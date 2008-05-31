@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $
+    @version $Id: FGAircraft.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -129,6 +129,8 @@ public:
       @see JSBSim.cpp documentation
       @return false if no error */
   bool Run(void);
+
+  bool InitModel(void);
 
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
@@ -175,6 +177,8 @@ public:
   inline int GetHoldDown(void) const {return HoldDown;}
 
   void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
+
+  void SetWingArea(double S) {WingArea = S;}
 
   double GetNlf(void);
 

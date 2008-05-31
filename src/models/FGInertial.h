@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.9 2008/05/12 04:37:12 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,6 +81,8 @@ class FGInertial : public FGModel {
 public:
   FGInertial(FGFDMExec*);
   ~FGInertial(void);
+
+  bool InitModel(void);
 
   bool Run(void);
   double SLgravity(void) const {return gAccelReference;}

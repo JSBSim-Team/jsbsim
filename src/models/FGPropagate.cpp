@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.30 2008/05/17 06:22:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.31 2008/05/31 23:13:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,14 +132,33 @@ FGPropagate::~FGPropagate(void)
 
 bool FGPropagate::InitModel(void)
 {
-  FGModel::InitModel();
+  if (!FGModel::InitModel()) return false;
 
   SeaLevelRadius = Inertial->GetRefRadius();          // For initialization ONLY
   RunwayRadius   = SeaLevelRadius;
 
-  VState.vLocation.SetRadius( SeaLevelRadius + 4.0 );
+  VState.vLocation.SetRadius( SeaLevelRadius + 4.0 ); // Todo Add terrain elevation?
   VState.vLocation.SetEllipse(Inertial->GetSemimajor(), Inertial->GetSemiminor());
   vOmega = FGColumnVector3( 0.0, 0.0, Inertial->omega() ); // Earth rotation vector
+
+  last2_vPQRdot.InitMatrix();
+  last_vPQRdot.InitMatrix();
+  vPQRdot.InitMatrix();
+  
+  last2_vUVWdot.InitMatrix();
+  last_vUVWdot.InitMatrix();
+  vUVWdot.InitMatrix();
+  
+  last2_vLocationDot.InitMatrix();
+  last_vLocationDot.InitMatrix();
+  vLocationDot.InitMatrix();
+
+  vOmegaLocal.InitMatrix();
+
+  integrator_rotational_rate = eAdamsBashforth2;
+  integrator_translational_rate = eAdamsBashforth2;
+  integrator_rotational_position = eTrapezoidal;
+  integrator_translational_position = eTrapezoidal;
 
   return true;
 }
@@ -509,9 +528,9 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, (PMF)&FGPropagate::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, (PMF)&FGPropagate::GetPQRdot);
 
-  PropertyManager->Tie("accelerations/udot-fps", this, eU, (PMF)&FGPropagate::GetUVWdot);
-  PropertyManager->Tie("accelerations/vdot-fps", this, eV, (PMF)&FGPropagate::GetUVWdot);
-  PropertyManager->Tie("accelerations/wdot-fps", this, eW, (PMF)&FGPropagate::GetUVWdot);
+  PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, (PMF)&FGPropagate::GetUVWdot);
+  PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGPropagate::GetUVWdot);
+  PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGPropagate::GetUVWdot);
 
   PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
   PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::Gethmeters, &FGPropagate::Sethmeters, true);

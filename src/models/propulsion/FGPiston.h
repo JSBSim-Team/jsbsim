@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.8 2008/05/16 04:04:31 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.8 2008/05/16 04:04:31 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,6 +186,7 @@ public:
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
 
+  void ResetToIC(void);
   void SetMagnetos(int magnetos) {Magnetos = magnetos;}
 
   double  GetEGT(void) { return EGT_degC; }

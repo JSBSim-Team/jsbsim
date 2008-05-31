@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.27 2008/05/12 04:37:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.28 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,6 +91,35 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   Debug(0);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGAuxiliary::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  vcas = veas = pt = tat = 0;
+  psl = rhosl = 1;
+  qbar = 0;
+  qbarUW = 0.0;
+  qbarUV = 0.0;
+  Mach = 0.0;
+  alpha = beta = 0.0;
+  adot = bdot = 0.0;
+  gamma = Vt = Vground = 0.0;
+  psigt = 0.0;
+  day_of_year = 1;
+  seconds_in_day = 0.0;
+  hoverbmac = hoverbcg = 0.0;
+
+  vPilotAccel.InitMatrix();
+  vPilotAccelN.InitMatrix();
+  vToEyePt.InitMatrix();
+  vAeroPQR.InitMatrix();
+  vEulerRates.InitMatrix();
+
+  return true;
+}
+  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGAuxiliary::~FGAuxiliary()

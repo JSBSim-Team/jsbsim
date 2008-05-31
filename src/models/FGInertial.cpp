@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.7 2008/05/12 04:37:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.8 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,17 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 FGInertial::~FGInertial(void)
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInertial::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  earthPosAngle   = 0.0;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

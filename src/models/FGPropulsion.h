@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.17 2008/05/16 04:04:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.18 2008/05/31 23:13:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +101,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.17 2008/05/16 04:04:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.18 2008/05/31 23:13:30 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -125,6 +125,8 @@ public:
 
       [Note: Should we be checking the Starved flag here?] */
   bool Run(void);
+
+  bool InitModel(void);
 
   /** Loads the propulsion system (engine[s] and tank[s]).
       Characteristics of the propulsion system are read in from the config file.
@@ -224,6 +226,9 @@ private:
   bool HaveTurboPropEngine;
   bool HaveRocketEngine;
   bool HaveElectricEngine;
+
+  int InitializedEngines;
+  bool HasInitializedEngines;
 
   void bind();
   void Debug(int from);

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.10 2008/05/04 18:22:55 dpculp Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -135,7 +135,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.10 2008/05/04 18:22:55 dpculp Exp $
+    @version $Id: FGOutput.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,7 @@ public:
   FGOutput(FGFDMExec*);
   ~FGOutput();
 
+  bool InitModel(void);
   bool Run(void);
 
   void DelimitedOutput(string);

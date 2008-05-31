@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.18 2008/05/12 04:37:11 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.19 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -174,7 +174,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.18 $
+    @version $Revision: 1.19 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -202,6 +202,8 @@ public:
   FGFCS(FGFDMExec*);
   /// Destructor
   ~FGFCS();
+
+  bool InitModel(void);
 
   /** Runs the Flight Controls model; called by the Executive
       @return false if no error */

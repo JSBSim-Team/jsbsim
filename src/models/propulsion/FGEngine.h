@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,6 +177,9 @@ public:
   virtual void SetStarter(bool s) { Starter = s; }
 
   virtual int InitRunning(void){ return 1; }
+
+  /** Resets the Engine parameters to the initial conditions */
+  void ResetToIC(void);
 
   /** Calculates the thrust of the engine, and other engine functions.
       @return Thrust in pounds */

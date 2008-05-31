@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.8 2008/04/29 12:09:42 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -202,6 +202,9 @@ public:
   */
   int GetType(void) {return Type;}
 
+  /** Resets the tank parameters to the initial conditions */
+  void ResetToIC(void);
+
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
   double GetContents(void) const {return Contents;}
@@ -226,10 +229,10 @@ private:
   double Capacity;
   double Radius;
   double PctFull;
-  double Contents;
+  double Contents, InitialContents;
   double Area;
-  double Temperature;  
-  double Standpipe;    
+  double Temperature, InitialTemperature;
+  double Standpipe, InitialStandpipe;
   bool  Selected;
   FGAuxiliary* Auxiliary;
   FGPropertyManager* PropertyManager;

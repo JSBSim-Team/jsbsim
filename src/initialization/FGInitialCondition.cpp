@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.23 2008/05/28 00:09:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.24 2008/05/31 23:13:28 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -889,14 +889,13 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetTargetNlfIC(document->FindElementValueAsNumber("targetNlf"));
   }
 
-  if (document->FindElement("running")) {
-    n = int(document->FindElementValueAsNumber("running"));
-    if (n != 0) {
-      FGPropulsion* propulsion = fdmex->GetPropulsion();
-      for(unsigned int i=0; i<propulsion->GetNumEngines(); i++) {
-         propulsion->GetEngine(i)->SetRunning(true);
-      }
-    }
+  // Check to see if any engines are specified to be initialized in a running state
+  FGPropulsion* propulsion = fdmex->GetPropulsion();
+  Element* running_elements = document->FindElement("running");
+  while (running_elements) {
+    n = int(running_elements->GetDataAsNumber());
+    propulsion->InitRunning(n);
+    running_elements = document->FindNextElement("running");
   }
 
   fdmex->RunIC();

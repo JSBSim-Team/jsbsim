@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.11 2008/05/12 04:37:11 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.12 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.11 2008/05/12 04:37:11 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.12 2008/05/31 23:13:29 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,8 @@ public:
 
   /// Destructor
   ~FGAuxiliary();
+
+  bool InitModel(void);
 
   /** Runs the Auxiliary routines; called by the Executive
       @return false if no error */

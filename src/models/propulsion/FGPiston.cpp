@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.14 2008/05/16 04:04:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.15 2008/05/31 23:13:30 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // Defaults and initializations
 
   Type = etPiston;
+  dt = State->Getdt();
 
   // These items are read from the configuration file
 
@@ -81,17 +82,11 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // These are internal program variables
 
   crank_counter = 0;
-  OilTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
-  ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
+  Magnetos = 0;
   minMAP = 21950;
   maxMAP = 96250;
-  MAP = Atmosphere->GetPressure() * psftopa;
-  CylinderHeadTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
-  Magnetos = 0;
-  ExhaustGasTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
-  EGT_degC = ExhaustGasTemp_degK - 273;
 
-  dt = State->Getdt();
+  ResetToIC();
 
   // Supercharging
   BoostSpeeds = 0;  // Default to no supercharging
@@ -260,6 +255,23 @@ FGPiston::~FGPiston()
   delete Lookup_Combustion_Efficiency;
   delete Power_Mixture_Correlation;
   Debug(1); // Call Debug() routine from constructor if needed
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPiston::ResetToIC(void)
+{
+  FGEngine::ResetToIC();
+  
+  ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
+  MAP = Atmosphere->GetPressure() * psftopa;
+  double airTemperature_degK = RankineToKelvin(Atmosphere->GetTemperature());
+  OilTemp_degK = airTemperature_degK;
+  CylinderHeadTemp_degK = airTemperature_degK;
+  ExhaustGasTemp_degK = airTemperature_degK;
+  EGT_degC = ExhaustGasTemp_degK - 273;
+  Thruster->SetRPM(0.0);
+  RPM = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

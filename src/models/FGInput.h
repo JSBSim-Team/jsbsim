@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.3 2008/05/04 18:22:54 dpculp Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.4 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,6 +86,7 @@ public:
   FGInput(FGFDMExec*);
   ~FGInput();
 
+  bool InitModel(void);
   bool Run(void);
 
   void SetType(string);

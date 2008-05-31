@@ -49,7 +49,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.4 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.5 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,6 +110,15 @@ FGExternalReactions::~FGExternalReactions()
   for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
   interface_properties.clear();
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGExternalReactions::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

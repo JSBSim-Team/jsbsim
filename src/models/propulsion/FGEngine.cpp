@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.18 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.19 2008/05/31 23:13:30 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,17 +81,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   SLFuelFlowMax = SLOxiFlowMax = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
-  Thrust = 0.0;
-  Throttle = 0.0;
-  Mixture = 1.0;
-  Starter = false;
-  FuelNeed = OxidizerNeed = 0.0;
-  Starved = Running = Cranking = false;
-  PctPower = 0.0;
-  TrimMode = false;
-  FuelFlow_gph = 0.0;
-  FuelFlow_pph = 0.0;
-  FuelFreeze = false;
+
+  ResetToIC(); // initialize dynamic terms
 
   FDMExec = exec;
   State = FDMExec->GetState();
@@ -152,6 +143,23 @@ FGEngine::~FGEngine()
 {
   delete Thruster;
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGEngine::ResetToIC(void)
+{
+  Thrust = 0.0;
+  Throttle = 0.0;
+  Mixture = 1.0;
+  Starter = false;
+  FuelNeed = OxidizerNeed = 0.0;
+  Starved = Running = Cranking = false;
+  PctPower = 0.0;
+  TrimMode = false;
+  FuelFlow_gph = 0.0;
+  FuelFlow_pph = 0.0;
+  FuelFreeze = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

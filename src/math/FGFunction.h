@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.14 2007/12/30 14:53:08 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.15 2008/05/31 23:13:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,6 +193,35 @@ private:
   FGPropertyManager* const PropertyManager;
   bool cached;
   string Prefix;
+  string description_string;
+  string property_string;
+  string value_string;
+  string table_string;
+  string p_string;
+  string v_string;
+  string t_string;
+  string function_string;
+  string sum_string;
+  string difference_string;
+  string product_string;
+  string quotient_string;
+  string pow_string;
+  string exp_string;
+  string abs_string;
+  string sin_string;
+  string cos_string;
+  string tan_string;
+  string asin_string;
+  string acos_string;
+  string atan_string;
+  string atan2_string;
+  string min_string;
+  string max_string;
+  string avg_string;
+  string fraction_string;
+  string mod_string;
+  string random_string;
+  string integer_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,

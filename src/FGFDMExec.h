@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.39 2008/05/11 18:15:52 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.40 2008/05/31 23:13:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.39 $
+    @version $Revision: 1.40 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -394,7 +394,7 @@ public:
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
   /// Resets the initial conditions object and prepares the simulation to run again.
-  void ResetInitialConditions(void);
+  void ResetToInitialConditions(void);
   /// Sets the debug level.
   void SetDebugLevel(int level) {debug_lvl = level;}
 

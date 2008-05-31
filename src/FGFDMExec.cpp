@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.52 2008/05/17 06:22:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.53 2008/05/31 23:13:28 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,6 +218,9 @@ bool FGFDMExec::Allocate(void)
   MassBalance     = new FGMassBalance(this);
   Aerodynamics    = new FGAerodynamics (this);
   Inertial        = new FGInertial(this);
+
+  GroundCallback  = new FGGroundCallback(Inertial->GetRefRadius());
+
   GroundReactions = new FGGroundReactions(this);
   ExternalReactions = new FGExternalReactions(this);
   BuoyantForces   = new FGBuoyantForces(this);
@@ -226,7 +229,6 @@ bool FGFDMExec::Allocate(void)
   Auxiliary       = new FGAuxiliary(this);
   Input           = new FGInput(this);
 
-  GroundCallback  = new FGGroundCallback(Inertial->GetRefRadius());
   State           = new FGState(this); // This must be done here, as the FGState
                                        // class needs valid pointers to the above
                                        // model classes
@@ -394,6 +396,24 @@ bool FGFDMExec::RunIC(void)
   State->ResumeIntegration();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::ResetToInitialConditions(void)
+{
+  FGModel* model_iterator;
+
+  model_iterator = FirstModel;
+  if (model_iterator == 0L) return;
+
+  while (model_iterator != 0L) {
+    model_iterator->InitModel();
+    model_iterator = model_iterator->NextModel;
+  }
+
+  RunIC();
+  if (Script) Script->ResetEvents();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

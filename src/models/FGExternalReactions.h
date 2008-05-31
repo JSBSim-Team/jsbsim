@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.4 2008/05/04 18:22:54 dpculp Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.5 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -130,6 +130,8 @@ public:
       cleared out and the items pointed to are deleted.
   */
   ~FGExternalReactions(void);
+
+  bool InitModel(void);
 
   /** Sum all the constituent forces for this cycle.
       @return true always.

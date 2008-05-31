@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.20 2008/05/12 04:37:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.21 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +109,23 @@ FGAerodynamics::~FGAerodynamics()
   Debug(1);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGAerodynamics::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  impending_stall = stall_hyst = 0.0;
+  alphaclmin = alphaclmax = 0.0;
+  alphahystmin = alphahystmax = 0.0;
+  clsq = lod = 0.0;
+  alphaw = 0.0;
+  bi2vel = ci2vel = 0.0;
+  AeroRPShift = 0;
+  vDeltaRP.InitMatrix();
+
+  return true;
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGAerodynamics::Run(void)

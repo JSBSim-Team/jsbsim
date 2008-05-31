@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.24 2008/05/16 04:04:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.25 2008/05/31 23:13:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -71,6 +71,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
   Name = "FGPropulsion";
 
+  InitializedEngines = 0;
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines = 0;
   numOxiTanks = numFuelTanks = 0;
@@ -86,6 +87,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   HaveRocketEngine =
   HaveTurboPropEngine =
   HaveElectricEngine = false;
+  HasInitializedEngines = false;
 
   Debug(0);
 }
@@ -99,6 +101,28 @@ FGPropulsion::~FGPropulsion()
   for (unsigned int i=0; i<Tanks.size(); i++) delete Tanks[i];
   Tanks.clear();
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGPropulsion::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  for (unsigned int i=0; i<numTanks; i++) Tanks[i]->ResetToIC();
+
+  for (unsigned int i=0; i<numEngines; i++) {
+    switch (Engines[i]->GetType()) {
+      case FGEngine::etPiston:
+        ((FGPiston*)Engines[i])->ResetToIC();
+        if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        break;
+      default:
+        break;
+    }
+  }
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,20 +172,28 @@ bool FGPropulsion::GetSteadyState(void)
 
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
+      cout << "  Finding steady state for engine " << i << endl;
       Engines[i]->SetTrimMode(true);
       steady=false;
       steady_count=0;
+      j=0;
       while (!steady && j < 6000) {
         Engines[i]->Calculate();
         lastThrust = currentThrust;
         currentThrust = Engines[i]->GetThrust();
         if (fabs(lastThrust-currentThrust) < 0.0001) {
           steady_count++;
-          if (steady_count > 120) { steady=true; }
+          if (steady_count > 120) {
+            steady=true;
+            cout << "    Steady state found at thrust: " << currentThrust << " lbs." << endl;
+          }
         } else {
           steady_count=0;
         }
         j++;
+      }
+      if (j >= 6000) {
+        cout << "    Could not find a steady state for this engine." << endl;
       }
       vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
       vMoments += Engines[i]->GetMoments();     // sum body frame moments
@@ -178,14 +210,34 @@ bool FGPropulsion::GetSteadyState(void)
 
 void FGPropulsion::InitRunning(int n)
 {
-  n=0;
+  if (n > 0) { // A specific engine is supposed to be initialized
 
-  for(unsigned int i=0; i<GetNumEngines(); i++) {
-    FCS->SetThrottleCmd(i,1);
-    FCS->SetMixtureCmd(i,1);
-    GetEngine(i)->InitRunning();
+    if (n >= GetNumEngines() ) {
+      cerr << "Tried to initialize a non-existent engine!" << endl;
+      throw;
+    }
+    FCS->SetThrottleCmd(n,1);
+    FCS->SetMixtureCmd(n,1);
+    GetEngine(n)->InitRunning();
+    GetSteadyState();
+
+    InitializedEngines = 1 << n;
+    HasInitializedEngines = true;
+
+  } else if (n < 0) { // -1 refers to "All Engines"
+
+    for (unsigned int i=0; i<GetNumEngines(); i++) {
+      FCS->SetThrottleCmd(i,1);
+      FCS->SetMixtureCmd(i,1);
+      GetEngine(i)->InitRunning();
+    }
+    GetSteadyState();
+    InitializedEngines = -1;
+    HasInitializedEngines = true;
+
+  } else if (n == 0) { // No engines are to be initialized
+    // Do nothing
   }
-  GetSteadyState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

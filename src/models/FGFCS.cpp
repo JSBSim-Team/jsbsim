@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.40 2008/05/12 04:37:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.41 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -117,6 +117,32 @@ FGFCS::~FGFCS()
   Debug(1);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFCS::InitModel(void)
+{
+  unsigned int i;
+
+  if (!FGModel::InitModel()) return false;
+
+  for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = 0.0;
+  for (i=0; i<MixturePos.size(); i++) MixturePos[i] = 0.0;
+  for (i=0; i<ThrottleCmd.size(); i++) ThrottleCmd[i] = 0.0;
+  for (i=0; i<MixtureCmd.size(); i++) MixtureCmd[i] = 0.0;
+  for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = 0.0;
+  for (i=0; i<PropFeather.size(); i++) PropFeather[i] = 0.0;
+
+  DaCmd = DeCmd = DrCmd = DsCmd = DfCmd = DsbCmd = DspCmd = 0;
+  PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
+
+  for (i=0;i<NForms;i++) {
+    DePos[i] = DaLPos[i] = DaRPos[i] = DrPos[i] = 0.0;
+    DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
+  }
+
+  return true;
+}
+  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Notes: In this logic the default engine commands are set. This is simply a
 // sort of safe-mode method in case the user has not defined control laws for

@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.13 2008/05/12 04:37:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.14 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,15 @@ FGMassBalance::~FGMassBalance()
   PointMasses.clear();
 
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGMassBalance::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,6 +303,8 @@ void FGMassBalance::bind(void)
                        &FGMassBalance::GetMass);
   PropertyManager->Tie("inertia/weight-lbs", this,
                        &FGMassBalance::GetWeight);
+  PropertyManager->Tie("inertia/empty-weight-lbs", this,
+    &FGMassBalance::GetWeight, &FGMassBalance::SetEmptyWeight);
   PropertyManager->Tie("inertia/cg-x-in", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-in", this,2,

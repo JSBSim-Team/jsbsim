@@ -54,7 +54,7 @@ INCLUDES
 #include <math/FGColumnVector3.h>
 #include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.11 2008/05/12 04:37:12 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.12 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,6 +93,7 @@ public:
   FGGroundReactions(FGFDMExec*);
   ~FGGroundReactions(void);
 
+  bool InitModel(void);
   bool Run(void);
   bool Load(Element* el);
   FGColumnVector3& GetForces(void) {return vForces;}

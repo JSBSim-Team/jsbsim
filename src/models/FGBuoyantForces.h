@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.4 2008/05/04 18:22:53 dpculp Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.5 2008/05/31 23:13:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,7 +103,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.4 2008/05/04 18:22:53 dpculp Exp $
+    @version $Id: FGBuoyantForces.h,v 1.5 2008/05/31 23:13:29 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,6 +119,8 @@ public:
   FGBuoyantForces(FGFDMExec* Executive);
   /// Destructor
   ~FGBuoyantForces();
+
+  bool InitModel(void);
 
   /** Runs the Buoyant forces model; called by the Executive
       @return false if no error */

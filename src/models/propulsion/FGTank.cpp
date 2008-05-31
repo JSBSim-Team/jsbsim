@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.9 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.10 2008/05/31 23:13:30 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,11 +80,11 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   if (el->FindElement("capacity"))
     Capacity = el->FindElementValueAsNumberConvertTo("capacity", "LBS");
   if (el->FindElement("contents"))
-    Contents = el->FindElementValueAsNumberConvertTo("contents", "LBS");
+    InitialContents = Contents = el->FindElementValueAsNumberConvertTo("contents", "LBS");
   if (el->FindElement("temperature"))
-    Temperature = el->FindElementValueAsNumber("temperature");
+    InitialTemperature = Temperature = el->FindElementValueAsNumber("temperature");
   if (el->FindElement("standpipe"))
-    Standpipe = el->FindElementValueAsNumberConvertTo("standpipe", "LBS");
+    InitialStandpipe = Standpipe = el->FindElementValueAsNumberConvertTo("standpipe", "LBS");
 
   Selected = true;
 
@@ -100,7 +100,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   PropertyManager->Tie( property_name, (FGTank*)this, &FGTank::GetContents,
                                        &FGTank::SetContents );
 
-  if (Temperature != -9999.0)  Temperature = FahrenheitToCelsius(Temperature);
+  if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
 
   Debug(0);
@@ -111,6 +111,17 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 FGTank::~FGTank()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTank::ResetToIC(void)
+{
+  Temperature = InitialTemperature;
+  Standpipe = InitialStandpipe;
+  Contents = InitialContents;
+  PctFull = 100.0*Contents/Capacity;
+  Selected = true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

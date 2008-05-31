@@ -79,7 +79,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.16 2008/05/12 04:37:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.17 2008/05/31 23:13:29 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,6 +107,15 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 FGAircraft::~FGAircraft()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGAircraft::InitModel(void)
+{
+  if (!FGModel::InitModel()) return false;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,7 +218,7 @@ bool FGAircraft::Load(Element* el)
 void FGAircraft::bind(void)
 {
   typedef double (FGAircraft::*PMF)(int) const;
-  PropertyManager->Tie("metrics/Sw-sqft", this, &FGAircraft::GetWingArea);
+  PropertyManager->Tie("metrics/Sw-sqft", this, &FGAircraft::GetWingArea, &FGAircraft::SetWingArea);
   PropertyManager->Tie("metrics/bw-ft", this, &FGAircraft::GetWingSpan);
   PropertyManager->Tie("metrics/cbarw-ft", this, &FGAircraft::Getcbar);
   PropertyManager->Tie("metrics/iw-rad", this, &FGAircraft::GetWingIncidence);

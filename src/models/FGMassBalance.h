@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.9 2008/05/12 04:37:13 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.10 2008/05/31 23:13:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -104,7 +104,7 @@ public:
   ~FGMassBalance();
 
   bool Load(Element* el);
-
+  bool InitModel(void);
   bool Run(void);
 
   inline double GetMass(void) const {return Mass;}
