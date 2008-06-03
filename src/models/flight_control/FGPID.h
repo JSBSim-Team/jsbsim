@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.4 2008/05/01 01:03:14 dpculp Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.5 2008/06/03 00:17:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.4 $
+    @version $Revision: 1.5 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,6 +112,12 @@ private:
   double Kp, Ki, Kd;
   double I_out_total;
   double Input_prev, Input_prev2;
+  double KpPropertySign;
+  double KiPropertySign;
+  double KdPropertySign;
+  FGPropertyManager* KpPropertyNode;
+  FGPropertyManager* KiPropertyNode;
+  FGPropertyManager* KdPropertyNode;
 
   void Debug(int from);
 };
