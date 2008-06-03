@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	propC10v.xml \
 	propC6v.xml \
 	propC8v.xml \
+	prop_Clark_Y7570.xml \
 	propDA-R352_6-123-F_2.xml \
 	prop_75in2f.xml \
 	prop_81in2v.xml \
