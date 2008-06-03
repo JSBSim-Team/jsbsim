@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.13 2008/05/17 19:09:48 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.14 2008/06/03 00:17:31 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,19 @@ CLASS IMPLEMENTATION
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number)
   : FGEngine(exec, el, engine_number)
 {
-  SetDefaults();
+  Type = etTurbine;
+
+  MilThrust = MaxThrust = 10000.0;
+  TSFC = 0.8;
+  ATSFC = 1.7;
+  IdleN1 = 30.0;
+  IdleN2 = 60.0;
+  MaxN1 = MaxN2 = 100.0;
+  Augmented = AugMethod = Injected = 0;
+  BypassRatio = BleedDemand = 0.0;
+  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
+
+  ResetToIC();
 
   Load(exec, el);
   Debug(0);
@@ -72,6 +84,21 @@ FGTurbine::~FGTurbine()
   delete MaxThrustLookup;
   delete InjectionLookup;
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTurbine::ResetToIC(void)
+{
+  N1 = N2 = 0.0;
+  correctedTSFC = TSFC;
+  ThrottlePos = AugmentCmd = 0.0;
+  InletPosition = NozzlePosition = 1.0;
+  Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
+  Cutoff = true;
+  phase = tpOff;
+  EGT_degC = 0.0;
+  OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -358,45 +385,6 @@ double FGTurbine::Seek(double *var, double target, double accel, double decel) {
     if (v > target) v = target;
   }
   return v;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGTurbine::SetDefaults(void)
-{
-  N1 = N2 = 0.0;
-  Type = etTurbine;
-  MilThrust = 10000.0;
-  MaxThrust = 10000.0;
-  BypassRatio = 0.0;
-  TSFC = 0.8;
-  correctedTSFC = TSFC;
-  ATSFC = 1.7;
-  IdleN1 = 30.0;
-  IdleN2 = 60.0;
-  MaxN1 = 100.0;
-  MaxN2 = 100.0;
-  Augmented = 0;
-  AugMethod = 0;
-  Injected = 0;
-  InjectionTime = 0.0;
-  InjectionTimer = 0.0;
-  BleedDemand = 0.0;
-  ThrottlePos = 0.0;
-  AugmentCmd = 0.0;
-  InletPosition = 1.0;
-  NozzlePosition = 1.0;
-  Augmentation = false;
-  Injection = false;
-  Reversed = false;
-  Cutoff = true;
-  phase = tpOff;
-  Stalled = false;
-  Seized = false;
-  Overtemp = false;
-  Fire = false;
-  EGT_degC = 0.0;
-  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.19 2008/05/31 23:13:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.20 2008/06/03 00:17:31 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   // Load thruster
   local_element = engine_element->GetParent()->FindElement("thruster");
   if (local_element) {
-    LoadThruster(local_element);
+    if (!LoadThruster(local_element)) exit(-1);
   } else {
     cerr << "No thruster definition supplied with engine definition." << endl;
   }

@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.11 2008/05/17 19:09:48 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.12 2008/06/03 00:17:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.11 2008/05/17 19:09:48 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.12 2008/06/03 00:17:31 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,6 +208,7 @@ public:
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
   int InitRunning(void);
+  void ResetToIC(void);
 
   string GetEngineLabels(string delimeter);
   string GetEngineValues(string delimeter);
@@ -272,7 +273,6 @@ private:
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
 
-  void SetDefaults(void);
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(void);
   void Debug(int from);
