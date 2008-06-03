@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.24 2008/05/31 23:13:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.25 2008/06/03 00:18:04 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -165,6 +165,34 @@ void FGInitialCondition::InitializeIC(void)
 
   salpha=sbeta=stheta=sphi=spsi=sgamma=0;
   calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
+}
+
+//******************************************************************************
+
+void FGInitialCondition::WriteStateFile(int num)
+{
+  string filename = fdmex->GetFullAircraftPath() + "/" + "initfile.xml";
+  ofstream outfile(filename.c_str());
+  FGPropagate* Propagate = fdmex->GetPropagate();
+  
+  if (outfile.is_open()) {
+    outfile << "<?xml version=\"1.0\"?>" << endl;
+    outfile << "<initialize name=\"reset00\">" << endl;
+    outfile << "  <ubody unit=\"FT/SEC\"> " << Propagate->GetUVW(eX) << " </ubody> " << endl;
+    outfile << "  <vbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eY) << " </vbody> " << endl;
+    outfile << "  <wbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eZ) << " </wbody> " << endl;
+    outfile << "  <phi unit=\"DEG\"> " << Propagate->GetEuler(ePhi) << " </phi>" << endl;
+    outfile << "  <theta unit=\"DEG\"> " << Propagate->GetEuler(eTht) << " </theta>" << endl;
+    outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi) << " </psi>" << endl;
+    outfile << "  <longitude unit=\"DEG\"> " << Propagate->GetLongitudeDeg() << " </longitude>" << endl;
+    outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
+    outfile << "  <altitude unit=\"FT\"> " << Propagate->Geth() << " </altitude>" << endl;
+    outfile << "</initialize>" << endl;
+  } else {
+    cerr << "Could not open and/or write the state to the initial conditions file." << endl;
+  }
+
+  outfile.close();
 }
 
 //******************************************************************************
@@ -1073,6 +1101,12 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
+
+  typedef int (FGInitialCondition::*iPMF)(void) const;
+  PropertyManager->Tie("simulation/write-state-file",
+                       this,
+                       (iPMF)0,
+                       &FGInitialCondition::WriteStateFile);
 
 }
 
