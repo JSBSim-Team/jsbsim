@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.25 2008/05/31 23:13:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.26 2008/06/03 00:18:50 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -115,6 +115,10 @@ bool FGPropulsion::InitModel(void)
     switch (Engines[i]->GetType()) {
       case FGEngine::etPiston:
         ((FGPiston*)Engines[i])->ResetToIC();
+        if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        break;
+      case FGEngine::etTurbine:
+        ((FGTurbine*)Engines[i])->ResetToIC();
         if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
         break;
       default:
