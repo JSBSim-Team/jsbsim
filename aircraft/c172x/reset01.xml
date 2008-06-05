@@ -1,51 +1,9 @@
 <?xml version="1.0"?>
 <initialize name="reset01">
-  <!--
-    This file sets up the aircraft at 8000
-	feet on a heading of 200 degrees.
-  -->
   <vc unit="KTS">    84.0  </vc>
   <latitude unit="DEG">   47.0  </latitude>
   <longitude unit="DEG"> 122.0  </longitude>
   <psi unit="DEG">       200.0  </psi>
   <altitude unit="FT">  4000.0  </altitude>
-  <trim_config name="trim01" type="FULL">
-    <!--
-      This tag sets up the trim parameters.
-    -->
-    <search type="Nelder-Mead">
-          <sigma_nm> 0.5 </sigma_nm>
-          <alpha_nm> 1.0 </alpha_nm>
-          <beta_nm>  0.5 </beta_nm>
-          <gamma_nm> 2.0 </gamma_nm>
-          <tolerance value="0.000000001"/>
-          <max_iterations value="4000"/>
-          <stop_criterion type="Stop-On-Delta"/> <!-- "Stop-On-Delta", "Stop-On-Std" -->
-    </search>
-
-    <!-- action=From-IC takes the corrensponding value from the initialization file 
-         (the tag content is ignored) 
-    -->
-    <initial_values>
-          <phi action="From-IC"/>
-          <theta action="From-IC" unit="DEG"> 6.0 </theta>
-          <psi action="From-IC"/>
-          <throttle_cmd>  0.4  </throttle_cmd>
-          <elevator_cmd> -0.5  </elevator_cmd>
-          <rudder_cmd>   0.0  </rudder_cmd>
-          <aileron_cmd>  0.0  </aileron_cmd>
-          <gamma action="From-IC" unit="DEG"> -3.0 </gamma>
-    </initial_values>
-    <steps>
-          <phi   unit="DEG"> 0.3 </phi>
-          <theta unit="DEG"> 0.3 </theta>
-          <psi   unit="DEG"> 0.3 </psi>
-          <throttle_cmd> 0.2 </throttle_cmd>
-          <elevator_cmd> 0.2 </elevator_cmd>
-          <rudder_cmd>   0.2 </rudder_cmd>
-          <aileron_cmd>  0.2 </aileron_cmd>
-    </steps>
-    <output_file name="trim_data.txt"/>
-  </trim_config>
-
+  <running> 0 </running>
 </initialize>
