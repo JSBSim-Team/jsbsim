@@ -10,6 +10,7 @@ EXTRA_DIST = \
   c1723.xml \
   c172_cruise_8K.xml \
   c3101.xml \
+  c3104.xml \
   cannonball.xml \
   plotfile.xml \
   kml_output.xml \

@@ -26,7 +26,7 @@
       <set name="ap/attitude_hold" value="0"/>
       <set name="ap/wp_latitude_rad" value="0.517238"/>
       <set name="ap/wp_longitude_rad" value="-1.662727"/>
-      <set name="ap/heading_setpoint" value="355"/>
+      <set name="ap/heading_setpoint" value="350"/>
       <set name="ap/heading-setpoint-select" value="0"/>
       <set name="ap/heading_hold" value="1"/>
       <set name="ap/active-waypoint" value="0"/>

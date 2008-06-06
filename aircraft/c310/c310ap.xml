@@ -63,8 +63,9 @@ ROLL CHANNEL
 
 <!-- Wing leveler -->
 
-<channel name="AP Roll Wing Leveler">
-  <pure_gain name="Roll AP Wing Leveler">
+<channel name="AP roll wing leveler">
+
+  <pure_gain name="fcs/roll-ap-wing-leveler">
     <input>fcs/attitude/sensor/phi-rad</input>
     <gain>1.7</gain>
     <clipto>
@@ -73,17 +74,17 @@ ROLL CHANNEL
     </clipto>
   </pure_gain>
 
-  <integrator name="Roll AP Error Integrator">
+  <integrator name="fcs/roll-ap-error-integrator">
     <input> attitude/phi-rad </input>
     <c1> 1.0 </c1>
   </integrator>
 
-  <pure_gain name="roll-rate-gain">
+  <pure_gain name="fcs/roll-rate-gain">
     <input>velocities/p-rad_sec</input>
     <gain> 20.0 </gain>
   </pure_gain>
 
-  <summer name="Roll AP Error summer">
+  <summer name="fcs/roll-ap-error-summer">
      <input> fcs/roll-rate-gain </input>
      <input> fcs/roll-ap-wing-leveler </input>
      <input> fcs/roll-ap-error-integrator </input>
@@ -93,17 +94,18 @@ ROLL CHANNEL
      </clipto>
   </summer>
 
-  <switch name="Roll AP Autoswitch">
+  <switch name="fcs/roll-ap-autoswitch">
     <default value="0.0"/>
     <test value="fcs/roll-ap-error-summer">
       ap/attitude_hold == 1
     </test>
   </switch>
 
-  <pure_gain name="Roll AP Aileron Command Normalizer">
+  <pure_gain name="fcs/roll-ap-aileron-command-normalizer">
      <input>fcs/roll-ap-autoswitch</input>
      <gain>-1</gain>
   </pure_gain>
+
 </channel>
 
 <!-- Waypoint Heading hold -->
@@ -148,7 +150,7 @@ ROLL CHANNEL
     </function>
   </fcs_function>
 
-  <fcs_function name="Heading to Waypoint Rad">
+  <fcs_function name="fcs/heading-to-waypoint-rad">
     <!--
     The heading in radians to a specified waypoint, given the
     current position.
@@ -174,7 +176,7 @@ ROLL CHANNEL
     </function>
   </fcs_function>
 
-  <fcs_function name="WP Distance A">
+  <fcs_function name="fcs/wp-distance-a">
     <!--
     This is an intermediate distance calculation between
     the current location and the specified waypoint.
@@ -211,7 +213,7 @@ ROLL CHANNEL
     </function>
   </fcs_function> 
 
-  <fcs_function name="WP Distance">
+  <fcs_function name="fcs/wp-distance">
     <!--
     This is the final distance calculation between
     the current location and the specified waypoint.
@@ -241,19 +243,19 @@ ROLL CHANNEL
     </function>
   </fcs_function> 
 
-  <summer name="Heading to Waypoint Positive">
+  <summer name="fcs/heading-to-waypoint-positive">
     <input> fcs/heading-to-waypoint-rad </input>
     <bias> 6.283 </bias>
   </summer>
 
-  <switch name="WP Heading Corrector">
+  <switch name="fcs/wp-heading-corrector">
     <default value="fcs/heading-to-waypoint-positive"/>
     <test value="fcs/heading-to-waypoint-rad">
       fcs/heading-to-waypoint-rad gt 0.0
     </test>
   </switch>
   
-  <pure_gain name="WP Heading Deg">
+  <pure_gain name="fcs/wp-heading-deg">
     <input> fcs/wp-heading-corrector </input>
     <gain> 57.3 </gain>
   </pure_gain>
@@ -270,24 +272,24 @@ ROLL CHANNEL
        heading setpoint selector is 0, then the heading setpoint
        is used, if the selector is 1, then the heading calculated
        from the waypoint is used. -->
-  <switch name="Heading Setpoint Selector">
+  <switch name="fcs/heading-setpoint-selector">
     <default value="ap/heading_setpoint"/>
     <test value="fcs/wp-heading-deg">
       ap/heading-setpoint-select == 1
     </test>
   </switch>
 
-  <pure_gain name="Heading True Degrees">
+  <pure_gain name="fcs/heading-true-degrees">
     <input>attitude/heading-true-rad</input>
     <gain>57.3</gain> <!-- convert to degrees -->
   </pure_gain>
 
-  <summer name="Heading Error">
+  <summer name="fcs/heading-error">
     <input> -fcs/heading-true-degrees</input>
     <input> fcs/heading-setpoint-selector </input>
   </summer>
 
-  <switch name="Heading Error Bias Switch">
+  <switch name="fcs/heading-error-bias-switch">
     <default value="0.0"/>
     <test value="360.0">
       fcs/heading-error lt -180
@@ -297,7 +299,7 @@ ROLL CHANNEL
     </test>
   </switch>
 
-  <summer name="Heading Corrected">
+  <summer name="fcs/heading-corrected">
     <input> fcs/heading-error-bias-switch </input>
     <input> fcs/heading-error </input>
     <clipto>
@@ -306,58 +308,59 @@ ROLL CHANNEL
     </clipto>
   </summer>
 
-  <pure_gain name="Heading Command">
+  <pure_gain name="fcs/heading-command">
     <input> fcs/heading-corrected </input>
     <gain> 0.01745 </gain>
   </pure_gain>
 
-  <lag_filter name="Heading Roll Error Lag">
+  <lag_filter name="fcs/heading-roll-error-lag">
     <input> fcs/heading-command </input>
     <c1> 0.50 </c1>
   </lag_filter>
 
-  <summer name="Heading Roll Error">
+  <summer name="fcs/heading-roll-error">
     <input> fcs/heading-roll-error-lag </input>
     <input> -attitude/phi-rad </input>
   </summer>
 
-  <switch name="Heading Roll Error Switch">
+  <switch name="fcs/heading-roll-error-switch">
     <default value="0.0"/>
     <test value="fcs/heading-roll-error">
       ap/heading_hold == 1
     </test>
   </switch>
 
-  <pure_gain name="Heading Proportional">
+  <pid name="fcs/heading-pi-controller">
     <input> fcs/heading-roll-error-switch </input>
-    <gain> 1.0 </gain>
-  </pure_gain>
+    <kp> 6.0 </kp>
+    <ki> 0.13 </ki>
+    <kd> 6.0 </kd>
+  </pid>
 
-  <integrator name="Heading Integral">
-    <input> fcs/heading-roll-error-switch </input>
-    <c1> 0.10 </c1>
-  </integrator>
-
-  <summer name="Heading Error Summer">
-    <input> fcs/heading-integral </input>
-    <input> fcs/heading-proportional </input>
-    <clipto>
-      <min>-1.0</min>
-      <max> 1.0</max>
-    </clipto>
-  </summer>
-
-  <switch name="Roll Command Selector">
+  <switch name="fcs/roll-command-selector">
     <default value="0.0"/>
-    <test value="fcs/heading-error-summer">
+    <test value="fcs/heading-pi-controller">
       ap/heading_hold == 1
+      gear/unit[2]/WOW == 0
     </test>
     <test value="fcs/roll-ap-aileron-command-normalizer">
       ap/attitude_hold == 1
+      gear/unit[2]/WOW == 0
     </test>
     <output>ap/aileron_cmd</output>
   </switch>
+
+  <switch name="fcs/roll-command-selector-steering">
+    <default value="0.0"/>
+    <test value="fcs/heading-pi-controller">
+      ap/heading_hold == 1
+      gear/unit/WOW == 1
+    </test>
+    <output>fcs/steer-cmd-norm</output>
+  </switch>
+
 </channel>
+
 <!--
 =====================================================
 PITCH CHANNEL
@@ -384,7 +387,7 @@ PITCH CHANNEL
   is determined, and limited to 100. The output from this component is
   the desired climb rate in percent of maximum.
   -->
-  <summer name="Altitude Error">
+  <summer name="fcs/altitude-error">
     <input> ap/altitude_setpoint </input>
     <input> -position/h-sl-ft </input>
     <clipto>
@@ -396,7 +399,7 @@ PITCH CHANNEL
   <!--
   The desired climb rate is lagged slightly for stability.
   -->
-  <lag_filter name="Alt Error Lag">
+  <lag_filter name="fcs/alt-error-lag">
     <input> fcs/altitude-error </input>
     <c1> 1 </c1>
   </lag_filter>
@@ -412,7 +415,7 @@ PITCH CHANNEL
   ROC (ft/sec) = 25.7 - h/833.33
   -->
 
-  <fcs_function name="HDot Command">
+  <fcs_function name="fcs/hdot-command">
     <input>fcs/alt-error-lag</input>
     <function>
       <quotient>
@@ -433,7 +436,7 @@ PITCH CHANNEL
   the commanded climb rate (from the previous component) and actual climb rate
   in ft./sec.
   -->
-  <summer name="HDot Error">
+  <summer name="fcs/hdot-error">
     <input>fcs/hdot-command</input>
     <input>-velocities/h-dot-fps</input>
   </summer>
@@ -443,7 +446,7 @@ PITCH CHANNEL
   pass through the climb rate error (from the previous component). Otherwise, it
   will pass zero.
   -->
-  <switch name="AP Alt Hold Switch">
+  <switch name="fcs/ap-alt-hold-switch">
     <default value="0.0"/>
     <test value="fcs/hdot-error">
       ap/altitude_hold == 1
@@ -455,7 +458,7 @@ PITCH CHANNEL
   elevator, however, does not travel symmetrically. This will need to be addressed
   in a fix to the deadband component.
   -->
-  <deadband name="Windup Trigger">
+  <deadband name="fcs/windup-trigger">
     <input> fcs/elevator-pos-deg </input>
     <width>46.0</width>
   </deadband>
@@ -470,7 +473,7 @@ PITCH CHANNEL
   degrees) then the deadband passes a non-zero value, triggering the anti-windup
   logic in the integrator.
   -->
-  <integrator name="Integral">
+  <integrator name="fcs/integral">
     <input> fcs/ap-alt-hold-switch </input>
     <trigger> fcs/windup-trigger </trigger>
     <c1> 0.001 </c1>
@@ -480,7 +483,7 @@ PITCH CHANNEL
   The proportional component multiplies the error signal by a constant, providing
   the proportional control action of this PI altitude hold controller.
   -->
-  <pure_gain name="Proportional">
+  <pure_gain name="fcs/proportional">
     <input> fcs/ap-alt-hold-switch </input>
     <gain> 0.03 </gain>
   </pure_gain>
@@ -489,7 +492,7 @@ PITCH CHANNEL
   The control summer component sums the proprortional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
-  <summer name="Control Summer">
+  <summer name="fcs/control-summer">
     <input> fcs/integral </input>
     <input> fcs/proportional </input>
     <clipto>
@@ -502,11 +505,12 @@ PITCH CHANNEL
   The elevator component flips the sign on the output of the control summer
   above and sets the ap/elevator_command property.
   -->
-  <pure_gain name="Elevator">
+  <pure_gain name="fcs/elevator">
     <input> fcs/control-summer </input>
     <gain> -1.0 </gain>
     <output> ap/elevator_cmd </output>
   </pure_gain>
+
 </channel>
 
 </autopilot>
