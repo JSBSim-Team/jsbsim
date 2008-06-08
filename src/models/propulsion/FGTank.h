@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.10 2008/06/08 14:53:34 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -207,6 +207,7 @@ public:
 
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
+  double GetCapacity(void) {return Capacity;}
   double GetContents(void) const {return Contents;}
   double GetTemperature_degC(void) {return Temperature;}
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}

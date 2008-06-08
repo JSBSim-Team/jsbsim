@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.28 2008/05/17 19:09:48 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.29 2008/06/08 14:53:34 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -218,6 +218,8 @@ FGJSBsim::FGJSBsim( double dt )
         node->setDoubleValue("level-lb", Propulsion->GetTank(i)->GetContents());
         node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
       }
+      node->setDoubleValue("capacity-gal_us",
+                           Propulsion->GetTank(i)->GetCapacity() / 6.6);
     }
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
 
