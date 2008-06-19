@@ -47,30 +47,23 @@ INCLUDES
 #include <FGJSBBase.h>
 #include <input_output/FGXMLElement.h>
 #include <math/FGColumnVector3.h>
-// #include <FGAuxiliary.h>
+#include <models/FGAuxiliary.h>
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-  SG_USING_STD(string);
-  SG_USING_STD(cerr);
-  SG_USING_STD(endl);
-  SG_USING_STD(cout);
-#else
-# include <string>
-  using std::string;
-# if !defined(sgi) || defined(__GNUC__) || (_COMPILER_VERSION >= 740)
-   using std::cerr;
-   using std::endl;
-   using std::cout;
-# endif
 #endif
+
+#include <string>
+using std::string;
+using std::cerr;
+using std::endl;
+using std::cout;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.10 2008/06/08 14:53:34 andgi Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.11 2008/06/19 03:41:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,11 +113,16 @@ CLASS DOCUMENTATION
 
 @code
 <tank type="{FUEL | OXIDIZER}">
-  <location unit="{FT | M}">
+  <location unit="{FT | M | IN}">
     <x> {number} </x>
     <y> {number} </y>
     <z> {number} </z>
   </location>
+  <drain_location unit="{FT | M | IN}">
+    <x> {number} </x>
+    <y> {number} </y>
+    <z> {number} </z>
+  </drain_location>
   <radius unit="{FT | M}"> {number} </radius>
   <capacity unit="{LBS | KG}"> {number} </capacity>
   <contents unit="{LBS | KG}"> {number} </contents>
@@ -136,22 +134,30 @@ CLASS DOCUMENTATION
 <h3>Definition of the tank configuration file parameters:</h3>
 
 - \b type - One of FUEL or OXIDIZER.  This is required.
-- \b x - Location of tank on aircraft's x-axis, defaults to inches.
-- \b y - Location of tank on aircraft's y-axis, defaults to inches.
-- \b z - Location of tank on aircraft's z-axis, defaults to inches.
 - \b radius - Equivalent radius of tank for modeling slosh, defaults to inches.
 - \b capacity - Capacity, defaults to pounds.
 - \b contents - Initial contents, defaults to pounds.
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
 
+location:
+- \b x - Location of tank on aircraft's x-axis, defaults to inches.
+- \b y - Location of tank on aircraft's y-axis, defaults to inches.
+- \b z - Location of tank on aircraft's z-axis, defaults to inches.
+
+drain_location:
+- \b x - Location of tank drain on aircraft's x-axis, defaults to inches.
+- \b y - Location of tank drain on aircraft's y-axis, defaults to inches.
+- \b z - Location of tank drain on aircraft's z-axis, defaults to inches.
+
 <h3>Default values of the tank configuration file parameters:</h3>
 
 - \b type - ttUNKNOWN  (causes a load error in the propulsion configuration)
-- \b location - optional, but a warning message will be printed to console
-- \b x - 0.0  
-- \b y - 0.0
-- \b z - 0.0
+- \b location, \b drain_location - both optional, but a warning message will
+be printed to the console if the location is not given
+- \b x - 0.0  (both full and drained CG locations)
+- \b y - 0.0  (both full and drained CG locations)
+- \b z - 0.0  (both full and drained CG locations)
 - \b radius - 0.0
 - \b capacity - 0.0
 - \b contents - 0.0
@@ -198,7 +204,6 @@ public:
 
   /** Retrieves the type of tank: Fuel or Oxidizer.
       @return the tank type, 0 for undefined, 1 for fuel, and 2 for oxidizer.
-
   */
   int GetType(void) {return Type;}
 
@@ -212,8 +217,8 @@ public:
   double GetTemperature_degC(void) {return Temperature;}
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
   double GetStandpipe(void) {return Standpipe;}
-  const FGColumnVector3& GetXYZ(void) {return vXYZ;}
-  double GetXYZ(int idx) {return vXYZ(idx);}
+  const FGColumnVector3 GetXYZ(void);
+  const double GetXYZ(int idx);
 
   double Fill(double amount);
   void SetContents(double amount);
@@ -227,6 +232,7 @@ private:
   int TankNumber;
   string type;
   FGColumnVector3 vXYZ;
+  FGColumnVector3 vXYZ_drain;
   double Capacity;
   double Radius;
   double PctFull;

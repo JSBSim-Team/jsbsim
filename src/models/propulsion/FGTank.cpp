@@ -36,8 +36,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
-#include <models/FGAuxiliary.h>
 #include "FGTank.h"
 
 #if !defined ( sgi ) || defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
@@ -48,7 +46,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.10 2008/05/31 23:13:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.11 2008/06/19 03:38:16 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +63,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Auxiliary = exec->GetAuxiliary();
   Radius = Capacity = Contents = Standpipe = 0.0;
   PropertyManager = exec->GetPropertyManager();
+  vXYZ.InitMatrix();
+  vXYZ_drain.InitMatrix();
 
   type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
@@ -74,6 +74,13 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   element = el->FindElement("location");
   if (element)  vXYZ = element->FindElementTripletConvertTo("IN");
   else          cerr << "No location found for this tank." << endl;
+
+  vXYZ_drain = vXYZ; // Set initial drain location to initial tank CG
+
+  element = el->FindElement("drain_location");
+  if (element)  {
+    vXYZ_drain = element->FindElementTripletConvertTo("IN");
+  }
 
   if (el->FindElement("radius"))
     Radius = el->FindElementValueAsNumberConvertTo("radius", "IN");
@@ -122,6 +129,20 @@ void FGTank::ResetToIC(void)
   Contents = InitialContents;
   PctFull = 100.0*Contents/Capacity;
   Selected = true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGColumnVector3 FGTank::GetXYZ(void)
+{
+  return vXYZ_drain + (Contents/Capacity)*(vXYZ - vXYZ_drain);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const double FGTank::GetXYZ(int idx)
+{
+  return vXYZ_drain(idx) + (Contents/Capacity)*(vXYZ(idx)-vXYZ_drain(idx));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
