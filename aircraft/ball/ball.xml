@@ -83,10 +83,10 @@
           </product>
         </function>
         <!-- The location below is in structural frame (x positive
-             aft), so this location describes a point 1 foot forward
+             aft), so this location describes a point 1 foot aft
              of the origin. In this case, the origin is the center. -->
         <location unit="FT">
-          <x>-1</x>
+          <x>1</x>
           <y>0</y>
           <z>0</z>
         </location>
