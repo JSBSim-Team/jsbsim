@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.41 2008/05/12 04:37:10 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.42 2008/07/03 03:44:54 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -454,81 +454,84 @@ bool options(int count, char **arg)
     exit(0);
   }
 
+#define gripe cerr << "Option '" << keyword 	\
+	<< "' requires a value, as in '"	\
+	<< keyword << "=something'" << endl << endl;/**/
+
   for (i=1; i<count; i++) {
     string argument = string(arg[i]);
-    int n=0;
-    if (argument.find("--help") != string::npos) {
+    string keyword(argument);
+    string value("");
+    unsigned int n=argument.find("=");
+    if (n != string::npos && n > 0) {
+      keyword = argument.substr(0, n);
+      value = argument.substr(n+1);
+    }
+
+    if (keyword == "--help") {
       PrintHelp();
       exit(0);
-    } else if (argument.find("--version") != string::npos) {
+    } else if (keyword == "--version") {
       cout << endl << "  JSBSim Version: " << FDMExec->GetVersion() << endl << endl;
       exit (0);
-    } else if (argument.find("--realtime") != string::npos) {
+    } else if (keyword == "--realtime") {
       realtime = true;
-    } else if (argument.find("--nice") != string::npos) {
+    } else if (keyword == "--nice") {
       play_nice = true;
-    } else if (argument.find("--suspend") != string::npos) {
+    } else if (keyword == "--suspend") {
       suspend = true;
-    } else if (argument.find("--outputlogfile") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        LogOutputName = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--outputlogfile") {
+      if (n != string::npos) {
+        LogOutputName = value;
       } else {
         LogOutputName = "JSBout.csv";
         cerr << "  Output log file name must be specified with an = sign. Using JSBout.csv as default";
       }
-    } else if (argument.find("--logdirectivefile") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        LogDirectiveName = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--logdirectivefile") {
+      if (n != string::npos) {
+        LogDirectiveName = value;
       } else {
-        cerr << "  Log directives file must be specified after an = sign." << endl << endl;
+        gripe;
         exit(1);
       }
-    } else if (argument.find("--root") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        RootDir = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--root") {
+      if (n != string::npos) {
+        RootDir = value;
       } else {
-        cerr << "  Root directory not valid or not understood." << endl << endl;
+        gripe;
         exit(1);
       }
-    } else if (argument.find("--aircraft") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        AircraftName = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--aircraft") {
+      if (n != string::npos) {
+        AircraftName = value;
       } else {
-        cerr << "  Aircraft name not valid or not understood." << endl << endl;
+        gripe;
         exit(1);
       }
-    } else if (argument.find("--script") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        ScriptName = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--script") {
+      if (n != string::npos) {
+        ScriptName = value;
       } else {
-        cerr << "  Script name not valid or not understood." << endl << endl;
+        gripe;
         exit(1);
       }
-    } else if (argument.find("--initfile") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        ResetName = argument.substr(argument.find("=")+1);
+    } else if (keyword == "--initfile") {
+      if (n != string::npos) {
+        ResetName = value;
       } else {
-        cerr << "  Reset name not valid or not understood." << endl << endl;
+        gripe;
         exit(1);
       }
 
-    } else if (argument.find("--end-time") != string::npos) {
-      n = argument.find("=")+1;
-      if (n > 0) {
-        string s = argument.substr(argument.find("=")+1);
-        end_time = atof( s.c_str() );
+    } else if (keyword == "--end-time") {
+      if (n != string::npos) {
+        end_time = atof( value.c_str() );
       } else {
-        cerr << "  End time not valid or not understood." << endl << endl;
+        gripe;
         exit(1);
       }
 
-    } else if (argument.find("--catalog") != string::npos) {
+    } else if (keyword == "--catalog") {
         catalog = true;
     } else {
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
