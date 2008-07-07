@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.66 $ </version>
+        <version> $Revision: 1.67 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -406,7 +406,7 @@
 
             <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
-                <gain>0.31831</gain>
+                <gain>0.25465</gain>
             </pure_gain>
 
             <summer name="yaw trim error">
