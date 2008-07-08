@@ -36,6 +36,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#include <iostream>
 #ifdef FGFS
 #  include <simgear/props/props.hxx>
 #else
@@ -48,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.7 2008/05/17 06:22:24 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.8 2008/07/08 13:49:18 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
