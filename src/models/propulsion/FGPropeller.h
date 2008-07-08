@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.11 2008/05/27 15:56:14 dpculp Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.12 2008/07/08 12:46:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.11 2008/05/27 15:56:14 dpculp Exp $
+    @version $Id: FGPropeller.h,v 1.12 2008/07/08 12:46:15 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -185,7 +185,7 @@ public:
   double GetPitch(void)         { return Pitch;         }
 
   /// Retrieves the RPMs of the propeller
-  double GetRPM(void)           { return RPM;           }
+  double GetRPM(void)     const { return RPM;           } 
 
   /// Retrieves the propeller moment of inertia
   double GetIxx(void)           { return Ixx;           }
