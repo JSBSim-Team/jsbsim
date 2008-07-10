@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.23 2007/10/19 03:49:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.24 2008/07/10 12:50:53 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +81,7 @@ const double FGJSBBase::fpstokts = 0.592484;
 const double FGJSBBase::ktstofps = 1.68781;
 const double FGJSBBase::inchtoft = 0.08333333;
 const double FGJSBBase::in3tom3 = 1.638706E-5;
+const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
 const double FGJSBBase::inhgtopa = 3386.38;
 const double FGJSBBase::fttom = 0.3048;
 double FGJSBBase::Reng = 1716.0;
@@ -94,6 +95,8 @@ const double FGJSBBase::SHRatio = 1.40;
 // Taken from units gnu commandline tool
 const double FGJSBBase::slugtolb = 32.174049;
 const double FGJSBBase::lbtoslug = 1.0/slugtolb;
+const double FGJSBBase::kgtolb = 2.20462;
+const double FGJSBBase::kgtoslug = 0.06852168;
 
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = "1.0 "__DATE__" "__TIME__;
