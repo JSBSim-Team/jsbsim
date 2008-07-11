@@ -5,9 +5,9 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Unknown </author>
-        <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Revision: 1.26 $ </version>
+        <author> Erik Hofman </author>
+        <filecreationdate> 2005-01-01 </filecreationdate>
+        <version> $Revision: 1.27 $ </version>
         <description> McDonnell Douglas F-15 Eagle </description>
 
     </fileheader>
@@ -42,13 +42,13 @@
         <iyy unit="SLUG*FT2"> 165100 </iyy>
         <izz unit="SLUG*FT2"> 187900 </izz>
         <ixz unit="SLUG*FT2"> 520 </ixz>
-        <emptywt unit="LBS"> 30035 </emptywt>
+        <emptywt unit="LBS"> 28000 </emptywt>
         <location name="CG" unit="IN">
             <x> -236.39 </x>
             <y> 0 </y>
             <z> 4.5 </z>
         </location>
-        <pointmass name="name">
+        <pointmass name="Pilot">
             <weight unit="LBS"> 230 </weight>
             <location name="POINTMASS" unit="IN">
                 <x> -398.45 </x>
@@ -255,7 +255,7 @@
                 <z> 4.5 </z>
             </location>
             <capacity unit="LBS"> 6561.5 </capacity>
-            <contents unit="LBS"> 6500 </contents>
+            <contents unit="LBS"> 2500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -264,20 +264,14 @@
                 <z> 4.5 </z>
             </location>
             <capacity unit="LBS"> 6561.5 </capacity>
-            <contents unit="LBS"> 6500 </contents>
+            <contents unit="LBS"> 2500 </contents>
         </tank>
     </propulsion>
     <flight_control name="FCS: f15">
-        <channel name="Roll">
-            <pure_gain name="Pitch Damper Gain">
-                <input>velocities/q-rad_sec</input>
-                <gain>0.000698</gain>
-            </pure_gain>
-
+        <channel name="Pitch">
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <input>fcs/pitch-damper-gain</input>
                 <clipto>
                     <min>-1</min>
                     <max>1</max>
@@ -295,15 +289,9 @@
             </aerosurface_scale>
         </channel>
         <channel name="Roll">
-            <pure_gain name="Roll Damper Gain">
-                <input>velocities/p-rad_sec</input>
-                <gain>-0.013963</gain>
-            </pure_gain>
-
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <input>fcs/roll-damper-gain</input>
                 <clipto>
                     <min>-1</min>
                     <max>1</max>
