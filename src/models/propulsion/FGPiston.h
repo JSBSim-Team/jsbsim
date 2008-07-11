@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.10 2008/07/11 00:35:47 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.9 2008/05/31 23:13:30 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.10 2008/07/11 00:35:47 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,6 +198,10 @@ public:
   double getOilPressure_psi(void) const {return OilPressure_psi;}
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
   double getRPM(void) {return RPM;}
+
+protected:
+  double ThrottlePos;
+
 
 private:
   int crank_counter;
@@ -236,6 +240,7 @@ private:
 
   FGTable *Lookup_Combustion_Efficiency;
   FGTable *Power_Mixture_Correlation;
+  FGTable *Mixture_Efficiency_Correlation;
 
   //
   // Configuration
@@ -247,7 +252,8 @@ private:
   double SparkFailDrop;            // drop of power due to spark failure
   double Cycles;                   // cycles/power stroke
   double IdleRPM;                  // revolutions per minute
-  double StarterHP;                // initial horsepower of starter motor 
+  double MaxRPM;                   // revolutions per minute
+  double StarterHP;                // initial horsepower of starter motor
   int BoostSpeeds;	// Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
   int BoostSpeed;	// The current boost-speed (zero-based).
   bool Boosted;		// Set true for boosted engine.
@@ -273,6 +279,7 @@ private:
   double minMAP;  // Pa
   double maxMAP;  // Pa
   double MAP;     // Pa
+  double BSFC;    // unitless
 
   //
   // Inputs (in addition to those in FGEngine).
@@ -286,11 +293,13 @@ private:
   bool Magneto_Right;
   int Magnetos;
 
+
   //
   // Outputs (in addition to those in FGEngine).
   //
   double rho_air;
   double volumetric_efficiency;
+  double suction_loss;
   double m_dot_air;
   double equivalence_ratio;
   double m_dot_fuel;
