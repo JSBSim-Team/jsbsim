@@ -55,6 +55,7 @@ INCLUDES
 #include "models/propulsion/FGPiston.h"
 #include <fstream>
 #include <iomanip>
+#include <cstring>
 
 #include "input_output/net_fdm.hxx"
 
@@ -70,7 +71,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.26 2008/05/31 23:13:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.27 2008/07/11 12:52:24 andgi Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
