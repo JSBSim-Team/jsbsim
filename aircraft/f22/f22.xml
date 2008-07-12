@@ -7,7 +7,7 @@
     <fileheader>
         Erik Hofman<author>  </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Revision: 1.24 $ </version>
+        <version> $Revision: 1.25 $ </version>
         <description> Models an F-22 Raptor </description>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
@@ -57,12 +57,21 @@
         <ixx unit="SLUG*FT2"> 40843 </ixx>
         <iyy unit="SLUG*FT2"> 204751 </iyy>
         <izz unit="SLUG*FT2"> 258201 </izz>
+        <ixz unit="SLUG*FT2"> 520 </ixz>
         <emptywt unit="LBS"> 31670 </emptywt>
         <location name="CG" unit="IN">
             <x> 446.5 </x>
             <y> 0 </y>
             <z> -18.6 </z>
         </location>
+        <pointmass name="Pilot">
+            <weight unit="LBS"> 230 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 608.56 </x>
+                <y> 0 </y>
+                <z> 20 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
@@ -169,8 +178,8 @@
                 <y> 0 </y>
                 <z> -18.6033 </z>
             </location>
-            <capacity unit="LBS"> 700 </capacity>
-            <contents unit="LBS"> 350 </contents>
+            <capacity unit="LBS"> 7000 </capacity>
+            <contents unit="LBS"> 3500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -178,17 +187,8 @@
                 <y> 0 </y>
                 <z> -18.6033 </z>
             </location>
-            <capacity unit="LBS"> 700 </capacity>
-            <contents unit="LBS"> 350 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 2 -->
-            <location unit="IN">
-                <x> 446.478 </x>
-                <y> 0 </y>
-                <z> -18.6033 </z>
-            </location>
-            <capacity unit="LBS"> 700 </capacity>
-            <contents unit="LBS"> 350 </contents>
+            <capacity unit="LBS"> 7000 </capacity>
+            <contents unit="LBS"> 3500 </contents>
         </tank>
     </propulsion>
     <flight_control name="FCS: F22">
@@ -769,7 +769,6 @@
         </axis>
 
         <axis name="YAW">
-<!--
             <function name="aero/coefficient/Cnb">
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
@@ -780,7 +779,6 @@
                     <value>0.1200</value>
                 </product>
             </function>
--->
             <function name="aero/coefficient/Cnb">
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
