@@ -12,8 +12,8 @@
 -->
 
 <turbine_engine name="F119-PW1">
-  <milthrust>   35068.8 </milthrust>
-  <maxthrust>   52603.2 </maxthrust>
+  <milthrust>   22024.5   </milthrust>
+  <maxthrust>   35068.8 </maxthrust>
   <bypassratio>     0.4 </bypassratio>
   <tsfc>            0.8 </tsfc>
   <atsfc>           1.7 </atsfc>
