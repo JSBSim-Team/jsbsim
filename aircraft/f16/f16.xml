@@ -7,25 +7,8 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.68 $ </version>
-        <license>
-         <licenseName>GPL (General Public License)</licenseName>
-         <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
+        <version> $Revision: 1.69 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
-        <note>
-         This model was created using data that is, or has been, publically
-         available by means of technical reports, textbooks, image graphs or
-         published code. This aircraft description file is in no way related 
-         to the manufacturer of the real aircraft.
-         Neither the name of (any of) the authors nor the names of (any of) the
-         manufacturers may be used to endorse or promote products derived from
-         this file.
-
-         The data is provided ''as is'' and any express or implied
-         warranties, including, but not limitted to the implied warranties of
-         merchantability and fitness for a particular purpose are disclaimed.
-        </note>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
         <reference refID="None" author="Richard Murray" title="http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/" date="n/a"/>
@@ -43,7 +26,7 @@
         <vtailarea unit="FT2"> 54.75 </vtailarea>
         <vtailarm unit="FT"> 0 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> -189.5 </x>
+            <x> -191.0 </x>
             <y> 0 </y>
             <z> 3.9 </z>
         </location>
@@ -406,7 +389,7 @@
 
             <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
-                <gain>0.28648</gain>
+                <gain>0.25465</gain>
             </pure_gain>
 
             <summer name="yaw trim error">
@@ -417,7 +400,7 @@
 
             <pure_gain name="yaw rate p">
                 <input>fcs/yaw-trim-error</input>
-                <gain>3</gain>
+                <gain>2.8</gain>
             </pure_gain>
 
             <integrator name="yaw rate i">
@@ -518,7 +501,6 @@
                 <default value="0"/>
                 <test logic="OR" value="1">
                     velocities/vc-kts lt 250
-                    gear/gear-cmd-norm == 1
                 </test>
             </switch>
 
