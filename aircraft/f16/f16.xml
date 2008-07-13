@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.69 $ </version>
+        <version> $Revision: 1.70 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -26,7 +26,7 @@
         <vtailarea unit="FT2"> 54.75 </vtailarea>
         <vtailarm unit="FT"> 0 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> -191.0 </x>
+            <x> -189.75 </x>
             <y> 0 </y>
             <z> 3.9 </z>
         </location>
