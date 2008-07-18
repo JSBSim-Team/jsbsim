@@ -7,8 +7,25 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.70 $ </version>
+        <version> $Revision: 1.71 $ </version>
+        <license>
+         <licenseName>GPL (General Public License)</licenseName>
+         <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
+        </license>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
+        <note>
+         This model was created using data that is, or has been, publically
+         available by means of technical reports, textbooks, image graphs or
+         published code. This aircraft description file is in no way related 
+         to the manufacturer of the real aircraft.
+         Neither the name of (any of) the authors nor the names of (any of) the
+         manufacturers may be used to endorse or promote products derived from
+         this file.
+ 
+         The data is provided ''as is'' and any express or implied
+         warranties, including, but not limitted to the implied warranties of
+         merchantability and fitness for a particular purpose are disclaimed.
+        </note>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
         <reference refID="None" author="Richard Murray" title="http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/" date="n/a"/>
@@ -26,7 +43,7 @@
         <vtailarea unit="FT2"> 54.75 </vtailarea>
         <vtailarm unit="FT"> 0 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> -189.75 </x>
+            <x> -189.5 </x>
             <y> 0 </y>
             <z> 3.9 </z>
         </location>
@@ -285,7 +302,7 @@
             </summer>
 
             <pure_gain name="g load norm">
-              <input>-fcs/bias-to-zero</input>
+              <input>-accelerations/n-pilot-z-norm</input>
               <gain>0.125</gain>
             </pure_gain>
 
