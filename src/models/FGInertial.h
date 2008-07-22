@@ -38,16 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#endif
+#include <vector>
 
 #include "FGModel.h"
 #include <math/FGColumnVector3.h>
@@ -56,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

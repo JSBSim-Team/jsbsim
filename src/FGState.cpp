@@ -36,22 +36,13 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include <math.h>
-#else
-#  if defined(sgi) && !defined(__GNUC__)
-#    include <math.h>
-#  else
-#    include <cmath>
-#  endif
-#endif
+#include <cmath>
 
 #include "FGState.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.9 2008/05/12 04:37:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.10 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

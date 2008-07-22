@@ -40,41 +40,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <stdlib.h>
-#ifdef FGFS
-#  include <math.h>
-#  include <simgear/compiler.h>
-#  include STL_STRING
-#  include STL_FSTREAM
-#  include STL_IOSTREAM
-   SG_USING_STD(string);
-   SG_USING_STD(ostream);
-   SG_USING_STD(istream);
-   SG_USING_STD(cerr);
-   SG_USING_STD(cout);
-   SG_USING_STD(endl);
-#else
-#  include <string>
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-     include <fstream.h>
-     include <iostream.h>
-#    include <math.h>
-#  else
-#    include <fstream>
-#    include <iostream>
-#    if defined(sgi) && !defined(__GNUC__)
-#      include <math.h>
-#    else
-#      include <cmath>
-#    endif
-     using std::ostream;
-     using std::istream;
-     using std::cerr;
-     using std::cout;
-     using std::endl;
-#  endif
-   using std::string;
-#endif
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <cmath>
+
+using std::ostream;
+using std::istream;
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::string;
 
 #include "FGColumnVector3.h"
 #include "FGJSBBase.h"
@@ -83,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.4 2008/05/04 19:20:45 dpculp Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.5 2008/07/22 02:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

@@ -1,12 +1,12 @@
 includedir = @includedir@/JSBSim/models/flight_control
 
 LIBRARY_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
-                            FGFilter.cpp FGGain.cpp FGGradient.cpp FGKinemat.cpp \
+                            FGFilter.cpp FGGain.cpp FGKinemat.cpp \
                             FGSummer.cpp FGSwitch.cpp FGFCSFunction.cpp FGSensor.cpp \
                             FGPID.cpp FGActuator.cpp
 
 LIBRARY_INCLUDES = FGDeadBand.h FGFCSComponent.h FGFilter.h \
-                 FGGain.h FGGradient.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
+                 FGGradient.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h
 
 if BUILD_LIBRARIES

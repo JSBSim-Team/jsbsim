@@ -41,21 +41,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <fstream>
-#  else
-#    include <fstream.h>
-#  endif
-#else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <fstream.h>
-#  else
-#    include <fstream>
-#  endif
-#endif
-
+#include <fstream>
 #include <string>
 #include <map>
 #include "FGJSBBase.h"
@@ -76,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.12 2008/05/12 04:37:10 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.13 2008/07/22 02:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +78,7 @@ CLASS DOCUMENTATION
     <h3>Properties</h3>
     @property sim-time-sec (read only) cumulative simulation in seconds.
     @author Jon S. Berndt
-    @version $Revision: 1.12 $
+    @version $Revision: 1.13 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

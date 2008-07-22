@@ -38,19 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#    include <map>
-#  else
-#    include <vector.h>
-#    include <map.h>
-#  endif
-#else
-#  include <vector>
-#  include <map>
-#endif
+#include <vector>
+#include <map>
 
 #include "FGModel.h"
 #include <math/FGFunction.h>
@@ -62,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.15 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.16 2008/07/22 02:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +108,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.15 $
+    @version $Revision: 1.16 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

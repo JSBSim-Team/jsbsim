@@ -41,22 +41,7 @@ INCLUDES
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#ifdef FGFS
-#  ifndef __BORLANDC__
-#    include <simgear/compiler.h>
-#  endif
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <cmath>
-#  else
-#    include <math.h>
-#  endif
-#else
-#  if defined (sgi) && !defined(__GNUC__)
-#    include <math.h>
-#  else
-#    include <cmath>
-#  endif
-#endif
+#include <cmath>
 
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
@@ -79,7 +64,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.17 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.18 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

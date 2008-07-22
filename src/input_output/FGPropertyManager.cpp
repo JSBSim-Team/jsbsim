@@ -63,12 +63,7 @@ string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
     else if( isspace(name[i]) )
       name[i]='-';
   }
-  /*
-  for(i=0;i<name.length();i++) {
-    if( name[i] == '/' )
-      name.erase(i,1);
-  }
-  */
+  
   return name;
 }
 

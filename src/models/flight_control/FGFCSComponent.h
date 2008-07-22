@@ -37,23 +37,20 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#endif
-
-#include <string>
-#include <vector>
 #include <FGJSBBase.h>
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGXMLElement.h>
+#include <string>
+#include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.9 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.10 2008/07/22 02:42:18 jberndt Exp $"
 
 using std::string;
+using std::vector;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +80,7 @@ CLASS DOCUMENTATION
     - FGPID
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.9 2006/08/30 12:04:35 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.10 2008/07/22 02:42:18 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 

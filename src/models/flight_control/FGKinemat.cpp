@@ -37,14 +37,13 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGKinemat.h"
 #include <math.h>
 #include <float.h>
 
-#include "FGKinemat.h"
-
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.5 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.6 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

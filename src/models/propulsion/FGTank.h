@@ -48,12 +48,8 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGColumnVector3.h>
 #include <models/FGAuxiliary.h>
-
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#endif
-
 #include <string>
+
 using std::string;
 using std::cerr;
 using std::endl;
@@ -63,7 +59,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.11 2008/06/19 03:41:46 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.12 2008/07/22 02:42:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -210,13 +206,38 @@ public:
   /** Resets the tank parameters to the initial conditions */
   void ResetToIC(void);
 
+  /** If the tank is supplying fuel, this function returns true.
+      @return true if this tank is feeding an engine.*/
   bool GetSelected(void) {return Selected;}
+
+  /** Gets the tank fill level.
+      @return the fill level in percent, from 0 to 100.*/
   double GetPctFull(void) {return PctFull;}
+
+  /** Gets the capacity of the tank.
+      @return the capacity of the tank in pounds. */
   double GetCapacity(void) {return Capacity;}
+
+  /** Gets the contents of the tank.
+      @return the contents of the tank in pounds. */
   double GetContents(void) const {return Contents;}
+
+  /** Gets the temperature of the fuel.
+      The temperature of the fuel is calculated if an initial tempearture is
+      given in the configuration file. 
+      @return the temperature of the fuel in degrees C IF an initial temperature
+      is given, otherwise 0.0 C is returned. */
   double GetTemperature_degC(void) {return Temperature;}
+
+  /** Gets the temperature of the fuel.
+      The temperature of the fuel is calculated if an initial tempearture is
+      given in the configuration file. 
+      @return the temperature of the fuel in degrees F IF an initial temperature
+      is given, otherwise 32 degrees F is returned. */
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
+
   double GetStandpipe(void) {return Standpipe;}
+
   const FGColumnVector3 GetXYZ(void);
   const double GetXYZ(int idx);
 

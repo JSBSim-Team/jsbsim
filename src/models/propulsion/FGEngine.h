@@ -43,30 +43,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_STRING
-   SG_USING_STD(string);
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#  include <string>
-#endif
-
 #include <FGJSBBase.h>
 #include "FGThruster.h"
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGXMLFileRead.h>
+#include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -134,7 +122,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.11 2008/05/31 23:13:30 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,28 +53,8 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <cmath>
-#    include <iomanip>
-#  else
-#    include <math.h>
-#    include <iomanip.h>
-#  endif
-#else
-#  if defined(sgi) && !defined(__GNUC__)
-#    include <math.h>
-#    if (_COMPILER_VERSION < 740)
-#      include <iomanip.h>
-#    else
-#      include <iomanip>
-#    endif
-#  else
-#    include <cmath>
-#    include <iomanip>
-#  endif
-#endif
+#include <cmath>
+#include <iomanip>
 
 #include "FGPropagate.h"
 #include <FGState.h>
@@ -86,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.31 2008/05/31 23:13:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.32 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.40 2008/05/31 23:13:28 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.41 2008/07/22 02:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,6 +68,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGScript;
+class FGTrim;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -167,7 +168,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.40 $
+    @version $Revision: 1.41 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

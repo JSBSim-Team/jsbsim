@@ -42,15 +42,13 @@ INCLUDES
 #include <models/FGMassBalance.h>
 #include "FGGasCell.h"
 
-#if !defined ( sgi ) || defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
 using std::cerr;
 using std::endl;
 using std::cout;
-#endif
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.8 2008/05/12 04:37:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.9 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

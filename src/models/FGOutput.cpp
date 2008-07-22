@@ -68,10 +68,9 @@ INCLUDES
 static const int endianTest = 1;
 #define isLittleEndian (*((char *) &endianTest ) != 0)
 
-
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.27 2008/07/11 12:52:24 andgi Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.28 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)

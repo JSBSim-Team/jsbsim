@@ -38,19 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#    include <fstream>
-#  else
-#    include <vector.h>
-#    include <fstream.h>
-#  endif
-#else
-#  include <vector>
-#  include <fstream>
-#endif
+#include <vector>
+#include <fstream>
 
 #include "FGModel.h"
 #include <models/propulsion/FGEngine.h>
@@ -62,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.18 2008/05/31 23:13:30 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.19 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +90,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.18 2008/05/31 23:13:30 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.19 2008/07/22 02:42:18 jberndt Exp $
     @see
     FGEngine
     FGTank

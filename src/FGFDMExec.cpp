@@ -41,19 +41,6 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_IOSTREAM
-#  include STL_ITERATOR
-#else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <iostream.h>
-#  else
-#    include <iostream>
-#  endif
-#  include <iterator>
-#endif
-
 #include "FGFDMExec.h"
 #include "FGState.h"
 #include <models/FGAtmosphere.h>
@@ -77,9 +64,12 @@ INCLUDES
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGScript.h>
 
+#include <iostream>
+#include <iterator>
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.53 2008/05/31 23:13:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.54 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

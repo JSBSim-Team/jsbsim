@@ -38,10 +38,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#endif
-
 #include <FGJSBBase.h>
 #include <FGFDMExec.h>
 #include <input_output/FGXMLElement.h>
@@ -53,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.22 2008/05/12 04:37:12 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.23 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.22 2008/05/12 04:37:12 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.23 2008/07/22 02:42:18 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",

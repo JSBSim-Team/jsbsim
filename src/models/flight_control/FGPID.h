@@ -38,22 +38,19 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_STRING
-   SG_USING_STD(string);
-#else
-#  include <string>
-#endif
-
 #include "FGFCSComponent.h"
 #include <input_output/FGXMLElement.h>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.5 2008/06/03 00:17:01 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $"
+
+using std::string;
+
+using std::string;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +88,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.5 $
+    @version $Revision: 1.7 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

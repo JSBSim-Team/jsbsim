@@ -37,26 +37,22 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#endif
-
-#include <string>
 #include "FGFCSComponent.h"
 #include <input_output/FGXMLElement.h>
+#include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.5 2008/05/01 01:03:14 dpculp Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $"
+
+using std::vector;
+using std::string;
+
+using std::vector;
+using std::string;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -110,7 +106,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.5 2008/05/01 01:03:14 dpculp Exp $
+    @version $Id: FGSummer.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.16 2008/07/11 00:35:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.17 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,16 +167,16 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
 /*
 Manifold_Pressure_Lookup = new
 
-    	0   	0.2  	0.4  	0.6  	0.8 	1
-0	    1.0000	1.0000	1.0000	1.0000	1.0000	1.0000
-1000	0.7778	0.8212	0.8647	0.9081	0.9516	0.9950
-2000	0.5556	0.6424	0.7293	0.8162	0.9031	0.9900
-3000	0.3333	0.4637	0.5940	0.7243	0.8547	0.9850
-4000	0.2000	0.2849	0.4587	0.6324	0.8062	0.9800
-5000	0.2000	0.2000	0.3233	0.5406	0.7578	0.9750
-6000	0.2000	0.2000	0.2000	0.4487	0.7093	0.9700
-7000	0.2000	0.2000	0.2000	0.2000	0.4570	0.7611
-8000	0.2000	0.2000	0.2000	0.2000	0.2047	0.5522
+        0       0.2      0.4      0.6      0.8     1
+0        1.0000    1.0000    1.0000    1.0000    1.0000    1.0000
+1000    0.7778    0.8212    0.8647    0.9081    0.9516    0.9950
+2000    0.5556    0.6424    0.7293    0.8162    0.9031    0.9900
+3000    0.3333    0.4637    0.5940    0.7243    0.8547    0.9850
+4000    0.2000    0.2849    0.4587    0.6324    0.8062    0.9800
+5000    0.2000    0.2000    0.3233    0.5406    0.7578    0.9750
+6000    0.2000    0.2000    0.2000    0.4487    0.7093    0.9700
+7000    0.2000    0.2000    0.2000    0.2000    0.4570    0.7611
+8000    0.2000    0.2000    0.2000    0.2000    0.2047    0.5522
 */
 
   // Read inputs from engine data file where present.
@@ -513,8 +513,8 @@ void FGPiston::doBoostControl(void)
 
 void FGPiston::doMAP(void)
 {
-	suction_loss = pow( ThrottlePos*0.98, RPM/MaxRPM );
-	MAP = p_amb * suction_loss;
+    suction_loss = pow( ThrottlePos*0.98, RPM/MaxRPM );
+    MAP = p_amb * suction_loss;
 
     if(Boosted) {
       // If takeoff boost is fitted, we currently assume the following throttle map:
@@ -599,10 +599,10 @@ void FGPiston::doFuelFlow(void)
   double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
   m_dot_fuel = m_dot_air / AFR;
   FuelFlow_gph = m_dot_fuel
-    * 3600			// seconds to hours
-    * 2.2046			// kg to lb
-    / 6.0;			// lb to gal_us of gasoline
-//    / 6.6;			// lb to gal_us of kerosene
+    * 3600            // seconds to hours
+    * 2.2046            // kg to lb
+    / 6.0;            // lb to gal_us of gasoline
+//    / 6.6;            // lb to gal_us of kerosene
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -627,15 +627,14 @@ void FGPiston::doEnginePower(void)
     double T_amb_sea_lev_degF = KelvinToFahrenheit(288);
 
     // FIXME: this needs to be generalized
-    double ManXRPM, ME, Adjusted_BSFC;  // Convienience term for use in the calculations
-	ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
-	Adjusted_BSFC = (1/ThrottlePos) * BSFC;
-	Percentage_Power = 1.000;
+    double ME, Adjusted_BSFC;  // Convienience term for use in the calculations
+    ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
+    Adjusted_BSFC = (1/ThrottlePos) * BSFC;
+    Percentage_Power = 1.000;
 
-    if( Magnetos != 3 )
-      Percentage_Power *= SparkFailDrop;
+    if ( Magnetos != 3 ) Percentage_Power *= SparkFailDrop;
 
-      HP = (FuelFlow_gph * 6.0 / Adjusted_BSFC )* ME * suction_loss * Percentage_Power;
+    HP = (FuelFlow_gph * 6.0 / Adjusted_BSFC )* ME * suction_loss * Percentage_Power;
 
   } else {
 
@@ -775,7 +774,7 @@ void FGPiston::doOilPressure(void)
 {
   double Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
   double Oil_Press_RPM_Max = MaxRPM * 0.75;    // 75% of max rpm FIXME: may vary by engine
-  double Design_Oil_Temp = 358;	      // degK; FIXME: may vary by engine
+  double Design_Oil_Temp = 358;          // degK; FIXME: may vary by engine
   double Oil_Viscosity_Index = 0.25;
 
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;

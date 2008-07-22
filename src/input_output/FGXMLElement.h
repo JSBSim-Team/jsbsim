@@ -34,35 +34,16 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <string>
-#    include <vector>
-#    include <iostream>
-#    include <map>
-#  else
-#    include <vector.h>
-#    include <string>
-#    include <iostream.h>
-#    include <map.h>
-#  endif
-#else
-#  include <string>
-#  include <map>
-#  include <iostream>
-#  include <vector>
-   using std::string;
-   using std::map;
-   using std::vector;
-   using std::cout;
-   using std::endl;
-#endif
-   using std::string;
-   using std::map;
-   using std::vector;
-   using std::cout;
-   using std::endl;
+#include <string>
+#include <map>
+#include <iostream>
+#include <vector>
+
+using std::string;
+using std::map;
+using std::vector;
+using std::cout;
+using std::endl;
 
 #include <math/FGColumnVector3.h>
 
@@ -70,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.9 2008/04/16 18:24:01 dpculp Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.10 2008/07/22 02:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -151,7 +132,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.9 2008/04/16 18:24:01 dpculp Exp $
+    @version $Id: FGXMLElement.h,v 1.10 2008/07/22 02:42:17 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -42,28 +42,14 @@ INCLUDES
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGXMLElement.h>
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <iostream>
-#  else
-#    include <iostream.h>
-#  endif
-#else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <iostream.h>
-#  else
-#    include <iostream>
-#  endif
-#endif
-
+#include <iostream>
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.7 2008/01/23 23:54:47 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.8 2008/07/22 02:42:18 jberndt Exp $"
 
 using namespace std;
 

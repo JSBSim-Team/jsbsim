@@ -1,11 +1,11 @@
 includedir = @includedir@/JSBSim/models/propulsion
 
 LIBRARY_SOURCES = FGElectric.cpp FGEngine.cpp FGForce.cpp FGNozzle.cpp \
-                         FGPiston.cpp FGPropeller.cpp FGRocket.cpp FGRotor.cpp \
+                         FGPiston.cpp FGPropeller.cpp FGRocket.cpp \
                          FGTank.cpp FGThruster.cpp FGTurbine.cpp FGTurboProp.cpp
 
 LIBRARY_INCLUDES = FGElectric.h FGEngine.h FGForce.h FGNozzle.h FGPiston.h \
-                  FGPropeller.h FGRocket.h FGRotor.h FGTank.h FGThruster.h \
+                  FGPropeller.h FGRocket.h FGTank.h FGThruster.h \
                   FGTurbine.h FGTurboProp.h
 
 if BUILD_LIBRARIES

@@ -38,30 +38,12 @@ SENTRY
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <math.h>
-#  include <simgear/compiler.h>
-#  include STL_IOSTREAM
-   SG_USING_STD(cerr);
-   SG_USING_STD(cout);
-   SG_USING_STD(endl);
-#else
-#  include <string>
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <iostream.h>
-#    include <math.h>
-#  else
-#    include <iostream>
-#    if defined(sgi) && !defined(__GNUC__)
-#      include <math.h>
-#    else
-#      include <cmath>
-#    endif
-     using std::cerr;
-     using std::cout;
-     using std::endl;
-#  endif
-#endif
+#include <string>
+#include <iostream>
+#include <cmath>
+using std::cerr;
+using std::cout;
+using std::endl;
 
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
@@ -74,7 +56,7 @@ SENTRY
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.5 2008/02/11 14:27:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.6 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

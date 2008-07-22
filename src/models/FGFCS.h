@@ -38,16 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#endif
+#include <vector>
 
 #include <string>
 #include <models/flight_control/FGFCSComponent.h>
@@ -59,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.19 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.20 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -174,7 +165,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.19 $
+    @version $Revision: 1.20 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction

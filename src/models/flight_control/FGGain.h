@@ -37,23 +37,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_STRING
-   SG_USING_STD(string);
-#else
-#  include <string>
-#endif
-
 #include "FGFCSComponent.h"
+#include <string>
 #include <input_output/FGXMLElement.h>
 #include <math/FGTable.h>
+
+using std::string;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.10 2007/06/13 11:16:54 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,7 +211,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Revision: 1.10 $
+    @version $Revision: 1.11 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

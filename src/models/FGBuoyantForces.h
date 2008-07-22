@@ -39,19 +39,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#    include <map>
-#  else
-#    include <vector.h>
-#    include <map.h>
-#  endif
-#else
-#  include <vector>
-#  include <map>
-#endif
+#include <vector>
+#include <map>
 
 #include "FGModel.h"
 #include "FGGasCell.h"
@@ -62,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.5 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,7 +92,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.5 2008/05/31 23:13:29 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

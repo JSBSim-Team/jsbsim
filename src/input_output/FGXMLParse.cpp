@@ -30,11 +30,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGXMLParse.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.6 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.7 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

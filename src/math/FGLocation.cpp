@@ -38,27 +38,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <cmath>
-#  else
-#    include <math.h>
-#  endif
-#else
-#  if defined(sgi) && !defined(__GNUC__)
-#    include <math.h>
-#  else
-#    include <cmath>
-#  endif
-#endif
+#include <cmath>
 
 #include "FGLocation.h"
 #include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.12 2008/04/26 16:44:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.13 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

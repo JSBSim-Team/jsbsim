@@ -57,13 +57,12 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.20 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.21 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 {

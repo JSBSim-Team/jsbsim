@@ -45,28 +45,17 @@ INCLUDES
 #include <models/propulsion/FGForce.h>
 #include <math/FGFunction.h>
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_STRING
-  SG_USING_STD(string);
-  SG_USING_STD(cerr);
-  SG_USING_STD(endl);
-  SG_USING_STD(cout);
-#else
-# include <string>
-  using std::string;
-# if !defined(sgi) || defined(__GNUC__) || (_COMPILER_VERSION >= 740)
-   using std::cerr;
-   using std::endl;
-   using std::cout;
-# endif
-#endif
+#include <string>
+using std::string;
+using std::cerr;
+using std::endl;
+using std::cout;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.6 2008/05/04 18:22:54 dpculp Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.7 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

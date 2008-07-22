@@ -38,11 +38,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGColumnVector3.h"
-#include <stdio.h>
+#include <cstdio>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.4 2007/02/24 18:52:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.5 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

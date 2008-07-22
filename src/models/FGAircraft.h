@@ -38,16 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#endif
+#include <vector>
 
 #include "FGModel.h"
 #include <input_output/FGXMLElement.h>
@@ -57,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +89,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.10 2008/05/31 23:13:29 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994

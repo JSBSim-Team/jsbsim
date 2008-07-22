@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.9 2008/06/03 00:17:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.10 2008/07/22 02:42:18 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,9 +101,6 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  //if (element->FindElement("kp")) Kp = element->FindElementValueAsNumber("kp");
-  //if (element->FindElement("ki")) Ki = element->FindElementValueAsNumber("ki");
-  //if (element->FindElement("kd")) Kd = element->FindElementValueAsNumber("kd");
   if (element->FindElement("trigger")) {
     Trigger =  PropertyManager->GetNode(element->FindElementValue("trigger"));
   }

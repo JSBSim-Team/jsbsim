@@ -41,26 +41,16 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_IOSTREAM
-#  include STL_ITERATOR
-#else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <iostream.h>
-#  else
-#    include <iostream>
-#  endif
-#  include <iterator>
-#endif
-
 #include "FGScript.h"
 #include <input_output/FGXMLParse.h>
 #include <initialization/FGTrim.h>
 
+#include <iostream>
+#include <iterator>
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.28 2008/05/12 04:37:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.29 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

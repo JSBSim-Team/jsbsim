@@ -37,18 +37,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGTable.h"
-
-#if defined ( sgi ) && !defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
-# include <iomanip.h>
-#else
-# include <iomanip>
-#endif
+#include <iomanip>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.16 2008/05/12 04:37:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.17 2008/07/22 02:42:17 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
