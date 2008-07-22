@@ -46,10 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $"
-
-using std::vector;
-using std::string;
+#define ID_SUMMER "$Id: FGSummer.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $"
 
 using std::vector;
 using std::string;
@@ -106,7 +103,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

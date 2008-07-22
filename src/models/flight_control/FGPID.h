@@ -46,9 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.7 2008/07/22 02:44:42 jberndt Exp $"
-
-using std::string;
+#define ID_PID "$Id: FGPID.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $"
 
 using std::string;
 
@@ -88,7 +86,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.7 $
+    @version $Revision: 1.6 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
