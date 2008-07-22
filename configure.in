@@ -40,7 +40,7 @@ case "${host}" in
     if test "$CXX" = "CC"; then
         AR="CC -ar"
         ARFLAGS="-o"
-        CXXFLAGS="$CXXFLAGS -LANG:libc_in_namespace_std=off"
+        CXXFLAGS="$CXXFLAGS -I$(top_srcdir)/include/mipspro -LANG:libc_in_namespace_std=off"
     else
         AR="ar"
         ARFLAGS="cru"
