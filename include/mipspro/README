@@ -1,3 +1,7 @@
+The contents of this directory is taken from SimGear and is required to compile
+JSBSim using the MIPSpro compiler under IRIX and adds header files that are
+missing. Note that at least version 7.4 of the MIPSpro compiler is required
+otherwise a number of other header files should have been added here.
 
 The following header files where taken from the boost clib package
 (http://www.boost.org):
