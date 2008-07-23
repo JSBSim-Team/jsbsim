@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.42 2008/07/03 03:44:54 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.43 2008/07/23 10:31:55 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -75,6 +75,8 @@ string AircraftName;
 string ResetName;
 string LogOutputName;
 string LogDirectiveName;
+vector <string> CommandLineProperties;
+vector <double> CommandLinePropertyValues;
 JSBSim::FGFDMExec* FDMExec;
 bool realtime;
 bool play_nice;
@@ -343,6 +345,18 @@ int main(int argc, char* argv[])
     }
   }
 
+  // SET PROPERTY VALUES THAT ARE GIVEN ON THE COMMAND LINE
+
+  for (unsigned int i=0; i<CommandLineProperties.size(); i++) {
+
+    if (!FDMExec->GetPropertyManager()->GetNode(CommandLineProperties[i])) {
+      cerr << endl << "  No property by the name " << CommandLineProperties[i] << endl;
+      goto quit;
+    } else {
+      FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
+    }
+  }
+
   result = FDMExec->Run();  // MAKE AN INITIAL RUN
 
   if (suspend) FDMExec->Hold();
@@ -430,6 +444,8 @@ int main(int argc, char* argv[])
     }
 
   }
+
+quit:
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
@@ -523,6 +539,18 @@ bool options(int count, char **arg)
         exit(1);
       }
 
+    } else if (keyword == "--property") {
+      if (n != string::npos) {
+         string propName = value.substr(0,value.find("="));
+         string propValueString = value.substr(value.find("=")+1);
+         double propValue = atof(propValueString.c_str());
+         CommandLineProperties.push_back(propName);
+         CommandLinePropertyValues.push_back(propValue);
+      } else {
+        gripe;
+        exit(1);
+      }
+
     } else if (keyword == "--end-time") {
       if (n != string::npos) {
         end_time = atof( value.c_str() );
@@ -576,8 +604,8 @@ void PrintHelp(void)
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
-
+    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
+    cout << "    --property=<property_name=property_value> e.g. --property=aero/qbar-psf=3.4" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;
