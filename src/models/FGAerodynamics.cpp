@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.21 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.22 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -308,9 +308,6 @@ bool FGAerodynamics::Load(Element *element)
   Element *temp_element, *axis_element, *function_element;
 
   string separator = "/";
-#ifdef macintosh
-  separator = ";";
-#endif
 
   fname = element->GetAttributeValue("file");
   if (!fname.empty()) {

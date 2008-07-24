@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.17 2008/07/11 12:52:24 andgi Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.18 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,10 +205,8 @@ FGfdmSocket::FGfdmSocket(int port)
 
 FGfdmSocket::~FGfdmSocket()
 {
-  #ifndef macintosh
   if (sckt) shutdown(sckt,2);
   if (sckt_in) shutdown(sckt_in,2);
-  #endif
 
   #ifdef __BORLANDC__
     WSACleanup();

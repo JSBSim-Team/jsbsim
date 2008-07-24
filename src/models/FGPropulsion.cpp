@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.27 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.28 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -336,9 +336,6 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
   ifstream engine_file;
 
   string separator = "/";
-# ifdef macintosh
-  separator = ";";
-# endif
 
   fullpath = enginePath + separator;
   localpath = aircraftPath + separator + "Engines" + separator;
@@ -367,9 +364,6 @@ ifstream* FGPropulsion::FindEngineFile(string engine_filename)
   ifstream* engine_file = new ifstream();
 
   string separator = "/";
-# ifdef macintosh
-  separator = ";";
-# endif
 
   fullpath = enginePath + separator;
   localpath = aircraftPath + separator + "Engines" + separator;

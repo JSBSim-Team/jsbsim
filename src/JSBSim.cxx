@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.29 2008/06/08 14:53:34 andgi Exp $
+// $Id: JSBSim.cxx,v 1.30 2008/07/24 19:44:17 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -311,6 +311,7 @@ void FGJSBsim::init()
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
       Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
       Atmosphere->SetExDensity(density->getDoubleValue());
+      Atmosphere->SetTurbModel(ttCulp)
       Atmosphere->SetTurbGain(turbulence_gain->getDoubleValue());
       Atmosphere->SetTurbRate(turbulence_rate->getDoubleValue());
 

@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.28 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.29 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -885,9 +885,6 @@ bool FGOutput::Load(Element* element)
   Element *property_element;
 
   string separator = "/";
-# ifdef macintosh
-  separator = ";";
-# endif
 
   if (!DirectivesFile.empty()) { // A directives filename from the command line overrides
     output_file_name = DirectivesFile;      // one found in the config file.

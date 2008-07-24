@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.41 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.42 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -494,9 +494,6 @@ bool FGFCS::Load(Element* el, SystemType systype)
   Components=0;
 
   string separator = "/";
-#ifdef macintosh
-  separator = ";";
-#endif
 
 // ToDo: The handling of name and file attributes could be improved, here,
 //       considering that a name can be in the external file, as well.
@@ -649,9 +646,6 @@ string FGFCS::FindSystemFullPathname(string system_filename)
   ifstream system_file;
 
   string separator = "/";
-# ifdef macintosh
-  separator = ";";
-# endif
 
   fullpath = systemPath + separator;
   localpath = aircraftPath + separator + "Systems" + separator;
@@ -680,9 +674,6 @@ ifstream* FGFCS::FindSystemFile(string system_filename)
   ifstream* system_file = new ifstream();
 
   string separator = "/";
-# ifdef macintosh
-  separator = ";";
-# endif
 
   fullpath = systemPath + separator;
   localpath = aircraftPath + separator + "Systems" + separator;

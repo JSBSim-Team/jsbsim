@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.4 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.5 2008/07/24 19:44:18 ehofman Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,9 +116,6 @@ bool FGBuoyantForces::Load(Element *element)
   Debug(2);
 
   string separator = "/";
-#ifdef macintosh
-  separator = ";";
-#endif
 
   fname = element->GetAttributeValue("file");
   if (!fname.empty()) {
