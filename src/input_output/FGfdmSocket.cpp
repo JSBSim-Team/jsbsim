@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.18 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.19 2008/07/25 09:55:26 ehofman Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ FGfdmSocket::FGfdmSocket(string address, int port, int protocol)
   sckt = sckt_in = size = 0;
   connected = false;
 
-  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  #if defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
     int wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
@@ -109,7 +109,7 @@ FGfdmSocket::FGfdmSocket(string address, int port)
   sckt = sckt_in = size = 0;
   connected = false;
 
-  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  #if defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
     int wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
@@ -162,7 +162,7 @@ FGfdmSocket::FGfdmSocket(int port)
   connected = false;
   unsigned long NoBlock = true;
 
-  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  #if defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
     int wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
@@ -180,7 +180,7 @@ FGfdmSocket::FGfdmSocket(int port)
     if (bind(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
       cout << "Successfully bound to socket for input on port " << port << endl;
       if (listen(sckt, 5) >= 0) { // successful listen()
-        #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+        #if defined(_MSC_VER) || defined(__MINGW32__)
           ioctlsocket(sckt, FIONBIO, &NoBlock);
           sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
         #else
@@ -207,10 +207,6 @@ FGfdmSocket::~FGfdmSocket()
 {
   if (sckt) shutdown(sckt,2);
   if (sckt_in) shutdown(sckt_in,2);
-
-  #ifdef __BORLANDC__
-    WSACleanup();
-  #endif
   Debug(1);
 }
 
@@ -227,13 +223,13 @@ string FGfdmSocket::Receive(void)
                     // class attribute and pass as a reference?
 
   if (sckt_in <= 0) {
-    #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+    #if defined(_MSC_VER) || defined(__MINGW32__)
       sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
     #else
       sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
     #endif
     if (sckt_in > 0) {
-      #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+      #if defined(_MSC_VER) || defined(__MINGW32__)
          ioctlsocket(sckt_in, FIONBIO,&NoBlock);
       #else
          ioctl(sckt_in, FIONBIO, &NoBlock);

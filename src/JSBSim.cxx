@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.30 2008/07/24 19:44:17 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.31 2008/07/25 09:55:26 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -28,9 +28,6 @@
 #include <simgear/compiler.h>
 
 #include <stdio.h>    //    size_t
-#ifdef SG_MATH_EXCEPTION_CLASH
-#  include <math.h>
-#endif
 
 #include STL_STRING
 
