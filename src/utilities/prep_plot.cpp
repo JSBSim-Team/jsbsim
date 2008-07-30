@@ -58,10 +58,6 @@ that is part of Ghostscript.
 
 Compiling:
 
-g++ prep_plot.cpp -o prep_plot
-
-new:
-
 g++ prep_plot.cpp plotXMLVisitor.cpp ../simgear/xml/easyxml.cxx -L ../simgear/xml/ -lExpat -o prep_plot.exe
 
 Usage:
