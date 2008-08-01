@@ -35,9 +35,14 @@
   <property>ap/airspeed_hold</property>
   <property>ap/throttle-cmd-norm</property>
 
+<!-- INITIAL GAIN VALUES -->
+  
   <property value="0.5"> ap/hdg-roll-err-c1 </property>
+  <property value="50.0"> ap/roll-pid-kp </property>
+  <property value="5.0"> ap/roll-pid-ki </property>
+  <property value="17.0"> ap/roll-pid-kd </property>
 
-<!--  <property>attitude/sensor/phi-rad</property> -->
+  <!--  <property>attitude/sensor/phi-rad</property> -->
 
 <!-- SENSOR -->
 
@@ -63,24 +68,27 @@ ROLL CHANNEL
 
 <channel name="Roll wing leveler">
 
-  <pid name="fcs/roll-ap-error-pid">
-    <input>attitude/phi-rad</input>
-    <kp> 1.0 </kp>
-    <ki> 0.01</ki>
-    <kd> 0.1 </kd>
-  </pid>
-
-  <switch name="fcs/roll-ap-autoswitch">
-    <default value="0.0"/>
-    <test value="fcs/roll-ap-error-pid">
+  <switch name="fcs/wing-leveler-ap-on-off">
+    <default value="-1"/>
+    <test value="0">
       ap/attitude_hold == 1
     </test>
   </switch>
 
-  <pure_gain name="fcs/roll-ap-aileron-command-normalizer">
-     <input>fcs/roll-ap-autoswitch</input>
-     <gain>-1</gain>
-  </pure_gain>
+  <pid name="fcs/roll-ap-error-pid">
+    <input>attitude/phi-rad</input>
+    <kp> ap/roll-pid-kp </kp>
+    <ki> ap/roll-pid-ki </ki>
+    <kd> ap/roll-pid-kd </kd>
+    <trigger> fcs/wing-leveler-ap-on-off </trigger>
+  </pid>
+
+  <switch name="fcs/roll-ap-autoswitch">
+    <default value="0.0"/>
+    <test value="-fcs/roll-ap-error-pid">
+      ap/attitude_hold == 1
+    </test>
+  </switch>
 
 </channel>
 
@@ -151,7 +159,7 @@ ROLL CHANNEL
       ap/heading_hold == 1
       gear/unit[2]/WOW == 0
     </test>
-    <test value="fcs/roll-ap-aileron-command-normalizer">
+    <test value="fcs/roll-ap-autoswitch">
       ap/attitude_hold == 1
       gear/unit[2]/WOW == 0
     </test>

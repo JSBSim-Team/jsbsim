@@ -9,7 +9,7 @@
             licenseName="GPL"
             licenseURL="http://www.gnu.org/licenses/gpl.html"/>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.74 $</version>
+        <version>$Revision: 1.75 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -279,6 +279,7 @@
         </channel>
 
         <channel name="Roll">
+
             <summer name="fcs/roll-trim-sum">
                 <input>ap/aileron_cmd</input>
                 <input>fcs/aileron-cmd-norm</input>
@@ -288,24 +289,51 @@
                     <max>1</max>
                 </clipto>
             </summer>
+
             <aerosurface_scale name="fcs/left-aileron-control">
-                <input>fcs/roll-trim-sum</input>
-                <gain>0.01745</gain>
-                <range>
-                    <min>-20</min>
-                    <max> 15</max>
-                </range>
-                <output>fcs/left-aileron-pos-rad</output>
+	      <description> The output from this control is in radians. </description>
+              <input>fcs/roll-trim-sum</input>
+              <gain>0.01745</gain>
+              <range>
+                <min>-20</min>
+                <max> 15</max>
+              </range>
             </aerosurface_scale>
+	    
+	    <actuator name="fcs/left-aileron-actuator">
+	      <description> The input to this actuator is in radians. </description>
+	      <input> fcs/left-aileron-control </input>
+	      <rate_limit> 4.35 </rate_limit>
+	      <hysteresis> 0.01 </hysteresis>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/left-aileron-pos-rad</output>
+	    </actuator>
+	    
             <aerosurface_scale name="fcs/right-aileron-control">
-                <input>-fcs/roll-trim-sum</input>
-                <gain>0.01745</gain>
-                <range>
-                    <min>-20</min>
-                    <max> 15</max>
-                </range>
-                <output>fcs/right-aileron-pos-rad</output>
+	      <description> The output from this control is in radians. </description>
+              <input>-fcs/roll-trim-sum</input>
+              <gain>0.01745</gain>
+              <range>
+                <min>-20</min>
+                <max> 15</max>
+              </range>
             </aerosurface_scale>
+
+	    <actuator name="fcs/right-aileron-actuator">
+	      <description> The input to this actuator is in radians. </description>
+	      <input> fcs/right-aileron-control </input>
+	      <rate_limit> 4.35 </rate_limit>
+	      <hysteresis> 0.01 </hysteresis>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/right-aileron-pos-rad</output>
+	    </actuator>
+	    
         </channel>
 
         <channel name="Yaw">
@@ -1056,7 +1084,8 @@
 <!--
     <input port="1137"/>
 -->
-    <output name="JSBout172B.csv" type="CSV" rate="10">
+<!--
+    <output name="JSBout172B.csv" type="CSV" rate="40">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> fcs/attitude/sensor/phi-rad </property>
@@ -1095,6 +1124,7 @@
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
     </output>
+-->
 <!---
     <output name="localhost" type="SOCKET" port="1138" rate="20">
         <simulation> OFF </simulation>
