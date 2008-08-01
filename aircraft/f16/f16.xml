@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.71 $ </version>
+        <version> $Revision: 1.72 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -565,12 +565,25 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>1</position>
+                        <position>60</position>
                         <time>1</time>
                     </setting>
                 </traverse>
-                <output>fcs/speedbrake-pos-norm</output>
+                <output>fcs/speedbrake-pos-deg</output>
             </kinematic>
+
+           <aerosurface_scale name="Flap Position Normalizer">
+              <input>fcs/speedbrake-control</input>
+              <domain>
+                <min>0</min>
+                <max>60</max>
+              </domain>
+              <range>
+                <min>0</min>
+                <max>1</max>
+              </range>
+              <output>fcs/speedbrake-pos-norm</output>
+            </aerosurface_scale>
 
         </channel>
 
@@ -724,7 +737,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/mag-speedbrake-pos-rad</property>
+                    <property>fcs/speedbrake-pos-rad</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
@@ -1514,6 +1527,7 @@
             </function>
         </axis>
     </aerodynamics>
+<!--
   <output name="f16_datalog.csv" type="CSV" rate="1">
     <property> aero/qbar-psf </property>
     <property> attitude/phi-rad </property>
@@ -1536,4 +1550,5 @@
     <fcs> ON </fcs>
     <ground_reactions> ON </ground_reactions>
   </output>
+-->
 </fdm_config>
