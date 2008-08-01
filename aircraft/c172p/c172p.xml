@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.23 2007/10/17 01:09:24 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.24 2008/08/01 09:43:20 jberndt Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -864,9 +864,9 @@
     </aerodynamics>
     <output name="JSBout172C.csv" type="CSV" rate="60">
       <property> aero/qbar-psf </property>
-      <property> accelerations/udot-fps </property>
-      <property> accelerations/vdot-fps </property>
-      <property> accelerations/wdot-fps </property>
+      <property> accelerations/udot-ft_sec2 </property>
+      <property> accelerations/vdot-ft_sec2 </property>
+      <property> accelerations/wdot-ft_sec2 </property>
       <property> accelerations/a-pilot-x-ft_sec2 </property>
       <property> accelerations/a-pilot-y-ft_sec2 </property>
       <property> accelerations/a-pilot-z-ft_sec2 </property>
