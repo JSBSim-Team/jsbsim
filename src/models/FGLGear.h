@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.23 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.24 2008/08/01 11:33:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.23 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.24 2008/08/01 11:33:26 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -210,6 +210,8 @@ public:
   enum ContactType {ctBOGEY, ctSTRUCTURE, ctUNKNOWN};
   /// Report type enumerators
   enum ReportType {erNone=0, erTakeoff, erLand};
+  /// Damping types
+  enum DampType {dtLinear=0, dtSquare};
   /** Constructor
       @param el a pointer to the XML element that contains the CONTACT info.
       @param Executive a pointer to the parent executive object
@@ -348,6 +350,8 @@ private:
   BrakeGroup  eBrakeGrp;
   ContactType eContactType;
   SteerType   eSteerType;
+  DampType    eDampType;
+  DampType    eDampTypeRebound;
   double  maxSteerAngle;
   double RFRV;  // Rolling force relaxation velocity
   double SFRV;  // Side force relaxation velocity

@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.43 2008/05/16 04:04:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.44 2008/08/01 11:33:25 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,11 +61,15 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
                  GearNumber(number)
 {
   Element *force_table=0;
+  Element *dampCoeff=0;
+  Element *dampCoeffRebound=0;
   string force_type="";
 
   kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
   sSteerType = sBrakeGroup = sSteerType = "";
   isRetractable = 0;
+  eDampType = dtLinear;
+  eDampTypeRebound = dtLinear;
 
   name = el->GetAttributeValue("name");
   sContactType = el->GetAttributeValue("type");
@@ -79,13 +83,28 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
 
   if (el->FindElement("spring_coeff"))
     kSpring = el->FindElementValueAsNumberConvertTo("spring_coeff", "LBS/FT");
-  if (el->FindElement("damping_coeff"))
-    bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC");
+  if (el->FindElement("damping_coeff")) {
+    dampCoeff = el->FindElement("damping_coeff");
+    if (dampCoeff->GetAttributeValue("type") == "SQUARE") {
+      eDampType = dtSquare; // default is dtLinear
+      bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC2");
+    } else {
+      bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC");
+    }
+  }
 
-  if (el->FindElement("damping_coeff_rebound"))
-    bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC");
-  else
+  if (el->FindElement("damping_coeff_rebound")) {
+    dampCoeffRebound = el->FindElement("damping_coeff_rebound");
+    if (dampCoeffRebound->GetAttributeValue("type") == "SQUARE") {
+      eDampTypeRebound = dtSquare; // default is dtLinear
+      bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC2");
+    } else {
+      bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC");
+    }
+  } else {
     bDampRebound   = bDamp;
+    eDampTypeRebound = eDampType;
+  }
 
   if (el->FindElement("dynamic_friction"))
     dynamicFCoeff = el->FindElementValueAsNumber("dynamic_friction");
@@ -674,9 +693,17 @@ void FGLGear::ComputeVerticalStrutForce(void)
   springForce = -compressLength * kSpring;
 
   if (compressSpeed >= 0.0) {
-    dampForce   = -compressSpeed * bDamp;
+
+    if (eDampType == dtLinear)   dampForce = -compressSpeed * bDamp;
+    else         dampForce = -compressSpeed * compressSpeed * bDamp;
+
   } else {
-    dampForce   = -compressSpeed * bDampRebound;
+
+    if (eDampTypeRebound == dtLinear)
+      dampForce   = -compressSpeed * bDampRebound;
+    else
+      dampForce   =  compressSpeed * compressSpeed * bDampRebound;
+
   }
   vLocalForce(eZ) =  min(springForce + dampForce, (double)0.0);
 
@@ -779,7 +806,17 @@ void FGLGear::Debug(int from)
       cout << "    " << sContactType << " " << name          << endl;
       cout << "      Location: "         << vXYZ          << endl;
       cout << "      Spring Constant:  " << kSpring       << endl;
-      cout << "      Damping Constant: " << bDamp         << endl;
+
+      if (eDampType == dtLinear)
+        cout << "      Damping Constant: " << bDamp << " (linear)" << endl;
+      else
+        cout << "      Damping Constant: " << bDamp << " (square law)" << endl;
+
+      if (eDampTypeRebound == dtLinear)
+        cout << "      Rebound Damping Constant: " << bDampRebound << " (linear)" << endl;
+      else 
+        cout << "      Rebound Damping Constant: " << bDampRebound << " (square law)" << endl;
+
       cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
       cout << "      Static Friction:  " << staticFCoeff  << endl;
       if (eContactType == ctBOGEY) {
