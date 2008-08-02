@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.31 2008/07/25 09:55:26 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.32 2008/08/02 13:48:38 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -28,8 +28,7 @@
 #include <simgear/compiler.h>
 
 #include <stdio.h>    //    size_t
-
-#include STL_STRING
+#include <string>
 
 #include <simgear/constants.h>
 #include <simgear/debug/logstream.hxx>
@@ -308,7 +307,7 @@ void FGJSBsim::init()
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
       Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
       Atmosphere->SetExDensity(density->getDoubleValue());
-      Atmosphere->SetTurbModel(ttCulp)
+      Atmosphere->SetTurbType(FGAtmosphere::ttCulp);
       Atmosphere->SetTurbGain(turbulence_gain->getDoubleValue());
       Atmosphere->SetTurbRate(turbulence_rate->getDoubleValue());
 
