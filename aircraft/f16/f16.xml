@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.72 $ </version>
+        <version> $Revision: 1.73 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -93,7 +93,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 5000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 5000 </damping_coeff>
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
@@ -108,7 +108,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 10000 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
@@ -123,7 +123,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 10000 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
@@ -286,42 +286,37 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
-        
-            <summer name="elevator cmd limiter">
-              <input>fcs/elevator-cmd-norm</input>
-              <input>fcs/pitch-trim-cmd-norm</input>
-              <clipto>
-                <min>-1</min>
-                <max>0.44</max>
-              </clipto>
-            </summer>
-
-            <summer name="bias-to-zero">
-              <input>accelerations/n-pilot-z-norm</input>
-              <bias> -1 </bias>
-            </summer>
+            <pure_gain name="pitch rate norm">
+                <input>velocities/q-aero-rad_sec</input>
+                <gain>0.695</gain>
+            </pure_gain>
 
             <pure_gain name="g load norm">
-              <input>-accelerations/n-pilot-z-norm</input>
-              <gain>0.125</gain>
+              <input>accelerations/n-pilot-z-norm</input>
+              <gain>-0.08613</gain>
             </pure_gain>
 
             <pure_gain name="alpha limiter">
               <input>aero/alpha-rad</input>
               <gain>1.0472</gain>
             </pure_gain>
-
-            <summer name="g load error">
-              <input>fcs/elevator-cmd-limiter</input>
+        
+            <summer name="elevator cmd limiter">
+              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/pitch-rate-norm</input>
               <input>fcs/g-load-norm</input>
               <input>fcs/alpha-limiter</input>
+              <clipto>
+                <min>-1</min>
+                <max>0.44</max>
+              </clipto>
             </summer>
 
             <pid name="g-load-pid">
-              <input>fcs/g-load-error</input>
-              <kp> 0.660000 </kp>
-              <ki> 0.005000 </ki>
-              <kd> 0.000 </kd>
+              <input>fcs/elevator-cmd-limiter</input>
+              <kp> 0.675000 </kp>
+              <ki> 0.004750 </ki>
+              <kd> 0.00005 </kd>
               <clipto>
                 <min>-1</min>
                 <max>1</max>
@@ -403,49 +398,41 @@
         </channel>
 
         <channel name="Yaw">
-
             <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
-                <gain>0.25465</gain>
+                <gain>100</gain>
+            </pure_gain>
+
+            <pure_gain name="yaw load norm">
+                <input>accelerations/n-pilot-y-norm</input>
+                <gain>0.25</gain>
             </pure_gain>
 
             <summer name="yaw trim error">
                 <input>fcs/rudder-cmd-norm</input>
-                <!-- input>fcs/yaw-trim-cmd-norm</input -->
-                <input>fcs/yaw-rate-norm</input>
-            </summer>
-
-            <pure_gain name="yaw rate p">
-                <input>fcs/yaw-trim-error</input>
-                <gain>2.8</gain>
-            </pure_gain>
-
-            <integrator name="yaw rate i">
-                <input>fcs/yaw-trim-error</input>
-                <c1>0.045</c1>
-            </integrator>
-
-            <lead_lag_filter name="yaw rate d">
-                <input>fcs/yaw-trim-error</input>
-                <c1>-0.00113</c1>
-                <c2>0.0</c2>
-                <c3>0.0</c3>
-                <c4>1</c4>
-            </lead_lag_filter>
-
-            <summer name="yaw command">
-                <input>fcs/yaw-rate-p</input>
-                <input>fcs/yaw-rate-i</input>
-                <input>fcs/yaw-rate-d</input>
+                <input>fcs/yaw-trim-cmd-norm</input>
+                <input>fcs/yaw-rate-norm</input> 
+                <input>fcs/yaw-load-norm</input>
                 <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-                <output>fcs/rudder-pos-norm</output>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
             </summer>
+
+            <pid name="yaw-load-pid">
+              <input>fcs/yaw-trim-error</input>
+              <kp> 0.105500 </kp>
+              <ki> 0.000010 </ki>
+              <kd> 0.00005 </kd>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+              <output>fcs/rudder-pos-norm</output>
+            </pid>
 
             <aerosurface_scale name="Rudder Control">
-                <input>fcs/yaw-command</input>
+                <input>fcs/yaw-load-pid</input>
                 <range>
                     <min>-0.524</min>
                     <max>0.524</max>
@@ -572,7 +559,7 @@
                 <output>fcs/speedbrake-pos-deg</output>
             </kinematic>
 
-           <aerosurface_scale name="Flap Position Normalizer">
+           <aerosurface_scale name="Speedbrake Position Normalizer">
               <input>fcs/speedbrake-control</input>
               <domain>
                 <min>0</min>
@@ -979,7 +966,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/mag-speedbrake-pos-rad</property>
+                    <property>fcs/speedbrake-pos-rad</property>
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
@@ -1033,7 +1020,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>velocities/q-aero-rad_sec</property>
                     <property>aero/ci2vel</property>
-                    <property>fcs/mag-speedbrake-pos-rad</property>
+                    <property>fcs/speedbrake-pos-rad</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
