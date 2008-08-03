@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.73 $ </version>
+        <version> $Revision: 1.74 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -303,17 +303,25 @@
         
             <summer name="elevator cmd limiter">
               <input>fcs/elevator-cmd-norm</input>
-              <input>fcs/pitch-rate-norm</input>
               <input>fcs/g-load-norm</input>
-              <input>fcs/alpha-limiter</input>
               <clipto>
                 <min>-1</min>
                 <max>0.44</max>
               </clipto>
             </summer>
 
-            <pid name="g-load-pid">
+            <summer name="pitch correction">
               <input>fcs/elevator-cmd-limiter</input>
+              <input>fcs/pitch-rate-norm</input>
+              <input>fcs/alpha-limiter</input>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </summer>
+
+            <pid name="g-load-pid">
+              <input>fcs/pitch-correction</input>
               <kp> 0.675000 </kp>
               <ki> 0.004750 </ki>
               <kd> 0.00005 </kd>
@@ -408,11 +416,19 @@
                 <gain>0.25</gain>
             </pure_gain>
 
+            <summer name="yaw correction">
+                <input>fcs/yaw-trim-cmd-norm</input>
+                <input>fcs/yaw-rate-norm</input>
+                <input>fcs/yaw-load-norm</input>
+                <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </summer>
+
             <summer name="yaw trim error">
                 <input>fcs/rudder-cmd-norm</input>
-                <input>fcs/yaw-trim-cmd-norm</input>
-                <input>fcs/yaw-rate-norm</input> 
-                <input>fcs/yaw-load-norm</input>
+                <input>fcs/yaw-correction</input>
                 <clipto>
                 <min>-1</min>
                 <max>1</max>
