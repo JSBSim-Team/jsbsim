@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.44 2008/08/01 11:33:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.45 2008/08/04 12:37:44 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,8 +86,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   if (el->FindElement("damping_coeff")) {
     dampCoeff = el->FindElement("damping_coeff");
     if (dampCoeff->GetAttributeValue("type") == "SQUARE") {
-      eDampType = dtSquare; // default is dtLinear
-      bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC2");
+      eDampType = dtSquare;
+      bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT2/SEC2");
     } else {
       bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC");
     }
@@ -96,8 +96,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   if (el->FindElement("damping_coeff_rebound")) {
     dampCoeffRebound = el->FindElement("damping_coeff_rebound");
     if (dampCoeffRebound->GetAttributeValue("type") == "SQUARE") {
-      eDampTypeRebound = dtSquare; // default is dtLinear
-      bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC2");
+      eDampTypeRebound = dtSquare;
+      bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT2/SEC2");
     } else {
       bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC");
     }

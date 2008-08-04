@@ -9,7 +9,7 @@
             licenseName="GPL"
             licenseURL="http://www.gnu.org/licenses/gpl.html"/>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.75 $</version>
+        <version>$Revision: 1.76 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -109,7 +109,7 @@
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC">1600</damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
 <!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
 
             <relaxation_velocity>
@@ -136,7 +136,7 @@
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC">1600</damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
 <!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
 
             <relaxation_velocity>

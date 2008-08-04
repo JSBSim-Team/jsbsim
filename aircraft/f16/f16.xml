@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.75 $ </version>
+        <version> $Revision: 1.76 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -93,7 +93,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 12000 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 6000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 6000 </damping_coeff>
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
@@ -108,7 +108,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 10000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 10000 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
@@ -123,7 +123,7 @@
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 10000 </damping_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 10000 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
