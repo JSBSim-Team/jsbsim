@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.74 $ </version>
+        <version> $Revision: 1.75 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -92,8 +92,8 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 5000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 12000 </spring_coeff>
+            <damping_coeff type="SQUARE" unit="LBS/FT/SEC2"> 6000 </damping_coeff>
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
@@ -320,7 +320,15 @@
               </clipto>
             </summer>
 
+            <switch name="elevator pid trigger">
+                <default value="0"/>
+                <test value="1">
+                    velocities/v-fps > 5.0
+                </test>
+            </switch>
+
             <pid name="g-load-pid">
+              <trigger>fcs/elevator-pid-trigger</trigger>
               <input>fcs/pitch-correction</input>
               <kp> 0.675000 </kp>
               <ki> 0.004750 </ki>
@@ -435,7 +443,15 @@
               </clipto>
             </summer>
 
+            <switch name="rudder pid trigger">
+                <default value="0"/>
+                <test value="1">
+                    velocities/v-fps > 10.0
+                </test>
+            </switch>
+
             <pid name="yaw-load-pid">
+              <trigger>fcs/rudder-pid-trigger</trigger>
               <input>fcs/yaw-trim-error</input>
               <kp> 0.105500 </kp>
               <ki> 0.000010 </ki>
@@ -559,9 +575,24 @@
         </channel>
 
         <channel name="Speedbrake">
+            <switch name="speedbrake alpha limiter">
+                <default value="0"/>
+                <test logic="AND" value="1">
+                    aero/alpha-rad ge 0.80
+                    velocities/v-fps le 15
+                </test>
+            </switch>
+
+            <switch name="speedbrake scheduler">
+                <default value="0"/>
+                <test logic="OR" value="1">
+                    fcs/speedbrake-alpha-limiter == 1
+                    fcs/speedbrake-cmd-norm == 1
+                </test>
+            </switch>
 
             <kinematic name="Speedbrake Control">
-                <input>fcs/speedbrake-cmd-norm</input>
+                <input>fcs/speedbrake-scheduler</input>
                 <traverse>
                     <setting>
                         <position>0</position>
