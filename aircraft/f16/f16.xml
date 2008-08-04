@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.76 $ </version>
+        <version> $Revision: 1.77 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -300,9 +300,18 @@
               <input>aero/alpha-rad</input>
               <gain>1.0472</gain>
             </pure_gain>
+
+            <summer name="elevator scheduler">
+              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/pitch-rate-norm</input>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </summer>
         
             <summer name="elevator cmd limiter">
-              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/elevator-scheduler</input>
               <input>fcs/g-load-norm</input>
               <clipto>
                 <min>-1</min>
@@ -311,7 +320,6 @@
             </summer>
 
             <summer name="pitch correction">
-              <input>fcs/elevator-cmd-limiter</input>
               <input>fcs/pitch-rate-norm</input>
               <input>fcs/alpha-limiter</input>
               <clipto>
@@ -321,9 +329,9 @@
             </summer>
 
             <switch name="elevator pid trigger">
-                <default value="0"/>
-                <test value="1">
-                    velocities/v-fps > 5.0
+                <default value="1"/>
+                <test value="0">
+                    velocities/vc-kts lt 5.0
                 </test>
             </switch>
 
@@ -444,9 +452,9 @@
             </summer>
 
             <switch name="rudder pid trigger">
-                <default value="0"/>
-                <test value="1">
-                    velocities/v-fps > 10.0
+                <default value="1"/>
+                <test value="0">
+                    velocities/vc-kts lt 10.0
                 </test>
             </switch>
 
@@ -578,16 +586,16 @@
             <switch name="speedbrake alpha limiter">
                 <default value="0"/>
                 <test logic="AND" value="1">
-                    aero/alpha-rad ge 0.80
-                    velocities/v-fps le 15
+                    aero/alpha-deg ge 53 
+                    velocities/v-fps le 18
                 </test>
             </switch>
 
             <switch name="speedbrake scheduler">
                 <default value="0"/>
                 <test logic="OR" value="1">
-                    fcs/speedbrake-alpha-limiter == 1
-                    fcs/speedbrake-cmd-norm == 1
+                    fcs/speedbrake-alpha-limiter eq 1
+                    fcs/speedbrake-cmd-norm eq 1
                 </test>
             </switch>
 
