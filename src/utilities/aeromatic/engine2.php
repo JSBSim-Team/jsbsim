@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.8;
+$version = 0.81;
 
 //****************************************************
 //                                                   *
@@ -82,17 +82,20 @@ switch ($ac_enginetype) {
 function MakePiston() {
 
   global $ac_enginename, $ac_enginepower;
-  $displacement = $ac_enginepower * 1.6;
+  $displacement = $ac_enginepower * 1.9;
 
   print("<piston_engine name=\"$ac_enginename\">\n");
-  print("  <minmp unit=\"INHG\">          6.0 </minmp>\n");
-  print("  <maxmp unit=\"INHG\">         30.0 </maxmp>\n");
+  print("  <minmp unit=\"INHG\">          6.0 </minmp><!-- Deprecated -->\n");
+  print("  <maxmp unit=\"INHG\">         29.9 </maxmp><!-- Deprecated -->\n");
   printf("  <displacement unit=\"IN3\"> %3.2f </displacement>\n", $displacement);
-  printf("  <maxhp>        %3.2f </maxhp>\n", $ac_enginepower);
-  print("  <cycles>         2.0 </cycles>\n");
+  print("  <bsfc>           0.45 </bsfc>\n");
+  printf("  <maxhp>        %3.2f </maxhp><!-- Deprecated -->\n", $ac_enginepower);
+  print("  <cycles>         4.0 </cycles>\n");
   print("  <idlerpm>      700.0 </idlerpm>\n");
+  print("  <maxrpm>      2800.0 </maxrpm>\n");
   print("  <maxthrottle>    1.0 </maxthrottle>\n");
   print("  <minthrottle>    0.2 </minthrottle>\n");
+  print("  <sparkfaildrop>  0.0 </sparkfaildrop>\n");
   print("</piston_engine>\n");
   }
 
