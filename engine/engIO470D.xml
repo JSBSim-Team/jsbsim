@@ -12,12 +12,15 @@
 -->
 
 <piston_engine name="IO470D">
-  <minmp unit="INHG">          6.5 </minmp>
-  <maxmp unit="INHG">         28.5 </maxmp>
+  <minmp unit="INHG">          6.5 </minmp>	<!-- Deprecated -->
+  <maxmp unit="INHG">         28.5 </maxmp>	<!-- Deprecated -->
   <displacement unit="IN3">  470.0 </displacement>
-  <maxhp>        260.00 </maxhp>
-  <cycles>         2.0 </cycles>
+  <maxhp>        260.00 </maxhp>		<!-- Deprecated -->
+  <bsfc>           0.45 </bsfc>
+  <cycles>         4.0 </cycles>
   <idlerpm>      900.0 </idlerpm>
+  <maxrpm>      2600.0 </maxrpm>
   <maxthrottle>    1.0 </maxthrottle>
   <minthrottle>    0.2 </minthrottle>
+  <sparkfaildrop>  0.0 </sparkfaildrop>
 </piston_engine>
