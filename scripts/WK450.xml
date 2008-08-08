@@ -8,7 +8,7 @@
   -->
 
   <use aircraft="WK450" initialize="WK450_Initial_Conditions"/>
-  <run start="0.0" end="20" dt="0.005">
+  <run start="0.0" end="200" dt="0.005">
 
     <property> simulation/notify-time-trigger </property>
     <property> simulation/run_id </property>
@@ -17,6 +17,7 @@
       <description> initialize the run id </description>
       <condition> sim-time-sec >= 0.00 </condition>
       <set name="simulation/run_id" value="1"/>
+      <set name="ap/heading_hold" value="1"/>
       <notify/>
     </event>
 
@@ -53,7 +54,7 @@
         <property>simulation/run_id</property>
       </notify>
     </event>
-
+<!--
     <event name="Set heading hold">
       <description>Set Heading when 5 ft AGL is reached</description>
       <notify/>
@@ -64,7 +65,7 @@
       <set name="ap/attitude_hold" value="0"/>
       <set name="ap/heading_hold" value="1"/>
     </event>
-
+-->
     <event name="Set autopilot for 20 ft.">
       <description>Set Autopilot for 20 ft</description>
       <notify/>

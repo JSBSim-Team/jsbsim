@@ -88,5 +88,37 @@
       <set name="ap/heading_setpoint" value="20"/>
     </event>
 
+    <event name="Nose gear liftoff">
+      <description>Report roll length when nosegear lifts off</description>
+      <condition>
+        gear/unit/WOW == 0
+        sim-time-sec > 1.0
+      </condition>
+      <notify>
+        <property>position/distance-from-start-mag-mt</property>
+      </notify>
+    </event>
+
+    <event name="Left main gear liftoff">
+      <description>Report roll length when left main gear lifts off</description>
+      <condition>
+        gear/unit[1]/WOW == 0
+        sim-time-sec > 1.0
+      </condition>
+      <notify>
+        <property>position/distance-from-start-mag-mt</property>
+      </notify>
+    </event>
+
+    <event name="Report rollout distance at 50 foot clearance">
+      <description>Report takeoff length at 50 foot clearance</description>
+      <condition>
+        position/h-agl-ft >= 50
+      </condition>
+      <notify>
+        <property>position/distance-from-start-mag-mt</property>
+      </notify>
+    </event>
+
   </run>
 </runscript>
