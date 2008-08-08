@@ -13,7 +13,7 @@
 
 <turbine_engine name="T76">
   <milthrust>    1600.0 </milthrust>
-  <tsfc>            0.55 </tsfc>
+  <tsfc>            0.35 </tsfc>
   <idlen2>         61.0  </idlen2>
   <maxn2>         100.0  </maxn2>
   <augmented>         0  </augmented>

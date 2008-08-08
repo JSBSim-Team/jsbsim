@@ -7,7 +7,7 @@
     <fileheader>
         Erik Hofman<author>  </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Revision: 1.25 $ </version>
+        <version> $Revision: 1.26 $ </version>
         <description> Models an F-22 Raptor </description>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
@@ -67,7 +67,7 @@
         <pointmass name="Pilot">
             <weight unit="LBS"> 230 </weight>
             <location name="POINTMASS" unit="IN">
-                <x> 608.56 </x>
+                <x> 148.8 </x>
                 <y> 0 </y>
                 <z> 20 </z>
             </location>

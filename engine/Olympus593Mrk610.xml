@@ -2,8 +2,8 @@
 <!--
   File:     Olympus593Mrk610.xml
   Author:   Aero-Matic v 0.7
-  Version:  1.04
-  Date:     30 March 2007
+  Version:  1.05
+  Date:     1st January 2008
 
   Inputs:
     name:           Olympus593Mrk610
@@ -116,15 +116,34 @@
 
        One supposes secondary nozzles included in the engine thrust.
        Simplification : no air intake effect above Mach 1.3.
+
+
+       Ground idle = 90 % of normal thrust.
   -->
 
  <function name="IdleThrust">
   <table>
    <independentVar lookup="row">velocities/mach</independentVar>
    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
-   <tableData>
+   <independentVar lookup="table">fcs/ground-idle</independentVar>
+   <tableData breakPoint="0">
           -10000      0  10000  20000  30000  40000  50000  60000
     0.0   0.0430 0.0488 0.0528 0.0694 0.0899 0.1183 0.1467 0.0792
+    0.2   0.0500 0.0501 0.0335 0.0544 0.0797 0.1049 0.1342 0.0725
+    0.4   0.0040 0.0047 0.0020 0.0272 0.0595 0.0891 0.1203 0.0650
+    0.6   0.0    0.0    0.0    0.0    0.0276 0.0718 0.1073 0.0579
+    0.8   0.0    0.0    0.0    0.0    0.0474 0.0868 0.0900 0.0486
+    1.0   0.0    0.0    0.0    0.0    0.0    0.0552 0.0800 0.0432
+    1.2   0.0    0.0    0.0    0.0    0.0    0.0530 0.0768 0.0415
+    1.4   0.0    0.0    0.0    0.0    0.0    0.0519 0.0753 0.0407
+    1.6   0.0    0.0    0.0    0.0    0.0    0.0    0.0745 0.0403
+    1.8   0.0    0.0    0.0    0.0    0.0    0.0    0.0723 0.0391
+    2.0   0.0    0.0    0.0    0.0    0.0    0.0    0.0680 0.0368
+    2.2   0.0    0.0    0.0    0.0    0.0    0.0    0.0605 0.0328
+   </tableData>
+   <tableData breakPoint="1">
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   0.0387 0.0439 0.0475 0.0625 0.0809 0.1065 0.1320 0.0713
     0.2   0.0500 0.0501 0.0335 0.0544 0.0797 0.1049 0.1342 0.0725
     0.4   0.0040 0.0047 0.0020 0.0272 0.0595 0.0891 0.1203 0.0650
     0.6   0.0    0.0    0.0    0.0    0.0276 0.0718 0.1073 0.0579
@@ -476,4 +495,3 @@
 -->
 
 </turbine_engine>
-

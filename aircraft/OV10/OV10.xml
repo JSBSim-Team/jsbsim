@@ -7,7 +7,7 @@
     <fileheader>
         <author> Dave Culp, based on Aero-Matic </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.23 $ </version>
+        <version> $Revision: 1.24 $ </version>
         <description> OV-10 Bronco </description>
     </fileheader>
 
@@ -20,7 +20,7 @@
         <vtailarea unit="FT2"> 52.38 </vtailarea>
         <vtailarm unit="FT"> 18.5 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> 249.6 </x>
+            <x> 200 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
@@ -42,7 +42,7 @@
         <izz unit="SLUG*FT2"> 56531 </izz>
         <emptywt unit="LBS">   8640 </emptywt>
         <location name="CG" unit="IN">
-            <x> 249.6 </x>
+            <x> 200.0 </x>
             <y> 0 </y>
             <z> -12.5 </z>
         </location>
@@ -58,38 +58,38 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 2000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 200 </damping_coeff>
-            <max_steer unit="DEG"> 5 </max_steer>
+            <spring_coeff unit="LBS/FT"> 20160 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 1440 </damping_coeff>
+            <max_steer unit="DEG"> 35 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
-                <x> 272.1 </x>
+                <x> 221.0 </x>
                 <y> -43.2 </y>
-                <z> -59.9 </z>
+                <z> -58.0 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 72000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 2880 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
-                <x> 272.1 </x>
+                <x> 221.0 </x>
                 <y> 43.2 </y>
-                <z> -59.9 </z>
+                <z> -58.0 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 72000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 2880 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
@@ -98,7 +98,7 @@
     <propulsion>
         <engine file="T76">
             <location unit="IN">
-                <x> 230 </x>
+                <x> 190 </x>
                 <y> -80 </y>
                 <z> 0 </z>
             </location>
@@ -110,7 +110,7 @@
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
-                    <x> 230 </x>
+                    <x> 190 </x>
                     <y> -80 </y>
                     <z> 0 </z>
                 </location>
@@ -123,7 +123,7 @@
         </engine>
         <engine file="T76">
             <location unit="IN">
-                <x> 230 </x>
+                <x> 190 </x>
                 <y> 80 </y>
                 <z> 0 </z>
             </location>
@@ -132,10 +132,10 @@
                 <pitch> 0 </pitch>
                 <yaw> 0 </yaw>
             </orient>
-            <feed>1</feed>
+            <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
-                    <x> 230 </x>
+                    <x> 190 </x>
                     <y> 80 </y>
                     <z> 0 </z>
                 </location>
@@ -146,23 +146,102 @@
                 </orient>
             </thruster>
         </engine>
-        <tank type="FUEL">    <!-- Internal -->
+	<!-- Internal Tank -->
+        <tank type="FUEL">    
             <location unit="IN">
-                <x> 249.6 </x>
+                <x> 200 </x>
                 <y> 0 </y>
                 <z> 12 </z>
+            </location>
+            <capacity unit="LBS"> 1554 </capacity> <!-- must account for the external tank (3004) -->
+            <contents unit="LBS"> 1500 </contents>
+        </tank>
+	<!-- External Tank -->
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 200 </x>
+                <y> 0 </y>
+                <z> -40 </z>
             </location>
             <capacity unit="LBS"> 1554 </capacity>
             <contents unit="LBS"> 1500 </contents>
         </tank>
-        <tank type="FUEL">    <!-- External Tank -->
+	<!-- Mk 82 weight -->
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 200 </x>
+                <y> 21.5 </y>
+                <z> -35 </z>
+            </location>
+            <capacity unit="LBS"> 500 </capacity>
+            <contents unit="LBS"> 500 </contents>
+        </tank>
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 200 </x>
+                <y> -21.5 </y>
+                <z> -35 </z>
+            </location>
+            <capacity unit="LBS"> 500 </capacity>
+            <contents unit="LBS"> 500 </contents>
+        </tank>
+	<!-- LAU 68 weight -->
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 200 </x>
+                <y> 35.8 </y>
+                <z> -30 </z>
+            </location>
+            <capacity unit="LBS"> 190 </capacity>
+            <contents unit="LBS"> 190 </contents>
+        </tank>
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 200 </x>
+                <y> -35.8 </y>
+                <z> -30 </z>
+            </location>
+            <capacity unit="LBS"> 190 </capacity>
+            <contents unit="LBS"> 190 </contents>
+        </tank>
+	<!-- Pilots weight -->
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 90 </x>
+                <y> 0 </y>
+                <z> 10 </z>
+            </location>
+            <capacity unit="LBS"> 191 </capacity>
+            <contents unit="LBS"> 191 </contents>
+        </tank>
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 150 </x>
+                <y> 0 </y>
+                <z> 10 </z>
+            </location>
+            <capacity unit="LBS"> 192 </capacity>
+            <contents unit="LBS"> 192 </contents>
+        </tank>
+	<!-- Rear payload weight -->
+        <tank type="FUEL">    
             <location unit="IN">
                 <x> 249.6 </x>
                 <y> 0 </y>
-                <z> -20 </z>
+                <z> 20 </z>
             </location>
-            <capacity unit="LBS"> 1450 </capacity>
-            <contents unit="LBS"> 1400 </contents>
+            <capacity unit="LBS"> 200 </capacity>
+            <contents unit="LBS"> 200 </contents>
+        </tank>
+	<!-- Paratroopers weight -->
+        <tank type="FUEL">    
+            <location unit="IN">
+                <x> 249.6 </x>
+                <y> 0 </y>
+                <z> 20 </z>
+            </location>
+            <capacity unit="LBS"> 1100 </capacity>
+            <contents unit="LBS"> 1100 </contents>
         </tank>
     </propulsion>
     <flight_control name="FCS: OV10">
@@ -638,16 +717,4 @@
             </function>
         </axis>
     </aerodynamics>
-  <output name="OV10.csv" type="CSV" rate="4">
-    <rates> ON </rates>
-    <velocities> ON </velocities>
-    <forces> ON </forces>
-    <moments> ON </moments>
-    <position> ON </position>
-    <fcs> OFF </fcs>
-    <propulsion> ON </propulsion>
-    <aerosurfaces> OFF </aerosurfaces>
-    <fcs> OFF </fcs>
-    <ground_reactions> ON </ground_reactions>
-  </output>
 </fdm_config>

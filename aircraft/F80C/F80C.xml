@@ -7,7 +7,7 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2006-01-04</filecreationdate>
-     <version>$Revision: 1.4 $</version>
+     <version>$Revision: 1.5 $</version>
      <description>Models a Lockheed F-80C</description>
  </fileheader>
 
@@ -56,7 +56,7 @@
             <z> 36 </z>
         </location>
         <location name="VRP" unit="IN">
-            <x> 0 </x>
+            <x> 185.0 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
@@ -120,7 +120,60 @@
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
         </contact>
-    </ground_reactions>
+	<!-- Structure contact points. -->
+        <contact type="STRUCTURE" name="NOSE">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction>  0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 16800 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 3360 </damping_coeff>
+            <brake_group> NONE </brake_group>
+        </contact>
+         <contact type="STRUCTURE" name="LEFT_WINGTIP">
+            <location unit="IN">
+                <x>  212.60 </x>
+                <y> -236.2  </y>
+                <z>  -35.4  </z>
+            </location>
+            <static_friction>  0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 16800 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 3360 </damping_coeff>
+            <brake_group> NONE </brake_group>
+        </contact>
+         <contact type="STRUCTURE" name="RIGHT_WINGTIP">
+            <location unit="IN">
+                <x> 212.6 </x>
+                <y> 236.2 </y>
+                <z> -35.4 </z>
+            </location>
+            <static_friction>  0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 16800 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 3360 </damping_coeff>
+            <brake_group> NONE </brake_group>
+        </contact>
+        <contact type="STRUCTURE" name="TAIL">
+            <location unit="IN">
+                <x> 425.2 </x>
+                <y> 0 </y>
+                <z> -9.9 </z>
+            </location>
+            <static_friction>  0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 16800 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 3360 </damping_coeff>
+            <brake_group> NONE </brake_group>
+        </contact>
+   </ground_reactions>
     <propulsion>
         <engine file="J33-A-35">
             <location unit="IN">

@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.77 $ </version>
+        <version> $Revision: 1.78 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -286,48 +286,50 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
-            <pure_gain name="pitch rate norm">
-                <input>velocities/q-aero-rad_sec</input>
-                <gain>0.695</gain>
-            </pure_gain>
-
-            <pure_gain name="g load norm">
-              <input>accelerations/n-pilot-z-norm</input>
-              <gain>-0.08613</gain>
-            </pure_gain>
-
-            <pure_gain name="alpha limiter">
-              <input>aero/alpha-rad</input>
-              <gain>1.0472</gain>
-            </pure_gain>
-
-            <summer name="elevator scheduler">
-              <input>fcs/elevator-cmd-norm</input>
-              <input>fcs/pitch-rate-norm</input>
-              <clipto>
-                <min>-1</min>
-                <max>1</max>
-              </clipto>
-            </summer>
-        
             <summer name="elevator cmd limiter">
-              <input>fcs/elevator-scheduler</input>
-              <input>fcs/g-load-norm</input>
+              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/pitch-trim-cmd-norm</input>
               <clipto>
                 <min>-1</min>
                 <max>0.44</max>
               </clipto>
             </summer>
 
-            <summer name="pitch correction">
-              <input>fcs/pitch-rate-norm</input>
-              <input>fcs/alpha-limiter</input>
-              <clipto>
-                <min>-1</min>
-                <max>1</max>
-              </clipto>
-            </summer>
+            <scheduled_gain name="elevator scheduler">
+                <input>fcs/elevator-cmd-limiter</input>
+                <table>
+                    <independentVar>aero/alpha-rad</independentVar>
+                    <tableData>
+                    -1.0472     0
+                    -0.8754     1
+                     0.0        1
+                     0.8754     1
+                     1.0472     0
+                    </tableData>
+                </table>
+            </scheduled_gain>
 
+            <pure_gain name="pitch rate norm">
+                <input>velocities/q-aero-rad_sec</input>
+                <gain>11.0</gain>
+            </pure_gain>
+
+            <pure_gain name="g load norm">
+              <input>accelerations/n-pilot-z-norm</input>
+              <gain>-0.25</gain>
+            </pure_gain>
+
+            <pure_gain name="alpha limiter norm">
+              <input>aero/alpha-rad</input>
+              <gain>2.1</gain>
+            </pure_gain>
+
+            <summer name="pitch trim error">
+              <input>fcs/elevator-scheduler</input>
+              <input>fcs/pitch-rate-norm</input>
+              <input>fcs/g-load-norm</input>
+            </summer>
+        
             <switch name="elevator pid trigger">
                 <default value="1"/>
                 <test value="0">
@@ -335,21 +337,36 @@
                 </test>
             </switch>
 
-            <pid name="g-load-pid">
+            <pid name="g load pid">
               <trigger>fcs/elevator-pid-trigger</trigger>
-              <input>fcs/pitch-correction</input>
-              <kp> 0.675000 </kp>
-              <ki> 0.004750 </ki>
-              <kd> 0.00005 </kd>
+              <input>fcs/pitch-trim-error</input>
+              <kp> 0.10000 </kp>
+              <ki> 0.00010 </ki>
+              <kd> 0.0005 </kd>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </pid>
+
+            <!--
+              - Calculate the difference between the current pitch rate
+              - and the one requested for.
+              - Compensate for too high alpha values.
+              -->
+            <summer name="pitch scheduler">
+              <input>fcs/elevator-scheduler</input>
+              <input>fcs/alpha-limiter-norm</input>
+              <input>fcs/g-load-pid</input>
               <clipto>
                 <min>-1</min>
                 <max>1</max>
               </clipto>
               <output>fcs/elevator-pos-norm</output>
-            </pid>
+            </summer>
 
             <aerosurface_scale name="Elevator Control">
-              <input>fcs/g-load-pid</input>
+              <input>fcs/pitch-scheduler</input>
               <range>
                 <min>-0.436</min>
                 <max>0.436</max>
@@ -432,23 +449,9 @@
                 <gain>0.25</gain>
             </pure_gain>
 
-            <summer name="yaw correction">
-                <input>fcs/yaw-trim-cmd-norm</input>
+            <summer name="yaw trim error">
                 <input>fcs/yaw-rate-norm</input>
                 <input>fcs/yaw-load-norm</input>
-                <clipto>
-                <min>-1</min>
-                <max>1</max>
-              </clipto>
-            </summer>
-
-            <summer name="yaw trim error">
-                <input>fcs/rudder-cmd-norm</input>
-                <input>fcs/yaw-correction</input>
-                <clipto>
-                <min>-1</min>
-                <max>1</max>
-              </clipto>
             </summer>
 
             <switch name="rudder pid trigger">
@@ -458,7 +461,7 @@
                 </test>
             </switch>
 
-            <pid name="yaw-load-pid">
+            <pid name="yaw load pid">
               <trigger>fcs/rudder-pid-trigger</trigger>
               <input>fcs/yaw-trim-error</input>
               <kp> 0.105500 </kp>
@@ -471,8 +474,23 @@
               <output>fcs/rudder-pos-norm</output>
             </pid>
 
-            <aerosurface_scale name="Rudder Control">
+            <!--
+              - calculate the difference between the current yaw rate
+              - and the one requiested for
+              -->
+            <summer name="yaw scheduler">
+                <input>fcs/rudder-cmd-norm</input>
+                <input>fcs/yaw-trim-cmd-norm</input>
                 <input>fcs/yaw-load-pid</input>
+                <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+              <output>fcs/rudder-pos-norm</output>
+            </summer>
+
+            <aerosurface_scale name="Rudder Control">
+                <input>fcs/yaw-scheduler</input>
                 <range>
                     <min>-0.524</min>
                     <max>0.524</max>

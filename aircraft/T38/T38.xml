@@ -7,7 +7,7 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2004-01-01</filecreationdate>
-     <version>$Revision: 1.23 $</version>
+     <version>$Revision: 1.24 $</version>
      <description>Models a Northrop T-38</description>
  </fileheader>
 
@@ -55,7 +55,7 @@
             <z> 36 </z>
         </location>
         <location name="VRP" unit="IN">
-            <x> 0 </x>
+            <x> 320 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
@@ -76,9 +76,9 @@
     <ground_reactions>
         <contact type="BOGEY" name="NOSE_LG">
             <location unit="IN">
-                <x> 140 </x>
+                <x> 73 </x>
                 <y> 0 </y>
-                <z> -60 </z>
+                <z> -46 </z>
             </location>
             <static_friction>  0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -93,7 +93,7 @@
             <location unit="IN">
                 <x> 335 </x>
                 <y> -65 </y>
-                <z> -60 </z>
+                <z> -46 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -108,7 +108,7 @@
             <location unit="IN">
                 <x> 335 </x>
                 <y> 65 </y>
-                <z> -60 </z>
+                <z> -46 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -119,7 +119,73 @@
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
         </contact>
-    </ground_reactions>
+	<contact type="STRUCTURE" name="NOSE">
+	    <location unit="IN">
+		<x> -22 </x>
+		<y> 0 </y>
+		<z> -4 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+	<contact type="STRUCTURE" name="LEFT_WINGTIP">
+	    <location unit="IN">
+		<x> 330 </x>
+		<y> -157 </y>
+		<z> -15 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+	<contact type="STRUCTURE" name="RIGHT_WINGTIP">
+	    <location unit="IN">
+		<x> 330 </x>
+		<y> 157 </y>
+		<z> -15 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+	<contact type="STRUCTURE" name="CANOPY">
+	    <location unit="IN">
+		<x> 178 </x>
+		<y> 0 </y>
+		<z> 54 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+	<contact type="STRUCTURE" name="VSTAB">
+	    <location unit="IN">
+		<x> 450 </x>
+		<y> 0 </y>
+		<z> 114 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+	<contact type="STRUCTURE" name="ENGINES">
+	    <location unit="IN">
+		<x> 525 </x>
+		<y> 0 </y>
+		<z> 5 </z>
+	    </location>
+	    <static_friction>  0.80 </static_friction>
+	    <dynamic_friction> 0.50 </dynamic_friction>
+	    <spring_coeff unit="LBS/FT">      5000.00 </spring_coeff>
+	    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+	</contact>
+      </ground_reactions>
     <propulsion>
         <engine file="J85-GE-5">
             <location unit="IN">

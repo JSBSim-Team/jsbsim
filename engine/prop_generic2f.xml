@@ -6,10 +6,11 @@
   <numblades> 2 </numblades>
   <minpitch> 23 </minpitch>
   <maxpitch> 23 </maxpitch>
+  <gearratio>0.85 </gearratio>
 
   <table name="C_THRUST" type="internal">
     <tableData>
-      0	0.0936
+      0.0	0.0936
       0.1	0.0927
       0.2	0.0918
       0.3	0.0909
@@ -19,14 +20,14 @@
       0.7	0.0495
       0.8	0.036
       0.9	0.0198
-      1	0.0045
+      1.0	0.0045
       1.04	-0.0009
     </tableData>
   </table>
 
   <table name="C_POWER" type="internal">
     <tableData>
-      0	0.0594
+      0.0	0.0594
       0.1	0.0585
       0.2	0.0576
       0.3	0.0558
@@ -36,7 +37,7 @@
       0.7	0.0432
       0.8	0.0342
       0.9	0.0225
-      1	0.009
+      1.0	0.009
       1.04	0
     </tableData>
   </table>
