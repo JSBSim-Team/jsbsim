@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.78 $ </version>
+        <version> $Revision: 1.79 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -385,32 +385,32 @@
 
             <summer name="roll trim error">
                 <input>fcs/aileron-cmd-norm</input>
-                <!-- input>fcs/roll-trim-cmd-norm</input -->
                 <input>-fcs/roll-rate-norm</input>
             </summer>
 
-            <pure_gain name="roll rate p">
-                <input>fcs/roll-trim-error</input>
-                <gain>3</gain>
-            </pure_gain>
+            <switch name="aileron pid trigger">
+                <default value="1"/>
+                <test value="0">
+                    velocities/vc-kts lt 20.0
+                </test>
+            </switch>
 
-            <integrator name="roll rate i">
-                <input>fcs/roll-trim-error</input>
-                <c1>0.05</c1>
-            </integrator>
-
-            <lead_lag_filter name="roll rate d">
-                <input>fcs/roll-trim-error</input>
-                <c1>-0.00125</c1>
-                <c2>0.0</c2>
-                <c3>0.0</c3>
-                <c4>1</c4>
-            </lead_lag_filter>
+            <pid name="roll rate pid">
+              <trigger>fcs/aileron-pid-trigger</trigger>
+              <input>fcs/roll-trim-error</input>
+              <kp> 3.00000 </kp>
+              <ki> 0.00050 </ki>
+              <kd> -0.00125 </kd>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </pid>
 
             <summer name="roll rate command">
-                <input>fcs/roll-rate-p</input>
-                <input>fcs/roll-rate-i</input>
-                <input>fcs/roll-rate-d</input>
+                <input>fcs/roll-rate-pid</input>
+                <input>fcs/aileron-cmd-norm</input>
+                <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
                     <min>-1</min>
                     <max>1</max>
