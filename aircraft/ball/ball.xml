@@ -122,6 +122,7 @@
 
     <output name="JSBBallOut.csv" type="CSV" rate="10">
         <property> gear/unit[0]/WOW </property>
+        <property> fcs/parachute_reef_pos_norm </property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
