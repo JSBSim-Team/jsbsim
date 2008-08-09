@@ -1,0 +1,245 @@
+<!--
+
+  Airship added/virtual mass model for JSBSim.
+
+    Copyright (C) 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="added-mass">
+
+ <documentation>
+  This system computes forces and moments due to added/virtual mass.
+  The model is based on
+  [Max M. Munk, "Aerodynamic forces on airship hulls", NACA report 184, 1924]
+  and the introduction in
+  [Christopher J. Atkinson, Robert G. Urso, "Modeling of Apparent Mass Effects
+   for the Real-Time Simulation of a Hybrid Airship", AIAA Modeling and
+   Simulation Technologies Conference, Aug 2006].
+
+  Usage:
+
+  Define the following properties:
+    aero/constants/volume-ft3
+    aero/constants/length-diameter-ft2          (length^2 + diameter^2)
+    aero/constants/added-mass/k-axial
+    aero/constants/added-mass/k-traverse
+    aero/constants/added-mass/k-rotational
+    aero/constants/added-mass/tweak-factor   (1.0 is the standard value)
+
+  Define the following external forces:
+
+    <force name="added-mass-bx" frame="BODY">
+     <location unit="">
+      { AERORP }
+     </location>
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+    <force name="added-mass-by" frame="BODY">
+     <location unit="">
+      { AERORP }
+     </location>
+     <direction>
+      <x> 0.0 </x>
+      <y> 1.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+    <force name="added-mass-bz" frame="BODY">
+     <location unit="">
+      { AERORP }
+     </location>
+     <direction>
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 1.0 </z>
+     </direction>
+    </force>
+
+    <force name="added-mass-pitch[0]" frame="BODY">
+     <location unit="">
+      <x> AERORP X </x>
+      <y> AERORP Y </y>
+      <z> AERORP Z - 0.3048 </z>
+     </location>
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+    <force name="added-mass-pitch[1]" frame="BODY">
+     <location unit="M">
+      <x> AERORP X </x>
+      <y> AERORP Y </y>
+      <z> AERORP Z + 0.3048 </z>
+     </location>
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+
+    <force name="added-mass-yaw[0]" frame="BODY">
+     <location unit="M">
+      <x> AERORP X </x>
+      <y> AERORP Y - 0.3048 </y>
+      <z>  0.0 </z>
+     </location>
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+    <force name="added-mass-yaw[1]" frame="BODY">
+     <location unit="M">
+      <x> AERORP X </x>
+      <y> AERORP Y + 0.3048 </y>
+      <z>  0.0 </z>
+     </location>
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </force>
+
+ </documentation>
+
+ <channel name="startup">
+
+  <!-- Allow the vehicle state to stabilize. -->
+  <fcs_function name="aero/added-mass/active">
+   <function>
+    <min>
+     <property> aero/constants/added-mass/tweak-factor </property>
+     <max>
+      <value> 0.0 </value>
+      <difference>
+       <property> sim-time-sec </property>
+       <value> 2.0 </value>
+      </difference>
+     </max>
+    </min>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="translational">
+
+  <fcs_function name="aero/added-mass/force-bx-lbs">
+   <function>
+    <product>
+     <property> aero/added-mass/active </property>
+     <property> atmosphere/rho-slugs_ft3 </property>
+     <property> aero/constants/added-mass/k-axial </property>
+     <property> aero/constants/volume-ft3 </property>
+     <property> accelerations/udot-ft_sec2 </property>
+    </product>
+   </function>
+   <output> external_reactions/added-mass-bx/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="aero/added-mass/force-by-lbs">
+   <function>
+    <product>
+     <property> aero/added-mass/active </property>
+     <property> atmosphere/rho-slugs_ft3 </property>
+     <property> aero/constants/added-mass/k-traverse </property>
+     <property> aero/constants/volume-ft3 </property>
+     <property> accelerations/vdot-ft_sec2 </property>
+    </product>
+   </function>
+   <output> external_reactions/added-mass-by/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="aero/added-mass/force-bz-lbs">
+   <function>
+    <product>
+     <property> aero/added-mass/active </property>
+     <property> atmosphere/rho-slugs_ft3 </property>
+     <property> aero/constants/added-mass/k-traverse </property>
+     <property> aero/constants/volume-ft3 </property>
+     <property> accelerations/wdot-ft_sec2 </property>
+    </product>
+   </function>
+   <output> external_reactions/added-mass-bz/magnitude </output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="rotational">
+
+  <fcs_function name="aero/added-mass/pitch-moment-lbsft">
+   <function>
+    <product>
+     <property> aero/added-mass/active </property>
+     <value> 0.05 </value>
+     <property> atmosphere/rho-slugs_ft3 </property>
+     <property> aero/constants/added-mass/k-rotational </property>
+     <property> aero/constants/volume-ft3 </property>
+     <property> aero/constants/length-diameter-ft2 </property>
+     <property> accelerations/qdot-rad_sec2 </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="aero/added-mass/yaw-moment-lbsft">
+   <function>
+    <product>
+     <property> aero/added-mass/active </property>
+     <value> 0.05 </value>
+     <property> aero/constants/added-mass/k-rotational </property>
+     <property> atmosphere/rho-slugs_ft3 </property>
+     <property> aero/constants/volume-ft3 </property>
+     <property> aero/constants/length-diameter-ft2 </property>
+     <property> accelerations/rdot-rad_sec2 </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <pure_gain name="aero/added-mass/pitch-moment-force-lbs[0]">
+   <input> aero/added-mass/pitch-moment-lbsft </input>
+   <gain>-0.5</gain>
+   <output> external_reactions/added-mass-pitch[0]/magnitude </output>
+  </pure_gain>
+  <pure_gain name="aero/added-mass/pitch-moment-force-lbs[1]">
+   <input> aero/added-mass/pitch-moment-lbsft </input>
+   <gain>0.5</gain>
+   <output> external_reactions/added-mass-pitch[1]/magnitude </output>
+  </pure_gain>
+
+  <pure_gain name="aero/added-mass/yaw-moment-force-lbs[0]">
+   <input> aero/added-mass/yaw-moment-lbsft </input>
+   <gain>-0.5</gain>
+   <output> external_reactions/added-mass-yaw[0]/magnitude </output>
+  </pure_gain>
+  <pure_gain name="aero/added-mass/yaw-moment-force-lbs[1]">
+   <input> aero/added-mass/yaw-moment-lbsft </input>
+   <gain>0.5</gain>
+   <output> external_reactions/added-mass-yaw[1]/magnitude </output>
+  </pure_gain>
+
+ </channel>
+
+</system>

@@ -32,7 +32,7 @@
         sim-time-sec >= 60.0
       </condition>
       <set name="inertia/pointmass-weight-lbs[0]"
-           value="740.0"
+           value="730.0"
            action="FG_RAMP" tc ="30.0"/>
   </event>
 
@@ -53,12 +53,12 @@
   <event name="Set ballonet valves">
       <notify/>
       <condition>
-        sim-time-sec >= 150.0
+        sim-time-sec >= 250.0
       </condition>
       <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
-           value="0.10"/>
+           value="0.0"/>
       <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
-           value="0.10"/>
+           value="0.0"/>
   </event>
 
   <event name="yaw damper">
