@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
   File:     IO320.xml
-  Author:   Aero-Matic v 0.8
+  Author:   Ron Jensen
 
   Inputs:
     name:           IO320
@@ -12,15 +12,15 @@
 -->
 
 <piston_engine name="IO320">
-  <minmp unit="INHG">          6.5 </minmp>	<!-- Deprecated -->
-  <maxmp unit="INHG">         29.92 </maxmp>	<!-- Deprecated -->
-  <displacement unit="IN3"> 320.00 </displacement>
-  <bsfc>           0.45 </bsfc>
-  <maxhp>        160.00 </maxhp>		<!-- Deprecated -->
-  <cycles>         4.0 </cycles>
-  <idlerpm>      550.0 </idlerpm>
-  <maxrpm>      2700.0 </maxrpm>
-  <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.2 </minthrottle>
-  <sparkfaildrop>  0.0 </sparkfaildrop>
+  <minmp unit="INHG">         6.5  </minmp>	<!-- Deprecated -->
+  <maxmp unit="INHG">        29.92 </maxmp>	<!-- Deprecated -->
+  <displacement unit="IN3"> 320.0  </displacement>
+  <maxhp>                   160.0  </maxhp>	<!-- Deprecated -->
+  <bsfc>                      0.37 </bsfc>
+  <cycles>                    4.0  </cycles>
+  <idlerpm>                 550.0  </idlerpm>
+  <maxrpm>                 2700.0  </maxrpm>
+  <maxthrottle>               1.0  </maxthrottle>
+  <minthrottle>               0.1  </minthrottle>
+  <sparkfaildrop>             0.1 </sparkfaildrop>
 </piston_engine>
