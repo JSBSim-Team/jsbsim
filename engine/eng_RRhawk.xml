@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<piston_engine name="RR_Hawk">
+ <!--
+   http://en.wikipedia.org/wiki/Rolls-Royce_Hawk
+    Rolls-Royce Hawk was an aero engine built by Rolls-Royce, similar
+    to one bank of six cylinders from the Rolls-Royce Eagle.
+
+     * Layout: Water cooled inline 6 cylinder
+     * Power output: 75 hp @ 1350 rpm 7.4 litre
+     * Bore: 4 inches
+     * Stroke: 6 inches
+     * Weight: 387 lbs
+
+   It was produced between 1914 and 1918, during which 204 were built
+   at Brazil Straker and one by Rolls-Royce.
+ -->
+ <!--
+   Data plate photo at http://www.aeroplanedetouraine.fr/yvangot.htm
+     No. 1.75.280
+     BHP 85.5 at 1350 RPM
+     Carburtr. Main Je<unreadable>
+     Petrol Gals Per Hr 6.5
+     Oil GalLs Per Hour 3.5
+     Oil Press 22 LBs Per Sq In
+     Air Screw 1350 RPM
+     Left Hand Tractor
+ -->
+ <minmp unit="INHG">          6.0 </minmp> <!-- Ignored -->
+ <maxmp unit="INHG">         29.9 </maxmp> <!-- Ignored -->
+ <displacement unit="IN3"> 452.39 </displacement>
+ <bsfc>          0.45 </bsfc> 
+ <maxhp>        85.50 </maxhp> <!-- Ignored -->
+ <cycles>         4.0 </cycles>
+ <idlerpm>      300.0 </idlerpm>
+ <maxrpm>      1350.0 </maxrpm>
+ <maxthrottle>    0.85</maxthrottle>
+ <minthrottle>    0.1 </minthrottle>
+ <sparkfaildrop>  0.1 </sparkfaildrop>
+</piston_engine>
