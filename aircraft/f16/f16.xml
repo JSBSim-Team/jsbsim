@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.80 $ </version>
+        <version> $Revision: 1.81 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -92,8 +92,8 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 12000 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 6000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 17250 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 4250 </damping_coeff>
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
@@ -107,8 +107,8 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 10000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 37500 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 7500 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
@@ -122,8 +122,8 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 22704 </spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2"> 10000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 37500 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 7500 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
@@ -623,13 +623,25 @@
                 </test>
             </switch>
 
-            <switch name="speedbrake scheduler">
+            <switch name="speedbrake initiate">
                 <default value="0"/>
                 <test logic="OR" value="1">
                     fcs/speedbrake-alpha-limiter eq 1
                     fcs/speedbrake-cmd-norm eq 1
                 </test>
             </switch>
+
+            <scheduled_gain name="speedbrake scheduler">
+                <input>fcs/speedbrake-initiate</input>
+                <table>
+                    <independentVar>gear/gear-cmd-norm</independentVar>
+                    <tableData>
+                        0    1.0
+                        1    0.71667
+                    </tableData>
+                </table>
+                <output>fcs/steer-pos-deg</output>
+            </scheduled_gain>
 
             <kinematic name="Speedbrake Control">
                 <input>fcs/speedbrake-scheduler</input>
@@ -1054,7 +1066,6 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/speedbrake-pos-rad</property>
-                    <property>aero/function/kCLge</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
