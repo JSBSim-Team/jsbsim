@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.79 $ </version>
+        <version> $Revision: 1.80 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -286,6 +286,15 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
+            <fcs_function name="n pilot z correction">
+             <function>
+                <product>
+                 <cos><property>attitude/pitch-rad</property></cos>
+                 <cos><property>attitude/roll-rad</property></cos>
+                </product>
+             </function>
+            </fcs_function>
+
             <summer name="elevator cmd limiter">
               <input>fcs/elevator-cmd-norm</input>
               <input>fcs/pitch-trim-cmd-norm</input>
@@ -311,17 +320,22 @@
 
             <pure_gain name="pitch rate norm">
                 <input>velocities/q-aero-rad_sec</input>
-                <gain>11.0</gain>
+                <gain>6.2</gain>
             </pure_gain>
 
-            <pure_gain name="g load norm">
+            <summer name="g load corrected">
               <input>accelerations/n-pilot-z-norm</input>
-              <gain>-0.25</gain>
+              <input>-fcs/n-pilot-z-correction</input>
+            </summer>
+
+            <pure_gain name="g load norm">
+              <input>fcs/g-load-corrected</input>
+              <gain>0.020</gain>
             </pure_gain>
 
             <pure_gain name="alpha limiter norm">
               <input>aero/alpha-rad</input>
-              <gain>2.1</gain>
+              <gain>0.956</gain>
             </pure_gain>
 
             <summer name="pitch trim error">
@@ -340,9 +354,9 @@
             <pid name="g load pid">
               <trigger>fcs/elevator-pid-trigger</trigger>
               <input>fcs/pitch-trim-error</input>
-              <kp> 0.10000 </kp>
-              <ki> 0.00010 </ki>
-              <kd> 0.0005 </kd>
+              <kp> 0.94737 </kp>
+              <ki> 0.00050 </ki>
+              <kd> 0.00065 </kd>
               <clipto>
                 <min>-1</min>
                 <max>1</max>
@@ -801,18 +815,18 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.1750  -0.0570
-                              -0.0870  -0.0240
-                               0.0000  0.0100
+                              -0.1750 -0.0545
+                              -0.0870 -0.0225
+                               0.0000  0.0096
                                0.0870  0.0590
-                               0.1750  0.1300
-                               0.2620  0.2290
-                               0.3490  0.2430
-                               0.4360  0.2120
-                               0.5240  0.1500
-                               0.6110  0.1100
-                               0.6980  0.1430
-                               0.7850  0.1250
+                               0.1750  0.1244
+                               0.2620  0.2182
+                               0.3490  0.2324
+                               0.4360  0.2029
+                               0.5240  0.1435
+                               0.6110  0.1046
+                               0.6980  0.1363
+                               0.7850  0.1196
                           </tableData>
                       </table>
                 </product>
@@ -1044,18 +1058,18 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.1750  0.3820
-                              -0.0870  0.3850
-                              0.0000  0.3860
-                              0.0870  0.2640
-                              0.1750  0.2840
-                              0.2620  0.3790
-                              0.3490  0.1340
-                              0.4360  0.0080
-                              0.5240  -0.1370
-                              0.6110  -0.1920
-                              0.6980  -0.1220
-                              0.7850  -0.1110
+                              -0.1750  0.3645
+                              -0.0870  0.3678 
+                              0.0000   0.3684
+                              0.0870   0.2522
+                              0.1750   0.2710
+                              0.2620   0.3615
+                              0.3490   0.1283
+                              0.4360   0.0075
+                              0.5240  -0.1311
+                              0.6110  -0.1836
+                              0.6980  -0.1161
+                              0.7850  -0.1064
                           </tableData>
                       </table>
                 </product>
@@ -1066,6 +1080,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>velocities/q-aero-rad_sec</property>
+                    <property>aero/function/kCLge</property>
                     <property>aero/ci2vel</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
@@ -1087,7 +1102,7 @@
                 </product>
             </function>
             <function name="aero/coefficient/CLq_Dsb">
-                <description>Lift_due_to_speedbrake_deflection</description>
+                <description>Lift_due_to_pitch_rate_and_speedbrake_deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -1354,6 +1369,32 @@
                               1.0000  -0.9626
                               1.1000  -0.8480
                               1.2000  -0.7907
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CmDsb">
+             <description>Change_in_Pitch_moment_due_to_speedbrake</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>fcs/speedbrake-pos-rad</property>
+                      <table>
+                          <independentVar>aero/alpha-rad</independentVar>
+                          <tableData>
+                              -0.1750   -0.0036
+                              -0.0870   -0.0036
+                               0.0000   -0.0036
+                               0.0870    0.0303
+                               0.1750    0.0225
+                               0.2620    0.0128
+                               0.3490    0.0252
+                               0.4360    0.0275
+                               0.5240   -0.0171
+                               0.6110   -0.0448
+                               0.6980   -0.0737
+                               0.7850   -0.0884
                           </tableData>
                       </table>
                 </product>
