@@ -28,12 +28,12 @@
  <minmp unit="INHG">          6.0 </minmp> <!-- Ignored -->
  <maxmp unit="INHG">         29.9 </maxmp> <!-- Ignored -->
  <displacement unit="IN3"> 452.39 </displacement>
- <bsfc>          0.45 </bsfc> 
+ <bsfc>          0.37 </bsfc> 
  <maxhp>        85.50 </maxhp> <!-- Ignored -->
  <cycles>         4.0 </cycles>
  <idlerpm>      300.0 </idlerpm>
  <maxrpm>      1350.0 </maxrpm>
- <maxthrottle>    0.85</maxthrottle>
+ <maxthrottle>    0.9 </maxthrottle>
  <minthrottle>    0.1 </minthrottle>
  <sparkfaildrop>  0.1 </sparkfaildrop>
 </piston_engine>

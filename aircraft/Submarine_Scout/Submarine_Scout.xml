@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.6 2008/08/12 23:23:14 andgi Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.7 2008/08/14 23:33:43 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -35,7 +35,7 @@
   <license licenseName="GPL"
            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
   <filecreationdate>2007-02-11</filecreationdate>
-  <version>$Id: Submarine_Scout.xml,v 1.6 2008/08/12 23:23:14 andgi Exp $</version>
+  <version>$Id: Submarine_Scout.xml,v 1.7 2008/08/14 23:33:43 andgi Exp $</version>
 
   <reference refID="Freeman:1932:Akron"
              author="Hugh B. Freeman"
@@ -286,7 +286,7 @@
    </location>
   </pointmass>
 
-  <!-- 
+  <!--
   === Engine =================================================
   -->
   <documentation>
@@ -308,7 +308,7 @@
    </location>
   </pointmass>
 
-  <!-- 
+  <!--
   === Other point masses =====================================
   -->
 
@@ -1131,25 +1131,45 @@
    </product>
   </function>
 
-  <!-- For computing the effective angle between envelope and relative wind.
-  -->
-  <function name="aero/envelope-axis-offset-mag-norm">
+  <!-- Relation between wind and body coordinate systems. -->
+  <function name="aero/tmp/wx">
+   <product>
+    <cos>
+     <property> aero/envelope-alpha-rad </property>
+    </cos>
+    <cos>
+     <property> aero/beta-rad </property>
+    </cos>
+   </product>
+  </function>
+  <function name="aero/tmp/wy">
+   <product>
+    <cos>
+     <property> aero/envelope-alpha-rad </property>
+    </cos>
+    <sin>
+     <property> aero/beta-rad </property>
+    </sin>
+   </product>   
+  </function>
+  <function name="aero/tmp/wz">
+   <sin>
+    <property> aero/envelope-alpha-rad </property>
+   </sin>
+  </function>
+  <function name="aero/tmp/h_wy_wz">
    <pow>
     <sum>
      <pow>
-      <sin>
-       <property> aero/envelope-alpha-rad </property>
-      </sin>
-      <value> 2.0 </value>
+      <property> aero/tmp/wy </property>
+      <value>2.0</value>
      </pow>
      <pow>
-      <sin>
-       <property> aero/beta-rad </property>
-      </sin>
-      <value> 2.0 </value>
+      <property> aero/tmp/wz </property>
+      <value>2.0</value>
      </pow>
     </sum>
-    <value> 0.5 </value>
+    <value>0.5</value>
    </pow>
   </function>
 
@@ -1157,9 +1177,9 @@
   <function name="aero/envelope-aoa-mag-rad">
    <max>
     <value>0.0</value>
-    <asin>
-     <property> aero/envelope-axis-offset-mag-norm </property>
-    </asin>
+    <acos>
+     <property> aero/tmp/wx </property>
+    </acos>
    </max>
   </function>
   <function name="aero/envelope-aoa-mag-deg">
@@ -1214,7 +1234,7 @@
 
    <function name="aero/force/D_env_aoa">
     <description>Drag_from_envelope_due_to_angle_of_attack</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1251,7 +1271,7 @@
 
    <function name="aero/force/D_hfin_alpha">
     <description>Drag_from_horizontal_fin_due_to_alpha</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1300,7 +1320,7 @@
 
    <function name="aero/force/D_de">
     <description>Drag_due_to_elevator_deflection</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1326,7 +1346,7 @@
 
    <function name="aero/force/D_vfin_beta">
     <description>Drag_from_vertical_fin_due_to_beta</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1378,7 +1398,7 @@
 
    <function name="aero/force/D_dr">
     <description>Drag_due_to_rudder_deflection</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1404,7 +1424,7 @@
 
    <function name="aero/force/D_car">
     <description>Drag_from_car_and_rigging</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1419,8 +1439,7 @@
           the envelope on a small non-rigid contributes approximately
           35% to the total air resistance.
           I think they mean 'at zero alpha and beta'.
-     -->  
-     <value> 0.9 </value> <!-- Tweak -->
+     -->
      <value> 1.6 </value>
      <value> 0.0059211 </value>
     </product>
@@ -1437,12 +1456,10 @@
      <value> -1.0 </value>  <!-- Note the sign! -->
      <property> aero/force/L_env_aoa </property>
      <quotient>
-      <sin>
-       <property> aero/beta-rad </property>
-      </sin>
+      <property> aero/tmp/wy </property>
       <max>
        <value> 0.00001 </value>
-       <property> aero/envelope-axis-offset-mag-norm </property>
+       <property> aero/tmp/h_wy_wz </property>
       </max>
      </quotient>
     </product>
@@ -1463,7 +1480,7 @@
      <!-- Start CY -->
      <value> -1.0 </value>  <!-- There is only one vertical fin as opposed to
                                  two horizontal ones, though twice as big.
-				 Tweaking needed. Note the sign!
+                                 Tweaking needed. Note the sign!
                             -->
      <table>
       <independentVar lookup="row">aero/beta-deg</independentVar>
@@ -1503,7 +1520,7 @@
 
    <function name="aero/force/Y_dr">
     <description>Side_force_due_to_rudder</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1537,12 +1554,10 @@
     <product>
      <property>aero/force/L_env_aoa</property>
      <quotient>
-      <sin>
-       <property> aero/envelope-alpha-rad </property>
-      </sin>
+      <property> aero/tmp/wz </property>
       <max>
        <value> 0.00001 </value>
-       <property> aero/envelope-axis-offset-mag-norm </property>
+       <property> aero/tmp/h_wy_wz </property>
       </max>
      </quotient>
     </product>
@@ -1550,11 +1565,11 @@
 
    <function name="aero/force/L_hfin_alpha">
     <description>Lift_from_horizontal_fin_due_to_alpha</description>
-    <!--	 
-	 Formulation based on NACA report 432 "Force measurements on a
+    <!--
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
-	    CL = L / (q * (vol)^(2/3))
+            CL = L / (q * (vol)^(2/3))
 
     -->
     <product>
@@ -1599,7 +1614,7 @@
 
    <function name="aero/force/L_dr">
     <description>Lift_due_to_elevator</description>
-    <!-- 
+    <!--
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
@@ -1659,8 +1674,8 @@
 
    <function name="aero/moment/m_env_alpha">
     <description>Pitch_moment_from_envelope_due_to_alpha</description>
-    <!--	 
-	 Formulation based on NACA report 432 "Force measurements on a
+    <!--
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
@@ -1709,7 +1724,7 @@
    <function name="aero/moment/m_fin_alpha">
     <description>Pitch_moment_from_horizontal_fin_due_to_alpha</description>
     <!--
-	 Formulation based on NACA report 432 "Force measurements on a
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
@@ -1758,7 +1773,7 @@
    <function name="aero/moment/m_de">
     <description>Pitch_moment_due_to_elevator</description>
     <!--
-	 Formulation based on NACA report 432 "Force measurements on a
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
@@ -1800,7 +1815,7 @@
    <function name="aero/moment/n_dr">
     <description>Yaw_moment_due_to_rudder</description>
     <!--
-	 Formulation based on NACA report 432 "Force measurements on a
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
@@ -1826,7 +1841,7 @@
    <function name="aero/moment/n_env_beta">
     <description>Yaw_moment_from_envelope_due_to_beta</description>
     <!--
-	 Formulation based on NACA report 432 "Force measurements on a
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cn = M / (q * vol)
@@ -1876,7 +1891,7 @@
    <function name="aero/moment/n_fin_beta">
     <description>Yaw_moment_from_vertical_fin_due_to_beta</description>
     <!--
-	 Formulation based on NACA report 432 "Force measurements on a
+         Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cn = M / (q * vol)
@@ -1889,7 +1904,7 @@
      <value> -1.0 </value> <!-- There is only one vertical fin as opposed to
                                 two horizontal ones, but it might be bigger.
                                 NOTE: sign.
-				Tweaking needed.
+                                Tweaking needed.
                            -->
      <table>
       <independentVar lookup="row">aero/beta-deg</independentVar>
