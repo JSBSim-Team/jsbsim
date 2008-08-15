@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="General Dynamics F-16A" version="2.0" release="BETA"
+<fdm_config name="General Dynamics F-16A" version="2.0" release="PRODUCTION"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.81 $ </version>
+        <filecreationdate> 2001-12-28 </filecreationdate>
+        <version> $Revision: 1.82 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -286,6 +286,14 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
+            <!--
+              - accelerations/n-pilot-z-norm has the disadvantage that is
+              - has an offset of 1G when positioned horizontal (and -1G
+              - when upside down). When you want the calculate the difference
+              - between commanded pitch-rate and actual pitch-rate this offset
+              - gets in the way. the following function calculates an offset
+              - to compensate for the earths gravity.
+              -->
             <fcs_function name="n pilot z correction">
              <function>
                 <product>
@@ -295,6 +303,16 @@
              </function>
             </fcs_function>
 
+            <summer name="g load corrected">
+              <input>accelerations/n-pilot-z-norm</input>
+              <input>-fcs/n-pilot-z-correction</input>
+            </summer>
+
+            <!--
+              - The F-16 has a G limit of 9G positive and 4G negative (44.44% 
+              - of 9G). This section limits the stick output to 100% up and 44%
+              - down.
+              -->
             <summer name="elevator cmd limiter">
               <input>fcs/elevator-cmd-norm</input>
               <input>fcs/pitch-trim-cmd-norm</input>
@@ -304,6 +322,13 @@
               </clipto>
             </summer>
 
+            <!--
+               - If alpha (the difference between the pitch vector and the
+               - thrust vector) approaches 60 degrees the Flight Computer will
+               - command full down elevator deflection to prevent a stall.
+               - This section reduces pilot command to zero when alpha
+               - exceeds 50 degrees.
+               -->
             <scheduled_gain name="elevator scheduler">
                 <input>fcs/elevator-cmd-limiter</input>
                 <table>
@@ -318,32 +343,40 @@
                 </table>
             </scheduled_gain>
 
-            <pure_gain name="pitch rate norm">
-                <input>velocities/q-aero-rad_sec</input>
-                <gain>6.2</gain>
-            </pure_gain>
-
-            <summer name="g load corrected">
-              <input>accelerations/n-pilot-z-norm</input>
-              <input>-fcs/n-pilot-z-correction</input>
-            </summer>
-
-            <pure_gain name="g load norm">
-              <input>fcs/g-load-corrected</input>
-              <gain>0.020</gain>
-            </pure_gain>
-
+            <!-- Command full pitch down when approaching 60 degrees alpha -->
             <pure_gain name="alpha limiter norm">
               <input>aero/alpha-rad</input>
               <gain>0.956</gain>
             </pure_gain>
 
+            <!-- Calculate the normalized current pitch-rate -->
+            <pure_gain name="pitch rate norm">
+                <input>velocities/q-aero-rad_sec</input>
+                <gain>6.2</gain>
+            </pure_gain>
+
+            <!-- Calculate the normalized current pilot g-load -->
+            <pure_gain name="g load norm">
+              <input>fcs/g-load-corrected</input>
+              <gain>0.020</gain>
+            </pure_gain>
+
+            <!--
+              - Calculated the difference between the commanded pitch-rate
+              - (elevator-scheduler) and the current pitch-rate and g-load.
+              - The difference has to be compensated for straight flight.
+              -->
             <summer name="pitch trim error">
               <input>fcs/elevator-scheduler</input>
               <input>fcs/pitch-rate-norm</input>
               <input>fcs/g-load-norm</input>
             </summer>
         
+            <!--
+              - Make sure the PID controller is only active when the aircraft
+              - has gained some speed. This will prevent bad behaviour when the
+              - aircraft has been parked for a while.
+              -->
             <switch name="elevator pid trigger">
                 <default value="1"/>
                 <test value="0">
@@ -364,9 +397,8 @@
             </pid>
 
             <!--
-              - Calculate the difference between the current pitch rate
-              - and the one requested for.
-              - Compensate for too high alpha values.
+              - Calculate the difference between the current pitch-rate and
+              - the one requested for. Compensate for too high alpha values.
               -->
             <summer name="pitch scheduler">
               <input>fcs/elevator-scheduler</input>
@@ -392,16 +424,26 @@
 
         <channel name="Roll">
 
+            <!-- Calculate the normailzed roll-rate -->
             <pure_gain name="roll rate norm">
                 <input>velocities/p-aero-rad_sec</input>
                 <gain>0.31831</gain>
             </pure_gain>
 
+            <!--
+               - Calculate the difference between actual roll-rate and
+               - commanded roll-rate.
+               -->
             <summer name="roll trim error">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>-fcs/roll-rate-norm</input>
             </summer>
 
+            <!--
+              - Make sure the PID controller is only active when the aircraft
+              - has gained some speed. This will prevent bad behaviour when the
+              - aircraft has been parked for a while.
+              -->
             <switch name="aileron pid trigger">
                 <default value="1"/>
                 <test value="0">
@@ -453,21 +495,33 @@
         </channel>
 
         <channel name="Yaw">
+            <!-- Calculate the normalized yaw-rate -->
             <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
                 <gain>100</gain>
             </pure_gain>
 
+            <!-- Calculate the normalized yaw-load -->
             <pure_gain name="yaw load norm">
                 <input>accelerations/n-pilot-y-norm</input>
                 <gain>0.25</gain>
             </pure_gain>
 
+            <!--
+              - Calculate the difference between the current yaw-rate
+              - and the one requiested for.
+              -->
             <summer name="yaw trim error">
+                <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-rate-norm</input>
                 <input>fcs/yaw-load-norm</input>
             </summer>
 
+            <!--
+              - Make sure the PID controller is only active when the aircraft
+              - has gained some speed. This will prevent bad behaviour when the
+              - aircraft has been parked for a while.
+              -->
             <switch name="rudder pid trigger">
                 <default value="1"/>
                 <test value="0">
@@ -488,10 +542,6 @@
               <output>fcs/rudder-pos-norm</output>
             </pid>
 
-            <!--
-              - calculate the difference between the current yaw rate
-              - and the one requiested for
-              -->
             <summer name="yaw scheduler">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
@@ -615,6 +665,12 @@
         </channel>
 
         <channel name="Speedbrake">
+            <!--
+              - To prevent deep stall the Flight Computer commands speedbrake
+              - deflection at high angle of attack (alpha) and low speeds. This
+              - will provide just enough pitch down moment to keep the aircraft
+              - under controll.
+              -->
             <switch name="speedbrake alpha limiter">
                 <default value="0"/>
                 <test logic="AND" value="1">
@@ -631,6 +687,11 @@
                 </test>
             </switch>
 
+            <!--
+              - Speedbrake deflection is limited to 43 degrees (instead of 60
+              - degrees) when the gear is extended to prevent physical
+              - speedbrake damage on touchdown.
+              -->
             <scheduled_gain name="speedbrake scheduler">
                 <input>fcs/speedbrake-initiate</input>
                 <table>
@@ -1065,6 +1126,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
+                    <property>aero/function/kCLge</property>
                     <property>fcs/speedbrake-pos-rad</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
