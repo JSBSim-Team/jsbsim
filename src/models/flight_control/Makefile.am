@@ -6,7 +6,7 @@ LIBRARY_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
                             FGPID.cpp FGActuator.cpp
 
 LIBRARY_INCLUDES = FGDeadBand.h FGFCSComponent.h FGFilter.h \
-                 FGGradient.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
+                 FGGain.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h
 
 if BUILD_LIBRARIES
