@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.14 2008/04/18 13:33:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.15 2008/08/25 15:51:33 andgi Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     zero_centered = element->FindElement("zero_centered");
     //ToDo if zero centered, then mins must be <0 and max's must be >0
     if (zero_centered) {
-      sZeroCentered = zero_centered->FindElementValue("zero_centered");
+      sZeroCentered = element->FindElementValue("zero_centered");
       if (sZeroCentered == string("0") || sZeroCentered == string("false")) {
         ZeroCentered = false;
       }
