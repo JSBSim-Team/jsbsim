@@ -18,9 +18,8 @@
   <minmp unit="INHG">          6.0 </minmp>	<!-- Deprecated -->
   <maxmp unit="INHG">         30.0 </maxmp>	<!-- Deprecated -->
   <displacement unit="IN3"> 1649.0 </displacement>
-  <maxhp>       1650.0 </maxhp>			<!-- Deprecated -->
+  <maxhp>       1650.0 </maxhp>
   <cycles>         4.0 </cycles>
-  <bsfc>           0.45 </bsfc>
   <idlerpm>      700.0 </idlerpm>
   <maxrpm>      3000.0 </maxrpm>
   <maxthrottle>    1.0 </maxthrottle>
