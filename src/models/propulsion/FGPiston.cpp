@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.18 2008/08/11 23:51:32 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.19 2008/08/26 00:59:25 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,9 +235,9 @@ Manifold_Pressure_Lookup = new
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
   char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/power_hp", EngineNumber);
+  snprintf(property_name, 80, "/engines/engine[%d]/power_hp", engine_number);
   PropertyManager->Tie(property_name, &HP);
-  snprintf(property_name, 80, "propulsion/engine[%d]/bsfc", EngineNumber);
+  snprintf(property_name, 80, "/engines/engine[%d]/bsfc", engine_number);
   PropertyManager->Tie(property_name, &BSFC);
 
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
@@ -299,6 +299,10 @@ Manifold_Pressure_Lookup = new
 FGPiston::~FGPiston()
 {
   char property_name[80];
+  snprintf(property_name, 80, "/engines/engine[%d]/power_hp", EngineNumber);
+  PropertyManager->Untie(property_name);
+  snprintf(property_name, 80, "/engines/engine[%d]/bsfc", EngineNumber);
+  PropertyManager->Untie(property_name);
 
   delete Lookup_Combustion_Efficiency;
   delete Power_Mixture_Correlation;
@@ -509,8 +513,7 @@ void FGPiston::doBoostControl(void)
 
 void FGPiston::doMAP(void)
 {
-    suction_loss = RPM > 0.0 ? ThrottlePos * MaxRPM / RPM : 1.0;
-    if (suction_loss > 1.0) suction_loss = 1.0;
+    suction_loss = pow( ThrottlePos*0.98, RPM/MaxRPM );
     MAP = p_amb * suction_loss;
 
     if(Boosted) {
@@ -537,7 +540,7 @@ void FGPiston::doMAP(void)
         }
       }
       // Boost the manifold pressure.
-      MAP += MAP * BoostMul[BoostSpeed] * suction_loss * RPM/RatedRPM[BoostSpeed];
+      MAP += MAP * BoostMul[BoostSpeed] * RPM/MaxRPM;
       // Now clip the manifold pressure to BCV or Wastegate setting.
       if(bTakeoffPos) {
         if(MAP > TakeoffMAP[BoostSpeed]) {
@@ -574,7 +577,7 @@ void FGPiston::doAirFlow(void)
 rho_air = p_amb / (R_air * T_amb);
   double displacement_SI = Displacement * in3tom3;
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
-  double v_dot_air = swept_volume * volumetric_efficiency * suction_loss;
+  double v_dot_air = swept_volume * volumetric_efficiency;
 
   double rho_air_manifold = MAP / (R_air * T_amb);
   m_dot_air = v_dot_air * rho_air_manifold;
@@ -624,18 +627,14 @@ void FGPiston::doEnginePower(void)
     double T_amb_sea_lev_degF = KelvinToFahrenheit(288);
 
     // FIXME: this needs to be generalized
-    double ME, friction, percent_RPM;  // Convienience term for use in the calculations
+    double ME, Adjusted_BSFC;  // Convienience term for use in the calculations
     ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
-
-    percent_RPM = RPM/MaxRPM;
-    friction = 1 - (percent_RPM * percent_RPM * percent_RPM * percent_RPM/10);
-    if (friction < 0 ) friction = 0;
-    Percentage_Power = friction;
+    Adjusted_BSFC = (1/ThrottlePos) * BSFC;
+    Percentage_Power = 1.000;
 
     if ( Magnetos != 3 ) Percentage_Power *= SparkFailDrop;
 
-
-    HP = (FuelFlow_gph * 6.0 / BSFC )* ME * suction_loss * Percentage_Power;
+    HP = (FuelFlow_gph * 6.0 / Adjusted_BSFC )* ME * suction_loss * Percentage_Power;
 
   } else {
 
