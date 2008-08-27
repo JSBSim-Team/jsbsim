@@ -39,10 +39,14 @@
   <property>ap/airspeed_hold</property>
   <property>ap/throttle-cmd-norm</property>
 
+  <property value="50.0"> ap/roll-pid-kp </property>
+  <property value="5.0"> ap/roll-pid-ki </property>
+  <property value="17.0"> ap/roll-pid-kd </property>
+
 <!--  <property>attitude/sensor/phi-rad</property> -->
 
 <!-- SENSOR -->
-
+<!--
   <sensor name="attitude/sensor/phi-rad">
     <input> attitude/phi-rad </input>
     <lag> 0.5 </lag>
@@ -54,7 +58,7 @@
     </quantization>
     <bias> 0.001 </bias>
   </sensor>
-
+-->
 <!--
 =====================================================
 ROLL CHANNEL
@@ -65,38 +69,24 @@ ROLL CHANNEL
 
 <channel name="AP roll wing leveler">
 
-  <pure_gain name="fcs/roll-ap-wing-leveler">
-    <input>fcs/attitude/sensor/phi-rad</input>
-    <gain>1.7</gain>
-    <clipto>
-      <min>-0.255</min>
-      <max>0.255</max>
-    </clipto>
-  </pure_gain>
+  <switch name="fcs/wing-leveler-ap-on-off">
+    <default value="-1"/>
+    <test value="0">
+      ap/attitude_hold == 1
+    </test>
+  </switch>
 
-  <integrator name="fcs/roll-ap-error-integrator">
-    <input> attitude/phi-rad </input>
-    <c1> 1.0 </c1>
-  </integrator>
-
-  <pure_gain name="fcs/roll-rate-gain">
-    <input>velocities/p-rad_sec</input>
-    <gain> 20.0 </gain>
-  </pure_gain>
-
-  <summer name="fcs/roll-ap-error-summer">
-     <input> fcs/roll-rate-gain </input>
-     <input> fcs/roll-ap-wing-leveler </input>
-     <input> fcs/roll-ap-error-integrator </input>
-     <clipto>
-       <min>-1.0</min>
-       <max> 1.0</max>
-     </clipto>
-  </summer>
+  <pid name="fcs/roll-ap-error-pid">
+    <input>attitude/phi-rad</input>
+    <kp> ap/roll-pid-kp </kp>
+    <ki> ap/roll-pid-ki </ki>
+    <kd> ap/roll-pid-kd </kd>
+    <trigger> fcs/wing-leveler-ap-on-off </trigger>
+  </pid>
 
   <switch name="fcs/roll-ap-autoswitch">
     <default value="0.0"/>
-    <test value="fcs/roll-ap-error-summer">
+    <test value="-fcs/roll-ap-error-pid">
       ap/attitude_hold == 1
     </test>
   </switch>

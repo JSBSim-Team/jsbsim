@@ -110,10 +110,10 @@
     <event name="Set third waypoint">
       <description>
         When the distance to the second waypoint (Hobby Airport) is less than
-        300 feet, then set the third waypoint.
+        500 feet, then set the third waypoint.
       </description>
       <condition>
-        fcs/wp-distance lt 300
+        fcs/wp-distance lt 500
         ap/active-waypoint eq 2
       </condition>
       <set name="ap/wp_latitude_rad" value="0.507481"/>

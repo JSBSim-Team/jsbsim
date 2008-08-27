@@ -6,10 +6,21 @@
     <fileheader>
         <author>Tony Peden</author>
         <license
-            licenseName="GPL"
-            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+          licenseName="GPL (General Public License)"
+          licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <note>
+          This model was created using publicly available data, publicly available
+          technical reports, textbooks, and guesses. It contains no proprietary or
+          restricted data. It has been validated only to the extent that it seems
+          to "fly right", and possibly to comply to published, publicly known,
+          performance data (maximum speed, endurance, etc.). Thus, this model
+          is meant for educational and entertainment purposes only.
+
+          This simulation model is not endorsed by the manufacturer. This model
+          is not to be sold.
+        </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.76 $</version>
+        <version>$Revision: 1.77 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
