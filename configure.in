@@ -46,6 +46,9 @@ case "${host}" in
         ARFLAGS="cru"
     fi
     ;;
+*-*-mingw32*)
+    LIBS="$LIBS -lwsock32"
+    ;;
 *)
     if test "$CXX" = "g++"; then
        CXXFLAGS="$CXXFLAGS -Wno-non-template-friend"
