@@ -88,8 +88,9 @@ function MakePiston() {
   print("  <minmp unit=\"INHG\">          6.0 </minmp><!-- Deprecated -->\n");
   print("  <maxmp unit=\"INHG\">         29.9 </maxmp><!-- Deprecated -->\n");
   printf("  <displacement unit=\"IN3\"> %3.2f </displacement>\n", $displacement);
-  print("  <bsfc>           0.45 </bsfc>\n");
-  printf("  <maxhp>        %3.2f </maxhp><!-- Deprecated -->\n", $ac_enginepower);
+  print("<!-- Defining <bsfc> over-rides the bsfc value calculated from <maxhp> -->\n");
+  print("  <!--<bsfc>           0.45 </bsfc>-->\n");
+  printf("  <maxhp>        %3.2f </maxhp>\n", $ac_enginepower);
   print("  <cycles>         4.0 </cycles>\n");
   print("  <idlerpm>      700.0 </idlerpm>\n");
   print("  <maxrpm>      2800.0 </maxrpm>\n");

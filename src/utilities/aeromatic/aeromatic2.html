@@ -4,35 +4,56 @@
 </HEAD>
 <body background="fgbackground2.jpg" leftMargin=50 topMargin=50 rightMargin=15>
 <P><FONT face=Arial size=4><STRONG>Aeromatic</STRONG></FONT></P>
-<b>version 0.9</b> <!-- 03 July 2003, David P. Culp, davidculp2@comcast.net --><!-- update: 26 July 2003, DPC, new aero.php with flap changes --><!-- update:  5 Sept 2003, DPC, added multi-engine prop transport --><!-- update: 29 Sept 2003, DPC, added high-alpha/beta drag --><!-- update: 16  Oct 2003, DPC, better FCS, version 0.7 --><!-- update: 13 Dec 2004, DPC, new configuration file format 2.0 -->
+<b>version 0.9</b>
+
+<!-- 03 July 2003, David P. Culp, davidculp2@comcast.net          -->
+<!-- update: 26 July 2003, DPC, new aero.php with flap changes    -->
+<!-- update:  5 Sept 2003, DPC, added multi-engine prop transport -->
+<!-- update: 29 Sept 2003, DPC, added high-alpha/beta drag        -->
+<!-- update: 16  Oct 2003, DPC, better FCS, version 0.7           -->
+<!-- update: 13 Dec 2004, DPC, new configuration file format 2.0  -->
+
 <br><hr>
 
 This form can be used to create aircraft configuration files for
 use with the <A href="http://jsbsim.sourceforge.net" target="top">JSBSim</A> Flight
 Dynamics Model, the default FDM for the
-<A href="http://www.flightgear.org">FlightGear</A> flight simulator.  The configuration file format is version 2.0,
-and is incompatable with older formats because of an extensive overhaul of JSBSim's XML code that occured in December
+<A href="http://www.flightgear.org">FlightGear</A> and <a href="www.openeaagles.org">
+OpenEaagles</a> (etc.) flight simulators.  The configuration file format 
+produced using this utility is version 2.0, and is incompatable with older formats 
+because of an extensive overhaul of JSBSim's XML code that occured in December
 of 2004.
 <br><br>
-You will need at least two files for a complete configuration, an <i>aero</i> 
-file containing information on the aircraft's aerodynamic properties, an 
-<i>engine</i> file describing the engine(s), and in the case of a 
-propeller-driven aircraft you will need a <i>prop</i> file.  Aeromatic 
-will generate plausible configuration files for your aircraft using some 
-simplifying assumptions.  Note that Aeromatic allows only one type of engine 
-to be defined per aircraft.  If you want to mix engine types you'll have to
-make the necessary changes by hand.  Also note that all turbine, turboprop and
+You will need at least two files for a complete configuration, an <i>aircraft</i> 
+file containing information on the aircraft's mass properties, propulsion, flight 
+control, aerodynamic properties, etc., an <i>engine</i> file describing the 
+engine(s), and in the case of a propeller-driven aircraft you will need a 
+<i>prop</i> file.  Aeromatic will generate plausible configuration files for your 
+aircraft using some simplifying assumptions.  Note that Aeromatic allows only one 
+type of engine to be defined per aircraft.  If you want to mix engine types you'll 
+have to make the necessary changes by hand.  Also note that all turbine, turboprop and
 rocket engines use the default "direct" thruster. 
+<br><br>
+<b>
+Note: After a configuration file has been generated and is displayed in your browser,
+you should select (via the menu) "View Source". This is needed because when viewing
+aircraft configuration files (for instance), some formatting is performed for web browser 
+viewing, but if the file is saved in that format it will not work. The source for the
+page needs to be viewed, and the file saved with a '.xml' extension.
+</b>
 <br><br>
 For more detailed instructions see the <B><A href="readme-aeromatic.html">How-to</A></B>
 
-<br><br><hr><br><!-- *************************************************************************** --><!-- *  Engine Form                                                            * --><!-- *************************************************************************** -->
+<br><br><hr><br>
+<!-- *************************************************************************** -->
+<!-- *  Engine Form                                                            * -->
+<!-- *************************************************************************** -->
 <form action="engine2.php" method="post">
 <font color=red size=5>Step 1: The Engine configuration ...</font>
 
 This step is not necessary if you are using an already existing engine 
 configuration file.  In any case you will have to edit the propulsion 
-section of the aero configuration file to ensure that the engine name 
+section of the aircraft configuration file to ensure that the engine name 
 is the same as the name of the engine configuration file. 
 <br><br><br>
 <b>Engine Name</b><br>&nbsp;
@@ -69,7 +90,10 @@ You are now ready to have Aeromatic generate your file.  Aeromatic will create a
  this file with a filename of the form <i>engine_name.xml</i>.<br><br>    
 <center><input type="submit" name="generate" value="Generate"></center>
 <br><br><br><hr><br>
-</form><!-- *************************************************************************** --><!-- *  Propeller Form                                                         * --><!-- *************************************************************************** -->
+</form>
+<!-- *************************************************************************** -->
+<!-- *  Propeller Form                                                         * -->
+<!-- *************************************************************************** -->
 <form action="prop2.php" method="post">
 <font color=red size=5>Step 2: The Prop configuration (if applicable)...</font>
 <br><br>
@@ -96,9 +120,12 @@ You are now ready to have Aeromatic generate your file.  Aeromatic will create a
  this file with a filename of the form <i>prop_name.xml</i>.<br><br>    
 <center><input type="submit" name="generate" value="Generate"></center>
 <br><br><br><hr><br>
-</form><!-- *************************************************************************** --><!-- *  Aero Form                                                              * --><!-- *************************************************************************** -->
+</form>
+<!-- *************************************************************************** -->
+<!-- *  Aero Form                                                              * -->
+<!-- *************************************************************************** -->
 <form action="aero2.php" method="post">
-<font color=red size=5>Step 3: The Aero configuration ...</font>
+<font color=red size=5>Step 3: The Aircraft configuration ...</font>
 <br><br>
 <b>Chose a system of measurement</b><br>&nbsp;
 <input type="radio" name="ac_units" value="0" checked>English (feet, pounds)
