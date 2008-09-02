@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.32 2008/08/02 13:48:38 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.33 2008/09/02 18:10:50 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -279,6 +279,8 @@ FGJSBsim::FGJSBsim( double dt )
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-x-in", 196),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-y-in", 0),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-z-in", -16));
+
+    crashed = false;
 }
 
 /******************************************************************************/
@@ -398,6 +400,12 @@ void FGJSBsim::init()
 
 void FGJSBsim::update( double dt )
 {
+    if(crashed) {
+      if(!fgGetBool("/sim/crashed"))
+        fgSetBool("/sim/crashed", true);
+      return;
+    }
+
     if (is_suspended())
       return;
 
@@ -480,6 +488,8 @@ void FGJSBsim::update( double dt )
       msg = fdmex->ProcessMessage();
       switch (msg->type) {
       case FGJSBBase::Message::eText:
+        if (msg->text == "Crash Detected: Simulation FREEZE.")
+          crashed = true;
         SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text );
         break;
       case FGJSBBase::Message::eBool:
@@ -863,11 +873,10 @@ bool FGJSBsim::copy_from_JSBsim()
     speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
     spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
 
-    // force a sim reset if crashed (altitude AGL < 0)
+    // force a sim crashed if crashed (altitude AGL < 0)
     if (get_Altitude_AGL() < -100.0) {
-         fgSetBool("/sim/crashed", true);
-         SGPropertyNode* node = fgGetNode("/sim/presets", true);
-         globals->get_commands()->execute("old-reinit-dialog", node);
+         State->SuspendIntegration();
+         crashed = true;
     }
 
     return true;
