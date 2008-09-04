@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.33 2008/09/02 18:10:50 andgi Exp $
+// $Id: JSBSim.cxx,v 1.34 2008/09/04 19:30:14 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1082,6 +1082,7 @@ void FGJSBsim::init_gear(void )
       node->setDoubleValue("position-norm", gear->GetGearUnitPos());
       node->setDoubleValue("tire-pressure-norm", gear->GetTirePressure());
       node->setDoubleValue("compression-norm", gear->GetCompLen());
+      node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
         node->setDoubleValue("steering-norm", gear->GetSteerNorm());
     }
@@ -1098,6 +1099,7 @@ void FGJSBsim::update_gear(void)
       node->getChild("position-norm", 0, true)->setDoubleValue(gear->GetGearUnitPos());
       gear->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
       node->setDoubleValue("compression-norm", gear->GetCompLen());
+      node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
         node->setDoubleValue("steering-norm", gear->GetSteerNorm());
     }
