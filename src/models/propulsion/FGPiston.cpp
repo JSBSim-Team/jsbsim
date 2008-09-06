@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.20 2008/08/26 04:44:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.21 2008/09/06 13:34:21 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,8 +304,6 @@ Manifold_Pressure_Lookup = new
 
 FGPiston::~FGPiston()
 {
-  char property_name[80];
-
   delete Lookup_Combustion_Efficiency;
   delete Power_Mixture_Correlation;
   delete Mixture_Efficiency_Correlation;
