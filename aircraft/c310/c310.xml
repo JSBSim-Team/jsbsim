@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.59 $ </version>
+        <version> $Revision: 1.60 $ </version>
         <description>
             Models a C310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -338,7 +338,15 @@
         </tank>
     </propulsion>
 
-    <autopilot file="c310ap"/>
+  <autopilot file="c310ap">
+
+    <!-- Roll channel A/P gains -->
+    
+    <property value="50.0"> ap/roll-pid-kp </property>
+    <property value="5.0"> ap/roll-pid-ki </property>
+    <property value="17.0"> ap/roll-pid-kd </property>
+
+  </autopilot>
 
     <flight_control name="Cessna 310">
 
