@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.82 $ </version>
+        <version> $Revision: 1.83 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -282,17 +282,102 @@
     <flight_control name="F-16 FC">
 
       <!-- Declare some interface properties -->
-
         <property>fcs/alpha-norm</property>
+
+        <channel name="Roll">
+
+            <!-- Calculate the normalized roll-rate -->
+            <pure_gain name="roll rate norm">
+                <input>velocities/p-aero-rad_sec</input>
+                <gain>0.31821</gain>
+            </pure_gain>
+
+            <!--
+              - Calculate the difference between actual roll-rate and
+              - commanded roll-rate.
+              -->
+            <summer name="roll trim error">
+                <input>fcs/aileron-cmd-norm</input>
+                <input>-fcs/roll-rate-norm</input>
+            </summer>
+
+            <!--
+              - Make sure the PID controller is only active when the aircraft
+              - has gained some speed. This will prevent bad behaviour when the
+              - aircraft has been parked for a while.
+              -->
+            <switch name="aileron pid trigger">
+                <default value="1"/>
+                <test value="0">
+                    velocities/vc-kts lt 20.0
+                </test>
+            </switch>
+
+            <pid name="roll rate pid">
+              <trigger>fcs/aileron-pid-trigger</trigger>
+              <input>fcs/roll-trim-error</input>
+              <kp> 3.00000 </kp>
+              <ki> 0.00050 </ki>
+              <kd> -0.00125 </kd>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </pid>
+
+            <summer name="roll rate command">
+                <input>fcs/roll-rate-pid</input>
+                <input>fcs/aileron-cmd-norm</input>
+                <input>fcs/roll-trim-cmd-norm</input>
+                <clipto>
+                    <min>-1</min>
+                    <max>1</max>
+                </clipto>
+            </summer>
+
+            <kinematic name="aileron position">
+                <input>fcs/roll-rate-command</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.3</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.3</time>
+                    </setting>
+                </traverse>
+                <output>fcs/left-aileron-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="Left Aileron Control">
+                <input>fcs/left-aileron-pos-norm</input>
+                <range>
+                    <min>-0.375</min>
+                    <max>0.375</max>
+                </range>
+                <output>fcs/left-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right Aileron Control">
+                <input>-fcs/left-aileron-pos-norm</input>
+                <range>
+                    <min>-0.375</min>
+                    <max>0.375</max>
+                </range>
+                <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+        </channel>
 
         <channel name="Pitch">
             <!--
-              - accelerations/n-pilot-z-norm has the disadvantage that is
+              - accelerations/n-pilot-z-norm has the disadvantage that it
               - has an offset of 1G when positioned horizontal (and -1G
-              - when upside down). When you want the calculate the difference
-              - between commanded pitch-rate and actual pitch-rate this offset
-              - gets in the way. the following function calculates an offset
-              - to compensate for the earths gravity.
+              - when upside down). To calculate the difference between the
+              - commanded pitch-rate and actual pitch-rate this offset has
+              - to be eliminated. The following function calculates an offset
+              - to compensate for the earth's gravity.
               -->
             <fcs_function name="n pilot z correction">
              <function>
@@ -324,29 +409,31 @@
 
             <!--
                - If alpha (the difference between the pitch vector and the
-               - thrust vector) approaches 60 degrees the Flight Computer will
-               - command full down elevator deflection to prevent a stall.
+               - thrust vector) approaches 30 degrees the Flight Computer will
+               - command full down elevator deflection to prevent stalling.
                - This section reduces pilot command to zero when alpha
-               - exceeds 50 degrees.
+               - exceeds 28 degrees and approaches 30 degrees.
+               - (note: JSBSim doesn't extrapolate, so no need to specify
+               - beyond 30 degrees)
                -->
             <scheduled_gain name="elevator scheduler">
                 <input>fcs/elevator-cmd-limiter</input>
                 <table>
                     <independentVar>aero/alpha-rad</independentVar>
                     <tableData>
-                    -1.0472     0
-                    -0.8754     1
-                     0.0        1
-                     0.8754     1
-                     1.0472     0
+                    -0.5236     0.0
+                    -0.5	0.11
+                     0.0        1.0
+                     0.5	0.11
+                     0.5236     0.0
                     </tableData>
                 </table>
             </scheduled_gain>
 
-            <!-- Command full pitch down when approaching 60 degrees alpha -->
+            <!-- Command full pitch down when approaching 30 degrees alpha -->
             <pure_gain name="alpha limiter norm">
               <input>aero/alpha-rad</input>
-              <gain>0.956</gain>
+              <gain>1.0472</gain>
             </pure_gain>
 
             <!-- Calculate the normalized current pitch-rate -->
@@ -389,7 +476,7 @@
               <input>fcs/pitch-trim-error</input>
               <kp> 0.94737 </kp>
               <ki> 0.00050 </ki>
-              <kd> 0.00065 </kd>
+              <kd> 0.000 </kd>
               <clipto>
                 <min>-1</min>
                 <max>1</max>
@@ -408,11 +495,25 @@
                 <min>-1</min>
                 <max>1</max>
               </clipto>
-              <output>fcs/elevator-pos-norm</output>
             </summer>
 
-            <aerosurface_scale name="Elevator Control">
-              <input>fcs/pitch-scheduler</input>
+            <kinematic name="elevator position">
+                <input>fcs/pitch-scheduler</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.3</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.3</time>
+                    </setting>
+                </traverse>
+                <output>fcs/elevator-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="elevator position">
+              <input>fcs/elevator-pos-norm</input>
               <range>
                 <min>-0.436</min>
                 <max>0.436</max>
@@ -420,77 +521,23 @@
               <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
 
-        </channel>
-
-        <channel name="Roll">
-
-            <!-- Calculate the normailzed roll-rate -->
-            <pure_gain name="roll rate norm">
-                <input>velocities/p-aero-rad_sec</input>
-                <gain>0.31831</gain>
-            </pure_gain>
-
-            <!--
-               - Calculate the difference between actual roll-rate and
-               - commanded roll-rate.
-               -->
-            <summer name="roll trim error">
-                <input>fcs/aileron-cmd-norm</input>
-                <input>-fcs/roll-rate-norm</input>
-            </summer>
-
-            <!--
-              - Make sure the PID controller is only active when the aircraft
-              - has gained some speed. This will prevent bad behaviour when the
-              - aircraft has been parked for a while.
-              -->
-            <switch name="aileron pid trigger">
-                <default value="1"/>
-                <test value="0">
-                    velocities/vc-kts lt 20.0
-                </test>
-            </switch>
-
-            <pid name="roll rate pid">
-              <trigger>fcs/aileron-pid-trigger</trigger>
-              <input>fcs/roll-trim-error</input>
-              <kp> 3.00000 </kp>
-              <ki> 0.00050 </ki>
-              <kd> -0.00125 </kd>
+            <summer name="dht left pos rad">
+              <input>-fcs/elevator-pos-rad</input>
+              <input>-fcs/left-aileron-pos-rad</input>
               <clipto>
-                <min>-1</min>
-                <max>1</max>
+                <min>-0.436</min>
+                <max>0.436</max>
               </clipto>
-            </pid>
+             </summer>
 
-            <summer name="roll rate command">
-                <input>fcs/roll-rate-pid</input>
-                <input>fcs/aileron-cmd-norm</input>
-                <input>fcs/roll-trim-cmd-norm</input>
-                <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-                <output>fcs/left-aileron-pos-norm</output>
-            </summer>
-
-            <aerosurface_scale name="Left Aileron Control">
-                <input>fcs/roll-rate-command</input>
-                <range>
-                    <min>-0.375</min>
-                    <max>0.375</max>
-                </range>
-                <output>fcs/left-aileron-pos-rad</output>
-            </aerosurface_scale>
-
-            <aerosurface_scale name="Right Aileron Control">
-                <input>-fcs/roll-rate-command</input>
-                <range>
-                    <min>-0.375</min>
-                    <max>0.375</max>
-                </range>
-                <output>fcs/right-aileron-pos-rad</output>
-            </aerosurface_scale>
+             <summer name="dht right pos rad">
+              <input>fcs/elevator-pos-rad</input>
+              <input>fcs/right-aileron-pos-rad</input>
+              <clipto>
+                <min>-0.436</min>
+                <max>0.436</max>
+              </clipto>
+             </summer>
 
         </channel>
 
@@ -550,11 +597,25 @@
                 <min>-1</min>
                 <max>1</max>
               </clipto>
-              <output>fcs/rudder-pos-norm</output>
             </summer>
 
-            <aerosurface_scale name="Rudder Control">
+            <kinematic name="rudder position">
                 <input>fcs/yaw-scheduler</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.4</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.4</time>
+                    </setting>
+                </traverse>
+                <output>fcs/rudder-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="Rudder Control">
+                <input>fcs/rudder-pos-norm</input>
                 <range>
                     <min>-0.524</min>
                     <max>0.524</max>
@@ -566,46 +627,53 @@
 
         <channel name="Leading Edge Flap">
 
-            <pure_gain name="Alpha Norm Gain">
-                <input>aero/alpha-rad</input>
-                <gain>1.90986</gain>
-                <output>fcs/alpha-norm</output>
+            <switch name="lef pos rad">
+                <default value="0.0"/>
+                <test logic="AND" value="-0.0349">
+                    fcs/gear-wow eq 1
+                    gear/gear-pos-norm gt 0
+                </test>
+                <test logic="AND" value="0.436">
+                    gear/gear-pos-norm eq 0
+                    aero/alpha-rad gt 0.2618
+                </test>
+                <test logic="AND" value="0.262">
+                    fcs/gear-wow eq 0
+                    aero/alpha-rad gt 0.0873
+                </test>
+                <test logic="AND" value="-0.0349">
+                    velocities/mach gt 0.9
+                </test>
+            </switch>
+
+            <pure_gain name="lef pos norm">
+              <input>fcs/lef-pos-rad</input>
+              <gain>2.293578</gain>
             </pure_gain>
 
-            <kinematic name="LEF Pos Deg">
-                <input>fcs/alpha-norm</input>
+            <kinematic name="lef control">
+                <input>fcs/lef-pos-norm</input>
                 <traverse>
                     <setting>
-                        <position>-2</position>
-                        <time>0.5</time>
+                        <position>-1.0</position>
+                        <time>3.0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
-                        <time>1</time>
-                    </setting>
-                    <setting>
-                        <position>25</position>
-                        <time>2</time>
+                        <position>1.0</position>
+                        <time>3.0</time>
                     </setting>
                 </traverse>
             </kinematic>
 
-            <!-- ===============================================================
-                 Component for Leading edge flap position, NORMALIZED
-                 Input: fcs/lef-pos-deg (above)
-                 Output: Component (output) value is normalized leading edge
-                         flap position, mapping the LEF domain of
-                         -2 to +25 degrees into a range of 0 to 1.
-            -->
-            <aerosurface_scale name="LEF Pos Norm">
-              <input>fcs/lef-pos-deg</input>
+            <aerosurface_scale name="lef pos deg">
+              <input>fcs/lef-control</input>
               <domain>
-                <min>-2</min>  <!-- LEF actual minimum position -->
-                <max>25</max>  <!-- LEF actual maximum position -->
+                <min>-1.0</min>
+                <max>1.0</max>
               </domain>
               <range>
-                <min>0</min>  <!-- LEF normalized minimum position -->
-                <max>1</max>  <!-- LEF normalized maximum position -->
+                <min>-25</min>
+                <max>25</max>
               </range>
             </aerosurface_scale>
 
@@ -623,43 +691,49 @@
 
         <channel name="Flaps">
 
-            <switch name="Flap Command">
-                <default value="0"/>
-                <test logic="OR" value="1">
+            <switch name="tef pos rad">
+                <default value="0.0"/>
+                <test logic="AND" value="0.349">
                     velocities/vc-kts lt 250
+                </test>
+                <test logic="AND" value="-0.0349">
+                    velocities/mach gt 0.9
                 </test>
             </switch>
 
-            <kinematic name="Flaps Control">
-                <input>fcs/flap-command</input>
+            <pure_gain name="tef pos norm">
+              <input>fcs/tef-pos-rad</input>
+              <gain>2.864789</gain>
+            </pure_gain>
+
+            <kinematic name="tef control">
+                <input>fcs/tef-pos-norm</input>
                 <traverse>
                     <setting>
-                        <position>-2</position>
-                        <time>0.5</time>
+                        <position>-1.0</position>
+                        <time>3.0</time>
                     </setting>
                     <setting>
                         <position>0</position>
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>20</position>
-                        <time>3</time>
+                        <position>1.0</position>
+                        <time>3.0</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
             </kinematic>
 
-            <aerosurface_scale name="Flap Position Normalizer">
-              <input>fcs/flaps-control</input>
+            <aerosurface_scale name="tef pos deg">
+              <input>fcs/tef-control</input>
               <domain>
-                <min>-2</min>  <!-- Flaps actual minimum position -->
-                <max>20</max>  <!-- Flaps actual maximum position -->
+                <min>-1.0</min>
+                <max>1.0</max>
               </domain>
               <range>
-                <min>0</min>  <!-- Flaps normalized minimum position -->
-                <max>1</max>  <!-- Flaps normalized maximum position -->
+                <min>-20</min>
+                <max>20</max>
               </range>
-              <output>fcs/flap-pos-norm</output>
             </aerosurface_scale>
 
         </channel>
@@ -669,7 +743,7 @@
               - To prevent deep stall the Flight Computer commands speedbrake
               - deflection at high angle of attack (alpha) and low speeds. This
               - will provide just enough pitch down moment to keep the aircraft
-              - under controll.
+              - under control.
               -->
             <switch name="speedbrake alpha limiter">
                 <default value="0"/>
@@ -735,6 +809,14 @@
         </channel>
 
         <channel name="Landing Gear">
+
+            <switch name="gear-wow">
+                <default value="0"/>
+                <test logic="AND" value="1">
+                    gear/unit[1]/WOW eq 1
+                    gear/unit[2]/WOW eq 1
+                </test>
+            </switch>
 
             <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
@@ -841,7 +923,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/lef-pos-norm</property>
+                    <property>fcs/lef-pos-rad</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
@@ -866,7 +948,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flap-pos-norm</property>
+                    <property>fcs/tef-pos-norm</property>
                     <value>0.0800</value>
                 </product>
             </function>
@@ -937,7 +1019,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>velocities/q-aero-rad_sec</property>
                     <property>aero/ci2vel</property>
-                    <property>fcs/lef-pos-norm</property>
+                    <property>fcs/lef-pos-rad</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
@@ -1090,7 +1172,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/lef-pos-norm</property>
+                    <property>fcs/lef-pos-rad</property>
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
