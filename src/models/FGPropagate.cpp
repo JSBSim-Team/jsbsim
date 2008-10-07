@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.32 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.33 2008/10/07 10:56:57 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,6 +319,7 @@ bool FGPropagate::Run(void)
   last2_vLocationDot = last_vLocationDot;
   last_vLocationDot = vLocationDot;
 
+  Debug(2);
   return false;
 }
 
@@ -580,6 +581,20 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+    if (from == 2) { // State sanity checking
+      if (fabs(VState.vPQR.Magnitude()) > 1000.0) {
+        cerr << endl << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude() << endl;
+        exit(-1);
+      }
+      if (fabs(VState.vUVW.Magnitude()) > 1.0e10) {
+        cerr << endl << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude() << endl;
+        exit(-1);
+      }
+      if (fabs(GetDistanceAGL()) > 1e10) {
+        cerr << endl << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL() << endl;
+        exit(-1);
+      }
+    }
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

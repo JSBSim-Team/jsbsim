@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.5 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.6 2008/10/07 10:56:57 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ FGColumnVector3::FGColumnVector3(void)
 string FGColumnVector3::Dump(string delimeter) const
 {
   char buffer[256];
-  sprintf(buffer, "%f%s%f%s%f", Entry(1), delimeter.c_str(), Entry(2), delimeter.c_str(), Entry(3));
+  sprintf(buffer, "%10.3e%s%10.3e%s%10.3e", Entry(1), delimeter.c_str(), Entry(2), delimeter.c_str(), Entry(3));
   return string(buffer);
 }
 
