@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.83 $ </version>
+        <version> $Revision: 1.84 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -283,6 +283,9 @@
 
       <!-- Declare some interface properties -->
         <property>fcs/alpha-norm</property>
+        <property>fcs/hook-engage</property>
+        <property>fcs/canopy-engage</property>
+        <property>fcs/scan-marker-pos-norm</property>
 
         <channel name="Roll">
 
@@ -805,6 +808,73 @@
               </range>
               <output>fcs/speedbrake-pos-norm</output>
             </aerosurface_scale>
+
+        </channel>
+
+        <channel name="Hook">
+
+            <kinematic name="Hook Control">
+                <input>fcs/hook-engage</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>2.5</time>
+                    </setting>
+                </traverse>
+                <output>fcs/hook-pos-norm</output>
+            </kinematic>
+            
+        </channel>
+
+        <channel name="Canopy">
+
+            <kinematic name="Canopy Control">
+                <input>fcs/canopy-engage</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>10</time>
+                    </setting>
+                </traverse>
+                <output>fcs/canopy-pos-norm</output>
+            </kinematic>
+
+        </channel>
+
+        <channel name="Radar Scan Marker">
+
+            <switch name="scan-marker initiate">
+                <default value="fcs/scan-marker-initiate"/>
+                <test logic="AND" value="1">
+                    fcs/scan-marker-pos-norm eq 0 
+                </test>
+                <test logic="AND" value="0">
+                    fcs/scan-marker-pos-norm eq 1
+                </test>
+            </switch>
+
+            <kinematic name="MSM Control">
+                <input>fcs/scan-marker-initiate</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>2.5</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>2.5</time>
+                    </setting>
+                </traverse>
+                <output>fcs/scan-marker-pos-norm</output>
+            </kinematic>
 
         </channel>
 
