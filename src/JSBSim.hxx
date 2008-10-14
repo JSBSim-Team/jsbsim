@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.8 2008/09/02 18:10:50 andgi Exp $
+    @version $Id: JSBSim.hxx,v 1.9 2008/10/14 23:43:54 dpculp Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -252,6 +252,8 @@ private:
     SGPropertyNode_ptr spoilers_pos_pct;
 
     SGPropertyNode_ptr gear_pos_pct;
+    SGPropertyNode_ptr wing_fold_pos_pct;
+    SGPropertyNode_ptr tailhook_pos_pct;
 
     SGPropertyNode_ptr temperature;
     SGPropertyNode_ptr pressure;
