@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.21 2008/10/14 19:09:12 dpculp Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.22 2008/10/14 23:17:22 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.21 $
+    @version $Revision: 1.22 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -561,7 +561,7 @@ private:
   vector <bool> PropFeather;
   vector <double> SteerPosDeg;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
-  double GearCmd, GearPos;
+  double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
 
   typedef vector <FGFCSComponent*> FCSCompVec;

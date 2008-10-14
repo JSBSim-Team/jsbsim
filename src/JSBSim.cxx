@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.35 2008/10/14 19:09:12 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.36 2008/10/14 23:16:05 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -28,11 +28,7 @@
 #include <simgear/compiler.h>
 
 #include <stdio.h>    //    size_t
-#ifdef SG_MATH_EXCEPTION_CLASH
-#  include <math.h>
-#endif
-
-#include STL_STRING
+#include <string>
 
 #include <simgear/constants.h>
 #include <simgear/debug/logstream.hxx>
@@ -218,6 +214,8 @@ FGJSBsim::FGJSBsim( double dt )
         node->setDoubleValue("level-lb", Propulsion->GetTank(i)->GetContents());
         node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
       }
+      node->setDoubleValue("capacity-gal_us",
+                           Propulsion->GetTank(i)->GetCapacity() / 6.6);
     }
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
 
@@ -283,6 +281,8 @@ FGJSBsim::FGJSBsim( double dt )
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-x-in", 196),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-y-in", 0),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-z-in", -16));
+
+    crashed = false;
 }
 
 /******************************************************************************/
@@ -311,6 +311,7 @@ void FGJSBsim::init()
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
       Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
       Atmosphere->SetExDensity(density->getDoubleValue());
+      Atmosphere->SetTurbType(FGAtmosphere::ttCulp);
       Atmosphere->SetTurbGain(turbulence_gain->getDoubleValue());
       Atmosphere->SetTurbRate(turbulence_rate->getDoubleValue());
 
@@ -401,6 +402,12 @@ void FGJSBsim::init()
 
 void FGJSBsim::update( double dt )
 {
+    if(crashed) {
+      if(!fgGetBool("/sim/crashed"))
+        fgSetBool("/sim/crashed", true);
+      return;
+    }
+
     if (is_suspended())
       return;
 
@@ -483,6 +490,8 @@ void FGJSBsim::update( double dt )
       msg = fdmex->ProcessMessage();
       switch (msg->type) {
       case FGJSBBase::Message::eText:
+        if (msg->text == "Crash Detected: Simulation FREEZE.")
+          crashed = true;
         SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text );
         break;
       case FGJSBBase::Message::eBool:
@@ -868,11 +877,10 @@ bool FGJSBsim::copy_from_JSBsim()
     tailhook_pos_pct->setDoubleValue( FCS->GetTailhookPos() );
     wing_fold_pos_pct->setDoubleValue( FCS->GetWingFoldPos() );
 
-    // force a sim reset if crashed (altitude AGL < 0)
+    // force a sim crashed if crashed (altitude AGL < 0)
     if (get_Altitude_AGL() < -100.0) {
-         fgSetBool("/sim/crashed", true);
-         SGPropertyNode* node = fgGetNode("/sim/presets", true);
-         globals->get_commands()->execute("old-reinit-dialog", node);
+         State->SuspendIntegration();
+         crashed = true;
     }
 
     return true;
@@ -1078,6 +1086,7 @@ void FGJSBsim::init_gear(void )
       node->setDoubleValue("position-norm", gear->GetGearUnitPos());
       node->setDoubleValue("tire-pressure-norm", gear->GetTirePressure());
       node->setDoubleValue("compression-norm", gear->GetCompLen());
+      node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
         node->setDoubleValue("steering-norm", gear->GetSteerNorm());
     }
@@ -1094,6 +1103,7 @@ void FGJSBsim::update_gear(void)
       node->getChild("position-norm", 0, true)->setDoubleValue(gear->GetGearUnitPos());
       gear->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
       node->setDoubleValue("compression-norm", gear->GetCompLen());
+      node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
         node->setDoubleValue("steering-norm", gear->GetSteerNorm());
     }
