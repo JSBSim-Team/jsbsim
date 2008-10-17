@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.21 2008/09/06 13:34:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.22 2008/10/17 11:14:20 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -628,18 +628,18 @@ void FGPiston::doEnginePower(void)
     double T_amb_sea_lev_degF = KelvinToFahrenheit(288);
 
     // FIXME: this needs to be generalized
-    double ME, friction, percent_RPM;  // Convienience term for use in the calculations
+    double ME, friction, percent_RPM, power;  // Convienience term for use in the calculations
     ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
 
     percent_RPM = RPM/MaxRPM;
     friction = 1 - (percent_RPM * percent_RPM * percent_RPM * percent_RPM/10);
     if (friction < 0 ) friction = 0;
-    Percentage_Power = friction;
+    power = friction;
 
-    if ( Magnetos != 3 ) Percentage_Power *= SparkFailDrop;
+    if ( Magnetos != 3 ) power *= SparkFailDrop;
 
 
-    HP = (FuelFlow_gph * 6.0 / BSFC )* ME * suction_loss * Percentage_Power;
+    HP = (FuelFlow_gph * 6.0 / BSFC )* ME * suction_loss * power;
 
   } else {
 
@@ -661,6 +661,7 @@ void FGPiston::doEnginePower(void)
         HP = 0.0;
     }
   }
+  Percentage_Power = HP / MaxHP ;
 //  cout << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << endl;
 }
 
@@ -788,7 +789,7 @@ void FGPiston::doOilPressure(void)
     OilPressure_psi = Oil_Press_Relief_Valve;
   }
 
-  OilPressure_psi += (Design_Oil_Temp - OilTemp_degK) * Oil_Viscosity_Index;
+  OilPressure_psi += (Design_Oil_Temp - OilTemp_degK) * Oil_Viscosity_Index * OilPressure_psi / Oil_Press_Relief_Valve;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
