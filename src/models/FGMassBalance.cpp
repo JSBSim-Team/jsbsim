@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.14 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.15 2008/10/17 11:00:25 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,6 +129,11 @@ bool FGMassBalance::Load(Element* el)
     AddPointMass(element);
     element = el->FindNextElement("pointmass");
   }
+
+  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight()
+    + BuoyantForces->GetGasMass()*slugtolb;
+
+  Mass = lbtoslug*Weight;
 
   Debug(2);
   return true;
