@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.9;
+$version = 0.91;
 
 //****************************************************
 //                                                   *
@@ -18,6 +18,7 @@ $version = 0.9;
 // Updated: 17 Jun 2004, JSB - increased version number to 1.65
 // Updated: 14 Dec 2004, DPC - adapted to new XML format, v2.0
 // Updated: 29 Dec 2005, DPC - more v2.0 updates, added incidence
+// Updated: 21 Oct 2008, DPC - fixed drag due to elevator with <abs>
 
 header("Content-type: text/plain");
 
@@ -584,9 +585,9 @@ switch($ac_type) {
   case 0: $ac_K = 0.023; break;
   case 1: $ac_K = 0.040; break;
   case 2: $ac_K = 0.041; break;
-  case 3: $ac_K = 0.045; break;
-  case 4: $ac_K = 0.090; break;
-  case 5: $ac_K = 0.090; break;
+  case 3: $ac_K = 0.060; break;
+  case 4: $ac_K = 0.120; break;
+  case 5: $ac_K = 0.120; break;
   case 6: $ac_K = 0.043; break;
   case 7: $ac_K = 0.042; break;
   case 8: $ac_K = 0.042; break;
@@ -1555,7 +1556,7 @@ print("       <description>Drag_due_to_Elevator_Deflection</description>\n");
 print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
-print("           <property>fcs/elevator-pos-norm</property>\n");
+print("           <abs><property>fcs/elevator-pos-norm</property></abs>\n");
 print("           <value>$ac_CDde</value>\n");
 print("       </product>\n");
 print("    </function>\n\n");
