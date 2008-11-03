@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.22 2008/10/17 11:14:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.23 2008/11/03 10:10:59 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,9 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   MaxManifoldPressure_inHg = 28.5;
   BSFC = -1;
 
+  // Initialisation
+  volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
+
   // These are internal program variables
 
   crank_counter = 0;
@@ -113,8 +116,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     BoostSwitchAltitude[i] = 0.0;
     BoostSwitchPressure[i] = 0.0;
   }
-  // Initialisation
-  volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
 
   // First column is thi, second is neta (combustion efficiency)
   Lookup_Combustion_Efficiency = new FGTable(12);
@@ -202,7 +203,9 @@ Manifold_Pressure_Lookup = new
   if (el->FindElement("minthrottle"))
     MinThrottle = el->FindElementValueAsNumber("minthrottle");
   if (el->FindElement("bsfc"))
-    BSFC = el->FindElementValueAsNumber("bsfc");
+    BSFC = el->FindElementValueAsNumberConvertTo("bsfc", "LBS/HP*HR");
+  if (el->FindElement("volumetric-efficiency"))
+    volumetric_efficiency = el->FindElementValueAsNumber("volumetric-efficiency");
   if (el->FindElement("numboostspeeds")) { // Turbo- and super-charging parameters
     BoostSpeeds = (int)el->FindElementValueAsNumber("numboostspeeds");
     if (el->FindElement("boostoverride"))
@@ -236,16 +239,16 @@ Manifold_Pressure_Lookup = new
   }
 
   // Create a BSFC to match the engine if not provided
-  // The 0.8 in the equation below is volumetric efficiency
   if (BSFC < 0) {
-      BSFC = ( Displacement * MaxRPM * 0.8 ) / (9411 * MaxHP);
+      BSFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * MaxHP);
   }
   char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/power_hp", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%d]/power-hp", EngineNumber);
   PropertyManager->Tie(property_name, &HP);
-  snprintf(property_name, 80, "propulsion/engine[%d]/bsfc", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%d]/bsfc-lbs_hphr", EngineNumber);
   PropertyManager->Tie(property_name, &BSFC);
-
+  snprintf(property_name, 80, "propulsion/engine[%d]/volumetric-efficiency", EngineNumber);
+  PropertyManager->Tie(property_name, &volumetric_efficiency);
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
   StarterHP = sqrt(MaxHP) * 0.4;
@@ -315,7 +318,7 @@ FGPiston::~FGPiston()
 void FGPiston::ResetToIC(void)
 {
   FGEngine::ResetToIC();
-  
+
   ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
   MAP = Atmosphere->GetPressure() * psftopa;
   double airTemperature_degK = RankineToKelvin(Atmosphere->GetTemperature());
@@ -325,6 +328,7 @@ void FGPiston::ResetToIC(void)
   EGT_degC = ExhaustGasTemp_degK - 273;
   Thruster->SetRPM(0.0);
   RPM = 0.0;
+  OilPressure_psi = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -596,9 +600,10 @@ rho_air = p_amb / (R_air * T_amb);
 void FGPiston::doFuelFlow(void)
 {
   double thi_sea_level = 1.3 * Mixture; // Allows an AFR of infinity:1 to 11.3075:1
-  equivalence_ratio = thi_sea_level; // * p_amb_sea_level / p_amb;
-  double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
-  m_dot_fuel = m_dot_air / AFR;
+  equivalence_ratio = thi_sea_level * 101325.0 / p_amb;
+//  double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
+//  m_dot_fuel = m_dot_air / AFR;
+  m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
   FuelFlow_gph = m_dot_fuel
     * 3600            // seconds to hours
     * 2.2046            // kg to lb
@@ -703,7 +708,7 @@ void FGPiston::doEGT(void)
  * Calculate the cylinder head temperature.
  *
  * Inputs: T_amb, IAS, rho_air, m_dot_fuel, calorific_value_fuel,
- *   combustion_efficiency, RPM
+ *   combustion_efficiency, RPM, MaxRPM
  *
  * Outputs: CylinderHeadTemp_degK
  */
@@ -712,7 +717,7 @@ void FGPiston::doCHT(void)
 {
   double h1 = -95.0;
   double h2 = -3.95;
-  double h3 = -0.05;
+  double h3 = -140.0; // -0.05 * 2800 (default maxrpm)
 
   double arbitary_area = 1.0;
   double CpCylinderHead = 800.0;
@@ -725,7 +730,7 @@ void FGPiston::doCHT(void)
   double dqdt_from_combustion =
     m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
   double dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) +
-    (h3 * RPM * temperature_difference);
+    (h3 * RPM * temperature_difference / MaxRPM);
   double dqdt_free = h1 * temperature_difference;
   double dqdt_cylinder_head = dqdt_from_combustion + dqdt_forced + dqdt_free;
 
@@ -739,7 +744,7 @@ void FGPiston::doCHT(void)
 /**
  * Calculate the oil temperature.
  *
- * Inputs: Percentage_Power, running flag.
+ * Inputs: CylinderHeadTemp_degK, T_amb, OilPressure_psi.
  *
  * Outputs: OilTemp_degK
  */
@@ -749,15 +754,18 @@ void FGPiston::doOilTemperature(void)
   double idle_percentage_power = 0.023;        // approximately
   double target_oil_temp;        // Steady state oil temp at the current engine conditions
   double time_constant;          // The time constant for the differential equation
+  double efficiency = 0.667;     // The aproximate oil cooling system efficiency // FIXME: may vary by engine
 
-  if (Running) {
-    target_oil_temp = 363;
-    time_constant = 500;        // Time constant for engine-on idling.
-    if (Percentage_Power > idle_percentage_power) {
-      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0); // adjust for power
-    }
+//  Target oil temp is interpolated between ambient temperature and Cylinder Head Tempurature
+//  target_oil_temp = ( T_amb * efficiency ) + (CylinderHeadTemp_degK *(1-efficiency)) ;
+  target_oil_temp = CylinderHeadTemp_degK + efficiency * (T_amb - CylinderHeadTemp_degK) ;
+
+  if (OilPressure_psi > 5.0 ) {
+    time_constant = 5000 / OilPressure_psi; // Guess at a time constant for circulated oil.
+                                            // The higher the pressure the faster it reaches
+					    // target temperature.  Oil pressure should be about
+					    // 60 PSI yielding a TC of about 80.
   } else {
-    target_oil_temp = RankineToKelvin(Atmosphere->GetTemperature());
     time_constant = 1000;  // Time constant for engine-off; reflects the fact
                            // that oil is no longer getting circulated
   }
@@ -771,7 +779,7 @@ void FGPiston::doOilTemperature(void)
 /**
  * Calculate the oil pressure.
  *
- * Inputs: RPM
+ * Inputs: RPM, MaxRPM, OilTemp_degK
  *
  * Outputs: OilPressure_psi
  */

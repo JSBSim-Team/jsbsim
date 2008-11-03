@@ -39,7 +39,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.22 2008/08/04 12:37:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.23 2008/11/03 10:10:59 andgi Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,6 +128,9 @@ Element::Element(string nm)
   convert["PA"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["PA"];
   // Mass flow
   convert["KG/MIN"]["LBS/MIN"] = convert["KG"]["LBS"];
+  // Fuel Consumption
+  convert["LBS/HP*HR"]["KG/KW*HR"] = 0.6083;
+  convert["KG/KW*HR"]["LBS/HP*HR"] = 1.0/convert["LBS/HP*HR"]["KG/KW*HR"];
 
   // Length
   convert["M"]["M"] = 1.00;
@@ -187,6 +190,9 @@ Element::Element(string nm)
   convert["LBS/SEC"]["LBS/SEC"] = 1.00;
   convert["KG/MIN"]["KG/MIN"] = 1.0;
   convert["LBS/MIN"]["LBS/MIN"] = 1.0;
+  // Fuel Consumption
+  convert["LBS/HP*HR"]["LBS/HP*HR"] = 1.0;
+  convert["KG/KW*HR"]["KG/KW*HR"] = 1.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -389,12 +395,12 @@ double Element::FindElementValueAsNumberConvertFromTo( string el,
                                                        string target_units)
 {
   Element* element = FindElement(el);
-  
+
   if (!element) {
     cerr << "Attempting to get non-existent element " << el << endl;
     exit(0);
   }
-  
+
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
       cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"

@@ -51,7 +51,7 @@ using std::endl;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.10 2008/07/22 02:42:17 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.11 2008/11/03 10:10:59 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,6 +90,8 @@ CLASS DOCUMENTATION
     - convert["LBS"]["N"] = 1.0/convert["N"]["LBS"];
     - convert["KTS"]["FT/SEC"] = ktstofps;
     - convert["KG/MIN"]["LBS/MIN"] = convert["KG"]["LBS"];
+    - convert["LBS/HP*HR"]["KG/KW*HR"] = 0.6083;
+    - convert["KG/KW*HR"]["LBS/HP*HR"] = 1/convert["LBS/HP*HR"]["KG/KW*HR"];
 
     - convert["M"]["M"] = 1.00;
     - convert["FT"]["FT"] = 1.00;
@@ -115,6 +117,8 @@ CLASS DOCUMENTATION
     - convert["FT/SEC"]["FT/SEC"] = 1.0;
     - convert["KG/MIN"]["KG/MIN"] = 1.0;
     - convert["LBS/MIN"]["LBS/MIN"] = 1.0;
+    - convert["LBS/HP*HR"]["LBS/HP*HR"] = 1.0;
+    - convert["KG/KW*HR"]["KG/KW*HR"] = 1.0;
 
     Where:
     - N = newtons
@@ -130,9 +134,11 @@ CLASS DOCUMENTATION
     - DEG = degrees
     - RAD = radians
     - WATTS = watts
+    - HP = horsepower
+    - HR = hour
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.10 2008/07/22 02:42:17 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.11 2008/11/03 10:10:59 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
