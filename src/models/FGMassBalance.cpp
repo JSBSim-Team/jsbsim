@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.15 2008/10/17 11:00:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.16 2008/11/03 23:23:02 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +130,7 @@ bool FGMassBalance::Load(Element* el)
     element = el->FindNextElement("pointmass");
   }
 
-  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight()
+  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetTotalPointMassWeight()
     + BuoyantForces->GetGasMass()*slugtolb;
 
   Mass = lbtoslug*Weight;
@@ -149,7 +149,7 @@ bool FGMassBalance::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
-  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight()
+  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetTotalPointMassWeight()
     + BuoyantForces->GetGasMass()*slugtolb;
 
   Mass = lbtoslug*Weight;
@@ -216,18 +216,14 @@ void FGMassBalance::AddPointMass(Element* el)
 
   double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
   FGColumnVector3 vXYZ = loc_element->FindElementTripletConvertTo("IN");
+
   PointMasses.push_back(new PointMass(w, vXYZ));
-
-  int num = PointMasses.size()-1;
-
-  snprintf(tmp, 80, "inertia/pointmass-weight-lbs[%u]", num);
-  PropertyManager->Tie( tmp, this, num, &FGMassBalance::GetPointMassWeight,
-                                        &FGMassBalance::SetPointMassWeight);
+  PointMasses.back()->bind(PropertyManager, PointMasses.size()-1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGMassBalance::GetPointMassWeight(void)
+double FGMassBalance::GetTotalPointMassWeight(void)
 {
   double PM_total_weight = 0.0;
 
