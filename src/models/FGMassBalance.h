@@ -48,7 +48,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.11 2008/11/03 23:23:02 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.12 2008/11/16 17:03:53 jberndt Exp $"
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+#define snprintf _snprintf
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
