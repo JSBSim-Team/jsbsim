@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.16 2008/11/03 23:23:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.17 2008/11/16 17:04:20 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,8 +205,6 @@ bool FGMassBalance::Run(void)
 
 void FGMassBalance::AddPointMass(Element* el)
 {
-  char tmp[80];
-
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
