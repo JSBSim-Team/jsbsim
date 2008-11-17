@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.46 2008/10/14 23:17:22 dpculp Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.47 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -557,7 +557,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
 
   if (!fname.empty()) {
     property_element = el->FindElement("property");
-    if (property_element) cout << endl << "    Declared properties" << endl << endl;
+    if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
     while (property_element) {
       double value=0.0;
       if ( ! property_element->GetAttributeValue("value").empty())
@@ -573,7 +573,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
       } else {
         interface_properties.push_back(new double(value));
         PropertyManager->Tie(interface_property_string, interface_properties.back());
-        cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+	if (debug_lvl > 0)
+          cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
       }
       
       
@@ -600,7 +601,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
   channel_element = document->FindElement("channel");
   while (channel_element) {
   
-    cout << endl << highint << fgblue << "    Channel " 
+    if (debug_lvl > 0)
+      cout << endl << highint << fgblue << "    Channel " 
          << normint << channel_element->GetAttributeValue("name") << reset << endl;
   
     component_element = channel_element->GetElement();

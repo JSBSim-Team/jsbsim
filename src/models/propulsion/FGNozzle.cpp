@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.8 2007/02/13 00:45:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.9 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,6 +53,12 @@ CLASS IMPLEMENTATION
 FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
                     : FGThruster(FDMExec, nozzle_element, num)
 {
+  if (nozzle_element->FindElement("area"))
+    Area = nozzle_element->FindElementValueAsNumberConvertTo("area", "FT2");
+  else {
+    cerr << "Fatal Error: Nozzle exit area must be given in nozzle config file." << endl;
+    exit(-1);
+  }
 
   if (nozzle_element->FindElement("pe"))
     PE = nozzle_element->FindElementValueAsNumberConvertTo("pe", "PSF");
@@ -60,29 +66,9 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
     cerr << "Fatal Error: Nozzle exit pressure must be given in nozzle config file." << endl;
     exit(-1);
   }
-  if (nozzle_element->FindElement("expr"))
-    ExpR = nozzle_element->FindElementValueAsNumber("expr");
-  else {
-    cerr << "Fatal Error: Nozzle expansion ratio must be given in nozzle config file." << endl;
-    exit(-1);
-  }
-  if (nozzle_element->FindElement("nzl_eff"))
-    nzlEff = nozzle_element->FindElementValueAsNumber("nzl_eff");
-  else {
-    cerr << "Fatal Error: Nozzle efficiency must be given in nozzle config file." << endl;
-    exit(-1);
-  }
-  if (nozzle_element->FindElement("diam"))
-    Diameter = nozzle_element->FindElementValueAsNumberConvertTo("diam", "FT");
-  else {
-    cerr << "Fatal Error: Nozzle diameter must be given in nozzle config file." << endl;
-    exit(-1);
-  }
 
   Thrust = 0;
   Type = ttNozzle;
-  Area2 = (Diameter*Diameter/4.0)*M_PI;
-  AreaT = Area2/ExpR;
   
   Debug(0);
 }
@@ -96,26 +82,14 @@ FGNozzle::~FGNozzle()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGNozzle::Calculate(double CfPc)
+double FGNozzle::Calculate(double vacThrust)
 {
   double pAtm = fdmex->GetAtmosphere()->GetPressure();
-  if (CfPc > 0)
-    Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
-  else
-    Thrust = 0.0;
+  Thrust = max((double)0.0, vacThrust - pAtm*Area);
 
   vFn(1) = Thrust * cos(ReverserAngle);
 
-  ThrustCoeff = max((double)0.0, CfPc / ((pAtm - PE) * Area2));
-
   return Thrust;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGNozzle::GetPowerRequired(void)
-{
-  return PE;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,10 +140,7 @@ void FGNozzle::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      Nozzle Name: " << Name << endl;
-      cout << "      Nozzle Exit Pressure = " << PE << endl;
-      cout << "      Nozzle Expansion Ratio = " << ExpR << endl;
-      cout << "      Nozzle Efficiency = " << nzlEff << endl;
-      cout << "      Nozzle Diameter = " << Diameter << endl;
+      cout << "      Nozzle Exit Area = " << Area << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

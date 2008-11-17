@@ -59,7 +59,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.12 2008/07/22 02:42:19 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,6 +109,9 @@ CLASS DOCUMENTATION
 
 @code
 <tank type="{FUEL | OXIDIZER}">
+  <grain_config type="{CYLINDRICAL | ENDBURNING}">
+    <length unit="{IN | FT | M}"> {number} </radius>
+  </grain_config>
   <location unit="{FT | M | IN}">
     <x> {number} </x>
     <y> {number} </y>
@@ -119,7 +122,7 @@ CLASS DOCUMENTATION
     <y> {number} </y>
     <z> {number} </z>
   </drain_location>
-  <radius unit="{FT | M}"> {number} </radius>
+  <radius unit="{IN | FT | M}"> {number} </radius>
   <capacity unit="{LBS | KG}"> {number} </capacity>
   <contents unit="{LBS | KG}"> {number} </contents>
   <temperature> {number} </temperature> <!-- must be degrees fahrenheit -->
@@ -131,6 +134,8 @@ CLASS DOCUMENTATION
 
 - \b type - One of FUEL or OXIDIZER.  This is required.
 - \b radius - Equivalent radius of tank for modeling slosh, defaults to inches.
+- \b grain_config type - One of CYLINDRICAL or ENDBURNING.
+- \b length - length of tank for modeling solid fuel propellant grain, defaults to inches.
 - \b capacity - Capacity, defaults to pounds.
 - \b contents - Initial contents, defaults to pounds.
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
@@ -236,6 +241,10 @@ public:
       is given, otherwise 32 degrees F is returned. */
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
 
+  double GetIxx(void) {return Ixx;}
+  double GetIyy(void) {return Iyy;}
+  double GetIzz(void) {return Izz;}
+
   double GetStandpipe(void) {return Standpipe;}
 
   const FGColumnVector3 GetXYZ(void);
@@ -247,15 +256,25 @@ public:
   void SetStandpipe(double amount) { Standpipe = amount; }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
+  enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING};
 
 private:
   TankType Type;
+  GrainType grainType;
   int TankNumber;
   string type;
+  string strGType;
   FGColumnVector3 vXYZ;
   FGColumnVector3 vXYZ_drain;
   double Capacity;
   double Radius;
+  double InnerRadius;
+  double Length;
+  double Volume;
+  double Density;
+  double Ixx;
+  double Iyy;
+  double Izz;
   double PctFull;
   double Contents, InitialContents;
   double Area;
@@ -264,6 +283,7 @@ private:
   bool  Selected;
   FGAuxiliary* Auxiliary;
   FGPropertyManager* PropertyManager;
+  void CalculateInertias(void);
   void Debug(int from);
 };
 }

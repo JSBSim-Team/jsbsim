@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.14 2008/06/03 00:17:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.15 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,7 +361,10 @@ double FGTurbine::Trim()
 
 double FGTurbine::CalcFuelNeed(void)
 {
-  return FuelFlow_pph /3600 * State->Getdt() * Propulsion->GetRate();
+  double dT = State->Getdt() * Propulsion->GetRate();
+  FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
+  FuelExpended = FuelFlowRate * dT;     // Calculates fuel expended in this time step
+  return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -493,8 +496,6 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name, &N1);
   snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
   PropertyManager->Tie( property_name, &N2);
-  snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
-  PropertyManager->Tie( property_name, this, &FGTurbine::GetThrust);
   snprintf(property_name, 80, "propulsion/engine[%u]/injection_cmd", EngineNumber);
   PropertyManager->Tie( property_name, (FGTurbine*)this, 
                         &FGTurbine::GetInjection, &FGTurbine::SetInjection);

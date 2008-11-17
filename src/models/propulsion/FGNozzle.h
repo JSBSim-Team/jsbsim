@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,23 +63,19 @@ CLASS DOCUMENTATION
 @code
 <nozzle name="{string}">
   <pe unit="{PSF}"> {number}  </pe>
-  <expr>  {number}  </expr>
-  <nzl_eff>  {number}  </nzl_eff>
-  <diam unit="{FT | M | IN}"> {number}  </diam>
+  <area unit="{FT2 | M2 | IN2}"> {number}  </area>
 </nozzle>
 @endcode
 
 <h3>Configuration parameters are:</h3>
 <pre>
-    <b>pe</b> -      Nozzle exit pressure.
-    <b>expr</b> -    Nozzle expansion ratio, Ae/At, sqft. dimensionless ratio.
-    <b>nzl_eff</b> - Nozzle efficiency, 0.0 - 1.0.
-    <b>diam</b> -    Nozzle diameter.
+    <b>pe</b> -      Nozzle design exit pressure.
+    <b>area</b> -    Nozzle area at the exit plane.
 </pre>
 
     All parameters MUST be specified.  
     @author Jon S. Berndt
-    @version $Id: FGNozzle.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $
+    @version $Id: FGNozzle.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,18 +90,13 @@ public:
   /// Destructor
   ~FGNozzle();
 
-  double Calculate(double CfPc);
-  double GetPowerRequired(void);
+  double Calculate(double vacThrust);
   string GetThrusterLabels(int id, string delimeter);
   string GetThrusterValues(int id, string delimeter);
 
 private:
   double PE;
-  double ExpR;
-  double nzlEff;
-  double Diameter;
-  double AreaT;
-  double Area2;
+  double Area;
   void Debug(int from);
 };
 }

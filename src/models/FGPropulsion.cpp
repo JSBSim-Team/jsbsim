@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.28 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.29 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -462,9 +462,13 @@ FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 
   tankJ = FGMatrix33();
 
-  for (unsigned int i=0; i<size; i++)
+  for (unsigned int i=0; i<size; i++) {
     tankJ += MassBalance->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
                                                Tanks[i]->GetXYZ() );
+    tankJ(1,1) += Tanks[i]->GetIxx();
+    tankJ(2,2) += Tanks[i]->GetIyy();
+    tankJ(3,3) += Tanks[i]->GetIzz();
+  }
 
   return tankJ;
 }

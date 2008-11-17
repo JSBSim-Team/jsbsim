@@ -44,7 +44,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.12 2008/07/22 02:42:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.13 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,10 +56,11 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 {
   string token;
   Element* element;
+  Element* element_Grain;
   Area = 1.0;
   Temperature = -9999.0;
   Auxiliary = exec->GetAuxiliary();
-  Radius = Capacity = Contents = Standpipe = 0.0;
+  Radius = Capacity = Contents = Standpipe = Length = InnerRadius = 0.0;
   PropertyManager = exec->GetPropertyManager();
   vXYZ.InitMatrix();
   vXYZ_drain.InitMatrix();
@@ -98,6 +99,44 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   } else {
     Contents = 0;
     PctFull  = 0;
+  }
+
+  // Check whether this is a solid propellant "tank". Initialize it if true.
+
+  grainType = gtUNKNOWN; // This is the default
+  
+  element_Grain = el->FindElement("grain_config");
+  if (element_Grain) {
+
+    strGType = element_Grain->GetAttributeValue("type");
+    if (strGType == "CYLINDRICAL")     grainType = gtCYLINDRICAL;
+    else if (strGType == "ENDBURNING") grainType = gtENDBURNING;
+    else                               cerr << "Unknown propellant grain type specified" << endl;
+
+    if (element_Grain->FindElement("length"))
+      Length = element_Grain->FindElementValueAsNumberConvertTo("length", "IN");
+    if (element_Grain->FindElement("bore_diameter"))
+      InnerRadius = element_Grain->FindElementValueAsNumberConvertTo("bore_diameter", "IN")/2.0;
+
+    // Initialize solid propellant values for debug and runtime use.
+
+    switch (grainType) {
+      case gtCYLINDRICAL:
+        if (Radius <= InnerRadius) {
+          cerr << "The bore diameter should be smaller than the total grain diameter!" << endl;
+          exit(-1);
+        }
+        Volume = M_PI * Length * (Radius*Radius - InnerRadius*InnerRadius); // cubic inches
+        break;
+      case gtENDBURNING:
+        Volume = M_PI * Length * Radius * Radius; // cubic inches
+        break;
+      case gtUNKNOWN:
+        cerr << "Unknown grain type found in this rocket engine definition." << endl;
+        exit(-1);
+    }
+    Density = (Contents*lbtoslug)/Volume; // slugs/in^3
+
   }
 
   char property_name[80];
@@ -160,6 +199,9 @@ double FGTank::Drain(double used)
     PctFull = 0.0;
     Selected = false;
   }
+
+  if (grainType != gtUNKNOWN) CalculateInertias();
+
   return remaining;
 }
 
@@ -208,6 +250,35 @@ double FGTank::Calculate(double dt)
     dTemp = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
   }
   return Temperature += (dTemp + dTemp);    // For now, assume upper/lower the same
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//  This function calculates the moments of inertia for a solid propellant
+//  grain - either an end burning cylindrical grain or a bored cylindrical
+//  grain.
+
+void FGTank::CalculateInertias(void)
+{
+  double Mass = Contents*lbtoslug;
+  double RadSumSqr;
+  double Rad2 = Radius*Radius;
+  Volume = (Contents*lbtoslug)/Density; // in^3
+
+  switch (grainType) {
+    case gtCYLINDRICAL:
+      InnerRadius = sqrt(Rad2 - Volume/(M_PI * Length));
+      RadSumSqr = (Rad2 + InnerRadius*InnerRadius)/144.0;
+      Ixx = 0.5*Mass*RadSumSqr;
+      Iyy = Mass*(3.0*RadSumSqr + Length*Length/144.0)/12.0;
+      break;
+    case gtENDBURNING:
+      Length = Volume/(M_PI*Rad2);
+      Ixx = 0.5*Mass*Rad2/144.0;
+      Iyy = Mass*(3.0*Rad2 + Length*Length)/(144.0*12.0);
+      break;
+  }
+  Izz  = Iyy;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

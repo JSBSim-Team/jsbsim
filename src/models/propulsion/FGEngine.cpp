@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.22 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.23 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   Type = etUnknown;
   X = Y = Z = 0.0;
   EnginePitch = EngineYaw = 0.0;
-  SLFuelFlowMax = SLOxiFlowMax = 0.0;
+  SLFuelFlowMax = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
 
@@ -117,8 +117,11 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
 
   char property_name[80];
   snprintf(property_name, 80, "propulsion/engine[%d]/set-running", EngineNumber);
-  PropertyManager->Tie( property_name, (FGEngine*)this, &FGEngine::GetRunning,
-                                       &FGEngine::SetRunning );
+  PropertyManager->Tie( property_name, this, &FGEngine::GetRunning, &FGEngine::SetRunning );
+  snprintf(property_name, 80, "propulsion/engine[%u]/thrust-lbs", EngineNumber);
+  PropertyManager->Tie( property_name, this, &FGEngine::GetThrust);
+  snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow-rate-pps", EngineNumber);
+  PropertyManager->Tie( property_name, this, &FGEngine::GetFuelFlowRate);
 
   Debug(0);
 }
@@ -139,7 +142,7 @@ void FGEngine::ResetToIC(void)
   Throttle = 0.0;
   Mixture = 1.0;
   Starter = false;
-  FuelNeed = OxidizerNeed = 0.0;
+  FuelExpended = 0.0;
   Starved = Running = Cranking = false;
   PctPower = 0.0;
   TrimMode = false;
@@ -153,6 +156,7 @@ void FGEngine::ResetToIC(void)
 // derived class' Calculate() function before any other calculations are done.
 // This base class method removes fuel from the fuel tanks as appropriate,
 // and sets the starved flag if necessary.
+// This version of the fuel consumption code should never see an oxidizer tank.
 
 void FGEngine::ConsumeFuel(void)
 {
@@ -160,22 +164,20 @@ void FGEngine::ConsumeFuel(void)
   if (TrimMode) return;
 
   unsigned int i;
-  double Fshortage, Oshortage, TanksWithFuel, TanksWithOxidizer;
+  double Fshortage, TanksWithFuel;
   FGTank* Tank;
-  bool haveOxTanks = false;
-  Fshortage = Oshortage = TanksWithFuel = TanksWithOxidizer = 0.0;
+  Fshortage = TanksWithFuel = 0.0;
 
   // count how many assigned tanks have fuel
   for (i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetType() == FGTank::ttFUEL){
       if (Tank->GetContents() > 0.0) ++TanksWithFuel;
-    } else if (Tank->GetType() == FGTank::ttOXIDIZER) {
-      haveOxTanks = true;
-      if (Tank->GetContents() > 0.0) ++TanksWithOxidizer;
+    } else {
+       cerr << "No oxidizer tanks should be used for this engine type." << endl;
     }
   }
-  if (TanksWithFuel==0 || (haveOxTanks && TanksWithOxidizer==0)) {
+  if (TanksWithFuel==0) {
     Starved = true;
     return;
   }
@@ -184,12 +186,12 @@ void FGEngine::ConsumeFuel(void)
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetType() == FGTank::ttFUEL) {
        Fshortage += Tank->Drain(CalcFuelNeed()/TanksWithFuel);
-    } else if (Tank->GetType() == FGTank::ttOXIDIZER) {
-       Oshortage += Tank->Drain(CalcOxidizerNeed()/TanksWithOxidizer);
+    } else {
+       cerr << "No oxidizer tanks should be used for this engine type." << endl;
     }
   }
 
-  if (Fshortage < 0.00 || Oshortage < 0.00) Starved = true;
+  if (Fshortage < 0.00) Starved = true;
   else Starved = false;
 }
 
@@ -197,16 +199,10 @@ void FGEngine::ConsumeFuel(void)
 
 double FGEngine::CalcFuelNeed(void)
 {
-  FuelNeed = SLFuelFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
-  return FuelNeed;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGEngine::CalcOxidizerNeed(void)
-{
-  OxidizerNeed = SLOxiFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
-  return OxidizerNeed;
+  double dT = State->Getdt()*Propulsion->GetRate();
+  FuelFlowRate = SLFuelFlowMax*PctPower;
+  FuelExpended = FuelFlowRate*dT;
+  return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

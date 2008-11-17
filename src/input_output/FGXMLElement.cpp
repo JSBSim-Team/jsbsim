@@ -39,7 +39,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.23 2008/11/03 10:10:59 andgi Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.24 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,8 @@ Element::Element(string nm)
   convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
   convert["M2"]["IN2"] = convert["M"]["IN"]*convert["M"]["IN"];
   convert["IN2"]["M2"] = 1.0/convert["M2"]["IN2"];
+  convert["FT2"]["IN2"] = 144.0;
+  convert["IN2"]["FT2"] = 1.0/convert["FT2"]["IN2"];
   // Volume
   convert["IN3"]["CC"] = 16.387064;
   convert["CC"]["IN3"] = 1.0/convert["IN3"]["CC"];

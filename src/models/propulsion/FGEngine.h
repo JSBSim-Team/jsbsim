@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,8 @@ public:
 
   virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
   virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
-  virtual double GetThrust(void) { return Thrust; }
+  virtual double GetFuelFlowRate(void) const {return FuelFlowRate;}
+  virtual double GetThrust(void) const { return Thrust; }
   virtual bool   GetStarved(void) { return Starved; }
   virtual bool   GetRunning(void) const { return Running; }
   virtual bool   GetCranking(void) { return Cranking; }
@@ -173,25 +174,6 @@ public:
       @return Thrust in pounds */
   virtual double Calculate(void) {return 0.0;}
 
-  /** Reduces the fuel in the active tanks by the amount required.
-      This function should be called from within the
-      derived class' Calculate() function before any other calculations are
-      done. This base class method removes fuel from the fuel tanks as
-      appropriate, and sets the starved flag if necessary. */
-  virtual void ConsumeFuel(void);
-
-  /** The fuel need is calculated based on power levels and flow rate for that
-      power level. It is also turned from a rate into an actual amount (pounds)
-      by multiplying it by the delta T and the rate.
-      @return Total fuel requirement for this engine in pounds. */
-  virtual double CalcFuelNeed(void);
-
-  /** The oxidizer need is calculated based on power levels and flow rate for that
-      power level. It is also turned from a rate into an actual amount (pounds)
-      by multiplying it by the delta T and the rate.
-      @return Total oxidizer requirement for this engine in pounds. */
-  virtual double CalcOxidizerNeed(void);
-
   /// Sets engine placement information
   virtual void SetPlacement(FGColumnVector3& location, FGColumnVector3& orientation);
 
@@ -210,6 +192,19 @@ public:
   virtual string GetEngineValues(string delimeter) = 0;
 
 protected:
+  /** Reduces the fuel in the active tanks by the amount required.
+      This function should be called from within the
+      derived class' Calculate() function before any other calculations are
+      done. This base class method removes fuel from the fuel tanks as
+      appropriate, and sets the starved flag if necessary. */
+  virtual void ConsumeFuel(void);
+
+  /** The fuel need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total fuel requirement for this engine in pounds. */
+  virtual double CalcFuelNeed(void);
+
   FGPropertyManager* PropertyManager;
   string Name;
   const int   EngineNumber;
@@ -218,15 +213,14 @@ protected:
   double EnginePitch;
   double EngineYaw;
   double SLFuelFlowMax;
-  double SLOxiFlowMax;
   double MaxThrottle;
   double MinThrottle;
 
   double Thrust;
   double Throttle;
   double Mixture;
-  double FuelNeed;
-  double OxidizerNeed;
+  double FuelExpended;
+  double FuelFlowRate;
   double PctPower;
   bool  Starter;
   bool  Starved;

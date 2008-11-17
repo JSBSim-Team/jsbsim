@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.6 2008/04/30 22:38:14 dpculp Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.7 2008/11/17 12:21:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,10 +61,7 @@ CLASS DOCUMENTATION
 /** Models a generic rocket engine.
     The rocket engine is modeled given the following parameters:
     <ul>
-        <li>Chamber pressure (in psf)</li>
-        <li>Specific heat ratio (usually about 1.2 for hydrocarbon fuel and LOX)</li>
-        <li>Propulsive efficiency (in percent, from 0 to 1.0)</li>
-        <li>Variance (in percent, from 0 to 1.0, nominally 0.05)</li>
+        <li>Specific Impulse (in sec)</li>
     </ul>
     Additionally, the following control inputs, operating characteristics, and
     location are required, as with all other engine types:
@@ -78,12 +75,8 @@ CLASS DOCUMENTATION
         <li>Pitch and Yaw</li>
     </ul>
     The nozzle exit pressure (p2) is returned via a
-    call to FGNozzle::GetPowerRequired(). This exit pressure is used,
-    along with chamber pressure and specific heat ratio, to get the
-    thrust coefficient for the throttle setting. This thrust
-    coefficient is multiplied by the chamber pressure and then passed
-    to the nozzle Calculate() routine, where the thrust force is
-    determined.
+    call to FGNozzle::GetPowerRequired(). This exit pressure is used
+    to get the at-altitude thrust level.
     
     One can model the thrust of a solid rocket by providing a normalized thrust table
     as a function of time. For instance, the space shuttle solid rocket booster
@@ -125,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.6 2008/04/30 22:38:14 dpculp Exp $
+    $Id: FGRocket.h,v 1.7 2008/11/17 12:21:07 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -150,30 +143,62 @@ public:
   /** Destructor */
   ~FGRocket(void);
 
-  /** Determines the thrust coefficient.
-      @return thrust coefficient times chamber pressure */
+  /** Determines the thrust.
+      @return thrust */
   double Calculate(void);
 
-  /** Gets the chamber pressure.
-      @return chamber pressure in psf. */
-  double GetChamberPressure(void) {return PC;}
+  /** Gets the total impulse of the rocket.
+      @return The cumulative total impulse of the rocket up to this time.*/
+  double GetTotalImpulse(void) const {return It;}
 
   /** Gets the flame-out status.
       The engine will "flame out" if the throttle is set below the minimum
-      sustainable setting.
+      sustainable-thrust setting.
       @return true if engine has flamed out. */
   bool GetFlameout(void) {return Flameout;}
+
+  double GetOxiFlowRate(void) const {return OxidizerFlowRate;}
+
   string GetEngineLabels(string delimeter);
   string GetEngineValues(string delimeter);
 
 private:
-  double SHR;
-  double maxPC;
-  double propEff;
-  double kFactor;
-  double Variance;
-  double PC;
+  /** Reduces the fuel in the active tanks by the amount required.
+      This function should be called from within the
+      derived class' Calculate() function before any other calculations are
+      done. This base class method removes fuel from the fuel tanks as
+      appropriate, and sets the starved flag if necessary. */
+  void ConsumeFuel(void);
+
+  /** The fuel need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total fuel requirement for this engine in pounds. */
+  double CalcFuelNeed(void);
+
+  /** The oxidizer need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total oxidizer requirement for this engine in pounds. */
+  double CalcOxidizerNeed(void);
+
+  /** Returns the vacuum thrust.
+      @return The vacuum thrust in lbs. */
+  double GetVacThrust(void) const {return VacThrust;}
+
+  void bindmodel(void);
+
+  double Isp; // Vacuum Isp
+  double It;
+  double MxR; // Mixture Ratio
   double BurnTime;
+  double VacThrust;
+  double previousFuelNeedPerTank;
+  double previousOxiNeedPerTank;
+  double OxidizerExpended;
+  double SLOxiFlowMax;
+  double OxidizerFlowRate;
+  double PropellantFlowRate;
   bool Flameout;
   FGTable* ThrustTable;
 

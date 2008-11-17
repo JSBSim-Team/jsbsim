@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
     there is no battery model available, so this motor does not consume any
     energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $"
+    @version "$Id: FGElectric.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,12 +82,13 @@ public:
 
   double Calculate(void);
   double GetPowerAvailable(void) {return PowerAvailable;}
-  double CalcFuelNeed(void);
   double getRPM(void) {return RPM;}
   string GetEngineLabels(string delimeter);
   string GetEngineValues(string delimeter);
 
 private:
+
+  double CalcFuelNeed(void);
 
   double BrakeHorsePower;
   double PowerAvailable;

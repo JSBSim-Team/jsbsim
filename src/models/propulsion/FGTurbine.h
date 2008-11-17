@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.12 2008/06/03 00:17:31 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.12 2008/06/03 00:17:31 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,7 @@ public:
   double Calculate(void);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
-  double GetThrust(void) const {return Thrust;}
+//  double GetThrust(void) const {return Thrust;}
   /** A lag filter.
       Used to control the rate at which values are allowed to change.
       @param var a pointer to a variable of type double

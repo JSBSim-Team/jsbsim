@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.23 2008/11/03 10:10:59 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.24 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -389,7 +389,11 @@ if(HP<0.1250)
 
 double FGPiston::CalcFuelNeed(void)
 {
-  return FuelFlow_gph / 3600 * 6 * State->Getdt() * Propulsion->GetRate();
+  double dT = State->Getdt() * Propulsion->GetRate();
+  FuelFlow_pph = FuelFlow_gph * 6.0;
+  FuelFlowRate = FuelFlow_pph / 3600.0; // Assumes 6 lbs / gallon
+  FuelExpended = FuelFlowRate * dT;
+  return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

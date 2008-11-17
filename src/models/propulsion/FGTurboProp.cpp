@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.9 2008/05/16 04:04:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.10 2008/11/17 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,7 +398,10 @@ double FGTurboProp::Start(void)
 
 double FGTurboProp::CalcFuelNeed(void)
 {
-  return FuelFlow_pph /3600 * State->Getdt() * Propulsion->GetRate();
+  double dT = State->Getdt() * Propulsion->GetRate();
+  FuelFlowRate = FuelFlow_pph / 3600.0;
+  FuelExpended = FuelFlowRate * dT;
+  return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
