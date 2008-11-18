@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.36 2008/10/14 23:16:05 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.37 2008/11/18 15:24:57 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -750,6 +750,10 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
         node->setDoubleValue("mp-osi", eng->getManifoldPressure_inHg());
+        // NOTE: mp-osi is not in ounces per square inch.
+        // This error is left for reasons of backwards compatibility with
+        // existing FlightGear sound and instrument configurations.
+        node->setDoubleValue("mp-inhg", eng->getManifoldPressure_inHg());
         node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
         node->setDoubleValue("rpm", eng->getRPM());
         } // end FGPiston code block
