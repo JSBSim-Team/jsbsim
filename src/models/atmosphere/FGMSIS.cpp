@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.7 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.8 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ bool MSIS::Run(void)
 
   if (turbType != ttNone) {
     Turbulence();
-    vWindNED += vTurbulence;
+    vWindNED += vTurbulenceNED;
   }
 
   if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
@@ -1643,14 +1643,14 @@ void MSIS::Debug(int from)
   }
   if (debug_lvl & 32) { // Turbulence
     if (first_pass && from == 2) {
-      cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
+      cout << "vTurbulenceNED(X), vTurbulenceNED(Y), vTurbulenceNED(Z), "
            << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
            << "vDirection(X), vDirection(Y), vDirection(Z), "
            << "Magnitude, "
            << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
     }
     if (from == 2) {
-      cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+      cout << vTurbulenceNED << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
     }
   }
   if (debug_lvl & 64) {

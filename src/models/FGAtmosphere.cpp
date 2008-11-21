@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.21 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.22 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,8 +90,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   T_dev_sl = T_dev = delta_T = 0.0;
   StandardTempOnly = false;
   first_pass = true;
-  vGustNED(1) = vGustNED(2) = vGustNED(3) = 0.0; bgustSet = false;
-  vTurbulence(1) = vTurbulence(2) = vTurbulence(3) = 0.0;
+  vGustNED.InitMatrix();
+  vTurbulenceNED.InitMatrix();
 
   bind();
   Debug(0);
@@ -256,17 +256,18 @@ void FGAtmosphere::Calculate(double altitude)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Calculate parameters derived from T, P and rho
+// Sum gust and turbulence values in NED frame into the wind vector.
 
 void FGAtmosphere::CalculateDerived(void)
 {
   T_dev = (*temperature) - GetTemperature(h);
   density_altitude = h + T_dev * 66.7;
 
-  if (turbType == ttStandard || ttCulp) {
-    Turbulence();
-    vWindNED += vGustNED + vTurbulence;
-  }
-  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
+  if (turbType == ttStandard || ttCulp) Turbulence();
+
+  vTotalWindNED = vWindNED + vGustNED + vTurbulenceNED;
+
+  if (vWindNED(eX) != 0.0) psiw = atan2( vWindNED(eY), vWindNED(eX) );
   if (psiw < 0) psiw += 2*M_PI;
 
   soundspeed = sqrt(SHRatio*Reng*(*temperature));
@@ -326,6 +327,36 @@ static inline double square_signed (double value)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGAtmosphere::SetWindspeed(double speed)
+{
+  if (vWindNED.Magnitude() == 0.0) {
+    psiw = 0.0;
+    vWindNED(eNorth) = speed;
+  } else {
+    vWindNED(eNorth) = speed * cos(psiw);
+    vWindNED(eEast) = speed * sin(psiw);
+    vWindNED(eDown) = 0.0;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAtmosphere::GetWindspeed(void) const
+{
+  return vWindNED.Magnitude();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAtmosphere::SetWindPsi(double dir)
+{
+  double mag = GetWindspeed();
+  psiw = dir;
+  SetWindspeed(mag);  
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
@@ -359,10 +390,10 @@ void FGAtmosphere::Turbulence(void)
 
                                 // Diminish turbulence within three wingspans
                                 // of the ground
-    vTurbulence = TurbGain * Magnitude * vDirection;
+    vTurbulenceNED = TurbGain * Magnitude * vDirection;
     double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
-        vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
+        vTurbulenceNED *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
     // I don't believe these next two statements calculate the proper gradient over
     // the aircraft body. One reason is because this has no relationship with the
@@ -395,8 +426,8 @@ void FGAtmosphere::Turbulence(void)
                                 // that we've used them to calculate
                                 // moments.
                                 // Why? (JSB)
-//    vTurbulence(eX) = 0.0;
-//    vTurbulence(eY) = 0.0;
+//    vTurbulenceNED(eX) = 0.0;
+//    vTurbulenceNED(eY) = 0.0;
 
     break;
   }
@@ -426,7 +457,7 @@ void FGAtmosphere::Turbulence(void)
 
     vDirection.Normalize();
 
-    vTurbulence = TurbGain*Magnitude * vDirection;
+    vTurbulenceNED = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
     vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
@@ -473,19 +504,19 @@ void FGAtmosphere::Turbulence(void)
     // max vertical wind speed in fps, corresponds to TurbGain = 1.0
     double max_vs = 40;
 
-    vTurbulence(1) = vTurbulence(2) = vTurbulence(3) = 0.0;
+    vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
     double delta = strength * max_vs * TurbGain * (1-Rhythmicity) * spike;
 
     // Vertical component of turbulence.
-    vTurbulence(3) = sinewave * max_vs * TurbGain * Rhythmicity;
-    vTurbulence(3)+= delta;
+    vTurbulenceNED(3) = sinewave * max_vs * TurbGain * Rhythmicity;
+    vTurbulenceNED(3)+= delta;
     double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
-        vTurbulence(3) *= HOverBMAC * 0.3333;
+        vTurbulenceNED(3) *= HOverBMAC * 0.3333;
  
     // Yaw component of turbulence.
-    vTurbulence(1) = sin( delta * 3.0 );
-    vTurbulence(2) = cos( delta * 3.0 );
+    vTurbulenceNED(1) = sin( delta * 3.0 );
+    vTurbulenceNED(2) = cos( delta * 3.0 );
 
     // Roll component of turbulence. Clockwise vortex causes left roll.
     vTurbPQR(eP) += delta * 0.04;
@@ -541,6 +572,28 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/delta-T", this, &FGAtmosphere::GetDeltaT, &FGAtmosphere::SetDeltaT);
   PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGAtmosphere::GetSLTempDev, &FGAtmosphere::SetSLTempDev);
   PropertyManager->Tie("atmosphere/density-altitude", this, &FGAtmosphere::GetDensityAltitude);
+
+  PropertyManager->Tie("atmosphere/wind-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetWindNED,
+                                                          (PMFd)&FGAtmosphere::SetWindNED);
+  PropertyManager->Tie("atmosphere/wind-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetWindNED,
+                                                          (PMFd)&FGAtmosphere::SetWindNED);
+  PropertyManager->Tie("atmosphere/wind-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetWindNED,
+                                                          (PMFd)&FGAtmosphere::SetWindNED);
+  PropertyManager->Tie("atmosphere/wind-from-cw", this, &FGAtmosphere::GetWindFromClockwise,
+                                                        &FGAtmosphere::SetWindFromClockwise);
+  PropertyManager->Tie("atmosphere/wind-mag-fps", this, &FGAtmosphere::GetWindspeed,
+                                                        &FGAtmosphere::SetWindspeed);
+  PropertyManager->Tie("atmosphere/total-wind-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetTotalWindNED);
+  PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGAtmosphere::GetTotalWindNED);
+  PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGAtmosphere::GetTotalWindNED);
+
+  PropertyManager->Tie("atmosphere/gust-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetGustNED,
+                                                          (PMFd)&FGAtmosphere::SetGustNED);
+  PropertyManager->Tie("atmosphere/gust-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetGustNED,
+                                                          (PMFd)&FGAtmosphere::SetGustNED);
+  PropertyManager->Tie("atmosphere/gust-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetGustNED,
+                                                          (PMFd)&FGAtmosphere::SetGustNED);
+
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGAtmosphere::GetTurbPQR);
@@ -548,14 +601,6 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/turb-gain", this, &FGAtmosphere::GetTurbGain, &FGAtmosphere::SetTurbGain);
   PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGAtmosphere::GetRhythmicity,
                                                             &FGAtmosphere::SetRhythmicity);
-  PropertyManager->Tie("atmosphere/gust-north-fps", this,1, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-  PropertyManager->Tie("atmosphere/gust-east-fps",  this,2, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-  PropertyManager->Tie("atmosphere/gust-down-fps",  this,3, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-  PropertyManager->Tie("atmosphere/wind-from-cw", this, &FGAtmosphere::GetWindFromClockwise,
-                                                        &FGAtmosphere::SetWindFromClockwise);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -598,14 +643,14 @@ void FGAtmosphere::Debug(int from)
   if (debug_lvl & 128) { // Turbulence
     if (first_pass && from == 2) {
       first_pass = false;
-      cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
+      cout << "vTurbulenceNED(X), vTurbulenceNED(Y), vTurbulenceNED(Z), "
            << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
            << "vDirection(X), vDirection(Y), vDirection(Z), "
            << "Magnitude, "
            << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
     } 
     if (from == 2) {
-      cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+      cout << vTurbulenceNED << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
     }
   }
   if (debug_lvl & 64) {

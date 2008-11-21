@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.29 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.30 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -371,7 +371,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Atmosphere->GetPressure() << delimeter;
     outstream << Atmosphere->GetTurbMagnitude() << delimeter;
     outstream << Atmosphere->GetTurbDirection().Dump(delimeter) << delimeter;
-    outstream << Atmosphere->GetWindNED().Dump(delimeter);
+    outstream << Atmosphere->GetTotalWindNED().Dump(delimeter);
   }
   if (SubSystems & ssMassProps) {
     outstream << delimeter;
@@ -809,7 +809,7 @@ void FGOutput::SocketOutput(void)
     socket->Append(Atmosphere->GetPressure());
     socket->Append(Atmosphere->GetTurbMagnitude());
     socket->Append(Atmosphere->GetTurbDirection().Dump(","));
-    socket->Append(Atmosphere->GetWindNED().Dump(","));
+    socket->Append(Atmosphere->GetTotalWindNED().Dump(","));
   }
   if (SubSystems & ssMassProps) {
     socket->Append(MassBalance->GetJ()(1,1));

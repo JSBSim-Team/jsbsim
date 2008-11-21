@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.28 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.29 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,10 +169,10 @@ bool FGAuxiliary::Run()
   } else if (GroundReactions->GetWOW() && vUVW(eU) < 30) {
     double factor = (vUVW(eU) - 10.0)/20.0;
     vAeroPQR = vPQR + factor*Atmosphere->GetTurbPQR();
-    vAeroUVW = vUVW + factor*Propagate->GetTl2b()*(Atmosphere->GetWindNED()+Atmosphere->GetGustNED());
+    vAeroUVW = vUVW + factor*Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
   } else {
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-    vAeroUVW = vUVW + Propagate->GetTl2b()*(Atmosphere->GetWindNED()+Atmosphere->GetGustNED());
+    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
   }
 
   Vt = vAeroUVW.Magnitude();
@@ -291,7 +291,7 @@ double FGAuxiliary::GetHeadWind(void) const
   double psiw,vw;
 
   psiw = Atmosphere->GetWindPsi();
-  vw = Atmosphere->GetWindNED().Magnitude();
+  vw = Atmosphere->GetTotalWindNED().Magnitude();
 
   return vw*cos(psiw - Propagate->GetEuler(ePsi));
 }
@@ -303,7 +303,7 @@ double FGAuxiliary::GetCrossWind(void) const
   double psiw,vw;
 
   psiw = Atmosphere->GetWindPsi();
-  vw = Atmosphere->GetWindNED().Magnitude();
+  vw = Atmosphere->GetTotalWindNED().Magnitude();
 
   return  vw*sin(psiw - Propagate->GetEuler(ePsi));
 }

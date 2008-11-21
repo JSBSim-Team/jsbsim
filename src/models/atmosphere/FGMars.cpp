@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.6 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.7 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,81 +59,8 @@ FGMars::FGMars(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
   Name = "FGMars";
   Reng = 53.5 * 44.01;
 
-/*
-  lastIndex = 0;
-  h = 0.0;
-  psiw = 0.0;
-
-  MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-//   turbType = ttNone;
-  turbType = ttStandard;
-//   turbType = ttBerndt;
-  TurbGain = 0.0;
-  TurbRate = 1.0;
-*/
-
   bind();
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
-FGMars::~FGMars()
-{
-  Debug(1);
-}
-*/
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGMars::InitModel(void)
-{
-  FGModel::InitModel();
-
-  Calculate(h);
-  SLtemperature = intTemperature;
-  SLpressure    = intPressure;
-  SLdensity     = intDensity;
-  SLsoundspeed  = sqrt(SHRatio*Reng*intTemperature);
-  rSLtemperature = 1.0/intTemperature;
-  rSLpressure    = 1.0/intPressure;
-  rSLdensity     = 1.0/intDensity;
-  rSLsoundspeed  = 1.0/SLsoundspeed;
-  temperature = &intTemperature;
-  pressure = &intPressure;
-  density = &intDensity;
-
-  useExternal=false;
-
-  return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGMars::Run(void)
-{
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
-
-  //do temp, pressure, and density first
-  if (!useExternal) {
-    h = Propagate->Geth();
-    Calculate(h);
-  }
-
-  if (turbType != ttNone) {
-    Turbulence();
-    vWindNED += vTurbulence;
-  }
-
-  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
-
-  if (psiw < 0) psiw += 2*M_PI;
-
-  soundspeed = sqrt(SHRatio*Reng*(*temperature));
-
-  Debug(2);
-
-  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,122 +80,6 @@ void FGMars::Calculate(double altitude)
   intDensity = intPressure/(Reng*intTemperature); // slugs/ft^3 (needs deg R. as input
 
   //cout << "Atmosphere:  h=" << altitude << " rho= " << intDensity << endl;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// square a value, but preserve the original sign
-
-static inline double
-square_signed (double value)
-{
-  if (value < 0)
-    return value * value * -1;
-  else
-    return value * value;
-}
-
-void FGMars::Turbulence(void)
-{
-  switch (turbType) {
-  case ttStandard: {
-    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-
-    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
-                                // Scale the magnitude so that it moves
-                                // away from the peaks
-    MagnitudedAccelDt = ((MagnitudedAccelDt - Magnitude) /
-                         (1 + fabs(Magnitude)));
-    MagnitudeAccel    += MagnitudedAccelDt*rate*TurbRate*State->Getdt();
-    Magnitude         += MagnitudeAccel*rate*State->Getdt();
-
-    vDirectiondAccelDt.Normalize();
-
-                                // deemphasise non-vertical forces
-    vDirectiondAccelDt(eX) = square_signed(vDirectiondAccelDt(eX));
-    vDirectiondAccelDt(eY) = square_signed(vDirectiondAccelDt(eY));
-
-    vDirectionAccel += vDirectiondAccelDt*rate*TurbRate*State->Getdt();
-    vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*rate*State->Getdt();
-
-    vDirection.Normalize();
-
-                                // Diminish turbulence within three wingspans
-                                // of the ground
-    vTurbulence = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Auxiliary->GetHOverBMAC();
-    if (HOverBMAC < 3.0)
-        vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
-
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
-
-    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
-//     if (Aircraft->GetHTailArm() != 0.0)
-//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
-//     else
-//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
-
-    if (Aircraft->GetVTailArm())
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
-    else
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
-
-                                // Clear the horizontal forces
-                                // actually felt by the plane, now
-                                // that we've used them to calculate
-                                // moments.
-    vTurbulence(eX) = 0.0;
-    vTurbulence(eY) = 0.0;
-
-    break;
-  }
-  case ttBerndt: {
-    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-
-
-    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
-    MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
-    Magnitude         += MagnitudeAccel*rate*State->Getdt();
-
-    vDirectiondAccelDt.Normalize();
-    vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
-    vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*rate*State->Getdt();
-
-                                // Diminish z-vector within two wingspans
-                                // of the ground
-    double HOverBMAC = Auxiliary->GetHOverBMAC();
-    if (HOverBMAC < 2.0)
-        vDirection(eZ) *= HOverBMAC / 2.0;
-
-    vDirection.Normalize();
-
-    vTurbulence = TurbGain*Magnitude * vDirection;
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
-
-    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
-    if (Aircraft->GetHTailArm() != 0.0)
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
-    else
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
-
-    if (Aircraft->GetVTailArm())
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
-    else
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
-
-    break;
-  }
-  default:
-    break;
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,13 +121,13 @@ void FGMars::Debug(int from)
   }
   if (debug_lvl & 32) { // Turbulence
     if (first_pass && from == 2) {
-      cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
+      cout << "vTurbulenceNED(X), vTurbulenceNED(Y), vTurbulenceNED(Z), "
            << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
            << "vDirection(X), vDirection(Y), vDirection(Z), "
            << "Magnitude, "
            << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
     } else if (from == 2) {
-      cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+      cout << vTurbulenceNED << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
     }
   }
   if (debug_lvl & 64) {

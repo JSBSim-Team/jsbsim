@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.10 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.11 2008/11/21 02:45:27 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +96,7 @@ void FGState::Initialize(FGInitialCondition *FGIC)
                           FGIC->GetWindDFpsIC() );
 
   FGColumnVector3 vAeroUVW;
-  vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetWindNED();
+  vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
 
   double alpha, beta;
   if (vAeroUVW(eW) != 0.0)

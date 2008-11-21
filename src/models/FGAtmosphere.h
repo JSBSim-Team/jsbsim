@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.16 2008/05/17 06:22:24 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.17 2008/11/21 02:45:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.16 2008/05/17 06:22:24 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.17 2008/11/21 02:45:27 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -86,10 +86,10 @@ public:
   enum tType {ttStandard, ttBerndt, ttCulp, ttNone} turbType;
 
   /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature(void) const {return *temperature;}
+  double GetTemperature(void) const {return *temperature;}
   /** Returns the density in slugs/ft^3.
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  inline double GetDensity(void)  const {return *density;}
+  double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
   double GetPressure(void)  const {return *pressure;}
   /// Returns the standard pressure at a specified altitude
@@ -99,25 +99,25 @@ public:
   /// Returns the standard density at a specified altitude
   double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
-  inline double GetSoundSpeed(void) const {return soundspeed;}
+  double GetSoundSpeed(void) const {return soundspeed;}
 
   /// Returns the sea level temperature in degrees Rankine.
-  inline double GetTemperatureSL(void) const { return SLtemperature; }
+  double GetTemperatureSL(void) const { return SLtemperature; }
   /// Returns the sea level density in slugs/ft^3
-  inline double GetDensitySL(void)  const { return SLdensity; }
+  double GetDensitySL(void)  const { return SLdensity; }
   /// Returns the sea level pressure in psf.
-  inline double GetPressureSL(void) const { return SLpressure; }
+  double GetPressureSL(void) const { return SLpressure; }
   /// Returns the sea level speed of sound in ft/sec.
-  inline double GetSoundSpeedSL(void) const { return SLsoundspeed; }
+  double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
-  inline double GetTemperatureRatio(void) const { return (*temperature)*rSLtemperature; }
+  double GetTemperatureRatio(void) const { return (*temperature)*rSLtemperature; }
   /// Returns the ratio of at-altitude density over the sea level value.
-  inline double GetDensityRatio(void) const { return (*density)*rSLdensity; }
+  double GetDensityRatio(void) const { return (*density)*rSLdensity; }
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  inline double GetPressureRatio(void) const { return (*pressure)*rSLpressure; }
+  double GetPressureRatio(void) const { return (*pressure)*rSLpressure; }
   /// Returns the ratio of at-altitude sound speed over the sea level value.
-  inline double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
+  double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
 
   /// Tells the simulator to use an externally calculated atmosphere model.
   void UseExternal(void);
@@ -127,66 +127,100 @@ public:
   bool External(void) { return useExternal; }
 
   /// Provides the external atmosphere model with an interface to set the temperature.
-  inline void SetExTemperature(double t)  { exTemperature=t; }
+  void SetExTemperature(double t)  { exTemperature=t; }
   /// Provides the external atmosphere model with an interface to set the density.
-  inline void SetExDensity(double d)      { exDensity=d; }
+  void SetExDensity(double d)      { exDensity=d; }
   /// Provides the external atmosphere model with an interface to set the pressure.
-  inline void SetExPressure(double p)     { exPressure=p; }
+  void SetExPressure(double p)     { exPressure=p; }
 
   /// Sets the temperature deviation at sea-level in degrees Fahrenheit
-  inline void SetSLTempDev(double d)  { T_dev_sl = d; }
+  void SetSLTempDev(double d)  { T_dev_sl = d; }
   /// Gets the temperature deviation at sea-level in degrees Fahrenheit
-  inline double GetSLTempDev(void) const { return T_dev_sl; }
+  double GetSLTempDev(void) const { return T_dev_sl; }
   /// Sets the current delta-T in degrees Fahrenheit
-  inline void SetDeltaT(double d)  { delta_T = d; }
+  void SetDeltaT(double d)  { delta_T = d; }
   /// Gets the current delta-T in degrees Fahrenheit
-  inline double GetDeltaT(void) const  { return delta_T; }
+  double GetDeltaT(void) const  { return delta_T; }
   /// Gets the at-altitude temperature deviation in degrees Fahrenheit
-  inline double GetTempDev(void) const { return T_dev; }
+  double GetTempDev(void) const { return T_dev; }
   /// Gets the density altitude in feet
-  inline double GetDensityAltitude(void) const { return density_altitude; }
+  double GetDensityAltitude(void) const { return density_altitude; }
+
+  // TOTAL WIND access functions (wind + gust + turbulence)
+
+  /// Retrieves the total wind components in NED frame.
+  FGColumnVector3& GetTotalWindNED(void) { return vTotalWindNED; }
+
+  /// Retrieves a total wind component in NED frame.
+  double GetTotalWindNED(int idx) const {return vTotalWindNED(idx);}
+
+  // WIND access functions
 
   /// Sets the wind components in NED frame.
-  inline void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
+  void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
+
+  /// Sets a wind component in NED frame.
+  void SetWindNED(int idx, double wind) { vWindNED(idx)=wind;}
 
   /// Retrieves the wind components in NED frame.
-  inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
+  FGColumnVector3& GetWindNED(void) { return vWindNED; }
 
-  /// Sets gust components in NED frame.
-  inline void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
+  /// Retrieves a wind component in NED frame.
+  double GetWindNED(int idx) const {return vWindNED(idx);}
+
+  /** Retrieves the direction that the wind is coming from.
+      The direction is defined as north=0 and increases counterclockwise.
+      The wind heading is returned in radians.*/
+  double GetWindPsi(void) const { return psiw; }
+
+  /** Sets the direction that the wind is coming from.
+      The direction is defined as north=0 and increases counterclockwise to 2*pi (radians). The
+      vertical component of wind is assumed to be zero - and is forcibly set to zero. This function
+      sets the vWindNED vector components based on the supplied direction. The magnitude of
+      the wind set in the vector is preserved (assuming the vertical component is non-zero).
+      @param dir wind direction in the horizontal plane, in radians.*/
+  void SetWindPsi(double dir);
+
+  void SetWindspeed(double speed);
+
+  double GetWindspeed(void) const;
+
+  // GUST access functions
+
+  /// Sets a gust component in NED frame.
+  void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
+
+  /// Sets the gust components in NED frame.
+  void SetGustNED(double gN, double gE, double gD) { vGustNED(eNorth)=gN; vGustNED(eEast)=gE; vGustNED(eDown)=gD;}
+
+  /// Retrieves a gust component in NED frame.
+  double GetGustNED(int idx) const {return vGustNED(idx);}
 
   /// Retrieves the gust components in NED frame.
-  inline double GetGustNED(int idx) const {return vGustNED(idx);}
-
-  /// Retrieves the gust components in NED frame.
-  inline FGColumnVector3& GetGustNED(void) {return vGustNED;}
-
-  /** Retrieves the wind direction. The direction is defined as north=0 and
-      increases counterclockwise. The wind heading is returned in radians.*/
-  inline double GetWindPsi(void) const { return psiw; }
+  FGColumnVector3& GetGustNED(void) {return vGustNED;}
 
   /** Turbulence models available: ttStandard, ttBerndt, ttCulp, ttNone */
-  inline void   SetTurbType(tType tt) {turbType = tt;}
-  inline tType  GetTurbType() const {return turbType;}
+  void   SetTurbType(tType tt) {turbType = tt;}
+  tType  GetTurbType() const {return turbType;}
 
-  inline void   SetTurbGain(double tg) {TurbGain = tg;}
-  inline double GetTurbGain() const {return TurbGain;}
+  void   SetTurbGain(double tg) {TurbGain = tg;}
+  double GetTurbGain() const {return TurbGain;}
 
-  inline void   SetTurbRate(double tr) {TurbRate = tr;}
-  inline double GetTurbRate() const {return TurbRate;}
+  void   SetTurbRate(double tr) {TurbRate = tr;}
+  double GetTurbRate() const {return TurbRate;}
 
-  inline void   SetRhythmicity(double r) {Rhythmicity=r;}
-  inline double GetRhythmicity() const {return Rhythmicity;}
+  void   SetRhythmicity(double r) {Rhythmicity=r;}
+  double GetRhythmicity() const {return Rhythmicity;}
 
   /** Sets wind vortex, clockwise as seen from a point in front of aircraft,
       looking aft. Units are radians/second. */
-  inline void   SetWindFromClockwise(double wC) { wind_from_clockwise=wC; }
-  inline double GetWindFromClockwise(void) const {return wind_from_clockwise;}
+  void   SetWindFromClockwise(double wC) { wind_from_clockwise=wC; }
+  double GetWindFromClockwise(void) const {return wind_from_clockwise;}
 
-  inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
+  double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   double GetTurbMagnitude(void) const {return Magnitude;}
   FGColumnVector3& GetTurbDirection(void) {return vDirection;}
-  inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
+  FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
 
 protected:
   double rho;
@@ -217,16 +251,15 @@ protected:
   FGColumnVector3 vDirectiondAccelDt;
   FGColumnVector3 vDirectionAccel;
   FGColumnVector3 vDirection;
-  FGColumnVector3 vTurbulence;
   FGColumnVector3 vTurbulenceGrad;
   FGColumnVector3 vBodyTurbGrad;
   FGColumnVector3 vTurbPQR;
 
-  FGColumnVector3 vWindNED;
   double psiw;
-
+  FGColumnVector3 vTotalWindNED;
+  FGColumnVector3 vWindNED;
   FGColumnVector3 vGustNED;
-  bool bgustSet;
+  FGColumnVector3 vTurbulenceNED;
 
   /// Calculate the atmosphere for the given altitude, including effects of temperature deviation.
   void Calculate(double altitude);
