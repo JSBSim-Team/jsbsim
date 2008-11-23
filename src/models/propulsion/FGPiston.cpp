@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.25 2008/11/23 19:25:13 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.26 2008/11/23 20:10:14 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,7 +549,9 @@ void FGPiston::doMAP(void)
         }
       }
       // Boost the manifold pressure.
-      MAP += MAP * BoostMul[BoostSpeed] * suction_loss * RPM/RatedRPM[BoostSpeed];
+      double boost_factor = BoostMul[BoostSpeed] * suction_loss * RPM/RatedRPM[BoostSpeed];
+      if (boost_factor < 1.0) boost_factor = 1.0;  // boost will never reduce the MAP
+      MAP *= boost_factor;
       // Now clip the manifold pressure to BCV or Wastegate setting.
       if(bTakeoffPos) {
         if(MAP > TakeoffMAP[BoostSpeed]) {
