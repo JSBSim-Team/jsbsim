@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.24 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.25 2008/11/23 19:25:13 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,8 +390,8 @@ if(HP<0.1250)
 double FGPiston::CalcFuelNeed(void)
 {
   double dT = State->Getdt() * Propulsion->GetRate();
-  FuelFlow_pph = FuelFlow_gph * 6.0;
-  FuelFlowRate = FuelFlow_pph / 3600.0; // Assumes 6 lbs / gallon
+  FuelFlow_pph = FuelFlow_gph * 6.0; // Assumes 6 lbs / gallon
+  FuelFlowRate = FuelFlow_pph / 3600.0;
   FuelExpended = FuelFlowRate * dT;
   return FuelExpended;
 }
@@ -582,8 +582,7 @@ void FGPiston::doMAP(void)
 
 void FGPiston::doAirFlow(void)
 {
-
-rho_air = p_amb / (R_air * T_amb);
+  rho_air = p_amb / (R_air * T_amb);
   double displacement_SI = Displacement * in3tom3;
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   double v_dot_air = swept_volume * volumetric_efficiency * suction_loss;
