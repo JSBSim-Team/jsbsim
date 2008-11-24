@@ -2,12 +2,8 @@
 <nozzle name="X-15 XLR-99 Nozzle">
   <!--
     pe      = Nozzle exit pressure, psf.
-    expr    = Nozzle expansion ratio, Ae/At, sqft. dimensionless ratio
-    nzl_eff = Nozzle efficiency, 0.0 - 1.0
-    diam    = Nozzle diameter, ft.
+    area    = Nozzle exit area, sqft.
   -->
   <pe unit="PSF"> 40.0  </pe>
-  <expr>           9.8  </expr>
-  <nzl_eff>        0.67 </nzl_eff>
-  <diam unit="FT"> 3.2  </diam>
+  <area unit="FT2"> 8.04  </area>
 </nozzle>

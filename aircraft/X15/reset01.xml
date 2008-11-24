@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <initialize name="reset01">
   <!--
-    This file sets up the aircraft to start off
-    from the runway in preparation for takeoff.
+    This file sets up the X15 to start off at altitude.
   -->
   <ubody unit="FT/SEC">  750.0  </ubody>
   <vbody unit="FT/SEC">    0.0  </vbody>
