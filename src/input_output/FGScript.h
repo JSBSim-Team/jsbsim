@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.11 2008/05/11 18:15:52 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.12 2008/11/29 13:52:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.11 2008/05/11 18:15:52 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.12 2008/11/29 13:52:37 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,8 +204,8 @@ private:
   struct event {
     FGCondition     *Condition;
     bool             Persistent;
+    bool             Continuous;
     bool             Triggered;
-    bool             PrevTriggered;
     bool             Notify;
     bool             Notified;
     double           Delay;
@@ -226,8 +226,8 @@ private:
 
     event() {
       Triggered = false;
-      PrevTriggered = false;
       Persistent = false;
+      Continuous = false;
       Delay = 0.0;
       Notify = Notified = false;
       Name = "";
@@ -237,7 +237,6 @@ private:
 
     void reset(void) {
       Triggered = false;
-      PrevTriggered = false;
       Notified = false;
       StartTime = 0.0;
     }
