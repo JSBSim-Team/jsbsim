@@ -64,7 +64,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.18 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.19 2008/11/30 16:56:03 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ bool FGAircraft::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAircraft::GetNlf(void)
+double FGAircraft::GetNlf(void) const
 {
   return -1*Aerodynamics->GetvFw(3)/MassBalance->GetWeight();
 }
@@ -216,13 +216,6 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/lv-norm", this, &FGAircraft::Getlbarv);
   PropertyManager->Tie("metrics/vbarh-norm", this, &FGAircraft::Getvbarh);
   PropertyManager->Tie("metrics/vbarv-norm", this, &FGAircraft::Getvbarv);
-  PropertyManager->Tie("forces/hold-down", this, &FGAircraft::GetHoldDown, &FGAircraft::SetHoldDown);
-  PropertyManager->Tie("moments/l-total-lbsft", this, eL, (PMF)&FGAircraft::GetMoments);
-  PropertyManager->Tie("moments/m-total-lbsft", this, eM, (PMF)&FGAircraft::GetMoments);
-  PropertyManager->Tie("moments/n-total-lbsft", this, eN, (PMF)&FGAircraft::GetMoments);
-  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAircraft::GetForces);
-  PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAircraft::GetForces);
-  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("metrics/aero-rp-x-in", this, eX, (PMF)&FGAircraft::GetXYZrp);
   PropertyManager->Tie("metrics/aero-rp-y-in", this, eY, (PMF)&FGAircraft::GetXYZrp);
   PropertyManager->Tie("metrics/aero-rp-z-in", this, eZ, (PMF)&FGAircraft::GetXYZrp);
@@ -232,6 +225,14 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZvrp);
+  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAircraft::GetForces);
+  PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAircraft::GetForces);
+  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, (PMF)&FGAircraft::GetForces);
+  PropertyManager->Tie("forces/load-factor", this, &FGAircraft::GetNlf);
+  PropertyManager->Tie("forces/hold-down", this, &FGAircraft::GetHoldDown, &FGAircraft::SetHoldDown);
+  PropertyManager->Tie("moments/l-total-lbsft", this, eL, (PMF)&FGAircraft::GetMoments);
+  PropertyManager->Tie("moments/m-total-lbsft", this, eM, (PMF)&FGAircraft::GetMoments);
+  PropertyManager->Tie("moments/n-total-lbsft", this, eN, (PMF)&FGAircraft::GetMoments);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

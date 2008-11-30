@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.12 2008/11/30 16:56:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.11 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.12 2008/11/30 16:56:03 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -171,7 +171,7 @@ public:
 
   void SetWingArea(double S) {WingArea = S;}
 
-  double GetNlf(void);
+  double GetNlf(void) const;
 
   inline FGColumnVector3& GetNwcg(void) { return vNwcg; }
 
