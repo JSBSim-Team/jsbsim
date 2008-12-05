@@ -1,7 +1,5 @@
 includedir = @includedir@/JSBSim/math
 
-###SUBDIRS = direct_search
-
 LIBRARY_SOURCES = FGColumnVector3.cpp FGFunction.cpp FGLocation.cpp FGMatrix33.cpp \
                     FGPropertyValue.cpp FGQuaternion.cpp FGRealValue.cpp FGTable.cpp \
                     FGCondition.cpp

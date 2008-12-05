@@ -46,7 +46,6 @@ INCLUDES
 #include <models/flight_control/FGDeadBand.h>
 #include <models/flight_control/FGGain.h>
 #include <models/flight_control/FGPID.h>
-#include <models/flight_control/FGGradient.h>
 #include <models/flight_control/FGSwitch.h>
 #include <models/flight_control/FGSummer.h>
 #include <models/flight_control/FGKinemat.h>
@@ -56,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.47 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.48 2008/12/05 23:52:38 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)

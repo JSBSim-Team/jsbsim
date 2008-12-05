@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.12 2008/11/29 13:52:37 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.13 2008/12/05 23:52:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,13 +70,14 @@ CLASS DOCUMENTATION
     format. A test condition (or conditions) can be set up in an event in a
     script and when the condition evaluates to true, the specified
     action[s] is/are taken. An event can be <em>persistent</em>,
-    meaning that at all times when the test condition evaluates to true
-    the specified <em>set</em> actions take place. When the set of
-    tests evaluates to true for a given
+    meaning that at every time the test condition first evaluates to true
+    (toggling from false to true) then the specified <em>set</em> actions take
+    place. An event can also be defined to execute or evaluate continuously
+    while the condition is true. When the set of tests evaluates to true for a given
     condition, an item may be set to another value. This value may
     be a value, or a delta value, and the change from the
-    current value to the new value can be either via a step function,
-    a ramp, or an exponential approach. The speed of a ramp or
+    current value to the new value can be either via a step action,
+    a ramp, or an exponential approach. The speed of a ramp or exponential
     approach is specified via the time constant. Here is an example
     illustrating the format of the script file:
 
@@ -157,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.12 2008/11/29 13:52:37 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.13 2008/12/05 23:52:58 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
