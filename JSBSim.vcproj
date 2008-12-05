@@ -191,35 +191,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\CompassSearch.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\compiler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\CoordinateSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\cppmat.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\DirectSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\Dyn_alloc.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\xml\easyxml.hxx"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\EdHJSearch.h"
 				>
 			</File>
 			<File
@@ -324,10 +300,6 @@
 			</File>
 			<File
 				RelativePath=".\src\models\FGGasCell.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\flight_control\FGGradient.h"
 				>
 			</File>
 			<File
@@ -439,10 +411,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\models\propulsion\FGRotor.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\input_output\FGScript.h"
 				>
 			</File>
@@ -503,14 +471,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\HJSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\Hybrid_NMSearch.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\xml\iasciitab.h"
 				>
 			</File>
@@ -535,22 +495,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\NLessSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\NMSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\objective.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\PatternSearch.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\props\props.hxx"
 				>
 			</File>
@@ -563,23 +507,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\SHHSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\SimplexSearch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\SMDSearch.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\xml\utf8tab.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\vec.h"
 				>
 			</File>
 			<File
@@ -611,27 +539,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\math\direct_search\CompassSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\CoordinateSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\DirectSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\simgear\xml\easyxml.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\xml\easyxml.cxx"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\EdHJSearch.cc"
 				>
 			</File>
 			<File
@@ -724,10 +632,6 @@
 			</File>
 			<File
 				RelativePath=".\src\models\FGGasCell.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\flight_control\FGGradient.cpp"
 				>
 			</File>
 			<File
@@ -839,10 +743,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\models\propulsion\FGRotor.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\input_output\FGScript.cpp"
 				>
 			</File>
@@ -899,47 +799,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\HJSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\Hybrid_NMSearch.cc"
-				>
-			</File>
-			<File
 				RelativePath=".\src\JSBSim.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\math\direct_search\NLessSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\NMSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\objective.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\PatternSearch.cc"
-				>
-			</File>
-			<File
 				RelativePath=".\src\simgear\props\props.cxx"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\SHHSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\SimplexSearch.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\src\math\direct_search\SMDSearch.cc"
 				>
 			</File>
 			<File
