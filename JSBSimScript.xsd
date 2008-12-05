@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!--<?xml-stylesheet type="text/xsl" href="XMLToDoc.xsl"?>-->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 <xs:annotation><xs:documentation>
@@ -37,19 +38,46 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation><xs:documentation>
+            A property element placed within the run element (in a sort of "global"
+            script space) allows variables to be created for scripting. The property can
+            be given an initial value, as well.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="value" type="xs:decimal" default="0.0" use="optional" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
         <xs:element ref="event" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="start" type="xs:decimal" use="optional"/>
-      <xs:attribute name="end" type="xs:decimal" use="required"/>
-      <xs:attribute name="dt" type="xs:decimal" use="required"/>
+      <xs:attribute name="start" type="xs:decimal" use="optional">
+        <xs:annotation><xs:documentation>
+          This attribute is not currently used. A script will always begin execution at
+          time 0.0.
+        </xs:documentation></xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="end" type="xs:decimal" use="required">
+        <xs:annotation><xs:documentation>
+          Since script execution always begins at time 0.0, the "end" attribute is essentially
+          the same thing as the duration of the script.
+        </xs:documentation></xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="dt" type="xs:decimal" use="required">
+        <xs:annotation><xs:documentation>
+          The dt attribute is simply the frame time, or the times step size. 
+        </xs:documentation></xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="event">
     <xs:annotation><xs:documentation>
       The "event" element (if any) has as its parent the "run" element. There may be any
-      number of event elements defined, or none at all. An event element may feature a
+      number of event elements defined - even none at all. An event element may feature a
       name attribute, and/or a persistent attribute.
     </xs:documentation>
     </xs:annotation>
@@ -67,8 +95,19 @@
       <xs:attribute name="persistent" use="optional" default="false">
         <xs:annotation><xs:documentation>
           If an event is marked persistent, the event will be executed anytime the condition[s]
-          evaluate to true. Otherwise, the event only executes the first time the condition
-          evaluates to true. 
+          first evaluate to true after toggling from false. Otherwise, the event only executes
+          the first time the condition evaluates toggles to true. 
+        </xs:documentation></xs:annotation>
+        <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="true|false"/></xs:restriction></xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="continuous" use="optional" default="false">
+        <xs:annotation><xs:documentation>
+          If an event is marked as "continuous", the "set" action will be executed at all times
+          while the conditions evaluate to true. This is not only relevant when a property is set
+          via the exponential approach method. If a function is used within the "set" element to 
+          define the value that the event will assign, the use of the continuous attribute (set
+          to true) causes the function to be evaluated continuously while the condition evaluates
+          to true.
         </xs:documentation></xs:annotation>
         <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="true|false"/></xs:restriction></xs:simpleType>
       </xs:attribute>
@@ -122,7 +161,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="property"></xs:element>
+        <xs:element name="property" type="xs:string"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -158,6 +197,9 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:all minOccurs="0">
+        <xs:element minOccurs="0" ref="function"/>
+      </xs:all>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="action" use="optional" default="FG_STEP">
         <xs:annotation>
@@ -172,7 +214,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="value" type="xs:double" use="required"/>
+      <xs:attribute name="value" type="xs:double" use="optional"/>
       <xs:attribute name="tc" type="xs:double" use="optional"/>
       <xs:attribute name="type" use="optional" default="FG_VALUE">
         <xs:simpleType>
@@ -212,4 +254,246 @@
     </xs:complexType>
   </xs:element>
 
+  <!-- Functions -->
+  <xs:group name="func_group">
+    <xs:choice>
+      <xs:element ref="table" />
+      <xs:element ref="product" />
+      <xs:element ref="difference" />
+      <xs:element ref="sum" />
+      <xs:element ref="quotient" />
+      <xs:element ref="pow" />
+      <xs:element ref="abs" />
+      <xs:element ref="sin" />
+      <xs:element ref="cos" />
+      <xs:element ref="tan" />
+      <xs:element ref="asin" />
+      <xs:element ref="acos" />
+      <xs:element ref="atan" />
+      <xs:element ref="atan2" />
+      <xs:element ref="min" />
+      <xs:element ref="max" />
+      <xs:element ref="avg" />
+      <xs:element ref="fraction" />
+      <xs:element ref="integer" />
+      <xs:element ref="mod"/>
+      <xs:element name="random"/>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="function">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" minOccurs="0">
+          <xs:annotation><xs:documentation>
+            A descriptiopn of the element.            
+          </xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:group ref="func_group" />
+      </xs:sequence>
+      <xs:attribute name="name" use="optional" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="product">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="difference">
+    <xs:complexType>
+      <xs:choice maxOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sum">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="quotient">
+    <xs:complexType>
+      <xs:choice maxOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="abs">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="pow">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sin">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="cos">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tan">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="asin">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="acos">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="atan">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="atan2">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="min">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="max">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="avg">
+    <xs:complexType>
+      <xs:choice minOccurs="2" maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fraction">
+    <xs:complexType>
+      <xs:choice>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="integer">
+    <xs:complexType>
+      <xs:choice>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="value" type="xs:double" />
+  
+  <xs:element name="mod">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="PositiveNumber">
+    <xs:restriction base="xs:double">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:element name="table">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="independentVar" />
+        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="name" use="optional" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="independentVar">
+    <xs:complexType mixed="true">
+      <xs:attribute name="lookup" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tableData">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="breakPoint" type="xs:double" use="optional" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  
 </xs:schema>
