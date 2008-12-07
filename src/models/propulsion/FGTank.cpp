@@ -44,7 +44,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.14 2008/12/07 19:33:56 andgi Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.15 2008/12/07 20:20:01 andgi Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +147,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
+
+  CalculateInertias();
 
   Debug(0);
 }
