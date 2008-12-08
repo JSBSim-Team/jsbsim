@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.29 2008/11/21 02:45:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.30 2008/12/08 12:27:31 andgi Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,6 +79,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   day_of_year = 1;
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
+  tatc = RankineToCelsius(tat);
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
