@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.3 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.4 2008/12/12 05:05:50 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@ FGMatrix33::FGMatrix33(void)
   data[0] = data[1] = data[2] = data[3] = data[4] = data[5] =
     data[6] = data[7] = data[8] = 0.0;
 
-  Debug(0);
+  // Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
