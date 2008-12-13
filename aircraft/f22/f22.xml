@@ -7,7 +7,7 @@
     <fileheader>
         Erik Hofman<author>  </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Revision: 1.27 $ </version>
+        <version> $Revision: 1.28 $ </version>
         <description> Models an F-22 Raptor </description>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
@@ -122,7 +122,7 @@
         </contact>
     </ground_reactions>
     <propulsion>
-        <engine file="F119-PW1">
+        <engine file="F119-PW-1">
             <location unit="IN">
                 <x> 684.131 </x>
                 <y> -20 </y>
@@ -147,7 +147,7 @@
                 </orient>
             </thruster>
         </engine>
-        <engine file="F119-PW1">
+        <engine file="F119-PW-1">
             <location unit="IN">
                 <x> 684.131 </x>
                 <y> 20 </y>
