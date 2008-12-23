@@ -96,6 +96,7 @@ src/utilities/aeromatic/Makefile \
 aircraft/Makefile \
 aircraft/737/Makefile \
 aircraft/A320/Makefile \
+aircraft/B17/Makefile \
 aircraft/B747/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \

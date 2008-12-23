@@ -3,7 +3,7 @@ EXTRA_DIST = \
 	CFM56_5.xml \
 	CFM56.xml \
 	GE-CF6-80C2-B1F.xml \
-	F119-PW1.xml \
+	F119-PW-1.xml \
 	J69-T25.xml \
 	J85-GE-5.xml \
 	J85-GE-5.xml \
@@ -11,6 +11,7 @@ EXTRA_DIST = \
 	LMdescent.xml \
 	PT6A-68.xml \
 	PW125B.xml \
+	R-1820-97.xml \
 	T76.xml \
 	Tay-651.xml \
 	XLR99.xml \
@@ -25,6 +26,7 @@ EXTRA_DIST = \
 	propC8v.xml \
 	prop_Clark_Y7570.xml \
 	propDA-R352_6-123-F_2.xml \
+	propHS139v.xml \
 	prop_75in2f.xml \
 	prop_81in2v.xml \
 	prop_generic2f.xml \

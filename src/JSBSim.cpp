@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.43 2008/07/23 10:31:55 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.44 2008/12/23 15:24:38 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -272,7 +272,6 @@ int main(int argc, char* argv[])
   FDMExec->SetAircraftPath(RootDir + "aircraft");
   FDMExec->SetEnginePath(RootDir + "engine");
   FDMExec->SetSystemsPath(RootDir + "systems");
-
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 

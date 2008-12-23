@@ -7,14 +7,15 @@
     This run is for testing X-15 high altitude,
     high speed pitch pulses in the simulator.
   </description>
-  <use aircraft="X15" initialize="reset00"/>
-  <run start="0.0" end="10.0" dt="0.01">
+  <use aircraft="X15" initialize="reset01"/>
+  <run start="0.0" end="5.0" dt="0.0083333">
     <event name="Test throttle, aileron">
       <condition>sim-time-sec  ge  0.5</condition>
       <set name="fcs/aileron-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.1" tc="0.5"/>
       <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.9" tc="0.5"/>
       <notify/>
     </event>
+    <!--
     <event name="Test rudder">
       <condition>sim-time-sec  ge  1.5</condition>
       <set name="fcs/rudder-cmd-norm" action="FG_RAMP" type="FG_DELTA" value="0.2" tc="0.5"/>
@@ -25,5 +26,6 @@
       <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.1" tc="0.5"/>
       <notify/>
     </event>
+    -->
   </run>
 </runscript>

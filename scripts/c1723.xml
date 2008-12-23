@@ -12,7 +12,7 @@
 
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
-
+    
     <event name="engine start">
       <description>Start the engine</description>
       <condition> sim-time-sec >= 0.25 </condition>
