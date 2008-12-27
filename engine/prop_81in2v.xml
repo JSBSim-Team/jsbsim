@@ -4,7 +4,7 @@
   <ixx> 1.67 </ixx>
   <diameter unit="IN"> 81.0 </diameter>
   <numblades> 2 </numblades>
-  <minpitch> 12.0 </minpitch>
+  <minpitch> 17.0 </minpitch>
   <maxpitch> 31.8 </maxpitch>
   <minrpm>    900 </minrpm>
   <maxrpm>   2400 </maxrpm>
