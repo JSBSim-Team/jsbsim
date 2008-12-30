@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.11 2008/11/03 10:10:59 andgi Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.12 2008/12/30 11:37:16 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.11 2008/11/03 10:10:59 andgi Exp $
+    @version $Id: FGPiston.h,v 1.12 2008/12/30 11:37:16 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,7 @@ public:
   double getRPM(void) {return RPM;}
 
 protected:
-  double ThrottlePos;
+  double ThrottleAngle;
 
 
 private:
@@ -252,6 +252,7 @@ private:
   //
   double MinManifoldPressure_inHg; // Inches Hg
   double MaxManifoldPressure_inHg; // Inches Hg
+  double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
   double Displacement;             // cubic inches
   double MaxHP;                    // horsepower
   double SparkFailDrop;            // drop of power due to spark failure
@@ -304,7 +305,7 @@ private:
   //
   double rho_air;
   double volumetric_efficiency;
-  double suction_loss;
+  double map_coefficient;
   double m_dot_air;
   double equivalence_ratio;
   double m_dot_fuel;

@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.26 2008/11/23 20:10:14 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.27 2008/12/30 11:37:07 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,6 +242,8 @@ Manifold_Pressure_Lookup = new
   if (BSFC < 0) {
       BSFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * MaxHP);
   }
+  if ( MaxManifoldPressure_inHg > 29.9 ) MaxManifoldPressure_inHg = 29.9; // Don't allow boosting with a bogus number
+  MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
   char property_name[80];
   snprintf(property_name, 80, "propulsion/engine[%d]/power-hp", EngineNumber);
   PropertyManager->Tie(property_name, &HP);
@@ -338,7 +340,8 @@ double FGPiston::Calculate(void)
   if (FuelFlow_gph > 0.0) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
-  ThrottlePos = MinThrottle+((MaxThrottle-MinThrottle)*Throttle );
+  // calculate the throttle plate angle.  1 unit is pi/2 radians.
+  ThrottleAngle = MinThrottle+((MaxThrottle-MinThrottle)*Throttle );
   Mixture = FCS->GetMixturePos(EngineNumber);
 
   //
@@ -521,9 +524,9 @@ void FGPiston::doBoostControl(void)
 
 void FGPiston::doMAP(void)
 {
-    suction_loss = RPM > 0.0 ? ThrottlePos * MaxRPM / RPM : 1.0;
-    if (suction_loss > 1.0) suction_loss = 1.0;
-    MAP = p_amb * suction_loss;
+    double throttle_area = pow(ThrottleAngle, 1/ThrottleAngle); // estimate throttle plate area
+    map_coefficient = pow ((throttle_area * MaxManifoldPressure_Percent),RPM/MaxRPM);
+    MAP = p_amb * map_coefficient;
 
     if(Boosted) {
       // If takeoff boost is fitted, we currently assume the following throttle map:
@@ -549,7 +552,7 @@ void FGPiston::doMAP(void)
         }
       }
       // Boost the manifold pressure.
-      double boost_factor = BoostMul[BoostSpeed] * suction_loss * RPM/RatedRPM[BoostSpeed];
+      double boost_factor = BoostMul[BoostSpeed] * map_coefficient * RPM/RatedRPM[BoostSpeed];
       if (boost_factor < 1.0) boost_factor = 1.0;  // boost will never reduce the MAP
       MAP *= boost_factor;
       // Now clip the manifold pressure to BCV or Wastegate setting.
@@ -575,7 +578,7 @@ void FGPiston::doMAP(void)
  * (used in CHT calculation for air-cooled engines).
  *
  * Inputs: p_amb, R_air, T_amb, MAP, Displacement,
- *   RPM, volumetric_efficiency, ThrottlePos
+ *   RPM, volumetric_efficiency, ThrottleAngle
  *
  * TODO: Model inlet manifold air temperature.
  *
@@ -587,7 +590,7 @@ void FGPiston::doAirFlow(void)
   rho_air = p_amb / (R_air * T_amb);
   double displacement_SI = Displacement * in3tom3;
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
-  double v_dot_air = swept_volume * volumetric_efficiency * suction_loss;
+  double v_dot_air = swept_volume * volumetric_efficiency * map_coefficient;
 
   double rho_air_manifold = MAP / (R_air * T_amb);
   m_dot_air = v_dot_air * rho_air_manifold;
@@ -649,7 +652,7 @@ void FGPiston::doEnginePower(void)
     if ( Magnetos != 3 ) power *= SparkFailDrop;
 
 
-    HP = (FuelFlow_gph * 6.0 / BSFC )* ME * suction_loss * power;
+    HP = (FuelFlow_gph * 6.0 / BSFC )* ME * map_coefficient * power;
 
   } else {
 
