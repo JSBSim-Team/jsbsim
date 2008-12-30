@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.11 2008/07/09 02:16:21 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.12 2008/12/30 12:19:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.11 2008/07/09 02:16:21 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.12 2008/12/30 12:19:26 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,7 @@ public:
   virtual void SetRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(double dt) {deltaT = dt;}
-  double GetThrust(void) {return Thrust;}
+  double GetThrust(void) const {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
   void SetReverserAngle(double angle) {ReverserAngle = angle;}

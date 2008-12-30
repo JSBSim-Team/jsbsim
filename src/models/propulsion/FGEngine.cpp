@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.23 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.24 2008/12/30 12:19:26 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   snprintf(property_name, 80, "propulsion/engine[%d]/set-running", EngineNumber);
   PropertyManager->Tie( property_name, this, &FGEngine::GetRunning, &FGEngine::SetRunning );
   snprintf(property_name, 80, "propulsion/engine[%u]/thrust-lbs", EngineNumber);
-  PropertyManager->Tie( property_name, this, &FGEngine::GetThrust);
+  PropertyManager->Tie( property_name, Thruster, &FGThruster::GetThrust);
   snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow-rate-pps", EngineNumber);
   PropertyManager->Tie( property_name, this, &FGEngine::GetFuelFlowRate);
 
@@ -138,7 +138,6 @@ FGEngine::~FGEngine()
 
 void FGEngine::ResetToIC(void)
 {
-  Thrust = 0.0;
   Throttle = 0.0;
   Mixture = 1.0;
   Starter = false;

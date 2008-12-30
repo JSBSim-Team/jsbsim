@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.15 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.16 2008/12/30 12:19:26 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,6 +107,8 @@ void FGTurbine::ResetToIC(void)
 
 double FGTurbine::Calculate(void)
 {
+  double thrust;
+
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   dt = State->Getdt() * Propulsion->GetRate();
   ThrottlePos = FCS->GetThrottlePos(EngineNumber);
@@ -144,19 +146,19 @@ double FGTurbine::Calculate(void)
   if (Seized) phase = tpSeize;
 
   switch (phase) {
-    case tpOff:    Thrust = Off(); break;
-    case tpRun:    Thrust = Run(); break;
-    case tpSpinUp: Thrust = SpinUp(); break;
-    case tpStart:  Thrust = Start(); break;
-    case tpStall:  Thrust = Stall(); break;
-    case tpSeize:  Thrust = Seize(); break;
-    case tpTrim:   Thrust = Trim(); break;
-    default: Thrust = Off();
+    case tpOff:    thrust = Off(); break;
+    case tpRun:    thrust = Run(); break;
+    case tpSpinUp: thrust = SpinUp(); break;
+    case tpStart:  thrust = Start(); break;
+    case tpStall:  thrust = Stall(); break;
+    case tpSeize:  thrust = Seize(); break;
+    case tpTrim:   thrust = Trim(); break;
+    default: thrust = Off();
   }
 
-  Thrust = Thruster->Calculate(Thrust); // allow thruster to modify thrust (i.e. reversing)
+  thrust = Thruster->Calculate(thrust); // allow thruster to modify thrust (i.e. reversing)
 
-  return Thrust;
+  return thrust;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

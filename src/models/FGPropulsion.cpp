@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.29 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.30 2008/12/30 12:19:26 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -184,7 +184,7 @@ bool FGPropulsion::GetSteadyState(void)
       while (!steady && j < 6000) {
         Engines[i]->Calculate();
         lastThrust = currentThrust;
-        currentThrust = Engines[i]->GetThrust();
+        currentThrust = Engines[i]->GetThruster()->GetThrust();
         if (fabs(lastThrust-currentThrust) < 0.0001) {
           steady_count++;
           if (steady_count > 120) {

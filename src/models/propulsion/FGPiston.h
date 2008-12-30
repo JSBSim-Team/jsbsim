@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.12 2008/12/30 11:37:16 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.13 2008/12/30 12:19:26 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.12 2008/12/30 11:37:16 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.13 2008/12/30 12:19:26 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +206,6 @@ public:
 
 protected:
   double ThrottleAngle;
-
 
 private:
   int crank_counter;

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.14 2008/12/30 12:19:26 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.14 2008/12/30 12:19:26 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,6 @@ public:
   virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
   virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
   virtual double GetFuelFlowRate(void) const {return FuelFlowRate;}
-  virtual double GetThrust(void) const { return Thrust; }
   virtual bool   GetStarved(void) { return Starved; }
   virtual bool   GetRunning(void) const { return Running; }
   virtual bool   GetCranking(void) { return Cranking; }
@@ -216,7 +215,6 @@ protected:
   double MaxThrottle;
   double MinThrottle;
 
-  double Thrust;
   double Throttle;
   double Mixture;
   double FuelExpended;

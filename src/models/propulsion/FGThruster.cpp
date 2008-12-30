@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.8 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.9 2008/12/30 12:19:26 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   PropertyManager->Tie( property_name, (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
 
   if (el->GetName() == "direct") // this is a direct thruster. At this time
-                                      // only a direct thruster can be reversed.
+                                 // only a direct thruster can be reversed.
   {
     snprintf(property_name, 80, "propulsion/engine[%d]/reverser-angle-rad", EngineNum);
     PropertyManager->Tie( property_name, (FGThruster *)this, &FGThruster::GetReverserAngle,
