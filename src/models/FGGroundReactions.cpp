@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.18 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.19 2009/01/01 06:11:21 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,17 +89,14 @@ bool FGGroundReactions::Run(void)
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
-    // Sum forces and moments for all gear, here.
-    // Some optimizations may be made here - or rather in the gear code itself.
-    // The gear ::Run() method is called several times - once for each gear.
-    // Perhaps there is some commonality for things which only need to be
-    // calculated once.
-  if ( Propagate->GetDistanceAGL() < 300.0 ) { // Only execute gear code below 300 feet
-    for (unsigned int i=0; i<lGear.size(); i++) {
-      vForces  += lGear[i]->Force();
-      vMoments += lGear[i]->Moment();
-    }
-
+  // Sum forces and moments for all gear, here.
+  // Some optimizations may be made here - or rather in the gear code itself.
+  // The gear ::Run() method is called several times - once for each gear.
+  // Perhaps there is some commonality for things which only need to be
+  // calculated once.
+  for (unsigned int i=0; i<lGear.size(); i++) {
+    vForces  += lGear[i]->Force();
+    vMoments += lGear[i]->Moment();
   }
 
   return false;

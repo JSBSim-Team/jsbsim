@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.45 2008/08/04 12:37:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.46 2009/01/01 06:11:21 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -452,6 +452,7 @@ void FGLGear::ComputeRetractionState(void)
   double gearPos = GetGearUnitPos();
   if (gearPos < 0.01) {
     GearUp   = true;
+    WOW      = false;
     GearDown = false;
   } else if (gearPos > 0.99) {
     GearDown = true;
