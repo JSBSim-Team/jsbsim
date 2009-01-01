@@ -50,15 +50,16 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.46 2009/01/01 06:11:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.47 2009/01/01 11:44:36 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
-                 GearNumber(number)
+FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
+  GearNumber(number),
+  Exec(fdmex)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
@@ -740,6 +741,8 @@ void FGLGear::bind(void)
     snprintf(property_name, 80, "gear/unit[%d]/z-position", GearNumber);
     Exec->GetPropertyManager()->Tie( property_name, (FGLGear*)this,
                           &FGLGear::GetZPosition, &FGLGear::SetZPosition);
+    snprintf(property_name, 80, "gear/unit[%d]/compression-ft", GearNumber);
+    Exec->GetPropertyManager()->Tie( property_name, &compressLength );
   }
 
   if( isRetractable ) {
