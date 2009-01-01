@@ -5,7 +5,7 @@
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
   <fileheader>
-    <author> Aeromatic v 0.9 </author>
+    <author> Aeromatic v 0.9, refined by Jon Berndt </author>
     <filecreationdate> 2008-12-22 </filecreationdate>
     <version>$Revison: $</version>
     <description> Models a Boeing B-17G. </description>
@@ -60,12 +60,12 @@
   </metrics>
 
   <mass_balance>
-    <ixx unit="SLUG*FT2">    336320 </ixx>
-    <iyy unit="SLUG*FT2">    206510 </iyy>
-    <izz unit="SLUG*FT2">    534371 </izz>
-    <emptywt unit="LBS" >     39300 </emptywt>
+    <ixx unit="SLUG*FT2">    400000 </ixx>
+    <iyy unit="SLUG*FT2">    250000 </iyy>
+    <izz unit="SLUG*FT2">    600000 </izz>
+    <emptywt unit="LBS" >     36100 </emptywt>
     <location name="CG" unit="FT">
-      <x> 21.9 </x>
+      <x> 22.0 </x>
       <y>  0.0 </y>
       <z> -0.5 </z>
     </location>
@@ -82,8 +82,12 @@
       <static_friction>  0.80 </static_friction>
       <dynamic_friction> 0.50 </dynamic_friction>
       <rolling_friction> 0.02 </rolling_friction>
-      <spring_coeff unit="LBS/FT">      65500.00 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 13100.00 </damping_coeff>
+      <spring_coeff unit="LBS/FT">      30000.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">  3000.00 </damping_coeff>
+      <relaxation_velocity>
+        <rolling unit="FT/SEC">0.066666</rolling>
+        <side unit="FT/SEC">0.2</side>
+      </relaxation_velocity>
       <max_steer unit="DEG">0</max_steer>
       <brake_group>LEFT</brake_group>
       <retractable>1</retractable>
@@ -98,8 +102,12 @@
       <static_friction>  0.80 </static_friction>
       <dynamic_friction> 0.50 </dynamic_friction>
       <rolling_friction> 0.02 </rolling_friction>
-      <spring_coeff unit="LBS/FT">      65500.00 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 13100.00 </damping_coeff>
+      <spring_coeff unit="LBS/FT">      30000.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">  3000.00 </damping_coeff>
+      <relaxation_velocity>
+        <rolling unit="FT/SEC">0.066666</rolling>
+        <side unit="FT/SEC">0.2</side>
+      </relaxation_velocity>
       <max_steer unit="DEG">0</max_steer>
       <brake_group>RIGHT</brake_group>
       <retractable>1</retractable>
@@ -114,8 +122,12 @@
       <static_friction>  0.80 </static_friction>
       <dynamic_friction> 0.50 </dynamic_friction>
       <rolling_friction> 0.02 </rolling_friction>
-      <spring_coeff unit="LBS/FT">      65500.00 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 52400.00 </damping_coeff>
+      <spring_coeff unit="LBS/FT">      6500.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 650.00 </damping_coeff>
+      <relaxation_velocity>
+        <rolling unit="FT/SEC">0.066666</rolling>
+        <side unit="FT/SEC">0.2</side>
+      </relaxation_velocity>
       <max_steer unit="DEG"> 5.00 </max_steer>
       <brake_group>NONE</brake_group>
       <retractable>1</retractable>
@@ -149,13 +161,18 @@
 
   <propulsion>
 
-    <engine file="R-1820-97"> <!-- Engine 0 -->
+    <engine file="R-1820-97"> <!-- Engine 0 (left outboard) -->
       <location unit="FT">
         <x>  10.1 </x>
         <y> -21.6 </y>
         <z>  -0.4 </z>
       </location>
       <feed>0</feed>
+      <feed>1</feed>
+      <feed>2</feed>
+      <feed>3</feed>
+      <feed>4</feed>
+      <feed>9</feed>
       <thruster file="propHS139v">
         <location unit="FT">
           <x>  10.1 </x>
@@ -170,13 +187,18 @@
       </thruster>
     </engine>
 
-    <engine file="R-1820-97"> <!-- Engine 1 -->
+    <engine file="R-1820-97"> <!-- Engine 1 (left inboard) -->
       <location unit="FT">
         <x>  8.6 </x>
         <y> -10.0 </y>
         <z> -0.7 </z>
       </location>
-      <feed>1</feed>
+      <feed>5</feed>
+      <feed>6</feed>
+      <feed>7</feed>
+      <feed>8</feed>
+      <feed>10</feed>
+      <feed>11</feed>
       <thruster file="propHS139v">
         <location unit="FT">
           <x>   8.6 </x>
@@ -191,13 +213,18 @@
       </thruster>
     </engine>
 
-    <engine file="R-1820-97"> <!-- Engine 2 -->
+    <engine file="R-1820-97"> <!-- Engine 2 (right inboard) -->
       <location unit="FT">
         <x>  8.6 </x>
         <y> 10.0 </y>
         <z> -0.7 </z>
       </location>
-      <feed>1</feed>
+      <feed>12</feed>
+      <feed>13</feed>
+      <feed>15</feed>
+      <feed>16</feed>
+      <feed>17</feed>
+      <feed>18</feed>
       <thruster file="propHS139v">
         <location unit="FT">
           <x>  8.6 </x>
@@ -212,13 +239,18 @@
       </thruster>
     </engine>
 
-    <engine file="R-1820-97"> <!-- Engine 3 -->
+    <engine file="R-1820-97"> <!-- Engine 3 (right outboard) -->
       <location unit="FT">
         <x> 10.1 </x>
         <y> 21.6 </y>
         <z> -0.4 </z>
       </location>
-      <feed>0</feed>
+      <feed>14</feed>
+      <feed>19</feed>
+      <feed>20</feed>
+      <feed>21</feed>
+      <feed>22</feed>
+      <feed>23</feed>
       <thruster file="propHS139v">
         <location unit="FT">
           <x> 10.1 </x>
@@ -233,54 +265,274 @@
       </thruster>
     </engine>
 
+    <!-- Left side tanks -->
+    
     <tank type="FUEL" number="0">
-      <location unit="IN">
-        <x> 445.98 </x>
-        <y>   0.00 </y>
-        <z> -22.30 </z>
+      <description> B-17 Pilot's Manual "Left Outboard Tank 1" (54 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -45.8 </y>
+        <z>   2.0 </z>
       </location>
-      <capacity unit="LBS"> 727.78 </capacity>
-      <contents unit="LBS"> 363.89 </contents>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
     </tank>
 
     <tank type="FUEL" number="1">
-      <location unit="IN">
-        <x> 445.98 </x>
-        <y>   0.00 </y>
-        <z> -22.30 </z>
+      <description> B-17 Pilot's Manual "Left Outboard Tank 2" (54 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -43.8 </y>
+        <z>   2.0 </z>
       </location>
-      <capacity unit="LBS"> 727.78 </capacity>
-      <contents unit="LBS"> 363.89 </contents>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
     </tank>
 
     <tank type="FUEL" number="2">
-      <location unit="IN">
-        <x> 445.98 </x>
-        <y>   0.00 </y>
-        <z> -22.30 </z>
+      <description> B-17 Pilot's Manual "Left Outboard Tank 3" (54 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -41.9 </y>
+        <z>   2.0 </z>
       </location>
-      <capacity unit="LBS"> 727.78 </capacity>
-      <contents unit="LBS"> 363.89 </contents>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
     </tank>
 
     <tank type="FUEL" number="3">
-      <location unit="IN">
-        <x> 445.98 </x>
-        <y>   0.00 </y>
-        <z> -22.30 </z>
+      <description> B-17 Pilot's Manual "Left Outboard Tank 4" (54 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -40.0 </y>
+        <z>   2.0 </z>
       </location>
-      <capacity unit="LBS"> 727.78 </capacity>
-      <contents unit="LBS"> 363.89 </contents>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
     </tank>
 
     <tank type="FUEL" number="4">
-      <location unit="IN">
-        <x> 445.98 </x>
-        <y>   0.00 </y>
-        <z> -22.30 </z>
+      <description> B-17 Pilot's Manual "Left Outboard Tank 5" (54 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -37.7 </y>
+        <z>   2.0 </z>
       </location>
-      <capacity unit="LBS"> 727.78 </capacity>
-      <contents unit="LBS"> 363.89 </contents>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
+    </tank>
+
+    <tank type="FUEL" number="5">
+      <description> B-17 Pilot's Manual "Left Inboard Tank 6" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -35.8 </y>
+        <z>   2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="6">
+      <description> B-17 Pilot's Manual "Left Inboard Tank 7" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -33.9 </y>
+        <z>   2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="7">
+      <description> B-17 Pilot's Manual "Left Inboard Tank 8" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -32.0 </y>
+        <z>   2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="8">
+      <description> B-17 Pilot's Manual "Left Inboard Tank 9" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x>  24.7 </x>
+        <y> -30.1 </y>
+        <z>   2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="9">
+      <description> B-17 Pilot's Manual "Left Outboard Engine tank" (425 US Gallons) </description>
+      <location unit="FT">
+        <x>  22.4 </x>
+        <y> -25.8 </y>
+        <z>   1.0 </z>
+      </location>
+      <capacity unit="LBS"> 2581 </capacity>
+      <contents unit="LBS"> 2581 </contents>
+    </tank>
+
+    <tank type="FUEL" number="10">
+      <description> B-17 Pilot's Manual "Left Inboard Engine tank" (213 US Gallons) </description>
+      <location unit="FT">
+        <x>  22.4 </x>
+        <y> -14.3 </y>
+        <z>   1.0 </z>
+      </location>
+      <capacity unit="LBS"> 1293 </capacity>
+      <contents unit="LBS"> 1293 </contents>
+    </tank>
+
+    <tank type="FUEL" number="11">
+      <description> B-17 Pilot's Manual "Left Inboard Engine 2 Feeder tank" (212 US Gallons) </description>
+      <location unit="FT">
+        <x>  25.0 </x>
+        <y> -14.3 </y>
+        <z>   1.0 </z>
+      </location>
+      <capacity unit="LBS"> 1287 </capacity>
+      <contents unit="LBS"> 1287 </contents>
+    </tank>
+
+    <!-- Right side tanks -->
+
+    <tank type="FUEL" number="12">
+      <description> B-17 Pilot's Manual "Right Inboard Engine Feeder tank" (212 US Gallons) </description>
+      <location unit="FT">
+        <x> 25.0 </x>
+        <y> 14.3 </y>
+        <z>  1.0 </z>
+      </location>
+      <capacity unit="LBS"> 1287 </capacity>
+      <contents unit="LBS"> 1287 </contents>
+    </tank>
+
+    <tank type="FUEL" number="13">
+      <description> B-17 Pilot's Manual "Right Inboard Engine tank" (213 US Gallons) </description>
+      <location unit="FT">
+        <x> 22.4 </x>
+        <y> 14.3 </y>
+        <z>  1.0 </z>
+      </location>
+      <capacity unit="LBS"> 1293 </capacity>
+      <contents unit="LBS"> 1293 </contents>
+    </tank>
+
+    <tank type="FUEL" number="14">
+      <description> B-17 Pilot's Manual "Right Outboard Engine tank" (425 US Gallons) </description>
+      <location unit="FT">
+        <x> 22.4 </x>
+        <y> 25.8 </y>
+        <z>  1.0 </z>
+      </location>
+      <capacity unit="LBS"> 2581 </capacity>
+      <contents unit="LBS"> 2581 </contents>
+    </tank>
+
+    <tank type="FUEL" number="15">
+      <description> B-17 Pilot's Manual "Right Inboard Tank 9" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 30.1 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="16">
+      <description> B-17 Pilot's Manual "Rightt Inboard Tank 8" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 32.0 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="17">
+      <description> B-17 Pilot's Manual "Right Inboard Tank 7" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 33.9 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+    <tank type="FUEL" number="18">
+      <description> B-17 Pilot's Manual "Right Inboard Tank 6" (67.5 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 35.8 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 410 </capacity>
+      <contents unit="LBS"> 410 </contents>
+    </tank>
+
+
+    <tank type="FUEL" number="19">
+      <description> B-17 Pilot's Manual "Right Outboard Tank 5" (54 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 37.7 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
+    </tank>
+
+
+    <tank type="FUEL" number="20">
+      <description> B-17 Pilot's Manual "Right Outboard Tank 4" (54 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 40.0 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
+    </tank>
+
+    <tank type="FUEL" number="21">
+      <description> B-17 Pilot's Manual "Right Outboard Tank 3" (54 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 41.9 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
+    </tank>
+
+    <tank type="FUEL" number="22">
+      <description> B-17 Pilot's Manual "Right Outboard Tank 2" (54 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 43.8 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
+    </tank>
+
+    <tank type="FUEL" number="23">
+      <description> B-17 Pilot's Manual "Right Outboard Tank 1" (54 US Gallons) </description>
+      <location unit="FT">
+        <x> 24.7 </x>
+        <y> 45.8 </y>
+        <z>  2.0 </z>
+      </location>
+      <capacity unit="LBS"> 328 </capacity>
+      <contents unit="LBS"> 328 </contents>
     </tank>
 
   </propulsion>
@@ -832,4 +1084,18 @@
 
   </aerodynamics>
 
+  <output name="JSBoutB17.csv" type="CSV" rate="40">
+    <rates> ON </rates>
+    <velocities> ON </velocities>
+    <forces> ON </forces>
+    <moments> ON </moments>
+    <position> ON </position>
+    <fcs> OFF </fcs>
+    <propulsion> ON </propulsion>
+    <aerosurfaces> ON </aerosurfaces>
+    <fcs> OFF </fcs>
+    <massprops> ON </massprops>
+    <ground_reactions> ON </ground_reactions>
+  </output>
+  
 </fdm_config>
