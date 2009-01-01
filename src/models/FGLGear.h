@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.24 2008/08/01 11:33:26 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.25 2009/01/01 06:17:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.24 2008/08/01 11:33:26 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.25 2009/01/01 06:17:16 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -256,6 +256,9 @@ public:
 
   /// Sets the brake value in percent (0 - 100)
   inline void SetBrake(double bp) {brakePct = bp;}
+
+  /// Sets the weight-on-wheels flag.
+  void SetWOW(bool wow) {WOW = wow;}
 
   /** Set the console touchdown reporting feature
       @param flag true turns on touchdown reporting, false turns it off */
