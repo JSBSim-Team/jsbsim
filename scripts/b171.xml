@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C310-01A takeoff run">
+  <use aircraft="B17" initialize="reset00"/>
+  <run start="0.0" end="5" dt="0.00833333">
+    <event name="Start engine">
+      <condition>sim-time-sec  ge  3.0</condition>
+      <set name="fcs/mixture-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1.0"/>
+      <set name="fcs/mixture-cmd-norm[2]" value="1.0"/>
+      <set name="fcs/mixture-cmd-norm[3]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[1]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[2]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[3]" value="1.0"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1.0"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify/>
+    </event>
+    <!--
+    <event name="Climb">
+      <condition>
+        aero/qbar-psf  ge  17.0
+        position/h-sl-ft  le  2000
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="-0.5" tc="2.0"/>
+      <notify/>
+    </event>
+    <event name="Adjust altitude">
+      <condition>
+        position/h-sl-ft  ge  2000
+        attitude/theta-rad  ge  0.30
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.06" tc="12.0"/>
+    </event>
+    <event name="Adjust altitude">
+      <condition>
+        position/h-sl-ft  le  2000
+        attitude/theta-rad  le  0.25
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="-0.06" tc="12.0"/>
+    </event>
+    <event name="Maintain Altitude">
+      <condition>
+        position/h-sl-ft  ge  2000
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="0.00" tc="1.0"/>
+    </event>
+    -->
+  </run>
+</runscript>
