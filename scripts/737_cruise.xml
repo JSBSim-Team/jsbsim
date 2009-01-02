@@ -41,8 +41,8 @@
       <notify>
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[0]/thrust</property>
-        <property>propulsion/engine[1]/thrust</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
         <property>velocities/vc-kts</property>
         <property>velocities/vc-fps</property>
         <property>velocities/vt-fps</property>
@@ -57,8 +57,8 @@
       <notify>
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[0]/thrust</property>
-        <property>propulsion/engine[1]/thrust</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
         <property>position/h-agl-ft</property>
         <property>velocities/vc-kts</property>
         <property>velocities/vc-fps</property>

@@ -83,8 +83,8 @@
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>
         <property>propulsion/starter_cmd</property>
-        <property>propulsion/engine[0]/thrust</property>
-        <property>propulsion/engine[1]/thrust</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
       </notify>
     </event>
 
@@ -97,8 +97,8 @@
       <notify>
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[0]/thrust</property>
-        <property>propulsion/engine[1]/thrust</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
         <property>velocities/vc-kts</property>
       </notify>
     </event>
@@ -109,8 +109,8 @@
       <notify>
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[0]/thrust</property>
-        <property>propulsion/engine[1]/thrust</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
         <property>velocities/vc-kts</property>
       </notify>
     </event>
