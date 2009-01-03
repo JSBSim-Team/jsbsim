@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.27 2008/12/30 11:37:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.28 2009/01/03 17:20:08 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,12 +238,14 @@ Manifold_Pressure_Lookup = new
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
 
+  if ( MaxManifoldPressure_inHg > 29.9 ) MaxManifoldPressure_inHg = 29.9; // Don't allow boosting with a bogus number
+  MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
   // Create a BSFC to match the engine if not provided
   if (BSFC < 0) {
       BSFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * MaxHP);
+      BSFC *= (MaxManifoldPressure_Percent * MaxManifoldPressure_Percent * MaxManifoldPressure_Percent);
   }
-  if ( MaxManifoldPressure_inHg > 29.9 ) MaxManifoldPressure_inHg = 29.9; // Don't allow boosting with a bogus number
-  MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
+
   char property_name[80];
   snprintf(property_name, 80, "propulsion/engine[%d]/power-hp", EngineNumber);
   PropertyManager->Tie(property_name, &HP);
@@ -874,6 +876,7 @@ void FGPiston::Debug(int from)
       cout << "      IdleRPM: "             << IdleRPM                  << endl;
       cout << "      MaxThrottle: "         << MaxThrottle              << endl;
       cout << "      MinThrottle: "         << MinThrottle              << endl;
+      cout << "      BSFC: "                << BSFC                     << endl;
 
       cout << endl;
       cout << "      Combustion Efficiency table:" << endl;
