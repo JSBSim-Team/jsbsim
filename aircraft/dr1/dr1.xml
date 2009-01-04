@@ -5,7 +5,7 @@
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
-  <author> Aeromatic v 0.9 </author>
+  <author> Ron Jensen, Eric Hoffman?, Aeromatic v 0.9 </author>
   <filecreationdate> 2008-07-26 </filecreationdate>
   <version>$Revison: $</version>
   <description> Models a Fokker Dr.1. </description>
@@ -47,7 +47,7 @@
    <vtailarea unit="FT2">   20.13 </vtailarea>
    <vtailarm  unit="FT" >    9.47 </vtailarm>
    <location name="AERORP" unit="IN">
-     <x> 109.04 </x>
+     <x>   0.00</x>
      <y>   0.00 </y>
      <z>   0.00 </z>
    </location>
@@ -69,7 +69,7 @@
    <izz unit="SLUG*FT2">    731.37 </izz>
    <emptywt unit="LBS" >       775 </emptywt>
    <location name="CG" unit="IN">
-     <x> 109.04 </x>
+     <x>   0.00 </x>
      <y>   0.00 </y>
      <z>  -5.68 </z>
    </location>
@@ -79,9 +79,9 @@
 
   <contact type="BOGEY" name="LEFT_MAIN">
    <location unit="IN">
-     <x> 16.272 </x>
-     <y> -27.48 </y>
-     <z>  69.60 </z>
+     <x>  -8.5 </x>
+     <y> -30.59 </y>
+     <z> -69.60 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -95,9 +95,9 @@
 
   <contact type="BOGEY" name="RIGHT_MAIN">
    <location unit="IN">
-     <x> 16.272 </x>
-     <y>  27.48 </y>
-     <z>  69.60 </z>
+     <x>  -8.5 </x>
+     <y>  30.59 </y>
+     <z> -69.60 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -111,9 +111,9 @@
 
   <contact type="BOGEY" name="TAIL">
    <location unit="IN">
-     <x> 153.48 </x>
+     <x> 157.48 </x>
      <y>   0.00 </y>
-     <z>  30.00 </z>
+     <z> -26.85 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -127,9 +127,9 @@
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
-     <x> 16.272 </x>
-     <y> -144.0 </y>
-     <z>  26.4 </z>
+     <x>   22.4 </x>
+     <y> -108.8 </y>
+     <z>  -34.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -139,9 +139,9 @@
 
   <contact type="STRUCTURE" name="RIGHT_WING">
     <location unit="IN">
-     <x> 16.272 </x>
-     <y>  144.0 </y>
-     <z>  26.4 </z>
+     <x>   22.4 </x>
+     <y>  108.8 </y>
+     <z>  -34.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -155,8 +155,8 @@
 
    <engine file="Oberursel-UrII">
     <location unit="IN">
-      <x>  36.00 </x>
-      <y>   0.00 </y>
+      <x> -25.00 </x>
+      <y> -15.80 </y>
       <z>   0.00 </z>
     </location>
     <orient unit="DEG">
@@ -167,8 +167,8 @@
     <feed>0</feed>
     <thruster file="Dr1_propeller">
      <location unit="IN">
-       <x>  36.00 </x>
-       <y>   0.00 </y>
+       <x> -36.36 </x>
+       <y> -15.80 </y>
        <z>   0.00 </z>
      </location>
      <orient unit="DEG">
@@ -181,7 +181,7 @@
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x> 109.04 </x>
+       <x>   0.04 </x>
        <y>   0.00 </y>
        <z>  -5.68 </z>
      </location>
@@ -457,7 +457,6 @@
        CDde:	0.0136
        CDK:	0.0922
      -->
-
     <function name="aero/coefficient/CD0">
        <description>Drag_at_zero_lift</description>
        <product>
@@ -568,7 +567,7 @@
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
           <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
+            <independentVar lookup="row">aero/beta-rad</independentVar>
             <tableData>
               -1.57    1.230
               -0.26    0.050

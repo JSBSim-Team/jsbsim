@@ -1,24 +1,29 @@
 <?xml version="1.0"?>
 <!--
   File:     Oberursel Ur.II.xml
-  Author:   Aero-Matic v 0.8
+  Author:   Ron Jensen
+  
+  Reference: http://www.aviation-history.com/engines/rotary.htm
 
   Inputs:
     name:           Oberursel Ur.II
     type:           piston
-    power:          100 hp
+    power:          110 hp
+    Bore & Stroke:  4.9 in x 5.9 in
+                    124mm x 150mm
+    Displacement:   995 in 16.3 L 
     augmented?      no
     injected?       no
 -->
 
 <piston_engine name="Oberursel Ur.II">
   <minmp unit="INHG">          6.0 </minmp>	<!-- Deprecated -->
-  <maxmp unit="INHG">         30.0 </maxmp>	<!-- Deprecated -->
-  <displacement unit="IN3"> 160.00 </displacement>
-  <maxhp>        100.00 </maxhp>		<!-- Deprecated -->
-  <bsfc>           0.45 </bsfc>
-  <cycles>         2.0 </cycles>
-  <idlerpm>      700.0 </idlerpm>
+  <maxmp unit="INHG">         29.0 </maxmp>
+  <displacement unit="IN3"> 995.00 </displacement>
+  <maxhp>        110.00 </maxhp>		
+  <!--bsfc>           0.45 </bsfc-->
+  <cycles>         4.0 </cycles>
+  <idlerpm>      300.0 </idlerpm>
   <maxrpm>      1200.0 </maxrpm>
   <maxthrottle>    1.0 </maxthrottle>
   <minthrottle>    0.2 </minthrottle>
