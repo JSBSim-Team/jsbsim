@@ -1,0 +1,137 @@
+<!-- $Id: take-off-ap.xml,v 1.1 2009/01/05 13:29:48 andgi Exp $ -->
+<!--
+
+  Short S.23 flying boat flight model for JSBSim.
+
+    Copyright (C) 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="take-off-ap">
+
+ <documentation>
+  This system provides autopilot components for scripting
+  take-offs in JSBSim/standalone.
+ </documentation>
+
+ <property value="0.0">take-off-ap/enabled</property>
+ <property value="0.0">take-off-ap/landing</property>
+
+ <channel name="Take-off aileron">
+
+  <pid name="take-off-ap/aileron-cmd-norm"> 
+   <input> hydro/roll-deg </input>
+   <kp>   -3.000 </kp>
+   <ki>    0.000 </ki>
+   <kd>    0.000 </kd>
+   <clipto>
+    <min>-1.0</min>
+    <max> 1.0</max>
+   </clipto>
+  </pid>
+
+  <switch name="Aileron Switch">
+   <default value="0.0"/>
+   <test value="take-off-ap/aileron-cmd-norm">
+     take-off-ap/enabled GT 0.5
+   </test>
+   <output>fcs/copilot/aileron-cmd-norm</output>
+  </switch>
+
+ </channel>
+
+ <channel name="Take-off elevator">
+
+  <fcs_function name="take-off-ap/pitch-error-deg">
+   <documentation>
+    Deviation from target pitch angles during take-off run.
+    Based on the real aircraft.
+   </documentation>
+   <function>
+    <difference>
+     <table>
+      <independentVar lookup="row">hydro/v-kt</independentVar>
+      <independentVar lookup="column">take-off-ap/landing</independentVar>
+      <!--  Real take-off pitch data, except the last two. -->
+      <tableData>
+                0.0    1.0
+        0.0     4.0    4.0
+        15.0    7.0    6.0
+        25.0   10.0    9.0
+        30.0   13.0   12.0 
+        60.0   12.0   11.0
+        70.0   10.0    7.0
+        80.0    5.0    6.0
+        100.0   0.0    5.0
+        142.0  -2.0    0.0
+      </tableData>
+     </table>
+     <property> hydro/pitch-deg </property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <pid name="take-off-ap/elevator-cmd-norm"> 
+   <input> take-off-ap/pitch-error-deg </input>
+   <kp>   -0.100 </kp>
+   <ki>    0.000 </ki>
+   <kd>    0.000 </kd>
+   <clipto>
+    <min>-1.0</min>
+    <max> 1.0</max>
+   </clipto>
+  </pid>
+
+  <switch name="Elevator Switch">
+   <default value="0.0"/>
+   <test value="-1.0">
+     take-off-ap/enabled GT 0.5
+     hydro/coefficients/C_V LE 1.0
+   </test>
+   <test value="take-off-ap/elevator-cmd-norm">
+     take-off-ap/enabled GT 0.5
+     hydro/coefficients/C_V GT 1.0
+   </test>
+   <output>fcs/copilot/elevator-cmd-norm</output>
+  </switch>
+
+ </channel>
+
+ <channel name="Take-off Rudder">
+
+  <pid name="take-off-ap/rudder-cmd-norm"> 
+   <input> hydro/beta-deg </input>
+   <kp>   -1.000 </kp>
+   <ki>    0.000 </ki>
+   <kd>    0.000 </kd>
+   <clipto>
+    <min>-1.0</min>
+    <max> 1.0</max>
+   </clipto>
+  </pid>
+
+  <switch name="Rudder Switch">
+   <default value="0.0"/>
+   <test value="take-off-ap/rudder-cmd-norm">
+     take-off-ap/enabled GT 0.5
+     hydro/height-agl-ft LT 20.0
+   </test>
+   <output>fcs/copilot/rudder-cmd-norm</output>
+  </switch>
+
+ </channel>
+
+</system>

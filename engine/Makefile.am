@@ -19,12 +19,14 @@ EXTRA_DIST = \
 	engIO360C.xml \
 	engIO470D.xml \
 	engIO540AB1A5.xml \
+	eng_PegasusXc.xml \
 	eng_io320.xml \
 	prop30FP2B.xml \
 	propC10v.xml \
 	propC6v.xml \
 	propC8v.xml \
 	prop_Clark_Y7570.xml \
+	prop_deHavilland5000.xml \
 	propDA-R352_6-123-F_2.xml \
 	propHS139v.xml \
 	prop_75in2f.xml \

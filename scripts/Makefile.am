@@ -1,5 +1,6 @@
 EXTRA_DIST = \
   B747_script1.xml \
+  Short_S23_1.xml \
   T37.xml \
   T38.xml \
   ball_chute.xml \

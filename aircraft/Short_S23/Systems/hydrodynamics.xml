@@ -1,0 +1,1321 @@
+<!-- $Id: hydrodynamics.xml,v 1.1 2009/01/05 13:29:48 andgi Exp $ -->
+<!--
+
+  Short S.23 flying boat flight model for JSBSim.
+
+    Copyright (C) 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="hydrodynamics">
+
+ <documentation>
+  This system computes forces and moments due to the hull's interaction
+  with water, both hydrostatic and hydrodynamic, with respect to the
+  hydrodynamic reference point (HRP).
+  
+  The coordinate system for the forces and moments is similar to the
+  wind system but is always aligned with the water surface (which is
+  assumed to be horizontal).
+
+  The forces are split into the channels:
+  - Drag - opposing the relative water flow.
+  - Side - 90 degrees right from the relative water flow in the surface plane.
+  - Lift - up (the same as -Z in the local frame).
+  The moments are split into the channels:
+  (NOTE: they are in the body frame for now!):
+  - Pitch
+  - Yaw
+  - Roll
+
+  The properties determining the location and orientation of the hull
+  w.r.t the the water surface and stream are:
+  - hydro/height-agl-ft - Height of the hydrodynamic reference point
+                          over the water surface.
+  - hydro/beta-deg      - angle between the hull's velocity vector throught
+                          the water and its longitudal axis.
+                          Analogous to aerodynamics/beta-deg.
+  - hydro/pitch-deg     - angle between the hull longitudal axis and the
+                          water surface (ground plane).
+  - hydro/roll-deg      - angle between the hull traverse axis and the
+                          water surface (ground plane).
+  - hydro/v-fps         - The hull's speed relative the water.
+ </documentation>
+
+ <property value="0.0">hydro/water-level-ft</property>
+
+ <!-- Model parameters -->
+ <documentation>
+  The hydrodynamic coefficients are assumed to be defined as in
+  [Dawson:1934:Clipper], that is the hull beam is used as the
+  reference length and to define both reference area and volume.
+ </documentation>
+ <property value="10.0">hydro/hull-beam-ft</property>
+ <property value="1000.0">hydro/hull-beam-ft3</property>
+ <property value="10000.0">hydro/hull-beam-ft4</property>
+
+ <property value="3.55">hydro/float-beam-ft</property>
+ <property value="44.74">hydro/float-beam-ft3</property>
+ <property value="158.8">hydro/float-beam-ft4</property>
+
+ <property value="9.75">hydro/float-arm-y-ft</property>
+
+ <!-- Tweak factors. :) -->
+ <property value="0.5">hydro/drag-tweak-factor</property>
+ <property value="20.0">hydro/lift-tweak-factor</property>
+ <property value="1.5">hydro/pitch-tweak-factor</property>
+
+
+ <channel name ="Hull position, orientation and velocity">
+
+  <fcs_function name="hydro/height-agl-ft">
+   <documentation>
+    Distance between the hydrodynamic reference point and the water surface.
+    Not correctly computed yet.
+   </documentation>
+   <function>
+    <sum>
+     <value> 0.0 </value>
+     <difference>
+      <property> position/h-sl-ft </property>
+      <property> hydro/water-level-ft </property>
+     </difference>
+    </sum>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/pitch-deg">
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> attitude/pitch-rad </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/s40-pitch-deg">
+   <documentation>
+    Some of the hydrodynamic coefficients are based on
+    data from the Sikorsky S-40 'boat. [Dawson:1934:Clipper]
+    As it's hull has a different datum line and behaviour
+    the pitch trim angle needs to be adjusted.
+    This is rough guess based on the reported trim
+    angles for the S.23 and the best trim angles for
+    the S-40.
+   </documentation>
+   <function>
+    <sum>
+     <value> 3.0 </value> <!-- S-40 trim at rest -->
+     <product>
+      <value> 0.22 </value>
+      <sum> <!-- Deviation from trim at rest -->
+       <property> hydro/pitch-deg </property>
+       <value> -4.25 </value> <!-- S.23 trim at rest -->
+      </sum>
+     </product>
+    </sum>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/roll-deg">
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> attitude/roll-rad </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/beta-rad">
+   <function>
+    <difference>
+     <property> flight-path/psi-gt-rad </property>
+     <property> attitude/psi-rad </property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/beta-deg">
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> hydro/beta-rad </property>
+    </product>
+   </function>
+  </fcs_function>
+  
+  <fcs_function name="hydro/true-course-deg">
+   <!-- (Currently) the course made good by the hull. -->
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> flight-path/psi-gt-rad </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/v-fps">
+   <function>
+    <pow>
+     <sum>
+      <pow>
+       <property> velocities/v-north-fps </property>
+       <value> 2.0 </value>
+      </pow>
+      <pow>
+       <property> velocities/v-east-fps </property>
+       <value> 2.0 </value>
+      </pow>
+     </sum>
+     <value> 0.5 </value>
+    </pow>
+   </function>
+  </fcs_function>
+  <fcs_function name="hydro/v-kt">
+   <function>
+    <product>
+     <value> 0.5924838 </value>
+     <property> hydro/v-fps </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/qbar-psf">
+   <function>
+    <product>
+     <value> 0.50 </value>
+     <product>
+      <value> 63.5 </value>
+      <pow>
+       <property> hydro/v-fps </property>
+       <value> 2.0 </value>
+      </pow>
+     </product>
+    </product>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <channel name ="Hydrodynamic coefficients">
+
+  <fcs_function name="hydro/coefficients/C_Delta">
+   <documentation>
+    Unitless load on water coefficient. [Dawson:1934:Clipper]
+    Will lag one time-step behind the true value.
+   </documentation>
+   <function>
+    <quotient>
+     <property> external_reactions/hydro-Z/magnitude </property>
+     <product>
+      <value> 63.5 </value>
+      <property>hydro/hull-beam-ft3</property>
+     </product>
+    </quotient>
+   </function>
+  </fcs_function> 
+
+  <fcs_function name="hydro/coefficients/C_V">
+   <documentation>
+    Unitless speed coefficient. [Dawson:1934:Clipper]
+   </documentation>
+   <function>
+    <product>
+     <value> 0.75 </value> <!-- Tweak -->
+     <quotient>
+      <property> hydro/v-fps </property>
+      <pow>
+       <product>
+        <value> 32.185039 </value>
+        <property>hydro/hull-beam-ft</property>
+       </product>
+       <value> 0.5 </value>
+      </pow>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function> 
+
+  <fcs_function name="hydro/coefficients/C_M">
+   <documentation>
+    Unitless moment coefficient based on [Dawson:1934:Clipper].
+    Modelled as a function of trim angle, speed coefficient and
+    load coefficient.
+    The curve for C_M as a function of C_V was interpolated from
+    the experimental data in [Dawson:1934:Clipper] for each trim
+    angle and load. The data is for the hull of a Sikorsky S-40 'boat.
+   </documentation>
+   <function>
+    <table>
+     <independentVar lookup="row">hydro/s40-pitch-deg</independentVar>
+     <independentVar lookup="column">hydro/coefficients/C_V</independentVar>
+     <independentVar lookup="table">hydro/coefficients/C_Delta</independentVar>
+     <tableData breakPoint="0.0">
+            0.0  0.1  1.0  2.0  3.0  4.0  5.0  6.0  7.0  8.0  9.0  10.0
+       2.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       3.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       5.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       7.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       9.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+     </tableData>
+     <tableData breakPoint="0.19">
+            0.0  0.1  1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.04398  0.07357  0.09161  0.10097  0.10449  0.10503  0.05779  0.05252  0.05252  0.05252
+       3.0  0.0  0.0  0.08723  0.13430  0.15360  0.15752  0.17497  0.10503  0.10503  0.05252  0.05252  0.07194
+       5.0  0.0  0.0  0.02112  0.03711  0.04763  0.05230  0.05252  0.05252  0.14933  0.15755  0.15755  0.15755
+       7.0  0.0  0.0  0.02856  0.04427  0.05096  0.05249  0.00000 -0.00110 -0.05224 -0.05252 -0.08902 -0.15491
+       9.0  0.0  0.0 -0.10803 -0.15569 -0.16770 -0.08473 -0.09804 -0.13626 -0.14640 -0.15283 -0.15629 -0.15751
+     </tableData>
+     <tableData breakPoint="0.39">
+            0.0  0.1  1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.10280  0.17464  0.22103  0.24747  0.25948  0.26255  0.22409  0.15879  0.15755  0.15755
+       3.0  0.0  0.0  0.17197  0.26619  0.30606  0.31497  0.23508  0.24354  0.25258  0.12321  0.13262  0.14266
+       5.0  0.0  0.0  0.00212  0.00939  0.02316  0.04479  0.10503  0.10503  0.15643  0.11137  0.12050  0.14479
+       7.0  0.0  0.0  0.05794  0.08933  0.10231  0.10501  0.03098 -0.05835 -0.09931 -0.25485 -0.21067 -0.30629
+       9.0  0.0  0.0 -0.10803 -0.15569 -0.16770 -0.08473 -0.09804 -0.13626 -0.14640 -0.15283 -0.15629 -0.15751
+     </tableData>
+     <tableData breakPoint="0.78">
+            0.0  0.1  1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.10280  0.17464  0.22103  0.24747  0.25948  0.26255  0.22409  0.15879  0.15755  0.15755
+       3.0  0.0  0.0  0.18681  0.35423  0.50598  0.62213  0.57769  0.55315  0.47693  0.36774  0.31510  0.31510
+       5.0  0.0  0.0  0.12694  0.21441  0.25822  0.24610  0.22481  0.16173  0.15755  0.08773  0.06798  0.13887
+       7.0  0.0  0.0  0.00840  0.03370  0.07600  0.15011  0.06505 -0.00067 -0.13857 -0.35100 -0.55688 -0.61862
+       9.0  0.0  0.0 -0.54015 -0.77845 -0.83849 -0.42363 -0.49019 -0.68132 -0.73200 -0.76415 -0.78144 -0.78755
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/coefficients/C_R">
+   <documentation>
+    Unitless resistance coefficient based on [Dawson:1934:Clipper].
+    Modelled as a function of trim angle, speed coefficient and
+    load coefficient.
+    The curve for C_R as a function of C_V was interpolated from
+    the experimental data in [Dawson:1934:Clipper] for each trim
+    angle and load. The data is for the hull of a Sikorsky S-40 'boat.
+   </documentation>
+   <function>
+    <table>
+     <independentVar lookup="row">hydro/s40-pitch-deg</independentVar>
+     <independentVar lookup="column">hydro/coefficients/C_V</independentVar>
+     <independentVar lookup="table">hydro/coefficients/C_Delta</independentVar>
+     <tableData breakPoint="0.0">
+            0.0  0.01  0.1  1.0  2.0  3.0  4.0  5.0  6.0  7.0  8.0  9.0  10.0
+       2.0  0.0  0.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       3.0  0.0  0.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       5.0  0.0  0.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       7.0  0.0  0.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       9.0  0.0  0.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+     </tableData>
+     <tableData breakPoint="0.19">
+            0.0  0.01 1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.03841  0.07404  0.10711  0.13783  0.16644  0.19316  0.21477  0.26320  0.28304  0.32647
+       3.0  0.0  0.0  0.01662  0.03801  0.06297  0.09032  0.12465  0.14866  0.16747  0.21471  0.25808  0.27417
+       5.0  0.0  0.0  0.03789  0.06255  0.07629  0.08141  0.08045  0.13011  0.16566  0.21599  0.26929  0.33215
+       7.0  0.0  0.0  0.00692  0.02605  0.05495  0.09120  0.14758  0.20436  0.27640  0.34443  0.41282  0.45606
+     </tableData>
+     <tableData breakPoint="0.39">
+            0.0  0.01 1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.04107  0.08456  0.13015  0.17751  0.22632  0.27627  0.33090  0.36963  0.40992  0.42751
+       3.0  0.0  0.0  0.01460  0.04363  0.08296  0.12844  0.17623  0.21049  0.26559  0.27830  0.32475  0.38257
+       5.0  0.0  0.0  0.03967  0.07145  0.09574  0.11295  0.12307  0.16221  0.20271  0.26918  0.33684  0.38637
+       7.0  0.0  0.0  0.01937  0.04693  0.08053  0.11804  0.16738  0.24008  0.30799  0.39579  0.46271  0.52537
+     </tableData>
+     <tableData breakPoint="0.78">
+            0.0  0.01 1.0      2.0      3.0      4.0      5.0      6.0      7.0      8.0      9.0      10.0
+       2.0  0.0  0.0  0.04107  0.08456  0.13015  0.17751  0.22632  0.27627  0.33090  0.36963  0.40992  0.42751
+       3.0  0.0  0.0  0.05351  0.10187  0.14608  0.18820  0.25167  0.30893  0.36593  0.41842  0.46725  0.50670
+       5.0  0.0  0.0  0.04621  0.08960  0.13080  0.16778  0.19043  0.22750  0.27973  0.35972  0.40521  0.46899
+       7.0  0.0  0.0  0.06387  0.11098  0.14178  0.15820  0.22145  0.29636  0.39455  0.47031  0.54559  0.62306
+       9.0  0.0  0.0  0.04724  0.10109  0.15964  0.22221  0.28927  0.38092  0.48972  0.61576  0.76097  0.92730
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Float positions">
+
+  <switch name="hydro/left-float-submersion-ft">
+   <default value="gear/unit[0]/compression-ft"/>
+  </switch>
+
+  <switch name="hydro/right-float-submersion-ft">
+   <default value="gear/unit[1]/compression-ft"/>
+  </switch>
+
+ </channel>
+
+ <channel name="Force Z (up)">
+
+  <fcs_function name="hydro/buoyancy-lbs">
+   <documentation>
+    Lift due to buoyancy.
+    This data was computed in Gerris using the S.23 3d model.
+   </documentation>
+   <function>
+    <product>
+     <value> 0.22480894 </value>
+     <table>
+      <independentVar lookup="row">hydro/pitch-deg</independentVar>
+      <independentVar lookup="column">hydro/roll-deg</independentVar>
+      <independentVar lookup="table">hydro/height-agl-ft</independentVar>
+      <tableData breakPoint="0.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 471513 529318 451948 529318 471781
+       -2 484533 543473 459442 543474 484532
+        0 506037 558098 469308 558098 506037
+        2 499140 575971 480809 575968 499140
+        4 534647 628964 511795 628966 534647
+        8 534555 637509 526837 637509 534564
+       12 542667 601706 498387 601991 542954
+      </tableData>
+      <tableData breakPoint="1.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 363495 391944 348233 391944 363495
+       -2 346845 392606 337550 392607 346845
+        0 344195 387374 331658 387375 344195
+        2 355479 395111 338248 395111 355479
+        4 385920 421173 355773 421416 385954
+        8 427173 504216 415554 504217 427173
+       12 380347 490098 413565 490098 380348
+      </tableData>
+      <tableData breakPoint="2.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 252919 275644 240065 275644 252919
+       -2 246111 263012 227493 263013 246111
+        0 220136 252142 216287 252142 220136
+        2 228135 254079 215431 254079 228135
+        4 215240 265381 224238 265381 215240
+        8 279353 332682 280414 332682 279353
+       12 302922 391924 327264 391889 302922
+      </tableData>
+      <tableData breakPoint="3.0"> <!-- NOTE: pitch 12 roll +/-2 bogus -->
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 142120 171015 148729 171015 142120
+       -2 127612 157092 135542 157092 127612
+        0 114230 145509 122383 145509 114230
+        2 107857 138234 116358 138235 107857
+        4 110378 143678 120266 143678 110379
+        8 161820 193024 162847 193024 161820
+       12 234083 234083 237382 234083 234083
+      </tableData>
+      <tableData breakPoint="4.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 71870 89246.7 76693.2 89246.8 71870
+       -2 56038 71705 61308.3 71705.1 56038
+        0 50762.8 63663.5 53743.8 63663.5 50762.8
+        2 46220.4 57930.7 48733 57978 46220.9
+        4 46287.5 56769.4 46230.2 56770.1 46287.3
+        8 74002.1 91338.7 78464.5 91338.9 74002.1
+       12 150252 177944 154273 177944 150252
+      </tableData>
+      <tableData breakPoint="5.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 26962.2 33549.8 28893.6 33550 26962.3
+       -2 17047.2 22493.5 20145.2 22498.6 17047.3
+        0 12329.3 16034.7 12939.3 16035.5 12329.5
+        2 9901.83 12502.6 11214.6 12502.5 9902.02
+        4 10057.6 13165.6 12146.2 13165.9 10057.6
+        8 21312.2 28314.1 25030.5 28314.4 21312.2
+       12 79560.7 92543.9 80100.7 92544.1 79560.9
+      </tableData>
+      <tableData breakPoint="6.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 4843.47 4359.17 5193.03 4359.18 4843.48
+       -2 3701.01 3643.21 3921.95 3643.21 3701.01
+        0 2984.28 3432.53 3640.74 3432.52 2984.28
+        2 2883.82 2860.71 3139.31 2860.69 2883.83
+        4 3191.52 3148.69 3350.45 3148.69 3191.59
+        8 4402.81 4496.28 5093.11 4496.3 4402.84
+       12 26632.9 33492 28864.3 33492 26632.7
+      </tableData>
+      <tableData breakPoint="7.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 2513.48 2615.09 2602.83 2614.99 2513.47
+       -2 2268.19 2362.97 2444.06 2362.98 2268.19
+        0 2660.55 2415.71 2566.3 2415.72 2660.55
+        2 2199.33 2154.26 2230.72 2154.26 2199.32
+        4 2304.66 2248.22 2349.64 2248.22 2304.66
+        8 2558.24 2481.7 2580.57 2481.8 2558.44
+       12 7147.6 6815.41 7176.91 6815.46 7147.66
+      </tableData>
+      <tableData breakPoint="8.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 2614.97 2617.15 2629.4 2617.15 2614.88
+       -2 2617 2595.28 2636.16 2595.27 2617
+        0 2587.25 2675.29 2703.01 2675.29 2587.25
+        2 2492.4 2567.07 2552.65 2567.02 2492.4
+        4 2511.89 2577.28 2524.28 2577.28 2511.89
+        8 2578.84 2572.92 2624.14 2572.91 2578.89
+       12 2836.84 3018.86 3030.04 3019.24 2836.84
+      </tableData>
+<!--
+      <tableData breakPoint="9.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 2438.78 2522.59 2538.88 2522.47 2438.78
+       -2 2414.23 2418.61 2457.88 2418.86 2414.19
+        0 2473.96 2531.05 2542.79 2531.05 2473.96
+        2 2499.91 2468.16 2489.68 2468.49 2499.89
+        4 2425.66 2411.13 2383.13 2411.03 2425.65
+        8 2438.66 2420.7 2450.45 2420.69 2430.23
+       12 2454.65 2322.08 2287.79 2322.42 2455.03
+      </tableData>
+      <tableData breakPoint="10.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 2436.31 2467.89 2434.47 2467.89 2436.31
+       -2 2397.55 2406.87 2465.42 2406.87 2397.55
+        0 2451.36 2514.61 2496.55 2514.61 2451.36
+        2 2427.12 2420.3 2455.71 2420.3 2427.9
+        4 2393.36 2410.91 2421.76 2410.91 2393.68
+        8 2322.52 2380.65 2389.54 2380.65 2322.73
+       12 2300.35 2486.93 2416.24 2486.95 2300.35
+      </tableData>
+-->
+      <tableData breakPoint="9.0" >
+            -4       -2       0        2        4
+       -4   0.0      0.0      0.0      0.0      0.0
+       -2   0.0      0.0      0.0      0.0      0.0
+        0   0.0      0.0      0.0      0.0      0.0
+        2   0.0      0.0      0.0      0.0      0.0
+        4   0.0      0.0      0.0      0.0      0.0
+        8   0.0      0.0      0.0      0.0      0.0
+       12   0.0      0.0      0.0      0.0      0.0
+      </tableData>      
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/hull-lift-lbs">
+   <function>
+    <description>Lift due to hull moving in water</description>
+    <product>
+     <property>hydro/hull-beam-ft3</property>
+     <property>hydro/lift-tweak-factor</property>
+     <!-- From Boeing314A: Lift_at_step -->
+     <table>
+      <independentVar lookup="row">attitude/roll-rad</independentVar>
+      <independentVar lookup="column">hydro/v-kt</independentVar>
+      <independentVar lookup="table">hydro/height-agl-ft</independentVar>
+      <tableData breakPoint="0.0">
+                                        0.0   34.0000  44.0000
+                             -0.0690    0.0   0.0000   0.0000
+                             -0.0590    0.0   0.0000   0.5000
+                             -0.0490    0.0   0.5000   1.0000
+                             -0.0290    0.0   1.0000   1.0000
+                              0.0290    0.0   1.0000   1.0000
+                              0.0490    0.0   0.5000   1.0000
+                              0.0590    0.0   0.0000   0.5000
+                              0.0690    0.0   0.0000   0.0000
+      </tableData>
+      <tableData breakPoint="5.9">
+                                        0.0   34.0000  44.0000
+                             -0.0690    0.0   0.0000   0.0000
+                             -0.0590    0.0   0.0000   0.5000
+                             -0.0490    0.0   0.5000   1.0000
+                             -0.0290    0.0   1.0000   1.0000
+                              0.0290    0.0   1.0000   1.0000
+                              0.0490    0.0   0.5000   1.0000
+                              0.0590    0.0   0.0000   0.5000
+                              0.0690    0.0   0.0000   0.0000
+      </tableData>
+      <tableData breakPoint="6.5">
+                                        0.0   34.0000  44.0000
+                             -0.0690    0.0   0.0000   0.0000
+                             -0.0590    0.0   0.0000   0.0000
+                             -0.0490    0.0   0.0000   0.0000
+                             -0.0290    0.0   0.0000   0.0000
+                              0.0290    0.0   0.0000   0.0000
+                              0.0490    0.0   0.0000   0.0000
+                              0.0590    0.0   0.0000   0.0000
+                              0.0690    0.0   0.0000   0.0000
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/damping-lift-lbs">
+   <function>
+    <product>
+     <property>velocities/v-down-fps</property>
+     <value> -1.0 </value>
+     <table>
+      <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
+      <tableData>
+       0.0      0.0
+       0.1  -5000.0
+       0.4  -7000.0
+       1.0 -13000.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <summer name="hydro/Z-force-lbs">
+   <input> hydro/buoyancy-lbs </input>
+   <input> hydro/hull-lift-lbs </input>
+   <input> hydro/damping-lift-lbs </input>
+   <output> external_reactions/hydro-Z/magnitude </output>
+  </summer>
+
+ </channel>
+
+ <channel name="Drag">
+
+  <fcs_function name="hydro/hull-drag-lbs">
+   <function>
+    <description>Drag due to hull</description>
+    <product>
+     <value>63.5</value>
+     <property>hydro/hull-beam-ft3</property>
+     <property>hydro/drag-tweak-factor</property>
+     <property>hydro/coefficients/C_R</property>
+     <!-- Drag should increase dramatically with beta. -->
+     <table>
+      <independentVar lookup="row">hydro/beta-deg</independentVar>
+      <tableData>
+       -360.0  1.0
+       -270.0  10.0
+       -180.0  1.0
+       -90.0   10.0
+       0.0     1.0
+       90.0    10.0
+       180.0   1.0
+       270.0   10.0
+       360.0   1.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/left-float-drag-lbs">
+   <function>
+    <description>Drag due to left float</description>
+    <product>
+     <property>hydro/float-beam-ft3</property>
+     <property>hydro/drag-tweak-factor</property>
+     <!-- From Boeing314A: Hull_resistance (beta=0) -->
+     <table>
+      <independentVar lookup="row">hydro/v-kt</independentVar>
+      <independentVar lookup="column">hydro/left-float-submersion-ft</independentVar>
+      <tableData>
+                                        0.0     2.0
+                          0.0000        0.0     0.0000
+                          3.7000        0.0     0.0678
+                          6.0000        0.0     0.1356
+                          8.3000        0.0     0.2288
+                          10.6000       0.0     0.3559
+                          12.5000       0.0     0.4576
+                          14.3000       0.0     0.5593
+                          15.9000       0.0     0.6186
+                          18.5000       0.0     0.7203
+                          21.1000       0.0     0.8051
+                          24.5000       0.0     0.8983
+                          26.4000       0.0     0.9322
+                          28.7000       0.0     0.9576
+                          31.3000       0.0     0.9915
+                          34.0000       0.0     1.0000
+                          36.2000       0.0     0.9915
+                          38.9000       0.0     0.9961
+                          41.5000       0.0     0.9068
+                          44.9000       0.0     0.7119
+                          48.7000       0.0     0.6186
+                          52.5000       0.0     0.4915
+                          57.4000       0.0     0.1949
+      </tableData>
+     </table>
+     <!-- Drag should increase dramatically with beta. -->
+     <table>
+      <independentVar lookup="row">hydro/beta-deg</independentVar>
+      <tableData>
+       -360.0  1.0
+       -270.0  10.0
+       -180.0  1.0
+       -90.0   10.0
+       0.0     1.0
+       90.0    10.0
+       180.0   1.0
+       270.0   10.0
+       360.0   1.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/right-float-drag-lbs">
+   <function>
+    <description>Drag due to right float</description>
+    <product>
+     <property>hydro/float-beam-ft3</property>
+     <property>hydro/drag-tweak-factor</property>
+     <!-- From Boeing314A: Hull_resistance (beta=0) -->
+     <table>
+      <independentVar lookup="row">hydro/v-kt</independentVar>
+      <independentVar lookup="column">hydro/right-float-submersion-ft</independentVar>
+      <tableData>
+                                        0.0     2.0
+                          0.0000        0.0     0.0000
+                          3.7000        0.0     0.0678
+                          6.0000        0.0     0.1356
+                          8.3000        0.0     0.2288
+                          10.6000       0.0     0.3559
+                          12.5000       0.0     0.4576
+                          14.3000       0.0     0.5593
+                          15.9000       0.0     0.6186
+                          18.5000       0.0     0.7203
+                          21.1000       0.0     0.8051
+                          24.5000       0.0     0.8983
+                          26.4000       0.0     0.9322
+                          28.7000       0.0     0.9576
+                          31.3000       0.0     0.9915
+                          34.0000       0.0     1.0000
+                          36.2000       0.0     0.9915
+                          38.9000       0.0     0.9961
+                          41.5000       0.0     0.9068
+                          44.9000       0.0     0.7119
+                          48.7000       0.0     0.6186
+                          52.5000       0.0     0.4915
+                          57.4000       0.0     0.1949
+      </tableData>
+     </table>
+     <!-- Drag should increase dramatically with beta. -->
+     <table>
+      <independentVar lookup="row">hydro/beta-deg</independentVar>
+      <tableData>
+       -360.0  1.0
+       -270.0  10.0
+       -180.0  1.0
+       -90.0   10.0
+       0.0     1.0
+       90.0    10.0
+       180.0   1.0
+       270.0   10.0
+       360.0   1.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <summer name="hydro/drag-lbs">
+   <input> hydro/hull-drag-lbs </input>
+   <!-- input> hydro/left-float-drag-lbs </input>
+   <input> hydro/right-float-drag-lbs </input -->
+  </summer>
+
+ </channel>
+
+ <channel name="Side">
+
+  <summer name="hydro/side-lbs">
+   <!-- input> hydro/test-side-lbs </input -->
+  </summer>
+
+ </channel>
+
+ <channel name="Pitch">
+
+  <fcs_function name="hydro/buoyancy-pitch-moment-lbsft">
+   <documentation>
+    Pitch moment due to buoyancy.
+    This data was computed in Gerris using the S.23 3d model.
+   </documentation>
+   <function>
+    <product>
+     <value> 0.73756215 </value>
+     <table>
+      <independentVar lookup="row">hydro/pitch-deg</independentVar>
+      <independentVar lookup="column">hydro/roll-deg</independentVar>
+      <independentVar lookup="table">hydro/height-agl-ft</independentVar>
+      <tableData breakPoint="0.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 794395 873072 768282 873072 794769
+       -2 565277 616841 536860 616841 565279
+        0 258473 273597 243000 273596 258472
+        2 -140793 -189274 -138808 -189236 -140793
+        4 -636405 -791097 -616951 -791091 -636405
+        8 -1.12718e+06 -1.31198e+06 -1.12603e+06 -1.31198e+06 -1.12729e+06
+       12 -1.34168e+06 -1.51067e+06 -1.27753e+06 -1.51135e+06 -1.3423e+06
+      </tableData>
+      <tableData breakPoint="1.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 742041 801459 716430 801452 742041
+       -2 526964 594374 514582 594374 526964
+        0 279133 305057 267611 305057 279132
+        2 -18360.3 -22716.6 -14948 -22717.4 -18360.6
+        4 -411026 -457989 -378280 -458289 -411400
+        8 -1.14223e+06 -1.33748e+06 -1.13448e+06 -1.33748e+06 -1.14224e+06
+       12 -1.21429e+06 -1.49274e+06 -1.29324e+06 -1.49274e+06 -1.2143e+06
+      </tableData>
+      <tableData breakPoint="2.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 601872 656289 571272 656289 601871
+       -2 438008 473242 407863 473242 438008
+        0 236145 271280 231674 271280 236144
+        2 37655.4 42630.8 34111.9 42630.6 37655.3
+        4 -195202 -240916 -201747 -240918 -195202
+        8 -889810 -1.04415e+06 -894807 -1.04415e+06 -889816
+       12 -1.19137e+06 -1.48196e+06 -1.258e+06 -1.48151e+06 -1.19137e+06
+      </tableData>
+      <tableData breakPoint="3.0"> <!-- NOTE: pitch 12 roll +/-2 bogus -->
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 371781 451925 387907 451925 371784
+       -2 252780 312081 265248 312082 252780
+        0 140401 180943 149911 180942 140401
+        2 35641.6 46879.8 39839.3 46879.7 35641.8
+        4 -86450 -115375 -95265.5 -115375 -86450.6
+        8 -553639 -647123 -547275 -647123 -553640
+       12 -1.08928e+06 -1.08928e+06 -1.09356e+06 -1.08928e+06 -1.08928e+06
+      </tableData>
+      <tableData breakPoint="4.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 201320 254145 213503 254145 201320
+       -2 116673 151664 125742 151664 116672
+        0 62141.4 82234.8 66592.1 82234.8 62141.4
+        2 16280.4 23777.5 17640.8 23809.9 16276.3
+        4 -31320.7 -33945.7 -30333.3 -33951.6 -31322.5
+        8 -257126 -314051 -266728 -314052 -257126
+       12 -805205 -948455 -827608 -948455 -805205
+      </tableData>
+      <tableData breakPoint="5.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 79727.1 102478 83412 102477 79727.1
+       -2 34802.1 50035.5 40687.5 49981.8 34802.2
+        0 13121.2 19563.2 11778.3 19553.9 13121.1
+        2 662.807 2997.44 457.508 3000.47 661.053
+        4 -9234.21 -10904.7 -10290.1 -10904.8 -9234.21
+        8 -72752.2 -99287 -83972.4 -99288.2 -72752.8
+       12 -485911 -569014 -489666 -569016 -485913
+      </tableData>
+      <tableData breakPoint="6.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 9856.35 11651.3 10816.3 11651.4 9856.35
+       -2 2893.69 2538.61 1924.94 2538.64 2893.71
+        0 -55.4567 654.824 610.936 654.824 -55.4995
+        2 -832.434 -746.173 -924.108 -746.13 -832.434
+        4 -2543.06 -2476.83 -2447.66 -2476.82 -2542.75
+        8 -10982.2 -11935.5 -12778.1 -11935.6 -10982.3
+       12 -175102 -236119 -193187 -236119 -175098
+      </tableData>
+      <tableData breakPoint="7.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 1277.87 957.499 990.988 958.278 1277.94
+       -2 -166.13 44.5178 193.53 44.424 -166.155
+        0 -1062.69 -1042.51 -1315.64 -1042.48 -1062.76
+        2 -1226.66 -1318.77 -1272.68 -1318.73 -1226.65
+        4 -1815 -1794.62 -1913.66 -1794.61 -1814.99
+        8 -4541.25 -4448.52 -4842.38 -4448.25 -4542.99
+       12 -43909.1 -39749.6 -38314.9 -39749.9 -43909.6
+      </tableData>
+      <tableData breakPoint="8.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -539.871 -599.041 -567.42 -599.04 -538.624
+       -2 -916.836 -872.569 -791.409 -872.777 -916.83
+        0 -1262.84 -1325.61 -1287.74 -1325.61 -1262.85
+        2 -1564.8 -1626.85 -1699.42 -1627.17 -1564.8
+        4 -1953.53 -1988.31 -1965.56 -1988.3 -1953.53
+        8 -2874.48 -2936.27 -2938.92 -2936.26 -2874.21
+       12 -8592.15 -9474.87 -9381 -9479.34 -8592.15
+      </tableData>
+<!--
+      <tableData breakPoint="9.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -625.455 -601.809 -460.689 -600.832 -625.265
+       -2 -1040.53 -1105.1 -1105.74 -1107.19 -1040.18
+        0 -1221.91 -1311.27 -1446.95 -1311.32 -1221.92
+        2 -1621.45 -1699.61 -1699.57 -1702.35 -1621.42
+        4 -1914.57 -1889.33 -2018.82 -1889.45 -1914.54
+        8 -2476.94 -2462.8 -2401.37 -2462.74 -2472.12
+       12 -3803.03 -3579.03 -3554.87 -3582.25 -3806.89
+      </tableData>
+      <tableData breakPoint="10.0">
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -475.855 -478.4 -484.169 -478.349 -475.972
+       -2 -872.44 -847.823 -846.027 -847.823 -872.434
+        0 -1047.45 -1125.91 -1104.92 -1125.91 -1047.44
+        2 -1505.76 -1525.5 -1559.25 -1525.46 -1514.2
+        4 -1962.69 -1943.74 -2069.74 -1943.72 -1965.56
+        8 -2389.04 -2423.44 -2348.17 -2423.06 -2393.5
+       12 -3074.16 -3329.39 -3275.16 -3329.36 -3074.12
+      </tableData>
+-->
+      <tableData breakPoint="9.0">
+            -4       -2       0        2        4
+       -4   0.0      0.0      0.0      0.0      0.0
+       -2   0.0      0.0      0.0      0.0      0.0
+        0   0.0      0.0      0.0      0.0      0.0
+        2   0.0      0.0      0.0      0.0      0.0
+        4   0.0      0.0      0.0      0.0      0.0
+        8   0.0      0.0      0.0      0.0      0.0
+        12  0.0      0.0      0.0      0.0      0.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/damping-pitch-moment-lbsft">
+   <function>
+    <product>
+     <property>velocities/thetadot-rad_sec</property>
+     <value> 2.0 </value>
+     <table>
+      <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
+      <tableData>
+       0.0       0.0
+       0.1  -60000.0
+       0.4 -100000.0
+       1.0 -200000.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/hull-pitch-moment-lbsft">
+   <function>
+    <description>Hydrodynamic pitch moment due to hull</description>
+    <product>
+     <value>63.5</value>
+     <property>hydro/hull-beam-ft4</property>
+     <property>hydro/pitch-tweak-factor</property>
+     <property>hydro/coefficients/C_M</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/step-pitch-moment-lbsft">
+   <function>
+    <description>Step moment</description>
+    <product>
+     <property>hydro/hull-beam-ft4</property>
+     <property>hydro/pitch-tweak-factor</property>
+     <!-- From Boeing314A: Step_moment -->
+     <table>
+      <independentVar lookup="row">hydro/v-kt</independentVar>
+      <independentVar lookup="column">hydro/height-agl-ft</independentVar>
+      <tableData>
+                                        4.1     5.0     5.9
+                          0.0000        0.0000  0.0000  0.0000
+                          17.0000      -1.6000 -1.2800  0.0000
+                          34.0000       0.8000  0.6400  0.0000
+                          51.0000       0.0000  0.0000  0.0000
+                          57.000       -0.1000 -0.0800  0.0000
+      </tableData>
+     </table>
+     </product>
+   </function>
+  </fcs_function>
+
+  <summer name="hydro/pitch-moment-lbsft">
+   <input> hydro/buoyancy-pitch-moment-lbsft </input>
+   <input> hydro/damping-pitch-moment-lbsft </input>
+   <input> hydro/hull-pitch-moment-lbsft </input>
+   <!-- input> hydro/step-pitch-moment-lbsft </input -->
+  </summer>
+
+ </channel>
+
+ <channel name="Yaw">
+
+  <fcs_function name="hydro/damping-yaw-moment-lbsft">
+   <documentation>
+    Dampen yaw movements while in the water. Guessed.
+   </documentation>
+   <function>
+    <product>
+     <property>velocities/psidot-rad_sec</property>
+     <table>
+      <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
+      <tableData>
+       0.0  0.0
+       0.1 -20000.0
+       0.4 -200000.0
+       1.0 -400000.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/floats-yaw-moment-lbsft">
+   <documentation>
+    Yaw moment due to drag from the floats.
+    Assumption: the longitudal position of the floats coincide with the HRP.
+   </documentation>
+   <function>
+    <product>
+     <property>hydro/float-arm-y-ft</property>
+     <cos>
+      <property>hydro/beta-rad</property>
+     </cos>
+     <difference>
+      <property>hydro/right-float-drag-lbs</property>
+      <property>hydro/left-float-drag-lbs</property>
+     </difference>
+    </product>
+   </function>
+  </fcs_function>
+
+  <summer name="hydro/yaw-moment-lbsft">
+   <!-- input> hydro/floats-yaw-moment-lbsft </input -->
+   <input> hydro/damping-yaw-moment-lbsft </input>
+  </summer>
+
+ </channel>
+
+ <channel name="Roll">
+
+  <fcs_function name="hydro/buoyancy-roll-moment-lbsft">
+   <documentation>
+    Roll moment due to buoyancy.
+    This data was computed in Gerris using the S.23 3d model.
+   </documentation>
+   <function>
+    <product>
+     <value> 0.73756215 </value>
+     <table>
+      <independentVar lookup="row">hydro/pitch-deg</independentVar>
+      <independentVar lookup="column">hydro/roll-deg</independentVar>
+      <independentVar lookup="table">hydro/height-agl-ft</independentVar>
+      <tableData breakPoint="0.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 1132.91 3144.73 -1.83506 -3144.02 -1136.26
+       -2 -1717.66 3152.52 4.91177 -3151.83 1716.43
+        0 -965.733 -241.478 3.56414 242.449 965.181
+        2 -653.653 -3983.77 2.90621 3984.45 651.893
+        4 -230.997 -19051.6 4.69397 19054.6 232.588
+        8 10091.8 -1170.76 5.92693 1173.2 -9597.37
+       12 19839.1 15307.4 2.42165 -15335.5 -19907.2
+      </tableData>
+      <tableData breakPoint="1.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -4489.47 647.865 2.74016 -596.378 4488.68
+       -2 -4101.75 -1286.95 1.15452 1287.21 4101.51
+        0 -3830.27 -2724.95 1.61639 2725.98 3829.93
+        2 2658.57 -1033.81 2.44355 1034.29 -2657.73
+        4 -1962.31 -2708.62 5.36615 2714.18 1579.45
+        8 8099.01 -5944.68 -0.507029 5951.06 -8096.13
+       12 6195.87 3414.35 4.13887 -3412.46 -6193.73
+      </tableData>
+      <tableData breakPoint="2.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -1367.18 778.049 2.52421 -777.105 1366.99
+       -2 -1923.67 873.256 0.535026 -873.127 1923.41
+        0 1016.54 716.97 0.605134 -716.694 -1016.64
+        2 1483.96 2776.27 1.69169 -2776.38 -1484.18
+        4 1198.89 -307.846 2.26077 308.429 -1198.73
+        8 -3740.97 -5590.15 5.33952 5592.13 3741.46
+       12 35.7637 -8727.34 3.65246 5085.2 -34.975
+      </tableData>
+      <tableData breakPoint="3.0" > <!-- NOTE: pitch 12 roll +/-2 bogus -->
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 1470.91 3445.06 0.269221 -3444.97 -1551.11
+       -2 429.955 730.729 0.364612 -697.663 -431.632
+        0 1271.64 1451 0.537519 -1451 -1268.92
+        2 1345.16 2159.73 -0.330731 -2159.71 -1345.42
+        4 1579.92 3102.36 1.68181 -3102.6 -1579.94
+        8 -1846.23 -7214.52 5.08205 7216.6 1846.62
+       12 553.978 553.978 5.38245 -553.439 -553.439
+      </tableData>
+      <tableData breakPoint="4.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 846.48 898.461 -0.197694 -898.394 -845.849
+       -2 827.234 633.996 -0.120358 -633.947 -827.259
+        0 795.787 -251.329 0.856818 251.527 -795.775
+        2 237.628 201.946 0.250281 -201.567 -240.294
+        4 766.737 1272.77 -1.21915 -1279.27 -766.805
+        8 2730.29 3019.37 4.27939 -3019.38 -2730.05
+       12 -6023.97 -5768.18 6.66964 5768.38 6024.6
+      </tableData>
+      <tableData breakPoint="5.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 856.707 1844.57 -0.618471 -1844.88 -857.057
+       -2 849.172 902.428 -0.472863 -818.044 -849.166
+        0 1118.87 1917.84 -0.425374 -1919.15 -1118.35
+        2 152.709 130.985 0.549974 -135.42 -155.465
+        4 -148.869 716.835 -0.357189 -716.762 148.917
+        8 2402.38 1193.88 0.719134 -1194.61 -2402.17
+       12 2740.13 -5122.88 5.24414 5123.6 -2739.61
+      </tableData>
+      <tableData breakPoint="6.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -262.034 200.418 -0.204909 -199.837 263.028
+       -2 -64.754 44.2375 -0.14505 -44.2841 64.735
+        0 -1.02471 58.2872 0.0757767 -58.3176 1.11618
+        2 81.9092 126.845 0.577447 -126.813 -81.916
+        4 -73.0912 30.3084 0.992686 -30.3054 73.0998
+        8 519.597 362.223 -0.149887 -362.191 -519.582
+       12 4485.08 2469.31 5.44404 -2469.43 -4485.06
+      </tableData>
+      <tableData breakPoint="7.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 -6.45455 42.088 -0.0897964 -42.6245 5.5806
+       -2 -7.76596 36.3943 -0.211349 -36.4629 7.66014
+        0 121.894 93.0656 -0.250723 -93.0767 -121.903
+        2 88.9589 1.74412 0.0136017 -1.76603 -88.962
+        4 106.055 79.957 0.644695 -79.9589 -106.061
+        8 -497.319 -199.786 1.58978 199.909 496.931
+       12 2355.34 633.708 1.33159 -633.616 -2355.25
+      </tableData>
+      <tableData breakPoint="8.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 116.821 57.4184 -0.394429 -59.4196 -116.495
+       -2 155.847 71.3015 0.128816 -71.4714 -155.853
+        0 56.5965 32.2282 0.225545 -32.2187 -56.6447
+        2 -10.8683 -36.5665 0.0066792 36.5575 10.8676
+        4 83.6683 55.2516 0.330561 -55.2509 -83.6793
+        8 -73.632 5.52166 -0.046139 -5.53083 73.6375
+       12 249.164 305.038 -0.0882072 -307.445 -249.183
+      </tableData>
+<!--
+      <tableData breakPoint="9.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 9.65316 -29.3946 0.116049 28.5329 -5.39712
+       -2 7.64309 57.0959 0.159609 -58.3246 -7.97915
+        0 60.8632 37.1863 -0.114307 -37.551 -60.882
+        2 23.6346 -4.42309 0.0563764 3.36065 -23.6652
+        4 67.5136 -1.059 -0.162872 1.05356 -67.5143
+        8 -41.3204 22.1686 0.567848 -22.1814 -19.4546
+       12 -344.352 -150.311 0.887449 148.506 342.39
+      </tableData>
+      <tableData breakPoint="10.0" >
+            -4.0  -2.0   0.0   2.0   4.0
+       -4 77.9386 77.3267 -0.0510067 -76.9263 -73.442
+       -2 27.4616 28.6334 -0.0776854 -28.6312 -27.4613
+        0 58.7029 11.3491 0.116008 -11.3641 -58.6976
+        2 46.9631 22.0932 0.0209892 -22.0996 -86.1649
+        4 9.83869 0.273796 0.0987665 -0.271115 -11.1031
+        8 18.4121 35.289 0.819307 -35.5273 -20.32
+       12 -21.9244 -19.9442 -0.070781 19.9376 21.9402
+      </tableData>
+-->
+      <tableData breakPoint="9.0">
+            -4       -2       0        2        4
+       -4   0.0      0.0      0.0      0.0      0.0
+       -2   0.0      0.0      0.0      0.0      0.0
+        0   0.0      0.0      0.0      0.0      0.0
+        2   0.0      0.0      0.0      0.0      0.0
+        4   0.0      0.0      0.0      0.0      0.0
+        8   0.0      0.0      0.0      0.0      0.0
+        12  0.0      0.0      0.0      0.0      0.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/damping-roll-moment-lbsft">
+   <function>
+    <product>
+     <property>velocities/phidot-rad_sec</property>
+     <table>
+      <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
+      <tableData>
+       0.0      0.0
+       0.1 -10000.0
+       0.5 -50000.0
+       1.0 -80000.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <summer name="hydro/roll-moment-lbsft">
+   <input> hydro/buoyancy-roll-moment-lbsft </input>
+   <input> hydro/damping-roll-moment-lbsft </input>
+  </summer>
+
+ </channel>
+
+ <!-- Implementation of forces  and moments below. -->
+
+ <channel name="Implementation Force X (north)">
+
+  <fcs_function name="hydro/X/force-lbs">
+   <function>
+    <product>
+     <value> -1.0 </value>
+     <sum>
+      <product>
+       <cos>
+        <property> flight-path/psi-gt-rad </property>
+       </cos>
+       <property> hydro/drag-lbs </property>
+      </product>
+      <product>
+       <sin>
+        <property> flight-path/psi-gt-rad </property>
+       </sin>
+       <property> hydro/side-lbs </property>
+      </product>     
+     </sum>
+    </product>
+   </function>
+   <output> external_reactions/hydro-X/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="hydro/X/left-float-lbs">
+   <function>
+    <product>
+     <value> -1.0 </value>
+     <sum>
+      <product>
+       <cos>
+        <property> flight-path/psi-gt-rad </property>
+       </cos>
+       <property> hydro/left-float-drag-lbs </property>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <output> external_reactions/left-float-X/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="hydro/X/right-float-lbs">
+   <function>
+    <product>
+     <value> -1.0 </value>
+     <sum>
+      <product>
+       <cos>
+        <property> flight-path/psi-gt-rad </property>
+       </cos>
+       <property> hydro/right-float-drag-lbs </property>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <output> external_reactions/right-float-X/magnitude </output>
+  </fcs_function>
+ 
+ </channel>
+
+ <channel name="Implementation Force Y (east)">
+
+  <fcs_function name="hydro/Y/force-lbs">
+   <function>
+    <sum>
+     <product>
+      <value> -1.0 </value>
+      <product>
+       <sin>
+        <property> flight-path/psi-gt-rad </property>
+       </sin>
+       <property> hydro/drag-lbs </property>
+      </product>
+     </product>
+     <product>
+      <cos>
+       <property> flight-path/psi-gt-rad </property>
+      </cos>
+      <property> hydro/side-lbs </property>
+     </product>     
+    </sum>
+   </function>
+   <output> external_reactions/hydro-Y/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="hydro/Y/left-float-lbs">
+   <function>
+    <sum>
+     <product>
+      <value> -1.0 </value>
+      <product>
+       <sin>
+        <property> flight-path/psi-gt-rad </property>
+       </sin>
+       <property> hydro/left-float-drag-lbs </property>
+      </product>
+     </product>
+    </sum>
+   </function>
+   <output> external_reactions/left-float-Y/magnitude </output>
+  </fcs_function>
+
+  <fcs_function name="hydro/Y/right-float-lbs">
+   <function>
+    <sum>
+     <product>
+      <value> -1.0 </value>
+      <product>
+       <sin>
+        <property> flight-path/psi-gt-rad </property>
+       </sin>
+       <property> hydro/right-float-drag-lbs </property>
+      </product>
+     </product>
+    </sum>
+   </function>
+   <output> external_reactions/right-float-Y/magnitude </output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Implementation Pitch Moment">
+
+  <pure_gain name="hydro/pitch-moment/force-lbs[0]">
+   <input> hydro/pitch-moment-lbsft </input>
+   <gain> 0.5</gain>
+   <output> external_reactions/hydro-pitch[0]/magnitude </output>
+  </pure_gain>
+  <pure_gain name="hydro/pitch-moment/force-lbs[1]">
+   <input> hydro/pitch-moment-lbsft </input>
+   <gain>-0.5</gain>
+   <output> external_reactions/hydro-pitch[1]/magnitude </output>
+  </pure_gain>
+
+ </channel>
+
+ <channel name="Implementation Yaw Moment">
+
+  <pure_gain name="hydro/yaw-moment/force-lbs[0]">
+   <input> hydro/yaw-moment-lbsft </input>
+   <gain> 0.5</gain>
+   <output> external_reactions/hydro-yaw[0]/magnitude </output>
+  </pure_gain>
+  <pure_gain name="hydro/yaw-moment/force-lbs[1]">
+   <input> hydro/yaw-moment-lbsft </input>
+   <gain>-0.5</gain>
+   <output> external_reactions/hydro-yaw[1]/magnitude </output>
+  </pure_gain>
+
+ </channel>
+
+ <channel name="Implementation Roll Moment">
+
+  <pure_gain name="hydro/roll-moment/force-lbs[0]">
+   <input> hydro/roll-moment-lbsft </input>
+   <gain> 0.5</gain>
+   <output> external_reactions/hydro-roll[0]/magnitude </output>
+  </pure_gain>
+  <pure_gain name="hydro/roll-moment/force-lbs[1]">
+   <input> hydro/roll-moment-lbsft </input>
+   <gain>-0.5</gain>
+   <output> external_reactions/hydro-roll[1]/magnitude </output>
+  </pure_gain>
+
+ </channel>
+
+</system>

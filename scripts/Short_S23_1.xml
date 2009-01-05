@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.jsbsim.org/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+           name="Short S.23 take-off test">
+ <description>This is a take off run for the Short S.23.</description>
+
+ <use aircraft="Short_S23" initialize="reset00"/>
+ <run start="0.0" end="240" dt="0.00833333">
+
+  <!-- event name="flaps out">
+   <description>Extend 1/3 flaps</description>
+   <notify/>
+   <condition>
+    sim-time-sec >= 10.0
+   </condition>
+   <set name="fcs/flap-cmd-norm" value="0.33"/>
+  </event -->
+
+  <event name="engine start">
+   <description>Start the engines</description>
+   <notify/>
+   <condition>
+    sim-time-sec >= 60.0
+   </condition>
+   <set name="fcs/throttle-cmd-norm[0]" value="0.15"/>
+   <set name="fcs/throttle-cmd-norm[1]" value="0.15"/>
+   <set name="fcs/throttle-cmd-norm[2]" value="0.15"/>
+   <set name="fcs/throttle-cmd-norm[3]" value="0.15"/>
+   <set name="fcs/mixture-cmd-norm[0]" value="0.97"/>
+   <set name="fcs/mixture-cmd-norm[1]" value="0.97"/>
+   <set name="fcs/mixture-cmd-norm[2]" value="0.97"/>
+   <set name="fcs/mixture-cmd-norm[3]" value="0.97"/>
+   <set name="propulsion/magneto_cmd" value="3"/>
+   <set name="propulsion/starter_cmd" value="1"/>
+  </event>
+
+  <event name="take-off AP">
+   <description>Enable take-off AP</description>
+   <notify/>
+   <condition>
+    sim-time-sec >= 70.0
+   </condition>
+   <set name="propulsion/starter_cmd" value="0"/>
+   <set name="take-off-ap/enabled" value="1.0"/>
+  </event>
+
+  <event name="open throttles">
+   <description>Open up the throttles to take-off power</description>
+   <notify/>
+   <condition>
+    sim-time-sec >= 75.0
+   </condition>
+   <set name="fcs/throttle-cmd-norm[0]"
+        value="0.99" action="FG_RAMP" tc ="10.0"/>
+   <set name="fcs/throttle-cmd-norm[1]"
+        value="0.99" action="FG_RAMP" tc ="10.0"/>
+   <set name="fcs/throttle-cmd-norm[2]"
+        value="0.99" action="FG_RAMP" tc ="10.0"/>
+   <set name="fcs/throttle-cmd-norm[3]"
+        value="0.99" action="FG_RAMP" tc ="10.0"/>
+  </event>
+
+  <event name="Climb power">
+   <description>Set climb power</description>
+   <notify/>
+   <condition>
+    position/h-agl-ft >= 100.0
+   </condition>
+   <set name="fcs/throttle-cmd-norm[0]"
+        value="0.95" action="FG_RAMP" tc ="1.0"/>
+   <set name="fcs/throttle-cmd-norm[1]"
+        value="0.95" action="FG_RAMP" tc ="1.0"/>
+   <set name="fcs/throttle-cmd-norm[2]"
+        value="0.95" action="FG_RAMP" tc ="1.0"/>
+   <set name="fcs/throttle-cmd-norm[3]"
+        value="0.95" action="FG_RAMP" tc ="1.0"/>
+   <set name="fcs/flap-cmd-norm" value="0.0"/>
+  </event>
+
+  <event name="Time Notify" type="FG_DELTA" persistent="true">
+   <description>Output message at 20 seconds intervals</description>
+   <notify>
+    <property>position/h-agl-ft</property>
+    <property>hydro/height-agl-ft</property>
+    <property>hydro/v-kt</property>
+    <property>hydro/pitch-deg</property>
+    <property>hydro/roll-deg</property>
+    <property>hydro/beta-deg</property>
+    <property>take-off-ap/enabled</property>
+   </notify>
+   <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+   <set name="simulation/notify-time-trigger" value="20" type="FG_DELTA"/>
+  </event>
+
+ </run>
+
+</runscript>

@@ -5,6 +5,7 @@ SUBDIRS =		\
 	B747		\
 	OV10		\
 	SGS		\
+	Short_S23	\
 	T37		\
 	T38		\
 	X15		\

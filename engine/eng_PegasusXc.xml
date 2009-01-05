@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!--
+  File:     PegasusXC.xml
+  Authors:  Ron Jensen, Anders Gidenstam
+
+  Inputs:
+    name:           PegasusXC
+    type:           piston
+    power:          920.0 hp
+    augmented?      no
+    injected?       no
+
+Selected informative quotes from
+
+"Flying Empires  Short 'C' class Empire flying boats",
+Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
+    
+  "The Pegasus engine data plates were fixed on the port side panel
+  below the fore and aft level. The information on the plates read:
+  Take off 2475 rpm. maximum +4 1/4 lb. sq. in.
+           Maximum rpm   Boost.   Cylinder temp.   Oil temp.deg.C.
+  Take off     2475      +4 1/4   235 for 15 min.      ??
+  Climbing     2250      +2 1/2   235                  80
+  Cruising     2250      +2       190                  70
+  All out      2600      +2       235                  90
+  Oil pressure maximum 80 lb./sq. in. 5 minutes
+               minimum 5 lb./sq. in."
+  (pp.71)
+
+  "The Pegasus XC was a 28.7 litre, civil-rated, medium
+  supercharged, poppet-valved engine and equipped the S.23, S.33
+  'boats and one of the S.30 aircraft - KZ CATHAY. The Bristol
+  Perseus XIIC was 24.9 litre, civil rated, medium supercharged,
+  sleeve-valve engine and was fitted to the eight S.30 'boats. Both
+  types of engine were geared down to turn the airscrew at half
+  crankshaft speed, through Farman type reduction gearing."
+  (pp.91) 
+
+  "The engines originally fitted to all the Mark I S.23 'boats, one
+  of the S.30s and both the S.33 'boats were poppet valved Bristol
+  Pegasus XCs. The engines developed 820/900 bhp. (589/611 kW.) at
+  2250 rev. per min., at the rated altitude of 3500 ft. At sea
+  level, the maximum power was 885/920 bhp.  (660/686 kW.) at 2250
+  rev. per min. The maximum economy cruise power was 510 bhp. (380
+  kW.).  The maximum engine speed for for the climb - with the
+  airscrews in COARSE pitch - was 2250 rev.  per min. with +1 1/4
+  lb. sq. in.. For continuous cruising the speed was 2500 rev. per
+  min. up to 5000 ft. and 2100 rev. per min. over 5000
+  ft. Maximum engine speed - all out - was 2600 rev. per min. with
+  +2 1/2 lb. sq. in. for 5 minutes in level flight."
+  (pp.167)
+-->
+<piston_engine name="PegasusXC">
+  <minmp unit="INHG">          6.0 </minmp> <!-- Deprecated -->
+  <maxmp unit="INHG">         28.5 </maxmp>
+  <displacement unit="IN3"> 1750.0 </displacement>
+
+  <cycles>         4.0 </cycles>
+  <maxhp>        920.0 </maxhp> <!-- Boosted. -->
+  <bsfc>          0.52 </bsfc>  <!-- From Wikipedia. Pegasus XVIII. -->
+  <idlerpm>      200.0 </idlerpm>
+  <maxrpm>      2600.0 </maxrpm>
+
+  <maxthrottle>    1.0 </maxthrottle>
+  <minthrottle>    0.2 </minthrottle>
+  <sparkfaildrop>  0.1 </sparkfaildrop>
+
+  <numboostspeeds> 1.0 </numboostspeeds>
+  <boostoverride> 0 </boostoverride>
+
+  <ratedboost1 unit="INHG">     4.1 </ratedboost1>
+  <ratedpower1 unit="HP">     900.0 </ratedpower1>
+  <ratedrpm1>                2250.0 </ratedrpm1>
+  <ratedaltitude1 unit="FT"> 3500.0 </ratedaltitude1>
+
+  <takeoffboost unit="INHG"> 8.65 </takeoffboost>
+</piston_engine>
