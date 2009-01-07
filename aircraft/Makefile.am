@@ -3,6 +3,7 @@ SUBDIRS =		\
 	A320		\
 	B17   \
 	B747		\
+	F4N	\
 	OV10		\
 	SGS		\
 	Short_S23	\

@@ -1090,7 +1090,6 @@
     <forces> ON </forces>
     <moments> ON </moments>
     <position> ON </position>
-    <fcs> OFF </fcs>
     <propulsion> ON </propulsion>
     <aerosurfaces> ON </aerosurfaces>
     <fcs> OFF </fcs>
