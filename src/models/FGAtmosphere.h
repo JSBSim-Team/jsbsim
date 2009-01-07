@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.17 2008/11/21 02:45:27 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.18 2009/01/07 13:46:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.17 2008/11/21 02:45:27 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.18 2009/01/07 13:46:53 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -100,6 +100,10 @@ public:
   double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
   double GetSoundSpeed(void) const {return soundspeed;}
+  /// Returns the absolute viscosity.
+  double GetAbsoluteViscosity(void) const {return intViscosity;}
+  /// Returns the kinematic viscosity.
+  double GetKinematicViscosity(void) const {return intKinematicViscosity;}
 
   /// Returns the sea level temperature in degrees Rankine.
   double GetTemperatureSL(void) const { return SLtemperature; }
@@ -237,6 +241,7 @@ protected:
   bool useExternal;
   double exTemperature,exDensity,exPressure;
   double intTemperature, intDensity, intPressure;
+  double SutherlandConstant, Beta, intViscosity, intKinematicViscosity;
   double T_dev_sl, T_dev, delta_T, density_altitude;
   atmType atmosphere;
   bool StandardTempOnly;
