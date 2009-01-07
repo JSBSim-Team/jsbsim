@@ -98,11 +98,13 @@ aircraft/737/Makefile \
 aircraft/A320/Makefile \
 aircraft/B17/Makefile \
 aircraft/B747/Makefile \
+aircraft/F4N/Makefile \
+aircraft/F4N/Engines/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \
+aircraft/Submarine_Scout/Makefile \
 aircraft/Short_S23/Makefile \
 aircraft/Short_S23/Systems/Makefile \
-aircraft/Submarine_Scout/Makefile \
 aircraft/T37/Makefile \
 aircraft/T38/Makefile \
 aircraft/X15/Makefile \
