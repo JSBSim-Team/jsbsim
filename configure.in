@@ -100,6 +100,8 @@ aircraft/B17/Makefile \
 aircraft/B747/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \
+aircraft/Short_S23/Makefile \
+aircraft/Short_S23/Systems/Makefile \
 aircraft/Submarine_Scout/Makefile \
 aircraft/T37/Makefile \
 aircraft/T38/Makefile \
