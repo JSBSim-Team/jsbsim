@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<propeller name="Clark Y 0.08 t/c ratio variable pitch">
+<propeller name="Clark Y 0.10 t/c ratio variable pitch">
   <ixx>                1.8 </ixx>
   <diameter unit="IN"> 84.0 </diameter>
   <numblades>          2   </numblades>
