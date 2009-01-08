@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.47 2009/01/01 11:44:36 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.48 2009/01/08 12:34:20 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -756,6 +756,8 @@ void FGLGear::bind(void)
 
 void FGLGear::Report(ReportType repType)
 {
+  if (fabs(TakeoffDistanceTraveled) < 0.001) return; // Don't print superfluous reports
+
   switch(repType) {
   case erLand:
     cout << endl << "Touchdown report for " << name << endl;
