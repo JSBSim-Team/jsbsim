@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.12 2008/05/31 23:13:29 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.13 2009/01/08 12:35:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.12 2008/05/31 23:13:29 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.13 2009/01/08 12:35:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,14 +181,15 @@ public:
   double GetMagBeta (int unit) const { if (unit == inDegrees) return fabs(beta)*radtodeg;
                                        else cerr << "Bad units" << endl; return 0.0;}
 
-  double Getqbar    (void) const { return qbar;       }
-  double GetqbarUW  (void) const { return qbarUW;     }
-  double GetqbarUV  (void) const { return qbarUV;     }
-  double GetVt      (void) const { return Vt;         }
-  double GetVground (void) const { return Vground;    }
-  double GetMach    (void) const { return Mach;       }
-  double GetMachU   (void) const { return MachU;      }
-  double GetNz      (void) const { return Nz;         }
+  double Getqbar          (void) const { return qbar;       }
+  double GetqbarUW        (void) const { return qbarUW;     }
+  double GetqbarUV        (void) const { return qbarUV;     }
+  double GetReynoldsNumber(void) const { return Re;         }
+  double GetVt            (void) const { return Vt;         }
+  double GetVground       (void) const { return Vground;    }
+  double GetMach          (void) const { return Mach;       }
+  double GetMachU         (void) const { return MachU;      }
+  double GetNz            (void) const { return Nz;         }
 
   double GetHOverBCG(void) const { return hoverbcg; }
   double GetHOverBMAC(void) const { return hoverbmac; }
@@ -247,6 +248,7 @@ private:
 
   double Vt, Vground, Mach, MachU;
   double qbar, qbarUW, qbarUV;
+  double Re; // Reynolds Number = V*c/mu
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;

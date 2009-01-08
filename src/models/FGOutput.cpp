@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.30 2008/11/21 02:45:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.31 2009/01/08 12:35:34 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -247,6 +247,7 @@ void FGOutput::DelimitedOutput(string fname)
     if (SubSystems & ssVelocities) {
       outstream << delimeter;
       outstream << "q bar (psf)" + delimeter;
+      outstream << "Reynolds Number" + delimeter;
       outstream << "V_{Total} (ft/s)" + delimeter;
       outstream << "V_{Inertial} (ft/s)" + delimeter;
       outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
@@ -266,6 +267,8 @@ void FGOutput::DelimitedOutput(string fname)
     if (SubSystems & ssAtmosphere) {
       outstream << delimeter;
       outstream << "Rho (slugs/ft^3)" + delimeter;
+      outstream << "Absolute Viscosity" + delimeter;
+      outstream << "Kinematic Viscosity" + delimeter;
       outstream << "P_{SL} (psf)" + delimeter;
       outstream << "P_{Ambient} (psf)" + delimeter;
       outstream << "Turbulence Magnitude (ft/sec)" + delimeter;
@@ -274,17 +277,17 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssMassProps) {
       outstream << delimeter;
-      outstream << "I_xx" + delimeter;
-      outstream << "I_xy" + delimeter;
-      outstream << "I_xz" + delimeter;
-      outstream << "I_yx" + delimeter;
-      outstream << "I_yy" + delimeter;
-      outstream << "I_yz" + delimeter;
-      outstream << "I_zx" + delimeter;
-      outstream << "I_zy" + delimeter;
-      outstream << "I_zz" + delimeter;
+      outstream << "I_{xx}" + delimeter;
+      outstream << "I_{xy}" + delimeter;
+      outstream << "I_{xz}" + delimeter;
+      outstream << "I_{yx}" + delimeter;
+      outstream << "I_{yy}" + delimeter;
+      outstream << "I_{yz}" + delimeter;
+      outstream << "I_{zx}" + delimeter;
+      outstream << "I_{zy}" + delimeter;
+      outstream << "I_{zz}" + delimeter;
       outstream << "Mass" + delimeter;
-      outstream << "X_cg" + delimeter + "Y_cg" + delimeter + "Z_cg";
+      outstream << "X_{cg}" + delimeter + "Y_{cg}" + delimeter + "Z_{cg}";
     }
     if (SubSystems & ssPropagate) {
       outstream << delimeter;
@@ -348,6 +351,7 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssVelocities) {
     outstream << delimeter;
     outstream << Auxiliary->Getqbar() << delimeter;
+    outstream << Auxiliary->GetReynoldsNumber() << delimeter;
     outstream << setprecision(12) << Auxiliary->GetVt() << delimeter;
     outstream << Propagate->GetInertialVelocityMagnitude() << delimeter;
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
@@ -367,6 +371,8 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssAtmosphere) {
     outstream << delimeter;
     outstream << Atmosphere->GetDensity() << delimeter;
+    outstream << Atmosphere->GetAbsoluteViscosity() << delimeter;
+    outstream << Atmosphere->GetKinematicViscosity() << delimeter;
     outstream << Atmosphere->GetPressureSL() << delimeter;
     outstream << Atmosphere->GetPressure() << delimeter;
     outstream << Atmosphere->GetTurbMagnitude() << delimeter;

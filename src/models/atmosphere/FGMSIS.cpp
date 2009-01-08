@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.8 2008/11/21 02:45:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.9 2009/01/08 12:35:34 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,7 @@ bool MSIS::InitModel(void)
   pressure = &intPressure;
   density = &intDensity;
 
-  useExternal=false;
+  UseInternal();
 
   return true;
 }
@@ -174,19 +174,11 @@ bool MSIS::Run(void)
     intTemperature = output.t[1] * 1.8;
     intDensity     = output.d[5] * 1.940321;
     intPressure    = 1716.488 * intDensity * intTemperature;
-    soundspeed     = sqrt(2403.0832 * intTemperature);
     //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
     //cout << intPressure << " a=" << soundspeed << endl;
   }
 
-  if (turbType != ttNone) {
-    Turbulence();
-    vWindNED += vTurbulenceNED;
-  }
-
-  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
-
-  if (psiw < 0) psiw += 2*M_PI;
+  CalculateDerived();
 
   Debug(2);
 

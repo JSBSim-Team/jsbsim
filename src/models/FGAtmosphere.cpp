@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.23 2009/01/07 13:46:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.24 2009/01/08 12:35:34 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,6 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   spike = target_time = strength = 0.0;
   wind_from_clockwise = 0.0;
   SutherlandConstant = 198.72; // deg Rankine
-//  Beta = 7.302500E-07; // lbm/(sec ft R^0.5)
   Beta = 2.269690E-08; // slug/(sec ft R^0.5)
 
   T_dev_sl = T_dev = delta_T = 0.0;
@@ -254,9 +253,6 @@ void FGAtmosphere::Calculate(double altitude)
     intDensity = intPressure/(Reng*intTemperature);
   }
   
-  intViscosity = Beta * pow(intTemperature, 1.5) / (SutherlandConstant + intTemperature);
-  intKinematicViscosity = intViscosity / intDensity;
-
   lastIndex=i;
 }
 
@@ -269,7 +265,7 @@ void FGAtmosphere::CalculateDerived(void)
   T_dev = (*temperature) - GetTemperature(h);
   density_altitude = h + T_dev * 66.7;
 
-  if (turbType == ttStandard || turbType == ttCulp) Turbulence();
+  if (turbType != ttNone) Turbulence();
 
   vTotalWindNED = vWindNED + vGustNED + vTurbulenceNED;
 
@@ -277,6 +273,9 @@ void FGAtmosphere::CalculateDerived(void)
   if (psiw < 0) psiw += 2*M_PI;
 
   soundspeed = sqrt(SHRatio*Reng*(*temperature));
+
+  intViscosity = Beta * pow(intTemperature, 1.5) / (SutherlandConstant + intTemperature);
+  intKinematicViscosity = intViscosity / intDensity;
 }
 
 
