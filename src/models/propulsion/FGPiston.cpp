@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.28 2009/01/03 17:20:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.29 2009/01/08 12:34:48 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,8 +372,8 @@ double FGPiston::Calculate(void)
 //    Running = false;
 
   doEnginePower();
-if(HP<0.1250)
-  Running = false;
+
+  if (HP < 0.1250) Running = false;
 
   doEGT();
   doCHT();
@@ -395,7 +395,6 @@ if(HP<0.1250)
 double FGPiston::CalcFuelNeed(void)
 {
   double dT = State->Getdt() * Propulsion->GetRate();
-  FuelFlow_pph = FuelFlow_gph * 6.0; // Assumes 6 lbs / gallon
   FuelFlowRate = FuelFlow_pph / 3600.0;
   FuelExpended = FuelFlowRate * dT;
   return FuelExpended;
@@ -614,11 +613,10 @@ void FGPiston::doFuelFlow(void)
 //  double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
 //  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
-  FuelFlow_gph = m_dot_fuel
+  FuelFlow_pph = m_dot_fuel
     * 3600            // seconds to hours
-    * 2.2046            // kg to lb
-    / 6.0;            // lb to gal_us of gasoline
-//    / 6.6;            // lb to gal_us of kerosene
+    * 2.2046;         // kg to lb
+  FuelFlow_gph = FuelFlow_pph / 6.0; // Assumes 6 lbs / gallon
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
