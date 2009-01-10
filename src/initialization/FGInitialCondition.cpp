@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.27 2008/07/24 19:44:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.28 2009/01/10 02:12:26 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -156,7 +156,13 @@ void FGInitialCondition::InitializeIC(void)
 
 void FGInitialCondition::WriteStateFile(int num)
 {
-  string filename = fdmex->GetFullAircraftPath() + "/" + "initfile.xml";
+  string filename = fdmex->GetFullAircraftPath();
+
+  if (filename.empty())
+    filename = "initfile.xml";
+  else
+    filename.append("/initfile.xml");
+  
   ofstream outfile(filename.c_str());
   FGPropagate* Propagate = fdmex->GetPropagate();
   
@@ -173,11 +179,10 @@ void FGInitialCondition::WriteStateFile(int num)
     outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
     outfile << "  <altitude unit=\"FT\"> " << Propagate->Geth() << " </altitude>" << endl;
     outfile << "</initialize>" << endl;
+    outfile.close();
   } else {
-    cerr << "Could not open and/or write the state to the initial conditions file." << endl;
+    cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
   }
-
-  outfile.close();
 }
 
 //******************************************************************************
