@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.29 2009/01/08 12:34:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.30 2009/01/21 04:17:11 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,21 +132,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   *Lookup_Combustion_Efficiency << 1.60 << 0.525;
   *Lookup_Combustion_Efficiency << 2.00 << 0.345;
 
-  Power_Mixture_Correlation = new FGTable(13);
-  *Power_Mixture_Correlation << (14.7/1.6) << 0.780;
-  *Power_Mixture_Correlation << 10 <<  0.860;
-  *Power_Mixture_Correlation << 11 <<  0.935;
-  *Power_Mixture_Correlation << 12 <<  0.980;
-  *Power_Mixture_Correlation << 13 <<  1.000;
-  *Power_Mixture_Correlation << 14 <<  0.990;
-  *Power_Mixture_Correlation << 15 <<  0.964;
-  *Power_Mixture_Correlation << 16 <<  0.925;
-  *Power_Mixture_Correlation << 17 <<  0.880;
-  *Power_Mixture_Correlation << 18 <<  0.830;
-  *Power_Mixture_Correlation << 19 <<  0.785;
-  *Power_Mixture_Correlation << 20 <<  0.740;
-  *Power_Mixture_Correlation << (14.7/0.6) << 0.58;
-
   Mixture_Efficiency_Correlation = new FGTable(15);
   *Mixture_Efficiency_Correlation << 0.05000 << 0.00000;
   *Mixture_Efficiency_Correlation << 0.05137 << 0.00862;
@@ -164,21 +149,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   *Mixture_Efficiency_Correlation << 0.12435 << 0.23276;
   *Mixture_Efficiency_Correlation << 0.12500 << 0.00000;
 
-
-/*
-Manifold_Pressure_Lookup = new
-
-        0       0.2      0.4      0.6      0.8     1
-0        1.0000    1.0000    1.0000    1.0000    1.0000    1.0000
-1000    0.7778    0.8212    0.8647    0.9081    0.9516    0.9950
-2000    0.5556    0.6424    0.7293    0.8162    0.9031    0.9900
-3000    0.3333    0.4637    0.5940    0.7243    0.8547    0.9850
-4000    0.2000    0.2849    0.4587    0.6324    0.8062    0.9800
-5000    0.2000    0.2000    0.3233    0.5406    0.7578    0.9750
-6000    0.2000    0.2000    0.2000    0.4487    0.7093    0.9700
-7000    0.2000    0.2000    0.2000    0.2000    0.4570    0.7611
-8000    0.2000    0.2000    0.2000    0.2000    0.2047    0.5522
-*/
 
   // Read inputs from engine data file where present.
 
@@ -238,12 +208,15 @@ Manifold_Pressure_Lookup = new
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
 
-  if ( MaxManifoldPressure_inHg > 29.9 ) MaxManifoldPressure_inHg = 29.9; // Don't allow boosting with a bogus number
   MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
   // Create a BSFC to match the engine if not provided
   if (BSFC < 0) {
       BSFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * MaxHP);
       BSFC *= (MaxManifoldPressure_Percent * MaxManifoldPressure_Percent * MaxManifoldPressure_Percent);
+  }
+  if ( MaxManifoldPressure_inHg > 29.9 ) {   // Don't allow boosting with a bogus number
+      MaxManifoldPressure_inHg = 29.9;
+      MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
   }
 
   char property_name[80];
@@ -303,7 +276,9 @@ Manifold_Pressure_Lookup = new
     BoostSpeed = 0;
   }
   bBoostOverride = (BoostOverride == 1 ? true : false);
-  if (MinThrottle < 0.001) MinThrottle = 0.001;  //MinThrottle is a denominator in a power equation so it can't be zero
+  if (MinThrottle < 0.12) MinThrottle = 0.12;  //MinThrottle is limited to 0.12 to prevent the
+                                               // throttle area equation from going negative
+                                               // 0.12 is 1% of maximum area
   Debug(0); // Call Debug() routine from constructor if needed
 }
 
@@ -312,7 +287,6 @@ Manifold_Pressure_Lookup = new
 FGPiston::~FGPiston()
 {
   delete Lookup_Combustion_Efficiency;
-  delete Power_Mixture_Correlation;
   delete Mixture_Efficiency_Correlation;
   Debug(1); // Call Debug() routine from constructor if needed
 }
@@ -372,7 +346,6 @@ double FGPiston::Calculate(void)
 //    Running = false;
 
   doEnginePower();
-
   if (HP < 0.1250) Running = false;
 
   doEGT();
@@ -395,7 +368,6 @@ double FGPiston::Calculate(void)
 double FGPiston::CalcFuelNeed(void)
 {
   double dT = State->Getdt() * Propulsion->GetRate();
-  FuelFlowRate = FuelFlow_pph / 3600.0;
   FuelExpended = FuelFlowRate * dT;
   return FuelExpended;
 }
@@ -514,18 +486,16 @@ void FGPiston::doBoostControl(void)
  * from the throttle position, turbo/supercharger boost control
  * system, engine speed and local ambient air density.
  *
- * TODO: changes in MP should not be instantaneous -- introduce
- * a lag between throttle changes and MP changes, to allow pressure
- * to build up or disperse.
- *
- * Inputs: minMAP, maxMAP, p_amb, Throttle
+ * Inputs: p_amb, Throttle, MaxManifoldPressure_Percent, ThrottleAngle
+ *         RPM, MaxRPM
  *
  * Outputs: MAP, ManifoldPressure_inHg
  */
 
 void FGPiston::doMAP(void)
 {
-    double throttle_area = pow(ThrottleAngle, 1/ThrottleAngle); // estimate throttle plate area
+ // estimate throttle plate area.  This maps 0.2 -> 0.1 for historical performance reasons
+    double throttle_area = ThrottleAngle * 1.125 - 0.125;
     map_coefficient = pow ((throttle_area * MaxManifoldPressure_Percent),RPM/MaxRPM);
     MAP = p_amb * map_coefficient;
 
@@ -613,10 +583,9 @@ void FGPiston::doFuelFlow(void)
 //  double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
 //  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
-  FuelFlow_pph = m_dot_fuel
-    * 3600            // seconds to hours
-    * 2.2046;         // kg to lb
-  FuelFlow_gph = FuelFlow_pph / 6.0; // Assumes 6 lbs / gallon
+  FuelFlowRate =  m_dot_fuel * 2.2046;  // kg to lb
+  FuelFlow_pph = FuelFlowRate  * 3600;  // seconds to hours
+  FuelFlow_gph = FuelFlow_pph / 6.0;    // Assumes 6 lbs / gallon
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -879,11 +848,6 @@ void FGPiston::Debug(int from)
       cout << endl;
       cout << "      Combustion Efficiency table:" << endl;
       Lookup_Combustion_Efficiency->Print();
-      cout << endl;
-
-      cout << endl;
-      cout << "      Power Mixture Correlation table:" << endl;
-      Power_Mixture_Correlation->Print();
       cout << endl;
 
       cout << endl;
