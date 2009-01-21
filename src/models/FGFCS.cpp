@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.49 2009/01/21 04:30:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.50 2009/01/21 08:44:45 ehofman Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -513,6 +513,10 @@ bool FGFCS::Load(Element* el, SystemType systype)
       return false;
     } else {
       document = LoadXMLDocument(file);
+      if (!document) {
+        cerr << "Error loading file " << file << endl;
+        return false;
+      }
       name = document->GetAttributeValue("name");
     }
   } else {
