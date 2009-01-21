@@ -14,8 +14,8 @@
         Start engine and set initial heading and waypoints, turn on heading-hold mode.
       </description>
       <condition>sim-time-sec  ge  0.25</condition>
-      <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
-      <set name="fcs/mixture-cmd-norm[1]" value="0.87"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1"/>
       <set name="fcs/advance-cmd-norm[0]" value="1.0"/>
       <set name="fcs/advance-cmd-norm[1]" value="1.0"/>
       <set name="propulsion/magneto_cmd" value="3"/>
@@ -34,13 +34,13 @@
     </event>
     
     <event name="Set altitude for 1,000 ft.">
-      <condition>velocities/vc-fps ge 135.0</condition>
+      <condition>velocities/vc-fps ge 145.0</condition>
       <set name="ap/altitude_hold" value="1"/>
       <notify/>
     </event>
     
     <event name="Raise landing gear">
-      <condition>position/h-agl-ft  ge  20</condition>
+      <condition>position/h-agl-ft  ge  40</condition>
       <set name="gear/gear-cmd-norm" value="0"/>
       <notify/>
     </event>

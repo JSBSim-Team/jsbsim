@@ -13,7 +13,32 @@
       </scale>
       <parameter axis="x">Longitude (Deg)</parameter>
       <parameter axis="y">Latitude (Deg)</parameter>
+   </plot> 
+   <plot>
+     <title>Temperature Profile</title>
+      <label axis="x">Temperature (R)</label>
+      <label axis="y">Altitude (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Temperature (R)</parameter>
+      <parameter axis="y">Altitude (ft)</parameter>
    </plot>
+   <plot>
+     <title>Pressure Profile</title>
+      <label axis="x">Pressure (psf)</label>
+      <label axis="y">Altitude (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">P_{Ambient} (psf)</parameter>
+      <parameter axis="y">Altitude (ft)</parameter>
+   </plot>
+   <plot>
+     <title>Density Profile</title>
+      <label axis="x">Rho (slugs/ft^3)</label>
+      <label axis="y">Altitude (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Rho (slugs/ft^3)</parameter>
+      <parameter axis="y">Altitude (ft)</parameter>
+   </plot>
+<!--
    <plot>
       <title>Body Rates</title>
       <label axis="x">Time (sec)</label>
@@ -160,4 +185,5 @@
       <parameter axis="y">NOSE_BodyXForce</parameter>
       <parameter axis="y">NOSE_BodyYForce</parameter>
    </plot>
+-->
 </plotset>
