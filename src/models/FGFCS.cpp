@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.48 2008/12/05 23:52:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.49 2009/01/21 04:30:48 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -550,7 +550,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
   }
 
   // After reading interface properties in a file, read properties in the local
-  // flight_control, autopiot, or system element. This allows general-purpose
+  // flight_control, autopilot, or system element. This allows general-purpose
   // systems to be defined in a file, with overrides or initial loaded constants
   // supplied in the relevant element of the aircraft configuration file.
 
@@ -966,7 +966,7 @@ void FGFCS::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      cout << endl << "  Flight Control (" << Name << ")" << endl;
+      cout << endl << "  " << Name << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
