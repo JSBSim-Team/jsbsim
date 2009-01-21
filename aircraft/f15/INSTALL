@@ -1,0 +1,11 @@
+// This file instructs the automatic synchronization utilities where to
+// install this aircraft and under what name.
+//
+// The syntax is easy;
+// * the package name at the beginning of a new line folowed by a colon
+// * a space as a column separator
+// * the path and filename relative to the aircraft install directory
+//
+// Currently known package names are: FlightGear
+
+FlightGear: f15c/f15.xml
