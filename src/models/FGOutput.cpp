@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.31 2009/01/08 12:35:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.32 2009/01/21 04:31:42 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -269,6 +269,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Rho (slugs/ft^3)" + delimeter;
       outstream << "Absolute Viscosity" + delimeter;
       outstream << "Kinematic Viscosity" + delimeter;
+      outstream << "Temperature (R)" + delimeter;
       outstream << "P_{SL} (psf)" + delimeter;
       outstream << "P_{Ambient} (psf)" + delimeter;
       outstream << "Turbulence Magnitude (ft/sec)" + delimeter;
@@ -373,6 +374,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Atmosphere->GetDensity() << delimeter;
     outstream << Atmosphere->GetAbsoluteViscosity() << delimeter;
     outstream << Atmosphere->GetKinematicViscosity() << delimeter;
+    outstream << Atmosphere->GetTemperature() << delimeter;
     outstream << Atmosphere->GetPressureSL() << delimeter;
     outstream << Atmosphere->GetPressure() << delimeter;
     outstream << Atmosphere->GetTurbMagnitude() << delimeter;
