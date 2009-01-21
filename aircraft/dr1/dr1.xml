@@ -5,7 +5,7 @@
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
-  <author> Ron Jensen, Eric Hoffman?, Aeromatic v 0.9 </author>
+  <author> Ron Jensen, Erik Hofman, Aeromatic v 0.9 </author>
   <filecreationdate> 2008-07-26 </filecreationdate>
   <version>$Revison: $</version>
   <description> Models a Fokker Dr.1. </description>
@@ -323,8 +323,8 @@
 
   <axis name="LIFT">
     <!--
-       CLadot:	0.759
-       CLq:	1.245
+       CLadot:	0.759 (/rad)
+       CLq:	1.245 (/rad)
      -->
 
     <function name="aero/coefficient/CLalpha">
@@ -453,8 +453,8 @@
 
   <axis name="DRAG">
     <!--
-       CDo:	0.0323
-       CDde:	0.0136
+       CDo:	0.0323	[x]
+       CDde:	0.0136	[x]
        CDK:	0.0922
      -->
     <function name="aero/coefficient/CD0">
@@ -462,16 +462,8 @@
        <product>
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
-          <table>
-            <independentVar lookup="row">aero/alpha-rad</independentVar>
-            <tableData>
-             -1.57    1.500
-             -0.26    0.036
-              0.00    0.0323
-              0.26    0.036
-              1.57    1.500
-            </tableData>
-          </table>
+          <property>aero/alpha-rad</property>
+          <value>0.0323</value>
        </product>
     </function>
 
@@ -593,11 +585,11 @@
 
   <axis name="SIDE">
     <!--
-       CYbeta:	-0.3855
+       CYbeta:	-0.3855 (/rad)	[x]
        CYda:	0
-       CYdr:	0.094
-       CYp:	-0.01
-       CYr:	0.1047
+       CYdr:	0.094 (/rad)	[x]
+       CYp:	-0.01 (/rad)	[x]
+       CYr:	0.1047 (/rad)	[x]
      -->
 
     <function name="aero/coefficient/CYb">
@@ -610,15 +602,47 @@
        </product>
     </function>
 
+    <function name="aero/coefficient/CYdr">
+       <description>Side_force_due_to_rudder</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>fcs/rudder-pos-rad</property>
+           <value>0.094</value>
+       </product>
+    </function>
+
+    <function name="aero/coefficient/CYp">
+       <description>Side_force_due_to_roll_rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/p-aero-rad_sec</property>
+           <value>-0.01</value>
+       </product>
+    </function>
+
+    <function name="aero/coefficient/CYr">
+        <description>Side_force_due_to_yaw_rate</description>
+        <product>
+            <property>aero/qbar-psf</property>
+            <property>metrics/Sw-sqft</property>
+            <property>aero/bi2vel</property>
+            <property>velocities/r-aero-rad_sec</property>
+            <value>0.1047</value>
+        </product>
+    </function>
+
   </axis>
 
   <axis name="ROLL">
     <!--
-       Clbeta:	-0.02
-       Clda:	-0.087
-       Cldr:	0.005
-       Clp:	-0.193
-       Clr:	0.0458
+       Clbeta:	-0.02 (/rad)	[x]
+       Clda:	-0.087 (/rad)	[x]
+       Cldr:	0.005 (/rad)	[x]
+       Clp:	-0.193 (/rad)	[x]
+       Clr:	0.0458 (/rad)	[x]
     -->
 
     <function name="aero/coefficient/Clb">
@@ -682,8 +706,8 @@
 
   <axis name="PITCH">
     <!--
-       Cmadot:	-1.122
-       Cmq:	-1.839
+       Cmadot:	-1.122 (/rad)	[x]
+       Cmq:	-1.839 (/rad)	[x]
     -->
 
     <function name="aero/coefficient/Cmalpha">
@@ -802,8 +826,6 @@
           <table>
             <independentVar lookup="row">velocities/mach</independentVar>
             <tableData>
-              0.0     -1.100
-              2.0     -0.275
             </tableData>
           </table>
        </product>
@@ -837,11 +859,11 @@
 
   <axis name="YAW">
     <!--
-       Cnbeta:	0.096
-       Cnda:	0.0552
-       Cndr:	-0.0502
-       Cnp:	-0.0109
-       Cnr:	-0.082
+       Cnbeta:	0.096 (/rad)	[x]
+       Cnda:	0.0552 (/rad)	[x]
+       Cndr:	-0.0502 (/rad)	[x]
+       Cnp:	-0.0109 (/rad)	[x]
+       Cnr:	-0.082 (/rad)	[x]
      -->
 
     <function name="aero/coefficient/Cnb">
@@ -853,6 +875,18 @@
            <property>aero/beta-rad</property>
            <value>0.096</value>
        </product>
+    </function>
+
+    <function name="aero/coefficient/Cnp">
+        <description>Yaw_moment_due_to_roll_rate</description>
+        <product>
+            <property>aero/qbar-psf</property>
+            <property>metrics/Sw-sqft</property>
+            <property>metrics/bw-ft</property>
+            <property>aero/bi2vel</property>
+            <property>velocities/p-aero-rad_sec</property>
+            <value>-0.0109</value>
+        </product>
     </function>
 
     <function name="aero/coefficient/Cnr">

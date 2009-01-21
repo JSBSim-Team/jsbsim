@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2005-01-01 </filecreationdate>
-        <version> $Revision: 1.28 $ </version>
+        <version> $Revision: 1.29 $ </version>
         <description> McDonnell Douglas F-15 Eagle </description>
 
     </fileheader>
@@ -581,7 +581,7 @@
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
-                                0.5000	1.4000
+                                         0.5000	1.4000
                               -0.3490	-0.9300	-0.2500
                               -0.2620	-0.8600	-0.2300
                               -0.1750	-0.5800	-0.1600

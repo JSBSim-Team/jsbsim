@@ -7,44 +7,51 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.13 $ </version>
+        <version> $Revision: 1.14 $ </version>
         <description> PC-7 </description>
     </fileheader>
+
+    <!--
+      -  Total internal fuel - 474 litres
+      -  Specific gravity of JetA is 0.8
+      -->
+    
 
     <metrics>
         <wingarea unit="FT2"> 178.7 </wingarea>
         <wingspan unit="FT"> 34.12 </wingspan>
+        <wing_incidence> 2.00 </wing_incidence>
         <chord unit="FT"> 6.52 </chord>
         <htailarea unit="FT2"> 30.38 </htailarea>
         <htailarm unit="FT"> 19.25 </htailarm>
         <vtailarea unit="FT2"> 17.87 </vtailarea>
-        <vtailarm unit="FT"> 0 </vtailarm>
+        <vtailarm unit="FT"> 19.25 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> 152 </x>
+            <x> 164.16 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
         <location name="EYEPOINT" unit="IN">
-            <x> 107.8 </x>
+            <x> 114.91 </x>
             <y> 0 </y>
             <z> 40 </z>
         </location>
         <location name="VRP" unit="IN">
-            <x> 0 </x>
+            <x> 10 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
     </metrics>
 
     <mass_balance>
-        <ixx unit="SLUG*FT2"> 4577 </ixx>
-        <iyy unit="SLUG*FT2"> 7196 </iyy>
-        <izz unit="SLUG*FT2"> 10425 </izz>
-        <emptywt unit="LBS"> 2778 </emptywt>
+        <ixx unit="SLUG*FT2"> 2348 </ixx>
+        <iyy unit="SLUG*FT2"> 4194 </iyy>
+        <izz unit="SLUG*FT2"> 5696 </izz>
+        <emptywt unit="LBS"> 3564 </emptywt>
         <location name="CG" unit="IN">
-            <x> 152 </x>
+            <x> 164.16 </x>
             <y> 0 </y>
-            <z> -9.6 </z>
+            <z> -10.26 </z>
         </location>
     </mass_balance>
 
@@ -66,7 +73,7 @@
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
-                <x> 160.2 </x>
+                <x> 172.2 </x>
                 <y> -61.4 </y>
                 <z> -46.2 </z>
             </location>
@@ -81,7 +88,7 @@
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
-                <x> 160.2 </x>
+                <x> 172.2 </x>
                 <y> 61.4 </y>
                 <z> -46.2 </z>
             </location>
@@ -93,6 +100,29 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
+        </contact>
+
+        <contact type="STRUCTURE" name="LEFT_WING">
+           <location unit="IN">
+             <x> 164.16 </x>
+             <y> -17.06 </y>
+             <z> -10.26 </z>
+           </location>
+           <static_friction>  0.80 </static_friction>
+           <dynamic_friction> 0.50 </dynamic_friction>
+           <spring_coeff unit="LBS/FT">       5940.00 </spring_coeff>
+           <damping_coeff unit="LBS/FT/SEC">  1188.00 </damping_coeff>
+        </contact>
+        <contact type="STRUCTURE" name="RIGHT_WING">
+          <location unit="IN">
+             <x> 164.16 </x>
+             <y>  17.06 </y>
+             <z> -10.26 </z>
+           </location>
+           <static_friction>  0.80 </static_friction>
+           <dynamic_friction> 0.50 </dynamic_friction>
+           <spring_coeff unit="LBS/FT">       5940.00 </spring_coeff>
+           <damping_coeff unit="LBS/FT/SEC">  1188.00 </damping_coeff>
         </contact>
     </ground_reactions>
     <propulsion>
@@ -122,27 +152,23 @@
                 </orient>
             </thruster>
         </engine>
-        <tank type="FUEL">    <!-- Tank number 0 -->
+        <tank type="FUEL" number="0">
             <location unit="IN">
-                <x> 154.023 </x>
+                <x> 164.16 </x>
                 <y> 0 </y>
-                <z> -9.62645 </z>
+                <z> -10.26 </z>
             </location>
-            <!-- 
-			Total internal fuel - 474 litres
-			Specific gravity of JetA is 0.8
-		-->
-            <capacity unit="LBS"> 417 </capacity>
-            <contents unit="LBS"> 350 </contents>
+            <capacity unit="LBS"> 1000 </capacity>
+            <contents unit="LBS"> 500 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 1 -->
+        <tank type="FUEL" number="1">
             <location unit="IN">
-                <x> 154.023 </x>
+                <x> 164.16 </x>
                 <y> 0 </y>
-                <z> -9.62645 </z>
+                <z> -10.26 </z>
             </location>
-            <capacity unit="LBS"> 417 </capacity>
-            <contents unit="LBS"> 350 </contents>
+            <capacity unit="LBS"> 1000 </capacity>
+            <contents unit="LBS"> 500 </contents>
         </tank>
     </propulsion>
     <flight_control name="FCS: pc7">
