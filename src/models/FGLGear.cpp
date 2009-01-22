@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.48 2009/01/08 12:34:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.49 2009/01/22 13:23:32 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -342,97 +342,96 @@ FGColumnVector3& FGLGear::Force(void)
 
   if (isRetractable) ComputeRetractionState();
 
-  if (!GearDown) return vForce; // return the null vForce column vector
+  if (GearDown) {
 
-  vWhlBodyVec = MassBalance->StructuralToBody(vXYZ); // Get wheel in body frame
-  vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
+    vWhlBodyVec = MassBalance->StructuralToBody(vXYZ); // Get wheel in body frame
+    vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
 
-  gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
-  compressLength = -Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
+    gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
+    compressLength = -Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
 
-  // The compression length is measured in the Z-axis, only, at this time.
+    // The compression length is measured in the Z-axis, only, at this time.
 
-  if (compressLength > 0.00) {
+    if (compressLength > 0.00) {
 
-    WOW = true;
+      WOW = true;
 
-    // [The next equation should really use the vector to the contact patch of
-    // the tire including the strut compression and not the original vWhlBodyVec.]
+      // [The next equation should really use the vector to the contact patch of
+      // the tire including the strut compression and not the original vWhlBodyVec.]
 
-    vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
-    vWhlVelVec     +=  Propagate->GetVel() - cvel;
-    compressSpeed   =  vWhlVelVec(eZ);
+      vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
+      vWhlVelVec     +=  Propagate->GetVel() - cvel;
+      compressSpeed   =  vWhlVelVec(eZ);
 
-    InitializeReporting();
-    ComputeBrakeForceCoefficient();
-    ComputeSteeringAngle();
-    ComputeSlipAngle();
-    ComputeSideForceCoefficient();
-    ComputeVerticalStrutForce();
+      InitializeReporting();
+      ComputeBrakeForceCoefficient();
+      ComputeSteeringAngle();
+      ComputeSlipAngle();
+      ComputeSideForceCoefficient();
+      ComputeVerticalStrutForce();
 
-    // Compute the forces in the wheel ground plane.
+      // Compute the forces in the wheel ground plane.
 
-    double sign = RollingWhlVel>0?1.0:(RollingWhlVel<0?-1.0:0.0);
-    RollingForce = ((1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff) * sign;
-    SideForce    = vLocalForce(eZ) * FCoeff;
+      double sign = RollingWhlVel>0?1.0:(RollingWhlVel<0?-1.0:0.0);
+      RollingForce = ((1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff) * sign;
+      SideForce    = vLocalForce(eZ) * FCoeff;
 
-    // Transform these forces back to the local reference frame.
+      // Transform these forces back to the local reference frame.
 
-    vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
-    vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
+      vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
+      vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
 
-    // Transform the forces back to the body frame and compute the moment.
+      // Transform the forces back to the body frame and compute the moment.
 
-    vForce  = Propagate->GetTl2b() * vLocalForce;
+      vForce  = Propagate->GetTl2b() * vLocalForce;
 
-// Start experimental section for gear jitter reduction
-//
-// Lag and attenuate the XY-plane forces dependent on velocity
+      // Lag and attenuate the XY-plane forces dependent on velocity
 
-    double ca, cb, denom;
-    FGColumnVector3 Output;
+      double ca, cb, denom;
+      FGColumnVector3 Output;
 
-// This code implements a lag filter, C/(s + C) where
-// "C" is the filter coefficient. When "C" is chosen at the 
-// frame rate (in Hz), the jittering is significantly reduced. This is because
-// the jitter is present *at* the execution rate.
-// If a coefficient is set to something equal to or less than zero, the filter
-// is bypassed.
+      // This code implements a lag filter, C/(s + C) where
+      // "C" is the filter coefficient. When "C" is chosen at the 
+      // frame rate (in Hz), the jittering is significantly reduced. This is because
+      // the jitter is present *at* the execution rate.
+      // If a coefficient is set to something equal to or less than zero, the filter
+      // is bypassed.
 
-    if (LongForceLagFilterCoeff > 0) { 
-      denom = 2.00 + dT*LongForceLagFilterCoeff;
-      ca = dT*LongForceLagFilterCoeff / denom;
-      cb = (2.00 - dT*LongForceLagFilterCoeff) / denom;
-      Output(eX) = vForce(eX) * ca + prevIn(eX) * ca + prevOut(eX) * cb;
-      vForce(eX) = Output(eX);
+      if (LongForceLagFilterCoeff > 0) { 
+        denom = 2.00 + dT*LongForceLagFilterCoeff;
+        ca = dT*LongForceLagFilterCoeff / denom;
+        cb = (2.00 - dT*LongForceLagFilterCoeff) / denom;
+        Output(eX) = vForce(eX) * ca + prevIn(eX) * ca + prevOut(eX) * cb;
+        vForce(eX) = Output(eX);
+      }
+      if (LatForceLagFilterCoeff > 0) { 
+        denom = 2.00 + dT*LatForceLagFilterCoeff;
+        ca = dT*LatForceLagFilterCoeff / denom;
+        cb = (2.00 - dT*LatForceLagFilterCoeff) / denom;
+        Output(eY) = vForce(eY) * ca + prevIn(eY) * ca + prevOut(eY) * cb;
+        vForce(eY) = Output(eY);
+      }
+
+      prevIn = vForce;
+      prevOut = Output;
+
+      if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
+      if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) vForce(eY) *= fabs(SideWhlVel)/SFRV;
+
+  // End section for attentuating gear jitter
+
+      vMoment = vWhlBodyVec * vForce;
+
+    } else { // Gear is NOT compressed
+
+      WOW = false;
+      compressLength = 0.0;
+
+      // Return to neutral position between 1.0 and 0.8 gear pos.
+      SteerAngle *= max(GetGearUnitPos()-0.8, 0.0)/0.2;
+
+      ResetReporting();
     }
-    if (LatForceLagFilterCoeff > 0) { 
-      denom = 2.00 + dT*LatForceLagFilterCoeff;
-      ca = dT*LatForceLagFilterCoeff / denom;
-      cb = (2.00 - dT*LatForceLagFilterCoeff) / denom;
-      Output(eY) = vForce(eY) * ca + prevIn(eY) * ca + prevOut(eY) * cb;
-      vForce(eY) = Output(eY);
-    }
-
-    prevIn = vForce;
-    prevOut = Output;
-
-    if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
-    if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) vForce(eY) *= fabs(SideWhlVel)/SFRV;
-
-// End section for attentuating gear jitter
-
-    vMoment = vWhlBodyVec * vForce;
-
-  } else { // Gear is NOT compressed
-
-    WOW = false;
-    compressLength = 0.0;
-
-    // Return to neutral position between 1.0 and 0.8 gear pos.
-    SteerAngle *= max(GetGearUnitPos()-0.8, 0.0)/0.2;
-
-    ResetReporting();
   }
 
   ReportTakeoffOrLanding();
@@ -577,7 +576,7 @@ void FGLGear::ReportTakeoffOrLanding(void)
     LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
 
   if (StartedGroundRun) {
-     TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
+    TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
     if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
   }
 
