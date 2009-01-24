@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.37 2008/11/18 15:24:57 andgi Exp $
+// $Id: JSBSim.cxx,v 1.38 2009/01/24 20:36:53 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -281,6 +281,10 @@ FGJSBsim::FGJSBsim( double dt )
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-x-in", 196),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-y-in", 0),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-z-in", -16));
+
+    // Untie the write-state-file property to avoid creating an initfile.xml
+    // file on each reset.
+    fgGetNode("/fdm/jsbsim/simulation/write-state-file")->untie();
 
     crashed = false;
 }
