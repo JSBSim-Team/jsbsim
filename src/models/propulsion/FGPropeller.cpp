@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.18 2008/07/08 13:35:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.19 2009/02/02 06:11:19 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,8 +236,7 @@ double FGPropeller::GetPowerRequired(void)
           double dRPM = rpmReq - RPM;
           // The pitch of a variable propeller cannot be changed when the RPMs are
           // too low - the oil pump does not work.
-          if (RPM > 200) Pitch -= dRPM / 10;
-
+          if (RPM > 200) Pitch -= dRPM * deltaT;
           if (Pitch < MinPitch)       Pitch = MinPitch;
           else if (Pitch > MaxPitch)  Pitch = MaxPitch;
 
