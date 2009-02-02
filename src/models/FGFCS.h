@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.22 2008/10/14 23:17:22 dpculp Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.23 2009/02/02 06:12:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.22 $
+    @version $Revision: 1.23 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -206,31 +206,31 @@ public:
   //@{
   /** Gets the aileron command.
       @return aileron command in range from -1.0 - 1.0 */
-  inline double GetDaCmd(void) const { return DaCmd; }
+  double GetDaCmd(void) const { return DaCmd; }
 
   /** Gets the elevator command.
       @return elevator command in range from -1.0 - 1.0 */
-  inline double GetDeCmd(void) const { return DeCmd; }
+  double GetDeCmd(void) const { return DeCmd; }
 
   /** Gets the rudder command.
       @return rudder command in range from -1.0 - 1.0 */
-  inline double GetDrCmd(void) const { return DrCmd; }
+  double GetDrCmd(void) const { return DrCmd; }
 
   /** Gets the steering command.
       @return steering command in range from -1.0 - 1.0 */
-  inline double GetDsCmd(void) const { return DsCmd; }
+  double GetDsCmd(void) const { return DsCmd; }
 
   /** Gets the flaps command.
       @return flaps command in range from 0 to 1.0 */
-  inline double GetDfCmd(void) const { return DfCmd; }
+  double GetDfCmd(void) const { return DfCmd; }
 
   /** Gets the speedbrake command.
       @return speedbrake command in range from 0 to 1.0 */
-  inline double GetDsbCmd(void) const { return DsbCmd; }
+  double GetDsbCmd(void) const { return DsbCmd; }
 
   /** Gets the spoiler command.
       @return spoiler command in range from 0 to 1.0 */
-  inline double GetDspCmd(void) const { return DspCmd; }
+  double GetDspCmd(void) const { return DspCmd; }
 
   /** Gets the throttle command.
       @param engine engine ID number
@@ -240,73 +240,73 @@ public:
   /** Gets the mixture command.
       @param engine engine ID number
       @return mixture command in range from 0 - 1.0 for the given engine */
-  inline double GetMixtureCmd(int engine) const { return MixtureCmd[engine]; }
+  double GetMixtureCmd(int engine) const { return MixtureCmd[engine]; }
 
   /** Gets the prop pitch command.
       @param engine engine ID number
       @return pitch command in range from 0.0 - 1.0 for the given engine */
-  inline double GetPropAdvanceCmd(int engine) const { return PropAdvanceCmd[engine]; }
+  double GetPropAdvanceCmd(int engine) const { return PropAdvanceCmd[engine]; }
 
   /** Gets the prop feather command.
       @param engine engine ID number
       @return feather command for the given engine (on / off)*/
-  inline bool GetFeatherCmd(int engine) const { return PropFeatherCmd[engine]; }
+  bool GetFeatherCmd(int engine) const { return PropFeatherCmd[engine]; }
 
   /** Gets the pitch trim command.
       @return pitch trim command in range from -1.0 to 1.0 */
-  inline double GetPitchTrimCmd(void) const { return PTrimCmd; }
+  double GetPitchTrimCmd(void) const { return PTrimCmd; }
 
   /** Gets the rudder trim command.
       @return rudder trim command in range from -1.0 - 1.0 */
-  inline double GetYawTrimCmd(void) const { return YTrimCmd; }
+  double GetYawTrimCmd(void) const { return YTrimCmd; }
 
   /** Gets the aileron trim command.
       @return aileron trim command in range from -1.0 - 1.0 */
-  inline double GetRollTrimCmd(void) const { return RTrimCmd; }
+  double GetRollTrimCmd(void) const { return RTrimCmd; }
 
   /** Get the gear extend/retract command. 0 commands gear up, 1 down.
       defaults to down.
       @return the current value of the gear extend/retract command*/
-  inline double GetGearCmd(void) const { return GearCmd; }
+  double GetGearCmd(void) const { return GearCmd; }
   //@}
 
   /// @name Aerosurface position retrieval
   //@{
   /** Gets the left aileron position.
       @return aileron position in radians */
-  inline double GetDaLPos( int form = ofRad )
+  double GetDaLPos( int form = ofRad )
                          const { return DaLPos[form]; }
 
   /// @name Aerosurface position retrieval
   //@{
   /** Gets the right aileron position.
       @return aileron position in radians */
-  inline double GetDaRPos( int form = ofRad )
+  double GetDaRPos( int form = ofRad )
                          const { return DaRPos[form]; }
 
   /** Gets the elevator position.
       @return elevator position in radians */
-  inline double GetDePos( int form = ofRad )
+  double GetDePos( int form = ofRad )
                          const { return DePos[form]; }
 
   /** Gets the rudder position.
       @return rudder position in radians */
-  inline double GetDrPos( int form = ofRad )
+  double GetDrPos( int form = ofRad )
                          const { return DrPos[form]; }
 
   /** Gets the speedbrake position.
       @return speedbrake position in radians */
-  inline double GetDsbPos( int form = ofRad )
+  double GetDsbPos( int form = ofRad )
                          const { return DsbPos[form]; }
 
   /** Gets the spoiler position.
       @return spoiler position in radians */
-  inline double GetDspPos( int form = ofRad )
+  double GetDspPos( int form = ofRad )
                          const { return DspPos[form]; }
 
   /** Gets the flaps position.
       @return flaps position in radians */
-  inline double GetDfPos( int form = ofRad )
+  double GetDfPos( int form = ofRad )
                          const { return DfPos[form]; }
 
   /** Gets the throttle position.
@@ -317,7 +317,7 @@ public:
   /** Gets the mixture position.
       @param engine engine ID number
       @return mixture position for the given engine in range from 0 - 1.0 */
-  inline double GetMixturePos(int engine) const { return MixturePos[engine]; }
+  double GetMixturePos(int engine) const { return MixturePos[engine]; }
 
   /** Gets the steering position.
       @return steering position in degrees */
@@ -325,31 +325,31 @@ public:
 
   /** Gets the gear position (0 up, 1 down), defaults to down
       @return gear position (0 up, 1 down) */
-  inline double GetGearPos(void) const { return GearPos; }
+  double GetGearPos(void) const { return GearPos; }
 
   /** Gets the tailhook position (0 up, 1 down)
       @return tailhook position (0 up, 1 down) */
-  inline double GetTailhookPos(void) const { return TailhookPos; }
+  double GetTailhookPos(void) const { return TailhookPos; }
 
   /** Gets the wing fold position (0 unfolded, 1 folded)
       @return wing fold position (0 unfolded, 1 folded) */
-  inline double GetWingFoldPos(void) const { return WingFoldPos; }
+  double GetWingFoldPos(void) const { return WingFoldPos; }
 
   /** Gets the prop pitch position.
       @param engine engine ID number
       @return prop pitch position for the given engine in range from 0 - 1.0 */
-  inline double GetPropAdvance(int engine) const { return PropAdvance[engine]; }
+  double GetPropAdvance(int engine) const { return PropAdvance[engine]; }
 
   /** Gets the prop feather position.
       @param engine engine ID number
       @return prop fether for the given engine (on / off)*/
-  inline bool GetPropFeather(int engine) const { return PropFeather[engine]; }
+  bool GetPropFeather(int engine) const { return PropFeather[engine]; }
   //@}
 
   /** Retrieves the State object pointer.
       This is used by the FGFCS-owned components.
       @return pointer to the State object */
-  inline FGState* GetState(void) { return State; }
+  FGState* GetState(void) { return State; }
 
   /** Retrieves all component names for inclusion in output stream
       @param delimeter either a tab or comma string depending on output type
@@ -366,43 +366,43 @@ public:
   //@{
   /** Sets the aileron command
       @param cmd aileron command */
-  inline void SetDaCmd( double cmd ) { DaCmd = cmd; }
+  void SetDaCmd( double cmd ) { DaCmd = cmd; }
 
   /** Sets the elevator command
       @param cmd elevator command in percent*/
-  inline void SetDeCmd(double cmd ) { DeCmd = cmd; }
+  void SetDeCmd(double cmd ) { DeCmd = cmd; }
 
   /** Sets the rudder command
       @param cmd rudder command in percent*/
-  inline void SetDrCmd(double cmd) { DrCmd = cmd; }
+  void SetDrCmd(double cmd) { DrCmd = cmd; }
 
   /** Sets the steering command
       @param cmd steering command in percent*/
-  inline void SetDsCmd(double cmd) { DsCmd = cmd; }
+  void SetDsCmd(double cmd) { DsCmd = cmd; }
 
   /** Sets the flaps command
       @param cmd flaps command in percent*/
-  inline void SetDfCmd(double cmd) { DfCmd = cmd; }
+  void SetDfCmd(double cmd) { DfCmd = cmd; }
 
   /** Sets the speedbrake command
       @param cmd speedbrake command in percent*/
-  inline void SetDsbCmd(double cmd) { DsbCmd = cmd; }
+  void SetDsbCmd(double cmd) { DsbCmd = cmd; }
 
   /** Sets the spoilers command
       @param cmd spoilers command in percent*/
-  inline void SetDspCmd(double cmd) { DspCmd = cmd; }
+  void SetDspCmd(double cmd) { DspCmd = cmd; }
 
   /** Sets the pitch trim command
       @param cmd pitch trim command in percent*/
-  inline void SetPitchTrimCmd(double cmd) { PTrimCmd = cmd; }
+  void SetPitchTrimCmd(double cmd) { PTrimCmd = cmd; }
 
   /** Sets the rudder trim command
       @param cmd rudder trim command in percent*/
-  inline void SetYawTrimCmd(double cmd) { YTrimCmd = cmd; }
+  void SetYawTrimCmd(double cmd) { YTrimCmd = cmd; }
 
   /** Sets the aileron trim command
       @param cmd aileron trim command in percent*/
-  inline void SetRollTrimCmd(double cmd) { RTrimCmd = cmd; }
+  void SetRollTrimCmd(double cmd) { RTrimCmd = cmd; }
 
   /** Sets the throttle command for the specified engine
       @param engine engine ID number
@@ -433,31 +433,31 @@ public:
   //@{
   /** Sets the left aileron position
       @param cmd left aileron position in radians*/
-  inline void SetDaLPos( int form , double pos );
+  void SetDaLPos( int form , double pos );
 
   /** Sets the right aileron position
       @param cmd right aileron position in radians*/
-  inline void SetDaRPos( int form , double pos );
+  void SetDaRPos( int form , double pos );
 
   /** Sets the elevator position
       @param cmd elevator position in radians*/
-  inline void SetDePos( int form , double pos );
+  void SetDePos( int form , double pos );
 
   /** Sets the rudder position
       @param cmd rudder position in radians*/
-  inline void SetDrPos( int form , double pos );
+  void SetDrPos( int form , double pos );
 
    /** Sets the flaps position
       @param cmd flaps position in radians*/
-  inline void SetDfPos( int form , double pos );
+  void SetDfPos( int form , double pos );
 
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
-  inline void SetDsbPos( int form , double pos );
+  void SetDsbPos( int form , double pos );
 
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
-  inline void SetDspPos( int form , double pos );
+  void SetDspPos( int form , double pos );
 
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
