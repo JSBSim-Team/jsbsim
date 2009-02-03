@@ -280,7 +280,7 @@ int main(int argc, char **argv)
           cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
           EmitComparisonPlot(files, i+3, names[i+2]);
         }
-        i += 3;
+        i += 2;
         cout << "unset multiplot" << endl;
         cout << "set size 1.0,1.0" << endl;
         cout << "set origin 0.0,0.0" << endl;
