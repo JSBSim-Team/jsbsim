@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.9 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.10 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,29 +196,25 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
   Mass = Contents * M_gas();
 
   // Bind relevant properties
-  char property_name[80];
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/max_volume-ft3",
-           CellNum);
-  PropertyManager->Tie( property_name, &MaxVolume );
+  string property_name, base_property_name;
+
+  base_property_name = CreateIndexedPropertyName("buoyant_forces/gas-cell", CellNum);
+
+  property_name = base_property_name + "/max_volume-ft3";
+  PropertyManager->Tie( property_name.c_str(), &MaxVolume );
   PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/temp-R",
-           CellNum);
-  PropertyManager->Tie( property_name, &Temperature );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/pressure-psf",
-           CellNum);
-  PropertyManager->Tie( property_name, &Pressure );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/volume-ft3",
-           CellNum);
-  PropertyManager->Tie( property_name, &Volume );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/buoyancy-lbs",
-           CellNum);
-  PropertyManager->Tie( property_name, &Buoyancy );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/contents-mol",
-           CellNum);
-  PropertyManager->Tie( property_name, &Contents );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/valve_open",
-           CellNum);
-  PropertyManager->Tie( property_name, &ValveOpen );
+  property_name = base_property_name + "/temp-R";
+  PropertyManager->Tie( property_name.c_str(), &Temperature );
+  property_name = base_property_name + "/pressure-psf";
+  PropertyManager->Tie( property_name.c_str(), &Pressure );
+  property_name = base_property_name + "/volume-ft3";
+  PropertyManager->Tie( property_name.c_str(), &Volume );
+  property_name = base_property_name + "/buoyancy-lbs";
+  PropertyManager->Tie( property_name.c_str(), &Buoyancy );
+  property_name = base_property_name + "/contents-mol";
+  PropertyManager->Tie( property_name.c_str(), &Contents );
+  property_name = base_property_name + "/valve_open";
+  PropertyManager->Tie( property_name.c_str(), &ValveOpen );
 
   Debug(0);
 
@@ -640,37 +636,27 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent)
   Volume = Contents * R * Temperature / Pressure;
 
   // Bind relevant properties
-  char property_name[80];
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/max_volume-ft3",
-           Parent->GetIndex(),
-           CellNum);
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("buoyant_forces/gas-cell", Parent->GetIndex());
+  base_property_name = CreateIndexedPropertyName(base_property_name + "/ballonet", CellNum);
+
+  property_name = base_property_name + "/max_volume-ft3";
   PropertyManager->Tie( property_name, &MaxVolume );
   PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/temp-R",
-           Parent->GetIndex(),
-           CellNum);
+
+  property_name = base_property_name + "/temp-R";
   PropertyManager->Tie( property_name, &Temperature );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/pressure-psf",
-           Parent->GetIndex(),
-           CellNum);
+
+  property_name = base_property_name + "/pressure-psf";
   PropertyManager->Tie( property_name, &Pressure );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/volume-ft3",
-           Parent->GetIndex(),
-           CellNum);
+
+  property_name = base_property_name + "/volume-ft3";
   PropertyManager->Tie( property_name, &Volume );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/contents-mol",
-           Parent->GetIndex(),
-           CellNum);
+
+  property_name = base_property_name + "/contents-mol";
   PropertyManager->Tie( property_name, &Contents );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/valve_open",
-           Parent->GetIndex(),
-           CellNum);
+
+  property_name = base_property_name + "/valve_open";
   PropertyManager->Tie( property_name, &ValveOpen );
 
   Debug(0);

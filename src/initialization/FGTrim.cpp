@@ -42,6 +42,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cstdlib>
+#include <iomanip>
 #include "FGTrim.h"
 #include <models/FGAtmosphere.h>
 #include "FGInitialCondition.h"
@@ -58,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.8 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.9 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,21 +102,19 @@ FGTrim::~FGTrim(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::TrimStats() {
-  char out[80];
   int run_sum=0;
   cout << endl << "  Trim Statistics: " << endl;
   cout << "    Total Iterations: " << total_its << endl;
-  if(total_its > 0) {
+  if( total_its > 0) {
     cout << "    Sub-iterations:" << endl;
-    for(current_axis=0; current_axis<TrimAxes.size(); current_axis++) {
-      run_sum+=TrimAxes[current_axis]->GetRunCount();
-      snprintf(out,80,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
-                  TrimAxes[current_axis]->GetStateName().c_str(),
-                  sub_iterations[current_axis],
-                  sub_iterations[current_axis]/double(total_its),
-                  successful[current_axis],
-                  TrimAxes[current_axis]->GetAvgStability() );
-      cout << out;
+    for (current_axis=0; current_axis<TrimAxes.size(); current_axis++) {
+      run_sum += TrimAxes[current_axis]->GetRunCount();
+      cout << "   " << setw(5) << TrimAxes[current_axis]->GetStateName().c_str()
+           << ": " << setprecision(3) << sub_iterations[current_axis]
+           << " average: " << setprecision(5) << sub_iterations[current_axis]/double(total_its)
+           << "  successful:  " << setprecision(3) << successful[current_axis]
+           << "  stability: " << setprecision(5) << TrimAxes[current_axis]->GetAvgStability()
+           << endl;
     }
     cout << "    Run Count: " << run_sum << endl;
   }

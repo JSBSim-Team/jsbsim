@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.19 2009/02/02 06:11:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.20 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,15 +126,16 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   D4 = Diameter*Diameter*Diameter*Diameter;
   D5 = D4*Diameter;
 
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/advance-ratio", EngineNum);
-  PropertyManager->Tie( property_name, &J );
-  snprintf(property_name, 80, "propulsion/engine[%d]/blade-angle", EngineNum);
-  PropertyManager->Tie( property_name, &Pitch );
-  snprintf(property_name, 80, "propulsion/engine[%d]/thrust-coefficient", EngineNum);
-  PropertyManager->Tie( property_name, this, &FGPropeller::GetThrustCoefficient );
-  snprintf(property_name, 80, "propulsion/engine[%d]/propeller-rpm", EngineNum);
-  PropertyManager->Tie( property_name, this, &FGPropeller::GetRPM );
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
+  property_name = base_property_name + "/advance-ratio";
+  PropertyManager->Tie( property_name.c_str(), &J );
+  property_name = base_property_name + "/blade-angle";
+  PropertyManager->Tie( property_name.c_str(), &Pitch );
+  property_name = base_property_name + "/thrust-coefficient";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetThrustCoefficient );
+  property_name = base_property_name + "/propeller-rpm";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetRPM );
 
   Debug(0);
 }

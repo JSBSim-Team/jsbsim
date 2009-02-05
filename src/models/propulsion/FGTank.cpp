@@ -44,7 +44,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.15 2008/12/07 20:20:01 andgi Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.16 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,9 +140,10 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   }
 
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/tank[%d]/contents-lbs", TankNumber);
-  PropertyManager->Tie( property_name, (FGTank*)this, &FGTank::GetContents,
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/tank", TankNumber);
+  property_name = base_property_name + "/contents-lbs";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
                                        &FGTank::SetContents );
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);

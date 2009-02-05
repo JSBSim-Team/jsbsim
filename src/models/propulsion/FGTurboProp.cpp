@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.10 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.11 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,9 +76,6 @@ FGTurboProp::~FGTurboProp()
 
 bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 {
-  char property_prefix[80];
-  snprintf(property_prefix, 80, "propulsion/engine[%u]/", EngineNumber);
-
   IdleFF=-1;
   MaxStartingTime = 999999; //very big timeout -> infinite
   Ielu_max_torque=-1;
@@ -493,7 +490,9 @@ string FGTurboProp::GetEngineValues(string delimeter)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-int FGTurboProp::InitRunning(void) {
+
+int FGTurboProp::InitRunning(void)
+{
   State->SuspendIntegration();
   Cutoff=false;
   Running=true;  
@@ -503,19 +502,18 @@ int FGTurboProp::InitRunning(void) {
   return phase==tpRun;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTurboProp::bindmodel()
 {
-  char property_name[80];
-
-// ToDo: Do a proper Tie here, this should be read only.
-
-  snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
-  PropertyManager->Tie( property_name, &N1);
-  snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
-  PropertyManager->Tie( property_name, &N2);
-  snprintf(property_name, 80, "propulsion/engine[%u]/reverser", EngineNumber);
-  PropertyManager->Tie( property_name, &Reversed);
-
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  property_name = base_property_name + "/n1";
+  PropertyManager->Tie( property_name.c_str(), &N1);
+  property_name = base_property_name + "/n2";
+  PropertyManager->Tie( property_name.c_str(), &N2);
+  property_name = base_property_name + "/reverser";
+  PropertyManager->Tie( property_name.c_str(), &Reversed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

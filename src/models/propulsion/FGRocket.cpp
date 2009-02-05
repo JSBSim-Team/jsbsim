@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.8 2008/12/30 12:19:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.9 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,14 +274,15 @@ string FGRocket::GetEngineValues(string delimeter)
 //
 void FGRocket::bindmodel()
 {
-  char property_name[80];
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
 
-  snprintf(property_name, 80, "propulsion/engine[%u]/total-impulse", EngineNumber);
-  PropertyManager->Tie( property_name, this, &FGRocket::GetTotalImpulse);
-  snprintf(property_name, 80, "propulsion/engine[%u]/oxi-flow-rate-pps", EngineNumber);
-  PropertyManager->Tie( property_name, this, &FGRocket::GetOxiFlowRate);
-  snprintf(property_name, 80, "propulsion/engine[%u]/vacuum-thrust_lbs", EngineNumber);
-  PropertyManager->Tie( property_name, this, &FGRocket::GetVacThrust);
+  property_name = base_property_name + "/total-impulse";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetTotalImpulse);
+  property_name = base_property_name + "/oxi-flow-rate-pps";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOxiFlowRate);
+  property_name = base_property_name + "/vacuum-thrust_lbs";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetVacThrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

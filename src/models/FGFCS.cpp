@@ -41,6 +41,8 @@ INCLUDES
 #include <FGFDMExec.h>
 #include <input_output/FGPropertyManager.h>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 #include <models/flight_control/FGFilter.h>
 #include <models/flight_control/FGDeadBand.h>
@@ -55,12 +57,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.50 2009/01/21 08:44:45 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.51 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
-
-#if defined(WIN32) && !defined(__CYGWIN__)
-#define snprintf _snprintf
-#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -768,41 +766,37 @@ string FGFCS::GetComponentStrings(string delimeter)
 
 string FGFCS::GetComponentValues(string delimeter)
 {
+  std::ostringstream buf;
+
   unsigned int comp;
-  string CompValues = "";
-  char buffer[100];
   bool firstime = true;
   int total_count=0;
 
   for (unsigned int i=0; i<Systems.size(); i++) {
     if (firstime) firstime = false;
-    else          CompValues += delimeter;
+    else          buf << delimeter;
 
-    snprintf(buffer, 100, "%9.6f", Systems[i]->GetOutput());
-    CompValues += string(buffer);
+    buf << setprecision(9) << Systems[i]->GetOutput();
     total_count++;
   }
 
   for (comp = 0; comp < APComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          CompValues += delimeter;
+    else          buf << delimeter;
 
-    sprintf(buffer, "%9.6f", APComponents[comp]->GetOutput());
-    CompValues += string(buffer);
+    buf << setprecision(9) << APComponents[comp]->GetOutput();
     total_count++;
   }
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          CompValues += delimeter;
+    else          buf << delimeter;
 
-    sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
-    CompValues += string(buffer);
+    buf << setprecision(9) << FCSComponents[comp]->GetOutput();
     total_count++;
   }
 
-  CompValues += "\0";
-  return CompValues;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -898,35 +892,34 @@ void FGFCS::bind(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Technically, this function should probably bind propulsion type specific controls
 // rather than mixture and prop-advance.
-//
 
 void FGFCS::bindThrottle(unsigned int num)
 {
-  char tmp[80];
+  string tmp;
 
-  snprintf(tmp, 80, "fcs/throttle-cmd-norm[%u]",num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetThrottleCmd,
+  tmp = CreateIndexedPropertyName("fcs/throttle-cmd-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetThrottleCmd,
                                         &FGFCS::SetThrottleCmd);
-  snprintf(tmp, 80, "fcs/throttle-pos-norm[%u]",num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetThrottlePos,
+  tmp = CreateIndexedPropertyName("fcs/throttle-pos-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetThrottlePos,
                                         &FGFCS::SetThrottlePos);
-  snprintf(tmp, 80, "fcs/mixture-cmd-norm[%u]",num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetMixtureCmd,
+  tmp = CreateIndexedPropertyName("fcs/mixture-cmd-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetMixtureCmd,
                                         &FGFCS::SetMixtureCmd);
-  snprintf(tmp, 80, "fcs/mixture-pos-norm[%u]",num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetMixturePos,
+  tmp = CreateIndexedPropertyName("fcs/mixture-pos-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetMixturePos,
                                         &FGFCS::SetMixturePos);
-  snprintf(tmp, 80, "fcs/advance-cmd-norm[%u]",num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropAdvanceCmd,
+  tmp = CreateIndexedPropertyName("fcs/advance-cmd-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetPropAdvanceCmd,
                                         &FGFCS::SetPropAdvanceCmd);
-  snprintf(tmp, 80, "fcs/advance-pos-norm[%u]", num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropAdvance,
+  tmp = CreateIndexedPropertyName("fcs/advance-pos-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetPropAdvance,
                                         &FGFCS::SetPropAdvance);
-  snprintf(tmp, 80, "fcs/feather-cmd-norm[%u]", num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetFeatherCmd,
+  tmp = CreateIndexedPropertyName("fcs/feather-cmd-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetFeatherCmd,
                                         &FGFCS::SetFeatherCmd);
-  snprintf(tmp, 80, "fcs/feather-pos-norm[%u]", num);
-  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropFeather,
+  tmp = CreateIndexedPropertyName("fcs/feather-pos-norm", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetPropFeather,
                                         &FGFCS::SetPropFeather);
 }
 
@@ -935,12 +928,12 @@ void FGFCS::bindThrottle(unsigned int num)
 void FGFCS::bindModel(void)
 {
   unsigned int i;
-  char tmp[80];
+  string tmp;
 
   for (i=0; i<SteerPosDeg.size(); i++) {
     if (GroundReactions->GetGearUnit(i)->GetSteerable()) {
-      snprintf(tmp,80,"fcs/steer-pos-deg[%u]",i);
-      PropertyManager->Tie( tmp, this, i, &FGFCS::GetSteerPosDeg, &FGFCS::SetSteerPosDeg);
+      tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", i);
+      PropertyManager->Tie( tmp.c_str(), this, i, &FGFCS::GetSteerPosDeg, &FGFCS::SetSteerPosDeg);
     }
   }
 }

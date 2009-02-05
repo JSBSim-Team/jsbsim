@@ -60,11 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.5 2006/11/20 13:59:49 jberndt Exp $"
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-  #define snprintf _snprintf
-#endif
+#define ID_TRIM "$Id: FGTrim.h,v 1.6 2009/02/05 10:22:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +120,7 @@ CLASS DOCUMENTATION
     @endcode
     
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.5 2006/11/20 13:59:49 jberndt Exp $"
+    @version "$Id: FGTrim.h,v 1.6 2009/02/05 10:22:49 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.30 2009/01/21 04:17:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.31 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,13 +219,14 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
       MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
   }
 
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/power-hp", EngineNumber);
-  PropertyManager->Tie(property_name, &HP);
-  snprintf(property_name, 80, "propulsion/engine[%d]/bsfc-lbs_hphr", EngineNumber);
-  PropertyManager->Tie(property_name, &BSFC);
-  snprintf(property_name, 80, "propulsion/engine[%d]/volumetric-efficiency", EngineNumber);
-  PropertyManager->Tie(property_name, &volumetric_efficiency);
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  property_name = base_property_name + "/power-hp";
+  PropertyManager->Tie(property_name.c_str(), &HP);
+  property_name = base_property_name + "/bsfc-lbs_hphr";
+  PropertyManager->Tie(property_name.c_str(), &BSFC);
+  property_name = base_property_name + "/volumetric-efficiency";
+  PropertyManager->Tie(property_name.c_str(), &volumetric_efficiency);
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
   StarterHP = sqrt(MaxHP) * 0.4;

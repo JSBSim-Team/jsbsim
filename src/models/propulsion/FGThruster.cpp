@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.9 2008/12/30 12:19:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.10 2009/02/05 10:22:49 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,17 +79,18 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   SetLocation(location);
   SetAnglesToBody(orientation);
 
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/pitch-angle-rad", EngineNum);
-  PropertyManager->Tie( property_name, (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
-  snprintf(property_name, 80, "propulsion/engine[%d]/yaw-angle-rad", EngineNum);
-  PropertyManager->Tie( property_name, (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
+  property_name = base_property_name + "/pitch-angle-rad";
+  PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
+  property_name = base_property_name + "/yaw-angle-rad";
+  PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
 
   if (el->GetName() == "direct") // this is a direct thruster. At this time
                                  // only a direct thruster can be reversed.
   {
-    snprintf(property_name, 80, "propulsion/engine[%d]/reverser-angle-rad", EngineNum);
-    PropertyManager->Tie( property_name, (FGThruster *)this, &FGThruster::GetReverserAngle,
+    property_name = base_property_name + "/reverser-angle-rad";
+    PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetReverserAngle,
                                                           &FGThruster::SetReverserAngle);
   }
 
