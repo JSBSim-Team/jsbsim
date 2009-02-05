@@ -41,6 +41,7 @@ INCLUDES
 #include <float.h>
 #include <queue>
 #include <string>
+#include <sstream>
 #include <cmath>
 
 using std::fabs;
@@ -58,7 +59,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.17 2009/02/05 04:59:53 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.18 2009/02/05 21:31:45 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +75,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.17 2009/02/05 04:59:53 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.18 2009/02/05 21:31:45 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,11 +327,11 @@ protected:
 
   static string CreateIndexedPropertyName(string Property, int index)
   {
-    char tmp[80];
-    string indexedString;
-    _itoa(index, tmp, 10);
-    indexedString = Property + "[" + tmp + "]";
-    return indexedString;
+    std::stringstream str;
+    str << index;
+    string tmp;
+    str >> tmp;
+    return Property + "[" + tmp + "]";
   }
 
 public:
