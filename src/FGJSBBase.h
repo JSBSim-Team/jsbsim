@@ -58,7 +58,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.16 2008/07/10 12:51:01 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.17 2009/02/05 04:59:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.16 2008/07/10 12:51:01 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.17 2009/02/05 04:59:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +100,27 @@ public:
     bool bVal;
     int  iVal;
     double dVal;
+  };
+
+  /// First order, (low pass / lag) filter
+  class Filter {
+    double prev_in;
+    double prev_out;
+    double ca;
+    double cb;
+    public: Filter(void) {}
+    public: Filter(double coeff, double dt) {
+      prev_in = prev_out = 0.0;
+      double denom = 2.0 + coeff*dt;
+      ca = coeff*dt/denom;
+      cb = (2.0 - coeff*dt)/denom;
+    }
+    public: double execute(double in) {
+      double out = (in + prev_in)*ca + prev_out*cb;
+      prev_in = in;
+      prev_out = out;
+      return out;
+    }
   };
 
   ///@name JSBSim console output highlighting terms.
@@ -302,6 +323,15 @@ protected:
   static const double kgtoslug;
   static const string needed_cfg_version;
   static const string JSBSim_version;
+
+  static string CreateIndexedPropertyName(string Property, int index)
+  {
+    char tmp[80];
+    string indexedString;
+    _itoa(index, tmp, 10);
+    indexedString = Property + "[" + tmp + "]";
+    return indexedString;
+  }
 
 public:
 /// Moments L, M, N

@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.49 2009/01/22 13:23:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.50 2009/02/05 04:59:54 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,9 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
     }
   }
 
+  LongForceFilter = Filter(LongForceLagFilterCoeff, State->Getdt());
+  LatForceFilter = Filter(LatForceLagFilterCoeff, State->Getdt());
+
   WheelSlipLagFilterCoeff = 1/State->Getdt();
 
   Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
@@ -197,6 +200,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
     WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->GetDataAsNumber();
   }
   
+  WheelSlipFilter = Filter(WheelSlipLagFilterCoeff, State->Getdt());
+
   GearUp = false;
   GearDown = true;
   GearPos  = 1.0;
@@ -240,9 +245,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
 
   SinWheel = 0.0;
   CosWheel = 0.0;
-
-  prevSlipIn  = 0.0;
-  prevSlipOut = 0.0;
 
   Debug(0);
 }
@@ -312,15 +314,14 @@ FGLGear::FGLGear(const FGLGear& lgear)
   ForceY_Table    = lgear.ForceY_Table;
   CosWheel        = lgear.CosWheel;
   SinWheel        = lgear.SinWheel;
-  prevOut         = lgear.prevOut;
-  prevIn          = lgear.prevIn;
-  prevSlipIn      = lgear.prevSlipIn;
-  prevSlipOut     = lgear.prevSlipOut;
   RFRV            = lgear.RFRV;
   SFRV            = lgear.SFRV;
   LongForceLagFilterCoeff = lgear.LongForceLagFilterCoeff;
   LatForceLagFilterCoeff = lgear.LatForceLagFilterCoeff;
   WheelSlipLagFilterCoeff = lgear.WheelSlipLagFilterCoeff;
+  WheelSlipFilter = lgear.WheelSlipFilter;
+  LongForceFilter = lgear.LongForceFilter;
+  LatForceFilter = lgear.LatForceFilter;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,40 +386,20 @@ FGColumnVector3& FGLGear::Force(void)
 
       vForce  = Propagate->GetTl2b() * vLocalForce;
 
-      // Lag and attenuate the XY-plane forces dependent on velocity
+      // Lag and attenuate the XY-plane forces dependent on velocity. This code
+      // uses a lag filter, C/(s + C) where "C" is the filter coefficient. When
+      // "C" is chosen at the frame rate (in Hz), the jittering is significantly
+      // reduced. This is because the jitter is present *at* the execution rate.
+      // If a coefficient is set to something equal to or less than zero, the
+      // filter is bypassed.
 
-      double ca, cb, denom;
-      FGColumnVector3 Output;
-
-      // This code implements a lag filter, C/(s + C) where
-      // "C" is the filter coefficient. When "C" is chosen at the 
-      // frame rate (in Hz), the jittering is significantly reduced. This is because
-      // the jitter is present *at* the execution rate.
-      // If a coefficient is set to something equal to or less than zero, the filter
-      // is bypassed.
-
-      if (LongForceLagFilterCoeff > 0) { 
-        denom = 2.00 + dT*LongForceLagFilterCoeff;
-        ca = dT*LongForceLagFilterCoeff / denom;
-        cb = (2.00 - dT*LongForceLagFilterCoeff) / denom;
-        Output(eX) = vForce(eX) * ca + prevIn(eX) * ca + prevOut(eX) * cb;
-        vForce(eX) = Output(eX);
-      }
-      if (LatForceLagFilterCoeff > 0) { 
-        denom = 2.00 + dT*LatForceLagFilterCoeff;
-        ca = dT*LatForceLagFilterCoeff / denom;
-        cb = (2.00 - dT*LatForceLagFilterCoeff) / denom;
-        Output(eY) = vForce(eY) * ca + prevIn(eY) * ca + prevOut(eY) * cb;
-        vForce(eY) = Output(eY);
-      }
-
-      prevIn = vForce;
-      prevOut = Output;
+      if (LongForceLagFilterCoeff > 0) vForce(eX) = LongForceFilter.execute(vForce(eX));
+      if (LatForceLagFilterCoeff > 0)  vForce(eY) = LatForceFilter.execute(vForce(eY));
 
       if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
       if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) vForce(eY) *= fabs(SideWhlVel)/SFRV;
 
-  // End section for attentuating gear jitter
+      // End section for attentuating gear jitter
 
       vMoment = vWhlBodyVec * vForce;
 
@@ -472,22 +453,10 @@ void FGLGear::ComputeSlipAngle(void)
   SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
   // Calculate tire slip angle.
-    WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
+  WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
 
   // Filter the wheel slip angle
-
-  double SlipOutput, ca, cb, denom;
-
-  if (WheelSlipLagFilterCoeff > 0) {
-    denom = 2.00 + dT*WheelSlipLagFilterCoeff;
-    ca = dT*WheelSlipLagFilterCoeff / denom;
-    cb = (2.00 - dT*WheelSlipLagFilterCoeff) / denom;
-
-    SlipOutput = ca * (WheelSlip + prevSlipIn) + cb * prevSlipOut;
-
-    prevSlipIn = WheelSlip;
-    WheelSlip = prevSlipOut = SlipOutput;
-  }
+  if (WheelSlipLagFilterCoeff > 0) WheelSlip = WheelSlipFilter.execute(WheelSlip);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -729,24 +698,26 @@ double FGLGear::GetGearUnitPos(void)
 
 void FGLGear::bind(void)
 {
-  char property_name[80];
+  string property_name;
+  string base_property_name;
+  base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
   if (eContactType == ctBOGEY) {
-    snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
-    snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, &WOW );
-    snprintf(property_name, 80, "gear/unit[%d]/wheel-speed-fps", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, &RollingWhlVel );
-    snprintf(property_name, 80, "gear/unit[%d]/z-position", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, (FGLGear*)this,
+    property_name = base_property_name + "/slip-angle-deg";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &WheelSlip );
+    property_name = base_property_name + "/WOW";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &WOW );
+    property_name = base_property_name + "/wheel-speed-fps";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &RollingWhlVel );
+    property_name = base_property_name + "/z-position";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), (FGLGear*)this,
                           &FGLGear::GetZPosition, &FGLGear::SetZPosition);
-    snprintf(property_name, 80, "gear/unit[%d]/compression-ft", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, &compressLength );
+    property_name = base_property_name + "/compression-ft";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
   }
 
   if( isRetractable ) {
-    snprintf(property_name, 80, "gear/unit[%d]/pos-norm", GearNumber);
-    Exec->GetPropertyManager()->Tie( property_name, &GearPos );
+    property_name = base_property_name + "/pos-norm";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &GearPos );
   }
 
 }

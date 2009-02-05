@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.25 2009/01/01 06:17:16 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.26 2009/02/05 04:59:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.25 2009/01/01 06:17:16 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.26 2009/02/05 04:59:54 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -223,7 +223,6 @@ public:
   FGLGear(const FGLGear& lgear);
   /// Destructor
   ~FGLGear();
-
 
   /// The Force vector for this gear
   FGColumnVector3& Force(void);
@@ -304,7 +303,6 @@ private:
   FGColumnVector3 vLocalForce;
   FGColumnVector3 vWhlVelVec;     // Velocity of this wheel (Local)
   FGColumnVector3 normal, cvel;
-  FGColumnVector3 prevOut, prevIn;
   FGLocation contact, gearLoc;
   FGTable *ForceY_Table;
   double dT;
@@ -328,8 +326,6 @@ private:
   double SideWhlVel, RollingWhlVel;
   double RollingForce, SideForce, FCoeff;
   double WheelSlip;
-  double prevSlipIn;
-  double prevSlipOut;
   double TirePressureNorm;
   double SinWheel, CosWheel;
   double GearPos;
@@ -361,6 +357,10 @@ private:
   double LongForceLagFilterCoeff; // Longitudinal Force Lag Filter Coefficient
   double LatForceLagFilterCoeff; // Lateral Force Lag Filter Coefficient
   double WheelSlipLagFilterCoeff; // Wheel slip angle lag filter coefficient
+
+  Filter LongForceFilter;
+  Filter LatForceFilter;
+  Filter WheelSlipFilter;
 
   FGFDMExec*     Exec;
   FGState*       State;
