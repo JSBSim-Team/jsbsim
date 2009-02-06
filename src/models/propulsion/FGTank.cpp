@@ -44,7 +44,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.16 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.17 2009/02/06 12:21:41 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         exit(-1);
     }
     Density = (Contents*lbtoslug)/Volume; // slugs/in^3
-
+    CalculateInertias();
   }
 
   string property_name, base_property_name;
@@ -148,8 +148,6 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
-
-  CalculateInertias();
 
   Debug(0);
 }
@@ -266,7 +264,13 @@ void FGTank::CalculateInertias(void)
   double Mass = Contents*lbtoslug;
   double RadSumSqr;
   double Rad2 = Radius*Radius;
-  Volume = (Contents*lbtoslug)/Density; // in^3
+
+  if (Density > 0.0) {
+    Volume = (Contents*lbtoslug)/Density; // in^3
+  } else {
+    cerr << endl << "  Solid propellant grain density is zero!" << endl << endl;
+    exit(-1);
+  }
 
   switch (grainType) {
     case gtCYLINDRICAL:
