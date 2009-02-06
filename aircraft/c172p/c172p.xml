@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.24 2008/08/01 09:43:20 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.25 2009/02/06 19:55:23 ehofman Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -49,7 +49,7 @@
             <y> 0 </y>
             <z> 36.5 </z>
         </location>
-        <pointmass name="name">
+        <pointmass name="Pilot">
             <weight unit="LBS"> 180 </weight>
             <location name="POINTMASS" unit="IN">
                 <x> 36 </x>
@@ -57,6 +57,38 @@
                 <z> 24 </z>
             </location>
         </pointmass>
+        <pointmass name="Co-Pilot">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 36 </x>
+                <y> 14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Left Passenger">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 70 </x>
+                <y> -14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Right Passenger">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 70 </x>
+                <y> 14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Baggage">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 95 </x>
+                <y>  0 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
@@ -862,6 +894,7 @@
             </function>
         </axis>
     </aerodynamics>
+<!--
     <output name="JSBout172C.csv" type="CSV" rate="60">
       <property> aero/qbar-psf </property>
       <property> accelerations/udot-ft_sec2 </property>
@@ -884,4 +917,5 @@
       <fcs> OFF </fcs>
       <ground_reactions> OFF </ground_reactions>
     </output>
+-->
 </fdm_config>

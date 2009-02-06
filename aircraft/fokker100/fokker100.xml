@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Revision: 1.25 $ </version>
+        <version> $Revision: 1.26 $ </version>
         <description> Fokker 100 commercial airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
         <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
@@ -586,7 +586,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
+                    <abs><property>fcs/elevator-pos-norm</property></abs>
                     <value>0.0590</value>
                 </product>
             </function>

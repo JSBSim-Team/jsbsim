@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.14 $ </version>
+        <version> $Revision: 1.15 $ </version>
         <description> PC-7 </description>
     </fileheader>
 
@@ -394,7 +394,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
+                    <abs><property>fcs/elevator-pos-norm</property></abs>
                     <value>0.0400</value>
                 </product>
             </function>

@@ -6,8 +6,8 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 1st March 2008 </filecreationdate>
-        <version> 1.09 </version>
+        <filecreationdate> 31 December 2008 </filecreationdate>
+        <version> 1.10 </version>
         <description>Aerospatiale/British Aerospace Concorde</description>
 
         <note>Nose gear is longer.</note>
@@ -345,7 +345,7 @@
 
           The lift curve (delta wing) shifts downwards, temporarily at Mach 1.06, and completely near Mach 1.65.
 
-          Differences of XB70 with Concorde :
+          Differences of XB-70 :
           - cruise Mach 3 at 70,000 feet.
           - wider canards.
           - wingtips fold from 0 deg at Mach 0.75 to 65.70 deg at Mach 1.5 (transonic 25.30 deg).
@@ -594,6 +594,10 @@
 
     <flight_control name="Concorde">
 
+     <property>fcs/elevator-surface</property>
+     <property>fcs/aileron-surface</property>
+     <property>fcs/rudder-surface</property>
+
      <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
@@ -605,8 +609,13 @@
             </clipto>
         </summer>
 
-        <aerosurface_scale name="Elevator Control">
+        <actuator name="Elevator Actuator">
             <input>fcs/pitch-trim-sum</input>
+            <output>fcs/elevator-surface</output>
+        </actuator>
+
+        <aerosurface_scale name="Elevator Control">
+            <input>fcs/elevator-surface</input>
             <gain>0.0175</gain>
             <range>
                 <documentation>
@@ -618,7 +627,7 @@
             <output>fcs/elevator-pos-rad</output>
         </aerosurface_scale>
         <aerosurface_scale name="Elevator Position Normalizer">
-            <input>fcs/pitch-trim-sum</input>
+            <input>fcs/elevator-surface</input>
             <range>
                 <min>-1</min>
                 <max>1</max>
@@ -638,8 +647,13 @@
             </clipto>
         </summer>
 
-        <aerosurface_scale name="Left Aileron Control">
+        <actuator name="Aileron Actuator">
             <input>fcs/roll-trim-sum</input>
+            <output>fcs/aileron-surface</output>
+        </actuator>
+
+        <aerosurface_scale name="Left Aileron Control">
+            <input>fcs/aileron-surface</input>
             <gain>0.0175</gain>
             <range>
                 <documentation>
@@ -651,7 +665,7 @@
             <output>fcs/left-aileron-pos-rad</output>
         </aerosurface_scale>
         <aerosurface_scale name="Left Aileron Position Normalizer">
-            <input>fcs/roll-trim-sum</input>
+            <input>fcs/aileron-surface</input>
             <range>
                 <min>-1</min>
                 <max>1</max>
@@ -660,7 +674,7 @@
         </aerosurface_scale>
 
         <aerosurface_scale name="Right Aileron Control">
-            <input>-fcs/roll-trim-sum</input>
+            <input>-fcs/aileron-surface</input>
             <gain>0.0175</gain>
             <range>
                 <documentation>
@@ -672,7 +686,7 @@
             <output>fcs/right-aileron-pos-rad</output>
         </aerosurface_scale>
         <aerosurface_scale name="Right Aileron Position Normalizer">
-            <input>fcs/roll-trim-sum</input>
+            <input>fcs/aileron-surface</input>
             <range>
                 <min>-1</min>
                 <max>1</max>
@@ -743,8 +757,13 @@
             </clipto>
         </summer>
 
-        <aerosurface_scale name="Rudder Control">
+        <actuator name="Rudder Actuator">
             <input>fcs/rudder-sum</input>
+            <output>fcs/rudder-surface</output>
+        </actuator>
+
+        <aerosurface_scale name="Rudder Control">
+            <input>fcs/rudder-surface</input>
             <gain>0.0175</gain>
             <range>
                 <documentation>
@@ -756,7 +775,7 @@
             <output>fcs/rudder-pos-rad</output>
         </aerosurface_scale>
         <aerosurface_scale name="Rudder Position Normalizer">
-            <input>fcs/rudder-sum</input>
+            <input>fcs/rudder-surface</input>
             <range>
                 <min>-1</min>
                 <max>1</max>
@@ -990,7 +1009,7 @@
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <documentation>
-                tank 2 :
+                Tank 2 :
                 - 1/2 radius of tank 5.
                 - align 1/2 of gear track.
                 - near engine center.
@@ -1007,7 +1026,7 @@
         </tank>
         <tank type="FUEL">    <!-- Tank number 2 -->
             <documentation>
-                tank 3 :
+                Tank 3 :
                 - 1/2 radius of tank 5.
                 - align 1/2 of gear track.
                 - near engine center.
@@ -1024,7 +1043,7 @@
         </tank>
         <tank type="FUEL">    <!-- Tank number 3 -->
             <documentation>
-                tank 4 :
+                Tank 4 :
                 - 1/2 radius of tank 5.
                 - align 3/4 of gear track.
                 - => 39.80 % MAC
@@ -1282,7 +1301,7 @@
 
         <axis name="DRAG">
             <documentation>
-               add mach column :
+               Add Mach 0.0, 0.6, 1.1 and 2.4 :
                - supersonic decreases drag (in front of the wave);
                - increase (x1.5) climb drag to get 10 pitch;
                - increase (x1.5) landing drag to get 10 pitch and VREF 162 kt.
@@ -1316,7 +1335,7 @@
                 </product>
             </function>
             <documentation>
-              add Mach 1.15, 1.3, 1.7 and 2.0 :
+              Add Mach 1.15, 1.3, 1.7 and 2.0 :
               - respect the thrust X 2.7 by air intakes.
               - supersonic decreases drag (in front of the wave).
               - climb Mach 0.95 to 1.7 in 10 minutes.
@@ -1387,13 +1406,16 @@
                           <tableData>
                               -1.5700	1.2300
                               -0.2600	0.0500
-                              0.0000	0.0000
-                              0.2600	0.0500
-                              1.5700	1.2300
+                               0.0000	0.0000
+                               0.2600	0.0500
+                               1.5700	1.2300
                           </tableData>
                       </table>
                 </product>
             </function>
+            <documentation>
+              cannot be negativ.
+            </documentation>
             <function name="aero/coefficient/CDde">
                 <description>Drag_due_to_Elevator_Deflection</description>
                 <product>
@@ -1419,13 +1441,14 @@
 
         <axis name="LIFT">
             <documentation>
-             add mach column (0.0 and 0.6) :
+             Add Mach 0.0 and 0.6 :
              - decrease (0 and x1/3 at 0 radian) landing lift to get 10 pitch;
              - decrease climb lift to get 10 pitch;
              - at low speed, lift is better (x0.75) at high AOA, because of vortex over the wing.
-             add mach column (above 0.8) :
-             - transonic (Mach 1.06) shifts the curve vertically (XB70).
-             - supersonic (above Mach 1.18) shifts the curve vertically (XB70).
+
+             Add Mach above 0.8 :
+             - transonic (Mach 1.06) shifts the curve vertically (XB-70).
+             - supersonic (above Mach 1.18) shifts the curve vertically (XB-70).
              - adjust consumption during supersonic cruise : drag increases with alpha.
             </documentation>
             <function name="aero/coefficient/CLalpha">

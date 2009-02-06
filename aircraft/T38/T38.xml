@@ -7,7 +7,7 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2004-01-01</filecreationdate>
-     <version>$Revision: 1.24 $</version>
+     <version>$Revision: 1.25 $</version>
      <description>Models a Northrop T-38</description>
  </fileheader>
 
@@ -560,7 +560,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
+                    <abs><property>fcs/elevator-pos-norm</property></abs>
                     <value>0.0300</value>
                 </product>
             </function>

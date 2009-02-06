@@ -5,9 +5,12 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
+        <author> External model, animations and FDM by Erik Hofman.  Cockpit model in progress, work by the FlightGear community. </author>
+        <filecreationdate> In progress January 2008 </filecreationdate>
+        <version> External model $Revision: 1.17 $   Cockpit model in development.</version>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.16 $ </version>
+        <version> $Revision: 1.17 $ </version>
         <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
@@ -19,21 +22,21 @@
         <htailarea unit="FT2"> 120.57 </htailarea>
         <htailarm unit="FT"> 41.42 </htailarm>
         <vtailarea unit="FT2"> 135.64 </vtailarea>
-        <vtailarm unit="FT"> 0 </vtailarm>
+        <vtailarm unit="FT"> 41.42 </vtailarm>
         <location name="AERORP" unit="IN">
-            <x> 497.1 </x>
+            <x> 497.1 </x> <!--491.1-->
             <y> 0 </y>
             <z> 0 </z>
         </location>
         <location name="EYEPOINT" unit="IN">
-            <x> 79.5 </x>
-            <y> -24 </y>
-            <z> 65 </z>
+            <x> 0 </x>  <!-- 79.5 -->
+            <y> 0 </y>	<!-- Original -24 -->
+            <z> 0 </z>   <!--original 65 -->
         </location>
         <location name="VRP" unit="IN">
-            <x> 497.1 </x>
+            <x> 497.1 </x> <!-- 497.1 -->
             <y> 0 </y>
-            <z> -24.9 </z>
+            <z> -24.9 </z>  <!-- original -24.9 -->
         </location>
     </metrics>
 
@@ -61,7 +64,7 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 13196.9 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 4399 </damping_coeff>
-            <max_steer unit="DEG"> 5 </max_steer>
+            <max_steer unit="DEG"> 65 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
@@ -171,6 +174,8 @@
             <retractable>0</retractable>
         </contact>
     </ground_reactions>
+
+
     <propulsion>
         <engine file="PW125B">
             <location unit="IN">
@@ -222,6 +227,7 @@
                 </orient>
             </thruster>
         </engine>
+
         <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x> 497.072 </x>
@@ -251,6 +257,7 @@
         </tank>
     </propulsion>
     <flight_control name="Fokker50">
+
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
@@ -430,6 +437,24 @@
         </channel>
     </flight_control>
 
+    <system name="NWS">
+     <property>systems/NWS/engaged</property>
+
+     <channel name="Nose Wheel Steering">
+      <scheduled_gain name="systems/NWS/steer-cmd">
+       <input>fcs/rudder-cmd-norm</input>
+       <table>
+        <independentVar lookup="row">systems/NWS/engaged</independentVar>
+         <tableData>
+            0     -0.1
+            1     -1.0
+         </tableData>
+       </table>
+       <output>fcs/steer-cmd-norm</output>
+      </scheduled_gain>
+     </channel>
+    </system>
+
     <aerodynamics>
 
         <function name="aero/function/kCDge">
@@ -575,7 +600,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
+                    <abs><property>fcs/elevator-pos-norm</property></abs>
                     <value>0.0350</value>
                 </product>
             </function>

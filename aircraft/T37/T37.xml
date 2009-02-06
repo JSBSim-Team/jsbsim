@@ -35,7 +35,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.25 $ </version>
+        <version> $Revision: 1.26 $ </version>
         <description> T-37 trainer </description>
     </fileheader>
 
@@ -463,7 +463,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
+                    <abs><property>fcs/elevator-pos-norm</property></abs>
                     <value>0.0750</value>
                 </product>
             </function>
