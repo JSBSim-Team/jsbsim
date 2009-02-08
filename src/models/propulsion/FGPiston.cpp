@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.32 2009/02/08 21:05:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.33 2009/02/08 22:08:55 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,13 +222,13 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
   property_name = base_property_name + "/power-hp";
-  PropertyManager->Tie(property_name.c_str(), &HP);
+  PropertyManager->Tie(property_name, &HP);
   property_name = base_property_name + "/bsfc-lbs_hphr";
-  PropertyManager->Tie(property_name.c_str(), &BSFC);
+  PropertyManager->Tie(property_name, &BSFC);
   property_name = base_property_name + "/volumetric-efficiency";
-  PropertyManager->Tie(property_name.c_str(), &volumetric_efficiency);
-  property_name = base_property_name + "/map-pa";
-  PropertyManager->Tie(property_name.c_str(), &MAP);
+  PropertyManager->Tie(property_name, &volumetric_efficiency);
+  property_name = base_property_name + "/map-inhg";
+  PropertyManager->Tie(property_name, &ManifoldPressure_inHg);
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
   StarterHP = sqrt(MaxHP) * 0.4;
@@ -609,9 +609,6 @@ void FGPiston::doFuelFlow(void)
 void FGPiston::doEnginePower(void)
 {
   if (Running) {
-    double T_amb_degF = KelvinToFahrenheit(T_amb);
-    double T_amb_sea_lev_degF = KelvinToFahrenheit(288);
-
     // FIXME: this needs to be generalized
     double ME, friction, percent_RPM, power;  // Convienience term for use in the calculations
     ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
@@ -731,7 +728,6 @@ void FGPiston::doCHT(void)
 
 void FGPiston::doOilTemperature(void)
 {
-  double idle_percentage_power = 0.023;        // approximately
   double target_oil_temp;        // Steady state oil temp at the current engine conditions
   double time_constant;          // The time constant for the differential equation
   double efficiency = 0.667;     // The aproximate oil cooling system efficiency // FIXME: may vary by engine
