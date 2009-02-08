@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.31 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.32 2009/02/08 21:05:55 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,6 +227,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   PropertyManager->Tie(property_name.c_str(), &BSFC);
   property_name = base_property_name + "/volumetric-efficiency";
   PropertyManager->Tie(property_name.c_str(), &volumetric_efficiency);
+  property_name = base_property_name + "/map-pa";
+  PropertyManager->Tie(property_name.c_str(), &MAP);
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
   StarterHP = sqrt(MaxHP) * 0.4;
