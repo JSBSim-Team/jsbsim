@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.33 2008/10/07 10:56:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.34 2009/02/11 01:24:26 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,8 +93,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   vOmegaLocal.InitMatrix();
 
   integrator_rotational_rate = eAdamsBashforth2;
-  integrator_translational_rate = eAdamsBashforth2;
-  integrator_rotational_position = eTrapezoidal;
+  integrator_translational_rate = eTrapezoidal;
+  integrator_rotational_position = eAdamsBashforth2;
   integrator_translational_position = eTrapezoidal;
 
   bind();
@@ -136,8 +136,8 @@ bool FGPropagate::InitModel(void)
   vOmegaLocal.InitMatrix();
 
   integrator_rotational_rate = eAdamsBashforth2;
-  integrator_translational_rate = eAdamsBashforth2;
-  integrator_rotational_position = eTrapezoidal;
+  integrator_translational_rate = eTrapezoidal;
+  integrator_rotational_position = eAdamsBashforth2;
   integrator_translational_position = eTrapezoidal;
 
   return true;
