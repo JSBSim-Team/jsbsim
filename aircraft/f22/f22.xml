@@ -7,7 +7,7 @@
     <fileheader>
              <author>Erik Hofman </author>
              <filecreationdate> 2004-01-01 </filecreationdate>
-            <version> $Revision: 1.30 $ </version>
+            <version> $Revision: 1.31 $ </version>
             <description> Models an F-22A Raptor </description>
             <license>
              <licenseName>GPL (General Public License)</licenseName>
@@ -54,10 +54,10 @@
         </metrics>
     
         <mass_balance>
-            <ixx unit="SLUG*FT2"> 40843 </ixx>
-            <iyy unit="SLUG*FT2"> 204751 </iyy>
-            <izz unit="SLUG*FT2"> 258201 </izz>
-            <ixz unit="SLUG*FT2"> 520 </ixz>
+            <ixx unit="SLUG*FT2"> 56005 </ixx>
+            <iyy unit="SLUG*FT2"> 280766 </iyy>
+            <izz unit="SLUG*FT2"> 354090 </izz>
+            <ixz unit="SLUG*FT2"> 713 </ixz>
             <emptywt unit="LBS"> 43430 </emptywt>
             <location name="CG" unit="IN">
                 <x> 445.7 </x>
@@ -177,7 +177,7 @@
         <tank type="FUEL">
                <location unit="IN">
                    <x> 446.478 </x>
-                   <y> 0 </y>
+                   <y> -36 </y>
                    <z> -18.6033 </z>
                </location>
                <capacity unit="LBS"> 9350 </capacity>
@@ -186,7 +186,7 @@
            <tank type="FUEL">
                <location unit="IN">
                    <x> 446.478 </x>
-                   <y> 0 </y>
+                   <y> 36 </y>
                    <z> -18.6033 </z>
                </location>
                <capacity unit="LBS"> 9350 </capacity>
@@ -410,9 +410,9 @@
 								<independentVar lookup="column">position/h-sl-ft</independentVar>
 								<tableData>
 										0  33000	50000
-									160	0.6	0.5	0.35
-									270	0.8	0.7	0.55
-									400	1.0	0.8	0.65
+									160	0.6	0.45	0.3
+									270	0.8	0.65	0.45
+									400	0.9	0.7	0.6
 									500	1.0	0.95	0.8
 									580	1.0	1.0	0.9
 									1000	1.0	1.0	1.0
@@ -427,7 +427,8 @@
 										0 33000	50000
 									160	-28.4059  -31.1627  -31.1627
   									270	-30.9146  -32.6575  -32.6575
-  									400	-47.4687  -38.7651  -38.7651
+									330	-35.9146  -32.6575  -32.6575
+  									400	-44.4687  -38.7651  -38.7651
   									580	-44.2746  -36.5662  -36.5662
   									700	-39.0735  -34.9842  -34.9842
 
@@ -449,20 +450,17 @@
 										0  33000	50000
 									160	-0.0494   -0.0266   -0.0266
     									270	0.0067   -0.0160   -0.0160
+									330	0.0067   -0.0160   -0.0160
    									400	-0.1082   -0.0108   -0.0108
    									580	-0.0104   -0.0091   -0.0091
    									700	-0.0095   -0.0118   -0.0118
-
-
-
-
 								</tableData>
 							</table>
 						</product>
 
 						<product>
 							<property>velocities/p-aero-rad_sec</property>
-							<value>-1.5</value>
+							<value>-1.25</value>
 							<table>
 								<independentVar lookup="row">velocities/vc-kts</independentVar>
 								<independentVar lookup="column">position/h-sl-ft</independentVar>
@@ -470,13 +468,10 @@
 										0 33000	50000
 									160	11.7952   13.4573   13.4573
    									270	11.9041   13.1381   13.1381
+									330	11.9041   13.1381   13.1381
    									400	12.0644   10.6808   10.6808
    									580	11.0366   10.7511   10.7511
     									700	9.3909   10.8556   10.8556
-
-
-
-
 								</tableData>
 							</table>
 						</product>
@@ -590,11 +585,11 @@
 								<independentVar lookup="column">position/h-sl-ft</independentVar>
 								<tableData>
 									0 33000	50000
-									160	1  	1	1
-  									270	1  	1  	1
-  									400	1	1	1
-   									580	0.8   0.9   1
-   									700	0.5   0.6   0.7
+									160	1  	1.2	1.2
+  									270	1  	1.1  	1.1
+  									400	0.8	0.9	1
+   									580	0.7   0.8   0.9
+   									700	0.5   0.5   0.5
 								</tableData>
 							</table>
 
@@ -2494,7 +2489,7 @@
                <function name="aero/coefficient/CnDr">
                    <description>Yaw_moment_due_to_rudder</description>
                    <product>
-				<value>1.5</value>
+				<value>2</value>
                        <property>aero/qbar-psf</property>
                        <property>metrics/Sw-sqft</property>
                        <property>metrics/bw-ft</property>
