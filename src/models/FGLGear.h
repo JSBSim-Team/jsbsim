@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.26 2009/02/05 04:59:54 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.27 2009/02/17 08:04:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.26 2009/02/05 04:59:54 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.27 2009/02/17 08:04:15 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -218,9 +218,6 @@ public:
       @param number integer identifier for this instance of FGLGear
   */
   FGLGear(Element* el, FGFDMExec* Executive, int number);
-  /** Constructor
-      @param lgear a reference to an existing FGLGear object     */
-  FGLGear(const FGLGear& lgear);
   /// Destructor
   ~FGLGear();
 
@@ -313,6 +310,7 @@ private:
   double compressLength;
   double compressSpeed;
   double staticFCoeff, dynamicFCoeff, rollingFCoeff;
+  double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double brakePct;
   double BrakeFCoeff;
   double maxCompLen;

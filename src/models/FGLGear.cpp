@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.50 2009/02/05 04:59:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.51 2009/02/17 08:04:15 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,82 +246,14 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   SinWheel = 0.0;
   CosWheel = 0.0;
 
+  // Set Pacejka terms
+
+  Stiffness = 0.06;
+  Shape = 2.8;
+  Peak = staticFCoeff;
+  Curvature = 1.03;
+
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGLGear::FGLGear(const FGLGear& lgear)
-{
-  GearNumber = lgear.GearNumber;
-  State    = lgear.State;
-  Aircraft = lgear.Aircraft;
-  Propagate = lgear.Propagate;
-  Auxiliary = lgear.Auxiliary;
-  Exec     = lgear.Exec;
-  FCS      = lgear.FCS;
-  MassBalance = lgear.MassBalance;
-
-  vXYZ = lgear.vXYZ;
-  vMoment = lgear.vMoment;
-  vWhlBodyVec = lgear.vWhlBodyVec;
-  vLocalGear = lgear.vLocalGear;
-
-  WOW                = lgear.WOW;
-  lastWOW            = lgear.lastWOW;
-  ReportEnable       = lgear.ReportEnable;
-  FirstContact       = lgear.FirstContact;
-  StartedGroundRun   = lgear.StartedGroundRun;
-  LandingDistanceTraveled   = lgear.LandingDistanceTraveled;
-  TakeoffDistanceTraveled   = lgear.TakeoffDistanceTraveled;
-  TakeoffDistanceTraveled50ft   = lgear.TakeoffDistanceTraveled50ft;
-  MaximumStrutForce  = lgear.MaximumStrutForce;
-  MaximumStrutTravel = lgear.MaximumStrutTravel;
-  SideForce          = lgear.SideForce;
-  RollingForce       = lgear.RollingForce;
-
-  kSpring         = lgear.kSpring;
-  bDamp           = lgear.bDamp;
-  bDampRebound    = lgear.bDampRebound;
-  compressLength  = lgear.compressLength;
-  compressSpeed   = lgear.compressSpeed;
-  staticFCoeff    = lgear.staticFCoeff;
-  dynamicFCoeff   = lgear.dynamicFCoeff;
-  rollingFCoeff   = lgear.rollingFCoeff;
-  brakePct        = lgear.brakePct;
-  maxCompLen      = lgear.maxCompLen;
-  SinkRate        = lgear.SinkRate;
-  GroundSpeed     = lgear.GroundSpeed;
-  LandingReported = lgear.LandingReported;
-  TakeoffReported = lgear.TakeoffReported;
-  name            = lgear.name;
-  sSteerType      = lgear.sSteerType;
-  sRetractable    = lgear.sRetractable;
-  sContactType    = lgear.sContactType;
-  eContactType    = lgear.eContactType;
-  sBrakeGroup     = lgear.sBrakeGroup;
-  eSteerType      = lgear.eSteerType;
-  eBrakeGrp       = lgear.eBrakeGrp;
-  maxSteerAngle   = lgear.maxSteerAngle;
-  isRetractable   = lgear.isRetractable;
-  GearUp          = lgear.GearUp;
-  GearDown        = lgear.GearDown;
-  GearPos         = lgear.GearPos;
-  useFCSGearPos   = lgear.useFCSGearPos;
-  WheelSlip       = lgear.WheelSlip;
-  TirePressureNorm = lgear.TirePressureNorm;
-  Servicable      = lgear.Servicable;
-  ForceY_Table    = lgear.ForceY_Table;
-  CosWheel        = lgear.CosWheel;
-  SinWheel        = lgear.SinWheel;
-  RFRV            = lgear.RFRV;
-  SFRV            = lgear.SFRV;
-  LongForceLagFilterCoeff = lgear.LongForceLagFilterCoeff;
-  LatForceLagFilterCoeff = lgear.LatForceLagFilterCoeff;
-  WheelSlipLagFilterCoeff = lgear.WheelSlipLagFilterCoeff;
-  WheelSlipFilter = lgear.WheelSlipFilter;
-  LongForceFilter = lgear.LongForceFilter;
-  LatForceFilter = lgear.LatForceFilter;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -624,27 +556,22 @@ void FGLGear::ComputeBrakeForceCoefficient(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
-// Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
-// transition from static to dynamic friction.  There are more complicated formulations
-// of this that avoid the discrete jump (similar to Pacejka).  Will fix this later.
+// Compute the sideforce coefficients using Pacejka's Magic Formula.
+//
+//   y(x) = D sin {C arctan [Bx - E(Bx - arctan Bx)]}
+//
+// Where: B = Stiffness Factor (0.06, here)
+//        C = Shape Factor (2.8, here)
+//        D = Peak Factor (0.8, here)
+//        E = Curvature Factor (1.03, here)
 
 void FGLGear::ComputeSideForceCoefficient(void)
 {
   if (ForceY_Table) {
-
     FCoeff = ForceY_Table->GetValue(WheelSlip);
-
   } else {
-
-    if (fabs(WheelSlip) <= 10.0) {
-      FCoeff = staticFCoeff*WheelSlip/10.0;
-    } else if (fabs(WheelSlip) <= 40.0) {
-      FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 10.0)/10.0
-                + staticFCoeff*(40.0 - fabs(WheelSlip))/10.0)*(WheelSlip>=0?1.0:-1.0);
-    } else {
-      FCoeff = dynamicFCoeff*(WheelSlip>=0?1.0:-1.0);
-    }
+    double StiffSlip = Stiffness*WheelSlip;
+    FCoeff = Peak * sin(Shape*atan(StiffSlip - Curvature*(StiffSlip - atan(StiffSlip))));
   }
 }
 
@@ -713,6 +640,8 @@ void FGLGear::bind(void)
                           &FGLGear::GetZPosition, &FGLGear::SetZPosition);
     property_name = base_property_name + "/compression-ft";
     Exec->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
+    property_name = base_property_name + "/side_friction_coeff";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &FCoeff );
   }
 
   if( isRetractable ) {
