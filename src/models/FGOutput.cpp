@@ -46,6 +46,8 @@ INCLUDES
 #include "FGFCS.h"
 #include "FGAerodynamics.h"
 #include "FGGroundReactions.h"
+#include "FGExternalReactions.h"
+#include "FGBuoyantForces.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGPropagate.h"
@@ -70,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.32 2009/01/21 04:31:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.33 2009/02/17 08:05:17 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -258,11 +260,21 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << delimeter;
       outstream << "F_{Drag} (lbs)" + delimeter + "F_{Side} (lbs)" + delimeter + "F_{Lift} (lbs)" + delimeter;
       outstream << "L/D" + delimeter;
-      outstream << "F_X (lbs)" + delimeter + "F_Y (lbs)" + delimeter + "F_Z (lbs)";
+      outstream << "F_{Aero x} (lbs)" + delimeter + "F_{Aero y} (lbs)" + delimeter + "F_{Aero z} (lbs)" + delimeter;
+      outstream << "F_{Prop x} (lbs)" + delimeter + "F_{Prop y} (lbs)" + delimeter + "F_{Prop z} (lbs)" + delimeter;
+      outstream << "F_{Gear x} (lbs)" + delimeter + "F_{Gear y} (lbs)" + delimeter + "F_{Gear z} (lbs)" + delimeter;
+      outstream << "F_{Ext x} (lbs)" + delimeter + "F_{Ext y} (lbs)" + delimeter + "F_{Ext z} (lbs)" + delimeter;
+      outstream << "F_{Buoyant x} (lbs)" + delimeter + "F_{Buoyant y} (lbs)" + delimeter + "F_{Buoyant z} (lbs)" + delimeter;
+      outstream << "F_{Total x} (lbs)" + delimeter + "F_{Total y} (lbs)" + delimeter + "F_{Total z} (lbs)";
     }
     if (SubSystems & ssMoments) {
       outstream << delimeter;
-      outstream << "L (ft-lbs)" + delimeter + "M (ft-lbs)" + delimeter + "N (ft-lbs)";
+      outstream << "L_{Aero} (ft-lbs)" + delimeter + "M_{Aero} ( ft-lbs)" + delimeter + "N_{Aero} (ft-lbs)" + delimeter;
+      outstream << "L_{Prop} (ft-lbs)" + delimeter + "M_{Prop} (ft-lbs)" + delimeter + "N_{Prop} (ft-lbs)" + delimeter;
+      outstream << "L_{Gear} (ft-lbs)" + delimeter + "M_{Gear} (ft-lbs)" + delimeter + "N_{Gear} (ft-lbs)" + delimeter;
+      outstream << "L_{ext} (ft-lbs)" + delimeter + "M_{ext} (ft-lbs)" + delimeter + "N_{ext} (ft-lbs)" + delimeter;
+      outstream << "L_{Buoyant} (ft-lbs)" + delimeter + "M_{Buoyant} (ft-lbs)" + delimeter + "N_{Buoyant} (ft-lbs)" + delimeter;
+      outstream << "L_{Total} (ft-lbs)" + delimeter + "M_{Total} (ft-lbs)" + delimeter + "N_{Total} (ft-lbs)";
     }
     if (SubSystems & ssAtmosphere) {
       outstream << delimeter;
@@ -358,15 +370,26 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
     outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
     outstream << Propagate->GetVel().Dump(delimeter);
+    outstream.precision(10);
   }
   if (SubSystems & ssForces) {
     outstream << delimeter;
     outstream << Aerodynamics->GetvFw() << delimeter;
     outstream << Aerodynamics->GetLoD() << delimeter;
+    outstream << Aerodynamics->GetForces() << delimeter;
+    outstream << Propulsion->GetForces() << delimeter;
+    outstream << GroundReactions->GetForces() << delimeter;
+    outstream << ExternalReactions->GetForces() << delimeter;
+    outstream << BuoyantForces->GetForces() << delimeter;
     outstream << Aircraft->GetForces().Dump(delimeter);
   }
   if (SubSystems & ssMoments) {
     outstream << delimeter;
+    outstream << Aerodynamics->GetMoments() << delimeter;
+    outstream << Propulsion->GetMoments() << delimeter;
+    outstream << GroundReactions->GetMoments() << delimeter;
+    outstream << ExternalReactions->GetMoments() << delimeter;
+    outstream << BuoyantForces->GetMoments() << delimeter;
     outstream << Aircraft->GetMoments().Dump(delimeter);
   }
   if (SubSystems & ssAtmosphere) {
@@ -388,6 +411,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << MassBalance->GetXYZcg();
   }
   if (SubSystems & ssPropagate) {
+    outstream.precision(14);
     outstream << delimeter;
     outstream << Propagate->Geth() << delimeter;
     outstream << (radtodeg*Propagate->GetEuler()).Dump(delimeter) << delimeter;
@@ -395,10 +419,13 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
     outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
+    outstream.precision(18);
     outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;
+    outstream.precision(14);
     outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << Propagate->GetRunwayRadius();
+    outstream.precision(10);
   }
   if (SubSystems & ssCoefficients) {
     scratch = Aerodynamics->GetCoefficientValues(delimeter);
