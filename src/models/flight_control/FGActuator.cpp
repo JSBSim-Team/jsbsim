@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.7 2008/05/25 14:32:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.8 2009/02/25 12:14:46 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,7 +194,10 @@ void FGActuator::Deadband(void)
 
 void FGActuator::bind(void)
 {
-  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  string tmp = Name;
+  if (Name.find("/") == string::npos) {
+    tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  }
   const string tmp_zero = tmp + "/malfunction/fail_zero";
   const string tmp_hardover = tmp + "/malfunction/fail_hardover";
   const string tmp_stuck = tmp + "/malfunction/fail_stuck";
