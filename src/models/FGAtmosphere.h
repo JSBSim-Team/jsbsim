@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.18 2009/01/07 13:46:53 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.19 2009/02/25 03:28:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.18 2009/01/07 13:46:53 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.19 2009/02/25 03:28:57 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -215,11 +215,6 @@ public:
 
   void   SetRhythmicity(double r) {Rhythmicity=r;}
   double GetRhythmicity() const {return Rhythmicity;}
-
-  /** Sets wind vortex, clockwise as seen from a point in front of aircraft,
-      looking aft. Units are radians/second. */
-  void   SetWindFromClockwise(double wC) { wind_from_clockwise=wC; }
-  double GetWindFromClockwise(void) const {return wind_from_clockwise;}
 
   double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   double GetTurbMagnitude(void) const {return Magnitude;}

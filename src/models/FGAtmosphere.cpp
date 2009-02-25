@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.25 2009/01/16 02:39:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.26 2009/02/25 03:28:57 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   htab[7]=278385.0; //ft.
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-  SetTurbType( ttCulp );
+//  SetTurbType( ttCulp );
+  SetTurbType( ttNone );
   TurbGain = 0.0;
   TurbRate = 1.7;
   Rhythmicity = 0.1;
@@ -274,6 +275,7 @@ void FGAtmosphere::CalculateDerived(void)
 
   vTotalWindNED = vWindNED + vGustNED + vTurbulenceNED;
 
+   // psiw (Wind heading) is the direction the wind is blowing towards
   if (vWindNED(eX) != 0.0) psiw = atan2( vWindNED(eY), vWindNED(eX) );
   if (psiw < 0) psiw += 2*M_PI;
 
@@ -336,6 +338,8 @@ static inline double square_signed (double value)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// psi is the angle that the wind is blowing *towards*
 
 void FGAtmosphere::SetWindspeed(double speed)
 {
@@ -357,6 +361,8 @@ double FGAtmosphere::GetWindspeed(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// psi is the angle that the wind is blowing *towards*
 
 void FGAtmosphere::SetWindPsi(double dir)
 {
@@ -578,7 +584,7 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/sigma", this, &FGAtmosphere::GetDensityRatio);
   PropertyManager->Tie("atmosphere/delta", this, &FGAtmosphere::GetPressureRatio);
   PropertyManager->Tie("atmosphere/a-ratio", this, &FGAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("atmosphere/psiw-rad", this, &FGAtmosphere::GetWindPsi);
+  PropertyManager->Tie("atmosphere/psiw-rad", this, &FGAtmosphere::GetWindPsi, &FGAtmosphere::SetWindPsi);
   PropertyManager->Tie("atmosphere/delta-T", this, &FGAtmosphere::GetDeltaT, &FGAtmosphere::SetDeltaT);
   PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGAtmosphere::GetSLTempDev, &FGAtmosphere::SetSLTempDev);
   PropertyManager->Tie("atmosphere/density-altitude", this, &FGAtmosphere::GetDensityAltitude);
@@ -589,8 +595,6 @@ void FGAtmosphere::bind(void)
                                                           (PMFd)&FGAtmosphere::SetWindNED);
   PropertyManager->Tie("atmosphere/wind-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetWindNED,
                                                           (PMFd)&FGAtmosphere::SetWindNED);
-  PropertyManager->Tie("atmosphere/wind-from-cw", this, &FGAtmosphere::GetWindFromClockwise,
-                                                        &FGAtmosphere::SetWindFromClockwise);
   PropertyManager->Tie("atmosphere/wind-mag-fps", this, &FGAtmosphere::GetWindspeed,
                                                         &FGAtmosphere::SetWindspeed);
   PropertyManager->Tie("atmosphere/total-wind-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetTotalWindNED);

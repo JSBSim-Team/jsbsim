@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.31 2009/01/08 12:35:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.32 2009/02/25 03:30:41 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ bool FGAuxiliary::Run()
 // 12/16/2005, JSB: For ground handling purposes, at this time, let's ramp
 // in the effects of wind from 10 fps to 30 fps when there is weight on the
 // landing gear wheels.
-
+/*
   if (GroundReactions->GetWOW() && vUVW(eU) < 10) {
     vAeroPQR = vPQR;
     vAeroUVW = vUVW;
@@ -172,10 +172,11 @@ bool FGAuxiliary::Run()
     double factor = (vUVW(eU) - 10.0)/20.0;
     vAeroPQR = vPQR + factor*Atmosphere->GetTurbPQR();
     vAeroUVW = vUVW + factor*Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
-  } else {
-    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
-  }
+  } else { */
+  FGColumnVector3 wind = Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
+    vAeroPQR = vPQR - Atmosphere->GetTurbPQR();
+    vAeroUVW = vUVW - wind;
+/*  } */
 
   Vt = vAeroUVW.Magnitude();
   if ( Vt > 0.05) {
@@ -289,6 +290,9 @@ bool FGAuxiliary::Run()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// A positive headwind is blowing with you, a negative headwind is blowing against you.
+// psi is the direction the wind is blowing *towards*.
 
 double FGAuxiliary::GetHeadWind(void) const
 {
@@ -301,6 +305,10 @@ double FGAuxiliary::GetHeadWind(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// A positive crosswind is blowing towards the right (from teh perspective of the
+// pilot). A negative crosswind is blowing towards the -Y direction (left).
+// psi is the direction the wind is blowing *towards*.
 
 double FGAuxiliary::GetCrossWind(void) const
 {
