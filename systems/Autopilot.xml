@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+
+  Author:   Jon Berndt
+  Date:     January 2009
+  Function: Autopilot
+
+  This file contains general purpose autopilot functions. This file contains
+  algorithms that depend on parameters calculated in the file, GNCUtilities.xml
+  - which should be included prior to the inclusion of this file, e.g.,
+  
+  <system file="GNCUtilities"/>
+
+  <system file="Autopilot"/>
+  
+
+-->
+
+<system name="Autopilot"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+  <property> ap/roll-attitude-mode </property>
+  <property> ap/autopilot-roll-on  </property>
+  
+  <channel name="Heading Hold">
+
+    <switch name="ap/roll-control-autopilot-on">
+      <default value="0"/>
+      <test value="1">
+        ap/autopilot-roll-on ne 0.0
+      </test>
+    </switch>
+
+    <switch name="ap/roll-autopilot-windup-trigger">
+      <default value="1"/>
+      <test value="1">
+        ap/roll-angle-saturation ne 0.0
+      </test>
+      <test value="0">
+        ap/roll-control-autopilot-on gt 0
+      </test>
+    </switch>
+
+    <pure_gain name="ap/limited-roll-angle-rad">
+      <description>
+        This component takes as input the angle to the target heading from
+        the current heading, as calculated by the Angle to Heading channel
+        in the GNC Utilities system file. The output of this component (stored)
+        in the component property "ap/limited-roll-angle-rad" is the roll
+        angle command, which is just the correct-sense heading error, but 
+        limited at 30 degrees (0.524 radians).
+      </description>
+      <input> ap/angle-to-heading-rad </input>
+      <gain> ap/angle-to-heading-sense </gain>
+      <clipto>
+        <min> -0.524 </min> <!-- -30 degrees -->
+        <max>  0.524 </max> <!--  30 degrees -->
+      </clipto>
+    </pure_gain>
+
+    <switch name="ap/roll-attitude-selector">
+      <!--
+        This component selects whether to use a roll angle of "0" - which
+        is a wings-level attitude - or to use the roll angle commanded by the 
+        ap/limited-roll-angle-rad component, above, which is used to acquire
+        and hold a heading.
+      -->
+      <default value="0"/>
+      <test value="ap/limited-roll-angle-rad">
+        ap/roll-attitude-mode eq 1
+      </test>
+    </switch>
+    
+    <summer name="ap/limited-roll-angle-error">
+      <description>
+        This component computes the error between the calculated target roll
+        angle and the actual roll angle. The output is interpreted as a roll
+        rate command.
+      </description>
+      <input>  ap/roll-attitude-selector </input>
+      <input> -attitude/phi-rad </input>
+    </summer>
+
+    <pid name="ap/roll-angle-pid-control">
+      <input> ap/limited-roll-angle-error </input>
+      <kp> 30 </kp>
+      <ki> 0.1  </ki>
+      <kd> 0.0  </kd>
+      <trigger> ap/roll-autopilot-windup-trigger </trigger>
+      <clipto>
+        <min> -0.175 </min> <!-- -10 degrees/sec -->
+        <max>  0.175 </max> <!--  10 degrees/sec -->
+      </clipto>
+    </pid>
+
+    <deadband name="ap/roll-angle-saturation">
+      <input> ap/roll-angle-pid-control </input>
+      <width> 0.34999 </width>
+    </deadband>
+
+    <summer name="ap/limited-roll-rate-error">
+      <description>
+        This component computes the error between the calculated target roll
+        rate and the actual roll rate. The output is interpreted as an aileron
+        command.
+      </description>
+      <input> ap/roll-angle-pid-control </input>
+      <input> -velocities/p-aero-rad_sec </input>
+    </summer>
+
+    <pid name="ap/roll-rate-pid-control">
+      <input> ap/limited-roll-rate-error </input>
+      <kp>2.5</kp>
+      <ki>0.0</ki>
+      <kd>0.0</kd>
+      <trigger> ap/roll-autopilot-windup-trigger </trigger>
+    </pid>
+
+    <lag_filter name="ap/roll-cmd-smoother">
+      <input> ap/roll-rate-pid-control </input>
+      <c1> 100.0 </c1>
+    </lag_filter>
+
+    <switch name="ap/roll-cmd-norm-output">
+      <default value="0"/>
+      <test value="ap/roll-cmd-smoother">
+        ap/roll-control-autopilot-on ne 0.0
+      </test>
+    </switch>
+
+  </channel>
+
+</system>

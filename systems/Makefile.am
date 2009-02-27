@@ -10,4 +10,6 @@ EXTRA_DIST = \
 	holdback.xml \
 	hook.xml \
 	refuel.xml \
-	speedbrakes.xml
+	speedbrakes.xml \
+	GNCUtilities.xml \
+	Autopilot.xml
