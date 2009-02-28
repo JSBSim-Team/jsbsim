@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.7 2008/08/14 23:33:43 andgi Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.8 2009/02/28 00:16:58 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
 
-    Copyright (C) 2007 - 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2007 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,16 +35,16 @@
   <license licenseName="GPL"
            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
   <filecreationdate>2007-02-11</filecreationdate>
-  <version>$Id: Submarine_Scout.xml,v 1.7 2008/08/14 23:33:43 andgi Exp $</version>
+  <version>$Id: Submarine_Scout.xml,v 1.8 2009/02/28 00:16:58 andgi Exp $</version>
 
   <reference refID="Freeman:1932:Akron"
              author="Hugh B. Freeman"
              title="Force Measurements on a 1/40-scale Model of the U.S. Airship ``Akron'';  NACA Report #432"
-             date="1932"/>  
+             date="1932"/>
   <reference refID="Mowthrope:1998:Battlebags"
              author="Ces Mowthorpe"
              title="Battlebags  British Airships of the First World War"
-             date="1998"/>  
+             date="1998"/>
   <reference refID="VentryKo:1982:AS"
              author="Lord Ventry and Eugene M. Kolesnik"
              title="Airship Saga;  ISBN 0 7137 1001 2"
@@ -252,16 +252,6 @@
    <weight unit="KG">  70 </weight>
   </pointmass>
 
-  <!-- Initial weigh-off ballast -->
-  <pointmass name="Initial_Weigh_Off">
-   <location unit="M">
-    <x> 17.22 </x>
-    <y>  0.0  </y>
-    <z> -7.20 </z>
-   </location>
-   <weight unit="KG"> 0 </weight>
-  </pointmass>
-
   <!--
   === Armament ===============================================
   -->
@@ -352,16 +342,16 @@
  <!--
  === Gas cell ==============================================================
  -->
+ <system name="Forward declaration of ballonet inflow properties">
+  <property>ballonets/in-flow-ft3ps[0]</property>
+  <property>ballonets/in-flow-ft3ps[1]</property>
+ </system>
 
  <buoyant_forces>
 
   <documentation>
    NOTE: The cell is placed based on the envelope centroid location
          as computed by BRLCAD.
-
-         The maximum overpressure is estimated from the normal pressure
-         for a North Sea class airship, which was 25-30 mm water according
-         to [VentryKo:1982:AS].
   </documentation>
   <documentation>
    Envelope and gas control for a S.S. b.E.2C according to [Whale:1919:BA]:
@@ -370,7 +360,7 @@
     - Nose stiffeners: 24
     - 2 Ballonets
       - capacity 6,375 feet^3 each
-      - automatic spring valves set to open at 25 - 28mm (water I presume)
+      - automatic spring valves set to open at 25 - 28mm (of water I presume)
     - 2 gas valves one at the bottom and one at the top of the envelope
       - Bottom valve automatically opens at 30 - 35mm pressure.
       - Top valve is manual only
@@ -381,12 +371,6 @@
     - Envelope    70,000 feet^3
     - 2 Ballonets 9,800 feet^3 each
   </documentation>
-  <limitation>
-   The ballonet air feed from the air-scoop in the propeller slip stream
-   is not modelled yet. Each ballonet receives a constant 15 cubic feet
-   per second air flow instead. The outflow valves needs to be set to
-   bleed the right amount of air for the desired pressure and trim.
-  </limitation>
 
   <gas_cell type="HYDROGEN">
    <location unit="M">
@@ -485,7 +469,7 @@
     </heat>
     <blower_input>
      <function name="buoyant_forces/gas-cell/ballonet[0]/in-flow-ft3ps">
-      <value> 15.0 </value>
+      <property>ballonets/in-flow-ft3ps[0]</property>
      </function>
     </blower_input>
    </ballonet>
@@ -535,7 +519,7 @@
     </heat>
     <blower_input>
      <function name="buoyant_forces/gas-cell/ballonet[1]/in-flow-ft3ps">
-      <value> 15.0 </value>
+      <property>ballonets/in-flow-ft3ps[1]</property>
      </function>
     </blower_input>
    </ballonet>
@@ -788,34 +772,34 @@
     - Lewis machine gun 
   </documentation>
 
-  <channel name="">
+  <channel name="Instruments">
 
-  <fcs_function name="instrumentation/gas-pressure-psf">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/pressure-psf </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
+   <fcs_function name="instrumentation/gas-pressure-psf">
+    <function>
+     <difference>
+      <property> buoyant_forces/gas-cell/pressure-psf </property>
+      <property> atmosphere/P-psf </property>
+     </difference>
+    </function>   
+   </fcs_function>
 
-  <fcs_function name="instrumentation/ballonet-pressure-psf[0]">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf[0] </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
+   <fcs_function name="instrumentation/ballonet-pressure-psf[0]">
+    <function>
+     <difference>
+      <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf </property>
+      <property> atmosphere/P-psf </property>
+     </difference>
+    </function>   
+   </fcs_function>
 
-  <fcs_function name="instrumentation/ballonet-pressure-psf[1]">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
+   <fcs_function name="instrumentation/ballonet-pressure-psf[1]">
+    <function>
+     <difference>
+      <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
+      <property> atmosphere/P-psf </property>
+     </difference>
+    </function>   
+   </fcs_function>
 
   </channel>
  </system>
@@ -828,6 +812,101 @@
    The autopilot is only minimally tuned.
   </limitation>
  </autopilot>
+
+ <system name="Ballonet control">
+
+  <documentation>
+   "Two ballonets are provided, one forward and one aft, the capacity
+   of each being 6,375 cubic feet.  The supply of air for filling
+   these is taken from the propeller draught by a slanting aluminium
+   tube to the underside of the envelope, where it meets a
+   longitudinal fabric hose which connects the two ballonet air
+   inlets.  Non-return fabric valves known as crab-pots are fitted in
+   this fabric hose on either side of their junction with the air
+   scoop.  Two automatic air valves are fitted to the underside of the
+   envelope, one for each ballonet.  The air pressure tends to open
+   the valve instead of keeping it shut and to counteract this the
+   spring of the valve is inside the envelope.  The springs are set to
+   open at a pressure of 25 to 28 mm."  [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "The valve cords are led to the pilot's seat through eyes attached
+   to the envelope."  [Whale:1919:BA] on the S.S.B.E. 2C.
+  </documentation>
+  <limitation>
+   The slip stream pressure calculation does not take the direction of the
+   relative wind into account.
+  </limitation>
+
+  <!-- The pilot's ballonet valve inputs. -->
+  <property>ballonets/valve-cmd-norm[0]</property>
+  <property>ballonets/valve-cmd-norm[1]</property>
+
+  <channel name="Ballonet air supply">
+
+   <fcs_function name="ballonets/slip-stream-pressure-psf">
+    <function>
+     <sum>
+      <property>atmosphere/P-psf</property>
+      <property>aero/qbar-psf</property>
+      <quotient>
+       <property>propulsion/engine/thrust-lbs</property>
+       <value>63.62</value> <!-- Propeller disc area ft^2 -->
+      </quotient>
+     </sum>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[0]">
+    <function>
+     <product>
+      <value>15.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+      <max>
+       <value>0.0</value>
+       <difference>
+        <property>ballonets/slip-stream-pressure-psf</property>
+        <property>buoyant_forces/gas-cell/ballonet[0]/pressure-psf</property>
+       </difference>
+      </max>
+     </product>
+    </function>
+    <output>ballonets/in-flow-ft3ps[0]</output>
+   </fcs_function>
+
+   <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[1]">
+    <function>
+     <product>
+      <value>15.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+      <max>
+       <value>0.0</value>
+       <difference>
+        <property>ballonets/slip-stream-pressure-psf</property>
+        <property>buoyant_forces/gas-cell/ballonet[1]/pressure-psf</property>
+       </difference>
+      </max>
+     </product>
+    </function>
+    <output>ballonets/in-flow-ft3ps[1]</output>
+   </fcs_function>
+
+  </channel>
+
+  <channel name="Ballonet out-flow valves">
+
+   <summer name="ballonets/valve-pos-norm[0]">
+    <input>ballonets/valve-cmd-norm[0]</input>
+    <input>ap/ballonet-valve-cmd[0]</input>
+    <output>buoyant_forces/gas-cell/ballonet[0]/valve_open</output>
+   </summer>
+
+   <summer name="ballonets/valve-pos-norm[1]">
+    <input>ballonets/valve-cmd-norm[1]</input>
+    <input>ap/ballonet-valve-cmd[1]</input>
+    <output>buoyant_forces/gas-cell/ballonet[1]/valve_open</output>
+   </summer>
+
+  </channel>
+
+ </system>
 
  <flight_control name="FGFCS">
 
@@ -922,7 +1001,7 @@
   <!--
   === Static Trim ============================================
   -->
-  <property>fcs/static-trim-cmd-norm</property>
+  <property value="0.65">fcs/static-trim-cmd-norm</property>
 
   <channel name="StaticTrim">
    <!--
@@ -1102,15 +1181,15 @@
   <property value="70000"> aero/constants/volume-ft3 </property>
   <property value="1698.5"> aero/constants/volume-ft3_2_3 </property>
 
+ </system>
+
+ <system file="airship_added_mass">
   <!-- Added mass constants. -->
   <property value="-0.06"> aero/constants/added-mass/k-axial </property>
   <property value="-0.89"> aero/constants/added-mass/k-traverse </property>
   <property value="-0.69"> aero/constants/added-mass/k-rotational </property>
   <property value="0.75"> aero/constants/added-mass/tweak-factor </property>
-
  </system>
-
- <system file="airship_added_mass"/>
 
  <aerodynamics>
 

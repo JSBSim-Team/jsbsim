@@ -7,32 +7,23 @@
  <use aircraft="Submarine_Scout" initialize="reset00"/>
  <run start="0.0" end="2600" dt="0.00833333">
 
-  <event name="Trim">
+  <!-- event name="Set ballonet valves">
       <notify/>
       <condition>
         sim-time-sec >= 0.0
       </condition>
-      <set name="fcs/static-trim-cmd-norm"
-           value="0.50"
-           action="FG_RAMP" tc ="55.0"/>
-  </event>
-  <event name="Set ballonet valves">
-      <notify/>
-      <condition>
-        sim-time-sec >= 0.0
-      </condition>
-      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+      <set name="ballonets/valve-cmd-norm[0]"
            value="0.15"/>
-      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+      <set name="ballonets/valve-cmd-norm[1]"
            value="0.05"/>
-  </event>
+  </event -->
   <event name="Drop ballast">
       <notify/>
       <condition>
         sim-time-sec >= 60.0
       </condition>
       <set name="inertia/pointmass-weight-lbs[0]"
-           value="730.0"
+           value="700.0"
            action="FG_RAMP" tc ="30.0"/>
   </event>
 
@@ -50,16 +41,16 @@
       <set name="propulsion/starter_cmd"    value="1"/>
   </event>
 
-  <event name="Set ballonet valves">
+  <!-- event name="Set ballonet valves">
       <notify/>
       <condition>
         sim-time-sec >= 250.0
       </condition>
-      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+      <set name="ballonets/valve-cmd-norm[0]"
            value="0.0"/>
-      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+      <set name="ballonets/valve-cmd-norm[1]"
            value="0.0"/>
-  </event>
+  </event -->
 
   <event name="yaw damper">
       <description>Rudder yaw damper</description>
@@ -77,13 +68,14 @@
       <condition>
         sim-time-sec >= 200
       </condition>
-      <set name="ap/pitch-hold-active"      value="0"/>
-      <set name="ap/pitch-setpoint-degrees" value="0"/>
+      <set name="ap/pitch-hold-active"      value="1"/>
+      <set name="ap/pitch-setpoint-degrees" value="5"/>
       <set name="fcs/elevator-cmd-norm"
            value="-0.0"
            action="FG_RAMP" tc ="1.0"/>
   </event>
-  <event name="level out 1">
+
+  <event name="level out">
       <description>Level out</description>
       <notify/>
       <condition>
@@ -92,21 +84,7 @@
       <set name="fcs/elevator-cmd-norm"
            value="0.05"
            action="FG_RAMP" tc ="60.0"/>
-      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
-           value="0.06"/>
-      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
-           value="0.14"/>
-  </event>
-  <event name="level out 2">
-      <description>Level out</description>
-      <notify/>
-      <condition>
-        sim-time-sec >= 560
-      </condition>
-      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
-           value="0.10"/>
-      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
-           value="0.10"/>
+      <set name="ap/pitch-setpoint-degrees" value="1.1"/>
   </event>
 
   <event name="Start turn">
@@ -127,9 +105,6 @@
       </condition>
       <set name="fcs/rudder-cmd-norm"
            value="-0.2"/>
-       <set name="fcs/elevator-cmd-norm"
-           value="0.07"
-           action="FG_RAMP" tc ="30.0"/>
   </event>
 
   <event name="Opposite rudder">

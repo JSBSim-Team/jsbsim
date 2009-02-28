@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.2 2008/04/25 23:40:09 andgi Exp $ -->
+<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.3 2009/02/28 00:17:00 andgi Exp $ -->
 <!--
 
-  Submarine Scout airship flight model for JSBSim with my LTA patch.
+  Submarine Scout airship flight model for JSBSim.
 
-    Copyright (C) 2007  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2007 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,14 +30,15 @@
   <property>ap/pitch-hold-active</property>
   <property>ap/pitch-setpoint-degrees</property>
   <property>ap/elevator-cmd-norm</property>
+  <property>ap/ballonet-trim-cmd-norm</property>
 
   <!-- SENSORS -->
 
   <!-- CHANNELS -->
 
-  <channel name="fcs/ap-yaw-damper">
+  <channel name="Rudder">
 
-    <pid name="Yaw damper PID"> 
+    <pid name="ap/yaw-damper-pid"> 
       <input> aero/beta-deg </input>
       <kp>   -2.000 </kp>
       <ki>    0.000 </ki>
@@ -48,62 +49,101 @@
       </clipto> 
     </pid>
 
-    <summer name="fcs/heading-ap-sum">
-      <input> fcs/yaw-damper-pid </input>
+    <summer name="ap/heading-sum">
+      <input> ap/yaw-damper-pid </input>
     </summer>
 
-    <switch name="Heading AP Autoswitch">
+    <switch name="ap/heading-switch">
       <default value="0.0"/>
-      <test logic="AND" value="fcs/heading-ap-sum">
+      <test logic="AND" value="ap/heading-sum">
             ap/yaw-damper-active == 1
             fcs/rudder-cmd-norm gt -0.1
             fcs/rudder-cmd-norm lt 0.1
       </test>
-    </switch>
-
-    <pure_gain name="Heading AP Rudder Command Normalizer">
-      <input>fcs/heading-ap-autoswitch</input>
-      <gain>1</gain>
       <output>ap/rudder-cmd-norm</output>
-    </pure_gain>
+    </switch>
 
   </channel>
 
-  <channel name="fcs/ap-pitch-hold">
+  <channel name="Elevator">
 
-    <pure_gain name="fcs/ap-pitch-setpoint-rad">
+    <pure_gain name="ap/pitch-setpoint-rad">
       <input> ap/pitch-setpoint-degrees </input>
       <gain> 0.017453 </gain>
     </pure_gain>
 
-    <summer name="fcs/pitch-error">
-      <input> -attitude/theta-rad</input>
-      <input> fcs/ap-pitch-setpoint-rad </input>
+    <summer name="ap/pitch-error-rad">
+      <input> attitude/theta-rad</input>
+      <input> -ap/pitch-setpoint-rad </input>
     </summer>
 
-    <pid name="Pitch AP PID"> 
-      <input> fcs/pitch-error </input>
-      <kp>  10.00 </kp>
+    <pid name="ap/elevator-pid"> 
+      <input> ap/pitch-error-rad </input>
+      <kp> -10.00 </kp>
       <ki>   0.00 </ki>
-      <kd>   0.01 </kd>
+      <kd>  -0.01 </kd>
       <clipto>
         <min>-1.0</min>
         <max> 1.0</max>
       </clipto> 
     </pid>
 
-    <switch name="Pitch AP Autoswitch">
+    <switch name="ap/elevator-switch">
       <default value="0.0"/>
-      <test logic="AND" value="fcs/pitch-ap-pid">
+      <test logic="AND" value="ap/elevator-pid">
             ap/pitch-hold-active == 1
+            ap/pitch-hold-active == 0
       </test>
+      <output>ap/elevator-cmd-norm</output>
     </switch>
 
-    <pure_gain name="Pitch AP Elevator Command Normalizer">
-      <input>fcs/pitch-ap-autoswitch</input>
-      <gain>1</gain>
-      <output>ap/elevator-cmd-norm</output>
-    </pure_gain>
+  </channel>
+
+  <channel name="Static trim via ballonets">
+
+   <pid name="ap/ballonet-trim-pid"> 
+    <input> ap/pitch-error-rad </input>
+    <kp>  80.00 </kp>
+    <ki>   0.00 </ki>
+    <kd>   0.00 </kd>
+    <clipto>
+     <min>-1.0</min>
+     <max> 1.0</max>
+    </clipto> 
+   </pid>
+
+   <switch name="ap/ballonet-switch">
+    <!-- greater than 0 means trim towards nose heavy. -->
+    <default value="0.0"/>
+    <test logic="AND" value="ap/ballonet-trim-pid">
+     ap/pitch-hold-active == 1
+    </test>
+    <output>ap/ballonet-trim-cmd-norm</output>
+   </switch>
+
+   <fcs_function name="ap/ballonet-valve-cmd[0]">
+    <function>
+     <product>
+      <value>-1.0</value>
+      <min>
+       <value> 0.0 </value>
+       <property>ap/ballonet-trim-cmd-norm</property>
+      </min>
+     </product>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="ap/ballonet-valve-cmd[1]">
+    <function>
+     <product>
+      <value>1.0</value>
+      <max>
+       <value> 0.0 </value>
+       <property>ap/ballonet-trim-cmd-norm</property>
+      </max>
+     </product>
+    </function>
+   </fcs_function>
 
   </channel>
 
