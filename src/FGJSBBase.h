@@ -59,7 +59,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.18 2009/02/05 21:31:45 andgi Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.19 2009/03/04 13:13:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.18 2009/02/05 21:31:45 andgi Exp $
+    @version $Id: FGJSBBase.h,v 1.19 2009/03/04 13:13:36 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,6 +332,31 @@ protected:
     string tmp;
     str >> tmp;
     return Property + "[" + tmp + "]";
+  }
+
+  static double GaussianRandomNumber(void)
+  {
+    static double V1, V2, S;
+    static int phase = 0;
+    double X;
+
+    if (phase == 0) {
+      do {
+        double U1 = (double)rand() / RAND_MAX;
+        double U2 = (double)rand() / RAND_MAX;
+
+        V1 = 2 * U1 - 1;
+        V2 = 2 * U2 - 1;
+        S = V1 * V1 + V2 * V2;
+      } while(S >= 1 || S == 0);
+
+        X = V1 * sqrt(-2 * log(S) / S);
+    } else
+      X = V2 * sqrt(-2 * log(S) / S);
+
+    phase = 1 - phase;
+
+    return X;
   }
 
 public:

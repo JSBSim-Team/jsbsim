@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.21 2008/05/31 23:13:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.22 2009/03/04 13:13:36 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,33 +326,6 @@ string FGFunction::GetValueAsString(void) const
   sprintf(buffer,"%9.6f",GetValue());
   value = string(buffer);
   return value;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGFunction::GaussianRandomNumber(void) const
-{
-  static double V1, V2, S;
-  static int phase = 0;
-  double X;
-
-  if (phase == 0) {
-    do {
-      double U1 = (double)rand() / RAND_MAX;
-      double U2 = (double)rand() / RAND_MAX;
-
-      V1 = 2 * U1 - 1;
-      V2 = 2 * U2 - 1;
-      S = V1 * V1 + V2 * V2;
-    } while(S >= 1 || S == 0);
-
-      X = V1 * sqrt(-2 * log(S) / S);
-  } else
-    X = V2 * sqrt(-2 * log(S) / S);
-
-  phase = 1 - phase;
-
-  return X;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

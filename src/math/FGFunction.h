@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.15 2008/05/31 23:13:28 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.16 2009/03/04 13:13:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -227,7 +227,6 @@ private:
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom} Type;
   string Name;
-  double GaussianRandomNumber(void) const;
   void bind(void);
   void Debug(int from);
 };
