@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.39 2009/02/06 19:13:41 andgi Exp $
+// $Id: JSBSim.cxx,v 1.40 2009/03/06 16:40:18 frohlich Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -82,7 +82,7 @@ FMAX (double a, double b)
 
 class FGFSGroundCallback : public FGGroundCallback {
 public:
-  FGFSGroundCallback(FGInterface* ifc) : mInterface(ifc) {}
+  FGFSGroundCallback(FGJSBsim* ifc) : mInterface(ifc) {}
   virtual ~FGFSGroundCallback() {}
 
   /** Get the altitude above sea level depenent on the location. */
@@ -100,17 +100,16 @@ public:
                             FGLocation& cont,
                             FGColumnVector3& n, FGColumnVector3& v) const {
     double loc_cart[3] = { l(eX), l(eY), l(eZ) };
-    double contact[3], normal[3], vel[3], lc, ff, agl;
-    int groundtype;
-    mInterface->get_agl_ft(t, loc_cart, contact, normal, vel,
-                           &groundtype, &lc, &ff, &agl);
+    double contact[3], normal[3], vel[3], agl = 0;
+    mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
+                           vel, &agl);
     n = l.GetTec2l()*FGColumnVector3( normal[0], normal[1], normal[2] );
     v = l.GetTec2l()*FGColumnVector3( vel[0], vel[1], vel[2] );
     cont = FGColumnVector3( contact[0], contact[1], contact[2] );
     return agl;
   }
 private:
-  FGInterface* mInterface;
+  FGJSBsim* mInterface;
 };
 
 /******************************************************************************/
@@ -465,10 +464,9 @@ void FGJSBsim::update( double dt )
 
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
-        double contact[3], dummy[3], lc, ff, agl;
-        int groundtype;
-        get_agl_ft(State->Getsim_time(), cart_pos, contact,
-                   dummy, dummy, &groundtype, &lc, &ff, &agl);
+        double contact[3], d[3], agl;
+        get_agl_ft(State->Getsim_time(), cart_pos, SG_METER_TO_FEET*2, contact,
+                   d, d, &agl);
         double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
 
@@ -709,9 +707,8 @@ bool FGJSBsim::copy_from_JSBsim()
     {
       double loc_cart[3] = { l(FGJSBBase::eX), l(FGJSBBase::eY), l(FGJSBBase::eZ) };
       double contact[3], d[3], sd, t;
-      int id;
       is_valid_m(&t, d, &sd);
-      get_agl_ft(t, loc_cart, contact, d, d, &id, &sd, &sd, &sd);
+      get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, d, d, &sd);
       double rwrad
         = FGColumnVector3( contact[0], contact[1], contact[2] ).Magnitude();
       _set_Runway_altitude( rwrad - get_Sea_level_radius() );
@@ -1169,6 +1166,23 @@ void FGJSBsim::update_ic(void)
    }
 }
 
+bool
+FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
+                     double contact[3], double normal[3], double vel[3],
+                     double *agl)
+{
+   double angularVel[3];
+   const SGMaterial* material;
+   simgear::BVHNode::Id id;
+   if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
+                                angularVel, material, id))
+       return false;
+   SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
+   SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
+   *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
+   return true;
+}
+
 inline static double dot3(const FGColumnVector3& a, const FGColumnVector3& b)
 {
     return a(1) * b(1) + a(2) * b(2) + a(3) * b(3);
@@ -1241,12 +1255,10 @@ void FGJSBsim::update_external_forces(double t_off)
     double contact[3];
     double ground_normal[3];
     double ground_vel[3];
-    int ground_type;
-    const SGMaterial* ground_material;
     double root_agl_ft;
 
     if (!got_wire) {
-        bool got = get_agl_ft(t_off, hook_area[1], 0, contact, ground_normal, ground_vel, &ground_type, &ground_material, &root_agl_ft);
+        bool got = get_agl_ft(t_off, hook_area[1], 0, contact, ground_normal, ground_vel, &root_agl_ft);
         if (got && root_agl_ft > 0 && root_agl_ft < hook_length) {
             FGColumnVector3 ground_normal_body = Tl2b * (Tec2l * FGColumnVector3(ground_normal[0], ground_normal[1], ground_normal[2]));
             FGColumnVector3 contact_body = Tl2b * Location.LocationToLocal(FGColumnVector3(contact[0], contact[1], contact[2]));

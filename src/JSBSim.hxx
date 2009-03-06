@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.9 2008/10/14 23:43:54 dpculp Exp $
+    @version $Id: JSBSim.hxx,v 1.10 2009/03/06 16:40:18 frohlich Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -207,6 +207,9 @@ public:
     void do_trim(void);
     void update_ic(void);
 
+    bool get_agl_ft(double t, const double pt[3], double alt_off,
+                    double contact[3], double normal[3], double vel[3],
+                    double *agl);
 private:
     JSBSim::FGFDMExec *fdmex;
     JSBSim::FGInitialCondition *fgic;
