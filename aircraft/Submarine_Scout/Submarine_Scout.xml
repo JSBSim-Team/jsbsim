@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.8 2009/02/28 00:16:58 andgi Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.9 2009/03/13 21:52:56 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -35,7 +35,7 @@
   <license licenseName="GPL"
            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
   <filecreationdate>2007-02-11</filecreationdate>
-  <version>$Id: Submarine_Scout.xml,v 1.8 2009/02/28 00:16:58 andgi Exp $</version>
+  <version>$Id: Submarine_Scout.xml,v 1.9 2009/03/13 21:52:56 andgi Exp $</version>
 
   <reference refID="Freeman:1932:Akron"
              author="Hugh B. Freeman"
@@ -433,7 +433,7 @@
     <x_radius unit="M">  6.45 </x_radius>
     <y_radius unit="M">  3.00 </y_radius>
     <z_radius unit="M">  2.23 </z_radius>
-    <max_overpressure unit="PA"> 250.0 </max_overpressure> 
+    <max_overpressure unit="PA"> 255.0 </max_overpressure> 
     <valve_coefficient unit="M4*SEC/KG"> 0.01 </valve_coefficient>
     <fullness>0.5</fullness>
     <heat>
@@ -727,7 +727,7 @@
    </location>
    <!-- 196.39 kg for 60 UK gallon at AVGAS density 0.72 kg/liter. -->
    <capacity unit="KG"> 196.39 </capacity>
-   <contents unit="KG"> 163.5 </contents>
+   <contents unit="KG"> 196.39 </contents>
   </tank>
   <tank type="FUEL">
    <location unit="M">
@@ -737,7 +737,7 @@
    </location>
    <!-- 196.39 kg for 60 UK gallon at AVGAS density 0.72 kg/liter. -->
    <capacity unit="KG"> 196.39 </capacity>
-   <contents unit="KG"> 163.5 </contents>
+   <contents unit="KG"> 196.39 </contents>
   </tank>
 
  </propulsion>
@@ -764,7 +764,8 @@
     - Controls:
       - rudder pedals
       - elevator wheel mounted in a fore-aft direction across the seat (?)
-      - Valve cord to top (and bottom?) gas valve valve(s)
+      - Valve cord to top gas valve
+      - Valve cords to the ballonet valves(?)
       - Rip cord
 
    Observer/Wireless operator:
@@ -774,31 +775,24 @@
 
   <channel name="Instruments">
 
-   <fcs_function name="instrumentation/gas-pressure-psf">
+   <fcs_function name="instrumentation/gas-pressure-psf[0]">
     <function>
      <difference>
       <property> buoyant_forces/gas-cell/pressure-psf </property>
       <property> atmosphere/P-psf </property>
      </difference>
     </function>   
+    <output>/instrumentation/gas-manometer[0]/gas-pressure-psf</output>
    </fcs_function>
 
-   <fcs_function name="instrumentation/ballonet-pressure-psf[0]">
+   <fcs_function name="instrumentation/gas-pressure-psf[1]">
     <function>
      <difference>
-      <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf </property>
+      <property> buoyant_forces/gas-cell/pressure-psf </property>
       <property> atmosphere/P-psf </property>
      </difference>
     </function>   
-   </fcs_function>
-
-   <fcs_function name="instrumentation/ballonet-pressure-psf[1]">
-    <function>
-     <difference>
-      <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
-      <property> atmosphere/P-psf </property>
-     </difference>
-    </function>   
+    <output>/instrumentation/gas-manometer[1]/gas-pressure-psf</output>
    </fcs_function>
 
   </channel>
@@ -809,11 +803,13 @@
  -->
  <autopilot file="Submarine_Scout_crew_ap">
   <limitation>
+   The real aircraft did not have any autopilot. This autopilot is
+   mostly intended for scripted flights in JSBSim/standalone.
    The autopilot is only minimally tuned.
   </limitation>
  </autopilot>
 
- <system name="Ballonet control">
+ <system name="Ballonet and gas control">
 
   <documentation>
    "Two ballonets are provided, one forward and one aft, the capacity
@@ -831,15 +827,52 @@
 
    "The valve cords are led to the pilot's seat through eyes attached
    to the envelope."  [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "Two gas valves are also fitted, one on the top of the envelope,
+   the other at the bottom.  The bottom gas valve spring is set to
+   open at 30 to 35 mm. pressure, the top valve is hand controlled
+   only."   [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "One ripping panel is fitted, which is situated on the top of the
+   envelope towards the nose.  It has a length of 14 feet 5 inches and
+   a breadth of about 8 inches."  [Whale:1919:BA] on the S.S.B.E. 2C.
   </documentation>
   <limitation>
    The slip stream pressure calculation does not take the direction of the
    relative wind into account.
   </limitation>
 
-  <!-- The pilot's ballonet valve inputs. -->
-  <property>ballonets/valve-cmd-norm[0]</property>
-  <property>ballonets/valve-cmd-norm[1]</property>
+  <!-- Pilot inputs. -->
+  <property value="0.0">fcs/gas-valve-cmd-norm[0]</property>
+  <property value="0.0">fcs/ballonet-valve-cmd-norm[0]</property>
+  <property value="0.0">fcs/ballonet-valve-cmd-norm[1]</property>
+  <property value="0.0">fcs/rip-cord-cmd-norm</property>
+
+  <channel name="Gas valve">
+
+   <switch name="fcs/ripped-sample-hold">
+    <default value="fcs/rip-cord-cmd-norm"/>
+    <test logic="AND" value="fcs/ripped-sample-hold">
+     fcs/ripped-sample-hold GE 1.0
+    </test>
+   </switch>
+
+   <fcs_function name="fcs/gas-valve-pos-norm">
+    <function>
+     <sum>
+      <property>fcs/gas-valve-cmd-norm</property>
+      <property>ap/gas-valve-cmd</property>
+      <product>
+       <value>100.0</value>
+       <property>fcs/ripped-sample-hold</property>
+      </product>
+     </sum>
+    </function>
+    <output>buoyant_forces/gas-cell/valve_open</output>
+   </fcs_function>
+
+  </channel>
+
 
   <channel name="Ballonet air supply">
 
@@ -859,7 +892,7 @@
    <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[0]">
     <function>
      <product>
-      <value>15.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+      <value>20.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
       <max>
        <value>0.0</value>
        <difference>
@@ -875,7 +908,7 @@
    <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[1]">
     <function>
      <product>
-      <value>15.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+      <value>20.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
       <max>
        <value>0.0</value>
        <difference>
@@ -892,23 +925,31 @@
 
   <channel name="Ballonet out-flow valves">
 
-   <summer name="ballonets/valve-pos-norm[0]">
-    <input>ballonets/valve-cmd-norm[0]</input>
-    <input>ap/ballonet-valve-cmd[0]</input>
+   <fcs_function name="ballonets/valve-pos-norm[0]">
+    <function>
+     <sum>
+      <property>fcs/ballonet-valve-cmd-norm[0]</property>
+      <property>ap/ballonet-valve-cmd[0]</property>
+     </sum>
+    </function>
     <output>buoyant_forces/gas-cell/ballonet[0]/valve_open</output>
-   </summer>
+   </fcs_function>
 
-   <summer name="ballonets/valve-pos-norm[1]">
-    <input>ballonets/valve-cmd-norm[1]</input>
-    <input>ap/ballonet-valve-cmd[1]</input>
+   <fcs_function name="ballonets/valve-pos-norm[1]">
+    <function>
+     <sum>
+      <property>fcs/ballonet-valve-cmd-norm[1]</property>
+      <property>ap/ballonet-valve-cmd[1]</property>
+     </sum>
+    </function>
     <output>buoyant_forces/gas-cell/ballonet[1]/valve_open</output>
-   </summer>
+   </fcs_function>
 
   </channel>
 
  </system>
 
- <flight_control name="FGFCS">
+ <flight_control name="Aerodynamic controls">
 
   <!--
   === Pitch ==================================================
@@ -1062,8 +1103,7 @@
 
  <system name="Weigh_Off">
   <channel name="Initial_Static_Weigh_Off">
-   <!-- This system ensures that the ship starts slightly heavy. -->
-   <!-- The weight of inertia/pointmass-weight-lbs[3] is set from Nasal. -->
+   <!-- The weight of inertia/pointmass-weight-lbs[0] is set from Nasal. -->
 
    <summer name="static-condition/net-lift-lbs">
     <input> buoyant_forces/gas-cell[0]/buoyancy-lbs </input>
@@ -1172,24 +1212,20 @@
  ==== Aerodynamics ==========================================================
  -->
 
- <system name="constants">
-
+ <system name="Aerodynamic constants">
   <!-- Aerodynamic constants. -->
-  <property value="143.42"> aero/constants/length-ft </property>
-  <property value="30.0"> aero/constants/diameter-ft </property>
+  <property value="143.42">  aero/constants/length-ft </property>
+  <property value="30.0">    aero/constants/diameter-ft </property>
   <property value="21469.3"> aero/constants/length-diameter-ft2 </property>
-  <property value="70000"> aero/constants/volume-ft3 </property>
-  <property value="1698.5"> aero/constants/volume-ft3_2_3 </property>
-
- </system>
-
- <system file="airship_added_mass">
+  <property value="70000">   aero/constants/volume-ft3 </property>
+  <property value="1698.5">  aero/constants/volume-ft3_2_3 </property>
   <!-- Added mass constants. -->
   <property value="-0.06"> aero/constants/added-mass/k-axial </property>
   <property value="-0.89"> aero/constants/added-mass/k-traverse </property>
   <property value="-0.69"> aero/constants/added-mass/k-rotational </property>
-  <property value="0.75"> aero/constants/added-mass/tweak-factor </property>
+  <property value="0.75">  aero/constants/added-mass/tweak-factor </property>
  </system>
+ <system file="airship_added_mass"/>
 
  <aerodynamics>
 

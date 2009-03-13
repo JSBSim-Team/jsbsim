@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.3 2009/02/28 00:17:00 andgi Exp $ -->
+<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.4 2009/03/13 21:52:56 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -79,9 +79,9 @@
 
     <pid name="ap/elevator-pid"> 
       <input> ap/pitch-error-rad </input>
-      <kp> -10.00 </kp>
+      <kp>   5.00 </kp>
       <ki>   0.00 </ki>
-      <kd>  -0.01 </kd>
+      <kd>   0.01 </kd>
       <clipto>
         <min>-1.0</min>
         <max> 1.0</max>
@@ -92,7 +92,6 @@
       <default value="0.0"/>
       <test logic="AND" value="ap/elevator-pid">
             ap/pitch-hold-active == 1
-            ap/pitch-hold-active == 0
       </test>
       <output>ap/elevator-cmd-norm</output>
     </switch>
@@ -103,7 +102,7 @@
 
    <pid name="ap/ballonet-trim-pid"> 
     <input> ap/pitch-error-rad </input>
-    <kp>  80.00 </kp>
+    <kp>  40.00 </kp>
     <ki>   0.00 </ki>
     <kd>   0.00 </kd>
     <clipto>
@@ -142,6 +141,16 @@
        <property>ap/ballonet-trim-cmd-norm</property>
       </max>
      </product>
+    </function>
+   </fcs_function>
+
+  </channel>
+
+  <channel name="Envelope pressure">
+
+   <fcs_function name="ap/gas-valve-cmd">
+    <function>
+     <value>0.0</value>
     </function>
    </fcs_function>
 

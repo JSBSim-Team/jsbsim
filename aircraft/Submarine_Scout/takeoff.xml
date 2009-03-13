@@ -7,23 +7,13 @@
  <use aircraft="Submarine_Scout" initialize="reset00"/>
  <run start="0.0" end="2600" dt="0.00833333">
 
-  <!-- event name="Set ballonet valves">
-      <notify/>
-      <condition>
-        sim-time-sec >= 0.0
-      </condition>
-      <set name="ballonets/valve-cmd-norm[0]"
-           value="0.15"/>
-      <set name="ballonets/valve-cmd-norm[1]"
-           value="0.05"/>
-  </event -->
   <event name="Drop ballast">
       <notify/>
       <condition>
         sim-time-sec >= 60.0
       </condition>
       <set name="inertia/pointmass-weight-lbs[0]"
-           value="700.0"
+           value="600.0"
            action="FG_RAMP" tc ="30.0"/>
   </event>
 
@@ -34,7 +24,7 @@
         sim-time-sec >= 120.0
       </condition>
       <set name="fcs/throttle-cmd-norm"
-           value="0.3" action="FG_RAMP" tc ="0.5"/>
+           value="0.6" action="FG_RAMP" tc ="0.5"/>
       <set name="fcs/mixture-cmd-norm"
            value="0.87" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd"    value="3"/>
@@ -56,7 +46,7 @@
       <description>Rudder yaw damper</description>
       <notify/>
       <condition>
-        sim-time-sec >= 200
+        sim-time-sec >= 150
       </condition>
       <set name="ap/yaw-damper-active"      value="1"/>
       <set name="fcs/elevator-cmd-norm"     value="-0.4"/>
@@ -66,12 +56,12 @@
       <description>Pitch hold</description>
       <notify/>
       <condition>
-        sim-time-sec >= 200
+        sim-time-sec >= 160
       </condition>
       <set name="ap/pitch-hold-active"      value="1"/>
       <set name="ap/pitch-setpoint-degrees" value="5"/>
       <set name="fcs/elevator-cmd-norm"
-           value="-0.0"
+           value="0.0"
            action="FG_RAMP" tc ="1.0"/>
   </event>
 
@@ -81,10 +71,10 @@
       <condition>
         sim-time-sec >= 500
       </condition>
-      <set name="fcs/elevator-cmd-norm"
+      <!-- set name="fcs/elevator-cmd-norm"
            value="0.05"
-           action="FG_RAMP" tc ="60.0"/>
-      <set name="ap/pitch-setpoint-degrees" value="1.1"/>
+           action="FG_RAMP" tc ="60.0"/ -->
+      <set name="ap/pitch-setpoint-degrees" value="3.8"/>
   </event>
 
   <event name="Start turn">
@@ -132,6 +122,7 @@
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
