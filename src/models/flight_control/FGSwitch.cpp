@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.11 2008/01/03 06:27:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.12 2009/03/15 16:29:52 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +109,8 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       tests.push_back(current_test);
     }
 
-    if (test_element->GetName() != "output") { // this is not an output element
+    if (test_element->GetName() != "output"
+        && test_element->GetName() != "description") { // this is not an output element
       value = test_element->GetAttributeValue("value");
       if (value.empty()) {
         cerr << "No VALUE supplied for switch component: " << Name << endl;
