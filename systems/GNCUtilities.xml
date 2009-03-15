@@ -1,103 +1,100 @@
 <?xml version="1.0"?>
-<!--
+<system name="GNC Utilities"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+<!-- #######################################################################
 
   Author:   Jon Berndt
   Date:     January 2009
   Function: Calculates useful GNC values
 
--->
-<system name="GNC Utilities"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+  Inputs: 
+    position/lat-gc-rad (geocentric latitude in radians)
+    position/long-gc-rad (longitude in radians)
 
-<!-- ####################################################################### -->
+    [Declared Interface Parameters]
+    guidance/target_wp_latitude_rad
+    guidance/target_wp_longitude_rad
 
-  <!--
-    Inputs: 
-      position/lat-gc-rad (geocentric latitude in radians)
-      position/long-gc-rad (longitude in radians)
+  Introduced parameters (temporary terms):
+    guidance/delta-lat-rad
+    guidance/delta-lon-rad
+    guidance/heading-to-waypoint-rad
+    guidance/wp-distance-a
+    guidance/heading-to-waypoint-positive
 
-      [Declared Interface Parameters]
-      ap/wp_latitude_rad
-      ap/wp_longitude_rad
+  Outputs
+    guidance/wp-distance (feet)
+    guidance/wp-heading-rad (rad)
+    guidance/wp-heading-deg (deg)
 
-    Introduced parameters (temporary terms):
-      fcs/delta-lat-rad
-      fcs/delta-lon-rad
-      fcs/heading-to-waypoint-rad
-      fcs/wp-distance-a
-      fcs/heading-to-waypoint-positive
+  The calculations, below, implement the Haversine formulas to calculate
+  heading and distance to a set of lat/long coordinates from the current
+  position. The latitude and longitude are expected to be in radian units
+  and are measured from the 0 meridian and the equator, with positive 
+  longitude being east from there, and positive latitude being north.
 
-    Outputs
-      fcs/wp-distance (feet)
-      fcs/wp-heading-rad (rad)
-      fcs/wp-heading-deg (deg)
+  The basic equations are:
 
-    The calculations, below, implement the Haversine formulas to calculate
-    heading and distance to a set of lat/long coordinates from the current
-    position. The latitude and longitude are expected to be in radian units
-    and are measured from the 0 meridian and the equator, with positive 
-    longitude being east from there, and positive latitude being north.
+  R = earth’s radius
+  Δlat = lat2 − lat1
+  Δlong = long2 − long1
+  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
+  c = 2∙atan2(√a, √(1−a))
+  d = R∙c
+  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1) ∙cos(lat2)∙cos(Δlong) )
 
-    The basic equations are:
+  Usage
+  =====
 
-    R = earth’s radius
-    Δlat = lat2 − lat1
-    Δlong = long2 − long1
-    a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
-    c = 2∙atan2(√a, √(1−a))
-    d = R∙c
-    θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1) ∙cos(lat2)∙cos(Δlong) )
+  To use this channel, include it in a <system> element as follows:
+  
+  <system file="GNCUtilities"/>
+  
+  Prior to including including the above system, you will want to create
+  another system in which you set the target lat/lon (in radians). The
+  waypoint latitude and longitude properties are mentioned above
+  (Declared Interface Parameters):
+  
+    guidance/target_wp_latitude_rad
+    guidance/target_wp_longitude_rad
 
-    Usage
-    =====
+  The outputs from the AP Waypoint Heading Director channel are the heading
+  to the waypoint from the current location, and the distance to the waypoint
+  from the current position,
+  
+    fcs/wp-distance
+    fcs/wp-heading-rad
 
-    To use this channel, include it in a <system> element as follows:
-    
-    <system file="GNCUtilities"/>
-    
-    Prior to including including the above system, you will want to create
-    another system in which you set the target lat/lon (in radians). The
-    waypoint latitude and longitude properties are mentioned above
-    (Declared Interface Parameters):
-    
-      ap/wp_latitude_rad
-      ap/wp_longitude_rad
+######################################################################## -->
 
-    The outputs from the AP Waypoint Heading Director channel are the heading
-    to the waypoint from the current location, and the distance to the waypoint
-    from the current position,
-    
-      fcs/wp-distance
-      fcs/wp-heading-rad
-  -->
+  <property> guidance/target_wp_latitude_rad </property>
+  <property> guidance/target_wp_longitude_rad </property>
 
-  <property> ap/wp_latitude_rad </property>
-  <property> ap/wp_longitude_rad </property>
+  <channel name="Guidance Waypoint Heading Director">
 
-  <channel name="AP Waypoint Heading Director">
-
-    <fcs_function name="fcs/delta-lat-rad">
+    <fcs_function name="guidance/delta-lat-rad">
       <!-- Delta latitude in radians -->
       <function>
         <difference>
-          <property> ap/wp_latitude_rad </property>
+          <property> guidance/target_wp_latitude_rad </property>
           <property> position/lat-gc-rad </property>
         </difference>
       </function>
     </fcs_function>
 
-    <fcs_function name="fcs/delta-lon-rad">
+    <fcs_function name="guidance/delta-lon-rad">
       <!-- Delta longitude in radians -->
       <function>
         <difference>
-          <property> ap/wp_longitude_rad </property>
+          <property> guidance/target_wp_longitude_rad </property>
           <property> position/long-gc-rad </property>
         </difference>
       </function>
     </fcs_function>
 
-    <fcs_function name="fcs/heading-to-waypoint-rad">
+    <fcs_function name="guidance/heading-to-waypoint-rad">
       <!--
       The heading in radians to a specified waypoint, given the
       current position.
@@ -105,25 +102,25 @@
       <function>
         <atan2> <!-- atan2 (deltaY, deltaX )-->
           <product>
-            <sin><property> fcs/delta-lon-rad </property></sin>
-            <cos><property> ap/wp_latitude_rad </property></cos>
+            <sin><property> guidance/delta-lon-rad </property></sin>
+            <cos><property> guidance/target_wp_latitude_rad </property></cos>
           </product>
           <difference>
             <product>
               <cos><property> position/lat-gc-rad </property></cos>
-              <sin><property> ap/wp_latitude_rad </property></sin>
+              <sin><property> guidance/target_wp_latitude_rad </property></sin>
             </product>
             <product>
               <sin><property> position/lat-gc-rad </property></sin>
-              <cos><property> ap/wp_latitude_rad </property></cos>
-              <cos><property> fcs/delta-lon-rad </property></cos>
+              <cos><property> guidance/target_wp_latitude_rad </property></cos>
+              <cos><property> guidance/delta-lon-rad </property></cos>
             </product>
           </difference>
         </atan2>
       </function>
     </fcs_function>
 
-    <fcs_function name="fcs/wp-distance-a">
+    <fcs_function name="guidance/wp-distance-a">
       <!--
       This is an intermediate distance calculation between
       the current location and the specified waypoint.
@@ -133,7 +130,7 @@
           <pow>
             <sin>
               <quotient>
-                <property> fcs/delta-lat-rad </property>
+                <property> guidance/delta-lat-rad </property>
                 <value> 2.0 </value>
               </quotient>
             </sin>
@@ -144,12 +141,12 @@
               <property> position/lat-gc-rad </property>
             </cos>
             <cos>
-              <property> ap/wp_latitude_rad </property>
+              <property> guidance/target_wp_latitude_rad </property>
             </cos>
             <pow>
               <sin>
                 <quotient>
-                  <property> fcs/delta-lon-rad </property>
+                  <property> guidance/delta-lon-rad </property>
                   <value> 2.0 </value>
                 </quotient>
               </sin>
@@ -160,7 +157,7 @@
       </function>
     </fcs_function> 
 
-    <fcs_function name="fcs/wp-distance">
+    <fcs_function name="guidance/wp-distance">
       <!--
         This is the final distance calculation between the current location and
         the specified waypoint. If you want this calculation to output in units
@@ -172,13 +169,13 @@
           <value> 2.0 </value>
           <atan2>
             <pow>
-              <property> fcs/wp-distance-a </property>
+              <property> guidance/wp-distance-a </property>
               <value> 0.5 </value>
             </pow>
             <pow>
               <difference>
                 <value> 1.0 </value>
-                <property> fcs/wp-distance-a </property>
+                <property> guidance/wp-distance-a </property>
               </difference>
               <value> 0.5 </value>
             </pow>
@@ -188,20 +185,20 @@
       </function>
     </fcs_function> 
 
-    <summer name="fcs/heading-to-waypoint-positive">
-      <input> fcs/heading-to-waypoint-rad </input>
+    <summer name="guidance/heading-to-waypoint-positive">
+      <input> guidance/heading-to-waypoint-rad </input>
       <bias> 6.283 </bias>
     </summer>
 
-    <switch name="fcs/wp-heading-rad">
-      <default value="fcs/heading-to-waypoint-positive"/>
-      <test value="fcs/heading-to-waypoint-rad">
-        fcs/heading-to-waypoint-rad gt 0.0
+    <switch name="guidance/wp-heading-rad">
+      <default value="guidance/heading-to-waypoint-positive"/>
+      <test value="guidance/heading-to-waypoint-rad">
+        guidance/heading-to-waypoint-rad gt 0.0
       </test>
     </switch>
 
-    <pure_gain name="fcs/wp-heading-deg">
-      <input> fcs/wp-heading-rad </input>
+    <pure_gain name="guidance/wp-heading-deg">
+      <input> guidance/wp-heading-rad </input>
       <gain> 57.3 </gain>
     </pure_gain>
 
@@ -221,7 +218,7 @@
 
   Inputs:
   
-    ap/actual-heading-rad
+    navigation/actual-heading-rad
     ap/specified-heading-rad
     ap/heading-selector-switch
   
@@ -258,7 +255,7 @@
   =====
 
   To use this channel, the actual heading should be copied into the
-  ap/actual-heading-rad property. The desired target heading needs to be
+  navigation/actual-heading-rad property. The desired target heading needs to be
   copied into the ap/specified-heading-rad property - OR, the heading calculated
   above from a given waypoint lat/lon can be used. The ap/heading-selector-switch
   property should be set according to how the target heading should be supplied.
@@ -272,82 +269,82 @@
   compass heading to the given waypoint lat/lon.
 -->
 
-  <property> ap/actual-heading-rad </property>
-  <property> ap/specified-heading-rad </property>
-  <property> ap/heading-selector-switch </property>
+  <property> navigation/actual-heading-rad </property>
+  <property> guidance/specified-heading-rad </property>
+  <property> guidance/heading-selector-switch </property>
 
   <channel name="Included Angle to Heading">
 
-    <switch name="ap/selected_target_heading">
-      <default value="fcs/wp-heading-rad"/>
-      <test value="ap/specified-heading-rad">
-        ap/heading-selector-switch eq 1
+    <switch name="guidance/selected_target_heading">
+      <default value="guidance/wp-heading-rad"/>
+      <test value="guidance/specified-heading-rad">
+        guidance/heading-selector-switch eq 1
       </test>
     </switch>
 
-    <fcs_function name="ap/x1">
+    <fcs_function name="guidance/x1">
       <function>
-        <cos><p> ap/actual-heading-rad </p></cos>
+        <cos><p> navigation/actual-heading-rad </p></cos>
       </function>
     </fcs_function>
   
-    <fcs_function name="ap/y1">
+    <fcs_function name="guidance/y1">
       <function>
-        <sin><p> ap/actual-heading-rad </p></sin>
+        <sin><p> navigation/actual-heading-rad </p></sin>
       </function>
     </fcs_function>
 
-    <fcs_function name="ap/x2">
+    <fcs_function name="guidance/x2">
       <function>
-        <cos><p> ap/selected_target_heading </p></cos>
+        <cos><p> guidance/selected_target_heading </p></cos>
       </function>
     </fcs_function>
   
-    <fcs_function name="ap/y2">
+    <fcs_function name="guidance/y2">
       <function>
-        <sin><p> ap/selected_target_heading </p></sin>
+        <sin><p> guidance/selected_target_heading </p></sin>
       </function>
     </fcs_function>
 
-    <fcs_function name="ap/angle-to-heading-rad">
+    <fcs_function name="guidance/angle-to-heading-rad">
       <function>
         <acos>
           <sum>
             <product>
-              <p>ap/x1</p>
-              <p>ap/x2</p>
+              <p>guidance/x1</p>
+              <p>guidance/x2</p>
             </product>
             <product>
-              <p>ap/y1</p>
-              <p>ap/y2</p>
+              <p>guidance/y1</p>
+              <p>guidance/y2</p>
             </product>
           </sum>
         </acos>
       </function>
     </fcs_function>
 
-    <fcs_function name="ap/x1y2">
+    <fcs_function name="guidance/x1y2">
       <function>
         <product>
-          <p> ap/x1 </p>
-          <p> ap/y2 </p>
+          <p> guidance/x1 </p>
+          <p> guidance/y2 </p>
         </product>
       </function>
     </fcs_function>
 
-    <fcs_function name="ap/x2y1">
+    <fcs_function name="guidance/x2y1">
       <function>
         <product>
-          <p> ap/x2 </p>
-          <p> ap/y1 </p>
+          <p> guidance/x2 </p>
+          <p> guidance/y1 </p>
         </product>
       </function>
     </fcs_function>
 
-    <switch name="ap/angle-to-heading-sense">
+    <switch name="guidance/angle-to-heading-sense">
       <default value="-1"/>
       <test value="1">
-        ap/x1y2 gt ap/x2y1
+        guidance/x1y2 gt guidance/x2y1
       </test>
     </switch>
 
