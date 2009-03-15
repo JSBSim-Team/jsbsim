@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.51 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.52 2009/03/15 15:37:22 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -541,13 +541,18 @@ bool FGFCS::Load(Element* el, SystemType systype)
   property_element = document->FindElement("property");
   if (property_element) cout << endl << "    Declared properties" << endl << endl;
   while (property_element) {
-    double value=0.0;
-    if ( ! property_element->GetAttributeValue("value").empty())
-      value = property_element->GetAttributeValueAsNumber("value");
-    interface_properties.push_back(new double(value));
     interface_property_string = property_element->GetDataLine();
-    PropertyManager->Tie(interface_property_string, interface_properties.back());
-    cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+    if (PropertyManager->HasNode(interface_property_string)) {
+      cout << "      Property " << interface_property_string << " is already defined." << endl;
+    } else {
+      double value=0.0;
+      if ( ! property_element->GetAttributeValue("value").empty())
+        value = property_element->GetAttributeValueAsNumber("value");
+      interface_properties.push_back(new double(value));
+      interface_property_string = property_element->GetDataLine();
+      PropertyManager->Tie(interface_property_string, interface_properties.back());
+      cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+    }
     property_element = document->FindNextElement("property");
   }
 
@@ -558,26 +563,24 @@ bool FGFCS::Load(Element* el, SystemType systype)
 
   if (!fname.empty()) {
     property_element = el->FindElement("property");
-    if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
+    if (property_element && debug_lvl > 0) cout << endl << "    Overriding properties" << endl << endl;
     while (property_element) {
       double value=0.0;
       if ( ! property_element->GetAttributeValue("value").empty())
         value = property_element->GetAttributeValueAsNumber("value");
 
       interface_property_string = property_element->GetDataLine();
-      
-      FGPropertyManager* node = PropertyManager->GetNode(interface_property_string);
-      if (node) {
+      if (PropertyManager->HasNode(interface_property_string)) {
+        FGPropertyManager* node = PropertyManager->GetNode(interface_property_string);
         cout << "      " << "Overriding value for property " << interface_property_string
              << " (old value: " << node->getDoubleValue() << "  new value: " << value << ")" << endl;
         node->setDoubleValue(value);
       } else {
         interface_properties.push_back(new double(value));
         PropertyManager->Tie(interface_property_string, interface_properties.back());
-	if (debug_lvl > 0)
+        if (debug_lvl > 0)
           cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
       }
-      
       
       property_element = el->FindNextElement("property");
     }
