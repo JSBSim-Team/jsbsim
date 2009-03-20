@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.22 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.23 2009/03/20 02:08:36 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,15 +257,15 @@ FGMatrix33& FGAerodynamics::GetTw2b(void)
   cb = cos(beta);
   sb = sin(beta);
 
-  mTw2b(1,1) = ca*cb;
+  mTw2b(1,1) =  ca*cb;
   mTw2b(1,2) = -ca*sb;
   mTw2b(1,3) = -sa;
-  mTw2b(2,1) = sb;
-  mTw2b(2,2) = cb;
-  mTw2b(2,3) = 0.0;
-  mTw2b(3,1) = sa*cb;
+  mTw2b(2,1) =  sb;
+  mTw2b(2,2) =  cb;
+  mTw2b(2,3) =  0.0;
+  mTw2b(3,1) =  sa*cb;
   mTw2b(3,2) = -sa*sb;
-  mTw2b(3,3) = ca;
+  mTw2b(3,3) =  ca;
 
   return mTw2b;
 }

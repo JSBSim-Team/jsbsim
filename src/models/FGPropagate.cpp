@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.34 2009/02/11 01:24:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.35 2009/03/20 02:08:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,6 +125,10 @@ bool FGPropagate::InitModel(void)
   last_vPQRdot.InitMatrix();
   vPQRdot.InitMatrix();
   
+  last2_vQtrndot = FGQuaternion(0,0,0);
+  last_vQtrndot = FGQuaternion(0,0,0);
+  vQtrndot = FGQuaternion(0,0,0);
+
   last2_vUVWdot.InitMatrix();
   last_vUVWdot.InitMatrix();
   vUVWdot.InitMatrix();
