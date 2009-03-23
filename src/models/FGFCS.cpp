@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.53 2009/03/23 03:13:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.54 2009/03/23 21:21:08 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,7 +153,7 @@ bool FGFCS::InitModel(void)
 
   }
 
-  for (int i=0; FCSComponents.size(); i++) {
+  for (int i=0; i<FCSComponents.size(); i++) {
     if (FCSComponents[i]->GetType() == "LAG" ||
         FCSComponents[i]->GetType() == "LEAD_LAG" ||
         FCSComponents[i]->GetType() == "WASHOUT" ||
@@ -166,7 +166,7 @@ bool FGFCS::InitModel(void)
     }
   }
 
-  for (int i=0; APComponents.size(); i++) {
+  for (int i=0; i<APComponents.size(); i++) {
     if (APComponents[i]->GetType() == "LAG" ||
         APComponents[i]->GetType() == "LEAD_LAG" ||
         APComponents[i]->GetType() == "WASHOUT" ||

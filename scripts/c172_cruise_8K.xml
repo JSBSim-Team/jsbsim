@@ -5,24 +5,52 @@
     name="C172 cruise at 4K, 100% power">
   <description>This run is for testing the C172 altitude hold autopilot and cruise performance</description>
   <use aircraft="c172x" initialize="reset01"/>
+
   <run start="0.0" end="50" dt="0.0083333">
+  
+    <property value="0"> simulation/run_id </property>
+
     <event name="Start engine">
       <condition>
-        sim-time-sec  ge  0.25
+        sim-time-sec  ge  0.01
       </condition>
-      <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.59" tc="0.05"/>
-      <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="0.85" tc="0.05"/>
+      <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.50" tc="0.05"/>
+      <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="1.0" tc="0.05"/> 
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify/>
     </event> 
+
     <event name="Trim">
       <condition>
         sim-time-sec  gt  1.0
       </condition>
-      <set name="simulation/do_simple_trim" value="0"/>
-      <notify/>
+      <set name="simulation/do_simple_trim" value="1"/>
+      <notify>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+        <property> attitude/psi-rad </property>
+        <property> attitude/theta-rad </property>
+        <property> attitude/phi-rad </property>
+        <property> position/h-agl-ft </property>
+        <property> accelerations/pdot-rad_sec2 </property>
+        <property> accelerations/qdot-rad_sec2 </property>
+        <property> accelerations/rdot-rad_sec2 </property>
+        <property> propulsion/engine/thrust-lbs </property>
+        <property> propulsion/engine/propeller-rpm </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> fcs/elevator-cmd-norm </property>
+        <property> fcs/aileron-cmd-norm </property>
+        <property> fcs/rudder-cmd-norm </property>
+        <property> fcs/elevator-pos-norm </property>
+        <property> fcs/right-aileron-pos-norm </property>
+        <property> fcs/rudder-pos-norm </property>
+      </notify>
     </event>
+
     <event name="Hold heading and altitude">
       <condition>sim-time-sec  ge  5</condition>
       <set name="ap/heading_setpoint" value="200"/>
@@ -31,5 +59,28 @@
       <set name="ap/altitude_hold" value="1"/>
       <notify/>
     </event>
+
+    <event name="Reset">
+      <condition>
+        sim-time-sec  ge  10.0
+      </condition>
+      <set name="ap/heading_setpoint" value="0"/>
+      <set name="ap/altitude_setpoint" value="0"/>
+      <set name="ap/altitude_hold" value="0"/>
+      <set name="ap/heading_hold" value="0"/>
+      <set name="simulation/reset" value="1"/>
+      <set name="simulation/run_id" type="FG_DELTA" value="1"/>
+      <notify>
+        <property> simulation/run_id </property>
+      </notify>
+    </event>
+
+    <event name="Terminate on run ID">
+      <condition>
+        simulation/run_id  ge  5
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+    </event>
+
   </run>
 </runscript>
