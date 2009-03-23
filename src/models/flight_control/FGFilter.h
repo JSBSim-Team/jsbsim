@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.7 2007/09/18 03:19:04 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.8 2009/03/23 03:13:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -225,7 +225,7 @@ is so that the last component in a "string" can copy its value to the appropriat
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Revision: 1.7 $
+@version $Revision: 1.8 $
 
 */
 
@@ -244,7 +244,8 @@ public:
   /** When true, causes previous values to be set to current values. This
       is particularly useful for first pass. */
   bool Initialize;
-
+  void ResetPastStates(void) {Input = 0.0; Initialize = true;}
+  
   enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
 
 private:

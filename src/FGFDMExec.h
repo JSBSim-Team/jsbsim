@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.41 2008/07/22 02:42:17 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.42 2009/03/23 03:13:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.41 $
+    @version $Revision: 1.42 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,6 +507,7 @@ private:
   bool ReadFileHeader(Element*);
   bool ReadSlave(Element*);
   bool ReadPrologue(Element*);
+  void ResetToInitialConditions(int mode);
   bool Allocate(void);
   bool DeAllocate(void);
 

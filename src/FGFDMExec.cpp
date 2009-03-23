@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.56 2008/12/23 14:28:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.57 2009/03/23 03:13:12 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,6 +172,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   typedef int (FGFDMExec::*iPMF)(void) const;
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   Constructing = false;
 }
@@ -386,6 +387,16 @@ bool FGFDMExec::RunIC(void)
   State->ResumeIntegration();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// A private, internal function call for Tie-ing to a property, so it needs an
+// argument. Nothing is done with the argument, yet.
+
+void FGFDMExec::ResetToInitialConditions(int mode)
+{
+  ResetToInitialConditions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

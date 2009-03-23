@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.52 2009/03/15 15:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.53 2009/03/23 03:13:12 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,46 @@ bool FGFCS::InitModel(void)
   for (i=0;i<NForms;i++) {
     DePos[i] = DaLPos[i] = DaRPos[i] = DrPos[i] = 0.0;
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
+  }
+
+  for (int i=0; i<Systems.size(); i++) {
+    if (Systems[i]->GetType() == "LAG" ||
+        Systems[i]->GetType() == "LEAD_LAG" ||
+        Systems[i]->GetType() == "WASHOUT" ||
+        Systems[i]->GetType() == "SECOND_ORDER_FILTER" ||
+        Systems[i]->GetType() == "INTEGRATOR")
+    {
+      ((FGFilter*)Systems[i])->ResetPastStates();
+    } else if (Systems[i]->GetType() == "PID" ) {
+      ((FGPID*)Systems[i])->ResetPastStates();
+    }
+
+  }
+
+  for (int i=0; FCSComponents.size(); i++) {
+    if (FCSComponents[i]->GetType() == "LAG" ||
+        FCSComponents[i]->GetType() == "LEAD_LAG" ||
+        FCSComponents[i]->GetType() == "WASHOUT" ||
+        FCSComponents[i]->GetType() == "SECOND_ORDER_FILTER" ||
+        FCSComponents[i]->GetType() == "INTEGRATOR")
+    {
+      ((FGFilter*)FCSComponents[i])->ResetPastStates();
+    } else if (FCSComponents[i]->GetType() == "PID" ) {
+      ((FGPID*)FCSComponents[i])->ResetPastStates();
+    }
+  }
+
+  for (int i=0; APComponents.size(); i++) {
+    if (APComponents[i]->GetType() == "LAG" ||
+        APComponents[i]->GetType() == "LEAD_LAG" ||
+        APComponents[i]->GetType() == "WASHOUT" ||
+        APComponents[i]->GetType() == "SECOND_ORDER_FILTER" ||
+        APComponents[i]->GetType() == "INTEGRATOR")
+    {
+      ((FGFilter*)APComponents[i])->ResetPastStates();
+    } else if (APComponents[i]->GetType() == "PID" ) {
+      ((FGPID*)APComponents[i])->ResetPastStates();
+    }
   }
 
   return true;
