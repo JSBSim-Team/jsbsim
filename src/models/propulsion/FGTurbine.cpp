@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.17 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.18 2009/03/23 17:34:55 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number)
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
+  N1_spinup = 1.0; N2_spinup = 3.0; 
 
   ResetToIC();
 
@@ -255,8 +256,8 @@ double FGTurbine::SpinUp(void)
 {
   Running = false;
   FuelFlow_pph = 0.0;
-  N2 = Seek(&N2, 25.18, 3.0, N2/2.0);
-  N1 = Seek(&N1, 5.21, 1.0, N1/2.0);
+  N2 = Seek(&N2, 25.18, N2_spinup, N2/2.0);
+  N1 = Seek(&N1, 5.21, N1_spinup, N1/2.0);
   EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
@@ -419,6 +420,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     MaxN1 = el->FindElementValueAsNumber("maxn1");
   if (el->FindElement("maxn2"))
     MaxN2 = el->FindElementValueAsNumber("maxn2");
+  if (el->FindElement("n1spinup"))
+    N1_spinup = el->FindElementValueAsNumber("n1spinup");
+  if (el->FindElement("n2spinup"))
+    N2_spinup = el->FindElementValueAsNumber("n2spinup");
   if (el->FindElement("augmented"))
     Augmented = (int)el->FindElementValueAsNumber("augmented");
   if (el->FindElement("augmethod"))

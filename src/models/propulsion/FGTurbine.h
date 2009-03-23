@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.14 2008/12/30 12:19:26 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.15 2009/03/23 17:34:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.14 2008/12/30 12:19:26 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.15 2009/03/23 17:34:55 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,6 +234,8 @@ private:
   double ThrottlePos;      ///< FCS-supplied throttle position
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
   double TAT;              ///< total air temperature (deg C)
+  double N1_spinup;        ///< N1 spin up rate from starter (per second)
+  double N2_spinup;        ///< N2 spin up rate from starter (per second)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
