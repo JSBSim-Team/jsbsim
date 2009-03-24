@@ -7,7 +7,7 @@
     <fileheader>
              <author>Erik Hofman </author>
              <filecreationdate> 2004-01-01 </filecreationdate>
-            <version> $Revision: 1.32 $ </version>
+            <version> $Revision: 1.33 $ </version>
             <description> Models an F-22A Raptor </description>
             <license>
              <licenseName>GPL (General Public License)</licenseName>
@@ -224,12 +224,14 @@
 					<max>1</max>
 				</clipto>
 			</summer>
-
+			
+			<!-- Stick filter -->
 			<lag_filter name="roll cmd filter">
 				<input>fcs/aileron-cmd-limiter</input>
 				<c1>20</c1>
 				</lag_filter>
 
+			<!-- Limit roll rate command in radians based on altitude, mach and AoA-->
 			<fcs_function name="roll cmd limit">
 				<function>
 				<table>
@@ -277,24 +279,23 @@
 						-90	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 						-25	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 						-20	0.6	0.85	1	1	1	1	1	1	1
-						-15	0.6	0.85	1.5	1.5	1.5	1.5	1.5	1.5	1.5
-						-10	0.6	0.85	2.5	3.14	3.14	3.14	3.14	2.617	2.1
-						0	0.6	0.85	2.5	3.66	4	4	3.14	2.617	2.1
-						10	0.6	0.85	2.5	3.14	3.14	3.14	3.14	2.617	2.1
-						15	0.6	0.85	2.5	2.617	2.617	2.617	2.617	2.617	2.1	
-						20	0.6	0.85	2.1	2.1	2.1	2.1	2.1	2.1	2.1
-						25	0.6	0.85	1.5	1.5	1.5	1.5	1.5	1.5	1.5
-						30	0.6	0.85	1.3	1.3	1.3	1.3	1.3	1.3	1.3
+						-15	0.6	0.85	1	1.25	1.5	1.5	1.5	1.5	1.5
+						-10	0.6	0.85	1.5	1.5	2	2.25	2.25	2.25	2
+						0	0.6	0.85	1.5	2	2.5	2.5	2.75	2.75	2.5
+						10	0.6	0.85	1.5	1.5	2	2.25	2.25	2.25	2
+						15	0.6	0.85	1.5	2	2	2	2	2	2	
+						20	0.6	0.85	1	1.25	1.5	2	2	2	2
+						25	0.6	0.85	1	1.25	1.5	1.5	1.5	1.5	1.5
+						30	0.6	0.85	1	1	1.3	1.3	1.3	1.3	1.3
 						35	0.6	0.85	1	1	1	1	1	1	1
 						40	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4
 						45	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4
                     			180	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4
                     		</tableData>
-
-
                		 </table>
 				</function>
-			</fcs_function>		
+			</fcs_function>
+		
 			<!-- Calculate the normalized commanded roll rate absolutely limited to +230 deg/s -230 deg/s--> 
 			<pure_gain name="roll rate cmd">
 				<input>fcs/roll-cmd-filter</input>
@@ -310,13 +311,6 @@
 				<input>fcs/roll-rate-cmd</input>
 				<input>-velocities/p-aero-rad_sec</input>
 			</summer>
-
-			<!--switch name="aileron int trigger">
-                		<default value="1"/>
-                		<test value="0">
-                    			velocities/vc-kts lt 10.0
-                		</test>
-            		</switch-->
 
 			<integrator name="roll rate integrator">
 				<!--trigger>fcs/aileron-int-trigger</trigger-->
@@ -344,12 +338,13 @@
 				</clipto>
 			</pure_gain>
 
+			<!-- Rudder pedal filter -->
 			<lag_filter name="rudder cmd filter">
 				<input>fcs/rudder-cmd-limiter</input>
 				<c1>10</c1>
 				</lag_filter>
 
-
+			<!-- Limit yaw rate command in radians based on mach and altitude -->
 			<fcs_function name="yaw rate limit">
 			   <function>
 				<table>
@@ -373,24 +368,16 @@
 				
 			</pure_gain>
 
-			
+			<!-- washout filter to fullfill handling qualities-->
 			<washout_filter name="yaw rate filter">
 			<input>velocities/r-aero-rad_sec</input>
 		 		<c1> 1.2 </c1>
-		 
 	     		</washout_filter>
 
 			<summer name="yaw rate error">
 				<value>fcs/yaw-rate-cmd</value>
 				<input>-fcs/yaw-rate-filter</input>
 			</summer>
-
-			<!--fcs_function name="rudder int trigger">
-                		<default value="1"/>
-                		<test value="0">
-                    		velocities/vc-kts gt 10.0
-                		</test>
-            		</fcs_function-->
 			
 			<integrator name="yaw rate integrator">
 				<!--trigger>fcs/rudder-int-trigger</trigger-->
@@ -402,6 +389,7 @@
 				</clipto>
 			</integrator>
 			
+			<!-- if yaw rate exceeds limits based om rate and mach, then apply opposite rudder-->
 			<fcs_function name="yaw rate override">
 			   <function>
 				<table>
@@ -438,7 +426,7 @@
 
 
 
-			<!-- aileron control-->
+			<!-- LQR Tracker Integral aileron roll-rate control-->
 			<fcs_function name="roll cmd">
 
 				<function>
@@ -614,9 +602,8 @@
 				<output>fcs/right-aileron-pos-rad</output>
 			</aerosurface_scale>
 
-			
+			<!-- LQR Tracker Integral rudder yaw-rate control-->
 			<fcs_function name="yaw cmd">
-
 				<function>
 				   <product>
 					<sum>					
@@ -775,11 +762,13 @@
 				<gain>-1.0</gain>
 			</pure_gain>
 
+			<!-- Pilot stick filter -->
 			<lag_filter name="stick filter">
 				<input>fcs/elevator-cmd-norm</input>
-				<c1>20</c1>
+				<c1>30</c1>
 				</lag_filter>
 
+			<!-- Do not allow TVC to operate when gear is down! -->
 			<switch name="tvc inhibit">
                 	  <default value="1"/>
                      <test logic="AND" value="0">
@@ -797,7 +786,7 @@
 				</clipto>
 			</summer>
 			
-			
+			<!-- Limit pitch rate command based on altitude and mach.  Max of +50/-30 deg/sec command -->
 			<fcs_function name="pitch cmd limiter">
 				<function>
 				<table>
@@ -822,13 +811,12 @@
 				</function>
 			</fcs_function>
 
-
-			<!-- Calculate the normalized current pitch rate absolutely limited to +50 deg/s -30 deg/s-->
 			<pure_gain name="pitch rate cmd">
 				<input>fcs/elevator-cmd-limiter</input>
 				<gain>-fcs/pitch-cmd-limiter</gain>
 			</pure_gain>
 			
+			<!-- G-limiter based on mach.  +9.5/-3.5 G limit. --> 
 			<fcs_function name="pitch cmd g limiter">
 				<function>
 				<table>
@@ -868,7 +856,7 @@
 				</clipto>
 			</pure_gain>
 		
-			<!--	Gear Down q Limiter--> 
+			<!--	Limit pitch rate command when gear is down--> 
 			<switch name="gear down q limit">
                 	  <default value="1"/>
 			<test logic="AND" value=".3">
@@ -885,7 +873,7 @@
 				</clipto>
 			</pure_gain>
 
-
+		<!--FADEC function to automatically add throttle in post stall conditions for TVC pitch authority-->
 		<fcs_function name="throttle adjust">
 		<function>
 		<table>
@@ -908,13 +896,7 @@
 		</function>
 		</fcs_function>
 
-		<!--switch name="throttle adjust">
-                	  <default value="0"/>
-                     <test logic="AND" value="1">
-                         velocities/vc-kts lt 70
-                     </test>
-			</switch-->
-		<pure_gain name="throttle gain">
+      	<pure_gain name="throttle gain">
 			<input>fcs/throttle-adjust</input>
 			<gain>fcs/tvc-inhibit</gain>
 			<output>fcs/throttle-override</output>		
@@ -937,41 +919,6 @@
 
 			</integrator>
 
-		<pure_gain name="pitch error gain">
-              <input>fcs/pitch-rate-error</input>
-              <gain>1</gain>
-            </pure_gain>
-
-		<!--fcs_function name="pitch rate override">
-			   <function>
-				<table>
-                    		  <independentVar lookup="row">velocities/r-aero-rad_sec</independentVar>
-					  <independentVar lookup="column">velocities/mach</independentVar>
-                                    <tableData>
-								0	0.4	0.8	1.0	2.0
-						-0.440	0.872 0.7	0.35	0.2	0.2 
-		      			-0.436	0	0.7	0.35	0.2	0.2 
-						-0.360	0	0.7	0.35	0.2	0.2
-						-0.349	0	0	0.35	0.2	0.2
-						-0.180	0	0	0.35	0.2	0.2
-						-0.1745	0	0	0	0.2	0.2
-						-0.11		0	0	0	0.2	0.2
-						-0.1		0	0	0	0	0
-						0		0	0	0	0	0
-						0.1		0	0	0	0	0
-						0.11		0	0	0	-0.2	-0.2
-						0.1745	0	0	0	-0.2	-0.2
-						0.18		0	0	-0.35	-0.2	-0.2
-						0.349		0	0	-0.35	-0.2	-0.2
-						0.36		0	-0.7	-0.35	-0.2	-0.2
-						0.436		0	-0.7	-0.35	-0.2	-0.2
-						0.440		-0.872 -0.7	-0.35	-0.2	-0.2
-                    		    </tableData>
-                		</table>
-			    </function>
-		        </fcs_function-->
-
-
 		<summer name="pitch cmd summer">
               <input>fcs/pitch-rate-integrator</input>
 			<!--input>fcs/pitch-rate-override</input-->
@@ -984,12 +931,10 @@
               <gain>0.3048</gain>
             </pure_gain>
 
+			<!-- LQR Tracker Integral elevator pitch rate controller-->
 			<fcs_function name="el pitch cmd">
-				<description>elevator control lqr regulator</description>
-				<function>
-				   
+				<function>	   
 					<sum>
-
 						<product>
 							<table>
 								<independentVar lookup="row">velocities/vc-kts</independentVar>
@@ -1153,6 +1098,7 @@
               </clipto>
              </summer>
 
+			<!-- Reduce TVC gains if AB is on-->
 			<switch name="tvc gain select">
 				<default value="1"/>
 				<test logic="AND" value="0.6">
@@ -1160,7 +1106,7 @@
                      </test>
 			</switch>
 
-			<!-- TVC control -->
+			<!-- LQR Tracker Integral TVC pitch rate controller-->
 			<fcs_function name="tvc pitch cmd">
 				<description>thrust vector control lqr regulator</description>
 				<function>
@@ -1369,6 +1315,7 @@
 
 
 		<!--TVC used for trim in high altitude supersonic flight-->
+		<!-- Uses TVC to reduce trim setting of elevator for reduced drag-->
 		<fcs_function name="ss trim">
 		  
 		    <function>
@@ -1427,6 +1374,7 @@
 
 	         </fcs_function>
 
+		<!-- In situations where TVC control is not called for, disable TVC SS Trim if manuevering-->
 		<fcs_function name="ss trim override">
 		<function>
 		<table>
@@ -1525,7 +1473,8 @@
 		      </sum>
 		   
               </function>
-	     </fcs_function> 
+	     </fcs_function>
+ 
 	    <pure_gain name="lef deg to rad">
 		<input>fcs/lef-transfer-function</input>
 		<gain>0.01745</gain>
@@ -1634,7 +1583,7 @@
 				<output>fcs/throttle-pos-norm[1]</output>
 			</pure_gain>
 			
-
+			<!-- Needed to compute TVC pitch moment contribution-->
 			<fcs_function name="thrust normalized">
 				<description>Normalized thrust output</description>
 				<function>
@@ -1785,6 +1734,7 @@
               <output>fcs/speedbrake-pos-norm</output>
             </aerosurface_scale>
 
+		<!-- F-22 uses flaps, ailerons and rudders for speedbrakes. Outputs are used to animate surfaces during speedbrake deployment-->
 		<pure_gain name="speedbrake-aileron">
 			<input>fcs/speedbrake-pos-norm</input>
 			<gain>-1</gain>
@@ -1853,6 +1803,8 @@
 
     </flight_control>
         <aerodynamics>
+
+		<!-- Shift the aero ref point aft. F-22 is 10% unstable at subsonic, stable at around Mach 1.2+ -->
 		<aero_ref_pt_shift_x>
 		  <function>
 			<table>
@@ -1869,9 +1821,9 @@
                                  
                              </tableData>
                     </table>
-
 			</function>
 		</aero_ref_pt_shift_x>
+
            <function name="aero/function/kCLge">
                <description>Change_in_lift_due_to_ground_effect</description>
                <product>
@@ -1931,7 +1883,7 @@
                              <tableData>
                                  -1.5700    1.5000
                                  -0.2600    0.0480
-                                 0.0000    0.0200
+                                 0.0000    0.00820
                                  0.2600    0.0480
                                  1.5700    1.5000
                              </tableData>
@@ -2473,7 +2425,7 @@
                <function name="aero/coefficient/Clda">
                    <description>Roll_moment_due_to_aileron</description>
                    <product>
-				<value>3</value>
+				<value>4</value>
                        <property>aero/qbar-psf</property>
                        <property>metrics/Sw-sqft</property>
                        <property>metrics/bw-ft</property>
@@ -2761,7 +2713,7 @@
                <function name="aero/coefficient/CnDr">
                    <description>Yaw_moment_due_to_rudder</description>
                    <product>
-				<value>4</value>
+				<value>5</value>
                        <property>aero/qbar-psf</property>
                        <property>metrics/Sw-sqft</property>
                        <property>metrics/bw-ft</property>
