@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.4 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.5 2009/03/25 13:52:44 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.4 2006/08/30 12:04:35 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.5 2009/03/25 13:52:44 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +161,7 @@ private:
   /* MESO7 */
   double meso_tn1[5];
   double meso_tn2[4];
-  double meso_tn3[3];
+  double meso_tn3[5];
   double meso_tgn1[2];
   double meso_tgn2[2];
   double meso_tgn3[2];
