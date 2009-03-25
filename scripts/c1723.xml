@@ -8,7 +8,7 @@
   -->
 
   <use aircraft="c172x" initialize="reset00"/>
-  <run start="0.0" end="2000" dt="0.0083333">
+  <run start="0.0" end="100" dt="0.0083333">
 
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
@@ -31,9 +31,10 @@
         Set heading hold when time is greater than 0.25 sec.
       </description>
       <condition> sim-time-sec >= 0.25 </condition>
-      <set name="ap/heading_setpoint" value="200"/>
-      <set name="ap/attitude_hold" value="0"/>
-      <set name="ap/heading_hold" value="1"/>
+<!--      <set name="ap/heading_setpoint" value="200"/> -->
+<!--      <set name="ap/heading_hold" value="1"/> -->
+      <set name="ap/autopilot-roll-on" value="1"/>
+      <set name="ap/roll-attitude-mode" value="0"/>
       <notify/>
     </event>
 
@@ -56,15 +57,27 @@
       </condition>
       <set name="ap/altitude_setpoint" value="6000.0"/>
     </event>
-
+<!--
+    <event name="Turn on autopilot wing leveler">
+      <condition>
+        position/h-agl-ft >= 50
+      </condition>
+      <set name="ap/autopilot-roll-on" value="1"/>
+      <set name="ap/roll-attitude-mode" value="0"/>
+      <notify/>
+    </event>
+-->
     <event name="Adjust throttle/flaps">
-      <description>Remove flaps at 50 ft</description>
+      <description>Remove flaps at 50 ft and set heading to 100; acquire heading.</description>
       <notify/>
       <condition>
         position/h-agl-ft >= 100
       </condition>
       <set name="fcs/mixture-cmd-norm" value="0.69" action="FG_EXP" tc ="400.0"/>
       <set name="fcs/flap-cmd-norm" value="0"/>
+      <set name="guidance/specified-heading-rad" value="1.75"/>
+      <set name="guidance/heading-selector-switch" value="1"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
     </event>
 
     <event name="Time Notify" persistent="true">
@@ -78,7 +91,7 @@
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
     </event>
-
+<!--
     <event name="Set heading hold">
       <description>Set Heading when 6000 ft AGL is reached</description>
       <notify/>
@@ -87,7 +100,7 @@
       </condition>
       <set name="ap/heading_setpoint" value="20"/>
     </event>
-
+-->
     <event name="Nose gear liftoff">
       <description>Report roll length when nosegear lifts off</description>
       <condition>

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.13 2009/03/25 12:02:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.12 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.13 2009/03/25 12:02:49 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,7 @@ public:
 
 
   void SetType(string);
+  void SetStartNewFile(bool tt) {StartNewFile = tt;}
   void SetSubsystems(int tt) {SubSystems = tt;}
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }
@@ -181,7 +182,9 @@ private:
   enum {otNone, otCSV, otTab, otSocket, otTerminal, otFlightGear, otUnknown} Type;
   bool sFirstPass, dFirstPass, enabled;
   int SubSystems;
-  string output_file_name, delimeter, Filename, DirectivesFile;
+  int runID_postfix;
+  bool StartNewFile;
+  string output_file_name, delimeter, BaseFilename, Filename, DirectivesFile;
   ofstream datafile;
   FGfdmSocket* socket;
   FGfdmSocket* flightGearSocket;

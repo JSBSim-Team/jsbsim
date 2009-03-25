@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.13 2008/12/05 23:52:58 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.14 2009/03/25 12:02:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.13 2008/12/05 23:52:58 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.14 2009/03/25 12:02:49 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,7 +186,7 @@ public:
   bool RunScript(void);
 
   void ResetEvents(void) {
-    for (int i=0; i<Events.size(); i++) Events[i].reset();
+    for (unsigned int i=0; i<Events.size(); i++) Events[i].reset();
   }
 
 private:

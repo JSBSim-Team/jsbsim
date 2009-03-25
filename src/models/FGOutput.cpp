@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.33 2009/02/17 08:05:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.34 2009/03/25 12:02:49 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -128,11 +128,13 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   sFirstPass = dFirstPass = true;
   socket = 0;
   flightGearSocket = 0;
+  runID_postfix = 0;
   Type = otNone;
   SubSystems = 0;
   enabled = true;
+  StartNewFile = false;
   delimeter = ", ";
-  Filename = "";
+  BaseFilename = Filename = "";
   DirectivesFile = "";
   output_file_name = "";
 
@@ -155,7 +157,24 @@ FGOutput::~FGOutput()
 
 bool FGOutput::InitModel(void)
 {
+  char fname[1000] = "";
+
   if (!FGModel::InitModel()) return false;
+
+  if (Filename.size() > 0 && StartNewFile) {
+    int idx = BaseFilename.find_last_of(".");
+    int len = BaseFilename.length();
+    string extension = "";
+    if (idx != string::npos) {
+      extension = BaseFilename.substr(idx, len-idx);
+      len -= extension.length();
+    }
+    sprintf(fname, "%s_%d%s", BaseFilename.substr(0,len).c_str(), runID_postfix++, extension.c_str());
+    Filename = string(fname);
+    datafile.close();
+    StartNewFile = false;
+    dFirstPass = true;
+  }
 
   return true;
 }
@@ -216,7 +235,7 @@ void FGOutput::DelimitedOutput(string fname)
   if (fname == "COUT" || fname == "cout") {
     buffer = cout.rdbuf();
   } else {
-    datafile.open(fname.c_str());
+    if (!datafile.is_open()) datafile.open(fname.c_str());
     buffer = datafile.rdbuf();
   }
 
@@ -946,7 +965,7 @@ bool FGOutput::Load(Element* element)
     else
        flightGearSocket = new FGfdmSocket(name, port, FGfdmSocket::ptTCP);  // create tcp socket (default)
   } else {
-    Filename = name;
+    BaseFilename = Filename = name;
   }
   if (!document->GetAttributeValue("rate").empty()) {
     OutRate = (int)document->GetAttributeValueAsNumber("rate");

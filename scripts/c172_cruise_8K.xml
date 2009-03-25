@@ -60,6 +60,13 @@
       <notify/>
     </event>
 
+    <event name="Terminate on run ID">
+      <condition>
+        simulation/run_id  ge  5
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+    </event>
+
     <event name="Reset">
       <condition>
         sim-time-sec  ge  10.0
@@ -73,13 +80,6 @@
       <notify>
         <property> simulation/run_id </property>
       </notify>
-    </event>
-
-    <event name="Terminate on run ID">
-      <condition>
-        simulation/run_id  ge  5
-      </condition>
-      <set name="simulation/terminate" value="1"/>
     </event>
 
   </run>

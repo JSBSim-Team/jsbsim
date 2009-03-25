@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.57 2009/03/23 03:13:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.58 2009/03/25 12:02:48 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,10 +392,16 @@ bool FGFDMExec::RunIC(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
 // A private, internal function call for Tie-ing to a property, so it needs an
-// argument. Nothing is done with the argument, yet.
+// argument.
 
 void FGFDMExec::ResetToInitialConditions(int mode)
 {
+  if (mode == 1) {
+    for (unsigned int i=0; i<Outputs.size(); i++) {
+      Outputs[i]->SetStartNewFile(true); 
+    }
+  }
+  
   ResetToInitialConditions();
 }
 

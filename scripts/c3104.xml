@@ -7,7 +7,7 @@
   <description>For testing autopilot capability</description>
   <use aircraft="c310" initialize="ellington"/>
   
-  <run start="0.0" end="3600" dt="0.00833333">
+  <run start="0.0" end="3600" dt="0.02">
   
     <event name="Start engine">
       <description>
@@ -24,8 +24,8 @@
       <set name="propulsion/starter_cmd" value="1"/>
       <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
       <set name="ap/attitude_hold" value="0"/>
-      <set name="ap/wp_latitude_rad" value="0.517238"/>
-      <set name="ap/wp_longitude_rad" value="-1.662727"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.517238"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.662727"/>
       <set name="ap/heading_setpoint" value="350"/>
       <set name="ap/heading-setpoint-select" value="0"/>
       <set name="ap/heading_hold" value="1"/>
@@ -54,7 +54,7 @@
       <set name="ap/heading-setpoint-select" value="1"/>
       <set name="ap/active-waypoint" value="1"/>
       <notify>
-        <property>fcs/wp-distance</property>
+        <property>guidance/wp-distance</property>
       </notify>
     </event>
     
@@ -64,7 +64,7 @@
         then terminate the simulation.
       </description>
       <condition>
-        fcs/wp-distance lt 100
+        guidance/wp-distance lt 100
         ap/active-waypoint eq 5
       </condition>
       <set name="simulation/terminate" value="1"/>
@@ -78,14 +78,14 @@
         (back to Ellington Field).
       </description>
       <condition>
-        fcs/wp-distance lt 100
+        guidance/wp-distance lt 100
         ap/active-waypoint eq 4
       </condition>
-      <set name="ap/wp_latitude_rad" value="0.516512"/>
-      <set name="ap/wp_longitude_rad" value="-1.660922"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.516512"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.660922"/>
       <set name="ap/active-waypoint" value="5"/>
       <notify>
-        <property>fcs/wp-distance</property>
+        <property>guidance/wp-distance</property>
       </notify>
     </event>
 
@@ -96,14 +96,14 @@
         (northeast end of Galveston Island).
       </description>
       <condition>
-        fcs/wp-distance lt 800
+        guidance/wp-distance lt 800
         ap/active-waypoint eq 3
       </condition>
-      <set name="ap/wp_latitude_rad" value="0.511661"/>
-      <set name="ap/wp_longitude_rad" value="-1.653510"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.511661"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.653510"/>
       <set name="ap/active-waypoint" value="4"/>
       <notify>
-        <property>fcs/wp-distance</property>
+        <property>guidance/wp-distance</property>
       </notify>
     </event>
 
@@ -113,14 +113,14 @@
         500 feet, then set the third waypoint.
       </description>
       <condition>
-        fcs/wp-distance lt 500
+        guidance/wp-distance lt 500
         ap/active-waypoint eq 2
       </condition>
-      <set name="ap/wp_latitude_rad" value="0.507481"/>
-      <set name="ap/wp_longitude_rad" value="-1.660062"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.507481"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.660062"/>
       <set name="ap/active-waypoint" value="3"/>
       <notify>
-        <property>fcs/wp-distance</property>
+        <property>guidance/wp-distance</property>
       </notify>
     </event>
     
@@ -130,14 +130,14 @@
         700 feet, then set the second waypoint.
       </description>
       <condition>
-        fcs/wp-distance lt 700
+        guidance/wp-distance lt 700
         ap/active-waypoint eq 1
       </condition>
-      <set name="ap/wp_latitude_rad" value="0.517533"/>
-      <set name="ap/wp_longitude_rad" value="-1.663076"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.517533"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.663076"/>
       <set name="ap/active-waypoint" value="2"/>
       <notify>
-        <property>fcs/wp-distance</property>
+        <property>guidance/wp-distance</property>
       </notify>
     </event>
     

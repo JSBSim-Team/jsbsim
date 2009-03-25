@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.54 2009/03/23 21:21:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.55 2009/03/25 12:02:49 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +139,7 @@ bool FGFCS::InitModel(void)
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
   }
 
-  for (int i=0; i<Systems.size(); i++) {
+  for (unsigned int i=0; i<Systems.size(); i++) {
     if (Systems[i]->GetType() == "LAG" ||
         Systems[i]->GetType() == "LEAD_LAG" ||
         Systems[i]->GetType() == "WASHOUT" ||
@@ -150,10 +150,9 @@ bool FGFCS::InitModel(void)
     } else if (Systems[i]->GetType() == "PID" ) {
       ((FGPID*)Systems[i])->ResetPastStates();
     }
-
   }
 
-  for (int i=0; i<FCSComponents.size(); i++) {
+  for (unsigned int i=0; i<FCSComponents.size(); i++) {
     if (FCSComponents[i]->GetType() == "LAG" ||
         FCSComponents[i]->GetType() == "LEAD_LAG" ||
         FCSComponents[i]->GetType() == "WASHOUT" ||
@@ -166,7 +165,7 @@ bool FGFCS::InitModel(void)
     }
   }
 
-  for (int i=0; i<APComponents.size(); i++) {
+  for (unsigned int i=0; i<APComponents.size(); i++) {
     if (APComponents[i]->GetType() == "LAG" ||
         APComponents[i]->GetType() == "LEAD_LAG" ||
         APComponents[i]->GetType() == "WASHOUT" ||
