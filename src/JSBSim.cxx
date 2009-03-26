@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.41 2009/03/15 11:28:09 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.42 2009/03/26 22:30:49 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -59,6 +59,8 @@
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
 #include <FDM/JSBSim/models/FGLGear.h>
+#include <FDM/JSBSim/models/FGExternalReactions.h>
+#include <FDM/JSBSim/models/FGBuoyantForces.h>
 #include <FDM/JSBSim/models/propulsion/FGEngine.h>
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
@@ -144,6 +146,16 @@ FGJSBsim::FGJSBsim( double dt )
     }
 
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
+
+    // begin ugly hack
+    // Untie the write-state-file property to avoid creating an initfile.xml
+    // file on each FlightGear reset.
+    fgGetNode("/fdm/jsbsim/simulation/write-state-file")->untie();
+    fgGetNode("/fdm/jsbsim/simulation")->removeChild("write-state-file", false);
+    // Prevent nuking of the state on JSBSim recreation after FlightGear reset.
+    fgGetNode("/fdm/jsbsim/simulation/reset")->untie();
+    fgGetNode("/fdm/jsbsim/simulation")->removeChild("reset", false);
+    // end ugly hack
 
     // Register ground callback.
     fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
@@ -280,10 +292,6 @@ FGJSBsim::FGJSBsim( double dt )
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-x-in", 196),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-y-in", 0),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-z-in", -16));
-
-    // Untie the write-state-file property to avoid creating an initfile.xml
-    // file on each reset.
-    fgGetNode("/fdm/jsbsim/simulation/write-state-file")->untie();
 
     crashed = false;
 }
