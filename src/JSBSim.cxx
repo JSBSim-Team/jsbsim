@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.43 2009/03/27 08:02:54 andgi Exp $
+// $Id: JSBSim.cxx,v 1.44 2009/03/27 11:44:06 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -340,7 +340,7 @@ void FGJSBsim::init()
      << ", " << fdmex->GetAtmosphere()->GetDensity() );
 
     if (fgGetBool("/sim/presets/running")) {
-          for (int i=0; i < Propulsion->GetNumEngines(); i++) {
+          for (unsigned int i=0; i < Propulsion->GetNumEngines(); i++) {
             SGPropertyNode * node = fgGetNode("engines/engine", i, true);
             node->setBoolValue("running", true);
             Propulsion->GetEngine(i)->SetRunning(true);
@@ -454,14 +454,18 @@ void FGJSBsim::update( double dt )
     if (!cache_ok) {
       SG_LOG(SG_FLIGHT, SG_WARN,
              "FGInterface is being called without scenery below the aircraft!");
-      SG_LOG(SG_FLIGHT, SG_WARN,
-             "altitude         = " << alt);
-      SG_LOG(SG_FLIGHT, SG_WARN,
-            "sea level radius = " << slr);
-      SG_LOG(SG_FLIGHT, SG_WARN,
-            "latitude         = " << lat);
-      SG_LOG(SG_FLIGHT, SG_WARN,
-            "longitude        = " << lon);
+
+      alt = fgic->GetAltitudeFtIC();
+      SG_LOG(SG_FLIGHT, SG_WARN, "altitude         = " << alt);
+
+      slr = fgic->GetSeaLevelRadiusFtIC();
+      SG_LOG(SG_FLIGHT, SG_WARN, "sea level radius = " << slr);
+
+      lat = fgic->GetLatitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      SG_LOG(SG_FLIGHT, SG_WARN, "latitude         = " << lat);
+
+      lon = fgic->GetLongitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      SG_LOG(SG_FLIGHT, SG_WARN, "longitude        = " << lon);
       //return;
     }
 
@@ -595,6 +599,8 @@ bool FGJSBsim::copy_to_JSBsim()
         eng->SetCondition( globals->get_controls()->get_condition(i) );
         break;
         } // end FGTurboProp code block
+      default:
+        break;
       }
 
       { // FGEngine code block
