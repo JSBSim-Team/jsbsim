@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.44 2009/03/27 11:44:06 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.45 2009/03/27 19:55:47 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -150,9 +150,6 @@ FGJSBsim::FGJSBsim( double dt )
     // file on each FlightGear reset.
     fgGetNode("/fdm/jsbsim/simulation/write-state-file")->untie();
     fgGetNode("/fdm/jsbsim/simulation")->removeChild("write-state-file", false);
-    // Prevent nuking of the state on JSBSim recreation after FlightGear reset.
-    fgGetNode("/fdm/jsbsim/simulation/reset")->untie();
-    fgGetNode("/fdm/jsbsim/simulation")->removeChild("reset", false);
     // end ugly hack
 
     // Register ground callback.
