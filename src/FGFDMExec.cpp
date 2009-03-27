@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.58 2009/03/25 12:02:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.59 2009/03/27 10:31:09 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -412,7 +412,7 @@ void FGFDMExec::ResetToInitialConditions(void)
   FGModel* model_iterator;
 
   model_iterator = FirstModel;
-  if (model_iterator == 0L) return;
+  if (model_iterator == 0L || Constructing) return;
 
   while (model_iterator != 0L) {
     model_iterator->InitModel();
