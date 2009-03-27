@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.42 2009/03/26 22:30:49 andgi Exp $
+// $Id: JSBSim.cxx,v 1.43 2009/03/27 08:02:54 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -59,8 +59,6 @@
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
 #include <FDM/JSBSim/models/FGLGear.h>
-#include <FDM/JSBSim/models/FGExternalReactions.h>
-#include <FDM/JSBSim/models/FGBuoyantForces.h>
 #include <FDM/JSBSim/models/propulsion/FGEngine.h>
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
