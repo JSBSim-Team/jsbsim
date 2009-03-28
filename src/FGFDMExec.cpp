@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.59 2009/03/27 10:31:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.60 2009/03/28 14:30:27 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -514,56 +514,170 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   document = LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
   if (document) {
     ReadPrologue(document);
-    element = document->GetElement();
 
-    result = true;
-    while (element && result) {
-      string element_name = element->GetName();
-      if (element_name == "fileheader" )           result = ReadFileHeader(element);
-      else if (element_name == "slave")            result = ReadSlave(element);
-      else if (element_name == "metrics")          result = Aircraft->Load(element);
-      else if (element_name == "mass_balance")     result = MassBalance->Load(element);
-      else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
-      else if (element_name == "external_reactions") result = ExternalReactions->Load(element);
-      else if (element_name == "buoyant_forces")   result = BuoyantForces->Load(element);
-      else if (element_name == "propulsion")       result = Propulsion->Load(element);
-      else if (element_name == "system")           result = FCS->Load(element,
-                                                            FGFCS::stSystem);
-      else if (element_name == "autopilot")        result = FCS->Load(element,
-                                                            FGFCS::stAutoPilot);
-      else if (element_name == "flight_control")   result = FCS->Load(element,
-                                                            FGFCS::stFCS);
-      else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
-      else if (element_name == "input")            result = Input->Load(element);
-      else if (element_name == "output")           {
-          FGOutput* Output = new FGOutput(this);
-          Output->InitModel();
-          Schedule(Output,       1);
-          result = Output->Load(element);
-          Outputs.push_back(Output);
+    // Process the fileheader element in the aircraft config file. This element is OPTIONAL.
+    element = document->FindElement("fileheader");
+    if (element) {
+      result = ReadFileHeader(element);
+      if (!result) {
+        cerr << endl << "Aircraft fileheader element has problems in file " << aircraftCfgFileName << endl;
+        return result;
       }
-      else {
-        cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
-        result = false;
-        break;
-      }
-      element = document->GetNextElement();
     }
-  } else {
-    cerr << fgred
-         << "  JSBSim failed to load aircraft model."
-         << fgdef << endl;
-    return false;
-  }
 
-  if (result) {
+    // Process the metrics element. This element is REQUIRED.
+    element = document->FindElement("metrics");
+    if (element) {
+      result = Aircraft->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft metrics element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    } else {
+      cerr << endl << "No metrics element was found in the aircraft config file." << endl;
+      return false;
+    }
+
+    // Process the mass_balance element. This element is REQUIRED.
+    element = document->FindElement("mass_balance");
+    if (element) {
+      result = MassBalance->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft mass_balance element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    } else {
+      cerr << endl << "No mass_balance element was found in the aircraft config file." << endl;
+      return false;
+    }
+
+    // Process the ground_reactions element. This element is REQUIRED.
+    element = document->FindElement("ground_reactions");
+    if (element) {
+      result = GroundReactions->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft ground_reactions element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    } else {
+      cerr << endl << "No ground_reactions element was found in the aircraft config file." << endl;
+      return false;
+    }
+
+    // Process the external_reactions element. This element is OPTIONAL.
+    element = document->FindElement("external_reactions");
+    if (element) {
+      result = ExternalReactions->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft external_reactions element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the buoyant_forces element. This element is OPTIONAL.
+    element = document->FindElement("buoyant_forces");
+    if (element) {
+      result = BuoyantForces->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft buoyant_forces element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the propulsion element. This element is OPTIONAL.
+    element = document->FindElement("propulsion");
+    if (element) {
+      result = Propulsion->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the system element[s]. This element is OPTIONAL, and there may be more than one.
+    element = document->FindElement("system");
+    while (element) {
+      result = FCS->Load(element, FGFCS::stSystem);
+      if (!result) {
+        cerr << endl << "Aircraft system element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+      element = document->FindNextElement("system");
+    }
+
+    // Process the autopilot element. This element is OPTIONAL.
+    element = document->FindElement("autopilot");
+    if (element) {
+      result = FCS->Load(element, FGFCS::stAutoPilot);
+      if (!result) {
+        cerr << endl << "Aircraft autopilot element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the flight_control element. This element is OPTIONAL.
+    element = document->FindElement("flight_control");
+    if (element) {
+      result = FCS->Load(element, FGFCS::stFCS);
+      if (!result) {
+        cerr << endl << "Aircraft flight_control element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the aerodynamics element. This element is OPTIONAL, but almost always expected.
+    element = document->FindElement("aerodynamics");
+    if (element) {
+      result = Aerodynamics->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft aerodynamics element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    } else {
+      cerr << endl << "No expected aerodynamics element was found in the aircraft config file." << endl;
+    }
+
+    // Process the input element. This element is OPTIONAL.
+    element = document->FindElement("input");
+    if (element) {
+      result = Input->Load(element);
+      if (!result) {
+        cerr << endl << "Aircraft input element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
+    // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
+    element = document->FindElement("output");
+    while (element) {
+      FGOutput* Output = new FGOutput(this);
+      Output->InitModel();
+      Schedule(Output, 1);
+      result = Output->Load(element);
+      Outputs.push_back(Output);
+      if (!result) {
+        cerr << endl << "Aircraft output element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+      element = document->FindNextElement("output");
+    }
+
+    // Lastly, process the slave element. This element is OPTIONAL - and NOT YET SUPPORTED.
+    element = document->FindElement("slave");
+    if (element) {
+      result = ReadSlave(element);
+      if (!result) {
+        cerr << endl << "Aircraft slave element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+    }
+
     modelLoaded = true;
-    Debug(3);
+
   } else {
     cerr << fgred
-         << "  JSBSim failed to load properly."
+         << "  JSBSim failed to open the configuration file: " << aircraftCfgFileName
          << fgdef << endl;
-    return false;
   }
 
   struct PropertyCatalogStructure masterPCS;
