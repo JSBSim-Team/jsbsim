@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.28 2009/01/10 02:12:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.29 2009/03/28 14:29:46 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -69,7 +69,9 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
     fdmex->GetPropagate()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
     PropertyManager=fdmex->GetPropertyManager();
+    Constructing = true;
     bind();
+    Constructing = false;
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
@@ -156,6 +158,8 @@ void FGInitialCondition::InitializeIC(void)
 
 void FGInitialCondition::WriteStateFile(int num)
 {
+  if (Constructing) return;
+
   string filename = fdmex->GetFullAircraftPath();
 
   if (filename.empty())
