@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.13 2008/12/30 12:19:26 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.14 2009/04/10 11:40:36 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,8 +67,12 @@ CLASS DOCUMENTATION
 @code
 <piston_engine name="{string}">
   <minmp unit="{INHG | PA | ATM}"> {number} </minmp> <!-- Depricated -->
-  <maxmp unit="{INHG | PA | ATM}"> {number} </maxmp> <!-- Depricated -->
+  <maxmp unit="{INHG | PA | ATM}"> {number} </maxmp>
   <displacement unit="{IN3 | LTR | CC}"> {number} </displacement>
+  <bore unit="{IN | M}"> {number} </bore>
+  <stroke unit="{IN | M}"> {number} </stroke>
+  <cylinders> {number} </cylinders>
+  <compression-ratio> {number} </compression-ratio>
   <sparkfaildrop> {number} </sparkfaildrop>
   <maxhp unit="{HP | WATTS}"> {number} </maxhp>
   <cycles> {number} </cycles>
@@ -76,9 +80,9 @@ CLASS DOCUMENTATION
   <maxrpm> {number} </maxrpm>
   <maxthrottle> {number} </maxthrottle>
   <minthrottle> {number} </minthrottle>
-  <numboostspeeds> {number} </numboostspeeds>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsft>
   <volumetric_efficiency> {number} </volumetric_efficiency>
+  <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>
   <ratedboost1 unit="{INHG | PA | ATM}"> {number} </ratedboost1>
   <ratedpower1 unit="{HP | WATTS}"> {number} </ratedpower1>
@@ -169,7 +173,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.13 2008/12/30 12:19:26 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.14 2009/04/10 11:40:36 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,7 +214,9 @@ protected:
 private:
   int crank_counter;
 
-  double BrakeHorsePower;
+  double IndicatedHorsePower;
+  double PMEP;
+  double FMEP;
   double SpeedSlope;
   double SpeedIntercept;
   double AltitudeSlope;
@@ -243,7 +249,6 @@ private:
   const double Cp_fuel;     // J/KgK
 
   FGTable *Lookup_Combustion_Efficiency;
-  FGTable *Power_Mixture_Correlation;
   FGTable *Mixture_Efficiency_Correlation;
 
   //
@@ -253,11 +258,17 @@ private:
   double MaxManifoldPressure_inHg; // Inches Hg
   double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
   double Displacement;             // cubic inches
+  double displacement_SI;          // cubic meters
   double MaxHP;                    // horsepower
   double SparkFailDrop;            // drop of power due to spark failure
   double Cycles;                   // cycles/power stroke
   double IdleRPM;                  // revolutions per minute
   double MaxRPM;                   // revolutions per minute
+  double Bore;                     // inches
+  double Stroke;                   // inches
+  double Cylinders;                // number
+  double CompressionRatio;        // number
+
   double StarterHP;                // initial horsepower of starter motor
   int BoostSpeeds;	// Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
   int BoostSpeed;	// The current boost-speed (zero-based).
@@ -284,20 +295,18 @@ private:
   double minMAP;  // Pa
   double maxMAP;  // Pa
   double MAP;     // Pa
-  double BSFC;    // brake specific fuel consumption [lbs/horsepower*hour
+  double ISFC;    // Indicated specific fuel consumption [lbs/horsepower*hour
 
   //
   // Inputs (in addition to those in FGEngine).
   //
   double p_amb;              // Pascals
-  double p_amb_sea_level;    // Pascals
   double T_amb;              // degrees Kelvin
   double RPM;                // revolutions per minute
   double IAS;                // knots
   bool Magneto_Left;
   bool Magneto_Right;
   int Magnetos;
-
 
   //
   // Outputs (in addition to those in FGEngine).
@@ -308,7 +317,6 @@ private:
   double m_dot_air;
   double equivalence_ratio;
   double m_dot_fuel;
-  double Percentage_Power;
   double HP;
   double combustion_efficiency;
   double ExhaustGasTemp_degK;
@@ -317,6 +325,7 @@ private:
   double CylinderHeadTemp_degK;
   double OilPressure_psi;
   double OilTemp_degK;
+  double MeanPistonSpeed_fps;
 
   void Debug(int from);
 };

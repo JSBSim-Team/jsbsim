@@ -44,10 +44,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGFDMExec.h"
 #include <FGJSBBase.h>
 #include <input_output/FGXMLElement.h>
 #include <math/FGColumnVector3.h>
-#include <models/FGAuxiliary.h>
 #include <string>
 
 using std::string;
@@ -59,7 +59,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.13 2008/11/17 12:21:07 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.14 2009/04/10 11:40:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -281,7 +281,7 @@ private:
   double Temperature, InitialTemperature;
   double Standpipe, InitialStandpipe;
   bool  Selected;
-  FGAuxiliary* Auxiliary;
+  FGFDMExec* Exec;
   FGPropertyManager* PropertyManager;
   void CalculateInertias(void);
   void Debug(int from);
