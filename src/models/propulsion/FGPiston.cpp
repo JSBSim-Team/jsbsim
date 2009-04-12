@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.34 2009/04/10 11:40:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.35 2009/04/12 13:13:56 ehofman Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,13 +82,11 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   MinManifoldPressure_inHg = 6.5;
   MaxManifoldPressure_inHg = 28.5;
   ISFC = -1;
+  volumetric_efficiency = -0.1;
   Bore = 5.125;
   Stroke = 4.375;
   Cylinders = 4;
   CompressionRatio = 8.5;
-
-  // Initialisation
-  volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
 
   // These are internal program variables
 
@@ -221,18 +219,29 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
 
-  MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
-  // Create a ISFC to match the engine if not provided
+  StarterHP = sqrt(MaxHP) * 0.4;
+  displacement_SI = Displacement * in3tom3;
+
+  // Create IFSC and VE to match the engine if not provided
+  int calculated_ve=0;
+  if (volumetric_efficiency < 0) {
+      volumetric_efficiency = MaxManifoldPressure_inHg / 29.92;
+      calculated_ve=1;
+  }
   if (ISFC < 0) {
-      ISFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * MaxHP);
-      ISFC *= MaxManifoldPressure_Percent;
-      ISFC *= MaxManifoldPressure_Percent;
-      ISFC *= MaxManifoldPressure_Percent;
+      double pmep = MaxManifoldPressure_inHg > 29.92 ? 0 : 29.92 - MaxManifoldPressure_inHg;
+      pmep *= inhgtopa;
+      double fmep = (18400 * (2*(Stroke/12)*(MaxRPM/60)) * fttom + 46500)/2;
+      double hp_loss = ((pmep + fmep) * displacement_SI * MaxRPM)/(Cycles*22371);
+      ISFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * (MaxHP+hp_loss));
+// cout <<"FMEP: "<< fmep <<" PMEP: "<< pmep << " hp_loss: " <<hp_loss <<endl;
   }
   if ( MaxManifoldPressure_inHg > 29.9 ) {   // Don't allow boosting with a bogus number
       MaxManifoldPressure_inHg = 29.9;
-      MaxManifoldPressure_Percent = MaxManifoldPressure_inHg / 29.92;
+      if (calculated_ve) volumetric_efficiency = 1.0;
   }
+  minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
+  maxMAP = MaxManifoldPressure_inHg * inhgtopa;
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
@@ -246,10 +255,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   PropertyManager->Tie(property_name, &MAP);
   property_name = base_property_name + "/map-inhg";
   PropertyManager->Tie(property_name, &ManifoldPressure_inHg);
-  minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
-  maxMAP = MaxManifoldPressure_inHg * inhgtopa;
-  StarterHP = sqrt(MaxHP) * 0.4;
-  displacement_SI = Displacement * in3tom3;
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -504,7 +509,7 @@ void FGPiston::doBoostControl(void)
  * from the throttle position, turbo/supercharger boost control
  * system, engine speed and local ambient air density.
  *
- * Inputs: p_amb, Throttle, MaxManifoldPressure_Percent, ThrottleAngle,
+ * Inputs: p_amb, Throttle, ThrottleAngle,
  *         MeanPistonSpeed_fps, dt
  *
  * Outputs: MAP, ManifoldPressure_inHg
