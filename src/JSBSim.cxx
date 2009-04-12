@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.45 2009/03/27 19:55:47 andgi Exp $
+// $Id: JSBSim.cxx,v 1.46 2009/04/12 13:32:52 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -325,9 +325,9 @@ void FGJSBsim::init()
       Atmosphere->UseInternal();
     }
 
-    fgic->SetVNorthFpsIC( wind_from_north->getDoubleValue() );
-    fgic->SetVEastFpsIC( wind_from_east->getDoubleValue() );
-    fgic->SetVDownFpsIC( wind_from_down->getDoubleValue() );
+    fgic->SetVNorthFpsIC( -wind_from_north->getDoubleValue() );
+    fgic->SetVEastFpsIC( -wind_from_east->getDoubleValue() );
+    fgic->SetVDownFpsIC( -wind_from_down->getDoubleValue() );
 
     //Atmosphere->SetExTemperature(get_Static_temperature());
     //Atmosphere->SetExPressure(get_Static_pressure());
@@ -622,9 +622,9 @@ bool FGJSBsim::copy_to_JSBsim()
     tmp = turbulence_rate->getDoubleValue();
     //Atmosphere->SetTurbRate(tmp);
 
-    Atmosphere->SetWindNED( wind_from_north->getDoubleValue(),
-                            wind_from_east->getDoubleValue(),
-                            wind_from_down->getDoubleValue() );
+    Atmosphere->SetWindNED( -wind_from_north->getDoubleValue(),
+                            -wind_from_east->getDoubleValue(),
+                            -wind_from_down->getDoubleValue() );
 //    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
 //                  << get_V_north_airmass() << ", "
 //                  << get_V_east_airmass()  << ", "
