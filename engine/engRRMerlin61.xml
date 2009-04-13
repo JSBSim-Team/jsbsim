@@ -20,7 +20,7 @@
   <idlerpm>      700.0 </idlerpm>
   <maxrpm>      3000.0 </maxrpm>
   <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.2 </minthrottle>
+  <minthrottle>    0.1 </minthrottle>
   <numboostspeeds> 2   </numboostspeeds>
   <boostoverride>  1   </boostoverride>
   <ratedboost1>    9   </ratedboost1>

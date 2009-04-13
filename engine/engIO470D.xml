@@ -20,6 +20,6 @@
   <idlerpm>      900.0 </idlerpm>
   <maxrpm>      2700.0 </maxrpm>
   <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.2 </minthrottle>
+  <minthrottle>    0.1 </minthrottle>
   <sparkfaildrop>  0.0 </sparkfaildrop>
 </piston_engine>

@@ -62,7 +62,7 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   <maxrpm>      2600.0 </maxrpm>
 
   <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.2 </minthrottle>
+  <minthrottle>    0.1 </minthrottle>
   <sparkfaildrop>  0.1 </sparkfaildrop>
 
   <numboostspeeds> 1.0 </numboostspeeds>
