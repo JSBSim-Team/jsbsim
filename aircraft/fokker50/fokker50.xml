@@ -7,10 +7,10 @@
     <fileheader>
         <author> External model, animations and FDM by Erik Hofman.  Cockpit model in progress, work by the FlightGear community. </author>
         <filecreationdate> In progress January 2008 </filecreationdate>
-        <version> External model $Revision: 1.17 $   Cockpit model in development.</version>
+        <version> External model $Revision: 1.18 $   Cockpit model in development.</version>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.17 $ </version>
+        <version> $Revision: 1.18 $ </version>
         <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
@@ -44,7 +44,7 @@
         <ixx unit="SLUG*FT2"> 474936 </ixx>
         <iyy unit="SLUG*FT2"> 430723 </iyy>
         <izz unit="SLUG*FT2"> 896344 </izz>
-        <emptywt unit="LBS"> 26394 </emptywt>
+        <emptywt unit="LBS"> 29700 </emptywt>
         <location name="CG" unit="IN">
             <x> 497.1 </x>
             <y> 0 </y>
@@ -177,7 +177,8 @@
 
 
     <propulsion>
-        <engine file="PW125B">
+<!--        <engine file="PWC125B_Aeromatic">  -->
+        <engine file="PW125BX">  -->
             <location unit="IN">
                 <x> 497.072 </x>
                 <y> -190.298 </y>
@@ -189,7 +190,9 @@
                 <yaw> 0 </yaw>
             </orient>
             <feed>0</feed>
-            <thruster file="direct">
+            <thruster file="dowty-rotol-aero">   
+<!--           <thruster file="prop_RAF-6-mod"> -->
+<!--		<thruster file="direct"> -->
                 <location unit="IN">
                     <x> 497.072 </x>
                     <y> -190.298 </y>
@@ -202,7 +205,8 @@
                 </orient>
             </thruster>
         </engine>
-        <engine file="PW125B">
+<!--        <engine file="PWC125B_Aeromatic"> -->
+        <engine file="PW125BX">  
             <location unit="IN">
                 <x> 497.072 </x>
                 <y> 190.298 </y>
@@ -214,7 +218,9 @@
                 <yaw> 0 </yaw>
             </orient>
             <feed>1</feed>
-            <thruster file="direct">
+            <thruster file="dowty-rotol-aero">  
+<!--            <thruster file="prop_RAF-6-mod">   -->
+<!--		<thruster file="direct">  -->
                 <location unit="IN">
                     <x> 497.072 </x>
                     <y> 190.298 </y>
@@ -231,22 +237,22 @@
         <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x> 497.072 </x>
-                <y> 0 </y>
+                <y> 3 </y>
                 <z> -24.8536 </z>
             </location>
-            <capacity unit="LBS"> 814.6 </capacity>
-            <contents unit="LBS"> 407.3 </contents>
+            <capacity unit="LBS"> 4576 </capacity>
+            <contents unit="LBS"> 1100 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
                 <x> 497.072 </x>
-                <y> 0 </y>
+                <y> -3 </y>
                 <z> -24.8536 </z>
             </location>
-            <capacity unit="LBS"> 814.6 </capacity>
-            <contents unit="LBS"> 407.3 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 2 -->
+            <capacity unit="LBS"> 4576 </capacity>
+            <contents unit="LBS"> 1100 </contents>
+        </tank>  <!--
+        <tank type="FUEL">     Tank number 2 
             <location unit="IN">
                 <x> 497.072 </x>
                 <y> 0 </y>
@@ -254,11 +260,96 @@
             </location>
             <capacity unit="LBS"> 814.6 </capacity>
             <contents unit="LBS"> 407.3 </contents>
-        </tank>
+        </tank>  -->
     </propulsion>
+
+
+
     <flight_control name="Fokker50">
 
+<channel name="EEC">
+
+	<switch name="fcs/eec-throttle-multiplier">
+                <default value="0.825"/>
+                <test logic="AND" value="1.0"> <!-- GA == 1 -->
+                    /systems/fokker50/erp/settingn GT 0.5
+                    /systems/fokker50/erp/settingn LT 1.5
+                </test>
+                <test logic="AND" value="0.93"> <!-- TO == 2 -->
+                    /systems/fokker50/erp/settingn GT 1.5
+                    /systems/fokker50/erp/settingn LT 2.5
+                </test>
+                <test logic="AND" value="0.95"> <!-- MCT == 3 -->
+                    /systems/fokker50/erp/settingn GT 2.5
+                    /systems/fokker50/erp/settingn LT 3.5
+                </test>
+                <test logic="AND" value="0.82"> <!-- CRZ == 5 -->
+                    /systems/fokker50/erp/settingn GT 4.5
+                    /systems/fokker50/erp/settingn LT 5.5
+                </test>
+                <test logic="AND" value="0.91"> <!-- CLB == 4 -->
+                    /systems/fokker50/erp/settingn GT 3.5
+                    /systems/fokker50/erp/settingn LT 4.5
+                </test>
+
+             </switch>
+
+             <fcs_function name="fcs/eec-throttle-pos-norm[0]">
+                 <function>
+                     <product>
+                         <property> fcs/eec-throttle-multiplier </property>
+                         <property> /controls/engines/engine/throttle </property>
+                     </product>
+                 </function>
+               <output>fcs/throttle-cmd-norm[0]</output> 
+             </fcs_function>
+
+             <fcs_function name="fcs/eec-throttle-pos-norm[1]">
+                 <function>
+                     <product>
+                         <property> fcs/eec-throttle-multiplier </property>
+                         <property> /controls/engines/engine[1]/throttle </property>
+                     </product>
+                 </function>
+                 <output>fcs/throttle-cmd-norm[1]</output>
+             </fcs_function>
+
+<!-- Control Np.  GA =1 TO =2 MCT =3 CLB = 4 CRZ =5, plus 0.5 for gnd idle range -->
+    <switch name="fcs/erp-np-cmd">
+     <default value="0.825"/>
+      <test logic="OR" value="0.495">
+       /systems/fokker50/erp/settinggi == 5
+       /systems/fokker50/erp/settinggi == 4
+     </test>
+      <test logic="OR" value="0">
+       /systems/fokker50/erp/settinggi == 2.5
+       /systems/fokker50/erp/settinggi == 3.5
+       /systems/fokker50/erp/settinggi == 4.5
+       /systems/fokker50/erp/settinggi == 5.5
+     </test>
+     <output>fcs/advance-pos-norm[1]</output>
+     <output>fcs/advance-pos-norm</output>
+    </switch>
+
+    <switch name="fcs/erp-np-cmd[1]">
+     <default value="0.825"/>
+      <test logic="OR" value="0.495">
+       /systems/fokker50/erp/settinggi == 5
+       /systems/fokker50/erp/settinggi == 4
+     </test>
+      <test logic="OR" value="0">
+       /systems/fokker50/erp/settinggi == 2.5
+       /systems/fokker50/erp/settinggi == 3.5
+       /systems/fokker50/erp/settinggi == 4.5
+       /systems/fokker50/erp/settinggi == 5.5
+     </test>
+     <output>fcs/advance-pos-norm</output>
+    </switch>
+        </channel>
+
         <channel name="Pitch">
+
+
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
@@ -674,7 +765,8 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
-                    <value>-0.1000</value>
+  <!--                  <value>-0.1000</value>-->
+                    <value>-0.0000</value>
                 </product>
             </function>
             <function name="aero/coefficient/Clp">
@@ -786,7 +878,8 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
-                    <value>0.1200</value>
+                    <value>0.0000</value>
+<!--                    <value>0.1200</value>  -->
                 </product>
             </function>
             <function name="aero/coefficient/Cnr">
