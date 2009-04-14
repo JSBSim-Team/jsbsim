@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.4 2009/03/13 21:52:56 andgi Exp $ -->
+<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.1 2009/04/14 19:33:22 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -22,15 +22,12 @@
   
 -->
 
-<autopilot name="Submarine Scout Crew Autopilot">
+<system name="Submarine Scout Crew Autopilot">
 
   <!-- INTERFACE PROPERTIES -->
   <property>ap/yaw-damper-active</property>
-  <property>ap/rudder-cmd-norm</property>
-  <property>ap/pitch-hold-active</property>
   <property>ap/pitch-setpoint-degrees</property>
-  <property>ap/elevator-cmd-norm</property>
-  <property>ap/ballonet-trim-cmd-norm</property>
+  <property>ap/pitch-hold-active</property>
 
   <!-- SENSORS -->
 
@@ -120,7 +117,7 @@
     <output>ap/ballonet-trim-cmd-norm</output>
    </switch>
 
-   <fcs_function name="ap/ballonet-valve-cmd[0]">
+   <fcs_function name="ap/ballonet-valve-cmd-norm[0]">
     <function>
      <product>
       <value>-1.0</value>
@@ -132,7 +129,7 @@
     </function>
    </fcs_function>
 
-   <fcs_function name="ap/ballonet-valve-cmd[1]">
+   <fcs_function name="ap/ballonet-valve-cmd-norm[1]">
     <function>
      <product>
       <value>1.0</value>
@@ -148,7 +145,7 @@
 
   <channel name="Envelope pressure">
 
-   <fcs_function name="ap/gas-valve-cmd">
+   <fcs_function name="ap/gas-valve-cmd-norm">
     <function>
      <value>0.0</value>
     </function>
@@ -156,4 +153,4 @@
 
   </channel>
 
-</autopilot>
+</system>

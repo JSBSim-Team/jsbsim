@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.9 2009/03/13 21:52:56 andgi Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.10 2009/04/14 19:33:22 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -35,7 +35,7 @@
   <license licenseName="GPL"
            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
   <filecreationdate>2007-02-11</filecreationdate>
-  <version>$Id: Submarine_Scout.xml,v 1.9 2009/03/13 21:52:56 andgi Exp $</version>
+  <version>$Id: Submarine_Scout.xml,v 1.10 2009/04/14 19:33:22 andgi Exp $</version>
 
   <reference refID="Freeman:1932:Akron"
              author="Hugh B. Freeman"
@@ -342,11 +342,6 @@
  <!--
  === Gas cell ==============================================================
  -->
- <system name="Forward declaration of ballonet inflow properties">
-  <property>ballonets/in-flow-ft3ps[0]</property>
-  <property>ballonets/in-flow-ft3ps[1]</property>
- </system>
-
  <buoyant_forces>
 
   <documentation>
@@ -371,6 +366,10 @@
     - Envelope    70,000 feet^3
     - 2 Ballonets 9,800 feet^3 each
   </documentation>
+
+  <!-- Forward declaration of ballonet inflow properties -->
+  <property value="0.0">ballonets/in-flow-ft3ps[0]</property>
+  <property value="0.0">ballonets/in-flow-ft3ps[1]</property>
 
   <gas_cell type="HYDROGEN">
    <location unit="M">
@@ -801,13 +800,13 @@
  <!--
  ==== Flight control system =================================================
  -->
- <autopilot file="Submarine_Scout_crew_ap">
+ <system file="Submarine_Scout_crew_ap">
   <limitation>
    The real aircraft did not have any autopilot. This autopilot is
    mostly intended for scripted flights in JSBSim/standalone.
    The autopilot is only minimally tuned.
   </limitation>
- </autopilot>
+ </system>
 
  <system name="Ballonet and gas control">
 
@@ -861,7 +860,7 @@
     <function>
      <sum>
       <property>fcs/gas-valve-cmd-norm</property>
-      <property>ap/gas-valve-cmd</property>
+      <property>ap/gas-valve-cmd-norm</property>
       <product>
        <value>100.0</value>
        <property>fcs/ripped-sample-hold</property>
@@ -929,7 +928,7 @@
     <function>
      <sum>
       <property>fcs/ballonet-valve-cmd-norm[0]</property>
-      <property>ap/ballonet-valve-cmd[0]</property>
+      <property>ap/ballonet-valve-cmd-norm[0]</property>
      </sum>
     </function>
     <output>buoyant_forces/gas-cell/ballonet[0]/valve_open</output>
@@ -939,7 +938,7 @@
     <function>
      <sum>
       <property>fcs/ballonet-valve-cmd-norm[1]</property>
-      <property>ap/ballonet-valve-cmd[1]</property>
+      <property>ap/ballonet-valve-cmd-norm[1]</property>
      </sum>
     </function>
     <output>buoyant_forces/gas-cell/ballonet[1]/valve_open</output>

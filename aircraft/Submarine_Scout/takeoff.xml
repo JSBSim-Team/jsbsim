@@ -24,7 +24,7 @@
         sim-time-sec >= 120.0
       </condition>
       <set name="fcs/throttle-cmd-norm"
-           value="0.6" action="FG_RAMP" tc ="0.5"/>
+           value="0.5" action="FG_RAMP" tc ="0.5"/>
       <set name="fcs/mixture-cmd-norm"
            value="0.87" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd"    value="3"/>
