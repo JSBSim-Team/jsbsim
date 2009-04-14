@@ -55,7 +55,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.7 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.8 2009/04/14 18:48:14 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -189,40 +189,41 @@ public:
 
   /** Get the index of this gas cell
       @return gas cell index. */
-  int GetIndex(void) {return CellNum;}
+  int GetIndex(void) const {return CellNum;}
 
   /** Get the center of gravity location of the gas cell
       (including any ballonets)
       @return CoG location in the structural frame. */
-  const FGColumnVector3& GetXYZ(void) {return vXYZ;}
+  const FGColumnVector3& GetXYZ(void) const {return vXYZ;}
 
   /** Get the center of gravity location of the gas cell
       (including any ballonets)
       @return CoG location in the structural frame. */
-  double GetXYZ(int idx) {return vXYZ(idx);}
+  double GetXYZ(int idx) const {return vXYZ(idx);}
 
   /** Get the current mass of the gas cell (including any ballonets)
       @return gas mass in slug. */
-  double GetMass(void) {return Mass;}
+  double GetMass(void) const {return Mass;}
 
   /** Get the moments of inertia of the gas cell (including any ballonets)
-      @return moments of inertia matrix in slug ft<sup>2</sup>. */
-  FGMatrix33& GetInertia(void) {return gasCellJ;}
+      @return moments of inertia matrix relative the gas cell location
+      in slug ft<sup>2</sup>. */
+  const FGMatrix33& GetInertia(void) const {return gasCellJ;}
 
   /** Get the moment due to mass of the gas cell (including any ballonets)
 
       Note that the buoyancy of the gas cell is handled separately by the
       FGForce part and not included here.
       @return moment vector in lbs ft. */
-  FGColumnVector3& GetMassMoment(void) {return gasCellM;}
+  const FGColumnVector3& GetMassMoment(void) const {return gasCellM;}
 
   /** Get the current gas temperature inside the gas cell
       @return gas temperature in Rankine. */
-  double GetTemperature(void) {return Temperature;}
+  double GetTemperature(void) const {return Temperature;}
 
   /** Get the current gas pressure inside the gas cell
       @return gas pressure in lbs / ft<sup>2</sup>. */
-  double GetPressure(void) {return Pressure;}
+  double GetPressure(void) const {return Pressure;}
 
 private:
 
@@ -316,25 +317,25 @@ public:
 
   /** Get the center of gravity location of the ballonet
       @return CoG location in the structural frame. */
-  const FGColumnVector3& GetXYZ(void) {return vXYZ;}
+  const FGColumnVector3& GetXYZ(void) const {return vXYZ;}
   /** Get the center of gravity location of the ballonet
       @return CoG location in the structural frame. */
-  double GetXYZ(int idx) {return vXYZ(idx);}
+  double GetXYZ(int idx) const {return vXYZ(idx);}
 
   /** Get the current mass of the ballonets
       @return mass in slug. */
-  double GetMass(void) {return Contents * M_air;}
+  double GetMass(void) const {return Contents * M_air;}
 
   /** Get the moments of inertia of the ballonet
       @return moments of inertia matrix in slug ft<sup>2</sup>. */
-  FGMatrix33& GetInertia(void) {return ballonetJ;}
+  const FGMatrix33& GetInertia(void) const {return ballonetJ;}
 
   /** Get the current volume of the ballonet
       @return volume in ft<sup>3</sup>. */
-  double GetVolume(void) {return Volume;}
+  double GetVolume(void) const {return Volume;}
   /** Get the current heat flow into the ballonet
       @return heat flow in lbs ft / sec. */
-  double GetHeatFlow(void) {return dU;}             // [lbs ft / sec]
+  double GetHeatFlow(void) const {return dU;}       // [lbs ft / sec]
 
 private:
   int CellNum;

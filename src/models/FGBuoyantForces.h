@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.7 2009/04/14 18:48:14 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,6 +71,10 @@ CLASS DOCUMENTATION
 
     @code
     <buoyant_forces>
+
+      <!-- Interface properties -->
+      <property>ballonets/in-flow-ft3ps[0]</property>
+
       <gas_cell type="HYDROGEN">
         <location unit="M">
           <x> 18.8 </x>
@@ -84,7 +88,7 @@ CLASS DOCUMENTATION
         <valve_coefficient unit="M4*SEC/KG"> 0.015 </valve_coefficient>
       </gas_cell>
       
-      ... {other gass cells} ...
+      ... {other gas cells} ...
       
     </buoyant_forces>
     @endcode
@@ -92,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.7 2009/04/14 18:48:14 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,11 +128,11 @@ public:
 
   /** Gets the total Buoyant force vector.
       @return a force vector. */
-  FGColumnVector3 GetForces(void) {return vTotalForces;}
+  const FGColumnVector3& GetForces(void) const {return vTotalForces;}
 
   /** Gets the total Buoyancy moment vector.
       @return a moment vector. */
-  FGColumnVector3 GetMoments(void) {return vTotalMoments;}
+  const FGColumnVector3& GetMoments(void) const {return vTotalMoments;}
 
   /** Gets the total gas mass. The gas mass is part of the aircraft's
       inertia.
@@ -137,11 +141,11 @@ public:
 
   /** Gets the total moment from the gas mass.
       @return a moment vector. */
-  FGColumnVector3& GetGasMassMoment(void);
+  const FGColumnVector3& GetGasMassMoment(void);
 
   /** Gets the total moments of inertia for the gas mass.
       @return . */
-  FGMatrix33& GetGasMassInertia(void);
+  const FGMatrix33& GetGasMassInertia(void);
 
   /** Gets the strings for the current set of gas cells.
       @param delimeter either a tab or comma string depending on output type
@@ -165,10 +169,11 @@ private:
   FGColumnVector3 vGasCellXYZ;
   FGColumnVector3 vXYZgasCell_arm;
 
+  vector <double*> interface_properties;
+
   bool NoneDefined;
 
   void bind(void);
-  void unbind(void);
 
   void Debug(int from);
 };

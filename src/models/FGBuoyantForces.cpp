@@ -5,7 +5,7 @@
  Date started: 01/21/08
  Purpose:      Encapsulates the buoyant forces
 
- ------------- Copyright (C) 2008  Anders Gidenstam               -------------
+ ------------- Copyright (C) 2008 - 2009  Anders Gidenstam        -------------
  ------------- Copyright (C) 2008  Jon S. Berndt (jsb@hal-pc.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.5 2008/07/24 19:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.6 2009/04/14 18:48:14 andgi Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +72,9 @@ FGBuoyantForces::~FGBuoyantForces()
   for (unsigned int i=0; i<Cells.size(); i++) delete Cells[i];
   Cells.clear();
 
-  unbind();
+  for (unsigned int i=0; i<interface_properties.size(); i++)
+    delete interface_properties[i];
+  interface_properties.clear();
 
   Debug(1);
 }
@@ -125,6 +127,29 @@ bool FGBuoyantForces::Load(Element *element)
     document = element;
   }
 
+  Element *property_element = document->FindElement("property");
+  if (property_element)
+    cout << endl << "    Declared properties" << endl << endl;
+  while (property_element) {
+    string interface_property_string = property_element->GetDataLine();
+
+    if (PropertyManager->HasNode(interface_property_string)) {
+      cout << "      Property " << interface_property_string <<
+        " is already defined." << endl;
+    } else {
+      double value=0.0;
+      if ( ! property_element->GetAttributeValue("value").empty())
+        value = property_element->GetAttributeValueAsNumber("value");
+      interface_properties.push_back(new double(value));
+      interface_property_string = property_element->GetDataLine();
+      PropertyManager->Tie(interface_property_string,
+                           interface_properties.back());
+      cout << "      " << interface_property_string <<
+        " (initial value: " << value << ")" << endl;
+    }
+    property_element = document->FindNextElement("property");
+  }
+
   gas_cell_element = document->FindElement("gas_cell");
   while (gas_cell_element) {
     NoneDefined = false;
@@ -150,7 +175,7 @@ double FGBuoyantForces::GetGasMass(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
+const FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
 {
   vXYZgasCell_arm.InitMatrix();
   for (unsigned int i = 0; i < Cells.size(); i++) {
@@ -161,7 +186,7 @@ FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
+const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
 {
   const unsigned int size = Cells.size();
   
@@ -190,8 +215,8 @@ FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
 string FGBuoyantForces::GetBuoyancyStrings(string delimeter)
 {
   string CoeffStrings = "";
-  bool firstime = true;
 /*
+  bool firstime = true;
   for (sd = 0; sd < variables.size(); sd++) {
     if (firstime) {
       firstime = false;
@@ -220,8 +245,8 @@ string FGBuoyantForces::GetBuoyancyStrings(string delimeter)
 string FGBuoyantForces::GetBuoyancyValues(string delimeter)
 {
   string SDValues = "";
-  bool firstime = true;
 /*
+  bool firstime = true;
   for (sd = 0; sd < variables.size(); sd++) {
     if (firstime) {
       firstime = false;
@@ -248,12 +273,6 @@ string FGBuoyantForces::GetBuoyancyValues(string delimeter)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGBuoyantForces::bind(void)
-{
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGBuoyantForces::unbind(void)
 {
 }
 
