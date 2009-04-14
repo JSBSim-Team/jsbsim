@@ -13,7 +13,7 @@
 
 <piston_engine name="RR-Merlin_61">
   <minmp unit="INHG">          6.5 </minmp>	<!-- Deprecated -->
-  <maxmp unit="INHG">         29.92 </maxmp>	<!-- Deprecated -->
+  <maxmp unit="INHG">         54.32 </maxmp>	
   <displacement unit="IN3"> 1649.00 </displacement>
   <maxhp>       1650.00 </maxhp>
   <cycles>         4.0 </cycles>

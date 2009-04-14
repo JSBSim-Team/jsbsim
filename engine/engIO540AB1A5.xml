@@ -13,7 +13,7 @@
 
 <piston_engine name="IO540AB1A5">
   <minmp unit="INHG">          6.5 </minmp>	<!-- Deprecated -->
-  <maxmp unit="INHG">         28.5 </maxmp>	<!-- Deprecated -->
+  <maxmp unit="INHG">         28.5 </maxmp>	
   <displacement unit="IN3">  540.0 </displacement>
   <maxhp>        230.0 </maxhp>
   <cycles>         4.0 </cycles>

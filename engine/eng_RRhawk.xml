@@ -10,6 +10,7 @@
      * Bore: 4 inches
      * Stroke: 6 inches
      * Weight: 387 lbs
+     * Compression ratio: 5.1:1
 
    It was produced between 1914 and 1918, during which 204 were built
    at Brazil Straker and one by Rolls-Royce.
@@ -26,14 +27,18 @@
      Left Hand Tractor
  -->
  <minmp unit="INHG">          6.0 </minmp> <!-- Ignored -->
- <maxmp unit="INHG">         29.9 </maxmp> <!-- Ignored -->
+ <maxmp unit="INHG">         27.9 </maxmp> 
  <displacement unit="IN3"> 452.39 </displacement>
- <bsfc>          0.37 </bsfc> 
- <maxhp>        85.50 </maxhp> <!-- Ignored -->
+ <!--bsfc>          0.37 </bsfc--> 
+ <maxhp>        85.50 </maxhp> 
+ <bore unit="IN"> 4.0 </bore>
+ <stroke unit="IN"> 6.0 </stroke>
+ <cylinders> 6 </cylinders>
+ <compression-ratio> 5.1 </compression-ratio> 
  <cycles>         4.0 </cycles>
  <idlerpm>      300.0 </idlerpm>
  <maxrpm>      1350.0 </maxrpm>
- <maxthrottle>    0.9 </maxthrottle>
+ <maxthrottle>    1.0 </maxthrottle>
  <minthrottle>    0.1 </minthrottle>
  <sparkfaildrop>  0.1 </sparkfaildrop>
 </piston_engine>
