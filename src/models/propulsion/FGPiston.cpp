@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.35 2009/04/12 13:13:56 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.36 2009/04/16 06:41:18 ehofman Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,6 +322,7 @@ void FGPiston::ResetToIC(void)
 
   ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
   MAP = Atmosphere->GetPressure() * psftopa;
+  TMAP = MAP;
   double airTemperature_degK = RankineToKelvin(Atmosphere->GetTemperature());
   OilTemp_degK = airTemperature_degK;
   CylinderHeadTemp_degK = airTemperature_degK;
@@ -512,7 +513,7 @@ void FGPiston::doBoostControl(void)
  * Inputs: p_amb, Throttle, ThrottleAngle,
  *         MeanPistonSpeed_fps, dt
  *
- * Outputs: MAP, ManifoldPressure_inHg
+ * Outputs: MAP, ManifoldPressure_inHg, TMAP
  */
 
 void FGPiston::doMAP(void)
@@ -524,23 +525,19 @@ void FGPiston::doMAP(void)
 
   if ( map_coefficient < 0.1 ) map_coefficient = 0.1;
 
-  // map_coefficient = pow ((throttle_area * MaxManifoldPressure_Percent),RPM/MaxRPM);
   // Add a one second lag to manifold pressure changes
-  double dMAP = (MAP - p_amb * map_coefficient) * dt;
-  MAP -=dMAP;
+  double dMAP = (TMAP - p_amb * map_coefficient) * dt;
+  TMAP -=dMAP;
 
   // Find the mean effective pressure required to achieve this manifold pressure
-  // Doing this before boost so boost doesn't add horsepower to the engine.
-  // A better method would be deterimining the HP consumed by the supercharger
+  // Fixme: determine the HP consumed by the supercharger
 
-  PMEP = MAP - p_amb; // Fixme: p_amb should be exhaust manifold pressure
+  PMEP = TMAP - p_amb; // Fixme: p_amb should be exhaust manifold pressure
 
   if (Boosted) {
     // If takeoff boost is fitted, we currently assume the following throttle map:
     // (In throttle % - actual input is 0 -> 1)
     // 99 / 100 - Takeoff boost
-    // 96 / 97 / 98 - Rated boost
-    // 0 - 95 - Idle to Rated boost (MinManifoldPressure to MaxManifoldPressure)
     // In real life, most planes would be fitted with a mechanical 'gate' between
     // the rated boost and takeoff boost positions.
 
@@ -548,22 +545,20 @@ void FGPiston::doMAP(void)
     if (bTakeoffBoost) {
       if (Throttle > 0.98) {
         bTakeoffPos = true;
-      } else if(Throttle <= 0.95) {
-        bTakeoffPos = false;
-      } else {
-        bTakeoffPos = false;
       }
     }
     // Boost the manifold pressure.
     double boost_factor = BoostMul[BoostSpeed] * map_coefficient * RPM/RatedRPM[BoostSpeed];
     if (boost_factor < 1.0) boost_factor = 1.0;  // boost will never reduce the MAP
-    MAP *= boost_factor;
+    MAP = TMAP * boost_factor;
     // Now clip the manifold pressure to BCV or Wastegate setting.
     if (bTakeoffPos) {
       if (MAP > TakeoffMAP[BoostSpeed]) MAP = TakeoffMAP[BoostSpeed];
     } else {
       if (MAP > RatedMAP[BoostSpeed]) MAP = RatedMAP[BoostSpeed];
     }
+  } else {
+      MAP = TMAP;
   }
 
   // And set the value in American units as well
