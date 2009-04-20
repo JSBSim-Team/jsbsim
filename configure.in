@@ -103,6 +103,7 @@ aircraft/F4N/Engines/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \
 aircraft/Submarine_Scout/Makefile \
+aircraft/Submarine_Scout/Systems/Makefile \
 aircraft/Short_S23/Makefile \
 aircraft/Short_S23/Systems/Makefile \
 aircraft/T37/Makefile \
