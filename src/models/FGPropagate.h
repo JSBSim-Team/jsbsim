@@ -40,7 +40,6 @@ INCLUDES
 
 #include <models/FGModel.h>
 #include <math/FGColumnVector3.h>
-#include <initialization/FGInitialCondition.h>
 #include <math/FGLocation.h>
 #include <math/FGQuaternion.h>
 #include <math/FGMatrix33.h>
@@ -49,13 +48,15 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.26 2008/05/12 04:37:13 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.27 2009/04/30 00:18:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGInitialCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -88,7 +89,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.26 2008/05/12 04:37:13 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.27 2009/04/30 00:18:26 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +98,27 @@ CLASS DECLARATION
 
 class FGPropagate : public FGModel {
 public:
+
+  /** The current vehicle state vector structure contains the translational and
+    angular position, and the translational and angular velocity. */
+  struct VehicleState {
+    /** Represents the current location of the vehicle in Earth centered Earth
+        fixed (ECEF) frame.
+        units ft */
+    FGLocation vLocation;
+    /** The velocity vector of the vehicle with respect to the ECEF frame,
+        expressed in the body system.
+        units ft/sec */
+    FGColumnVector3 vUVW;
+    /** The angular velocity vector for the vehicle relative to the ECEF frame,
+        expressed in the body frame.
+        units rad/sec */
+    FGColumnVector3 vPQR;
+    /** The current orientation of the vehicle, that is, the orientation of the
+        body frame relative to the local, vehilce-carried, NED frame. */
+    FGQuaternion vQtrn;
+  };
+
   /** Constructor.
       The constructor initializes several variables, and sets the initial set
       of integrators to use as follows:
@@ -112,26 +134,6 @@ public:
   
   /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
-
-/** The current vehicle state vector structure contains the translational and
-    angular position, and the translational and angular velocity. */
-struct VehicleState {
-  /** Represents the current location of the vehicle in Earth centered Earth
-      fixed (ECEF) frame.
-      units ft */
-  FGLocation vLocation;
-  /** The velocity vector of the vehicle with respect to the ECEF frame,
-      expressed in the body system.
-      units ft/sec */
-  FGColumnVector3 vUVW;
-  /** The angular velocity vector for the vehicle relative to the ECEF frame,
-      expressed in the body frame.
-      units rad/sec */
-  FGColumnVector3 vPQR;
-  /** The current orientation of the vehicle, that is, the orientation of the
-      body frame relative to the local, vehilce-carried, NED frame. */
-  FGQuaternion vQtrn;
-};
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
       The base class FGModel::InitModel is called first, initializing pointers to the 
@@ -181,7 +183,7 @@ struct VehicleState {
   */
   const FGColumnVector3& GetUVWdot(void) const { return vUVWdot; }
   
-  /** Retrieves the body angular rates vector.
+  /** Retrieves the body angular rates vector, relative to the ECEF frame.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
       The vector returned is represented by an FGColumnVector reference. The vector
@@ -195,6 +197,20 @@ struct VehicleState {
   */
   const FGColumnVector3& GetPQR(void) const {return VState.vPQR;}
   
+  /** Retrieves the body angular rates vector, relative to the ECI (inertial) frame.
+      Retrieves the body angular rates (p, q, r), which are calculated by integration
+      of the angular acceleration.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the angular velocity in Body frame is organized (P, Q, R). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vPQR(1) is P. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eP=1, eQ=2, eR=3.
+      units rad/sec
+      @return The body frame angular rates in rad/sec.
+  */
+  const FGColumnVector3& GetPQRi(void) const {return vPQRi;}
+
   /** Retrieves the body axis angular acceleration vector.
       Retrieves the body axis angular acceleration vector in rad/sec^2. The
       angular acceleration vector is determined from the applied forces and
@@ -286,7 +302,7 @@ struct VehicleState {
   */
   double Gethmeters(void) const { return Geth()*fttom;}
 
-  /** Retrieves a body frame angular velocity component.
+  /** Retrieves a body frame angular velocity component relative to the ECEF frame.
       Retrieves a body frame angular velocity component. The angular velocity
       returned is extracted from the vPQR vector (an FGColumnVector). The vector
       for the angular velocity in Body frame is organized (P, Q, R). The vector
@@ -298,6 +314,19 @@ struct VehicleState {
       @return The body frame angular velocity component.
   */
   double GetPQR(int axis) const {return VState.vPQR(axis);}
+
+  /** Retrieves a body frame angular velocity component relative to the ECI (inertial) frame.
+      Retrieves a body frame angular velocity component. The angular velocity
+      returned is extracted from the vPQR vector (an FGColumnVector). The vector
+      for the angular velocity in Body frame is organized (P, Q, R). The vector
+      is 1-based. In other words, GetPQR(1) returns P (roll rate). Various
+      convenience enumerators are defined in FGJSBBase. The relevant enumerators
+      for the angular velocity returned by this call are, eP=1, eQ=2, eR=3.
+      units rad/sec
+      @param axis the index of the angular velocity component desired (1-based).
+      @return The body frame angular velocity component.
+  */
+  double GetPQRi(int axis) const {return vPQRi(axis);}
 
   /** Retrieves a body frame angular acceleration component.
       Retrieves a body frame angular acceleration component. The angular
@@ -423,13 +452,13 @@ struct VehicleState {
       @return a reference to the local-to-ECEF matrix.  */
   const FGMatrix33& GetTl2ec(void) const { return VState.vLocation.GetTl2ec(); }
 
-  const VehicleState GetVState(void) const { return VState; }
+  VehicleState* GetVState(void) { return &VState; }
 
-  void SetVState(VehicleState vstate) {
-      VState.vLocation = vstate.vLocation;
-      VState.vUVW = vstate.vUVW;
-      VState.vPQR = vstate.vPQR;
-      VState.vQtrn = vstate.vQtrn; // ... mmh
+  void SetVState(VehicleState* vstate) {
+      VState.vLocation = vstate->vLocation;
+      VState.vUVW = vstate->vUVW;
+      VState.vPQR = vstate->vPQR;
+      VState.vQtrn = vstate->vQtrn; // ... mmh
   }
 
   const FGQuaternion GetQuaternion(void) const { return VState.vQtrn; }
@@ -504,4 +533,7 @@ private:
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#include <initialization/FGInitialCondition.h>
+
 #endif

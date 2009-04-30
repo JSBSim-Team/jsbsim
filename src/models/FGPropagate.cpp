@@ -57,8 +57,8 @@ INCLUDES
 #include <iomanip>
 
 #include "FGPropagate.h"
-#include <FGState.h>
 #include <FGFDMExec.h>
+#include <FGState.h>
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGInertial.h"
@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.36 2009/03/23 03:13:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.37 2009/04/30 00:18:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -510,6 +510,10 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/p-rad_sec", this, eP, (PMF)&FGPropagate::GetPQR);
   PropertyManager->Tie("velocities/q-rad_sec", this, eQ, (PMF)&FGPropagate::GetPQR);
   PropertyManager->Tie("velocities/r-rad_sec", this, eR, (PMF)&FGPropagate::GetPQR);
+
+  PropertyManager->Tie("velocities/pi-rad_sec", this, eP, (PMF)&FGPropagate::GetPQRi);
+  PropertyManager->Tie("velocities/qi-rad_sec", this, eQ, (PMF)&FGPropagate::GetPQRi);
+  PropertyManager->Tie("velocities/ri-rad_sec", this, eR, (PMF)&FGPropagate::GetPQRi);
 
   PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
 
