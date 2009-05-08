@@ -54,10 +54,11 @@ INCLUDES
 #include <models/flight_control/FGFCSFunction.h>
 #include <models/flight_control/FGSensor.h>
 #include <models/flight_control/FGActuator.h>
+#include <models/flight_control/FGAccelerometer.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.55 2009/03/25 12:02:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.56 2009/05/08 11:57:09 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -578,11 +579,11 @@ bool FGFCS::Load(Element* el, SystemType systype)
   // all stored in the interface properties array.
 
   property_element = document->FindElement("property");
-  if (property_element) cout << endl << "    Declared properties" << endl << endl;
+  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
   while (property_element) {
     interface_property_string = property_element->GetDataLine();
     if (PropertyManager->HasNode(interface_property_string)) {
-      cout << "      Property " << interface_property_string << " is already defined." << endl;
+      cerr << "      Property " << interface_property_string << " is already defined." << endl;
     } else {
       double value=0.0;
       if ( ! property_element->GetAttributeValue("value").empty())
@@ -590,7 +591,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
       interface_properties.push_back(new double(value));
       interface_property_string = property_element->GetDataLine();
       PropertyManager->Tie(interface_property_string, interface_properties.back());
-      cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+      if (debug_lvl > 0)
+        cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
     }
     property_element = document->FindNextElement("property");
   }
@@ -611,8 +613,9 @@ bool FGFCS::Load(Element* el, SystemType systype)
       interface_property_string = property_element->GetDataLine();
       if (PropertyManager->HasNode(interface_property_string)) {
         FGPropertyManager* node = PropertyManager->GetNode(interface_property_string);
-        cout << "      " << "Overriding value for property " << interface_property_string
-             << " (old value: " << node->getDoubleValue() << "  new value: " << value << ")" << endl;
+        if (debug_lvl > 0)
+          cout << "      " << "Overriding value for property " << interface_property_string
+               << " (old value: " << node->getDoubleValue() << "  new value: " << value << ")" << endl;
         node->setDoubleValue(value);
       } else {
         interface_properties.push_back(new double(value));
@@ -679,6 +682,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
           Components->push_back(new FGActuator(this, component_element));
         } else if (component_element->GetName() == string("sensor")) {
           Components->push_back(new FGSensor(this, component_element));
+        } else if (component_element->GetName() == string("accelerometer")) {
+          Components->push_back(new FGAccelerometer(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }

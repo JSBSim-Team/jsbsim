@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGSensor.h
+ Header:       FGAccelerometer.h
  Author:       Jon Berndt
- Date started: 9 July 2005
+ Date started: May 2009
 
- ------------- Copyright (C) 2005 -------------
+ ------------- Copyright (C) 2009 -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -30,21 +30,25 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGSENSOR_H
-#define FGSENSOR_H
+#ifndef FGACCELEROMETER_H
+#define FGACCELEROMETER_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFCSComponent.h"
+#include "FGSensor.h"
 #include <input_output/FGXMLElement.h>
+#include "models/FGPropagate.h"
+#include "models/FGMassBalance.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.11 2009/05/08 11:57:09 jberndt Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.1 2009/05/08 11:58:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,12 +62,12 @@ class FGFCS;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates a Sensor component for the flight control system.
+/** Encapsulates a Accelerometer component for the flight control system.
 
 Syntax:
 
 @code
-<sensor name="name">
+<accelerometer name="name">
   <input> property </input>
   <lag> number </lag>
   <noise variation="PERCENT|ABSOLUTE"> number </noise>
@@ -74,93 +78,62 @@ Syntax:
   </quantization>
   <drift_rate> number </drift_rate>
   <bias> number </bias>
-</sensor>
+</accelerometer>
 @endcode
 
 Example:
 
 @code
-<sensor name="aero/sensor/qbar">
+<accelerometer name="aero/accelerometer/qbar">
   <input> aero/qbar </input>
   <lag> 0.5 </lag>
   <noise variation="PERCENT"> 2 </noise>
-  <quantization name="aero/sensor/quantized/qbar">
+  <quantization name="aero/accelerometer/quantized/qbar">
     <bits> 12 </bits>
     <min> 0 </min>
     <max> 400 </max>
   </quantization>
   <bias> 0.5 </bias>
-</sensor>
+</accelerometer>
 @endcode
 
-The only required element in the sensor definition is the input element. In that
+The only required element in the accelerometer definition is the input element. In that
 case, no degradation would be modeled, and the output would simply be the input.
 
 For noise, if the type is PERCENT, then the value supplied is understood to be a
 percentage variance. That is, if the number given is 0.05, the the variance is
-understood to be +/-0.05 percent maximum variance. So, the actual value for the sensor
+understood to be +/-0.05 percent maximum variance. So, the actual value for the accelerometer
 will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
 even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.11 $
+@version $Revision: 1.1 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGSensor  : public FGFCSComponent
+class FGAccelerometer  : public FGSensor
 {
 public:
-  FGSensor(FGFCS* fcs, Element* element);
-  ~FGSensor();
+  FGAccelerometer(FGFCS* fcs, Element* element);
+  ~FGAccelerometer();
 
-  void SetFailLow(double val) {if (val > 0.0) fail_low = true; else fail_low = false;}
-  void SetFailHigh(double val) {if (val > 0.0) fail_high = true; else fail_high = false;}
-  void SetFailStuck(double val) {if (val > 0.0) fail_stuck = true; else fail_stuck = false;}
-
-  double GetFailLow(void) const {if (fail_low) return 1.0; else return 0.0;}
-  double GetFailHigh(void) const {if (fail_high) return 1.0; else return 0.0;}
-  double GetFailStuck(void) const {if (fail_stuck) return 1.0; else return 0.0;}
-  int    GetQuantized(void) const {return quantized;}
-
-  virtual bool Run (void);
-
-protected:
-  enum eNoiseType {ePercent=0, eAbsolute} NoiseType;
-  double dt;
-  double min, max;
-  double span;
-  double bias;
-  double drift_rate;
-  double drift;
-  double noise_variance;
-  double lag;
-  double granularity;
-  double ca; /// lag filter coefficient "a"
-  double cb; /// lag filter coefficient "b"
-  double PreviousOutput;
-  double PreviousInput;
-  int noise_type;
-  int bits;
-  int quantized;
-  int divisions;
-  bool fail_low;
-  bool fail_high;
-  bool fail_stuck;
-  string quant_property;
-
-  void Noise(void);
-  void Bias(void);
-  void Drift(void);
-  void Quantize(void);
-  void Lag(void);
-
-  void bind(void);
+  bool Run (void);
 
 private:
+  FGPropagate* Propagate;
+  FGMassBalance* MassBalance;
+  FGColumnVector3 vLocation;
+  FGColumnVector3 vOrient;
+  FGColumnVector3 vRadius;
+  FGColumnVector3 vAccel;
+  FGMatrix33 mT;
+  void CalculateTransformMatrix(void);
+  int axis;
+  
   void Debug(int from);
 };
 }
