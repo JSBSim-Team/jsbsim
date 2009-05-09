@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.8 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.9 2009/05/09 13:28:33 jberndt Exp $"
 
 using namespace std;
 
@@ -110,6 +110,7 @@ public:
   virtual bool InitModel(void);
   virtual void SetRate(int tt) {rate = tt;}
   virtual int  GetRate(void)   {return rate;}
+  FGFDMExec* GetExec(void)     {return FDMExec;}
 
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
 
