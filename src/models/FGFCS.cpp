@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.56 2009/05/08 11:57:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.57 2009/05/10 09:53:02 andgi Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -454,7 +454,7 @@ void FGFCS::SetMixturePos(int engineNum, double setting)
 
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<=MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
+      for (ctr=0;ctr<MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
     } else {
       MixturePos[engineNum] = setting;
     }
@@ -484,7 +484,7 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<=PropAdvanceCmd.size();ctr++) PropAdvance[ctr] = PropAdvanceCmd[ctr];
+      for (ctr=0;ctr<PropAdvanceCmd.size();ctr++) PropAdvance[ctr] = PropAdvanceCmd[ctr];
     } else {
       PropAdvance[engineNum] = setting;
     }
@@ -514,7 +514,7 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<=PropFeatherCmd.size();ctr++) PropFeather[ctr] = PropFeatherCmd[ctr];
+      for (ctr=0;ctr<PropFeatherCmd.size();ctr++) PropFeather[ctr] = PropFeatherCmd[ctr];
     } else {
       PropFeather[engineNum] = setting;
     }
