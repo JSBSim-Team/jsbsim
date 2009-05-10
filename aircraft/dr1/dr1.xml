@@ -7,7 +7,7 @@
  <fileheader>
   <author> Ron Jensen, Erik Hofman, Aeromatic v 0.9 </author>
   <filecreationdate> 2008-07-26 </filecreationdate>
-  <version>$Revison: $</version>
+  <version>$Revision: 1.4 $</version>
   <description> Models a Fokker Dr.1. </description>
  </fileheader>
 

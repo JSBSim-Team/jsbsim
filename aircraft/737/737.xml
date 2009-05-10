@@ -8,7 +8,7 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2006-01-04 </filecreationdate>
-        <version>$Revison: 1.0 $</version>
+        <version>$Revision: 1.37 $</version>
         <description> Models a Boeing 737. </description>
         <license>
           <licenseName>GPL (General Public License)</licenseName>
@@ -204,7 +204,7 @@
             </location>
             <capacity unit="LBS"> 10200 </capacity>
             <contents unit="LBS"> 10000 </contents>
-            <temperature> 59.0 </temperature> <!-- Fuel temp in degrees F -->
+            <temperature unit="degF"> 59.0 </temperature> <!-- Fuel temp in degrees F -->
         </tank>
         <tank type="FUEL"><!-- Right wing tank -->
             <location unit="IN">
