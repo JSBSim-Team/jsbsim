@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.9 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.10 2009/05/10 10:59:49 andgi Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,6 +98,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
 
 FGRocket::~FGRocket(void)
 {
+  delete ThrustTable;
   Debug(1);
 }
 

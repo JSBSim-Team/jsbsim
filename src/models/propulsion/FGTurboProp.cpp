@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.11 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.12 2009/05/10 10:59:50 andgi Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number)
-  : FGEngine(exec, el, engine_number)
+  : FGEngine(exec, el, engine_number),
+    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL)
 {
   SetDefaults();
 
@@ -69,6 +70,9 @@ FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number)
 
 FGTurboProp::~FGTurboProp()
 {
+  delete ITT_N1;
+  delete EnginePowerRPM_N1;
+  delete EnginePowerVC;
   Debug(1);
 }
 

@@ -56,7 +56,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.7 2008/05/04 18:22:53 dpculp Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.8 2009/05/10 10:59:48 andgi Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ FGExternalForce::FGExternalForce(const FGExternalForce& extForce) : FGForce(extF
 FGExternalForce::~FGExternalForce()
 {
   unbind( PropertyManager->GetNode("external_reactions"));
-
+  delete Magnitude_Function;
   Debug(1);
 }
 

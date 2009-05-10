@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.52 2009/04/13 11:40:32 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.53 2009/05/10 10:59:49 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +260,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
 
 FGLGear::~FGLGear()
 {
+  delete ForceY_Table;
   Debug(1);
 }
 
