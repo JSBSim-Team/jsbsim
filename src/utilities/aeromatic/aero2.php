@@ -19,6 +19,7 @@ $version = 0.91;
 // Updated: 14 Dec 2004, DPC - adapted to new XML format, v2.0
 // Updated: 29 Dec 2005, DPC - more v2.0 updates, added incidence
 // Updated: 21 Oct 2008, DPC - fixed drag due to elevator with <abs>
+// Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
 
 header("Content-type: text/plain");
 
@@ -328,9 +329,9 @@ $ac_gearsteerable_main = 'FIXED';
 $ac_gearsteerable_tail = 'CASTERED';
 $ac_gearmaxsteer = 5;
 if($ac_gearretract == 0)
-  $ac_retract = 'FIXED';
+  $ac_retract = '0';
 else
-  $ac_retract = 'RETRACT';
+  $ac_retract = '1';
 
 //***** PROPULSION ************************************
 
@@ -770,7 +771,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate> $date_string </filecreationdate>\n");
-print("  <version>\$Revision: 1.9 $</version>\n");
+print("  <version>\$Revision: 1.10 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
