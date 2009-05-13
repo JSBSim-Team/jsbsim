@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.30 2008/11/29 13:52:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.31 2009/05/13 11:50:11 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,14 +181,20 @@ bool FGScript::LoadScript( string script )
   while (property_element) {
 
     double value=0.0;
+    string title="";
+
+    title = property_element->GetDataLine();
     if ( ! property_element->GetAttributeValue("value").empty())
       value = property_element->GetAttributeValueAsNumber("value");
 
     LocalProps *localProp = new LocalProps(value);
-    localProp->title = property_element->GetDataLine();
+    localProp->title = title;
     local_properties.push_back(localProp);
-
-    PropertyManager->Tie(localProp->title, (local_properties.back())->value);
+    if (PropertyManager->HasNode(title)) {
+      PropertyManager->GetNode(title)->setDoubleValue(value);
+    } else {
+      PropertyManager->Tie(localProp->title, localProp->value);
+    }
     property_element = run_element->FindNextElement("property");
   }
 
@@ -446,6 +452,14 @@ void FGScript::Debug(int from)
       cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
            << " seconds with dt = " << State->Getdt() << endl;
       cout << endl;
+
+      for (unsigned int i=0; i<local_properties.size(); i++) {
+        cout << "Local property: " << local_properties[i]->title 
+             << " = " << PropertyManager->GetNode(local_properties[i]->title)->getDoubleValue()
+             << endl;
+      }
+      
+      if (local_properties.size() > 0) cout << endl;
 
       for (unsigned i=0; i<Events.size(); i++) {
         cout << "Event " << i;
