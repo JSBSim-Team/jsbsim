@@ -60,7 +60,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.21 2009/05/14 01:54:00 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.22 2009/05/14 04:17:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.21 2009/05/14 01:54:00 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.22 2009/05/14 04:17:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -296,7 +296,7 @@ public:
     return value<min?(min):(value>max?(max):(value));
   }
   
-  static double sign(double num) {num>=0.0?1.0:-1.0;}
+  static double sign(double num) {return num>=0.0?1.0:-1.0;}
 
 protected:
   static Message localMsg;
