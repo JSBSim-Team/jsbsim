@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.12 2009/05/08 11:57:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.13 2009/05/14 01:55:47 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   // inputs are read from the base class constructor
 
-  bits = quantized = divisions = 0;
+  bits = quantized = divisions = index = delay = 0;
   PreviousInput = PreviousOutput = 0.0;
   min = max = bias = noise_variance = lag = drift_rate = drift = span = 0.0;
   granularity = 0.0;
@@ -103,6 +103,21 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       cerr << "Unknown noise type in sensor: " << Name << endl;
       cerr << "  defaulting to PERCENT." << endl;
     }
+    string distribution = element->FindElement("noise")->GetAttributeValue("distribution");
+    if (distribution == "UNIFORM") {
+      DistributionType = eUniform;
+    } else if (distribution == "GAUSSIAN") {
+      DistributionType = eGaussian;
+    } else {
+      DistributionType = eUniform;
+      cerr << "Unknown random distribution type in sensor: " << Name << endl;
+      cerr << "  defaulting to UNIFORM." << endl;
+    }
+  }
+  if ( element->FindElement("delay") ) {
+    delay = (unsigned int)element->FindElementValueAsNumber("delay");
+    output_array.resize(delay);
+    for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
   }
 
   FGFCSComponent::bind();
@@ -133,16 +148,17 @@ bool FGSensor::Run(void )
     return true;
   }
 
-  if (lag != 0.0)            Lag();       // models sensor lag
+  if (lag != 0.0)            Lag();       // models sensor lag and filter
   if (noise_variance != 0.0) Noise();     // models noise
   if (drift_rate != 0.0)     Drift();     // models drift over time
   if (bias != 0.0)           Bias();      // models a finite bias
+
+  if (delay != 0.0)          Delay();     // models system signal transport latencies
 
   if (fail_low)  Output = -HUGE_VAL;
   if (fail_high) Output =  HUGE_VAL;
 
   if (bits != 0)             Quantize();  // models quantization degradation
-//  if (delay != 0.0)          Delay();     // models system signal transport latencies
 
   Clip(); // Is it right to clip a sensor?
   return true;
@@ -152,7 +168,13 @@ bool FGSensor::Run(void )
 
 void FGSensor::Noise(void)
 {
-  double random_value = ((double)rand()/(double)RAND_MAX) - 0.5;
+  double random_value=0.0;
+
+  if (DistributionType == eUniform) {
+    random_value = ((double)rand()/(double)RAND_MAX) - 0.5;
+  } else {
+    random_value = GaussianRandomNumber();
+  }
 
   switch( NoiseType ) {
   case ePercent:
@@ -195,11 +217,21 @@ void FGSensor::Quantize(void)
 
 void FGSensor::Lag(void)
 {
-  // "Output" on the right side of the "=" is the current frame input
+  // "Output" on the right side of the "=" is the current input
   Output = ca * (Output + PreviousInput) + PreviousOutput * cb;
 
   PreviousOutput = Output;
   PreviousInput  = Input;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSensor::Delay(void)
+{
+  output_array[index] = Output;
+  if (index == delay-1) index = 0;
+  else index++;
+  Output = output_array[index];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +290,8 @@ void FGSensor::Debug(int from)
         else
           cout << "      INPUT: " << InputNodes[0]->getName() << endl;
       }
-      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (delay > 0) cout <<"      Frame delay: " << delay
+                                   << " frames (" << delay*dt << " sec)" << endl;
       if (bits != 0) {
         if (quant_property.empty())
           cout << "      Quantized output" << endl;
@@ -281,7 +314,13 @@ void FGSensor::Debug(int from)
         } else {
           cout << "      Noise variance type is invalid" << endl;
         }
+        if (DistributionType == eUniform) {
+          cout << "      Random noise is uniformly distributed." << endl;
+        } else if (DistributionType == eGaussian) {
+          cout << "      Random noise is gaussian distributed." << endl;
+        }
       }
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
