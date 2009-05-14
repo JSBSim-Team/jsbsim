@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.8 2009/02/25 12:14:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.9 2009/05/14 01:54:00 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ bool FGActuator::Run(void )
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
   if (fail_zero) Input = 0;
-  if (fail_hardover) Input =  clipmax*fabs(Input)/Input;
+  if (fail_hardover) Input =  clipmax*sign(Input);
 
   Output = Input; // Perfect actuator. At this point, if no failures are present
                   // and no subsequent lag, limiting, etc. is done, the output

@@ -60,7 +60,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.20 2009/03/05 20:40:57 andgi Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.21 2009/05/14 01:54:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.20 2009/03/05 20:40:57 andgi Exp $
+    @version $Id: FGJSBBase.h,v 1.21 2009/05/14 01:54:00 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,7 +156,7 @@ public:
   /** Places a Message structure on the Message queue.
       @param msg pointer to a Message structure
       @return pointer to a Message structure */
-void PutMessage(const Message& msg);
+  void PutMessage(const Message& msg);
   /** Creates a message with the given text and places it on the queue.
       @param text message text
       @return pointer to a Message structure */
@@ -165,17 +165,17 @@ void PutMessage(const Message& msg);
       @param text message text
       @param bVal boolean value associated with the message
       @return pointer to a Message structure */
-void PutMessage(const string& text, bool bVal);
+  void PutMessage(const string& text, bool bVal);
   /** Creates a message with the given text and integer value and places it on the queue.
       @param text message text
       @param iVal integer value associated with the message
       @return pointer to a Message structure */
-void PutMessage(const string& text, int iVal);
+  void PutMessage(const string& text, int iVal);
   /** Creates a message with the given text and double value and places it on the queue.
       @param text message text
       @param dVal double value associated with the message
       @return pointer to a Message structure */
-void PutMessage(const string& text, double dVal);
+  void PutMessage(const string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return 1 if some messages */
   int SomeMessages(void);
@@ -295,6 +295,8 @@ void PutMessage(const string& text, double dVal);
   static double Constrain(double min, double value, double max) {
     return value<min?(min):(value>max?(max):(value));
   }
+  
+  static double sign(double num) {num>=0.0?1.0:-1.0;}
 
 protected:
   static Message localMsg;
@@ -340,6 +342,8 @@ protected:
     static double V1, V2, S;
     static int phase = 0;
     double X;
+
+    V1 = V2 = S = X = 0.0;
 
     if (phase == 0) {
       do {
