@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.29 2009/03/28 14:29:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.30 2009/05/15 11:31:49 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -120,7 +120,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   FGColumnVector3 _vUVW_BODY(u,v,w);
   FGColumnVector3 _vUVW_NED = _Tb2l * _vUVW_BODY;
   FGColumnVector3 _vWIND_NED(wnorth,weast,wdown);
-  FGColumnVector3 _vUVWAero = _Tl2b * ( _vUVW_NED + _vWIND_NED );
+//  FGColumnVector3 _vUVWAero = _Tl2b * ( _vUVW_NED + _vWIND_NED );
 
   uw=_vWIND_NED(1); vw=_vWIND_NED(2); ww=_vWIND_NED(3);
 
@@ -858,6 +858,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
   if (document->FindElement("longitude"))
     SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
+  if (document->FindElement("elevation"))
+    SetTerrainAltitudeFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
   if (document->FindElement("altitude"))
     SetAltitudeFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   if (document->FindElement("ubody"))
