@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.47 2009/04/13 11:40:32 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.48 2009/05/17 13:44:55 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -144,13 +144,6 @@ FGJSBsim::FGJSBsim( double dt )
     }
 
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
-
-    // begin ugly hack
-    // Untie the write-state-file property to avoid creating an initfile.xml
-    // file on each FlightGear reset.
-    fgGetNode("/fdm/jsbsim/simulation/write-state-file")->untie();
-    fgGetNode("/fdm/jsbsim/simulation")->removeChild("write-state-file", false);
-    // end ugly hack
 
     // Register ground callback.
     fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
