@@ -94,7 +94,7 @@ INCLUDES
 #include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Helvetica,10"
-#define TITLE_FONT "Helvetica,12"
+#define TITLE_FONT "Helvetica,14"
 #define LABEL_FONT "Helvetica,12"
 #define AXIS_FONT "Helvetica,12"
 #define TIMESTAMP_FONT "Helvetica,8"
@@ -424,22 +424,22 @@ void MakeArbitraryPlot(
            << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
            << LeftYAxisNames[0] << "\"";
       if (numLeftYAxisNames > 1) {
-        cout << ",\\" << endl;
+        cout << ", \\" << endl;
         for (i=1; i<numLeftYAxisNames-1; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
-               << LeftYAxisNames[i] << "\",\\" << endl;
+               << LeftYAxisNames[i] << "\", \\" << endl;
         }
         cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
              << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
              << LeftYAxisNames[numLeftYAxisNames-1] << "\"";
       }
       if (numRightYAxisNames > 0) {
-        cout << ",\\" << endl;
+        cout << ", \\" << endl;
         for (i=0; i<numRightYAxisNames-1; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
-               << RightYAxisNames[i] << "\",\\" << endl;
+               << RightYAxisNames[i] << "\", \\" << endl;
         }
         cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
              << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
@@ -463,7 +463,7 @@ void MakeArbitraryPlot(
       
         if (f==0) cout << "plot ";
         else      {
-          cout << ",\\" << endl;
+          cout << ", \\" << endl;
           cout << "     ";
         }
 
@@ -471,22 +471,22 @@ void MakeArbitraryPlot(
              << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
              << LeftYAxisNames[0] << ": " << f << "\"";
         if (numLeftYAxisNames > 1) {
-          cout << ",\\" << endl;
+          cout << ", \\" << endl;
           for (i=1; i<numLeftYAxisNames-1; i++) {
             cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                  << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
-                 << LeftYAxisNames[i] << ": " << f << "\",\\" << endl;
+                 << LeftYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
           cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
                << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
                << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {
-          cout << ",\\" << endl;
+          cout << ", \\" << endl;
           for (i=0; i<numRightYAxisNames-2; i++) {
             cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                  << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
-                 << RightYAxisNames[i] << ": " << f << "\",\\" << endl;
+                 << RightYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
           cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
@@ -514,9 +514,9 @@ void EmitSinglePlot(string filename, int index, string linetitle )
 
 void EmitComparisonPlot(vector <string>& filenames, int index, string linetitle)
 {
-  cout << "plot \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\",\\" << endl;
+  cout << "plot \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
   for (unsigned int f=1;f<filenames.size()-1;f++){
-    cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\",\\" << endl;
+    cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\", \\" << endl;
   }
   cout << "\"" << filenames[filenames.size()-1] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << filenames.size() << "\"" << endl;
 }
