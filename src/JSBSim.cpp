@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.44 2008/12/23 15:24:38 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.45 2009/05/17 13:51:23 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -355,6 +355,10 @@ int main(int argc, char* argv[])
       FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
     }
   }
+
+  cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
+       << "---- JSBSim Execution beginning ... --------------------------------------------"
+       << JSBSim::FGFDMExec::reset << endl << endl;
 
   result = FDMExec->Run();  // MAKE AN INITIAL RUN
 
