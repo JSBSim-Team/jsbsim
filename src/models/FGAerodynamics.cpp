@@ -36,6 +36,7 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <FGFDMExec.h>
 #include "FGAerodynamics.h"
 #include "FGPropagate.h"
 #include "FGAircraft.h"
@@ -45,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.23 2009/03/20 02:08:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.24 2009/05/17 13:55:48 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

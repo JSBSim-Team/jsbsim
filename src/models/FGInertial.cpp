@@ -36,13 +36,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInertial.h"
+#include <FGFDMExec.h>
 #include "FGPropagate.h"
 #include "FGState.h"
 #include "FGMassBalance.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.9 2008/12/12 05:06:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.10 2009/05/17 13:55:48 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

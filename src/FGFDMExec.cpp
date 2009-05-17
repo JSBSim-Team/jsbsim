@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.60 2009/03/28 14:30:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.61 2009/05/17 13:55:48 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,6 @@ void checkTied ( FGPropertyManager *node )
 
   for (int i=0; i<N; i++) {
     if (node->getChild(i)->nChildren() ) {
-//      cout << "Untieing " << node->getChild(i)->getName() << " property branch." << endl;
       checkTied( (FGPropertyManager*)node->getChild(i) );
     } else if ( node->getChild(i)->isTied() ) {
       name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
@@ -128,19 +127,12 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Script          = 0;
 
   modelLoaded = false;
-  IsSlave = false;
+  IsChild = false;
   holding = false;
   Terminate = false;
 
-  // Multiple FDM's are stopped for now.  We need to ensure that
-  // the "user" instance always gets the zeroeth instance number,
-  // because there may be instruments or scripts tied to properties
-  // in the jsbsim[0] node.
-  // ToDo: it could be that when JSBSim is reset and a new FDM is wanted, that
-  // process might try setting FDMctr = 0. Then the line below would not need
-  // to be commented out.
-  IdFDM = FDMctr;
-  //FDMctr++;
+  IdFDM = FDMctr; // The main (parent) JSBSim instance is always the "zeroth"
+  FDMctr++;       // instance. "child" instances are loaded last.
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
@@ -189,10 +181,10 @@ FGFDMExec::~FGFDMExec()
     cout << "Caught error: " << msg << endl;
   }
 
-  for (unsigned int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
-  SlaveFDMList.clear();
+  for (unsigned int i=1; i<ChildFDMList.size(); i++) delete ChildFDMList[i]->exec;
+  ChildFDMList.clear();
 
-  //ToDo remove property catalog.
+  PropertyCatalog.clear();
 
   Debug(1);
 }
@@ -355,9 +347,9 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
-  for (unsigned int i=1; i<SlaveFDMList.size(); i++) {
-//    SlaveFDMList[i]->exec->State->Initialize(); // Transfer state to the slave FDM
-//    SlaveFDMList[i]->exec->Run();
+  for (unsigned int i=1; i<ChildFDMList.size(); i++) {
+    ChildFDMList[i]->AssignState(Propagate); // Transfer state to the child FDM
+    ChildFDMList[i]->Run();
   }
 
   // returns true if success
@@ -453,8 +445,8 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
   FDMList.push_back(Aircraft->GetAircraftName());
 
-  for (unsigned int i=1; i<SlaveFDMList.size(); i++) {
-    FDMList.push_back(SlaveFDMList[i]->exec->GetAircraft()->GetAircraftName());
+  for (unsigned int i=1; i<ChildFDMList.size(); i++) {
+    FDMList.push_back(ChildFDMList[i]->exec->GetAircraft()->GetAircraftName());
   }
 
   return FDMList;
@@ -511,9 +503,15 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     Allocate();
   }
 
+  int saved_debug_lvl = debug_lvl;
+
   document = LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
   if (document) {
+    if (IsChild) debug_lvl = 0;
+
     ReadPrologue(document);
+
+    if (IsChild) debug_lvl = saved_debug_lvl;
 
     // Process the fileheader element in the aircraft config file. This element is OPTIONAL.
     element = document->FindElement("fileheader");
@@ -524,6 +522,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
         return result;
       }
     }
+
+    if (IsChild) debug_lvl = 0;
 
     // Process the metrics element. This element is REQUIRED.
     element = document->FindElement("metrics");
@@ -662,17 +662,26 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
       element = document->FindNextElement("output");
     }
 
-    // Lastly, process the slave element. This element is OPTIONAL - and NOT YET SUPPORTED.
-    element = document->FindElement("slave");
+    // Lastly, process the child element. This element is OPTIONAL - and NOT YET SUPPORTED.
+    element = document->FindElement("child");
     if (element) {
-      result = ReadSlave(element);
+      result = ReadChild(element);
       if (!result) {
-        cerr << endl << "Aircraft slave element has problems in file " << aircraftCfgFileName << endl;
+        cerr << endl << "Aircraft child element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
     }
 
     modelLoaded = true;
+
+    if (debug_lvl > 0) {
+      cout << endl << fgblue << highint
+           << "End of vehicle configuration loading." << endl
+           << "-------------------------------------------------------------------------------"
+           << reset << endl;
+    }
+    
+    if (IsChild) debug_lvl = saved_debug_lvl;
 
   } else {
     cerr << fgred
@@ -745,16 +754,20 @@ bool FGFDMExec::ReadFileHeader(Element* el)
 {
   bool result = true; // true for success
 
-  if (debug_lvl & ~1) return result;
+  if (debug_lvl == 0) return result;
 
+  if (IsChild) {
+    cout << endl <<highint << fgblue << "Reading child model: " << IdFDM << reset << endl << endl;
+  }
+
+  if (el->FindElement("description"))
+    cout << "  Description:   " << el->FindElement("description")->GetDataLine() << endl;
   if (el->FindElement("author"))
     cout << "  Model Author:  " << el->FindElement("author")->GetDataLine() << endl;
   if (el->FindElement("filecreationdate"))
     cout << "  Creation Date: " << el->FindElement("filecreationdate")->GetDataLine() << endl;
   if (el->FindElement("version"))
     cout << "  Version:       " << el->FindElement("version")->GetDataLine() << endl;
-  if (el->FindElement("description"))
-    cout << "  Description:   " << el->FindElement("description")->GetDataLine() << endl;
 
   return result;
 }
@@ -821,53 +834,50 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::ReadSlave(Element* el)
+bool FGFDMExec::ReadChild(Element* el)
 {
-  // Add a new slaveData object to the slave FDM list
-  // Populate that slaveData element with a new FDMExec object
-  // Set the IsSlave flag for that FDMExec object
+  // Add a new childData object to the child FDM list
+  // Populate that childData element with a new FDMExec object
+  // Set the IsChild flag for that FDMExec object
   // Get the aircraft name
-  // set debug level to print out no additional data for slave objects
+  // set debug level to print out no additional data for child objects
   // Load the model given the aircraft name
   // reset debug level to prior setting
 
-  int saved_debug_lvl = debug_lvl;
   string token;
 
-  SlaveFDMList.push_back(new slaveData);
-  SlaveFDMList.back()->exec = new FGFDMExec();
-  SlaveFDMList.back()->exec->SetSlave(true);
-/*
-  string AircraftName = AC_cfg->GetValue("file");
+  struct childData* child = new childData;
 
-  debug_lvl = 0;                 // turn off debug output for slave vehicle
+  child->exec = new FGFDMExec();
+  child->exec->SetChild(true);
 
-  SlaveFDMList.back()->exec->SetAircraftPath( AircraftPath );
-  SlaveFDMList.back()->exec->SetEnginePath( EnginePath );
-  SlaveFDMList.back()->exec->SetSystemsPath( SystemsPath );
-  SlaveFDMList.back()->exec->LoadModel(AircraftName);
-  debug_lvl = saved_debug_lvl;   // turn debug output back on for master vehicle
+  string childAircraft = el->GetAttributeValue("name");
+  string sMated = el->GetAttributeValue("mated");
+  if (sMated == "false") child->mated = false; // child objects are mated by default.
+  string sInternal = el->GetAttributeValue("internal");
+  if (sInternal == "true") child->internal = true; // child objects are external by default.
 
-  AC_cfg->GetNextConfigLine();
-  while ((token = AC_cfg->GetValue()) != string("/SLAVE")) {
-    *AC_cfg >> token;
-    if      (token == "xloc")  { *AC_cfg >> SlaveFDMList.back()->x;    }
-    else if (token == "yloc")  { *AC_cfg >> SlaveFDMList.back()->y;    }
-    else if (token == "zloc")  { *AC_cfg >> SlaveFDMList.back()->z;    }
-    else if (token == "pitch") { *AC_cfg >> SlaveFDMList.back()->pitch;}
-    else if (token == "yaw")   { *AC_cfg >> SlaveFDMList.back()->yaw;  }
-    else if (token == "roll")  { *AC_cfg >> SlaveFDMList.back()->roll;  }
-    else cerr << "Unknown identifier: " << token << " in slave vehicle definition" << endl;
+  child->exec->SetAircraftPath( AircraftPath );
+  child->exec->SetEnginePath( EnginePath );
+  child->exec->SetSystemsPath( SystemsPath );
+  child->exec->LoadModel(childAircraft);
+
+  Element* location = el->FindElement("location");
+  if (location) {
+    child->Loc = location->FindElementTripletConvertTo("IN");
+  } else {
+    cerr << endl << highint << fgred << "  No location was found for this child object!" << reset << endl;
+    exit(-1);
   }
-*/
-  if (debug_lvl > 0)  {
-    cout << "      X = " << SlaveFDMList.back()->x << endl;
-    cout << "      Y = " << SlaveFDMList.back()->y << endl;
-    cout << "      Z = " << SlaveFDMList.back()->z << endl;
-    cout << "      Pitch = " << SlaveFDMList.back()->pitch << endl;
-    cout << "      Yaw = " << SlaveFDMList.back()->yaw << endl;
-    cout << "      Roll = " << SlaveFDMList.back()->roll << endl;
+  
+  Element* orientation = el->FindElement("orient");
+  if (orientation) {
+    child->Orient = orientation->FindElementTripletConvertTo("RAD");
+  } else if (debug_lvl > 0) {
+    cerr << endl << highint << "  No orientation was found for this child object! Assuming 0,0,0." << reset << endl;
   }
+
+  ChildFDMList.push_back(child);
 
   return true;
 }

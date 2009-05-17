@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.17 2008/11/16 17:04:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.18 2009/05/17 13:55:48 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,8 +130,13 @@ bool FGMassBalance::Load(Element* el)
     element = el->FindNextElement("pointmass");
   }
 
+  double ChildFDMWeight = 0.0;
+  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+    if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
+  }
+
   Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetTotalPointMassWeight()
-    + BuoyantForces->GetGasMass()*slugtolb;
+    + BuoyantForces->GetGasMass()*slugtolb + ChildFDMWeight;
 
   Mass = lbtoslug*Weight;
 
@@ -149,8 +154,13 @@ bool FGMassBalance::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
+  double ChildFDMWeight = 0.0;
+  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+    if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
+  }
+
   Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetTotalPointMassWeight()
-    + BuoyantForces->GetGasMass()*slugtolb;
+    + BuoyantForces->GetGasMass()*slugtolb + ChildFDMWeight;
 
   Mass = lbtoslug*Weight;
 
