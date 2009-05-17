@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
+#include <FGFDMExec.h>
 #include <math/FGColumnVector3.h>
 #include <math/FGLocation.h>
 #include "FGPropagate.h"
@@ -48,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.13 2009/01/08 12:35:34 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.14 2009/05/17 13:50:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +101,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.13 2009/01/08 12:35:34 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.14 2009/05/17 13:50:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,10 +186,23 @@ public:
   double GetqbarUW        (void) const { return qbarUW;     }
   double GetqbarUV        (void) const { return qbarUV;     }
   double GetReynoldsNumber(void) const { return Re;         }
+
+  /** Gets the magnitude of total vehicle velocity including wind effects in feet per second. */
   double GetVt            (void) const { return Vt;         }
+
+  /** Gets the ground speed in feet per second.
+      The magnitude is the square root of the sum of the squares (RSS) of the 
+      vehicle north and east velocity components.
+      @return The magnitude of the vehicle velocity in the horizontal plane. */
   double GetVground       (void) const { return Vground;    }
+
+  /** Gets the Mach number. */
   double GetMach          (void) const { return Mach;       }
+
+  /** The mach number calculated using the vehicle X axis velocity. */
   double GetMachU         (void) const { return MachU;      }
+
+  /** The vertical acceleration in g's of the aircraft center of gravity. */
   double GetNz            (void) const { return Nz;         }
 
   double GetHOverBCG(void) const { return hoverbcg; }
