@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.27 2009/04/30 00:18:26 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.28 2009/05/26 05:35:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.27 2009/04/30 00:18:26 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.28 2009/05/26 05:35:42 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,21 +286,19 @@ public:
   */
   double GetInertialVelocityMagnitude(void) const { return vInertialVelocity.Magnitude(); }
 
-  /** Returns the current altitude.
-      Returns the current altitude. Specifically, this function returns the
-      difference between the distance to the center of the Earth, and sea level.
+  /** Returns the current altitude above sea level.
+      This function returns the altitude above sea level.
       units ft
       @return The current altitude above sea level in feet.
   */
-  double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
+  double GetAltitudeASL(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
 
-  /** Returns the current altitude.
-      Returns the curren altitude. Specifically, this function returns the
-      difference between the distance to the center of the Earth, and sea level.
+  /** Returns the current altitude above sea level.
+      This function returns the altitude above sea level.
       units meters
       @return The current altitude above sea level in meters.
   */
-  double Gethmeters(void) const { return Geth()*fttom;}
+  double GetAltitudeASLmeters(void) const { return GetAltitudeASL()*fttom;}
 
   /** Retrieves a body frame angular velocity component relative to the ECEF frame.
       Retrieves a body frame angular velocity component. The angular velocity
@@ -385,16 +383,16 @@ public:
   */
   double Gethdot(void) const { return -vVel(eDown); }
 
-  /** Returns the "constant" RunwayRadius.
-      The RunwayRadius parameter is set by the calling application or set to
-      sea level if JSBSim is running in standalone mode.
+  /** Returns the "constant" LocalTerrainRadius.
+      The LocalTerrainRadius parameter is set by the calling application or set to
+      sea level + terrain elevation if JSBSim is running in standalone mode.
       units feet
-      @return distance of the runway from the center of the earth.
+      @return distance of the local terrain from the center of the earth.
       */
-  double GetRunwayRadius(void) const;
+  double GetLocalTerrainRadius(void) const;
 
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
-  double GetTerrainElevationASL(void) const;
+  double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {
       if (VState.vLocation.GetRadius() == 0) return 1.0;
@@ -481,13 +479,13 @@ public:
   void SetLatitudeDeg(double lat) {SetLatitude(lat*degtorad);}
   void SetRadius(double r) { VState.vLocation.SetRadius(r); }
   void SetLocation(const FGLocation& l) { VState.vLocation = l; }
-  void Seth(double tt);
-  void Sethmeters(double tt) {Seth(tt/fttom);}
+  void SetAltitudeASL(double altASL);
+  void SetAltitudeASLmeters(double altASL) {SetAltitudeASL(altASL/fttom);}
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
-  void SetTerrainElevationASL(double tt);
+  void SetTerrainElevation(double tt);
   void SetDistanceAGL(double tt);
   void SetInitialState(const FGInitialCondition *);
-  void RecomputeRunwayRadius(void);
+  void RecomputeLocalTerrainRadius(void);
 
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);
@@ -521,7 +519,7 @@ private:
   FGMatrix33 Ti2b;   // ECI to body frame rotation matrix
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   
-  double RunwayRadius, SeaLevelRadius, VehicleRadius;
+  double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
   double radInv;
   int integrator_rotational_rate;
   int integrator_translational_rate;

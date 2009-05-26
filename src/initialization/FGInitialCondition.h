@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.16 2009/03/28 14:29:46 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.17 2009/05/26 05:35:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
    @code
    FGInitialCondition fgic=new FGInitialCondition(FDMExec);
    fgic->SetVcalibratedKtsIC()
-   fgic->SetAltitudeFtIC();
+   fgic->SetAltitudeAGLFtIC();
 
    // directly into Run
    FDMExec->GetState()->Initialize(fgic)
@@ -140,7 +140,7 @@ CLASS DOCUMENTATION
    - beta (angle, degrees)
    - gamma (angle, degrees)
    - roc (vertical velocity, ft/sec)
-   - altitude (altitude, ft)
+   - altitude (altitude AGL, ft)
    - winddir (wind from-angle, degrees)
    - vwind (magnitude wind speed, ft/sec)
    - hwind (headwind speed, knots)
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
    @property ic/h-sl-ft (read/write) Height above sea level initial condition in feet
    @property ic/h-agl-ft (read/write) Height above ground level initial condition in feet
    @property ic/sea-level-radius-ft (read/write) Radius of planet at sea level in feet
-   @property ic/terrain-altitude-ft (read/write) Terrain elevation above sea level in feet
+   @property ic/terrain-elevation-ft (read/write) Terrain elevation above sea level in feet
    @property ic/vg-fps (read/write) Ground speed initial condition in feet/second
    @property ic/vt-fps (read/write) True airspeed initial condition in feet/second
    @property ic/vw-bx-fps (read/write) Wind velocity initial condition in Body X frame in feet/second
@@ -199,7 +199,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.16 2009/03/28 14:29:46 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.17 2009/05/26 05:35:42 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,9 +269,9 @@ public:
       @param gamma Flight path angle in degrees  */
   inline void SetFlightPathAngleDegIC(double gamma) { SetFlightPathAngleRadIC(gamma*degtorad); }
 
-  /** Sets the altitude initial condition in feet.
-      @param alt Altitude in feet */
-  void SetAltitudeFtIC(double alt);
+  /** Sets the altitude above sea level initial condition in feet.
+      @param altitudeASL Altitude above sea level in feet */
+  void SetAltitudeASLFtIC(double altitudeASL);
 
   /** Sets the initial Altitude above ground level.
       @param agl Altitude above ground level in feet */
@@ -283,7 +283,7 @@ public:
 
   /** Sets the initial terrain elevation.
       @param elev Initial terrain elevation in feet */
-  void SetTerrainAltitudeFtIC(double elev);
+  void SetTerrainElevationFtIC(double elev);
 
   /** Sets the initial latitude.
       @param lat Initial latitude in degrees */
@@ -349,13 +349,13 @@ public:
       @return Initial longitude in degrees */
   inline double GetLongitudeDegIC(void) const { return longitude*radtodeg; }
 
-  /** Gets the initial altitude.
+  /** Gets the initial altitude above sea level.
       @return Initial altitude in feet. */
-  inline double GetAltitudeFtIC(void) const { return altitude; }
+  inline double GetAltitudeASLFtIC(void) const { return altitudeASL; }
 
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */
-  inline double GetAltitudeAGLFtIC(void) const { return altitude - terrain_altitude; }
+  inline double GetAltitudeAGLFtIC(void) const { return altitudeASL - terrain_elevation; }
 
   /** Gets the initial sea level radius.
       @return Initial sea level radius */
@@ -363,7 +363,7 @@ public:
 
   /** Gets the initial terrain elevation.
       @return Initial terrain elevation in feet */
-  inline double GetTerrainAltitudeFtIC(void) const { return terrain_altitude; }
+  inline double GetTerrainElevationFtIC(void) const { return terrain_elevation; }
 
   /** Sets the initial ground speed.
       @param vg Initial ground speed in feet/second */
@@ -616,7 +616,7 @@ public:
 private:
   double vt,vc,ve,vg;
   double mach;
-  double altitude,hdot;
+  double altitudeASL,hdot;
   double latitude,longitude;
   double u,v,w;
   double p,q,r;
@@ -625,7 +625,7 @@ private:
   double wnorth,weast,wdown;
   double whead, wcross, wdir, wmag;
   double sea_level_radius;
-  double terrain_altitude;
+  double terrain_elevation;
   double radius_to_vehicle;
   double targetNlfIC;
 

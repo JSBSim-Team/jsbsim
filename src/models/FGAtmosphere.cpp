@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.26 2009/02/25 03:28:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.27 2009/05/26 05:35:42 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,7 @@ bool FGAtmosphere::Run(void)
   if (FDMExec->Holding()) return false;
 
   T_dev = 0.0;
-  h = Propagate->Geth();
+  h = Propagate->GetAltitudeASL();
 
   if (!useExternal) {
     Calculate(h);

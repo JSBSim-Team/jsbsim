@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.37 2009/04/30 00:18:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.38 2009/05/26 05:35:42 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,10 +118,10 @@ bool FGPropagate::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  SeaLevelRadius = Inertial->GetRefRadius();          // For initialization ONLY
-  RunwayRadius   = SeaLevelRadius;
+  // For initialization ONLY:
+  SeaLevelRadius = LocalTerrainRadius = Inertial->GetRefRadius();
 
-  VState.vLocation.SetRadius( SeaLevelRadius + 4.0 ); // Todo Add terrain elevation?
+  VState.vLocation.SetRadius( LocalTerrainRadius + 4.0 );
   VState.vLocation.SetEllipse(Inertial->GetSemimajor(), Inertial->GetSemiminor());
   vOmega = FGColumnVector3( 0.0, 0.0, Inertial->omega() ); // Earth rotation vector
 
@@ -155,13 +155,13 @@ bool FGPropagate::InitModel(void)
 
 void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
-  SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
-  RunwayRadius = SeaLevelRadius;
+  SetSeaLevelRadius(FGIC->GetSeaLevelRadiusFtIC());
+  SetTerrainElevation(FGIC->GetTerrainElevationFtIC());
 
   // Set the position lat/lon/radius
   VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
                           FGIC->GetLatitudeRadIC(),
-                          FGIC->GetAltitudeFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
+                          FGIC->GetAltitudeASLFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
 
   VehicleRadius = GetRadius();
   radInv = 1.0/VehicleRadius;
@@ -187,8 +187,8 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Finally, make sure that the quaternion stays normalized.
   VState.vQtrn.Normalize();
 
-  // Recompute the RunwayRadius level.
-  RecomputeRunwayRadius();
+  // Recompute the LocalTerrainRadius.
+  RecomputeLocalTerrainRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,7 +216,7 @@ bool FGPropagate::Run(void)
   if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
   if (FDMExec->Holding()) return false;
 
-  RecomputeRunwayRadius();
+  RecomputeLocalTerrainRadius();
 
   // Calculate current aircraft radius from center of planet
 
@@ -424,27 +424,27 @@ void FGPropagate::CalculateLocationdot(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::RecomputeRunwayRadius(void)
+void FGPropagate::RecomputeLocalTerrainRadius(void)
 {
-  // Get the runway radius.
+  // Get the LocalTerrain radius.
   FGLocation contactloc;
   FGColumnVector3 dv;
   FGGroundCallback* gcb = FDMExec->GetGroundCallback();
   double t = State->Getsim_time();
   gcb->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
-  RunwayRadius = contactloc.GetRadius();
+  LocalTerrainRadius = contactloc.GetRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetTerrainElevationASL(double tt)
+void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(tt+SeaLevelRadius);
+  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(terrainElev + SeaLevelRadius);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropagate::GetTerrainElevationASL(void) const
+double FGPropagate::GetTerrainElevation(void) const
 {
   return FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius()-SeaLevelRadius;
 }
@@ -465,30 +465,30 @@ const FGMatrix33& FGPropagate::GetTec2i(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::Seth(double tt)
+void FGPropagate::SetAltitudeASL(double altASL)
 {
-  VState.vLocation.SetRadius( tt + SeaLevelRadius );
+  VState.vLocation.SetRadius( altASL + SeaLevelRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropagate::GetRunwayRadius(void) const
+double FGPropagate::GetLocalTerrainRadius(void) const
 {
-  return RunwayRadius;
+  return LocalTerrainRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGL(void) const
 {
-  return VState.vLocation.GetRadius() - RunwayRadius;
+  return VState.vLocation.GetRadius() - LocalTerrainRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  VState.vLocation.SetRadius( tt + RunwayRadius );
+  VState.vLocation.SetRadius( tt + LocalTerrainRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -525,8 +525,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGPropagate::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGPropagate::GetUVWdot);
 
-  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
-  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::Gethmeters, &FGPropagate::Sethmeters, true);
+  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL, true);
+  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters, true);
   PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
   PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
   PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg);
@@ -537,10 +537,10 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
-                          &FGPropagate::GetTerrainElevationASL,
-                          &FGPropagate::SetTerrainElevationASL, false);
+                          &FGPropagate::GetTerrainElevation,
+                          &FGPropagate::SetTerrainElevation, false);
 
-  PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius);
+  PropertyManager->Tie("metrics/terrain-radius", this, &FGPropagate::GetLocalTerrainRadius);
 
   PropertyManager->Tie("attitude/phi-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/theta-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);

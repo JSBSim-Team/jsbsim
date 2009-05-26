@@ -60,7 +60,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.22 2009/05/14 04:17:30 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.23 2009/05/26 05:35:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.22 2009/05/14 04:17:30 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.23 2009/05/26 05:35:42 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -355,7 +355,7 @@ protected:
         S = V1 * V1 + V2 * V2;
       } while(S >= 1 || S == 0);
 
-        X = V1 * sqrt(-2 * log(S) / S);
+      X = V1 * sqrt(-2 * log(S) / S);
     } else
       X = V2 * sqrt(-2 * log(S) / S);
 

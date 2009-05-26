@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.9 2009/01/08 12:35:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.10 2009/05/26 05:35:42 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,7 +168,7 @@ bool MSIS::Run(void)
     // get at-altitude values
     Calculate(Auxiliary->GetDayOfYear(),
               Auxiliary->GetSecondsInDay(),
-              Propagate->Geth(),
+              Propagate->GetAltitudeASL(),
               Propagate->GetLocation().GetLatitudeDeg(),
               Propagate->GetLocation().GetLongitudeDeg());
     intTemperature = output.t[1] * 1.8;

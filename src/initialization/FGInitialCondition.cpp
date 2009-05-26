@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.30 2009/05/15 11:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.31 2009/05/26 05:35:42 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -66,7 +66,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   InitializeIC();
 
   if(FDMExec != NULL ) {
-    fdmex->GetPropagate()->Seth(altitude);
+    fdmex->GetPropagate()->SetAltitudeASL(altitudeASL);
     fdmex->GetAtmosphere()->Run();
     PropertyManager=fdmex->GetPropertyManager();
     Constructing = true;
@@ -134,7 +134,7 @@ void FGInitialCondition::InitializeIC(void)
   mach=0;
   alpha=beta=gamma=0;
   theta=phi=psi=0;
-  altitude=hdot=0;
+  altitudeASL=hdot=0;
   latitude=longitude=0;
   u=v=w=0;
   p=q=r=0;
@@ -146,7 +146,7 @@ void FGInitialCondition::InitializeIC(void)
   lastSpeedSet=setvt;
   lastWindSet=setwned;
   radius_to_vehicle = sea_level_radius = fdmex->GetInertial()->GetRefRadius();
-  terrain_altitude = 0;
+  terrain_elevation = 0;
 
   targetNlfIC = 1.0;
 
@@ -181,7 +181,7 @@ void FGInitialCondition::WriteStateFile(int num)
     outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi) << " </psi>" << endl;
     outfile << "  <longitude unit=\"DEG\"> " << Propagate->GetLongitudeDeg() << " </longitude>" << endl;
     outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
-    outfile << "  <altitude unit=\"FT\"> " << Propagate->Geth() << " </altitude>" << endl;
+    outfile << "  <altitude unit=\"FT\"> " << Propagate->GetAltitudeASL() << " </altitude>" << endl;
     outfile << "</initialize>" << endl;
     outfile.close();
   } else {
@@ -538,9 +538,10 @@ void FGInitialCondition::calcWindUVW(void) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetAltitudeFtIC(double tt) {
-  altitude=tt;
-  fdmex->GetPropagate()->Seth(altitude);
+void FGInitialCondition::SetAltitudeASLFtIC(double tt)
+{
+  altitudeASL=tt;
+  fdmex->GetPropagate()->SetAltitudeASL(altitudeASL);
   fdmex->GetAtmosphere()->Run();
   //lets try to make sure the user gets what they intended
 
@@ -567,25 +568,29 @@ void FGInitialCondition::SetAltitudeFtIC(double tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetAltitudeAGLFtIC(double tt) {
-  SetAltitudeFtIC(terrain_altitude + tt);
+void FGInitialCondition::SetAltitudeAGLFtIC(double tt)
+{
+  SetAltitudeASLFtIC(terrain_elevation + tt);
 }
 
 //******************************************************************************
 
-void FGInitialCondition::SetSeaLevelRadiusFtIC(double tt) {
+void FGInitialCondition::SetSeaLevelRadiusFtIC(double tt)
+{
   sea_level_radius = tt;
 }
 
 //******************************************************************************
 
-void FGInitialCondition::SetTerrainAltitudeFtIC(double tt) {
-  terrain_altitude=tt;
+void FGInitialCondition::SetTerrainElevationFtIC(double tt)
+{
+  terrain_elevation=tt;
 }
 
 //******************************************************************************
 
-void FGInitialCondition::calcUVWfromNED(void) {
+void FGInitialCondition::calcUVWfromNED(void)
+{
   u=vnorth*ctheta*cpsi +
      veast*ctheta*spsi -
      vdown*stheta;
@@ -859,9 +864,9 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   if (document->FindElement("longitude"))
     SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
   if (document->FindElement("elevation"))
-    SetTerrainAltitudeFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
-  if (document->FindElement("altitude"))
-    SetAltitudeFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
+    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+  if (document->FindElement("altitude")) // This is feet above ground level
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   if (document->FindElement("ubody"))
     SetUBodyFpsIC(document->FindElementValueAsNumberConvertTo("ubody", "FT/SEC"));
   if (document->FindElement("vbody"))
@@ -981,8 +986,8 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::SetLongitudeDegIC,
                        true);
   PropertyManager->Tie("ic/h-sl-ft", this,
-                       &FGInitialCondition::GetAltitudeFtIC,
-                       &FGInitialCondition::SetAltitudeFtIC,
+                       &FGInitialCondition::GetAltitudeASLFtIC,
+                       &FGInitialCondition::SetAltitudeASLFtIC,
                        true);
   PropertyManager->Tie("ic/h-agl-ft", this,
                        &FGInitialCondition::GetAltitudeAGLFtIC,
@@ -992,9 +997,9 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetSeaLevelRadiusFtIC,
                        &FGInitialCondition::SetSeaLevelRadiusFtIC,
                        true);
-  PropertyManager->Tie("ic/terrain-altitude-ft", this,
-                       &FGInitialCondition::GetTerrainAltitudeFtIC,
-                       &FGInitialCondition::SetTerrainAltitudeFtIC,
+  PropertyManager->Tie("ic/terrain-elevation-ft", this,
+                       &FGInitialCondition::GetTerrainElevationFtIC,
+                       &FGInitialCondition::SetTerrainElevationFtIC,
                        true);
   PropertyManager->Tie("ic/vg-fps", this,
                        &FGInitialCondition::GetVgroundFpsIC,

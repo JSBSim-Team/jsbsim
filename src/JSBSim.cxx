@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.48 2009/05/17 13:44:55 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.49 2009/05/26 05:35:42 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -85,7 +85,7 @@ public:
   FGFSGroundCallback(FGJSBsim* ifc) : mInterface(ifc) {}
   virtual ~FGFSGroundCallback() {}
 
-  /** Get the altitude above sea level depenent on the location. */
+  /** Get the altitude above sea level dependent on the location. */
   virtual double GetAltitude(const FGLocation& l) const {
     double pt[3] = { SG_FEET_TO_METER*l(eX),
                      SG_FEET_TO_METER*l(eY),
@@ -431,7 +431,7 @@ void FGJSBsim::update( double dt )
     double alt, slr, lat, lon;
     FGColumnVector3 cart = Auxiliary->GetLocationVRP();
     if ( needTrim && startup_trim->getBoolValue() ) {
-      alt = fgic->GetAltitudeFtIC();
+      alt = fgic->GetAltitudeASLFtIC();
       slr = fgic->GetSeaLevelRadiusFtIC();
       lat = fgic->GetLatitudeDegIC() * SGD_DEGREES_TO_RADIANS;
       lon = fgic->GetLongitudeDegIC() * SGD_DEGREES_TO_RADIANS;
@@ -445,7 +445,7 @@ void FGJSBsim::update( double dt )
       SG_LOG(SG_FLIGHT, SG_WARN,
              "FGInterface is being called without scenery below the aircraft!");
 
-      alt = fgic->GetAltitudeFtIC();
+      alt = fgic->GetAltitudeASLFtIC();
       SG_LOG(SG_FLIGHT, SG_WARN, "altitude         = " << alt);
 
       slr = fgic->GetSeaLevelRadiusFtIC();
@@ -472,10 +472,10 @@ void FGJSBsim::update( double dt )
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
 
         SG_LOG(SG_FLIGHT, SG_INFO,
-          "Ready to trim, terrain altitude is: "
+          "Ready to trim, terrain elevation is: "
             << terrain_alt * SG_METER_TO_FEET );
 
-        fgic->SetTerrainAltitudeFtIC( terrain_alt );
+        fgic->SetTerrainElevationFtIC( terrain_alt );
         do_trim();
       } else {
         fdmex->RunIC();  //apply any changes made through the set_ functions
@@ -956,6 +956,7 @@ void FGJSBsim::set_Longitude(double lon)
     needTrim=true;
 }
 
+// Sets the altitude above sea level.
 void FGJSBsim::set_Altitude(double alt)
 {
     static SGConstPropertyNode_ptr latitude = fgGetNode("/position/latitude-deg");
@@ -974,9 +975,9 @@ void FGJSBsim::set_Altitude(double alt)
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
     SG_LOG(SG_FLIGHT, SG_INFO,
-          "Terrain altitude: " << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
+          "Terrain elevation: " << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
-    fgic->SetAltitudeFtIC(alt);
+    fgic->SetAltitudeASLFtIC(alt);
     needTrim=true;
 }
 
@@ -1162,7 +1163,7 @@ void FGJSBsim::update_ic(void)
    if ( !needTrim ) {
      fgic->SetLatitudeRadIC(get_Lat_geocentric() );
      fgic->SetLongitudeRadIC( get_Longitude() );
-     fgic->SetAltitudeFtIC( get_Altitude() );
+     fgic->SetAltitudeASLFtIC( get_Altitude() );
      fgic->SetVcalibratedKtsIC( get_V_calibrated_kts() );
      fgic->SetThetaRadIC( get_Theta() );
      fgic->SetPhiRadIC( get_Phi() );

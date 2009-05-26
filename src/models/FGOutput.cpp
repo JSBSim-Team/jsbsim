@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.34 2009/03/25 12:02:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.35 2009/05/26 05:35:42 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -323,7 +323,8 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssPropagate) {
       outstream << delimeter;
-      outstream << "Altitude (ft)" + delimeter;
+      outstream << "Altitude ASL (ft)" + delimeter;
+      outstream << "Altitude AGL (ft)" + delimeter;
       outstream << "Phi (deg)" + delimeter + "Theta (deg)" + delimeter + "Psi (deg)" + delimeter;
       outstream << "Alpha (deg)" + delimeter;
       outstream << "Beta (deg)" + delimeter;
@@ -332,7 +333,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "ECEF X (ft)" + delimeter + "ECEF Y (ft)" + delimeter + "ECEF Z (ft)" + delimeter;
       outstream << "EPA (deg)" + delimeter;
       outstream << "Distance AGL (ft)" + delimeter;
-      outstream << "Runway Radius (ft)";
+      outstream << "Terrain Radius (ft)";
     }
     if (SubSystems & ssCoefficients) {
       scratch = Aerodynamics->GetCoefficientStrings(delimeter);
@@ -432,7 +433,8 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssPropagate) {
     outstream.precision(14);
     outstream << delimeter;
-    outstream << Propagate->Geth() << delimeter;
+    outstream << Propagate->GetAltitudeASL() << delimeter;
+    outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << (radtodeg*Propagate->GetEuler()).Dump(delimeter) << delimeter;
     outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
@@ -443,7 +445,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream.precision(14);
     outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
-    outstream << Propagate->GetRunwayRadius();
+    outstream << Propagate->GetLocalTerrainRadius();
     outstream.precision(10);
   }
   if (SubSystems & ssCoefficients) {
@@ -483,7 +485,7 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
     // Positions
     net->longitude = Propagate->GetLocation().GetLongitude(); // geodetic (radians)
     net->latitude  = Propagate->GetLocation().GetLatitude(); // geodetic (radians)
-    net->altitude  = Propagate->Geth()*0.3048; // altitude, above sea level (meters)
+    net->altitude  = Propagate->GetAltitudeASL()*0.3048; // altitude, above sea level (meters)
     net->agl       = (float)(Propagate->GetDistanceAGL()*0.3048); // altitude, above ground level (meters)
 
     net->phi       = (float)(Propagate->GetEuler(ePhi)); // roll (radians)
@@ -881,7 +883,7 @@ void FGOutput::SocketOutput(void)
     socket->Append(MassBalance->GetXYZcg()(eZ));
   }
   if (SubSystems & ssPropagate) {
-    socket->Append(Propagate->Geth());
+    socket->Append(Propagate->GetAltitudeASL());
     socket->Append(radtodeg*Propagate->GetEuler(ePhi));
     socket->Append(radtodeg*Propagate->GetEuler(eTht));
     socket->Append(radtodeg*Propagate->GetEuler(ePsi));
