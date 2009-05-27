@@ -8,16 +8,20 @@
   -->
 
   <use aircraft="c172x" initialize="reset00"/>
-  <run start="0.0" end="100" dt="0.0083333">
+  <run start="0.0" end="200" dt="0.0083333">
 
+    <!-- Initialize with brakes on -->
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
-    
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+    <property value="1"> fcs/center-brake-cmd-norm </property>
+
     <event name="engine start">
       <description>Start the engine</description>
       <condition> sim-time-sec >= 0.25 </condition>
-      <set name="fcs/throttle-cmd-norm" value="0.94" action="FG_RAMP" tc ="0.5"/>
-      <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify>
@@ -31,32 +35,37 @@
         Set heading hold when time is greater than 0.25 sec.
       </description>
       <condition> sim-time-sec >= 0.25 </condition>
-<!--      <set name="ap/heading_setpoint" value="200"/> -->
-<!--      <set name="ap/heading_hold" value="1"/> -->
-      <set name="ap/autopilot-roll-on" value="1"/>
       <set name="ap/roll-attitude-mode" value="0"/>
+      <set name="ap/autopilot-roll-on" value="1"/>
       <notify/>
     </event>
 
-    <event name="Set autopilot for 20 ft.">
-      <description>Set Autopilot for 20 ft</description>
+    <event name="Begin roll">
+      <description>Release brakes and get rolling with flaps at 10 degrees. </description>
+      <condition> sim-time-sec >= 2.0 </condition>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <set name="fcs/right-brake-cmd-norm" value="0"/>
+      <set name="fcs/center-brake-cmd-norm" value="0"/>
+      <set name="fcs/flap-cmd-norm" value="0.16"/>
+    </event>
+
+    <event name="Rotate">
+      <description>Set Autopilot for 500 ft and rotate at 49 keas. </description>
       <notify/>
-      <condition>
-        aero/qbar-psf >= 4
-      </condition>
-      <set name="ap/altitude_setpoint" value="100.0"/>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <set name="ap/altitude_setpoint" value="500.0"/>
       <set name="ap/altitude_hold" value="1"/>
       <set name="fcs/flap-cmd-norm" value=".33"/>
     </event>
 
     <event name="Set autopilot for 6000 ft.">
-      <description>Set Autopilot for 6000 ft</description>
+      <description>Set Autopilot for 6000 ft after a five second delay. </description>
       <notify/>
-      <condition>
-        aero/qbar-psf > 5
-      </condition>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <delay>5.0</delay>
       <set name="ap/altitude_setpoint" value="6000.0"/>
     </event>
+
 <!--
     <event name="Turn on autopilot wing leveler">
       <condition>
@@ -71,9 +80,8 @@
       <description>Remove flaps at 50 ft and set heading to 100; acquire heading.</description>
       <notify/>
       <condition>
-        position/h-agl-ft >= 100
+        position/h-agl-ft >= 2000
       </condition>
-      <set name="fcs/mixture-cmd-norm" value="0.69" action="FG_EXP" tc ="400.0"/>
       <set name="fcs/flap-cmd-norm" value="0"/>
       <set name="guidance/specified-heading-rad" value="1.75"/>
       <set name="guidance/heading-selector-switch" value="1"/>
