@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.79 $</version>
+        <version>$Revision: 1.80 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -83,7 +83,9 @@
             </location>
         </pointmass>
     </mass_balance>
+    
     <ground_reactions>
+
         <contact type="BOGEY" name="Nose Gear">
             <location unit="IN">
                 <x> -6.8 </x>
@@ -95,16 +97,11 @@
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">1800</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">600</damping_coeff>
-<!--
-          <relaxation_velocity>
-            <rolling unit="FT/SEC">0.0</rolling>
-            <side unit="FT/SEC">0.0</side>
-          </relaxation_velocity>
--->
+
             <relaxation_velocity>
-              <rolling unit="FT/SEC">0.2</rolling>
-              <side unit="FT/SEC">0.75</side>
-            </relaxation_velocity> -->
+              <rolling unit="FT/SEC">0.55</rolling>
+              <side unit="FT/SEC">1.10</side>
+            </relaxation_velocity> 
 
             <force_lag_filter>
               <rolling> 120 </rolling>
@@ -116,6 +113,7 @@
             <brake_group>NONE</brake_group>
             <retractable>0</retractable>
         </contact>
+
         <contact type="BOGEY" name="Left Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
@@ -127,19 +125,13 @@
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
-<!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
-<!--
+            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound>
             <relaxation_velocity>
-              <rolling unit="FT/SEC">0.0</rolling>
-              <side unit="FT/SEC">0.0</side>
+              <rolling unit="FT/SEC">0.55</rolling>
+              <side unit="FT/SEC">1.10</side>
             </relaxation_velocity>
--->
-          <relaxation_velocity>
-            <rolling unit="FT/SEC">0.25</rolling>
-            <side unit="FT/SEC">0.55</side>
-          </relaxation_velocity>
 
-          <force_lag_filter>
+            <force_lag_filter>
               <rolling> 120 </rolling>
               <side> 120 </side>
             </force_lag_filter>
@@ -149,6 +141,7 @@
             <brake_group>LEFT</brake_group>
             <retractable>0</retractable>
         </contact>
+
         <contact type="BOGEY" name="Right Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
@@ -160,17 +153,11 @@
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
-<!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
-<!--
+            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound>
             <relaxation_velocity>
-              <rolling unit="FT/SEC">0.0</rolling>
-              <side unit="FT/SEC">0.0</side>
+              <rolling unit="FT/SEC">0.55</rolling>
+              <side unit="FT/SEC">1.10</side>
             </relaxation_velocity>
--->
-          <relaxation_velocity>
-            <rolling unit="FT/SEC">0.25</rolling>
-            <side unit="FT/SEC">0.55</side>
-          </relaxation_velocity>
 
             <force_lag_filter>
               <rolling> 120 </rolling>
@@ -182,6 +169,7 @@
             <brake_group>RIGHT</brake_group>
             <retractable>0</retractable>
         </contact>
+
         <contact type="STRUCTURE" name="TAIL_SKID">
             <location unit="IN">
                 <x> 188.0 </x>
@@ -193,6 +181,7 @@
             <spring_coeff unit="LBS/FT">20000</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">1000</damping_coeff>
         </contact>
+
         <contact type="STRUCTURE" name="LEFT_TIP">
             <location unit="IN">
                 <x> 43.2 </x>
@@ -217,7 +206,7 @@
         </contact>
     </ground_reactions>
     <propulsion>
-        <engine file="engIO360C">
+        <engine file="eng_io320">
             <location unit="IN">
                 <x>-19.7</x>
                 <y>0</y>
@@ -253,7 +242,7 @@
             </location>
             <radius unit="IN">29.4</radius>
             <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">150</contents>
+            <contents unit="LBS">100</contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -263,7 +252,7 @@
             </location>
             <radius unit="IN">29.4</radius>
             <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">150</contents>
+            <contents unit="LBS">100</contents>
         </tank>
     </propulsion>
     
@@ -272,7 +261,7 @@
         <sensor name="navigation/actual-heading-rad">
           <input> attitude/heading-true-rad </input>
           <lag> 0.5 </lag>
-          <noise variation="PERCENT"> .02 </noise>
+<!--          <noise variation="PERCENT"> .02 </noise> -->
           <bias> 0.01 </bias>
         </sensor>
       </channel>
@@ -281,7 +270,7 @@
     <system file="GNCUtilities"/>
 
     <system file="Autopilot">
-      <property value="1.047"> guidance/roll-angle-limit </property>
+      <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
     </system>
     
@@ -1165,18 +1154,29 @@
 -->
 
     <output name="JSBout172B.csv" type="CSV" rate="60">
-        <simulation> ON        </simulation>
-        <atmosphere> OFF       </atmosphere>
-        <massprops> OFF        </massprops>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> velocities/pi-rad_sec </property>
+        <property> velocities/qi-rad_sec </property>
+        <property> velocities/ri-rad_sec </property>
+        <property> acclerations/sensor/nose-accelerometer-X-ft_sec2 </property>
+        <property> acclerations/sensor/nose-accelerometer-Y-ft_sec2 </property>
+        <property> acclerations/sensor/nose-accelerometer-Z-ft_sec2 </property>
         <rates> ON             </rates>
         <velocities> ON        </velocities>
+        <position> ON          </position>
+        <atmosphere> ON       </atmosphere>
+        <ground_reactions> ON </ground_reactions> -->
+<!--        <simulation> ON        </simulation>
+        <massprops> OFF        </massprops>
         <forces> OFF           </forces>
         <moments> OFF          </moments>
         <position> ON          </position>
         <fcs> ON               </fcs>
         <propulsion> OFF       </propulsion>
         <aerosurfaces> ON      </aerosurfaces>
-        <ground_reactions> OFF </ground_reactions>
+        <ground_reactions> OFF </ground_reactions> -->
     </output>
 
 <!---
