@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.86 $ </version>
+        <version> $Revision: 1.87 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -33,7 +33,7 @@
         <reference refID="H-2177" author="NASA" title="Dynamic ground effect for a Cranked Arrow Wing Airplane" date="n/a"/>
         <reference refID="None" author="n/a" title="http://www.codeonemagazine.com/archives/1991/articles/jul_91/july2a_91.html" date="n/a"/>
     </fileheader>
-
+<!--
   <child name="mk82">
     <location unit="IN">
       <x> -170.0 </x>
@@ -41,7 +41,7 @@
       <z>  -12.0 </z>
     </location>
   </child>
-  
+-->  
     <metrics>
         <wingarea unit="FT2"> 300 </wingarea>
         <wingspan unit="FT"> 30 </wingspan>
