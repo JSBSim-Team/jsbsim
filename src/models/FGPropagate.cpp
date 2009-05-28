@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.38 2009/05/26 05:35:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.39 2009/05/28 23:12:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -426,12 +426,12 @@ void FGPropagate::CalculateLocationdot(void)
 
 void FGPropagate::RecomputeLocalTerrainRadius(void)
 {
+  double t = State->Getsim_time();
+
   // Get the LocalTerrain radius.
   FGLocation contactloc;
   FGColumnVector3 dv;
-  FGGroundCallback* gcb = FDMExec->GetGroundCallback();
-  double t = State->Getsim_time();
-  gcb->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
+  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
   LocalTerrainRadius = contactloc.GetRadius();
 }
 
@@ -439,7 +439,8 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
 
 void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(terrainElev + SeaLevelRadius);
+  LocalTerrainRadius = terrainElev + SeaLevelRadius;
+  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(LocalTerrainRadius);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
