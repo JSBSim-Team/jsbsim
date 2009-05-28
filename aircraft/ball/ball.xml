@@ -120,7 +120,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="JSBBallOut.csv" type="CSV" rate="10">
+    <output name="JSBBallOut.csv" type="CSV" rate="1">
         <property> gear/unit[0]/WOW </property>
         <property> fcs/parachute_reef_pos_norm </property>
         <rates> ON </rates>

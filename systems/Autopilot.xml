@@ -56,6 +56,33 @@
 
   <channel name="Heading Hold">
 
+    <accelerometer name="acclerations/sensor/nose-accelerometer-X-ft_sec2">
+      <location unit="IN">
+        <x>0</x>
+        <y>20</y>
+        <z>20</z>
+      </location>
+      <axis>x</axis>
+    </accelerometer>
+
+    <accelerometer name="acclerations/sensor/nose-accelerometer-Y-ft_sec2">
+      <location unit="IN">
+        <x>0</x>
+        <y>20</y>
+        <z>20</z>
+      </location>
+      <axis>y</axis>
+    </accelerometer>
+
+    <accelerometer name="acclerations/sensor/nose-accelerometer-Z-ft_sec2">
+      <location unit="IN">
+        <x>0</x>
+        <y>20</y>
+        <z>20</z>
+      </location>
+      <axis>z</axis>
+    </accelerometer>
+
     <switch name="ap/roll-control-autopilot-on">
       <default value="0"/>
       <test value="1">

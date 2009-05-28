@@ -11,8 +11,8 @@
          <max axis="x">122.5</max>
          <max axis="y">47.5</max>
       </scale>
-      <parameter axis="x">Longitude (Deg)</parameter>
-      <parameter axis="y">Latitude (Deg)</parameter>
+      <parameter axis="x">Longitude (deg)</parameter>
+      <parameter axis="y">Latitude (deg)</parameter>
    </plot> 
    <plot>
      <title>Temperature Profile</title>
@@ -38,11 +38,11 @@
       <parameter axis="x">Rho (slugs/ft^3)</parameter>
       <parameter axis="y">Altitude (ft)</parameter>
    </plot>
-<!--
+
    <plot>
       <title>Body Rates</title>
       <label axis="x">Time (sec)</label>
-      <label axis="y">P, Q, R (rad/sec)</label>
+      <label axis="y">P, Q, R (deg/s)</label>
       <scale>
          <min axis="x">50.0</min>
          <min axis="y">-0.6</min>
@@ -50,9 +50,9 @@
          <max axis="y">0.6</max>
       </scale>
       <parameter axis="x">Time</parameter>
-      <parameter axis="y">P</parameter>
-      <parameter axis="y">Q</parameter>
-      <parameter axis="y">R</parameter>
+      <parameter axis="y">P (deg/s)</parameter>
+      <parameter axis="y">Q (deg/s)</parameter>
+      <parameter axis="y">R (deg/s)</parameter>
    </plot>
    <plot>
       <title>Body Velocities</title>
@@ -70,10 +70,11 @@
       <label axis="y">U, V, W (ft/sec)</label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
-      <parameter axis="y">UAero</parameter>
-      <parameter axis="y">VAero</parameter>
-      <parameter axis="y">WAero</parameter>
+      <parameter axis="y">Aero V_{X Body} (ft/s)</parameter>
+      <parameter axis="y">Aero V_{Y Body} (ft/s)</parameter>
+      <parameter axis="y">Aero V_{Z Body} (ft/s)</parameter>
    </plot>
+  <!--
    <plot>
       <title>Earth Frame Vertical Velocity</title>
       <label axis="x">Time (sec)</label>

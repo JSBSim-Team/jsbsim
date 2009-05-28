@@ -48,7 +48,7 @@
   Usage
   =====
 
-  To use this channel, include it in a <system> element as follows:
+  To use this system, include it in a <system> element as follows:
   
   <system file="GNCUtilities"/>
   

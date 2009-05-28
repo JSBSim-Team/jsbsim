@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.53 2009/05/10 10:59:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.54 2009/05/28 00:51:18 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -663,7 +663,8 @@ void FGLGear::Report(ReportType repType)
 
   switch(repType) {
   case erLand:
-    cout << endl << "Touchdown report for " << name << endl;
+    cout << endl << "Touchdown report for " << name << " (WOW at time: "
+         << Exec->GetState()->Getsim_time() << " seconds)" << endl;
     cout << "  Sink rate at contact:  " << SinkRate                << " fps,    "
                                 << SinkRate*0.3048          << " mps"     << endl;
     cout << "  Contact ground speed:  " << GroundSpeed*.5925       << " knots,  "
@@ -677,11 +678,17 @@ void FGLGear::Report(ReportType repType)
     LandingReported = true;
     break;
   case erTakeoff:
-    cout << endl << "Takeoff report for " << name << endl;
+    cout << endl << "Takeoff report for " << name << " (Liftoff at time: "
+         << Exec->GetState()->Getsim_time() << " seconds)" << endl;
     cout << "  Distance traveled:                " << TakeoffDistanceTraveled
          << " ft,     " << TakeoffDistanceTraveled*0.3048  << " meters"  << endl;
     cout << "  Distance traveled (over 50'):     " << TakeoffDistanceTraveled50ft
          << " ft,     " << TakeoffDistanceTraveled50ft*0.3048 << " meters" << endl;
+    cout << "  [Altitude (ASL): " << Exec->GetPropagate()->GetAltitudeASL() << " ft. / "
+         << Exec->GetPropagate()->GetAltitudeASLmeters() << " m  | Temperature: "
+         << Exec->GetAtmosphere()->GetTemperature() - 459.67 << " F / "
+         << RankineToCelsius(Exec->GetAtmosphere()->GetTemperature()) << " C]" << endl;
+    cout << "  [Velocity (KCAS): " << Exec->GetAuxiliary()->GetVcalibratedKTS() << "]" << endl;
     TakeoffReported = true;
     break;
   }

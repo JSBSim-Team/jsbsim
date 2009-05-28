@@ -49,11 +49,12 @@
   <sensor name="fcs/attitude/sensor/phi-rad">
     <input> attitude/phi-rad </input>
     <lag> 0.5 </lag>
-    <noise variation="PERCENT"> 0.05 </noise>
+    <delay> 2 </delay>
+    <noise variation="PERCENT" distribution="GAUSSIAN"> 0.05 </noise>
     <quantization name="attitude/sensor/quantized/phi-rad">
       <bits> 12 </bits>
-      <min> -180 </min>
-      <max> 180 </max>
+      <min> -3.1416 </min>
+      <max>  3.1416 </max>
     </quantization>
     <bias> 0.001 </bias>
   </sensor>
@@ -204,7 +205,7 @@ PITCH CHANNEL
   -->
   <summer name="fcs/altitude-error">
     <input> ap/altitude_setpoint </input>
-    <input> -position/h-sl-ft </input>
+    <input> -position/h-agl-ft </input>
     <clipto>
       <min>-100</min>
       <max> 100</max>
@@ -299,9 +300,9 @@ PITCH CHANNEL
 
   <pid name="fcs/altitude-hold-pid">
     <input> fcs/ap-alt-hold-switch </input>
-    <kp> 0.013 </kp>
-    <ki> 0.00015 </ki>
-    <kd> 0.0003 </kd>
+    <kp> 0.05 </kp>
+<!--    <ki> 0.00015 </ki>
+    <kd> 0.0003 </kd> -->
     <trigger> fcs/windup-trigger </trigger>
     <clipto> <min>-1.0</min>
              <max> 1.0</max> </clipto>

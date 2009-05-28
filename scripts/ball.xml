@@ -5,7 +5,7 @@
     name="ball test">
   <description>Simplest of all tests</description>
   <use aircraft="ball" initialize="reset00"/>
-  <run start="0.0" end="5400" dt="0.00833333">
+  <run start="0.0" end="10800" dt="0.01">
     <event name="Initialize integrators">
       <condition>sim-time-sec  ge  0.0</condition>
       <set name="simulation/integrator/rate/rotational" value="2"/>

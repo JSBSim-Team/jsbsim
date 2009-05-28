@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.85 $ </version>
+        <version> $Revision: 1.86 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -34,6 +34,14 @@
         <reference refID="None" author="n/a" title="http://www.codeonemagazine.com/archives/1991/articles/jul_91/july2a_91.html" date="n/a"/>
     </fileheader>
 
+  <child name="mk82">
+    <location unit="IN">
+      <x> -170.0 </x>
+      <y>  -80.0 </y>
+      <z>  -12.0 </z>
+    </location>
+  </child>
+  
     <metrics>
         <wingarea unit="FT2"> 300 </wingarea>
         <wingspan unit="FT"> 30 </wingspan>
@@ -97,6 +105,16 @@
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120 </rolling>
+            <side> 240 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 480 </wheel_slip_filter>
+
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
@@ -112,6 +130,16 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120 </rolling>
+            <side> 240 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 480 </wheel_slip_filter>
+
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
@@ -127,6 +155,16 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120 </rolling>
+            <side> 240 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 480 </wheel_slip_filter>
+
         </contact>
         <contact type="STRUCTURE" name="LEFT_WT">
             <location unit="IN">
@@ -500,7 +538,7 @@
               </clipto>
             </summer>
 
-            <kinematic name="elevator position">
+            <kinematic name="elevator position normal">
                 <input>fcs/pitch-scheduler</input>
                 <traverse>
                     <setting>
@@ -1853,28 +1891,18 @@
             </function>
         </axis>
     </aerodynamics>
-<!--
-  <output name="f16_datalog.csv" type="CSV" rate="1">
-    <property> aero/qbar-psf </property>
-    <property> attitude/phi-rad </property>
-    <property> position/h-sl-ft </property>
-    <property> velocities/vc-kts </property>
-    <property> fcs/throttle-cmd-norm </property>
-    <property> fcs/elevator-cmd-norm </property>
-    <property> fcs/pitch-trim-cmd-norm </property>
-    <property> propulsion/total-fuel-lbs </property>
-    <property> flight-path/gamma-rad </property>
-    <property> accelerations/n-pilot-z-norm </property>
+
+  <output name="f16_datalog.csv" type="CSV" rate="120">
     <rates> ON </rates>
+    <coefficients> ON </coefficients>
     <velocities> ON </velocities>
     <forces> ON </forces>
     <moments> ON </moments>
     <position> ON </position>
-    <fcs> ON </fcs>
+    <fcs> OFF </fcs>
     <propulsion> OFF </propulsion>
-    <aerosurfaces> ON </aerosurfaces>
-    <fcs> ON </fcs>
+    <aerosurfaces> OFF </aerosurfaces>
     <ground_reactions> ON </ground_reactions>
   </output>
--->
+
 </fdm_config>

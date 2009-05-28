@@ -104,7 +104,7 @@ ROLL CHANNEL
        from the waypoint is used. -->
   <switch name="fcs/heading-setpoint-selector">
     <default value="ap/heading_setpoint"/>
-    <test value="fcs/wp-heading-deg">
+    <test value="guidance/wp-heading-deg">
       ap/heading-setpoint-select == 1
     </test>
   </switch>

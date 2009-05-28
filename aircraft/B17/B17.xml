@@ -7,7 +7,7 @@
   <fileheader>
     <author> Aeromatic v 0.9, refined by Jon Berndt </author>
     <filecreationdate> 2008-12-22 </filecreationdate>
-    <version>$Revision: 1.4 $</version>
+    <version>$Revision: 1.5 $</version>
     <description> Models a Boeing B-17G. </description>
   </fileheader>
 
@@ -738,6 +738,29 @@
 
   <aerodynamics>
 
+    <function name="aero/angle/right_wing_tip_alpha">
+      <description>
+         This parameter calculates the angle of attack at the right wingtip,
+         accounting for the motion of the wing at that point away from the CG.
+      </description>
+      <atan2>
+        <sum>
+          <property>velocities/w-fps</property>
+          <product>
+            <property>velocities/p-aero-rad_sec</property>
+            <value>50</value>
+          </product>
+        </sum>
+        <difference>
+          <property>velocities/u-fps</property>
+          <product>
+            <property>velocities/r-aero-rad_sec</property>
+            <value>50</value>
+          </product>
+        </difference>
+      </atan2>
+    </function>
+    
     <axis name="LIFT">
 
       <function name="aero/coefficient/CLalpha">
@@ -1095,6 +1118,7 @@
     <fcs> OFF </fcs>
     <massprops> ON </massprops>
     <ground_reactions> ON </ground_reactions>
+    <property> aero/angle/right_wing_tip_alpha </property>
   </output>
   
 </fdm_config>

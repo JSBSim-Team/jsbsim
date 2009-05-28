@@ -18,26 +18,18 @@
     <property value="1"> fcs/center-brake-cmd-norm </property>
 
     <event name="engine start">
-      <description>Start the engine</description>
+      <description>Start the engine and set roll control to heading hold</description>
       <condition> sim-time-sec >= 0.25 </condition>
       <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.5"/>
       <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
+      <set name="ap/roll-attitude-mode" value="0"/>
+      <set name="ap/autopilot-roll-on" value="1"/>
       <notify>
         <property>simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
       </notify>
-    </event>
-
-    <event name="Set heading hold">
-      <description>
-        Set heading hold when time is greater than 0.25 sec.
-      </description>
-      <condition> sim-time-sec >= 0.25 </condition>
-      <set name="ap/roll-attitude-mode" value="0"/>
-      <set name="ap/autopilot-roll-on" value="1"/>
-      <notify/>
     </event>
 
     <event name="Begin roll">
@@ -66,16 +58,6 @@
       <set name="ap/altitude_setpoint" value="6000.0"/>
     </event>
 
-<!--
-    <event name="Turn on autopilot wing leveler">
-      <condition>
-        position/h-agl-ft >= 50
-      </condition>
-      <set name="ap/autopilot-roll-on" value="1"/>
-      <set name="ap/roll-attitude-mode" value="0"/>
-      <notify/>
-    </event>
--->
     <event name="Adjust throttle/flaps">
       <description>Remove flaps at 50 ft and set heading to 100; acquire heading.</description>
       <notify/>
@@ -98,47 +80,6 @@
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
-    </event>
-<!--
-    <event name="Set heading hold">
-      <description>Set Heading when 6000 ft AGL is reached</description>
-      <notify/>
-      <condition>
-        position/h-agl-ft >= 5999
-      </condition>
-      <set name="ap/heading_setpoint" value="20"/>
-    </event>
--->
-    <event name="Nose gear liftoff">
-      <description>Report roll length when nosegear lifts off</description>
-      <condition>
-        gear/unit/WOW == 0
-        sim-time-sec > 1.0
-      </condition>
-      <notify>
-        <property>position/distance-from-start-mag-mt</property>
-      </notify>
-    </event>
-
-    <event name="Left main gear liftoff">
-      <description>Report roll length when left main gear lifts off</description>
-      <condition>
-        gear/unit[1]/WOW == 0
-        sim-time-sec > 1.0
-      </condition>
-      <notify>
-        <property>position/distance-from-start-mag-mt</property>
-      </notify>
-    </event>
-
-    <event name="Report rollout distance at 50 foot clearance">
-      <description>Report takeoff length at 50 foot clearance</description>
-      <condition>
-        position/h-agl-ft >= 50
-      </condition>
-      <notify>
-        <property>position/distance-from-start-mag-mt</property>
-      </notify>
     </event>
 
   </run>

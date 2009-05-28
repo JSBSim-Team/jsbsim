@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.61 $ </version>
+        <version> $Revision: 1.62 $ </version>
         <description>
             Models a C310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -999,18 +999,18 @@
             </function>
         </axis>
     </aerodynamics>
-    <output name="C310.csv" type="CSV" rate="10">
+    <output name="C310.csv" type="CSV" rate="5">
         <simulation> OFF </simulation>
         <atmosphere> OFF </atmosphere>
         <massprops> OFF</massprops>
-        <aerosurfaces> ON </aerosurfaces>
+        <aerosurfaces> OFF </aerosurfaces>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
         <moments> ON </moments>
         <position> ON </position>
         <propulsion> ON </propulsion>
-        <fcs> ON </fcs>
+        <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
         <property> position/long-gc-rad </property>
