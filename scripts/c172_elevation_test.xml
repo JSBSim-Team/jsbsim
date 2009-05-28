@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A takeoff elevation test">
+  <!--
+    This run is for testing the C172 at different takeoff elevations
+  -->
+
+  <use aircraft="c172x" initialize="reset00"/>
+  <run start="0.0" end="1000" dt="0.0083333">
+
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> simulation/run_id </property>
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+    <property value="1"> fcs/center-brake-cmd-norm </property>
+
+    <event name="engine start">
+      <description>Start the engine</description>
+      <condition> sim-time-sec >= 0.25 </condition>
+      <set name="fcs/throttle-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify>
+        <property>simulation/run_id</property>
+        <property>ap/hdg-roll-err-c1</property>
+      </notify>
+    </event>
+
+    <event name="Set heading hold">
+      <description>
+        Set heading hold when time is greater than 0.25 sec.
+      </description>
+      <condition> sim-time-sec >= 0.25 </condition>
+      <set name="ap/autopilot-roll-on" value="1"/>
+      <set name="ap/roll-attitude-mode" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Begin roll">
+      <description>Release brakes and get rolling with flaps at 10 degrees. </description>
+      <condition> sim-time-sec >= 2.0 </condition>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <set name="fcs/right-brake-cmd-norm" value="0"/>
+      <set name="fcs/center-brake-cmd-norm" value="0"/>
+      <set name="fcs/flap-cmd-norm" value="0.16"/>
+    </event>
+
+    <event name="Rotate">
+      <description>Set Autopilot for 500 ft and rotate at 49 keas. </description>
+      <notify/>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <set name="ap/altitude_setpoint" value="500.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="fcs/flap-cmd-norm" value=".33"/>
+    </event>
+
+    <event name="Set autopilot for 6000 ft.">
+      <description>Set Autopilot for 6000 ft after a five second delay. </description>
+      <notify/>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <delay>5.0</delay>
+      <set name="ap/altitude_setpoint" value="6000.0"/>
+    </event>
+
+    <event name="Adjust throttle/flaps">
+      <description>Remove flaps at 50 ft and set heading to 100; acquire heading.</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 2000
+      </condition>
+      <set name="fcs/flap-cmd-norm" value="0"/>
+      <set name="guidance/specified-heading-rad" value="1.75"/>
+      <set name="guidance/heading-selector-switch" value="1"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
+    </event>
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at 1 minute intervals</description>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+        <property>position/lat-geod-deg</property>
+        <property>position/geod-alt-ft</property>
+      </notify>
+      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+    <event name="Terminate">
+      <description>
+        Terminate this run when the run ID is greater than a specified number
+      </description>
+      <condition>
+        simulation/run_id >= 7
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Reset">
+      <description>
+        This event is very critical with regard to when the various properties
+        below are set. When the terrain elevation is set (AFTER the reset is
+        performed) the height AGL MUST ALSO be set, otherwise the landing gear
+        is compressed a LOT.
+      </description>
+      <condition>
+        sim-time-sec  ge  300.0
+      </condition>
+      <set name="ap/heading_setpoint" value="0"/>
+      <set name="ap/altitude_setpoint" value="0"/>
+      <set name="ap/altitude_hold" value="0"/>
+      <set name="ap/heading_hold" value="0"/>
+      <set name="simulation/run_id" type="FG_DELTA" value="1"/>
+      <set name="simulation/reset" value="1"/>
+      <set name="position/terrain-elevation-asl-ft">
+        <function>
+          <product>
+            <property>simulation/run_id</property>
+            <value>500.0</value>
+          </product>
+        </function>
+      </set>
+      <set name="position/h-agl-ft" value="4.6"/>
+      <notify>
+        <property> simulation/run_id </property>
+      </notify>
+    </event>
+
+  </run>
+</runscript>

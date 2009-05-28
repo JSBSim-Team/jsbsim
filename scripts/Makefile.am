@@ -18,4 +18,5 @@ EXTRA_DIST = \
   Postfix.kml \
   x151.xml \
   x152.xml \
-  f16_runway_test.xml
+  f16_runway_test.xml \
+  c172_elevation_test.xml
