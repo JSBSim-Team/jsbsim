@@ -4,7 +4,12 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="C172-01A takeoff elevation test">
   <!--
-    This run is for testing the C172 at different takeoff elevations
+    This run is for testing the C172 at different takeoff elevations.
+    
+    The run begins with the brakes set on all wheels. The engine is started
+    and the heading hold autopilot mode is set. At 2.0 seconds the brakes are
+    released and the rollout begins. The flaps are set to 32%, which is
+    10 degrees.
   -->
 
   <use aircraft="c172x" initialize="reset00"/>
@@ -23,20 +28,12 @@
       <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
+      <set name="ap/autopilot-roll-on" value="1"/>
+      <set name="ap/roll-attitude-mode" value="0"/>
       <notify>
         <property>simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
       </notify>
-    </event>
-
-    <event name="Set heading hold">
-      <description>
-        Set heading hold when time is greater than 0.25 sec.
-      </description>
-      <condition> sim-time-sec >= 0.25 </condition>
-      <set name="ap/autopilot-roll-on" value="1"/>
-      <set name="ap/roll-attitude-mode" value="0"/>
-      <notify/>
     </event>
 
     <event name="Begin roll">
@@ -45,16 +42,15 @@
       <set name="fcs/left-brake-cmd-norm" value="0"/>
       <set name="fcs/right-brake-cmd-norm" value="0"/>
       <set name="fcs/center-brake-cmd-norm" value="0"/>
-      <set name="fcs/flap-cmd-norm" value="0.16"/>
+      <set name="fcs/flap-cmd-norm" value="0.33"/>
     </event>
 
     <event name="Rotate">
-      <description>Set Autopilot for 500 ft and rotate at 49 keas. </description>
+      <description>Set Autopilot for 400 ft and rotate at 49 keas. </description>
       <notify/>
       <condition> velocities/vc-kts >= 49 </condition>
-      <set name="ap/altitude_setpoint" value="500.0"/>
+      <set name="ap/altitude_setpoint" value="400.0"/>
       <set name="ap/altitude_hold" value="1"/>
-      <set name="fcs/flap-cmd-norm" value=".33"/>
     </event>
 
     <event name="Set autopilot for 6000 ft.">
@@ -94,7 +90,7 @@
         Terminate this run when the run ID is greater than a specified number
       </description>
       <condition>
-        simulation/run_id >= 7
+        simulation/run_id >= 9
       </condition>
       <set name="simulation/terminate" value="1"/>
       <notify/>
