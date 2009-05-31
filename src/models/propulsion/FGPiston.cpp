@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.37 2009/05/31 19:40:39 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.38 2009/05/31 21:09:13 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -548,7 +548,7 @@ void FGPiston::doMAP(void)
       }
     }
     // Boost the manifold pressure.
-    double boost_factor = BoostMul[BoostSpeed] * map_coefficient * RPM/RatedRPM[BoostSpeed];
+    double boost_factor = BoostMul[BoostSpeed] * RPM/RatedRPM[BoostSpeed];
     if (boost_factor < 1.0) boost_factor = 1.0;  // boost will never reduce the MAP
     MAP = TMAP * boost_factor;
     // Now clip the manifold pressure to BCV or Wastegate setting.
@@ -713,7 +713,7 @@ void FGPiston::doEGT(void)
  * Calculate the cylinder head temperature.
  *
  * Inputs: T_amb, IAS, rho_air, m_dot_fuel, calorific_value_fuel,
- *   combustion_efficiency, RPM, MaxRPM
+ *   combustion_efficiency, RPM, MaxRPM, Displacement
  *
  * Outputs: CylinderHeadTemp_degK
  */
