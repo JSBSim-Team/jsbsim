@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.15 2009/03/23 17:34:55 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.16 2009/05/31 19:54:57 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.15 2009/03/23 17:34:55 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.16 2009/05/31 19:54:57 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +224,7 @@ private:
   double IdleN2;           ///< Idle N2
   double N1;               ///< N1
   double N2;               ///< N2
+  double N2norm;           ///< N2 normalized (0=idle, 1=max)
   double MaxN1;            ///< N1 at 100% throttle
   double MaxN2;            ///< N2 at 100% throttle
   double IdleFF;           ///< Idle Fuel Flow (lbm/hr)

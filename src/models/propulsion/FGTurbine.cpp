@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.18 2009/03/23 17:34:55 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.19 2009/05/31 19:54:57 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,7 @@ FGTurbine::~FGTurbine()
 void FGTurbine::ResetToIC(void)
 {
   N1 = N2 = 0.0;
+  N2norm = 0.0;
   correctedTSFC = TSFC;
   ThrottlePos = AugmentCmd = 0.0;
   InletPosition = NozzlePosition = 1.0;
@@ -186,7 +187,9 @@ double FGTurbine::Off(void)
 double FGTurbine::Run()
 {
   double idlethrust, milthrust, thrust;
-  double N2norm;   // 0.0 = idle N2, 1.0 = maximum N2
+  double spoolup;                        // acceleration in pct/sec
+  double sigma = Atmosphere->GetDensityRatio();
+  double T = Atmosphere->GetTemperature();
 
   idlethrust = MilThrust * IdleThrustLookup->GetValue();
   milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
@@ -194,8 +197,13 @@ double FGTurbine::Run()
   Running = true;
   Starter = false;
 
-  N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, delay, delay * 3.0);
-  N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, delay, delay * 2.4);
+  // adjust acceleration for N2 and atmospheric density
+  double n = N2norm + 0.1;
+  if (n > 1) n = 1; 
+  spoolup = delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma));
+  
+  N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, spoolup, spoolup * 3.0);
+  N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, spoolup, spoolup * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
   EGT_degC = TAT + 363.1 + ThrottlePos * 357.1;
@@ -203,7 +211,7 @@ double FGTurbine::Run()
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    correctedTSFC = TSFC * (0.84 + (1-N2norm)*(1-N2norm));
+    correctedTSFC = TSFC * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 100000);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
@@ -329,7 +337,7 @@ double FGTurbine::Seize(void)
 
 double FGTurbine::Trim()
 {
-    double idlethrust, milthrust, thrust, tdiff, N2norm;
+    double idlethrust, milthrust, thrust, tdiff;
     idlethrust = MilThrust * IdleThrustLookup->GetValue();
     milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
     N2 = IdleN2 + ThrottlePos * N2_factor;
@@ -457,7 +465,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
 
   // Pre-calculations and initializations
 
-  delay = 60.0 / (BypassRatio + 3.0);
+  delay = 90.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
