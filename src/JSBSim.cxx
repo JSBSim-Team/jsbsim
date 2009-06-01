@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.49 2009/05/26 05:35:42 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.50 2009/06/01 08:36:20 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -384,7 +384,7 @@ void FGJSBsim::init()
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
             << Propagate->GetLocation().GetLongitudeDeg() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Altitude: "
-            << Propagate->Geth() << " feet" );
+            << Propagate->GetAltitudeASL() << " feet" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  loaded initial conditions" );
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  set dt" );
@@ -631,7 +631,7 @@ bool FGJSBsim::copy_to_JSBsim()
     }
 
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
-    fdmex->SetSlave(slaved->getBoolValue());
+    fdmex->SetChild(slaved->getBoolValue());
 
     return true;
 }
