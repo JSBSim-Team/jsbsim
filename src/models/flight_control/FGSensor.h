@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.12 2009/05/14 01:55:47 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.13 2009/06/01 19:08:06 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.12 $
+@version $Revision: 1.13 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ class FGSensor  : public FGFCSComponent
 {
 public:
   FGSensor(FGFCS* fcs, Element* element);
-  ~FGSensor();
+  virtual ~FGSensor();
 
   void SetFailLow(double val) {if (val > 0.0) fail_low = true; else fail_low = false;}
   void SetFailHigh(double val) {if (val > 0.0) fail_high = true; else fail_high = false;}
