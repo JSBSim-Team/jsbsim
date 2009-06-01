@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2005-01-01 </filecreationdate>
-        <version> $Revision: 1.29 $ </version>
+        <version> $Revision: 1.30 $ </version>
         <description> McDonnell Douglas F-15 Eagle </description>
 
     </fileheader>
@@ -278,9 +278,28 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Elevator Control">
+             <kinematic name="elevator position">
+                <input>fcs/pitch-trim-sum</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.6</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.6</time>
+                    </setting>
+                </traverse>
+                <output>fcs/elevator-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="elevator position">
                 <input>fcs/pitch-trim-sum</input>
                 <gain>0.01745</gain>
+                <domain>
+                    <min>-1</min>
+                    <max>1</max>
+                </domain>
                 <range>
                     <min>-26</min>
                     <max>15</max>
@@ -298,8 +317,23 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Left Aileron Control">
+            <kinematic name="aileron pos norm">
                 <input>fcs/roll-trim-sum</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.3</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.3</time>
+                    </setting>
+                </traverse>
+                <output>fcs/left-aileron-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="Left Aileron Control">
+                <input>fcs/aileron-pos-norm</input>
                 <gain>0.01745</gain>
                 <range>
                     <min>-20</min>
@@ -309,7 +343,7 @@
             </aerosurface_scale>
 
             <aerosurface_scale name="Right Aileron Control">
-                <input>fcs/roll-trim-sum</input>
+                <input>fcs/aileron-pos-norm</input>
                 <gain>-0.01745</gain>
                 <range>
                     <min>-20</min>
@@ -334,8 +368,23 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Rudder Control">
+            <kinematic name="rudder position">
                 <input>fcs/yaw-trim-sum</input>
+                <traverse>
+                    <setting>
+                        <position>-1</position>
+                        <time>0.4</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.4</time>
+                    </setting>
+                </traverse>
+                <output>fcs/rudder-pos-norm</output>
+            </kinematic>
+
+            <aerosurface_scale name="Rudder Control">
+                <input>fcs/rudder-pos-norm</input>
                 <gain>0.01745</gain>
                 <range>
                     <min>-30</min>
@@ -358,6 +407,22 @@
                     </setting>
                 </traverse>
                 <output>gear/gear-pos-norm</output>
+            </kinematic>
+        </channel>
+        <channel name="Speedbrake">
+            <kinematic name="Speedbrake Control">
+                <input>fcs/speedbrake-cmd-norm</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>2</time>
+                    </setting>
+                </traverse>
+                <output>fcs/speedbrake-pos-norm</output>
             </kinematic>
         </channel>
     </flight_control>
@@ -526,7 +591,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/mag-elevator-pos-rad</property>
+                    <abs><property>fcs/mag-elevator-pos-rad</property></abs>
                     <value>0.0438</value>
                 </product>
             </function>
@@ -581,7 +646,7 @@
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
-                                         0.5000	1.4000
+                                0.5000	1.4000
                               -0.3490	-0.9300	-0.2500
                               -0.2620	-0.8600	-0.2300
                               -0.1750	-0.5800	-0.1600
