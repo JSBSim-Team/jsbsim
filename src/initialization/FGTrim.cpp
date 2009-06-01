@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.9 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.10 2009/06/01 17:47:20 andgi Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ bool FGTrim::RemoveState( State state ) {
       ta=*iAxes;
       if( ta->GetStateType() == state ) {
         delete ta;
-        TrimAxes.erase(iAxes);
+        iAxes = TrimAxes.erase(iAxes);
         result=true;
         continue;
       }
