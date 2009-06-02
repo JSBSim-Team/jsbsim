@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.6 2008/05/01 01:03:14 dpculp Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.7 2009/06/02 00:51:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     produce no output. For example, say that the width value is 2.0. If the
     input is between -1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @version $Id: FGDeadBand.h,v 1.6 2008/05/01 01:03:14 dpculp Exp $
+    @version $Id: FGDeadBand.h,v 1.7 2009/06/02 00:51:32 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,8 @@ public:
 private:
   double width;
   double gain;
+  FGPropertyManager* WidthPropertyNode;
+  double WidthPropertySign;
 
   void Debug(int from);
 };

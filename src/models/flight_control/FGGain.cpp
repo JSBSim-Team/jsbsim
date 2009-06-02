@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.15 2008/08/25 15:51:33 andgi Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.16 2009/06/02 00:51:32 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +207,11 @@ void FGGain::Debug(int from)
       else
         cout << "      INPUT: " << InputNodes[0]->getName() << endl;
 
-      cout << "      GAIN: " << Gain << endl;
+      if (GainPropertyNode != 0) {
+        cout << "      GAIN: " << GainPropertyNode->GetName() << endl;
+      } else {
+        cout << "      GAIN: " << Gain << endl;
+      }
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       if (Type == "AEROSURFACE_SCALE") {
         cout << "      In/Out Mapping:" << endl;

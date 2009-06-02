@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.4 2007/09/19 01:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.5 2009/06/02 00:51:32 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,11 +52,24 @@ CLASS IMPLEMENTATION
 
 FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
+  string width_string;
+
+  WidthPropertyNode = 0;
+  WidthPropertySign = 1.0;
   gain = 1.0;
   width = 0.0;
 
-  if (element->FindElement("width")) {
-    width = element->FindElementValueAsNumber("width");
+  if ( element->FindElement("width") ) {
+    width_string = element->FindElementValue("width");
+    if (width_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+      if (width_string[0] == '-') {
+       WidthPropertySign = -1.0;
+       width_string.erase(0,1);
+      }
+      WidthPropertyNode = PropertyManager->GetNode(width_string);
+    } else {
+      width = element->FindElementValueAsNumber("width");
+    }
   }
 
   if (element->FindElement("gain")) {
@@ -79,6 +92,10 @@ FGDeadBand::~FGDeadBand()
 bool FGDeadBand::Run(void )
 {
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+
+  if (WidthPropertyNode != 0) {
+    width = WidthPropertyNode->getDoubleValue() * WidthPropertySign;
+  }
 
   if (Input < -width/2.0) {
     Output = (Input + width/2.0)*gain;
@@ -121,7 +138,11 @@ void FGDeadBand::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->getName() << endl;
-      cout << "      DEADBAND WIDTH: " << width << endl;
+      if (WidthPropertyNode != 0) {
+        cout << "      DEADBAND WIDTH: " << WidthPropertyNode->GetName() << endl;
+      } else {
+        cout << "      DEADBAND WIDTH: " << width << endl;
+      }
       cout << "      GAIN: " << gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
