@@ -29,6 +29,7 @@ SUBDIRS =		\
 	paraglider	\
 	sgs126		\
 	Submarine_Scout \
+        Shuttle         \
 	t6texan2	\
 	x24b
 

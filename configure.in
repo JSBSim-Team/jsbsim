@@ -106,6 +106,7 @@ aircraft/Submarine_Scout/Makefile \
 aircraft/Submarine_Scout/Systems/Makefile \
 aircraft/Short_S23/Makefile \
 aircraft/Short_S23/Systems/Makefile \
+aircraft/Shuttle/Makefile \
 aircraft/T37/Makefile \
 aircraft/T38/Makefile \
 aircraft/X15/Makefile \
@@ -127,7 +128,6 @@ aircraft/p51d/Makefile \
 aircraft/pa28/Makefile \
 aircraft/paraglider/Makefile \
 aircraft/sgs126/Makefile \
-aircraft/shuttle/Makefile \
 aircraft/t6texan2/Makefile \
 aircraft/x24b/Makefile \
 engine/Makefile \
