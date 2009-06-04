@@ -11,8 +11,6 @@ configure
 stamp-h
 stamp-h.in
 stamp-h1
-COPYING
-INSTALL
 build
 config.guess
 config.sub
