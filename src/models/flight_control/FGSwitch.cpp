@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.12 2009/03/15 16:29:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.13 2009/06/04 05:40:45 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,20 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
         cerr << "Unrecognized LOGIC token " << logic << " in switch component: " << Name << endl;
       }
       for (unsigned int i=0; i<test_element->GetNumDataLines(); i++) {
+        string input_data = test_element->GetDataLine(i);
+        while (1) {
+          if (input_data[0] <= 32) {
+            input_data = input_data.erase(0,1);
+          } else {
+            break;
+          }
+          if (input_data.size() <= 1) break;
+        }
+        if (test_element->GetDataLine(i).size() <= 1) {
+          // Make sure there are no bad data lines that consist solely of whitespace
+          cerr << fgred << "  Bad data line in switch component: " << Name << reset << endl;
+          continue;
+        }
         current_test->conditions.push_back(new FGCondition(test_element->GetDataLine(i), PropertyManager));
       }
 
