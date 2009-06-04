@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.13 2009/06/04 05:40:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.14 2009/06/04 12:51:59 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,20 +98,16 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
       for (unsigned int i=0; i<test_element->GetNumDataLines(); i++) {
         string input_data = test_element->GetDataLine(i);
-        while (1) {
-          if (input_data[0] <= 32) {
-            input_data = input_data.erase(0,1);
-          } else {
-            break;
-          }
+        while (input_data[0] <= 32) {
+          input_data = input_data.erase(0,1);
           if (input_data.size() <= 1) break;
         }
-        if (test_element->GetDataLine(i).size() <= 1) {
+        if (input_data.size() <= 1) {
           // Make sure there are no bad data lines that consist solely of whitespace
           cerr << fgred << "  Bad data line in switch component: " << Name << reset << endl;
           continue;
         }
-        current_test->conditions.push_back(new FGCondition(test_element->GetDataLine(i), PropertyManager));
+        current_test->conditions.push_back(new FGCondition(input_data, PropertyManager));
       }
 
       condition_element = test_element->GetElement(); // retrieve condition groups
