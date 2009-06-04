@@ -16,6 +16,8 @@
     <property value="1"> fcs/left-brake-cmd-norm </property>
     <property value="1"> fcs/right-brake-cmd-norm </property>
     <property value="1"> fcs/center-brake-cmd-norm </property>
+    <property value="3.49"> guidance/specified-heading-rad </property>
+    <property value="1"> guidance/heading-selector-switch </property>
 
     <event name="engine start">
       <description>Start the engine and set roll control to heading hold</description>
@@ -24,7 +26,7 @@
       <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
-      <set name="ap/roll-attitude-mode" value="0"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
       <set name="ap/autopilot-roll-on" value="1"/>
       <notify>
         <property>simulation/run_id</property>
@@ -38,16 +40,16 @@
       <set name="fcs/left-brake-cmd-norm" value="0"/>
       <set name="fcs/right-brake-cmd-norm" value="0"/>
       <set name="fcs/center-brake-cmd-norm" value="0"/>
-      <set name="fcs/flap-cmd-norm" value="0.16"/>
+      <set name="fcs/flap-cmd-norm" value="0.33"/>
     </event>
 
     <event name="Rotate">
-      <description>Set Autopilot for 500 ft and rotate at 49 keas. </description>
+      <description>Set Autopilot for 400 ft and rotate at 49 keas. </description>
       <notify/>
       <condition> velocities/vc-kts >= 49 </condition>
-      <set name="ap/altitude_setpoint" value="500.0"/>
+      <set name="ap/altitude_setpoint" value="400.0"/>
       <set name="ap/altitude_hold" value="1"/>
-      <set name="fcs/flap-cmd-norm" value=".33"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
     </event>
 
     <event name="Set autopilot for 6000 ft.">
@@ -66,7 +68,6 @@
       </condition>
       <set name="fcs/flap-cmd-norm" value="0"/>
       <set name="guidance/specified-heading-rad" value="1.75"/>
-      <set name="guidance/heading-selector-switch" value="1"/>
       <set name="ap/roll-attitude-mode" value="1"/>
     </event>
 

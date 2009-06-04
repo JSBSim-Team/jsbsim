@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.13 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.14 2009/06/04 02:56:34 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +164,26 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
                             radius*cosLat*sinLon,
                             radius*sinLat );
   ComputeDerived();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
+{
+  mCacheValid = false;
+  
+  mGeodLat = lat;
+  mLon = lon;
+  GeodeticAltitude = height;
+
+  initial_longitude = mLon;
+
+  double RN = a / sqrt(1.0 - e2*sin(mGeodLat)*sin(mGeodLat));
+
+  mECLoc(eX) = (RN + GeodeticAltitude)*cos(mGeodLat)*cos(mLon);
+  mECLoc(eY) = (RN + GeodeticAltitude)*cos(mGeodLat)*sin(mLon);
+  mECLoc(eZ) = ((1 - e2)*RN + GeodeticAltitude)*sin(mGeodLat);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

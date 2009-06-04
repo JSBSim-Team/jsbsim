@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.13 2008/05/04 19:20:45 dpculp Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.14 2009/06/04 02:56:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.13 2008/05/04 19:20:45 dpculp Exp $
+    @version $Id: FGLocation.h,v 1.14 2009/06/04 02:56:34 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,6 +232,12 @@ public:
       @param lat GEOCENTRIC latitude in radians
       @param radius distance from center of earth to vehicle in feet*/
   void SetPosition(double lon, double lat, double radius);
+
+  /** Sets the longitude, latitude and the distance above the reference ellipsoid.
+      @param lon longitude in radians
+      @param lat GEODETIC latitude in radians
+      @param height distance above the reference ellipsoid to vehicle in feet*/
+  void SetPositionGeodetic(double lon, double lat, double height);
 
   /** Sets the semimajor and semiminor axis lengths for this planet.
       The eccentricity and flattening are calculated from the semimajor

@@ -56,33 +56,6 @@
 
   <channel name="Heading Hold">
 
-    <accelerometer name="acclerations/sensor/nose-accelerometer-X-ft_sec2">
-      <location unit="IN">
-        <x>0</x>
-        <y>20</y>
-        <z>20</z>
-      </location>
-      <axis>x</axis>
-    </accelerometer>
-
-    <accelerometer name="acclerations/sensor/nose-accelerometer-Y-ft_sec2">
-      <location unit="IN">
-        <x>0</x>
-        <y>20</y>
-        <z>20</z>
-      </location>
-      <axis>y</axis>
-    </accelerometer>
-
-    <accelerometer name="acclerations/sensor/nose-accelerometer-Z-ft_sec2">
-      <location unit="IN">
-        <x>0</x>
-        <y>20</y>
-        <z>20</z>
-      </location>
-      <axis>z</axis>
-    </accelerometer>
-
     <switch name="ap/roll-control-autopilot-on">
       <default value="0"/>
       <test value="1">
@@ -147,7 +120,7 @@
       <input> ap/limited-roll-angle-error </input>
       <kp> 30 </kp>
       <ki> 0.1  </ki>
-      <kd> 0.0  </kd>
+      <kd> 0.1  </kd>
       <trigger> ap/roll-autopilot-windup-trigger </trigger>
       <clipto>
         <min> -guidance/roll-rate-limit </min>
@@ -193,6 +166,15 @@
       <test value="ap/roll-cmd-smoother">
         ap/roll-control-autopilot-on ne 0.0
       </test>
+    </switch>
+
+    <switch name="ap/roll-command-selector-steering">
+      <default value="0.0"/>
+      <test value="ap/roll-cmd-norm-output">
+        ap/roll-control-autopilot-on == 1
+        gear/unit[0]/WOW == 1
+      </test>
+      <output>fcs/steer-cmd-norm</output>
     </switch>
 
   </channel>

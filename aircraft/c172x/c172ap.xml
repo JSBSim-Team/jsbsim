@@ -166,7 +166,7 @@ ROLL CHANNEL
     </test>
     <output>ap/aileron_cmd</output>
   </switch>
-
+<!--
   <switch name="fcs/roll-command-selector-steering">
     <default value="0.0"/>
     <test value="fcs/heading-pi-controller">
@@ -175,7 +175,7 @@ ROLL CHANNEL
     </test>
     <output>fcs/steer-cmd-norm</output>
   </switch>
-
+-->
 </channel>
 <!--
 =====================================================
