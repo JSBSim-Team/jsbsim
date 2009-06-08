@@ -859,9 +859,6 @@
 
      </channel>
 
-     <property>fcs/intake-subsonic-pos</property>
-     <property>fcs/ground-idle</property>
-
     </flight_control>
 
     <propulsion>
@@ -876,6 +873,9 @@
               => real engine diameter is 1.65 m = (11 - 7.7) / 2.
             - Thruster center 3/4 of length (2428 in.), aligned with engines.
         </documentation>
+
+        <property>fcs/ground-idle</property>
+        <property>fcs/intake-subsonic-pos</property>
 
         <engine file="Olympus593Mrk610">
             <location unit="IN">
