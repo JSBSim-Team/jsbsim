@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.8 2009/06/09 03:23:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.9 2009/06/09 13:17:09 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +157,6 @@ bool FGModel::Load(Element* el)
       if ( ! property_element->GetAttributeValue("value").empty())
         value = property_element->GetAttributeValueAsNumber("value");
       interface_properties.push_back(new double(value));
-      interface_property_string = property_element->GetDataLine();
       PropertyManager->Tie(interface_property_string, interface_properties.back());
       if (debug_lvl > 0)
         cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
