@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.24 2009/05/17 13:55:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.25 2009/06/09 03:23:54 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -317,6 +317,8 @@ bool FGAerodynamics::Load(Element *element)
   } else {
     document = element;
   }
+
+  FGModel::Load(element); // Perform base class Load
 
   DetermineAxisSystem(); // Detemine if Lift/Side/Drag, etc. is used.
 

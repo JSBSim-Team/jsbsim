@@ -49,7 +49,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.5 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.6 2009/06/09 03:23:54 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,26 +66,9 @@ FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGExternalReactions::Load(Element* el)
 {
+  FGModel::Load(el); // Call the base class Load() function to load interface properties.
+
   Debug(2);
-
-  // Interface properties are all stored in the interface properties array.
-  // ToDo: Interface properties should not be created if they already exist.
-  // A check should be done prior to creation. This ought to make it easier 
-  // to work with FlightGear, where some properties used in definitions may 
-  // already have been created, but would not be seen when JSBSim is run
-  // in standalone mode.
-
-  Element* property_element;
-  property_element = el->FindElement("property");
-  while (property_element) {
-    double value=0.0;
-    if ( ! property_element->GetAttributeValue("value").empty())
-      value = property_element->GetAttributeValueAsNumber("value");
-    interface_properties.push_back(new double(value));
-    string interface_property_string = property_element->GetDataLine();
-    PropertyManager->Tie(interface_property_string, interface_properties.back());
-    property_element = el->FindNextElement("property");
-  }
 
   // Parse force elements
 
@@ -107,8 +90,7 @@ FGExternalReactions::~FGExternalReactions()
 {
   for (unsigned int i=0; i<Forces.size(); i++) delete Forces[i];
   Forces.clear();
-  for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
-  interface_properties.clear();
+
   Debug(1);
 }
 

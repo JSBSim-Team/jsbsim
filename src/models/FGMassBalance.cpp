@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.18 2009/05/17 13:55:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.19 2009/06/09 03:23:55 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +95,8 @@ bool FGMassBalance::Load(Element* el)
   Element *element;
   string element_name = "";
   double bixx, biyy, bizz, bixy, bixz, biyz;
+
+  FGModel::Load(el); // Perform base class Load.
 
   bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
   if (el->FindElement("ixx"))

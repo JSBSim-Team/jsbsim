@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.6 2009/04/14 18:48:14 andgi Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.7 2009/06/09 03:23:54 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,10 +71,6 @@ FGBuoyantForces::~FGBuoyantForces()
 {
   for (unsigned int i=0; i<Cells.size(); i++) delete Cells[i];
   Cells.clear();
-
-  for (unsigned int i=0; i<interface_properties.size(); i++)
-    delete interface_properties[i];
-  interface_properties.clear();
 
   Debug(1);
 }
@@ -127,28 +123,7 @@ bool FGBuoyantForces::Load(Element *element)
     document = element;
   }
 
-  Element *property_element = document->FindElement("property");
-  if (property_element)
-    cout << endl << "    Declared properties" << endl << endl;
-  while (property_element) {
-    string interface_property_string = property_element->GetDataLine();
-
-    if (PropertyManager->HasNode(interface_property_string)) {
-      cout << "      Property " << interface_property_string <<
-        " is already defined." << endl;
-    } else {
-      double value=0.0;
-      if ( ! property_element->GetAttributeValue("value").empty())
-        value = property_element->GetAttributeValueAsNumber("value");
-      interface_properties.push_back(new double(value));
-      interface_property_string = property_element->GetDataLine();
-      PropertyManager->Tie(interface_property_string,
-                           interface_properties.back());
-      cout << "      " << interface_property_string <<
-        " (initial value: " << value << ")" << endl;
-    }
-    property_element = document->FindNextElement("property");
-  }
+  FGModel::Load(element); // Perform base class Load
 
   gas_cell_element = document->FindElement("gas_cell");
   while (gas_cell_element) {

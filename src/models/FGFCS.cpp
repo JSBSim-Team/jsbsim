@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.57 2009/05/10 09:53:02 andgi Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.58 2009/06/09 03:23:55 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,8 +101,6 @@ FGFCS::~FGFCS()
 
   unsigned int i;
 
-  for (i=0;i<sensors.size();i++) delete sensors[i];
-  sensors.clear();
   for (i=0;i<APComponents.size();i++) delete APComponents[i];
   APComponents.clear();
   for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
@@ -110,8 +108,6 @@ FGFCS::~FGFCS()
   for (i=0;i<Systems.size();i++) delete Systems[i];
   Systems.clear();
 
-  for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
-  interface_properties.clear();
 
   Debug(1);
 }
@@ -207,10 +203,6 @@ bool FGFCS::Run(void)
     FGLGear* gear = GroundReactions->GetGearUnit(i);
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
-
-  // Cycle through the sensor, systems, autopilot, and flight control components
-  // Execute Sensors
-  for (i=0; i<sensors.size(); i++) sensors[i]->Run();
 
   // Execute Systems in order
   for (i=0; i<Systems.size(); i++) Systems[i]->Run();
@@ -527,7 +519,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
 {
   string name, file, fname="", interface_property_string, parent_name;
   vector <FGFCSComponent*> *Components;
-  Element *component_element, *property_element, *sensor_element;
+  Element *component_element, *sensor_element;
   Element *channel_element;
 
   Components=0;
@@ -575,32 +567,14 @@ bool FGFCS::Load(Element* el, SystemType systype)
 
   if (document->GetName() == "flight_control") bindModel();
 
-  // Interface properties from any autopilot, flight control, or other system are
-  // all stored in the interface properties array.
-
-  property_element = document->FindElement("property");
-  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
-  while (property_element) {
-    interface_property_string = property_element->GetDataLine();
-    if (PropertyManager->HasNode(interface_property_string)) {
-      cerr << "      Property " << interface_property_string << " is already defined." << endl;
-    } else {
-      double value=0.0;
-      if ( ! property_element->GetAttributeValue("value").empty())
-        value = property_element->GetAttributeValueAsNumber("value");
-      interface_properties.push_back(new double(value));
-      interface_property_string = property_element->GetDataLine();
-      PropertyManager->Tie(interface_property_string, interface_properties.back());
-      if (debug_lvl > 0)
-        cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
-    }
-    property_element = document->FindNextElement("property");
-  }
+  FGModel::Load(document); // Load interface properties from document
 
   // After reading interface properties in a file, read properties in the local
   // flight_control, autopilot, or system element. This allows general-purpose
   // systems to be defined in a file, with overrides or initial loaded constants
   // supplied in the relevant element of the aircraft configuration file.
+
+  Element* property_element = 0;
 
   if (!fname.empty()) {
     property_element = el->FindElement("property");
@@ -626,22 +600,6 @@ bool FGFCS::Load(Element* el, SystemType systype)
       
       property_element = el->FindNextElement("property");
     }
-  }
-
-  // Any sensor elements that are outside of a channel (in either the autopilot
-  // or the flight_control, or even any possible "system") are placed into the global
-  // "sensors" array, and are executed prior to any autopilot, flight control, or
-  // system.
-
-  sensor_element = document->FindElement("sensor");
-  while (sensor_element) {
-    try {
-      sensors.push_back(new FGSensor(this, sensor_element));
-    } catch (string s) {
-      cerr << highint << fgred << endl << "  " << s << endl;
-      return false;
-    }
-    sensor_element = document->FindNextElement("sensor");
   }
 
   channel_element = document->FindElement("channel");

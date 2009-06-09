@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.32 2009/06/08 17:39:36 andgi Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.33 2009/06/09 03:23:55 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -100,10 +100,6 @@ FGPropulsion::~FGPropulsion()
   Engines.clear();
   for (unsigned int i=0; i<Tanks.size(); i++) delete Tanks[i];
   Tanks.clear();
-  for (unsigned int i=0; i<interface_properties.size(); i++)
-    delete interface_properties[i];
-  interface_properties.clear();
-
   Debug(1);
 }
 
@@ -257,31 +253,8 @@ bool FGPropulsion::Load(Element* el)
 
   Debug(2);
 
-  // Process interface properties
-  Element *property_element = el->FindElement("property");
-  if (property_element)
-    cout << endl << "    Declared properties" << endl << endl;
-  while (property_element) {
-    string interface_property_string = property_element->GetDataLine();
+  FGModel::Load(el); // Perform base class Load.
 
-    if (PropertyManager->HasNode(interface_property_string)) {
-      cout << "      Property " << interface_property_string <<
-        " is already defined." << endl;
-    } else {
-      double value=0.0;
-      if ( ! property_element->GetAttributeValue("value").empty())
-        value = property_element->GetAttributeValueAsNumber("value");
-      interface_properties.push_back(new double(value));
-      interface_property_string = property_element->GetDataLine();
-      PropertyManager->Tie(interface_property_string,
-                           interface_properties.back());
-      cout << "      " << interface_property_string <<
-        " (initial value: " << value << ")" << endl;
-    }
-    property_element = el->FindNextElement("property");
-  }
-
-  // Process engines
   Element* engine_element = el->FindElement("engine");
   while (engine_element) {
     engine_filename = engine_element->GetAttributeValue("file");

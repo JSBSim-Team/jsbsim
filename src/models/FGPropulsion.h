@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.20 2009/06/08 17:39:36 andgi Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.21 2009/06/09 03:23:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,10 +77,6 @@ CLASS DOCUMENTATION
 
   @code
     <propulsion>
-
-        <!-- Interface properties -->
-        <property>fcs/ground-idle</property>
-
         <engine file="{string}">
           ... see FGEngine, FGThruster, and class for engine type ...
         </engine>
@@ -94,7 +90,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.20 2009/06/08 17:39:36 andgi Exp $
+    @version $Id: FGPropulsion.h,v 1.21 2009/06/09 03:23:55 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -222,8 +218,6 @@ private:
 
   int InitializedEngines;
   bool HasInitializedEngines;
-
-  vector <double*> interface_properties;
 
   void bind();
   void Debug(int from);

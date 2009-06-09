@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.7 2009/04/14 18:48:14 andgi Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.8 2009/06/09 03:23:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.7 2009/04/14 18:48:14 andgi Exp $
+    @version $Id: FGBuoyantForces.h,v 1.8 2009/06/09 03:23:54 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,8 +168,6 @@ private:
   FGMatrix33 gasCellJ;
   FGColumnVector3 vGasCellXYZ;
   FGColumnVector3 vXYZgasCell_arm;
-
-  vector <double*> interface_properties;
 
   bool NoneDefined;
 

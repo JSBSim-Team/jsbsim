@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.7 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.8 2009/06/09 03:23:55 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,6 +99,9 @@ FGModel::FGModel(FGFDMExec* fdmex)
 
 FGModel::~FGModel()
 {
+  for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
+  interface_properties.clear();
+
   if (debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
 }
 
@@ -133,6 +136,36 @@ bool FGModel::InitModel(void)
       !Propagate ||
       !Auxiliary) return(false);
   else return(true);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGModel::Load(Element* el)
+{
+  // Interface properties are all stored in the interface properties array.
+
+  string interface_property_string = "";
+
+  Element *property_element = el->FindElement("property");
+  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
+  while (property_element) {
+    interface_property_string = property_element->GetDataLine();
+    if (PropertyManager->HasNode(interface_property_string)) {
+      cerr << "      Property " << interface_property_string << " is already defined." << endl;
+    } else {
+      double value=0.0;
+      if ( ! property_element->GetAttributeValue("value").empty())
+        value = property_element->GetAttributeValueAsNumber("value");
+      interface_properties.push_back(new double(value));
+      interface_property_string = property_element->GetDataLine();
+      PropertyManager->Tie(interface_property_string, interface_properties.back());
+      if (debug_lvl > 0)
+        cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+    }
+    property_element = el->FindNextElement("property");
+  }
+  
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

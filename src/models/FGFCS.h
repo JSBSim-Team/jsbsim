@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.23 2009/02/02 06:12:04 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.24 2009/06/09 03:23:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.23 $
+    @version $Revision: 1.24 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -568,8 +568,6 @@ private:
   FCSCompVec Systems;
   FCSCompVec FCSComponents;
   FCSCompVec APComponents;
-  FCSCompVec sensors;
-  vector <double*> interface_properties;
   void bind(void);
   void bindModel(void);
   void bindThrottle(unsigned int);

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.19 2009/01/01 06:11:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.20 2009/06/09 03:23:55 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,6 +130,8 @@ bool FGGroundReactions::Load(Element* el)
     FCS->AddGear(); // make the FCS aware of the landing gear
     contact_element = el->FindNextElement("contact");
   }
+  
+  FGModel::Load(el); // Perform base class Load
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 

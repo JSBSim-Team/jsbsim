@@ -44,12 +44,13 @@ INCLUDES
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.9 2009/05/09 13:28:33 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.10 2009/06/09 03:23:55 jberndt Exp $"
 
 using namespace std;
 
@@ -93,12 +94,12 @@ public:
   /// Constructor
   FGModel(FGFDMExec*);
   /// Destructor
-  virtual ~FGModel();
+  ~FGModel();
 
   /** Loads this model.
       @param el a pointer to the element
       @return true if model is successfully loaded*/
-  virtual bool Load(Element* el) {return true;}
+  virtual bool Load(Element* el);
 
   FGModel* NextModel;
   string Name;
@@ -135,6 +136,8 @@ protected:
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
   FGPropertyManager* PropertyManager;
+
+  vector <double*> interface_properties;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
