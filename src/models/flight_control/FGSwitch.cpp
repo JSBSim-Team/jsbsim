@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.15 2009/06/13 02:41:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.16 2009/06/13 11:45:27 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,10 +98,6 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
       for (unsigned int i=0; i<test_element->GetNumDataLines(); i++) {
         string input_data = test_element->GetDataLine(i);
-        while (input_data[0] <= 32) {
-          input_data = input_data.erase(0,1);
-          if (input_data.size() <= 1) break;
-        }
         if (input_data.size() <= 1) {
           // Make sure there are no bad data lines that consist solely of whitespace
           cerr << fgred << "  Bad data line in switch component: " << Name << reset << endl;
