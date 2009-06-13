@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.14 2009/06/04 12:51:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.15 2009/06/13 02:41:59 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,8 +125,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       if (value.empty()) {
         cerr << "No VALUE supplied for switch component: " << Name << endl;
       } else {
-        if (value.find_first_not_of("-.0123456789eE") == string::npos) {
-          // if true (and execution falls into this block), "value" is a number.
+        if (is_number(value)) {
           current_test->OutputVal = atof(value.c_str());
         } else {
           // "value" must be a property if execution passes to here.

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.16 2009/06/02 00:51:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.17 2009/06/13 02:41:59 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if ( element->FindElement("gain") ) {
     gain_string = element->FindElementValue("gain");
-    if (gain_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(gain_string)) { // property
       if (gain_string[0] == '-') {
        GainPropertySign = -1.0;
        gain_string.erase(0,1);

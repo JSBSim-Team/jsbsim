@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.10 2008/04/18 13:33:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.11 2009/06/13 02:41:59 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,7 @@ void FGFilter::ReadFilterCoefficients(Element* element, int index)
 
   if ( element->FindElement(coefficient) ) {
     property_string = element->FindElementValue(coefficient);
-    if (property_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(property_string)) { // property
       if (property_string[0] == '-') {
        PropertySign[index] = -1.0;
        property_string.erase(0,1);

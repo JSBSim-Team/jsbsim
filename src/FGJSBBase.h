@@ -45,6 +45,8 @@ INCLUDES
 #include <cmath>
 #include <cstdlib>
 
+#include "input_output/string_utilities.h"
+
 using std::fabs;
 using std::string;
 
@@ -60,7 +62,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.23 2009/05/26 05:35:42 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.24 2009/06/13 02:41:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +78,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.23 2009/05/26 05:35:42 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.24 2009/06/13 02:41:58 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

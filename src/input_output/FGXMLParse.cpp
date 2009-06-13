@@ -31,10 +31,11 @@ INCLUDES
 
 #include "FGXMLParse.h"
 #include <cstdlib>
+#include "input_output/string_utilities.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.7 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.8 2009/06/13 02:41:58 jberndt Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,26 +115,9 @@ void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
 
 void FGXMLParse::endElement (const char * name)
 {
-  string local_work_string;
-
-  while (!working_string.empty()) {
-    // clear leading newlines and spaces
-    string::size_type pos = working_string.find_first_not_of( " \n");
-    if (pos > 0)
-      working_string.erase(0, pos);
-
-    // remove spaces (only) from end of string
-    pos = working_string.find_last_not_of( " ");
-    if (pos != string::npos)
-      working_string.erase( ++pos);
-
-    if (!working_string.empty()) {
-      pos = working_string.find("\n");
-      if (pos != string::npos) local_work_string = working_string.substr(0,pos);
-      else local_work_string = working_string;
-      current_element->AddData(local_work_string);
-      working_string.erase(0, pos);
-    }
+  if (!working_string.empty()) {
+    vector <string> work_strings = split(working_string, '\n');
+    for (int i=0; i<work_strings.size(); i++) current_element->AddData(work_strings[i]);
   }
 
   current_element = current_element->GetParent();

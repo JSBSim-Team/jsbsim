@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.18 2009/05/08 11:57:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.19 2009/06/13 02:41:58 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +133,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   clip_el = element->FindElement("clipto");
   if (clip_el) {
     clip_string = clip_el->FindElementValue("min");
-    if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+    if (!is_number(clip_string)) { // it's a property
       if (clip_string[0] == '-') {
         clipMinSign = -1.0;
         clip_string.erase(0,1);
@@ -143,7 +143,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       clipmin = clip_el->FindElementValueAsNumber("min");
     }
     clip_string = clip_el->FindElementValue("max");
-    if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+    if (!is_number(clip_string)) { // it's a property
       if (clip_string[0] == '-') {
         clipMaxSign = -1.0;
         clip_string.erase(0,1);

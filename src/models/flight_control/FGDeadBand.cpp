@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.5 2009/06/02 00:51:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.6 2009/06/13 02:41:58 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 
   if ( element->FindElement("width") ) {
     width_string = element->FindElementValue("width");
-    if (width_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(width_string)) { // property
       if (width_string[0] == '-') {
        WidthPropertySign = -1.0;
        width_string.erase(0,1);

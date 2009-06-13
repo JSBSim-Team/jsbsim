@@ -35,10 +35,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGCondition.h"
+#include <vector>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.6 2008/02/17 18:24:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.7 2009/06/13 02:41:58 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,13 +88,14 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//This constructor is called when there are no nested test groups inside the
+// This constructor is called when there are no nested test groups inside the
 // condition
 
 FGCondition::FGCondition(string test, FGPropertyManager* PropertyManager) :
   PropertyManager(PropertyManager), isGroup(false)
 {
   string property1, property2, compare_string;
+  vector <string> test_strings;
 
   InitializeConditionals();
 
@@ -103,20 +105,21 @@ FGCondition::FGCondition(string test, FGPropertyManager* PropertyManager) :
   Logic       = elUndef;
   conditions.clear();
 
-  unsigned int start = 0, end = 0;
-  start = test.find_first_not_of(" ");
-  end = test.find_first_of(" ", start+1);
-  property1 = test.substr(start,end-start);
-  start = test.find_first_not_of(" ",end);
-  end = test.find_first_of(" ",start+1);
-  conditional = test.substr(start,end-start);
-  start = test.find_first_not_of(" ",end);
-  end = test.find_first_of(" ",start+1);
-  property2 = test.substr(start,end-start);
+  test_strings = split(test, ' ');
+  if (test_strings.size() == 3) {
+    property1 = test_strings[0];
+    conditional = test_strings[1];
+    property2 = test_strings[2];
+  } else {
+    cerr << endl << "  Conditional test is invalid: \"" << test
+         << "\" has " << test_strings.size() << " elements in the "
+         << "test condition." << endl;
+    exit(-1);
+  }
 
   TestParam1 = PropertyManager->GetNode(property1, true);
   Comparison = mComparison[conditional];
-  if (property2.find_first_not_of("-.0123456789eE") == string::npos) {
+  if (is_number(property2)) {
     TestValue = atof(property2.c_str());
   } else {
     TestParam2 = PropertyManager->GetNode(property2, true);

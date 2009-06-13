@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.10 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.11 2009/06/13 02:41:59 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if ( element->FindElement("kp") ) {
     kp_string = element->FindElementValue("kp");
-    if (kp_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(kp_string)) { // property
       if (kp_string[0] == '-') {
        KpPropertySign = -1.0;
        kp_string.erase(0,1);
@@ -77,7 +77,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if ( element->FindElement("ki") ) {
     ki_string = element->FindElementValue("ki");
-    if (ki_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(ki_string)) { // property
       if (ki_string[0] == '-') {
        KiPropertySign = -1.0;
        ki_string.erase(0,1);
@@ -90,7 +90,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if ( element->FindElement("kd") ) {
     kd_string = element->FindElementValue("kd");
-    if (kd_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+    if (!is_number(kd_string)) { // property
       if (kd_string[0] == '-') {
        KdPropertySign = -1.0;
        kd_string.erase(0,1);

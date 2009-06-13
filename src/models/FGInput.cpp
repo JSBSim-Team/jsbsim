@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.12 2008/05/31 23:13:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.13 2009/06/13 02:41:58 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,67 +114,71 @@ bool FGInput::Run(void)
       if (line.size() == 0) break;
 
       // now parse individual line
-      token_start = line.find_first_not_of(" ", 0);
-      token_end = line.find_first_of(" ", token_start);
-      token = line.substr(token_start, token_end - token_start);
+      vector <string> tokens = split(line,' ');
+  
+      string command="", argument="", str_value="";
+      if (tokens.size() > 0) {
+        command = to_lower(tokens[0]);
+        if (tokens.size() > 1) {
+          argument = trim(tokens[1]);
+          if (tokens.size() > 2) {
+            str_value = trim(tokens[2]);
+          }
+        }
+      }
 
-      if (token == "set" || token == "SET" ) {                   // SET PROPERTY
+      if (command == "set") {                   // SET PROPERTY
 
-        token_start = line.find_first_not_of(" ", token_end);
-        token_end = line.find_first_of(" ", token_start);
-        token = line.substr(token_start, token_end-token_start);
-        node = PropertyManager->GetNode(token);
-        if (node == 0) socket->Reply("Unknown property\n");
+        node = PropertyManager->GetNode(argument);
+        if (node == 0)
+          socket->Reply("Unknown property\n");
         else {
-          token_start = line.find_first_not_of(" ", token_end);
-          token_end = line.find_first_of(" ", token_start);
-          token = line.substr(token_start, token_end-token_start);
-          value = atof(token.c_str());
+          value = atof(str_value.c_str());
           node->setDoubleValue(value);
         }
+        socket->Reply("");
 
-      } else if (token == "get" || token == "GET") {             // GET PROPERTY
+      } else if (command == "get") {             // GET PROPERTY
 
-        token_start = line.find_first_not_of(" ", token_end);
-        if (token_start == string::npos) {
+        if (argument.size() == 0) {
           socket->Reply("No property argument supplied.\n");
           break;
-        } else {
-          token = line.substr(token_start, line.size()-token_start);
         }
         try {
-          node = PropertyManager->GetNode(token);
+          node = PropertyManager->GetNode(argument);
         } catch(...) {
           socket->Reply("Badly formed property query\n");
           break;
         }
         if (node == 0) {
           if (FDMExec->Holding()) { // if holding can query property list
-            string query = FDMExec->QueryPropertyCatalog(token);
+            string query = FDMExec->QueryPropertyCatalog(argument);
             socket->Reply(query);
           } else {
             socket->Reply("Must be in HOLD to search properties\n");
           }
         } else if (node > 0) {
-          sprintf(buf, "%s = %12.6f\n", token.c_str(), node->getDoubleValue());
+          sprintf(buf, "%s = %12.6f\n", argument.c_str(), node->getDoubleValue());
           socket->Reply(buf);
         }
 
-      } else if (token == "hold" || token == "HOLD") {                  // PAUSE
+      } else if (command == "hold") {                  // PAUSE
 
         FDMExec->Hold();
+        socket->Reply("");
 
-      } else if (token == "resume" || token == "RESUME") {             // RESUME
+      } else if (command == "resume") {             // RESUME
 
         FDMExec->Resume();
+        socket->Reply("");
 
-      } else if (token == "quit" || token == "QUIT") {                   // QUIT
+      } else if (command == "quit") {                   // QUIT
 
         // close the socket connection
         socket->Reply("");
         socket->Close();
 
-      } else if (token == "info" || token == "INFO") {                   // INFO
+      } else if (command == "info") {                   // INFO
 
         // get info about the sim run and/or aircraft, etc.
         sprintf(buf, "%8.3f\0", State->Getsim_time());
@@ -184,7 +188,7 @@ bool FGInput::Run(void)
         info_string += "Simulation time: " + string(buf) + "\n";
         socket->Reply(info_string);
 
-      } else if (token == "help" || token == "HELP") {                   // HELP
+      } else if (command == "help") {                   // HELP
 
         socket->Reply(
         " JSBSim Server commands:\n\n"
