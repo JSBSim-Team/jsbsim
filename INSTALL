@@ -60,7 +60,7 @@ Will compile the various classes, and build the JSBSim application.
 By default, the JSBSim libraries are not built. To build and install
 the libraries, use:
 
-$ ./autogen --enable-libraries [--disable-static] [--enable-shared]
+$ ./autogen.sh --enable-libraries [--disable-static] [--enable-shared]
 
 The configure options can be used to select what libraries to build.
 
