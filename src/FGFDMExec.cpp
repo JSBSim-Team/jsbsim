@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.61 2009/05/17 13:55:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.62 2009/06/26 12:00:55 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,7 +132,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Terminate = false;
 
   IdFDM = FDMctr; // The main (parent) JSBSim instance is always the "zeroth"
-  FDMctr++;       // instance. "child" instances are loaded last.
+                  // instance. "child" instances are loaded last.
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
@@ -145,6 +145,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
     if (master == 0)
       master = new FGPropertyManager;
     Root = master;
+
+    // JSBSim Standalone, multiple childs are allowed
+    FDMctr++;
   }
 
   instance = Root->GetNode("/fdm/jsbsim",IdFDM,true);
