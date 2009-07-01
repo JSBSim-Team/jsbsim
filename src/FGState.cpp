@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.12 2009/02/05 04:59:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.13 2009/07/01 11:59:30 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,8 @@ FGState::FGState(FGFDMExec* fdex)
   FDMExec = fdex;
 
   sim_time = 0.0;
-  //dt = 1.0/120.0;
+  dt = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
+                  // run in standalone mode with no initialization file.
 
   Aircraft     = FDMExec->GetAircraft();
   Propagate    = FDMExec->GetPropagate();
