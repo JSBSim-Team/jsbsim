@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.54 2009/05/28 00:51:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.55 2009/07/14 18:40:57 dpculp Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -341,8 +341,12 @@ FGColumnVector3& FGLGear::Force(void)
       WOW = false;
       compressLength = 0.0;
 
-      // No wheel conditons
-      RollingWhlVel = SideWhlVel = WheelSlip = 0.0;
+      // No wheel conditions
+      SideWhlVel = WheelSlip = 0.0;
+
+      // Let wheel spin down slowly
+      RollingWhlVel -= 13.0*dT;
+      if (RollingWhlVel < 0.0) RollingWhlVel = 0.0;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
       SteerAngle *= max(GetGearUnitPos()-0.8, 0.0)/0.2;
@@ -371,6 +375,7 @@ void FGLGear::ComputeRetractionState(void)
     GearUp   = true;
     WOW      = false;
     GearDown = false;
+    RollingWhlVel = 0.0;
   } else if (gearPos > 0.99) {
     GearDown = true;
     GearUp   = false;
