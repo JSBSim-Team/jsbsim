@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.12 2009/05/10 10:59:50 andgi Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.13 2009/07/24 07:26:14 andgi Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
   if (el->FindElement("idlen2"))
-    IdleN2 = el->FindElementValueAsNumber("idlen1");
+    IdleN2 = el->FindElementValueAsNumber("idlen2");
   if (el->FindElement("maxn1"))
     MaxN1 = el->FindElementValueAsNumber("maxn1");
   if (el->FindElement("maxn2"))
