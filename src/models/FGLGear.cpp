@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.55 2009/07/14 18:40:57 dpculp Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.56 2009/07/27 12:16:16 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,6 +310,19 @@ FGColumnVector3& FGLGear::Force(void)
       RollingForce = ((1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff) * sign;
       SideForce    = vLocalForce(eZ) * FCoeff;
 
+      // Lag and attenuate the XY-plane forces dependent on velocity. This code
+      // uses a lag filter, C/(s + C) where "C" is the filter coefficient. When
+      // "C" is chosen at the frame rate (in Hz), the jittering is significantly
+      // reduced. This is because the jitter is present *at* the execution rate.
+      // If a coefficient is set to something equal to or less than zero, the
+      // filter is bypassed.
+
+      if (LongForceLagFilterCoeff > 0) RollingForce = LongForceFilter.execute(RollingForce);
+      if (LatForceLagFilterCoeff > 0)  SideForce = LatForceFilter.execute(SideForce);
+
+      if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) RollingForce *= fabs(RollingWhlVel)/RFRV;
+      if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) SideForce *= fabs(SideWhlVel)/SFRV;
+
       // Transform these forces back to the local reference frame.
 
       vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
@@ -318,19 +331,6 @@ FGColumnVector3& FGLGear::Force(void)
       // Transform the forces back to the body frame and compute the moment.
 
       vForce  = Propagate->GetTl2b() * vLocalForce;
-
-      // Lag and attenuate the XY-plane forces dependent on velocity. This code
-      // uses a lag filter, C/(s + C) where "C" is the filter coefficient. When
-      // "C" is chosen at the frame rate (in Hz), the jittering is significantly
-      // reduced. This is because the jitter is present *at* the execution rate.
-      // If a coefficient is set to something equal to or less than zero, the
-      // filter is bypassed.
-
-      if (LongForceLagFilterCoeff > 0) vForce(eX) = LongForceFilter.execute(vForce(eX));
-      if (LatForceLagFilterCoeff > 0)  vForce(eY) = LatForceFilter.execute(vForce(eY));
-
-      if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
-      if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) vForce(eY) *= fabs(SideWhlVel)/SFRV;
 
       // End section for attentuating gear jitter
 
