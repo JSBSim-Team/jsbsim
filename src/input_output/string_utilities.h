@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.1 2009/06/13 02:41:58 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.2 2009/07/28 11:46:29 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,18 +74,16 @@ CLASS DECLARATION
 
   string& trim_left(string& str)
   {
-    while ( !isgraph(str[0]) ) {
+    while (str.size() && !isgraph(str[0])) {
       str = str.erase(0,1);
-      if (str.size() == 0) break;
     }
     return str;
   }
 
   string& trim_right(string& str)
   {
-    while (!isgraph(str[str.size()-1])) {
+    while (str.size() && !isgraph(str[str.size()-1])) {
       str = str.erase(str.size()-1,1);
-      if (str.size() == 0) break;
     }
     return str;
   }
