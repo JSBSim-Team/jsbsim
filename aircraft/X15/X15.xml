@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 1998-07-01 </filecreationdate>
-        <version> $Revision: 1.54 $ </version>
+        <version> $Revision: 1.55 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
@@ -45,8 +45,9 @@
         <ixy unit="SLUG*FT2"> 0 </ixy>
         <ixz unit="SLUG*FT2"> -590 </ixz>
         <iyz unit="SLUG*FT2"> 0 </iyz>
-        <emptywt unit="LBS"> 15560 </emptywt>
-        <location name="CG" unit="IN">
+<!--        <emptywt unit="LBS"> 15560 </emptywt> -->
+        <emptywt unit="LBS"> 14560 </emptywt> 
+      <location name="CG" unit="IN">
             <x> 345 </x>
             <y> 0 </y>
             <z> 0 </z>
@@ -63,8 +64,13 @@
             <static_friction> 0.5 </static_friction>
             <dynamic_friction> 0.02 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
+            <spring_coeff unit="LBS/FT"> 13000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC"> 2000 </damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
@@ -76,10 +82,15 @@
                 <z> -76.6 </z>
             </location>
             <static_friction> 0.9 </static_friction>
-            <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <dynamic_friction> 0.3 </dynamic_friction>
+            <rolling_friction> 0.3 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 28000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 500 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC"> 1000 </damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
@@ -91,10 +102,15 @@
                 <z> -76.6 </z>
             </location>
             <static_friction> 0.9 </static_friction>
-            <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <dynamic_friction> 0.3 </dynamic_friction>
+            <rolling_friction> 0.3 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 28000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 500 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC"> 1000 </damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.4</rolling>
+              <side unit="FT/SEC">0.6</side>
+            </relaxation_velocity>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
