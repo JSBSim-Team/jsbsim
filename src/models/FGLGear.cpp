@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.56 2009/07/27 12:16:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.57 2009/07/29 13:24:32 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,6 +340,7 @@ FGColumnVector3& FGLGear::Force(void)
 
       WOW = false;
       compressLength = 0.0;
+      compressSpeed = 0.0;
 
       // No wheel conditions
       SideWhlVel = WheelSlip = 0.0;
