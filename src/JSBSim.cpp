@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.45 2009/05/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.46 2009/07/30 12:42:24 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -382,26 +382,8 @@ int main(int argc, char* argv[])
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
-    while (FDMExec->SomeMessages()) {
-      msg = FDMExec->ProcessMessage();
-      switch (msg->type) {
-      case JSBSim::FGJSBBase::Message::eText:
-        cout << msg->messageId << ": " << msg->text << endl;
-        break;
-      case JSBSim::FGJSBBase::Message::eBool:
-        cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
-        break;
-      case JSBSim::FGJSBBase::Message::eInteger:
-        cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
-        break;
-      case JSBSim::FGJSBBase::Message::eDouble:
-        cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
-        break;
-      default:
-        cerr << "Unrecognized message type." << endl;
-        break;
-      }
-    }
+
+    FDMExec->ProcessMessage(); // Process messages, if any.
 
     // if running realtime, throttle the execution, else just run flat-out fast
     // unless "playing nice", in which case sleep for a while (0.01 seconds) each frame.
@@ -556,7 +538,12 @@ bool options(int count, char **arg)
 
     } else if (keyword == "--end-time") {
       if (n != string::npos) {
+        try {
         end_time = atof( value.c_str() );
+        } catch (...) {
+          cerr << endl << "  Invalid end time given!" << endl << endl;
+          result = false;
+        }
       } else {
         gripe;
         exit(1);

@@ -38,10 +38,11 @@ INCLUDES
 #define BASE
 
 #include "FGJSBBase.h"
+#include <iostream>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.25 2009/06/13 02:41:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.26 2009/07/30 12:42:24 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,6 +109,10 @@ FGJSBBase::Message FGJSBBase::localMsg;
 unsigned int FGJSBBase::messageId = 0;
 
 short FGJSBBase::debug_lvl  = 1;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -176,10 +181,43 @@ int FGJSBBase::SomeMessages(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::ProcessMessage(void)
+void FGJSBBase::ProcessMessage(void)
+{
+  if (Messages.empty()) return;
+  localMsg = Messages.front();
+
+  while (Messages.size() > 0) {
+      switch (localMsg.type) {
+      case JSBSim::FGJSBBase::Message::eText:
+        cout << localMsg.messageId << ": " << localMsg.text << endl;
+        break;
+      case JSBSim::FGJSBBase::Message::eBool:
+        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.bVal << endl;
+        break;
+      case JSBSim::FGJSBBase::Message::eInteger:
+        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.iVal << endl;
+        break;
+      case JSBSim::FGJSBBase::Message::eDouble:
+        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.dVal << endl;
+        break;
+      default:
+        cerr << "Unrecognized message type." << endl;
+        break;
+      }
+      Messages.pop();
+      if (Messages.size() > 0) localMsg = Messages.front();
+      else break;
+  }
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGJSBBase::Message* FGJSBBase::ProcessNextMessage(void)
 {
   if (Messages.empty()) return NULL;
   localMsg = Messages.front();
+
   Messages.pop();
   return &localMsg;
 }

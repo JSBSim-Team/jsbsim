@@ -62,7 +62,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.24 2009/06/13 02:41:58 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.25 2009/07/30 12:42:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.24 2009/06/13 02:41:58 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.25 2009/07/30 12:42:24 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,8 +182,12 @@ public:
       @return 1 if some messages */
   int SomeMessages(void);
   /** Reads the message on the queue and removes it from the queue.
-      @return pointer to a Message structure (or NULL if no mesage) */
-  Message* ProcessMessage(void);
+      This function also prints out the message.*/
+  void ProcessMessage(void);
+  /** Reads the next message on the queue and removes it from the queue.
+      This function also prints out the message.
+      @return a pointer to the message, or NULL if there are no messages.*/
+  Message* FGJSBBase::ProcessNextMessage(void);
   //@}
 
   /** Returns the version number of JSBSim.
