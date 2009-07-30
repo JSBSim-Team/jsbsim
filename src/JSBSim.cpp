@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.46 2009/07/30 12:42:24 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.47 2009/07/30 12:52:38 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -83,7 +83,7 @@ bool play_nice;
 bool suspend;
 bool catalog;
 
-double end_time = -1.0;
+double end_time = 1e99;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -381,7 +381,7 @@ int main(int argc, char* argv[])
   current_seconds = initial_seconds = getcurrentseconds();
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
-  while (result) {
+  while (result && FDMExec->GetSimTime() <= end_time) {
 
     FDMExec->ProcessMessage(); // Process messages, if any.
 
