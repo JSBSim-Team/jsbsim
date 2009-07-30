@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.2 2009/07/28 11:46:29 andgi Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.3 2009/07/30 12:41:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,7 +69,7 @@ CLASS DECLARATION
   extern string& to_upper(string& str);
   extern string& to_lower(string& str);
   extern bool is_number(string& str);
-  vector <string> split(string str, char d);
+  extern vector <string> split(string str, char d);
 #else
 
   string& trim_left(string& str)
