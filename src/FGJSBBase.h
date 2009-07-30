@@ -62,7 +62,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.25 2009/07/30 12:42:24 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.26 2009/07/30 17:10:27 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.25 2009/07/30 12:42:24 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.26 2009/07/30 17:10:27 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,7 +187,7 @@ public:
   /** Reads the next message on the queue and removes it from the queue.
       This function also prints out the message.
       @return a pointer to the message, or NULL if there are no messages.*/
-  Message* FGJSBBase::ProcessNextMessage(void);
+  Message* ProcessNextMessage(void);
   //@}
 
   /** Returns the version number of JSBSim.
