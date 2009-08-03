@@ -31,5 +31,6 @@ SUBDIRS =		\
 	Submarine_Scout \
         Shuttle         \
 	t6texan2	\
-	x24b
+	x24b		\
+	ZLT-NT
 

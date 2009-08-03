@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+  File:     electric147kW.xml
+  Author:   Anders Gidenstam
+-->
+<electric_engine name="electric">
+ <!-- This engine is used to drive the aft side-thruster on ZLT NT.
+      In the real ship that thruster is powered by the aft main engine.
+ -->
+ <power unit="WATTS">  147000.0 </power>
+</electric_engine>
