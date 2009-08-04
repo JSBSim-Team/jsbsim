@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.47 2009/07/30 12:52:38 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.48 2009/08/04 11:52:08 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -363,8 +363,6 @@ int main(int argc, char* argv[])
   result = FDMExec->Run();  // MAKE AN INITIAL RUN
 
   if (suspend) FDMExec->Hold();
-
-  JSBSim::FGJSBBase::Message* msg;
 
   // Print actual time at start
   char s[100];

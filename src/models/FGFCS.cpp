@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.58 2009/06/09 03:23:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.59 2009/08/04 11:52:08 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -519,7 +519,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
 {
   string name, file, fname="", interface_property_string, parent_name;
   vector <FGFCSComponent*> *Components;
-  Element *component_element, *sensor_element;
+  Element *component_element;
   Element *channel_element;
 
   Components=0;
