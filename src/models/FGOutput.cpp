@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.35 2009/05/26 05:35:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.36 2009/08/05 12:20:38 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -465,9 +465,11 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Propulsion->GetPropulsionValues(delimeter);
   }
 
+  outstream.precision(18);
   for (unsigned int i=0;i<OutputProperties.size();i++) {
     outstream << delimeter << OutputProperties[i]->getDoubleValue();
   }
+  outstream.precision(10);
 
   outstream << endl;
   outstream.flush();
