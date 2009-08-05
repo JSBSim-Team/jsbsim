@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.28 2009/05/26 05:35:42 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.29 2009/08/05 12:23:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.28 2009/05/26 05:35:42 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.29 2009/08/05 12:23:11 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -487,6 +487,11 @@ public:
   void SetInitialState(const FGInitialCondition *);
   void RecomputeLocalTerrainRadius(void);
 
+  void NudgeBodyLocation(FGColumnVector3 deltaLoc) {
+    vDeltaXYZEC = GetTb2ec()*deltaLoc;
+    VState.vLocation -= vDeltaXYZEC;
+  }
+
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);
   void CalculateLocationdot(void);
@@ -504,6 +509,7 @@ private:
   FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
   FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;
   FGColumnVector3 vLocation;
+  FGColumnVector3 vDeltaXYZEC;
   FGColumnVector3 vPQRi;   // Inertial frame angular velocity
   FGColumnVector3 vOmega;  // The Earth angular velocity vector
   FGColumnVector3 vOmegaLocal;  // The local frame angular velocity vector

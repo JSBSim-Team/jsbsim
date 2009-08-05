@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.13 2009/02/05 04:59:54 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.14 2009/08/05 12:23:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -107,10 +107,13 @@ public:
   bool InitModel(void);
   bool Run(void);
 
-  inline double GetMass(void) const {return Mass;}
-  inline double GetWeight(void) const {return Weight;}
-  inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
-  inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
+  double GetMass(void) const {return Mass;}
+  double GetWeight(void) const {return Weight;}
+  FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
+  double GetXYZcg(int axis) const  {return vXYZcg(axis);}
+  FGColumnVector3& GetDeltaXYZcg(void) {return vDeltaXYZcg;}
+//  FGColumnVector3& GetDeltaXYZcgBody(void) {return vDeltaXYZcgBody;}
+  double GetDeltaXYZcg(int axis) const  {return vDeltaXYZcg(axis);}
 
   /** Computes the inertia contribution of a pointmass.
       Computes and returns the inertia matrix of a pointmass of mass
@@ -166,6 +169,9 @@ private:
   FGMatrix33 pmJ;
   FGMatrix33 baseJ;
   FGColumnVector3 vXYZcg;
+  FGColumnVector3 vLastXYZcg;
+  FGColumnVector3 vDeltaXYZcg;
+  FGColumnVector3 vDeltaXYZcgBody;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;
   FGColumnVector3 vPMxyz;
