@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.36 2009/08/05 12:20:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.37 2009/08/06 02:58:38 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -1018,12 +1018,25 @@ bool FGOutput::Load(Element* element)
     property_element = document->FindNextElement("property");
   }
 
-  OutRate = OutRate>1000?1000:(OutRate<0?0:OutRate);
-  rate = (int)(0.5 + 1.0/(State->Getdt()*OutRate));
+  SetRate(OutRate);
 
   Debug(2);
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::SetRate(int rtHz)
+{
+  rtHz = rtHz>1000?1000:(rtHz<0?0:rtHz);
+  if (rtHz > 0) {
+    rate = (int)(0.5 + 1.0/(State->Getdt()*rtHz));
+    Enable();
+  } else {
+    rate = 1;
+    Disable();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

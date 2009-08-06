@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.13 2009/03/25 12:02:49 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.14 2009/08/06 02:58:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.13 2009/03/25 12:02:49 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.14 2009/08/06 02:58:38 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,12 +150,13 @@ public:
   void SetType(string);
   void SetStartNewFile(bool tt) {StartNewFile = tt;}
   void SetSubsystems(int tt) {SubSystems = tt;}
-  inline void Enable(void) { enabled = true; }
-  inline void Disable(void) { enabled = false; }
-  inline bool Toggle(void) {enabled = !enabled; return enabled;}
+  void Enable(void) { enabled = true; }
+  void Disable(void) { enabled = false; }
+  bool Toggle(void) {enabled = !enabled; return enabled;}
   bool Load(Element* el);
   void SetOutputFileName(string fname) {Filename = fname;}
   void SetDirectivesFile(string fname) {DirectivesFile = fname;}
+  void SetRate(int rt);
   string GetOutputFileName(void) const {return Filename;}
 
   /// Subsystem types for specifying which will be output in the FDM data logging
