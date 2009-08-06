@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.63 2009/06/26 12:26:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.64 2009/08/06 11:54:45 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -650,16 +650,23 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     }
 
     // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
+    unsigned int idx=0;
+    typedef int (FGOutput::*iOPMF)(void) const;
     element = document->FindElement("output");
     while (element) {
+      if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
       FGOutput* Output = new FGOutput(this);
       Output->InitModel();
       Schedule(Output, 1);
       result = Output->Load(element);
-      Outputs.push_back(Output);
       if (!result) {
         cerr << endl << "Aircraft output element has problems in file " << aircraftCfgFileName << endl;
         return result;
+      } else {
+        Outputs.push_back(Output);
+        string outputProp = CreateIndexedPropertyName("simulation/output",idx);
+        instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
+        idx++;
       }
       element = document->FindNextElement("output");
     }
@@ -930,6 +937,10 @@ bool FGFDMExec::SetOutputDirectives(string fname)
   Schedule(Output,       1);
   result = Output->Load(0);
   Outputs.push_back(Output);
+
+  typedef int (FGOutput::*iOPMF)(void) const;
+  string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
+  instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
 
   return result;
 }
