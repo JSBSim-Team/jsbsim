@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.31 2009/05/26 05:35:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.32 2009/08/06 03:28:32 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -865,8 +865,14 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
   if (document->FindElement("elevation"))
     SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+
   if (document->FindElement("altitude")) // This is feet above ground level
     SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
+  else if (document->FindElement("altitudeAGL")) // This is feet above ground level
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+  else if (document->FindElement("altitudeMSL")) // This is feet above sea level
+    SetAltitudeASLFtIC(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+
   if (document->FindElement("ubody"))
     SetUBodyFpsIC(document->FindElementValueAsNumberConvertTo("ubody", "FT/SEC"));
   if (document->FindElement("vbody"))

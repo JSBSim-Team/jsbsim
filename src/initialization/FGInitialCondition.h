@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.17 2009/05/26 05:35:42 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.18 2009/08/06 03:28:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -140,7 +140,10 @@ CLASS DOCUMENTATION
    - beta (angle, degrees)
    - gamma (angle, degrees)
    - roc (vertical velocity, ft/sec)
+   - elevation (local terrain elevation, ft)
    - altitude (altitude AGL, ft)
+   - altitudeAGL (altitude AGL, ft)
+   - altitudeMSL (altitude MSL, ft)
    - winddir (wind from-angle, degrees)
    - vwind (magnitude wind speed, ft/sec)
    - hwind (headwind speed, knots)
@@ -199,7 +202,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.17 2009/05/26 05:35:42 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.18 2009/08/06 03:28:32 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
