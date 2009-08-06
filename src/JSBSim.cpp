@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.48 2009/08/04 11:52:08 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.49 2009/08/06 02:38:28 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -549,6 +549,7 @@ bool options(int count, char **arg)
 
     } else if (keyword == "--catalog") {
         catalog = true;
+        if (value.size() > 0) AircraftName=value;
     } else {
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
       result = false;
@@ -592,7 +593,8 @@ void PrintHelp(void)
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
+    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << 
+    cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<property_name=property_value> e.g. --property=aero/qbar-psf=3.4" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
