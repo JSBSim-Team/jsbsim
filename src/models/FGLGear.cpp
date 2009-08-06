@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.57 2009/07/29 13:24:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.58 2009/08/06 02:42:58 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -652,6 +652,10 @@ void FGLGear::bind(void)
     Exec->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
     property_name = base_property_name + "/side_friction_coeff";
     Exec->GetPropertyManager()->Tie( property_name.c_str(), &FCoeff );
+
+    property_name = base_property_name + "/static_friction_coeff";
+    Exec->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
+
   }
 
   if( isRetractable ) {
