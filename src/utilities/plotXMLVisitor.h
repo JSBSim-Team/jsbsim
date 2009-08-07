@@ -1,23 +1,26 @@
 #include "../simgear/xml/easyxml.hxx"
 #include <string>
 #include <vector>
+#include <cstdio>
+#include <cstdlib>
 
 struct Plots {
   string Title;
-  string Axis_Caption[2];
-  double Min[2], Max[2];
+  string Axis_Caption[3];
+  double Min[3], Max[3];
   bool Autoscale;
   vector <string> Y_Variables;
+  vector <string> Y2_Variables;
   string X_Variable;
 
   Plots(void) {
     Autoscale = false;
-    Min[0] = Min[1] = 0.0;
-    Max[0] = Max[1] = 0.0;
+    Min[0] = Min[1] = Min[2] = 0.0;
+    Max[0] = Max[1] = Min[2] = 0.0;
   }
 };
 
-enum Axis {unset=-1, eX=0, eY=1};
+enum Axis {unset=-1, eX=0, eY, eY2};
 
 class plotXMLVisitor : public XMLVisitor
 {

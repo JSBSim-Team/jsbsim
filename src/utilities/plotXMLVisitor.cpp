@@ -28,6 +28,7 @@ void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
   for (int i=0; i<atts.size();i++) {
     if (string(atts.getName(i)) == string("axis")) {
       if (string(atts.getValue(i)) == string("x")) axis = eX;
+      else if (string(atts.getValue(i)) == string("y2")) axis = eY2;
       else axis = eY;
     } else {
       cerr << "Unknown attribute " << atts.getName(i) << " encountered." << endl;
@@ -80,6 +81,8 @@ void plotXMLVisitor::endElement (const char * name)
       vPlots.back().X_Variable = data_string;
     } else if (axis == eY) {
       vPlots.back().Y_Variables.push_back(data_string);
+    } else if (axis == eY2) {
+      vPlots.back().Y2_Variables.push_back(data_string);
     } else {
       cerr << "Axis not chosen." << endl;
       exit(-1);

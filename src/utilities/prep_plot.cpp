@@ -316,40 +316,15 @@ int main(int argc, char **argv)
       LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
     }
     RightYAxisNames.clear();
+    for (int y=0;y<myPlot.Y2_Variables.size();y++) {
+      RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+    }
     if (!supplied_title.empty()) Title = supplied_title + string("\\n");
     else Title.clear();
     Title += myPlot.Title;
     MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
   }
 
-/*
-  LeftYAxisNames.clear();
-  LeftYAxisNames.push_back("Latitude (Deg)");
-  RightYAxisNames.clear();
-  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-  else Title.clear();
-  Title += "Ground Track";
-  MakeArbitraryPlot(files, names, "Longitude (Deg)", LeftYAxisNames, RightYAxisNames, Title);
-
-  LeftYAxisNames.clear();
-  LeftYAxisNames.push_back("Q");
-  RightYAxisNames.clear();
-  RightYAxisNames.push_back("M");
-  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-  else Title.clear();
-  Title += "Pitch Response";
-  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
-
-  LeftYAxisNames.clear();
-  LeftYAxisNames.push_back("P");
-  LeftYAxisNames.push_back("Q");
-  LeftYAxisNames.push_back("R");
-  RightYAxisNames.clear();
-  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-  else Title.clear();
-  Title += "Body Rates";
-  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
-*/
 }
 
 // ############################################################################
