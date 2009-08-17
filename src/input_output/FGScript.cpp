@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.31 2009/05/13 11:50:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.32 2009/08/17 12:45:43 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,14 +274,14 @@ bool FGScript::LoadScript( string script )
       newEvent->newValue.push_back(0.0);
       newEvent->ValueSpan.push_back(0.0);
       string tempCompare = set_element->GetAttributeValue("type");
-      if      (tempCompare == "FG_DELTA") newEvent->Type.push_back(FG_DELTA);
-      else if (tempCompare == "FG_BOOL")  newEvent->Type.push_back(FG_BOOL);
-      else if (tempCompare == "FG_VALUE") newEvent->Type.push_back(FG_VALUE);
+      if      (to_lower(tempCompare).find("delta") != string::npos) newEvent->Type.push_back(FG_DELTA);
+      else if (to_lower(tempCompare).find("bool") != string::npos)  newEvent->Type.push_back(FG_BOOL);
+      else if (to_lower(tempCompare).find("value") != string::npos) newEvent->Type.push_back(FG_VALUE);
       else                                newEvent->Type.push_back(FG_VALUE); // DEFAULT
       tempCompare = set_element->GetAttributeValue("action");
-      if      (tempCompare == "FG_RAMP") newEvent->Action.push_back(FG_RAMP);
-      else if (tempCompare == "FG_STEP") newEvent->Action.push_back(FG_STEP);
-      else if (tempCompare == "FG_EXP")  newEvent->Action.push_back(FG_EXP);
+      if      (to_lower(tempCompare).find("ramp") != string::npos) newEvent->Action.push_back(FG_RAMP);
+      else if (to_lower(tempCompare).find("step") != string::npos) newEvent->Action.push_back(FG_STEP);
+      else if (to_lower(tempCompare).find("exp") != string::npos) newEvent->Action.push_back(FG_EXP);
       else                               newEvent->Action.push_back(FG_STEP); // DEFAULT
 
       if (!set_element->GetAttributeValue("tc").empty())
