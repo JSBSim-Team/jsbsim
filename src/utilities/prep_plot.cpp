@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 
   if (argc == 1 || argc > 5) {
     cout << endl << "Usage: " << endl << endl;
-    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.csv> --comp[rehensive]] [--title=<title>]"
+    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml> --comp[rehensive]] [--title=<title>]"
          << endl << endl;
     exit(-1);
   }
