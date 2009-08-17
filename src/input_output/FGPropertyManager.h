@@ -38,6 +38,10 @@ INCLUDES
 #include <string>
 #include <iostream>
 #include <simgear/props/props.hxx>
+#if !PROPS_STANDALONE
+  // This include is needed by MSVC9 because of the new Vec4d class in props.hxx
+# include <simgear/math/SGMath.hxx>
+#endif
 
 #include "FGJSBBase.h"
 
@@ -45,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.11 2009/08/05 12:24:24 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.12 2009/08/17 13:08:41 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
