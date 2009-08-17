@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.14 2009/08/06 02:58:38 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.15 2009/08/17 12:46:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
       FLIGHTGEAR  A socket is created for sending binary data packets to
                   an external instance of FlightGear for visuals.  Parameters
                   defining the socket are given on the \<output> line.
-      TABULAR     Columnar data. NOT IMPLEMENTED YET!
+      TABULAR     Columnar data.
       TERMINAL    Output to terminal. NOT IMPLEMENTED YET!
       NONE        Specifies to do nothing. This setting makes it easy to turn on and
                   off the data output without having to mess with anything else.
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
       Examples:
 </pre>
 @code
-	<output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"></output>
+	<output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"/>
 @endcode
 @code
 	<output name="B737_datalog.csv" type="CSV" rate="20">
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.14 2009/08/06 02:58:38 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.15 2009/08/17 12:46:23 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
