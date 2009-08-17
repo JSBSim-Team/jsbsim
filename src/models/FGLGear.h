@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.27 2009/02/17 08:04:15 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.28 2009/08/17 12:44:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.27 2009/02/17 08:04:15 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.28 2009/08/17 12:44:08 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -234,55 +234,55 @@ public:
   double GetLocalGear(int idx) const { return vLocalGear(idx); }
 
   /// Gets the name of the gear
-  inline string GetName(void) const {return name;          }
+  string GetName(void) const {return name;          }
   /// Gets the Weight On Wheels flag value
-  inline bool   GetWOW(void) const {return WOW;           }
+  bool   GetWOW(void) const {return WOW;           }
   /// Gets the current compressed length of the gear in feet
-  inline double  GetCompLen(void) const {return compressLength;}
+  double  GetCompLen(void) const {return compressLength;}
   /// Gets the current gear compression velocity in ft/sec
-  inline double  GetCompVel(void) const {return compressSpeed; }
+  double  GetCompVel(void) const {return compressSpeed; }
   /// Gets the gear compression force in pounds
-  inline double  GetCompForce(void) const {return vForce(eZ);    }
-  inline double  GetBrakeFCoeff(void) const {return BrakeFCoeff;}
+  double  GetCompForce(void) const {return StrutForce;   }
+  double  GetBrakeFCoeff(void) const {return BrakeFCoeff;}
 
   /// Gets the current normalized tire pressure
-  inline double  GetTirePressure(void) const { return TirePressureNorm; }
+  double  GetTirePressure(void) const { return TirePressureNorm; }
   /// Sets the new normalized tire pressure
-  inline void    SetTirePressure(double p) { TirePressureNorm = p; }
+  void    SetTirePressure(double p) { TirePressureNorm = p; }
 
   /// Sets the brake value in percent (0 - 100)
-  inline void SetBrake(double bp) {brakePct = bp;}
+  void SetBrake(double bp) {brakePct = bp;}
 
   /// Sets the weight-on-wheels flag.
   void SetWOW(bool wow) {WOW = wow;}
 
   /** Set the console touchdown reporting feature
       @param flag true turns on touchdown reporting, false turns it off */
-  inline void SetReport(bool flag) { ReportEnable = flag; }
+  void SetReport(bool flag) { ReportEnable = flag; }
   /** Get the console touchdown reporting feature
       @return true if reporting is turned on */
-  inline bool GetReport(void) const  { return ReportEnable; }
+  bool GetReport(void) const  { return ReportEnable; }
   double GetSteerNorm(void) const    { return radtodeg/maxSteerAngle*SteerAngle; }
   double GetDefaultSteerAngle(double cmd) const { return cmd*maxSteerAngle; }
   double GetstaticFCoeff(void) const { return staticFCoeff; }
 
-  inline int GetBrakeGroup(void) const { return (int)eBrakeGrp; }
-  inline int GetSteerType(void) const  { return (int)eSteerType; }
+  int GetBrakeGroup(void) const { return (int)eBrakeGrp; }
+  int GetSteerType(void) const  { return (int)eSteerType; }
 
-  inline double GetZPosition(void) const { return vXYZ(3); }
-  inline void SetZPosition(double z) { vXYZ(3) = z; }
+  double GetZPosition(void) const { return vXYZ(3); }
+  void SetZPosition(double z) { vXYZ(3) = z; }
 
   bool GetSteerable(void) const { return eSteerType != stFixed; }
-  inline bool GetRetractable(void) const      { return isRetractable;   }
-  inline bool GetGearUnitUp(void) const       { return GearUp;          }
-  inline bool GetGearUnitDown(void) const     { return GearDown;        }
-  inline double GetWheelSideForce(void) const { return SideForce;       }
-  inline double GetWheelRollForce(void) const { return RollingForce;    }
-  inline double GetWheelSideVel(void) const   { return SideWhlVel;      }
-  inline double GetWheelRollVel(void) const   { return RollingWhlVel;   }
-  inline double GetBodyXForce(void) const     { return vLocalForce(eX); }
-  inline double GetBodyYForce(void) const     { return vLocalForce(eY); }
-  inline double GetWheelSlipAngle(void) const { return WheelSlip;       }
+  bool GetRetractable(void) const      { return isRetractable;   }
+  bool GetGearUnitUp(void) const       { return GearUp;          }
+  bool GetGearUnitDown(void) const     { return GearDown;        }
+  double GetWheelSideForce(void) const { return vLocalForce(eY); }
+  double GetWheelRollForce(void) const { return vLocalForce(eX); }
+  double GetWheelSideVel(void) const   { return vWhlVelVec(eY);  }
+  double GetWheelRollVel(void) const   { return vWhlVelVec(eX);  }
+  double GetBodyXForce(void) const     { return vForce(eX);      }
+  double GetBodyYForce(void) const     { return vForce(eY);      }
+  double GetWheelSlipAngle(void) const { return WheelSlip;       }
   double GetWheelVel(int axis) const          { return vWhlVelVec(axis);}
   bool IsBogey(void) const                    { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
@@ -291,15 +291,15 @@ public:
 
 private:
   int GearNumber;
+  FGMatrix33 Tg2b, Tb2g;
   FGColumnVector3 vXYZ;
   FGColumnVector3 vMoment;
   FGColumnVector3 vWhlBodyVec;
   FGColumnVector3 vLocalGear;
   FGColumnVector3 vForce;
-  FGColumnVector3 last_vForce; // remove this
   FGColumnVector3 vLocalForce;
-  FGColumnVector3 vWhlVelVec;     // Velocity of this wheel (Local)
-  FGColumnVector3 normal, cvel;
+  FGColumnVector3 vWhlVelVec, vLocalWhlVel;     // Velocity of this wheel
+  FGColumnVector3 normal, cvel, vGroundNormal;
   FGLocation contact, gearLoc;
   FGTable *ForceY_Table;
   double dT;
@@ -319,13 +319,11 @@ private:
   double TakeoffDistanceTraveled;
   double TakeoffDistanceTraveled50ft;
   double LandingDistanceTraveled;
-  double MaximumStrutForce;
+  double MaximumStrutForce, StrutForce;
   double MaximumStrutTravel;
-  double SideWhlVel, RollingWhlVel;
-  double RollingForce, SideForce, FCoeff;
+  double FCoeff;
   double WheelSlip;
   double TirePressureNorm;
-  double SinWheel, CosWheel;
   double GearPos;
   bool   useFCSGearPos;
   bool WOW;
@@ -374,6 +372,7 @@ private:
   void ComputeSlipAngle(void);
   void ComputeSideForceCoefficient(void);
   void ComputeVerticalStrutForce(void);
+  void ComputeGroundCoordSys(void);
   void CrashDetect(void);
   void InitializeReporting(void);
   void ResetReporting(void);
