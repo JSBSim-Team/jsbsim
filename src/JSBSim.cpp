@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.49 2009/08/06 02:38:28 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.50 2009/08/19 04:39:49 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -74,7 +74,7 @@ string ScriptName;
 string AircraftName;
 string ResetName;
 string LogOutputName;
-string LogDirectiveName;
+vector <string> LogDirectiveName;
 vector <string> CommandLineProperties;
 vector <double> CommandLinePropertyValues;
 JSBSim::FGFDMExec* FDMExec;
@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
   AircraftName = "";
   ResetName = "";
   LogOutputName = "";
-  LogDirectiveName = "";
+  LogDirectiveName.clear();
   bool result = false, success;
   bool was_paused = false;
   
@@ -321,11 +321,13 @@ int main(int argc, char* argv[])
   }
 
   // Load output directives file, if given
-  if (!LogDirectiveName.empty()) {
-    if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
-      cout << "Output directives not properly set" << endl;
-      delete FDMExec;
-      exit(-1);
+  for (int i=0; i<LogDirectiveName.size(); i++) {
+    if (!LogDirectiveName[i].empty()) {
+      if (!FDMExec->SetOutputDirectives(LogDirectiveName[i])) {
+        cout << "Output directives not properly set in file " << LogDirectiveName[i] << endl;
+        delete FDMExec;
+        exit(-1);
+      }
     }
   }
 
@@ -488,7 +490,7 @@ bool options(int count, char **arg)
       }
     } else if (keyword == "--logdirectivefile") {
       if (n != string::npos) {
-        LogDirectiveName = value;
+        LogDirectiveName.push_back(value);
       } else {
         gripe;
         exit(1);
@@ -584,8 +586,9 @@ void PrintHelp(void)
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;
-    cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
-    cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
+    cout << "    --outputlogfile=<filename>  sets (overrides) the name of the first data output file" << endl;
+    cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
+    cout << "                                   (can appear multiple times)" << endl;
     cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
@@ -593,7 +596,7 @@ void PrintHelp(void)
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << 
+    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<property_name=property_value> e.g. --property=aero/qbar-psf=3.4" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
