@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.51 2009/07/30 12:42:24 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.52 2009/08/19 04:40:44 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -103,8 +103,8 @@ public:
     double contact[3], normal[3], vel[3], agl = 0;
     mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
                            vel, &agl);
-    n = l.GetTec2l()*FGColumnVector3( normal[0], normal[1], normal[2] );
-    v = l.GetTec2l()*FGColumnVector3( vel[0], vel[1], vel[2] );
+    n = FGColumnVector3( -normal[0], -normal[1], -normal[2] );
+    v = FGColumnVector3( vel[0], vel[1], vel[2] );
     cont = FGColumnVector3( contact[0], contact[1], contact[2] );
     return agl;
   }
