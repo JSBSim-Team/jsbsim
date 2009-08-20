@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.30 2009/08/19 04:40:44 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.31 2009/08/20 04:43:40 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.30 2009/08/19 04:40:44 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.31 2009/08/20 04:43:40 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -325,7 +325,6 @@ private:
   double WheelSlip;
   double TirePressureNorm;
   double GearPos;
-  double RollingWhlVel;
   bool   useFCSGearPos;
   bool WOW;
   bool lastWOW;

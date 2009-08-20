@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.61 2009/08/19 04:40:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.62 2009/08/20 04:43:40 ehofman Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,6 +233,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
 
   vLocalGear = Propagate->GetTb2l() * vWhlBodyVec;
 
+  vLocalWhlVel.InitMatrix();
+
   compressLength  = 0.0;
   compressSpeed   = 0.0;
   brakePct        = 0.0;
@@ -361,8 +363,8 @@ FGColumnVector3& FGLGear::Force(void)
       compressSpeed = 0.0;
 
       // Let wheel spin down slowly
-      RollingWhlVel -= 13.0*dT;
-      if (RollingWhlVel < 0.0) RollingWhlVel = 0.0;
+      vLocalWhlVel(eX) -= 13.0*dT;
+      if (vLocalWhlVel(eX) < 0.0) vLocalWhlVel(eX) = 0.0;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
       SteerAngle *= max(GetGearUnitPos()-0.8, 0.0)/0.2;
@@ -430,6 +432,7 @@ void FGLGear::ComputeRetractionState(void)
     GearUp   = true;
     WOW      = false;
     GearDown = false;
+    vLocalWhlVel.InitMatrix();
   } else if (gearPos > 0.99) {
     GearDown = true;
     GearUp   = false;
