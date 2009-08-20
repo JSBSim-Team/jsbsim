@@ -5,6 +5,7 @@ using namespace std;
 plotXMLVisitor::plotXMLVisitor(void)
 {
   first_element_read = false;
+  inPage = false;
   axis = unset;
 }
 
@@ -49,60 +50,81 @@ void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
     }
   }
 
-  if (current_element == "plot") vPlots.push_back(Plots());
+  if (current_element == "page") {
+    vPages.push_back(Page());
+    inPage = true;
+  } else if (current_element == "plot") {
+    if (!inPage) {
+      vPlots.push_back(Plots());
+    } else {
+      vPages.back().vPlots.push_back(Plots());
+    }
+  }
 }
 
 void plotXMLVisitor::endElement (const char * name)
 {
   if (string(name) == string("title")) {
-    vPlots.back().Title = data_string;
+    if (!inPage)
+      vPlots.back().Title = data_string;
+    else
+      vPages.back().vPlots.back().Title = data_string;
   } else if (string(name) == string("label")) {
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
-    vPlots.back().Axis_Caption[axis] = data_string;
+    if (!inPage)
+      vPlots.back().Axis_Caption[axis] = data_string;
+    else
+      vPages.back().vPlots.back().Axis_Caption[axis] = data_string;
   } else if (string(name) == string("scale")) {
-    if (data_string == "auto") vPlots.back().Autoscale = true;
+    if (!inPage)
+      if (data_string == "auto") vPlots.back().Autoscale = true;
+    else
+      if (data_string == "auto") vPages.back().vPlots.back().Autoscale = true;    
   } else if (string(name) == string("min")) {
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
-    vPlots.back().Min[axis] = atof(data_string.c_str());
+    if (!inPage)
+      vPlots.back().Min[axis] = atof(data_string.c_str());
+    else
+      vPages.back().vPlots.back().Min[axis] = atof(data_string.c_str());
   } else if (string(name) == string("max")) {
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
-    vPlots.back().Max[axis] = atof(data_string.c_str());
+    if (!inPage)
+      vPlots.back().Max[axis] = atof(data_string.c_str());
+    else
+      vPages.back().vPlots.back().Max[axis] = atof(data_string.c_str());
   } else if (string(name) == string("parameter")) {
     if (axis == eX) {
-      vPlots.back().X_Variable = data_string;
+      if (!inPage)
+        vPlots.back().X_Variable = data_string;
+      else
+        vPages.back().vPlots.back().X_Variable = data_string;
     } else if (axis == eY) {
-      vPlots.back().Y_Variables.push_back(data_string);
+      if (!inPage)
+        vPlots.back().Y_Variables.push_back(data_string);
+      else
+        vPages.back().vPlots.back().Y_Variables.push_back(data_string);
     } else if (axis == eY2) {
-      vPlots.back().Y2_Variables.push_back(data_string);
+      if (!inPage)
+        vPlots.back().Y2_Variables.push_back(data_string);
+      else
+        vPages.back().vPlots.back().Y2_Variables.push_back(data_string);
     } else {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
   } else if (string(name) == string("plotset")) {
-//    cout << "End of plot set." << endl;
   } else if (string(name) == string("plot")) {
-//    cout << endl << "Title: " << vPlots.back().Title << endl;
-//    cout << "X Axis title: " << vPlots.back().Axis_Caption[eX] << endl;
-//    cout << "Y Axis title: " << vPlots.back().Axis_Caption[eY] << endl;
-//    cout << "Autoscale: " << vPlots.back().Autoscale << endl;
-//    cout << "Minimum X axis value: " << vPlots.back().Min[eX] << endl;
-//    cout << "Maximum X axis value: " << vPlots.back().Max[eX] << endl;
-//    cout << "Minimum Y axis value: " << vPlots.back().Min[eY] << endl;
-//    cout << "Maximum Y axis value: " << vPlots.back().Max[eY] << endl;
-//    cout << "X Parameter: " << vPlots.back().X_Variable << endl;
-//    cout << vPlots.back().Y_Variables.size() << " Y parameters:" << endl;
-    for (int i=0; i<vPlots.back().Y_Variables.size(); i++) {
-//      cout << vPlots.back().Y_Variables[i] << endl;
-    }
+  } else if (string(name) == string("page")) {
+    inPage = false;
   } else {
     cerr << "Unknown data element." << endl;
     exit(-1);

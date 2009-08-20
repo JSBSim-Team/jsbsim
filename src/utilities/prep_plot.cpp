@@ -303,7 +303,7 @@ int main(int argc, char **argv)
     }
   } // end if comprehensive
 
-  // special plots
+  // special single plots
 
   vector <string> LeftYAxisNames;
   vector <string> RightYAxisNames;
@@ -324,6 +324,43 @@ int main(int argc, char **argv)
     Title += myPlot.Title;
     MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
   }
+
+  // special multiple plots
+
+  for (int page=0; page<myVisitor.vPages.size(); page++) {
+    int numPlots = myVisitor.vPages[page].vPlots.size();
+    
+    cout << "set size 1.0,1.0" << endl;
+    cout << "set origin 0.0,0.0" << endl;
+    cout << "set multiplot" << endl;
+
+    for (int plot=0; plot<numPlots; plot++) {
+      struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
+      
+        cout << "set size 1.0," << 1.0/numPlots << endl;
+        cout << "set origin 0.0," << (double)plot/(double)numPlots << endl;
+
+        LeftYAxisNames.clear();
+        for (int y=0;y<myPlot.Y_Variables.size();y++) {
+          LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+        }
+        RightYAxisNames.clear();
+        for (int y=0;y<myPlot.Y2_Variables.size();y++) {
+          RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+        }
+        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+        else Title.clear();
+//        Title += myPlot.Title;
+        MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
+    
+    }
+  
+    cout << "unset multiplot" << endl;
+    cout << "set size 1.0,1.0" << endl;
+    cout << "set origin 0.0,0.0" << endl;
+
+  }
+
 
 }
 

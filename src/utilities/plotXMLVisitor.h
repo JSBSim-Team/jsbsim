@@ -20,6 +20,10 @@ struct Plots {
   }
 };
 
+struct Page {
+  vector <struct Plots> vPlots;
+};
+
 enum Axis {unset=-1, eX=0, eY, eY2};
 
 class plotXMLVisitor : public XMLVisitor
@@ -38,6 +42,9 @@ public:
   void warning (const char * message, int line, int column);
 
   vector <struct Plots> vPlots;
+  vector <struct Page> vPages;
+  
+  bool inPage;
 
 private:
   bool first_element_read;
