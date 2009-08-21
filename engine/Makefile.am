@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	Tay-651.xml \
 	XLR99.xml \
 	direct.xml \
+	electric147kW.xml \
 	engIO360C.xml \
 	engIO470D.xml \
 	engIO540AB1A5.xml \
@@ -28,6 +29,7 @@ EXTRA_DIST = \
 	prop_Clark_Y7570.xml \
 	prop_deHavilland5000.xml \
 	propDA-R352_6-123-F_2.xml \
+	propHO-V373-D.xml \
 	propHS139v.xml \
 	prop_75in2f.xml \
 	prop_81in2v.xml \
