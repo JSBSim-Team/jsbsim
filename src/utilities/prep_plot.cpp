@@ -102,6 +102,8 @@ INCLUDES
 
 using namespace std;
 
+string plot_range;
+
 string HaveTerm(vector <string>&, string); 
 int GetTermIndex(vector <string>&, string);
 void EmitComparisonPlot(vector <string>&, int, string);
@@ -124,9 +126,11 @@ int main(int argc, char **argv)
   char num[4];
   bool comprehensive=false;
 
+  string start_time="", end_time="";
+
   if (argc == 1 || argc > 5) {
     cout << endl << "Usage: " << endl << endl;
-    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml> --comp[rehensive]] [--title=<title>]"
+    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml> --comp[rehensive]] [--start=<time>] [--end=time] [--title=<title>]"
          << endl << endl;
     exit(-1);
   }
@@ -165,11 +169,19 @@ int main(int argc, char **argv)
       comprehensive=true;
     } else if (input_arg.substr(0,7) == "--title") {
       supplied_title=input_arg.erase(0,8);
+    } else if (input_arg.substr(0,7) == "--start") {
+      start_time=input_arg.erase(0,8);
+    } else if (input_arg.substr(0,5) == "--end") {
+      end_time=input_arg.erase(0,6);
     } else {
       cerr << endl << "Unknown argument " << input_arg << endl;
       exit(-1);
     }
   }
+
+  plot_range="";
+  if (start_time.size() > 0 || end_time.size() > 0)
+    plot_range = "["+start_time+":"+end_time+"]";
 
   plotXMLVisitor myVisitor;
   if (!plotspecfile.empty()) {
@@ -322,6 +334,7 @@ int main(int argc, char **argv)
     if (!supplied_title.empty()) Title = supplied_title + string("\\n");
     else Title.clear();
     Title += myPlot.Title;
+    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
     MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
   }
 
@@ -332,26 +345,33 @@ int main(int argc, char **argv)
     
     cout << "set size 1.0,1.0" << endl;
     cout << "set origin 0.0,0.0" << endl;
+    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
     cout << "set multiplot" << endl;
 
+    float margin = 24./540.;
+    float plot_margin = (2.*(numPlots-1.))*margin;
+    float size = (1.0 - plot_margin)/(float)numPlots;
     for (int plot=0; plot<numPlots; plot++) {
       struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
-      
-        cout << "set size 1.0," << 1.0/numPlots << endl;
-        cout << "set origin 0.0," << (double)plot/(double)numPlots << endl;
 
-        LeftYAxisNames.clear();
-        for (int y=0;y<myPlot.Y_Variables.size();y++) {
-          LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
-        }
-        RightYAxisNames.clear();
-        for (int y=0;y<myPlot.Y2_Variables.size();y++) {
-          RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
-        }
-        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-        else Title.clear();
-//        Title += myPlot.Title;
-        MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
+      float position = (float)plot*(size + 2.*margin);
+
+      cout << "set size 1.0," << size << endl;
+      cout << "set origin 0.0," << position << endl;
+
+      LeftYAxisNames.clear();
+      for (int y=0;y<myPlot.Y_Variables.size();y++) {
+        LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+      }
+      RightYAxisNames.clear();
+      for (int y=0;y<myPlot.Y2_Variables.size();y++) {
+        RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+      }
+      if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+      else Title.clear();
+      Title += myPlot.Title;
+      MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
+      cout << "unset timestamp" << endl;
     
     }
   
@@ -398,7 +418,11 @@ void MakeArbitraryPlot(
   int i;
   int numLeftYAxisNames = LeftYAxisNames.size();
   int numRightYAxisNames = RightYAxisNames.size();
-  
+  string time_range="";
+
+  // This line assumes time is in column 1
+  if (GetTermIndex(names, XAxisName) == 1) time_range = plot_range;
+
   have_all_terms = have_all_terms && !HaveTerm(names, XAxisName).empty();
   for (i=0; i<numLeftYAxisNames; i++) have_all_terms = have_all_terms && !HaveTerm(names, LeftYAxisNames[i]).empty();
   for (i=0; i<numRightYAxisNames; i++) have_all_terms = have_all_terms && !HaveTerm(names, RightYAxisNames[i]).empty();
@@ -423,8 +447,6 @@ void MakeArbitraryPlot(
       cout << RightYAxisNames[numRightYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
     }
 
-    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-
     if (files.size() == 1) { // Single file
     
       if (numRightYAxisNames > 0) {
@@ -432,7 +454,7 @@ void MakeArbitraryPlot(
         cout << "set y2tics font \""TICS_FONT"\"" << endl;
       }
 
-      cout << "plot \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+      cout << "plot " << time_range << " \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
            << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
            << LeftYAxisNames[0] << "\"";
       if (numLeftYAxisNames > 1) {
@@ -473,7 +495,7 @@ void MakeArbitraryPlot(
 
       for (int f=0;f<files.size();f++) {
       
-        if (f==0) cout << "plot ";
+        if (f==0) cout << "plot " << time_range << " ";
         else      {
           cout << ", \\" << endl;
           cout << "     ";
@@ -519,14 +541,14 @@ void MakeArbitraryPlot(
 
 void EmitSinglePlot(string filename, int index, string linetitle )
 {
-  cout << "plot \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
+  cout << "plot " << plot_range << " \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
 }
 
 // ############################################################################
 
 void EmitComparisonPlot(vector <string>& filenames, int index, string linetitle)
 {
-  cout << "plot \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
+  cout << "plot " << plot_range <<  " \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
   for (unsigned int f=1;f<filenames.size()-1;f++){
     cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\", \\" << endl;
   }
