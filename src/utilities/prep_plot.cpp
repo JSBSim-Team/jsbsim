@@ -91,6 +91,7 @@ INCLUDES
 #include <string>
 #include <fstream>
 #include <vector>
+#include <sstream>
 #include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Helvetica,10"
@@ -108,17 +109,19 @@ string HaveTerm(vector <string>&, string);
 int GetTermIndex(vector <string>&, string);
 void EmitComparisonPlot(vector <string>&, int, string);
 void EmitSinglePlot(string, int, string);
-void MakeArbitraryPlot(
+bool MakeArbitraryPlot(
   vector <string>& files,
   vector <string>& names,
   string XAxisName,
   vector <string>& LeftYAxisNames,
   vector <string>& RightYAxisNames,
-  string Title);
+  string Title,
+  stringstream& plot);
 
 int main(int argc, char **argv)
 {
-  string in_string, var_name, input_arg, plotspecfile="", supplied_title="";
+  string in_string, var_name, input_arg, supplied_title="";
+  vector <string> plotspecfiles;
   vector <string> names;
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
   vector <string> files;
@@ -164,7 +167,7 @@ int main(int argc, char **argv)
   for (int i=2; i<argc; i++) {
     input_arg = string(argv[i]);
     if (input_arg.substr(0,6) == "--plot") {
-      plotspecfile=input_arg.erase(0,7);
+      plotspecfiles.push_back(input_arg.erase(0,7));
     } else if (input_arg.substr(0,6) == "--comp") {
       comprehensive=true;
     } else if (input_arg.substr(0,7) == "--title") {
@@ -182,16 +185,6 @@ int main(int argc, char **argv)
   plot_range="";
   if (start_time.size() > 0 || end_time.size() > 0)
     plot_range = "["+start_time+":"+end_time+"]";
-
-  plotXMLVisitor myVisitor;
-  if (!plotspecfile.empty()) {
-    ifstream plotDirectivesFile(plotspecfile.c_str());
-    if (!plotDirectivesFile) {
-      cerr << "Could not open autoplot file " << plotspecfile << endl << endl;
-      exit(-1);
-    }
-    readXML (plotDirectivesFile, myVisitor);
-  }
 
   cout << "set terminal postscript enhanced color \""DEFAULT_FONT"\"" << endl;
   if (!supplied_title.empty()) {
@@ -320,68 +313,85 @@ int main(int argc, char **argv)
   vector <string> LeftYAxisNames;
   vector <string> RightYAxisNames;
   string title;
+  stringstream newPlot;
+  bool result = false;
+  plotXMLVisitor myVisitor;
 
-  for (int i=0; i<myVisitor.vPlots.size();i++) {
-    struct Plots& myPlot = myVisitor.vPlots[i];
-    LeftYAxisNames.clear();
-    for (int y=0;y<myPlot.Y_Variables.size();y++) {
-      LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
-    }
-    RightYAxisNames.clear();
-    for (int y=0;y<myPlot.Y2_Variables.size();y++) {
-      RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
-    }
-    if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-    else Title.clear();
-    Title += myPlot.Title;
-    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-    MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
-  }
+  for (int fl=0; fl<plotspecfiles.size(); fl++) {
+    ifstream plotDirectivesFile(plotspecfiles[fl].c_str());
+    if (!plotDirectivesFile) {
+      cerr << "Could not open autoplot file " << plotspecfiles[fl] << endl << endl;
+      exit(-1);
+    } else {
+      plotXMLVisitor *aVisitor = new plotXMLVisitor();
+      myVisitor = *aVisitor;
+      readXML (plotDirectivesFile, myVisitor);
 
-  // special multiple plots
-
-  for (int page=0; page<myVisitor.vPages.size(); page++) {
-    int numPlots = myVisitor.vPages[page].vPlots.size();
-    
-    cout << "set size 1.0,1.0" << endl;
-    cout << "set origin 0.0,0.0" << endl;
-    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-    cout << "set multiplot" << endl;
-
-    float margin = 24./540.;
-    float plot_margin = (2.*(numPlots-1.))*margin;
-    float size = (1.0 - plot_margin)/(float)numPlots;
-    for (int plot=0; plot<numPlots; plot++) {
-      struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
-
-      float position = (float)plot*(size + 2.*margin);
-
-      cout << "set size 1.0," << size << endl;
-      cout << "set origin 0.0," << position << endl;
-
-      LeftYAxisNames.clear();
-      for (int y=0;y<myPlot.Y_Variables.size();y++) {
-        LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+      for (int i=0; i<myVisitor.vPlots.size();i++) {
+        newPlot.str("");
+        struct Plots& myPlot = myVisitor.vPlots[i];
+        LeftYAxisNames.clear();
+        for (int y=0;y<myPlot.Y_Variables.size();y++) {
+          LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+        }
+        RightYAxisNames.clear();
+        for (int y=0;y<myPlot.Y2_Variables.size();y++) {
+          RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+        }
+        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+        else Title.clear();
+        Title += myPlot.Title;
+        newPlot << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        result = MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title, newPlot);
+        if (result) cout << newPlot.str();
       }
-      RightYAxisNames.clear();
-      for (int y=0;y<myPlot.Y2_Variables.size();y++) {
-        RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+
+      // special multiple plots
+
+      for (int page=0; page<myVisitor.vPages.size(); page++) {
+        int numPlots = myVisitor.vPages[page].vPlots.size();
+        newPlot.str("");
+        
+        float margin = 20./540.;
+        float plot_margin = (2.*(numPlots-1.))*margin;
+        float size = (1.0 - plot_margin)/(float)numPlots;
+
+        newPlot << "set size 1.0,1.0" << endl;
+        newPlot << "set origin 0.0,0.0" << endl;
+        newPlot << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        newPlot << "set multiplot" << endl;
+
+        for (int plot=0; plot<numPlots; plot++)
+        {
+          struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
+          LeftYAxisNames.clear();
+          RightYAxisNames.clear();
+
+          for (int y=0;y<myPlot.Y_Variables.size();y++) LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+          for (int y=0;y<myPlot.Y2_Variables.size();y++) RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
+
+          float position = (float)plot*(size + 2.*margin);
+
+          newPlot << "set size 1.0," << size << endl;
+          newPlot << "set origin 0.0," << position << endl;
+
+          if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+          else Title.clear();
+
+          Title += myPlot.Title;
+          result = MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title, newPlot);
+          if (!result) break;
+          newPlot << "unset timestamp" << endl;
+        }
+      
+        newPlot << "unset multiplot" << endl;
+        newPlot << "set size 1.0,1.0" << endl;
+        newPlot << "set origin 0.0,0.0" << endl;
+
+        if (result) cout << newPlot.str();
       }
-      if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-      else Title.clear();
-      Title += myPlot.Title;
-      MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
-      cout << "unset timestamp" << endl;
-    
     }
-  
-    cout << "unset multiplot" << endl;
-    cout << "set size 1.0,1.0" << endl;
-    cout << "set origin 0.0,0.0" << endl;
-
   }
-
-
 }
 
 // ############################################################################
@@ -391,6 +401,7 @@ string HaveTerm(vector <string>& names, string parameter)
   for (unsigned int i=0; i<names.size(); i++) {
     if (names[i] == parameter) return names[i];
   }
+  cerr << "Could not find parameter: " << parameter << endl;
   return string("");
 }
 
@@ -406,13 +417,14 @@ int GetTermIndex(vector <string>& names, string parameter)
 
 // ############################################################################
 
-void MakeArbitraryPlot(
+bool MakeArbitraryPlot(
   vector <string>& files,
   vector <string>& names,
   string XAxisName,
   vector <string>& LeftYAxisNames,
   vector <string>& RightYAxisNames,
-  string Title)
+  string Title,
+  stringstream& newPlot)
 {
   bool have_all_terms=true;
   int i;
@@ -429,112 +441,113 @@ void MakeArbitraryPlot(
 
   if (have_all_terms) {
     if (!Title.empty()) {
-      cout << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
+      newPlot << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
     }
-    cout << "set xlabel \"" << XAxisName << "\" font \""LABEL_FONT"\"" << endl;
+    newPlot << "set xlabel \"" << XAxisName << "\" font \""LABEL_FONT"\"" << endl;
 
-    cout << "set ylabel \"";
+    newPlot << "set ylabel \"";
     for (i=0; i<numLeftYAxisNames-1; i++) {
-      cout << LeftYAxisNames[i] << ", ";
+      newPlot << LeftYAxisNames[i] << ", ";
     }
-    cout << LeftYAxisNames[numLeftYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
+    newPlot << LeftYAxisNames[numLeftYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
 
     if (numRightYAxisNames > 0) {
-      cout << "set y2label \"";
+      newPlot << "set y2label \"";
       for (i=0; i<numRightYAxisNames-1; i++) {
-        cout << RightYAxisNames[i] << ", ";
+        newPlot << RightYAxisNames[i] << ", ";
       }
-      cout << RightYAxisNames[numRightYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
+      newPlot << RightYAxisNames[numRightYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
     }
 
     if (files.size() == 1) { // Single file
     
       if (numRightYAxisNames > 0) {
-        cout << "set rmargin 9" << endl;
-        cout << "set y2tics font \""TICS_FONT"\"" << endl;
+        newPlot << "set rmargin 9" << endl;
+        newPlot << "set y2tics font \""TICS_FONT"\"" << endl;
       }
 
-      cout << "plot " << time_range << " \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+      newPlot << "plot " << time_range << " \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
            << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
            << LeftYAxisNames[0] << "\"";
       if (numLeftYAxisNames > 1) {
-        cout << ", \\" << endl;
+        newPlot << ", \\" << endl;
         for (i=1; i<numLeftYAxisNames-1; i++) {
-          cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+          newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
                << LeftYAxisNames[i] << "\", \\" << endl;
         }
-        cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
+        newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
              << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
              << LeftYAxisNames[numLeftYAxisNames-1] << "\"";
       }
       if (numRightYAxisNames > 0) {
-        cout << ", \\" << endl;
+        newPlot << ", \\" << endl;
         for (i=0; i<numRightYAxisNames-1; i++) {
-          cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+          newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
                << RightYAxisNames[i] << "\", \\" << endl;
         }
-        cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+        newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
              << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
              << RightYAxisNames[numRightYAxisNames-1] << "\"";
       }
-      cout << endl;
+      newPlot << endl;
       if (numRightYAxisNames > 0) {
-        cout << "set rmargin 4" << endl;
-        cout << "unset y2tics" << endl;
-        cout << "set y2label" << endl;
+        newPlot << "set rmargin 4" << endl;
+        newPlot << "unset y2tics" << endl;
+        newPlot << "set y2label" << endl;
       }
 
     } else { // Multiple file comparison plot
 
       if (numRightYAxisNames > 0) {
-        cout << "set rmargin 9" << endl;
-        cout << "set y2tics font \""TICS_FONT"\"" << endl;
+        newPlot << "set rmargin 9" << endl;
+        newPlot << "set y2tics font \""TICS_FONT"\"" << endl;
       }
 
       for (int f=0;f<files.size();f++) {
       
         if (f==0) cout << "plot " << time_range << " ";
         else      {
-          cout << ", \\" << endl;
-          cout << "     ";
+          newPlot << ", \\" << endl;
+          newPlot << "     ";
         }
 
-        cout << "\"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+        newPlot << "\"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
              << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
              << LeftYAxisNames[0] << ": " << f << "\"";
         if (numLeftYAxisNames > 1) {
-          cout << ", \\" << endl;
+          newPlot << ", \\" << endl;
           for (i=1; i<numLeftYAxisNames-1; i++) {
-            cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                  << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
                  << LeftYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
-          cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
+          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
                << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
                << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {
-          cout << ", \\" << endl;
+          newPlot << ", \\" << endl;
           for (i=0; i<numRightYAxisNames-2; i++) {
-            cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                  << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
                  << RightYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
-          cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
                << RightYAxisNames[numRightYAxisNames-1] << ": " << f << "\"";
         }
       }
-      cout << endl;
+      newPlot << endl;
       if (numRightYAxisNames > 0) {
-        cout << "set rmargin 4" << endl;
-        cout << "unset y2tics" << endl;
-        cout << "set y2label" << endl;
+        newPlot << "set rmargin 4" << endl;
+        newPlot << "unset y2tics" << endl;
+        newPlot << "set y2label" << endl;
       }
     }
   }
+  return have_all_terms;
 }
 
 // ############################################################################
