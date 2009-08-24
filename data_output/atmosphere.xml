@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<output name="atmosphere.csv" type="CSV" rate="20">
+  <atmosphere> ON </atmosphere>
+  <property> atmosphere/T-R</property>
+  <property> atmosphere/rho-slugs_ft3</property>
+  <property> atmosphere/P-psf </property>
+  <property> atmosphere/a-fps </property>
+  <property> atmosphere/T-sl-R </property>
+  <property> atmosphere/rho-sl-slugs_ft3 </property>
+  <property> atmosphere/P-sl-psf </property>
+  <property> atmosphere/a-sl-fps </property>
+  <property> atmosphere/theta </property>
+  <property> atmosphere/sigma </property>
+  <property> atmosphere/delta </property>
+  <property> atmosphere/a-ratio </property>
+  <property> atmosphere/psiw-rad </property>
+  <property> atmosphere/delta-T </property>
+  <property> atmosphere/T-sl-dev-F </property>
+  <property> atmosphere/density-altitude </property>
+  <property> atmosphere/wind-north-fps </property>
+  <property> atmosphere/wind-east-fps </property>
+  <property> atmosphere/wind-down-fps </property>
+  <property> atmosphere/wind-mag-fps </property>
+  <property> atmosphere/total-wind-north-fps </property>
+  <property> atmosphere/total-wind-east-fps </property>
+  <property> atmosphere/total-wind-down-fps </property>
+  <property> atmosphere/gust-north-fps </property>
+  <property> atmosphere/gust-east-fps </property>
+  <property> atmosphere/gust-down-fps </property>
+  <property> atmosphere/p-turb-rad_sec </property>
+  <property> atmosphere/q-turb-rad_sec </property>
+  <property> atmosphere/r-turb-rad_sec </property>
+  <property> atmosphere/turb-rate </property>
+  <property> atmosphere/turb-gain </property>
+  <property>atmosphere/turb-rhythmicity </property>
+</output>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<output name="position.csv" type="CSV" rate="20">
+  <position> ON </position>
+  <property> position/epa-rad </property>
+  <property> position/h-sl-ft </property>
+  <property> position/h-sl-meters </property>
+  <property> position/lat-gc-rad </property>
+  <property> position/long-gc-rad </property>
+  <property> position/lat-gc-deg </property>
+  <property> position/long-gc-deg </property>
+  <property> position/lat-geod-rad </property>
+  <property> position/lat-geod-deg </property>
+  <property> position/geod-alt-ft </property>
+  <property> position/h-agl-ft </property>
+  <property> position/radius-to-vehicle-ft </property>
+  <property> position/terrain-elevation-asl-ft </property>
+  <property> position/distance-from-start-lon-mt </property>
+  <property> position/distance-from-start-lat-mt </property>
+  <property> position/distance-from-start-mag-mt </property>
+  <property> position/vrp-gc-latitude_deg </property>
+  <property> position/vrp-longitude_deg </property>
+  <property> position/vrp-radius-ft </property>
+</output>

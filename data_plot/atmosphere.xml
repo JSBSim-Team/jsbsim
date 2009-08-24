@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the atmospheric data logged by JSBSim
+    when the atmosphere flag is turned ON.
+    
+    These are the variables logged by JSBSim with the position flag set to ON
+    
+      Rho (slugs/ft^3)
+      Absolute Viscosity
+      Kinematic Viscosity
+      Temperature (R)
+      P_{SL} (psf)
+      P_{Ambient} (psf)
+      Turbulence Magnitude (ft/sec)
+      Turbulence X Direction (rad)
+      Turbulence Y Direction (rad)
+      Turbulence Z Direction (rad)
+      Wind V_{North} (ft/s)
+      Wind V_{East} (ft/s)
+      Wind V_{Down} (ft/s)
+
+-->
+  <page>
+   <plot>
+     <title>Temperature vs. Time</title>
+     <label axis="y">Temperature (R)</label>
+     <label axis="x">Time (sec)</label>
+     <scale>auto</scale>
+     <parameter axis="x">Time</parameter>
+     <parameter axis="y">Temperature (R)</parameter>
+   </plot>
+   <plot>
+     <title>Pressure vs. Time</title>
+     <label axis="x">Time (sec)</label>
+     <label axis="y">Pressure (psf)</label>
+     <scale>auto</scale>
+     <parameter axis="x">Time</parameter>
+     <parameter axis="y">P_{Ambient} (psf)</parameter>
+   </plot>
+   <plot>
+     <title>Density vs. Time</title>
+      <label axis="y">Rho (slugs/ft^3)</label>
+      <label axis="x">Time (sec)</label>
+      <scale>auto</scale>
+      <parameter axis="y">Rho (slugs/ft^3)</parameter>
+      <parameter axis="x">Time</parameter>
+   </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> Wind V_{Down} (ft/s) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Wind V_{Down} (ft/s)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"> </label>
+      <label axis="y"> Wind V_{East} (ft/s) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Wind V_{East} (ft/s)</parameter>
+    </plot>
+    <plot>
+      <title>Wind vs. Time</title>
+      <label axis="x"> </label>
+      <label axis="y"> Wind V_{North} (ft/s) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Wind V_{North} (ft/s)</parameter>
+    </plot>
+  </page>
+
+</plotset>
