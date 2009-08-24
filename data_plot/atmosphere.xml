@@ -4,7 +4,7 @@
     This file contains plot descriptions for the atmospheric data logged by JSBSim
     when the atmosphere flag is turned ON.
     
-    These are the variables logged by JSBSim with the position flag set to ON
+    These are the variables logged by JSBSim with the atmosphere flag set to ON
     
       Rho (slugs/ft^3)
       Absolute Viscosity

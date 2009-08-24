@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<output name="aerosurfaces.csv" type="CSV" rate="20">
+  <aerosurfaces> ON </aerosurfaces>
+</output>
