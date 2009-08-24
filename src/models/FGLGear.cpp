@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.62 2009/08/20 04:43:40 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.63 2009/08/24 16:16:20 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,7 +280,7 @@ FGColumnVector3& FGLGear::Force(void)
     vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
 
     gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
-    // Compute the height of the theoritical location of the wheel (if struct was not compressed) with
+    // Compute the height of the theoretical location of the wheel (if strut is not compressed) with
     // respect to the ground level
     double height = Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
     vGroundNormal = -1. * Propagate->GetTec2b() * normal;

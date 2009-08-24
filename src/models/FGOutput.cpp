@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.37 2009/08/06 02:58:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.38 2009/08/24 16:16:20 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -333,7 +333,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "ECEF X (ft)" + delimeter + "ECEF Y (ft)" + delimeter + "ECEF Z (ft)" + delimeter;
       outstream << "EPA (deg)" + delimeter;
       outstream << "Distance AGL (ft)" + delimeter;
-      outstream << "Terrain Radius (ft)";
+      outstream << "Terrain Elevation (ft)";
     }
     if (SubSystems & ssCoefficients) {
       scratch = Aerodynamics->GetCoefficientStrings(delimeter);
@@ -445,7 +445,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream.precision(14);
     outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
-    outstream << Propagate->GetLocalTerrainRadius();
+    outstream << Propagate->GetTerrainElevation();
     outstream.precision(10);
   }
   if (SubSystems & ssCoefficients) {
