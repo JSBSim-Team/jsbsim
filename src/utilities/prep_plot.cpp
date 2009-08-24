@@ -42,7 +42,7 @@ is substituted for on the command line to prep_plot using the "#" character.
 
 For example:
 
-./prep_plot F4NOutput#.csv
+./prep_plot F4NOutput#.csv --comp
 
 will look for all input files named F4NOutput0.csv, F4NOutput1.csv,
 F4NOutput2.csv, etc. up to F4NOutput9.csv. This will probably be modified
@@ -60,16 +60,19 @@ Compiling:
 
 g++ prep_plot.cpp plotXMLVisitor.cpp ../simgear/xml/easyxml.cxx -L ../simgear/xml/ -lExpat -o prep_plot.exe
 
+These compiler options may produce a faster executable if your machines supports it:
+-O9 -march=nocona 
+
 Usage:
 (note that an argument with embedded spaces needs to be surrounded by quotes)
 
-prep_plot <filename.csv> [--title="my title"] [--plot=<plotfile.xml> --comprehensive]
+prep_plot <filename.csv> [--title="my title"] [--plot=<plotfile.xml>] [--comp[rehensive]] [--start=start_time] [--end=end_time]
 
 I have used this utility as follows to produce a PDF file:
 
 ./prep_plot.exe F4NOutput#.csv --title="F4N Ground Reactions Testing (0.3, 0.2)" > gpfile.txt
 gnuplot gpfile.txt
-ps2pdf14 F4NOutput0.ps F4NOutput0.pdf
+ps2pdf F4NOutput0.ps F4NOutput0.pdf
 
 Special Notes:
 
@@ -92,6 +95,7 @@ INCLUDES
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <string_utilities.h>
 #include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Helvetica,10"
@@ -131,9 +135,9 @@ int main(int argc, char **argv)
 
   string start_time="", end_time="";
 
-  if (argc == 1 || argc > 5) {
+  if (argc == 1) {
     cout << endl << "Usage: " << endl << endl;
-    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml> --comp[rehensive]] [--start=<time>] [--end=time] [--title=<title>]"
+    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml>] [--comp[rehensive]] [--start=<time>] [--end=<time.] [--title=<title>]"
          << endl << endl;
     exit(-1);
   }
@@ -161,6 +165,8 @@ int main(int argc, char **argv)
     exit(-1);
   }
   getline(infile, in_string, '\n');
+  names = split(in_string, ',');
+  unsigned int num_names=names.size();
   
   // Read command line args
   
@@ -205,22 +211,6 @@ int main(int argc, char **argv)
   cout << "set ytics font \""TICS_FONT"\"" << endl;
   cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
 
-  while(next_comma != string::npos) {
-    next_comma=in_string.find_first_of(",",start);
-    if (next_comma == string::npos) {
-      var_name=in_string.substr(start);
-    } else {
-      len = next_comma-start;
-      var_name=in_string.substr(start,len);
-    }
-    var_name.erase(0,var_name.find_first_not_of(" "));
-    names.push_back(var_name);
-    start = next_comma+1;
-    ctr++;
-  }
-  
-  unsigned int num_names=names.size();
-  
   if (comprehensive) {
   
     for (unsigned int i=1;i<num_names;i++) {
@@ -375,8 +365,8 @@ int main(int argc, char **argv)
           newPlot << "set size 1.0," << size << endl;
           newPlot << "set origin 0.0," << position << endl;
 
+          Title = "";
           if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-          else Title.clear();
 
           Title += myPlot.Title;
           result = MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title, newPlot);
@@ -399,9 +389,9 @@ int main(int argc, char **argv)
 string HaveTerm(vector <string>& names, string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
-    if (names[i] == parameter) return names[i];
+    if (names[i] == parameter.substr(0,names[i].size())) return names[i];
   }
-  cerr << "Could not find parameter: " << parameter << endl;
+  cerr << "Could not find parameter: _" << parameter << "_" << endl;
   return string("");
 }
 
@@ -442,6 +432,8 @@ bool MakeArbitraryPlot(
   if (have_all_terms) {
     if (!Title.empty()) {
       newPlot << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
+    } else {
+      newPlot << "unset title" << endl;
     }
     newPlot << "set xlabel \"" << XAxisName << "\" font \""LABEL_FONT"\"" << endl;
 

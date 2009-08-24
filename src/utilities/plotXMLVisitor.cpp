@@ -1,4 +1,6 @@
 #include "plotXMLVisitor.h"
+#define BASE
+#include <string_utilities.h>
 
 using namespace std;
 
@@ -66,23 +68,23 @@ void plotXMLVisitor::endElement (const char * name)
 {
   if (string(name) == string("title")) {
     if (!inPage)
-      vPlots.back().Title = data_string;
+      vPlots.back().Title = trim(data_string);
     else
-      vPages.back().vPlots.back().Title = data_string;
+      vPages.back().vPlots.back().Title = trim(data_string);
   } else if (string(name) == string("label")) {
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
     if (!inPage)
-      vPlots.back().Axis_Caption[axis] = data_string;
+      vPlots.back().Axis_Caption[axis] = trim(data_string);
     else
-      vPages.back().vPlots.back().Axis_Caption[axis] = data_string;
+      vPages.back().vPlots.back().Axis_Caption[axis] = trim(data_string);
   } else if (string(name) == string("scale")) {
     if (!inPage)
-      if (data_string == "auto") vPlots.back().Autoscale = true;
+      if (trim(data_string) == "auto") vPlots.back().Autoscale = true;
     else
-      if (data_string == "auto") vPages.back().vPlots.back().Autoscale = true;    
+      if (trim(data_string) == "auto") vPages.back().vPlots.back().Autoscale = true;    
   } else if (string(name) == string("min")) {
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
@@ -104,19 +106,19 @@ void plotXMLVisitor::endElement (const char * name)
   } else if (string(name) == string("parameter")) {
     if (axis == eX) {
       if (!inPage)
-        vPlots.back().X_Variable = data_string;
+        vPlots.back().X_Variable = trim(data_string);
       else
-        vPages.back().vPlots.back().X_Variable = data_string;
+        vPages.back().vPlots.back().X_Variable = trim(data_string);
     } else if (axis == eY) {
       if (!inPage)
-        vPlots.back().Y_Variables.push_back(data_string);
+        vPlots.back().Y_Variables.push_back(trim(data_string));
       else
-        vPages.back().vPlots.back().Y_Variables.push_back(data_string);
+        vPages.back().vPlots.back().Y_Variables.push_back(trim(data_string));
     } else if (axis == eY2) {
       if (!inPage)
-        vPlots.back().Y2_Variables.push_back(data_string);
+        vPlots.back().Y2_Variables.push_back(trim(data_string));
       else
-        vPages.back().vPlots.back().Y2_Variables.push_back(data_string);
+        vPages.back().vPlots.back().Y2_Variables.push_back(trim(data_string));
     } else {
       cerr << "Axis not chosen." << endl;
       exit(-1);
@@ -133,9 +135,8 @@ void plotXMLVisitor::endElement (const char * name)
 
 void plotXMLVisitor::data (const char * s, int length)
 {
-//  data_string = s;
-  const char *local_string = s;
-  data_string = local_string;
+//  const char *local_string = s;
+  data_string = s;
   data_string.resize(length);
 }
 

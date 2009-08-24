@@ -14,9 +14,11 @@ struct Plots {
   string X_Variable;
 
   Plots(void) {
-    Autoscale = false;
+    Autoscale = true;
     Min[0] = Min[1] = Min[2] = 0.0;
     Max[0] = Max[1] = Max[2] = 0.0;
+    Title="";
+    Axis_Caption[0] = Axis_Caption[1] = Axis_Caption[2] = "";
   }
 };
 
