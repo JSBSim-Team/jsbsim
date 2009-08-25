@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the ground_reactions data logged by JSBSim
+    when the aerosurfaces flag is turned ON.
+    
+    These are the *typical* variables logged by JSBSim with the ground_reactions flag set to ON.
+    The exact parameter names include the specific contact point name, followed by more
+    descriptive names. The list below assumes that a representative contact point name is
+    "Nose Gear",
+    
+    Nose Gear WOW
+    Nose Gear stroke (ft)
+    Nose Gear stroke velocity (ft/sec)
+    Nose Gear compress force (lbs)
+    Nose Gear wheel side force (lbs)
+    Nose Gear wheel roll force (lbs)
+    Nose Gear body X force (lbs)
+    Nose Gear body Y force (lbs)
+    Nose Gear wheel velocity vec X (ft/sec)
+    Nose Gear wheel velocity vec Y (ft/sec)
+    Nose Gear wheel rolling velocity (ft/sec)
+    Nose Gear wheel side velocity (ft/sec)
+    Nose Gear wheel slip (deg)
+
+    These additional parameters are also logged,
+
+    Total Gear Force_X (lbs)
+    Total Gear Force_Y (lbs)
+    Total Gear Force_Z (lbs)
+    Total Gear Moment_L (ft-lbs)
+    Total Gear Moment_M (ft-lbs)
+    Total Gear Moment_N (ft-lbs)
+
+-->
+  <page>
+    <plot> <!-- bottom -->
+      <title>Left Main Gear</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Left Main stroke (ft)</label>
+      <label axis="y2">Left Main stroke velocity (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Left Main Gear stroke (ft)</parameter>
+      <parameter axis="y2">Left Main Gear stroke velocity (ft/sec)</parameter>
+    </plot>
+    <plot> <!-- middle -->
+      <title>Right Main Gear</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Right Main stroke (ft)</label>
+      <label axis="y2">Right Main stroke velocity (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Right Main Gear stroke (ft)</parameter>
+      <parameter axis="y2">Right Main Gear stroke velocity (ft/sec)</parameter>
+    </plot>
+    <plot> <!-- top -->
+      <title>Nose Gear</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Nose Gear stroke (ft)</label>
+      <label axis="y2">Nose Gear stroke velocity (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Nose Gear stroke (ft)</parameter>
+      <parameter axis="y2">Nose Gear stroke velocity (ft/sec)</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <!-- bottom -->
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Left Main wheel slip (deg)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Left Main Gear wheel slip (deg)</parameter>
+    </plot>
+    <plot>
+      <!-- middle -->
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Right Main wheel slip (deg)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Right Main Gear wheel slip (deg)</parameter>
+    </plot>
+    <plot>
+      <!-- top -->
+      <title>Wheel Slip Angle</title>
+      <label axis="x"></label>
+      <label axis="y">Nose Gear wheel slip (deg)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Nose Gear wheel slip (deg)</parameter>
+    </plot>
+  </page>
+
+</plotset>
