@@ -21,8 +21,8 @@
     <plot>
       <title></title>
       <label axis="x">Time (sec)</label>
-      <label axis="y">Elevator Command (norm)</label>
-      <label axis="y2">Elevator Position (deg)</label>
+      <label axis="y">Elevator Command</label>
+      <label axis="y2">Elevator Position</label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
       <parameter axis="y">Elevator Command (norm)</parameter>
@@ -31,8 +31,8 @@
     <plot>
       <title></title>
       <label axis="x"></label>
-      <label axis="y">Aileron Command (norm)</label>
-      <label axis="y2">Aileron Position (deg)</label>
+      <label axis="y">Aileron Command</label>
+      <label axis="y2">Aileron Position</label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
       <parameter axis="y">Aileron Command (norm)</parameter>
@@ -42,8 +42,8 @@
     <plot>
       <title></title>
       <label axis="x"></label>
-      <label axis="y">Rudder Command (norm)</label>
-      <label axis="y2">Rudder Position (deg)</label>
+      <label axis="y">Rudder Command</label>
+      <label axis="y2">Rudder Position</label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
       <parameter axis="y">Rudder Command (norm)</parameter>
@@ -52,8 +52,8 @@
     <plot>
       <title>Aerosurface Time History</title>
       <label axis="x"></label>
-      <label axis="y">Flap Command (norm)</label>
-      <label axis="y2">Flap Position (deg)</label>
+      <label axis="y">Flap Command</label>
+      <label axis="y2">Flap Position</label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
       <parameter axis="y">Flap Command (norm)</parameter>
