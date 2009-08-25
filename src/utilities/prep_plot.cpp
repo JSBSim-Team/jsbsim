@@ -100,8 +100,8 @@ INCLUDES
 
 #define DEFAULT_FONT "Helvetica,10"
 #define TITLE_FONT "Helvetica,14"
-#define LABEL_FONT "Helvetica,12"
-#define AXIS_FONT "Helvetica,12"
+#define LABEL_FONT "Helvetica,10"
+#define AXIS_FONT "Helvetica,10"
 #define TIMESTAMP_FONT "Helvetica,8"
 #define TICS_FONT "Helvetica,8"
 
@@ -116,9 +116,7 @@ void EmitSinglePlot(string, int, string);
 bool MakeArbitraryPlot(
   vector <string>& files,
   vector <string>& names,
-  string XAxisName,
-  vector <string>& LeftYAxisNames,
-  vector <string>& RightYAxisNames,
+  struct Plots& myPlot,
   string Title,
   stringstream& plot);
 
@@ -320,19 +318,10 @@ int main(int argc, char **argv)
       for (int i=0; i<myVisitor.vPlots.size();i++) {
         newPlot.str("");
         struct Plots& myPlot = myVisitor.vPlots[i];
-        LeftYAxisNames.clear();
-        for (int y=0;y<myPlot.Y_Variables.size();y++) {
-          LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
-        }
-        RightYAxisNames.clear();
-        for (int y=0;y<myPlot.Y2_Variables.size();y++) {
-          RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
-        }
+        Title = "";
         if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-        else Title.clear();
-        Title += myPlot.Title;
         newPlot << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-        result = MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title, newPlot);
+        result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
         if (result) cout << newPlot.str();
       }
 
@@ -342,7 +331,26 @@ int main(int argc, char **argv)
         int numPlots = myVisitor.vPages[page].vPlots.size();
         newPlot.str("");
         
-        float margin = 20./540.;
+        // Calculate margins smartly
+        float marginXLabel = 0.0;
+        for (int plot=1; plot<numPlots; plot++)
+        {
+          if (myVisitor.vPages[page].vPlots[plot].Axis_Caption[eX].size() > 0) {
+            marginXLabel = 8.0;
+            break;
+          }
+        }
+
+        float marginTitle = 0.0;
+        for (int plot=0; plot<numPlots-1; plot++)
+        {
+          if (myVisitor.vPages[page].vPlots[plot].Title.size() > 0) {
+            marginTitle = 9.0;
+            break;
+          }
+        }
+
+        float margin = (3. + marginTitle + marginXLabel)/540.;
         float plot_margin = (2.*(numPlots-1.))*margin;
         float size = (1.0 - plot_margin)/(float)numPlots;
 
@@ -354,22 +362,14 @@ int main(int argc, char **argv)
         for (int plot=0; plot<numPlots; plot++)
         {
           struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
-          LeftYAxisNames.clear();
-          RightYAxisNames.clear();
-
-          for (int y=0;y<myPlot.Y_Variables.size();y++) LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
-          for (int y=0;y<myPlot.Y2_Variables.size();y++) RightYAxisNames.push_back(myPlot.Y2_Variables[y]);
-
           float position = (float)plot*(size + 2.*margin);
-
           newPlot << "set size 1.0," << size << endl;
           newPlot << "set origin 0.0," << position << endl;
 
           Title = "";
           if (!supplied_title.empty()) Title = supplied_title + string("\\n");
 
-          Title += myPlot.Title;
-          result = MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title, newPlot);
+          result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
           if (!result) break;
           newPlot << "unset timestamp" << endl;
         }
@@ -410,14 +410,15 @@ int GetTermIndex(vector <string>& names, string parameter)
 bool MakeArbitraryPlot(
   vector <string>& files,
   vector <string>& names,
-  string XAxisName,
-  vector <string>& LeftYAxisNames,
-  vector <string>& RightYAxisNames,
+  struct Plots& myPlot,
   string Title,
   stringstream& newPlot)
 {
   bool have_all_terms=true;
   int i;
+  vector <string> LeftYAxisNames = myPlot.Y_Variables;
+  vector <string> RightYAxisNames = myPlot.Y2_Variables;
+  string XAxisName = myPlot.X_Variable;
   int numLeftYAxisNames = LeftYAxisNames.size();
   int numRightYAxisNames = RightYAxisNames.size();
   string time_range="";
@@ -430,26 +431,30 @@ bool MakeArbitraryPlot(
   for (i=0; i<numRightYAxisNames; i++) have_all_terms = have_all_terms && !HaveTerm(names, RightYAxisNames[i]).empty();
 
   if (have_all_terms) {
-    if (!Title.empty()) {
+    // Title
+    Title += myPlot.Title;
+    if (!Title.empty())
       newPlot << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
-    } else {
+    else
       newPlot << "unset title" << endl;
-    }
-    newPlot << "set xlabel \"" << XAxisName << "\" font \""LABEL_FONT"\"" << endl;
+    
+    // X axis caption
+    if (myPlot.Axis_Caption[eX].size() > 0)
+      newPlot << "set xlabel \"" << myPlot.Axis_Caption[eX] << "\" font \""LABEL_FONT"\"" << endl;
+    else
+      newPlot << "unset xlabel" << endl;
 
-    newPlot << "set ylabel \"";
-    for (i=0; i<numLeftYAxisNames-1; i++) {
-      newPlot << LeftYAxisNames[i] << ", ";
-    }
-    newPlot << LeftYAxisNames[numLeftYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
+    // Left Y axis caption
+    if (myPlot.Axis_Caption[eY].size() > 0)
+      newPlot << "set ylabel \"" << myPlot.Axis_Caption[eY] << "\" font \""LABEL_FONT"\"" << endl;
+    else
+      newPlot << "unset ylabel" << endl;
 
-    if (numRightYAxisNames > 0) {
-      newPlot << "set y2label \"";
-      for (i=0; i<numRightYAxisNames-1; i++) {
-        newPlot << RightYAxisNames[i] << ", ";
-      }
-      newPlot << RightYAxisNames[numRightYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
-    }
+    // Right Y axis caption
+    if (myPlot.Axis_Caption[eY2].size() > 0)
+      newPlot << "set y2label \"" << myPlot.Axis_Caption[eY2] << "\" font \""LABEL_FONT"\"" << endl;
+    else
+      newPlot << "unset y2label" << endl;
 
     if (files.size() == 1) { // Single file
     
