@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.3 2009/08/29 14:25:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.4 2009/08/29 14:25:48 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +108,7 @@ bool FGAccelerometer::Run(void )
               + Propagate->GetPQR() * (Propagate->GetPQR() * vRadius));
 
   // transform to the specified orientation
-  vAccel = mt * vAccel;
+  vAccel = mT * vAccel;
 
   Input = vAccel(axis);
 
