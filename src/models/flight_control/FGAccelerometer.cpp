@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.4 2009/08/29 14:25:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.5 2009/08/29 16:36:12 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,6 +125,7 @@ bool FGAccelerometer::Run(void )
   if (noise_variance != 0.0) Noise();     // models noise
   if (drift_rate != 0.0)     Drift();     // models drift over time
   if (bias != 0.0)           Bias();      // models a finite bias
+  if (gain != 0.0)           Gain();      // models a gain
 
   if (fail_low)  Output = -HUGE_VAL;
   if (fail_high) Output =  HUGE_VAL;

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.13 2009/06/01 19:08:06 andgi Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.14 2009/08/29 16:36:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.13 $
+@version $Revision: 1.14 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,6 +139,7 @@ protected:
   double min, max;
   double span;
   double bias;
+  double gain;
   double drift_rate;
   double drift;
   double noise_variance;
@@ -166,6 +167,7 @@ protected:
   void Quantize(void);
   void Lag(void);
   void Delay(void);
+  void Gain(void);
 
   void bind(void);
 

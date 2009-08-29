@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.13 2009/05/14 01:55:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.14 2009/08/29 16:36:12 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   bits = quantized = divisions = index = delay = 0;
   PreviousInput = PreviousOutput = 0.0;
-  min = max = bias = noise_variance = lag = drift_rate = drift = span = 0.0;
+  min = max = bias = gain = noise_variance = lag = drift_rate = drift = span = 0.0;
   granularity = 0.0;
   noise_type = 0;
   fail_low = fail_high = fail_stuck = false;
@@ -81,6 +81,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
   if ( element->FindElement("bias") ) {
     bias = element->FindElementValueAsNumber("bias");
+  }
+  if ( element->FindElement("gain") ) {
+    gain = element->FindElementValueAsNumber("gain");
   }
   if ( element->FindElement("drift_rate") ) {
     drift_rate = element->FindElementValueAsNumber("drift_rate");
@@ -152,6 +155,7 @@ bool FGSensor::Run(void )
   if (noise_variance != 0.0) Noise();     // models noise
   if (drift_rate != 0.0)     Drift();     // models drift over time
   if (bias != 0.0)           Bias();      // models a finite bias
+  if (gain != 0.0)           Gain();      // models a finite gain
 
   if (delay != 0.0)          Delay();     // models system signal transport latencies
 
@@ -192,6 +196,13 @@ void FGSensor::Noise(void)
 void FGSensor::Bias(void)
 {
   Output += bias;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSensor::Gain(void)
+{
+  Output *= gain;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,6 +315,7 @@ void FGSensor::Debug(int from)
         cout << "          (span: " << span << ", granularity: " << granularity << ")" << endl;
       }
       if (bias != 0.0) cout << "      Bias: " << bias << endl;
+      if (gain != 0.0) cout << "      Gain: " << gain << endl;
       if (drift_rate != 0) cout << "      Sensor drift rate: " << drift_rate << endl;
       if (lag != 0) cout << "      Sensor lag: " << lag << endl;
       if (noise_variance != 0) {
