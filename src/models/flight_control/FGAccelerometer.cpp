@@ -39,9 +39,10 @@ INCLUDES
 
 #include "FGAccelerometer.h"
 
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.1 2009/05/08 11:58:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.2 2009/08/29 13:45:05 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,6 +54,7 @@ FGAccelerometer::FGAccelerometer(FGFCS* fcs, Element* element) : FGSensor(fcs, e
 {
   Propagate = fcs->GetExec()->GetPropagate();
   MassBalance = fcs->GetExec()->GetMassBalance();
+  Inertial = fcs->GetExec()->GetInertial();
   
   Element* location_element = element->FindElement("location");
   if (location_element) vLocation = location_element->FindElementTripletConvertTo("IN");
@@ -98,8 +100,12 @@ bool FGAccelerometer::Run(void )
   // There is no input assumed. This is a dedicated acceleration sensor.
   
   vRadius = MassBalance->StructuralToBody(vLocation);
+    
+  //gravitational forces
+  vAccel = Propagate->GetTl2b() * FGColumnVector3(0, 0, Inertial->gravity());
 
-  vAccel = mT * (Propagate->GetUVWdot()
+  //aircraft forces
+  vAccel += mT * (Propagate->GetUVWdot()
                  + Propagate->GetPQRdot() * vRadius
                  + Propagate->GetPQR() * (Propagate->GetPQR() * vRadius));
   
@@ -139,6 +145,7 @@ void FGAccelerometer::CalculateTransformMatrix(void)
   cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
   cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
 
+
   mT(1,1) =  cp*cy;
   mT(1,2) =  cp*sy;
   mT(1,3) = -sp;
@@ -150,6 +157,7 @@ void FGAccelerometer::CalculateTransformMatrix(void)
   mT(3,1) = cr*sp*cy + sr*sy;
   mT(3,2) = cr*sp*sy - sr*cy;
   mT(3,3) = cr*cp;
+
   
   // This transform is different than for FGForce, where we want a native nozzle
   // force in body frame. Here we calculate the body frame accel and want it in

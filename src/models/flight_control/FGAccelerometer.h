@@ -41,6 +41,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include "models/FGPropagate.h"
 #include "models/FGMassBalance.h"
+#include "models/FGInertial.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 
@@ -48,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.1 2009/05/08 11:58:10 jberndt Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.2 2009/08/29 13:45:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +109,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.1 $
+@version $Revision: 1.2 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +127,7 @@ public:
 private:
   FGPropagate* Propagate;
   FGMassBalance* MassBalance;
+  FGInertial* Inertial;
   FGColumnVector3 vLocation;
   FGColumnVector3 vOrient;
   FGColumnVector3 vRadius;
