@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 1/9/2001
 
- ------------- Copyright (C) 2001  Jon S. Berndt (jsb@hal-pc.org) --------------
+ ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.8 2007/02/25 13:52:57 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -234,7 +234,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.8 2007/02/25 13:52:57 jberndt Exp $
+@version $Id: FGTable.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

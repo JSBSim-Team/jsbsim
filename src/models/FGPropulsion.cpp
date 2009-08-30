@@ -6,7 +6,7 @@
  Purpose:      Encapsulates the set of engines and tanks associated
                with this aircraft
 
- ------------- Copyright (C) 2000  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.33 2009/06/09 03:23:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.34 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

@@ -4,7 +4,7 @@
  Author:       Jon Berndt, Dave Culp
  Date started: 9/21/07
 
- ------------- Copyright (C) 2007  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2007  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.6 2008/05/04 18:22:53 dpculp Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

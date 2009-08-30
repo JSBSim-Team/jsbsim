@@ -5,7 +5,7 @@
  Date started: 08/23/00
  Purpose:      Encapsulates the thruster object
 
- ------------- Copyright (C) 2000  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.10 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.11 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

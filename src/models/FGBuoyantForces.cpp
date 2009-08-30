@@ -6,7 +6,7 @@
  Purpose:      Encapsulates the buoyant forces
 
  ------------- Copyright (C) 2008 - 2009  Anders Gidenstam        -------------
- ------------- Copyright (C) 2008  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2008  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.7 2009/06/09 03:23:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.8 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 12/23/2002
 
- ------------- Copyright (C) 2002 jsb@hal-pc.org  -------------
+ ------------- Copyright (C) 2002 jon@jsbsim.org  -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.11 2008/05/01 01:03:14 dpculp Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.11 2008/05/01 01:03:14 dpculp Exp $
+@version $Id: FGSwitch.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 8/20/04
 
- ------------- Copyright (C) 2004  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2004  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -49,7 +49,7 @@ using std::endl;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.5 2008/07/22 02:42:17 jberndt Exp $"
+#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $"
 #define VALID_CHARS """`!@#$%^&*()_+`1234567890-={}[];':,.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
     @author Jon S. Berndt
-    @version $Id: FGXMLParse.h,v 1.5 2008/07/22 02:42:17 jberndt Exp $
+    @version $Id: FGXMLParse.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5,7 +5,7 @@ Author: Jon Berndt
 Date started: 8/25/2004
 Purpose: Stores various parameter types for functions
 
- ------------- Copyright (C) 2004  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2004  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.22 2009/03/04 13:13:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.23 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

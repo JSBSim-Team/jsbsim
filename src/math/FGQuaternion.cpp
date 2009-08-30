@@ -4,7 +4,7 @@
  Author:       Jon Berndt, Mathias Froehlich
  Date started: 12/02/98
 
- ------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) ------------------
+ ------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) ------------------
  -------           (C) 2004  Mathias Froehlich (Mathias.Froehlich@web.de) ----
 
  This program is free software; you can redistribute it and/or modify it under
@@ -56,7 +56,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.6 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.7 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

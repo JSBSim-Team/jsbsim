@@ -5,7 +5,7 @@
  Purpose:      XML element class
  Called by:    FGXMLParse
 
- ------------- Copyright (C) 2001  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -39,7 +39,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.24 2008/11/17 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.25 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

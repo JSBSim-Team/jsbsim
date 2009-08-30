@@ -5,7 +5,7 @@
  Date started: 11/24/2006
  Purpose:      CSV -> gnuplot prepping tool
  
- ------------- Copyright (C) 2006  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2006  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software

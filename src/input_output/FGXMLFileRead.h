@@ -5,7 +5,7 @@
  Date started: 02/04/07
  Purpose:      Shared base class that wraps the XML file reading logic
 
- ------------- Copyright (C) 2007  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2007  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.1 2007/02/08 12:41:13 jberndt Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.2 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

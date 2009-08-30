@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt, Mathias Froehlich
  Date started: 04/04/2004
 
- ------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) ------------------
+ ------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) ------------------
  -------           (C) 2004  Mathias Froehlich (Mathias.Froehlich@web.de) ----
 
  This program is free software; you can redistribute it and/or modify it under
@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.14 2009/06/04 02:56:34 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.14 2009/06/04 02:56:34 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

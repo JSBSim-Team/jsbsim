@@ -4,7 +4,7 @@
  Author:       Jon Berndt
  Date started: 6/17/2006
 
- ------------- Copyright (C) 2006 by Jon S. Berndt, jsb@hal-pc.org -------------
+ ------------- Copyright (C) 2006 by Jon S. Berndt, jon@jsbsim.org -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.8 2009/03/23 03:13:12 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
 
 using std::string;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.8 $
+    @version $Revision: 1.9 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5,7 +5,7 @@
  Date started: 04/04/2004
  Purpose:      Store an arbitrary location on the globe
 
- ------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) ------------------
+ ------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) ------------------
  -------           (C) 2004  Mathias Froehlich (Mathias.Froehlich@web.de) ----
 
  This program is free software; you can redistribute it and/or modify it under
@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.14 2009/06/04 02:56:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.15 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

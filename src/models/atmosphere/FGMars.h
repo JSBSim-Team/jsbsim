@@ -4,7 +4,7 @@
  Author:       Jon Berndt
  Date started: 01/05/2004
  
- ------------- Copyright (C) 2004  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2004  Jon S. Berndt (jon@jsbsim.org) -------------
  
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MARS "$Id: FGMars.h,v 1.6 2008/11/21 02:45:27 jberndt Exp $"
+#define ID_MARS "$Id: FGMars.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ CLASS DOCUMENTATION
 
 /** Models the Martian atmosphere.
     @author Jon Berndt
-    @version $Id: FGMars.h,v 1.6 2008/11/21 02:45:27 jberndt Exp $
+    @version $Id: FGMars.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

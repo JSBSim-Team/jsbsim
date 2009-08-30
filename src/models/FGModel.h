@@ -4,7 +4,7 @@
  Author:       Jon Berndt
  Date started: 11/21/98
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.10 2009/06/09 03:23:55 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.11 2009/08/30 03:51:28 jberndt Exp $"
 
 using namespace std;
 

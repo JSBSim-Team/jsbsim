@@ -7,7 +7,7 @@
  Date started: 09/12/2000
  Purpose:      This module models a Piston engine
 
- ------------- Copyright (C) 2000  Jon S. Berndt (jsb@hal-pc.org) --------------
+ ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.38 2009/05/31 21:09:13 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.39 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

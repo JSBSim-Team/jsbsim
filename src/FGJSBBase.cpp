@@ -5,7 +5,7 @@
  Date started: 07/01/01
  Purpose:      Encapsulates the JSBBase object
 
- ------------- Copyright (C) 2001  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.26 2009/07/30 12:42:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.27 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Nov  4 21:16:33 CST 2000
     copyright            : (C) 2000 by Jon S. Berndt
-    email                : jsb@hal-pc.org
+    email                : jon@jsbsim.org
 
     compile this under windows like this:
 

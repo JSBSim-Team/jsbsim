@@ -6,7 +6,7 @@
  Purpose:      Manage output of sim parameters to file or stdout
  Called by:    FGSimExec
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.38 2009/08/24 16:16:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.39 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)

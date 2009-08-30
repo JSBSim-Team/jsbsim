@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.3 2006/03/12 12:18:59 jberndt Exp $
+// $Id: props.cxx,v 1.4 2009/08/30 03:51:28 jberndt Exp $
 
 #include "props.hxx"
 
@@ -107,7 +107,7 @@ static inline const string
 parse_name (const string &path, int &i)
 {
   string name = "";
-  int max = path.size();
+  int max = (int)path.size();
 
   if (path[i] == '.') {
     i++;
@@ -164,7 +164,7 @@ parse_index (const string &path, int &i)
   else
     i++;
 
-  for (int max = path.size(); i < max; i++) {
+  for (int max = (int)path.size(); i < max; i++) {
     if (isdigit(path[i])) {
       index = (index * 10) + (path[i] - '0');
     } else if (path[i] == ']') {
@@ -204,7 +204,7 @@ static void
 parse_path (const string &path, vector<PathComponent> &components)
 {
   int pos = 0;
-  int max = path.size();
+  int max = (int)path.size();
 
 				// Check for initial '/'
   if (path[pos] == '/') {

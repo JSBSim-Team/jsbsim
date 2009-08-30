@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 06/01/09
 
- ------------- Copyright (C) 2009  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2009  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.3 2009/07/30 12:41:11 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.4 2009/08/30 03:51:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

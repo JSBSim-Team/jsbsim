@@ -5,7 +5,7 @@
  Date started: 1/9/2001
  Purpose:      Models a lookup table
 
- ------------- Copyright (C) 2001  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.17 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.18 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

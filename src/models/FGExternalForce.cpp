@@ -4,7 +4,7 @@
  Author:       Jon Berndt, Dave Culp
  Date started: 9/21/07
 
- ------------- Copyright (C) 2007  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2007  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -56,7 +56,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.8 2009/05/10 10:59:48 andgi Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.9 2009/08/30 03:51:28 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
