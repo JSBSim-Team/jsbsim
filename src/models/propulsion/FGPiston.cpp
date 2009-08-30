@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.39 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.40 2009/08/30 15:56:12 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +185,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Bore = el->FindElementValueAsNumberConvertTo("bore","IN");
   if (el->FindElement("stroke"))
     Stroke = el->FindElementValueAsNumberConvertTo("stroke","IN");
-  if (el->FindElement("stroke"))
+  if (el->FindElement("cylinders"))
     Cylinders = el->FindElementValueAsNumber("cylinders");
   if (el->FindElement("numboostspeeds")) { // Turbo- and super-charging parameters
     BoostSpeeds = (int)el->FindElementValueAsNumber("numboostspeeds");
