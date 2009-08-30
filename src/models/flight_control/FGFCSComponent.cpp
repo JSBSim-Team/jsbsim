@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.19 2009/06/13 02:41:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.20 2009/08/30 03:13:27 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,6 +91,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     Type = "SENSOR";
   } else if (element->GetName() == string("accelerometer")) {
     Type = "ACCELEROMETER";
+  } else if (element->GetName() == string("gyro")) {
+    Type = "GYRO";
   } else if (element->GetName() == string("actuator")) {
     Type = "ACTUATOR";
   } else { // illegal component in this channel

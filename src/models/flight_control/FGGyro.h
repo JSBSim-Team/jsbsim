@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGFCSComponent.h
- Author:       Jon S. Berndt
- Date started: 05/01/2000
+ Header:       FGGyro.h
+ Author:       Jon Berndt
+ Date started: May 2009
 
- ------------- Copyright (C)  -------------
+ ------------- Copyright (C) 2009 -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -30,27 +30,26 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGFCSCOMPONENT_H
-#define FGFCSCOMPONENT_H
+#ifndef FGGYRO_H
+#define FGGYRO_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <input_output/FGPropertyManager.h>
+#include "FGSensor.h"
 #include <input_output/FGXMLElement.h>
-#include <string>
-#include <vector>
+#include "models/FGPropagate.h"
+#include "models/FGMassBalance.h"
+#include "models/FGInertial.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.11 2009/08/30 03:13:27 jberndt Exp $"
-
-using std::string;
-using std::vector;
+#define ID_GYRO "$Id: FGGyro.h,v 1.1 2009/08/30 03:13:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,75 +63,76 @@ class FGFCS;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Base class for JSBSim Flight Control System Components.
-    The Flight Control System (FCS) for JSBSim consists of the FCS container
-    class (see FGFCS), the FGFCSComponent base class, and the
-    component classes from which can be constructed a string, or channel. See:
+/** Encapsulates a Gyro component for the flight control system.
 
-    - FGSwitch
-    - FGGain
-    - FGKinemat
-    - FGFilter
-    - FGDeadBand
-    - FGSummer
-    - FGSensor
-    - FGFCSFunction
-    - FGPID
-    - FGAccelerometer
-    - FGGyro
-    - FGActuator
+Syntax:
 
-    @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.11 2009/08/30 03:13:27 jberndt Exp $
-    @see Documentation for the FGFCS class, and for the configuration file class
+@code
+<gyro name="name">
+  <input> property </input>
+  <lag> number </lag>
+  <noise variation="PERCENT|ABSOLUTE"> number </noise>
+  <quantization name="name">
+    <bits> number </bits>
+    <min> number </min>
+    <max> number </max>
+  </quantization>
+  <drift_rate> number </drift_rate>
+  <bias> number </bias>
+</gyro>
+@endcode
+
+Example:
+
+@code
+<gyro name="aero/gyro/qbar">
+  <input> aero/qbar </input>
+  <lag> 0.5 </lag>
+  <noise variation="PERCENT"> 2 </noise>
+  <quantization name="aero/gyro/quantized/qbar">
+    <bits> 12 </bits>
+    <min> 0 </min>
+    <max> 400 </max>
+  </quantization>
+  <bias> 0.5 </bias>
+</gyro>
+@endcode
+
+The only required element in the gyro definition is the input element. In that
+case, no degradation would be modeled, and the output would simply be the input.
+
+For noise, if the type is PERCENT, then the value supplied is understood to be a
+percentage variance. That is, if the number given is 0.05, the the variance is
+understood to be +/-0.05 percent maximum variance. So, the actual value for the gyro
+will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
+even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
+time.
+
+@author Jon S. Berndt
+@version $Revision: 1.1 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFCSComponent : public FGJSBBase
+class FGGyro  : public FGSensor
 {
 public:
-  /// Constructor
-  FGFCSComponent(FGFCS* fcs, Element* el);
-  /// Destructor
-  virtual ~FGFCSComponent();
+  FGGyro(FGFCS* fcs, Element* element);
+  ~FGGyro();
 
-  virtual bool Run(void);
-  virtual void SetOutput(void);
-  inline double GetOutput (void) const {return Output;}
-  inline FGPropertyManager* GetOutputNode(void) { return OutputNode; }
-  inline string GetName(void) const {return Name;}
-  inline string GetType(void) const { return Type; }
-  virtual double GetOutputPct(void) const { return 0; }
+  bool Run (void);
 
-protected:
-  FGFCS* fcs;
-  FGPropertyManager* PropertyManager;
-  FGPropertyManager* treenode;
-  FGPropertyManager* OutputNode;
-  FGPropertyManager* ClipMinPropertyNode;
-  FGPropertyManager* ClipMaxPropertyNode;
-  vector <FGPropertyManager*> InputNodes;
-  vector <float> InputSigns;
-  string Type;
-  string Name;
-  double Input;
-  double Output;
-  double clipmax, clipmin;
-  float clipMinSign, clipMaxSign;
-  bool IsOutput;
-  bool clip;
-
-  void Clip(void);
-  virtual void bind();
-  virtual void Debug(int from);
+private:
+  FGPropagate* Propagate;
+  FGColumnVector3 vOrient;
+  FGColumnVector3 vAccel;
+  FGMatrix33 mT;
+  void CalculateTransformMatrix(void);
+  int axis;
+  
+  void Debug(int from);
 };
-
-} //namespace JSBSim
-
-#include "../FGFCS.h"
-
+}
 #endif
-

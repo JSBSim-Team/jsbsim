@@ -55,10 +55,11 @@ INCLUDES
 #include <models/flight_control/FGSensor.h>
 #include <models/flight_control/FGActuator.h>
 #include <models/flight_control/FGAccelerometer.h>
+#include <models/flight_control/FGGyro.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.59 2009/08/04 11:52:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.60 2009/08/30 03:13:27 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -642,6 +643,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
           Components->push_back(new FGSensor(this, component_element));
         } else if (component_element->GetName() == string("accelerometer")) {
           Components->push_back(new FGAccelerometer(this, component_element));
+        } else if (component_element->GetName() == string("gyro")) {
+          Components->push_back(new FGGyro(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
