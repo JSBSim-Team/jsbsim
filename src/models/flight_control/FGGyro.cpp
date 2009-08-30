@@ -2,9 +2,9 @@
 
  Module:       FGGyro.cpp
  Author:       Jon Berndt
- Date started: 9 July 2005
+ Date started: 29 August 2009
 
- ------------- Copyright (C) 2005 -------------
+ ------------- Copyright (C) 2009 -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGyro.cpp,v 1.1 2009/08/30 03:13:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGyro.cpp,v 1.2 2009/08/30 03:24:08 jberndt Exp $";
 static const char *IdHdr = ID_GYRO;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

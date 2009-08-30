@@ -2,7 +2,7 @@
 
  Header:       FGGyro.h
  Author:       Jon Berndt
- Date started: May 2009
+ Date started: 29 August 2009
 
  ------------- Copyright (C) 2009 -------------
 
@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GYRO "$Id: FGGyro.h,v 1.1 2009/08/30 03:13:27 jberndt Exp $"
+#define ID_GYRO "$Id: FGGyro.h,v 1.2 2009/08/30 03:24:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.1 $
+@version $Revision: 1.2 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
