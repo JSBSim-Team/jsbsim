@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.64 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.65 2009/08/31 07:11:15 ehofman Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,19 +392,37 @@ FGColumnVector3& FGLGear::Force(void)
 
 void FGLGear::ComputeGroundCoordSys(void)
 {
-  // Compute the rolling direction projected on the ground
-  // It consists in finding a vector 'r' such that 'r' lies in the plane (w,z) and r.n = 0 (scalar
-  // product) where:
-  // 'n' is the normal to the ground,
-  // (x,y,z) are the directions defined in the body coord system
-  // and 'w' is 'x' rotated by the steering angle (SteerAngle) in the plane (x,y). 
-  // r = u * w + v * z and r.n = 0 => v/u = -w.n/z.n = a
-  // We also want u**2+v**2=1 and u > 0 (i.e. r orientated in the same 'direction' than w)
-  // after some arithmetic, one finds that :
-  double a = -(vGroundNormal(eX)*cos(SteerAngle)+vGroundNormal(eY)*sin(SteerAngle)) / vGroundNormal(eZ);
-  double u = 1. / sqrt(1. + a*a);
-  double v = a * u;
-  FGColumnVector3 vRollingGroundVec = FGColumnVector3(u * cos(SteerAngle), u * sin(SteerAngle), v);
+  FGColumnVector3 vRollingGroundVec;
+
+  if (eContactType == ctBOGEY) {
+    // Compute the rolling direction projected on the ground
+    // It consists in finding a vector 'r' such that 'r' lies in the plane (w,z) and r.n = 0 (scalar
+    // product) where:
+    // 'n' is the normal to the ground,
+    // (x,y,z) are the directions defined in the body coord system
+    // and 'w' is 'x' rotated by the steering angle (SteerAngle) in the plane (x,y). 
+    // r = u * w + v * z and r.n = 0 => v/u = -w.n/z.n = a
+    // We also want u**2+v**2=1 and u > 0 (i.e. r orientated in the same 'direction' than w)
+    // after some arithmetic, one finds that :
+    double a = -(vGroundNormal(eX)*cos(SteerAngle)+vGroundNormal(eY)*sin(SteerAngle)) / vGroundNormal(eZ);
+    double u = 1. / sqrt(1. + a*a);
+    double v = a * u;
+    vRollingGroundVec = FGColumnVector3(u * cos(SteerAngle), u * sin(SteerAngle), v);
+  }
+  else {
+    // Here the only significant direction is the normal to the ground "vGroundNormal". Since there is
+    // no wheel the 2 other vectors of the orthonormal basis are not meaningful and are only used to
+    // create the transformation matrix Tg2b. So we are building vRollingGroundVec as an arbitrary
+    // vector normal to vGroundNormal
+    if (fabs(vGroundNormal(eX)) > 0.)
+      vRollingGroundVec = FGColumnVector3(-vGroundNormal(eZ)/vGroundNormal(eX), 0., 1.);
+    else if (fabs(vGroundNormal(eY)) > 0.)
+      vRollingGroundVec = FGColumnVector3(0., -vGroundNormal(eZ)/vGroundNormal(eY), 1.);
+    else
+      vRollingGroundVec = FGColumnVector3(1., 0., -vGroundNormal(eX)/vGroundNormal(eZ));
+
+    vRollingGroundVec.Normalize();
+  }
 
   // The sliping direction is the cross product multiplication of the ground normal and rolling
   // directions

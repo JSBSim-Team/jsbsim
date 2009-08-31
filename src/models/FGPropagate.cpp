@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.40 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.41 2009/08/31 07:11:15 ehofman Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,6 +189,20 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   // Recompute the LocalTerrainRadius.
   RecomputeLocalTerrainRadius();
+
+  // These local copies of the transformation matrices are for use for
+  // initial conditions only.
+
+  Tl2b = GetTl2b();           // local to body frame transform
+  Tb2l = Tl2b.Transposed();   // body to local frame transform
+  Tl2ec = GetTl2ec();         // local to ECEF transform
+  Tec2l = Tl2ec.Transposed(); // ECEF to local frame transform
+  Tec2b = Tl2b * Tec2l;       // ECEF to body frame transform
+  Tb2ec = Tec2b.Transposed(); // body to ECEF frame tranform
+  Ti2ec = GetTi2ec();         // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed(); // ECEF to ECI frame transform
+  Ti2b  = Tec2b*Ti2ec;        // ECI to body frame transform
+  Tb2i  = Ti2b.Transposed();  // body to ECI frame transform
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
