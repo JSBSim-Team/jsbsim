@@ -62,7 +62,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.27 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.28 2009/09/01 12:35:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.27 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.28 2009/09/01 12:35:29 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,9 +349,9 @@ protected:
     static int phase = 0;
     double X;
 
-    V1 = V2 = S = X = 0.0;
-
     if (phase == 0) {
+      V1 = V2 = S = X = 0.0;
+
       do {
         double U1 = (double)rand() / RAND_MAX;
         double U2 = (double)rand() / RAND_MAX;
