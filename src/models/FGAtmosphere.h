@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.20 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.21 2009/09/03 12:26:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.20 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.21 2009/09/03 12:26:05 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -83,7 +83,7 @@ public:
       @return false if no error */
   bool Run(void);
   bool InitModel(void);
-  enum tType {ttStandard, ttBerndt, ttCulp, ttNone} turbType;
+  enum tType {ttNone, ttStandard, ttBerndt, ttCulp} turbType;
 
   /// Returns the temperature in degrees Rankine.
   double GetTemperature(void) const {return *temperature;}
@@ -194,16 +194,22 @@ public:
   /// Sets a gust component in NED frame.
   void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
 
+  /// Sets a turbulence component in NED frame.
+  void SetTurbNED(int idx, double turb) { vTurbulenceNED(idx)=turb;}
+
   /// Sets the gust components in NED frame.
   void SetGustNED(double gN, double gE, double gD) { vGustNED(eNorth)=gN; vGustNED(eEast)=gE; vGustNED(eDown)=gD;}
 
   /// Retrieves a gust component in NED frame.
   double GetGustNED(int idx) const {return vGustNED(idx);}
 
+  /// Retrieves a turbulence component in NED frame.
+  double GetTurbNED(int idx) const {return vTurbulenceNED(idx);}
+
   /// Retrieves the gust components in NED frame.
   FGColumnVector3& GetGustNED(void) {return vGustNED;}
 
-  /** Turbulence models available: ttStandard, ttBerndt, ttCulp, ttNone */
+  /** Turbulence models available: ttNone, ttStandard, ttBerndt, ttCulp */
   void   SetTurbType(tType tt) {turbType = tt;}
   tType  GetTurbType() const {return turbType;}
 

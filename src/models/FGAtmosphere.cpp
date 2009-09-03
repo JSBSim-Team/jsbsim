@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.28 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.29 2009/09/03 12:26:05 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,8 +82,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
 //  SetTurbType( ttCulp );
   SetTurbType( ttNone );
-  TurbGain = 0.0;
-  TurbRate = 1.7;
+  TurbGain = 1.0;
+  TurbRate = 10.0;
   Rhythmicity = 0.1;
   spike = target_time = strength = 0.0;
   wind_from_clockwise = 0.0;
@@ -375,9 +375,11 @@ void FGAtmosphere::SetWindPsi(double dir)
 
 void FGAtmosphere::Turbulence(void)
 {
+  double DeltaT = rate*State->Getdt();
+
   switch (turbType) {
   case ttStandard: {
-    TurbGain = TurbGain * TurbGain * 100.0;
+    // TurbGain = TurbGain * TurbGain * 100.0; // what is this!?
 
     vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
@@ -388,8 +390,8 @@ void FGAtmosphere::Turbulence(void)
                                 // away from the peaks
     MagnitudedAccelDt = ((MagnitudedAccelDt - Magnitude) /
                          (1 + fabs(Magnitude)));
-    MagnitudeAccel    += MagnitudedAccelDt*rate*TurbRate*State->Getdt();
-    Magnitude         += MagnitudeAccel*rate*State->Getdt();
+    MagnitudeAccel    += MagnitudedAccelDt*TurbRate*DeltaT;
+    Magnitude         += MagnitudeAccel*DeltaT;
     Magnitude          = fabs(Magnitude);
 
     vDirectiondAccelDt.Normalize();
@@ -398,9 +400,9 @@ void FGAtmosphere::Turbulence(void)
     vDirectiondAccelDt(eX) = square_signed(vDirectiondAccelDt(eX));
     vDirectiondAccelDt(eY) = square_signed(vDirectiondAccelDt(eY));
 
-    vDirectionAccel += vDirectiondAccelDt*rate*TurbRate*State->Getdt();
+    vDirectionAccel += vDirectiondAccelDt*TurbRate*DeltaT;
     vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*rate*State->Getdt();
+    vDirection      += vDirectionAccel*DeltaT;
 
     vDirection.Normalize();
 
@@ -449,42 +451,37 @@ void FGAtmosphere::Turbulence(void)
   }
   case ttBerndt: { // This is very experimental and incomplete at the moment.
 
-    TurbGain = TurbGain * TurbGain * 100.0;
-  
-    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    vDirectiondAccelDt(eX) = GaussianRandomNumber();
+    vDirectiondAccelDt(eY) = GaussianRandomNumber();
+    vDirectiondAccelDt(eZ) = GaussianRandomNumber();
 
-
-    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
-    MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
-    Magnitude         += MagnitudeAccel*rate*State->Getdt();
+    MagnitudedAccelDt = GaussianRandomNumber();
+    MagnitudeAccel    += MagnitudedAccelDt * DeltaT;
+    Magnitude         += MagnitudeAccel * DeltaT;
 
     vDirectiondAccelDt.Normalize();
-    vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
+    vDirectionAccel += TurbRate * vDirectiondAccelDt * DeltaT;
     vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*rate*State->Getdt();
+    vDirection      += vDirectionAccel*DeltaT;
 
-                                // Diminish z-vector within two wingspans
-                                // of the ground
+    // Diminish z-vector within two wingspans of the ground
     double HOverBMAC = Auxiliary->GetHOverBMAC();
-    if (HOverBMAC < 2.0)
-        vDirection(eZ) *= HOverBMAC / 2.0;
+    if (HOverBMAC < 2.0) vDirection(eZ) *= HOverBMAC / 2.0;
 
     vDirection.Normalize();
 
     vTurbulenceNED = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
+    vBodyTurbGrad = Propagate->GetTl2b() * vTurbulenceGrad;
+    vTurbPQR(eP) = vBodyTurbGrad(eY) / Aircraft->GetWingSpan();
     if (Aircraft->GetHTailArm() > 0)
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
+      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / Aircraft->GetHTailArm();
     else
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
+      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / 10.0;
 
     if (Aircraft->GetVTailArm() > 0)
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
+      vTurbPQR(eR) = vBodyTurbGrad(eX) / Aircraft->GetVTailArm();
     else
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
 
@@ -571,7 +568,9 @@ void FGAtmosphere::bind(void)
 {
   typedef double (FGAtmosphere::*PMF)(int) const;
   typedef double (FGAtmosphere::*PMFv)(void) const;
+  typedef int (FGAtmosphere::*PMFt)(void) const;
   typedef void   (FGAtmosphere::*PMFd)(int,double);
+  typedef void   (FGAtmosphere::*PMFi)(int);
   PropertyManager->Tie("atmosphere/T-R", this, (PMFv)&FGAtmosphere::GetTemperature);
   PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, (PMFv)&FGAtmosphere::GetDensity);
   PropertyManager->Tie("atmosphere/P-psf", this, (PMFv)&FGAtmosphere::GetPressure);
@@ -608,9 +607,17 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/gust-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetGustNED,
                                                           (PMFd)&FGAtmosphere::SetGustNED);
 
+  PropertyManager->Tie("atmosphere/turb-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetTurbNED,
+                                                          (PMFd)&FGAtmosphere::SetTurbNED);
+  PropertyManager->Tie("atmosphere/turb-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetTurbNED,
+                                                          (PMFd)&FGAtmosphere::SetTurbNED);
+  PropertyManager->Tie("atmosphere/turb-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetTurbNED,
+                                                          (PMFd)&FGAtmosphere::SetTurbNED);
+
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGAtmosphere::GetTurbPQR);
+  PropertyManager->Tie("atmosphere/turb-type", this, (PMFt)&FGAtmosphere::GetTurbType, (PMFi)&FGAtmosphere::SetTurbType);
   PropertyManager->Tie("atmosphere/turb-rate", this, &FGAtmosphere::GetTurbRate, &FGAtmosphere::SetTurbRate);
   PropertyManager->Tie("atmosphere/turb-gain", this, &FGAtmosphere::GetTurbGain, &FGAtmosphere::SetTurbGain);
   PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGAtmosphere::GetRhythmicity,
