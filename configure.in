@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(JSBSim.cpp, 1.0, jsb@hal-pc.org)
+AC_INIT(JSBSim.cpp, 1.0, jon@jsbsim.org)
 
 dnl set the $host variable based on local machine/os
 AC_CANONICAL_TARGET
@@ -91,6 +91,7 @@ src/math/Makefile \
 src/simgear/Makefile \
 src/simgear/props/Makefile \
 src/simgear/xml/Makefile \
+src/simgear/magvar/Makefile \
 src/utilities/Makefile \
 src/utilities/aeromatic/Makefile \
 aircraft/Makefile \
@@ -132,7 +133,9 @@ aircraft/paraglider/Makefile \
 aircraft/sgs126/Makefile \
 aircraft/t6texan2/Makefile \
 aircraft/x24b/Makefile \
+data_output/Makefile \
+data_plot/Makefile \
 engine/Makefile \
 systems/Makefile \
-scripts/Makefile \
+scripts/Makefile
 )

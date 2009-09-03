@@ -205,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\simgear\magvar\coremag.hxx"
+				>
+			</File>
+			<File
 				RelativePath=".\src\simgear\xml\easyxml.hxx"
 				>
 			</File>
@@ -354,6 +358,10 @@
 			</File>
 			<File
 				RelativePath=".\src\math\FGLocation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\flight_control\FGMagnetometer.h"
 				>
 			</File>
 			<File
@@ -557,6 +565,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\simgear\magvar\coremag.cxx"
+				>
+			</File>
+			<File
 				RelativePath=".\src\simgear\xml\easyxml.cxx"
 				>
 			</File>
@@ -702,6 +714,10 @@
 			</File>
 			<File
 				RelativePath=".\src\math\FGLocation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\flight_control\FGMagnetometer.cpp"
 				>
 			</File>
 			<File
@@ -882,18 +898,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\data_output\ground_reactions.xml"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath=".\data_plot\ground_reactions.xml"
 			>
 			<FileConfiguration
@@ -906,7 +910,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\data_plot\Makefile.am"
+			RelativePath=".\data_output\ground_reactions.xml"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -919,6 +923,18 @@
 		</File>
 		<File
 			RelativePath=".\data_output\Makefile.am"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\data_plot\Makefile.am"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"

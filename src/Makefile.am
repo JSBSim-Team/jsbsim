@@ -26,7 +26,8 @@ libJSBSim_la_LIBADD = \
 	input_output/libInputOutput.la \
 	math/libMath.la \
 	simgear/props/libProperties.la \
-	simgear/xml/libExpat.la
+	simgear/xml/libExpat.la \
+	simgear/magvar/libcoremag.la
 libJSBSim_la_CXXFLAGS = $(AM_CXXFLAGS)
 
 JSBSim_SOURCES = JSBSim.cpp
@@ -47,6 +48,7 @@ JSBSim_LDADD = \
 	math/libMath.a \
 	simgear/props/libProperties.a \
 	simgear/xml/libExpat.a \
+	simgear/magvar/libcoremag.a \
 	-lm
 
 endif
