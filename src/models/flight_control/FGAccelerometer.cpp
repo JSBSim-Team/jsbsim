@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.6 2009/09/06 13:26:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.7 2009/09/06 13:45:37 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ FGAccelerometer::~FGAccelerometer()
 bool FGAccelerometer::Run(void )
 {
   // There is no input assumed. This is a dedicated acceleration sensor.
-  
+
   vRadius = MassBalance->StructuralToBody(vLocation);
     
   //gravitational forces
@@ -93,28 +93,8 @@ bool FGAccelerometer::Run(void )
 
   Input = vAccel(axis);
 
-  Output = Input; // perfect accelerometer
+  ProcessSensorSignal();
 
-  // Degrade signal as specified
-
-  if (fail_stuck) {
-    Output = PreviousOutput;
-    return true;
-  }
-
-  if (lag != 0.0)            Lag();       // models accelerometer lag
-  if (noise_variance != 0.0) Noise();     // models noise
-  if (drift_rate != 0.0)     Drift();     // models drift over time
-  if (bias != 0.0)           Bias();      // models a finite bias
-  if (gain != 0.0)           Gain();      // models a gain
-
-  if (fail_low)  Output = -HUGE_VAL;
-  if (fail_high) Output =  HUGE_VAL;
-
-  if (bits != 0)             Quantize();  // models quantization degradation
-//  if (delay != 0.0)          Delay();     // models system signal transport latencies
-
-  Clip(); // Is it right to clip an accelerometer?
   return true;
 }
 

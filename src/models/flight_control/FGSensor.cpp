@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.14 2009/08/29 16:36:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.15 2009/09/06 13:45:37 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,34 +138,41 @@ FGSensor::~FGSensor()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGSensor::Run(void )
+bool FGSensor::Run(void)
 {
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
+  ProcessSensorSignal();
+
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSensor::ProcessSensorSignal(void)
+{
   Output = Input; // perfect sensor
 
   // Degrade signal as specified
 
   if (fail_stuck) {
     Output = PreviousOutput;
-    return true;
+  } else {
+    if (lag != 0.0)            Lag();       // models sensor lag and filter
+    if (noise_variance != 0.0) Noise();     // models noise
+    if (drift_rate != 0.0)     Drift();     // models drift over time
+    if (gain != 0.0)           Gain();      // models a finite gain
+    if (bias != 0.0)           Bias();      // models a finite bias
+
+    if (delay != 0.0)          Delay();     // models system signal transport latencies
+
+    if (fail_low)  Output = -HUGE_VAL;
+    if (fail_high) Output =  HUGE_VAL;
+
+    if (bits != 0)             Quantize();  // models quantization degradation
+
+    Clip();
   }
-
-  if (lag != 0.0)            Lag();       // models sensor lag and filter
-  if (noise_variance != 0.0) Noise();     // models noise
-  if (drift_rate != 0.0)     Drift();     // models drift over time
-  if (bias != 0.0)           Bias();      // models a finite bias
-  if (gain != 0.0)           Gain();      // models a finite gain
-
-  if (delay != 0.0)          Delay();     // models system signal transport latencies
-
-  if (fail_low)  Output = -HUGE_VAL;
-  if (fail_high) Output =  HUGE_VAL;
-
-  if (bits != 0)             Quantize();  // models quantization degradation
-
-  Clip(); // Is it right to clip a sensor?
-  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
