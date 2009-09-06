@@ -1,8 +1,8 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGGyro.h
+ Header:       FGSensorOrientation.h
  Author:       Jon Berndt
- Date started: 29 August 2009
+ Date started: September 2009
 
  ------------- Copyright (C) 2009 -------------
 
@@ -30,8 +30,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGGYRO_H
-#define FGGYRO_H
+#ifndef FGSENSORORIENTATION_H
+#define FGSENSORORIENTATION_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -39,18 +39,14 @@ INCLUDES
 
 #include "FGSensor.h"
 #include <input_output/FGXMLElement.h>
-#include "models/FGPropagate.h"
-#include "models/FGMassBalance.h"
-#include "models/FGInertial.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
-#include "FGSensorOrientation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GYRO "$Id: FGGyro.h,v 1.3 2009/09/06 13:26:13 jberndt Exp $"
+#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.1 2009/09/06 13:26:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,78 +54,82 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGFCS;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates a Gyro component for the flight control system.
+/** Encapsulates a SensorOrientation capability for a sensor.
 
 Syntax:
 
-@code
-<gyro name="name">
-  <input> property </input>
-  <lag> number </lag>
-  <noise variation="PERCENT|ABSOLUTE"> number </noise>
-  <quantization name="name">
-    <bits> number </bits>
-    <min> number </min>
-    <max> number </max>
-  </quantization>
-  <drift_rate> number </drift_rate>
-  <bias> number </bias>
-</gyro>
-@endcode
-
-Example:
-
-@code
-<gyro name="aero/gyro/qbar">
-  <input> aero/qbar </input>
-  <lag> 0.5 </lag>
-  <noise variation="PERCENT"> 2 </noise>
-  <quantization name="aero/gyro/quantized/qbar">
-    <bits> 12 </bits>
-    <min> 0 </min>
-    <max> 400 </max>
-  </quantization>
-  <bias> 0.5 </bias>
-</gyro>
-@endcode
-
-The only required element in the gyro definition is the input element. In that
-case, no degradation would be modeled, and the output would simply be the input.
-
-For noise, if the type is PERCENT, then the value supplied is understood to be a
-percentage variance. That is, if the number given is 0.05, the the variance is
-understood to be +/-0.05 percent maximum variance. So, the actual value for the gyro
-will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
-even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
-time.
-
 @author Jon S. Berndt
-@version $Revision: 1.3 $
+@version $Revision: 1.1 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGyro  : public FGSensor, public FGSensorOrientation
+class FGSensorOrientation  : public FGJSBBase
 {
 public:
-  FGGyro(FGFCS* fcs, Element* element);
-  ~FGGyro();
+  FGSensorOrientation(Element* element)
+  {
+    Element* orient_element = element->FindElement("orientation");
+    if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
+    else {cerr << "No orientation given for this sensor. " << endl;}
 
-  bool Run (void);
+    Element* axis_element = element->FindElement("axis");
+    if (axis_element) {
+      string sAxis = element->FindElementValue("axis");
+      if (sAxis == "X" || sAxis == "x") {
+        axis = 1;
+      } else if (sAxis == "Y" || sAxis == "y") {
+        axis = 2;
+      } else if (sAxis == "Z" || sAxis == "z") {
+        axis = 3;
+      } else {
+        cerr << "  Incorrect/no axis specified for this sensor; assuming X axis" << endl;
+        axis = 1;
+      }
+    }
+
+    CalculateTransformMatrix();
+  }
+
+//  ~FGSensorOrientation();
+
+protected:
+  FGColumnVector3 vOrient;
+  FGMatrix33 mT;
+  int axis;
+  void CalculateTransformMatrix(void)
+  {
+    double cp,sp,cr,sr,cy,sy;
+
+    cp=cos(vOrient(ePitch)); sp=sin(vOrient(ePitch));
+    cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
+    cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
+
+    mT(1,1) =  cp*cy;
+    mT(1,2) =  cp*sy;
+    mT(1,3) = -sp;
+
+    mT(2,1) = sr*sp*cy - cr*sy;
+    mT(2,2) = sr*sp*sy + cr*cy;
+    mT(2,3) = sr*cp;
+
+    mT(3,1) = cr*sp*cy + sr*sy;
+    mT(3,2) = cr*sp*sy - sr*cy;
+    mT(3,3) = cr*cp;
+
+    // This transform is different than for FGForce, where we want a native nozzle
+    // force in body frame. Here we calculate the body frame accel and want it in
+    // the transformed accelerometer frame. So, the next line is commented out.
+    // mT = mT.Inverse();
+  }
 
 private:
-  FGPropagate* Propagate;
-  FGColumnVector3 vAccel;
-  void CalculateTransformMatrix(void);
-  
   void Debug(int from);
 };
 }

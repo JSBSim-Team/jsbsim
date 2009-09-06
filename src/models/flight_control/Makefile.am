@@ -9,7 +9,7 @@ LIBRARY_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
 LIBRARY_INCLUDES = FGDeadBand.h FGFCSComponent.h FGFilter.h \
                  FGGain.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h FGAccelerometer.h FGGyro.h \
-                 FGMagnetometer.h
+                 FGMagnetometer.h FGSensorOrientation.h
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libFlightControl.la

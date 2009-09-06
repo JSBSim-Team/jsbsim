@@ -41,38 +41,18 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGyro.cpp,v 1.2 2009/08/30 03:24:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGyro.cpp,v 1.3 2009/09/06 13:26:13 jberndt Exp $";
 static const char *IdHdr = ID_GYRO;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGGyro::FGGyro(FGFCS* fcs, Element* element) : FGSensor(fcs, element)
+FGGyro::FGGyro(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
+                                               FGSensorOrientation(element)
 {
   Propagate = fcs->GetExec()->GetPropagate();
   
-  Element* orient_element = element->FindElement("orientation");
-  if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
-  else {cerr << "No orientation given for gyro. " << endl;}
-
-  Element* axis_element = element->FindElement("axis");
-  if (axis_element) {
-    string sAxis = element->FindElementValue("axis");
-    if (sAxis == "ROLL" || sAxis == "roll") {
-      axis = 1;
-    } else if (sAxis == "PITCH" || sAxis == "pitch") {
-      axis = 2;
-    } else if (sAxis == "YAW" || sAxis == "yaw") {
-      axis = 3;
-    } else {
-      cerr << "  Incorrect/no axis specified for gyro; assuming Roll axis" << endl;
-      axis = 1;
-    }
-  }
-
-  CalculateTransformMatrix();
-
   Debug(0);
 }
 
@@ -117,34 +97,6 @@ bool FGGyro::Run(void )
 
   Clip(); // Is it right to clip a gyro?
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGGyro::CalculateTransformMatrix(void)
-{
-  double cp,sp,cr,sr,cy,sy;
-
-  cp=cos(vOrient(ePitch)); sp=sin(vOrient(ePitch));
-  cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
-  cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
-
-  mT(1,1) =  cp*cy;
-  mT(1,2) =  cp*sy;
-  mT(1,3) = -sp;
-
-  mT(2,1) = sr*sp*cy - cr*sy;
-  mT(2,2) = sr*sp*sy + cr*cy;
-  mT(2,3) = sr*cp;
-
-  mT(3,1) = cr*sp*cy + sr*sy;
-  mT(3,2) = cr*sp*sy - sr*cy;
-  mT(3,3) = cr*cp;
-
-  // This transform is different than for FGForce, where we want a native nozzle
-  // force in body frame. Here we calculate the body frame accel and want it in
-  // the transformed gyro frame. So, the next line is commented out.
-  // mT = mT.Inverse();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

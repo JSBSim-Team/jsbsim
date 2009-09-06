@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.1 2009/09/03 12:27:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.2 2009/09/06 13:26:13 jberndt Exp $";
 static const char *IdHdr = ID_MAGNETOMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +51,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element) : FGSensor(fcs, element),\
+FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
+                                                               FGSensorOrientation(element),
                                                                counter(0),
                                                                INERTIAL_UPDATE_RATE(1000)
 {
@@ -64,27 +65,6 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element) : FGSensor(fcs, ele
   else {cerr << "No location given for magnetometer. " << endl; exit(-1);}
 
   vRadius = MassBalance->StructuralToBody(vLocation);
-
-  Element* orient_element = element->FindElement("orientation");
-  if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
-  else {cerr << "No orientation given for magnetometer. " << endl;}
-
-  Element* axis_element = element->FindElement("axis");
-  if (axis_element) {
-    string sAxis = element->FindElementValue("axis");
-    if (sAxis == "X" || sAxis == "x") {
-      axis = 1;
-    } else if (sAxis == "Y" || sAxis == "y") {
-      axis = 2;
-    } else if (sAxis == "Z" || sAxis == "z") {
-      axis = 3;
-    } else {
-      cerr << "  Incorrect/no axis specified for magnetometer; assuming X axis" << endl;
-      axis = 1;
-    }
-  }
-
-  CalculateTransformMatrix();
 
   //assuming date wont significantly change over a flight to affect mag field
   //would be better to get the date from the sim if its simulated...
@@ -114,7 +94,7 @@ FGMagnetometer::~FGMagnetometer()
 void FGMagnetometer::updateInertialMag(void)
 {
   counter++;
-  if(counter > INERTIAL_UPDATE_RATE)//dont need to update every iteration
+  if (counter > INERTIAL_UPDATE_RATE)//dont need to update every iteration
   {
       counter = 0;
 
@@ -135,16 +115,16 @@ void FGMagnetometer::updateInertialMag(void)
 
 bool FGMagnetometer::Run(void )
 {
-  // There is no input assumed. This is a dedicated acceleration sensor.
+  // There is no input assumed. This is a dedicated magnetic field sensor.
   
   vRadius = MassBalance->StructuralToBody(vLocation);
 
-
   updateInertialMag();
-  //Inertial magnetic field rotated to the body frame
+
+  // Inertial magnetic field rotated to the body frame
   vMag = Propagate->GetTl2b() * FGColumnVector3(field[3], field[4], field[5]);
 
-  //allow for sensor orientation
+  // Allow for sensor orientation
   vMag = mT * vMag;
   
   Input = vMag(axis);
@@ -170,38 +150,8 @@ bool FGMagnetometer::Run(void )
   if (bits != 0)             Quantize();  // models quantization degradation
 //  if (delay != 0.0)          Delay();     // models system signal transport latencies
 
-  Clip(); // Is it right to clip an magnetometer?
+  Clip(); // Is it right to clip a magnetometer?
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGMagnetometer::CalculateTransformMatrix(void)
-{
-  double cp,sp,cr,sr,cy,sy;
-
-  cp=cos(vOrient(ePitch)); sp=sin(vOrient(ePitch));
-  cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
-  cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
-
-
-  mT(1,1) =  cp*cy;
-  mT(1,2) =  cp*sy;
-  mT(1,3) = -sp;
-
-  mT(2,1) = sr*sp*cy - cr*sy;
-  mT(2,2) = sr*sp*sy + cr*cy;
-  mT(2,3) = sr*cp;
-
-  mT(3,1) = cr*sp*cy + sr*sy;
-  mT(3,2) = cr*sp*sy - sr*cy;
-  mT(3,3) = cr*cp;
-
-  
-  // This transform is different than for FGForce, where we want a native nozzle
-  // force in body frame. Here we calculate the body frame accel and want it in
-  // the transformed magnetometer frame. So, the next line is commented out.
-  // mT = mT.Inverse();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
