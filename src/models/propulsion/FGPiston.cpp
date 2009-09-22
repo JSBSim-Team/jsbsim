@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.40 2009/08/30 15:56:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.41 2009/09/22 07:28:51 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,6 +349,7 @@ double FGPiston::Calculate(void)
   //
 
   p_amb = Atmosphere->GetPressure() * psftopa;
+  p_ram = Auxiliary->GetTotalPressure() * psftopa;
   T_amb = RankineToKelvin(Atmosphere->GetTemperature());
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
@@ -526,7 +527,7 @@ void FGPiston::doMAP(void)
   if ( map_coefficient < 0.1 ) map_coefficient = 0.1;
 
   // Add a one second lag to manifold pressure changes
-  double dMAP = (TMAP - p_amb * map_coefficient) * dt;
+  double dMAP = (TMAP - p_ram * map_coefficient) * dt;
   TMAP -=dMAP;
 
   // Find the mean effective pressure required to achieve this manifold pressure
@@ -872,6 +873,7 @@ void FGPiston::Debug(int from)
       cout << "      MaxHP: "               << MaxHP                    << endl;
       cout << "      Cycles: "              << Cycles                   << endl;
       cout << "      IdleRPM: "             << IdleRPM                  << endl;
+      cout << "      MaxRPM: "              << MaxRPM                   << endl;
       cout << "      MaxThrottle: "         << MaxThrottle              << endl;
       cout << "      MinThrottle: "         << MinThrottle              << endl;
       cout << "      ISFC: "                << ISFC                     << endl;

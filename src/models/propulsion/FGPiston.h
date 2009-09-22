@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.16 2009/08/30 03:51:28 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.17 2009/09/22 07:28:51 andgi Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.16 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.17 2009/09/22 07:28:51 andgi Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,6 +302,7 @@ private:
   // Inputs (in addition to those in FGEngine).
   //
   double p_amb;              // Pascals
+  double p_ram;              // Pascals
   double T_amb;              // degrees Kelvin
   double RPM;                // revolutions per minute
   double IAS;                // knots
