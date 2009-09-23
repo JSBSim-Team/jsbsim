@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.65 2009/08/31 07:11:15 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.66 2009/09/23 11:25:53 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,6 +275,7 @@ FGColumnVector3& FGLGear::Force(void)
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
+    double verticalZProj = 0.;
 
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZ); // Get wheel in body frame
     vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
@@ -285,14 +286,18 @@ FGColumnVector3& FGLGear::Force(void)
     double height = Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
     vGroundNormal = -1. * Propagate->GetTec2b() * normal;
 
+    // The height returned above is the AGL and is expressed in the Z direction of the local
+    // coordinate frame. We now need to transform this height in actual compression of the strut (BOGEY)
+    // of in the normal direction to the ground (STRUCTURE)
     switch (eContactType) {
     case ctBOGEY:
-      // Project the height in the local coordinate frame of the strut to compute the actual compression
-      // length. The strut is assumed to be parallel to Z in the body frame.
-      compressLength = vGroundNormal(eZ) < 0.0 ? height / vGroundNormal(eZ) : 0.0;
+      // Could be optimized in verticalZProj = Propagate->GetTb2l()(3,3);
+      verticalZProj = (Propagate->GetTb2l()*FGColumnVector3(0.,0.,1.))(eZ);
+      compressLength = verticalZProj > 0.0 ? -height / verticalZProj : 0.0;
       break;
     case ctSTRUCTURE:
-      compressLength = -height;
+      verticalZProj = (Propagate->GetTec2l()*normal)(eZ);
+      compressLength = fabs(verticalZProj) > 0.0 ? -height / verticalZProj : 0.0;
       break;
     }
 
@@ -727,6 +732,11 @@ void FGLGear::bind(void)
 
     property_name = base_property_name + "/static_friction_coeff";
     Exec->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
+
+    if (eSteerType == stCaster) {
+      property_name = base_property_name + "/steering-angle-rad";
+      Exec->GetPropertyManager()->Tie( property_name.c_str(), &SteerAngle );
+    }
 
   }
 
