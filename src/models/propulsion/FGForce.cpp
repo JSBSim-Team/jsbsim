@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.10 2008/02/27 04:18:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.11 2009/09/23 11:24:34 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,23 +112,27 @@ FGMatrix33 FGForce::Transform(void)
 void FGForce::UpdateCustomTransformMatrix(void)
 {
   double cp,sp,cr,sr,cy,sy;
+  double srsp, crcy, crsy;
 
   cp=cos(vOrient(ePitch)); sp=sin(vOrient(ePitch));
   cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
   cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
 
+  srsp = sr*sp;
+  crcy = cr*cy;
+  crsy = cr*sy;
+
   mT(1,1) =  cp*cy;
-  mT(1,2) =  cp*sy;
-  mT(1,3) = -sp;
+  mT(2,1) =  cp*sy;
+  mT(3,1) = -sp;
 
-  mT(2,1) = sr*sp*cy - cr*sy;
-  mT(2,2) = sr*sp*sy + cr*cy;
-  mT(2,3) = sr*cp;
+  mT(1,2) = srsp*cy - crsy;
+  mT(2,2) = srsp*sy + crcy;
+  mT(3,2) = sr*cp;
 
-  mT(3,1) = cr*sp*cy + sr*sy;
-  mT(3,2) = cr*sp*sy - sr*cy;
+  mT(1,3) = crcy*sp + sr*sy;
+  mT(2,3) = crsy*sp - sr*cy;
   mT(3,3) = cr*cp;
-  mT = mT.Inverse();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
