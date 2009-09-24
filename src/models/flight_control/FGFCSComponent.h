@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.11 2009/08/30 03:13:27 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.12 2009/09/24 11:26:59 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.11 2009/08/30 03:13:27 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.12 2009/09/24 11:26:59 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -101,17 +101,16 @@ public:
 
   virtual bool Run(void);
   virtual void SetOutput(void);
-  inline double GetOutput (void) const {return Output;}
-  inline FGPropertyManager* GetOutputNode(void) { return OutputNode; }
-  inline string GetName(void) const {return Name;}
-  inline string GetType(void) const { return Type; }
+  double GetOutput (void) const {return Output;}
+  string GetName(void) const {return Name;}
+  string GetType(void) const { return Type; }
   virtual double GetOutputPct(void) const { return 0; }
 
 protected:
   FGFCS* fcs;
   FGPropertyManager* PropertyManager;
   FGPropertyManager* treenode;
-  FGPropertyManager* OutputNode;
+  vector <FGPropertyManager*> OutputNodes;
   FGPropertyManager* ClipMinPropertyNode;
   FGPropertyManager* ClipMaxPropertyNode;
   vector <FGPropertyManager*> InputNodes;

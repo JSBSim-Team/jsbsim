@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.6 2009/06/13 02:41:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.7 2009/09/24 11:26:59 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +144,10 @@ void FGDeadBand::Debug(int from)
         cout << "      DEADBAND WIDTH: " << width << endl;
       }
       cout << "      GAIN: " << gain << endl;
-      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (IsOutput) {
+        for (int i=0; i<OutputNodes.size(); i++)
+          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

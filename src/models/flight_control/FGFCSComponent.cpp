@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.20 2009/08/30 03:13:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.21 2009/09/24 11:26:59 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +52,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
   Element *input_element, *clip_el;
   Input = Output = clipmin = clipmax = 0.0;
-  OutputNode = treenode = 0;
+  treenode = 0;
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
@@ -123,13 +123,17 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     input_element = element->FindNextElement("input");
   }
 
-  if (element->FindElement("output")) {
+  Element *out_elem = element->FindElement("output");
+  while (out_elem) {
     IsOutput = true;
-    OutputNode = PropertyManager->GetNode( element->FindElementValue("output"), true );
+    string output_node_name = out_elem->GetDataLine();
+    FGPropertyManager* OutputNode = PropertyManager->GetNode( output_node_name, true );
+    OutputNodes.push_back(OutputNode);
     if (!OutputNode) {
-      cerr << endl << "  Unable to process property: " << element->FindElementValue("output") << endl;
+      cerr << endl << "  Unable to process property: " << output_node_name << endl;
       throw(string("Invalid output property name in flight control definition"));
     }
+    out_elem = element->FindNextElement("output");
   }
 
   clip_el = element->FindElement("clipto");
@@ -171,7 +175,7 @@ FGFCSComponent::~FGFCSComponent()
 
 void FGFCSComponent::SetOutput(void)
 {
-  OutputNode->setDoubleValue(Output);
+  for (int i=0; i<OutputNodes.size(); i++) OutputNodes[i]->setDoubleValue(Output);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

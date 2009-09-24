@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.6 2008/07/22 02:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.7 2009/09/24 11:26:59 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,7 @@ bool FGKinemat::Run(void )
 
   if (DoScale) Input *= Detents[NumDetents-1];
 
-  if (IsOutput) Output = OutputNode->getDoubleValue();
+  if (IsOutput) Output = OutputNodes[0]->getDoubleValue();
 
   if (Input < Detents[0])
     Input = Detents[0];
@@ -190,7 +190,10 @@ void FGKinemat::Debug(int from)
       for (int i=0;i<NumDetents;i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
-      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (IsOutput) {
+        for (int i=0; i<OutputNodes.size(); i++)
+          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+      }
       if (!DoScale) cout << "      NOSCALE" << endl;
     }
   }
