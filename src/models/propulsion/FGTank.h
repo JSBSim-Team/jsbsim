@@ -59,7 +59,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.16 2009/09/25 15:35:15 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,6 +127,7 @@ CLASS DOCUMENTATION
   <contents unit="{LBS | KG}"> {number} </contents>
   <temperature> {number} </temperature> <!-- must be degrees fahrenheit -->
   <standpipe unit="{LBS | KG"}> {number} </standpipe>
+  <priority> {integer} </priority>
 </tank>
 @endcode
 
@@ -140,6 +141,7 @@ CLASS DOCUMENTATION
 - \b contents - Initial contents, defaults to pounds.
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
+- \b priority - Establishes feed sequence of tank. "1" is the highest priority.
 
 location:
 - \b x - Location of tank on aircraft's x-axis, defaults to inches.
@@ -160,10 +162,11 @@ be printed to the console if the location is not given
 - \b y - 0.0  (both full and drained CG locations)
 - \b z - 0.0  (both full and drained CG locations)
 - \b radius - 0.0
-- \b capacity - 0.0
+- \b capacity - 0.00001 (tank capacity must not be zero)
 - \b contents - 0.0
-- \b temperature - -9999.0
-- \b standpipe - 0.0
+- \b temperature - -9999.0 (flag which indicates no temperature is set)
+- \b standpipe - 0.0 (all contents may be dumped)
+- \b priority - 1 (highest feed sequence priority)
 
     @author Jon Berndt, Dave Culp
     @see Akbar, Raza et al. "A Simple Analysis of Fuel Addition to the CWT of
@@ -211,8 +214,8 @@ public:
   /** Resets the tank parameters to the initial conditions */
   void ResetToIC(void);
 
-  /** If the tank is supplying fuel, this function returns true.
-      @return true if this tank is feeding an engine.*/
+  /** If the tank is set to supply fuel, this function returns true.
+      @return true if this tank is set to a non-zero priority.*/
   bool GetSelected(void) {return Selected;}
 
   /** Gets the tank fill level.
@@ -247,6 +250,9 @@ public:
 
   double GetStandpipe(void) {return Standpipe;}
 
+  int  GetPriority(void) const {return Priority;}
+  void SetPriority(int p) { Priority = p; Selected = p>0 ? true:false; } 
+
   const FGColumnVector3 GetXYZ(void);
   const double GetXYZ(int idx);
 
@@ -254,6 +260,7 @@ public:
   void SetContents(double amount);
   void SetTemperature(double temp) { Temperature = temp; }
   void SetStandpipe(double amount) { Standpipe = amount; }
+  void SetSelected(bool sel) { sel==true ? SetPriority(1):SetPriority(0); }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
   enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING};
@@ -281,6 +288,7 @@ private:
   double Temperature, InitialTemperature;
   double Standpipe, InitialStandpipe;
   bool  Selected;
+  int Priority, InitialPriority;
   FGFDMExec* Exec;
   FGPropertyManager* PropertyManager;
   void CalculateInertias(void);

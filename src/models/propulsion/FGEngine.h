@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.16 2009/09/25 15:35:15 dpculp Exp $"
 
 using std::string;
 using std::vector;
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.16 2009/09/25 15:35:15 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,7 +159,7 @@ public:
 
   virtual void SetRunning(bool bb) { Running=bb; }
   virtual void SetName(string name) { Name = name; }
-  virtual void AddFeedTank(int tkID);
+  virtual void AddFeedTank(int tkID, int priority);
   virtual void SetFuelFreeze(bool f) { FuelFreeze = f; }
 
   virtual void SetStarter(bool s) { Starter = s; }

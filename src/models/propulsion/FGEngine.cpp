@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.26 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.27 2009/09/25 15:35:15 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   SLFuelFlowMax = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
+  unsigned int i;
 
   ResetToIC(); // initialize dynamic terms
 
@@ -104,11 +105,17 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
     cerr << "No thruster definition supplied with engine definition." << endl;
   }
 
+  // Build and initialize the feed tank vector.
+  for (i=0; i<(Propulsion->GetNumTanks()); i++) {
+    SourceTanks.push_back(0);
+  }
+
   // Load feed tank[s] references
   local_element = engine_element->GetParent()->FindElement("feed");
   if (local_element) {
     while (local_element) {
-      AddFeedTank((int)local_element->GetDataAsNumber());
+      int tankID = (int)local_element->GetDataAsNumber();
+      AddFeedTank( tankID , Propulsion->GetTank(tankID)->GetPriority());
       local_element = engine_element->GetParent()->FindNextElement("feed");
     }
   } else {
@@ -165,35 +172,56 @@ void FGEngine::ConsumeFuel(void)
   if (TrimMode) return;
 
   unsigned int i;
-  double Fshortage, TanksWithFuel;
+  double Fshortage, TanksWithFuel, FuelNeeded;
   FGTank* Tank;
-  Fshortage = TanksWithFuel = 0.0;
+  Fshortage = TanksWithFuel = FuelNeeded = 0.0;
+  double FuelToBurn = CalcFuelNeed();
+  int CurrentPriority = 1;
+  double Contents = 0.0;
+  vector <int> FeedList;
+  Starved = false;
 
-  // count how many assigned tanks have fuel
-  for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(SourceTanks[i]);
-    if (Tank->GetType() == FGTank::ttFUEL){
-      if (Tank->GetContents() > 0.0) ++TanksWithFuel;
-    } else {
-       cerr << "No oxidizer tanks should be used for this engine type." << endl;
+  while (FuelToBurn > 0.0) {
+
+    // Count how many fuel tanks with the current priority level have fuel.
+    // If none, then try next lower priority.  Build the feed list.
+    while ((TanksWithFuel == 0.0) && (CurrentPriority <= Propulsion->GetNumTanks())) {
+      for (i=0; i<Propulsion->GetNumTanks(); i++) {
+        Tank = Propulsion->GetTank(i);
+        if (Tank->GetType() == FGTank::ttFUEL) {
+           if ((Tank->GetContents() > 0.0) && (Tank->GetPriority() == CurrentPriority)) {
+             ++TanksWithFuel;
+             FeedList.push_back(i);
+           } 
+        } else {
+           cerr << "No oxidizer tanks should be used for this engine type." << endl;
+        }
+      }
+      if (TanksWithFuel == 0.0) CurrentPriority++;
     }
-  }
-  if (TanksWithFuel==0) {
-    Starved = true;
-    return;
-  }
 
-  for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(SourceTanks[i]);
-    if (Tank->GetType() == FGTank::ttFUEL) {
-       Fshortage += Tank->Drain(CalcFuelNeed()/TanksWithFuel);
-    } else {
-       cerr << "No oxidizer tanks should be used for this engine type." << endl;
+    // No fuel found at any priority!
+    if (TanksWithFuel == 0.0) {
+      Starved = true;
+      return;
     }
-  }
 
-  if (Fshortage < 0.00) Starved = true;
-  else Starved = false;
+    // Remove equal amount of fuel from each feed tank.  
+    FuelNeeded = FuelToBurn/TanksWithFuel;
+    for (i=0; i<FeedList.size(); i++) {
+      Tank = Propulsion->GetTank(FeedList[i]);
+      Tank->Drain(FuelNeeded); 
+      FuelToBurn -= FuelNeeded;
+    }
+
+    // check if we were not able to burn all the fuel we needed to at this priority level
+    if (FuelToBurn > 0.001) {
+      CurrentPriority++;
+      TanksWithFuel = 0.0;
+      FeedList.clear();
+    }
+ 
+  }  // while
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,9 +247,9 @@ void FGEngine::SetPlacement(FGColumnVector3& location, FGColumnVector3& orientat
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGEngine::AddFeedTank(int tkID)
+void FGEngine::AddFeedTank(int tkID, int priority)
 {
-  SourceTanks.push_back(tkID);
+  SourceTanks[tkID] = priority;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
