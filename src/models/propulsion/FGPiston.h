@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.17 2009/09/22 07:28:51 andgi Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.18 2009/09/25 03:43:25 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,7 @@ CLASS DOCUMENTATION
   <volumetric_efficiency> {number} </volumetric_efficiency>
   <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>
+  <boostmanual> {0 | 1} </boostmanual>
   <ratedboost1 unit="{INHG | PA | ATM}"> {number} </ratedboost1>
   <ratedpower1 unit="{HP | WATTS}"> {number} </ratedpower1>
   <ratedrpm1> {number} </ratedrpm1>
@@ -97,6 +98,8 @@ CLASS DOCUMENTATION
   <ratedrpm3> {number} </ratedrpm3>
   <ratedaltitude3 unit="{FT | M}"> {number} </ratedaltitude3>
   <takeoffboost unit="{INHG | PA | ATM}"> {number} </takeoffboost>
+  <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
+  <ram-air-factor> {number} </ram-air-factor>
 </piston_engine>
 @endcode
 
@@ -119,6 +122,10 @@ CLASS DOCUMENTATION
       This isn't implemented in the model yet though, there would need to be
       some way of getting the boost control cutout lever position (on or off)
       from FlightGear first.
+
+    - BOOSTMANUAL - whether a multispeed supercharger will manually or
+      automatically shift boost speeds.  On manual shifting the boost speeds
+      is accomplished by controling propulsion/engine/boostspeed
 
     - The next items are all appended with either 1, 2 or 3 depending on which
       boost speed they refer to, eg RATEDBOOST1.  The rated values seems to have
@@ -173,7 +180,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.17 2009/09/22 07:28:51 andgi Exp $
+    @version $Id: FGPiston.h,v 1.18 2009/09/25 03:43:25 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +254,8 @@ private:
   const double calorific_value_fuel;  // W/Kg (approximate)
   const double Cp_air;      // J/KgK
   const double Cp_fuel;     // J/KgK
+  const double standard_pressure; //Pa
+
 
   FGTable *Lookup_Combustion_Efficiency;
   FGTable *Mixture_Efficiency_Correlation;
@@ -267,12 +276,19 @@ private:
   double Bore;                     // inches
   double Stroke;                   // inches
   double Cylinders;                // number
-  double CompressionRatio;        // number
+  double CompressionRatio;         // number
+  double Z_airbox; // number representing intake impediance before the throttle
+  double Z_throttle; // number representing slope of throttle impediance
+  double PeakMeanPistonSpeed_fps; // ft/sec speed where intake valves begin to choke. Typically 33-50 fps
+  double RatedMeanPistonSpeed_fps; // ft/sec derived from MaxRPM and stroke.
+  double Ram_Air_Factor;           // number
 
   double StarterHP;                // initial horsepower of starter motor
   int BoostSpeeds;	// Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
   int BoostSpeed;	// The current boost-speed (zero-based).
   bool Boosted;		// Set true for boosted engine.
+  int BoostManual;	// The raw value read in from the config file - should be 1 or 0 - see description below.
+  bool bBoostManual;	// Set true if pilot must manually control the boost speed.
   int BoostOverride;	// The raw value read in from the config file - should be 1 or 0 - see description below.
   bool bBoostOverride;	// Set true if pilot override of the boost regulator was fitted.
               // (Typically called 'war emergency power').
