@@ -51,7 +51,7 @@ using std::endl;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.13 2009/09/26 02:43:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     - HR = hour
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.13 2009/09/26 02:43:26 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,7 +335,8 @@ private:
   Element *parent;
   unsigned int element_index;
   typedef map <string, map <string, double> > tMapConvert;
-  tMapConvert convert;
+  static tMapConvert convert;
+  static bool converterIsInitialized;
 };
 
 } // namespace JSBSim
