@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.16 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.17 2009/09/26 06:28:25 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +52,6 @@ CLASS IMPLEMENTATION
 FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   double denom;
-  dt = fcs->GetDt();
 
   // inputs are read from the base class constructor
 

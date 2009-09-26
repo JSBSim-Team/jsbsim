@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.12 2009/09/24 11:26:59 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.13 2009/09/26 06:28:25 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.12 2009/09/24 11:26:59 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.13 2009/09/26 06:28:25 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -120,6 +120,7 @@ protected:
   double Input;
   double Output;
   double clipmax, clipmin;
+  double dt;
   float clipMinSign, clipMaxSign;
   bool IsOutput;
   bool clip;

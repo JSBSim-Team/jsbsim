@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.12 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.13 2009/09/26 06:28:25 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,6 @@ CLASS IMPLEMENTATION
 
 FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  dt = fcs->GetState()->Getdt();
   Trigger = 0;
   DynamicFilter = false;
 

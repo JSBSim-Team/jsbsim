@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.10 2009/09/26 06:28:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.9 $
+@version $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +144,6 @@ public:
   inline bool GetFailStuck(void) const {return fail_stuck;}
   
 private:
-  double dt;
   double span;
   double bias;
   double rate_limit;

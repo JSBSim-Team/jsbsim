@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.15 2009/09/06 13:45:37 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.16 2009/09/26 06:28:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.15 $
+@version $Revision: 1.16 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,6 @@ public:
 protected:
   enum eNoiseType {ePercent=0, eAbsolute} NoiseType;
   enum eDistributionType {eUniform=0, eGaussian} DistributionType;
-  double dt;
   double min, max;
   double span;
   double bias;

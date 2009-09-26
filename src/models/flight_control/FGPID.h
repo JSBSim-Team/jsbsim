@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.10 2009/09/26 06:28:25 jberndt Exp $"
 
 using std::string;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.9 $
+    @version $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,6 @@ public:
   void ResetPastStates(void) {Input_prev = Input_prev2 = Output = I_out_total = 0.0;}
 
 private:
-  double dt;
   FGPropertyManager *Trigger;
   double Kp, Ki, Kd;
   double I_out_total;

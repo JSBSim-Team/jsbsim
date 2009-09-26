@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.21 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.22 2009/09/26 06:28:25 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,6 +57,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
   string input, clip_string;
+  dt = fcs->GetDt();
 
   PropertyManager = fcs->GetPropertyManager();
   if        (element->GetName() == string("lag_filter")) {

@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.13 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.14 2009/09/26 06:28:25 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,7 +49,6 @@ CLASS IMPLEMENTATION
 FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   string kp_string, ki_string, kd_string;
-  dt = fcs->GetState()->Getdt();
 
   Kp = Ki = Kd = 0.0;
   KpPropertyNode = 0;

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.10 2009/09/26 06:28:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -225,7 +225,7 @@ is so that the last component in a "string" can copy its value to the appropriat
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Revision: 1.9 $
+@version $Revision: 1.10 $
 
 */
 
@@ -249,7 +249,6 @@ public:
   enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
 
 private:
-  double dt;
   double ca;
   double cb;
   double cc;

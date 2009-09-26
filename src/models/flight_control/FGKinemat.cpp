@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.7 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.8 2009/09/26 06:28:25 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,7 +98,7 @@ FGKinemat::~FGKinemat()
 
 bool FGKinemat::Run(void )
 {
-  double dt = fcs->GetState()->Getdt();
+  double dt0 = dt;
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
@@ -113,7 +113,7 @@ bool FGKinemat::Run(void )
 
   // Process all detent intervals the movement traverses until either the
   // final value is reached or the time interval has finished.
-  while ( 0.0 < dt && !EqualToRoundoff(Input, Output) ) {
+  while ( dt0 > 0.0 && !EqualToRoundoff(Input, Output) ) {
 
     // Find the area where Output is in
     int ind;
@@ -137,8 +137,8 @@ bool FGKinemat::Run(void )
       double ThisDt = fabs((ThisInput-Output)/Rate);
 
       // and clip to the timestep size
-      if (dt < ThisDt) {
-        ThisDt = dt;
+      if (dt0 < ThisDt) {
+        ThisDt = dt0;
         if (Output < Input)
           Output += ThisDt*Rate;
         else
@@ -148,7 +148,7 @@ bool FGKinemat::Run(void )
         // is met even in inexact arithmetics ...
         Output = ThisInput;
 
-      dt -= ThisDt;
+      dt0 -= ThisDt;
     }
   }
 
