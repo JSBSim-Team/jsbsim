@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.17 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.18 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,7 +262,7 @@ void FGSwitch::Debug(int from)
         cout << endl;
       }
       if (IsOutput) {
-        for (int i=0; i<OutputNodes.size(); i++)
+        for (unsigned int i=0; i<OutputNodes.size(); i++)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
     }

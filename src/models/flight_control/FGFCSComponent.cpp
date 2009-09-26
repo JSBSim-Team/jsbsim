@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.23 2009/09/26 06:36:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.24 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +141,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   if ( element->FindElement("delay") ) {
     delay = (unsigned int)element->FindElementValueAsNumber("delay");
     output_array.resize(delay);
-    for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
+    for (int i=0; i<delay; i++) output_array[i] = 0.0;
   }
 
   clip_el = element->FindElement("clipto");
@@ -183,7 +183,7 @@ FGFCSComponent::~FGFCSComponent()
 
 void FGFCSComponent::SetOutput(void)
 {
-  for (int i=0; i<OutputNodes.size(); i++) OutputNodes[i]->setDoubleValue(Output);
+  for (unsigned int i=0; i<OutputNodes.size(); i++) OutputNodes[i]->setDoubleValue(Output);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.12 2009/09/26 06:28:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.13 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,7 +235,7 @@ void FGActuator::Debug(int from)
         cout << "      INPUT: " << InputNodes[0]->getName() << endl;
 
       if (IsOutput) {
-        for (int i=0; i<OutputNodes.size(); i++)
+        for (unsigned int i=0; i<OutputNodes.size(); i++)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
       if (bias != 0.0) cout << "      Bias: " << bias << endl;

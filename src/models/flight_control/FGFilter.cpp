@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.13 2009/09/26 06:28:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.14 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,9 +322,11 @@ void FGFilter::Debug(int from)
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
           else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
           break;
+        case eUnknown:
+          break;
        } 
       if (IsOutput) {
-        for (int i=0; i<OutputNodes.size(); i++)
+        for (unsigned int i=0; i<OutputNodes.size(); i++)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
     }

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.3 2009/09/06 13:45:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.4 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_MAGNETOMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,11 +103,11 @@ void FGMagnetometer::updateInertialMag(void)
       usedAlt = (Propagate->GetGeodeticAltitude()*fttom*0.001);//km
 
       //this should be done whenever the position changes significantly (in nTesla)
-      double magvar = calc_magvar( usedLat,
-                                 usedLon,
-                                 usedAlt,
-                                 date,
-                                 field );
+      calc_magvar( usedLat,
+                   usedLon,
+                   usedAlt,
+                   date,
+                   field );
   }
 }
 

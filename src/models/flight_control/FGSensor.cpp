@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.18 2009/09/26 06:36:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.19 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +322,7 @@ void FGSensor::Debug(int from)
         }
       }
       if (IsOutput) {
-        for (int i=0; i<OutputNodes.size(); i++)
+        for (unsigned int i=0; i<OutputNodes.size(); i++)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
     }

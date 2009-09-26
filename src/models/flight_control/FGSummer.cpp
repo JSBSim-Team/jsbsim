@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.5 2009/09/24 11:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.6 2009/09/26 17:45:49 andgi Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,7 +120,7 @@ void FGSummer::Debug(int from)
       }
       if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
       if (IsOutput) {
-        for (int i=0; i<OutputNodes.size(); i++)
+        for (unsigned int i=0; i<OutputNodes.size(); i++)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
     }
