@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.16 2009/09/26 06:28:25 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.17 2009/09/26 06:36:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.16 $
+@version $Revision: 1.17 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,13 +152,10 @@ protected:
   int bits;
   int quantized;
   int divisions;
-  int delay;
-  int index;
   bool fail_low;
   bool fail_high;
   bool fail_stuck;
   string quant_property;
-  vector <double> output_array;
 
   void ProcessSensorSignal(void);
   void Noise(void);
@@ -166,7 +163,6 @@ protected:
   void Drift(void);
   void Quantize(void);
   void Lag(void);
-  void Delay(void);
   void Gain(void);
 
   void bind(void);

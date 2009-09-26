@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.13 2009/09/26 06:28:25 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.14 2009/09/26 06:36:05 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.13 2009/09/26 06:28:25 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.14 2009/09/26 06:36:05 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -115,16 +115,20 @@ protected:
   FGPropertyManager* ClipMaxPropertyNode;
   vector <FGPropertyManager*> InputNodes;
   vector <float> InputSigns;
+  vector <double> output_array;
   string Type;
   string Name;
   double Input;
   double Output;
   double clipmax, clipmin;
-  double dt;
+  int delay;
+  int index;
   float clipMinSign, clipMaxSign;
+  double dt;
   bool IsOutput;
   bool clip;
 
+  void Delay(void);
   void Clip(void);
   virtual void bind();
   virtual void Debug(int from);

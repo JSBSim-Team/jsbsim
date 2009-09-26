@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.17 2009/09/26 06:28:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.18 2009/09/26 06:36:05 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   // inputs are read from the base class constructor
 
-  bits = quantized = divisions = index = delay = 0;
+  bits = quantized = divisions = 0;
   PreviousInput = PreviousOutput = 0.0;
   min = max = bias = gain = noise_variance = lag = drift_rate = drift = span = 0.0;
   granularity = 0.0;
@@ -116,11 +116,6 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       cerr << "  defaulting to UNIFORM." << endl;
     }
   }
-  if ( element->FindElement("delay") ) {
-    delay = (unsigned int)element->FindElementValueAsNumber("delay");
-    output_array.resize(delay);
-    for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
-  }
 
   FGFCSComponent::bind();
   bind();
@@ -163,7 +158,7 @@ void FGSensor::ProcessSensorSignal(void)
     if (gain != 0.0)           Gain();      // models a finite gain
     if (bias != 0.0)           Bias();      // models a finite bias
 
-    if (delay != 0.0)          Delay();     // models system signal transport latencies
+    if (delay != 0)            Delay();     // models system signal transport latencies
 
     if (fail_low)  Output = -HUGE_VAL;
     if (fail_high) Output =  HUGE_VAL;
@@ -243,16 +238,6 @@ void FGSensor::Lag(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSensor::Delay(void)
-{
-  output_array[index] = Output;
-  if (index == delay-1) index = 0;
-  else index++;
-  Output = output_array[index];
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGSensor::bind(void)
 {
   string tmp = Name;
@@ -307,8 +292,6 @@ void FGSensor::Debug(int from)
         else
           cout << "      INPUT: " << InputNodes[0]->getName() << endl;
       }
-      if (delay > 0) cout <<"      Frame delay: " << delay
-                                   << " frames (" << delay*dt << " sec)" << endl;
       if (bits != 0) {
         if (quant_property.empty())
           cout << "      Quantized output" << endl;

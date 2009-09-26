@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.22 2009/09/26 06:28:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.23 2009/09/26 06:36:05 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,6 +53,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Element *input_element, *clip_el;
   Input = Output = clipmin = clipmax = 0.0;
   treenode = 0;
+  delay = index = 0;
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
@@ -137,6 +138,12 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     out_elem = element->FindNextElement("output");
   }
 
+  if ( element->FindElement("delay") ) {
+    delay = (unsigned int)element->FindElementValueAsNumber("delay");
+    output_array.resize(delay);
+    for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
+  }
+
   clip_el = element->FindElement("clipto");
   if (clip_el) {
     clip_string = clip_el->FindElementValue("min");
@@ -184,6 +191,16 @@ void FGFCSComponent::SetOutput(void)
 bool FGFCSComponent::Run(void)
 {
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCSComponent::Delay(void)
+{
+  output_array[index] = Output;
+  if (index == delay-1) index = 0;
+  else index++;
+  Output = output_array[index];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,6 +280,8 @@ void FGFCSComponent::Debug(int from)
           cout << "      Maximum limit: " << clipmax << endl;
         }
       }  
+      if (delay > 0) cout <<"      Frame delay: " << delay
+                                   << " frames (" << delay*dt << " sec)" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
