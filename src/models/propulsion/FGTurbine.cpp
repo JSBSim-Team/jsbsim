@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.20 2009/09/27 22:12:06 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.21 2009/09/27 22:44:42 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,8 +99,9 @@ void FGTurbine::ResetToIC(void)
   Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
   Cutoff = true;
   phase = tpOff;
-  EGT_degC = 0.0;
-  OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
+  TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
+  EGT_degC = TAT;
+  OilTemp_degK = TAT + 273.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -327,7 +328,7 @@ double FGTurbine::Seize(void)
     double qbar = Auxiliary->Getqbar();
     N2 = 0.0;
     N1 = Seek(&N1, qbar/20.0, 0, N1/15.0);
-    FuelFlow_pph = IdleFF;
+    FuelFlow_pph = Cutoff ? 0.0 : IdleFF;
     ConsumeFuel();
     OilPressure_psi = 0.0;
     OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0, 0.2);
@@ -528,7 +529,7 @@ int FGTurbine::InitRunning(void) {
   State->SuspendIntegration();
   Cutoff=false;
   Running=true;  
-  N2=16.0;
+  N2=IdleN2;
   Calculate();
   State->ResumeIntegration();
   return phase==tpRun;
