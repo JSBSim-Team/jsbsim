@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.42 2009/09/25 03:43:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.43 2009/09/27 02:33:24 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,6 +90,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   CompressionRatio = 8.5;
   Z_airbox = -999;
   Ram_Air_Factor = 1;
+  PeakMeanPistonSpeed_fps = 100;
 
   // These are internal program variables
 
@@ -195,6 +196,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Z_airbox = el->FindElementValueAsNumber("air-intake-impedance-factor");
   if (el->FindElement("ram-air-factor"))
     Ram_Air_Factor  = el->FindElementValueAsNumber("ram-air-factor");
+  if (el->FindElement("peak-piston-speed"))
+    PeakMeanPistonSpeed_fps  = el->FindElementValueAsNumber("peak-piston-speed");
   if (el->FindElement("numboostspeeds")) { // Turbo- and super-charging parameters
     BoostSpeeds = (int)el->FindElementValueAsNumber("numboostspeeds");
     if (el->FindElement("boostoverride"))
@@ -254,7 +257,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
 
 // For throttle
-  if(PeakMeanPistonSpeed_fps < 1) PeakMeanPistonSpeed_fps = 100 / 3;
   RatedMeanPistonSpeed_fps =  ( MaxRPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
   if(Z_airbox < 998){
     double Ze=RatedMeanPistonSpeed_fps/PeakMeanPistonSpeed_fps; // engine impedence
