@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.19 2009/05/31 19:54:57 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.20 2009/09/27 22:12:06 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -313,8 +313,10 @@ double FGTurbine::Stall(void)
   N1 = Seek(&N1, qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
   ConsumeFuel();
-  if (ThrottlePos < 0.01) phase = tpRun;        // clear the stall with throttle
-
+  if (ThrottlePos < 0.01) {
+    phase = tpRun;               // clear the stall with throttle to idle
+    Stalled = false;
+    }
   return 0.0;
 }
 
@@ -514,6 +516,10 @@ void FGTurbine::bindmodel()
   property_name = base_property_name + "/injection_cmd";
   PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, 
                         &FGTurbine::GetInjection, &FGTurbine::SetInjection);
+  property_name = base_property_name + "/seized";
+  PropertyManager->Tie( property_name.c_str(), &Seized);
+  property_name = base_property_name + "/stalled";
+  PropertyManager->Tie( property_name.c_str(), &Stalled);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
