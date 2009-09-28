@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.18 2009/09/25 03:43:25 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.19 2009/09/28 03:14:51 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
   <maxthrottle> {number} </maxthrottle>
   <minthrottle> {number} </minthrottle>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
-  <volumetric_efficiency> {number} </volumetric_efficiency>
+  <volumetric-efficiency> {number} </volumetric-efficiency>
   <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>
   <boostmanual> {0 | 1} </boostmanual>
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.18 2009/09/25 03:43:25 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.19 2009/09/28 03:14:51 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
