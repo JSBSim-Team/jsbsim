@@ -45,7 +45,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.20 2009/09/25 15:35:15 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.21 2009/09/30 21:25:22 andgi Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,6 +290,10 @@ void FGTank::CalculateInertias(void)
       Length = Volume/(M_PI*Rad2);
       Ixx = 0.5*Mass*Rad2/144.0;
       Iyy = Mass*(3.0*Rad2 + Length*Length)/(144.0*12.0);
+      break;
+    case gtUNKNOWN:
+      cerr << "Unknown grain type found." << endl;
+      exit(-1);
       break;
   }
   Izz  = Iyy;

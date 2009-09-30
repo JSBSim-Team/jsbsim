@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.27 2009/09/25 15:35:15 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.28 2009/09/30 21:25:22 andgi Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,8 +176,7 @@ void FGEngine::ConsumeFuel(void)
   FGTank* Tank;
   Fshortage = TanksWithFuel = FuelNeeded = 0.0;
   double FuelToBurn = CalcFuelNeed();
-  int CurrentPriority = 1;
-  double Contents = 0.0;
+  unsigned int CurrentPriority = 1;
   vector <int> FeedList;
   Starved = false;
 
@@ -189,7 +188,7 @@ void FGEngine::ConsumeFuel(void)
       for (i=0; i<Propulsion->GetNumTanks(); i++) {
         Tank = Propulsion->GetTank(i);
         if (Tank->GetType() == FGTank::ttFUEL) {
-           if ((Tank->GetContents() > 0.0) && (Tank->GetPriority() == CurrentPriority)) {
+          if ((Tank->GetContents() > 0.0) && ((unsigned int)Tank->GetPriority() == CurrentPriority)) {
              ++TanksWithFuel;
              FeedList.push_back(i);
            } 
@@ -272,7 +271,6 @@ bool FGEngine::LoadThruster(Element *thruster_element)
 {
   string token, fullpath, localpath;
   string thruster_filename, thruster_fullpathname, thrType;
-  double P_Factor = 0, Sense = 0.0;
   string enginePath = FDMExec->GetEnginePath();
   string aircraftPath = FDMExec->GetFullAircraftPath();
   ifstream thruster_file;

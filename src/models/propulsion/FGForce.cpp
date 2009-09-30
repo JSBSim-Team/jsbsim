@@ -49,14 +49,14 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.11 2009/09/23 11:24:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.12 2009/09/30 21:25:22 andgi Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
-                 ttype(tNone),
-                 fdmex(FDMExec)
+                 fdmex(FDMExec),
+                 ttype(tNone)
 {
   mT(1,1) = 1; //identity matrix
   mT(2,2) = 1;
