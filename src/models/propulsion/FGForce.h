@@ -57,16 +57,16 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
-#include <FGJSBBase.h>
-#include <math/FGMatrix33.h>
-#include <math/FGColumnVector3.h>
+#include "FGFDMExec.h"
+#include "FGJSBBase.h"
+#include "math/FGMatrix33.h"
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.11 2008/04/30 22:38:14 dpculp Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.11 2008/04/30 22:38:14 dpculp Exp $
+    @version $Id: FGForce.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,14 +44,14 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGGasCell.h"
-#include <math/FGColumnVector3.h>
-#include <input_output/FGXMLFileRead.h>
+#include "math/FGColumnVector3.h"
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

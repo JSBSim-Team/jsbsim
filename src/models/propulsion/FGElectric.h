@@ -39,13 +39,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGEngine.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
     there is no battery model available, so this motor does not consume any
     energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.6 2008/11/17 12:21:07 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -38,14 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
-#include <math/FGFunction.h>
+#include "input_output/FGXMLElement.h"
+#include "math/FGFunction.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.6 2008/05/01 01:03:14 dpculp Exp $"
+#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -105,7 +105,7 @@ a function (from an aero specification):
 </function>
 @endcode
 
-    @version $Id: FGFCSFunction.h,v 1.6 2008/05/01 01:03:14 dpculp Exp $
+    @version $Id: FGFCSFunction.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

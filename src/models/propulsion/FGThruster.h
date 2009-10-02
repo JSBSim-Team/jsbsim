@@ -39,16 +39,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGForce.h"
-#include <input_output/FGXMLElement.h>
-#include <input_output/FGPropertyManager.h>
-#include <math/FGColumnVector3.h>
+#include "input_output/FGXMLElement.h"
+#include "input_output/FGPropertyManager.h"
+#include "math/FGColumnVector3.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

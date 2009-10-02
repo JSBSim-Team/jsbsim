@@ -42,11 +42,11 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGAuxiliary.h"
 #include "FGMassBalance.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.26 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.27 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

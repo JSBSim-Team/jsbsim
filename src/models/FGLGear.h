@@ -38,18 +38,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <FGFDMExec.h>
-#include <input_output/FGXMLElement.h>
-#include <math/FGColumnVector3.h>
-#include <math/FGTable.h>
+#include "FGJSBBase.h"
+#include "FGFDMExec.h"
+#include "input_output/FGXMLElement.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGTable.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.32 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.33 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.32 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.33 2009/10/02 10:30:09 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",

@@ -42,10 +42,10 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGLGear.h"
-#include <math/FGColumnVector3.h>
-#include <input_output/FGXMLElement.h>
+#include "math/FGColumnVector3.h"
+#include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.14 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

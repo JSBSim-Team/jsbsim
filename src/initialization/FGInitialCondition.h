@@ -47,16 +47,16 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
-#include <FGJSBBase.h>
-#include <math/FGColumnVector3.h>
-#include <input_output/FGXMLFileRead.h>
+#include "FGFDMExec.h"
+#include "FGJSBBase.h"
+#include "math/FGColumnVector3.h"
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.18 2009/08/06 03:28:32 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.19 2009/10/02 10:30:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -202,7 +202,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.18 2009/08/06 03:28:32 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.19 2009/10/02 10:30:08 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

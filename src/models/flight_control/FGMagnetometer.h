@@ -38,7 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include "models/FGPropagate.h"
 #include "models/FGMassBalance.h"
 #include "models/FGInertial.h"
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MAGNETOMETER "$Id: FGMagnetometer.h,v 1.2 2009/09/06 13:26:13 jberndt Exp $"
+#define ID_MAGNETOMETER "$Id: FGMagnetometer.h,v 1.3 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -112,7 +112,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.2 $
+@version $Revision: 1.3 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

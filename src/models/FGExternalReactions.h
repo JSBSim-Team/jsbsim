@@ -40,13 +40,13 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGExternalForce.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.7 2009/06/09 03:23:55 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

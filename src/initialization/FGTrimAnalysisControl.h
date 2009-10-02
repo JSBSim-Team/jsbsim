@@ -48,13 +48,13 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
-#include <initialization/FGInitialCondition.h>
+#include "initialization/FGInitialCondition.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIMANALYSISCONTROL "$Id: FGTrimAnalysisControl.h,v 1.1 2007/09/02 03:54:17 jberndt Exp $"
+#define ID_TRIMANALYSISCONTROL "$Id: FGTrimAnalysisControl.h,v 1.2 2009/10/02 10:30:09 jberndt Exp $"
 
 #define DEFAULT_TRIM_ANALYSIS_TOLERANCE 0.00000001
 

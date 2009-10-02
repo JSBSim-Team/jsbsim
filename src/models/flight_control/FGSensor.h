@@ -38,14 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.17 2009/09/26 06:36:05 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.18 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.17 $
+@version $Revision: 1.18 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

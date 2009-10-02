@@ -43,14 +43,14 @@ INCLUDES
 #include <iostream>
 #include <fstream>
 
-#include <input_output/FGfdmSocket.h>
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGfdmSocket.h"
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

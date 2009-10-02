@@ -45,19 +45,19 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropulsion.h"
-#include <models/propulsion/FGRocket.h>
-#include <models/propulsion/FGTurbine.h>
-#include <models/propulsion/FGPiston.h>
-#include <models/propulsion/FGElectric.h>
-#include <models/propulsion/FGTurboProp.h>
-#include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLParse.h>
-#include <math/FGColumnVector3.h>
+#include "models/propulsion/FGRocket.h"
+#include "models/propulsion/FGTurbine.h"
+#include "models/propulsion/FGPiston.h"
+#include "models/propulsion/FGElectric.h"
+#include "models/propulsion/FGTurboProp.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLParse.h"
+#include "math/FGColumnVector3.h"
 #include <sstream>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.35 2009/09/25 15:34:04 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.36 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

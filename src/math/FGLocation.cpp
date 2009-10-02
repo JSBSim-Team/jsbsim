@@ -41,11 +41,11 @@ INCLUDES
 #include <cmath>
 
 #include "FGLocation.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.15 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.16 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

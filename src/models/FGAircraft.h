@@ -41,14 +41,14 @@ INCLUDES
 #include <vector>
 
 #include "FGModel.h"
-#include <input_output/FGXMLElement.h>
-#include <math/FGColumnVector3.h>
+#include "input_output/FGXMLElement.h"
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994

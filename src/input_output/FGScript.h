@@ -40,16 +40,16 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
-#include <math/FGFunction.h>
-#include <math/FGCondition.h>
+#include "math/FGFunction.h"
+#include "math/FGCondition.h"
 #include <vector>
-#include <input_output/FGXMLFileRead.h>
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

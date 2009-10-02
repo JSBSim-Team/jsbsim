@@ -38,7 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include <vector>
 #include <string>
 
@@ -46,7 +46,10 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
+
+using std::vector;
+using std::string;
 
 using std::vector;
 using std::string;
@@ -103,7 +106,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.6 2008/07/22 02:42:18 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

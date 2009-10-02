@@ -40,11 +40,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGElectric.h"
-#include <models/FGPropulsion.h>
+#include "models/FGPropulsion.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.5 2009/07/28 11:13:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.6 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -39,7 +39,7 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
+#include "FGFDMExec.h"
 //#include <initialization/FGTrimAnalysis.h>
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.51 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.52 2009/10/02 10:30:07 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA

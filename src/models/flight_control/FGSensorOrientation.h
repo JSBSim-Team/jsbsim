@@ -38,7 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 
@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.1 2009/09/06 13:26:13 jberndt Exp $"
+#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.2 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @author Jon S. Berndt
-@version $Revision: 1.1 $
+@version $Revision: 1.2 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,13 +41,13 @@ INCLUDES
 #include <vector>
 
 #include "FGModel.h"
-#include <math/FGColumnVector3.h>
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.13 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

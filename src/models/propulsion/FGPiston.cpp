@@ -43,12 +43,12 @@ INCLUDES
 #include <sstream>
 
 #include "FGPiston.h"
-#include <models/FGPropulsion.h>
+#include "models/FGPropulsion.h"
 #include "FGPropeller.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.44 2009/09/28 03:14:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.45 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

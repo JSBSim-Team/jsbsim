@@ -38,17 +38,17 @@ INCLUDES
 
 #include <string>
 #include <cstdlib>
-#include <FGFDMExec.h>
-#include <models/FGAtmosphere.h>
+#include "FGFDMExec.h"
+#include "models/FGAtmosphere.h"
 #include "FGInitialCondition.h"
 #include "FGTrimAxis.h"
-#include <models/FGAircraft.h>
-#include <models/FGPropulsion.h>
-#include <models/FGAerodynamics.h>
+#include "models/FGAircraft.h"
+#include "models/FGPropulsion.h"
+#include "models/FGAerodynamics.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.7 2008/07/22 02:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.8 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/

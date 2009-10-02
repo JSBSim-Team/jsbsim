@@ -39,8 +39,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <input_output/FGPropertyManager.h>
+#include "FGJSBBase.h"
+#include "input_output/FGPropertyManager.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
 
@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.15 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,13 +45,13 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-#include <math/FGColumnVector3.h>
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.13 2009/09/26 02:43:26 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     - HR = hour
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.13 2009/09/26 02:43:26 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

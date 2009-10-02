@@ -39,19 +39,19 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
-#include <FGJSBBase.h>
-#include <models/propulsion/FGForce.h>
+#include "FGFDMExec.h"
+#include "FGJSBBase.h"
+#include "models/propulsion/FGForce.h"
 #include <string>
-#include <input_output/FGPropertyManager.h>
-#include <math/FGColumnVector3.h>
-#include <math/FGFunction.h>
+#include "input_output/FGPropertyManager.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGFunction.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

@@ -38,9 +38,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include "FGParameter.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 #include <sstream>
 #include <vector>
 
@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -234,7 +234,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.9 2009/08/30 03:51:28 jberndt Exp $
+@version $Id: FGTable.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

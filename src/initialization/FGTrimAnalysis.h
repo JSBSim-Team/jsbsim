@@ -53,28 +53,28 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGTrimAnalysisControl.h"
 
-#include <models/FGAtmosphere.h>
-#include <initialization/FGInitialCondition.h>
-#include <models/FGAircraft.h>
-#include <models/FGMassBalance.h>
-#include <models/FGGroundReactions.h>
-#include <models/FGInertial.h>
-#include <models/FGAerodynamics.h>
-#include <math/FGColumnVector3.h>
-#include <models/FGAuxiliary.h>
-#include <models/FGPropulsion.h>
+#include "models/FGAtmosphere.h"
+#include "initialization/FGInitialCondition.h"
+#include "models/FGAircraft.h"
+#include "models/FGMassBalance.h"
+#include "models/FGGroundReactions.h"
+#include "models/FGInertial.h"
+#include "models/FGAerodynamics.h"
+#include "math/FGColumnVector3.h"
+#include "models/FGAuxiliary.h"
+#include "models/FGPropulsion.h"
 
 #include <vector>
 #include <map>
 #include <string>
 
-#include <math/direct_search/vec.h>
+#include "math/direct_search/vec.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.7 2008/03/12 13:26:13 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -117,7 +117,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.7 2008/03/12 13:26:13 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

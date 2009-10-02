@@ -35,11 +35,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGFDMExec.h>
-#include <models/FGAuxiliary.h>
-#include <models/FGAtmosphere.h>
-#include <models/FGInertial.h>
-#include <models/FGMassBalance.h>
+#include "FGFDMExec.h"
+#include "models/FGAuxiliary.h"
+#include "models/FGAtmosphere.h"
+#include "models/FGInertial.h"
+#include "models/FGMassBalance.h"
 #include "FGGasCell.h"
 
 using std::cerr;
@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.10 2009/02/05 10:22:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.11 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -40,13 +40,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <models/FGAtmosphere.h>
+#include "models/FGAtmosphere.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.5 2009/03/25 13:52:44 dpculp Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.6 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.5 2009/03/25 13:52:44 dpculp Exp $
+    @version $Id: FGMSIS.h,v 1.6 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

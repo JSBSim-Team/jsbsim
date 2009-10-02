@@ -38,13 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.7 2009/06/02 00:51:32 jberndt Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     produce no output. For example, say that the width value is 2.0. If the
     input is between -1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @version $Id: FGDeadBand.h,v 1.7 2009/06/02 00:51:32 jberndt Exp $
+    @version $Id: FGDeadBand.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

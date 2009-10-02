@@ -38,13 +38,13 @@ INCLUDES
 #include <sstream>
 
 #include "FGPropeller.h"
-#include <models/FGPropagate.h>
-#include <models/FGAtmosphere.h>
-#include <models/FGAuxiliary.h>
+#include "models/FGPropagate.h"
+#include "models/FGAtmosphere.h"
+#include "models/FGAuxiliary.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.23 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.24 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

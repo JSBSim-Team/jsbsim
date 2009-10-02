@@ -39,13 +39,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGThruster.h"
-#include <math/FGTable.h>
+#include "math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.13 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */

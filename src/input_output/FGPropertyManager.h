@@ -43,9 +43,9 @@ INCLUDES
 
 #include <string>
 #include <iostream>
-#include <simgear/props/props.hxx>
+#include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
-# include <simgear/math/SGMath.hxx>
+# include "simgear/math/SGMath.hxx"
 #endif
 
 #include "FGJSBBase.h"
@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.14 2009/08/20 07:54:18 ehofman Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

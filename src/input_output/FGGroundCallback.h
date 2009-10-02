@@ -38,14 +38,14 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <math/FGColumnVector3.h>
-#include <math/FGLocation.h>
+#include "math/FGColumnVector3.h"
+#include "math/FGLocation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.7 2008/02/20 23:36:38 jberndt Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
     ball formed earth.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.7 2008/02/20 23:36:38 jberndt Exp $
+    @version $Id: FGGroundCallback.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

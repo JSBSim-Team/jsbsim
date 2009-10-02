@@ -38,9 +38,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLElement.h>
+#include "FGJSBBase.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLElement.h"
 
 #include <iostream>
 #include <string>
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.11 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $"
 
 using namespace std;
 

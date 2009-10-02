@@ -37,7 +37,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGTank.h"
-#include <models/FGAuxiliary.h>
+#include "models/FGAuxiliary.h"
 
 using std::cerr;
 using std::endl;
@@ -45,7 +45,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.21 2009/09/30 21:25:22 andgi Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.22 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

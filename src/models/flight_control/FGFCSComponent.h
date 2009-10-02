@@ -37,9 +37,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLElement.h>
+#include "FGJSBBase.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLElement.h"
 #include <string>
 #include <vector>
 
@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.14 2009/09/26 06:36:05 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.14 2009/09/26 06:36:05 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 

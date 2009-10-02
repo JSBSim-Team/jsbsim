@@ -95,7 +95,7 @@ INCLUDES
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include <string_utilities.h>
+#include "string_utilities.h"
 #include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Helvetica,10"

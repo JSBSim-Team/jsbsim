@@ -39,14 +39,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
+#include "input_output/FGXMLElement.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.10 2009/09/26 06:28:25 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.11 2009/10/02 10:30:09 jberndt Exp $"
 
 using std::string;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.10 $
+    @version $Revision: 1.11 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

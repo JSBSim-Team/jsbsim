@@ -1,6 +1,6 @@
 #include "plotXMLVisitor.h"
 #define BASE
-#include <string_utilities.h>
+#include "string_utilities.h"
 
 using namespace std;
 

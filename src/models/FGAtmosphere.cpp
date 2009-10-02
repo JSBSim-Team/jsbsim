@@ -48,16 +48,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAtmosphere.h"
-#include <FGState.h>
-#include <FGFDMExec.h>
+#include "FGState.h"
+#include "FGFDMExec.h"
 #include "FGAircraft.h"
 #include "FGPropagate.h"
 #include "FGInertial.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.29 2009/09/03 12:26:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.30 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -454,10 +454,12 @@ void FGAtmosphere::Turbulence(void)
     vDirectiondAccelDt(eX) = GaussianRandomNumber();
     vDirectiondAccelDt(eY) = GaussianRandomNumber();
     vDirectiondAccelDt(eZ) = GaussianRandomNumber();
-
+/*
     MagnitudedAccelDt = GaussianRandomNumber();
     MagnitudeAccel    += MagnitudedAccelDt * DeltaT;
     Magnitude         += MagnitudeAccel * DeltaT;
+*/
+    Magnitude         += GaussianRandomNumber() * DeltaT;
 
     vDirectiondAccelDt.Normalize();
     vDirectionAccel += TurbRate * vDirectiondAccelDt * DeltaT;

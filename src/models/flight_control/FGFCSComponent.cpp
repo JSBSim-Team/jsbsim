@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.24 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.25 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,8 +138,19 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     out_elem = element->FindNextElement("output");
   }
 
-  if ( element->FindElement("delay") ) {
-    delay = (unsigned int)element->FindElementValueAsNumber("delay");
+  Element* delay_elem = element->FindElement("delay");
+  if ( delay_elem ) {
+    delay = (unsigned int)delay_elem->GetDataAsNumber();
+    string delayType = delay_elem->GetAttributeValue("type");
+    if (delayType.length() > 0) {
+      if (delayType == "time") {
+        delay = (int)(delay / dt);
+      } else {
+        cerr << "Unallowed delay type" << endl;
+      }
+    } else {
+      delay = (int)(delay / dt);
+    }
     output_array.resize(delay);
     for (int i=0; i<delay; i++) output_array[i] = 0.0;
   }

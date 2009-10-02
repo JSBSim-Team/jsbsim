@@ -38,17 +38,17 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <models/FGModel.h>
-#include <math/FGColumnVector3.h>
-#include <math/FGLocation.h>
-#include <math/FGQuaternion.h>
-#include <math/FGMatrix33.h>
+#include "models/FGModel.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGLocation.h"
+#include "math/FGQuaternion.h"
+#include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.30 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.31 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.30 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.31 2009/10/02 10:30:09 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -538,6 +538,6 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#include <initialization/FGInitialCondition.h>
+#include "initialization/FGInitialCondition.h"
 
 #endif

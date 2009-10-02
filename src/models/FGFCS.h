@@ -41,16 +41,16 @@ INCLUDES
 #include <vector>
 
 #include <string>
-#include <models/flight_control/FGFCSComponent.h>
-#include <models/FGModel.h>
-#include <models/FGLGear.h>
-#include <input_output/FGXMLFileRead.h>
+#include "models/flight_control/FGFCSComponent.h"
+#include "models/FGModel.h"
+#include "models/FGLGear.h"
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.25 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.26 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.25 $
+    @version $Revision: 1.26 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction

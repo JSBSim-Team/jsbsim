@@ -43,10 +43,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
+#include "FGJSBBase.h"
 #include "FGThruster.h"
-#include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLFileRead.h>
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLFileRead.h"
 #include <vector>
 #include <string>
 
@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.16 2009/09/25 15:35:15 dpculp Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.16 2009/09/25 15:35:15 dpculp Exp $
+    @version $Id: FGEngine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,16 +244,16 @@ protected:
   void Debug(int from);
 };
 }
-#include <FGState.h>
-#include <FGFDMExec.h>
-#include <models/FGAtmosphere.h>
-#include <models/FGFCS.h>
-#include <models/FGAircraft.h>
-#include <models/FGPropagate.h>
-#include <models/FGPropulsion.h>
-#include <models/FGAuxiliary.h>
-#include <models/propulsion/FGThruster.h>
-#include <input_output/FGXMLElement.h>
+#include "FGState.h"
+#include "FGFDMExec.h"
+#include "models/FGAtmosphere.h"
+#include "models/FGFCS.h"
+#include "models/FGAircraft.h"
+#include "models/FGPropagate.h"
+#include "models/FGPropulsion.h"
+#include "models/FGAuxiliary.h"
+#include "models/propulsion/FGThruster.h"
+#include "input_output/FGXMLElement.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

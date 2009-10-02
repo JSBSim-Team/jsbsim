@@ -42,14 +42,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGScript.h"
-#include <input_output/FGXMLParse.h>
-#include <initialization/FGTrim.h>
+#include "input_output/FGXMLParse.h"
+#include "initialization/FGTrim.h"
 
 #include <iostream>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.33 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.34 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

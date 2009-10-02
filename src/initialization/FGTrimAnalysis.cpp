@@ -48,25 +48,25 @@ INCLUDES
 
 #include <stdlib.h>
 
-#include <FGFDMExec.h>
-#include <models/FGAtmosphere.h>
-#include <initialization/FGInitialCondition.h>
+#include "FGFDMExec.h"
+#include "models/FGAtmosphere.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGTrimAnalysis.h"
-#include <models/FGAircraft.h>
-#include <models/FGMassBalance.h>
-#include <models/FGGroundReactions.h>
-#include <models/FGInertial.h>
-#include <models/FGAerodynamics.h>
-#include <math/FGColumnVector3.h>
+#include "models/FGAircraft.h"
+#include "models/FGMassBalance.h"
+#include "models/FGGroundReactions.h"
+#include "models/FGInertial.h"
+#include "models/FGAerodynamics.h"
+#include "math/FGColumnVector3.h"
 
-#include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLParse.h>
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLParse.h"
 
-#include <models/propulsion/FGPiston.h>
-#include <models/propulsion/FGPropeller.h>
-#include <models/propulsion/FGTurbine.h>
+#include "models/propulsion/FGPiston.h"
+#include "models/propulsion/FGPropeller.h"
+#include "models/propulsion/FGTurbine.h"
 
-#include <math/FGTable.h>
+#include "math/FGTable.h"
 
 #if defined(sgi) && !defined(__GNUC__)
 # include <math.h>
@@ -76,9 +76,9 @@ INCLUDES
 #include <sstream>
 #include <map>
 
-#include <math/direct_search/SMDSearch.h>
-#include <math/direct_search/NMSearch.h>
-#include <math/direct_search/vec.h>
+#include "math/direct_search/SMDSearch.h"
+#include "math/direct_search/NMSearch.h"
+#include "math/direct_search/vec.h"
 
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.12 2008/04/15 11:50:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.13 2009/10/02 10:30:08 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 

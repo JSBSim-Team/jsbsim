@@ -42,10 +42,10 @@ INCLUDES
 
 #include <vector>
 #include "FGEngine.h"
-#include <input_output/FGXMLElement.h>
-#include <math/FGFunction.h>
+#include "input_output/FGXMLElement.h"
+#include "math/FGFunction.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.16 2009/05/31 19:54:57 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.16 2009/05/31 19:54:57 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

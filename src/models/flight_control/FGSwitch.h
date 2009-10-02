@@ -38,14 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <input_output/FGXMLElement.h>
-#include <math/FGCondition.h>
+#include "input_output/FGXMLElement.h"
+#include "math/FGCondition.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.13 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.12 2009/08/30 03:51:28 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.13 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

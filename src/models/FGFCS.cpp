@@ -38,28 +38,28 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCS.h"
-#include <FGFDMExec.h>
-#include <input_output/FGPropertyManager.h>
+#include "FGFDMExec.h"
+#include "input_output/FGPropertyManager.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 
-#include <models/flight_control/FGFilter.h>
-#include <models/flight_control/FGDeadBand.h>
-#include <models/flight_control/FGGain.h>
-#include <models/flight_control/FGPID.h>
-#include <models/flight_control/FGSwitch.h>
-#include <models/flight_control/FGSummer.h>
-#include <models/flight_control/FGKinemat.h>
-#include <models/flight_control/FGFCSFunction.h>
-#include <models/flight_control/FGSensor.h>
-#include <models/flight_control/FGActuator.h>
-#include <models/flight_control/FGAccelerometer.h>
-#include <models/flight_control/FGGyro.h>
+#include "models/flight_control/FGFilter.h"
+#include "models/flight_control/FGDeadBand.h"
+#include "models/flight_control/FGGain.h"
+#include "models/flight_control/FGPID.h"
+#include "models/flight_control/FGSwitch.h"
+#include "models/flight_control/FGSummer.h"
+#include "models/flight_control/FGKinemat.h"
+#include "models/flight_control/FGFCSFunction.h"
+#include "models/flight_control/FGSensor.h"
+#include "models/flight_control/FGActuator.h"
+#include "models/flight_control/FGAccelerometer.h"
+#include "models/flight_control/FGGyro.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.61 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.62 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

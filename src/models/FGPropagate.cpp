@@ -57,16 +57,16 @@ INCLUDES
 #include <iomanip>
 
 #include "FGPropagate.h"
-#include <FGFDMExec.h>
-#include <FGState.h>
+#include "FGFDMExec.h"
+#include "FGState.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGInertial.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.41 2009/08/31 07:11:15 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.42 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

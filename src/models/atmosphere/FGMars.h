@@ -38,13 +38,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <models/FGAtmosphere.h>
+#include "models/FGAtmosphere.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MARS "$Id: FGMars.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_MARS "$Id: FGMars.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ CLASS DOCUMENTATION
 
 /** Models the Martian atmosphere.
     @author Jon Berndt
-    @version $Id: FGMars.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGMars.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -42,16 +42,16 @@ INCLUDES
 #include <map>
 
 #include "FGModel.h"
-#include <math/FGFunction.h>
-#include <math/FGColumnVector3.h>
-#include <math/FGMatrix33.h>
-#include <input_output/FGXMLFileRead.h>
+#include "math/FGFunction.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.17 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.18 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.17 $
+    @version $Revision: 1.18 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

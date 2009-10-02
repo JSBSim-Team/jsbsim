@@ -39,11 +39,11 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
-#include <input_output/FGXMLElement.h>
-#include <math/FGColumnVector3.h>
-#include <models/propulsion/FGForce.h>
-#include <math/FGFunction.h>
+#include "FGJSBBase.h"
+#include "input_output/FGXMLElement.h"
+#include "math/FGColumnVector3.h"
+#include "models/propulsion/FGForce.h"
+#include "math/FGFunction.h"
 
 #include <string>
 using std::string;
@@ -55,7 +55,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.8 2009/04/14 18:48:14 andgi Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

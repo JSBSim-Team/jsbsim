@@ -38,15 +38,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <map>
-#include <FGJSBBase.h>
-#include <input_output/FGXMLElement.h>
-#include <input_output/FGPropertyManager.h>
+#include "FGJSBBase.h"
+#include "input_output/FGXMLElement.h"
+#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.3 2007/12/30 15:31:30 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.4 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

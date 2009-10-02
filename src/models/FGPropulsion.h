@@ -42,16 +42,16 @@ INCLUDES
 #include <fstream>
 
 #include "FGModel.h"
-#include <models/propulsion/FGEngine.h>
-#include <models/propulsion/FGTank.h>
-#include <math/FGMatrix33.h>
-#include <input_output/FGXMLFileRead.h>
+#include "models/propulsion/FGEngine.h"
+#include "models/propulsion/FGTank.h"
+#include "math/FGMatrix33.h"
+#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.22 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.23 2009/10/02 10:30:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.22 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.23 2009/10/02 10:30:09 jberndt Exp $
     @see
     FGEngine
     FGTank

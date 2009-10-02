@@ -44,18 +44,17 @@ SENTRY
 #include <string>
 #include <stdlib.h>
 
-#include <FGFDMExec.h>
-#include <models/FGAtmosphere.h>
-#include <initialization/FGInitialCondition.h>
+#include "FGFDMExec.h"
+#include "models/FGAtmosphere.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGTrimAnalysisControl.h"
-#include <models/FGAircraft.h>
-#include <models/FGPropulsion.h>
-#include <models/FGAerodynamics.h>
-
+#include "models/FGAircraft.h"
+#include "models/FGPropulsion.h"
+#include "models/FGAerodynamics.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.3 2008/03/12 13:26:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.4 2009/10/02 10:30:09 jberndt Exp $";
 static const char *IdHdr = ID_TRIMANALYSISCONTROL;
 
 /*****************************************************************************/

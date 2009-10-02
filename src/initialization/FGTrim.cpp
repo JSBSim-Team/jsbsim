@@ -44,14 +44,14 @@ INCLUDES
 #include <cstdlib>
 #include <iomanip>
 #include "FGTrim.h"
-#include <models/FGAtmosphere.h>
+#include "models/FGAtmosphere.h"
 #include "FGInitialCondition.h"
-#include <models/FGAircraft.h>
-#include <models/FGMassBalance.h>
-#include <models/FGGroundReactions.h>
-#include <models/FGInertial.h>
-#include <models/FGAerodynamics.h>
-#include <math/FGColumnVector3.h>
+#include "models/FGAircraft.h"
+#include "models/FGMassBalance.h"
+#include "models/FGGroundReactions.h"
+#include "models/FGInertial.h"
+#include "models/FGAerodynamics.h"
+#include "math/FGColumnVector3.h"
 
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.10 2009/06/01 17:47:20 andgi Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.11 2009/10/02 10:30:08 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

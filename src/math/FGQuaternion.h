@@ -40,16 +40,16 @@ SENTRY
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FGJSBBase.h>
+#include "FGJSBBase.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
-#include <input_output/FGPropertyManager.h>
+#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.8 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
 
 namespace JSBSim {
 

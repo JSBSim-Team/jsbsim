@@ -43,20 +43,20 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGInitialCondition.h"
-#include <FGFDMExec.h>
-#include <models/FGInertial.h>
-#include <models/FGAtmosphere.h>
-#include <models/FGAerodynamics.h>
-#include <models/FGPropagate.h>
-#include <input_output/FGPropertyManager.h>
-#include <models/FGPropulsion.h>
-#include <input_output/FGXMLParse.h>
-#include <math/FGQuaternion.h>
+#include "FGFDMExec.h"
+#include "models/FGInertial.h"
+#include "models/FGAtmosphere.h"
+#include "models/FGAerodynamics.h"
+#include "models/FGPropagate.h"
+#include "input_output/FGPropertyManager.h"
+#include "models/FGPropulsion.h"
+#include "input_output/FGXMLParse.h"
+#include "math/FGQuaternion.h"
 #include <fstream>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.32 2009/08/06 03:28:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.33 2009/10/02 10:30:08 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
