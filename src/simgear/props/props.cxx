@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.4 2009/08/30 03:51:28 jberndt Exp $
+// $Id: props.cxx,v 1.5 2009/10/03 18:23:01 andgi Exp $
 
 #include "props.hxx"
 
@@ -908,7 +908,7 @@ SGPropertyNode_ptr
 SGPropertyNode::removeChild (int pos, bool keep)
 {
   SGPropertyNode_ptr node;
-  if (pos < 0 || pos >= _children.size())
+  if (pos < 0 || pos >= (int)_children.size())
     return node;
 
   vector<SGPropertyNode_ptr>::iterator it = _children.begin();

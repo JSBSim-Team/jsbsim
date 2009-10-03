@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.66 2009/10/02 10:30:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.67 2009/10/03 18:23:00 andgi Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -715,7 +715,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
   int node_idx = 0;
   char int_buf[10];
 
-  for (unsigned int i=0; i<pcs->node->nChildren(); i++) {
+  for (int i=0; i<pcs->node->nChildren(); i++) {
     pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
     node_idx = pcs->node->getChild(i)->getIndex();
     sprintf(int_buf, "[%d]", node_idx);

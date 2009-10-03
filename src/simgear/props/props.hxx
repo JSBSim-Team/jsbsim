@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.5 2009/08/30 03:51:28 jberndt Exp $
+ * $Id: props.hxx,v 1.6 2009/10/03 18:23:01 andgi Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -608,7 +608,7 @@ public:
   /**
    * Get the number of child nodes.
    */
-  unsigned int nChildren () const { return (unsigned int)_children.size(); }
+  int nChildren () const { return (int)_children.size(); }
 
 
   /**
@@ -1188,9 +1188,9 @@ private:
 
   class hash_table;
 
+  int _index;
   string _name;
   mutable string _display_name;
-  int _index;
   /// To avoid cyclic reference counting loops this shall not be a reference
   /// counted pointer
   SGPropertyNode * _parent;
