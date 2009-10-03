@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.66 2009/09/23 11:25:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.67 2009/10/03 19:54:12 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   } else if (sContactType == "STRUCTURE") {
     eContactType = ctSTRUCTURE;
   } else {
-    eContactType = ctUNKNOWN;
+    // Unknown contact point types will be treated as STRUCTURE.
+    eContactType = ctSTRUCTURE;
   }
 
   if (el->FindElement("spring_coeff"))
@@ -782,6 +783,8 @@ void FGLGear::Report(ReportType repType)
          << RankineToCelsius(Exec->GetAtmosphere()->GetTemperature()) << " C]" << endl;
     cout << "  [Velocity (KCAS): " << Exec->GetAuxiliary()->GetVcalibratedKTS() << "]" << endl;
     TakeoffReported = true;
+    break;
+  case erNone:
     break;
   }
 }

@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.52 2009/10/02 10:30:07 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.53 2009/10/03 19:54:12 andgi Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -250,7 +250,6 @@ int main(int argc, char* argv[])
   double initial_seconds = 0;
   double current_seconds = 0.0;
   double paused_seconds = 0.0;
-  double sim_time = 0.0;
   double sim_lag_time = 0;
   double cycle_duration = 0.0;
   long sleep_nseconds = 0;
@@ -321,7 +320,7 @@ int main(int argc, char* argv[])
   }
 
   // Load output directives file, if given
-  for (int i=0; i<LogDirectiveName.size(); i++) {
+  for (unsigned int i=0; i<LogDirectiveName.size(); i++) {
     if (!LogDirectiveName[i].empty()) {
       if (!FDMExec->SetOutputDirectives(LogDirectiveName[i])) {
         cout << "Output directives not properly set in file " << LogDirectiveName[i] << endl;

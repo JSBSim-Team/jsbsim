@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.33 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.34 2009/10/03 19:54:12 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -186,7 +186,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.33 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.34 2009/10/03 19:54:12 andgi Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -207,7 +207,7 @@ public:
   /// Steering group membership enumerators
   enum SteerType {stSteer, stFixed, stCaster};
   /// Contact point type
-  enum ContactType {ctBOGEY, ctSTRUCTURE, ctUNKNOWN};
+  enum ContactType {ctBOGEY, ctSTRUCTURE};
   /// Report type enumerators
   enum ReportType {erNone=0, erTakeoff, erLand};
   /// Damping types

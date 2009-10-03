@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.39 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.40 2009/10/03 19:54:12 andgi Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -162,8 +162,8 @@ bool FGOutput::InitModel(void)
   if (!FGModel::InitModel()) return false;
 
   if (Filename.size() > 0 && StartNewFile) {
-    int idx = BaseFilename.find_last_of(".");
-    int len = BaseFilename.length();
+    unsigned int idx = BaseFilename.find_last_of(".");
+    unsigned int len = BaseFilename.length();
     string extension = "";
     if (idx != string::npos) {
       extension = BaseFilename.substr(idx, len-idx);
@@ -1084,6 +1084,7 @@ void FGOutput::Debug(int from)
         cout << scratch << " in CSV format output at rate " << 1/(State->Getdt()*rate) << " Hz" << endl;
         break;
       case otNone:
+      default:
         cout << "  No log output" << endl;
         break;
       }

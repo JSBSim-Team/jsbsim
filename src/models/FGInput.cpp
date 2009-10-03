@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.14 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.15 2009/10/03 19:54:12 andgi Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,8 +90,7 @@ bool FGInput::InitModel(void)
 bool FGInput::Run(void)
 {
   string line, token, info_string;
-  int start=0, string_start=0, string_end=0;
-  int token_start=0, token_end=0;
+  unsigned int start=0, string_start=0, string_end=0;
   char buf[100];
   double value=0;
   FGPropertyManager* node=0;
@@ -181,7 +180,7 @@ bool FGInput::Run(void)
       } else if (command == "info") {                   // INFO
 
         // get info about the sim run and/or aircraft, etc.
-        sprintf(buf, "%8.3f\0", State->Getsim_time());
+        sprintf(buf, "%8.3f", State->Getsim_time());
         info_string  = "JSBSim version: " + JSBSim_version + "\n";
         info_string += "Config File version: " + needed_cfg_version + "\n";
         info_string += "Aircraft simulated: " + Aircraft->GetAircraftName() + "\n";
