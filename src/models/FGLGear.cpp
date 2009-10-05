@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.68 2009/10/05 04:48:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.69 2009/10/05 09:01:57 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -64,8 +64,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
-  GearNumber(number),
-  FGForce(fdmex)
+  FGForce(fdmex),
+  GearNumber(number)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
