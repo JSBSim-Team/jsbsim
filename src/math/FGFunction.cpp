@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.23 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.24 2009/10/05 18:37:49 andgi Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,7 +49,6 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
 {
   Element* element;
   string operation, property_name;
-  int size = el->GetNumElements();
   cached = false;
   cachedValue = -HUGE_VAL;
 

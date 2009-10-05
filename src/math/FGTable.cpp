@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.18 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.19 2009/10/05 18:37:49 andgi Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -488,7 +488,7 @@ void FGTable::operator<<(stringstream& in_stream)
 FGTable& FGTable::operator<<(const double n)
 {
   Data[rowCounter][colCounter] = n;
-  if (colCounter == nCols) {
+  if (colCounter == (int)nCols) {
     colCounter = 0;
     rowCounter++;
   } else {
