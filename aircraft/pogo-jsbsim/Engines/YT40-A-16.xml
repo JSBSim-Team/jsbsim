@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!--
+MILTHRUST   [LBS]
+MAXTHRUST   [LBS]
+idlen1      [%]
+maxn1       [%]
+betarangeend[%]
+    if ThrottleCmd < betarangeend/100.0 then engine power=idle, propeller pitch
+    is controled by ThrottleCmd (between MINPITCH and  REVERSEPITCH).
+    if ThrottleCmd > betarangeend/100.0 then engine power increases up to max reverse power
+reversemaxpower [%]
+    max engine power in reverse mode
+maxpower    [HP]
+psfc power specific fuel consumption [pph/HP] for N1=100%
+n1idle_max_delay [-] time constant for N1 change
+maxstartenginetime [sec]
+    after this time the automatic starting cycle is interrupted when the engine
+    doesn't start (0=automatic starting not present)
+startern1   [%]
+    when starting starter spin up engine to this spin
+ielumaxtorque [lb.ft]
+    if torque>ielumaxtorque limiters decrease the throttle
+    (ielu = Integrated Electronic Limiter Unit)
+itt_delay [-] time constant for ITT change
+    (ITT = Inter Turbine Temperature)
+-->
+<!--
+  File:     Allison YT40-A-16.xml
+  Author:   
+-->
+
+<turboprop_engine name="Allison YT40-A-16 ">
+  <milthrust unit="LBS">      12320.0   </milthrust>
+  <idlen1>                       30.0   </idlen1>
+  <maxn1>                       101.0   </maxn1>
+  <idlen2>                       60.0   </idlen2>
+  <maxn2>                       100.0   </maxn2>
+  <maxpower unit="HP">         7000.0   </maxpower>
+  <psfc unit="LBS/HR/HP">         0.669 </psfc>
+  <idlefuelflow>                 50.0   </idlefuelflow>
+  <n1idle_max_delay>              1     </n1idle_max_delay>
+  <maxstartingtime>              20     </maxstartingtime>
+  <startern1>                    20     </startern1>
+  <ielumaxtorque unit="FT*LB">15000     </ielumaxtorque>
+  <itt_delay>                     0.05  </itt_delay>
+  <betarangeend>                 34     </betarangeend>
+  <reversemaxpower>              60     </reversemaxpower>
+
+  <table name="EnginePowerVC">
+    <description> Engine power, function of airspeed and pressure </description>
+    <independentVar lookup="row">atmosphere/P-sl-psf</independentVar>
+    <independentVar lookup="column">velocities/ve-kts</independentVar>
+    <tableData>
+                 0     50    100    150    200    250
+       503   0.357  0.380  0.400  0.425  0.457  0.486
+      1048   0.586  0.589  0.600  0.621  0.650  0.686
+      1328   0.707  0.721  0.731  0.757  0.786  0.821
+      1496   0.779  0.786  0.808  0.821  0.857  0.900
+      1684   0.850  0.857  0.874  0.900  0.943  0.979
+      1896   0.914  0.929  0.946  0.971  1      1.057
+      2135   1      1.011  1.029  1.043  1.083  1.150
+      2213   1.029  1.043  1.057  1.079  1.114  1.171
+    </tableData>
+  </table>
+
+  <table name="EnginePowerRPM_N1" type="internal">
+    <description> Engine Power, function of RPM and N1 </description>
+    <tableData>
+		0	5	60	86	94	95	96	97	98	99	100	101
+	0	0.0	4.0	4.0	4.0	4.0	4.0	4.0	4.0	4.0	4.0	4.0	4.0
+	800	0.0	4.0	282.6	1615.1	2826.4	3068.6	3391.7	3714.7	4037.7	4279.9	4683.7	5006.7
+	1200	0.0	4.0	242.3	1857.3	3230.1	3472.4	3795.4	4078.1	4441.5	4764.5	5168.2	5491.3
+	1600	0.0	4.0	40.4	1938.1	3553.2	3835.8	4118.4	4441.5	4804.8	5087.5	5491.3	5814.3
+	2000	0.0	0.8	0.8	1817.0	3633.9	3997.3	4239.6	4562.6	4926.0	5249.0	5652.8	6016.2
+	2200	0.0	0.8	0.8	1655.5	3553.2	3876.2	4158.8	4522.2	4885.6	5208.6	5612.4	6000.0
+    </tableData>
+  </table>
+
+  <table name="ITT_N1" type="internal">
+    <description> Inter-Turbine Temperature ITT [deg C] depending on N1 and engine run (0=off / 1=running) </description>
+    <tableData>
+              0     1
+        0     0     0
+       15   100   100
+       60   180   520
+       96   270   680
+      100   280   730
+    </tableData>
+  </table>
+
+</turboprop_engine> 
