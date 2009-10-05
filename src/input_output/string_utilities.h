@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.4 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.5 2009/10/05 18:36:11 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,13 +97,13 @@ CLASS DECLARATION
 
   string& to_upper(string& str)
   {
-    for (int i=0; i<str.size(); i++) str[i] = toupper(str[i]);
+    for (unsigned int i=0; i<str.size(); i++) str[i] = toupper(str[i]);
     return str;
   }
 
   string& to_lower(string& str)
   {
-    for (int i=0; i<str.size(); i++) str[i] = tolower(str[i]);
+    for (unsigned int i=0; i<str.size(); i++) str[i] = tolower(str[i]);
     return str;
   }
 
@@ -115,7 +115,7 @@ CLASS DECLARATION
   vector <string> split(string str, char d)
   {
     vector <string> str_array;
-    int index=0;
+    unsigned int index=0;
     string temp = "";
 
     trim(str);
