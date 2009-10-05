@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.13 2009/10/05 04:48:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGForce.h,v 1.13 2009/10/05 04:48:03 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,6 +240,9 @@ public:
 
   virtual FGColumnVector3& GetBodyForces(void);
 
+  inline double GetBodyXForce(void) const { return vFb(eX); }
+  inline double GetBodyYForce(void) const { return vFb(eY); }
+  inline double GetBodyZForce(void) const { return vFb(eZ); }
   inline FGColumnVector3& GetMoments(void) { return vM; }
 
   // Normal point of application, JSBsim structural coords
@@ -273,12 +276,12 @@ public:
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; SetActingLocation(vv);}
   inline void SetActingLocation(FGColumnVector3 vv) { vActingXYZn = vv; }
 
-  inline double GetLocationX( void ) { return vXYZn(eX);}
-  inline double GetLocationY( void ) { return vXYZn(eY);}
-  inline double GetLocationZ( void ) { return vXYZn(eZ);}
-  inline double GetActingLocationX( void ) { return vActingXYZn(eX);}
-  inline double GetActingLocationY( void ) { return vActingXYZn(eY);}
-  inline double GetActingLocationZ( void ) { return vActingXYZn(eZ);}
+  inline double GetLocationX( void ) const { return vXYZn(eX);}
+  inline double GetLocationY( void ) const { return vXYZn(eY);}
+  inline double GetLocationZ( void ) const { return vXYZn(eZ);}
+  inline double GetActingLocationX( void ) const { return vActingXYZn(eX);}
+  inline double GetActingLocationY( void ) const { return vActingXYZn(eY);}
+  inline double GetActingLocationZ( void ) const { return vActingXYZn(eZ);}
   FGColumnVector3& GetLocation(void) { return vXYZn; }
   FGColumnVector3& GetActingLocation(void) { return vActingXYZn; }
 
@@ -302,10 +305,10 @@ public:
   double GetYaw(void) const {return vOrient(eYaw);}
 
   inline FGColumnVector3& GetAnglesToBody(void) {return vOrient;}
-  inline double GetAnglesToBody(int axis) {return vOrient(axis);}
+  inline double GetAnglesToBody(int axis) const {return vOrient(axis);}
 
   inline void SetTransformType(TransformType ii) { ttype=ii; }
-  inline TransformType GetTransformType(void) { return ttype; }
+  inline TransformType GetTransformType(void) const { return ttype; }
 
   FGMatrix33 Transform(void);
 

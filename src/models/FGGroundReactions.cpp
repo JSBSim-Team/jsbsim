@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.22 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.23 2009/10/05 04:48:03 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,8 +95,8 @@ bool FGGroundReactions::Run(void)
   // Perhaps there is some commonality for things which only need to be
   // calculated once.
   for (unsigned int i=0; i<lGear.size(); i++) {
-    vForces  += lGear[i]->Force();
-    vMoments += lGear[i]->Moment();
+    vForces  += lGear[i]->GetBodyForces();
+    vMoments += lGear[i]->GetMoments();
   }
 
   return false;
