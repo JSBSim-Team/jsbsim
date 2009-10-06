@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.25 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.26 2009/10/06 02:33:52 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,6 +93,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     Type = "SENSOR";
   } else if (element->GetName() == string("accelerometer")) {
     Type = "ACCELEROMETER";
+  } else if (element->GetName() == string("magnetometer")) {
+    Type = "MAGNETOMETER";
   } else if (element->GetName() == string("gyro")) {
     Type = "GYRO";
   } else if (element->GetName() == string("actuator")) {

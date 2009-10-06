@@ -55,11 +55,12 @@ INCLUDES
 #include "models/flight_control/FGSensor.h"
 #include "models/flight_control/FGActuator.h"
 #include "models/flight_control/FGAccelerometer.h"
+#include "models/flight_control/FGMagnetometer.h"
 #include "models/flight_control/FGGyro.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.62 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.63 2009/10/06 02:33:51 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -643,6 +644,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
           Components->push_back(new FGSensor(this, component_element));
         } else if (component_element->GetName() == string("accelerometer")) {
           Components->push_back(new FGAccelerometer(this, component_element));
+        } else if (component_element->GetName() == string("magnetometer")) {
+          Components->push_back(new FGMagnetometer(this, component_element));
         } else if (component_element->GetName() == string("gyro")) {
           Components->push_back(new FGGyro(this, component_element));
         } else {
