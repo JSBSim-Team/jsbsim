@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.11 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.12 2009/10/07 23:34:34 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,8 +125,12 @@ double FGRocket::Calculate(void)
     if ((Throttle == 1 || BurnTime > 0.0 ) && !Starved) {
       BurnTime += State->Getdt();
       double TotalEngineFuelAvailable=0.0;
-      for (int i=0; i<(int)SourceTanks.size(); i++)
-        TotalEngineFuelAvailable += Propulsion->GetTank(SourceTanks[i])->GetContents();
+      for (int i=0; i<(int)SourceTanks.size(); i++) {
+        FGTank* tank = Propulsion->GetTank(i);
+        if (SourceTanks[i] == 1) {
+          TotalEngineFuelAvailable += tank->GetContents();
+        }
+      }
 
       VacThrust = ThrustTable->GetValue(TotalEngineFuelAvailable);
     } else {
