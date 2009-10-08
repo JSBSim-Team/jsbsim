@@ -27,6 +27,9 @@
   <property> atmosphere/gust-north-fps </property>
   <property> atmosphere/gust-east-fps </property>
   <property> atmosphere/gust-down-fps </property>
+  <property> atmosphere/turb-north-fps </property>
+  <property> atmosphere/turb-east-fps </property>
+  <property> atmosphere/turb-down-fps </property>
   <property> atmosphere/p-turb-rad_sec </property>
   <property> atmosphere/q-turb-rad_sec </property>
   <property> atmosphere/r-turb-rad_sec </property>

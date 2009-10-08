@@ -75,4 +75,39 @@
     </plot>
   </page>
 
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> Turbulence Z Direction (rad) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Turbulence Z Direction (rad)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"> </label>
+      <label axis="y"> Turbulence Y Direction (rad) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Turbulence Y Direction (rad)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"> </label>
+      <label axis="y"> Turbulence X Direction (rad) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Turbulence X Direction (rad)</parameter>
+    </plot>
+    <plot>
+      <title>Turbulence vs. Time</title>
+      <label axis="x"> </label>
+      <label axis="y"> Turbulence Magnitude (ft/sec) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Turbulence Magnitude (ft/sec)</parameter>
+    </plot>
+  </page>
+
 </plotset>

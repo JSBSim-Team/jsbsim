@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the flight control data logged by JSBSim
+    when the fcs flag is turned ON.
+    
+    These are the variables logged by JSBSim with the fcs flag set to ON
+    
+-->
+  <page>
+  </page>
+</plotset>

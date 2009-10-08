@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<output name="aerodynamics.csv" type="CSV" rate="20">
+  <coefficients> ON </coefficients>
+  <property> forces/fbx-aero-lbs </property>
+  <property> forces/fby-aero-lbs </property>
+  <property> forces/fbz-aero-lbs </property>
+  <property> moments/l-aero-lbsft </property>
+  <property> moments/m-aero-lbsft </property>
+  <property> moments/n-aero-lbsft </property>
+  <property> forces/fwx-aero-lbs </property>
+  <property> forces/fwy-aero-lbs </property>
+  <property> forces/fwz-aero-lbs </property>
+  <property> forces/lod-norm </property>
+  <property> aero/cl-squared </property>
+  <property> aero/qbar-area </property>
+  <property> aero/alpha-max-rad </property>
+  <property> aero/alpha-min-rad </property>
+  <property> aero/bi2vel </property>
+  <property> aero/ci2vel </property>
+  <property> aero/alpha-wing-rad </property>
+  <property> systems/stall-warn-norm </property>
+  <property> aero/stall-hyst-norm </property>
+</output>

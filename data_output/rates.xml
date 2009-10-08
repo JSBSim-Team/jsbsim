@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<output name="rates.csv" type="CSV" rate="20">
+  <rates> ON </rates>
+</output>
