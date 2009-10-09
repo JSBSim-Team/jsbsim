@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.15 2009/10/03 19:54:12 andgi Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.16 2009/10/09 21:15:21 andgi Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,7 @@ bool FGInput::InitModel(void)
 bool FGInput::Run(void)
 {
   string line, token, info_string;
-  unsigned int start=0, string_start=0, string_end=0;
+  size_t start=0, string_start=0, string_end=0;
   char buf[100];
   double value=0;
   FGPropertyManager* node=0;

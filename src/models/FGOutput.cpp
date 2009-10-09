@@ -72,7 +72,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.40 2009/10/03 19:54:12 andgi Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.41 2009/10/09 21:15:21 andgi Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -162,8 +162,8 @@ bool FGOutput::InitModel(void)
   if (!FGModel::InitModel()) return false;
 
   if (Filename.size() > 0 && StartNewFile) {
-    unsigned int idx = BaseFilename.find_last_of(".");
-    unsigned int len = BaseFilename.length();
+    size_t idx = BaseFilename.find_last_of(".");
+    size_t len = BaseFilename.length();
     string extension = "";
     if (idx != string::npos) {
       extension = BaseFilename.substr(idx, len-idx);
