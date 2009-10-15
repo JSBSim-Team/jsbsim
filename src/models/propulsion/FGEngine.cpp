@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.29 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.30 2009/10/15 03:47:52 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,13 +172,16 @@ void FGEngine::ConsumeFuel(void)
   if (TrimMode) return;
 
   unsigned int i;
-  double Fshortage, TanksWithFuel, FuelNeeded;
+  double Fshortage, FuelNeeded;
   FGTank* Tank;
-  Fshortage = TanksWithFuel = FuelNeeded = 0.0;
-  double FuelToBurn = CalcFuelNeed();
+  unsigned int TanksWithFuel = 0;
+  Fshortage = FuelNeeded = 0.0;
+  double FuelToBurn;
   unsigned int CurrentPriority = 1;
   vector <int> FeedList;
   Starved = false;
+
+  FuelToBurn = CalcFuelNeed();
 
   while (FuelToBurn > 0.0) {
 
@@ -186,21 +189,23 @@ void FGEngine::ConsumeFuel(void)
     // If none, then try next lower priority.  Build the feed list.
     while ((TanksWithFuel == 0.0) && (CurrentPriority <= Propulsion->GetNumTanks())) {
       for (i=0; i<Propulsion->GetNumTanks(); i++) {
-        Tank = Propulsion->GetTank(i);
-        if (Tank->GetType() == FGTank::ttFUEL) {
-          if ((Tank->GetContents() > 0.0) && ((unsigned int)Tank->GetPriority() == CurrentPriority)) {
-             ++TanksWithFuel;
-             FeedList.push_back(i);
-           } 
-        } else {
-           cerr << "No oxidizer tanks should be used for this engine type." << endl;
+        if (SourceTanks[i] != 0) {
+          Tank = Propulsion->GetTank(i);
+          if (Tank->GetType() == FGTank::ttFUEL) {
+            if ((Tank->GetContents() > 0.0) && ((unsigned int)Tank->GetPriority() == CurrentPriority)) {
+               ++TanksWithFuel;
+               FeedList.push_back(i);
+             } 
+          } else {
+             cerr << "No oxidizer tanks should be used for this engine type." << endl;
+          }
         }
       }
-      if (TanksWithFuel == 0.0) CurrentPriority++;
+      if (TanksWithFuel == 0) CurrentPriority++;
     }
 
     // No fuel found at any priority!
-    if (TanksWithFuel == 0.0) {
+    if (TanksWithFuel == 0) {
       Starved = true;
       return;
     }
@@ -216,7 +221,7 @@ void FGEngine::ConsumeFuel(void)
     // check if we were not able to burn all the fuel we needed to at this priority level
     if (FuelToBurn > 0.001) {
       CurrentPriority++;
-      TanksWithFuel = 0.0;
+      TanksWithFuel = 0;
       FeedList.clear();
     }
  
