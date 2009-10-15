@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.21 2009/09/27 22:44:42 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.22 2009/10/15 15:45:17 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,6 +113,7 @@ double FGTurbine::Calculate(void)
   double thrust;
 
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
+  double qbar = Auxiliary->Getqbar();
   dt = State->Getdt() * Propulsion->GetRate();
   ThrottlePos = FCS->GetThrottlePos(EngineNumber);
   if (ThrottlePos > 1.0) {
@@ -141,7 +142,12 @@ double FGTurbine::Calculate(void)
   if (!Running && Cutoff && Starter) {
      if (phase == tpOff) phase = tpSpinUp;
      }
-  if (!Running && !Cutoff && (N2 > 15.0)) phase = tpStart;
+
+  // start
+  if ((Starter == true) || (qbar > 30.0)) {
+    if (!Running && !Cutoff && (N2 > 15.0)) phase = tpStart;
+  }
+
   if (Cutoff && (phase != tpSpinUp)) phase = tpOff;
   if (dt == 0) phase = tpTrim;
   if (Starved) phase = tpOff;
@@ -272,6 +278,7 @@ double FGTurbine::SpinUp(void)
   OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
   EPR = 1.0;
   NozzlePosition = 1.0;
+  if (Starter == false) phase = tpOff;
   return 0.0;
 }
 
@@ -279,15 +286,17 @@ double FGTurbine::SpinUp(void)
 
 double FGTurbine::Start(void)
 {
+  double qbar = Auxiliary->Getqbar();
   if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
     Cranking = true;                   // provided for sound effects signal
     if (N2 < IdleN2) {
       N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
       N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
       EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
-      FuelFlow_pph = Seek(&FuelFlow_pph, IdleFF, 103.7, 103.7);
+      FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
       ConsumeFuel();
+      if ((Starter == false) && (qbar < 30.0)) phase = tpOff; // aborted start
       }
     else {
       phase = tpRun;
