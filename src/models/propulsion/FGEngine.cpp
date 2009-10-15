@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.30 2009/10/15 03:47:52 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.31 2009/10/15 13:30:42 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,7 +219,7 @@ void FGEngine::ConsumeFuel(void)
     }
 
     // check if we were not able to burn all the fuel we needed to at this priority level
-    if (FuelToBurn > 0.001) {
+    if (FuelToBurn > 0.0) {
       CurrentPriority++;
       TanksWithFuel = 0;
       FeedList.clear();
