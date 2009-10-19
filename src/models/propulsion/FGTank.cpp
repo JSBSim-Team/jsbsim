@@ -45,7 +45,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.22 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.23 2009/10/19 15:14:51 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +206,6 @@ double FGTank::Drain(double used)
 
     Contents = 0.0;
     PctFull = 0.0;
-    SetPriority(0);
   }
 
   if (grainType != gtUNKNOWN) CalculateInertias();
