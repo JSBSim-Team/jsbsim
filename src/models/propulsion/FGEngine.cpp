@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.31 2009/10/15 13:30:42 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.32 2009/10/19 02:22:30 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,12 +182,13 @@ void FGEngine::ConsumeFuel(void)
   Starved = false;
 
   FuelToBurn = CalcFuelNeed();
+  if (FuelToBurn == 0.0) return;
 
   while (FuelToBurn > 0.0) {
 
     // Count how many fuel tanks with the current priority level have fuel.
     // If none, then try next lower priority.  Build the feed list.
-    while ((TanksWithFuel == 0.0) && (CurrentPriority <= Propulsion->GetNumTanks())) {
+    while ((TanksWithFuel == 0) && (CurrentPriority <= Propulsion->GetNumTanks())) {
       for (i=0; i<Propulsion->GetNumTanks(); i++) {
         if (SourceTanks[i] != 0) {
           Tank = Propulsion->GetTank(i);
@@ -216,13 +217,6 @@ void FGEngine::ConsumeFuel(void)
       Tank = Propulsion->GetTank(FeedList[i]);
       Tank->Drain(FuelNeeded); 
       FuelToBurn -= FuelNeeded;
-    }
-
-    // check if we were not able to burn all the fuel we needed to at this priority level
-    if (FuelToBurn > 0.0) {
-      CurrentPriority++;
-      TanksWithFuel = 0;
-      FeedList.clear();
     }
  
   }  // while
