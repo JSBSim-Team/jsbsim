@@ -39,7 +39,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.26 2009/09/26 02:43:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.27 2009/10/21 16:07:29 dpculp Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -138,6 +138,9 @@ Element::Element(string nm)
     // Fuel Consumption
     convert["LBS/HP*HR"]["KG/KW*HR"] = 0.6083;
     convert["KG/KW*HR"]["LBS/HP*HR"] = 1.0/convert["LBS/HP*HR"]["KG/KW*HR"];
+    // Density
+    convert["KG/L"]["LBS/GAL"] = 8.3454045;
+    convert["LBS/GAL"]["KG/L"] = 1.0/convert["KG/L"]["LBS/GAL"];
 
     // Length
     convert["M"]["M"] = 1.00;
@@ -200,6 +203,9 @@ Element::Element(string nm)
     // Fuel Consumption
     convert["LBS/HP*HR"]["LBS/HP*HR"] = 1.0;
     convert["KG/KW*HR"]["KG/KW*HR"] = 1.0;
+    // Density
+    convert["KG/L"]["KG/L"] = 1.0;
+    convert["LBS/GAL"]["LBS/GAL"] = 1.0;
   }
 }
 
