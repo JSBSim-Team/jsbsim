@@ -59,7 +59,7 @@ using std::cout;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.18 2009/10/22 01:51:44 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,6 +128,7 @@ CLASS DOCUMENTATION
   <temperature> {number} </temperature> <!-- must be degrees fahrenheit -->
   <standpipe unit="{LBS | KG"}> {number} </standpipe>
   <priority> {integer} </priority>
+  <density unit="{KG/L | LBS/GAL}"> {number} </density>
 </tank>
 @endcode
 
@@ -142,6 +143,7 @@ CLASS DOCUMENTATION
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
 - \b priority - Establishes feed sequence of tank. "1" is the highest priority.
+- \b density - Density of liquid tank contents.
 
 location:
 - \b x - Location of tank on aircraft's x-axis, defaults to inches.
@@ -167,6 +169,7 @@ be printed to the console if the location is not given
 - \b temperature - -9999.0 (flag which indicates no temperature is set)
 - \b standpipe - 0.0 (all contents may be dumped)
 - \b priority - 1 (highest feed sequence priority)
+- \b density - 6.6
 
     @author Jon Berndt, Dave Culp
     @see Akbar, Raza et al. "A Simple Analysis of Fuel Addition to the CWT of
@@ -226,9 +229,17 @@ public:
       @return the capacity of the tank in pounds. */
   double GetCapacity(void) {return Capacity;}
 
+  /** Gets the capacity of the tank.
+      @return the capacity of the tank in gallons. */
+  double GetCapacityGallons(void) {return Capacity/Density;}
+
   /** Gets the contents of the tank.
       @return the contents of the tank in pounds. */
   double GetContents(void) const {return Contents;}
+
+  /** Gets the contents of the tank.
+      @return the contents of the tank in gallons. */
+  double GetContentsGallons(void) const {return Contents/Density;}
 
   /** Gets the temperature of the fuel.
       The temperature of the fuel is calculated if an initial tempearture is
@@ -258,6 +269,7 @@ public:
 
   double Fill(double amount);
   void SetContents(double amount);
+  void SetContentsGallons(double gallons);
   void SetTemperature(double temp) { Temperature = temp; }
   void SetStandpipe(double amount) { Standpipe = amount; }
   void SetSelected(bool sel) { sel==true ? SetPriority(1):SetPriority(0); }

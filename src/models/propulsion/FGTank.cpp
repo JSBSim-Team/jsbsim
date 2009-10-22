@@ -45,7 +45,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.23 2009/10/19 15:14:51 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.24 2009/10/22 01:51:44 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,6 +59,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Element* element;
   Element* element_Grain;
   Area = 1.0;
+  Density = 6.6;
   Temperature = -9999.0;
   Ixx = Iyy = Izz = 0.0;
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
@@ -96,6 +97,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     InitialStandpipe = Standpipe = el->FindElementValueAsNumberConvertTo("standpipe", "LBS");
   if (el->FindElement("priority"))
     InitialPriority = Priority = el->FindElementValueAsNumber("priority");
+  if (el->FindElement("density"))
+    Density = el->FindElementValueAsNumberConvertTo("density", "LBS/GAL");
 
   SetPriority( InitialPriority );     // this will also set the Selected flag
 
@@ -243,6 +246,14 @@ void FGTank::SetContents(double amount)
     PctFull = Contents/Capacity*100.0;
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTank::SetContentsGallons(double gallons)
+{
+  SetContents(gallons * Density);
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
