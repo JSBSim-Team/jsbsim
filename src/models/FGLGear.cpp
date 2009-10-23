@@ -52,7 +52,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.69 2009/10/05 09:01:57 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.70 2009/10/23 23:31:16 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -65,7 +65,8 @@ CLASS IMPLEMENTATION
 
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   FGForce(fdmex),
-  GearNumber(number)
+  GearNumber(number),
+  SteerAngle(0.0)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
@@ -397,6 +398,8 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
       WOW = false;
       compressLength = 0.0;
       compressSpeed = 0.0;
+      WheelSlip = 0.0;
+      StrutForce = 0.0;
 
       // Let wheel spin down slowly
       vWhlVelVec(eX) -= 13.0*dT;
