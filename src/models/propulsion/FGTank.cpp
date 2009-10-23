@@ -45,7 +45,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.24 2009/10/22 01:51:44 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.25 2009/10/23 21:26:01 andgi Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Element* element_Grain;
   Area = 1.0;
   Density = 6.6;
-  Temperature = -9999.0;
+  InitialTemperature = Temperature = -9999.0;
   Ixx = Iyy = Izz = 0.0;
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
   Capacity = 0.00001;
