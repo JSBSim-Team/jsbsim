@@ -39,10 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLElement.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -50,9 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.12 2009/10/02 10:30:09 jberndt Exp $"
-
-using namespace std;
+#define ID_MODEL "$Id: FGModel.h,v 1.13 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,6 +69,8 @@ class FGBuoyantForces;
 class FGAircraft;
 class FGPropagate;
 class FGAuxiliary;
+class Element;
+class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -102,7 +99,7 @@ public:
   virtual bool Load(Element* el);
 
   FGModel* NextModel;
-  string Name;
+  std::string Name;
 
   /** Runs the model; called by the Executive
       @see JSBSim.cpp documentation
@@ -137,7 +134,7 @@ protected:
   FGAuxiliary*       Auxiliary;
   FGPropertyManager* PropertyManager;
 
-  vector <double*> interface_properties;
+  std::vector <double*> interface_properties;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

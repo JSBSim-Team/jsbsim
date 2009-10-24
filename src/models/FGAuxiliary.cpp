@@ -51,11 +51,15 @@ INCLUDES
 #include "FGBuoyantForces.h"
 #include "FGGroundReactions.h"
 #include "FGPropulsion.h"
+#include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.36 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.37 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,6 +395,13 @@ void FGAuxiliary::CalculateRelativePosition(void)
   lon_relative_position=(FDMExec->GetPropagate()->GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
   relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
 };
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::BadUnits(void) const
+{
+  cerr << "Bad units" << endl; return 0.0;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

@@ -38,10 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGGradient.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.3 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.4 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

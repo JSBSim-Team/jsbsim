@@ -28,23 +28,28 @@ Purpose: Stores various parameter types for functions
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <stdio.h>
-
+#include <sstream>
+#include <iomanip>
+#include <cstdlib>
 #include "FGFunction.h"
 #include "FGTable.h"
 #include "FGPropertyValue.h"
 #include "FGRealValue.h"
+#include "input_output/FGXMLElement.h"
+#include "input_output/FGPropertyManager.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.24 2009/10/05 18:37:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.25 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
+FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& prefix)
                                       : PropertyManager(propMan), Prefix(prefix)
 {
   Element* element;
@@ -319,12 +324,10 @@ double FGFunction::GetValue(void) const
 
 string FGFunction::GetValueAsString(void) const
 {
-  char buffer[20];
-  string value;
+  ostringstream buffer;
 
-  sprintf(buffer,"%9.6f",GetValue());
-  value = string(buffer);
-  return value;
+  buffer << setw(9) << setprecision(6) << GetValue();
+  return buffer.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

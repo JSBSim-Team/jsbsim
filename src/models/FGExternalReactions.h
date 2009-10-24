@@ -40,19 +40,21 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGExternalForce.h"
-#include "input_output/FGXMLElement.h"
+#include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.9 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -154,7 +156,7 @@ public:
 
 private:
 
-  vector <FGExternalForce*> Forces;
+  std::vector <FGExternalForce*> Forces;
   unsigned int numForces;
   FGColumnVector3 vTotalForces;
   FGColumnVector3 vTotalMoments;

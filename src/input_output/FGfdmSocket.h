@@ -39,15 +39,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cstdio>
 #include <string>
-#include <iostream>
-#include <fstream>
+#include <sstream>
 #include <sys/types.h>
 #include "FGJSBBase.h"
-
-using std::cout;
-using std::endl;
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
   #include <winsock.h>
@@ -69,7 +64,7 @@ using std::endl;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.16 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.17 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,27 +85,24 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-using std::string;
-using std::cerr;
-
 class FGfdmSocket : public FGJSBBase
 {
 public:
-  FGfdmSocket(string, int);
-  FGfdmSocket(string, int, int);
+  FGfdmSocket(const std::string&, int);
+  FGfdmSocket(const std::string&, int, int);
   FGfdmSocket(int);
   ~FGfdmSocket();
   void Send(void);
-  void Send(char *data, int length);
+  void Send(const char *data, int length);
 
-  string Receive(void);
-  int Reply(string text);
-  void Append(const string s) {Append(s.c_str());}
+  std::string Receive(void);
+  int Reply(const std::string& text);
+  void Append(const std::string& s) {Append(s.c_str());}
   void Append(const char*);
   void Append(double);
   void Append(long);
   void Clear(void);
-  void Clear(string s);
+  void Clear(const std::string& s);
   void Close(void);
   bool GetConnectStatus(void) {return connected;}
 
@@ -119,10 +111,9 @@ public:
 private:
   int sckt;
   int sckt_in;
-  int size;
   struct sockaddr_in scktName;
   struct hostent *host;
-  string buffer;
+  std::ostringstream buffer;
   bool connected;
   void Debug(int from);
 };

@@ -41,28 +41,29 @@ INCLUDES
 #include <float.h>
 #include <queue>
 #include <string>
-#include <sstream>
 #include <cmath>
-#include <cstdlib>
 
 #include "input_output/string_utilities.h"
-
-using std::fabs;
-using std::string;
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
 
-#if !defined(WIN32) || defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER >= 1300))
-  using std::max;
+#if defined(_MSC_VER) && (_MSC_VER < 1300)
+namespace std
+{
+  template <class T> inline T max(const T& a, const T& b)
+  {
+    return (a > b) ? a : b;
+  }
+}
 #endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.28 2009/09/01 12:35:29 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.29 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +79,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.28 2009/09/01 12:35:29 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.29 2009/10/24 22:59:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,8 +99,8 @@ public:
   public:
     unsigned int fdmId;
     unsigned int messageId;
-    string text;
-    string subsystem;
+    std::string text;
+    std::string subsystem;
     enum mType {eText, eInteger, eDouble, eBool} type;
     bool bVal;
     int  iVal;
@@ -162,22 +163,22 @@ public:
   /** Creates a message with the given text and places it on the queue.
       @param text message text
       @return pointer to a Message structure */
-  void PutMessage(const string& text);
+  void PutMessage(const std::string& text);
   /** Creates a message with the given text and boolean value and places it on the queue.
       @param text message text
       @param bVal boolean value associated with the message
       @return pointer to a Message structure */
-  void PutMessage(const string& text, bool bVal);
+  void PutMessage(const std::string& text, bool bVal);
   /** Creates a message with the given text and integer value and places it on the queue.
       @param text message text
       @param iVal integer value associated with the message
       @return pointer to a Message structure */
-  void PutMessage(const string& text, int iVal);
+  void PutMessage(const std::string& text, int iVal);
   /** Creates a message with the given text and double value and places it on the queue.
       @param text message text
       @param dVal double value associated with the message
       @return pointer to a Message structure */
-  void PutMessage(const string& text, double dVal);
+  void PutMessage(const std::string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return 1 if some messages */
   int SomeMessages(void);
@@ -192,7 +193,7 @@ public:
 
   /** Returns the version number of JSBSim.
   *   @return The version number of JSBSim. */
-  string GetVersion(void) {return JSBSim_version;}
+  std::string GetVersion(void) {return JSBSim_version;}
 
   /// Disables highlighting in the console output.
   void disableHighLighting(void);
@@ -268,7 +269,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(double a, double b) {
     double eps = 2.0*DBL_EPSILON;
-    return fabs(a - b) <= eps*max(fabs(a), fabs(b));
+    return std::fabs(a - b) <= eps*std::max(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
@@ -277,7 +278,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(float a, float b) {
     float eps = 2.0*FLT_EPSILON;
-    return fabs(a - b) <= eps*max(fabs(a), fabs(b));
+    return std::fabs(a - b) <= eps*std::max(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
@@ -331,44 +332,12 @@ protected:
   static const double slugtolb;
   static const double kgtolb;
   static const double kgtoslug;
-  static const string needed_cfg_version;
-  static const string JSBSim_version;
+  static const std::string needed_cfg_version;
+  static const std::string JSBSim_version;
 
-  static string CreateIndexedPropertyName(string Property, int index)
-  {
-    std::stringstream str;
-    str << index;
-    string tmp;
-    str >> tmp;
-    return Property + "[" + tmp + "]";
-  }
+  static std::string CreateIndexedPropertyName(const std::string& Property, int index);
 
-  static double GaussianRandomNumber(void)
-  {
-    static double V1, V2, S;
-    static int phase = 0;
-    double X;
-
-    if (phase == 0) {
-      V1 = V2 = S = X = 0.0;
-
-      do {
-        double U1 = (double)rand() / RAND_MAX;
-        double U2 = (double)rand() / RAND_MAX;
-
-        V1 = 2 * U1 - 1;
-        V2 = 2 * U2 - 1;
-        S = V1 * V1 + V2 * V2;
-      } while(S >= 1 || S == 0);
-
-      X = V1 * sqrt(-2 * log(S) / S);
-    } else
-      X = V2 * sqrt(-2 * log(S) / S);
-
-    phase = 1 - phase;
-
-    return X;
-  }
+  static double GaussianRandomNumber(void);
 
 public:
 /// Moments L, M, N

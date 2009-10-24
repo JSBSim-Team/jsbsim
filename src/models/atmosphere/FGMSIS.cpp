@@ -59,14 +59,14 @@ INCLUDES
 
 #include "FGMSIS.h"
 #include "FGState.h"
-#include <math.h>          /* maths functions */
-#include <stdlib.h>        /* for malloc/free */
-#include <stdio.h>         /* for printf      */
+#include <cmath>          /* maths functions */
 #include <iostream>        // for cout, endl
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.10 2009/05/26 05:35:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.11 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +322,7 @@ double MSIS::dnet (double dd, double dm, double zhm, double xmm, double xm)
   double ylog;
   a  = zhm / (xmm-xm);
   if (!((dm>0) && (dd>0))) {
-    printf("dnet log error %e %e %e\n",dm,dd,xm);
+    cerr << "dnet log error " << dm << ' ' << dd << ' ' << xm << ' ' << endl;
     if ((dd==0) && (dm==0))
       dd=1;
     if (dm==0)
@@ -400,7 +400,7 @@ void MSIS::splint (double *xa, double *ya, double *y2a, int n, double x, double 
   }
   h = xa[khi] - xa[klo];
   if (h==0.0)
-    printf("bad XA input to splint");
+    cerr << "bad XA input to splint" << endl;
   a = (xa[khi] - x)/h;
   b = (x - xa[klo])/h;
   yi = a * ya[klo] + b * ya[khi] + ((a*a*a - a) * y2a[klo] + (b*b*b - b) * y2a[khi]) * h * h/6.0;
@@ -422,9 +422,9 @@ void MSIS::spline (double *x, double *y, int n, double yp1, double ypn, double *
   double *u;
   double sig, p, qn, un;
   int i, k;
-  u=(double*)malloc(sizeof(double)*n);
+  u=new double[n];
   if (u==NULL) {
-    printf("Out Of Memory in spline - ERROR");
+    cerr << "Out Of Memory in spline - ERROR" << endl;
     return;
   }
   if (yp1>0.99E30) {
@@ -451,7 +451,7 @@ void MSIS::spline (double *x, double *y, int n, double yp1, double ypn, double *
   for (k=n-2;k>=0;k--)
     y2[k] = y2[k] * y2[k+1] + u[k];
 
-  free(u);
+  delete u;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -964,7 +964,7 @@ double MSIS::glob7s(double *p, struct nrlmsise_input *input,
   if (p[99]==0)
     p[99]=pset;
   if (p[99]!=pset) {
-    printf("Wrong parameter set for glob7s\n");
+    cerr << "Wrong parameter set for glob7s" << endl;
     return -1;
   }
   for (j=0;j<14;j++)
@@ -1247,7 +1247,7 @@ void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
     if (sqrt(diff*diff)<test)
       return;
     if (l==ltest) {
-      printf("ERROR: ghp7 not converging for press %e, diff %e",press,diff);
+      cerr << "ERROR: ghp7 not converging for press " << press << ", diff " << diff << endl;
       return;
     }
     xm = output->d[5] / xn / 1.66E-24;

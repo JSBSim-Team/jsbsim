@@ -49,14 +49,19 @@ INCLUDES
 #include "models/FGAerodynamics.h"
 #include "models/FGPropagate.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLElement.h"
 #include "models/FGPropulsion.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGQuaternion.h"
+#include <iostream>
 #include <fstream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.33 2009/10/02 10:30:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.34 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************

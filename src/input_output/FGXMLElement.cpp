@@ -32,6 +32,9 @@ INCLUDES
 
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
+
+using namespace std;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -39,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.27 2009/10/21 16:07:29 dpculp Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.28 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -49,7 +52,7 @@ map <string, map <string, double> > Element::convert;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-Element::Element(string nm)
+Element::Element(const string& nm)
 {
   name   = nm;
   parent = 0L;
@@ -221,7 +224,7 @@ Element::~Element(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string Element::GetAttributeValue(string attr)
+string Element::GetAttributeValue(const string& attr)
 {
   int select=-1;
   for (unsigned int i=0; i<attribute_key.size(); i++) {
@@ -233,7 +236,7 @@ string Element::GetAttributeValue(string attr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double Element::GetAttributeValueAsNumber(string attr)
+double Element::GetAttributeValueAsNumber(const string& attr)
 {
   string attribute = GetAttributeValue(attr);
 
@@ -292,7 +295,7 @@ double Element::GetDataAsNumber(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-unsigned int Element::GetNumElements(string element_name)
+unsigned int Element::GetNumElements(const string& element_name)
 {
   unsigned int number_of_elements=0;
   Element* el=FindElement(element_name);
@@ -305,7 +308,7 @@ unsigned int Element::GetNumElements(string element_name)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Element* Element::FindElement(string el)
+Element* Element::FindElement(const string& el)
 {
   if (el.empty() && children.size() >= 1) {
     element_index = 1;
@@ -323,7 +326,7 @@ Element* Element::FindElement(string el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Element* Element::FindNextElement(string el)
+Element* Element::FindNextElement(const string& el)
 {
   if (el.empty()) {
     if (element_index < children.size()) {
@@ -345,7 +348,7 @@ Element* Element::FindNextElement(string el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double Element::FindElementValueAsNumber(string el)
+double Element::FindElementValueAsNumber(const string& el)
 {
   Element* element = FindElement(el);
   if (element) {
@@ -358,7 +361,7 @@ double Element::FindElementValueAsNumber(string el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string Element::FindElementValue(string el)
+string Element::FindElementValue(const string& el)
 {
   Element* element = FindElement(el);
   if (element) {
@@ -370,7 +373,7 @@ string Element::FindElementValue(string el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double Element::FindElementValueAsNumberConvertTo(string el, string target_units)
+double Element::FindElementValueAsNumberConvertTo(const string& el, const string& target_units)
 {
   Element* element = FindElement(el);
 
@@ -404,9 +407,9 @@ double Element::FindElementValueAsNumberConvertTo(string el, string target_units
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double Element::FindElementValueAsNumberConvertFromTo( string el,
-                                                       string supplied_units,
-                                                       string target_units)
+double Element::FindElementValueAsNumberConvertFromTo( const string& el,
+                                                       const string& supplied_units,
+                                                       const string& target_units)
 {
   Element* element = FindElement(el);
 
@@ -438,7 +441,7 @@ double Element::FindElementValueAsNumberConvertFromTo( string el,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
+FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units)
 {
   FGColumnVector3 triplet;
   Element* item;
@@ -518,7 +521,7 @@ void Element::Print(unsigned int level)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void Element::AddAttribute(string name, string value)
+void Element::AddAttribute(const string& name, const string& value)
 {
   attribute_key.push_back(name);
   attributes[name] = value;
@@ -528,8 +531,8 @@ void Element::AddAttribute(string name, string value)
 
 void Element::AddData(string d)
 {
-  unsigned int string_start = (unsigned int)d.find_first_not_of(" \t");
-  if (string_start > 0) {
+  string::size_type string_start = d.find_first_not_of(" \t");
+  if (string_start != string::npos && string_start > 0) {
     d.erase(0,string_start);
   }
   data_lines.push_back(d);

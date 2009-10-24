@@ -38,6 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <string>
 #include <vector>
 
 #include "FGModel.h"
@@ -48,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +90,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -131,7 +132,7 @@ public:
 
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */
-  inline string GetAircraftName(void) { return AircraftName; }
+  const std::string& GetAircraftName(void) const { return AircraftName; }
 
   /// Gets the wing area
   double GetWingArea(void) const { return WingArea; }
@@ -163,7 +164,7 @@ public:
   inline double GetXYZrp(int idx) const { return vXYZrp(idx); }
   inline double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
   inline double GetXYZep(int idx) const { return vXYZep(idx); }
-  inline void SetAircraftName(string name) {AircraftName = name;}
+  inline void SetAircraftName(const std::string& name) {AircraftName = name;}
   inline void SetHoldDown(int hd) {HoldDown = hd;}
   inline int GetHoldDown(void) const {return HoldDown;}
 
@@ -193,7 +194,7 @@ private:
   double HTailArea, VTailArea, HTailArm, VTailArm;
   double lbarh,lbarv,vbarh,vbarv;
   int HoldDown;
-  string AircraftName;
+  std::string AircraftName;
 
   void Debug(int from);
 };

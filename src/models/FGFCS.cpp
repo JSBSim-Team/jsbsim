@@ -39,6 +39,7 @@ INCLUDES
 
 #include "FGFCS.h"
 #include "FGFDMExec.h"
+#include "FGGroundReactions.h"
 #include "input_output/FGPropertyManager.h"
 #include <fstream>
 #include <sstream>
@@ -58,9 +59,11 @@ INCLUDES
 #include "models/flight_control/FGMagnetometer.h"
 #include "models/flight_control/FGGyro.h"
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.63 2009/10/06 02:33:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.64 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -685,7 +688,7 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::FindSystemFullPathname(string system_filename)
+string FGFCS::FindSystemFullPathname(const string& system_filename)
 {
   string fullpath, localpath;
   string systemPath = FDMExec->GetSystemsPath();
@@ -713,7 +716,7 @@ string FGFCS::FindSystemFullPathname(string system_filename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ifstream* FGFCS::FindSystemFile(string system_filename)
+ifstream* FGFCS::FindSystemFile(const string& system_filename)
 {
   string fullpath, localpath;
   string systemPath = FDMExec->GetSystemsPath();
@@ -738,7 +741,7 @@ ifstream* FGFCS::FindSystemFile(string system_filename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentStrings(string delimeter)
+string FGFCS::GetComponentStrings(const string& delimiter)
 {
   unsigned int comp;
   string CompStrings = "";
@@ -747,7 +750,7 @@ string FGFCS::GetComponentStrings(string delimeter)
 
   for (unsigned int i=0; i<Systems.size(); i++) {
     if (firstime) firstime = false;
-    else          CompStrings += delimeter;
+    else          CompStrings += delimiter;
 
     CompStrings += Systems[i]->GetName();
     total_count++;
@@ -756,7 +759,7 @@ string FGFCS::GetComponentStrings(string delimeter)
   for (comp = 0; comp < APComponents.size(); comp++)
   {
     if (firstime) firstime = false;
-    else          CompStrings += delimeter;
+    else          CompStrings += delimiter;
 
     CompStrings += APComponents[comp]->GetName();
     total_count++;
@@ -764,7 +767,7 @@ string FGFCS::GetComponentStrings(string delimeter)
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          CompStrings += delimeter;
+    else          CompStrings += delimiter;
 
     CompStrings += FCSComponents[comp]->GetName();
     total_count++;
@@ -775,7 +778,7 @@ string FGFCS::GetComponentStrings(string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentValues(string delimeter)
+string FGFCS::GetComponentValues(const string& delimiter)
 {
   std::ostringstream buf;
 
@@ -785,7 +788,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
   for (unsigned int i=0; i<Systems.size(); i++) {
     if (firstime) firstime = false;
-    else          buf << delimeter;
+    else          buf << delimiter;
 
     buf << setprecision(9) << Systems[i]->GetOutput();
     total_count++;
@@ -793,7 +796,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
   for (comp = 0; comp < APComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          buf << delimeter;
+    else          buf << delimiter;
 
     buf << setprecision(9) << APComponents[comp]->GetOutput();
     total_count++;
@@ -801,7 +804,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          buf << delimeter;
+    else          buf << delimiter;
 
     buf << setprecision(9) << FCSComponents[comp]->GetOutput();
     total_count++;

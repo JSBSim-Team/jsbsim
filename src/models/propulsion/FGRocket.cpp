@@ -38,13 +38,19 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
 #include <sstream>
-
 #include "FGRocket.h"
+#include "FGState.h"
+#include "models/FGPropulsion.h"
+#include "FGThruster.h"
+#include "FGTank.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.12 2009/10/07 23:34:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.13 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,23 +258,23 @@ double FGRocket::CalcOxidizerNeed(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRocket::GetEngineLabels(string delimeter)
+string FGRocket::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << " Total Impulse (engine " << EngineNumber << " in psf)" << delimeter
-      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
+  buf << Name << " Total Impulse (engine " << EngineNumber << " in psf)" << delimiter
+      << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRocket::GetEngineValues(string delimeter)
+string FGRocket::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << It << delimeter << Thruster->GetThrusterValues(EngineNumber, delimeter);
+  buf << It << delimiter << Thruster->GetThrusterValues(EngineNumber, delimiter);
 
   return buf.str();
 }

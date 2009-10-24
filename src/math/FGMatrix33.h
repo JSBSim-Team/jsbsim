@@ -40,18 +40,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cstdlib>
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <cmath>
-
-using std::ostream;
-using std::istream;
-using std::cerr;
-using std::cout;
-using std::endl;
-using std::string;
+#include <iosfwd>
 
 #include "FGColumnVector3.h"
 #include "FGJSBBase.h"
@@ -60,7 +50,7 @@ using std::string;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.7 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,7 +74,7 @@ DECLARATION: MatrixException
 class MatrixException : public FGJSBBase
 {
 public:
-  string Message;
+  std::string Message;
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -450,7 +440,7 @@ inline FGMatrix33 operator*(double scalar, const FGMatrix33& A) {
 
     Write the matrix to a stream.
 */
-ostream& operator<<(ostream& os, const FGMatrix33& M);
+std::ostream& operator<<(std::ostream& os, const FGMatrix33& M);
 
 /** Read matrix from a stream.
 
@@ -459,7 +449,7 @@ ostream& operator<<(ostream& os, const FGMatrix33& M);
 
     Read matrix from a stream.
 */
-istream& operator>>(istream& is, FGMatrix33& M);
+std::istream& operator>>(std::istream& is, FGMatrix33& M);
 
 } // namespace JSBSim
 

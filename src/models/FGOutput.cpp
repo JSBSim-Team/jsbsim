@@ -53,13 +53,16 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGInertial.h"
-#include "FGPropulsion.h"   //access to FGEngine, FGTank
+#include "models/propulsion/FGEngine.h"
+#include "models/propulsion/FGTank.h"
 #include "models/propulsion/FGPiston.h"
-#include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <cstring>
+#include <cstdlib>
 
 #include "input_output/net_fdm.hxx"
+#include "input_output/FGfdmSocket.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <windows.h>
@@ -70,9 +73,11 @@ INCLUDES
 static const int endianTest = 1;
 #define isLittleEndian (*((char *) &endianTest ) != 0)
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.41 2009/10/09 21:15:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.42 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -157,20 +162,17 @@ FGOutput::~FGOutput()
 
 bool FGOutput::InitModel(void)
 {
-  char fname[1000] = "";
-
   if (!FGModel::InitModel()) return false;
 
   if (Filename.size() > 0 && StartNewFile) {
-    size_t idx = BaseFilename.find_last_of(".");
-    size_t len = BaseFilename.length();
-    string extension = "";
-    if (idx != string::npos) {
-      extension = BaseFilename.substr(idx, len-idx);
-      len -= extension.length();
+    ostringstream buf;
+    string::size_type dot = BaseFilename.find_last_of('.');
+    if (dot != string::npos) {
+      buf << BaseFilename.substr(0, dot) << '_' << runID_postfix++ << BaseFilename.substr(dot);
+    } else {
+      buf << BaseFilename << '_' << runID_postfix++;
     }
-    sprintf(fname, "%s_%d%s", BaseFilename.substr(0,len).c_str(), runID_postfix++, extension.c_str());
-    Filename = string(fname);
+    Filename = buf.str();
     datafile.close();
     StartNewFile = false;
     dFirstPass = true;
@@ -205,7 +207,7 @@ bool FGOutput::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::SetType(string type)
+void FGOutput::SetType(const string& type)
 {
   if (type == "CSV") {
     Type = otCSV;
@@ -227,7 +229,7 @@ void FGOutput::SetType(string type)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::DelimitedOutput(string fname)
+void FGOutput::DelimitedOutput(const string& fname)
 {
   streambuf* buffer;
   string scratch = "";
@@ -918,7 +920,7 @@ void FGOutput::SocketOutput(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::SocketStatusOutput(string out_str)
+void FGOutput::SocketStatusOutput(const string& out_str)
 {
   string asciiData;
 

@@ -39,10 +39,12 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include <iostream>
+#include <sstream>
+#include <cstdlib>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.27 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.28 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,6 +238,44 @@ void FGJSBBase::disableHighLighting(void) {
   fgred[0]='\0';
   fggreen[0]='\0';
   fgdef[0]='\0';
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGJSBBase::CreateIndexedPropertyName(const string& Property, int index)
+{
+  std::ostringstream buf;
+  buf << Property << '[' << index << ']';
+  return buf.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGJSBBase::GaussianRandomNumber(void)
+{
+  static double V1, V2, S;
+  static int phase = 0;
+  double X;
+
+  if (phase == 0) {
+    V1 = V2 = S = X = 0.0;
+
+    do {
+      double U1 = (double)rand() / RAND_MAX;
+      double U2 = (double)rand() / RAND_MAX;
+
+      V1 = 2 * U1 - 1;
+      V2 = 2 * U2 - 1;
+      S = V1 * V1 + V2 * V2;
+    } while(S >= 1 || S == 0);
+
+    X = V1 * sqrt(-2 * log(S) / S);
+  } else
+    X = V2 * sqrt(-2 * log(S) / S);
+
+  phase = 1 - phase;
+
+  return X;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

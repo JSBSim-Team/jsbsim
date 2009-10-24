@@ -35,16 +35,20 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
 #include <sstream>
 
 #include "FGPropeller.h"
 #include "models/FGPropagate.h"
 #include "models/FGAtmosphere.h"
 #include "models/FGAuxiliary.h"
+#include "input_output/FGXMLElement.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.24 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.25 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

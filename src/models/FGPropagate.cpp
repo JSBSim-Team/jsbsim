@@ -54,7 +54,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cmath>
-#include <iomanip>
+#include <cstdlib>
+#include <iostream>
 
 #include "FGPropagate.h"
 #include "FGFDMExec.h"
@@ -64,9 +65,11 @@ INCLUDES
 #include "FGInertial.h"
 #include "input_output/FGPropertyManager.h"
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.42 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.43 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

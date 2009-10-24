@@ -38,21 +38,28 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGfdmSocket.h"
+#include <iostream>
+#include <iomanip>
 #include <cstring>
+#include "FGfdmSocket.h"
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.21 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.22 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGfdmSocket::FGfdmSocket(string address, int port, int protocol)
+FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
 {
-  sckt = sckt_in = size = 0;
+  sckt = sckt_in = 0;
   connected = false;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -104,9 +111,9 @@ FGfdmSocket::FGfdmSocket(string address, int port, int protocol)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGfdmSocket::FGfdmSocket(string address, int port)
+FGfdmSocket::FGfdmSocket(const string& address, int port)
 {
-  sckt = sckt_in = size = 0;
+  sckt = sckt_in = 0;
   connected = false;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -158,7 +165,6 @@ FGfdmSocket::FGfdmSocket(string address, int port)
 
 FGfdmSocket::FGfdmSocket(int port)
 {
-  size = 0;
   connected = false;
   unsigned long NoBlock = true;
 
@@ -217,9 +223,8 @@ string FGfdmSocket::Receive(void)
   char buf[1024];
   int len = sizeof(struct sockaddr_in);
   int num_chars=0;
-  int total_chars = 0;
   unsigned long NoBlock = true;
-  string data = ""; // todo: should allocate this with a standard size as a
+  string data;      // todo: should allocate this with a standard size as a
                     // class attribute and pass as a reference?
 
   if (sckt_in <= 0) {
@@ -239,9 +244,8 @@ string FGfdmSocket::Receive(void)
   }
 
   if (sckt_in > 0) {
-    while ((num_chars = recv(sckt_in, buf, 1024, 0)) > 0) {
-      data += string(buf).substr(0,num_chars);
-      total_chars += num_chars;
+    while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
+      data.append(buf, num_chars);
     }
 
 #if defined(_MSC_VER)
@@ -258,12 +262,12 @@ string FGfdmSocket::Receive(void)
 #endif
   }
 
-  return data.substr(0, total_chars);
+  return data;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGfdmSocket::Reply(string text)
+int FGfdmSocket::Reply(const string& text)
 {
   int num_chars_sent=0;
 
@@ -288,71 +292,58 @@ void FGfdmSocket::Close(void)
 
 void FGfdmSocket::Clear(void)
 {
-  buffer = "";
-  size = 0;
+  buffer.str(string());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGfdmSocket::Clear(string s)
+void FGfdmSocket::Clear(const string& s)
 {
-  buffer = s + " ";
-  size = buffer.size();
+  Clear();
+  buffer << s << ' ';
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGfdmSocket::Append(const char* item)
 {
-  if (size == 0) buffer += string(item);
-  else buffer += string(",") + string(item);
-  size++;
+  if (buffer.tellp() > 0) buffer << ',';
+  buffer << item;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGfdmSocket::Append(double item)
 {
-  char s[25];
-
-  sprintf(s,"%12.7f",item);
-
-  if (size == 0) buffer += string(s);
-  else buffer += string(",") + string(s);
-  size++;
+  if (buffer.tellp() > 0) buffer << ',';
+  buffer << std::setw(12) << std::setprecision(7) << item;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGfdmSocket::Append(long item)
 {
-  char s[25];
-
-  sprintf(s,"%12ld",item);
-
-  if (size == 0) buffer += string(s);
-  else buffer += string(",") + string(s);
-  size++;
+  if (buffer.tellp() > 0) buffer << ',';
+  buffer << std::setw(12) << item;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGfdmSocket::Send(void)
 {
-  buffer += string("\n");
-  if ((send(sckt,buffer.c_str(),buffer.size(),0)) <= 0) {
+  buffer << '\n';
+  string str = buffer.str();
+  if ((send(sckt,str.c_str(),str.size(),0)) <= 0) {
     perror("send");
-  } else {
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGfdmSocket::Send(char *data, int length)
+void FGfdmSocket::Send(const char *data, int length)
 {
   if ((send(sckt,data,length,0)) <= 0) {
     perror("send");
-  } else {
   }
 }
 

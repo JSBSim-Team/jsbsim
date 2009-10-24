@@ -40,18 +40,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
 #include "FGEngine.h"
-#include "input_output/FGXMLElement.h"
-#include "math/FGFunction.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class Element;
+class FGFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.17 2009/10/02 10:30:09 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,8 +209,8 @@ public:
   int InitRunning(void);
   void ResetToIC(void);
 
-  string GetEngineLabels(string delimeter);
-  string GetEngineValues(string delimeter);
+  std::string GetEngineLabels(const std::string& delimiter);
+  std::string GetEngineValues(const std::string& delimiter);
 
 private:
 

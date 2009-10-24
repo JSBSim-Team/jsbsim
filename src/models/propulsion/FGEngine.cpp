@@ -41,13 +41,20 @@ INCLUDES
 #include "FGTank.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
+#include "FGState.h"
+#include "models/FGPropulsion.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
+
+#include <iostream>
 #include <fstream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.33 2009/10/19 15:14:51 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.34 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

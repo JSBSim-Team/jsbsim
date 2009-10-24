@@ -54,10 +54,14 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGInertial.h"
 #include "input_output/FGPropertyManager.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.30 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.31 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

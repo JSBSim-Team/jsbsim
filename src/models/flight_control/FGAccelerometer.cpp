@@ -38,10 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAccelerometer.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.7 2009/09/06 13:45:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.8 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

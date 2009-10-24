@@ -39,9 +39,11 @@ INCLUDES
 
 #include "FGActuator.h"
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.13 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.14 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

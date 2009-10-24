@@ -40,22 +40,17 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include "models/propulsion/FGForce.h"
 #include "math/FGFunction.h"
 
 #include <string>
-using std::string;
-using std::cerr;
-using std::endl;
-using std::cout;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,6 +59,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGBallonet;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -230,7 +226,7 @@ private:
   enum GasType {ttUNKNOWN, ttHYDROGEN, ttHELIUM, ttAIR};
 
   GasType Type;
-  string type;
+  std::string type;
   int CellNum;
   // Structural constants
   double MaxVolume;                 // [ft�]

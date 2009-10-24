@@ -39,10 +39,13 @@ INCLUDES
 #include "FGBuoyantForces.h"
 #include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"  // Need?
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.9 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.10 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

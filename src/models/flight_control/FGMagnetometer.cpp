@@ -40,10 +40,14 @@ INCLUDES
 #include "FGMagnetometer.h"
 #include "simgear/magvar/coremag.hxx"
 #include <ctime>
+#include <cstdlib>
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.4 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.5 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_MAGNETOMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

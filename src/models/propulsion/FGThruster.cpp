@@ -35,13 +35,17 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
 #include <sstream>
 
 #include "FGThruster.h"
+#include "input_output/FGXMLElement.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.11 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

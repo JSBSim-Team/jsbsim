@@ -41,14 +41,19 @@ INCLUDES
 #include "models/FGInertial.h"
 #include "models/FGMassBalance.h"
 #include "FGGasCell.h"
+#include "input_output/FGXMLElement.h"
+#include <iostream>
+#include <cstdlib>
 
 using std::cerr;
 using std::endl;
 using std::cout;
+using std::string;
+using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.11 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -38,14 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
-#include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.18 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -53,8 +52,8 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-using std::vector;
 class FGFCS;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -108,7 +107,7 @@ time. The delay element can specify a frame delay. The integer number provided i
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.18 $
+@version $Revision: 1.19 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +154,7 @@ protected:
   bool fail_low;
   bool fail_high;
   bool fail_stuck;
-  string quant_property;
+  std::string quant_property;
 
   void ProcessSensorSignal(void);
   void Noise(void);

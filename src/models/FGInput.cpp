@@ -42,12 +42,18 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-#include <fstream>
+#include "input_output/FGfdmSocket.h"
+#include "input_output/FGXMLElement.h"
+
+#include <sstream>
 #include <iomanip>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.16 2009/10/09 21:15:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.17 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,9 +95,8 @@ bool FGInput::InitModel(void)
 
 bool FGInput::Run(void)
 {
-  string line, token, info_string;
+  string line, token;
   size_t start=0, string_start=0, string_end=0;
-  char buf[100];
   double value=0;
   FGPropertyManager* node=0;
 
@@ -157,8 +162,9 @@ bool FGInput::Run(void)
             socket->Reply("Must be in HOLD to search properties\n");
           }
         } else if (node > 0) {
-          sprintf(buf, "%s = %12.6f\n", argument.c_str(), node->getDoubleValue());
-          socket->Reply(buf);
+          ostringstream buf;
+          buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << endl;
+          socket->Reply(buf.str());
         }
 
       } else if (command == "hold") {                  // PAUSE
@@ -180,12 +186,12 @@ bool FGInput::Run(void)
       } else if (command == "info") {                   // INFO
 
         // get info about the sim run and/or aircraft, etc.
-        sprintf(buf, "%8.3f", State->Getsim_time());
-        info_string  = "JSBSim version: " + JSBSim_version + "\n";
-        info_string += "Config File version: " + needed_cfg_version + "\n";
-        info_string += "Aircraft simulated: " + Aircraft->GetAircraftName() + "\n";
-        info_string += "Simulation time: " + string(buf) + "\n";
-        socket->Reply(info_string);
+        ostringstream info;
+        info << "JSBSim version: " << JSBSim_version << endl;
+        info << "Config File version: " << needed_cfg_version << endl;
+        info << "Aircraft simulated: " << Aircraft->GetAircraftName() << endl;
+        info << "Simulation time: " << setw(8) << setprecision(3) << State->Getsim_time() << endl;
+        socket->Reply(info.str());
 
       } else if (command == "help") {                   // HELP
 

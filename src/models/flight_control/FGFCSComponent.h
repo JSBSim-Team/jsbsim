@@ -38,8 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLElement.h"
 #include <string>
 #include <vector>
 
@@ -47,10 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $"
-
-using std::string;
-using std::vector;
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +54,8 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFCS;
+class FGPropertyManager;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -83,7 +80,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -102,22 +99,22 @@ public:
   virtual bool Run(void);
   virtual void SetOutput(void);
   double GetOutput (void) const {return Output;}
-  string GetName(void) const {return Name;}
-  string GetType(void) const { return Type; }
+  std::string GetName(void) const {return Name;}
+  std::string GetType(void) const { return Type; }
   virtual double GetOutputPct(void) const { return 0; }
 
 protected:
   FGFCS* fcs;
   FGPropertyManager* PropertyManager;
   FGPropertyManager* treenode;
-  vector <FGPropertyManager*> OutputNodes;
+  std::vector <FGPropertyManager*> OutputNodes;
   FGPropertyManager* ClipMinPropertyNode;
   FGPropertyManager* ClipMaxPropertyNode;
-  vector <FGPropertyManager*> InputNodes;
-  vector <float> InputSigns;
-  vector <double> output_array;
-  string Type;
-  string Name;
+  std::vector <FGPropertyManager*> InputNodes;
+  std::vector <float> InputSigns;
+  std::vector <double> output_array;
+  std::string Type;
+  std::string Name;
   double Input;
   double Output;
   double clipmax, clipmin;

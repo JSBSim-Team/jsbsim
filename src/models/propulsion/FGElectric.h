@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.8 2009/10/24 22:59:30 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
     there is no battery model available, so this motor does not consume any
     energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.8 2009/10/24 22:59:30 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,8 @@ public:
   double Calculate(void);
   double GetPowerAvailable(void) {return PowerAvailable;}
   double getRPM(void) {return RPM;}
-  string GetEngineLabels(string delimeter);
-  string GetEngineValues(string delimeter);
+  std::string GetEngineLabels(const std::string& delimiter);
+  std::string GetEngineValues(const std::string& delimiter);
 
 private:
 

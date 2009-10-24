@@ -38,12 +38,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGKinemat.h"
-#include <math.h>
-#include <float.h>
+#include "input_output/FGXMLElement.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.9 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.10 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

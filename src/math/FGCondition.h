@@ -39,20 +39,21 @@ INCLUDES
 
 #include <map>
 #include "FGJSBBase.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.4 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.5 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGPropertyManager;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -69,7 +70,7 @@ class FGCondition : public FGJSBBase
 {
 public:
   FGCondition(Element* element, FGPropertyManager* PropertyManager);
-  FGCondition(string test, FGPropertyManager* PropertyManager);
+  FGCondition(const std::string& test, FGPropertyManager* PropertyManager);
   ~FGCondition(void);
 
   bool Evaluate(void);
@@ -78,18 +79,18 @@ public:
 private:
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
   enum eLogic {elUndef=0, eAND, eOR};
-  map <string, eComparison> mComparison;
+  std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
   FGPropertyManager *TestParam1, *TestParam2, *PropertyManager;
   double TestValue;
   eComparison Comparison;
   bool isGroup;
-  string conditional;
+  std::string conditional;
 
-  static string indent;
+  static std::string indent;
 
-  vector <FGCondition*> conditions;
+  std::vector <FGCondition*> conditions;
   void InitializeConditionals(void);
 
   void Debug(int from);

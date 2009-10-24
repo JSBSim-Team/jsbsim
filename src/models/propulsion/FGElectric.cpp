@@ -40,11 +40,18 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGElectric.h"
+#include "FGState.h"
 #include "models/FGPropulsion.h"
+#include "models/propulsion/FGThruster.h"
+
+#include <iostream>
+#include <sstream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.6 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.7 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,24 +99,24 @@ double FGElectric::Calculate(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGElectric::GetEngineLabels(string delimeter)
+string FGElectric::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << " HP (engine " << EngineNumber << ")" << delimeter
-      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
+  buf << Name << " HP (engine " << EngineNumber << ")" << delimiter
+      << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGElectric::GetEngineValues(string delimeter)
+string FGElectric::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << HP << delimeter
-     << Thruster->GetThrusterValues(EngineNumber, delimeter);
+  buf << HP << delimiter
+     << Thruster->GetThrusterValues(EngineNumber, delimiter);
 
   return buf.str();
 }

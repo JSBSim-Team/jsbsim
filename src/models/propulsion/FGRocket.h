@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $
+    $Id: FGRocket.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -159,8 +159,8 @@ public:
 
   double GetOxiFlowRate(void) const {return OxidizerFlowRate;}
 
-  string GetEngineLabels(string delimeter);
-  string GetEngineValues(string delimeter);
+  std::string GetEngineLabels(const std::string& delimiter);
+  std::string GetEngineValues(const std::string& delimiter);
 
 private:
   /** Reduces the fuel in the active tanks by the amount required.

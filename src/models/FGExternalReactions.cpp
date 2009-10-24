@@ -37,7 +37,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGExternalReactions.h"
+#include "input_output/FGXMLElement.h"
+#include <iostream>
 #include <string>
+
+using namespace std;
 
 namespace JSBSim {
 
@@ -49,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.6 2009/06/09 03:23:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.7 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

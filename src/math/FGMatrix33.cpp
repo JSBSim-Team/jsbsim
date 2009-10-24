@@ -40,9 +40,13 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
+#include <iostream>
+
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.4 2008/12/12 05:05:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.5 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -38,6 +38,7 @@ INCLUDES
 
 #include <string>
 #include <cstdlib>
+#include <iomanip>
 #include "FGFDMExec.h"
 #include "models/FGAtmosphere.h"
 #include "FGInitialCondition.h"
@@ -45,10 +46,16 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGPropulsion.h"
 #include "models/FGAerodynamics.h"
+#include "models/FGFCS.h"
+#include "models/propulsion/FGEngine.h"
+#include "models/FGAuxiliary.h"
+#include "models/FGGroundReactions.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.8 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.9 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -427,13 +434,11 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-
-  char out[80];
-
-  sprintf(out,"  %20s: %6.2f %5s: %9.2e Tolerance: %3.0e",
-           GetControlName().c_str(), GetControl()*control_convert,
-           GetStateName().c_str(), GetState()+state_target, GetTolerance());
-  cout << out;
+  cout << "  " << setw(20) << GetControlName() << ": ";
+  cout << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
+  cout << setw(5) << GetStateName() << ": ";
+  cout << setw(9) << setprecision(2) << scientific << GetState()+state_target;
+  cout << " Tolerance: " << setw(3) << setprecision(0) << scientific << GetTolerance();
 
   if( fabs(GetState()+state_target) < fabs(GetTolerance()) )
      cout << "  Passed" << endl;

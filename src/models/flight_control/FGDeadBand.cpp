@@ -38,10 +38,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGDeadBand.h"
+#include "input_output/FGXMLElement.h"
+#include "input_output/FGPropertyManager.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.8 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.9 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

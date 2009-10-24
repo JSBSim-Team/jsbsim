@@ -39,11 +39,14 @@ INCLUDES
 #include <iomanip>
 
 #include "FGGroundReactions.h"
+#include "FGFCS.h"
 #include "input_output/FGPropertyManager.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.23 2009/10/05 04:48:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.24 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

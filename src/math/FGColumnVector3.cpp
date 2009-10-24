@@ -38,11 +38,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGColumnVector3.h"
-#include <cstdio>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.10 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.11 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,11 +62,13 @@ FGColumnVector3::FGColumnVector3(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGColumnVector3::Dump(string delimeter) const
+string FGColumnVector3::Dump(const string& delimiter) const
 {
-  char buffer[256];
-  sprintf(buffer, "%18.16f%s%18.16f%s%18.16f", Entry(1), delimeter.c_str(), Entry(2), delimeter.c_str(), Entry(3));
-  return string(buffer);
+  ostringstream buffer;
+  buffer << std::setw(18) << std::setprecision(16) << Entry(1) << delimiter;
+  buffer << std::setw(18) << std::setprecision(16) << Entry(2) << delimiter;
+  buffer << std::setw(18) << std::setprecision(16) << Entry(3);
+  return buffer.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

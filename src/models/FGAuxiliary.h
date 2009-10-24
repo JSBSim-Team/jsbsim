@@ -40,7 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-#include "FGFDMExec.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGLocation.h"
 #include "FGPropagate.h"
@@ -49,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.17 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.17 2009/10/24 22:59:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,15 +171,15 @@ public:
   double GetMagBeta (void) const { return fabs(beta); }
 
   double Getalpha   (int unit) const { if (unit == inDegrees) return alpha*radtodeg;
-                                       else cerr << "Bad units" << endl; return 0.0;}
+                                       else return BadUnits(); }
   double Getbeta    (int unit) const { if (unit == inDegrees) return beta*radtodeg;
-                                       else cerr << "Bad units" << endl; return 0.0;}
+                                       else return BadUnits(); }
   double Getadot    (int unit) const { if (unit == inDegrees) return adot*radtodeg;
-                                       else cerr << "Bad units" << endl; return 0.0;}
+                                       else return BadUnits(); }
   double Getbdot    (int unit) const { if (unit == inDegrees) return bdot*radtodeg;
-                                       else cerr << "Bad units" << endl; return 0.0;}
+                                       else return BadUnits(); }
   double GetMagBeta (int unit) const { if (unit == inDegrees) return fabs(beta)*radtodeg;
-                                       else cerr << "Bad units" << endl; return 0.0;}
+                                       else return BadUnits(); }
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
@@ -281,6 +280,7 @@ private:
   void CalculateRelativePosition(void);
 
   void bind(void);
+  double BadUnits(void) const;
   void Debug(int from);
 };
 

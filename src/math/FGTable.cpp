@@ -37,13 +37,17 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGTable.h"
-#include <iomanip>
+#include "input_output/FGXMLElement.h"
+#include "input_output/FGPropertyManager.h"
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.19 2009/10/05 18:37:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.20 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,7 +311,7 @@ FGTable::~FGTable()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-unsigned int FGTable::FindNumColumns(string test_line)
+unsigned int FGTable::FindNumColumns(const string& test_line)
 {
   // determine number of data columns in table (first column is row lookup - don't count)
   size_t position=0;
@@ -466,7 +470,7 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::operator<<(stringstream& in_stream)
+void FGTable::operator<<(istream& in_stream)
 {
   int startRow=0;
   int startCol=0;

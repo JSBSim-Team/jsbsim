@@ -43,10 +43,13 @@ INCLUDES
 
 #include "FGMars.h"
 #include "FGState.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.8 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.9 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

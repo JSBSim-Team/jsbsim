@@ -38,10 +38,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
+#include "input_output/FGXMLElement.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.19 2009/09/26 17:45:49 andgi Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.20 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

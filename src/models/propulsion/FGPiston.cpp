@@ -43,12 +43,17 @@ INCLUDES
 #include <sstream>
 
 #include "FGPiston.h"
+#include "FGState.h"
+#include "models/FGAtmosphere.h"
 #include "models/FGPropulsion.h"
 #include "FGPropeller.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.45 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.46 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -838,28 +843,28 @@ void FGPiston::doOilPressure(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPiston::GetEngineLabels(string delimeter)
+string FGPiston::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << " Power Available (engine " << EngineNumber << " in HP)" << delimeter
-      << Name << " HP (engine " << EngineNumber << ")" << delimeter
-      << Name << " equivalent ratio (engine " << EngineNumber << ")" << delimeter
-      << Name << " MAP (engine " << EngineNumber << " in inHg)" << delimeter
-      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
+  buf << Name << " Power Available (engine " << EngineNumber << " in HP)" << delimiter
+      << Name << " HP (engine " << EngineNumber << ")" << delimiter
+      << Name << " equivalent ratio (engine " << EngineNumber << ")" << delimiter
+      << Name << " MAP (engine " << EngineNumber << " in inHg)" << delimiter
+      << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPiston::GetEngineValues(string delimeter)
+string FGPiston::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << PowerAvailable << delimeter << HP << delimeter
-      << equivalence_ratio << delimeter << ManifoldPressure_inHg << delimeter
-      << Thruster->GetThrusterValues(EngineNumber, delimeter);
+  buf << PowerAvailable << delimiter << HP << delimiter
+      << equivalence_ratio << delimiter << ManifoldPressure_inHg << delimiter
+      << Thruster->GetThrusterValues(EngineNumber, delimiter);
 
   return buf.str();
 }

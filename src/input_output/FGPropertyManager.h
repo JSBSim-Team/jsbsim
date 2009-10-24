@@ -42,7 +42,6 @@ INCLUDES
 #endif
 
 #include <string>
-#include <iostream>
 #include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
@@ -54,13 +53,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.15 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-using namespace std;
 
 namespace JSBSim {
 
@@ -93,7 +90,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *  NOTE: this function changes its argument and thus relies
      *  on pass by value
      */
-    string mkPropertyName(string name, bool lowercase);
+    std::string mkPropertyName(std::string name, bool lowercase);
 
     /**
      * Get a property node.
@@ -103,10 +100,10 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @return The node, or 0 if none exists and none was created.
      */
     FGPropertyManager*
-    GetNode (const string &path, bool create = false);
+    GetNode (const std::string &path, bool create = false);
 
     FGPropertyManager*
-    GetNode (const string &relpath, int index, bool create = false);
+    GetNode (const std::string &relpath, int index, bool create = false);
 
     /**
      * Test whether a given node exists.
@@ -114,23 +111,23 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param path The path of the node, relative to root.
      * @return true if the node exists, false otherwise.
      */
-    bool HasNode (const string &path);
+    bool HasNode (const std::string &path);
 
     /**
      * Get the name of a node
      */
-    string GetName( void );
+    std::string GetName( void );
 
     /**
      * Get the name of a node without underscores, etc.
      */
-    string GetPrintableName( void );
+    std::string GetPrintableName( void );
 
     /**
      * Get the fully qualified name of a node
      * This function is very slow, so is probably useful for debugging only.
      */
-    string GetFullyQualifiedName(void);
+    std::string GetFullyQualifiedName(void);
 
     /**
      * Get a bool value for a property.
@@ -146,7 +143,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a bool, or the default value provided.
      */
-    bool GetBool (const string &name, bool defaultValue = false);
+    bool GetBool (const std::string &name, bool defaultValue = false);
 
 
     /**
@@ -163,7 +160,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as an int, or the default value provided.
      */
-    int GetInt (const string &name, int defaultValue = 0);
+    int GetInt (const std::string &name, int defaultValue = 0);
 
 
     /**
@@ -180,7 +177,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a long, or the default value provided.
      */
-    int GetLong (const string &name, long defaultValue = 0L);
+    int GetLong (const std::string &name, long defaultValue = 0L);
 
 
     /**
@@ -197,7 +194,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a float, or the default value provided.
      */
-    float GetFloat (const string &name, float defaultValue = 0.0);
+    float GetFloat (const std::string &name, float defaultValue = 0.0);
 
 
     /**
@@ -214,7 +211,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a double, or the default value provided.
      */
-    double GetDouble (const string &name, double defaultValue = 0.0);
+    double GetDouble (const std::string &name, double defaultValue = 0.0);
 
 
     /**
@@ -231,7 +228,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a string, or the default value provided.
      */
-    string GetString (const string &name, string defaultValue = "");
+    std::string GetString (const std::string &name, std::string defaultValue = "");
 
 
     /**
@@ -247,7 +244,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetBool (const string &name, bool val);
+    bool SetBool (const std::string &name, bool val);
 
 
     /**
@@ -263,7 +260,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetInt (const string &name, int val);
+    bool SetInt (const std::string &name, int val);
 
 
     /**
@@ -279,7 +276,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetLong (const string &name, long val);
+    bool SetLong (const std::string &name, long val);
 
 
     /**
@@ -295,7 +292,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetFloat (const string &name, float val);
+    bool SetFloat (const std::string &name, float val);
 
 
     /**
@@ -311,7 +308,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetDouble (const string &name, double val);
+    bool SetDouble (const std::string &name, double val);
 
 
     /**
@@ -327,7 +324,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param val The new value for the property.
      * @return true if the assignment succeeded, false otherwise.
      */
-    bool SetString (const string &name, const string &val);
+    bool SetString (const std::string &name, const std::string &val);
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -347,7 +344,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param name The property name.
      * @param state The state of the archive attribute (defaults to true).
      */
-    void SetArchivable (const string &name, bool state = true);
+    void SetArchivable (const std::string &name, bool state = true);
 
 
     /**
@@ -362,7 +359,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param name The property name.
      * @param state The state of the read attribute (defaults to true).
      */
-    void SetReadable (const string &name, bool state = true);
+    void SetReadable (const std::string &name, bool state = true);
 
 
     /**
@@ -377,7 +374,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param name The property name.
      * @param state The state of the write attribute (defaults to true).
      */
-    void SetWritable (const string &name, bool state = true);
+    void SetWritable (const std::string &name, bool state = true);
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -391,7 +388,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * Classes should use this function to release control of any
      * properties they are managing.
      */
-    void Untie (const string &name);
+    void Untie (const std::string &name);
 
 
         // Templates cause ambiguity here
@@ -409,7 +406,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        be modified; defaults to true.
      */
     void
-    Tie (const string &name, bool *pointer, bool useDefault = true);
+    Tie (const std::string &name, bool *pointer, bool useDefault = true);
 
 
     /**
@@ -425,7 +422,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        be modified; defaults to true.
      */
     void
-    Tie (const string &name, int *pointer, bool useDefault = true);
+    Tie (const std::string &name, int *pointer, bool useDefault = true);
 
 
     /**
@@ -441,7 +438,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        be modified; defaults to true.
      */
     void
-    Tie (const string &name, long *pointer, bool useDefault = true);
+    Tie (const std::string &name, long *pointer, bool useDefault = true);
 
 
     /**
@@ -457,7 +454,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        be modified; defaults to true.
      */
     void
-    Tie (const string &name, float *pointer, bool useDefault = true);
+    Tie (const std::string &name, float *pointer, bool useDefault = true);
 
     /**
      * Tie a property to an external double variable.
@@ -472,7 +469,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        be modified; defaults to true.
      */
     void
-    Tie (const string &name, double *pointer, bool useDefault = true);
+    Tie (const std::string &name, double *pointer, bool useDefault = true);
 
 //============================================================================
 //
@@ -482,19 +479,19 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
 //============================================================================
 
     /* template <class V> void
-    Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
+    Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0,
            bool useDefault = true);
 
     template <class V> void
-    Tie (const string &name, int index, V (*getter)(int),
+    Tie (const std::string &name, int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true);
 
     template <class T, class V> void
-    Tie (const string &name, T * obj, V (T::*getter)() const,
+    Tie (const std::string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true);
 
     template <class T, class V> void
-    Tie (const string &name, T * obj, int index,
+    Tie (const std::string &name, T * obj, int index,
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
            bool useDefault = true); */
 
@@ -516,12 +513,12 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      */
 
     template <class V> inline void
-    Tie (const string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
+    Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter), useDefault))
-        cout << "Failed to tie property " << name << " to functions" << endl;
+        std::cout << "Failed to tie property " << name << " to functions" << std::endl;
       else if (debug_lvl & 0x20)
-        cout << name << endl;
+        std::cout << name << std::endl;
     }
 
 
@@ -543,13 +540,13 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        property value should there be one; false if the old value should be
      *        discarded; defaults to true.
      */
-    template <class V> inline void Tie (const string &name, int index, V (*getter)(int),
+    template <class V> inline void Tie (const std::string &name, int index, V (*getter)(int),
                                 void (*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
-        cout << "Failed to tie property " << name << " to indexed functions" << endl;
+        std::cout << "Failed to tie property " << name << " to indexed functions" << std::endl;
       else if (debug_lvl & 0x20)
-        cout << name << endl;
+        std::cout << name << std::endl;
     }
 
 
@@ -573,13 +570,13 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        discarded; defaults to true.
      */
     template <class T, class V> inline void
-    Tie (const string &name, T * obj, V (T::*getter)() const,
+    Tie (const std::string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
-        cout << "Failed to tie property " << name << " to object methods" << endl;
+        std::cout << "Failed to tie property " << name << " to object methods" << std::endl;
       else if (debug_lvl & 0x20)
-        cout << name << endl;
+        std::cout << name << std::endl;
     }
 
     /**
@@ -602,13 +599,13 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        discarded; defaults to true.
      */
     template <class T, class V> inline void
-    Tie (const string &name, T * obj, int index, V (T::*getter)(int) const,
+    Tie (const std::string &name, T * obj, int index, V (T::*getter)(int) const,
                          void (T::*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
-        cout << "Failed to tie property " << name << " to indexed object methods" << endl;
+        std::cout << "Failed to tie property " << name << " to indexed object methods" << std::endl;
       else if (debug_lvl & 0x20)
-        cout << name << endl;
+        std::cout << name << std::endl;
    }
 };
 }

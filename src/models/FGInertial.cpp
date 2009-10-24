@@ -40,10 +40,13 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGState.h"
 #include "FGMassBalance.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.12 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.13 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

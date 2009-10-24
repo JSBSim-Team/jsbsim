@@ -59,11 +59,16 @@ INCLUDES
 #  include <sys/time.h>
 #endif
 
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.53 2009/10/03 19:54:12 andgi Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.54 2009/10/24 22:59:30 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -462,7 +467,7 @@ bool options(int count, char **arg)
     string argument = string(arg[i]);
     string keyword(argument);
     string value("");
-    unsigned int n=argument.find("=");
+    string::size_type n=argument.find("=");
     if (n != string::npos && n > 0) {
       keyword = argument.substr(0, n);
       value = argument.substr(n+1);

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.53 2009/10/16 08:04:42 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.54 2009/10/24 22:59:30 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -755,9 +755,7 @@ bool FGJSBsim::copy_from_JSBsim()
     // Copy the engine values from JSBSim.
     for ( i=0; i < Propulsion->GetNumEngines(); i++ ) {
       SGPropertyNode * node = fgGetNode("engines/engine", i, true);
-      char buf[30];
-      sprintf(buf, "engines/engine[%d]/thruster", i);
-      SGPropertyNode * tnode = fgGetNode(buf, true);
+      SGPropertyNode * tnode = node->getChild("thruster", 0, true);
       FGThruster * thruster = Propulsion->GetEngine(i)->GetThruster();
 
       switch (Propulsion->GetEngine(i)->GetType()) {

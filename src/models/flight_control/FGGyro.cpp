@@ -38,10 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGGyro.h"
+#include <iostream>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGyro.cpp,v 1.4 2009/09/06 13:45:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGyro.cpp,v 1.5 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_GYRO;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

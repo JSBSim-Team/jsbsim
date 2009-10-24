@@ -57,9 +57,11 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.11 2009/10/02 10:30:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

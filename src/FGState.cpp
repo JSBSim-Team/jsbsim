@@ -37,12 +37,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cmath>
+#include <iostream>
 
 #include "FGState.h"
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.14 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.15 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -46,10 +46,13 @@ INCLUDES
 #include "initialization/FGTrim.h"
 
 #include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.34 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.35 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

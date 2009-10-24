@@ -38,10 +38,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLElement.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.26 2009/10/06 02:33:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.27 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +153,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     if (delayType.length() > 0) {
       if (delayType == "time") {
         delay = (int)(delay / dt);
+      } else if (delayType == "frames") {
+        // no op. the delay type of "frames" is assumed and is the default.
       } else {
         cerr << "Unallowed delay type" << endl;
       }

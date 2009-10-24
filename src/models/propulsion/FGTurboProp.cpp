@@ -41,15 +41,19 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
+#include <iostream>
 #include <sstream>
 #include "FGTurboProp.h"
 
 #include "FGPropeller.h"
+#include "FGState.h"
+#include "models/FGAuxiliary.h"
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.13 2009/07/24 07:26:14 andgi Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.14 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -468,27 +472,27 @@ void FGTurboProp::SetDefaults(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-string FGTurboProp::GetEngineLabels(string delimeter)
+string FGTurboProp::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_N1[" << EngineNumber << "]" << delimeter
-      << Name << "_N2[" << EngineNumber << "]" << delimeter
-      << Name << "__PwrAvailJVK[" << EngineNumber << "]" << delimeter
-      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
+  buf << Name << "_N1[" << EngineNumber << "]" << delimiter
+      << Name << "_N2[" << EngineNumber << "]" << delimiter
+      << Name << "__PwrAvailJVK[" << EngineNumber << "]" << delimiter
+      << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGTurboProp::GetEngineValues(string delimeter)
+string FGTurboProp::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << N1 << delimeter
-      << N2 << delimeter
-      << Thruster->GetThrusterValues(EngineNumber,delimeter);
+  buf << N1 << delimiter
+      << N2 << delimiter
+      << Thruster->GetThrusterValues(EngineNumber,delimiter);
 
   return buf.str();
 }

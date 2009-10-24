@@ -66,10 +66,13 @@ INCLUDES
 
 #include <iostream>
 #include <iterator>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.67 2009/10/03 18:23:00 andgi Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.68 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -718,8 +721,9 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
   for (int i=0; i<pcs->node->nChildren(); i++) {
     pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
     node_idx = pcs->node->getChild(i)->getIndex();
-    sprintf(int_buf, "[%d]", node_idx);
-    if (node_idx != 0) pcsNew->base_string += string(int_buf);
+    if (node_idx != 0) {
+      pcsNew->base_string = CreateIndexedPropertyName(pcsNew->base_string, node_idx);
+    }
     if (pcs->node->getChild(i)->nChildren() == 0) {
       if (pcsNew->base_string.substr(0,11) == string("/fdm/jsbsim")) {
         pcsNew->base_string = pcsNew->base_string.erase(0,12);

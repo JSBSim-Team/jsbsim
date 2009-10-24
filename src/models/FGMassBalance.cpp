@@ -42,10 +42,14 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGBuoyantForces.h"
 #include "input_output/FGPropertyManager.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.23 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.24 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,6 +340,24 @@ void FGMassBalance::bind(void)
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager, int num) {
+  string tmp = CreateIndexedPropertyName("inertia/pointmass-weight-lbs", num);
+  PropertyManager->Tie( tmp.c_str(), this, &PointMass::GetPointMassWeight,
+                                       &PointMass::SetPointMassWeight);
+
+  tmp = CreateIndexedPropertyName("inertia/pointmass-location-X-inches", num);
+  PropertyManager->Tie( tmp.c_str(), this, eX, &PointMass::GetPointMassLocation,
+                                           &PointMass::SetPointMassLocation);
+  tmp = CreateIndexedPropertyName("inertia/pointmass-location-Y-inches", num);
+  PropertyManager->Tie( tmp.c_str(), this, eY, &PointMass::GetPointMassLocation,
+                                           &PointMass::SetPointMassLocation);
+  tmp = CreateIndexedPropertyName("inertia/pointmass-location-Z-inches", num);
+  PropertyManager->Tie( tmp.c_str(), this, eZ, &PointMass::GetPointMassLocation,
+                                           &PointMass::SetPointMassLocation);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

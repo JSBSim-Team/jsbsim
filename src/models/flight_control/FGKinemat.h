@@ -38,18 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
 #include <vector>
-#include <string>
-
-using std::vector;
-using std::string;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,8 +129,8 @@ public:
   bool Run (void);
 
 private:
-  vector<double> Detents;
-  vector<double> TransitionTimes;
+  std::vector<double> Detents;
+  std::vector<double> TransitionTimes;
   int NumDetents;
   double OutputPct;
   bool  DoScale;

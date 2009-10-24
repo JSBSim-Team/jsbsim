@@ -38,26 +38,25 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "input_output/FGXMLElement.h"
 #include "FGParameter.h"
-#include "input_output/FGPropertyManager.h"
-#include <sstream>
+#include <iosfwd>
 #include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.11 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-using std::vector;
-using std::stringstream;
-
 namespace JSBSim {
+
+class FGPropertyManager;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -234,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $
+@version $Id: FGTable.h,v 1.11 2009/10/24 22:59:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,7 +279,7 @@ public:
        </pre>
        */
 
-  void operator<<(stringstream&);
+  void operator<<(std::istream&);
   FGTable& operator<<(const double n);
   FGTable& operator<<(const int n);
 
@@ -298,16 +297,16 @@ private:
   bool internal;
   FGPropertyManager *lookupProperty[3];
   double** Data;
-  vector <FGTable*> Tables;
-  unsigned int FindNumColumns(string);
+  std::vector <FGTable*> Tables;
   unsigned int nRows, nCols, nTables, dimension;
   int colCounter, rowCounter, tableCounter;
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
   double** Allocate(void);
   FGPropertyManager* const PropertyManager;
-  string Name;
+  std::string Name;
   void bind(void);
 
+  unsigned int FindNumColumns(const std::string&);
   void Debug(int from);
 };
 }

@@ -34,22 +34,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
-#include <iostream>
-
-using std::string;
-using std::cout;
-using std::cerr;
-using std::endl;
-
-#include "FGXMLElement.h"
 #include "simgear/xml/easyxml.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.7 2009/10/24 22:59:30 jberndt Exp $"
 #define VALID_CHARS """`!@#$%^&*()_+`1234567890-={}[];':,.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,13 +49,15 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class Element;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
     @author Jon S. Berndt
-    @version $Id: FGXMLParse.h,v 1.6 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGXMLParse.h,v 1.7 2009/10/24 22:59:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

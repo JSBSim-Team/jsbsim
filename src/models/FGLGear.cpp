@@ -41,6 +41,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
+#include "FGState.h"
+#include "FGGroundReactions.h"
+#include "FGFCS.h"
+#include "FGAuxiliary.h"
+#include "FGAtmosphere.h"
+#include "FGMassBalance.h"
+#include "math/FGTable.h"
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
@@ -52,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.70 2009/10/23 23:31:16 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.71 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in

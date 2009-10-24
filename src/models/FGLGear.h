@@ -38,18 +38,15 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
 #include "models/propulsion/FGForce.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
-#include "math/FGTable.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.35 2009/10/05 04:48:03 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.36 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,6 +60,8 @@ class FGFCS;
 class FGState;
 class FGMassBalance;
 class FGAuxiliary;
+class FGTable;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -186,7 +185,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.35 2009/10/05 04:48:03 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.36 2009/10/24 22:59:30 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -333,11 +332,11 @@ private:
   bool isRetractable;
   bool GearUp, GearDown;
   bool Servicable;
-  string name;
-  string sSteerType;
-  string sBrakeGroup;
-  string sRetractable;
-  string sContactType;
+  std::string name;
+  std::string sSteerType;
+  std::string sBrakeGroup;
+  std::string sRetractable;
+  std::string sContactType;
 
   BrakeGroup  eBrakeGrp;
   ContactType eContactType;
@@ -377,12 +376,6 @@ private:
   void Debug(int from);
 };
 }
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGAuxiliary.h"
-#include "FGFCS.h"
-#include "FGMassBalance.h"
-#include "FGState.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

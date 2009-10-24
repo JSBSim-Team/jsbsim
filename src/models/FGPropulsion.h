@@ -39,11 +39,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <vector>
-#include <fstream>
+#include <iosfwd>
 
 #include "FGModel.h"
-#include "models/propulsion/FGEngine.h"
-#include "models/propulsion/FGTank.h"
 #include "math/FGMatrix33.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -51,13 +49,16 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.23 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.24 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGTank;
+class FGEngine;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -90,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.23 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.24 2009/10/24 22:59:30 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -157,8 +158,8 @@ public:
   /** Sets up the engines as running */
   void InitRunning(int n);
 
-  string GetPropulsionStrings(string delimeter);
-  string GetPropulsionValues(string delimeter);
+  std::string GetPropulsionStrings(const std::string& delimiter);
+  std::string GetPropulsionValues(const std::string& delimiter);
 
   inline FGColumnVector3& GetForces(void)  {return vForces; }
   inline double GetForces(int n) const { return vForces(n);}
@@ -176,8 +177,8 @@ public:
   FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void);
 
-  ifstream* FindEngineFile(string filename);
-  string FindEngineFullPathname(string engine_filename);
+  std::ifstream* FindEngineFile(const std::string& filename);
+  std::string FindEngineFullPathname(const std::string& engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) {return fuel_freeze;}
   double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
@@ -190,8 +191,8 @@ public:
   FGMatrix33& CalculateTankInertias(void);
 
 private:
-  vector <FGEngine*>   Engines;
-  vector <FGTank*>     Tanks;
+  std::vector <FGEngine*>   Engines;
+  std::vector <FGTank*>     Tanks;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;
   unsigned int numFuelTanks;

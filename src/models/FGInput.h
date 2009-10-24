@@ -40,23 +40,23 @@ INCLUDES
 
 #include "FGModel.h"
 
-#include <iostream>
-#include <fstream>
-
-#include "input_output/FGfdmSocket.h"
-#include "input_output/FGXMLElement.h"
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.8 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGFDMExec;
+class Element;
+class FGfdmSocket;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -78,7 +78,6 @@ public:
   bool InitModel(void);
   bool Run(void);
 
-  void SetType(string);
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }
   inline bool Toggle(void) {enabled = !enabled; return enabled;}
@@ -88,7 +87,7 @@ private:
   bool sFirstPass, dFirstPass, enabled;
   unsigned int port;
   FGfdmSocket* socket;
-  string data;
+  std::string data;
   void Debug(int from);
 };
 }

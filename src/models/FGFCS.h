@@ -38,6 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iosfwd>
 #include <vector>
 
 #include <string>
@@ -50,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.26 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.27 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.26 $
+    @version $Revision: 1.27 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -352,15 +353,15 @@ public:
   FGState* GetState(void) { return State; }
 
   /** Retrieves all component names for inclusion in output stream
-      @param delimeter either a tab or comma string depending on output type
+      @param delimiter either a tab or comma string depending on output type
       @return a string containing the descriptive names for all components */
-  string GetComponentStrings(string delimeter);
+  std::string GetComponentStrings(const std::string& delimiter);
 
   /** Retrieves all component outputs for inclusion in output stream
-      @param delimeter either a tab or comma string depending on output type
+      @param delimiter either a tab or comma string depending on output type
       @return a string containing the numeric values for the current set of
       component outputs */
-  string GetComponentValues(string delimeter);
+  std::string GetComponentValues(const std::string& delimiter);
 
   /// @name Pilot input command setting
   //@{
@@ -537,8 +538,8 @@ public:
       @return true if succesful */
   bool Load(Element* el, SystemType systype);
 
-  ifstream* FindSystemFile(string system_filename);
-  string FindSystemFullPathname(string system_filename);
+  std::ifstream* FindSystemFile(const std::string& system_filename);
+  std::string FindSystemFullPathname(const std::string& system_filename);
 
   void AddThrottle(void);
   void AddGear(void);
@@ -551,20 +552,20 @@ private:
   double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];
   double DfPos[NForms], DsbPos[NForms], DspPos[NForms];
   double PTrimCmd, YTrimCmd, RTrimCmd;
-  vector <double> ThrottleCmd;
-  vector <double> ThrottlePos;
-  vector <double> MixtureCmd;
-  vector <double> MixturePos;
-  vector <double> PropAdvanceCmd;
-  vector <double> PropAdvance;
-  vector <bool> PropFeatherCmd;
-  vector <bool> PropFeather;
-  vector <double> SteerPosDeg;
+  std::vector <double> ThrottleCmd;
+  std::vector <double> ThrottlePos;
+  std::vector <double> MixtureCmd;
+  std::vector <double> MixturePos;
+  std::vector <double> PropAdvanceCmd;
+  std::vector <double> PropAdvance;
+  std::vector <bool> PropFeatherCmd;
+  std::vector <bool> PropFeather;
+  std::vector <double> SteerPosDeg;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
 
-  typedef vector <FGFCSComponent*> FCSCompVec;
+  typedef std::vector <FGFCSComponent*> FCSCompVec;
   FCSCompVec Systems;
   FCSCompVec FCSComponents;
   FCSCompVec APComponents;

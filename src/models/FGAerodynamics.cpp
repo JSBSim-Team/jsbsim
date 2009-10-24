@@ -36,6 +36,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <cstdlib>
 #include <FGFDMExec.h>
 #include "FGAerodynamics.h"
 #include "FGPropagate.h"
@@ -44,9 +48,11 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
 
+using namespace std;
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.28 2009/10/03 19:54:12 andgi Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.29 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,7 +421,7 @@ void FGAerodynamics::DetermineAxisSystem()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientStrings(string delimeter)
+string FGAerodynamics::GetCoefficientStrings(const string& delimeter) const
 {
   string CoeffStrings = "";
   bool firstime = true;
@@ -445,33 +451,24 @@ string FGAerodynamics::GetCoefficientStrings(string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientValues(string delimeter)
+string FGAerodynamics::GetCoefficientValues(const string& delimeter) const
 {
-  string SDValues = "";
-  bool firstime = true;
-  unsigned int sd;
+  ostringstream buf;
 
-  for (sd = 0; sd < variables.size(); sd++) {
-    if (firstime) {
-      firstime = false;
-    } else {
-      SDValues += delimeter;
-    }
-    SDValues += variables[sd]->GetValueAsString();
+  buf.precision(6);
+  for (unsigned int sd = 0; sd < variables.size(); sd++) {
+    if (buf.tellp() > 0) buf << delimeter;
+    buf << setw(9) << variables[sd]->GetValue();
   }
 
   for (unsigned int axis = 0; axis < 6; axis++) {
     for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
-      if (firstime) {
-        firstime = false;
-      } else {
-        SDValues += delimeter;
-      }
-      SDValues += Coeff[axis][sd]->GetValueAsString();
+      if (buf.tellp() > 0) buf << delimeter;
+      buf << setw(9) << Coeff[axis][sd]->GetValue();
     }
   }
 
-  return SDValues;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

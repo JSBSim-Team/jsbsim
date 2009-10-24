@@ -45,19 +45,28 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropulsion.h"
+#include "FGState.h"
+#include "models/FGFCS.h"
+#include "models/FGMassBalance.h"
+#include "models/propulsion/FGThruster.h"
 #include "models/propulsion/FGRocket.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGPiston.h"
 #include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTurboProp.h"
+#include "models/propulsion/FGTank.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
+#include <iostream>
 #include <sstream>
+#include <cstdlib>
+
+using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.36 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.37 2009/10/24 22:59:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -330,7 +339,7 @@ bool FGPropulsion::Load(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::FindEngineFullPathname(string engine_filename)
+string FGPropulsion::FindEngineFullPathname(const string& engine_filename)
 {
   string fullpath, localpath;
   string enginePath = FDMExec->GetEnginePath();
@@ -358,7 +367,7 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ifstream* FGPropulsion::FindEngineFile(string engine_filename)
+ifstream* FGPropulsion::FindEngineFile(const string& engine_filename)
 {
   string fullpath, localpath;
   string enginePath = FDMExec->GetEnginePath();
@@ -383,7 +392,7 @@ ifstream* FGPropulsion::FindEngineFile(string engine_filename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionStrings(string delimeter)
+string FGPropulsion::GetPropulsionStrings(const string& delimiter)
 {
   unsigned int i;
 
@@ -393,13 +402,13 @@ string FGPropulsion::GetPropulsionStrings(string delimeter)
 
   for (i=0; i<Engines.size(); i++) {
     if (firstime)  firstime = false;
-    else           PropulsionStrings += delimeter;
+    else           PropulsionStrings += delimiter;
 
-    PropulsionStrings += Engines[i]->GetEngineLabels(delimeter);
+    PropulsionStrings += Engines[i]->GetEngineLabels(delimiter);
   }
   for (i=0; i<Tanks.size(); i++) {
-    if (Tanks[i]->GetType() == FGTank::ttFUEL) buf << delimeter << "Fuel Tank " << i;
-    else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << delimeter << "Oxidizer Tank " << i;
+    if (Tanks[i]->GetType() == FGTank::ttFUEL) buf << delimiter << "Fuel Tank " << i;
+    else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << delimiter << "Oxidizer Tank " << i;
   }
 
   return PropulsionStrings;
@@ -407,7 +416,7 @@ string FGPropulsion::GetPropulsionStrings(string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionValues(string delimeter)
+string FGPropulsion::GetPropulsionValues(const string& delimiter)
 {
   unsigned int i;
 
@@ -417,12 +426,12 @@ string FGPropulsion::GetPropulsionValues(string delimeter)
 
   for (i=0; i<Engines.size(); i++) {
     if (firstime)  firstime = false;
-    else           PropulsionValues += delimeter;
+    else           PropulsionValues += delimiter;
 
-    PropulsionValues += Engines[i]->GetEngineValues(delimeter);
+    PropulsionValues += Engines[i]->GetEngineValues(delimiter);
   }
   for (i=0; i<Tanks.size(); i++) {
-    buf << delimeter;
+    buf << delimiter;
     buf << Tanks[i]->GetContents();
   }
 

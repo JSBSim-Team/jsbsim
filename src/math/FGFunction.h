@@ -37,20 +37,21 @@ INCLUDES
 #include <vector>
 #include <string>
 #include "FGParameter.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.18 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGPropertyManager;
+class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -165,7 +166,7 @@ public:
     @param prefix an optional prefix to prepend to the name given to the property
            that represents this function (if given).
 */
-  FGFunction(FGPropertyManager* PropertyManager, Element* element, string prefix="");
+  FGFunction(FGPropertyManager* PropertyManager, Element* element, const std::string& prefix="");
   /// Destructor.
   virtual ~FGFunction();
 
@@ -175,10 +176,10 @@ public:
 
 /** The value that the function evaluates to, as a string.
   @return the value of the function as a string. */
-  string GetValueAsString(void) const;
+  std::string GetValueAsString(void) const;
 
 /// Retrieves the name of the function.
-  string GetName(void) const {return Name;}
+  std::string GetName(void) const {return Name;}
 
 /** Specifies whether to cache the value of the function, so it is calculated only
     once per frame.
@@ -189,44 +190,44 @@ public:
   void cacheValue(bool shouldCache);
 
 private:
-  vector <FGParameter*> Parameters;
+  std::vector <FGParameter*> Parameters;
   FGPropertyManager* const PropertyManager;
   bool cached;
-  string Prefix;
-  string description_string;
-  string property_string;
-  string value_string;
-  string table_string;
-  string p_string;
-  string v_string;
-  string t_string;
-  string function_string;
-  string sum_string;
-  string difference_string;
-  string product_string;
-  string quotient_string;
-  string pow_string;
-  string exp_string;
-  string abs_string;
-  string sin_string;
-  string cos_string;
-  string tan_string;
-  string asin_string;
-  string acos_string;
-  string atan_string;
-  string atan2_string;
-  string min_string;
-  string max_string;
-  string avg_string;
-  string fraction_string;
-  string mod_string;
-  string random_string;
-  string integer_string;
+  std::string Prefix;
+  std::string description_string;
+  std::string property_string;
+  std::string value_string;
+  std::string table_string;
+  std::string p_string;
+  std::string v_string;
+  std::string t_string;
+  std::string function_string;
+  std::string sum_string;
+  std::string difference_string;
+  std::string product_string;
+  std::string quotient_string;
+  std::string pow_string;
+  std::string exp_string;
+  std::string abs_string;
+  std::string sin_string;
+  std::string cos_string;
+  std::string tan_string;
+  std::string asin_string;
+  std::string acos_string;
+  std::string atan_string;
+  std::string atan2_string;
+  std::string min_string;
+  std::string max_string;
+  std::string avg_string;
+  std::string fraction_string;
+  std::string mod_string;
+  std::string random_string;
+  std::string integer_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom} Type;
-  string Name;
+  std::string Name;
   void bind(void);
   void Debug(int from);
 };

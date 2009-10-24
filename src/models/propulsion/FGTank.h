@@ -44,28 +44,25 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
 #include "FGJSBBase.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include <string>
-
-using std::string;
-using std::cerr;
-using std::endl;
-using std::cout;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.18 2009/10/22 01:51:44 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class Element;
+class FGPropertyManager;
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -281,8 +278,8 @@ private:
   TankType Type;
   GrainType grainType;
   int TankNumber;
-  string type;
-  string strGType;
+  std::string type;
+  std::string strGType;
   FGColumnVector3 vXYZ;
   FGColumnVector3 vXYZ_drain;
   double Capacity;
