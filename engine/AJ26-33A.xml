@@ -33,10 +33,7 @@
 -->
 
 <rocket_engine name="AJ26-33A">
-  <shr>                   1.24  </shr>
-  <max_pc unit="PSF">303700.00  </max_pc>
-  <variance>              0.10  </variance>
-  <prop_eff>              0.67  </prop_eff>
+  <isp>                   331.0 </isp>
   <maxthrottle>           1.00  </maxthrottle>
   <minthrottle>           0.40  </minthrottle>
   <slfuelflowmax unit="LBS/SEC">  314.0  </slfuelflowmax>
