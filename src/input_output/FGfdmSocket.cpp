@@ -50,7 +50,7 @@ using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.22 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.23 2009/10/26 12:22:13 ehofman Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
     else cout << "Winsock DLL not initialized ..." << endl;
   #endif
 
-  if (!is_number(address)) {
+  string addr = address;
+  if (!is_number(addr)) {
     if ((host = gethostbyname(address.c_str())) == NULL) {
       cout << "Could not get host net address by name..." << endl;
     }
@@ -128,7 +129,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port)
   cout << "Host name...   " << address << ",  Port...  " << port << "." << endl;
   cout << "Host name... (char)  " << address.c_str() << "." << endl;
 
-  if (!is_number(address)) {
+  string addr = address;
+  if (!is_number(addr)) {
     if ((host = gethostbyname(address.c_str())) == NULL) {
       cout << "Could not get host net address by name..." << endl;
     }
