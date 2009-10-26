@@ -41,6 +41,7 @@ INCLUDES
 #include <iostream>
 #include <iomanip>
 #include <cstring>
+#include <cstdio>
 #include "FGfdmSocket.h"
 #include "string_utilities.h"
 
@@ -51,7 +52,7 @@ using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.24 2009/10/26 13:12:31 ehofman Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.25 2009/10/26 18:14:02 andgi Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
