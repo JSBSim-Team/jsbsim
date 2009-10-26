@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.8 2009/10/26 03:49:58 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
 
     All parameters MUST be specified.  
     @author Jon S. Berndt
-    @version $Id: FGNozzle.h,v 1.7 2009/08/30 03:51:28 jberndt Exp $
+    @version $Id: FGNozzle.h,v 1.8 2009/10/26 03:49:58 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ public:
   string GetThrusterValues(int id, string delimeter);
 
 private:
-  double PE;
+//  double PE;
   double Area;
   void Debug(int from);
 };

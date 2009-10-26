@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.13 2009/10/26 03:49:58 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,14 +64,14 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
     cerr << "Fatal Error: Nozzle exit area must be given in nozzle config file." << endl;
     exit(-1);
   }
-
+/*
   if (nozzle_element->FindElement("pe"))
     PE = nozzle_element->FindElementValueAsNumberConvertTo("pe", "PSF");
   else {
     cerr << "Fatal Error: Nozzle exit pressure must be given in nozzle config file." << endl;
     exit(-1);
   }
-
+*/
   Thrust = 0;
   Type = ttNozzle;
   

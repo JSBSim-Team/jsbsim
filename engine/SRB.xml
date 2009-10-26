@@ -2,20 +2,18 @@
 <rocket_engine name="4 Segment Space Shuttle SRB">
   <!--
     This Space Shuttle Solid Rocket Booster (SRB) model is a standard four segment
-    SRB, based on information publicly available at http://www.sworld.com.au/steven/space/shuttle/sim/,
-    and further derived from SRB burn characteristics provided by Linder Metts 
-    (linder.metts@msfc.nasa.gov).
+    SRB, based on information publicly available at http://www.sworld.com.au/steven/space/shuttle/sim/.
   -->
 
-  <isp> 267.5 </isp>
+  <isp> 268 </isp>
   <thrust_table name="propulsion/thrust_prop_remain" type="internal">
     <tableData>
 <!--     =========  =========        ========= ===========   =====
          Prop Burn   Thrust            wdot    Total Impls    Time
          =========  =========        ========= ===========   ===== -->
-            1186.1  3166999.3 <!--    316699.9    11861.4      0.2  -->
+            1186.1  3060000.0 <!--    316699.9    11861.4      0.2  -->
            10675.3  3166999.3 <!--   2850299.4    11861.4      1.0  -->
-           22519.8  3157999.3 <!--   6012798.7    11827.7      2.0  -->
+           22519.8  3167999.3 <!--   6012798.7    11827.7      2.0  -->
            34368.2  3168999.3 <!--   9176298.0    11868.9      3.0  -->
            46280.1  3191999.3 <!--  12356797.3    11955.1      4.0  -->
            58293.2  3222999.3 <!--  15564296.6    12071.2      5.0  -->

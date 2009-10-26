@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <nozzle name="CLV SRB Nozzle">
   <!--
-    pe   = Nozzle exit pressure, psf.
     area = nozzle exit area
   -->
-  <pe unit="PSF"> 2116.00 </pe>
-  <area unit="FT2">  122.32 </area>
+  <area unit="FT2">  122.1 </area>
 </nozzle>

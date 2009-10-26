@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.13 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.14 2009/10/26 03:49:31 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,25 +120,23 @@ double FGRocket::Calculate(void)
   PropellantFlowRate = (FuelExpended + OxidizerExpended)/dT;
   Throttle = FCS->GetThrottlePos(EngineNumber);
 
-  // If there is a thrust table, it is a function of propellant remaining. The
+  // If there is a thrust table, it is a function of propellant burned. The
   // engine is started when the throttle is advanced to 1.0. After that, it
-  // burns without regard to throttle setting. The table returns a value between
-  // zero and one, representing the percentage of maximum vacuum thrust being
-  // applied.
+  // burns without regard to throttle setting.
 
   if (ThrustTable != 0L) { // Thrust table given -> Solid fuel used
 
     if ((Throttle == 1 || BurnTime > 0.0 ) && !Starved) {
       BurnTime += State->Getdt();
-      double TotalEngineFuelAvailable=0.0;
+      double TotalEngineFuelBurned=0.0;
       for (int i=0; i<(int)SourceTanks.size(); i++) {
         FGTank* tank = Propulsion->GetTank(i);
         if (SourceTanks[i] == 1) {
-          TotalEngineFuelAvailable += tank->GetContents();
+          TotalEngineFuelBurned += tank->GetCapacity() - tank->GetContents();
         }
       }
 
-      VacThrust = ThrustTable->GetValue(TotalEngineFuelAvailable);
+      VacThrust = ThrustTable->GetValue(TotalEngineFuelBurned);
     } else {
       VacThrust = 0.0;
     }
