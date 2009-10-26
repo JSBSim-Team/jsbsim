@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 06/01/09
 
- ------------- Copyright (C) 2009  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------------- Copyright (C) 2009  Jon S. Berndt (jsb@hal-pc.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -38,18 +38,20 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
 #include <vector>
+#include <ctype.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.7 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.8 2009/10/26 13:12:31 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+using namespace std;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -61,30 +63,29 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #if !defined(BASE)
-  extern std::string& trim_left(std::string& str);
-  extern std::string& trim_right(std::string& str);
-  extern std::string& trim(std::string& str);
-  extern std::string& to_upper(std::string& str);
-  extern std::string& to_lower(std::string& str);
-  extern bool is_number(const std::string& str);
-  std::vector <std::string> split(std::string str, char d);
+  extern string& trim_left(string& str);
+  extern string& trim_right(string& str);
+  extern string& trim(string& str);
+  extern string& to_upper(string& str);
+  extern string& to_lower(string& str);
+  extern bool is_number(const string& str);
+  vector <string> split(string str, char d);
 #else
-  #include <ctype.h>
-
-  using namespace std;
 
   string& trim_left(string& str)
   {
-    while (str.size() && !isgraph(str[0])) {
+    while ( !isgraph(str[0]) ) {
       str = str.erase(0,1);
+      if (str.size() == 0) break;
     }
     return str;
   }
 
   string& trim_right(string& str)
   {
-    while (str.size() && !isgraph(str[str.size()-1])) {
+    while (!isgraph(str[str.size()-1])) {
       str = str.erase(str.size()-1,1);
+      if (str.size() == 0) break;
     }
     return str;
   }
@@ -98,13 +99,13 @@ CLASS DECLARATION
 
   string& to_upper(string& str)
   {
-    for (size_t i=0; i<str.size(); i++) str[i] = toupper(str[i]);
+    for (int i=0; i<str.size(); i++) str[i] = toupper(str[i]);
     return str;
   }
 
   string& to_lower(string& str)
   {
-    for (size_t i=0; i<str.size(); i++) str[i] = tolower(str[i]);
+    for (int i=0; i<str.size(); i++) str[i] = tolower(str[i]);
     return str;
   }
 
@@ -116,7 +117,7 @@ CLASS DECLARATION
   vector <string> split(string str, char d)
   {
     vector <string> str_array;
-    size_t index=0;
+    int index=0;
     string temp = "";
 
     trim(str);

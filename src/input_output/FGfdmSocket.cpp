@@ -42,6 +42,7 @@ INCLUDES
 #include <iomanip>
 #include <cstring>
 #include "FGfdmSocket.h"
+#include "string_utilities.h"
 
 using std::cout;
 using std::cerr;
@@ -50,7 +51,7 @@ using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.23 2009/10/26 12:22:13 ehofman Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.24 2009/10/26 13:12:31 ehofman Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,8 +71,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
     else cout << "Winsock DLL not initialized ..." << endl;
   #endif
 
-  string addr = address;
-  if (!is_number(addr)) {
+  if (!is_number(address)) {
     if ((host = gethostbyname(address.c_str())) == NULL) {
       cout << "Could not get host net address by name..." << endl;
     }
@@ -129,8 +129,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port)
   cout << "Host name...   " << address << ",  Port...  " << port << "." << endl;
   cout << "Host name... (char)  " << address.c_str() << "." << endl;
 
-  string addr = address;
-  if (!is_number(addr)) {
+  if (!is_number(address)) {
     if ((host = gethostbyname(address.c_str())) == NULL) {
       cout << "Could not get host net address by name..." << endl;
     }
