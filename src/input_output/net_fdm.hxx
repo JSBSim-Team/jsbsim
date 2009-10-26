@@ -6,7 +6,7 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: net_fdm.hxx,v 1.2 2007/12/03 09:21:47 jberndt Exp $
+// $Id: net_fdm.hxx,v 1.3 2009/10/26 19:42:06 andgi Exp $
 
 
 #ifndef _NET_FDM_HXX
@@ -14,6 +14,7 @@
 
 
 #include <time.h> // time_t
+#include <stdint.h>
 
 #ifdef _MSC_VER
 typedef unsigned long uint32_t;
