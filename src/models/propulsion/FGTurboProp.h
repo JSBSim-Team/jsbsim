@@ -46,7 +46,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.11 2009/10/26 03:48:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,6 +167,7 @@ private:
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottleCmd;      ///< FCS-supplied throttle position
   double TAT;              ///< total air temperature (deg C)
+  double PowerAvailable;
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
