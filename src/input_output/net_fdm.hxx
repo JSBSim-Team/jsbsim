@@ -6,7 +6,7 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: net_fdm.hxx,v 1.3 2009/10/26 19:42:06 andgi Exp $
+// $Id: net_fdm.hxx,v 1.4 2009/10/27 17:38:35 andgi Exp $
 
 
 #ifndef _NET_FDM_HXX
@@ -14,15 +14,7 @@
 
 
 #include <time.h> // time_t
-#include <stdint.h>
-
-#ifdef _MSC_VER
-typedef unsigned long uint32_t;
-typedef long int32_t;
-#endif
-
-//--->>>#include <simgear/misc/stdint.hxx> //not required for JSBSim
-
+#include <simgear/misc/stdint.hxx>
 
 // NOTE: this file defines an external interface structure.  Due to
 // variability between platforms and architectures, we only used fixed
