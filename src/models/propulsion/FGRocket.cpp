@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.14 2009/10/26 03:49:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.15 2009/10/27 02:08:25 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,7 +151,12 @@ double FGRocket::Calculate(void)
 
     } else { // Calculate thrust
 
-      PctPower = Throttle / MaxThrottle; // Min and MaxThrottle range from 0.0 to 1.0, normally.
+      // This is nonsensical. Max throttle should be assumed to be 1.0. One might
+      // conceivably have a throttle setting > 1.0 for some rocket engines. But, 1.0
+      // should always be the default.
+      // PctPower = Throttle / MaxThrottle; // Min and MaxThrottle range from 0.0 to 1.0, normally.
+      
+      PctPower = Throttle;
       Flameout = false;
       VacThrust = Isp * PropellantFlowRate;
 
