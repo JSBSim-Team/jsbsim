@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- 
+  Vacuum Isp     445
+  Sea Level Isp  
+  Pc            610 psia
+  Thrust        22,300 lbs Vac
+  MR            5.5:1 (O:F)
+  Design altitude 
+-->
+<rocket_engine name="RL-10">
+  <isp>                   445  </isp>
+  <maxthrottle>           1.0   </maxthrottle>
+  <minthrottle>           1.0   </minthrottle>
+  <slfuelflowmax unit="LBS/SEC">  7.71  </slfuelflowmax>
+  <sloxiflowmax unit="LBS/SEC">   42.4  </sloxiflowmax>
+</rocket_engine>

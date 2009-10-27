@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<nozzle name="SSME Nozzle">
+  <!--
+    pe      = Nozzle exit pressure, psf.
+    area    = Nozzle exit area, sqft.
+  -->
+  <pe unit="PSF">   151.0  </pe>
+  <area unit="FT2">  44.18  </area>
+</nozzle>

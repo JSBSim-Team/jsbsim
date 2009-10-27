@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- 
+  Vacuum Isp     453
+  Sea Level Isp  363
+  Thrust         488,800 pounds (104.5% of Design Thrust)
+  MR             6:1 (O:F)
+  Design altitude 60kft.
+-->
+<rocket_engine name="Space Shuttle Main Engine (SSME)">
+  <isp>                    453  </isp>
+  <maxthrottle>           1.09  </maxthrottle>
+  <minthrottle>           0.66  </minthrottle>
+  <slfuelflowmax unit="LBS/SEC">  146.0  </slfuelflowmax>
+  <sloxiflowmax unit="LBS/SEC">   889.0  </sloxiflowmax>
+</rocket_engine>

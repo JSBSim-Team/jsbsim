@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<nozzle name="RL-10A-4-2 Nozzle">
+  <!--
+    pe      = Nozzle exit pressure, psf.
+    area    = Nozzle exit area, sqft.
+  -->
+  <area unit="FT2">  19.63  </area>
+</nozzle>
