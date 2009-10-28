@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\FGChildModel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\math\FGColumnVector3.h"
 				>
 			</File>
@@ -445,6 +449,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\flight_control\FGSensorOrientation.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\FGState.h"
 				>
 			</File>
@@ -530,6 +538,10 @@
 			</File>
 			<File
 				RelativePath=".\src\simgear\props\SGSharedPtr.hxx"
+				>
+			</File>
+			<File
+				RelativePath=".\src\simgear\misc\stdint.hxx"
 				>
 			</File>
 			<File
@@ -898,18 +910,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\data_plot\ground_reactions.xml"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath=".\data_output\ground_reactions.xml"
 			>
 			<FileConfiguration
@@ -922,7 +922,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\data_output\Makefile.am"
+			RelativePath=".\data_plot\ground_reactions.xml"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -935,6 +935,18 @@
 		</File>
 		<File
 			RelativePath=".\data_plot\Makefile.am"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\data_output\Makefile.am"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
