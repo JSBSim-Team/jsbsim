@@ -21,7 +21,7 @@ CUR_DIR=`pwd`
 CP="cp -p"
 #CP="echo"
 
-for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h'`; do
+for n in `find . -path './simgear' -prune -o -path './utilities' -prune -o -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name '*.h' -o -name string_utilities.h`; do
 
    if [ -f ../$1/src/FDM/JSBSim/$n ]; then
 
