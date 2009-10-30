@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: ZLT-NT.xml,v 1.1 2009/08/03 20:36:37 andgi Exp $ -->
+<!-- $Id: ZLT-NT.xml,v 1.2 2009/10/30 21:34:09 andgi Exp $ -->
 <!--
 
   ZLT NT airship flight model for JSBSim.
@@ -32,7 +32,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-06-10</filecreationdate>
-  <version>$Id: ZLT-NT.xml,v 1.1 2009/08/03 20:36:37 andgi Exp $</version>
+  <version>$Id: ZLT-NT.xml,v 1.2 2009/10/30 21:34:09 andgi Exp $</version>
 
   <description>JSBSim model of a N07 airship.</description>
 
@@ -70,6 +70,12 @@
    author="FAA"
    title="http://edocket.access.gpo.gov/2008/pdf/E8-6600.pdf"
    date="28 March 2008"/>
+
+  <reference
+   refID="FAA:2008:P30BO"
+   author="FAA"
+   title="http://www.hoffmann-prop.com/documents/HOV373TCDS_1.pdf"
+   date="24 April 2008"/>
 
  </fileheader>
 
@@ -1366,7 +1372,7 @@
    <pid name="fcs/etc/throttle-controller-pid[0]">
     <input>fcs/etc/propeller-speed-error-switch[0]</input>
     <kp> 0.0 </kp>
-    <ki> 0.0004 </ki>
+    <ki> 0.0002 </ki>
     <trigger>fcs/etc/windup-trigger[0]</trigger>
    </pid>
 
@@ -1431,7 +1437,7 @@
    <pid name="fcs/etc/throttle-controller-pid[1]">
     <input>fcs/etc/propeller-speed-error-switch[1]</input>
     <kp> 0.0 </kp>
-    <ki> 0.0004 </ki>
+    <ki> 0.0002 </ki>
     <trigger>fcs/etc/windup-trigger[1]</trigger>
    </pid>
 
@@ -1496,7 +1502,7 @@
    <pid name="fcs/etc/throttle-controller-pid[2]">
     <input>fcs/etc/propeller-speed-error-switch[2]</input>
     <kp> 0.0 </kp>
-    <ki> 0.0004 </ki>
+    <ki> 0.0002 </ki>
     <trigger>fcs/etc/windup-trigger[2]</trigger>
    </pid>
 
