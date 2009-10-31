@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.11 2009/10/31 23:05:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $
+    $Id: FGRocket.h,v 1.11 2009/10/31 23:05:24 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -200,6 +200,7 @@ private:
   double OxidizerFlowRate;
   double PropellantFlowRate;
   bool Flameout;
+  double BuildupTime;
   FGTable* ThrustTable;
 
   void Debug(int from);

@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.15 2009/10/27 02:08:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.16 2009/10/31 23:05:24 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   FuelFlowRate = 0.0;
   OxidizerFlowRate = 0.0;
   SLOxiFlowMax = 0.0;
+  BuildupTime = 0.0;
   It = 0.0;
 
   // Defaults
@@ -77,6 +78,8 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
 
   if (el->FindElement("isp"))
     Isp = el->FindElementValueAsNumber("isp");
+  if (el->FindElement("builduptime"))
+    BuildupTime = el->FindElementValueAsNumber("builduptime");
   if (el->FindElement("maxthrottle"))
     MaxThrottle = el->FindElementValueAsNumber("maxthrottle");
   if (el->FindElement("minthrottle"))
@@ -127,7 +130,6 @@ double FGRocket::Calculate(void)
   if (ThrustTable != 0L) { // Thrust table given -> Solid fuel used
 
     if ((Throttle == 1 || BurnTime > 0.0 ) && !Starved) {
-      BurnTime += State->Getdt();
       double TotalEngineFuelBurned=0.0;
       for (int i=0; i<(int)SourceTanks.size(); i++) {
         FGTank* tank = Propulsion->GetTank(i);
@@ -137,6 +139,11 @@ double FGRocket::Calculate(void)
       }
 
       VacThrust = ThrustTable->GetValue(TotalEngineFuelBurned);
+      if (BurnTime <= BuildupTime && BuildupTime > 0.0) {
+        VacThrust *= sin((BurnTime/BuildupTime)*M_PI/2.0);
+        // VacThrust *= (1-cos((BurnTime/BuildupTime)*M_PI))/2.0; // 1 - cos approach
+      }
+      BurnTime += State->Getdt(); // Increment burn time
     } else {
       VacThrust = 0.0;
     }
