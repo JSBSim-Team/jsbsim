@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.46 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.47 2009/11/02 12:14:35 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   MinManifoldPressure_inHg = 6.5;
   MaxManifoldPressure_inHg = 28.5;
   ISFC = -1;
-  volumetric_efficiency = -0.1;
+  volumetric_efficiency = 0.85;
   Bore = 5.125;
   Stroke = 4.375;
   Cylinders = 4;
@@ -239,32 +239,41 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
 
   StarterHP = sqrt(MaxHP) * 0.4;
   displacement_SI = Displacement * in3tom3;
+  RatedMeanPistonSpeed_fps =  ( MaxRPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
 
-  // Create IFSC and VE to match the engine if not provided
-  int calculated_ve=0;
-  if (volumetric_efficiency < 0) {
-      volumetric_efficiency = MaxManifoldPressure_inHg / 29.92;
-      calculated_ve=1;
-  }
+  // Create IFSC to match the engine if not provided
   if (ISFC < 0) {
-      double pmep = MaxManifoldPressure_inHg > 29.92 ? 0 : 29.92 - MaxManifoldPressure_inHg;
+      double pmep = 29.92 - MaxManifoldPressure_inHg;
       pmep *= inhgtopa;
-      double fmep = (18400 * (2*(Stroke/12)*(MaxRPM/60)) * fttom + 46500)/2;
+      double fmep = (18400 * RatedMeanPistonSpeed_fps * fttom + 46500);
       double hp_loss = ((pmep + fmep) * displacement_SI * MaxRPM)/(Cycles*22371);
-      ISFC = ( Displacement * MaxRPM * volumetric_efficiency ) / (9411 * (MaxHP+hp_loss));
+      ISFC = ( 1.1*Displacement * MaxRPM * volumetric_efficiency *(MaxManifoldPressure_inHg / 29.92) ) / (9411 * (MaxHP+hp_loss));
 // cout <<"FMEP: "<< fmep <<" PMEP: "<< pmep << " hp_loss: " <<hp_loss <<endl;
   }
   if ( MaxManifoldPressure_inHg > 29.9 ) {   // Don't allow boosting with a bogus number
       MaxManifoldPressure_inHg = 29.9;
-      if (calculated_ve) volumetric_efficiency = 1.0;
   }
   minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * inhgtopa;
 
 // For throttle
-  RatedMeanPistonSpeed_fps =  ( MaxRPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
-  if(Z_airbox < 998){
-    double Ze=RatedMeanPistonSpeed_fps/PeakMeanPistonSpeed_fps; // engine impedence
+/*
+ * Pm = ( Ze / ( Ze + Zi + Zt ) ) * Pa
+ * Where:
+ * Pm = Manifold Pressure
+ * Pa = Ambient Pressre
+ * Ze = engine impedance, Ze is effectively 1 / Mean Piston Speed  
+ * Zi = airbox impedance
+ * Zt = throttle impedance
+ * 
+ * For the calculation below throttle is fully open or Zt = 0
+ *
+ * 
+ *
+ */
+
+  if(Z_airbox < 0.0){
+    double Ze=PeakMeanPistonSpeed_fps/RatedMeanPistonSpeed_fps; // engine impedence
     Z_airbox = (standard_pressure *Ze / maxMAP) - Ze; // impedence of airbox
   }
   Z_throttle=(((MaxRPM * Stroke) / 360)/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; // Constant for Throttle impedence
@@ -913,7 +922,9 @@ void FGPiston::Debug(int from)
       cout << "      MaxThrottle: "         << MaxThrottle              << endl;
       cout << "      MinThrottle: "         << MinThrottle              << endl;
       cout << "      ISFC: "                << ISFC                     << endl;
-      cout << "      Volumentric Efficiency: " << volumetric_efficiency    << endl;
+      cout << "      Volumetric Efficiency: " << volumetric_efficiency    << endl;
+      cout << "      PeakMeanPistonSpeed_fps: " << PeakMeanPistonSpeed_fps << endl;
+      cout << "      Intake Impedance Factor: " << Z_airbox << endl;
 
       cout << endl;
       cout << "      Combustion Efficiency table:" << endl;
