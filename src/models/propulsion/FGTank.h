@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.20 2009/11/04 23:29:24 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -126,6 +126,7 @@ CLASS DOCUMENTATION
   <standpipe unit="{LBS | KG"}> {number} </standpipe>
   <priority> {integer} </priority>
   <density unit="{KG/L | LBS/GAL}"> {number} </density>
+  <type> {string} </type> <!-- will override previous density setting -->
 </tank>
 @endcode
 
@@ -141,6 +142,9 @@ CLASS DOCUMENTATION
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
 - \b priority - Establishes feed sequence of tank. "1" is the highest priority.
 - \b density - Density of liquid tank contents.
+- \b type - Named fuel type. One of AVGAS, JET-A, JET-A1, JET-B, JP-1, JP-2, JP-3,
+- \b        JP-4, JP-5, JP-6, JP-7, JP-8, JP-8+100, RP-1, T-1, ETHANOL, HYDRAZINE,
+- \b        F-34, F-35, F-40, F-44, AVTAG, AVCAT
 
 location:
 - \b x - Location of tank on aircraft's x-axis, defaults to inches.
@@ -252,6 +256,10 @@ public:
       is given, otherwise 32 degrees F is returned. */
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
 
+  /** Returns the density of a named fuel type.
+      @return the density, in lbs/gal, or 6.6 if name cannot be resolved. */
+  double ProcessFuelName(std::string const& name); 
+
   double GetIxx(void) {return Ixx;}
   double GetIyy(void) {return Iyy;}
   double GetIzz(void) {return Izz;}
@@ -260,6 +268,9 @@ public:
 
   int  GetPriority(void) const {return Priority;}
   void SetPriority(int p) { Priority = p; Selected = p>0 ? true:false; } 
+
+  double GetDensity(void) const {return Density;}
+  void   SetDensity(double d) { Density = d; }
 
   const FGColumnVector3 GetXYZ(void);
   const double GetXYZ(int idx);

@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.34 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.35 2009/11/04 23:29:24 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   SLFuelFlowMax = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
+  FuelDensity = 6.0;
   unsigned int i;
 
   ResetToIC(); // initialize dynamic terms
@@ -122,7 +123,9 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   if (local_element) {
     while (local_element) {
       int tankID = (int)local_element->GetDataAsNumber();
-      AddFeedTank( tankID , Propulsion->GetTank(tankID)->GetPriority());
+      FGTank* tank = Propulsion->GetTank(tankID); 
+      AddFeedTank( tankID , tank->GetPriority());
+      FuelDensity = tank->GetDensity();
       local_element = engine_element->GetParent()->FindNextElement("feed");
     }
   } else {
@@ -138,6 +141,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
   property_name = base_property_name + "/fuel-flow-rate-pps";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRate);
+
+  //cout << "Engine[" << EngineNumber << "] using fuel density: " << FuelDensity << endl;
 
   Debug(0);
 }

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.26 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.27 2009/11/04 23:29:24 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ CLASS IMPLEMENTATION
 FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
                   : TankNumber(tank_number), Exec(exec)
 {
-  string token;
+  string token, strFuelName;
   Element* element;
   Element* element_Grain;
   Area = 1.0;
@@ -102,6 +102,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     InitialPriority = Priority = el->FindElementValueAsNumber("priority");
   if (el->FindElement("density"))
     Density = el->FindElementValueAsNumberConvertTo("density", "LBS/GAL");
+  if (el->FindElement("type"))
+    strFuelName = el->FindElementValue("type");
+
 
   SetPriority( InitialPriority );     // this will also set the Selected flag
 
@@ -161,6 +164,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
+
+  // A named fuel type will override a previous density value
+  if (!strFuelName.empty()) Density = ProcessFuelName(strFuelName); 
 
   Debug(0);
 }
@@ -312,6 +318,43 @@ void FGTank::CalculateInertias(void)
   Izz  = Iyy;
 
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTank::ProcessFuelName(std::string const& name)
+{
+   if      (name == "AVGAS")    return 6.02; 
+   else if (name == "JET-A")    return 6.74;
+   else if (name == "JET-A1")   return 6.74;
+   else if (name == "JET-B")    return 6.48;
+   else if (name == "JP-1")     return 6.76;
+   else if (name == "JP-2")     return 6.38;
+   else if (name == "JP-3")     return 6.34;
+   else if (name == "JP-4")     return 6.48;
+   else if (name == "JP-5")     return 6.81;
+   else if (name == "JP-6")     return 6.55;
+   else if (name == "JP-7")     return 6.61;
+   else if (name == "JP-8")     return 6.66;
+   else if (name == "JP-8+100") return 6.66;
+ //else if (name == "JP-9")     return 6.74;
+ //else if (name == "JPTS")     return 6.74;
+   else if (name == "RP-1")     return 6.73;
+   else if (name == "T-1")      return 6.88;
+   else if (name == "ETHANOL")  return 6.58;
+   else if (name == "HYDRAZINE")return 8.61;
+   else if (name == "F-34")     return 6.66;
+   else if (name == "F-35")     return 6.74;
+   else if (name == "F-40")     return 6.48;
+   else if (name == "F-44")     return 6.81;
+   else if (name == "AVTAG")    return 6.48;
+   else if (name == "AVCAT")    return 6.81;
+   else {
+     cerr << "Unknown fuel type specified: "<< name << endl;
+   } 
+
+   return 6.6;
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

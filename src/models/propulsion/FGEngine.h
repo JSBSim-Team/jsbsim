@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.19 2009/11/04 23:29:24 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,13 +113,12 @@ CLASS DOCUMENTATION
 @endcode
 <pre>
     NOTES:
-	Engines feed from all tanks equally.
-
+	
 	Not all thruster types can be matched with a given engine type.  See the class
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.19 2009/11/04 23:29:24 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,6 +225,7 @@ protected:
 
   double FuelFlow_gph;
   double FuelFlow_pph;
+  double FuelDensity;
 
   FGFDMExec*      FDMExec;
   FGState*        State;
