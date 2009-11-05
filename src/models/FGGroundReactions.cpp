@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.24 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.25 2009/11/05 05:15:35 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +185,7 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter)
   for (unsigned int i=0;i<lGear.size();i++) {
     if (lGear[i]->IsBogey()) {
       FGLGear *gear = lGear[i];
-      buf << (gear->GetWOW() ? "1, " : "0, ")
+      buf << (gear->GetWOW() ? "1" : "0") << delimeter
           << setprecision(5) << gear->GetCompLen() << delimeter
           << setprecision(6) << gear->GetCompVel() << delimeter
           << setprecision(10) << gear->GetCompForce() << delimeter

@@ -9,7 +9,7 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: stdint.hxx,v 1.1 2009/10/27 17:38:35 andgi Exp $
+// $Id: stdint.hxx,v 1.2 2009/11/05 05:15:35 jberndt Exp $
 
 
 //////////////////////////////////////////////////////////////////////
@@ -88,7 +88,4 @@ inline void sgEndianSwap(uint16_t *x) { *x = sg_bswap_16(*x); }
 inline void sgEndianSwap(uint32_t *x) { *x = sg_bswap_32(*x); }
 inline void sgEndianSwap(uint64_t *x) { *x = sg_bswap_64(*x); }
 
-
-
 #endif // !_STDINT_HXX
-

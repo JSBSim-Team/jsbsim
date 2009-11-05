@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.7 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.8 2009/11/05 05:15:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,6 +157,11 @@ public:
   /** Destructor.
    */
   ~FGMatrix33(void) { Debug(1); }
+
+  /** Prints the contents of the matrix.
+      @param delimeter the item separator (tab or comma)
+      @return a string with the delimeter-separated contents of the matrix  */
+  std::string Dump(const std::string& delimeter) const;
 
   /** Read access the entries of the matrix.
       @param row Row index.
