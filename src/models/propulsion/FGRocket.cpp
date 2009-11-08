@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.16 2009/10/31 23:05:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.17 2009/11/08 02:24:17 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,8 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   SLOxiFlowMax = 0.0;
   BuildupTime = 0.0;
   It = 0.0;
+  ThrustVariation = 0.0;
+  TotalIspVariation = 0.0;
 
   // Defaults
    MinThrottle = 0.0;
@@ -89,9 +91,19 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   if (el->FindElement("sloxiflowmax"))
     SLOxiFlowMax = el->FindElementValueAsNumberConvertTo("sloxiflowmax", "LBS/SEC");
 
+  // If there is a thrust table element, this is a solid propellant engine.
   thrust_table_element = el->FindElement("thrust_table");
   if (thrust_table_element) {
     ThrustTable = new FGTable(PropertyManager, thrust_table_element);
+    Element* variation_element = el->FindElement("variation");
+    if (variation_element) {
+      if (variation_element->FindElement("thrust")) {
+        ThrustVariation = variation_element->FindElementValueAsNumber("thrust");
+      }
+      if (variation_element->FindElement("total_isp")) {
+        TotalIspVariation = variation_element->FindElementValueAsNumber("total_isp");
+      }
+    }
   }
 
   bindmodel();
@@ -138,7 +150,9 @@ double FGRocket::Calculate(void)
         }
       }
 
-      VacThrust = ThrustTable->GetValue(TotalEngineFuelBurned);
+      VacThrust = ThrustTable->GetValue(TotalEngineFuelBurned)
+                * (ThrustVariation + 1)
+                * (TotalIspVariation + 1);
       if (BurnTime <= BuildupTime && BuildupTime > 0.0) {
         VacThrust *= sin((BurnTime/BuildupTime)*M_PI/2.0);
         // VacThrust *= (1-cos((BurnTime/BuildupTime)*M_PI))/2.0; // 1 - cos approach
@@ -241,6 +255,11 @@ void FGRocket::ConsumeFuel(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 
+// The FuelFlowRate can be affected by the TotalIspVariation value (settable
+// in a config file or via properties). The TotalIspVariation parameter affects
+// thrust, but the thrust determines fuel flow rate, so it must be adjusted
+// for Total Isp Variation.
 
 double FGRocket::CalcFuelNeed(void)
 {
@@ -248,6 +267,7 @@ double FGRocket::CalcFuelNeed(void)
 
   if (ThrustTable != 0L) {          // Thrust table given - infers solid fuel
     FuelFlowRate = VacThrust/Isp;   // This calculates wdot (weight flow rate in lbs/sec)
+    FuelFlowRate /= (1 + TotalIspVariation);
   } else {
     FuelFlowRate = SLFuelFlowMax*PctPower;
   }
@@ -290,7 +310,7 @@ string FGRocket::GetEngineValues(const string& delimiter)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This funciton should tie properties to rocket engine specific properties
+// This function should tie properties to rocket engine specific properties
 // that are not bound in the base class (FGEngine) code.
 //
 void FGRocket::bindmodel()
@@ -300,10 +320,20 @@ void FGRocket::bindmodel()
 
   property_name = base_property_name + "/total-impulse";
   PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetTotalImpulse);
-  property_name = base_property_name + "/oxi-flow-rate-pps";
-  PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOxiFlowRate);
   property_name = base_property_name + "/vacuum-thrust_lbs";
   PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetVacThrust);
+
+  if (ThrustTable) { // Solid rocket motor
+    property_name = base_property_name + "/thrust-variation_pct";
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetThrustVariation,
+                                                       &FGRocket::SetThrustVariation);
+    property_name = base_property_name + "/total-isp-variation_pct";
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetTotalIspVariation,
+                                                       &FGRocket::SetTotalIspVariation);
+  } else { // Liquid rocket motor
+    property_name = base_property_name + "/oxi-flow-rate-pps";
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOxiFlowRate);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
