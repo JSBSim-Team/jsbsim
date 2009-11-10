@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.45 2009/10/02 10:30:07 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.46 2009/11/10 13:47:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.45 $
+    @version $Revision: 1.46 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,7 +222,7 @@ public:
       @param model A pointer to the model being scheduled.
       @param rate The rate at which to execute the model as described above.
       @return Currently returns 0 always. */
-  int  Schedule(FGModel* model, int rate);
+  void Schedule(FGModel* model, int rate);
 
   /** This function executes each scheduled model in succession.
       @return true if successful, false if sim should be ended  */
@@ -488,7 +488,6 @@ private:
 
   static FGPropertyManager *master;
 
-  FGModel*            FirstModel;
   FGGroundCallback*   GroundCallback;
   FGState*            State;
   FGAtmosphere*       Atmosphere;
@@ -514,6 +513,7 @@ private:
   vector <string> PropertyCatalog;
   vector <FGOutput*> Outputs;
   vector <childData*> ChildFDMList;
+  vector <FGModel*> Models;
 
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);

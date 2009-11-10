@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.11 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.12 2009/11/10 13:47:20 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,9 +176,11 @@ bool FGModel::Run()
 {
   if (debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
 
-  if (exe_ctr++ >= rate) exe_ctr = 1;
+  if (rate == 1) return false; // Fast exit if nothing to do
 
-  if (exe_ctr == 1) return false;
+  if (exe_ctr >= rate) exe_ctr = 1;
+
+  if (exe_ctr++ == 1) return false;
   else              return true;
 }
 

@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.69 2009/10/25 12:33:04 andgi Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.70 2009/11/10 13:47:20 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +108,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 {
 
   Frame           = 0;
-  FirstModel      = 0;
   Error           = 0;
   GroundCallback  = 0;
   State           = 0;
@@ -221,30 +220,11 @@ bool FGFDMExec::Allocate(void)
                                        // class needs valid pointers to the above
                                        // model classes
 
-  // Initialize models so they can communicate with each other
-
-  Atmosphere->InitModel();
-  FCS->InitModel();
-  Propulsion->InitModel();
-  MassBalance->InitModel();
-  Aerodynamics->InitModel();
-  Inertial->InitModel();
-  GroundReactions->InitModel();
-  ExternalReactions->InitModel();
-  BuoyantForces->InitModel();
-  Aircraft->InitModel();
-  Propagate->InitModel();
-  Auxiliary->InitModel();
-  Input->InitModel();
-
-  IC = new FGInitialCondition(this);
-
   // Schedule a model. The second arg (the integer) is the pass number. For
-  // instance, the atmosphere model could get executed every fifth pass it is called
-  // by the executive. IC and Trim objects are NOT scheduled.
-
+  // instance, the atmosphere model could get executed every fifth pass it is called.
+  
   Schedule(Input,           1);
-  Schedule(Atmosphere,      1);
+  Schedule(Atmosphere,      30);
   Schedule(FCS,             1);
   Schedule(Propulsion,      1);
   Schedule(MassBalance,     1);
@@ -256,6 +236,13 @@ bool FGFDMExec::Allocate(void)
   Schedule(Aircraft,        1);
   Schedule(Propagate,       1);
   Schedule(Auxiliary,       1);
+
+  // Initialize models so they can communicate with each other
+
+  vector <FGModel*>::iterator it;
+  for (it = Models.begin(); it != Models.end(); ++it) (*it)->InitModel();
+
+  IC = new FGInitialCondition(this);
 
   modelLoaded = false;
 
@@ -290,7 +277,6 @@ bool FGFDMExec::DeAllocate(void)
 
   delete GroundCallback;
 
-  FirstModel  = 0L;
   Error       = 0;
 
   State           = 0;
@@ -309,35 +295,18 @@ bool FGFDMExec::DeAllocate(void)
   Auxiliary       = 0;
   Script          = 0;
 
+  Models.clear();
+
   modelLoaded = false;
   return modelLoaded;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGFDMExec::Schedule(FGModel* model, int rate)
+void FGFDMExec::Schedule(FGModel* model, int rate)
 {
-  FGModel* model_iterator;
-
-  model_iterator = FirstModel;
-
-  if (model_iterator == 0L) {                  // this is the first model
-
-    FirstModel = model;
-    FirstModel->NextModel = 0L;
-    FirstModel->SetRate(rate);
-
-  } else {                                     // subsequent model
-
-    while (model_iterator->NextModel != 0L) {
-      model_iterator = model_iterator->NextModel;
-    }
-    model_iterator->NextModel = model;
-    model_iterator->NextModel->SetRate(rate);
-
-  }
-
-  return 0;
+  model->SetRate(rate);
+  Models.push_back(model);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,10 +314,6 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
 bool FGFDMExec::Run(void)
 {
   bool success=true;
-  FGModel* model_iterator;
-
-  model_iterator = FirstModel;
-  if (model_iterator == 0L) return false;
 
   Debug(2);
 
@@ -357,14 +322,11 @@ bool FGFDMExec::Run(void)
     ChildFDMList[i]->Run();
   }
 
-  // returns true if success
-  // false if complete
+  // returns true if success, false if complete
   if (Script != 0 && !State->IntegrationSuspended()) success = Script->RunScript();
 
-  while (model_iterator != 0L) {
-    model_iterator->Run();
-    model_iterator = model_iterator->NextModel;
-  }
+  vector <FGModel*>::iterator it;
+  for (it = Models.begin(); it != Models.end(); ++it) (*it)->Run();
 
   Frame++;
   if (!Holding()) State->IncrTime();
@@ -406,15 +368,10 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 
 void FGFDMExec::ResetToInitialConditions(void)
 {
-  FGModel* model_iterator;
+  if (Constructing) return;
 
-  model_iterator = FirstModel;
-  if (model_iterator == 0L || Constructing) return;
-
-  while (model_iterator != 0L) {
-    model_iterator->InitModel();
-    model_iterator = model_iterator->NextModel;
-  }
+  vector <FGModel*>::iterator it;
+  for (it = Models.begin(); it != Models.end(); ++it) (*it)->InitModel();
 
   RunIC();
   if (Script) Script->ResetEvents();
