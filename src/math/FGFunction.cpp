@@ -42,7 +42,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.25 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.26 2009/11/12 13:02:58 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,7 +335,12 @@ string FGFunction::GetValueAsString(void) const
 void FGFunction::bind(void)
 {
   if ( !Name.empty() ) {
-    string tmp = PropertyManager->mkPropertyName(Prefix + Name, false); // Allow upper case
+    string tmp;
+    if (Prefix.empty())
+      tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper case
+    else
+      tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false); // Allow upper case
+
     PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
   }
 }
