@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.17 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.18 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,6 +104,8 @@ bool FGInput::Run(void)
   if (port == 0) return false;      // Do nothing here if port not defined
                                     // return false if no error
   // This model DOES execute if "Exec->Holding"
+
+  RunPreFunctions();
 
   data = socket->Receive(); // get socket transmission if present
 
@@ -212,6 +214,8 @@ bool FGInput::Run(void)
       start = string_end;
     }
   }
+
+  RunPostFunctions();
 
   return false;
 }

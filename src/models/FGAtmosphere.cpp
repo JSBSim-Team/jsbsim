@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.31 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.32 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,6 +139,8 @@ bool FGAtmosphere::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
+  RunPreFunctions();
+
   T_dev = 0.0;
   h = Propagate->GetAltitudeASL();
 
@@ -148,6 +150,8 @@ bool FGAtmosphere::Run(void)
   } else {
     CalculateDerived();
   }
+
+  RunPostFunctions();
 
   Debug(2);
   return false;

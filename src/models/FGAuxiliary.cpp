@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.37 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.38 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,6 +141,8 @@ bool FGAuxiliary::Run()
 
   if (FGModel::Run()) return true; // return true if error returned from base class
   if (FDMExec->Holding()) return false;
+
+  RunPreFunctions();
 
   const FGColumnVector3& vPQR = Propagate->GetPQR();
   const FGColumnVector3& vUVW = Propagate->GetUVW();
@@ -289,6 +291,8 @@ bool FGAuxiliary::Run()
   // please calculate the distance from the initial point
 
   CalculateRelativePosition();
+
+  RunPostFunctions();
 
   return false;
 }

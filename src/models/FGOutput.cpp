@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.43 2009/11/05 05:15:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.44 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -188,6 +188,7 @@ bool FGOutput::Run(void)
   if (FGModel::Run()) return true;
 
   if (enabled && !State->IntegrationSuspended()&& !FDMExec->Holding()) {
+    RunPreFunctions();
     if (Type == otSocket) {
       SocketOutput();
     } else if (Type == otFlightGear) {
@@ -201,6 +202,7 @@ bool FGOutput::Run(void)
     } else {
       // Not a valid type of output
     }
+    RunPostFunctions();
   }
   return false;
 }

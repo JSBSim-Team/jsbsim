@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.43 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.44 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,6 +233,8 @@ bool FGPropagate::Run(void)
   if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
   if (FDMExec->Holding()) return false;
 
+  RunPreFunctions();
+
   RecomputeLocalTerrainRadius();
 
   // Calculate current aircraft radius from center of planet
@@ -343,6 +345,8 @@ bool FGPropagate::Run(void)
 
   last2_vLocationDot = last_vLocationDot;
   last_vLocationDot = vLocationDot;
+
+  RunPreFunctions();
 
   Debug(2);
   return false;

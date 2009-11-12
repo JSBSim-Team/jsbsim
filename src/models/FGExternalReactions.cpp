@@ -53,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.7 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.8 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,6 +85,8 @@ bool FGExternalReactions::Load(Element* el)
     force_element = el->FindNextElement("force");
   }
 
+  FGModel::PostLoad(el);
+
   return true;
 }
 
@@ -115,6 +117,8 @@ bool FGExternalReactions::Run()
   if (FDMExec->Holding()) return false; // if paused don't execute
   if (NoneDefined) return true;
 
+  RunPreFunctions();
+
   vTotalForces.InitMatrix();
   vTotalMoments.InitMatrix();
 
@@ -122,6 +126,8 @@ bool FGExternalReactions::Run()
     vTotalForces  += Forces[i]->GetBodyForces();
     vTotalMoments += Forces[i]->GetMoments();
   }
+
+  RunPostFunctions();
 
   return false;
 }

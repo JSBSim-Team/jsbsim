@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.12 2009/11/10 13:47:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.13 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,9 @@ FGModel::~FGModel()
   for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
   interface_properties.clear();
 
+  for (unsigned int i=0; i<PreFunctions.size(); i++) delete PreFunctions[i];
+  for (unsigned int i=0; i<PostFunctions.size(); i++) delete PostFunctions[i];
+
   if (debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
 }
 
@@ -146,15 +149,16 @@ bool FGModel::InitModel(void)
 bool FGModel::Load(Element* el)
 {
   // Interface properties are all stored in the interface properties array.
-
   string interface_property_string = "";
 
   Element *property_element = el->FindElement("property");
-  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" << endl << endl;
+  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" 
+                                              << endl << endl;
   while (property_element) {
     interface_property_string = property_element->GetDataLine();
     if (PropertyManager->HasNode(interface_property_string)) {
-      cerr << "      Property " << interface_property_string << " is already defined." << endl;
+      cerr << "      Property " << interface_property_string 
+           << " is already defined." << endl;
     } else {
       double value=0.0;
       if ( ! property_element->GetAttributeValue("value").empty())
@@ -162,12 +166,69 @@ bool FGModel::Load(Element* el)
       interface_properties.push_back(new double(value));
       PropertyManager->Tie(interface_property_string, interface_properties.back());
       if (debug_lvl > 0)
-        cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
+        cout << "      " << interface_property_string << " (initial value: " 
+             << value << ")" << endl << endl;
     }
     property_element = el->FindNextElement("property");
   }
   
+  // End of interface property loading logic
+
+  // Load model pre-functions, if any
+
+  Element *function = el->FindElement("function");
+  while (function) {
+    if (function->GetAttributeValue("type") == "pre") {
+      PreFunctions.push_back(new FGFunction(PropertyManager, function));
+    } else if (function->GetAttributeValue("type").empty()) { // Assume pre-function
+      string funcname = function->GetAttributeValue("name");
+      PreFunctions.push_back(new FGFunction(PropertyManager, function));
+    }
+    function = el->FindNextElement("function");
+  }
+
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGModel::PostLoad(Element* el)
+{
+  // Load model post-functions, if any
+
+  Element *function = el->FindElement("function");
+  while (function) {
+    if (function->GetAttributeValue("type") == "post") {
+      PostFunctions.push_back(new FGFunction(PropertyManager, function));
+    }
+    function = el->FindNextElement("function");
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Tell the Functions to cache values, so when the function values 
+// are being used in the model, the functions do not get
+// calculated each time, but instead use the values that have already
+// been calculated for this frame.
+
+void FGModel::RunPreFunctions(void)
+{
+  vector <FGFunction*>::iterator it;
+  for (it = PreFunctions.begin(); it != PreFunctions.end(); it++)
+    (*it)->GetValue();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Tell the Functions to cache values, so when the function values 
+// are being used in the model, the functions do not get
+// calculated each time, but instead use the values that have already
+// been calculated for this frame.
+
+void FGModel::RunPostFunctions(void)
+{
+  vector <FGFunction*>::iterator it;
+  for (it = PostFunctions.begin(); it != PostFunctions.end(); it++)
+    (*it)->GetValue();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

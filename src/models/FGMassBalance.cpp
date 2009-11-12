@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.24 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.25 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,6 +152,8 @@ bool FGMassBalance::Load(Element* el)
 
   Mass = lbtoslug*Weight;
 
+  FGModel::PostLoad(el);
+
   Debug(2);
   return true;
 }
@@ -165,6 +167,8 @@ bool FGMassBalance::Run(void)
 
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
+
+  RunPreFunctions();
 
   double ChildFDMWeight = 0.0;
   for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
@@ -225,6 +229,8 @@ bool FGMassBalance::Run(void)
   mJinv.InitMatrix( k1, k2, k3,
                     k2, k4, k5,
                     k3, k5, k6 );
+
+  RunPostFunctions();
 
   Debug(0);
 

@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.10 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.11 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +95,8 @@ bool FGBuoyantForces::Run(void)
   if (FDMExec->Holding()) return false; // if paused don't execute
   if (NoneDefined) return true;
 
+  RunPreFunctions();
+
   vTotalForces.InitMatrix();
   vTotalMoments.InitMatrix();
 
@@ -103,6 +105,8 @@ bool FGBuoyantForces::Run(void)
     vTotalForces  += Cells[i]->GetBodyForces();
     vTotalMoments += Cells[i]->GetMoments();
   }
+
+  RunPostFunctions();
 
   return false;
 }
@@ -135,6 +139,8 @@ bool FGBuoyantForces::Load(Element *element)
     gas_cell_element = document->FindNextElement("gas_cell");
   }
   
+  FGModel::PostLoad(element);
+
   return true;
 }
 

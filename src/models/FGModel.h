@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
+#include "math/FGFunction.h"
 
 #include <string>
 #include <vector>
@@ -47,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.13 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.14 2009/11/12 13:08:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,11 +94,6 @@ public:
   /// Destructor
   ~FGModel();
 
-  /** Loads this model.
-      @param el a pointer to the element
-      @return true if model is successfully loaded*/
-  virtual bool Load(Element* el);
-
   FGModel* NextModel;
   std::string Name;
 
@@ -116,6 +112,16 @@ protected:
   int exe_ctr;
   int rate;
 
+  void RunPreFunctions(void);
+  void RunPostFunctions(void);
+
+  /** Loads this model.
+      @param el a pointer to the element
+      @return true if model is successfully loaded*/
+  virtual bool Load(Element* el);
+
+  void PostLoad(Element* el);
+
   virtual void Debug(int from);
 
   FGFDMExec*         FDMExec;
@@ -133,6 +139,8 @@ protected:
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
   FGPropertyManager* PropertyManager;
+  std::vector <FGFunction*> PreFunctions;
+  std::vector <FGFunction*> PostFunctions;
 
   std::vector <double*> interface_properties;
 };

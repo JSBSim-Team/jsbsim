@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.25 2009/11/05 05:15:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.26 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +89,8 @@ bool FGGroundReactions::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
+  RunPreFunctions();
+
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
@@ -101,6 +103,8 @@ bool FGGroundReactions::Run(void)
     vForces  += lGear[i]->GetBodyForces();
     vMoments += lGear[i]->GetMoments();
   }
+
+  RunPostFunctions();
 
   return false;
 }
@@ -137,6 +141,8 @@ bool FGGroundReactions::Load(Element* el)
   FGModel::Load(el); // Perform base class Load
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
+
+  FGModel::PostLoad(el);
 
   return true;
 }

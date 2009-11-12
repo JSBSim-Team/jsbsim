@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.29 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.30 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,9 +108,6 @@ FGAerodynamics::~FGAerodynamics()
 
   delete[] Coeff;
 
-  for (i=0; i<variables.size(); i++)
-    delete variables[i];
-
   delete AeroRPShift;
 
   Debug(1);
@@ -137,11 +134,13 @@ bool FGAerodynamics::InitModel(void)
 
 bool FGAerodynamics::Run(void)
 {
-  unsigned int axis_ctr, ctr, i;
+  unsigned int axis_ctr, ctr;
   double alpha, twovel;
 
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false; // if paused don't execute
+
+  RunPreFunctions();
 
   // calculate some oft-used quantities for speed
 
@@ -172,13 +171,6 @@ bool FGAerodynamics::Run(void)
 
   vFw.InitMatrix();
   vFnative.InitMatrix();
-
-  // Tell the variable functions to cache their values, so while the aerodynamic
-  // functions are being calculated for each axis, these functions do not get
-  // calculated each time, but instead use the values that have already
-  // been calculated for this frame.
-
-  for (i=0; i<variables.size(); i++) variables[i]->cacheValue(true);
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
@@ -232,6 +224,8 @@ bool FGAerodynamics::Run(void)
       vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->GetValue();
     }
   }
+
+  RunPostFunctions();
 
   return false;
 }
@@ -324,7 +318,7 @@ bool FGAerodynamics::Load(Element *element)
     document = element;
   }
 
-  FGModel::Load(element); // Perform base class Load
+  FGModel::Load(element); // Perform base class Pre-Load
 
   DetermineAxisSystem(); // Detemine if Lift/Side/Drag, etc. is used.
 
@@ -349,12 +343,6 @@ bool FGAerodynamics::Load(Element *element)
     AeroRPShift = new FGFunction(PropertyManager, function_element);
   }
 
-  function_element = document->FindElement("function");
-  while (function_element) {
-    variables.push_back( new FGFunction(PropertyManager, function_element) );
-    function_element = document->FindNextElement("function");
-  }
-
   axis_element = document->FindElement("axis");
   while (axis_element) {
     CoeffArray ca;
@@ -367,6 +355,8 @@ bool FGAerodynamics::Load(Element *element)
     Coeff[AxisIdx[axis]] = ca;
     axis_element = document->FindNextElement("axis");
   }
+
+  FGModel::PostLoad(element); // Perform base class Post-Load
 
   return true;
 }
@@ -427,15 +417,6 @@ string FGAerodynamics::GetCoefficientStrings(const string& delimeter) const
   bool firstime = true;
   unsigned int axis, sd;
 
-  for (sd = 0; sd < variables.size(); sd++) {
-    if (firstime) {
-      firstime = false;
-    } else {
-      CoeffStrings += delimeter;
-    }
-    CoeffStrings += variables[sd]->GetName();
-  }
-
   for (axis = 0; axis < 6; axis++) {
     for (sd = 0; sd < Coeff[axis].size(); sd++) {
       if (firstime) {
@@ -454,12 +435,6 @@ string FGAerodynamics::GetCoefficientStrings(const string& delimeter) const
 string FGAerodynamics::GetCoefficientValues(const string& delimeter) const
 {
   ostringstream buf;
-
-  buf.precision(6);
-  for (unsigned int sd = 0; sd < variables.size(); sd++) {
-    if (buf.tellp() > 0) buf << delimeter;
-    buf << setw(9) << variables[sd]->GetValue();
-  }
 
   for (unsigned int axis = 0; axis < 6; axis++) {
     for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {

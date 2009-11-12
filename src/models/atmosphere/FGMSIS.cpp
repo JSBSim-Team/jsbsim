@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.11 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.12 2009/11/12 13:08:11 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,8 @@ bool MSIS::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
+  RunPreFunctions();
+
   //do temp, pressure, and density first
   if (!useExternal) {
     // get sea-level values
@@ -179,6 +181,8 @@ bool MSIS::Run(void)
   }
 
   CalculateDerived();
+
+  RunPostFunctions();
 
   Debug(2);
 
