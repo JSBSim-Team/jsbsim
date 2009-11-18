@@ -31,6 +31,7 @@ INCLUDES
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
+#include <cmath>
 #include "FGFunction.h"
 #include "FGTable.h"
 #include "FGPropertyValue.h"
@@ -42,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.26 2009/11/12 13:02:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.27 2009/11/18 04:13:03 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,6 +57,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   string operation, property_name;
   cached = false;
   cachedValue = -HUGE_VAL;
+  invlog2val = 1.0/log(2.0);
 
   property_string = "property";
   value_string = "value";
@@ -72,6 +74,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   quotient_string = "quotient";
   pow_string = "pow";
   exp_string = "exp";
+  log2_string = "log2";
   abs_string = "abs";
   sin_string = "sin";
   cos_string = "cos";
@@ -103,6 +106,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eQuotient;
   } else if (operation == pow_string) {
     Type = ePow;
+  } else if (operation == log2_string) {
+    Type = eLog2;
   } else if (operation == abs_string) {
     Type = eAbs;
   } else if (operation == sin_string) {
@@ -174,6 +179,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == quotient_string ||
                operation == pow_string ||
                operation == exp_string ||
+               operation == log2_string ||
                operation == abs_string ||
                operation == sin_string ||
                operation == cos_string ||
@@ -258,6 +264,9 @@ double FGFunction::GetValue(void) const
     break;
   case eExp:
     temp = exp(temp);
+    break;
+  case eLog2:
+    temp = log(temp)*invlog2val;
     break;
   case eAbs:
     temp = fabs(temp);

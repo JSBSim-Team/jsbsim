@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.20 2009/11/18 04:13:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,6 +70,7 @@ A function definition consists of an operation, a value, a table, or a property
 - quotient (takes 2 args)
 - pow (takes 2 args)
 - exp (takes 2 args)
+- log2 (takes 1 arg)
 - abs (takes n args)
 - sin (takes 1 arg)
 - cos (takes 1 arg)
@@ -193,6 +194,7 @@ private:
   std::vector <FGParameter*> Parameters;
   FGPropertyManager* const PropertyManager;
   bool cached;
+  double invlog2val;
   std::string Prefix;
   std::string description_string;
   std::string property_string;
@@ -208,6 +210,7 @@ private:
   std::string quotient_string;
   std::string pow_string;
   std::string exp_string;
+  std::string log2_string;
   std::string abs_string;
   std::string sin_string;
   std::string cos_string;
@@ -226,7 +229,7 @@ private:
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2} Type;
   std::string Name;
   void bind(void);
   void Debug(int from);
