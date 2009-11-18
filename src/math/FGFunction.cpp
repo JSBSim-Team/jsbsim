@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.27 2009/11/18 04:13:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.28 2009/11/18 04:19:04 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,7 +266,8 @@ double FGFunction::GetValue(void) const
     temp = exp(temp);
     break;
   case eLog2:
-    temp = log(temp)*invlog2val;
+    if (temp > 0.00) temp = log(temp)*invlog2val;
+    else temp = -HUGE_VAL;
     break;
   case eAbs:
     temp = fabs(temp);
