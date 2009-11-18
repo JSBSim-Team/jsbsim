@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.29 2009/11/18 04:49:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.30 2009/11/18 05:16:06 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   string operation, property_name;
   cached = false;
   cachedValue = -HUGE_VAL;
-  invlog2val = 1.0/log(2.0);
+  invlog2val = 1.0/log10(2.0);
 
   property_string = "property";
   value_string = "value";
@@ -274,7 +274,7 @@ double FGFunction::GetValue(void) const
     temp = exp(temp);
     break;
   case eLog2:
-    if (temp > 0.00) temp = log(temp)*invlog2val;
+    if (temp > 0.00) temp = log10(temp)*invlog2val;
     else temp = -HUGE_VAL;
     break;
   case eLn:
