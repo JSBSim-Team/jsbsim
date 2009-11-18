@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.20 2009/11/18 04:13:03 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.21 2009/11/18 04:49:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,6 +71,8 @@ A function definition consists of an operation, a value, a table, or a property
 - pow (takes 2 args)
 - exp (takes 2 args)
 - log2 (takes 1 arg)
+- ln (takes 1 arg)
+- log10 (takes 1 arg)
 - abs (takes n args)
 - sin (takes 1 arg)
 - cos (takes 1 arg)
@@ -211,6 +213,8 @@ private:
   std::string pow_string;
   std::string exp_string;
   std::string log2_string;
+  std::string ln_string;
+  std::string log10_string;
   std::string abs_string;
   std::string sin_string;
   std::string cos_string;
@@ -229,7 +233,7 @@ private:
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn, eLog10} Type;
   std::string Name;
   void bind(void);
   void Debug(int from);

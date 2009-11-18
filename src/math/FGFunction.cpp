@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.28 2009/11/18 04:19:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.29 2009/11/18 04:49:02 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   pow_string = "pow";
   exp_string = "exp";
   log2_string = "log2";
+  ln_string = "ln";
+  log10_string = "log10";
   abs_string = "abs";
   sin_string = "sin";
   cos_string = "cos";
@@ -108,6 +110,10 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = ePow;
   } else if (operation == log2_string) {
     Type = eLog2;
+  } else if (operation == ln_string) {
+    Type = eLn;
+  } else if (operation == log10_string) {
+    Type = eLog10;
   } else if (operation == abs_string) {
     Type = eAbs;
   } else if (operation == sin_string) {
@@ -180,6 +186,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == pow_string ||
                operation == exp_string ||
                operation == log2_string ||
+               operation == ln_string ||
+               operation == log10_string ||
                operation == abs_string ||
                operation == sin_string ||
                operation == cos_string ||
@@ -267,6 +275,14 @@ double FGFunction::GetValue(void) const
     break;
   case eLog2:
     if (temp > 0.00) temp = log(temp)*invlog2val;
+    else temp = -HUGE_VAL;
+    break;
+  case eLn:
+    if (temp > 0.00) temp = log(temp);
+    else temp = -HUGE_VAL;
+    break;
+  case eLog10:
+    if (temp > 0.00) temp = log10(temp);
     else temp = -HUGE_VAL;
     break;
   case eAbs:
