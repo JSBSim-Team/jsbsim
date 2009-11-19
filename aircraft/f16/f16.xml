@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.87 $ </version>
+        <version> $Revision: 1.88 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -33,15 +33,7 @@
         <reference refID="H-2177" author="NASA" title="Dynamic ground effect for a Cranked Arrow Wing Airplane" date="n/a"/>
         <reference refID="None" author="n/a" title="http://www.codeonemagazine.com/archives/1991/articles/jul_91/july2a_91.html" date="n/a"/>
     </fileheader>
-<!--
-  <child name="mk82">
-    <location unit="IN">
-      <x> -170.0 </x>
-      <y>  -80.0 </y>
-      <z>  -12.0 </z>
-    </location>
-  </child>
--->  
+
     <metrics>
         <wingarea unit="FT2"> 300 </wingarea>
         <wingspan unit="FT"> 30 </wingspan>
@@ -105,16 +97,6 @@
             <max_steer unit="DEG"> 80 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.4</rolling>
-              <side unit="FT/SEC">0.6</side>
-            </relaxation_velocity>
-          <force_lag_filter>
-            <rolling> 120 </rolling>
-            <side> 240 </side>
-          </force_lag_filter>
-          <wheel_slip_filter> 480 </wheel_slip_filter>
-
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
@@ -130,16 +112,6 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.4</rolling>
-              <side unit="FT/SEC">0.6</side>
-            </relaxation_velocity>
-          <force_lag_filter>
-            <rolling> 120 </rolling>
-            <side> 240 </side>
-          </force_lag_filter>
-          <wheel_slip_filter> 480 </wheel_slip_filter>
-
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
@@ -155,16 +127,6 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.4</rolling>
-              <side unit="FT/SEC">0.6</side>
-            </relaxation_velocity>
-          <force_lag_filter>
-            <rolling> 120 </rolling>
-            <side> 240 </side>
-          </force_lag_filter>
-          <wheel_slip_filter> 480 </wheel_slip_filter>
-
         </contact>
         <contact type="STRUCTURE" name="LEFT_WT">
             <location unit="IN">
@@ -317,13 +279,51 @@
             <contents unit="LBS"> 0 </contents>
         </tank>
     </propulsion>
+
     <flight_control name="F-16 FC">
 
       <!-- Declare some interface properties -->
         <property>fcs/alpha-norm</property>
         <property>fcs/hook-engage</property>
         <property>fcs/canopy-engage</property>
-        <property>fcs/scan-marker-pos-norm</property>
+        <property>fcs/fbw-override</property>
+
+        <channel name="Flaps">
+
+            <switch name="tef pos rad">
+                <default value="0.0"/>
+                <test logic="AND" value="0.349">
+                    velocities/vc-kts lt 250
+                </test>
+                <test logic="AND" value="-0.0349">
+                    velocities/mach gt 0.9
+                </test>
+            </switch>
+
+            <pure_gain name="tef pos norm">
+              <input>fcs/tef-pos-rad</input>
+              <gain>2.864789</gain>
+            </pure_gain>
+
+            <kinematic name="tef control">
+                <input>fcs/tef-pos-norm</input>
+                <traverse>
+                    <setting>
+                        <position>-1.0</position>
+                        <time>3.0</time>
+                    </setting>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1.0</position>
+                        <time>3.0</time>
+                    </setting>
+                </traverse>
+            </kinematic>
+
+        </channel>
 
         <channel name="Roll">
 
@@ -360,24 +360,38 @@
               <kp> 3.00000 </kp>
               <ki> 0.00050 </ki>
               <kd> -0.00125 </kd>
-              <clipto>
-                <min>-1</min>
-                <max>1</max>
-              </clipto>
             </pid>
 
             <summer name="roll rate command">
                 <input>fcs/roll-rate-pid</input>
                 <input>fcs/aileron-cmd-norm</input>
-                <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
             </summer>
 
-            <kinematic name="aileron position">
+            <aerosurface_scale name="Aileron Control">
                 <input>fcs/roll-rate-command</input>
+                <range>
+                    <min>-0.375</min>
+                    <max>0.375</max>
+                </range>
+                <output>fcs/aileron-pos-rad</output>
+            </aerosurface_scale>
+            
+            <!--
+              - FBW override swich
+              -->
+            <switch name="roll rate command switch">
+                <default value="fcs/roll-rate-command"/>
+                <test value="fcs/aileron-cmd-norm">
+                    fcs/fbw-override == 1
+                </test>
+            </switch>
+
+            <kinematic name="aileron position">
+                <input>fcs/roll-rate-command-switch</input>
                 <traverse>
                     <setting>
                         <position>-1</position>
@@ -391,8 +405,37 @@
                 <output>fcs/left-aileron-pos-norm</output>
             </kinematic>
 
-            <aerosurface_scale name="Left Aileron Control">
+            <scheduled_gain name="aileron speed compensated">
                 <input>fcs/left-aileron-pos-norm</input>
+                <table>
+                    <independentVar>velocities/mach</independentVar>
+                    <tableData>
+                        0.0     1.0
+                        1.0     0.15
+                    </tableData>
+                </table>
+            </scheduled_gain>
+
+            <summer name="left flaperon norm">
+                <input>-fcs/tef-control</input>
+                <input>-fcs/aileron-speed-compensated</input>
+                <clipto>
+                    <min>-1.0</min>
+                    <max>1.0</max>
+                </clipto>
+            </summer>
+
+            <summer name="right flaperon norm">
+                <input>fcs/tef-control</input>
+                <input>-fcs/aileron-speed-compensated</input>
+                <clipto>
+                    <min>-1.0</min>
+                    <max>1.0</max>
+                </clipto>
+            </summer>
+
+            <aerosurface_scale name="Left Aileron Control">
+                <input>fcs/aileron-speed-compensated</input>
                 <range>
                     <min>-0.375</min>
                     <max>0.375</max>
@@ -401,7 +444,7 @@
             </aerosurface_scale>
 
             <aerosurface_scale name="Right Aileron Control">
-                <input>-fcs/left-aileron-pos-norm</input>
+                <input>-fcs/aileron-speed-compensated</input>
                 <range>
                     <min>-0.375</min>
                     <max>0.375</max>
@@ -463,9 +506,9 @@
                     <independentVar>aero/alpha-rad</independentVar>
                     <tableData>
                     -0.5236     0.0
-                    -0.5	0.11
+                    -0.5	  0.11
                      0.0        1.0
-                     0.5	0.11
+                     0.5	  0.11
                      0.5236     0.0
                     </tableData>
                 </table>
@@ -537,9 +580,19 @@
                 <max>1</max>
               </clipto>
             </summer>
+            
+            <!--
+              - FBW override swich
+              -->
+             <switch name="pitch scheduler switch">
+                <default value="fcs/pitch-scheduler"/>
+                <test value="fcs/elevator-cmd-limiter">
+                    fcs/fbw-override == 1
+                </test>
+            </switch>
 
-            <kinematic name="elevator position normal">
-                <input>fcs/pitch-scheduler</input>
+            <kinematic name="elevator position">
+                <input>fcs/pitch-scheduler-switch</input>
                 <traverse>
                     <setting>
                         <position>-1</position>
@@ -730,55 +783,6 @@
 
         </channel>
 
-        <channel name="Flaps">
-
-            <switch name="tef pos rad">
-                <default value="0.0"/>
-                <test logic="AND" value="0.349">
-                    velocities/vc-kts lt 250
-                </test>
-                <test logic="AND" value="-0.0349">
-                    velocities/mach gt 0.9
-                </test>
-            </switch>
-
-            <pure_gain name="tef pos norm">
-              <input>fcs/tef-pos-rad</input>
-              <gain>2.864789</gain>
-            </pure_gain>
-
-            <kinematic name="tef control">
-                <input>fcs/tef-pos-norm</input>
-                <traverse>
-                    <setting>
-                        <position>-1.0</position>
-                        <time>3.0</time>
-                    </setting>
-                    <setting>
-                        <position>0</position>
-                        <time>0</time>
-                    </setting>
-                    <setting>
-                        <position>1.0</position>
-                        <time>3.0</time>
-                    </setting>
-                </traverse>
-            </kinematic>
-
-            <aerosurface_scale name="tef pos deg">
-              <input>fcs/tef-control</input>
-              <domain>
-                <min>-1.0</min>
-                <max>1.0</max>
-              </domain>
-              <range>
-                <min>-20</min>
-                <max>20</max>
-              </range>
-            </aerosurface_scale>
-
-        </channel>
-
         <channel name="Speedbrake">
             <!--
               - To prevent deep stall the Flight Computer commands speedbrake
@@ -883,35 +887,6 @@
                     </setting>
                 </traverse>
                 <output>fcs/canopy-pos-norm</output>
-            </kinematic>
-
-        </channel>
-
-        <channel name="Radar Scan Marker">
-
-            <switch name="scan-marker initiate">
-                <default value="fcs/scan-marker-initiate"/>
-                <test logic="AND" value="1">
-                    fcs/scan-marker-pos-norm eq 0 
-                </test>
-                <test logic="AND" value="0">
-                    fcs/scan-marker-pos-norm eq 1
-                </test>
-            </switch>
-
-            <kinematic name="MSM Control">
-                <input>fcs/scan-marker-initiate</input>
-                <traverse>
-                    <setting>
-                        <position>0</position>
-                        <time>2.5</time>
-                    </setting>
-                    <setting>
-                        <position>1</position>
-                        <time>2.5</time>
-                    </setting>
-                </traverse>
-                <output>fcs/scan-marker-pos-norm</output>
             </kinematic>
 
         </channel>
@@ -1180,7 +1155,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
+                    <property>fcs/aileron-pos-rad</property>
                     <value>-0.0226</value>
                 </product>
             </function>
@@ -1306,7 +1281,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flap-pos-norm</property>
+                    <property>fcs/tef-pos-norm</property>
                     <property>aero/function/kCLge</property>
                     <value>0.3500</value>
                 </product>
@@ -1375,18 +1350,18 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.1750  -0.2560
-                              -0.0870  -0.0620
+                             -0.1750  -0.2560
+                             -0.0870  -0.0620
                               0.0000  -0.0100
-                              0.0870  0.0200
+                              0.0870   0.0200
                               0.1750  -0.0110
-                              0.2620  0.0530
-                              0.3490  0.0630
+                              0.2620   0.0530
+                              0.3490   0.0630
                               0.4360  -0.0090
-                              0.5240  0.0340
-                              0.6110  0.0420
-                              0.6980  0.0050
-                              0.7850  0.0010
+                              0.5240   0.0340
+                              0.6110   0.0420
+                              0.6980   0.0050
+                              0.7850   0.0010
                           </tableData>
                       </table>
                 </product>
@@ -1501,24 +1476,24 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
+                    <property>fcs/aileron-pos-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">aero/beta-rad</independentVar>
                           <tableData>
-                                -0.5240  -0.3490  -0.1750  0.0000  0.1750  0.3490  0.5240
+                                      -0.5240 -0.3490 -0.1750  0.0000  0.1750  0.3490  0.5240
                               -0.1750  0.0410  0.0410  0.0420  0.0400  0.0430  0.0440  0.0430
                               -0.0870  0.0520  0.0530  0.0530  0.0520  0.0490  0.0480  0.0490
-                              0.0000  0.0530  0.0530  0.0520  0.0510  0.0480  0.0480  0.0470
-                              0.0870  0.0560  0.0530  0.0510  0.0520  0.0490  0.0470  0.0450
-                              0.1750  0.0500  0.0500  0.0490  0.0480  0.0430  0.0420  0.0420
-                              0.2620  0.0560  0.0510  0.0490  0.0480  0.0420  0.0410  0.0370
-                              0.3490  0.0820  0.0660  0.0430  0.0420  0.0420  0.0200  0.0030
-                              0.4360  0.0590  0.0430  0.0350  0.0370  0.0360  0.0280  0.0130
-                              0.5240  0.0420  0.0380  0.0260  0.0310  0.0250  0.0130  0.0100
-                              0.6110  0.0380  0.0270  0.0160  0.0260  0.0210  0.0140  0.0030
-                              0.6980  0.0270  0.0230  0.0180  0.0170  0.0160  0.0110  0.0070
-                              0.7850  0.0170  0.0160  0.0140  0.0120  0.0110  -0.0100  0.0080
+                              0.0000   0.0530  0.0530  0.0520  0.0510  0.0480  0.0480  0.0470
+                              0.0870   0.0560  0.0530  0.0510  0.0520  0.0490  0.0470  0.0450
+                              0.1750   0.0500  0.0500  0.0490  0.0480  0.0430  0.0420  0.0420
+                              0.2620   0.0560  0.0510  0.0490  0.0480  0.0420  0.0410  0.0370
+                              0.3490   0.0820  0.0660  0.0430  0.0420  0.0420  0.0200  0.0030
+                              0.4360   0.0590  0.0430  0.0350  0.0370  0.0360  0.0280  0.0130
+                              0.5240   0.0420  0.0380  0.0260  0.0310  0.0250  0.0130  0.0100
+                              0.6110   0.0380  0.0270  0.0160  0.0260  0.0210  0.0140  0.0030
+                              0.6980   0.0270  0.0230  0.0180  0.0170  0.0160  0.0110  0.0070
+                              0.7850   0.0170  0.0160  0.0140  0.0120  0.0110 -0.0100  0.0080
                           </tableData>
                       </table>
                 </product>
@@ -1530,7 +1505,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/alpha-rad</property>
-                    <property>fcs/left-aileron-pos-rad</property>
+                    <property>fcs/aileron-pos-rad</property>
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
@@ -1801,7 +1776,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
+                    <property>fcs/aileron-pos-rad</property>
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
@@ -1821,7 +1796,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
+                    <property>fcs/aileron-pos-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">aero/beta-rad</independentVar>
@@ -1891,18 +1866,59 @@
             </function>
         </axis>
     </aerodynamics>
+    <system file="pushback"/>
+    <system file="hook"/>
+    <external_reactions>
+      <force name="pushback" frame="BODY">
+       <location unit="IN">
+        <x>  -2.98081 </x>
+        <y>    0.0 </y>
+        <z>  -1.9683 </z>
+       </location>
+       <direction>
+        <x>1</x>
+        <y>0</y>
+        <z>0</z>
+       </direction>
+      </force>
 
-  <output name="f16_datalog.csv" type="CSV" rate="120">
+  <force name="hook" frame="BODY">
+   <location unit="IN">
+     <x>  100.669 </x>
+     <y>    0.0 </y>
+     <z>  -28.818 </z>
+   </location>
+   <direction>
+     <x>  -0.9995 </x>
+     <y>   0.0    </y>
+     <z>   0.01 </z>
+   </direction>
+  </force>
+
+    </external_reactions>
+<!--
+  <output name="f16_datalog.csv" type="CSV" rate="1">
+    <property> aero/qbar-psf </property>
+    <property> attitude/phi-rad </property>
+    <property> position/h-sl-ft </property>
+    <property> velocities/vc-kts </property>
+    <property> fcs/throttle-cmd-norm </property>
+    <property> fcs/elevator-cmd-norm </property>
+    <property> fcs/pitch-trim-cmd-norm </property>
+    <property> propulsion/total-fuel-lbs </property>
+    <property> flight-path/gamma-rad </property>
+    <property> accelerations/n-pilot-z-norm </property>
     <rates> ON </rates>
-    <coefficients> ON </coefficients>
     <velocities> ON </velocities>
     <forces> ON </forces>
     <moments> ON </moments>
     <position> ON </position>
-    <fcs> OFF </fcs>
+    <fcs> ON </fcs>
     <propulsion> OFF </propulsion>
-    <aerosurfaces> OFF </aerosurfaces>
+    <aerosurfaces> ON </aerosurfaces>
+    <fcs> ON </fcs>
     <ground_reactions> ON </ground_reactions>
   </output>
-
+-->
 </fdm_config>
+
