@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.36 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.37 2009/11/28 20:18:09 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,12 +162,17 @@ CLASS DOCUMENTATION
                 <y> {number} </y>
                 <z> {number} </z>
             </location>
+            <orientation unit="{RAD | DEG}">
+                <pitch> {number} </pitch>
+                <roll> {number} </roll>
+                <yaw> {number} </yaw>
+            </orientation>
             <static_friction> {number} </static_friction>
             <dynamic_friction> {number} </dynamic_friction>
             <rolling_friction> {number} </rolling_friction>
             <spring_coeff unit="{LBS/FT | N/M}"> {number} </spring_coeff>
-            <damping_coeff unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff>
-            <damping_coeff_rebound unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff_rebound>
+            <damping_coeff [type="SQUARE"] unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff>
+            <damping_coeff_rebound [type="SQUARE"] unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff_rebound>
             <max_steer unit="DEG"> {number | 0 | 360} </max_steer>
             <brake_group> {NONE | LEFT | RIGHT | CENTER | NOSE | TAIL} </brake_group>
             <retractable>{0 | 1}</retractable>
@@ -185,7 +190,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.36 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.37 2009/11/28 20:18:09 andgi Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
