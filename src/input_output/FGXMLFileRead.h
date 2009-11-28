@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.4 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.5 2009/11/28 20:12:47 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ protected:
       return 0L;
     }
 
-    readXML(infile, file_parser);
+    readXML(infile, file_parser, XML_filename);
     document = file_parser.GetDocument();
     infile.close();
     
