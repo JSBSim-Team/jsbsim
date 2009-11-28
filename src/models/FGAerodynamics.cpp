@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.30 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.31 2009/11/28 14:30:11 andgi Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,7 +318,7 @@ bool FGAerodynamics::Load(Element *element)
     document = element;
   }
 
-  FGModel::Load(element); // Perform base class Pre-Load
+  FGModel::Load(document); // Perform base class Pre-Load
 
   DetermineAxisSystem(); // Detemine if Lift/Side/Drag, etc. is used.
 
@@ -356,7 +356,7 @@ bool FGAerodynamics::Load(Element *element)
     axis_element = document->FindNextElement("axis");
   }
 
-  FGModel::PostLoad(element); // Perform base class Post-Load
+  FGModel::PostLoad(document); // Perform base class Post-Load
 
   return true;
 }
