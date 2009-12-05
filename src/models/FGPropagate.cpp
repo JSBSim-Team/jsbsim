@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.44 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.45 2009/12/05 12:13:26 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,7 +260,7 @@ bool FGPropagate::Run(void)
   vVel = Tb2l * VState.vUVW;
 
   // Inertial angular velocity measured in the body frame.
-  vPQRi = VState.vPQR + Tec2b*vOmega;
+  vPQRi = VState.vPQR + Ti2b*vOmega;
 
   // Calculate state derivatives
   CalculatePQRdot();      // Angular rate derivative
@@ -413,6 +413,10 @@ void FGPropagate::CalculateUVWdot(void)
   vUVWdot = vForces/mass - VState.vPQR * VState.vUVW;
 
   // Include Coriolis acceleration.
+  // vOmega is the Earth angular rate - expressed in the inertial frame -
+  // so it has to be transformed to the body frame. More completely,
+  // vOmega is the rate of the ECEF frame relative to the Inertial
+  // frame (ECI), expressed in the Inertial frame.
   vUVWdot -= 2.0 * (Ti2b *vOmega) * VState.vUVW;
 
   // Include Centrifugal acceleration.
