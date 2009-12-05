@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.25 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.26 2009/12/05 10:10:09 andgi Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,7 +339,7 @@ void FGMassBalance::bind(void)
   PropertyManager->Tie("inertia/weight-lbs", this,
                        &FGMassBalance::GetWeight);
   PropertyManager->Tie("inertia/empty-weight-lbs", this,
-    &FGMassBalance::GetWeight, &FGMassBalance::SetEmptyWeight);
+                       &FGMassBalance::GetEmptyWeight);
   PropertyManager->Tie("inertia/cg-x-in", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-in", this,2,
