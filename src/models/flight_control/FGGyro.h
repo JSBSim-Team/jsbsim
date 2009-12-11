@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GYRO "$Id: FGGyro.h,v 1.4 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_GYRO "$Id: FGGyro.h,v 1.5 2009/12/11 06:03:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,6 @@ Syntax:
 
 @code
 <gyro name="name">
-  <input> property </input>
   <lag> number </lag>
   <noise variation="PERCENT|ABSOLUTE"> number </noise>
   <quantization name="name">
@@ -86,8 +85,8 @@ Syntax:
 Example:
 
 @code
-<gyro name="aero/gyro/qbar">
-  <input> aero/qbar </input>
+<gyro name="aero/gyro/roll">
+  <axis> X </axis>
   <lag> 0.5 </lag>
   <noise variation="PERCENT"> 2 </noise>
   <quantization name="aero/gyro/quantized/qbar">
@@ -99,9 +98,6 @@ Example:
 </gyro>
 @endcode
 
-The only required element in the gyro definition is the input element. In that
-case, no degradation would be modeled, and the output would simply be the input.
-
 For noise, if the type is PERCENT, then the value supplied is understood to be a
 percentage variance. That is, if the number given is 0.05, the the variance is
 understood to be +/-0.05 percent maximum variance. So, the actual value for the gyro
@@ -110,7 +106,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.4 $
+@version $Revision: 1.5 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MAGNETOMETER "$Id: FGMagnetometer.h,v 1.3 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_MAGNETOMETER "$Id: FGMagnetometer.h,v 1.4 2009/12/11 06:03:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,8 +70,13 @@ Syntax:
 
 @code
 <magnetometer name="name">
-  <input> property </input>
+  <axis> {X|Y|Z} </axis>
   <lag> number </lag>
+  <orientation unit=DEG">
+    <x> number </x>
+    <y> number </y>
+    <z> number </z>
+  </orientation>
   <noise variation="PERCENT|ABSOLUTE"> number </noise>
   <quantization name="name">
     <bits> number </bits>
@@ -87,8 +92,8 @@ Syntax:
 Example:
 
 @code
-<magnetometer name="aero/magnetometer/qbar">
-  <input> aero/qbar </input>
+<magnetometer name="aero/magnetometer/X">
+  <axis> X </axis>
   <lag> 0.5 </lag>
   <noise variation="PERCENT"> 2 </noise>
   <quantization name="aero/magnetometer/quantized/qbar">
@@ -101,8 +106,9 @@ Example:
 </magnetometer>
 @endcode
 
-The only required element in the magnetometer definition is the input element. In that
-case, no degradation would be modeled, and the output would simply be the input.
+The only required element in the magnetometer definition is the axis element. In
+the default case, no degradation would be modeled, and the output would simply be
+the input.
 
 For noise, if the type is PERCENT, then the value supplied is understood to be a
 percentage variance. That is, if the number given is 0.05, the the variance is
@@ -112,7 +118,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.3 $
+@version $Revision: 1.4 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
