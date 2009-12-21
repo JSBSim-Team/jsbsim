@@ -114,15 +114,15 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <value>0.0001</value>
+                    <value>0.000</value>
                 </product>
             </function>
         </axis>
     </aerodynamics>
 
     <output name="JSBBallOut.csv" type="CSV" rate="1">
-        <property> gear/unit[0]/WOW </property>
-        <property> fcs/parachute_reef_pos_norm </property>
+<!--        <property> gear/unit[0]/WOW </property> -->
+<!--        <property> fcs/parachute_reef_pos_norm </property> -->
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>

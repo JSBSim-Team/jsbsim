@@ -4,7 +4,7 @@
     This file sets up the mk82 to start off
     from altitude.
   -->
-  <ubody unit="FT/SEC"> 24063.4  </ubody>
+  <ubody unit="FT/SEC"> 24063.2825  </ubody>
   <vbody unit="FT/SEC">     0.0  </vbody>
   <wbody unit="FT/SEC">     0.0  </wbody>
   <latitude unit="DEG">    28.6  </latitude>
