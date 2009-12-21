@@ -4,6 +4,7 @@ EXTRA_DIST = \
   T37.xml \
   T38.xml \
   ball_chute.xml \
+  ball_orbit.xml \
   blank.xml \
   c1721.xml \
   c1722.xml \
