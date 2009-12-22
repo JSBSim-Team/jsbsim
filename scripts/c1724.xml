@@ -9,12 +9,12 @@
     
     <event name="event 1">
       <condition>sim-time-sec  ge  10.0</condition>
-      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
+      <set name="fcs/steer-cmd-norm" action="ramp" value="0.5" tc="1"/>
     </event>
 
     <event name="event 2">
       <condition>sim-time-sec  ge  15.0</condition>
-      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.0" tc="1"/>
+      <set name="fcs/steer-cmd-norm" action="ramp" value="0.0" tc="1"/>
     </event>
 
   </run>

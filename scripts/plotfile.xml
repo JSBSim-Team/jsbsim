@@ -38,23 +38,23 @@
       <parameter axis="x">Rho (slugs/ft^3)</parameter>
       <parameter axis="y">Altitude (ft)</parameter>
    </plot>
-
-   <plot>
+  <page>
+    <plot>
       <title>Body Rates</title>
       <label axis="x">Time (sec)</label>
       <label axis="y">P, Q, R (deg/s)</label>
       <scale>
-         <min axis="x">50.0</min>
-         <min axis="y">-0.6</min>
-         <max axis="x">100.0</max>
-         <max axis="y">0.6</max>
+        <min axis="x">50.0</min>
+        <min axis="y">-0.6</min>
+        <max axis="x">100.0</max>
+        <max axis="y">0.6</max>
       </scale>
       <parameter axis="x">Time</parameter>
       <parameter axis="y">P (deg/s)</parameter>
       <parameter axis="y">Q (deg/s)</parameter>
       <parameter axis="y">R (deg/s)</parameter>
-   </plot>
-   <plot>
+    </plot>
+    <plot>
       <title>Body Velocities</title>
       <label axis="x">Time (sec)</label>
       <label axis="y">U, V, W (ft/sec)</label>
@@ -63,7 +63,8 @@
       <parameter axis="y">UBody</parameter>
       <parameter axis="y">VBody</parameter>
       <parameter axis="y">WBody</parameter>
-   </plot>
+    </plot>
+  </page>
    <plot>
       <title>Aero Velocities</title>
       <label axis="x">Time (sec)</label>
