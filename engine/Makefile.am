@@ -36,4 +36,8 @@ EXTRA_DIST = \
 	prop_generic2f.xml \
 	xlr99_nozzle.xml \
 	SRB.xml \
-	SRB_nozzle.xml
+	SRB_nozzle.xml \
+	SSME.xml \
+	SSME_nozzle.xml \
+	RL10.xml \
+	RL10_nozzle.xml
