@@ -4,10 +4,18 @@
     This Space Shuttle Solid Rocket Booster (SRB) model is a standard four segment
     SRB, based on information publicly available at http://www.sworld.com.au/steven/space/shuttle/sim/,
     As well as on Wikipedia, and at www.astronautix.com.
+    
+    This table starts with a thrust of 3,060,000 lbs at no mass burned - which
+    is an immediate thrust. However, the buildup of 0.2 seconds gives a sine wave
+    ramp up of thrust from 0.0 to whatever the calculated value of thrust is.
   -->
 
   <isp> 268 </isp>
   <builduptime> 0.2 </builduptime>
+  <variation>
+    <thrust>0.02</thrust>
+    <total_isp>0.00</total_isp>
+  </variation>
   <thrust_table name="propulsion/thrust_prop_remain" type="internal">
     <tableData>
 <!--     =========  =========      ===========  =========    =====
