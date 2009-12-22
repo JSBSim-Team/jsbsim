@@ -90,26 +90,53 @@
     <plot>
       <title></title>
       <label axis="x"> Time (sec) </label>
-      <label axis="y"> ECEF X (ft) </label>
+      <label axis="y"> X_{ECEF} (ft) </label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
-      <parameter axis="y">ECEF X (ft)</parameter>
+      <parameter axis="y">X_{ECEF} (ft)</parameter>
     </plot>
     <plot>
       <title></title>
       <label axis="x"></label>
-      <label axis="y"> ECEF Y (ft) </label>
+      <label axis="y"> Y_{ECEF} (ft) </label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
-      <parameter axis="y">ECEF Y (ft)</parameter>
+      <parameter axis="y">Y_{ECEF} (ft)</parameter>
     </plot>
     <plot>
       <title>ECEF Position Time History</title>
       <label axis="x"></label>
-      <label axis="y"> ECEF Z (ft) </label>
+      <label axis="y"> Z_{ECEF} (ft) </label>
       <scale>auto</scale>
       <parameter axis="x">Time</parameter>
-      <parameter axis="y">ECEF Z (ft)</parameter>
+      <parameter axis="y">Z_{ECEF} (ft)</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> X_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">X_{ECI} (ft)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y"> Y_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Y_{ECI} (ft)</parameter>
+    </plot>
+    <plot>
+      <title>ECI Position Time History</title>
+      <label axis="x"></label>
+      <label axis="y"> Z_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Z_{ECI} (ft)</parameter>
     </plot>
   </page>
 

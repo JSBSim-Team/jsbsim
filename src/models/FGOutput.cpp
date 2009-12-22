@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.44 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.45 2009/12/22 22:51:09 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -267,7 +267,8 @@ void FGOutput::DelimitedOutput(const string& fname)
     if (SubSystems & ssRates) {
       outstream << delimeter;
       outstream << "P (deg/s)" + delimeter + "Q (deg/s)" + delimeter + "R (deg/s)" + delimeter;
-      outstream << "P dot (deg/s^2)" + delimeter + "Q dot (deg/s^2)" + delimeter + "R dot (deg/s^2)";
+      outstream << "P dot (deg/s^2)" + delimeter + "Q dot (deg/s^2)" + delimeter + "R dot (deg/s^2)" + delimeter;
+      outstream << "P_{inertial} (deg/s)" + delimeter + "Q_{inertial} (deg/s)" + delimeter + "R_{inertial} (deg/s)";
     }
     if (SubSystems & ssVelocities) {
       outstream << delimeter;
@@ -277,6 +278,7 @@ void FGOutput::DelimitedOutput(const string& fname)
       outstream << "V_{Inertial} (ft/s)" + delimeter;
       outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
       outstream << "Aero V_{X Body} (ft/s)" + delimeter + "Aero V_{Y Body} (ft/s)" + delimeter + "Aero V_{Z Body} (ft/s)" + delimeter;
+      outstream << "V_{X_{inertial}} (ft/s)" + delimeter + "V_{Y_{inertial}} (ft/s)" + delimeter + "V_{Z_{inertial}} (ft/s)" + delimeter;
       outstream << "V_{North} (ft/s)" + delimeter + "V_{East} (ft/s)" + delimeter + "V_{Down} (ft/s)";
     }
     if (SubSystems & ssForces) {
@@ -334,8 +336,9 @@ void FGOutput::DelimitedOutput(const string& fname)
       outstream << "Beta (deg)" + delimeter;
       outstream << "Latitude (deg)" + delimeter;
       outstream << "Longitude (deg)" + delimeter;
-      outstream << "ECEF X (ft)" + delimeter + "ECEF Y (ft)" + delimeter + "ECEF Z (ft)" + delimeter;
-      outstream << "EPA (deg)" + delimeter;
+      outstream << "X_{ECI} (ft)" + delimeter + "Y_{ECI} (ft)" + delimeter + "Z_{ECI} (ft)" + delimeter;
+      outstream << "X_{ECEF} (ft)" + delimeter + "Y_{ECEF} (ft)" + delimeter + "Z_{ECEF} (ft)" + delimeter;
+      outstream << "Earth Position Angle (deg)" + delimeter;
       outstream << "Distance AGL (ft)" + delimeter;
       outstream << "Terrain Elevation (ft)";
     }
@@ -383,7 +386,8 @@ void FGOutput::DelimitedOutput(const string& fname)
   if (SubSystems & ssRates) {
     outstream << delimeter;
     outstream << (radtodeg*Propagate->GetPQR()).Dump(delimeter) << delimeter;
-    outstream << (radtodeg*Propagate->GetPQRdot()).Dump(delimeter);
+    outstream << (radtodeg*Propagate->GetPQRdot()).Dump(delimeter) << delimeter;
+    outstream << (radtodeg*Propagate->GetPQRi()).Dump(delimeter);
   }
   if (SubSystems & ssVelocities) {
     outstream << delimeter;
@@ -393,6 +397,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << Propagate->GetInertialVelocityMagnitude() << delimeter;
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
     outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
+    outstream << Propagate->GetInertialVelocity().Dump(delimeter) << delimeter;
     outstream << Propagate->GetVel().Dump(delimeter);
     outstream.precision(10);
   }
@@ -445,6 +450,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
     outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
     outstream.precision(18);
+    outstream << ((FGColumnVector3)Propagate->GetInertialPosition()).Dump(delimeter) << delimeter;
     outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;
     outstream.precision(14);
     outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;

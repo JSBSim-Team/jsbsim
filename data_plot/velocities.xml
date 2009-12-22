@@ -9,12 +9,21 @@
       
 -->
   <plot>
-    <title>Total Velocity</title>
+    <title>Total (Earth Relative) Velocity</title>
     <label axis="x">Time (sec)</label>
-    <label axis="y">Total Velocity (ft/sec)</label>
+    <label axis="y">Earth Relative Velocity (ft/sec)</label>
     <scale>auto</scale>
     <parameter axis="x">Time</parameter>
     <parameter axis="y">V_{Total} (ft/s)</parameter>
+  </plot>
+
+  <plot>
+    <title>Total Inertial Velocity</title>
+    <label axis="x">Time (sec)</label>
+    <label axis="y">Inertial Velocity (ft/sec)</label>
+    <scale>auto</scale>
+    <parameter axis="x">Time</parameter>
+    <parameter axis="y">V_{Inertial} (ft/s)</parameter>
   </plot>
 
 </plotset>

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.31 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.32 2009/12/22 22:51:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,10 +86,11 @@ CLASS DOCUMENTATION
     2: Trapezoidal
     3: Adams Bashforth 2
     4: Adams Bashforth 3
+    5: Adams Bashforth 4
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.31 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.32 2009/12/22 22:51:09 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,9 +115,17 @@ public:
         expressed in the body frame.
         units rad/sec */
     FGColumnVector3 vPQR;
+    /** The angular velocity vector for the vehicle body frame relative to the
+        ECI frame, expressed in the body frame.
+        units rad/sec */
+    FGColumnVector3 vPQRi;
     /** The current orientation of the vehicle, that is, the orientation of the
-        body frame relative to the local, vehilce-carried, NED frame. */
+        body frame relative to the local, vehicle-carried, NED frame. */
     FGQuaternion vQtrn;
+
+    FGColumnVector3 vInertialVelocity;
+
+    FGColumnVector3 vInertialPosition;
   };
 
   /** Constructor.
@@ -133,7 +142,7 @@ public:
   ~FGPropagate();
   
   /// These define the indices use to select the various integrators.
-  enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
+  enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
       The base class FGModel::InitModel is called first, initializing pointers to the 
@@ -209,7 +218,7 @@ public:
       units rad/sec
       @return The body frame angular rates in rad/sec.
   */
-  const FGColumnVector3& GetPQRi(void) const {return vPQRi;}
+  const FGColumnVector3& GetPQRi(void) const {return VState.vPQRi;}
 
   /** Retrieves the body axis angular acceleration vector.
       Retrieves the body axis angular acceleration vector in rad/sec^2. The
@@ -284,7 +293,15 @@ public:
 
   /** Retrieves the total inertial velocity in ft/sec.
   */
-  double GetInertialVelocityMagnitude(void) const { return vInertialVelocity.Magnitude(); }
+  double GetInertialVelocityMagnitude(void) const { return VState.vInertialVelocity.Magnitude(); }
+
+  /** Retrieves the inertial velocity vector in ft/sec.
+  */
+  const FGColumnVector3& GetInertialVelocity(void) const { return VState.vInertialVelocity; }
+
+  /** Retrieves the inertial position vector.
+  */
+  const FGColumnVector3& GetInertialPosition(void) const { return VState.vInertialPosition; }
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.
@@ -324,7 +341,7 @@ public:
       @param axis the index of the angular velocity component desired (1-based).
       @return The body frame angular velocity component.
   */
-  double GetPQRi(int axis) const {return vPQRi(axis);}
+  double GetPQRi(int axis) const {return VState.vPQRi(axis);}
 
   /** Retrieves a body frame angular acceleration component.
       Retrieves a body frame angular acceleration component. The angular
@@ -504,16 +521,14 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vInertialVelocity;
-  FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot;
-  FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
-  FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;
+  FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot, last3_vPQRdot;
+  FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot, last3_vUVWdot;
+  FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot, last3_vLocationDot;
   FGColumnVector3 vLocation;
   FGColumnVector3 vDeltaXYZEC;
-  FGColumnVector3 vPQRi;   // Inertial frame angular velocity
   FGColumnVector3 vOmega;  // The Earth angular velocity vector
   FGColumnVector3 vOmegaLocal;  // The local frame angular velocity vector
-  FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
+  FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot, last3_vQtrndot;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;
   FGMatrix33 Tl2b;   // local to body frame matrix copy for immediate local use

@@ -68,4 +68,31 @@
     </plot>
   </page>
 
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Inertial Roll rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">P_{inertial} (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Inertial Pitch rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Q_{inertial} (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title>Body rates (inertial)</title>
+      <label axis="x"></label>
+      <label axis="y">Inertial Yaw rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="y">R_{inertial} (deg/s)</parameter>
+      <parameter axis="x">Time</parameter>
+    </plot>
+  </page>
+
 </plotset>
