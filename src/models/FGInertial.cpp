@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.14 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.15 2010/01/01 15:48:21 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,6 +131,29 @@ bool FGInertial::Run(void)
 double FGInertial::GetGAccel(double r) const
 {
   return GM/(r*r);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
+{
+  FGColumnVector3 J2Gravity;
+
+  // Gravitation accel
+  double r = position.Magnitude();
+  double lat = Propagate->GetLatitude();
+  double sinLat = sin(lat);
+
+  double preCommon = 1.0 + 1.5*J2*(a/r)*(a/r);
+  double xy = 1.0 - 5.0*(sinLat*sinLat);
+  double z = 3.0 - 5.0*(sinLat*sinLat);
+  double GMOverr2 = GM/(r*r);
+
+  J2Gravity(1) = -GMOverr2 * ((preCommon * xy) * (position(eX)/r));
+  J2Gravity(2) = -GMOverr2 * ((preCommon * xy) * (position(eY)/r));
+  J2Gravity(3) = -GMOverr2 * ((preCommon * z) * (position(eZ)/r));
+
+  return J2Gravity;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
