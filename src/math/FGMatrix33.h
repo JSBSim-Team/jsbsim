@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.8 2009/11/05 05:15:35 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.9 2010/01/01 15:45:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +59,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGColumnVector3;
+class FGQuaternion;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -269,6 +270,10 @@ public:
     Entry(3,3) = m33;
   }
 
+  /** Returns the quaternion associated with this direction cosine (rotation) matrix.
+  */
+  FGQuaternion GetQuaternion(void);
+  
   /** Determinant of the matrix.
       @return the determinant of the matrix.
    */
@@ -457,5 +462,7 @@ std::ostream& operator<<(std::ostream& os, const FGMatrix33& M);
 std::istream& operator>>(std::istream& is, FGMatrix33& M);
 
 } // namespace JSBSim
+
+#include "FGQuaternion.h"
 
 #endif

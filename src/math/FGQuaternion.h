@@ -41,17 +41,17 @@ SENTRY
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "FGMatrix33.h"
 #include "FGColumnVector3.h"
-#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.9 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.10 2010/01/01 15:45:57 jberndt Exp $"
 
 namespace JSBSim {
+
+class FGMatrix33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   CLASS DOCUMENTATION
@@ -88,8 +88,7 @@ namespace JSBSim {
   CLASS DECLARATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGQuaternion
-  : virtual FGJSBBase {
+class FGQuaternion : virtual FGJSBBase {
 public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
@@ -143,13 +142,19 @@ public:
     }
   }
 
+  /** Initializer by matrix.
+      Initialize the quaternion with the matrix representing a transform from one frame
+      to another using the standard aerospace sequence, Yaw-Pitch-Roll (3-2-1).
+      @param m the rotation matrix */
+  FGQuaternion(const FGMatrix33& m);
+
   /// Destructor.
   ~FGQuaternion() {}
 
   /** Quaternion derivative for given angular rates.
       Computes the quaternion derivative which results from the given
       angular velocities
-      @param PQR a constant reference to the body rate vector
+      @param PQR a constant reference to a rotation rate vector
       @return the quaternion derivative
       @see Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
            Equation 1.3-36. */
@@ -425,7 +430,7 @@ public:
       +Entry(3)*Entry(3)+Entry(4)*Entry(4);
   }
 
-  /** Normialze.
+  /** Normalize.
 
       Normalize the vector to have the Magnitude() == 1.0. If the vector
       is equal to zero it is left untouched.
@@ -493,5 +498,7 @@ inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
 }
 
 } // namespace JSBSim
+
+#include "FGMatrix33.h"
 
 #endif

@@ -56,14 +56,14 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.7 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.8 2010/01/01 15:45:57 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize from q
-FGQuaternion::FGQuaternion(const FGQuaternion& q)
-  : mCacheValid(q.mCacheValid) {
+FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
+{
   Entry(1) = q(1);
   Entry(2) = q(2);
   Entry(3) = q(3);
@@ -80,8 +80,8 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize with the three euler angles
-FGQuaternion::FGQuaternion(double phi, double tht, double psi)
-  : mCacheValid(false) {
+FGQuaternion::FGQuaternion(double phi, double tht, double psi): mCacheValid(false)
+{
   double thtd2 = 0.5*tht;
   double psid2 = 0.5*psi;
   double phid2 = 0.5*phi;
@@ -107,12 +107,24 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// Initialize with a direction cosine (rotation) matrix
+FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
+{
+  Entry(1) = 0.50*sqrt(1.0 + m(1,1) + m(2,2) + m(3,3));
+  Entry(2) = 0.25*(m(2,3) - m(3,2))/Entry(1);
+  Entry(3) = 0.25*(m(3,1) - m(1,3))/Entry(1);
+  Entry(4) = 0.25*(m(1,2) - m(2,1))/Entry(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /** Returns the derivative of the quaternion corresponding to the
     angular velocities PQR.
     See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
     Equation 1.3-36. 
 */
-FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const {
+FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
+{
   double norm = Magnitude();
   if (norm == 0.0)
     return FGQuaternion::zero();
@@ -123,6 +135,7 @@ FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const {
   QDot(2) =  0.5*(Entry(1)*PQR(eP) + Entry(3)*PQR(eR) - Entry(4)*PQR(eQ));
   QDot(3) =  0.5*(Entry(1)*PQR(eQ) + Entry(4)*PQR(eP) - Entry(2)*PQR(eR));
   QDot(4) =  0.5*(Entry(1)*PQR(eR) + Entry(2)*PQR(eQ) - Entry(3)*PQR(eP));
+
   return rnorm*QDot;
 }
 

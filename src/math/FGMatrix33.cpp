@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.6 2009/11/05 05:15:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.7 2010/01/01 15:45:56 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,19 @@ string FGMatrix33::Dump(const string& delimiter) const
   buffer << std::setw(18) << std::setprecision(16) << Entry(3,2) << delimiter;
   buffer << std::setw(18) << std::setprecision(16) << Entry(3,3);
   return buffer.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGQuaternion FGMatrix33::GetQuaternion(void)
+{
+  FGQuaternion Q;
+  Q(1) = 0.50*sqrt(1.0 + Entry(1,1) + Entry(2,2) + Entry(3,3));
+  Q(2) = 0.25*(Entry(2,3) - Entry(3,2))/Q(1);
+  Q(3) = 0.25*(Entry(3,1) - Entry(1,3))/Q(1);
+  Q(4) = 0.25*(Entry(1,2) - Entry(2,1))/Q(1);
+
+  return (Q);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
