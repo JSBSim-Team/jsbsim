@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.24 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.25 2010/01/02 17:58:01 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.24 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.25 2010/01/02 17:58:01 andgi Exp $
     @see
     FGEngine
     FGTank
@@ -132,8 +132,8 @@ public:
       @return the address of the specific engine, or zero if no such engine is
               available */
   inline FGEngine* GetEngine(unsigned int index) {
-                      if (index <= Engines.size()-1) return Engines[index];
-                      else                           return 0L;      }
+                      if (index < Engines.size()) return Engines[index];
+                      else                        return 0L;      }
 
   /// Retrieves the number of tanks defined for the aircraft.
   inline unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
@@ -143,8 +143,8 @@ public:
       @return the address of the specific tank, or zero if no such tank is
               available */
   inline FGTank* GetTank(unsigned int index) {
-                      if (index <= Tanks.size()-1) return Tanks[index];
-                      else                         return 0L;        }
+                      if (index < Tanks.size()) return Tanks[index];
+                      else                      return 0L;        }
 
   /** Returns the number of fuel tanks currently actively supplying fuel */
   inline int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
