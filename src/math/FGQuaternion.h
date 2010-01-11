@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.10 2010/01/01 15:45:57 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.11 2010/01/11 07:15:13 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -291,6 +291,9 @@ public:
     return *this;
   }
 
+  /// Conversion from Quat to Matrix
+  operator FGMatrix33() const { return GetT(); }
+
   /** Comparison operator "==".
       @param q a quaternion reference
       @return true if both quaternions represent the same rotation.  */
@@ -455,9 +458,8 @@ private:
       This function checks if the derived values like euler angles and
       transformation matrices are already computed. If so, it
       returns. If they need to be computed the real worker routine
-      \ref FGQuaternion::ComputeDerivedUnconditional(void) const
-      is called.
-      This function is inlined to avoid function calls in the fast path. */
+      FGQuaternion::ComputeDerivedUnconditional(void) const
+      is called. */
   void ComputeDerived(void) const {
     if (!mCacheValid)
       ComputeDerivedUnconditional();

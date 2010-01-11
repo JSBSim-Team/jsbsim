@@ -56,7 +56,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.8 2010/01/01 15:45:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.9 2010/01/11 07:15:12 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,7 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
     mEulerSines = q.mEulerSines;
     mEulerCosines = q.mEulerCosines;
   }
+  Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,17 +104,22 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi): mCacheValid(fals
   Entry(2) = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
   Entry(3) = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
   Entry(4) = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+
+  Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 // Initialize with a direction cosine (rotation) matrix
+
 FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
 {
   Entry(1) = 0.50*sqrt(1.0 + m(1,1) + m(2,2) + m(3,3));
-  Entry(2) = 0.25*(m(2,3) - m(3,2))/Entry(1);
-  Entry(3) = 0.25*(m(3,1) - m(1,3))/Entry(1);
-  Entry(4) = 0.25*(m(1,2) - m(2,1))/Entry(1);
+  double t = 0.25/Entry(1);
+  Entry(2) = t*(m(2,3) - m(3,2));
+  Entry(3) = t*(m(3,1) - m(1,3));
+  Entry(4) = t*(m(1,2) - m(2,1));
+
+  Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,33 +128,27 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
     angular velocities PQR.
     See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
     Equation 1.3-36. 
+    Also see Jack Kuipers, "Quaternions and Rotation Sequences", Equation 11.12.
 */
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
 {
-  double norm = Magnitude();
-  if (norm == 0.0)
-    return FGQuaternion::zero();
-  double rnorm = 1.0/norm;
-
   FGQuaternion QDot;
-  QDot(1) = -0.5*(Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR));
-  QDot(2) =  0.5*(Entry(1)*PQR(eP) + Entry(3)*PQR(eR) - Entry(4)*PQR(eQ));
-  QDot(3) =  0.5*(Entry(1)*PQR(eQ) + Entry(4)*PQR(eP) - Entry(2)*PQR(eR));
-  QDot(4) =  0.5*(Entry(1)*PQR(eR) + Entry(2)*PQR(eQ) - Entry(3)*PQR(eP));
+  QDot(1) = -0.5*( Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR));
+  QDot(2) =  0.5*( Entry(1)*PQR(eP) - Entry(4)*PQR(eQ) + Entry(3)*PQR(eR));
+  QDot(3) =  0.5*( Entry(4)*PQR(eP) + Entry(1)*PQR(eQ) - Entry(2)*PQR(eR));
+  QDot(4) =  0.5*(-Entry(3)*PQR(eP) + Entry(2)*PQR(eQ) + Entry(1)*PQR(eR));
 
-  return rnorm*QDot;
+  return QDot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGQuaternion::Normalize()
 {
-  // Note: this does not touch the cache
-  // since it does not change the orientation ...
+  // Note: this does not touch the cache since it does not change the orientation
   
   double norm = Magnitude();
-  if (norm == 0.0)
-    return;
+  if (norm == 0.0) return;
   
   double rnorm = 1.0/norm;
   Entry(1) *= rnorm;
@@ -163,17 +163,11 @@ void FGQuaternion::Normalize()
 void FGQuaternion::ComputeDerivedUnconditional(void) const
 {
   mCacheValid = true;
-  
-  // First normalize the 4-vector
-  double norm = Magnitude();
-  if (norm == 0.0)
-    return;
 
-  double rnorm = 1.0/norm;
-  double q1 = rnorm*Entry(1);
-  double q2 = rnorm*Entry(2);
-  double q3 = rnorm*Entry(3);
-  double q4 = rnorm*Entry(4);
+  double q1 = Entry(1); // use some aliases/shorthand for the quat elements.
+  double q2 = Entry(2);
+  double q3 = Entry(3);
+  double q4 = Entry(4);
 
   // Now compute the transformation matrix.
   double q1q1 = q1*q1;
@@ -196,6 +190,7 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mT(3,1) = 2.0*(q2q4 + q1q3);
   mT(3,2) = 2.0*(q3q4 - q1q2);
   mT(3,3) = q1q1 - q2q2 - q3q3 + q4q4;
+
   // Since this is an orthogonal matrix, the inverse is simply
   // the transpose.
   mTInv = mT;
