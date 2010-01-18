@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.27 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.28 2010/01/18 13:12:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.27 $
+    @version $Revision: 1.28 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -407,12 +407,12 @@ public:
 
   /** Sets the throttle command for the specified engine
       @param engine engine ID number
-      @param cmd throttle command in percent (0 - 100)*/
+      @param cmd normalized throttle command (0.0 - 1.0)*/
   void SetThrottleCmd(int engine, double cmd);
 
   /** Sets the mixture command for the specified engine
       @param engine engine ID number
-      @param cmd mixture command in percent (0 - 100)*/
+      @param cmd normalized mixture command (0.0 - 1.0)*/
   void SetMixtureCmd(int engine, double cmd);
 
   /** Set the gear extend/retract command, defaults to down
@@ -462,12 +462,12 @@ public:
 
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
-      @param cmd throttle setting in percent (0 - 100)*/
+      @param cmd normalized throttle setting (0.0 - 1.0)*/
   void SetThrottlePos(int engine, double cmd);
 
   /** Sets the actual mixture setting for the specified engine
       @param engine engine ID number
-      @param cmd mixture setting in percent (0 - 100)*/
+      @param cmd normalized mixture setting (0.0 - 1.0)*/
   void SetMixturePos(int engine, double cmd);
 
   /** Sets the steering position
