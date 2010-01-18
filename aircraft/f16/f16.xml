@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.88 $ </version>
+        <version> $Revision: 1.89 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -433,6 +433,16 @@
                     <max>1.0</max>
                 </clipto>
             </summer>
+
+            <summer name="flaperon summer">
+                <input>fcs/left-flaperon-norm</input>
+                <input>fcs/right-flaperon-norm</input>
+            </summer>
+            
+            <pure_gain name="flaperon mix rad">
+                <input>fcs/flaperon-summer</input>
+                <gain>1.4324</gain>
+            </pure_gain>
 
             <aerosurface_scale name="Left Aileron Control">
                 <input>fcs/aileron-speed-compensated</input>
@@ -1031,7 +1041,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/tef-pos-norm</property>
+                    <property>fcs/flaperon-mix-rad</property>
                     <value>0.0800</value>
                 </product>
             </function>
@@ -1281,7 +1291,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/tef-pos-norm</property>
+                    <property>fcs/flaperon-mix-rad</property>
                     <property>aero/function/kCLge</property>
                     <value>0.3500</value>
                 </product>
