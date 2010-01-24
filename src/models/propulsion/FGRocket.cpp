@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.17 2009/11/08 02:24:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.18 2010/01/24 19:26:04 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,9 +66,9 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   previousFuelNeedPerTank = 0.0;
   previousOxiNeedPerTank = 0.0;
   PropellantFlowRate = 0.0;
-  FuelFlowRate = 0.0;
-  OxidizerFlowRate = 0.0;
-  SLOxiFlowMax = 0.0;
+  FuelFlowRate = FuelExpended = 0.0;
+  OxidizerFlowRate = OxidizerExpended = 0.0;
+  SLOxiFlowMax = SLFuelFlowMax = 0.0;
   BuildupTime = 0.0;
   It = 0.0;
   ThrustVariation = 0.0;
@@ -210,14 +210,16 @@ void FGRocket::ConsumeFuel(void)
   // a solid rocket is being modeled.
 
   for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(SourceTanks[i]);
+    Tank = Propulsion->GetTank(i);
     switch(Tank->GetType()) {
       case FGTank::ttFUEL:
-        if (Tank->GetContents() > 0.0 && Tank->GetSelected()) ++TanksWithFuel;
+        if (Tank->GetContents() > 0.0 && Tank->GetSelected() && SourceTanks[i] > 0) ++TanksWithFuel;
         break;
       case FGTank::ttOXIDIZER:
-        haveOxTanks = true;
-        if (Tank->GetContents() > 0.0 && Tank->GetSelected()) ++TanksWithOxidizer;
+        if (Tank->GetContents() > 0.0 && Tank->GetSelected() && SourceTanks[i] > 0) {
+          haveOxTanks = true;
+          ++TanksWithOxidizer;
+        }
         break;
     }
   }
@@ -232,12 +234,15 @@ void FGRocket::ConsumeFuel(void)
   // Expend fuel from the engine's tanks if the tank is selected as a source
   // for this engine.
 
-  double fuelNeedPerTank = CalcFuelNeed()/TanksWithFuel;
-  double oxiNeedPerTank = CalcOxidizerNeed()/TanksWithOxidizer;
+  double fuelNeedPerTank = 0;
+  double oxiNeedPerTank = 0;
+
+  if (TanksWithFuel > 0) fuelNeedPerTank = CalcFuelNeed()/TanksWithFuel;
+  if (TanksWithOxidizer > 0) oxiNeedPerTank = CalcOxidizerNeed()/TanksWithOxidizer;
 
   for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(SourceTanks[i]);
-    if ( ! Tank->GetSelected()) continue; // If this tank is not selected as a source, skip it.
+    Tank = Propulsion->GetTank(i);
+    if ( ! Tank->GetSelected() || SourceTanks[i] == 0) continue; // If this tank is not selected as a source, skip it.
     switch(Tank->GetType()) {
       case FGTank::ttFUEL:
         Fshortage += Tank->Drain(2.0*fuelNeedPerTank - previousFuelNeedPerTank);
@@ -367,7 +372,8 @@ void FGRocket::Debug(int from)
       cout << "      Minimum Throttle = " << MinThrottle << endl;
       cout << "      Fuel Flow (max) = " << SLFuelFlowMax << endl;
       cout << "      Oxidizer Flow (max) = " << SLOxiFlowMax << endl;
-      cout << "      Mixture ratio = " << SLOxiFlowMax/SLFuelFlowMax << endl;
+      if (SLFuelFlowMax > 0)
+        cout << "      Mixture ratio = " << SLOxiFlowMax/SLFuelFlowMax << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
