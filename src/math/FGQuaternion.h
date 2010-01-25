@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.11 2010/01/11 07:15:13 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.12 2010/01/25 12:25:14 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -108,6 +108,11 @@ public:
       @param tht The euler Y axis (attitude) angle in radians
       @param psi The euler Z axis (heading) angle in radians  */
   FGQuaternion(double phi, double tht, double psi);
+
+  /** Initializer by euler angle vector.
+      Initialize the quaternion with the euler angle vector.
+      @param vOrient The euler axis angle vector in radians (phi, tht, psi) */
+  FGQuaternion(FGColumnVector3 vOrient);
 
   /** Initializer by one euler angle.
       Initialize the quaternion with the single euler angle where its index
@@ -266,7 +271,10 @@ public:
 
       Note that the index given in the argument is unchecked.
   */
-  double& Entry(unsigned int idx) { mCacheValid = false; return mData[idx-1]; }
+  double& Entry(unsigned int idx) {
+    mCacheValid = false;
+    return mData[idx-1];
+  }
 
   /** Assignment operator "=".
       Assign the value of q to the current object. Cached values are
@@ -486,6 +494,8 @@ private:
   /** The cached sines and cosines of the euler angles.  */
   mutable FGColumnVector3 mEulerSines;
   mutable FGColumnVector3 mEulerCosines;
+
+  void InitializeFromEulerAngles(double phi, double tht, double psi);
 };
 
 /** Scalar multiplication.

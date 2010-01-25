@@ -56,7 +56,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.9 2010/01/11 07:15:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.10 2010/01/25 12:25:14 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,24 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
 // Initialize with the three euler angles
 FGQuaternion::FGQuaternion(double phi, double tht, double psi): mCacheValid(false)
 {
+  InitializeFromEulerAngles(phi, tht, psi);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGQuaternion::FGQuaternion(FGColumnVector3 vOrient): mCacheValid(false)
+{
+  double phi = vOrient(ePhi);
+  double tht = vOrient(eTht);
+  double psi = vOrient(ePsi);
+
+  InitializeFromEulerAngles(phi, tht, psi);
+}
+ 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
+{
   double thtd2 = 0.5*tht;
   double psid2 = 0.5*psi;
   double phid2 = 0.5*phi;
@@ -107,7 +125,6 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi): mCacheValid(fals
 
   Normalize();
 }
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Initialize with a direction cosine (rotation) matrix
 
@@ -148,7 +165,7 @@ void FGQuaternion::Normalize()
   // Note: this does not touch the cache since it does not change the orientation
   
   double norm = Magnitude();
-  if (norm == 0.0) return;
+  if (norm == 0.0 || norm == 1.000) return;
   
   double rnorm = 1.0/norm;
   Entry(1) *= rnorm;
