@@ -40,6 +40,7 @@ SENTRY
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 using std::cerr;
 using std::cout;
@@ -56,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.10 2010/01/25 12:25:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.11 2010/01/25 12:48:39 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,6 +156,8 @@ FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
   QDot(3) =  0.5*( Entry(4)*PQR(eP) + Entry(1)*PQR(eQ) - Entry(2)*PQR(eR));
   QDot(4) =  0.5*(-Entry(3)*PQR(eP) + Entry(2)*PQR(eQ) + Entry(1)*PQR(eR));
 
+  Debug(2);
+
   return QDot;
 }
 
@@ -243,6 +246,55 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mEulerCosines(ePhi) = cos(mEulerAngles(ePhi));
   mEulerCosines(eTht) = cos(mEulerAngles(eTht));
   mEulerCosines(ePsi) = cos(mEulerAngles(ePsi));
+
+  Debug(2);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
+
+void FGQuaternion::Debug(int from) const
+{
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGQuaternion" << endl;
+    if (from == 1) cout << "Destroyed:    FGQuaternion" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+    if (!EqualToRoundoff(Magnitude(), 1.0)) {
+      cout << "Quaternion magnitude differs from 1.0 !" << endl;
+      cout << "\tdelta from 1.0: " << std::scientific << Magnitude()-1.0 << endl;
+    }
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
 }
 
 } // namespace JSBSim
