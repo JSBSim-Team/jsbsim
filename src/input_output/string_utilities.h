@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.9 2009/10/26 13:28:07 ehofman Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.10 2010/01/25 19:49:27 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,13 +69,13 @@ CLASS DECLARATION
   extern bool is_number(const std::string& str);
   std::vector <std::string> split(std::string str, char d);
 #else
-  #include <ctype.h>
+  #include <cctype>
 
   using namespace std;
 
   string& trim_left(string& str)
   {
-    while (str.size() && !isgraph(str[0])) {
+    while (str.size() && isspace((unsigned char)str[0])) {
       str = str.erase(0,1);
     }
     return str;
@@ -83,7 +83,7 @@ CLASS DECLARATION
 
   string& trim_right(string& str)
   {
-    while (str.size() && !isgraph(str[str.size()-1])) {
+    while (str.size() && isspace((unsigned char)str[str.size()-1])) {
       str = str.erase(str.size()-1,1);
     }
     return str;
