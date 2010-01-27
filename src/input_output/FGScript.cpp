@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.35 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.36 2010/01/27 03:59:56 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -453,7 +453,7 @@ void FGScript::Debug(int from)
       cout << endl;
       cout << "Script: \"" << ScriptName << "\"" << endl;
       cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
-           << " seconds with dt = " << State->Getdt() << endl;
+        << " seconds with dt = " << State->Getdt() << " (" << ceil(1.0/State->Getdt()) << " Hz)" << endl;
       cout << endl;
 
       for (unsigned int i=0; i<local_properties.size(); i++) {
