@@ -43,16 +43,19 @@ INCLUDES
 #include "math/FGMatrix33.h"
 #include "input_output/FGXMLElement.h"
 #include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.19 2009/12/05 10:10:09 andgi Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.20 2010/02/04 13:09:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+using std::string;
 
 namespace JSBSim {
 
@@ -159,6 +162,7 @@ public:
   FGMatrix33& GetJ(void) {return mJ;}
   FGMatrix33& GetJinv(void) {return mJinv;}
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
+  void GetMassPropertiesReport(void) const;
   
 private:
   double Weight;
@@ -178,17 +182,57 @@ private:
   FGColumnVector3 PointMassCG;
   FGMatrix33& CalculatePMInertias(void);
 
+
+  /** The PointMass structure encapsulates a point mass object, moments of inertia
+     mass, location, etc. */
   struct PointMass {
     PointMass(double w, FGColumnVector3& vXYZ) {
       Weight = w;
       Location = vXYZ;
+      mPMInertia.InitMatrix();
+      Radius = 0.0;
+      Length = 0.0;
     }
+
+    void CalculateShapeInertia(void) {
+      switch(eShapeType) {
+        case esTube:
+          mPMInertia(1,1) = (Weight/(32.16))*Radius*Radius; // mr^2
+          mPMInertia(2,2) = (Weight/(32.16*12))*(6*Radius*Radius + Length*Length);
+          mPMInertia(3,3) = mPMInertia(2,2);
+          break;
+        case esCylinder:
+          mPMInertia(1,1) = (Weight/(32.16*2))*Radius*Radius; // 0.5*mr^2
+          mPMInertia(2,2) = (Weight/(32.16*12))*(3*Radius*Radius + Length*Length);
+          mPMInertia(3,3) = mPMInertia(2,2);
+          break;
+        default:
+          break;
+      }
+    }
+
+    enum esShape {esUnspecified, esTube, esCylinder, esSphere} eShapeType;
     FGColumnVector3 Location;
-    double Weight;
+    double Weight; /// Weight in pounds.
+    double Radius; /// Radius in feet.
+    double Length; /// Length in feet.
+    string Name;
+    FGMatrix33 mPMInertia;
+
     double GetPointMassLocation(int axis) const {return Location(axis);}
+    double GetPointMassWeight(void) const {return Weight;}
+    esShape GetShapeType(void) {return eShapeType;}
+    FGColumnVector3 GetLocation(void) {return Location;}
+    FGMatrix33 GetPointMassInertia(void) {return mPMInertia;}
+    string GetName(void) {return Name;}
+
     void SetPointMassLocation(int axis, double value) {Location(axis) = value;}
     void SetPointMassWeight(double wt) {Weight = wt;}
-    double GetPointMassWeight(void) const {return Weight;}
+    void SetPointMassShapeType(esShape st) {eShapeType = st;}
+    void SetRadius(double r) {Radius = r;}
+    void SetLength(double l) {Length = l;}
+    void SetName(string name) {Name = name;}
+    double GetPointMassMoI(int r, int c) {return mPMInertia(r,c);}
 
     void bind(FGPropertyManager* PropertyManager, int num);
   };

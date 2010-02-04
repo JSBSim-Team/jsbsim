@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.71 2009/11/11 22:22:15 andgi Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.72 2010/02/04 13:09:26 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,7 +225,7 @@ bool FGFDMExec::Allocate(void)
   // instance, the atmosphere model could get executed every fifth pass it is called.
   
   Schedule(Input,           1);
-  Schedule(Atmosphere,      30);
+  Schedule(Atmosphere,      1);
   Schedule(FCS,             1);
   Schedule(Propulsion,      1);
   Schedule(MassBalance,     1);
@@ -643,6 +643,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     }
 
     modelLoaded = true;
+
+    MassBalance->GetMassPropertiesReport();
 
     if (debug_lvl > 0) {
       cout << endl << fgblue << highint
