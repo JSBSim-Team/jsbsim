@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.20 2009/11/04 23:29:24 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.21 2010/02/05 05:53:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -195,6 +195,9 @@ public:
   /// Destructor
   ~FGTank();
 
+  enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
+  enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING};
+
   /** Removes fuel from the tank.
       This function removes fuel from a tank. If the tank empties, it is
       deselected.
@@ -275,15 +278,14 @@ public:
   const FGColumnVector3 GetXYZ(void);
   const double GetXYZ(int idx);
 
+  const GrainType GetGrainType(void) {return grainType;}
+
   double Fill(double amount);
   void SetContents(double amount);
   void SetContentsGallons(double gallons);
   void SetTemperature(double temp) { Temperature = temp; }
   void SetStandpipe(double amount) { Standpipe = amount; }
   void SetSelected(bool sel) { sel==true ? SetPriority(1):SetPriority(0); }
-
-  enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
-  enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING};
 
 private:
   TankType Type;

@@ -40,16 +40,18 @@ INCLUDES
 
 #include "FGMassBalance.h"
 #include "FGPropulsion.h"
+#include "propulsion/FGTank.h"
 #include "FGBuoyantForces.h"
 #include "input_output/FGPropertyManager.h"
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.28 2010/02/04 13:09:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.29 2010/02/05 05:53:00 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -405,28 +407,55 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager, int num)
 
 void FGMassBalance::GetMassPropertiesReport(void) const
 {
-  cout << endl << fgblue << highint << "  Mass Properties Report" << reset << endl;
-  cout <<         "  Basic Empty Weight: " << EmptyWeight << " lbs. (" << EmptyWeight/kgtolb << " kg.)" << endl;
-  cout <<         "  Basic CG location: " << vbaseXYZcg << " in. (" << vbaseXYZcg*inchtoft*fttom << " m.)" << endl;
-  cout <<         "  Basic Inertias (slugs-ft^2): " << baseJ << endl;
-  cout <<         "  Basic Inertias (kg-m^2): " << baseJ*fttom*fttom/kgtoslug << endl;
-  cout << endl;
+  cout << endl << fgblue << highint 
+       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
+       << reset << endl;
+  cout << "                                  " << underon << "    Weight    CG-X    CG-Y"
+       << "    CG-Z         Ixx         Iyy         Izz" << underoff << endl;
+  cout.precision(1);
+  cout << highint << setw(34) << left << "    Base Vehicle " << normint
+       << right << setw(10) << EmptyWeight << setw(8) << vbaseXYZcg(eX) << setw(8)
+       << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ) << setw(12) << baseJ(1,1)
+       << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3) << endl;
+
   for (int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
-    cout <<         "  " << pm->GetName() << " weight: " << pmweight << " (" << pmweight/kgtolb << " kg)" << endl;
-    cout <<         "    Location (in): " << pm->GetLocation() << " (" << pm->GetLocation()*inchtoft*fttom << " m)" << endl;
-    cout <<         "    Moments of Inertia about own CG (slug-ft^2):" << endl;
-    cout <<         "      Ixx : " << pm->GetPointMassMoI(1,1) << endl;
-    cout <<         "      Iyy: " << pm->GetPointMassMoI(2,2) << endl;
-    cout <<         "      Izz: " << pm->GetPointMassMoI(3,3) << endl;
-    cout <<         "    Moments of Inertia about own CG (kg-m^2):" << endl;
-    cout <<         "      Ixx : " << pm->GetPointMassMoI(1,1)*fttom*fttom/kgtoslug << endl;
-    cout <<         "      Iyy: " << pm->GetPointMassMoI(2,2)*fttom*fttom/kgtoslug << endl;
-    cout <<         "      Izz: " << pm->GetPointMassMoI(3,3)*fttom*fttom/kgtoslug << endl;
-    cout << endl;
+    cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
+         << right << setw(10) << pmweight << setw(8) << pm->GetLocation()(eX)
+         << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
+         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2)
+         << setw(12) << pm->GetPointMassMoI(3,3) << endl;
   }
-  // do tank weights here
+
+  for (int i=0;i<Propulsion->GetNumTanks() ;i++) {
+    FGTank* tank = Propulsion->GetTank(i);
+    string tankname="";
+    if (tank->GetType() == FGTank::ttFUEL && tank->GetGrainType() != FGTank::gtUNKNOWN) {
+      tankname = "Solid Fuel";
+    } else if (tank->GetType() == FGTank::ttFUEL) {
+      tankname = "Fuel";
+    } else if (tank->GetType() == FGTank::ttOXIDIZER) {
+      tankname = "Oxidizer";
+    } else {
+      tankname = "(Unknown tank type)";
+    }
+    cout << highint << left << setw(4) << i << setw(30) << tankname << normint
+      << right << setw(10) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
+         << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
+         << setw(12) << "*" << setw(12) << "*"
+         << setw(12) << "*" << endl;
+  }
+
+  cout << underon << setw(104) << " " << underoff << endl;
+  cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight 
+       << setw(8) << vXYZcg(eX)
+       << setw(8) << vXYZcg(eY)
+       << setw(8) << vXYZcg(eZ)
+       << setw(12) << mJ(1,1)
+       << setw(12) << mJ(2,2)
+       << setw(12) << mJ(3,3)
+       << normint << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
