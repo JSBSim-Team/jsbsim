@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.29 2010/02/05 05:53:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.30 2010/02/06 11:42:58 andgi Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,7 +418,7 @@ void FGMassBalance::GetMassPropertiesReport(void) const
        << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ) << setw(12) << baseJ(1,1)
        << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3) << endl;
 
-  for (int i=0;i<PointMasses.size();i++) {
+  for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
     cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
@@ -428,7 +428,7 @@ void FGMassBalance::GetMassPropertiesReport(void) const
          << setw(12) << pm->GetPointMassMoI(3,3) << endl;
   }
 
-  for (int i=0;i<Propulsion->GetNumTanks() ;i++) {
+  for (unsigned int i=0;i<Propulsion->GetNumTanks() ;i++) {
     FGTank* tank = Propulsion->GetTank(i);
     string tankname="";
     if (tank->GetType() == FGTank::ttFUEL && tank->GetGrainType() != FGTank::gtUNKNOWN) {
