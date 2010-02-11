@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.21 2009/10/24 22:59:30 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.22 2010/02/11 22:02:22 andgi Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ CLASS DOCUMENTATION
 
 @code
 <piston_engine name="{string}">
-  <minmp unit="{INHG | PA | ATM}"> {number} </minmp> <!-- Depricated -->
+  <minmp unit="{INHG | PA | ATM}"> {number} </minmp>
   <maxmp unit="{INHG | PA | ATM}"> {number} </maxmp>
   <displacement unit="{IN3 | LTR | CC}"> {number} </displacement>
   <bore unit="{IN | M}"> {number} </bore>
@@ -82,6 +82,8 @@ CLASS DOCUMENTATION
   <minthrottle> {number} </minthrottle>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
   <volumetric-efficiency> {number} </volumetric-efficiency>
+  <dynamic-fmep unit="{INHG | PA | ATM}"> {number} </dynamic-fmep>
+  <static-fmep unit="{INHG | PA | ATM}"> {number} </static-fmep>
   <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>
   <boostmanual> {0 | 1} </boostmanual>
@@ -180,7 +182,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.21 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.22 2010/02/11 22:02:22 andgi Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,7 +218,6 @@ public:
   double getRPM(void) {return RPM;}
 
 protected:
-  double ThrottleAngle;
 
 private:
   int crank_counter;
@@ -224,9 +225,8 @@ private:
   double IndicatedHorsePower;
   double PMEP;
   double FMEP;
-  double SpeedSlope;
-  double SpeedIntercept;
-  double AltitudeSlope;
+  double FMEPDynamic;
+  double FMEPStatic;
   double PowerAvailable;
 
   // timestep

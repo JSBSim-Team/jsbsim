@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.47 2009/11/02 12:14:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.48 2010/02/11 22:02:22 andgi Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,9 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   Z_airbox = -999;
   Ram_Air_Factor = 1;
   PeakMeanPistonSpeed_fps = 100;
+  FMEPDynamic= 18400;
+  FMEPStatic = 46500;
+
 
   // These are internal program variables
 
@@ -201,6 +204,10 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Z_airbox = el->FindElementValueAsNumber("air-intake-impedance-factor");
   if (el->FindElement("ram-air-factor"))
     Ram_Air_Factor  = el->FindElementValueAsNumber("ram-air-factor");
+  if (el->FindElement("dynamic-fmep"))
+    FMEPDynamic= el->FindElementValueAsNumberConvertTo("dynamic-fmep","PA");
+  if (el->FindElement("static-fmep"))
+    FMEPStatic = el->FindElementValueAsNumberConvertTo("static-fmep","PA");
   if (el->FindElement("peak-piston-speed"))
     PeakMeanPistonSpeed_fps  = el->FindElementValueAsNumber("peak-piston-speed");
   if (el->FindElement("numboostspeeds")) { // Turbo- and super-charging parameters
@@ -244,8 +251,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // Create IFSC to match the engine if not provided
   if (ISFC < 0) {
       double pmep = 29.92 - MaxManifoldPressure_inHg;
-      pmep *= inhgtopa;
-      double fmep = (18400 * RatedMeanPistonSpeed_fps * fttom + 46500);
+      pmep *= inhgtopa  * volumetric_efficiency;
+      double fmep = (FMEPDynamic * RatedMeanPistonSpeed_fps * fttom + FMEPStatic);
       double hp_loss = ((pmep + fmep) * displacement_SI * MaxRPM)/(Cycles*22371);
       ISFC = ( 1.1*Displacement * MaxRPM * volumetric_efficiency *(MaxManifoldPressure_inHg / 29.92) ) / (9411 * (MaxHP+hp_loss));
 // cout <<"FMEP: "<< fmep <<" PMEP: "<< pmep << " hp_loss: " <<hp_loss <<endl;
@@ -262,13 +269,13 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
  * Where:
  * Pm = Manifold Pressure
  * Pa = Ambient Pressre
- * Ze = engine impedance, Ze is effectively 1 / Mean Piston Speed  
+ * Ze = engine impedance, Ze is effectively 1 / Mean Piston Speed
  * Zi = airbox impedance
  * Zt = throttle impedance
- * 
+ *
  * For the calculation below throttle is fully open or Zt = 0
  *
- * 
+ *
  *
  */
 
@@ -276,7 +283,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     double Ze=PeakMeanPistonSpeed_fps/RatedMeanPistonSpeed_fps; // engine impedence
     Z_airbox = (standard_pressure *Ze / maxMAP) - Ze; // impedence of airbox
   }
-  Z_throttle=(((MaxRPM * Stroke) / 360)/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; // Constant for Throttle impedence
+  Z_throttle=(PeakMeanPistonSpeed_fps/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; // Constant for Throttle impedence
+//  Z_throttle=(MaxRPM/IdleRPM )*(standard_pressure/minMAP+2); // Constant for Throttle impedence
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
@@ -376,14 +384,11 @@ void FGPiston::ResetToIC(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGPiston::Calculate(void)
 {
   if (FuelFlow_gph > 0.0) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
-  // calculate the throttle plate angle.  1 unit is approx pi/2 radians.
-  ThrottleAngle = MinThrottle+((MaxThrottle-MinThrottle)*Throttle );
   Mixture = FCS->GetMixturePos(EngineNumber);
 
   //
@@ -447,6 +452,7 @@ int FGPiston::InitRunning(void) {
   //Thruster->SetRPM( 1.1*IdleRPM/Thruster->GetGearRatio() );
   Thruster->SetRPM( 1000 );
   Running=true;
+
   return 1;
 }
 
@@ -461,7 +467,6 @@ void FGPiston::doEngineStartup(void)
   // (spark, fuel, starter motor etc)
   bool spark;
   bool fuel;
-
   // Check for spark
   Magneto_Left = false;
   Magneto_Right = false;
@@ -559,7 +564,7 @@ void FGPiston::doBoostControl(void)
  * from the throttle position, turbo/supercharger boost control
  * system, engine speed and local ambient air density.
  *
- * Inputs: p_amb, Throttle, ThrottleAngle,
+ * Inputs: p_amb, Throttle,
  *         MeanPistonSpeed_fps, dt
  *
  * Outputs: MAP, ManifoldPressure_inHg, TMAP
@@ -567,7 +572,7 @@ void FGPiston::doBoostControl(void)
 
 void FGPiston::doMAP(void)
 {
-  double Zt =(1-Throttle)*(1-Throttle)*Z_throttle; // throttle impedence
+  double Zt = (1-Throttle)*(1-Throttle)*Z_throttle; // throttle impedence
   double Ze= MeanPistonSpeed_fps > 0 ? PeakMeanPistonSpeed_fps/MeanPistonSpeed_fps : 999999; // engine impedence
 
   double map_coefficient = Ze/(Ze+Z_airbox+Zt);
@@ -579,7 +584,7 @@ void FGPiston::doMAP(void)
   // Find the mean effective pressure required to achieve this manifold pressure
   // Fixme: determine the HP consumed by the supercharger
 
-  PMEP = TMAP - p_amb; // Fixme: p_amb should be exhaust manifold pressure
+  PMEP = (TMAP - p_amb) * volumetric_efficiency; // Fixme: p_amb should be exhaust manifold pressure
 
   if (Boosted) {
     // If takeoff boost is fitted, we currently assume the following throttle map:
@@ -618,7 +623,7 @@ void FGPiston::doMAP(void)
  * (used in CHT calculation for air-cooled engines).
  *
  * Inputs: p_amb, R_air, T_amb, MAP, Displacement,
- *   RPM, volumetric_efficiency, ThrottleAngle
+ *   RPM, volumetric_efficiency,
  *
  * TODO: Model inlet manifold air temperature.
  *
@@ -627,9 +632,10 @@ void FGPiston::doMAP(void)
 
 void FGPiston::doAirFlow(void)
 {
-  double gamma = 1.1; // specific heat constants
+  double gamma = 1.3; // specific heat constants
 // loss of volumentric efficiency due to difference between MAP and exhaust pressure
-  double ve =((gamma-1)/gamma)+( CompressionRatio -(p_amb/MAP))/(gamma*( CompressionRatio - 1));
+// Eq 6-10 from The Internal Combustion Engine - Charles Taylor Vol 1
+  double ve =((gamma-1)/gamma) +( CompressionRatio -(p_amb/MAP))/(gamma*( CompressionRatio - 1));
 
   rho_air = p_amb / (R_air * T_amb);
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
@@ -665,15 +671,11 @@ void FGPiston::doFuelFlow(void)
 /**
  * Calculate the power produced by the engine.
  *
- * Currently, the JSBSim propellor model does not allow the
- * engine to produce enough RPMs to get up to a high horsepower.
- * When tested with sufficient RPM, it has no trouble reaching
- * 200HP.
- *
- * Inputs: ManifoldPressure_inHg, p_amb, RPM, T_amb,
+ * Inputs: ManifoldPressure_inHg, p_amb, RPM, T_amb, ISFC,
  *   Mixture_Efficiency_Correlation, Cycles, MaxHP, PMEP,
+ *   MeanPistonSpeed_fps
  *
- * Outputs: PctPower, HP
+ * Outputs: PctPower, HP, FMEP, IndicatedHorsePower
  */
 
 void FGPiston::doEnginePower(void)
@@ -686,9 +688,8 @@ void FGPiston::doEnginePower(void)
     ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
 
     percent_RPM = RPM/MaxRPM;
-// Guestimate engine friction as a percentage of rated HP + a percentage of rpm + a percentage of Indicted HP
-//    friction = 1 - (percent_RPM * percent_RPM * percent_RPM/10);
-    FMEP = (-18400 * MeanPistonSpeed_fps * fttom - 46500);
+// Guestimate engine friction losses from Figure 4.4 of "Engines: An Introduction", John Lumley
+    FMEP = (-FMEPDynamic * MeanPistonSpeed_fps * fttom - FMEPStatic);
 
     power = 1;
 
@@ -770,7 +771,7 @@ void FGPiston::doCHT(void)
   double h2 = -3.95;
   double h3 = -140.0; // -0.05 * 2800 (default maxrpm)
 
-  double arbitary_area = 1.0;
+  double arbitary_area = Displacement/360.0;
   double CpCylinderHead = 800.0;
   double MassCylinderHead = 8.0;
 
@@ -813,8 +814,8 @@ void FGPiston::doOilTemperature(void)
   if (OilPressure_psi > 5.0 ) {
     time_constant = 5000 / OilPressure_psi; // Guess at a time constant for circulated oil.
                                             // The higher the pressure the faster it reaches
-					    // target temperature.  Oil pressure should be about
-					    // 60 PSI yielding a TC of about 80.
+                                            // target temperature.  Oil pressure should be about
+                                            // 60 PSI yielding a TC of about 80.
   } else {
     time_constant = 1000;  // Time constant for engine-off; reflects the fact
                            // that oil is no longer getting circulated
@@ -919,12 +920,13 @@ void FGPiston::Debug(int from)
       cout << "      Cycles: "              << Cycles                   << endl;
       cout << "      IdleRPM: "             << IdleRPM                  << endl;
       cout << "      MaxRPM: "              << MaxRPM                   << endl;
-      cout << "      MaxThrottle: "         << MaxThrottle              << endl;
-      cout << "      MinThrottle: "         << MinThrottle              << endl;
+      cout << "      Throttle Constant: "   << Z_throttle               << endl;
       cout << "      ISFC: "                << ISFC                     << endl;
       cout << "      Volumetric Efficiency: " << volumetric_efficiency    << endl;
       cout << "      PeakMeanPistonSpeed_fps: " << PeakMeanPistonSpeed_fps << endl;
       cout << "      Intake Impedance Factor: " << Z_airbox << endl;
+      cout << "      Dynamic FMEP Factor: " << FMEPDynamic << endl;
+      cout << "      Static FMEP Factor: " << FMEPStatic << endl;
 
       cout << endl;
       cout << "      Combustion Efficiency table:" << endl;
