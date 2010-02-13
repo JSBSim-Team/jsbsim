@@ -1,9 +1,9 @@
-<!-- $Id: hydrodynamics.xml,v 1.1 2009/01/05 13:29:48 andgi Exp $ -->
+<!-- $Id: hydrodynamics.xml,v 1.2 2010/02/13 19:36:32 andgi Exp $ -->
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,6 +57,11 @@
 
  <property value="0.0">hydro/water-level-ft</property>
 
+ <!-- HRP location -->
+ <property value="341.73">hydro/hrp-x-in</property>
+ <property value="0.0">hydro/hrp-y-in</property>
+ <property value="0.0">hydro/hrp-z-in</property>
+
  <!-- Model parameters -->
  <documentation>
   The hydrodynamic coefficients are assumed to be defined as in
@@ -77,6 +82,7 @@
  <property value="0.5">hydro/drag-tweak-factor</property>
  <property value="20.0">hydro/lift-tweak-factor</property>
  <property value="1.5">hydro/pitch-tweak-factor</property>
+ <property value="4.0">hydro/yaw-tweak-factor</property>
 
 
  <channel name ="Hull position, orientation and velocity">
@@ -84,16 +90,35 @@
   <fcs_function name="hydro/height-agl-ft">
    <documentation>
     Distance between the hydrodynamic reference point and the water surface.
-    Not correctly computed yet.
+    Not completely correctly computed yet.
    </documentation>
    <function>
-    <sum>
-     <value> 0.0 </value>
-     <difference>
+    <difference>
+     <sum>
       <property> position/h-sl-ft </property>
-      <property> hydro/water-level-ft </property>
-     </difference>
-    </sum>
+      <product>
+       <value> -0.083333333 </value>
+       <difference>
+        <property> hydro/hrp-x-in </property>
+        <property> inertia/cg-x-in </property>
+       </difference>
+       <sin>
+        <property> attitude/pitch-rad </property>
+       </sin>
+      </product>
+      <product>
+       <value> 0.083333333 </value>
+       <difference>
+        <property> hydro/hrp-z-in </property>
+        <property> inertia/cg-z-in </property>
+       </difference>
+       <cos>
+        <property> attitude/pitch-rad </property>
+       </cos>
+      </product>
+     </sum>
+     <property> hydro/water-level-ft </property>
+    </difference>
    </function>
   </fcs_function>
 
@@ -109,7 +134,7 @@
   <fcs_function name="hydro/s40-pitch-deg">
    <documentation>
     Some of the hydrodynamic coefficients are based on
-    data from the Sikorsky S-40 'boat. [Dawson:1934:Clipper]
+    data from the Sikorsky S-40 'boat [Dawson:1934:Clipper].
     As it's hull has a different datum line and behaviour
     the pitch trim angle needs to be adjusted.
     This is rough guess based on the reported trim
@@ -352,11 +377,17 @@
  <channel name="Float positions">
 
   <switch name="hydro/left-float-submersion-ft">
-   <default value="gear/unit[0]/compression-ft"/>
+   <default value="0.0"/>
+   <test value="/gear/gear[0]/compression-ft">
+     /gear/gear[0]/compression-ft NE 0.0
+   </test>
   </switch>
 
   <switch name="hydro/right-float-submersion-ft">
-   <default value="gear/unit[1]/compression-ft"/>
+   <default value="0.0"/>
+   <test value="/gear/gear[1]/compression-ft">
+     /gear/gear[1]/compression-ft NE 0.0
+   </test>
   </switch>
 
  </channel>
@@ -611,6 +642,7 @@
    <function>
     <description>Drag due to left float</description>
     <product>
+     <value> 1.0 </value>
      <property>hydro/float-beam-ft3</property>
      <property>hydro/drag-tweak-factor</property>
      <!-- From Boeing314A: Hull_resistance (beta=0) -->
@@ -666,6 +698,7 @@
    <function>
     <description>Drag due to right float</description>
     <product>
+     <value> 1.0 </value>
      <property>hydro/float-beam-ft3</property>
      <property>hydro/drag-tweak-factor</property>
      <!-- From Boeing314A: Hull_resistance (beta=0) -->
@@ -944,14 +977,15 @@
    </documentation>
    <function>
     <product>
+     <property>hydro/yaw-tweak-factor</property>
      <property>velocities/psidot-rad_sec</property>
      <table>
       <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
       <tableData>
-       0.0  0.0
-       0.1 -20000.0
-       0.4 -200000.0
-       1.0 -400000.0
+       0.0        0.0
+       0.1   -40000.0
+       0.4  -600000.0
+       1.0 -1000000.0
       </tableData>
      </table>
     </product>

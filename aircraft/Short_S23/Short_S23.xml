@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!-- $Id: Short_S23.xml,v 1.1 2009/01/05 13:29:48 andgi Exp $ -->
+<!-- $Id: Short_S23.xml,v 1.2 2010/02/13 19:36:32 andgi Exp $ -->
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate> 2008-11-05 </filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.1 2009/01/05 13:29:48 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.2 2010/02/13 19:36:32 andgi Exp $</version>
 
   <description> Models a Short S.23 flying boat. </description>
 
@@ -161,7 +161,7 @@
   <location name="CG" unit="M">
    <x> 8.68 </x>
    <y> 0.00 </y>
-   <z> 0.00 </z>
+   <z> 1.00 </z>
   </location>
 
   <documentation>
@@ -893,6 +893,9 @@
  <!-- Autopilot for JSBSim/standalone. -->
  <system file="take-off-ap"/>
 
+ <!-- Extra engine parameters -->
+ <system file="engines"/>
+
  <!-- aerodynamics file="aeromatic_aero.xml"/ -->
  <aerodynamics file="datcom_aero.xml"/>
 
@@ -907,7 +910,6 @@
   <aerosurfaces> ON </aerosurfaces>
   <fcs> ON </fcs>
   <ground_reactions> ON </ground_reactions>
-  <property> hydro/coefficients/C_V </property>
  </output>
 
 </fdm_config>

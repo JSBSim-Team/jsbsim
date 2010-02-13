@@ -1,14 +1,7 @@
 <?xml version="1.0"?>
 <!--
-  File:     PegasusXC.xml
+  File:     eng_PegasusXc.xml
   Authors:  Ron Jensen, Anders Gidenstam
-
-  Inputs:
-    name:           PegasusXC
-    type:           piston
-    power:          920.0 hp
-    augmented?      no
-    injected?       no
 
 Selected informative quotes from
 
@@ -49,29 +42,50 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   ft. Maximum engine speed - all out - was 2600 rev. per min. with
   +2 1/2 lb. sq. in. for 5 minutes in level flight."
   (pp.167)
+
+Flight Magazine November 12, 1936:
+  Bore:                   146 mm
+  Stroke:                 190.5 mm 
+  Reduction gear:         0.5
+  Normal crankshaft RPM:  2,250
+  Rated altitude:         4,500 ft
+  Normal output at rated altitude:    785/815 BHP
+  Max output at full throttle height: 830 BHP
+  Take-off power:                     920 BHP
+  Dry weight:                         1,015 lbs
+  Remark: Moderately supercharged. Max. power at 5,256ft
+
 -->
-<piston_engine name="PegasusXC">
-  <minmp unit="INHG">          6.0 </minmp> <!-- Deprecated -->
-  <maxmp unit="INHG">         28.5 </maxmp>
-  <displacement unit="IN3"> 1750.0 </displacement>
+<piston_engine name="PegasusXc">
 
-  <cycles>         4.0 </cycles>
-  <maxhp>        920.0 </maxhp> <!-- Boosted. -->
-  <bsfc>          0.52 </bsfc>  <!-- From Wikipedia. Pegasus XVIII. -->
-  <idlerpm>      200.0 </idlerpm>
-  <maxrpm>      2600.0 </maxrpm>
+ <displacement unit="IN3"> 1752.80 </displacement>
+ <bore unit="IN">             5.75 </bore>
+ <stroke unit="IN">           7.50 </stroke>
+ <compression-ratio>          6.25 </compression-ratio> <!-- From Wikipedia. Pegasus XVIII. -->
+ <cylinders>                  9.0  </cylinders>
+ <cycles>                     4.0  </cycles>
 
-  <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.1 </minthrottle>
-  <sparkfaildrop>  0.1 </sparkfaildrop>
+ <maxhp unit="HP">          920.0 </maxhp> <!-- Boosted. -->
+ <!-- bsfc unit="LBS/HP/HR"> 0.52 </bsfc -->  <!-- From Wikipedia. Pegasus XVIII. -->
+ <!-- volumetric_efficiency> <volumetric_efficiency -->
+ <idlerpm>      400.0 </idlerpm>
+ <maxrpm>      2600.0 </maxrpm>
 
-  <numboostspeeds> 1.0 </numboostspeeds>
-  <boostoverride> 0 </boostoverride>
+ <numboostspeeds> 1.0 </numboostspeeds>
+ <boostoverride>  0 </boostoverride>
 
-  <ratedboost1 unit="INHG">     4.1 </ratedboost1>
-  <ratedpower1 unit="HP">     900.0 </ratedpower1>
-  <ratedrpm1>                2250.0 </ratedrpm1>
-  <ratedaltitude1 unit="FT"> 3500.0 </ratedaltitude1>
+ <ratedboost1 unit="PSI">      2.50 </ratedboost1>
+ <ratedpower1 unit="HP">     900.00 </ratedpower1>
+ <ratedrpm1>                2250.00 </ratedrpm1>
+ <ratedaltitude1 unit="FT"> 3500.00 </ratedaltitude1>
 
-  <takeoffboost unit="INHG"> 8.65 </takeoffboost>
+ <takeoffboost unit="PSI">     4.25 </takeoffboost>
+
+ <sparkfaildrop>              0.10 </sparkfaildrop>
+
+ <minmp unit="INHG">          6.00 </minmp> <!-- Deprecated -->
+ <maxmp unit="INHG">         38.57 </maxmp>
+ <maxthrottle>                1.00 </maxthrottle>
+ <minthrottle>                0.10 </minthrottle>
+
 </piston_engine>
