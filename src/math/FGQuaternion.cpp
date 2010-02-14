@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.11 2010/01/25 12:48:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.12 2010/02/14 22:59:05 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,17 +148,14 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
     Equation 1.3-36. 
     Also see Jack Kuipers, "Quaternions and Rotation Sequences", Equation 11.12.
 */
-FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
+FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR)
 {
-  FGQuaternion QDot;
-  QDot(1) = -0.5*( Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR));
-  QDot(2) =  0.5*( Entry(1)*PQR(eP) - Entry(4)*PQR(eQ) + Entry(3)*PQR(eR));
-  QDot(3) =  0.5*( Entry(4)*PQR(eP) + Entry(1)*PQR(eQ) - Entry(2)*PQR(eR));
-  QDot(4) =  0.5*(-Entry(3)*PQR(eP) + Entry(2)*PQR(eQ) + Entry(1)*PQR(eR));
-
-  Debug(2);
-
-  return QDot;
+  return FGQuaternion(
+    -0.5*( Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR)),
+    0.5*( Entry(1)*PQR(eP) - Entry(4)*PQR(eQ) + Entry(3)*PQR(eR)),
+    0.5*( Entry(4)*PQR(eP) + Entry(1)*PQR(eQ) - Entry(2)*PQR(eR)),
+    0.5*(-Entry(3)*PQR(eP) + Entry(2)*PQR(eQ) + Entry(1)*PQR(eR))
+  );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,11 +163,11 @@ FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
 void FGQuaternion::Normalize()
 {
   // Note: this does not touch the cache since it does not change the orientation
-  
   double norm = Magnitude();
-  if (norm == 0.0 || norm == 1.000) return;
-  
+  if (norm == 0.0 || fabs(norm - 1.000) < 1e-10) return;
+
   double rnorm = 1.0/norm;
+
   Entry(1) *= rnorm;
   Entry(2) *= rnorm;
   Entry(3) *= rnorm;

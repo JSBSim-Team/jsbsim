@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.13 2010/01/25 12:48:39 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.14 2010/02/14 22:59:05 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -121,6 +121,7 @@ public:
       @param angle The euler angle in radians  */
   FGQuaternion(int idx, double angle)
     : mCacheValid(false) {
+
     double angle2 = 0.5*angle;
 
     double Sangle2 = sin(angle2);
@@ -163,7 +164,7 @@ public:
       @return the quaternion derivative
       @see Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
            Equation 1.3-36. */
-  FGQuaternion GetQDot(const FGColumnVector3& PQR) const;
+  FGQuaternion GetQDot(const FGColumnVector3& PQR);
 
   /** Transformation matrix.
       @return a reference to the transformation/rotation matrix
@@ -273,7 +274,7 @@ public:
   */
   double& Entry(unsigned int idx) {
     mCacheValid = false;
-    return mData[idx-1];
+   return mData[idx-1];
   }
 
   /** Assignment operator "=".
@@ -469,8 +470,7 @@ private:
       FGQuaternion::ComputeDerivedUnconditional(void) const
       is called. */
   void ComputeDerived(void) const {
-    if (!mCacheValid)
-      ComputeDerivedUnconditional();
+    if (!mCacheValid) ComputeDerivedUnconditional();
   }
 
   /** The quaternion values itself. This is the master copy. */
