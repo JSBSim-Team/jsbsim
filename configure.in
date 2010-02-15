@@ -102,6 +102,8 @@ aircraft/B17/Makefile \
 aircraft/B747/Makefile \
 aircraft/F4N/Makefile \
 aircraft/F4N/Engines/Makefile \
+aircraft/J246/Makefile \
+aircraft/J246/Systems/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \
 aircraft/Submarine_Scout/Makefile \

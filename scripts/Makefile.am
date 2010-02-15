@@ -13,6 +13,7 @@ EXTRA_DIST = \
   c3101.xml \
   c3104.xml \
   cannonball.xml \
+  J2461.xml \
   plotfile.xml \
   kml_output.xml \
   Prefix.kml \
