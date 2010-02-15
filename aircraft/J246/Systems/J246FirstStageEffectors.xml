@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<system name="J246 First Stage Effectors"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+  <channel name="Pitch">
+
+    <switch name="fcs/pitch-output-selector">
+      <default value="0.0"/>
+      <test value="control/peg-pitch-controller">
+        guidance/executive/current-mode eq 4 <!-- PEG mode -->
+      </test>
+      <test value="control/gravity-turn-alpha-controller">
+        guidance/executive/current-mode eq 3 <!-- Zero alpha/beta mode -->
+      </test>
+      <test value="control/gravity-turn-pitch-rate-command-gain">
+        guidance/executive/current-mode eq 2 <!-- Gravity turn mode -->
+      </test>
+      <test value="control/pitch-gain">
+        guidance/executive/current-mode le 1 <!-- Vertical rise mode -->
+      </test>
+    </switch>
+
+    <pure_gain name="fcs/pitch-actuator-cmd">
+      <input>fcs/pitch-output-selector</input>
+      <gain> 1.0 </gain>
+    </pure_gain>
+
+    <actuator name="fcs/pitch-actuator-pos">
+      <input>fcs/pitch-actuator-cmd</input>
+      <lag> 60 </lag>
+      <bias> 0.0017 </bias>
+      <hysteresis_width> 0.0017 </hysteresis_width>
+      <rate_limit> 0.085 </rate_limit>
+      <clipto>
+        <min> -0.17 </min>
+        <max>  0.17 </max>
+      </clipto>
+      <output>propulsion/engine[0]/pitch-angle-rad</output>
+      <output>propulsion/engine[1]/pitch-angle-rad</output>
+    </actuator>
+
+  </channel>
+
+  <channel name="Roll">
+
+  </channel>
+
+  <channel name="Yaw">
+
+    <switch name="fcs/yaw-output-selector">
+      <default value="0.0"/>
+      <test logic="OR" value="control/yaw-gain">
+        guidance/executive/current-mode eq 0 <!-- Vertical rise mode                 -->
+        guidance/executive/current-mode eq 1 <!-- Roll-to-heading mode               -->
+        guidance/executive/current-mode eq 2 <!-- Gravity turn angle pitch rate mode -->
+        guidance/executive/current-mode eq 3 <!-- Gravity turn zero beta mode        -->
+        guidance/executive/current-mode eq 4 <!-- Gravity turn zero beta mode        -->
+      </test>
+    </switch>
+
+    <pure_gain name="fcs/yaw-actuator-cmd">
+      <input>fcs/yaw-output-selector</input>
+      <gain>1.0</gain>
+    </pure_gain>
+
+    <actuator name="fcs/yaw-actuator-pos">
+      <input>fcs/yaw-actuator-cmd</input>
+      <lag> 60 </lag>
+      <bias> 0.0011 </bias>
+      <hysteresis_width> 0.0017 </hysteresis_width>
+      <rate_limit> 0.085 </rate_limit>
+      <clipto>
+        <min> -0.17 </min>
+        <max>  0.17 </max>
+      </clipto>
+      <output>propulsion/engine[0]/yaw-angle-rad</output>
+      <output>propulsion/engine[1]/yaw-angle-rad</output>
+    </actuator>
+
+  </channel>
+
+</system>

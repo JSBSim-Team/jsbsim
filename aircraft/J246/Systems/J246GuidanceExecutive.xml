@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<system name="J246 Guidance Executive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimSystem.xsd">
+
+  <!--
+  
+  This file (among others) represents the executive portion of the vehicle
+  flight software. There is a clock timer that ticks off Mission Elapsed Time
+  (MET) as it marches on from the time that the solid rocket boosters (engine
+  "0") ignites.
+  
+  #############################################################################
+  GNC Executive MET Clock
+  #############################################################################
+  -->
+
+  <channel name="GNC Executive MET Clock">
+
+    <switch name="guidance/executive/launch-time">
+      <default value="sim-time-sec"/>
+      <test value="guidance/executive/launch-time"> fcs/throttle-cmd-norm[0] gt 0 </test>
+    </switch>
+
+    <summer name="guidance/executive/MET">
+      <input> sim-time-sec </input>
+      <input> -guidance/executive/launch-time </input>
+    </summer>
+
+  </channel>
+
+  <!--
+  #############################################################################
+  Guidance Modes
+  #############################################################################
+  -->
+
+  <channel name="Guidance Modes">                       <!-- Determine GNC modes                        -->
+                                                        <!-- "0" represents the vertical rise mode      -->
+    <switch name="guidance/executive/current-mode">
+      <default value="-1"/>
+      <test value="4">                                  <!-- "4" represents the PEG mode, in second     -->
+        guidance/second-stage-flight-flag eq 1          <!-- stage flight.                              -->
+      </test>
+      <test logic="OR" value="3">                       <!-- "3" represents the zero alpha mode, with   -->
+        aero/qbar-psf ge 100.0                          <!-- qbar exceeding 100 psf @ 14 seconds.       -->
+        guidance/executive/MET ge 30.0                  <!-- This mode "sticks", too, if MET >= 30.     -->
+      </test>
+      <test value="2">                                  <!-- "2" represents the gravity turn mode       -->
+        guidance/executive/MET ge 5.0                   <!-- This mode selected if MET .ge. 6 seconds,  -->
+      </test>                                           <!-- corresponding to an altitude gain of 350'. -->
+      <test value="1">                                  <!-- "1" represents the stay vertical mode.     --> 
+        guidance/executive/MET ge 999.0                 <!-- This mode selected if MET .ge. 2 seconds   -->
+      </test>                                           <!-- This mode is turned off for the moment.    -->
+      <test value="0">                                  <!-- "0" represents the vertical rise mode.     --> 
+        guidance/executive/MET ge 0.0                   <!-- This mode selected if MET .ge. 0 seconds   -->
+      </test>                                           <!-- This mode is turned off for the moment.    -->
+    </switch>
+
+    <switch name="guidance/executive/integrator-wind-up-guard-0">
+      <default value="1"/>
+      <test value="0"> guidance/executive/current-mode ge 0 </test>
+    </switch>
+
+    <switch name="guidance/executive/integrator-wind-up-guard-1">
+      <default value="1"/>
+      <test value="0"> guidance/executive/current-mode ge 1 </test>
+    </switch>
+
+    <switch name="guidance/executive/integrator-wind-up-guard-2">
+      <default value="1"/>
+      <test value="0"> guidance/executive/current-mode ge 2 </test>
+    </switch>
+
+    <switch name="guidance/executive/integrator-wind-up-guard-3">
+      <default value="1"/>
+      <test value="0"> guidance/executive/current-mode ge 3 </test>
+    </switch>
+
+    <switch name="guidance/executive/integrator-wind-up-guard-4">
+      <default value="1"/>
+      <test value="0"> guidance/executive/current-mode ge 4 </test>
+    </switch>
+
+  </channel>
+
+  <!--
+  #############################################################################
+  Major Vehicle Configuration Discrete Actions
+  #############################################################################
+  -->
+
+  <channel name="Major Vehicle Configuration Discrete Actions">
+
+    <switch name="guidance/executive/left-srb-sep-flag">
+      <default value="0"/>
+      <test value="1">
+        guidance/executive/MET gt 110.0
+        propulsion/engine[0]/thrust-lbs le 40000.0
+      </test>
+    </switch>
+
+    <switch name="guidance/executive/right-srb-sep-flag">
+      <default value="0"/>
+      <test value="1">
+        guidance/executive/MET gt 110.0
+        propulsion/engine[1]/thrust-lbs le 40000.0
+      </test>
+    </switch>
+
+    <switch name="guidance/second-stage-flight-flag">
+      <default value="0"/>
+      <test value="1" logic="OR">
+        guidance/executive/leftt-srb-sep-flag eq 1
+        guidance/executive/right-srb-sep-flag eq 1 </test>
+    </switch>
+
+    <switch name="guidance/executive/las-jettison-flag">
+      <default value="0"/>
+      <test value="1"> guidance/executive/MET ge 160.0 </test>
+    </switch>
+
+  </channel>
+
+  <property value="14.07644180e15"> guidance/executive/gm </property>
+
+  <channel name="Orbital Parameters">
+
+    <fcs_function name="guidance/executive/semimajor-axis-length-ft">
+      <description>
+        This equation calculates the semimajor-axis length in feet. a = mu/(2*mu/r - v^2) 
+      </description>
+      <function>
+        <quotient>
+          <p> guidance/executive/gm </p>
+          <difference>
+            <quotient>
+              <product>
+                <v> 2.0 </v>
+                <p> guidance/executive/gm </p>
+              </product>
+              <p> position/radius-to-vehicle-ft </p>
+            </quotient>
+            <pow>
+              <p> velocities/eci-velocity-mag-fps </p>
+              <v> 2.0 </v>
+            </pow>
+          </difference>
+        </quotient>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/executive/eccentricity">
+      <description>
+        This equation calculates eccentricity. e = sqrt (1 - [ r v cos(gamma) ]^2 / {a * mu})
+      </description>
+      <function>
+        <pow>
+          <difference>
+            <v> 1.0 </v>
+            <quotient>
+              <pow>
+                <product>
+                  <property> position/radius-to-vehicle-ft </property>
+                  <property> velocities/eci-velocity-mag-fps </property>
+                  <cos>
+                    <property> flight-path/gamma-rad </property>
+                  </cos>
+                </product>
+                <v> 2.0 </v>
+              </pow>
+              <product>
+                <p> guidance/executive/semimajor-axis-length-ft </p>
+                <p> guidance/executive/gm </p>
+              </product>
+            </quotient>
+          </difference>
+          <v> 0.5 </v>
+        </pow>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/executive/apoapsis">
+      <function>
+        <quotient>
+          <difference>
+            <product>
+              <property>guidance/executive/semimajor-axis-length-ft</property>
+              <sum>
+                <value>1</value>
+                <property>guidance/executive/eccentricity</property>
+              </sum>
+            </product>
+            <property>ic/sea-level-radius-ft</property>
+          </difference>
+          <value>5280</value>
+        </quotient>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/executive/periapsis">
+      <function>
+        <quotient>
+          <difference>
+            <product>
+              <property>guidance/executive/semimajor-axis-length-ft</property>
+              <difference>
+                <value>1</value>
+                <property>guidance/executive/eccentricity</property>
+              </difference>
+            </product>
+            <property>ic/sea-level-radius-ft</property>
+          </difference>
+          <value>5280</value>
+        </quotient>
+      </function>
+    </fcs_function>
+<!--
+    <fcs_function name="guidance/executive/true-anomaly">
+      <function>
+        
+      </function>
+    </fcs_function>
+-->
+  </channel>
+</system>

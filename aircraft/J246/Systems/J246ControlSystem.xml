@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<system name="J246 Control System"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+  <channel name="Mode 0: Vertical Rise">
+
+    <!-- This is a simple PID controller to maintain zero pitch and yaw rate
+             during the vertical rise phase when the roll angle is being adjusted 
+             to the appropriate heading - if the orientation on the pad is not
+             aligned with the launch azimuth. -->
+
+    <!-- Pitch Vertical Rise - hold pitch rate at zero. -->
+
+    <pid name="control/pitch-hold-vertical">
+      <input>velocities/q-rad_sec</input>
+      <kp>2</kp>
+      <ki>0.1</ki>
+      <kd>0.1</kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-0 </trigger>
+    </pid>
+
+    <lag_filter name="control/pitch-lag">
+      <input>control/pitch-hold-vertical</input>
+      <c1>20</c1>
+    </lag_filter>
+
+    <pure_gain name="control/pitch-gain">
+      <input>control/pitch-lag</input>
+      <gain>1.0</gain>
+    </pure_gain>
+
+    <!-- Yaw Vertical Rise - hold yaw rate at zero. -->
+
+    <pid name="control/yaw-hold-vertical">
+      <input>velocities/r-rad_sec</input>
+      <kp>2</kp>
+      <ki>0.1</ki>
+      <kd>0.1</kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-0 </trigger>
+    </pid>
+
+    <lag_filter name="control/yaw-lag">
+      <input>control/yaw-hold-vertical</input>
+      <c1>20</c1>
+    </lag_filter>
+
+    <pure_gain name="control/yaw-gain">
+      <input>control/yaw-lag</input>
+      <gain>1.0</gain>
+    </pure_gain>
+
+  </channel>
+
+  <!-- Interface property for commanding the gravity turn pitch rate -->
+  <property> control/gravity-turn-pitch-rate-command</property>
+
+  <channel name="Mode 2: Gravity turn">
+
+    <!-- This is a simple controller to generate a small pitch rate to
+             align heads down and ascending. -->
+
+    <!-- Gravity turn (Pitch Rate Command) -->
+
+    <summer name="control/gravity-turn-pitch-rate-error">
+      <input>  velocities/q-rad_sec </input>
+      <input> -control/gravity-turn-pitch-rate-command </input>
+    </summer>
+
+    <pid name="control/gravity-turn-pitch-rate-controller">
+      <input> control/gravity-turn-pitch-rate-error </input>
+      <kp>4.5</kp>
+      <ki>0.5</ki>
+      <kd>0.0</kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-2 </trigger>
+    </pid>
+
+    <pure_gain name="control/gravity-turn-pitch-rate-command-gain">
+      <input>control/gravity-turn-pitch-rate-controller</input>
+      <gain>1.0</gain>
+    </pure_gain>
+
+  </channel>
+
+  <channel name="Mode 3: Zero Alpha/Beta">
+
+    <pid name="control/gravity-turn-alpha-controller">
+      <input> aero/alpha-rad </input>
+      <kp>  0.4 </kp>
+      <ki>  0.005 </ki>
+      <kd>  0.4 </kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-3 </trigger>
+    </pid>
+
+    <pid name="control/gravity-turn-beta-controller">
+      <input> aero/beta-rad </input>
+      <kp>  0.4 </kp>
+      <ki>  0.005 </ki>
+      <kd>  0.4 </kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-3 </trigger>
+    </pid>
+
+  </channel>
+
+  <property value="0.0"> guidance/executive/peg-target-pitch-attitude </property>
+
+  <channel name="Mode 4:PEG (Powered Explicit Guidance)">
+
+    <summer name="control/peg-pitch-rate-command">
+      <input>  attitude/theta-rad </input>
+      <input> -guidance/executive/peg-target-pitch-attitude </input>
+      <clipto>
+        <max>  0.01 </max>
+        <min> -0.01 </min>
+      </clipto>
+    </summer>
+
+    <summer name="control/peg-pitch-rate-error">
+      <input> control/peg-pitch-rate-command </input>
+      <input> -velocities/q-rad_sec </input>
+    </summer>
+
+    <pid name="control/peg-pitch-controller">
+      <input> control/peg-pitch-rate-error </input>
+      <kp>  1.5 </kp>
+      <ki>  0.2 </ki>
+      <kd>  0.1 </kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-4 </trigger>
+    </pid>
+
+    <lag_filter name="control/peg-pitch-control-lag">
+      <input> control/peg-pitch-controller </input>
+      <c1> 5 </c1>
+    </lag_filter>
+    
+    <pure_gain name="control/peg-pitch-control-inverter">
+      <input> control/peg-pitch-control-lag </input>
+      <gain> -1.0 </gain>
+    </pure_gain>
+    
+    <pid name="control/peg-beta-controller">
+      <input> aero/beta-rad </input>
+      <kp>  0.4 </kp>
+      <ki>  0.005 </ki>
+      <kd>  0.4 </kd>
+      <trigger> guidance/executive/integrator-wind-up-guard-4 </trigger>
+    </pid>
+    
+  </channel>
+
+</system>

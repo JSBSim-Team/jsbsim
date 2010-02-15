@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Jupiter 246">
+  <description>
+    This run is for testing the J246 Launch Vehicle
+  </description>
+  <use aircraft="J246" initialize="LC39"/>
+  <run start="0.0" end="450" dt="0.008333">
+
+<!--<property value="23"> atmosphere/delta-T </property>-->
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> forces/hold-down </property>
+    <property value="0.008"> control/gravity-turn-pitch-rate-command </property>
+
+    <event name="Winds aloft" continuous="true">
+      <condition>sim-time-sec  ge  10000.05</condition>
+      <set name="atmosphere/psiw-rad">
+        <function>
+          <table>
+            <independentVar lookup="row"> position/h-agl-ft </independentVar>
+            <tableData>
+          <!-- Alt (ft)  Dir (rad) -->
+                   0.0    0.80
+                5000.0    0.90
+               10000.0    1.00
+               15000.0    0.90
+               20000.0    0.70
+               25000.0    0.80
+               30000.0    0.90
+               35000.0    1.00
+               40000.0    1.10
+               45000.0    1.20
+               50000.0    1.30
+               55000.0    1.40
+               60000.0    1.30
+               65000.0    1.20
+               70000.0    1.30
+              100000.0    1.40
+              200000.0    1.50
+            </tableData>
+          </table>
+        </function>
+      </set>
+      <set name="atmosphere/wind-mag-fps">
+        <function>
+          <table>
+            <independentVar lookup="row"> position/h-agl-ft </independentVar>
+            <tableData>
+          <!-- Alt (ft)  Speed (fps) -->
+                   0.0     10.0
+                5000.0     40.0
+               10000.0     60.0
+               15000.0    120.0
+               20000.0    135.0
+               25000.0    140.0
+               30000.0    130.0
+               35000.0    120.0
+               40000.0    110.0
+               45000.0    110.0
+               50000.0    100.0
+               55000.0     90.0
+               60000.0     85.0
+               65000.0     60.0
+               70000.0     40.0
+               100000.0    10.0
+               200000.0     5.0
+            </tableData>
+          </table>
+        </function>
+      </set>
+      <notify/>
+    </event>
+
+    <event name="Start SSME">
+      <condition>sim-time-sec  ge  6.0</condition>
+      <set name="fcs/throttle-cmd-norm[2]" value="1.0" action="exp" tc="0.5"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1.0" action="exp" tc="0.5"/>
+      <set name="fcs/throttle-cmd-norm[4]" value="1.0" action="exp" tc="0.5"/>
+      <set name="fcs/throttle-cmd-norm[5]" value="1.0" action="exp" tc="0.5"/>
+      <notify/>
+    </event>
+
+    <event name="Start Solid Rocket Boosters">
+      <condition>sim-time-sec  ge  12.0</condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <notify/>
+    </event>
+
+    <event name="Release">
+      <condition>forces/fbx-prop-lbs gt inertia/weight-lbs</condition>
+      <set name="forces/hold-down" value="0"/>
+      <notify/>
+    </event>
+    
+    <event name="Vehicle state:" persistent="true">
+      <description>Output message at 10 second intervals</description>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+        <property>forces/hold-down</property>
+        <property>fcs/throttle-cmd-norm[0]</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/tank[2]/contents-lbs</property>
+        <property>propulsion/tank[3]/contents-lbs</property>
+        <property>guidance/executive/current-mode</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>guidance/executive/launch-time</property>
+        <property>guidance/executive/MET</property>
+        <property>guidance/executive/eccentricity</property>
+        <property>guidance/executive/semimajor-axis-length-ft</property>
+        <property>guidance/executive/apoapsis</property>
+        <property>guidance/executive/periapsis</property>
+        <property>simulation/integrator/rate/rotational</property>
+        <property>simulation/integrator/rate/translational</property>
+        <property>simulation/integrator/position/rotational</property>
+        <property>simulation/integrator/position/translational</property>
+      </notify>
+      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="10" type="delta"/>
+    </event>
+
+    <event name="Jettison SRBs">
+      <condition logic="OR">
+        guidance/executive/left-srb-sep-flag eq 1
+        guidance/executive/right-srb-sep-flag eq 1
+      </condition>
+      <set name="inertia/pointmass-weight-lbs[0]" value="0"/>
+      <set name="inertia/pointmass-weight-lbs[1]" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Jettison LAS">
+      <condition>
+        guidance/executive/las-jettison-flag eq 1
+      </condition>
+      <set name="inertia/pointmass-weight-lbs[18]" value="0"/>
+      <notify/>
+    </event>
+
+  </run>
+</runscript>

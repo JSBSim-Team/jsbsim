@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<system name="J246 Second Stage Effectors"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+  <channel name="Pitch">
+
+    <switch name="control/stage2-pitch-output-selector">
+      <default value="0.0"/>
+      <test value="control/peg-pitch-control-inverter">
+        guidance/executive/current-mode eq 4 <!-- PEG mode -->
+      </test>
+    </switch>
+
+    <pure_gain name="control/stage2-pitch-actuator-cmd">
+      <input> control/stage2-pitch-output-selector </input>
+      <gain> 1.0 </gain>
+    </pure_gain>
+
+    <actuator name="control/stage2-pitch-actuator-pos">
+      <input> control/stage2-pitch-actuator-cmd </input>
+      <lag> 60 </lag>
+      <bias> 0.00017 </bias>
+      <hysteresis_width> 0.00017 </hysteresis_width>
+      <rate_limit> 0.085 </rate_limit>
+      <clipto>
+        <min> -0.17 </min>
+        <max>  0.17 </max>
+      </clipto>
+      <output> propulsion/engine[2]/pitch-angle-rad </output>
+      <output> propulsion/engine[3]/pitch-angle-rad </output>
+      <output> propulsion/engine[4]/pitch-angle-rad </output>
+      <output> propulsion/engine[5]/pitch-angle-rad </output>
+    </actuator>
+
+  </channel>
+
+  <channel name="Roll">
+
+  </channel>
+
+  <channel name="Yaw">
+
+    <actuator name="fcs/stage2-yaw-actuator-pos">
+      <input>fcs/yaw-actuator-cmd</input>
+      <lag> 60 </lag>
+      <bias> 0.00011 </bias>
+      <hysteresis_width> 0.00017 </hysteresis_width>
+      <rate_limit> 0.085 </rate_limit>
+      <clipto>
+        <min> -0.17 </min>
+        <max>  0.17 </max>
+      </clipto>
+      <output>propulsion/engine[2]/yaw-angle-rad</output>
+      <output>propulsion/engine[3]/yaw-angle-rad</output>
+      <output>propulsion/engine[4]/yaw-angle-rad</output>
+      <output>propulsion/engine[5]/yaw-angle-rad</output>
+    </actuator>
+
+  </channel>
+
+</system>

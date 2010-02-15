@@ -1,0 +1,675 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="Jupiter-246 - Lunar Crew Launch Vehicle Configuration" version="2.0" release="ALPHA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+    <fileheader>
+        <author> Jon S. Berndt </author>
+        <filecreationdate> 2010-01-14 </filecreationdate>
+        <version> $Revision: 1.1 $ </version>
+        <description>
+          Rough model of the DIRECT Jupiter-246 
+          Lunar Crew Launch Vehicle Configuration.
+          FOR EDUCATIONAL PURPOSES ONLY.
+          This model is not sanctioned by nor is it a work of the DIRECT Launcher
+          team.
+        </description>
+        <reference
+          refID="http://www.launchcomplexmodels.com/Direct/documents/Baseball_Cards/J246-41.4003.10050_CLV_090606.pdf"
+          author="DIRECT Team"
+          title="Jupiter-246 - Lunar Crew Launch Vehicle Configuration"
+          date="6 June 2009"/>
+    </fileheader>
+
+    <metrics>
+        <wingarea unit="FT2"> 255 </wingarea> <!-- reference area, cross sectional area -->
+        <wingspan unit="FT"> 18 </wingspan> <!-- lateral reference length, max diameter -->
+        <chord unit="FT"> 300 </chord> <!-- longitudinal reference length, length -->
+        <location name="AERORP" unit="IN">
+            <x> 1500 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+      
+      <!--
+                   Weight (each)   Quantity    Subtotal    Total
+        SRBs                                              2,593,208
+          Case        185,000         2         370,000
+          Prop      1,111,604         2       2,223,208
+
+        Core Stage                                        1,768,670
+          Struct     119,479          1         119,479
+          LOX      1,389,592          1       1,389,592
+          LH2        231,599          1         231,599
+          Engines (4)  7,000          4          28,000
+
+        Interstage     8,748          1           8,748       8,748
+
+        Upper Stage                                         411,730
+          Struct      21,117          1          21,117
+          LOX        331,674          1         331,674
+          LH2         55,279          1          55,279
+          Engines (6)    610          6           3,660
+
+        SM            26,000          1          26,000      26,000
+
+        CM            20,000          1          20,000      20,000
+
+        LAS           16,000          1          16,000      16,000
+
+        Shroud        12,571          1          12,571      12,571
+
+        Total                                             4,856,927
+      -->
+
+      <!-- Item 0 -->
+      <pointmass name="Left SRB case weight">
+        <form shape="tube">
+          <radius unit="FT"> 6 </radius>
+          <length unit="FT"> 145 </length>
+        </form>
+        <weight unit="LBS"> 185000 </weight>
+        <location unit="IN">
+          <x> 2770.0 </x>
+          <y> -225.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 1 -->
+      <pointmass name="Right SRB case weight">
+        <form shape="tube">
+          <radius unit="FT"> 6 </radius>
+          <length unit="FT"> 145 </length>
+        </form>
+        <weight unit="LBS"> 185000 </weight>
+        <location unit="IN">
+          <x> 2770.0 </x>
+          <y>  225.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 2 -->
+      <pointmass name="Core Main Stage Structure">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 153 </length>
+        </form>
+        <weight unit="LBS"> 119479 </weight>
+        <location unit="IN">
+          <x> 2556.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+      
+      <!-- SSMEs weigh 7000 lbs each -->
+
+      <!-- Item 3 -->
+      <pointmass name="SSME 0">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>  165.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 4 -->
+      <pointmass name="SSME 1">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>   55.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 5 -->
+      <pointmass name="SSME 2">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>  -55.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 6 -->
+      <pointmass name="SSME 3">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z> -165.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 7 -->
+      <pointmass name="Interstage">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 20 </length>
+        </form>
+        <weight unit="LBS"> 8748 </weight>
+        <location unit="IN">
+          <x> 1600.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 8 -->
+      <pointmass name="Upper Stage Structure">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 30 </length>
+        </form>
+        <weight unit="LBS"> 21117 </weight>
+        <location unit="IN">
+          <x> 1176.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+      
+      <!-- Item 9 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #0">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0 </x>
+          <y>    0.0 </y>
+          <z>    8.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 10 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #1">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0   </x>
+          <y>    6.928 </y>
+          <z>    4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 11 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #2">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0   </x>
+          <y>    6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 12 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #3">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0 </x>
+          <y>    0.0 </y>
+          <z>   -8.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 13 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #4">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0   </x>
+          <y>   -6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 14 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #5">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="IN">
+          <x>  936.0 </x>
+          <y>   -6.928 </y>
+          <z>    4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 15 -->
+      <pointmass name="Service Module (w/prop)">
+        <form shape="cylinder">
+          <radius unit="FT"> 7.0 </radius>
+          <length unit="FT"> 14 </length>
+        </form>
+        <weight unit="LBS"> 26000 </weight>
+        <location unit="IN">
+          <x>  700.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+      
+      <!-- Item 16 -->
+      <pointmass name="Command Module">
+        <form shape="cylinder">
+          <radius unit="FT"> 7.0 </radius>
+          <length unit="FT"> 14 </length>
+        </form>
+        <weight unit="LBS"> 20000 </weight>
+        <location unit="IN">
+          <x>  400.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 17 -->
+      <pointmass name="LAS">
+        <form shape="cylinder">
+          <radius unit="FT"> 1.0 </radius>
+          <length unit="FT"> 20 </length>
+        </form>
+        <weight unit="LBS"> 16000 </weight>
+        <location unit="IN">
+          <x> 120.0 </x>
+          <y>   0.0 </y>
+          <z>   0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 18 -->
+      <pointmass name="Payload Shroud">
+        <form shape="tube">
+          <radius unit="FT"> 10.0 </radius>
+          <length unit="FT"> 40 </length>
+        </form>
+        <weight unit="LBS"> 12571 </weight>
+        <location unit="IN">
+          <x> 1176.0 </x>
+          <y>   0.0 </y>
+          <z>   0.0 </z>
+        </location>
+      </pointmass>
+
+    </mass_balance>
+
+    <ground_reactions>
+      <!-- Not used - hold down model keeps vehicle in place -->
+    </ground_reactions>
+  
+    <propulsion>
+
+      <!-- Left SRB -->
+      <engine file="SRB"> <!-- Left SRB, Engine [0]-->
+            <location unit="IN">
+                <x> 2676 </x>
+                <y> -225 </y>
+                <z>    0 </z>
+            </location>
+            <feed>0</feed>
+            <thruster file="SRB_nozzle">
+                <location unit="IN">
+                    <x> 3500 </x>
+                    <y> -225 </y>
+                    <z>    0 </z>
+                </location>
+            </thruster>
+      </engine>
+
+      <tank type="FUEL">    <!-- Tank number 0  Left SRB prop -->
+          <location unit="IN">
+            <x> 2676 </x>
+            <y> -225 </y>
+            <z>    0 </z>
+          </location>
+          <radius unit="FT">6.0</radius>
+          <grain_config type="CYLINDRICAL">
+            <length unit="FT"> 124.0 </length>
+            <bore_diameter unit="FT"> 2.0 </bore_diameter>
+          </grain_config>
+          <capacity unit="LBS"> 1114092 </capacity>
+          <contents unit="LBS"> 1114092 </contents>
+      </tank>
+
+      <!-- Right SRB, Engine [1]-->
+      
+      <engine file="SRB">
+        <location unit="IN">
+          <x> 2676 </x>
+          <y>  225 </y>
+          <z>   0 </z>
+        </location>
+        <feed>1</feed>
+        <thruster file="SRB_nozzle">
+          <location unit="IN">
+            <x> 3500 </x>
+            <y>  225 </y>
+            <z>    0 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <tank type="FUEL"> <!-- Tank number 1  Right SRB prop -->
+        <location unit="IN">
+          <x> 2676 </x>
+          <y>  225 </y>
+          <z>    0 </z>
+        </location>
+        <radius unit="FT">6.0</radius>
+        <grain_config type="CYLINDRICAL">
+          <length unit="FT"> 124.0 </length>
+          <bore_diameter unit="FT"> 2.0 </bore_diameter>
+        </grain_config>
+        <capacity unit="LBS"> 1114092 </capacity>
+        <contents unit="LBS"> 1114092 </contents>
+      </tank>
+
+      <!-- Core Stage -->
+
+      <engine file="SSME"> <!-- SSME Engine 0 -->
+            <location unit="IN">
+              <x> 3500 </x>
+              <y>    0 </y>
+              <z>  165 </z>
+            </location>
+            <feed>2</feed>
+            <feed>3</feed>
+            <thruster file="SSME_nozzle">
+              <location unit="IN">
+                <x> 3500 </x>
+                <y>    0 </y>
+                <z>  165 </z>
+              </location>
+            </thruster>
+      </engine>
+
+      <engine file="SSME"> <!-- SSME Engine 1 -->
+        <location unit="IN">
+          <x> 3500 </x>
+          <y>    0 </y>
+          <z>   55 </z>
+        </location>
+        <feed>2</feed>
+        <feed>3</feed>
+        <thruster file="SSME_nozzle">
+          <location unit="IN">
+            <x> 3500 </x>
+            <y>    0 </y>
+            <z>   55 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="SSME"> <!-- SSME Engine 2 -->
+        <location unit="IN">
+          <x> 3500 </x>
+          <y>    0 </y>
+          <z>  -55 </z>
+        </location>
+        <feed>2</feed>
+        <feed>3</feed>
+        <thruster file="SSME_nozzle">
+          <location unit="IN">
+            <x> 3500 </x>
+            <y>    0 </y>
+            <z>  -55 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="SSME"> <!-- SSME Engine 3 -->
+        <location unit="IN">
+          <x> 3500 </x>
+          <y>    0 </y>
+          <z> -165 </z>
+        </location>
+        <feed>2</feed>
+        <feed>3</feed>
+        <thruster file="SSME_nozzle">
+          <location unit="IN">
+            <x> 3500 </x>
+            <y>    0 </y>
+            <z> -165 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <tank type="OXIDIZER">
+          <!-- Tank number 2 (LOX) -->
+          <location unit="IN">
+            <x> 1956 </x>
+            <y>    0 </y>
+            <z>    0 </z>
+          </location>
+        <drain_location unit="IN">
+          <x> 2076 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </drain_location>
+          <capacity unit="LBS"> 1389500 </capacity>
+          <contents unit="LBS"> 1389500 </contents>
+        </tank>
+
+      <tank type="FUEL">
+          <!-- Tank number 3 (LH2) -->
+          <location unit="IN">
+            <x> 2520 </x>
+            <y>    0 </y>
+            <z>    0 </z>
+          </location>
+          <drain_location unit="IN">
+            <x>  3300 </x>
+            <y>    0 </y>
+            <z>    0 </z>
+          </drain_location>
+          <capacity unit="LBS"> 231571 </capacity>
+          <contents unit="LBS"> 231571 </contents>
+      </tank>
+
+      <tank type="OXIDIZER">
+        <!-- Tank number 4 (LOX) Upper Stage -->
+        <location unit="IN">
+          <x> 1250 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </location>
+        <drain_location unit="IN">
+          <x> 1356 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </drain_location>
+        <capacity unit="LBS"> 331674 </capacity>
+        <contents unit="LBS"> 331674 </contents>
+      </tank>
+
+      <tank type="FUEL">
+        <!-- Tank number 5 (LH2) Upper Stage -->
+        <location unit="IN">
+          <x> 1476 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </location>
+        <drain_location unit="IN">
+          <x> 1596 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </drain_location>
+        <capacity unit="LBS"> 55279 </capacity>
+        <contents unit="LBS"> 55279 </contents>
+      </tank>
+
+    </propulsion>
+
+    <system name="J246 Guidance Executive" file="J246GuidanceExecutive.xml"/>
+    <system name="J246 Control System" file="J246ControlSystem.xml"/>
+    <system name="J246 First Stage Effectors" file="J246FirstStageEffectors.xml"/>
+    <system name="J246 Second Stage Effectors" file="J246SecondStageEffectors.xml"/>
+
+  <aerodynamics>
+
+        <axis name="DRAG">
+            <function name="aero/coefficient/CDmin">
+                <description>Drag_minimum</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                      <table>
+                          <independentVar>velocities/mach</independentVar>
+                          <tableData>
+                              0.0000        0.0610
+                              0.1000        0.0610
+                              0.5000        0.0610
+                              0.7000        0.0620
+                              0.8000        0.0650
+                              0.9000        0.0680
+                              0.9900        0.0900
+                              1.0000        0.0900
+                              1.0100        0.0900
+                              1.1000        0.1300
+                              1.2000        0.1200
+                              1.3000        0.1100
+                              1.4000        0.1000
+                              1.5000        0.0930
+                              2.0000        0.0800
+                              3.0000        0.0620
+                              4.0000        0.0480
+                              5.0000        0.0400
+                              6.0000        0.0380
+                              7.0000        0.0370
+                              8.0000        0.0370
+                              9.0000`        0.0370
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="SIDE">
+            <function name="aero/coefficient/CYbeta">
+                <description>Side force due to beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/beta-rad</property>
+                      <table>
+                          <independentVar>velocities/mach</independentVar>
+                          <tableData>
+                              0.0000        -4.5000
+                              0.4000        -3.8000
+                              0.6000        -3.6000
+                              1.0500        -4.5000
+                              1.4000        -4.0000
+                              2.8000        -2.5000
+                              6.0000        -1.1000
+                              9.0000        -1.0000
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="LIFT">
+            <function name="aero/coefficient/CLalpha">
+                <description>Lift force due to alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/alpha-rad</property>
+                      <table>
+                          <independentVar>velocities/mach</independentVar>
+                          <tableData>
+                              0.0000        4.5000
+                              0.4000        3.8000
+                              0.6000        3.6000
+                              1.0500        4.5000
+                              1.4000        4.0000
+                              2.8000        2.5000
+                              6.0000        1.1000
+                              9.0000        1.0000
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="ROLL">
+        </axis>
+
+        <axis name="PITCH">
+        </axis>
+
+        <axis name="YAW">
+        </axis>
+
+    </aerodynamics>
+
+    <output name="J246.csv" type="CSV" rate="10">
+        <simulation> OFF </simulation>
+        <atmosphere> ON </atmosphere>
+        <massprops> ON </massprops>
+        <aerosurfaces> OFF </aerosurfaces>
+        <rates> ON </rates>
+        <velocities> ON </velocities>
+        <forces> ON </forces>
+        <moments> ON </moments>
+        <position> ON </position>
+        <propulsion> ON </propulsion>
+        <fcs> ON </fcs>
+        <ground_reactions> OFF </ground_reactions>
+        <coefficients> OFF </coefficients>
+    </output>
+
+</fdm_config>
