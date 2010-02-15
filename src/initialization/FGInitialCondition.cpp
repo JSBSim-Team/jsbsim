@@ -56,12 +56,13 @@ INCLUDES
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.34 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.35 2010/02/15 03:22:57 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -842,8 +843,6 @@ double FGInitialCondition::GetWindDirDegIC(void) const {
 
 bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
-  int n;
-
   string sep = "/";
   if( useStoredPath ) {
     init_file_name = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
@@ -863,6 +862,26 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     cerr << "File: " << init_file_name << " is not a reset file." << endl;
     exit(-1);
   }
+
+  double version = document->GetAttributeValueAsNumber("version");
+  if (version == HUGE_VAL) {
+    return Load_v1(); // Default to the old version
+  } else if (version >= 3.0) {
+    cerr << "Only initialization file formats 1 and 2 are currently supported" << endl;
+    exit (-1);
+  } else if (version >= 2.0) {
+    return Load_v2();
+  } else if (version >= 1.0) {
+    return Load_v1();
+  } 
+
+}
+
+//******************************************************************************
+
+bool FGInitialCondition::Load_v1(void)
+{
+  int n;
 
   if (document->FindElement("latitude"))
     SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
@@ -937,6 +956,160 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   fdmex->RunIC();
 
   return true;
+}
+
+//******************************************************************************
+
+bool FGInitialCondition::Load_v2(void)
+{
+  int n;
+  FGColumnVector3 vLoc, vOrient;
+  bool result = true;
+  FGInertial* Inertial = fdmex->GetInertial();
+  FGPropagate* Propagate = fdmex->GetPropagate();
+
+  if (document->FindElement("earth_position_angle")) {
+    double epa = document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD");
+    Inertial->SetEarthPositionAngle(epa);
+  }
+
+  // Initialize vehicle position
+  //
+  // Allowable frames:
+  // - ECI (Earth Centered Inertial)
+  // - ECEF (Earth Centered, Earth Fixed)
+
+  Element* position = document->FindElement("position");
+  if (position) {
+    string frame = position->GetAttributeValue("frame");
+    frame = to_lower(frame);
+    if (frame == "eci") {
+      vLoc = position->FindElementTripletConvertTo("FT");
+      // Need to transform this to ECEF for storage and use in FGLocation.
+      vLoc = Propagate->GetTi2ec()*vLoc;
+    } else if (frame == "ecef") {
+      // Move vLoc query until after lat/lon/alt query to eliminate spurious warning msgs.
+      vLoc = position->FindElementTripletConvertTo("FT");
+      if (vLoc.Magnitude() == 0.0) {
+        Propagate->SetLatitudeDeg(position->FindElementValueAsNumberConvertTo("latitude", "DEG"));
+        Propagate->SetLongitudeDeg(position->FindElementValueAsNumberConvertTo("longitude", "DEG"));
+        if (position->FindElement("radius")) {
+          radius_to_vehicle = position->FindElementValueAsNumberConvertTo("radius", "FT");
+          SetAltitudeASLFtIC(radius_to_vehicle - sea_level_radius);
+        } else if (position->FindElement("altitudeAGL")) {
+          SetAltitudeAGLFtIC(position->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+        } else if (position->FindElement("altitudeMSL")) {
+          SetAltitudeASLFtIC(position->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+        } else {
+          cerr << endl << "  No altitude or radius initial condition is given." << endl;
+          result = false;
+        }
+      }
+    } else {
+      cerr << endl << "  Neither ECI nor ECEF frame is specified for initial position." << endl;
+      result = false;
+    }
+  } else {
+    cerr << endl << "  Initial position not specified in this initialization file." << endl;
+    result = false;
+  }
+
+  // End of position initialization
+
+  // Initialize aircraft orientation
+  // Allowable frames
+  // - ECI (Earth Centered Inertial)
+  // - ECEF (Earth Centered, Earth Fixed)
+  // - Local
+  //
+  // Need to convert the provided orientation to an ECI orientation, using 
+  // the given orientation and knowledge of the Earth position angle.
+  // This could be done using matrices (where in the subscript "b/a",
+  // it is meant "a with respect to b", and where b=body frame, 
+  // i=inertial frame, and e=ecef frame) as:
+  //
+  // M_i/b = M_i/e * M_e/n * M_n/b
+  //
+  // Or, using quaternions:
+  //
+  // Q_i/b = Q_i/e * Q_e/n * Q_n/b
+  //
+  // Use the specific matrices as needed. The above example of course is for the whole
+  // body to inertial orientation.
+  // The new orientation angles can be extracted from the matrix or the quaternion.
+  // ToDo: Do we need to deal with normalization of the quaternions here?
+
+  Element* orientation_el = document->FindElement("orientation");
+  if (orientation_el) {
+    string frame = orientation_el->GetAttributeValue("frame");
+    frame = to_lower(frame);
+    vOrient = orientation_el->FindElementTripletConvertTo("RAD");
+    if (frame == "eci") {
+      // Don't need to do anything
+    } else if (frame == "ecef") {
+      // In this case we are given the Euler angles representing the orientation of
+      // the body with respect to the ECEF system, represented by the M_e/b Matrix.
+      // We want the body orientation with respect to the inertial system:
+      //
+      // M_i/b = M_i/e * M_e/b
+      //
+      // Using quaternions:
+      //
+      // Q_i/b = Q_i/e * Q_e/b
+      //
+      FGQuaternion QuatEC2B(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_e/b
+      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_i/e from matrix
+      FGQuaternion QuatI2Body = QuatI2EC*QuatEC2B; // Q_i/b = Q_i/e * Q_e/b 
+    } else if (frame == "local") {
+      // In this case, we are supplying the Euler angles for the vehicle with
+      // respect to the local (NED frame). This is the most common way of 
+      // initializing the orientation of aircraft. The matrix representation is:
+      //
+      // M_i/b = M_i/e * M_e/n * M_n/b
+      //
+      // Or, using quaternions:
+      //
+      // Q_i/b = Q_i/e * Q_e/n * Q_n/b
+      //
+      FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_n/b
+      FGQuaternion QuatEC2Local = Propagate->GetTec2l(); // Get Q_e/n from matrix
+      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_i/e from matrix
+      FGQuaternion QuatI2Body = QuatI2EC*QuatEC2Local*QuatLocal2Body; // Q_i/b = Q_i/e * Q_e/n * Q_n/b
+    } else {
+      cerr << endl << fgred << "  Orientation frame type: \"" << frame
+           << "\" is not supported!" << reset << endl << endl;
+      result = false;
+    }
+  }
+
+  // Allowable frames
+  // - ECI (Earth Centered Inertial)
+  // - ECEF (Earth Centered, Earth Fixed)
+  // - Local
+  // - Body
+  if (document->FindElement("velocity")) {
+  }
+
+  // Allowable frames
+  // - ECI (Earth Centered Inertial)
+  // - ECEF (Earth Centered, Earth Fixed)
+  // - Local
+  // - Body
+  if (document->FindElement("attitude_rate")) {
+  }
+
+  // Check to see if any engines are specified to be initialized in a running state
+  FGPropulsion* propulsion = fdmex->GetPropulsion();
+  Element* running_elements = document->FindElement("running");
+  while (running_elements) {
+    n = int(running_elements->GetDataAsNumber());
+    propulsion->InitRunning(n);
+    running_elements = document->FindNextElement("running");
+  }
+
+  fdmex->RunIC();
+
+  return result;
 }
 
 //******************************************************************************
