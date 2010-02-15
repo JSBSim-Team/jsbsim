@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.32 2009/12/22 22:51:09 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.33 2010/02/15 03:25:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.32 2009/12/22 22:51:09 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.33 2010/02/15 03:25:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,21 +107,29 @@ public:
         fixed (ECEF) frame.
         units ft */
     FGLocation vLocation;
+
     /** The velocity vector of the vehicle with respect to the ECEF frame,
         expressed in the body system.
         units ft/sec */
     FGColumnVector3 vUVW;
+
     /** The angular velocity vector for the vehicle relative to the ECEF frame,
         expressed in the body frame.
         units rad/sec */
     FGColumnVector3 vPQR;
+
     /** The angular velocity vector for the vehicle body frame relative to the
         ECI frame, expressed in the body frame.
         units rad/sec */
     FGColumnVector3 vPQRi;
+
     /** The current orientation of the vehicle, that is, the orientation of the
         body frame relative to the local, vehicle-carried, NED frame. */
     FGQuaternion vQtrn;
+
+    /** The current orientation of the vehicle, that is, the orientation of the
+        body frame relative to the inertial (ECI) frame. */
+    FGQuaternion vQtrni;
 
     FGColumnVector3 vInertialVelocity;
 
@@ -216,7 +224,7 @@ public:
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eP=1, eQ=2, eR=3.
       units rad/sec
-      @return The body frame angular rates in rad/sec.
+      @return The body frame inertial angular rates in rad/sec.
   */
   const FGColumnVector3& GetPQRi(void) const {return VState.vPQRi;}
 
@@ -467,6 +475,15 @@ public:
       @return a reference to the local-to-ECEF matrix.  */
   const FGMatrix33& GetTl2ec(void) const { return VState.vLocation.GetTl2ec(); }
 
+  /** Retrieves the local-to-inertial transformation matrix.
+      @return a reference to the local-to-inertial transformation matrix.  */
+  const FGMatrix33& GetTl2i(void) const { return Tl2i; }
+
+  /** Retrieves the inertial-to-local transformation matrix.
+      @return a reference to the inertial-to-local matrix.  */
+  const FGMatrix33& GetTi2l(void) const { return Ti2l; }
+
+
   VehicleState* GetVState(void) { return &VState; }
 
   void SetVState(VehicleState* vstate) {
@@ -511,7 +528,7 @@ public:
 
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);
-  void CalculateLocationdot(void);
+  void CalculateInertialVelocity(void);
   void CalculateUVWdot(void);
 
 private:
@@ -523,7 +540,7 @@ private:
   FGColumnVector3 vVel;
   FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot, last3_vPQRdot;
   FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot, last3_vUVWdot;
-  FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot, last3_vLocationDot;
+  FGColumnVector3 vInertialVelocity, last_vInertialVelocity, last2_vInertialVelocity, last3_vInertialVelocity;
   FGColumnVector3 vLocation;
   FGColumnVector3 vDeltaXYZEC;
   FGColumnVector3 vOmega;  // The Earth angular velocity vector
@@ -539,6 +556,8 @@ private:
   FGMatrix33 Ti2ec;  // ECI to ECEF frame matrix copy for immediate local use
   FGMatrix33 Ti2b;   // ECI to body frame rotation matrix
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
+  FGMatrix33 Ti2l;
+  FGMatrix33 Tl2i;
   
   double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
   double radInv;
