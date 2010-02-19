@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.12 2010/02/14 22:59:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.13 2010/02/19 00:30:00 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,6 +99,12 @@ FGQuaternion::FGQuaternion(FGColumnVector3 vOrient): mCacheValid(false)
 }
  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// This function computes the quaternion that describes the relationship of the
+// body frame with respect to another frame, such as the ECI or ECEF frames. The
+// Euler angles used represent a 3-2-1 (psi, theta, phi) rotation sequence from
+// the reference frame to the body frame. See "Quaternions and Rotation
+// Sequences", Jack B. Kuipers, sections 9.2 and 7.6. 
 
 void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
 {
@@ -198,8 +204,8 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   double q2q4 = q2*q4;
   double q3q4 = q3*q4;
   
-  mT(1,1) = q1q1 + q2q2 - q3q3 - q4q4;
-  mT(1,2) = 2.0*(q2q3 + q1q4);
+  mT(1,1) = q1q1 + q2q2 - q3q3 - q4q4; // This is found from Eqn. 1.3-32 in
+  mT(1,2) = 2.0*(q2q3 + q1q4);         // Stevens and Lewis
   mT(1,3) = 2.0*(q2q4 - q1q3);
   mT(2,1) = 2.0*(q2q3 - q1q4);
   mT(2,2) = q1q1 - q2q2 + q3q3 - q4q4;
@@ -208,12 +214,14 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mT(3,2) = 2.0*(q3q4 - q1q2);
   mT(3,3) = q1q1 - q2q2 - q3q3 + q4q4;
 
-  // Since this is an orthogonal matrix, the inverse is simply
-  // the transpose.
+  // Since this is an orthogonal matrix, the inverse is simply the transpose.
+
   mTInv = mT;
   mTInv.T();
   
   // Compute the Euler-angles
+  // Also see Jack Kuipers, "Quaternions and Rotation Sequences", section 7.8..
+
   if (mT(3,3) == 0.0)
     mEulerAngles(ePhi) = 0.5*M_PI;
   else

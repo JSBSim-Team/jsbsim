@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.35 2010/02/15 03:22:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.36 2010/02/19 00:30:00 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -705,23 +705,22 @@ double FGInitialCondition::calcVcas(double Mach) {
   double psl=fdmex->GetAtmosphere()->GetPressureSL();
   double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
   double pt,A,B,D,vcas;
-  if(Mach < 0) Mach=0;
-  if(Mach < 1)    //calculate total pressure assuming isentropic flow
+
+  if (Mach < 0) Mach=0;
+  if (Mach < 1)    //calculate total pressure assuming isentropic flow
     pt=p*pow((1 + 0.2*Mach*Mach),3.5);
   else {
     // shock in front of pitot tube, we'll assume its normal and use
     // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
-    // pressure behind the shock to the static pressure in front
-
-
-    //the normal shock assumption should not be a bad one -- most supersonic
-    //aircraft place the pitot probe out front so that it is the forward
-    //most point on the aircraft.  The real shock would, of course, take
-    //on something like the shape of a rounded-off cone but, here again,
-    //the assumption should be good since the opening of the pitot probe
-    //is very small and, therefore, the effects of the shock curvature
-    //should be small as well. AFAIK, this approach is fairly well accepted
-    //within the aerospace community
+    // pressure behind the shock to the static pressure in front of
+    // the normal shock assumption should not be a bad one -- most supersonic
+    // aircraft place the pitot probe out front so that it is the forward
+    // most point on the aircraft.  The real shock would, of course, take
+    // on something like the shape of a rounded-off cone but, here again,
+    // the assumption should be good since the opening of the pitot probe
+    // is very small and, therefore, the effects of the shock curvature
+    // should be small as well. AFAIK, this approach is fairly well accepted
+    // within the aerospace community
 
     B = 5.76*Mach*Mach/(5.6*Mach*Mach - 0.8);
 
@@ -1016,7 +1015,7 @@ bool FGInitialCondition::Load_v2(void)
 
   // End of position initialization
 
-  // Initialize aircraft orientation
+  // Initialize vehicle orientation
   // Allowable frames
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
@@ -1025,14 +1024,14 @@ bool FGInitialCondition::Load_v2(void)
   // Need to convert the provided orientation to an ECI orientation, using 
   // the given orientation and knowledge of the Earth position angle.
   // This could be done using matrices (where in the subscript "b/a",
-  // it is meant "a with respect to b", and where b=body frame, 
+  // it is meant "b with respect to a", and where b=body frame, 
   // i=inertial frame, and e=ecef frame) as:
   //
-  // M_i/b = M_i/e * M_e/n * M_n/b
+  // C_b/i =  C_b/e * C_e/i
   //
-  // Or, using quaternions:
+  // Using quaternions (note reverse ordering compared to matrix representation):
   //
-  // Q_i/b = Q_i/e * Q_e/n * Q_n/b
+  // Q_b/i = Q_e/i * Q_b/e
   //
   // Use the specific matrices as needed. The above example of course is for the whole
   // body to inertial orientation.
@@ -1044,50 +1043,84 @@ bool FGInitialCondition::Load_v2(void)
     string frame = orientation_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     vOrient = orientation_el->FindElementTripletConvertTo("RAD");
+    FGQuaternion QuatI2Body;
     if (frame == "eci") {
-      // Don't need to do anything
+
+      QuatI2Body = FGQuaternion(vOrient);
+
     } else if (frame == "ecef") {
+
       // In this case we are given the Euler angles representing the orientation of
-      // the body with respect to the ECEF system, represented by the M_e/b Matrix.
+      // the body with respect to the ECEF system, represented by the C_e/b Matrix.
       // We want the body orientation with respect to the inertial system:
       //
-      // M_i/b = M_i/e * M_e/b
+      // C_b/i =  C_b/e * C_e/i
       //
-      // Using quaternions:
+      // Using quaternions (note reverse ordering compared to matrix representation):
       //
-      // Q_i/b = Q_i/e * Q_e/b
-      //
-      FGQuaternion QuatEC2B(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_e/b
-      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_i/e from matrix
-      FGQuaternion QuatI2Body = QuatI2EC*QuatEC2B; // Q_i/b = Q_i/e * Q_e/b 
+      // Q_b/i = Q_e/i * Q_b/e
+
+      FGQuaternion QuatEC2B(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
+      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
+      QuatI2Body = QuatI2EC*QuatEC2B; // Q_b/i = Q_e/i * Q_b/e 
+
     } else if (frame == "local") {
+
       // In this case, we are supplying the Euler angles for the vehicle with
-      // respect to the local (NED frame). This is the most common way of 
-      // initializing the orientation of aircraft. The matrix representation is:
+      // respect to the local (NED frame), also called the navigation frame.
+      // This is the most common way of initializing the orientation of
+      // aircraft. The matrix representation is:
       //
-      // M_i/b = M_i/e * M_e/n * M_n/b
+      // C_b/i = C_b/n * C_n/e * C_e/i
       //
-      // Or, using quaternions:
+      // Or, using quaternions (note reverse ordering compared to matrix representation):
       //
-      // Q_i/b = Q_i/e * Q_e/n * Q_n/b
-      //
-      FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_n/b
-      FGQuaternion QuatEC2Local = Propagate->GetTec2l(); // Get Q_e/n from matrix
-      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_i/e from matrix
-      FGQuaternion QuatI2Body = QuatI2EC*QuatEC2Local*QuatLocal2Body; // Q_i/b = Q_i/e * Q_e/n * Q_n/b
+      // Q_b/i = Q_e/i * Q_n/e * Q_b/n
+
+      FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_b/n
+      FGQuaternion QuatEC2Local = Propagate->GetTec2l(); // Get Q_n/e from matrix
+      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
+      QuatI2Body = QuatI2EC*QuatEC2Local*QuatLocal2Body; // Q_b/i = Q_e/i * Q_n/e * Q_b/n
+
     } else {
+
       cerr << endl << fgred << "  Orientation frame type: \"" << frame
            << "\" is not supported!" << reset << endl << endl;
       result = false;
+
     }
   }
 
+  // Initialize vehicle velocity
   // Allowable frames
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Local
   // - Body
-  if (document->FindElement("velocity")) {
+  Element* velocity_el = document->FindElement("velocity");
+  if (velocity_el) {
+    string frame = velocity_el->GetAttributeValue("frame");
+    frame = to_lower(frame);
+    FGColumnVector3 vInertialVelocity;
+    FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
+    if (frame == "eci") {
+      vInertialVelocity = vInitVelocity;
+    } else if (frame == "ecef") {
+      FGMatrix33 mTec2i = Propagate->GetTec2i(); // Get C_i/e
+      vInertialVelocity = mTec2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+    } else if (frame == "local") {
+      FGMatrix33 mTl2i = Propagate->GetTl2i();
+      vInertialVelocity = mTl2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+    } else if (frame == "body") {
+      FGMatrix33 mTb2i = Propagate->GetTb2i();
+      vInertialVelocity = mTb2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+    } else {
+
+      cerr << endl << fgred << "  Velocity frame type: \"" << frame
+           << "\" is not supported!" << reset << endl << endl;
+      result = false;
+
+    }
   }
 
   // Allowable frames

@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.17 2010/01/25 12:25:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.18 2010/02/19 00:30:00 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,7 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Compute the ECEF to ECI transformation matrix using Stevens and Lewis "Aircraft
 // Control and Simulation", second edition, eqn. 1.4-12, pg. 39. In Stevens and Lewis
-// notation, this is C_i/e, a rotation from ECEF to ECI.
+// notation, this is C_i/e, a transformation from ECEF to ECI.
 
 const FGMatrix33& FGLocation::GetTec2i(double epa)
 {
@@ -219,8 +219,9 @@ const FGMatrix33& FGLocation::GetTec2i(double epa)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // This is given in Stevens and Lewis "Aircraft
 // Control and Simulation", second edition, eqn. 1.4-12, pg. 39
-// The notation in Stevens and Lewis is: C_e/i, that is, a rotation from ECI to
-// ECEF.
+// The notation in Stevens and Lewis is: C_e/i. This represents a transformation
+// from ECI to ECEF - and the orientation of the ECEF frame relative to the ECI
+// frame.
 
 const FGMatrix33& FGLocation::GetTi2ec(double epa)
 {
@@ -275,10 +276,17 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   // Compute the transform matrices from and to the earth centered frame.
   // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
-  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e.
+  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e - the 
+  // orientation of the navigation (local) frame relative to the ECEF frame,
+  // and a transformation from ECEF to nav (local) frame.
+
   mTec2l = FGMatrix33( -cosLon*sinLat, -sinLon*sinLat,  cosLat,
                            -sinLon   ,     cosLon    ,    0.0 ,
                        -cosLon*cosLat, -sinLon*cosLat, -sinLat  );
+
+  // In Stevens and Lewis notation, this is C_e/n - the 
+  // orientation of the ECEF frame relative to the nav (local) frame,
+  // and a transformation from nav (local) to ECEF frame.
 
   mTl2ec = mTec2l.Transposed();
   

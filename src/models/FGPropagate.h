@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.33 2010/02/15 03:25:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.34 2010/02/19 00:30:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.33 2010/02/15 03:25:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.34 2010/02/19 00:30:00 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -454,6 +454,14 @@ public:
   /** Retrieves the body-to-ECEF transformation matrix.
       @return a reference to the body-to-ECEF matrix.  */
   const FGMatrix33& GetTb2ec(void) const { return Tb2ec; }
+
+  /** Retrieves the ECI-to-body transformation matrix.
+      @return a reference to the ECI-to-body transformation matrix.  */
+  const FGMatrix33& GetTi2b(void) const { return Ti2b; }
+
+  /** Retrieves the body-to-ECI transformation matrix.
+      @return a reference to the body-to-ECI matrix.  */
+  const FGMatrix33& GetTb2i(void) const { return Tb2i; }
 
   /** Retrieves the ECEF-to-ECI transformation matrix.
       @return a reference to the ECEF-to-ECI transformation matrix.  */

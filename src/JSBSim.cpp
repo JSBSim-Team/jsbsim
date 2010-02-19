@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.54 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.55 2010/02/19 00:29:59 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -458,6 +458,8 @@ bool options(int count, char **arg)
     PrintHelp();
     exit(0);
   }
+
+  cout.setf(ios_base::fixed);
 
 #define gripe cerr << "Option '" << keyword 	\
 	<< "' requires a value, as in '"	\

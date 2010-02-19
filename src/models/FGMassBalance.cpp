@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.30 2010/02/06 11:42:58 andgi Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.31 2010/02/19 00:30:00 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,6 +456,8 @@ void FGMassBalance::GetMassPropertiesReport(void) const
        << setw(12) << mJ(2,2)
        << setw(12) << mJ(3,3)
        << normint << endl;
+
+  cout.setf(ios_base::fixed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
