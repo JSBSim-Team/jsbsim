@@ -8,7 +8,7 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2006-01-04 </filecreationdate>
-        <version>$Revision: 1.37 $</version>
+        <version>$Revision: 1.38 $</version>
         <description> Models a Boeing 737. </description>
         <license>
           <licenseName>GPL (General Public License)</licenseName>
@@ -79,7 +79,7 @@
             <spring_coeff unit="LBS/FT"> 90000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 4000 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">8000</damping_coeff_rebound>
-            <relaxation_velocity>
+<!--            <relaxation_velocity>
               <rolling unit="FT/SEC">0.7</rolling>
               <side unit="FT/SEC">0.7</side>
             </relaxation_velocity>
@@ -88,7 +88,19 @@
               <side>120.0 </side>
             </force_lag_filter>
             <wheel_slip_filter> 120.0 </wheel_slip_filter>
-            <max_steer unit="DEG"> 35 </max_steer>
+-->
+          <relaxation_velocity>
+            <rolling unit="FT/SEC">0.7</rolling>
+            <side unit="FT/SEC">0.7</side>
+          </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120.0 </rolling>
+            <side>120.0 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 120.0 </wheel_slip_filter>
+
+
+          <max_steer unit="DEG"> 35 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
@@ -104,7 +116,7 @@
             <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">20000</damping_coeff_rebound>
-            <relaxation_velocity>
+<!--            <relaxation_velocity>
               <rolling unit="FT/SEC">0.7</rolling>
               <side unit="FT/SEC">0.7</side>
             </relaxation_velocity>
@@ -113,7 +125,18 @@
               <side> 120.0 </side>
             </force_lag_filter>
             <wheel_slip_filter> 120.0 </wheel_slip_filter>
-            <max_steer unit="DEG"> 0.0 </max_steer>
+-->
+          <relaxation_velocity>
+            <rolling unit="FT/SEC">0.7</rolling>
+            <side unit="FT/SEC">0.7</side>
+          </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120.0 </rolling>
+            <side>120.0 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 120.0 </wheel_slip_filter>
+
+          <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
         </contact>
@@ -129,7 +152,7 @@
             <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">20000</damping_coeff_rebound>
-            <relaxation_velocity>
+<!--            <relaxation_velocity>
               <rolling unit="FT/SEC">0.7</rolling>
               <side unit="FT/SEC">0.7</side>
             </relaxation_velocity>
@@ -138,6 +161,18 @@
               <side> 120.0 </side>
             </force_lag_filter>
             <wheel_slip_filter> 120.0 </wheel_slip_filter>
+-->            
+          <relaxation_velocity>
+            <rolling unit="FT/SEC">0.7</rolling>
+            <side unit="FT/SEC">0.7</side>
+          </relaxation_velocity>
+          <force_lag_filter>
+            <rolling> 120.0 </rolling>
+            <side>120.0 </side>
+          </force_lag_filter>
+          <wheel_slip_filter> 120.0 </wheel_slip_filter>
+            
+            
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
@@ -890,7 +925,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="B737_datalog.csv" rate="20" type="CSV">
+    <output name="B737_datalog.csv" rate="60" type="CSV">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> position/h-sl-ft </property>
@@ -902,7 +937,7 @@
         <forces> ON </forces>
         <moments> ON </moments>
         <position> ON </position>
-        <propulsion> ON </propulsion>
+        <propulsion> OFF </propulsion>
         <aerosurfaces> OFF </aerosurfaces>
         <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>

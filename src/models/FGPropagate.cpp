@@ -58,8 +58,8 @@ INCLUDES
 #include <iostream>
 
 #include "FGPropagate.h"
+#include "FGGroundReactions.h"
 #include "FGFDMExec.h"
-#include "FGState.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGInertial.h"
@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.47 2010/02/15 03:25:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.48 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,17 +300,17 @@ static int ctr;
 
   // These local copies of the transformation matrices are for use this
   // pass through Run() only.
+  Ti2ec = GetTi2ec();          // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
   Tl2b  = GetTl2b();           // local to body frame transform
   Tb2l  = Tl2b.Transposed();   // body to local frame transform
   Tl2ec = GetTl2ec();          // local to ECEF transform
   Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
   Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
-  Ti2ec = GetTi2ec();          // ECI to ECEF transform
-  Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
   Ti2b  = Tec2b*Ti2ec;         // ECI to body frame transform
   Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
-  Ti2l  = Tec2l * Ti2ec;
+  Ti2l  = GetTi2l();
   Tl2i  = Ti2l.Transposed();
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
@@ -323,7 +323,7 @@ static int ctr;
   CalculateInertialVelocity(); // Translational position derivative
 
   // Integrate to propagate the state
-  double dt = State->Getdt()*rate;  // The 'stepsize'
+  double dt = FDMExec->GetDeltaT()*rate;  // The 'stepsize'
 
   // Propagate rotational velocity
 
@@ -528,9 +528,23 @@ void FGPropagate::CalculateInertialVelocity(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropagate::SetInertialOrientation(FGQuaternion Qi) {
+  VState.vQtrni = Qi;
+  FGQuaternion vQuatEPA(0,0,Inertial->GetEarthPositionAngle());
+  VState.vQtrn = VState.vQtrni * vQuatEPA.Inverse();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
+  VState.vInertialVelocity = Vi;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::RecomputeLocalTerrainRadius(void)
 {
-  double t = State->Getsim_time();
+  double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
   FGLocation contactloc;
@@ -555,7 +569,9 @@ double FGPropagate::GetTerrainElevation(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+//Todo: when should this be called - when should the new EPA be used to
+// calculate the transformation matrix, so that the matrix is not a step
+// ahead of the sim and the associated calculations?
 const FGMatrix33& FGPropagate::GetTi2ec(void)
 {
   return VState.vLocation.GetTi2ec(Inertial->GetEarthPositionAngle());

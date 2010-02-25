@@ -40,7 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGOutput.h"
-#include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
@@ -53,6 +52,7 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGInertial.h"
+#include "FGPropulsion.h"
 #include "models/propulsion/FGEngine.h"
 #include "models/propulsion/FGTank.h"
 #include "models/propulsion/FGPiston.h"
@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.45 2009/12/22 22:51:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.46 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -187,7 +187,7 @@ bool FGOutput::Run(void)
 {
   if (FGModel::Run()) return true;
 
-  if (enabled && !State->IntegrationSuspended()&& !FDMExec->Holding()) {
+  if (enabled && !FDMExec->IntegrationSuspended()&& !FDMExec->Holding()) {
     RunPreFunctions();
     if (Type == otSocket) {
       SocketOutput();
@@ -368,7 +368,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     dFirstPass = false;
   }
 
-  outstream << State->Getsim_time();
+  outstream << FDMExec->GetSimTime();
   if (SubSystems & ssSimulation) {
   }
   if (SubSystems & ssAerosurfaces) {
@@ -823,7 +823,7 @@ void FGOutput::SocketOutput(void)
   }
 
   socket->Clear();
-  socket->Append(State->Getsim_time());
+  socket->Append(FDMExec->GetSimTime());
 
   if (SubSystems & ssAerosurfaces) {
     socket->Append(FCS->GetDaCmd());
@@ -1041,7 +1041,7 @@ void FGOutput::SetRate(int rtHz)
 {
   rtHz = rtHz>1000?1000:(rtHz<0?0:rtHz);
   if (rtHz > 0) {
-    rate = (int)(0.5 + 1.0/(State->Getdt()*rtHz));
+    rate = (int)(0.5 + 1.0/(FDMExec->GetDeltaT()*rtHz));
     Enable();
   } else {
     rate = 1;
@@ -1091,7 +1091,7 @@ void FGOutput::Debug(int from)
       }
       switch (Type) {
       case otCSV:
-        cout << scratch << " in CSV format output at rate " << 1/(State->Getdt()*rate) << " Hz" << endl;
+        cout << scratch << " in CSV format output at rate " << 1/(FDMExec->GetDeltaT()*rate) << " Hz" << endl;
         break;
       case otNone:
       default:

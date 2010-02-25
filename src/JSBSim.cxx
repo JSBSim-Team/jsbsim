@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.54 2009/10/24 22:59:30 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.55 2010/02/25 05:21:36 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -46,7 +46,6 @@
 #include "JSBSim.hxx"
 #include <FDM/JSBSim/FGFDMExec.h>
 #include <FDM/JSBSim/FGJSBBase.h>
-#include <FDM/JSBSim/FGState.h>
 #include <FDM/JSBSim/initialization/FGInitialCondition.h>
 #include <FDM/JSBSim/initialization/FGTrim.h>
 #include <FDM/JSBSim/models/FGModel.h>
@@ -148,7 +147,6 @@ FGJSBsim::FGJSBsim( double dt )
     // Register ground callback.
     fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
 
-    State           = fdmex->GetState();
     Atmosphere      = fdmex->GetAtmosphere();
     FCS             = fdmex->GetFCS();
     MassBalance     = fdmex->GetMassBalance();
@@ -171,7 +169,7 @@ FGJSBsim::FGJSBsim( double dt )
     SGPath systems_path( fgGetString("/sim/aircraft-dir") );
     systems_path.append( "Systems" );
 
-    State->Setdt( dt );
+    fdmex->Setdt( dt );
 
     result = fdmex->LoadModel( aircraft_path.str(),
                                engine_path.str(),
@@ -442,7 +440,7 @@ void FGJSBsim::update( double dt )
       cart = FGLocation(lon, lat, alt+slr);
     }
     double cart_pos[3] = { cart(1), cart(2), cart(3) };
-    double t0 = State->Getsim_time();
+    double t0 = fdmex->Getsim_time();
     bool cache_ok = prepare_ground_cache_ft( t0, t0 + dt, cart_pos,
                                              groundCacheRadius );
     if (!cache_ok) {
@@ -470,7 +468,7 @@ void FGJSBsim::update( double dt )
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
         double contact[3], d[3], agl;
-        get_agl_ft(State->Getsim_time(), cart_pos, SG_METER_TO_FEET*2, contact,
+        get_agl_ft(fdmex->Getsim_time(), cart_pos, SG_METER_TO_FEET*2, contact,
                    d, d, &agl);
         double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
@@ -489,7 +487,7 @@ void FGJSBsim::update( double dt )
 
     for ( i=0; i < multiloop; i++ ) {
       fdmex->Run();
-      update_external_forces(State->Getsim_time() + i * State->Getdt());      
+      update_external_forces(fdmex->Getsim_time() + i * fdmex->Getdt());      
     }
 
     FGJSBBase::Message* msg;
@@ -899,7 +897,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
     // force a sim crashed if crashed (altitude AGL < 0)
     if (get_Altitude_AGL() < -100.0) {
-         State->SuspendIntegration();
+         fdmex->SuspendIntegration();
          crashed = true;
     }
 
@@ -1149,9 +1147,6 @@ void FGJSBsim::do_trim(void)
   } else {
     trimmed->setBoolValue(true);
   }
-//  if (FGJSBBase::debug_lvl > 0)
-//      State->ReportState();
-
   delete fgtrim;
 
   pitch_trim->setDoubleValue( FCS->GetPitchTrimCmd() );

@@ -40,7 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGElectric.h"
-#include "FGState.h"
 #include "models/FGPropulsion.h"
 #include "models/propulsion/FGThruster.h"
 
@@ -51,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.7 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.8 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +66,7 @@ FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number)
   PowerWatts = 745.7;
   hptowatts = 745.7;
 
-  dt = State->Getdt();
+  dt = FDMExec->GetDeltaT();
 
   if (el->FindElement("power"))
     PowerWatts = el->FindElementValueAsNumberConvertTo("power","WATTS");

@@ -41,7 +41,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
-#include "FGState.h"
 #include "FGGroundReactions.h"
 #include "FGFCS.h"
 #include "FGAuxiliary.h"
@@ -62,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.71 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.72 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -223,15 +222,14 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
     }
   }
 
-  State       = fdmex->GetState();
   Aircraft    = fdmex->GetAircraft();
   Propagate   = fdmex->GetPropagate();
   Auxiliary   = fdmex->GetAuxiliary();
   FCS         = fdmex->GetFCS();
   MassBalance = fdmex->GetMassBalance();
 
-  LongForceLagFilterCoeff = 1/State->Getdt(); // default longitudinal force filter coefficient
-  LatForceLagFilterCoeff  = 1/State->Getdt(); // default lateral force filter coefficient
+  LongForceLagFilterCoeff = 1/fdmex->GetDeltaT(); // default longitudinal force filter coefficient
+  LatForceLagFilterCoeff  = 1/fdmex->GetDeltaT(); // default lateral force filter coefficient
 
   Element* force_lag_filter_elem = el->FindElement("force_lag_filter");
   if (force_lag_filter_elem) {
@@ -243,17 +241,17 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
     }
   }
 
-  LongForceFilter = Filter(LongForceLagFilterCoeff, State->Getdt());
-  LatForceFilter = Filter(LatForceLagFilterCoeff, State->Getdt());
+  LongForceFilter = Filter(LongForceLagFilterCoeff, fdmex->GetDeltaT());
+  LatForceFilter = Filter(LatForceLagFilterCoeff, fdmex->GetDeltaT());
 
-  WheelSlipLagFilterCoeff = 1/State->Getdt();
+  WheelSlipLagFilterCoeff = 1/fdmex->GetDeltaT();
 
   Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
   if (wheel_slip_angle_lag_elem) {
     WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->GetDataAsNumber();
   }
   
-  WheelSlipFilter = Filter(WheelSlipLagFilterCoeff, State->Getdt());
+  WheelSlipFilter = Filter(WheelSlipLagFilterCoeff, fdmex->GetDeltaT());
 
   GearUp = false;
   GearDown = true;
@@ -307,8 +305,8 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::GetBodyForces(void)
 {
-  double t = fdmex->GetState()->Getsim_time();
-  dT = State->Getdt()*fdmex->GetGroundReactions()->GetRate();
+  double t = fdmex->GetSimTime();
+  dT = fdmex->GetDeltaT()*fdmex->GetGroundReactions()->GetRate();
 
   vFn.InitMatrix();
 
@@ -571,7 +569,7 @@ void FGLGear::InitializeReporting(void)
 
 void FGLGear::ReportTakeoffOrLanding(void)
 {
-  double deltaT = State->Getdt()*fdmex->GetGroundReactions()->GetRate();
+  double deltaT = fdmex->GetDeltaT()*fdmex->GetGroundReactions()->GetRate();
 
   if (FirstContact)
     LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
@@ -608,10 +606,10 @@ void FGLGear::CrashDetect(void)
   if ( (compressLength > 500.0 ||
       vFn.Magnitude() > 100000000.0 ||
       GetMoments().Magnitude() > 5000000000.0 ||
-      SinkRate > 1.4666*30 ) && !State->IntegrationSuspended())
+      SinkRate > 1.4666*30 ) && !fdmex->IntegrationSuspended())
   {
     PutMessage("Crash Detected: Simulation FREEZE.");
-    State->SuspendIntegration();
+    fdmex->SuspendIntegration();
   }
 }
 
@@ -780,7 +778,7 @@ void FGLGear::Report(ReportType repType)
   switch(repType) {
   case erLand:
     cout << endl << "Touchdown report for " << name << " (WOW at time: "
-         << fdmex->GetState()->Getsim_time() << " seconds)" << endl;
+         << fdmex->GetSimTime() << " seconds)" << endl;
     cout << "  Sink rate at contact:  " << SinkRate                << " fps,    "
                                 << SinkRate*0.3048          << " mps"     << endl;
     cout << "  Contact ground speed:  " << GroundSpeed*.5925       << " knots,  "
@@ -795,7 +793,7 @@ void FGLGear::Report(ReportType repType)
     break;
   case erTakeoff:
     cout << endl << "Takeoff report for " << name << " (Liftoff at time: "
-         << fdmex->GetState()->Getsim_time() << " seconds)" << endl;
+        << fdmex->GetSimTime() << " seconds)" << endl;
     cout << "  Distance traveled:                " << TakeoffDistanceTraveled
          << " ft,     " << TakeoffDistanceTraveled*0.3048  << " meters"  << endl;
     cout << "  Distance traveled (over 50'):     " << TakeoffDistanceTraveled50ft

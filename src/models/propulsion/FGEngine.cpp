@@ -41,7 +41,6 @@ INCLUDES
 #include "FGTank.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
-#include "FGState.h"
 #include "models/FGPropulsion.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
@@ -54,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.35 2009/11/04 23:29:24 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.36 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +79,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   ResetToIC(); // initialize dynamic terms
 
   FDMExec = exec;
-  State = FDMExec->GetState();
   Atmosphere = FDMExec->GetAtmosphere();
   FCS = FDMExec->GetFCS();
   Propulsion = FDMExec->GetPropulsion();
@@ -234,7 +232,7 @@ void FGEngine::ConsumeFuel(void)
 
 double FGEngine::CalcFuelNeed(void)
 {
-  double dT = State->Getdt()*Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
   FuelFlowRate = SLFuelFlowMax*PctPower;
   FuelExpended = FuelFlowRate*dT;
   return FuelExpended;
@@ -321,7 +319,7 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     Thruster = new FGThruster( FDMExec, document, EngineNumber);
   }
 
-  Thruster->SetdeltaT(State->Getdt() * Propulsion->GetRate());
+  Thruster->SetdeltaT(FDMExec->GetDeltaT() * Propulsion->GetRate());
 
   Debug(2);
   return true;

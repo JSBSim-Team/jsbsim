@@ -42,6 +42,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGScript.h"
+#include "input_output/FGXMLElement.h"
 #include "input_output/FGXMLParse.h"
 #include "initialization/FGTrim.h"
 
@@ -52,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.36 2010/01/27 03:59:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.37 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,8 +68,8 @@ CLASS IMPLEMENTATION
 
 FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
 {
-  State = FDMExec->GetState();
   PropertyManager=FDMExec->GetPropertyManager();
+
   Debug(0);
 }
 
@@ -135,10 +136,10 @@ bool FGScript::LoadScript( string script )
   // Set sim timing
 
   StartTime = run_element->GetAttributeValueAsNumber("start");
-  State->Setsim_time(StartTime);
+  FDMExec->Setsim_time(StartTime);
   EndTime   = run_element->GetAttributeValueAsNumber("end");
   dt        = run_element->GetAttributeValueAsNumber("dt");
-  State->Setdt(dt);
+  FDMExec->Setdt(dt);
   
   // read aircraft and initialization files
 
@@ -320,7 +321,7 @@ bool FGScript::RunScript(void)
   unsigned i, j;
   unsigned event_ctr = 0;
 
-  double currentTime = State->Getsim_time();
+  double currentTime = FDMExec->GetSimTime();
   double newSetValue = 0;
 
   if (currentTime > EndTime) return false; //Script done!
@@ -453,7 +454,7 @@ void FGScript::Debug(int from)
       cout << endl;
       cout << "Script: \"" << ScriptName << "\"" << endl;
       cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
-        << " seconds with dt = " << State->Getdt() << " (" << ceil(1.0/State->Getdt()) << " Hz)" << endl;
+        << " seconds with dt = " << FDMExec->GetDeltaT() << " (" << ceil(1.0/FDMExec->GetDeltaT()) << " Hz)" << endl;
       cout << endl;
 
       for (unsigned int i=0; i<local_properties.size(); i++) {

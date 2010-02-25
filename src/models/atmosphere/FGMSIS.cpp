@@ -58,7 +58,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGMSIS.h"
-#include "FGState.h"
+#include "models/FGAuxiliary.h"
 #include <cmath>          /* maths functions */
 #include <iostream>        // for cout, endl
 
@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.12 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.13 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

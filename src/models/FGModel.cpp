@@ -39,7 +39,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-#include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
@@ -58,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.13 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.14 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +73,6 @@ FGModel::FGModel(FGFDMExec* fdmex)
   FDMExec     = fdmex;
   NextModel   = 0L;
 
-  State           = 0;
   Atmosphere      = 0;
   FCS             = 0;
   Propulsion      = 0;
@@ -115,7 +113,6 @@ FGModel::~FGModel()
 
 bool FGModel::InitModel(void)
 {
-  State           = FDMExec->GetState();
   Atmosphere      = FDMExec->GetAtmosphere();
   FCS             = FDMExec->GetFCS();
   Propulsion      = FDMExec->GetPropulsion();
@@ -129,8 +126,7 @@ bool FGModel::InitModel(void)
   Propagate       = FDMExec->GetPropagate();
   Auxiliary       = FDMExec->GetAuxiliary();
 
-  if (!State ||
-      !Atmosphere ||
+  if (!Atmosphere ||
       !FCS ||
       !Propulsion ||
       !MassBalance ||

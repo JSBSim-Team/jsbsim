@@ -34,4 +34,3 @@ SUBDIRS =		\
 	t6texan2	\
 	x24b		\
 	ZLT-NT
-

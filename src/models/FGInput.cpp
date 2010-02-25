@@ -39,7 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInput.h"
-#include "FGState.h"
+#include "FGAircraft.h"
 #include "FGFDMExec.h"
 
 #include "input_output/FGfdmSocket.h"
@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.18 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,7 +192,7 @@ bool FGInput::Run(void)
         info << "JSBSim version: " << JSBSim_version << endl;
         info << "Config File version: " << needed_cfg_version << endl;
         info << "Aircraft simulated: " << Aircraft->GetAircraftName() << endl;
-        info << "Simulation time: " << setw(8) << setprecision(3) << State->Getsim_time() << endl;
+        info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << endl;
         socket->Reply(info.str());
 
       } else if (command == "help") {                   // HELP

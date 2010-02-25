@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "FGState.h"
 #include "FGFDMExec.h"
 #include "math/FGFunction.h"
 #include "math/FGCondition.h"
@@ -49,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,7 +258,6 @@ private:
   vector <LocalProps*> local_properties;
 
   FGFDMExec* FDMExec;
-  FGState* State;
   FGPropertyManager* PropertyManager;
   void Debug(int from);
 };

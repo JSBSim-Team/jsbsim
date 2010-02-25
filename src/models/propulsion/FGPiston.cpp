@@ -43,8 +43,8 @@ INCLUDES
 #include <sstream>
 
 #include "FGPiston.h"
-#include "FGState.h"
 #include "models/FGAtmosphere.h"
+#include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
 #include "FGPropeller.h"
 #include <iostream>
@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.48 2010/02/11 22:02:22 andgi Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.49 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // Defaults and initializations
 
   Type = etPiston;
-  dt = State->Getdt();
+  dt = FDMExec->GetDeltaT();
 
   // These items are read from the configuration file
   // Defaults are from a Lycoming O-360, more or less
@@ -440,7 +440,7 @@ double FGPiston::Calculate(void)
 
 double FGPiston::CalcFuelNeed(void)
 {
-  double dT = State->Getdt() * Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
   FuelExpended = FuelFlowRate * dT;
   return FuelExpended;
 }

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.34 2010/02/19 00:30:00 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.35 2010/02/25 05:21:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,6 +66,16 @@ CLASS DOCUMENTATION
     The Equations of Motion (EOM) for JSBSim are integrated to propagate the
     state of the vehicle given the forces and moments that act on it. The
     integration accounts for a rotating Earth.
+
+    The general execution of this model follows this process:
+
+    -Calculate the angular accelerations
+    -Calculate the translational accelerations
+    -Calculate the angular rate
+    -Calculate the translational velocity
+
+    -Integrate accelerations and rates
+
     Integration of rotational and translation position and rate can be 
     customized as needed or frozen by the selection of no integrator. The
     selection of which integrator to use is done through the setting of 
@@ -90,7 +100,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.34 2010/02/19 00:30:00 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.35 2010/02/25 05:21:36 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,11 +495,11 @@ public:
 
   /** Retrieves the local-to-inertial transformation matrix.
       @return a reference to the local-to-inertial transformation matrix.  */
-  const FGMatrix33& GetTl2i(void) const { return Tl2i; }
+  const FGMatrix33& GetTl2i(void)  { return VState.vLocation.GetTl2i(); }
 
   /** Retrieves the inertial-to-local transformation matrix.
       @return a reference to the inertial-to-local matrix.  */
-  const FGMatrix33& GetTi2l(void) const { return Ti2l; }
+  const FGMatrix33& GetTi2l(void)  { return VState.vLocation.GetTi2l(); }
 
 
   VehicleState* GetVState(void) { return &VState; }
@@ -500,6 +510,9 @@ public:
       VState.vPQR = vstate->vPQR;
       VState.vQtrn = vstate->vQtrn; // ... mmh
   }
+
+  void SetInertialOrientation(FGQuaternion Qi);
+  void SetInertialVelocity(FGColumnVector3 Vi);
 
   const FGQuaternion GetQuaternion(void) const { return VState.vQtrn; }
 

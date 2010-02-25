@@ -38,7 +38,6 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGFDMExec.h"
 #include "FGPropagate.h"
-#include "FGState.h"
 #include "FGMassBalance.h"
 #include <iostream>
 
@@ -46,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.15 2010/01/01 15:48:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.16 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +118,7 @@ bool FGInertial::Run(void)
   // Gravitation accel
   double r = Propagate->GetRadius();
   gAccel = GetGAccel(r);
-  earthPosAngle += State->Getdt()*RotationRate;
+  earthPosAngle += FDMExec->GetDeltaT()*RotationRate;
 
   RunPostFunctions();
 

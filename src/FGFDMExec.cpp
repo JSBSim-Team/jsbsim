@@ -42,7 +42,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
-#include "FGState.h"
 #include "models/FGAtmosphere.h"
 #include "models/atmosphere/FGMSIS.h"
 #include "models/atmosphere/FGMars.h"
@@ -72,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.73 2010/02/05 05:52:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.74 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,7 +110,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Frame           = 0;
   Error           = 0;
   GroundCallback  = 0;
-  State           = 0;
   Atmosphere      = 0;
   FCS             = 0;
   Propulsion      = 0;
@@ -133,6 +131,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   IsChild = false;
   holding = false;
   Terminate = false;
+
+  sim_time = 0.0;
+  dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
+                  // run in standalone mode with no initialization file.
 
   IdFDM = FDMctr; // The main (parent) JSBSim instance is always the "zeroth"
   FDMctr++;       // instance. "child" instances are loaded last.
@@ -169,6 +171,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/terminate", (int *)&Terminate);
+  instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
+
   Constructing = false;
 }
 
@@ -217,10 +221,6 @@ bool FGFDMExec::Allocate(void)
   Auxiliary       = new FGAuxiliary(this);
   Input           = new FGInput(this);
 
-  State           = new FGState(this); // This must be done here, as the FGState
-                                       // class needs valid pointers to the above
-                                       // model classes
-
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model could get executed every fifth pass it is called.
   
@@ -267,7 +267,6 @@ bool FGFDMExec::DeAllocate(void)
   delete Aircraft;
   delete Propagate;
   delete Auxiliary;
-  delete State;
   delete Script;
 
   for (unsigned i=0; i<Outputs.size(); i++) delete Outputs[i];
@@ -280,7 +279,6 @@ bool FGFDMExec::DeAllocate(void)
 
   Error       = 0;
 
-  State           = 0;
   Input           = 0;
   Atmosphere      = 0;
   FCS             = 0;
@@ -324,13 +322,13 @@ bool FGFDMExec::Run(void)
   }
 
   // returns true if success, false if complete
-  if (Script != 0 && !State->IntegrationSuspended()) success = Script->RunScript();
+  if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
 
   vector <FGModel*>::iterator it;
   for (it = Models.begin(); it != Models.end(); ++it) (*it)->Run();
 
   Frame++;
-  if (!Holding()) State->IncrTime();
+  if (!Holding()) IncrTime();
   if (Terminate) success = false;
 
   return (success);
@@ -341,12 +339,47 @@ bool FGFDMExec::Run(void)
 
 bool FGFDMExec::RunIC(void)
 {
-  State->SuspendIntegration();
-  State->Initialize(IC);
+  SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
+  Initialize(IC);
   Run();
-  State->ResumeIntegration();
+  ResumeIntegration(); // Restores the integration rate to what it was.
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::Initialize(FGInitialCondition *FGIC)
+{
+  Propagate->SetInitialState( FGIC );
+
+  Atmosphere->Run();
+  Atmosphere->SetWindNED( FGIC->GetWindNFpsIC(),
+                          FGIC->GetWindEFpsIC(),
+                          FGIC->GetWindDFpsIC() );
+
+  FGColumnVector3 vAeroUVW;
+  vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
+
+  double alpha, beta;
+  if (vAeroUVW(eW) != 0.0)
+    alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
+  else
+    alpha = 0.0;
+  if (vAeroUVW(eV) != 0.0)
+    beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV), (fabs(vAeroUVW(eU))/vAeroUVW(eU))*sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
+  else
+    beta = 0.0;
+
+  Auxiliary->SetAB(alpha, beta);
+
+  double Vt = vAeroUVW.Magnitude();
+  Auxiliary->SetVt(Vt);
+
+  Auxiliary->SetMach(Vt/Atmosphere->GetSoundSpeed());
+
+  double qbar = 0.5*Vt*Vt*Atmosphere->GetDensity();
+  Auxiliary->Setqbar(qbar);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -384,20 +417,6 @@ void FGFDMExec::SetGroundCallback(FGGroundCallback* p)
 {
   delete GroundCallback;
   GroundCallback = p;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGFDMExec::GetSimTime(void)
-{
-  return (State->Getsim_time());
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGFDMExec::GetDeltaT(void)
-{
-  return (State->Getdt());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -921,11 +940,11 @@ void FGFDMExec::DoTrim(int mode)
     cerr << endl << "Illegal trimming mode!" << endl << endl;
     return;
   }
-  saved_time = State->Getsim_time();
+  saved_time = sim_time;
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
-  State->Setsim_time(saved_time);
+  sim_time = saved_time;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -939,7 +958,7 @@ void FGFDMExec::DoTrimAnalysis(int mode)
     cerr << endl << "Illegal trimming mode!" << endl << endl;
     return;
   }
-  saved_time = State->Getsim_time();
+  saved_time = sim_time;
 
   FGTrimAnalysis trimAnalysis(this, (JSBSim::TrimAnalysisMode)mode);
 
@@ -953,7 +972,7 @@ void FGFDMExec::DoTrimAnalysis(int mode)
   if ( !result ) cerr << endl << "Trim Failed" << endl << endl;
 
   trimAnalysis.Report();
-  State->Setsim_time(saved_time);
+  Setsim_time(saved_time);
 
   EnableOutput();
   cout << "\nOutput: " << GetOutputFileName() << endl;
@@ -1028,7 +1047,7 @@ void FGFDMExec::Debug(int from)
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
     if (from == 2) {
       cout << "================== Frame: " << Frame << "  Time: "
-           << State->Getsim_time() << " dt: " << State->Getdt() << endl;
+           << sim_time << " dt: " << dT << endl;
     }
   }
   if (debug_lvl & 8 ) { // Runtime state variables

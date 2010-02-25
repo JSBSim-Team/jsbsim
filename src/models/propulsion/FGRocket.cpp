@@ -41,7 +41,6 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include "FGRocket.h"
-#include "FGState.h"
 #include "models/FGPropulsion.h"
 #include "FGThruster.h"
 #include "FGTank.h"
@@ -50,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.18 2010/01/24 19:26:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +126,7 @@ FGRocket::~FGRocket(void)
 
 double FGRocket::Calculate(void)
 {
-  double dT = State->Getdt()*Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
   double thrust;
 
   if (!Flameout && !Starved) ConsumeFuel();
@@ -157,7 +156,7 @@ double FGRocket::Calculate(void)
         VacThrust *= sin((BurnTime/BuildupTime)*M_PI/2.0);
         // VacThrust *= (1-cos((BurnTime/BuildupTime)*M_PI))/2.0; // 1 - cos approach
       }
-      BurnTime += State->Getdt(); // Increment burn time
+      BurnTime += FDMExec->GetDeltaT(); // Increment burn time
     } else {
       VacThrust = 0.0;
     }
@@ -268,7 +267,7 @@ void FGRocket::ConsumeFuel(void)
 
 double FGRocket::CalcFuelNeed(void)
 {
-  double dT = State->Getdt()*Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
 
   if (ThrustTable != 0L) {          // Thrust table given - infers solid fuel
     FuelFlowRate = VacThrust/Isp;   // This calculates wdot (weight flow rate in lbs/sec)
@@ -285,7 +284,7 @@ double FGRocket::CalcFuelNeed(void)
 
 double FGRocket::CalcOxidizerNeed(void)
 {
-  double dT = State->Getdt()*Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
   OxidizerFlowRate = SLOxiFlowMax*PctPower;
   OxidizerExpended = OxidizerFlowRate*dT;
   return OxidizerExpended;

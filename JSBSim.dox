@@ -305,7 +305,7 @@ WARN_LOGFILE           =
 
 INPUT = src/ src/models src/initialization src/input_output src/JSBSim.cpp \
         src/models/flight_control src/models/atmosphere src/models/propulsion \
-        src/simgear src/simgear/xml src/simgear/props src/math
+        src/simgear src/simgear/xml src/simgear/props src/simgear/misc src/math
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

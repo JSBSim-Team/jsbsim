@@ -42,11 +42,15 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\simgear\xml&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="0"
+				FloatingPointExceptions="false"
 				UsePrecompiledHeader="0"
 				GenerateXMLDocumentationFiles="false"
+				BrowseInformation="1"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
@@ -81,6 +85,7 @@
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
+				ValidateIntelliSense="true"
 			/>
 			<Tool
 				Name="VCBscMakeTool"
@@ -453,10 +458,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\FGState.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\models\flight_control\FGSummer.h"
 				>
 			</File>
@@ -813,10 +814,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\FGState.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\models\flight_control\FGSummer.cpp"
 				>
 			</File>
@@ -910,18 +907,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\data_output\ground_reactions.xml"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath=".\data_plot\ground_reactions.xml"
 			>
 			<FileConfiguration
@@ -934,7 +919,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\data_plot\Makefile.am"
+			RelativePath=".\data_output\ground_reactions.xml"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -947,6 +932,18 @@
 		</File>
 		<File
 			RelativePath=".\data_output\Makefile.am"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\data_plot\Makefile.am"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"

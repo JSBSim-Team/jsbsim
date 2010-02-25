@@ -6,23 +6,23 @@
   <use aircraft="c172r" initialize="reset00"/>
   <run start="0.0" end="10" dt="0.008333">
     <event name="event name">
-      <condition>sim-time-sec  ge  0.25</condition>
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
       <set name="fcs/aileron-cmd-norm" action="FG_STEP" value="0.25" tc="0.25"/>
     </event>
     <event name="event name">
-      <condition>sim-time-sec  ge  0.5</condition>
+      <condition>simulation/sim-time-sec  ge  0.5</condition>
       <set name="fcs/aileron-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.5" tc="0.5"/>
     </event>
     <event name="event name">
-      <condition>sim-time-sec  ge  1.5</condition>
+      <condition>simulation/sim-time-sec  ge  1.5</condition>
       <set name="fcs/rudder-cmd-norm" action="FG_RAMP" type="FG_DELTA" value="0.5" tc="0.5"/>
     </event>
     <event name="event name">
-      <condition>sim-time-sec  ge  1.5</condition>
+      <condition>simulation/sim-time-sec  ge  1.5</condition>
       <set name="fcs/elevator-cmd-norm" action="FG_RAMP" value="0.25" tc="0.5"/>
     </event>
     <event name="event name">
-      <condition>sim-time-sec  ge  2.5</condition>
+      <condition>simulation/sim-time-sec  ge  2.5</condition>
       <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.5" tc="0.5"/>
     </event>
   </run>

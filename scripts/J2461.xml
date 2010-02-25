@@ -9,13 +9,18 @@
   <use aircraft="J246" initialize="LC39"/>
   <run start="0.0" end="450" dt="0.008333">
 
-<!--<property value="23"> atmosphere/delta-T </property>-->
+    <property value="2">simulation/integrator/rate/rotational</property>
+    <property value="3">simulation/integrator/rate/translational</property>
+    <property value="3">simulation/integrator/position/rotational</property>
+    <property value="3">simulation/integrator/position/translational</property>
+
+    <!--<property value="23"> atmosphere/delta-T </property>-->
     <property> simulation/notify-time-trigger </property>
     <property value="1"> forces/hold-down </property>
     <property value="0.008"> control/gravity-turn-pitch-rate-command </property>
 
     <event name="Winds aloft" continuous="true">
-      <condition>sim-time-sec  ge  10000.05</condition>
+      <condition>simulation/sim-time-sec  ge  10000.05</condition>
       <set name="atmosphere/psiw-rad">
         <function>
           <table>
@@ -74,7 +79,7 @@
     </event>
 
     <event name="Start SSME">
-      <condition>sim-time-sec  ge  6.0</condition>
+      <condition>simulation/sim-time-sec  ge  6.0</condition>
       <set name="fcs/throttle-cmd-norm[2]" value="1.0" action="exp" tc="0.5"/>
       <set name="fcs/throttle-cmd-norm[3]" value="1.0" action="exp" tc="0.5"/>
       <set name="fcs/throttle-cmd-norm[4]" value="1.0" action="exp" tc="0.5"/>
@@ -83,7 +88,7 @@
     </event>
 
     <event name="Start Solid Rocket Boosters">
-      <condition>sim-time-sec  ge  12.0</condition>
+      <condition>simulation/sim-time-sec  ge  12.0</condition>
       <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
       <notify/>
@@ -123,7 +128,7 @@
         <property>simulation/integrator/position/rotational</property>
         <property>simulation/integrator/position/translational</property>
       </notify>
-      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="10" type="delta"/>
     </event>
 

@@ -13,7 +13,7 @@
       <description>
         Start engine and set initial heading and waypoints, turn on heading-hold mode.
       </description>
-      <condition>sim-time-sec  ge  0.25</condition>
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="1"/>
       <set name="fcs/mixture-cmd-norm[1]" value="1"/>
       <set name="fcs/advance-cmd-norm[0]" value="1.0"/>

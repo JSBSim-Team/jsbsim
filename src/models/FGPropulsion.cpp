@@ -45,7 +45,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropulsion.h"
-#include "FGState.h"
 #include "models/FGFCS.h"
 #include "models/FGMassBalance.h"
 #include "models/propulsion/FGThruster.h"
@@ -66,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.38 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.39 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -149,7 +148,7 @@ bool FGPropulsion::Run(void)
 
   RunPreFunctions();
 
-  double dt = State->Getdt();
+  double dt = FDMExec->GetDeltaT();
 
   vForces.InitMatrix();
   vMoments.InitMatrix();

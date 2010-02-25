@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.36 2010/02/19 00:30:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.37 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1051,7 +1051,7 @@ bool FGInitialCondition::Load_v2(void)
     } else if (frame == "ecef") {
 
       // In this case we are given the Euler angles representing the orientation of
-      // the body with respect to the ECEF system, represented by the C_e/b Matrix.
+      // the body with respect to the ECEF system, represented by the C_b/e Matrix.
       // We want the body orientation with respect to the inertial system:
       //
       // C_b/i =  C_b/e * C_e/i
@@ -1060,9 +1060,9 @@ bool FGInitialCondition::Load_v2(void)
       //
       // Q_b/i = Q_e/i * Q_b/e
 
-      FGQuaternion QuatEC2B(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
+      FGQuaternion QuatEC2Body(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
       FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
-      QuatI2Body = QuatI2EC*QuatEC2B; // Q_b/i = Q_e/i * Q_b/e 
+      QuatI2Body = QuatI2EC * QuatEC2Body; // Q_b/i = Q_e/i * Q_b/e 
 
     } else if (frame == "local") {
 
@@ -1078,9 +1078,9 @@ bool FGInitialCondition::Load_v2(void)
       // Q_b/i = Q_e/i * Q_n/e * Q_b/n
 
       FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_b/n
-      FGQuaternion QuatEC2Local = Propagate->GetTec2l(); // Get Q_n/e from matrix
+      FGQuaternion QuatEC2Local = Propagate->GetTec2l();   // Get Q_n/e from matrix
       FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
-      QuatI2Body = QuatI2EC*QuatEC2Local*QuatLocal2Body; // Q_b/i = Q_e/i * Q_n/e * Q_b/n
+      QuatI2Body = QuatI2EC * QuatEC2Local * QuatLocal2Body; // Q_b/i = Q_e/i * Q_n/e * Q_b/n
 
     } else {
 
@@ -1089,6 +1089,8 @@ bool FGInitialCondition::Load_v2(void)
       result = false;
 
     }
+
+    Propagate->SetInertialOrientation(QuatI2Body);
   }
 
   // Initialize vehicle velocity
@@ -1097,12 +1099,17 @@ bool FGInitialCondition::Load_v2(void)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Local
   // - Body
+  // The vehicle will be defaulted to (0,0,0) in the Body frame if nothing is provided.
+  
   Element* velocity_el = document->FindElement("velocity");
+  FGColumnVector3 vInertialVelocity;
+  FGColumnVector3 vInitVelocity = FGColumnVector3(0.0, 0.0, 0.0);
   if (velocity_el) {
+
     string frame = velocity_el->GetAttributeValue("frame");
     frame = to_lower(frame);
-    FGColumnVector3 vInertialVelocity;
     FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
+
     if (frame == "eci") {
       vInertialVelocity = vInitVelocity;
     } else if (frame == "ecef") {
@@ -1121,7 +1128,15 @@ bool FGInitialCondition::Load_v2(void)
       result = false;
 
     }
+
+  } else {
+
+    FGMatrix33 mTb2i = Propagate->GetTb2i();
+    vInertialVelocity = mTb2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+
   }
+
+  
 
   // Allowable frames
   // - ECI (Earth Centered Inertial)
@@ -1140,7 +1155,7 @@ bool FGInitialCondition::Load_v2(void)
     running_elements = document->FindNextElement("running");
   }
 
-  fdmex->RunIC();
+  // fdmex->RunIC();
 
   return result;
 }

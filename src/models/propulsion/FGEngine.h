@@ -45,6 +45,8 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
 #include "math/FGColumnVector3.h"
 #include <vector>
 #include <string>
@@ -53,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.19 2009/11/04 23:29:24 dpculp Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.20 2010/02/25 05:21:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,9 +64,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGState;
 class FGAtmosphere;
-class FGFCS;
 class FGAircraft;
 class FGPropagate;
 class FGPropulsion;
@@ -118,7 +118,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.19 2009/11/04 23:29:24 dpculp Exp $
+    @version $Id: FGEngine.h,v 1.20 2010/02/25 05:21:36 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,7 +228,6 @@ protected:
   double FuelDensity;
 
   FGFDMExec*      FDMExec;
-  FGState*        State;
   FGAtmosphere*   Atmosphere;
   FGFCS*          FCS;
   FGPropulsion*   Propulsion;

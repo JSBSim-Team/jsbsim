@@ -42,15 +42,16 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include "FGTurbine.h"
-#include "FGState.h"
-#include "models/FGPropulsion.h"
 #include "FGThruster.h"
+#include "models/FGPropulsion.h"
+#include "models/FGAuxiliary.h"
+#include "models/FGAtmosphere.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.24 2010/02/15 03:32:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.25 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +119,7 @@ double FGTurbine::Calculate(void)
 
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   double qbar = Auxiliary->Getqbar();
-  dt = State->Getdt() * Propulsion->GetRate();
+  dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
   ThrottlePos = FCS->GetThrottlePos(EngineNumber);
   if (ThrottlePos > 1.0) {
     AugmentCmd = ThrottlePos - 1.0;
@@ -388,7 +389,7 @@ double FGTurbine::Trim()
 
 double FGTurbine::CalcFuelNeed(void)
 {
-  double dT = State->Getdt() * Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
   FuelExpended = FuelFlowRate * dT;     // Calculates fuel expended in this time step
   return FuelExpended;
@@ -539,12 +540,12 @@ void FGTurbine::bindmodel()
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int FGTurbine::InitRunning(void) {
-  State->SuspendIntegration();
+  FDMExec->SuspendIntegration();
   Cutoff=false;
   Running=true;  
   N2=IdleN2;
   Calculate();
-  State->ResumeIntegration();
+  FDMExec->ResumeIntegration();
   return phase==tpRun;
 }
 

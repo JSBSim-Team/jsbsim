@@ -7,7 +7,7 @@
     <fileheader>
         <author> Aeromatic / Jon Berndt / DATCOM </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.15 $ </version>
+        <version> $Revision: 1.16 $ </version>
         <description> Simple model of P-51D fighter </description>
     </fileheader>
 
@@ -96,8 +96,8 @@
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 12100 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 9680 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 1200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 980 </damping_coeff>
             <max_steer unit="DEG"> 360.0 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
@@ -594,4 +594,17 @@
             </function>
         </axis>
     </aerodynamics>
+  <output name="JSBoutp51.csv" type="CSV" rate="120">
+    <rates> ON </rates>
+    <velocities> ON </velocities>
+    <forces> ON </forces>
+    <moments> ON </moments>
+    <position> ON </position>
+    <propulsion> ON </propulsion>
+    <aerosurfaces> ON </aerosurfaces>
+    <fcs> OFF </fcs>
+    <massprops> ON </massprops>
+    <ground_reactions> ON </ground_reactions>
+  </output>
+
 </fdm_config>

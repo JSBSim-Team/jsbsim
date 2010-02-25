@@ -14,7 +14,7 @@
       </condition>
       <set name="fcs/parachute_reef_pos_norm" value="0.2" action="FG_RAMP" tc="1.0"/>
       <notify>
-        <property>sim-time-sec</property>
+        <property>simulation/sim-time-sec</property>
       </notify>
     </event>
 
@@ -25,7 +25,7 @@
       </condition>
       <set name="fcs/parachute_reef_pos_norm" value="0.6" action="FG_RAMP" tc="1.0"/>
       <notify>
-        <property>sim-time-sec</property>
+        <property>simulation/sim-time-sec</property>
       </notify>
     </event>
 
@@ -38,7 +38,7 @@
       <set name="atmosphere/wind-north-fps" value="40"/>
       <set name="atmosphere/wind-east-fps" value="40"/>
       <notify>
-        <property>sim-time-sec</property>
+        <property>simulation/sim-time-sec</property>
       </notify>
     </event>
 
@@ -49,7 +49,7 @@
       </condition>
       <set name="simulation/terminate" value="1.0"/>
       <notify>
-        <property>sim-time-sec</property>
+        <property>simulation/sim-time-sec</property>
       </notify>
     </event>
 

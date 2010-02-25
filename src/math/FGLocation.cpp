@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.18 2010/02/19 00:30:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +289,12 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // and a transformation from nav (local) to ECEF frame.
 
   mTl2ec = mTec2l.Transposed();
-  
+
+  // Now calculate the local (or nav, or ned) frame to inertial transform matrix,
+  // and the inverse.
+  mTl2i = mTec2i * mTl2ec;
+  mTi2l = mTl2i.Transposed();
+
   // Calculate the geodetic latitude base on AIAA Journal of Guidance and Control paper,
   // "Improved Method for Calculating Exact Geodetic Latitude and Altitude", and
   // "Improved Method for Calculating Exact Geodetic Latitude and Altitude, Revisited",

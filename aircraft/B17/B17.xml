@@ -7,7 +7,7 @@
   <fileheader>
     <author> Aeromatic v 0.9, refined by Jon Berndt </author>
     <filecreationdate> 2008-12-22 </filecreationdate>
-    <version>$Revision: 1.5 $</version>
+    <version>$Revision: 1.6 $</version>
     <description> Models a Boeing B-17G. </description>
   </fileheader>
 
@@ -1107,7 +1107,7 @@
 
   </aerodynamics>
 
-  <output name="JSBoutB17.csv" type="CSV" rate="40">
+  <output name="JSBoutB17.csv" type="CSV" rate="120">
     <rates> ON </rates>
     <velocities> ON </velocities>
     <forces> ON </forces>

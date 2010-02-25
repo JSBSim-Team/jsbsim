@@ -17,12 +17,12 @@
   <channel name="GNC Executive MET Clock">
 
     <switch name="guidance/executive/launch-time">
-      <default value="sim-time-sec"/>
+      <default value="simulation/sim-time-sec"/>
       <test value="guidance/executive/launch-time"> fcs/throttle-cmd-norm[0] gt 0 </test>
     </switch>
 
     <summer name="guidance/executive/MET">
-      <input> sim-time-sec </input>
+      <input> simulation/sim-time-sec </input>
       <input> -guidance/executive/launch-time </input>
     </summer>
 

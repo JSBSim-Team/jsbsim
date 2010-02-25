@@ -13,7 +13,7 @@
     <property value="3">simulation/integrator/position/translational</property>
 -->
     <event name="15-second control surface setting">
-      <condition> sim-time-sec >= 15.00 </condition>
+      <condition> simulation/sim-time-sec >= 15.00 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.0"/>
       <set name="fcs/aileron-cmd-norm" value="0.0"/>
       <set name="atmosphere/wind-north-fps" value="80"/>
@@ -22,50 +22,50 @@
     </event>
 
     <event name="30-second control surface setting">
-      <condition> sim-time-sec >= 30.00 </condition>
+      <condition> simulation/sim-time-sec >= 30.00 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.0"/>
       <set name="fcs/aileron-cmd-norm" value="0.0"/>
       <notify/>
     </event>
 
     <event name="45-second set brakes">
-      <condition> sim-time-sec >= 45.00 </condition>
+      <condition> simulation/sim-time-sec >= 45.00 </condition>
       <set name="fcs/right-brake-cmd-norm" value="1.0"/>
       <set name="fcs/left-brake-cmd-norm" value="1.0"/>
       <notify/>
     </event>
 
     <event name="50-second set nose brake">
-      <condition> sim-time-sec >= 50.00 </condition>
+      <condition> simulation/sim-time-sec >= 50.00 </condition>
       <set name="fcs/center-brake-cmd-norm" value="1.0"/>
       <notify/>
     </event>
 
     <event name="55-second release main brakes">
-      <condition> sim-time-sec >= 55.00 </condition>
+      <condition> simulation/sim-time-sec >= 55.00 </condition>
       <set name="fcs/left-brake-cmd-norm" value="0.0"/>
       <set name="fcs/right-brake-cmd-norm" value="0.0"/>
       <notify/>
     </event>
 
     <event name="60-second release nose brake">
-      <condition> sim-time-sec >= 60.00 </condition>
+      <condition> simulation/sim-time-sec >= 60.00 </condition>
       <set name="fcs/center-brake-cmd-norm" value="0.0"/>
       <notify/>
     </event>
 
     <event name="Steer left">
-      <condition> sim-time-sec >= 65.0 </condition>
+      <condition> simulation/sim-time-sec >= 65.0 </condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="-1.0" tc="2.5"/>
     </event>
 
     <event name="Steer right">
-      <condition> sim-time-sec >= 67.5 </condition>
+      <condition> simulation/sim-time-sec >= 67.5 </condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="1.0" tc="5.0"/>
     </event>
 
     <event name="Steer left again">
-      <condition> sim-time-sec >= 72.5 </condition>
+      <condition> simulation/sim-time-sec >= 72.5 </condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.0" tc="2.5"/>
     </event>
 

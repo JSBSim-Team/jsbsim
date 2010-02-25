@@ -7,22 +7,22 @@
   <use aircraft="T38" initialize="reset00"/>
   <run start="0.0" end="100" dt="0.00833333">
     <event name="Test steering">
-      <condition>sim-time-sec  ge  5.0</condition>
+      <condition>simulation/sim-time-sec  ge  5.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
       <notify/>
     </event>
     <event name="Test steering">
-      <condition>sim-time-sec  ge  7.0</condition>
+      <condition>simulation/sim-time-sec  ge  7.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
       <notify/>
     </event>
     <event name="Engine starter">
-      <condition>sim-time-sec  ge  10</condition>
+      <condition>simulation/sim-time-sec  ge  10</condition>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify/>
     </event>
     <event name="Start engine">
-      <condition>sim-time-sec  ge  15.0</condition>
+      <condition>simulation/sim-time-sec  ge  15.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
       <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="1.0" tc="0.5"/>
       <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="1.0" tc="0.5"/>

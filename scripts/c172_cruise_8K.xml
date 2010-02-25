@@ -12,7 +12,7 @@
 
     <event name="Start engine">
       <condition>
-        sim-time-sec  ge  0.01
+        simulation/sim-time-sec  ge  0.01
       </condition>
       <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.50" tc="0.05"/>
       <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="1.0" tc="0.05"/> 
@@ -23,7 +23,7 @@
 
     <event name="Trim">
       <condition>
-        sim-time-sec  gt  1.0
+        simulation/sim-time-sec  gt  1.0
       </condition>
       <set name="simulation/do_simple_trim" value="1"/>
       <notify>
@@ -52,7 +52,7 @@
     </event>
 
     <event name="Hold heading and altitude">
-      <condition>sim-time-sec  ge  5</condition>
+      <condition>simulation/sim-time-sec  ge  5</condition>
       <set name="ap/heading_setpoint" value="200"/>
       <set name="ap/heading_hold" value="1"/>
       <set name="ap/altitude_setpoint" value="4000.0"/>
@@ -69,7 +69,7 @@
 
     <event name="Reset">
       <condition>
-        sim-time-sec  ge  10.0
+        simulation/sim-time-sec  ge  10.0
       </condition>
       <set name="ap/heading_setpoint" value="0"/>
       <set name="ap/altitude_setpoint" value="0"/>

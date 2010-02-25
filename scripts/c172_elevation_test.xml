@@ -23,7 +23,7 @@
 
     <event name="engine start">
       <description>Start the engine</description>
-      <condition> sim-time-sec >= 0.25 </condition>
+      <condition> simulation/sim-time-sec >= 0.25 </condition>
       <set name="fcs/throttle-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
@@ -38,7 +38,7 @@
 
     <event name="Begin roll">
       <description>Release brakes and get rolling with flaps at 10 degrees. </description>
-      <condition> sim-time-sec >= 2.0 </condition>
+      <condition> simulation/sim-time-sec >= 2.0 </condition>
       <set name="fcs/left-brake-cmd-norm" value="0"/>
       <set name="fcs/right-brake-cmd-norm" value="0"/>
       <set name="fcs/center-brake-cmd-norm" value="0"/>
@@ -81,7 +81,7 @@
         <property>position/lat-geod-deg</property>
         <property>position/geod-alt-ft</property>
       </notify>
-      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
     </event>
 
@@ -104,7 +104,7 @@
         is compressed a LOT.
       </description>
       <condition>
-        sim-time-sec  ge  300.0
+        simulation/sim-time-sec  ge  300.0
       </condition>
       <set name="ap/heading_setpoint" value="0"/>
       <set name="ap/altitude_setpoint" value="0"/>

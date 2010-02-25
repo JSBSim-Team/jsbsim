@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.82 $</version>
+        <version>$Revision: 1.83 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -60,7 +60,7 @@
         </location>
         <pointmass name="PILOT">
             <weight unit="LBS">170.0</weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 36.0 </x>
                 <y> -14.0 </y>
                 <z> 24.0 </z>
@@ -68,7 +68,7 @@
         </pointmass>
         <pointmass name="CO-PILOT">
             <weight unit="LBS">110.0</weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 36.0 </x>
                 <y> 14.0 </y>
                 <z> 24.0 </z>
@@ -76,7 +76,7 @@
         </pointmass>
         <pointmass name="LUGGAGE">
             <weight unit="LBS">80.0</weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 95.0 </x>
                 <y>  0.0 </y>
                 <z> 24.0 </z>
@@ -230,7 +230,7 @@
                     <pitch>0</pitch>
                     <yaw>0</yaw>
                 </orient>
-                <sense>1</sense>
+                <sense>-1</sense>
                 <p_factor>10.0</p_factor>
             </thruster>
         </engine>

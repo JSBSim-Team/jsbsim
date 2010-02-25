@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,79 +60,89 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Holds an arbitrary location in the earth centered reference frame.
-    This coordinate frame has its center in the middle of the earth.
-    Its x-axis points from the center of the earth towards a location
-    with zero latitude and longitude on the earths surface. The y-axis
-    points from the center of the earth towards a location with zero
-    latitude and 90deg longitude on the earths surface. The z-axis
-    points from the earths center to the geographic north pole.
+/** FGLocation holds an arbitrary location in the Earth centered Earth fixed
+    reference frame (ECEF). This coordinate frame has its center in the middle
+    of the earth. The X-axis points from the center of the Earth towards a
+    location with zero latitude and longitude on the Earth surface. The Y-axis
+    points from the center of the Earth towards a location with zero latitude
+    and 90 deg East longitude on the Earth surface. The Z-axis points from the
+    Earth center to the geographic north pole.
 
-    This class provides access functions to set and get the location as
-    either the simple x, y and z values in ft or longitude/latitude and
-    the radial distance of the location from the earth center.
+    This class provides access functions to set and get the location as either
+    the simple X, Y and Z values in ft or longitude/latitude and the radial
+    distance of the location from the Earth center.
 
-    It is common to associate a parent frame with a location. This
-    frame is usually called the local horizontal frame or simply the local
-    frame. This frame has its x/y plane parallel to the surface of the earth
-    (with the assumption of a spherical earth). The x-axis points
-    towards north, the y-axis points towards east and the z-axis
-    points to the center of the earth.
+    It is common to associate a parent frame with a location. This frame is
+    usually called the local horizontal frame or simply the local frame. It is
+    also called the NED frame (North, East, Down), as well as the Navigation
+    frame. This frame has its X/Y plane parallel to the surface of the Earth
+    (with the assumption of a spherical Earth). The X-axis points towards north,
+    the Y-axis points east and the Z-axis points to the center of the Earth.
 
-    Since this frame is determined by the location, this class also
-    provides the rotation matrices required to transform from the
-    earth centered frame to the local horizontal frame and back. There
-    are also conversion functions for conversion of position vectors
-    given in the one frame to positions in the other frame.
+    Since the local frame is determined by the location (and NOT by the
+    orientation of the  vehicle IN any frame), this class also provides the
+    rotation matrices required to transform from the Earth centered (ECEF) frame
+    to the local horizontal frame and back. This class also "owns" the
+    transformations that go from the inertial frame (Earth-centered Inertial, or
+    ECI) to and from the ECEF frame, as well as to and from the local frame.
+    Again, this is because the ECI, ECEF, and local frames do not involve the
+    actual orientation of the vehicle - only the location on the Earth surface,
+    and the angular difference between the ECI and ECEF frames. There are
+    conversion functions for conversion of position vectors given in the one
+    frame to positions in the other frame.
 
-    The earth centered reference frame is *NOT* an inertial frame
-    since it rotates with the earth.
+    The Earth centered reference frame is NOT an inertial frame since it rotates
+    with the Earth.
 
-    The coordinates in the earth centered frame are the master values.
-    All other values are computed from these master values and are
-    cached as long as the location is changed by access through a
-    non-const member function. Values are cached to improve performance.
-    It is best practice to work with a natural set of master values.
-    Other parameters that are derived from these master values are calculated
-    only when needed, and IF they are needed and calculated, then they are
-    cached (stored and remembered) so they do not need to be re-calculated
-    until the master values they are derived from are themselves changed
-    (and become stale).
+    The coordinates in the Earth centered frame are the master values. All other
+    values are computed from these master values and are cached as long as the
+    location is changed by access through a non-const member function. Values
+    are cached to improve performance. It is best practice to work with a
+    natural set of master values. Other parameters that are derived from these
+    master values are calculated only when needed, and IF they are needed and
+    calculated, then they are cached (stored and remembered) so they do not need
+    to be re-calculated until the master values they are derived from are
+    themselves changed (and become stale).
 
-    Accuracy and round off:
+    Accuracy and round off
 
-    Given that we model a vehicle near the earth, the earths surface
-    radius is about 2*10^7, ft and that we use double values for the
-    representation of the location, we have an accuracy of about
-    1e-16*2e7ft/1=2e-9ft left. This should be sufficient for our needs.
-    Note that this is the same relative accuracy we would have when we
-    compute directly with lon/lat/radius. For the radius value this
-    is clear. For the lon/lat pair this is easy to see. Take for
-    example KSFO located at about 37.61deg north 122.35deg west, which
-    corresponds to 0.65642rad north and 2.13541rad west. Both values
-    are of magnitude of about 1. But 1ft corresponds to about
-    1/(2e7*2*pi)=7.9577e-09rad. So the left accuracy with this
-    representation is also about 1*1e-16/7.9577e-09=1.2566e-08 which
-    is of the same magnitude as the representation chosen here.
+    Given,
 
-    The advantage of this representation is that it is a linear space
-    without singularities. The singularities are the north and south
-    pole and most notably the non-steady jump at -pi to pi. It is
-    harder to track this jump correctly especially when we need to
-    work with error norms and derivatives of the equations of motion
-    within the time-stepping code. Also, the rate of change is of the
-    same magnitude for all components in this representation which is
-    an advantage for numerical stability in implicit time-stepping too.
+    -that we model a vehicle near the Earth
+    -that the Earth surface radius is about 2*10^7, ft
+    -that we use double values for the representation of the location
+    
+    we have an accuracy of about
+    
+    1e-16*2e7ft/1 = 2e-9 ft
+    
+    left. This should be sufficient for our needs. Note that this is the same
+    relative accuracy we would have when we compute directly with
+    lon/lat/radius. For the radius value this is clear. For the lon/lat pair
+    this is easy to see. Take for example KSFO located at about 37.61 deg north
+    122.35 deg west, which corresponds to 0.65642 rad north and 2.13541 rad
+    west. Both values are of magnitude of about 1. But 1 ft corresponds to about
+    1/(2e7*2*pi) = 7.9577e-09 rad. So the left accuracy with this representation
+    is also about 1*1e-16/7.9577e-09 = 1.2566e-08 which is of the same magnitude
+    as the representation chosen here.
 
-    Note: The latitude is a GEOCENTRIC value. FlightGear
-    converts latitude to a geodetic value and uses that. In order to get best
-    matching relative to a map, geocentric latitude must be converted to geodetic.
+    The advantage of this representation is that it is a linear space without
+    singularities. The singularities are the north and south pole and most
+    notably the non-steady jump at -pi to pi. It is harder to track this jump
+    correctly especially when we need to work with error norms and derivatives
+    of the equations of motion within the time-stepping code. Also, the rate of
+    change is of the same magnitude for all components in this representation
+    which is an advantage for numerical stability in implicit time-stepping.
+
+    Note: The latitude is a GEOCENTRIC value. FlightGear converts latitude to a
+    geodetic value and uses that. In order to get best matching relative to a
+    map, geocentric latitude must be converted to geodetic.
 
     @see Stevens and Lewis, "Aircraft Control and Simulation", Second edition
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.16 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,6 +341,10 @@ public:
       the earth centered frame to the inertial frame (ECEF to ECI). */
   const FGMatrix33& GetTec2i(double epa);
 
+  const FGMatrix33& GetTi2l(void) const {return mTi2l;}
+
+  const FGMatrix33& GetTl2i(void) const {return mTl2i;}
+
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
       @param lvec Vector in the local horizontal coordinate frame
@@ -385,6 +399,12 @@ public:
     mCacheValid = false; return mECLoc.Entry(idx);
   }
 
+  /** Sets this location via the supplied vector.
+      The location can be set by an Earth-centered, Earth-fixed (ECEF) frame
+      position vector. The cache is marked as invalid, so any future requests
+      for selected important data will cause the parameters to be calculated.
+      @param v the ECEF column vector in feet. 
+      @return a reference to the FGLocation object. */
   const FGLocation& operator=(const FGColumnVector3& v)
   {
     mECLoc(eX) = v(eX);
@@ -395,6 +415,9 @@ public:
     return *this;
   }
 
+  /** Sets this location via the supplied location object.
+      @param v A location object reference. 
+      @return a reference to the FGLocation object. */
   const FGLocation& operator=(const FGLocation& l)
   {
     mECLoc = l.mECLoc;
@@ -422,31 +445,47 @@ public:
 
     return *this;
   }
+
+  /** This operator returns true if the ECEF location vectors for the two
+      location objects are equal. */
   bool operator==(const FGLocation& l) const {
     return mECLoc == l.mECLoc;
   }
+
+  /** This operator returns true if the ECEF location vectors for the two
+      location objects are not equal. */
   bool operator!=(const FGLocation& l) const { return ! operator==(l); }
+
+  /** This operator adds the ECEF position vectors.
+      The supplied vector (right side) is added to the ECEF position vector
+      on the left side of the equality, and a pointer to this object is
+      returned. */
   const FGLocation& operator+=(const FGLocation &l) {
     mCacheValid = false;
     mECLoc += l.mECLoc;
     return *this;
   }
+
   const FGLocation& operator-=(const FGLocation &l) {
     mCacheValid = false;
     mECLoc -= l.mECLoc;
     return *this;
   }
+
   const FGLocation& operator*=(double scalar) {
     mCacheValid = false;
     mECLoc *= scalar;
     return *this;
   }
+
   const FGLocation& operator/=(double scalar) {
     return operator*=(1.0/scalar);
   }
+
   FGLocation operator+(const FGLocation& l) const {
     return FGLocation(mECLoc + l.mECLoc);
   }
+
   FGLocation operator-(const FGLocation& l) const {
     return FGLocation(mECLoc - l.mECLoc);
   }
@@ -500,7 +539,9 @@ private:
   mutable FGMatrix33 mTec2l;
   mutable FGMatrix33 mTi2ec;
   mutable FGMatrix33 mTec2i;
-  
+  mutable FGMatrix33 mTi2l;
+  mutable FGMatrix33 mTl2i;
+
   /* Terms for geodetic latitude calculation. Values are from WGS84 model */
   double a;    // Earth semimajor axis in feet (6,378,137.0 meters)
   double b;    // Earth semiminor axis in feet (6,356,752.3142 meters)

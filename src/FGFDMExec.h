@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.46 2009/11/10 13:47:20 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.47 2010/02/25 05:21:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.46 $
+    @version $Revision: 1.47 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,8 +318,6 @@ public:
   inline FGInput* GetInput(void)              {return Input;}
   /// Returns the FGGroundCallback pointer.
   inline FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
-  /// Returns the FGState pointer.
-  inline FGState* GetState(void)              {return State;}
   /// Retrieves the script object
   inline FGScript* GetScript(void) {return Script;}
   // Returns a pointer to the FGInitialCondition object
@@ -351,13 +349,13 @@ public:
 
   /// Returns the model name.
   string GetModelName(void) { return modelName; }
-
+/*
   /// Returns the current time.
   double GetSimTime(void);
 
   /// Returns the current frame time (delta T).
   double GetDeltaT(void);
-  
+*/  
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
   /// Returns a vector of strings representing the names of all loaded models (future)
@@ -465,12 +463,50 @@ public:
   void SetTrimMode(int mode){ ta_mode = mode; }
   int GetTrimMode(void) const { return ta_mode; }
 
+  /// Returns the cumulative simulation time in seconds.
+  double GetSimTime(void) const { return sim_time; }
+
+  /// Returns the simulation delta T.
+  double GetDeltaT(void) {return dT;}
+
+  /// Suspends the simulation and sets the delta T to zero.
+  void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
+
+  /// Resumes the simulation by resetting delta T to the correct value.
+  void ResumeIntegration(void)  {dT = saved_dT;}
+
+  /** Returns the simulation suspension state.
+      @return true if suspended, false if executing  */
+  bool IntegrationSuspended(void) {return dT == 0.0;}
+
+  /** Sets the current sim time.
+      @param cur_time the current time
+      @return the current simulation time.      */
+  double Setsim_time(double cur_time) {
+    sim_time = cur_time;
+    return sim_time;
+  }
+
+  /** Sets the integration time step for the simulation executive.
+      @param delta_t the time step in seconds.     */
+  void  Setdt(double delta_t) { dT = delta_t; }
+
+  /** Increments the simulation time.
+      @return the new simulation time.     */
+  double IncrTime(void) {
+    sim_time += dT;
+    return sim_time;
+  }
+
 private:
   static unsigned int FDMctr;
   int Error;
   unsigned int Frame;
   unsigned int IdFDM;
   unsigned short Terminate;
+  double dT;
+  double saved_dT;
+  double sim_time;
   bool holding;
   bool Constructing;
   bool modelLoaded;
@@ -489,7 +525,6 @@ private:
   static FGPropertyManager *master;
 
   FGGroundCallback*   GroundCallback;
-  FGState*            State;
   FGAtmosphere*       Atmosphere;
   FGFCS*              FCS;
   FGPropulsion*       Propulsion;
@@ -521,6 +556,7 @@ private:
   void ResetToInitialConditions(int mode);
   bool Allocate(void);
   bool DeAllocate(void);
+  void Initialize(FGInitialCondition *FGIC);
 
   void Debug(int from);
 };

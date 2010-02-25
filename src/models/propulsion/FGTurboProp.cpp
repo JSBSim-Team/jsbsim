@@ -44,16 +44,15 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include "FGTurboProp.h"
-
 #include "FGPropeller.h"
-#include "FGState.h"
+#include "models/FGPropulsion.h"
 #include "models/FGAuxiliary.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.15 2009/10/26 03:48:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.16 2010/02/25 05:21:36 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +161,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 double FGTurboProp::Calculate(void)
 {
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
-  dt = State->Getdt() * Propulsion->GetRate();
+  dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
 
   ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
 
@@ -406,7 +405,7 @@ double FGTurboProp::Start(void)
 
 double FGTurboProp::CalcFuelNeed(void)
 {
-  double dT = State->Getdt() * Propulsion->GetRate();
+  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
   FuelFlowRate = FuelFlow_pph / 3600.0;
   FuelExpended = FuelFlowRate * dT;
   return FuelExpended;
@@ -505,12 +504,12 @@ string FGTurboProp::GetEngineValues(const string& delimiter)
 
 int FGTurboProp::InitRunning(void)
 {
-  State->SuspendIntegration();
+  FDMExec->SuspendIntegration();
   Cutoff=false;
   Running=true;  
   N2=16.0;
   Calculate();
-  State->ResumeIntegration();
+  FDMExec->ResumeIntegration();
   return phase==tpRun;
 }
 
