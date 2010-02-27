@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.55 2010/02/25 05:21:36 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.56 2010/02/27 22:21:21 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -58,6 +58,8 @@
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
 #include <FDM/JSBSim/models/FGLGear.h>
+#include <FDM/JSBSim/models/FGGroundReactions.h>
+#include <FDM/JSBSim/models/FGPropulsion.h>
 #include <FDM/JSBSim/models/propulsion/FGEngine.h>
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
@@ -440,7 +442,7 @@ void FGJSBsim::update( double dt )
       cart = FGLocation(lon, lat, alt+slr);
     }
     double cart_pos[3] = { cart(1), cart(2), cart(3) };
-    double t0 = fdmex->Getsim_time();
+    double t0 = fdmex->GetSimTime();
     bool cache_ok = prepare_ground_cache_ft( t0, t0 + dt, cart_pos,
                                              groundCacheRadius );
     if (!cache_ok) {
@@ -468,7 +470,7 @@ void FGJSBsim::update( double dt )
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
         double contact[3], d[3], agl;
-        get_agl_ft(fdmex->Getsim_time(), cart_pos, SG_METER_TO_FEET*2, contact,
+        get_agl_ft(fdmex->GetSimTime(), cart_pos, SG_METER_TO_FEET*2, contact,
                    d, d, &agl);
         double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
@@ -487,7 +489,7 @@ void FGJSBsim::update( double dt )
 
     for ( i=0; i < multiloop; i++ ) {
       fdmex->Run();
-      update_external_forces(fdmex->Getsim_time() + i * fdmex->Getdt());      
+      update_external_forces(fdmex->GetSimTime() + i * fdmex->GetDeltaT());      
     }
 
     FGJSBBase::Message* msg;
