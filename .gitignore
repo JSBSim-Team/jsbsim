@@ -5,6 +5,7 @@ Makefile.in
 *.a
 *.csv
 COPYING
+CVS
 INSTALL
 VERSION
 aclocal.m4
@@ -20,4 +21,4 @@ install-sh
 libtool
 ltmain.sh
 missing
-src/JSBSim
+src/JSBSim*
