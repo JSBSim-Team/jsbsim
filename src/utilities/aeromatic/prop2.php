@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.8;
+$version = 1.0;
 
 //****************************************************
 //                                                   *
@@ -9,6 +9,10 @@ $version = 0.8;
 //                                                   *
 // July 2003, David P. Culp, davidculp2@comcast.net  *
 //                                                   * 
+// Sources:                                          *
+//    NACA report 84, by E. C. Reid                  *
+//    NACA report 640, by Hartman & Biermann         *
+//    NACA report RM-E6J31, by Sarri & Wallner       *
 //****************************************************
 
 header("Content-type: text/plain");
@@ -53,11 +57,19 @@ $d4 = $ac_diameter * $ac_diameter * $ac_diameter * $ac_diameter;
 $d5 = $d4 * $ac_diameter;
 $rho = 0.002378;
 
-// power and thrust coefficients
+// power and thrust coefficients at design point
+// for fixed pitch design point is beta=22, J=0.2
+// for variable pitch design point is beta=15, j=0
 $cp0 = $ac_enginepower * 550.0 / $rho / $rps3 / $d5;
-$ct0 = $cp0 * 0.86;
+if ($ac_pitch == 0){
+  $ct0 = $cp0 * 1.4;
+  $rpss = pow($ac_enginepower * 550.0 /1.025 / $cp0 / $rho / $d5, 0.3333);
+  $static_thrust = 1.09 * $ct0 * $rho * $rpss * $rpss * $d4;
+} else {
+  $ct0 = $cp0 * 2.33;
+  $static_thrust = $ct0 * $rho * $rps2 * $d4;
+}
 
-$static_thrust = $ct0 * $rho * $rps2 * $d4;
 
 // estimate number of blades
 if ($cp0 < 0.035) {
@@ -92,11 +104,11 @@ else
 print("            max engine rpm: $ac_maxengrpm\n");
 print("        prop diameter (ft): $ac_diameter\n");
 print("\n     Outputs:\n");
-printf("              max prop rpm:%7.2f\n", $max_rpm);
-printf("                gear ratio:%7.2f\n", $gearratio);
-printf("                       Cp0:%7.6f\n", $cp0);
-printf("                       Ct0:%7.6f\n", $ct0);
-printf("       static thrust (lbs):%7.2f\n", $static_thrust);
+printf("              max prop rpm: %7.2f\n", $max_rpm);
+printf("                gear ratio: %7.2f\n", $gearratio);
+printf("                       Cp0: %7.6f\n", $cp0);
+printf("                       Ct0: %7.6f\n", $ct0);
+printf("       static thrust (lbs): %7.2f\n", $static_thrust);
 print("-->\n\n");
 
 print("<propeller name=\"prop\">\n");
@@ -105,15 +117,9 @@ printf("  <diameter unit=\"IN\">%5.1f </diameter>\n", $ac_diameter * 12);
 print("  <numblades> $blades </numblades>\n");
 printf("  <gearratio>%4.2f </gearratio>\n", $gearratio);
 
-if($ac_pitch == 0) {
-  //print("  <minpitch> 22 </minpitch>\n");
-  //print("  <maxpitch> 22 </maxpitch>\n");
- } else {
-  print("  <minpitch> 12 </minpitch>\n");
-  print("  <maxpitch> 30 </maxpitch>\n");
- }
-
 if($ac_pitch == 1) {
+  print("  <minpitch> 12 </minpitch>\n");
+  print("  <maxpitch> 45 </maxpitch>\n");
   printf("  <minrpm>%7.0f </minrpm>\n", $max_rpm * 0.85);
   printf("  <maxrpm>%7.0f </maxrpm>\n", $max_rpm);
 }
@@ -123,42 +129,48 @@ print("\n");
 if($ac_pitch == 0) {          // fixed pitch
  print("  <table name=\"C_THRUST\" type=\"internal\">\n");
  print("     <tableData>\n");
- printf("       0.0  %5.4f\n", $ct0 * 1.0);
- printf("       0.1  %5.4f\n", $ct0 * 0.959);
- printf("       0.2  %5.4f\n", $ct0 * 0.917);
- printf("       0.3  %5.4f\n", $ct0 * 0.844);
- printf("       0.4  %5.4f\n", $ct0 * 0.758);
- printf("       0.5  %5.4f\n", $ct0 * 0.668);
- printf("       0.6  %5.4f\n", $ct0 * 0.540);
- printf("       0.7  %5.4f\n", $ct0 * 0.410);
- printf("       0.8  %5.4f\n", $ct0 * 0.222);
- printf("       1.0  %5.4f\n", $ct0 * -0.075);
- printf("       1.2  %5.4f\n", $ct0 * -0.394);
- printf("       1.4  %5.4f\n", $ct0 * -0.708);
+ printf("       0.0  %5.4f\n", $ct0 * 1.090);
+ printf("       0.1  %5.4f\n", $ct0 * 1.045);
+ printf("       0.2  %5.4f\n", $ct0 * 1.000);
+ printf("       0.3  %5.4f\n", $ct0 * 0.920);
+ printf("       0.4  %5.4f\n", $ct0 * 0.826);
+ printf("       0.5  %5.4f\n", $ct0 * 0.728);
+ printf("       0.6  %5.4f\n", $ct0 * 0.589);
+ printf("       0.7  %5.4f\n", $ct0 * 0.447);
+ printf("       0.8  %5.4f\n", $ct0 * 0.242);
+ printf("       1.0  %5.4f\n", $ct0 * -0.082);
+ printf("       1.2  %5.4f\n", $ct0 * -0.429);
+ printf("       1.4  %5.4f\n", $ct0 * -0.772);
  print("     </tableData>\n");
  print("  </table>\n\n");
 } else {                      // variable pitch
  print("  <table name=\"C_THRUST\" type=\"internal\">\n");
  print("      <tableData>\n");
- print("                12         30\n");
- $ct30 = $ct0 + 0.04;
- printf("       0.0      %5.4f   %5.4f\n", $ct0 * 1.0, $ct30 * 1.0);
- printf("       0.1      %5.4f   %5.4f\n", $ct0 * 0.917, $ct30 * 1.0);
- printf("       0.2      %5.4f   %5.4f\n", $ct0 * 0.833, $ct30 * 1.0);
- printf("       0.3      %5.4f   %5.4f\n", $ct0 * 0.692, $ct30 * 0.995);
- printf("       0.4      %5.4f   %5.4f\n", $ct0 * 0.526, $ct30 * 0.990);
- printf("       0.5      %5.4f   %5.4f\n", $ct0 * 0.359, $ct30 * 0.977);
- printf("       0.6      %5.4f   %5.4f\n", $ct0 * 0.154, $ct30 * 0.925);
- printf("       0.7      %5.4f   %5.4f\n", $ct0 * -0.013, $ct30 * 0.832);
- printf("       0.8      %5.4f   %5.4f\n", $ct0 * -0.295, $ct30 * 0.738);
- printf("       1.0      %5.4f   %5.4f\n", $ct0 * -0.641, $ct30 * 0.491);
- printf("       1.2      %5.4f   %5.4f\n", $ct0 * -1.050, $ct30 * 0.262);
- printf("       1.4      %5.4f   %5.4f\n", $ct0 * -1.436, $ct30 * 0.019);
- printf("       1.6      %5.4f   %5.4f\n", $ct0 * -1.880, $ct30 * -0.215);
- printf("       1.8      %5.4f   %5.4f\n", $ct0 * -2.300, $ct30 * -0.448);
- printf("       2.0      %5.4f   %5.4f\n", $ct0 * -2.700, $ct30 * -0.692);
- printf("       2.2      %5.4f   %5.4f\n", $ct0 * -3.100, $ct30 * -0.940);
- printf("       2.4      %5.4f   %5.4f\n", $ct0 * -3.500, $ct30 * -1.190);
+ print("                -10         0       15       25       35       45       55       65       90\n");
+ printf("      -0.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.488, $ct0*0.275, $ct0, $ct0*1.225, $ct0*1.35, $ct0*1.425, $ct0*1.313, $ct0*1.125, 0.0);
+ printf("       0.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.725, 0.0, $ct0, $ct0*1.225, $ct0*1.35, $ct0*1.438, $ct0*1.344, $ct0*1.125, 0.0);
+ printf("       0.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.25, $ct0*0.863, $ct0*1.2, $ct0*1.331, $ct0*1.438, $ct0*1.344, $ct0*1.125, 0.0);
+ printf("       0.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.581, $ct0*0.65, $ct0*1.188, $ct0*1.306, $ct0*1.425, $ct0*1.344, $ct0*1.125, 0.0);
+ printf("       0.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*0.344, $ct0*1.069, $ct0*1.25, $ct0*1.388, $ct0*1.325, $ct0*1.125, 0.0);
+ printf("       0.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*0.019, $ct0*0.8, $ct0*1.213, $ct0*1.338, $ct0*1.325, $ct0*1.125, 0.0);
+ printf("       1.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.325, $ct0*0.488, $ct0*1.163, $ct0*1.269, $ct0*1.313, $ct0*1.125, 0.0);
+ printf("       1.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.669, $ct0*0.15, $ct0*0.956, $ct0*1.225, $ct0*1.313, $ct0*1.125, 0.0);
+ printf("       1.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.219, $ct0*0.688, $ct0*1.206, $ct0*1.288, $ct0*1.125, 0.0);
+ printf("       1.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.556, $ct0*0.375, $ct0*1.163, $ct0*1.263, $ct0*1.125, 0.0);
+ printf("       1.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*0.063, $ct0, $ct0*1.225, $ct0*1.125, 0.0);
+ printf("       2.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.25, $ct0*0.781, $ct0*1.156, $ct0*1.125, 0.0);
+ printf("       2.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.563, $ct0*0.563, $ct0, $ct0*1.125, 0.0);
+ printf("       2.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*0.3, $ct0*0.813, $ct0*1.125, 0.0);
+ printf("       2.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*0.038, $ct0*0.606, $ct0, 0.0);
+ printf("       2.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.225, $ct0*0.406, $ct0*0.813, 0.0);
+ printf("       3.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.488, $ct0*0.213, $ct0*0.625, 0.0);
+ printf("       3.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.75, $ct0*0.019, $ct0*0.438, 0.0);
+ printf("       3.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.175, $ct0*0.25, 0.0);
+ printf("       3.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.369, $ct0*0.063, 0.0);
+ printf("       3.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.563, $ct0*-0.125, 0.0);
+ printf("       4.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.756, $ct0*-0.313, 0.0);
+ printf("       6.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, $ct0*-0.813, 0.0);
+
  print("      </tableData>\n");
  print("  </table>\n");
 }
@@ -167,43 +179,48 @@ print("\n");
 if($ac_pitch == 0) {          // fixed pitch
  print("  <table name=\"C_POWER\" type=\"internal\">\n");
  print("     <tableData>\n");
- printf("       0.0  %5.4f\n", $cp0 * 1.0);
- printf("       0.1  %5.4f\n", $cp0 * 1.0);
- printf("       0.2  %5.4f\n", $cp0 * 0.976);
- printf("       0.3  %5.4f\n", $cp0 * 0.953);
- printf("       0.4  %5.4f\n", $cp0 * 0.898);
- printf("       0.5  %5.4f\n", $cp0 * 0.823);
- printf("       0.6  %5.4f\n", $cp0 * 0.755);
- printf("       0.7  %5.4f\n", $cp0 * 0.634);
- printf("       0.8  %5.4f\n", $cp0 * 0.518);
- printf("       1.0  %5.4f\n", $cp0 * 0.185);
- printf("       1.2  %5.4f\n", $cp0 * -0.296);
- printf("       1.4  %5.4f\n", $cp0 * -0.890);
- printf("       1.6  %5.4f\n", $cp0 * -1.511);
+ printf("       0.0  %5.4f\n", $cp0 * 1.025);
+ printf("       0.1  %5.4f\n", $cp0 * 1.025);
+ printf("       0.2  %5.4f\n", $cp0 * 1.000);
+ printf("       0.3  %5.4f\n", $cp0 * 0.976);
+ printf("       0.4  %5.4f\n", $cp0 * 0.920);
+ printf("       0.5  %5.4f\n", $cp0 * 0.843);
+ printf("       0.6  %5.4f\n", $cp0 * 0.774);
+ printf("       0.7  %5.4f\n", $cp0 * 0.650);
+ printf("       0.8  %5.4f\n", $cp0 * 0.531);
+ printf("       1.0  %5.4f\n", $cp0 * 0.190);
+ printf("       1.2  %5.4f\n", $cp0 * -0.303);
+ printf("       1.4  %5.4f\n", $cp0 * -0.912);
+ printf("       1.6  %5.4f\n", $cp0 * -1.548);
  print("     </tableData>\n");
  print("  </table>\n");
 } else {                      // variable pitch
  print("  <table name=\"C_POWER\" type=\"internal\">\n");
  print("     <tableData>\n");
- print("                12         30\n");
- $cp30 = $cp0 + 0.06;
- printf("       0.0      %5.4f   %5.4f\n", $cp0 * 1.0, $cp30 * 1.0);
- printf("       0.1      %5.4f   %5.4f\n", $cp0 * 1.0, $cp30 * 1.0);
- printf("       0.2      %5.4f   %5.4f\n", $cp0 * 0.953, $cp30 * 1.0);
- printf("       0.3      %5.4f   %5.4f\n", $cp0 * 0.906, $cp30 * 1.0);
- printf("       0.4      %5.4f   %5.4f\n", $cp0 * 0.797, $cp30 * 1.0);
- printf("       0.5      %5.4f   %5.4f\n", $cp0 * 0.656, $cp30 * 0.989);
- printf("       0.6      %5.4f   %5.4f\n", $cp0 * 0.531, $cp30 * 0.978);
- printf("       0.7      %5.4f   %5.4f\n", $cp0 * 0.313, $cp30 * 0.956);
- printf("       0.8      %5.4f   %5.4f\n", $cp0 * 0.125, $cp30 * 0.911);
- printf("       1.0      %5.4f   %5.4f\n", $cp0 * -0.375, $cp30 * 0.744);
- printf("       1.2      %5.4f   %5.4f\n", $cp0 * -1.093, $cp30 * 0.500);
- printf("       1.4      %5.4f   %5.4f\n", $cp0 * -2.030, $cp30 * 0.250);
- printf("       1.6      %5.4f   %5.4f\n", $cp0 * -3.0, $cp30 * -0.022);
- printf("       1.8      %5.4f   %5.4f\n", $cp0 * -4.0, $cp30 * -0.610);
- printf("       2.0      %5.4f   %5.4f\n", $cp0 * -5.0, $cp30 * -1.220);
- printf("       2.2      %5.4f   %5.4f\n", $cp0 * -6.0, $cp30 * -1.830);
- printf("       2.4      %5.4f   %5.4f\n", $cp0 * -7.0, $cp30 * -2.440);
+ print("               -10        0       15       25       35       45       55        65        90\n");
+ printf("      -0.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*0.167, $cp0*0.333, $cp0*1.167, $cp0*2.65, $cp0*4.57, $cp0*6.5, $cp0*7.5, $cp0*8.3, $cp0*8.3);
+ printf("       0.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*0.667, $cp0*0.167, $cp0, $cp0*2.47, $cp0*4.37, $cp0*6.5, $cp0*7.53, $cp0*8.3, $cp0*8.3);
+ printf("       0.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*0.95, $cp0*0.267, $cp0*0.967, $cp0*2.3, $cp0*4.18, $cp0*6.5, $cp0*7.53, $cp0*8.3, $cp0*8.3);
+ printf("       0.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*1.28, $cp0*0.583, $cp0*0.833, $cp0*2.12, $cp0*3.97, $cp0*6.5, $cp0*7.53, $cp0*8.3, $cp0*8.3);
+ printf("       0.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*1.57, $cp0*0.883, $cp0*0.55, $cp0*1.97, $cp0*3.72, $cp0*6.37, $cp0*7.5, $cp0*8.3, $cp0*8.3);
+ printf("       0.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*1.85, $cp0*1.183, $cp0*0.167, $cp0*1.67, $cp0*3.5, $cp0*6.08, $cp0*7.5, $cp0*8.3, $cp0*8.3);
+ printf("       1.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*2.13, $cp0*1.47, $cp0*0.167, $cp0*1.17, $cp0*3.3, $cp0*5.77, $cp0*7.47, $cp0*8.3, $cp0*8.3);
+ printf("       1.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*2.42, $cp0*1.175, $cp0*-0.55, $cp0*0.45, $cp0*2.92, $cp0*5.53, $cp0*7.42, $cp0*8.3, $cp0*8.3);
+ printf("       1.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*2.7, $cp0*2.03, $cp0*-0.83, $cp0*-0.333, $cp0*2.25, $cp0*5.45, $cp0*7.33, $cp0*8.3, $cp0*8.3);
+ printf("       1.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*2.98, $cp0*2.32, $cp0*-0.97, $cp0*-1.0, $cp0*1.42, $cp0*5.3, $cp0*7.17, $cp0*8.0, $cp0*8.3);
+ printf("       1.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*3.27, $cp0*2.6, $cp0*-1.0, $cp0*-1.67, $cp0*0.417, $cp0*4.7, $cp0*6.95, $cp0*7.83, $cp0*8.3);
+ printf("       2.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*3.55, $cp0*2.88, $cp0*-1.28, $cp0*-2.33, $cp0*-0.5, $cp0*4.0, $cp0*6.62, $cp0*7.67, $cp0*8.3);
+ printf("       2.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*3.83, $cp0*3.17, $cp0*-1.57, $cp0*-3.0, $cp0*-1.5, $cp0*3.25, $cp0*6.42, $cp0*7.33, $cp0*8.3);
+ printf("       2.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*4.12, $cp0*3.45, $cp0*-1.85, $cp0*-3.67, $cp0*-2.5, $cp0*2.32, $cp0*6.23, $cp0*7.17, $cp0*8.3);
+ printf("       2.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*4.4, $cp0*3.73, $cp0*-2.13, $cp0*-4.33, $cp0*-3.17, $cp0*0.97, $cp0*6.08, $cp0*0.692, $cp0*8.3);
+ printf("       2.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*4.68, $cp0*4.02, $cp0*-2.42, $cp0*-5.0, $cp0*-3.8, $cp0*-0.33, $cp0*5.95, $cp0*6.83, $cp0*8.3);
+ printf("       3.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*4.97, $cp0*4.3, $cp0*-2.7, $cp0*-5.67, $cp0*-4.5, $cp0*-1.5, $cp0*5.75, $cp0*6.83, $cp0*8.3);
+ printf("       3.2      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*5.25, $cp0*4.58, $cp0*-2.98, $cp0*-6.33, $cp0*-5.17, $cp0*-2.67, $cp0*5.38, $cp0*6.67, $cp0*8.3);
+ printf("       3.4      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*5.53, $cp0*4.87, $cp0*-3.27, $cp0*-7.0, $cp0*-5.83, $cp0*-3.83, $cp0*4.17, $cp0*6.5, $cp0*8.3);
+ printf("       3.6      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*5.82, $cp0*5.15, $cp0*-3.55, $cp0*-7.67, $cp0*-6.5, $cp0*-5.0, $cp0*2.93, $cp0*6.33, $cp0*8.3);
+ printf("       3.8      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*6.1, $cp0*5.43, $cp0*-3.83, $cp0*-8.3, $cp0*-7.17, $cp0*-6.17, $cp0*1.63, $cp0*6.13, $cp0*8.3);
+ printf("       4.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*6.38, $cp0*5.72, $cp0*-4.12, $cp0*-8.3, $cp0*-8.3, $cp0*-7.33, $cp0*0.33, $cp0*5.67, $cp0*8.3);
+ printf("       6.0      %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n", $cp0*8.3, $cp0*8.3, $cp0*-8.3, $cp0*-8.3, $cp0*-8.3, $cp0*-8.3, $cp0*-8.3, $cp0*-5.0, $cp0*8.3); 
  print("     </tableData>\n");
  print("  </table>\n");
 }
