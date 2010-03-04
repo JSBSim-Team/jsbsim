@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.14 2010/02/14 22:59:05 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.15 2010/03/04 03:24:30 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -408,7 +408,7 @@ public:
       the identity orientation.
   */
   FGQuaternion Inverse(void) const {
-    double norm = Magnitude();
+    double norm = SqrMagnitude();
     if (norm == 0.0)
       return *this;
     double rNorm = 1.0/norm;
