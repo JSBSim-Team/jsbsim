@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.66 2010/01/26 13:00:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.67 2010/03/11 12:59:58 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -533,8 +533,6 @@ bool FGFCS::Load(Element* el, SystemType systype)
 
   Components=0;
 
-  string separator = "/";
-
 // ToDo: The handling of name and file attributes could be improved, here,
 //       considering that a name can be in the external file, as well.
 
@@ -545,7 +543,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
     if (systype == stSystem) {
       file = FindSystemFullPathname(fname);
     } else { 
-      file = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
+      file = FDMExec->GetFullAircraftPath() + "/" + fname + ".xml";
     }
     if (fname.empty()) {
       cerr << "FCS, Autopilot, or system does not appear to be defined inline nor in a file" << endl;
@@ -700,12 +698,10 @@ string FGFCS::FindSystemFullPathname(const string& sysfilename)
   string aircraftPath = FDMExec->GetFullAircraftPath();
   ifstream system_file;
 
-  string separator = "/";
+  fullpath = systemPath + "/";
+  localpath = aircraftPath + "/Systems/";
 
-  fullpath = systemPath + separator;
-  localpath = aircraftPath + separator + "Systems" + separator;
-
-  if (system_filename.substr(system_filename.length()-4, 4) != ".xml") {
+  if (system_filename.length() <=4 || system_filename.substr(system_filename.length()-4, 4) != ".xml") {
     system_filename.append(".xml");
   }
 
@@ -733,10 +729,8 @@ ifstream* FGFCS::FindSystemFile(const string& sysfilename)
   string aircraftPath = FDMExec->GetFullAircraftPath();
   ifstream* system_file = new ifstream();
 
-  string separator = "/";
-
-  fullpath = systemPath + separator;
-  localpath = aircraftPath + separator + "Systems" + separator;
+  fullpath = systemPath + "/";
+  localpath = aircraftPath + "/Systems/";
 
   if (system_filename.substr(system_filename.length()-4, 4) != ".xml") {
     system_filename.append(".xml");
