@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.49 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.50 2010/03/14 03:51:03 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,10 +449,13 @@ double FGPiston::CalcFuelNeed(void)
 
 int FGPiston::InitRunning(void) {
   Magnetos=3;
-  //Thruster->SetRPM( 1.1*IdleRPM/Thruster->GetGearRatio() );
-  Thruster->SetRPM( 1000 );
+  p_amb = Atmosphere->GetPressure() * psftopa;
+  double mix= p_amb / (101325.0*1.3);
+  FCS->SetMixturePos(EngineNumber, mix);
+  Thruster->SetRPM( 2.*IdleRPM/Thruster->GetGearRatio() );
+  //Thruster->SetRPM( 1000 );
   Running=true;
-
+// cout <<"Set Running in FGPiston. RPM:" << Thruster->GetRPM()*Thruster->GetGearRatio() <<" Pressure:"<<p_amb<<" Mixture:"<< mix <<endl;
   return 1;
 }
 
