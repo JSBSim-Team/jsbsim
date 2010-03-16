@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.15 2010/03/16 21:06:24 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,6 +71,7 @@ CLASS DOCUMENTATION
   <maxpitch> {number} </maxpitch>
   <minrpm> {number} </minrpm>
   <maxrpm> {number} </maxrpm>
+  <constspeed> {number} </constspeed>
   <reversepitch> {number} </reversepitch>
   <sense> {1 | -1} </sense>
   <p_factor> {number} </p_factor>
@@ -89,6 +90,19 @@ CLASS DOCUMENTATION
     </tableData>
   </table>
 
+  <table name="CT_MACH" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
+  <table name="CP_MACH" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
+
 </propeller>
 @endcode
 
@@ -102,6 +116,7 @@ CLASS DOCUMENTATION
     \<maxpitch>      - Maximum blade pitch angle.
     \<minrpm>        - Minimum rpm target for constant speed propeller.
     \<maxrpm>        - Maximum rpm target for constant speed propeller.
+    \<constspeed>    - 1 = constant speed mode, 0 = manual pitch mode. 
     \<reversepitch>  - Blade pitch angle for reverse.
     \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
                         -1=anti-clockwise as viewed from cockpit).
@@ -111,7 +126,10 @@ CLASS DOCUMENTATION
 </pre>
 
     Two tables are needed. One for coefficient of thrust (Ct) and one for
-    coefficient of power (Cp).  
+    coefficient of power (Cp).
+
+    Two tables are optional. They apply a factor to Ct and Cp based on the
+    helical tip Mach.  
     <br>
 
     Several references were helpful, here:<ul>
@@ -123,7 +141,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.14 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.15 2010/03/16 21:06:24 dpculp Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -169,6 +187,9 @@ public:
   /// Sets the P-Factor constant
   void SetPFactor(double pf) {P_Factor = pf;}
 
+  /// Sets propeller into constant speed mode, or manual pitch mode
+  void SetConstantSpeed(int mode) {ConstantSpeed = mode;} 
+
   /// Sets coefficient of thrust multiplier
   void SetCtFactor(double ctf) {CtFactor = ctf;}
 
@@ -204,6 +225,11 @@ public:
   /// Retrieves propeller power table
   FGTable* GetCPowerTable(void)  const { return cPower; }
 
+  /// Retrieves propeller thrust Mach effects factor
+  FGTable* GetCtMachTable(void) const { return CtMach; }
+  /// Retrieves propeller power Mach effects factor
+  FGTable* GetCpMachTable(void) const { return CpMach; }
+
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   double GetTorque(void)        { return vTorque(eX);    }
 
@@ -233,6 +259,8 @@ public:
   void   SetFeather (bool f) { Feathered = f; }
   bool   GetFeather (void) { return Feathered; }
   double GetThrustCoefficient(void) const {return ThrustCoeff;}
+  double GetHelicalTipMach(void) const {return HelicalTipMach;}
+  int    GetConstantSpeed(void) const {return ConstantSpeed;}
 
 private:
   int   numBlades;
@@ -251,14 +279,18 @@ private:
   double ExcessTorque;
   double D4;
   double D5;
+  double HelicalTipMach;
   FGColumnVector3 vTorque;
   FGTable *cThrust;
   FGTable *cPower;
+  FGTable *CtMach;
+  FGTable *CpMach;
   double CtFactor;
   double CpFactor;
+  int    ConstantSpeed;
   void Debug(int from);
   double ReversePitch; // Pitch, when fully reversed
-  bool   Reversed;		 // true, when propeller is reversed
+  bool   Reversed;     // true, when propeller is reversed
   double Reverse_coef; // 0 - 1 defines AdvancePitch (0=MIN_PITCH 1=REVERSE_PITCH)
   bool   Feathered;    // true, if feather command
 };
