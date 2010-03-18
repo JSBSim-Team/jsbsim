@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.26 2010/03/16 21:06:24 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.27 2010/03/18 13:17:10 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   GearRatio = 1.0;
   CtFactor = CpFactor = 1.0;
   ConstantSpeed = 0;
+  cThrust = cPower = CtMach = CpMach = 0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
