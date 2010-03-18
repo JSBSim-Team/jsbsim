@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.13 2010/02/19 00:30:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.14 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,13 +69,13 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
   Entry(2) = q(2);
   Entry(3) = q(3);
   Entry(4) = q(4);
-  if (mCacheValid) {
+//  if (mCacheValid) {
     mT = q.mT;
     mTInv = q.mTInv;
     mEulerAngles = q.mEulerAngles;
     mEulerSines = q.mEulerSines;
     mEulerCosines = q.mEulerCosines;
-  }
+//  }
   Normalize();
 }
 
@@ -108,6 +108,10 @@ FGQuaternion::FGQuaternion(FGColumnVector3 vOrient): mCacheValid(false)
 
 void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
 {
+  mEulerAngles(ePhi) = phi;
+  mEulerAngles(eTht) = tht;
+  mEulerAngles(ePsi) = psi;
+
   double thtd2 = 0.5*tht;
   double psid2 = 0.5*psi;
   double phid2 = 0.5*phi;
@@ -142,6 +146,8 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
   Entry(2) = t*(m(2,3) - m(3,2));
   Entry(3) = t*(m(3,1) - m(1,3));
   Entry(4) = t*(m(1,2) - m(2,1));
+
+  ComputeDerivedUnconditional();
 
   Normalize();
 }
@@ -187,33 +193,44 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
 {
   mCacheValid = true;
 
-  double q1 = Entry(1); // use some aliases/shorthand for the quat elements.
-  double q2 = Entry(2);
-  double q3 = Entry(3);
-  double q4 = Entry(4);
+  double q0 = Entry(1); // use some aliases/shorthand for the quat elements.
+  double q1 = Entry(2);
+  double q2 = Entry(3);
+  double q3 = Entry(4);
 
   // Now compute the transformation matrix.
+  double q0q0 = q0*q0;
   double q1q1 = q1*q1;
   double q2q2 = q2*q2;
   double q3q3 = q3*q3;
-  double q4q4 = q4*q4;
+  double q0q1 = q0*q1;
+  double q0q2 = q0*q2;
+  double q0q3 = q0*q3;
   double q1q2 = q1*q2;
   double q1q3 = q1*q3;
-  double q1q4 = q1*q4;
   double q2q3 = q2*q3;
-  double q2q4 = q2*q4;
-  double q3q4 = q3*q4;
   
-  mT(1,1) = q1q1 + q2q2 - q3q3 - q4q4; // This is found from Eqn. 1.3-32 in
-  mT(1,2) = 2.0*(q2q3 + q1q4);         // Stevens and Lewis
-  mT(1,3) = 2.0*(q2q4 - q1q3);
-  mT(2,1) = 2.0*(q2q3 - q1q4);
-  mT(2,2) = q1q1 - q2q2 + q3q3 - q4q4;
-  mT(2,3) = 2.0*(q3q4 + q1q2);
-  mT(3,1) = 2.0*(q2q4 + q1q3);
-  mT(3,2) = 2.0*(q3q4 - q1q2);
-  mT(3,3) = q1q1 - q2q2 - q3q3 + q4q4;
+  mT(1,1) = q0q0 + q1q1 - q2q2 - q3q3; // This is found from Eqn. 1.3-32 in
+  mT(1,2) = 2.0*(q1q2 + q0q3);         // Stevens and Lewis
+  mT(1,3) = 2.0*(q1q3 - q0q2);
+  mT(2,1) = 2.0*(q1q2 - q0q3);
+  mT(2,2) = q0q0 - q1q1 + q2q2 - q3q3;
+  mT(2,3) = 2.0*(q2q3 + q0q1);
+  mT(3,1) = 2.0*(q1q3 + q0q2);
+  mT(3,2) = 2.0*(q2q3 - q0q1);
+  mT(3,3) = q0q0 - q1q1 - q2q2 + q3q3;
 
+/*
+  mT(1,1) = 1.0 - 2.0*(q2q2 + q3q3);
+  mT(1,2) = 2.0*(q1q2 + q0q3);
+  mT(1,3) = 2.0*(q1q3 - q0q2);
+  mT(2,1) = 2.0*(q1q2 - q0q3);
+  mT(2,2) = 1.0 - 2.0*(q1q1 + q3q3);
+  mT(2,3) = 2.0*(q2q3 + q0q1);
+  mT(3,1) = 2.0*(q1q3 + q0q2);
+  mT(3,2) = 2.0*(q2q3 - q0q1);
+  mT(3,3) = 1.0 - 2.0*(q1q1 + q2q2);
+*/
   // Since this is an orthogonal matrix, the inverse is simply the transpose.
 
   mTInv = mT;

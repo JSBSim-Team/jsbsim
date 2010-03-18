@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.7 2010/01/01 15:45:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.8 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,15 +70,38 @@ FGMatrix33::FGMatrix33(void)
 string FGMatrix33::Dump(const string& delimiter) const
 {
   ostringstream buffer;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(1,1) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(1,2) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(1,3) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(2,1) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(2,2) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(2,3) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(3,1) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(3,2) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(3,3);
+  buffer << setw(12) << setprecision(10) << Entry(1,1) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(1,2) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(1,3) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(2,1) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(2,2) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(2,3) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(3,1) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(3,2) << delimiter;
+  buffer << setw(12) << setprecision(10) << Entry(3,3);
+  return buffer.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGMatrix33::Dump(const string& delimiter, const string& prefix) const
+{
+  ostringstream buffer;
+
+  buffer << prefix << right << fixed << setw(9) << setprecision(6) << Entry(1,1) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(1,2) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(1,3) << endl;
+
+  buffer << prefix << right << fixed << setw(9) << setprecision(6) << Entry(2,1) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(2,2) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(2,3) << endl;
+
+  buffer << prefix << right << fixed << setw(9) << setprecision(6) << Entry(3,1) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(3,2) << delimiter;
+  buffer << right << fixed << setw(9) << setprecision(6) << Entry(3,3);
+
+  buffer << setw(0) << left;
+
   return buffer.str();
 }
 
@@ -87,10 +110,48 @@ string FGMatrix33::Dump(const string& delimiter) const
 FGQuaternion FGMatrix33::GetQuaternion(void)
 {
   FGQuaternion Q;
-  Q(1) = 0.50*sqrt(1.0 + Entry(1,1) + Entry(2,2) + Entry(3,3));
-  Q(2) = 0.25*(Entry(2,3) - Entry(3,2))/Q(1);
-  Q(3) = 0.25*(Entry(3,1) - Entry(1,3))/Q(1);
-  Q(4) = 0.25*(Entry(1,2) - Entry(2,1))/Q(1);
+
+  double tempQ[4];
+  int idx;
+
+  tempQ[0] = 0.50*sqrt(1.0 + Entry(1,1) + Entry(2,2) + Entry(3,3));
+  tempQ[1] = 0.50*sqrt(1.0 + Entry(1,1) - Entry(2,2) - Entry(3,3));
+  tempQ[2] = 0.50*sqrt(1.0 - Entry(1,1) + Entry(2,2) - Entry(3,3));
+  tempQ[3] = 0.50*sqrt(1.0 - Entry(1,1) - Entry(2,2) + Entry(3,3));
+
+  // Find largest of the above
+  idx = 0;
+  for (int i=1; i<4; i++) if (tempQ[i] > tempQ[idx]) idx = i; 
+
+  switch(idx) {
+    case 0:
+      Q(1) = tempQ[0];
+      Q(2) = 0.25*(Entry(2,3) - Entry(3,2))/Q(1);
+      Q(3) = 0.25*(Entry(3,1) - Entry(1,3))/Q(1);
+      Q(4) = 0.25*(Entry(1,2) - Entry(2,1))/Q(1);
+      break;
+    case 1:
+      Q(2) = tempQ[1];
+      Q(1) = 0.25*(Entry(2,3) - Entry(3,2))/Q(2);
+      Q(3) = 0.25*(Entry(1,2) + Entry(2,1))/Q(2);
+      Q(4) = 0.25*(Entry(3,1) + Entry(1,3))/Q(2);
+      break;
+    case 2:
+      Q(3) = tempQ[2];
+      Q(1) = 0.25*(Entry(3,1) - Entry(1,3))/Q(3);
+      Q(2) = 0.25*(Entry(1,2) + Entry(2,1))/Q(3);
+      Q(4) = 0.25*(Entry(2,3) + Entry(3,2))/Q(3);
+      break;
+    case 3:
+      Q(4) = tempQ[3];
+      Q(1) = 0.25*(Entry(1,2) - Entry(2,1))/Q(4);
+      Q(2) = 0.25*(Entry(1,3) + Entry(3,1))/Q(4);
+      Q(3) = 0.25*(Entry(2,3) + Entry(3,2))/Q(4);
+      break;
+    default:
+      //error
+      break;
+  }
 
   return (Q);
 }
@@ -136,21 +197,28 @@ FGMatrix33 FGMatrix33::Inverse(void) const {
   // Compute the inverse of a general matrix using Cramers rule.
   // I guess googling for cramers rule gives tons of references
   // for this. :)
-  double rdet = 1.0/Determinant();
 
-  double i11 = rdet*(Entry(2,2)*Entry(3,3)-Entry(2,3)*Entry(3,2));
-  double i21 = rdet*(Entry(2,3)*Entry(3,1)-Entry(2,1)*Entry(3,3));
-  double i31 = rdet*(Entry(2,1)*Entry(3,2)-Entry(2,2)*Entry(3,1));
-  double i12 = rdet*(Entry(1,3)*Entry(3,2)-Entry(1,2)*Entry(3,3));
-  double i22 = rdet*(Entry(1,1)*Entry(3,3)-Entry(1,3)*Entry(3,1));
-  double i32 = rdet*(Entry(1,2)*Entry(3,1)-Entry(1,1)*Entry(3,2));
-  double i13 = rdet*(Entry(1,2)*Entry(2,3)-Entry(1,3)*Entry(2,2));
-  double i23 = rdet*(Entry(1,3)*Entry(2,1)-Entry(1,1)*Entry(2,3));
-  double i33 = rdet*(Entry(1,1)*Entry(2,2)-Entry(1,2)*Entry(2,1));
+  if (Determinant() != 0.0) {
+    double rdet = 1.0/Determinant();
 
-  return FGMatrix33( i11, i12, i13,
-                     i21, i22, i23,
-                     i31, i32, i33 );
+    double i11 = rdet*(Entry(2,2)*Entry(3,3)-Entry(2,3)*Entry(3,2));
+    double i21 = rdet*(Entry(2,3)*Entry(3,1)-Entry(2,1)*Entry(3,3));
+    double i31 = rdet*(Entry(2,1)*Entry(3,2)-Entry(2,2)*Entry(3,1));
+    double i12 = rdet*(Entry(1,3)*Entry(3,2)-Entry(1,2)*Entry(3,3));
+    double i22 = rdet*(Entry(1,1)*Entry(3,3)-Entry(1,3)*Entry(3,1));
+    double i32 = rdet*(Entry(1,2)*Entry(3,1)-Entry(1,1)*Entry(3,2));
+    double i13 = rdet*(Entry(1,2)*Entry(2,3)-Entry(1,3)*Entry(2,2));
+    double i23 = rdet*(Entry(1,3)*Entry(2,1)-Entry(1,1)*Entry(2,3));
+    double i33 = rdet*(Entry(1,1)*Entry(2,2)-Entry(1,2)*Entry(2,1));
+
+    return FGMatrix33( i11, i12, i13,
+                       i21, i22, i23,
+                       i31, i32, i33 );
+  } else {
+    return FGMatrix33( 0, 0, 0,
+                       0, 0, 0,
+                       0, 0, 0 );
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.15 2010/03/04 03:24:30 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.16 2010/03/18 13:21:24 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -288,15 +288,16 @@ public:
     Entry(2) = q(2);
     Entry(3) = q(3);
     Entry(4) = q(4);
+    ComputeDerived();
     // .. and copy the derived values if they are valid
     mCacheValid = q.mCacheValid;
-    if (mCacheValid) {
+//    if (mCacheValid) {
         mT = q.mT;
         mTInv = q.mTInv;
         mEulerAngles = q.mEulerAngles;
         mEulerSines = q.mEulerSines;
         mEulerCosines = q.mEulerCosines;
-    }
+//    }
     return *this;
   }
 
@@ -470,7 +471,8 @@ private:
       FGQuaternion::ComputeDerivedUnconditional(void) const
       is called. */
   void ComputeDerived(void) const {
-    if (!mCacheValid) ComputeDerivedUnconditional();
+//    if (!mCacheValid)
+      ComputeDerivedUnconditional();
   }
 
   /** The quaternion values itself. This is the master copy. */

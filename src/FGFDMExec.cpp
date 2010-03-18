@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.74 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.75 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,6 +172,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
+  instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
 
   Constructing = false;
 }
@@ -464,7 +465,6 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 {
   string token;
   string aircraftCfgFileName;
-  string separator = "/";
   Element* element = 0L;
   bool result = false; // initialize result to false, indicating input file not yet read
 
@@ -477,8 +477,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   }
 
   FullAircraftPath = AircraftPath;
-  if (addModelToPath) FullAircraftPath += separator + model;
-  aircraftCfgFileName = FullAircraftPath + separator + model + ".xml";
+  if (addModelToPath) FullAircraftPath += "/" + model;
+  aircraftCfgFileName = FullAircraftPath + "/" + model + ".xml";
 
   if (modelLoaded) {
     DeAllocate();
