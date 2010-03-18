@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.28 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.29 2010/03/18 13:19:21 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,8 +77,8 @@ CLASS IMPLEMENTATION
     char FGJSBBase::fgdef[6]    = {'\0' };
 #endif
 
-const double FGJSBBase::radtodeg = 57.29578;
-const double FGJSBBase::degtorad = 1.745329E-2;
+const double FGJSBBase::radtodeg = 57.295779513082320876798154814105;
+const double FGJSBBase::degtorad = 0.017453292519943295769236907684886;
 const double FGJSBBase::hptoftlbssec = 550.0;
 const double FGJSBBase::psftoinhg = 0.014138;
 const double FGJSBBase::psftopa = 47.88;
