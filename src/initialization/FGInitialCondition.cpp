@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.37 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.38 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1135,8 +1135,6 @@ bool FGInitialCondition::Load_v2(void)
     vInertialVelocity = mTb2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
 
   }
-
-  
 
   // Allowable frames
   // - ECI (Earth Centered Inertial)

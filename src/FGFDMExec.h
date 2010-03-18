@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.47 2010/02/25 05:21:36 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.48 2010/03/18 13:21:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.47 $
+    @version $Revision: 1.48 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -489,7 +489,7 @@ public:
 
   /** Sets the integration time step for the simulation executive.
       @param delta_t the time step in seconds.     */
-  void  Setdt(double delta_t) { dT = delta_t; }
+  void Setdt(double delta_t) { dT = delta_t; }
 
   /** Increments the simulation time.
       @return the new simulation time.     */
@@ -497,6 +497,9 @@ public:
     sim_time += dT;
     return sim_time;
   }
+
+  /** Retrieves the current debug level setting. */
+  int GetDebugLevel(void) const {return debug_lvl;};
 
 private:
   static unsigned int FDMctr;

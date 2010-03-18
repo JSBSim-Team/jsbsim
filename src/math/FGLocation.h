@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.18 2010/03/18 13:21:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.18 2010/03/18 13:21:24 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,6 +254,13 @@ public:
       and semiminor axis lengths */
   void SetEllipse(double semimajor, double semiminor);
 
+  /** Sets the Earth position angle.
+      This is the relative orientation of the ECEF frame with respect to the
+      Inertial frame.
+      @param EPA Earth fixed frame (ECEF) rotation offset about the axis with
+                 respect to the Inertial (ECI) frame in radians. */
+  void SetEarthPositionAngle(double EPA) {epa = EPA; mCacheValid = false; ComputeDerived();}
+
   /** Get the longitude.
       @return the longitude in rad of the location represented with this
       class instance. The returned values are in the range between
@@ -334,12 +341,12 @@ public:
   /** Transform matrix from inertial to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from
       the inertial frame to the earth centered frame (ECI to ECEF). */
-  const FGMatrix33& GetTi2ec(double epa);
+  const FGMatrix33& GetTi2ec(void);
 
   /** Transform matrix from the earth centered to inertial frame.
       Returns a const reference to the rotation matrix of the transform from
       the earth centered frame to the inertial frame (ECEF to ECI). */
-  const FGMatrix33& GetTec2i(double epa);
+  const FGMatrix33& GetTec2i(void);
 
   const FGMatrix33& GetTi2l(void) const {return mTi2l;}
 
@@ -510,7 +517,7 @@ private:
       transformation matrices are already computed. If so, it
       returns. If they need to be computed this is done here. */
   void ComputeDerived(void) const {
-    if (!mCacheValid)
+//    if (!mCacheValid)
       ComputeDerivedUnconditional();
   }
 
@@ -541,6 +548,8 @@ private:
   mutable FGMatrix33 mTec2i;
   mutable FGMatrix33 mTi2l;
   mutable FGMatrix33 mTl2i;
+
+  double epa;
 
   /* Terms for geodetic latitude calculation. Values are from WGS84 model */
   double a;    // Earth semimajor axis in feet (6,378,137.0 meters)

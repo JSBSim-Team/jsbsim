@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.25 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.27 2010/03/18 13:17:10 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Reverse_coef = 0.0;
   GearRatio = 1.0;
   CtFactor = CpFactor = 1.0;
+  ConstantSpeed = 0;
+  cThrust = cPower = CtMach = CpMach = 0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
@@ -91,8 +93,12 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     MaxPitch = prop_element->FindElementValueAsNumber("maxpitch");
   if (prop_element->FindElement("minrpm"))
     MinRPM = prop_element->FindElementValueAsNumber("minrpm");
-  if (prop_element->FindElement("maxrpm"))
+  if (prop_element->FindElement("maxrpm")) {
     MaxRPM = prop_element->FindElementValueAsNumber("maxrpm");
+    ConstantSpeed = 1;
+    }
+  if (prop_element->FindElement("constspeed"))
+    ConstantSpeed = (int)prop_element->FindElementValueAsNumber("constspeed");
   if (prop_element->FindElement("reversepitch"))
     ReversePitch = prop_element->FindElementValueAsNumber("reversepitch");
   for (int i=0; i<2; i++) {
@@ -102,6 +108,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       cThrust = new FGTable(PropertyManager, table_element);
     } else if (name == "C_POWER") {
       cPower = new FGTable(PropertyManager, table_element);
+    } else if (name == "CT_MACH") {
+      CtMach = new FGTable(PropertyManager, table_element);
+    } else if (name == "CP_MACH") {
+      CpMach = new FGTable(PropertyManager, table_element);
     } else {
       cerr << "Unknown table type: " << name << " in propeller definition." << endl;
     }
@@ -129,6 +139,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   vTorque.InitMatrix();
   D4 = Diameter*Diameter*Diameter*Diameter;
   D5 = D4*Diameter;
+  Pitch = MinPitch;
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
@@ -140,6 +151,12 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetThrustCoefficient );
   property_name = base_property_name + "/propeller-rpm";
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetRPM );
+  property_name = base_property_name + "/helical-tip-Mach";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetHelicalTipMach );
+  property_name = base_property_name + "/constant-speed-mode";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetConstantSpeed,
+                      &FGPropeller::SetConstantSpeed );
+
 
   Debug(0);
 }
@@ -150,6 +167,8 @@ FGPropeller::~FGPropeller()
 {
   delete cThrust;
   delete cPower;
+  delete CtMach;
+  delete CpMach;
 
   Debug(1);
 }
@@ -176,12 +195,25 @@ double FGPropeller::Calculate(double PowerAvailable)
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
 
-  if (RPS > 0.00) J = Vel / (Diameter * RPS); // Calculate J normally
-  else            J = 1000.0;                 // Set J to a high number
+  // Calculate helical tip Mach 
+  double Vtip = RPM * Diameter * M_PI / 60.0;
+  HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / 
+                   fdmex->GetAtmosphere()->GetSoundSpeed(); 
 
-  if (MaxPitch == MinPitch)  ThrustCoeff = cThrust->GetValue(J);
-  else                       ThrustCoeff = cThrust->GetValue(J, Pitch);
+  if (RPS > 0.0) J = Vel / (Diameter * RPS); // Calculate J normally
+  else           J = Vel / Diameter;      
+
+  if (MaxPitch == MinPitch) {    // Fixed pitch prop
+         ThrustCoeff = cThrust->GetValue(J);
+  } else {                       // Variable pitch prop
+         ThrustCoeff = cThrust->GetValue(J, Pitch);
+  }
+ 
+  // Apply optional scaling factor to Ct (default value = 1)
   ThrustCoeff *= CtFactor;
+
+  // Apply optional Mach effects from CT_MACH table
+  if (CtMach) ThrustCoeff *= CtMach->GetValue(HelicalTipMach);
 
   if (P_Factor > 0.0001) {
     alpha = fdmex->GetAuxiliary()->Getalpha();
@@ -208,7 +240,7 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 
-  if (RPM < 1.0) RPM = 0; // Engine friction stops rotation arbitrarily at 1 RPM.
+  if (RPM < 0.0) RPM = 0.0; // Engine won't turn backwards
 
   // Transform Torque and momentum first, as PQR is used in this
   // equation and cannot be transformed itself.
@@ -223,19 +255,23 @@ double FGPropeller::GetPowerRequired(void)
 {
   double cPReq, J;
   double rho = fdmex->GetAtmosphere()->GetDensity();
+  double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
   double RPS = RPM / 60.0;
 
-  if (RPS != 0) J = fdmex->GetAuxiliary()->GetAeroUVW(eU) / (Diameter * RPS);
-  else          J = 1000.0; // Set J to a high number
+  if (RPS != 0.0) J = Vel / (Diameter * RPS);
+  else            J = Vel / Diameter; 
 
-  if (MaxPitch == MinPitch) { // Fixed pitch prop
-    Pitch = MinPitch;
+  if (MaxPitch == MinPitch) {   // Fixed pitch prop
     cPReq = cPower->GetValue(J);
+
   } else {                      // Variable pitch prop
 
-    if (MaxRPM != MinRPM) {   // fixed-speed prop
+    if (ConstantSpeed != 0) {   // Constant Speed Mode
 
       // do normal calculation when propeller is neither feathered nor reversed
+      // Note:  This method of feathering and reversing was added to support the
+      //        turboprop model.  It's left here for backward compatablity, but
+      //        now feathering and reversing should be done in Manual Pitch Mode.
       if (!Feathered) {
         if (!Reversed) {
 
@@ -267,19 +303,29 @@ double FGPropeller::GetPowerRequired(void)
         Pitch += (MaxPitch - Pitch) / 300; // just a guess (about 5 sec to fully feathered)
       }
 
-    } else { // Variable Speed Prop
-      Pitch = MinPitch + (MaxPitch - MinPitch) * Advance;
+    } else { // Manual Pitch Mode, pitch is controlled externally
+
     }
+  
     cPReq = cPower->GetValue(J, Pitch);
   }
+
+  // Apply optional scaling factor to Cp (default value = 1)
   cPReq *= CpFactor;
 
-  if (RPS > 0) {
+  // Apply optional Mach effects from CP_MACH table
+  if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
+
+  if (RPS > 0.1) {
     PowerRequired = cPReq*RPS*RPS*RPS*D5*rho;
     vTorque(eX) = -Sense*PowerRequired / (RPS*2.0*M_PI);
   } else {
-    PowerRequired = 0.0;
-    vTorque(eX) = 0.0;
+     // For a stationary prop we have to estimate torque first.
+     double CL = (90.0 - Pitch) / 20.0;
+     if (CL > 1.5) CL = 1.5;
+     double BladeArea = Diameter * Diameter / 32.0 * numBlades;
+     vTorque(eX) = -Sense*BladeArea*Diameter*Vel*Vel*rho*0.19*CL;
+     PowerRequired = vTorque(eX)*0.2*M_PI;
   }
 
   return PowerRequired;

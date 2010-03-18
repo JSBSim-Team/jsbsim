@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.16 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.17 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +133,11 @@ double FGInertial::GetGAccel(double r) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// Calculate the WGS84 gravitation value in ECEF frame. Pass in the ECEF position
+// via the position parameter. The J2Gravity value returned is in ECEF frame,
+// and therefore may need to be expressed (transformed) in another frame,
+// depending on how it is used. See Stevens and Lewis.
 
 FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 {
@@ -143,14 +148,14 @@ FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
   double lat = Propagate->GetLatitude();
   double sinLat = sin(lat);
 
-  double preCommon = 1.0 + 1.5*J2*(a/r)*(a/r);
+  double preCommon = 1.5*J2*(a/r)*(a/r);
   double xy = 1.0 - 5.0*(sinLat*sinLat);
   double z = 3.0 - 5.0*(sinLat*sinLat);
   double GMOverr2 = GM/(r*r);
 
-  J2Gravity(1) = -GMOverr2 * ((preCommon * xy) * (position(eX)/r));
-  J2Gravity(2) = -GMOverr2 * ((preCommon * xy) * (position(eY)/r));
-  J2Gravity(3) = -GMOverr2 * ((preCommon * z) * (position(eZ)/r));
+  J2Gravity(1) = -GMOverr2 * ((1.0 + (preCommon * xy)) * position(eX)/r);
+  J2Gravity(2) = -GMOverr2 * ((1.0 + (preCommon * xy)) * position(eY)/r);
+  J2Gravity(3) = -GMOverr2 * ((1.0 + (preCommon *  z)) * position(eZ)/r);
 
   return J2Gravity;
 }

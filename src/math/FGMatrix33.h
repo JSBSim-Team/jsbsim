@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.9 2010/01/01 15:45:57 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.10 2010/03/18 13:21:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -163,6 +163,12 @@ public:
       @param delimeter the item separator (tab or comma)
       @return a string with the delimeter-separated contents of the matrix  */
   std::string Dump(const std::string& delimeter) const;
+
+  /** Prints the contents of the matrix.
+      @param delimeter the item separator (tab or comma, etc.)
+      @param prefix an additional prefix that is used to indent the 3X3 matrix printout
+      @return a string with the delimeter-separated contents of the matrix  */
+  std::string Dump(const std::string& delimiter, const std::string& prefix) const;
 
   /** Read access the entries of the matrix.
       @param row Row index.

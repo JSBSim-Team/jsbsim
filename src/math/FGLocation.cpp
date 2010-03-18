@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.20 2010/03/18 13:21:24 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +64,19 @@ FGLocation::FGLocation(void)
   e = 1.0;
   eps2 = -1.0;
   f = 1.0;
+  epa = 0.0;
+
+  mLon = mLat = mRadius = mGeodLat = GeodeticAltitude = 0.0;
+  
+//  initial_longitude = 0.0;
+
+  mTl2ec.InitMatrix();
+  mTec2l.InitMatrix();
+  mTi2ec.InitMatrix();
+  mTec2i.InitMatrix();
+  mTi2l.InitMatrix();
+  mTl2i.InitMatrix();
+  mECLoc.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +89,7 @@ FGLocation::FGLocation(double lon, double lat, double radius)
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-  initial_longitude = lon;
+
   a = 0.0;
   b = 0.0;
   a2 = 0.0;
@@ -85,9 +98,15 @@ FGLocation::FGLocation(double lon, double lat, double radius)
   e = 1.0;
   eps2 = -1.0;
   f = 1.0;
+  epa = 0.0;
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
+  mLon = mLat = mRadius = mGeodLat = GeodeticAltitude = 0.0;
+  
+//  initial_longitude = 0.0
+
+  ComputeDerived();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,7 +178,7 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-  initial_longitude = lon;
+//  initial_longitude = lon;
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
@@ -176,7 +195,7 @@ void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
   mLon = lon;
   GeodeticAltitude = height;
 
-  initial_longitude = mLon;
+//  initial_longitude = mLon;
 
   double RN = a / sqrt(1.0 - e2*sin(mGeodLat)*sin(mGeodLat));
 
@@ -207,12 +226,8 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 // Control and Simulation", second edition, eqn. 1.4-12, pg. 39. In Stevens and Lewis
 // notation, this is C_i/e, a transformation from ECEF to ECI.
 
-const FGMatrix33& FGLocation::GetTec2i(double epa)
+const FGMatrix33& FGLocation::GetTec2i(void)
 {
-  double mu = epa - initial_longitude;
-  mTec2i = FGMatrix33( cos(mu), -sin(mu), 0.0,
-                       sin(mu),  cos(mu), 0.0,
-                            0.0,     0.0, 1.0 );
   return mTec2i;
 }
 
@@ -223,12 +238,8 @@ const FGMatrix33& FGLocation::GetTec2i(double epa)
 // from ECI to ECEF - and the orientation of the ECEF frame relative to the ECI
 // frame.
 
-const FGMatrix33& FGLocation::GetTi2ec(double epa)
+const FGMatrix33& FGLocation::GetTi2ec(void)
 {
-  double mu = epa - initial_longitude;
-  mTi2ec = FGMatrix33( cos(mu), sin(mu), 0.0,
-                      -sin(mu), cos(mu), 0.0,
-                           0.0,      0.0, 1.0 );
   return mTi2ec;
 }
 
@@ -289,6 +300,12 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // and a transformation from nav (local) to ECEF frame.
 
   mTl2ec = mTec2l.Transposed();
+
+  // Calculate the inertial to ECEF and transpose matrices
+  mTi2ec = FGMatrix33( cos(epa), sin(epa), 0.0,
+                      -sin(epa), cos(epa), 0.0,
+                           0.0,      0.0, 1.0 );
+  mTec2i = mTi2ec.Transposed();
 
   // Now calculate the local (or nav, or ned) frame to inertial transform matrix,
   // and the inverse.
