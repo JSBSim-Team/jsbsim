@@ -135,7 +135,7 @@
      <max>
       <value> 0.0 </value>
       <difference>
-       <property> sim-time-sec </property>
+       <property> simulation/sim-time-sec </property>
        <value> 2.0 </value>
       </difference>
      </max>
