@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- $Id: tail_wheel_lock.xml,v 1.1 2010/03/23 22:44:37 andgi Exp $ -->
+<!--
+  Control system for castering tail wheel with tail wheel lock.
+  Copyright (C) 2010  Anders Gidenstam
+  This file is licensed under the LGPL license v2 or later.
+-->
+<system name="tail_wheel_control">
+
+ <!--
+  NOTE: The tail wheel must be gear unit 2.
+ -->
+ <property value="0.0">fcs/tail-wheel-lock-cmd-norm</property>
+
+ <channel name="tail wheel">
+ 
+  <switch name="fcs/tail-wheel-locked-deg">
+   <default value="0.0"/>
+   <output>fcs/steer-pos-deg[2]</output>
+  </switch>
+
+  <switch name="fcs/tail-wheel-free">
+   <default value="1.0"/>
+   <test value="0.0">
+    fcs/tail-wheel-lock-cmd-norm GT 0.99
+   </test>
+   <output>gear/unit[2]/castered</output>
+  </switch>
+
+ </channel>
+
+</system>

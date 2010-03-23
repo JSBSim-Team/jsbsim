@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.37 2009/11/28 20:18:09 andgi Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.38 2010/03/23 22:44:36 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,7 +84,6 @@ CLASS DOCUMENTATION
     <h3>Operational Properties</h3>
     <ol>
     <li>Name</li>
-    <li>Steerability attribute {one of STEERABLE | FIXED | CASTERED}</li>
     <li>Brake Group Membership {one of LEFT | CENTER | RIGHT | NOSE | TAIL | NONE}</li>
     <li>Max Steer Angle, in degrees</li>
     </ol></p>
@@ -190,7 +189,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.37 2009/11/28 20:18:09 andgi Exp $
+    @version $Id: FGLGear.h,v 1.38 2010/03/23 22:44:36 andgi Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -289,6 +288,7 @@ public:
   double GetWheelVel(int axis) const   { return vWhlVelVec(axis);}
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
+  double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
 
   void bind(void);
 
@@ -337,6 +337,7 @@ private:
   bool isRetractable;
   bool GearUp, GearDown;
   bool Servicable;
+  bool Castered;
   std::string name;
   std::string sSteerType;
   std::string sBrakeGroup;
