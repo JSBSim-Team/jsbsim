@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.72 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.73 2010/03/23 22:44:36 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -75,7 +75,8 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   FGForce(fdmex),
   GearNumber(number),
-  SteerAngle(0.0)
+  SteerAngle(0.0),
+  Castered(false)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
@@ -201,7 +202,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
 
   if      (sSteerType == "STEERABLE") eSteerType = stSteer;
   else if (sSteerType == "FIXED"    ) eSteerType = stFixed;
-  else if (sSteerType == "CASTERED" ) eSteerType = stCaster;
+  else if (sSteerType == "CASTERED" ) {eSteerType = stCaster; Castered = true;}
   else if (sSteerType.empty()       ) {eSteerType = stFixed;
                                        sSteerType = "FIXED (defaulted)";}
   else {
@@ -514,7 +515,13 @@ void FGLGear::ComputeSteeringAngle(void)
     SteerAngle = 0.0;
     break;
   case stCaster:
-    SteerAngle = atan2(vWhlVelVec(eY), fabs(vWhlVelVec(eX)));
+    if (!Castered)
+      SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
+    else {
+      // Check that the speed is non-null otherwise use the current angle
+      if (vWhlVelVec.Magnitude(eX,eY) > 1E-3)
+        SteerAngle = atan2(vWhlVelVec(eY), fabs(vWhlVelVec(eX)));
+    }
     break;
   default:
     cerr << "Improper steering type membership detected for this gear." << endl;
@@ -758,8 +765,10 @@ void FGLGear::bind(void)
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
 
     if (eSteerType == stCaster) {
-      property_name = base_property_name + "/steering-angle-rad";
-      fdmex->GetPropertyManager()->Tie( property_name.c_str(), &SteerAngle );
+      property_name = base_property_name + "/steering-angle-deg";
+      fdmex->GetPropertyManager()->Tie( property_name.c_str(), this, &FGLGear::GetSteerAngleDeg );
+      property_name = base_property_name + "/castered";
+      fdmex->GetPropertyManager()->Tie( property_name.c_str(), &Castered);
     }
   }
 
