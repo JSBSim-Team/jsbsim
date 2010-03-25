@@ -1,4 +1,4 @@
-<!-- $Id: engines.xml,v 1.2 2010/03/25 22:34:57 andgi Exp $ -->
+<!-- $Id: engines.xml,v 1.3 2010/03/25 22:47:58 andgi Exp $ -->
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
@@ -131,7 +131,7 @@
  </documentation>
  <channel name="Propeller pitch">
 
-  <switch name="propulsion/engine[0]/blade-angle">
+  <switch name="fcs/propeller/blade-angle-norm[0]">
    <default value="0.0"/>
    <test value="1.0">
      fcs/advance-cmd-norm[0] GT 0.5
@@ -139,7 +139,7 @@
    <output>propulsion/engine[0]/blade-angle</output>
   </switch>
 
-  <switch name="propulsion/engine[1]/blade-angle">
+  <switch name="fcs/propeller/blade-angle-norm[1]">
    <default value="0.0"/>
    <test value="1.0">
      fcs/advance-cmd-norm[1] GT 0.5
@@ -147,7 +147,7 @@
    <output>propulsion/engine[1]/blade-angle</output>
   </switch>
 
-  <switch name="propulsion/engine[2]/blade-angle">
+  <switch name="fcs/propeller/blade-angle-norm[2]">
    <default value="0.0"/>
    <test value="1.0">
      fcs/advance-cmd-norm[2] GT 0.5
@@ -155,7 +155,7 @@
    <output>propulsion/engine[2]/blade-angle</output>
    </switch>
 
-   <switch name="propulsion/engine[3]/blade-angle">
+   <switch name="fcs/propeller/blade-angle-norm[3]">
     <default value="0.0"/>
     <test value="1.0">
       fcs/advance-cmd-norm[3] GT 0.5
