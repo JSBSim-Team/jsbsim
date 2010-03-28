@@ -43,12 +43,13 @@ INCLUDES
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
 #include "math/FGMatrix33.h"
+#include <deque>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.36 2010/03/18 13:21:24 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.37 2010/03/28 05:57:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -56,6 +57,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+using std::deque;
 class FGInitialCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.36 2010/03/18 13:21:24 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.37 2010/03/28 05:57:01 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +146,11 @@ public:
     FGColumnVector3 vInertialVelocity;
 
     FGColumnVector3 vInertialPosition;
+
+    deque <FGColumnVector3> dqPQRdot;
+    deque <FGColumnVector3> dqUVWdot;
+    deque <FGColumnVector3> dqInertialVelocity;
+    deque <FGQuaternion> dqQtrndot;
   };
 
   /** Constructor.
@@ -504,7 +511,6 @@ public:
       @return a reference to the inertial-to-local matrix.  */
   const FGMatrix33& GetTi2l(void)  { return VState.vLocation.GetTi2l(); }
 
-
   VehicleState* GetVState(void) { return &VState; }
 
   void SetVState(VehicleState* vstate) {
@@ -513,6 +519,11 @@ public:
       VState.vPQR = vstate->vPQR;
       VState.qAttitudeLocal = vstate->qAttitudeLocal;
       VState.qAttitudeECI = vstate->qAttitudeECI;
+
+      VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+      VState.dqUVWdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+      VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
+      VState.dqQtrndot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   }
 
   void SetInertialOrientation(FGQuaternion Qi);
@@ -551,11 +562,6 @@ public:
     VState.vLocation -= vDeltaXYZEC;
   }
 
-  void CalculatePQRdot(void);
-  void CalculateQuatdot(void);
-  void CalculateInertialVelocity(void);
-  void CalculateUVWdot(void);
-
 private:
 
 // state vector
@@ -563,14 +569,14 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot, last3_vPQRdot;
-  FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot, last3_vUVWdot;
-  FGColumnVector3 vInertialVelocity, last_vInertialVelocity, last2_vInertialVelocity, last3_vInertialVelocity;
+  FGColumnVector3 vPQRdot;
+  FGColumnVector3 vUVWdot;
+  FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vLocation;
   FGColumnVector3 vDeltaXYZEC;
   FGColumnVector3 vGravAccel;
   FGColumnVector3 vOmegaEarth;  // The Earth angular velocity vector
-  FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot, last3_vQtrndot;
+  FGQuaternion vQtrndot;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;
   FGMatrix33 Tl2b;   // local to body frame matrix copy for immediate local use
@@ -586,11 +592,28 @@ private:
   
   double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
   double radInv;
-  int integrator_rotational_rate;
-  int integrator_translational_rate;
-  int integrator_rotational_position;
-  int integrator_translational_position;
+  eIntegrateType integrator_rotational_rate;
+  eIntegrateType integrator_translational_rate;
+  eIntegrateType integrator_rotational_position;
+  eIntegrateType integrator_translational_position;
   int gravType;
+
+  void CalculatePQRdot(void);
+  void CalculateQuatdot(void);
+  void CalculateInertialVelocity(void);
+  void CalculateUVWdot(void);
+
+  void Integrate( FGColumnVector3& Integrand,
+                  FGColumnVector3& Val,
+                  deque <FGColumnVector3>& ValDot,
+                  double dt,
+                  eIntegrateType integration_type);
+
+  void Integrate( FGQuaternion& Integrand,
+                  FGQuaternion& Val,
+                  deque <FGQuaternion>& ValDot,
+                  double dt,
+                  eIntegrateType integration_type);
 
   void bind(void);
   void Debug(int from);

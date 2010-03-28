@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.17 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.18 2010/03/28 05:57:00 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ double FGInertial::GetGAccel(double r) const
 // Calculate the WGS84 gravitation value in ECEF frame. Pass in the ECEF position
 // via the position parameter. The J2Gravity value returned is in ECEF frame,
 // and therefore may need to be expressed (transformed) in another frame,
-// depending on how it is used. See Stevens and Lewis.
+// depending on how it is used. See Stevens and Lewis eqn. 1.4-16.
 
 FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 {
