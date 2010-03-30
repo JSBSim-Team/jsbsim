@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+
+<system name="Electrictal">
+
+    <property value="1">propulsion/tank/priority</property>
+    <property value="0">propulsion/tank[1]/priority</property>
+    <property value="0">propulsion/tank[2]/priority</property>
+    <property value="0">propulsion/tank[3]/priority</property>
+    <property value="0">propulsion/tank[4]/priority</property>
+    <property value="0">systems/right-flor-gain</property>
+
+    <channel name="warning lights">
+
+       <switch name="/controls/engines/engine/boost-light-on">
+          <default value="0"/>
+          <test value="1">
+              propulsion/engine/boost-speed GT 0.9
+          </test>
+          <test value="1">
+              /controls/engines/engine/blower-light-check GT 0.9
+          </test>
+      </switch>
+
+      <switch name="/controls/gear/safe-light-on">
+         <default value="0"/>
+         <test login="AND" value ="1">
+             /controls/engines/engine[0]/throttle LT 0.25
+             /gear/gear/position-norm GT 0.99
+         </test>
+         <test value="1">
+            /controls/gear/gear-safe-light-check GT 0.9
+         </test>
+      </switch>
+
+      <switch name="/controls/gear/unsafe-light-on">
+         <default value="0"/>
+         <test login="AND" value ="1">
+             /controls/engines/engine[0]/throttle LT 0.25
+             /gear/gear/position-norm LT 0.99
+         </test>
+         <test value="1">
+            /controls/gear/gear-unsafe-light-check GT 0.9
+         </test>
+      </switch>
+
+    </channel>
+
+    <channel name="flor lights">
+
+       <switch name="systems/lighting/left-flor-switch-gain">
+          <default value="0"/>
+          <test value="0.2">
+             /controls/lighting/left-flor-pos == 1
+          </test>
+          <test value="0.75">
+             /controls/lighting/left-flor-pos == 2
+          </test>
+          <test value="0.5">
+             /controls/lighting/left-flor-pos == 3
+          </test>
+       </switch>
+
+       <switch name="systems/lighting/right-flor-switch-gain">
+          <default value="0"/>
+          <test value="0.2">
+             /controls/lighting/right-flor-pos == 1
+          </test>
+          <test value="0.75">
+             /controls/lighting/right-flor-pos == 2
+          </test>
+          <test value="0.5">
+             /controls/lighting/right-flor-pos == 3
+          </test>
+       </switch>
+
+        <fcs_function name="systems/lighting/flor-instrument">
+          <function>
+                 <property>systems/lighting/right-flor-switch-gain</property>
+          </function>
+          <output>/controls/lighting/instruments-norm</output>
+        </fcs_function>
+
+     </channel>
+
+    <channel name="Weapons">
+
+       <!-- support animating the weapons selector switch -->
+
+        <switch name="/controls/armament/rockets">
+           <default value="0"/>
+           <test value="1">
+              /controls/armament/weapons-select GT 2.9
+           </test>
+        </switch>
+
+        <switch name="/controls/armament/bombs-train">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/weapons-select GT 1.9
+              /controls/armament/weapons-select LT 2.9
+          </test>
+        </switch>
+
+        <switch name="/controls/armament/bombs-both">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/weapons-select GT 0.9
+              /controls/armament/weapons-select LT 1.9
+          </test>
+        </switch>
+
+        <!-- connect the triggers to the correct weapons systems -->
+        <switch name="/controls/armament/gun-trigger">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/trigger GT 0.9
+              /controls/armament/guns-enabled GT 0.9
+          </test>
+        </switch>
+
+         <switch name="/controls/armament/next-RX">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /ai/submodels/submodel[8]/count == 1
+          </test>
+          <test logic="AND" value="2">
+              /ai/submodels/submodel[8]/count == 0
+              /ai/submodels/submodel[9]/count == 1
+           </test>
+           <test logic="AND" value="3">
+               /ai/submodels/submodel[9]/count  == 0
+               /ai/submodels/submodel[10]/count == 1
+          </test>
+          <test logic="AND" value="4">
+              /ai/submodels/submodel[10]/count  == 0
+              /ai/submodels/submodel[11]/count  == 1
+           </test>
+           <test logic="AND" value="5">
+              /ai/submodels/submodel[11]/count  == 0
+              /ai/submodels/submodel[12]/count  == 1
+          </test>
+          <test logic="AND" value="6">
+              /ai/submodels/submodel[12]/count  == 0
+              /ai/submodels/submodel[13]/count  == 1
+          </test>
+          <test logic="AND" value="7">
+              /ai/submodels/submodel[13]/count  == 0
+              /ai/submodels/submodel[14]/count  == 1
+           </test>
+           <test logic="AND" value="8">
+              /ai/submodels/submodel[14]/count  == 0
+              /ai/submodels/submodel[15]/count  == 1
+          </test>
+          <test logic="AND" value="9">
+              /ai/submodels/submodel[15]/count  == 0
+              /ai/submodels/submodel[16]/count  == 1
+          </test>
+          <test logic="AND" value="10">
+              /ai/submodels/submodel[16]/count  == 0
+              /ai/submodels/submodel[17]/count  == 1
+           </test>
+        </switch>
+
+        <switch name="systems/armament/rocket-sound1">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[1]/trigger GT 0
+              /ai/submodels/submodel[8]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound2">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[2]/trigger == 1
+              /ai/submodels/submodel[9]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound3">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[3]/trigger == 1
+              /ai/submodels/submodel[10]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound4">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[4]/trigger == 1
+              /ai/submodels/submodel[11]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound5">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[5]/trigger == 1
+              /ai/submodels/submodel[12]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound6">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[6]/trigger == 1
+              /ai/submodels/submodel[13]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound7">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[7]/trigger == 1
+              /ai/submodels/submodel[14]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound8">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[8]/trigger == 1
+              /ai/submodels/submodel[15]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound9">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[9]/trigger == 1
+              /ai/submodels/submodel[16]/count GT 0
+           </test>
+       </switch>
+
+       <switch name="systems/armament/rocket-sound10">
+           <default value="0"/>
+           <test logic="AND" value="1">
+              /controls/armament/rocket[10]/trigger == 1
+              /ai/submodels/submodel[17]/count GT 0
+           </test>
+       </switch>
+              
+
+        <switch name="systems/armament/outer-pylons">
+           <default value="0"/>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 2
+           </test>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 3
+           </test>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 5
+           </test>
+        </switch>
+
+        <switch name="systems/armament/inner-pylons">
+           <default value="0"/>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 2
+           </test>
+        </switch>
+
+        <switch name="systems/armament/bomb-pylons">
+           <default value="0"/>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 1
+           </test>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 3
+           </test>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 4
+           </test>
+           <test value="1">
+               /controls/armament/User-Selected-Stores == 5
+           </test>
+        </switch>
+
+        <switch name="systems/armament/drop-tanks">
+           <default value="0"/>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 4
+               /ai/submodels/submodel[12]/count GT 0
+           </test>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 5
+               /ai/submodels/submodel[12]/count GT 0
+           </test>
+        </switch>
+
+        <switch name="systems/armament/right-bomb">
+           <default value="0"/>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 1
+               /ai/submodels/submodel[11]/count GT 0
+           </test>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 3
+               /ai/submodels/submodel[11]/count GT 0
+           </test>
+        </switch>
+
+        <switch name="systems/armament/left-bomb">
+           <default value="0"/>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 1
+               /ai/submodels/submodel[10]/count GT 0
+           </test>
+           <test logic="AND" value="1">
+               /controls/armament/User-Selected-Stores == 3
+               /ai/submodels/submodel[10]/count GT 0
+           </test>
+        </switch>
+
+     </channel>
+
+</system>
