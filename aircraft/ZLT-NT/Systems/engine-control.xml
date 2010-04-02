@@ -1,0 +1,409 @@
+<?xml version="1.0"?>
+<!-- $Id: engine-control.xml,v 1.1 2010/04/02 22:18:37 andgi Exp $ -->
+<!--
+
+  ZLT NT-07 airship flight model for JSBSim.
+
+    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="engine-control-jsbsim">
+
+ <documentation>
+  Controls according to [FAA:2008:AS1CE]:
+    Vectored Thrust Movements
+      Side Engines            0 (forward horizontal) to 120 degrees up.
+      Aft Engine              0 (aft horizontal) to 90 degrees down.
+  Avoid sustained operation with forward swivel angles between
+  43 and 57 degrees during normal operation.
+ </documentation>
+
+ <documentation>
+  Engine controls (from pictures of the engine panel and other sources)
+  - RPM SEL levers
+    - LH AFT RH: IDLE - ?  (to 1250RPM - max according to [FAA:2008:E8-6600])
+    - fcs/propeller-speed-cmd-norm[0|1|2] range [0, 1].
+  - Mixture levers
+    - LH AFT RH: LEAN - RICH
+    - the standard mixture properties
+      fcs/mixture-cmd-norm[0|1|2]
+  - Thrust (prop pitch) levers (direct propeller pitch [FAA:2008:E8-6600])
+    - LH RH AFT: REV - ZERO - T/O - CRUISE
+    - fcs/thrust-cmd-norm[0|1|2] range [0, 1].
+  - Swivel levers 
+    - LH RH: 0 - 120 degrees
+    - AFT:   0 - (-)90 degrees (only 0 or -90 according to [FAA:2008:E8-6600])
+    - fcs/side-engine-swivel-cmd-norm[0|1], fcs/rear-engine-swivel-cmd-norm
+      range [0, 1].
+ </documentation>
+
+ <property value="0.0">fcs/propeller-speed-cmd-norm[0]</property>
+ <property value="0.0">fcs/propeller-speed-cmd-norm[1]</property>
+ <property value="0.0">fcs/propeller-speed-cmd-norm[2]</property>
+
+ <!-- Automatically created by JSBSim.
+ <property value="0.0">fcs/mixture-cmd-norm[0]</property>
+ <property value="0.0">fcs/mixture-cmd-norm[1]</property>
+ <property value="0.0">fcs/mixture-cmd-norm[2]</property>
+ -->
+
+ <property value="0.0">fcs/thrust-cmd-norm[0]</property>
+ <property value="0.0">fcs/thrust-cmd-norm[1]</property>
+ <property value="0.0">fcs/thrust-cmd-norm[2]</property>
+
+ <property value="0.0">fcs/side-engine-swivel-cmd-norm[0]</property>
+ <property value="0.0">fcs/side-engine-swivel-cmd-norm[1]</property>
+ <property value="0.0">fcs/rear-engine-swivel-cmd-norm</property>
+
+ <documentation>
+  I have not seen any controls for the auxilliary rear side propeller
+  so I assume that it is controlled by the FCS in response to yaw
+  requests.
+ </documentation>
+
+ <!--
+ === Engine throttle control ================================
+ -->
+ <channel name="Engine 1 throttle control">
+
+  <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[0]">
+   <input>fcs/propeller-speed-cmd-norm[0]</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+   <range>
+    <min>300</min>
+    <max>1250</max>
+   </range>
+   <zero_centered>0</zero_centered>
+  </aerosurface_scale>
+
+  <summer name="fcs/etc/propeller-speed-error-rpm[0]">
+   <input>fcs/etc/propeller-speed-cmd-rpm[0]</input>
+   <input>-propulsion/engine[0]/propeller-rpm</input>
+  </summer>
+
+  <switch name="fcs/etc/propeller-speed-error-switch[0]">
+   <default value="0.0"/>
+   <test value="fcs/etc/propeller-speed-error-rpm[0]">
+     propulsion/engine[0]/fuel-flow-rate-pps GT 0.0
+   </test>
+  </switch>
+
+  <switch name="fcs/etc/windup-trigger[0]">
+   <default value="0.0"/>
+   <test value="-1.0">
+     fcs/etc/throttle-controller-pid[0] LT 0.0
+   </test>
+   <test value="1.0">
+     fcs/etc/propeller-speed-error-switch[0] GT 0.0
+     fcs/etc/throttle-controller-pid[0] GT 1.0
+   </test>
+  </switch>
+
+  <pid name="fcs/etc/throttle-controller-pid[0]">
+   <input>fcs/etc/propeller-speed-error-switch[0]</input>
+   <kp> 0.0 </kp>
+   <ki> 0.0002 </ki>
+   <trigger>fcs/etc/windup-trigger[0]</trigger>
+  </pid>
+
+  <actuator name="fcs/etc/throttle-actuator[0]">
+   <input>fcs/etc/throttle-controller-pid[0]</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[0]</output>
+  </actuator>
+
+ </channel>
+
+ <channel name="Engine 2 throttle control">
+
+  <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[1]">
+   <input>fcs/propeller-speed-cmd-norm[1]</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+   <range>
+    <min>300</min>
+    <max>1250</max>
+   </range>
+   <zero_centered>0</zero_centered>
+  </aerosurface_scale>
+  <summer name="fcs/etc/propeller-speed-error-rpm[1]">
+   <input>fcs/etc/propeller-speed-cmd-rpm[1]</input>
+   <input>-propulsion/engine[1]/propeller-rpm</input>
+  </summer>
+
+  <switch name="fcs/etc/propeller-speed-error-switch[1]">
+   <default value="0.0"/>
+   <test value="fcs/etc/propeller-speed-error-rpm[1]">
+     propulsion/engine[1]/fuel-flow-rate-pps GT 0.0
+   </test>
+  </switch>
+
+  <switch name="fcs/etc/windup-trigger[1]">
+   <default value="0.0"/>
+   <test value="-1.0">
+     fcs/etc/throttle-controller-pid[1] LT 0.0
+   </test>
+   <test value="1.0">
+     fcs/etc/propeller-speed-error-switch[1] GT 0.0
+     fcs/etc/throttle-controller-pid[1] GT 1.0
+   </test>
+  </switch>
+
+  <pid name="fcs/etc/throttle-controller-pid[1]">
+   <input>fcs/etc/propeller-speed-error-switch[1]</input>
+   <kp> 0.0 </kp>
+   <ki> 0.0002 </ki>
+   <trigger>fcs/etc/windup-trigger[1]</trigger>
+  </pid>
+
+  <actuator name="fcs/etc/throttle-actuator[1]">
+   <input>fcs/etc/throttle-controller-pid[1]</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[1]</output>
+  </actuator>
+
+ </channel>
+
+ <channel name="Engine 3 throttle control">
+
+  <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[2]">
+   <input>fcs/propeller-speed-cmd-norm[2]</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+   <range>
+    <min>300</min>
+    <max>1250</max>
+   </range>
+   <zero_centered>0</zero_centered>
+  </aerosurface_scale>
+
+  <summer name="fcs/etc/propeller-speed-error-rpm[2]">
+   <input>fcs/etc/propeller-speed-cmd-rpm[2]</input>
+   <input>-propulsion/engine[2]/propeller-rpm</input>
+  </summer>
+
+  <switch name="fcs/etc/propeller-speed-error-switch[2]">
+   <default value="0.0"/>
+   <test value="fcs/etc/propeller-speed-error-rpm[2]">
+     propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
+   </test>
+  </switch>
+
+  <switch name="fcs/etc/windup-trigger[2]">
+   <default value="0.0"/>
+   <test value="-1.0">
+     fcs/etc/throttle-controller-pid[2] LT 0.0
+   </test>
+   <test value="1.0">
+     fcs/etc/propeller-speed-error-switch[2] GT 0.0
+     fcs/etc/throttle-controller-pid[2] GT 1.0
+   </test>
+  </switch>
+
+  <pid name="fcs/etc/throttle-controller-pid[2]">
+   <input>fcs/etc/propeller-speed-error-switch[2]</input>
+   <kp> 0.0 </kp>
+   <ki> 0.0002 </ki>
+   <trigger>fcs/etc/windup-trigger[2]</trigger>
+  </pid>
+
+  <actuator name="fcs/etc/throttle-actuator[2]">
+   <input>fcs/etc/throttle-controller-pid[2]</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[2]</output>
+  </actuator>
+
+ </channel>
+
+ <!--
+ === Mixture control ========================================
+ -->
+ <channel name="Mixture control">
+
+  <switch name="fcs/etc/mixture-pos-norm[0]">
+   <default value="fcs/mixture-cmd-norm[0]"/>
+   <output>fcs/mixture-pos-norm[0]</output>
+  </switch>
+  <switch name="fcs/etc/mixture-pos-norm[1]">
+   <default value="fcs/mixture-cmd-norm[1]"/>
+   <output>fcs/mixture-pos-norm[1]</output>
+  </switch>
+  <switch name="fcs/etc/mixture-pos-norm[2]">
+   <default value="fcs/mixture-cmd-norm[2]"/>
+   <output>fcs/mixture-pos-norm[2]</output>
+  </switch>
+
+ </channel>
+
+ <!--
+ === Thrust control =========================================
+ -->
+ <channel name="Thrust control">
+
+  <fcs_function name="fcs/etc/blade-angle-deg[0]">
+   <function>
+    <difference>
+     <product>
+      <value>60.0</value>
+      <property>fcs/thrust-cmd-norm[0]</property>
+     </product>
+     <value>25.0</value>
+    </difference>
+   </function>
+   <output>propulsion/engine[0]/blade-angle</output>
+  </fcs_function>
+  <fcs_function name="fcs/etc/blade-angle-deg[1]">
+   <function>
+    <difference>
+     <product>
+      <value>60.0</value>
+      <property>fcs/thrust-cmd-norm[1]</property>
+     </product>
+     <value>25.0</value>
+    </difference>
+   </function>
+   <output>propulsion/engine[1]/blade-angle</output>
+  </fcs_function>
+  <fcs_function name="fcs/etc/blade-angle-deg[2]">
+   <function>
+    <difference>
+     <product>
+      <value>60.0</value>
+      <property>fcs/thrust-cmd-norm[2]</property>
+     </product>
+     <value>25.0</value>
+    </difference>
+   </function>
+   <output>propulsion/engine[2]/blade-angle</output>
+  </fcs_function>
+
+ </channel>
+
+ <!--
+ === Thrust vectoring =======================================
+ -->
+ <channel name="Thrust vectoring">
+
+  <aerosurface_scale name="fcs/etc/side-engine-swivel-cmd-rad">
+   <input>fcs/side-engine-swivel-cmd-norm</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+   <range>
+    <min>0</min>
+    <max>2.0944</max>
+   </range>
+  </aerosurface_scale>
+  <actuator name="fcs/etc/left-engine-swivel-actuator">
+   <input>fcs/etc/side-engine-swivel-cmd-rad</input>
+   <!-- lag> number </lag -->
+   <rate_limit> 0.5 </rate_limit>
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>2.0944</max>
+   </clipto>
+   <output>propulsion/engine[0]/pitch-angle-rad</output>
+  </actuator>
+
+  <aerosurface_scale name="fcs/etc/side-engine-swivel-cmd-rad[1]">
+   <input>fcs/side-engine-swivel-cmd-norm</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+    <range>
+     <min>0</min>
+     <max>2.0944</max>
+   </range>
+  </aerosurface_scale>
+  <actuator name="fcs/etc/right-engine-swivel-actuator">
+   <input>fcs/etc/side-engine-swivel-cmd-rad[1]</input>
+   <!-- lag> number </lag -->
+   <rate_limit> 0.5 </rate_limit>
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>2.0944</max>
+   </clipto>
+   <output>propulsion/engine[1]/pitch-angle-rad</output>
+  </actuator>
+
+  <aerosurface_scale name="fcs/etc/rear-engine-swivel-cmd-rad">
+   <input>fcs/rear-engine-swivel-cmd-norm</input>
+   <domain>
+    <min>0</min>
+    <max>1</max>
+   </domain>
+   <range>
+    <min>0.0</min>
+    <max>1.5708</max>
+   </range>
+  </aerosurface_scale>
+  <actuator name="fcs/etc/rear-engine-swivel-actuator">
+   <input>fcs/etc/rear-engine-swivel-cmd-rad</input>
+   <!-- lag> number </lag -->
+   <rate_limit> 0.5 </rate_limit>
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>0.0</min>
+    <max>1.5708</max>
+   </clipto>
+   <output>propulsion/engine[2]/pitch-angle-rad</output>
+  </actuator>
+
+ </channel>
+
+</system>

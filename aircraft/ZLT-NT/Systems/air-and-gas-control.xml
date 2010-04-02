@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!-- $Id: air-and-gas-control.xml,v 1.1 2010/04/02 22:18:37 andgi Exp $ -->
+<!--
+
+  ZLT NT-07 airship flight model for JSBSim.
+
+    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="air-and-gas-control-jsbsim">
+
+ <!--
+ === Ballonet control system ===============================================
+ -->
+
+ <!-- Interface properties -->
+ <property>fcs/ballonet-inflation-cmd-norm[0]</property>
+ <property>fcs/ballonet-inflation-cmd-norm[1]</property>
+
+ <documentation>
+  Range [-1, 1].
+  Positive values maps to blower inflow percentage and
+  negative values maps to valve open percentage.
+ </documentation>
+
+ <channel name="Ballonet control">
+
+  <fcs_function name="fcs/blower-cmd-norm[0]">
+   <function>
+    <max>
+     <value> 0.0 </value>
+     <property> fcs/ballonet-inflation-cmd-norm[0] </property>
+    </max>
+   </function>
+   <output>buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm</output>
+  </fcs_function>
+  <fcs_function name="fcs/valve-cmd-norm[0]">
+   <function>
+    <product>
+     <value> -1.0 </value>
+     <min>
+      <value> 0.0 </value>
+      <property> fcs/ballonet-inflation-cmd-norm[0] </property>
+     </min>
+    </product>
+   </function>
+   <output> buoyant_forces/gas-cell/ballonet[0]/valve_open </output>
+  </fcs_function>
+
+  <fcs_function name="fcs/blower-cmd-norm[1]">
+   <function>
+    <max>
+     <value> 0.0 </value>
+     <property> fcs/ballonet-inflation-cmd-norm[1] </property>
+    </max>
+   </function>
+   <output>buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm</output>
+  </fcs_function>
+  <fcs_function name="fcs/valve-cmd-norm[1]">
+   <function>
+    <product>
+     <value> -1.0 </value>
+     <min>
+      <value> 0.0 </value>
+      <property> fcs/ballonet-inflation-cmd-norm[1] </property>
+     </min>
+    </product>
+   </function>
+   <output> buoyant_forces/gas-cell/ballonet[1]/valve_open </output>
+  </fcs_function>
+
+ </channel>
+
+</system>

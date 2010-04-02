@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!-- $Id: ZLT-NT.xml,v 1.2 2009/10/30 21:34:09 andgi Exp $ -->
+<!-- $Id: ZLT-NT.xml,v 1.3 2010/04/02 22:18:37 andgi Exp $ -->
 <!--
 
   ZLT NT airship flight model for JSBSim.
 
-    Copyright (C) 2008 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
   
 -->
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="N07" version="2.0" release="BETA"
+<fdm_config name="NT07" version="2.0" release="BETA"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
@@ -32,9 +32,9 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-06-10</filecreationdate>
-  <version>$Id: ZLT-NT.xml,v 1.2 2009/10/30 21:34:09 andgi Exp $</version>
+  <version>$Id: ZLT-NT.xml,v 1.3 2010/04/02 22:18:37 andgi Exp $</version>
 
-  <description>JSBSim model of a N07 airship.</description>
+  <description>JSBSim model of a NT-07 airship.</description>
 
   <license>
    <licenseName>GPL</licenseName>
@@ -72,6 +72,12 @@
    date="28 March 2008"/>
 
   <reference
+   refID="FAA:2009:TCDS-1E10"
+   author="FAA"
+   title="http://rgl.faa.gov/Regulatory_and_Guidance_library/rgMakeModel.nsf/0/450619753f0fec87862575e6004f3dac/$FILE/1E10.pdf"
+   date="28 January 2009"/>
+
+  <reference
    refID="FAA:2008:P30BO"
    author="FAA"
    title="http://www.hoffmann-prop.com/documents/HOV373TCDS_1.pdf"
@@ -98,7 +104,7 @@
   <documentation>
    Some general data from http://www.zeppelinflug.de/seiten/D/zeppnt_techn.htm
 
-   LZ N07
+   NT-07
      Luftschiff neuer Technologie
      Erstflug:             18.September 1997
      Triebwerke:           Lycoming IO-360 mit je 147kw/200PS
@@ -439,7 +445,7 @@
    <rolling_friction> 0.2 </rolling_friction>
    <spring_coeff unit="N/M"> 50000 </spring_coeff>
    <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
+   <max_steer unit="DEG"> 360.0 </max_steer>
    <brake_group> LEFT </brake_group>
    <retractable>0</retractable>
   </contact>
@@ -455,7 +461,7 @@
    <rolling_friction> 0.2 </rolling_friction>
    <spring_coeff unit="N/M"> 50000 </spring_coeff>
    <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
+   <max_steer unit="DEG"> 360.0 </max_steer>
    <brake_group> RIGHT </brake_group>
    <retractable>0</retractable>
   </contact>
@@ -897,68 +903,9 @@
  </buoyant_forces>
 
  <!--
- === Ballonet control system ===============================================
+ === Ballonet and gas control system ========================================
  -->
- <system name="Ballonet control">
-
-  <!-- Interface properties -->
-  <property>fcs/ballonet-inflation-cmd-norm[0]</property>
-  <property>fcs/ballonet-inflation-cmd-norm[1]</property>
-
-  <documentation>
-   Range [-1, 1].
-   Positive values maps to blower inflow percentage and
-   negative values maps to valve open percentage.
-  </documentation>
-
-  <channel name="Ballonet control">
-
-   <fcs_function name="fcs/blower-cmd-norm[0]">
-    <function>
-     <max>
-      <value> 0.0 </value>
-      <property> fcs/ballonet-inflation-cmd-norm[0] </property>
-     </max>
-    </function>
-    <output>buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm</output>
-   </fcs_function>
-   <fcs_function name="fcs/valve-cmd-norm[0]">
-    <function>
-     <product>
-      <value> -1.0 </value>
-      <min>
-       <value> 0.0 </value>
-       <property> fcs/ballonet-inflation-cmd-norm[0] </property>
-      </min>
-     </product>
-    </function>
-    <output> buoyant_forces/gas-cell/ballonet[0]/valve_open </output>
-   </fcs_function>
-
-   <fcs_function name="fcs/blower-cmd-norm[1]">
-    <function>
-     <max>
-      <value> 0.0 </value>
-      <property> fcs/ballonet-inflation-cmd-norm[1] </property>
-     </max>
-    </function>
-    <output>buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm</output>
-   </fcs_function>
-   <fcs_function name="fcs/valve-cmd-norm[1]">
-    <function>
-     <product>
-      <value> -1.0 </value>
-      <min>
-       <value> 0.0 </value>
-       <property> fcs/ballonet-inflation-cmd-norm[1] </property>
-      </min>
-     </product>
-    </function>
-    <output> buoyant_forces/gas-cell/ballonet[1]/valve_open </output>
-   </fcs_function>
-
-  </channel>
- </system>
+ <system file="air-and-gas-control"/>
 
  <!--
  ==== Initial static condition weigh-off ====================================
@@ -1035,44 +982,11 @@
  </system>
 
  <!--
- ==== Instrumentation =======================================================
- -->
- <system name="Instrumentation">
-  <channel name="">
-
-  <fcs_function name="instrumentation/gas-pressure-psf">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/pressure-psf </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
-
-  <fcs_function name="instrumentation/ballonet-pressure-psf[0]">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf[0] </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
-
-  <fcs_function name="instrumentation/ballonet-pressure-psf[1]">
-   <function>
-    <difference>
-     <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
-     <property> atmosphere/P-psf </property>
-    </difference>
-   </function>   
-  </fcs_function>
-
-  </channel>
- </system>
-
- <!--
  ==== Flight control system =================================================
  -->
+
+ <system file="engine-control"/>  <!-- Engine and thrust vectoring. -->
+
  <flight_control name="NT FCS">
 
   <documentation>
@@ -1085,11 +999,19 @@
    43 and 57 degrees during normal operation.
   </documentation>
 
+  <!-- The pilot and copilot have independent side-sticks. -->
+  <!-- NOTE: yaw-cmd-norm is inverted. -->
+  <property value="0.0">fcs/pilot/pitch-cmd-norm</property>
+  <property value="0.0">fcs/pilot/yaw-cmd-norm</property>
+
+  <property value="0.0">fcs/copilot/pitch-cmd-norm</property>
+  <property value="0.0">fcs/copilot/yaw-cmd-norm</property>
+
   <documentation>
    Engine controls (from pictures of the engine panel and other sources)
    - RPM SEL levers
      - LH AFT RH: IDLE - ?  (to 1250RPM - max according to [FAA:2008:E8-6600])
-     - fcs/throttle-cmd-norm[1|2|3]
+     - fcs/throttle-cmd-norm[0|1|2]
    - Mixture levers
      - LH AFT RH: LEAN - RICH
      - the standard mixture properties
@@ -1099,12 +1021,10 @@
    - Swivel levers 
      - LH RH: 0 - 120 degrees
      - AFT:   0 - (-)90 degrees (only 0 or -90 according to [FAA:2008:E8-6600])
-     - fcs/side-engine-swivel-cmd-norm[1|2], fcs/rear-engine-swivel-cmd-norm
-  </documentation>
+     - fcs/side-engine-swivel-cmd-norm[0|1], fcs/rear-engine-swivel-cmd-norm
 
-  <property>fcs/side-engine-swivel-cmd-norm[0]</property>
-  <property>fcs/side-engine-swivel-cmd-norm[1]</property>
-  <property>fcs/rear-engine-swivel-cmd-norm</property>
+   See the engine-control-jsbsim system file.
+  </documentation>
 
   <documentation>
    I have not seen any controls for the auxilliary rear side propeller
@@ -1118,7 +1038,8 @@
   <channel name="Pitch">
 
    <summer name="fcs/pitch-trim-sum">
-    <input>fcs/elevator-cmd-norm</input>
+    <input>fcs/pilot/pitch-cmd-norm</input>
+    <input>fcs/copilot/pitch-cmd-norm</input>
     <input>fcs/pitch-trim-cmd-norm</input>
     <clipto>
      <min>-1</min>
@@ -1158,7 +1079,8 @@
   -->
   <channel name="Yaw">
    <summer name="Yaw Trim Sum">
-    <input>fcs/rudder-cmd-norm</input>
+    <input>-fcs/pilot/yaw-cmd-norm</input>
+    <input>-fcs/copilot/yaw-cmd-norm</input>
     <input>fcs/yaw-trim-cmd-norm</input>
     <clipto>
      <min>-1</min>
@@ -1240,300 +1162,6 @@
     <output>fcs/throttle-pos-norm[3]</output>
    </switch>
 
-  </channel>
-
-  <!--
-  === Thrust vectoring =======================================
-  -->
-  <channel name="Thrust vectoring">
-
-   <aerosurface_scale name="fcs/side-engine-swivel-cmd-rad">
-    <input>fcs/side-engine-swivel-cmd-norm</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>0</min>
-     <max>2.0944</max>
-    </range>
-   </aerosurface_scale>
-   <actuator name="fcs/left-engine-swivel-actuator">
-    <input>fcs/side-engine-swivel-cmd-rad</input>
-    <!-- lag> number </lag -->
-    <rate_limit> 0.5 </rate_limit>
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>2.0944</max>
-    </clipto>
-    <output>propulsion/engine[0]/pitch-angle-rad</output>
-   </actuator>
-
-   <aerosurface_scale name="fcs/side-engine-swivel-cmd-rad[1]">
-    <input>fcs/side-engine-swivel-cmd-norm</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>0</min>
-     <max>2.0944</max>
-    </range>
-   </aerosurface_scale>
-   <actuator name="fcs/right-engine-swivel-actuator">
-    <input>fcs/side-engine-swivel-cmd-rad[1]</input>
-    <!-- lag> number </lag -->
-    <rate_limit> 0.5 </rate_limit>
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>2.0944</max>
-    </clipto>
-    <output>propulsion/engine[1]/pitch-angle-rad</output>
-   </actuator>
-
-   <aerosurface_scale name="fcs/rear-engine-swivel-cmd-rad">
-    <input>fcs/rear-engine-swivel-cmd-norm</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>0.0</min>
-     <max>1.5708</max>
-    </range>
-   </aerosurface_scale>
-   <actuator name="fcs/rear-engine-swivel-actuator">
-    <input>fcs/rear-engine-swivel-cmd-rad</input>
-    <!-- lag> number </lag -->
-    <rate_limit> 0.5 </rate_limit>
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>1.5708</max>
-    </clipto>
-    <output>propulsion/engine[2]/pitch-angle-rad</output>
-   </actuator>
-
-  </channel>
-
-  <!--
-  === Engine throttle control ================================
-  -->
-  <channel name="Engine 1 throttle control">
-
-   <switch name="fcs/propeller-speed-cmd-norm[0]">
-    <default value="fcs/throttle-cmd-norm[0]"/>
-   </switch>
-
-   <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[0]">
-    <input>fcs/propeller-speed-cmd-norm[0]</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>300</min>
-     <max>1250</max>
-    </range>
-    <zero_centered>0</zero_centered>
-   </aerosurface_scale>
-
-   <summer name="fcs/etc/propeller-speed-error-rpm[0]">
-    <input>fcs/etc/propeller-speed-cmd-rpm[0]</input>
-    <input>-propulsion/engine[0]/propeller-rpm</input>
-   </summer>
-
-   <switch name="fcs/etc/propeller-speed-error-switch[0]">
-    <default value="0.0"/>
-    <test value="fcs/etc/propeller-speed-error-rpm[0]">
-      propulsion/engine[0]/fuel-flow-rate-pps GT 0.0
-    </test>
-   </switch>
-
-   <switch name="fcs/etc/windup-trigger[0]">
-    <default value="0.0"/>
-    <test value="-1.0">
-      fcs/etc/throttle-controller-pid[0] LT 0.0
-    </test>
-    <test value="1.0">
-      fcs/etc/propeller-speed-error-switch[0] GT 0.0
-      fcs/etc/throttle-controller-pid[0] GT 1.0
-    </test>
-   </switch>
-
-   <pid name="fcs/etc/throttle-controller-pid[0]">
-    <input>fcs/etc/propeller-speed-error-switch[0]</input>
-    <kp> 0.0 </kp>
-    <ki> 0.0002 </ki>
-    <trigger>fcs/etc/windup-trigger[0]</trigger>
-   </pid>
-
-   <actuator name="fcs/etc/throttle-actuator[0]">
-    <input>fcs/etc/throttle-controller-pid[0]</input>
-    <!-- lag> number </lag -->
-    <!-- rate_limit> number </rate_limit -->
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>1.0</max>
-    </clipto>
-    <output>fcs/throttle-pos-norm[0]</output>
-   </actuator>
-
-  </channel>
-
-  <channel name="Engine 2 throttle control">
-
-   <switch name="fcs/propeller-speed-cmd-norm[1]">
-    <default value="fcs/throttle-cmd-norm[1]"/>
-   </switch>
-
-   <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[1]">
-    <input>fcs/propeller-speed-cmd-norm[1]</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>300</min>
-     <max>1250</max>
-    </range>
-    <zero_centered>0</zero_centered>
-   </aerosurface_scale>
-
-   <summer name="fcs/etc/propeller-speed-error-rpm[1]">
-    <input>fcs/etc/propeller-speed-cmd-rpm[1]</input>
-    <input>-propulsion/engine[1]/propeller-rpm</input>
-   </summer>
-
-   <switch name="fcs/etc/propeller-speed-error-switch[1]">
-    <default value="0.0"/>
-    <test value="fcs/etc/propeller-speed-error-rpm[1]">
-      propulsion/engine[1]/fuel-flow-rate-pps GT 0.0
-    </test>
-   </switch>
-
-   <switch name="fcs/etc/windup-trigger[1]">
-    <default value="0.0"/>
-    <test value="-1.0">
-      fcs/etc/throttle-controller-pid[1] LT 0.0
-    </test>
-    <test value="1.0">
-      fcs/etc/propeller-speed-error-switch[1] GT 0.0
-      fcs/etc/throttle-controller-pid[1] GT 1.0
-    </test>
-   </switch>
-
-   <pid name="fcs/etc/throttle-controller-pid[1]">
-    <input>fcs/etc/propeller-speed-error-switch[1]</input>
-    <kp> 0.0 </kp>
-    <ki> 0.0002 </ki>
-    <trigger>fcs/etc/windup-trigger[1]</trigger>
-   </pid>
-
-   <actuator name="fcs/etc/throttle-actuator[1]">
-    <input>fcs/etc/throttle-controller-pid[1]</input>
-    <!-- lag> number </lag -->
-    <!-- rate_limit> number </rate_limit -->
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>1.0</max>
-    </clipto>
-    <output>fcs/throttle-pos-norm[1]</output>
-   </actuator>
-
-  </channel>
-
-  <channel name="Engine 3 throttle control">
-
-   <switch name="fcs/propeller-speed-cmd-norm[2]">
-    <default value="fcs/throttle-cmd-norm[2]"/>
-   </switch>
-
-   <aerosurface_scale name="fcs/etc/propeller-speed-cmd-rpm[2]">
-    <input>fcs/propeller-speed-cmd-norm[2]</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>300</min>
-     <max>1250</max>
-    </range>
-    <zero_centered>0</zero_centered>
-   </aerosurface_scale>
-
-   <summer name="fcs/etc/propeller-speed-error-rpm[2]">
-    <input>fcs/etc/propeller-speed-cmd-rpm[2]</input>
-    <input>-propulsion/engine[2]/propeller-rpm</input>
-   </summer>
-
-   <switch name="fcs/etc/propeller-speed-error-switch[2]">
-    <default value="0.0"/>
-    <test value="fcs/etc/propeller-speed-error-rpm[2]">
-      propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
-    </test>
-   </switch>
-
-   <switch name="fcs/etc/windup-trigger[2]">
-    <default value="0.0"/>
-    <test value="-1.0">
-      fcs/etc/throttle-controller-pid[2] LT 0.0
-    </test>
-    <test value="1.0">
-      fcs/etc/propeller-speed-error-switch[2] GT 0.0
-      fcs/etc/throttle-controller-pid[2] GT 1.0
-    </test>
-   </switch>
-
-   <pid name="fcs/etc/throttle-controller-pid[2]">
-    <input>fcs/etc/propeller-speed-error-switch[2]</input>
-    <kp> 0.0 </kp>
-    <ki> 0.0002 </ki>
-    <trigger>fcs/etc/windup-trigger[2]</trigger>
-   </pid>
-
-   <actuator name="fcs/etc/throttle-actuator[2]">
-    <input>fcs/etc/throttle-controller-pid[2]</input>
-    <!-- lag> number </lag -->
-    <!-- rate_limit> number </rate_limit -->
-    <!-- bias> number </bias -->
-    <!-- deadband_width> number </deadband_width -->
-    <!-- hysteresis_width> number </hysteresis_width -->
-    <clipto>
-     <min>0.0</min>
-     <max>1.0</max>
-    </clipto>
-    <output>fcs/throttle-pos-norm[2]</output>
-   </actuator>
-
-  </channel>
-
-  <!--
-  === Thrust control =========================================
-  -->
-  <channel name="Thrust control">
-   <!-- Model the imperfections of the propeller pitch control mechanism here. -->
-  </channel>
-
-  <!--
-  === Mixture control ========================================
-  -->
-  <channel name="Mixture control">
-   <!-- Model the imperfections of mixture control mechanism here. -->
   </channel>
 
  </flight_control>
@@ -1658,40 +1286,5 @@
 
  <!-- aerodynamics file="Systems/gerris_aero"/ -->
  <aerodynamics file="Systems/datcom_aero"/>
-
- <output name="datalog.csv" type="CSV" rate="5">
-
-  <rates> ON </rates>
-  <velocities> ON </velocities>
-  <forces> ON </forces>
-  <moments> ON </moments>
-  <position> ON </position>
-  <propulsion> ON </propulsion>
-  <aerosurfaces> ON </aerosurfaces>
-  <fcs> ON </fcs>
-  <ground_reactions> ON </ground_reactions>
-  <property> atmosphere/T-R </property>
-  <property> atmosphere/P-psf </property>
-  <property> buoyant_forces/gas-cell/max_volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/temp-R </property>
-  <property> buoyant_forces/gas-cell/pressure-psf </property>
-  <property> buoyant_forces/gas-cell/volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/buoyancy-lbs </property>
-  <property> buoyant_forces/gas-cell/contents-mol </property>
-  <property> buoyant_forces/gas-cell/valve_open </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/max_volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/temp-R </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/contents-mol </property>
-  <property> buoyant_forces/gas-cell/ballonet[0]/valve_open </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/max_volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/temp-R </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/volume-ft3 </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/contents-mol </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/valve_open </property>
-
- </output>
 
 </fdm_config>
