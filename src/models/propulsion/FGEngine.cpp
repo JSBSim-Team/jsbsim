@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.36 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.37 2010/04/02 21:54:46 andgi Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,8 +122,13 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
     while (local_element) {
       int tankID = (int)local_element->GetDataAsNumber();
       FGTank* tank = Propulsion->GetTank(tankID); 
-      AddFeedTank( tankID , tank->GetPriority());
-      FuelDensity = tank->GetDensity();
+      if (tank) {
+        AddFeedTank(tankID, tank->GetPriority());
+        FuelDensity = tank->GetDensity();
+      } else {
+        cerr << "Feed tank " << tankID <<
+          " specified in engine definition does not exist." << endl;
+      }
       local_element = engine_element->GetParent()->FindNextElement("feed");
     }
   } else {
@@ -166,6 +171,7 @@ void FGEngine::ResetToIC(void)
   TrimMode = false;
   FuelFlow_gph = 0.0;
   FuelFlow_pph = 0.0;
+  FuelFlowRate = 0.0;
   FuelFreeze = false;
 }
 
