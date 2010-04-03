@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+
+<system name="Weapons Weight">
+
+   <property>/ai/submodels/submodel[0]/count</property>
+   <property>/ai/submodels/submodel[1]/count</property>
+   <property>/ai/submodels/submodel[2]/count</property>
+   <property>/ai/submodels/submodel[3]/count</property>
+   <property>/ai/submodels/submodel[4]/count</property>
+   <property>/ai/submodels/submodel[5]/count</property>
+   <property>/ai/submodels/submodel[6]/count</property>
+   <property>/ai/submodels/submodel[7]/count</property>
+   <property>/ai/submodels/submodel[8]/count</property>
+   <property>/ai/submodels/submodel[9]/count</property>
+   <property>/ai/submodels/submodel[10]/count</property>
+   <property>/ai/submodels/submodel[11]/count</property>
+   <property>/ai/submodels/submodel[12]/count</property>
+   <property>/ai/submodels/submodel[13]/count</property>
+   <property>/ai/submodels/submodel[14]/count</property>
+   <property>/ai/submodels/submodel[15]/count</property>
+   <property>/ai/submodels/submodel[16]/count</property>
+   <property>/ai/submodels/submodel[17]/count</property>
+   <property>/ai/submodels/submodel[18]/count</property>
+   <property>/ai/submodels/submodel[19]/count</property>
+   <property>/ai/submodels/submodel[20]/count</property>
+   <property>/ai/submodels/submodel[21]/count</property>
+
+     <channel name="bullets weight">
+
+       <fcs_function name="systems/armament/gun[0]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[2]/count</property>
+                 <value> 0.396476 </value>
+              </product>   
+            </function>
+            <output>inertia/pointmass-weight-lbs[1]</output>
+       </fcs_function>
+       
+       <fcs_function name="systems/armament/gun[1]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[3]/count</property>
+                 <value> 0.396476 </value> 
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[2]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/gun[2]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[4]/count</property>
+                 <value> 0.396476 </value> 
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[3]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/gun[3]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[5]/count</property>
+                 <value> 0.396476 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[4]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/gun[4]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[6]/count</property>
+                 <value> 0.396476 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[5]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/gun[5]/ammo-weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[7]/count</property>
+                 <value> 0.396476 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[6]</output>
+       </fcs_function>
+
+     </channel>
+
+      <channel name="rockets weight">
+
+       <fcs_function name="systems/armament/rockets[0]/weight">
+            <function>
+              <product>
+                 <sum>
+                    <property>/ai/submodels/submodel[9]/count</property>
+                    <property>/ai/submodels/submodel[11]/count</property>
+                    <property>/ai/submodels/submodel[13]/count</property>
+                    <property>/ai/submodels/submodel[15]/count</property>
+                    <property>/ai/submodels/submodel[17]/count</property>
+                 </sum>
+                 <value> 140 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[7]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/rockets[1]/weight">
+            <function>
+               <product>
+                 <sum>
+                    <property>/ai/submodels/submodel[8]/count</property>
+                    <property>/ai/submodels/submodel[10]/count</property>
+                    <property>/ai/submodels/submodel[12]/count</property>
+                    <property>/ai/submodels/submodel[14]/count</property>
+                    <property>/ai/submodels/submodel[16]/count</property>
+                 </sum>
+                 <value> 140 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[8]</output>
+       </fcs_function>
+
+
+   </channel>
+
+   <channel name="bomb weight">
+
+      <fcs_function name="systems/armament/bombs[0]/weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[18]/count</property>
+                 <value> 500 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[9]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/bombs[1]/weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[19]/count</property>
+                 <value> 500 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[10]</output>
+       </fcs_function>
+
+   </channel>
+
+   <channel name="empty drop tank weight">
+
+     <fcs_function name="systems/armament/drop-tank[0]/weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[20]/count</property>
+                 <value> 50 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[11]</output>
+       </fcs_function>
+
+       <fcs_function name="systems/armament/drop-tank[1]/weight">
+            <function>
+              <product>
+                 <property>/ai/submodels/submodel[21]/count</property>
+                 <value> 50 </value>
+              </product>
+            </function>
+            <output>inertia/pointmass-weight-lbs[12]</output>
+       </fcs_function>
+
+    </channel>
+
+</system>

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.27 2010/03/18 13:17:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.28 2010/03/30 02:12:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,8 +235,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   vH(eY) = 0.0;
   vH(eZ) = 0.0;
 
-  if (omega > 0.0) ExcessTorque = GearRatio * PowerAvailable / omega;
-  else             ExcessTorque = GearRatio * PowerAvailable / 1.0;
+  if (omega > 0.0) ExcessTorque = PowerAvailable / omega;
+  else             ExcessTorque = PowerAvailable / 1.0;
 
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 

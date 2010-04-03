@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<!--
+
+Emulates the auto mixture controls of a Packard Merlin powered Mustang P-51B/C/D/K/H.  
+Would probably work for other Merlin powered aircraft like the Spitefire and 
+Mosquito as well.
+
+Lever in Full Rich position will give full rich mixture 100% of the time.
+This is used for stating the engine, take off and landing at lower altitudes  
+and in case the auto mixture feature malfunctions.
+
+With the lever at it's lowest position it will give a leaned mixture for 
+cruising.  This will automatically control mixture but should only be used 
+for reduced throttle cruising.  It will reduce fuel use by about 5% compared 
+to the normal run position.  When the throttle is fully closed this 
+position will also act as the fuel cutoff position for shutting down the 
+engine on the ground.
+
+In between will result in the normal run position which will automatically 
+control mixture at all altitudes and power settings.
+
+-->
+<system name="Mixture">
+    
+     
+    <channel name="Mixture Control">
+       
+        <switch name="mixture/position">
+            <default value= "atmosphere/delta" />
+            <test value="atmosphere/delta">  <!-- emergency full rich -->
+                fcs/mixture-cmd-norm  GE 0.90
+            </test> 
+            <test  logic="AND" value="999999999999">  <!-- cut off -->
+                fcs/throttle-cmd-norm  LE 0.1
+                fcs/mixture-cmd-norm  LE 0.1
+            </test>
+            <test value="1.053">   <!-- lean -->
+                fcs/mixture-cmd-norm  LE 0.1
+            </test>
+            <test value="1.0">    <!-- normal run -->
+                fcs/mixture-cmd-norm  LT 0.90
+                fcs/mixture-cmd-norm  GT 0.1
+            </test> 
+        </switch>
+        
+         
+      <fcs_function name="mixture">
+          <function>
+            <product>
+                <quotient>  <!-- invert mixture/position -->
+                    <value> 1.0 </value>
+                    <property> mixture/position </property>
+                </quotient>
+                <property> atmosphere/delta </property>
+            </product>
+          </function>
+          <output>fcs/mixture-pos-norm</output>   
+        </fcs_function>
+        
+  </channel>
+    
+</system>

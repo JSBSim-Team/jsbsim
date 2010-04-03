@@ -131,6 +131,8 @@ aircraft/fokker50/Makefile \
 aircraft/minisgs/Makefile \
 aircraft/mk82/Makefile \
 aircraft/p51d/Makefile \
+aircraft/p51d/Engines/Makefile \
+aircraft/p51d/Systems/Makefile \
 aircraft/pa28/Makefile \
 aircraft/paraglider/Makefile \
 aircraft/sgs126/Makefile \

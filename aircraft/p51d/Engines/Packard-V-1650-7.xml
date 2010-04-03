@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+
+  Packard V-1650-7 configured for 150 octane fuel for P51B/C/D use.  British 
+  Mustang IIIs would have been setup for a WEP of 81 inHg (25 lb boost).
+
+-->
+
+
+<piston_engine name="V1650-7">
+    <injected>1</injected>
+    <minmp unit="INHG"> 5.0 </minmp>
+    <maxmp unit="INHG"> 29.9 </maxmp>
+    <displacement unit="IN3"> 1650</displacement>
+    
+    <bore unit="IN"> 5.4  </bore> 
+    <stroke unit="IN"> 6.0 </stroke>
+    <cylinders> 12 </cylinders>
+    <cylinder-head-mass unit="LBS"> 40 </cylinder-head-mass>
+    <compression-ratio> 6 </compression-ratio>
+    <sparkfaildrop> 0.1 </sparkfaildrop>
+    
+    <!--
+       bsfc and VE are overriden at runtime by the propulsion module 
+    -->
+    <bsfc unit="LBS/HP*HR"> 0.591 </bsfc>
+    <volumetric-efficiency> 0.8295 </volumetric-efficiency>
+    
+    <air-intake-impedance-factor> 0.1 </air-intake-impedance-factor>
+    <ram-air-factor> 0.9 </ram-air-factor>
+    
+    <maxhp> 1700 </maxhp>
+    <cycles> 4 </cycles>
+    <idlerpm> 500.0 </idlerpm>
+    <maxrpm> 3000.0 </maxrpm>
+    
+    <maxthrottle> 1.0 </maxthrottle>
+    <minthrottle> 0.003 </minthrottle>
+    
+    <boostmanual> 1 </boostmanual>
+    <boostoverride> 0 </boostoverride>
+    <numboostspeeds> 2 </numboostspeeds> 
+    <!--<takeoffboost unit="INHG"> 45 </takeoffboost>--> <!-- WEP 75inHg -->
+    
+    <ratedboost1 unit="INHG"> 51 </ratedboost1>   <!-- 67 inHG - 29.97 -->
+    <ratedpower1> 1940 </ratedpower1>
+    <ratedrpm1> 3000 </ratedrpm1>
+    <ratedaltitude1> 5000 </ratedaltitude1>
+        
+    <ratedboost2 unit="INHG"> 51 </ratedboost2>
+    <ratedpower2> 1800 </ratedpower2>  
+    <ratedrpm2> 3000 </ratedrpm2>
+    <ratedaltitude2> 16000 </ratedaltitude2>
+    
+</piston_engine>

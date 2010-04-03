@@ -1,0 +1,113 @@
+<?xml version="1.0"?> 
+
+<autopilot name="Autothrottle">
+
+    <!-- INTERFACE PROPERTIES -->
+    <property value="0.0">ap/ap_map_hold</property>
+    <property>ap/throttle-cmd-norm</property>
+    
+    <!-- INITIAL GAIN and control VALUES -->
+
+    <property value="0.05"> ap/map-pid-kp </property>
+    <property value="0.1"> ap/map-pid-ki </property>
+    <property value="0.00625"> ap/map-pid-kd </property>
+    <property value="1"> ap/throttle-gain </property>
+    <property value="25.0"> ap/lag_constant </property>
+    <property value="75"> ap/max_MP </property>
+
+    <!--
+    =====================================================
+
+    MANIFOLD PRESSURE CHANNEL 
+    
+    Implements the RR Merlin engine monifold control system. 
+
+    =====================================================
+    -->     
+
+    <!-- Manifold Pressure hold -->
+
+    <channel name="Manifold pressure hold">
+    
+    
+       <!-- deal with corner cases -->
+       <switch name="ap/ap_map_trigger">
+          <default value="0.0"/>
+          
+          <!-- disable pid if engine not running -->
+          <test value="1.0">  
+              propulsion/engine/set-running == 0
+          </test>
+          
+          <!-- disable pid if target-mp < actual mp and butterfly fully closed -->
+          <test LOGIC="AND" value="1.0">
+             ap/map-error LT 0.0
+             fcs/throttle-pos-norm LE 0.001
+          </test>
+          
+          <!-- disable pid if target-mp > actual mp and butterfly fully open -->
+          <test logic="AND" value="1.0">
+             ap/map-error GT 0.0
+             fcs/throttle-pos-norm GT 0.99
+          </test>  
+       </switch>
+
+        <!--
+            The difference between the desired manifold pressure and the actual 
+            manifold pressure is determined.
+            
+            systems/engine/target-mp-inhg is defined and set in the propulsion module
+        -->
+
+        <summer name="ap/map-error">
+            <input> systems/engine/target-mp-inhg </input> 
+            <input> -/engines/engine/mp-inhg </input>
+            <clipto>
+               <min>-ap/max_MP </min>
+               <max> ap/max_MP </max>
+            </clipto>
+        </summer>
+
+        <!--
+           The desired MP is lagged slightly for stability.
+        -->
+
+        <lag_filter name="ap/map-error-lag">
+            <input> ap/map-error </input>
+            <c1> ap/lag_constant </c1>
+        </lag_filter>
+
+        <!--
+            If the MP autopilot command is ON, then this switch component will
+            pass through the MP error (from the previous component). Otherwise, it
+            will pass zero.    On this engine it is on by default and is only over riden
+            if the automatic system fails.
+        -->
+
+        <switch name="ap/map-switch">
+            <default value="0.0"/>
+            <test value="ap/map-error-lag">
+                ap/ap_map_hold == 0
+            </test>
+        </switch>
+        
+        <pid name="ap/map-error-pid">
+            <input>ap/map-switch</input>
+            <kp> ap/map-pid-kp </kp>
+            <ki> ap/map-pid-ki </ki>
+            <kd> ap/map-pid-kd </kd>
+            <trigger> ap/ap_map_trigger </trigger>
+        </pid>
+
+        <pure_gain name="ap/throttle-cmd-out">
+            <input> ap/map-error-pid </input>
+            <gain> ap/throttle-gain </gain>
+            <clipto>
+              <min> 0</min>
+              <max> 1</max>
+            </clipto>
+            <output>ap/throttle-cmd-norm</output>
+        </pure_gain>      
+
+   </channel>
+</autopilot>
