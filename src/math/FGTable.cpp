@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.20 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.21 2010/04/07 03:08:37 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,9 +165,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
       node = PropertyManager->GetNode(property_string);
 
       if (node == 0) {
-        cerr << "IndependenVar property, " << property_string
-             << " in Table definition is not defined." << endl;
-        abort();
+        throw("IndependenVar property, " + property_string + " in Table definition is not defined.");
       }
 
       lookup_axis = axisElement->GetAttributeValue("lookup");
@@ -177,6 +175,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
         lookupProperty[eColumn] = node;
       } else if (lookup_axis == string("table")) {
         lookupProperty[eTable] = node;
+      } else if (!lookup_axis.empty()) {
+        throw("Lookup table axis specification not understood: " + lookup_axis);
       } else { // assumed single dimension table; row lookup
         lookupProperty[eRow] = node;
       }

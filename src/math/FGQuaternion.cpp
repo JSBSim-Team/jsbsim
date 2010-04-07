@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.14 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.15 2010/04/07 03:08:37 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,6 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
     mEulerSines = q.mEulerSines;
     mEulerCosines = q.mEulerCosines;
 //  }
-  Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

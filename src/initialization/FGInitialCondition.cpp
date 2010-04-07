@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.38 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.39 2010/04/07 03:08:37 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1109,18 +1109,19 @@ bool FGInitialCondition::Load_v2(void)
     string frame = velocity_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
+    FGColumnVector3 omega_cross_r = Inertial->omega() * Propagate->GetInertialPosition();
 
     if (frame == "eci") {
       vInertialVelocity = vInitVelocity;
     } else if (frame == "ecef") {
       FGMatrix33 mTec2i = Propagate->GetTec2i(); // Get C_i/e
-      vInertialVelocity = mTec2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+      vInertialVelocity = mTec2i * vInitVelocity + omega_cross_r;
     } else if (frame == "local") {
       FGMatrix33 mTl2i = Propagate->GetTl2i();
-      vInertialVelocity = mTl2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+      vInertialVelocity = mTl2i * vInitVelocity + omega_cross_r;
     } else if (frame == "body") {
       FGMatrix33 mTb2i = Propagate->GetTb2i();
-      vInertialVelocity = mTb2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+      vInertialVelocity = mTb2i * vInitVelocity + omega_cross_r;
     } else {
 
       cerr << endl << fgred << "  Velocity frame type: \"" << frame
@@ -1136,12 +1137,36 @@ bool FGInitialCondition::Load_v2(void)
 
   }
 
+  Propagate->SetInertialVelocity(vInertialVelocity);
+
   // Allowable frames
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Local
   // - Body
-  if (document->FindElement("attitude_rate")) {
+  
+  Element* attrate_el = document->FindElement("attitude_rate");
+  if (attrate_el) {
+
+    string frame = attrate_el->GetAttributeValue("frame");
+    frame = to_lower(frame);
+
+    if (frame == "eci") {
+    
+    } else if (frame == "ecef") {
+    
+    } else if (frame == "local") {
+    
+    } else if (frame == "body") {
+    
+    } else if (!frame.empty()) { // misspelling of frame
+    
+    } else if (frame.empty()) {
+    
+    }
+    
+  } else { // Attitude rate assumed 0 relative to local frame.
+  
   }
 
   // Check to see if any engines are specified to be initialized in a running state

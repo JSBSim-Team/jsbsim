@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.48 2010/03/18 13:21:24 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.49 2010/04/07 03:08:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.48 $
+    @version $Revision: 1.49 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,7 +361,7 @@ public:
   /// Returns a vector of strings representing the names of all loaded models (future)
   vector <string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
-  int GetFDMCount(void) {return ChildFDMList.size();}
+  int GetFDMCount(void) {return (int)ChildFDMList.size();}
   /// Gets a particular child FDM.
   childData* GetChildFDM(int i) {return ChildFDMList[i];}
   /// Marks this instance of the Exec object as a "child" object.
