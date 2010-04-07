@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.55 2010/02/19 00:29:59 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.56 2010/04/07 03:08:37 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -604,7 +604,7 @@ void PrintHelp(void)
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
-    cout << "    --property=<property_name=property_value> e.g. --property=aero/qbar-psf=3.4" << endl;
+    cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;
