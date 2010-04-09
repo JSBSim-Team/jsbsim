@@ -50,7 +50,7 @@
        <sin>
          <product>
            <property>systems/compressabilty/hertz</property>
-           <property>sim-time-sec</property>
+           <property>simulation/sim-time-sec</property>
            <value>6.283185307</value>
          </product>
        </sin>
@@ -64,3 +64,4 @@
 
 
 </system>
+

@@ -16,7 +16,7 @@ Hal V. Engel hvengel@astound.net
     <fileheader>
         <author> Aeromatic / Jon Berndt / DATCOM / Hal V. Engel</author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.17 $ </version>
+        <version> $Revision: 1.18 $ </version>
         <description> Advanced model of P-51D fighter (Beta) </description>
     </fileheader>
 
@@ -530,6 +530,20 @@ Hal V. Engel hvengel@astound.net
             </product>
         </function>
 
+        <function name="aero/thrust-qbar_psf">
+            <product>
+                <v> 0.5 </v>
+                <p> atmosphere/rho-slugs_ft3 </p>
+                <pow>
+                    <sum>
+                        <p> propulsion/engine/prop-induced-velocity_fps </p>
+                        <p> velocities/u-aero-fps </p>
+                    </sum>
+                    <v> 2.0 </v>
+                </pow>
+            </product>
+        </function>
+
         <axis name="DRAG">
             <!--
                Add in parisitic drag for fuselage, cooling etc.  Since
@@ -878,7 +892,7 @@ Hal V. Engel hvengel@astound.net
             <function name="aero/coefficient/CLde">
                 <description>Lift_due_to_Elevator_Deflection</description>
                 <product>
-                    <property>aero/qbar-psf</property>
+                    <property>aero/thrust-qbar_psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/elevator-pos-rad</property>
                     <value>0.2000</value>
@@ -938,7 +952,7 @@ Hal V. Engel hvengel@astound.net
             <function name="aero/coefficient/Cldr">
                 <description>Roll_moment_due_to_rudder</description>
                 <product>
-                    <property>aero/qbar-psf</property>
+                    <property>aero/thrust-qbar_psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/rudder-pos-rad</property>
@@ -1129,7 +1143,7 @@ Hal V. Engel hvengel@astound.net
             <function name="aero/coefficient/Cmde">
                 <description>Pitch_moment_due_to_elevator</description>
                 <product>
-                    <property>aero/qbar-psf</property>
+                    <property>aero/thrust-qbar_psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
@@ -1270,7 +1284,7 @@ Hal V. Engel hvengel@astound.net
             <function name="aero/coefficient/Cndr">
                 <description>Yaw_moment_due_to_rudder</description>
                 <product>
-                    <property>aero/qbar-psf</property>
+                    <property>aero/thrust-qbar_psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/rudder-pos-rad</property>

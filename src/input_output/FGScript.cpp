@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.37 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.38 2010/04/09 12:47:29 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,7 +176,7 @@ bool FGScript::LoadScript( string script )
     if (output_file.empty()) {
       cerr << "No logging directives file was specified." << endl;
     } else {
-      FDMExec->SetOutputDirectives(output_file);
+      if (!FDMExec->SetOutputDirectives(output_file)) return false;
     }
   }
 

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.15 2010/03/16 21:06:24 dpculp Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.16 2010/04/09 12:44:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.15 2010/03/16 21:06:24 dpculp Exp $
+    @version $Id: FGPropeller.h,v 1.16 2010/04/09 12:44:06 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -261,6 +261,8 @@ public:
   double GetThrustCoefficient(void) const {return ThrustCoeff;}
   double GetHelicalTipMach(void) const {return HelicalTipMach;}
   int    GetConstantSpeed(void) const {return ConstantSpeed;}
+  void   SetInducedVelocity(double Vi) {Vinduced = Vi;}
+  double GetInducedVelocity(void) const {return Vinduced;}
 
 private:
   int   numBlades;
@@ -280,6 +282,7 @@ private:
   double D4;
   double D5;
   double HelicalTipMach;
+  double Vinduced;
   FGColumnVector3 vTorque;
   FGTable *cThrust;
   FGTable *cPower;

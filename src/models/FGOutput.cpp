@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.46 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.47 2010/04/09 12:47:29 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -963,6 +963,8 @@ bool FGOutput::Load(Element* element)
   } else {
     document = element;
   }
+
+  if (!document) return false;
 
   name = document->GetAttributeValue("name");
   type = document->GetAttributeValue("type");
