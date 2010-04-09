@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.28 2010/03/30 02:12:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.29 2010/04/09 12:44:06 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   CtFactor = CpFactor = 1.0;
   ConstantSpeed = 0;
   cThrust = cPower = CtMach = CpMach = 0;
+  Vinduced = 0.0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
@@ -156,7 +157,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   property_name = base_property_name + "/constant-speed-mode";
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetConstantSpeed,
                       &FGPropeller::SetConstantSpeed );
-
+  property_name = base_property_name + "/prop-induced-velocity_fps";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetInducedVelocity,
+                      &FGPropeller::SetInducedVelocity );
 
   Debug(0);
 }
@@ -195,8 +198,9 @@ double FGPropeller::Calculate(double PowerAvailable)
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
 
-  // Calculate helical tip Mach 
-  double Vtip = RPM * Diameter * M_PI / 60.0;
+  // Calculate helical tip Mach
+  double Area = Diameter*M_PI;
+  double Vtip = RPM * Area / 60.0;
   HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / 
                    fdmex->GetAtmosphere()->GetSoundSpeed(); 
 
@@ -223,6 +227,11 @@ double FGPropeller::Calculate(double PowerAvailable)
   }
 
   Thrust = ThrustCoeff*RPS*RPS*D4*rho;
+
+  // From B. W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics"
+  // first edition, eqn. 6.15 (propeller analysis chapter).
+  Vinduced = 0.5 * (-Vel + sqrt(Vel*Vel + 2.0*Thrust/(rho*Area)));
+
   omega = RPS*2.0*M_PI;
 
   vFn(1) = Thrust;
