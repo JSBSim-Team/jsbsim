@@ -23,7 +23,7 @@
      <switch name="systems/crash-detect/impact">
           <test logic="AND" value="1">
                 position/h-agl-ft lt 1.0
-                sim-time-sec gt 1.0
+                simulation/sim-time-sec gt 1.0
           </test>
           <output>systems/crash-detect/crashed</output>
      </switch>
