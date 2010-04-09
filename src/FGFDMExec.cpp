@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.75 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.76 2010/04/09 12:47:29 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -917,13 +917,15 @@ bool FGFDMExec::SetOutputDirectives(string fname)
   FGOutput* Output = new FGOutput(this);
   Output->SetDirectivesFile(fname);
   Output->InitModel();
-  Schedule(Output,       1);
+  Schedule(Output, 1);
   result = Output->Load(0);
-  Outputs.push_back(Output);
 
-  typedef int (FGOutput::*iOPMF)(void) const;
-  string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
-  instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
+  if (result) {
+    Outputs.push_back(Output);
+    typedef int (FGOutput::*iOPMF)(void) const;
+    string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
+    instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
+  }
 
   return result;
 }
