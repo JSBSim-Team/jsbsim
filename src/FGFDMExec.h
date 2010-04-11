@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.49 2010/04/07 03:08:37 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.50 2010/04/11 13:44:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.49 $
+    @version $Revision: 1.50 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,7 +270,7 @@ public:
   /** Loads a script
       @param Script the full path name and file name for the script to be loaded.
       @return true if successfully loadsd; false otherwise. */
-  bool LoadScript(string Script);
+  bool LoadScript(string Script, double deltaT);
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config

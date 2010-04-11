@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.76 2010/04/09 12:47:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.77 2010/04/11 13:44:42 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -437,12 +437,12 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadScript(string script)
+bool FGFDMExec::LoadScript(string script, double deltaT)
 {
   bool result;
 
   Script = new FGScript(this);
-  result = Script->LoadScript(script);
+  result = Script->LoadScript(script, deltaT);
 
   return result;
 }

@@ -48,12 +48,13 @@ INCLUDES
 
 #include <iostream>
 #include <cstdlib>
+#include <iomanip>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.38 2010/04/09 12:47:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.39 2010/04/11 13:44:42 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +91,7 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript( string script )
+bool FGScript::LoadScript(string script, double deltaT)
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
   string notifyPropertyName="";
@@ -138,7 +139,15 @@ bool FGScript::LoadScript( string script )
   StartTime = run_element->GetAttributeValueAsNumber("start");
   FDMExec->Setsim_time(StartTime);
   EndTime   = run_element->GetAttributeValueAsNumber("end");
-  dt        = run_element->GetAttributeValueAsNumber("dt");
+
+  if (deltaT == 0.0)
+    dt = run_element->GetAttributeValueAsNumber("dt");
+  else {
+    dt = deltaT;
+    cout << endl << "Overriding simulation step size from the command line. New step size is: "
+         << deltaT << " seconds (" << 1/deltaT << " Hz)" << endl << endl;
+  }
+
   FDMExec->Setdt(dt);
   
   // read aircraft and initialization files
@@ -454,7 +463,8 @@ void FGScript::Debug(int from)
       cout << endl;
       cout << "Script: \"" << ScriptName << "\"" << endl;
       cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
-        << " seconds with dt = " << FDMExec->GetDeltaT() << " (" << ceil(1.0/FDMExec->GetDeltaT()) << " Hz)" << endl;
+        << " seconds with dt = " << setprecision(6) << FDMExec->GetDeltaT() << " (" <<
+        ceil(1.0/FDMExec->GetDeltaT()) << " Hz)" << endl;
       cout << endl;
 
       for (unsigned int i=0; i<local_properties.size(); i++) {
