@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="groundtest" version="2.0" release="ALPHA"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+ <fileheader>
+  <author> Ron Jensen </author>
+  <filecreationdate> 2010-04-03 </filecreationdate>
+  <version>0.1 </version>
+  <description> Tests JSBSim Ground Reactions. </description>
+ </fileheader>
+
+ <metrics>
+   <wingarea  unit="FT2">  0.18</wingarea>
+   <wingspan  unit="FT" >  0.43 </wingspan>
+   <chord     unit="FT" >  0.0 </chord>
+ </metrics>
+
+ <mass_balance>
+   <ixx unit="SLUG*FT2"> 7.4 </ixx>
+   <iyy unit="SLUG*FT2"> 7.4 </iyy>
+   <izz unit="SLUG*FT2"> 7.4 </izz>
+   <emptywt unit="LBS"> 5.0 </emptywt>
+   <location name="CG" unit="IN">
+     <x>  0.0 </x>
+     <y>  0.0 </y>
+     <z>  0.0 </z>
+   </location>
+ </mass_balance>
+
+ <ground_reactions>
+  <contact type="BOGEY" name="base">
+   <location unit="IN">
+    <x>   0.0 </x>
+    <y>   0.0 </y>
+    <z>   0.0</z>
+   </location>
+   <static_friction>  0.80 </static_friction>
+   <dynamic_friction> 0.50 </dynamic_friction>
+   <spring_coeff unit="LBS/FT">       500 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">   5 </damping_coeff>
+   <damping_coeff_rebound unit="LBS/FT/SEC">  0 </damping_coeff_rebound>
+  </contact>
+ </ground_reactions>
+
+ <propulsion/>
+
+ <flight_control name="FCS: blank"/>
+
+ <aerodynamics>
+  <axis name="LIFT"/>
+  <axis name="DRAG"/>
+  <axis name="SIDE"/>
+  <axis name="ROLL"/>
+  <axis name="PITCH"/>
+  <axis name="YAW"/>
+ </aerodynamics>
+
+</fdm_config>
