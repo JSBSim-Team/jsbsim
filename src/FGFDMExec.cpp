@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.77 2010/04/11 13:44:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.78 2010/04/12 12:25:19 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +126,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   IC              = 0;
   Trim            = 0;
   Script          = 0;
+
+  RootDir = "";
 
   modelLoaded = false;
   IsChild = false;
@@ -442,7 +444,7 @@ bool FGFDMExec::LoadScript(string script, double deltaT)
   bool result;
 
   Script = new FGScript(this);
-  result = Script->LoadScript(script, deltaT);
+  result = Script->LoadScript(RootDir + script, deltaT);
 
   return result;
 }
@@ -452,9 +454,9 @@ bool FGFDMExec::LoadScript(string script, double deltaT)
 bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string SystemsPath,
                 string model, bool addModelToPath)
 {
-  FGFDMExec::AircraftPath = AircraftPath;
-  FGFDMExec::EnginePath = EnginePath;
-  FGFDMExec::SystemsPath = SystemsPath;
+  FGFDMExec::AircraftPath = RootDir + AircraftPath;
+  FGFDMExec::EnginePath = RootDir + EnginePath;
+  FGFDMExec::SystemsPath = RootDir + SystemsPath;
 
   return LoadModel(model, addModelToPath);
 }
@@ -915,7 +917,7 @@ bool FGFDMExec::SetOutputDirectives(string fname)
   bool result;
 
   FGOutput* Output = new FGOutput(this);
-  Output->SetDirectivesFile(fname);
+  Output->SetDirectivesFile(RootDir + fname);
   Output->InitModel();
   Schedule(Output, 1);
   result = Output->Load(0);

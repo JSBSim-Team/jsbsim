@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.58 2010/04/11 13:44:42 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.59 2010/04/12 12:25:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -276,9 +276,10 @@ int main(int argc, char* argv[])
 
   // *** SET UP JSBSIM *** //
   FDMExec = new JSBSim::FGFDMExec();
-  FDMExec->SetAircraftPath(RootDir + "aircraft");
-  FDMExec->SetEnginePath(RootDir + "engine");
-  FDMExec->SetSystemsPath(RootDir + "systems");
+  FDMExec->SetRootDir(RootDir);
+  FDMExec->SetAircraftPath("aircraft");
+  FDMExec->SetEnginePath("engine");
+  FDMExec->SetSystemsPath("systems");
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
@@ -292,7 +293,6 @@ int main(int argc, char* argv[])
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
 
-    ScriptName = RootDir + ScriptName;
     result = FDMExec->LoadScript(ScriptName, override_sim_rate_value);
 
     if (!result) {
@@ -306,9 +306,9 @@ int main(int argc, char* argv[])
 
     if (catalog) FDMExec->SetDebugLevel(0);
 
-    if ( ! FDMExec->LoadModel( RootDir + "aircraft",
-                               RootDir + "engine",
-                               RootDir + "systems",
+    if ( ! FDMExec->LoadModel( "aircraft",
+                               "engine",
+                               "systems",
                                AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       delete FDMExec;
@@ -337,7 +337,7 @@ int main(int argc, char* argv[])
   // Load output directives file, if given
   for (unsigned int i=0; i<LogDirectiveName.size(); i++) {
     if (!LogDirectiveName[i].empty()) {
-      if (!FDMExec->SetOutputDirectives(RootDir + LogDirectiveName[i])) {
+      if (!FDMExec->SetOutputDirectives(LogDirectiveName[i])) {
         cout << "Output directives not properly set in file " << LogDirectiveName[i] << endl;
         delete FDMExec;
         exit(-1);
