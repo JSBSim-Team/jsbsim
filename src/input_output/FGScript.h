@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.17 2010/02/25 05:21:36 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,10 +174,13 @@ public:
   ~FGScript();
 
   /** Loads a script to drive JSBSim (usually in standalone mode).
-      The language is the Script Directives for JSBSim.
+      The language is the Script Directives for JSBSim. If a simulation step size
+      has been supplied on the command line, it will be override the script-
+      specified simulation step size.
       @param script the filename (including path name, if any) for the script.
+      @param deltaT a simulation step size from the command line
       @return true if successful */
-  bool LoadScript( string script );
+  bool LoadScript(string script, double deltaT);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.

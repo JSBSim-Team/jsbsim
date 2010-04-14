@@ -16,7 +16,7 @@ Hal V. Engel hvengel@astound.net
     <fileheader>
         <author> Aeromatic / Jon Berndt / DATCOM / Hal V. Engel</author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.18 $ </version>
+        <version> $Revision: 1.19 $ </version>
         <description> Advanced model of P-51D fighter (Beta) </description>
     </fileheader>
 
@@ -536,8 +536,11 @@ Hal V. Engel hvengel@astound.net
                 <p> atmosphere/rho-slugs_ft3 </p>
                 <pow>
                     <sum>
-                        <p> propulsion/engine/prop-induced-velocity_fps </p>
                         <p> velocities/u-aero-fps </p>
+                        <product>
+                            <p> propulsion/engine/prop-induced-velocity_fps </p>
+                            <v> 2.0 </v>
+                        </product>
                     </sum>
                     <v> 2.0 </v>
                 </pow>

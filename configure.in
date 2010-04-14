@@ -142,5 +142,15 @@ data_output/Makefile \
 data_plot/Makefile \
 engine/Makefile \
 systems/Makefile \
-scripts/Makefile
+scripts/Makefile \
+check_cases/Makefile \
+check_cases/ground_tests/Makefile \
+check_cases/ground_tests/aircraft/Makefile \
+check_cases/ground_tests/aircraft/groundtest/Makefile \
+check_cases/ground_tests/data_output/Makefile \
+check_cases/ground_tests/data_plot/Makefile \
+check_cases/ground_tests/engine/Makefile \
+check_cases/ground_tests/logged_data/Makefile \
+check_cases/ground_tests/scripts/Makefile \
+check_cases/ground_tests/systems/Makefile
 )

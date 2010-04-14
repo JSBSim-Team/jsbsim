@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<output name="ground_reactions.csv" type="CSV" rate="120">
+  <ground_reactions> ON </ground_reactions>
+  <property> gear/num-units </property>
+  <property> moments/l-gear-lbsft </property>
+  <property> moments/m-gear-lbsft </property>
+  <property> moments/n-gear-lbsft </property>
+  <property> forces/fbx-gear-lbs </property>
+  <property> forces/fby-gear-lbs </property>
+  <property> forces/fbz-gear-lbs </property>
+  <property> velocities/u-aero-fps </property>
+  <property> velocities/v-aero-fps </property>
+  <property> velocities/w-aero-fps </property> 
+  <property> velocities/v-down-fps </property>
+  <property> position/h-agl-ft </property> 
+</output>

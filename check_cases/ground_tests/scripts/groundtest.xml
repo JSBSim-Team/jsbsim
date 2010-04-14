@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Basic ground reactions test">
+  <description>Bouncing</description>
+  <use aircraft="groundtest" initialize="reset00"/>
+  <output file="data_output/ground_reactions120hz"/>
+  <run start="0.0" end="20" dt="0.008333">
+    <event name="Initialize integrators">
+      <condition>sim-time-sec  ge  0.0</condition>
+      <set name="simulation/integrator/rate/rotational" value="2"/>
+      <set name="simulation/integrator/rate/translational" value="3"/>
+      <set name="simulation/integrator/position/rotational" value="3"/>
+      <set name="simulation/integrator/position/translational" value="3"/>
+    </event>
+  </run>
+</runscript>
+

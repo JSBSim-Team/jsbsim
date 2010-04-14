@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.47 2010/04/09 12:47:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.48 2010/04/12 12:25:19 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -958,7 +958,7 @@ bool FGOutput::Load(Element* element)
     output_file_name = DirectivesFile;      // one found in the config file.
     document = LoadXMLDocument(output_file_name);
   } else if (!element->GetAttributeValue("file").empty()) {
-    output_file_name = element->GetAttributeValue("file");
+    output_file_name = FDMExec->GetRootDir() + element->GetAttributeValue("file");
     document = LoadXMLDocument(output_file_name);
   } else {
     document = element;
@@ -966,7 +966,7 @@ bool FGOutput::Load(Element* element)
 
   if (!document) return false;
 
-  name = document->GetAttributeValue("name");
+  name = FDMExec->GetRootDir() + document->GetAttributeValue("name");
   type = document->GetAttributeValue("type");
   SetType(type);
   if (!document->GetAttributeValue("port").empty() && type == string("SOCKET")) {

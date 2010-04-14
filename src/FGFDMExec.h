@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.49 2010/04/07 03:08:37 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.51 2010/04/12 12:25:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.49 $
+    @version $Revision: 1.51 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,23 +270,23 @@ public:
   /** Loads a script
       @param Script the full path name and file name for the script to be loaded.
       @return true if successfully loadsd; false otherwise. */
-  bool LoadScript(string Script);
+  bool LoadScript(string Script, double deltaT);
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
       files are kept, for instance "engine"  */
-  bool SetEnginePath(string path)   { EnginePath = path; return true; }
+  bool SetEnginePath(string path)   { EnginePath = RootDir + path; return true; }
 
   /** Sets the path to the aircraft config file directories.
       @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
-  bool SetAircraftPath(string path) { AircraftPath = path; return true; }
+  bool SetAircraftPath(string path) { AircraftPath = RootDir + path; return true; }
   
   /** Sets the path to the systems config file directories.
       @param path path to the directory under which systems config
       files are kept, for instance "systems"  */
-  bool SetSystemsPath(string path)   { SystemsPath = path; return true; }
+  bool SetSystemsPath(string path)   { SystemsPath = RootDir + path; return true; }
   
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
@@ -491,6 +491,14 @@ public:
       @param delta_t the time step in seconds.     */
   void Setdt(double delta_t) { dT = delta_t; }
 
+  /** Sets the root directory where JSBSim starts looking for its system directories.
+      @param rootDir the string containing the root directory. */
+  void SetRootDir(string rootDir) {RootDir = rootDir;}
+
+  /** Retrieves teh Root Directory.
+      @return the string representing the root (base) JSBSim directory. */
+  string GetRootDir(void) const {return RootDir;}
+
   /** Increments the simulation time.
       @return the new simulation time.     */
   double IncrTime(void) {
@@ -521,6 +529,7 @@ private:
   string SystemsPath;
   string CFGVersion;
   string Release;
+  string RootDir;
 
   bool trim_status;
   int ta_mode;

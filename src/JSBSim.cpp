@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.57 2010/04/09 12:47:29 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.59 2010/04/12 12:25:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -89,6 +89,8 @@ bool suspend;
 bool catalog;
 
 double end_time = 1e99;
+double simulation_rate = 1./120.;
+bool override_sim_rate = false;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -257,6 +259,7 @@ int main(int argc, char* argv[])
   double paused_seconds = 0.0;
   double sim_lag_time = 0;
   double cycle_duration = 0.0;
+  double override_sim_rate_value = 0.0;
   long sleep_nseconds = 0;
 
   realtime = false;
@@ -273,17 +276,24 @@ int main(int argc, char* argv[])
 
   // *** SET UP JSBSIM *** //
   FDMExec = new JSBSim::FGFDMExec();
-  FDMExec->SetAircraftPath(RootDir + "aircraft");
-  FDMExec->SetEnginePath(RootDir + "engine");
-  FDMExec->SetSystemsPath(RootDir + "systems");
+  FDMExec->SetRootDir(RootDir);
+  FDMExec->SetAircraftPath("aircraft");
+  FDMExec->SetEnginePath("engine");
+  FDMExec->SetSystemsPath("systems");
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
+
+  if (simulation_rate < 1.0 )
+    FDMExec->Setdt(simulation_rate);
+  else
+    FDMExec->Setdt(1.0/simulation_rate);
+
+  if (override_sim_rate) override_sim_rate_value = FDMExec->GetDeltaT();
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
 
-    ScriptName = RootDir + ScriptName;
-    result = FDMExec->LoadScript(ScriptName);
+    result = FDMExec->LoadScript(ScriptName, override_sim_rate_value);
 
     if (!result) {
       cerr << "Script file " << ScriptName << " was not successfully loaded" << endl;
@@ -296,9 +306,9 @@ int main(int argc, char* argv[])
 
     if (catalog) FDMExec->SetDebugLevel(0);
 
-    if ( ! FDMExec->LoadModel( RootDir + "aircraft",
-                               RootDir + "engine",
-                               RootDir + "systems",
+    if ( ! FDMExec->LoadModel( "aircraft",
+                               "engine",
+                               "systems",
                                AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       delete FDMExec;
@@ -327,7 +337,7 @@ int main(int argc, char* argv[])
   // Load output directives file, if given
   for (unsigned int i=0; i<LogDirectiveName.size(); i++) {
     if (!LogDirectiveName[i].empty()) {
-      if (!FDMExec->SetOutputDirectives(RootDir + LogDirectiveName[i])) {
+      if (!FDMExec->SetOutputDirectives(LogDirectiveName[i])) {
         cout << "Output directives not properly set in file " << LogDirectiveName[i] << endl;
         delete FDMExec;
         exit(-1);
@@ -555,6 +565,20 @@ bool options(int count, char **arg)
         exit(1);
       }
 
+    } else if (keyword == "--simulation-rate") {
+      if (n != string::npos) {
+        try {
+          simulation_rate = atof( value.c_str() );
+          override_sim_rate = true;
+        } catch (...) {
+          cerr << endl << "  Invalid simulation rate given!" << endl << endl;
+          result = false;
+        }
+      } else {
+        gripe;
+        exit(1);
+      }
+
     } else if (keyword == "--catalog") {
         catalog = true;
         if (value.size() > 0) AircraftName=value;
@@ -605,6 +629,7 @@ void PrintHelp(void)
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
+    cout << "    --simulation-rate=<rate (double)> specifies the sim dT time or frequency" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;
