@@ -14,6 +14,8 @@ if [ ! -d engine ]; then
    exit;
 fi
 
+FG_SRC=`(cd $1; pwd)`
+
 cd src
 NEW_FILES=
 REMOVED_FILES=
@@ -23,14 +25,14 @@ CP="cp -p"
 
 for n in `find . -path './simgear' -prune -o -path './utilities' -prune -o -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name '*.h' -o -name string_utilities.h`; do
 
-   if [ -f $1/src/FDM/JSBSim/$n ]; then
+   if [ -f $FG_SRC/src/FDM/JSBSim/$n ]; then
 
-      NUM=`diff $n $1/src/FDM/JSBSim/$n | grep -e ">" -e "<" | wc -l`;
-      NUM_ID=`diff $n $1/src/FDM/JSBSim/$n | grep -e ">" -e "<" | grep "\$Id:" | wc -l`;
+      NUM=`diff $n $FG_SRC/src/FDM/JSBSim/$n | grep -e ">" -e "<" | wc -l`;
+      NUM_ID=`diff $n $FG_SRC/src/FDM/JSBSim/$n | grep -e ">" -e "<" | grep "\$Id:" | wc -l`;
 
       if [ ! $NUM -eq $NUM_ID ]; then
-         echo "$1/src/FDM/JSBSim/$n";
-         $CP $n $1/src/FDM/JSBSim/$n
+         echo "$FG_SRC/src/FDM/JSBSim/$n";
+         $CP $n $FG_SRC/src/FDM/JSBSim/$n
       fi;
 
    else
@@ -49,7 +51,7 @@ if [ "x$NEW_FILES" != "x" ]; then
    echo
 fi;
 
-cd $1/src/FDM/JSBSim;
+cd $FG_SRC/src/FDM/JSBSim;
 for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h'`; do
 
     if [ ! -f $CUR_DIR/$n ]; then
