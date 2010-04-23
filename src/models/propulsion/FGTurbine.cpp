@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.25 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.26 2010/04/22 08:15:27 ehofman Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +154,7 @@ double FGTurbine::Calculate(void)
   }
 
   if (Cutoff && (phase != tpSpinUp)) phase = tpOff;
-  if (dt == 0 && !Cutoff) phase = tpTrim;
+  if (dt == 0) phase = tpTrim;
   if (Starved) phase = tpOff;
   if (Stalled) phase = tpStall;
   if (Seized) phase = tpSeize;
