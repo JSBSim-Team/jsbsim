@@ -51,6 +51,8 @@ INCLUDES
 #include "models/FGGroundReactions.h"
 #include "models/FGInertial.h"
 #include "models/FGAerodynamics.h"
+#include "models/FGPropulsion.h"
+#include "models/propulsion/FGEngine.h"
 #include "math/FGColumnVector3.h"
 
 #if _MSC_VER
@@ -61,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.13 2010/04/23 17:23:40 dpculp Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,6 +241,8 @@ bool FGTrim::DoTrim(void) {
 
   fdmex->DisableOutput();
 
+  setEngineTrimMode(true);
+
   fgic->SetPRadpsIC(0.0);
   fgic->SetQRadpsIC(0.0);
   fgic->SetRRadpsIC(0.0);
@@ -354,6 +358,7 @@ bool FGTrim::DoTrim(void) {
   for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
+  setEngineTrimMode(false);
   fdmex->EnableOutput();
   return !trim_failed;
 }
@@ -615,6 +620,15 @@ void FGTrim::setDebug(void) {
   } else {
     Debug=0;
     return;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTrim::setEngineTrimMode(bool mode) {
+  FGPropulsion* prop = fdmex->GetPropulsion();
+  for (unsigned int i=0; i<prop->GetNumEngines(); i++) {
+    prop->GetEngine(i)->SetTrimMode(mode);
   }
 }
 
