@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.50 2010/03/14 03:51:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.51 2010/05/03 04:54:01 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,7 +549,7 @@ void FGPiston::doBoostControl(void)
       if(p_amb < BoostSwitchPressure[BoostSpeed] - BoostSwitchHysteresis) {
         BoostSpeed++;
       }
-    } else if(BoostSpeed > 0) {
+    } if(BoostSpeed > 0) {
       // Check if we need to change to a lower boost speed
       if(p_amb > BoostSwitchPressure[BoostSpeed - 1] + BoostSwitchHysteresis) {
         BoostSpeed--;
