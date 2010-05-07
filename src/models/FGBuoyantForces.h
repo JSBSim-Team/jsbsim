@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam, Jon S. Berndt
  Date started: 01/21/08
 
- ------------- Copyright (C) 2008  Anders Gidenstam               -------------
+ ------------- Copyright (C) 2008 - 2010  Anders Gidenstam        -------------
  ------------- Copyright (C) 2008  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.11 2010/05/07 20:38:34 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.10 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.11 2010/05/07 20:38:34 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,9 +130,17 @@ public:
       @return a force vector. */
   const FGColumnVector3& GetForces(void) const {return vTotalForces;}
 
+  /** Gets a component of the total Buoyant force vector.
+      @return a component of the force vector. */
+  double GetForces(int idx) const {return vTotalForces(idx);}
+
   /** Gets the total Buoyancy moment vector.
       @return a moment vector. */
   const FGColumnVector3& GetMoments(void) const {return vTotalMoments;}
+
+  /** Gets a component of the total Buoyancy moment vector.
+      @return a component of the moment vector. */
+  double GetMoments(int idx) const {return vTotalMoments(idx);}
 
   /** Gets the total gas mass. The gas mass is part of the aircraft's
       inertia.
