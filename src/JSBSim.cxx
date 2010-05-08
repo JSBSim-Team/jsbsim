@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.57 2010/04/14 01:26:50 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.58 2010/05/08 09:39:25 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -301,8 +301,6 @@ FGJSBsim::~FGJSBsim(void)
 
 void FGJSBsim::init()
 {
-    double tmp;
-
     SG_LOG( SG_FLIGHT, SG_INFO, "Starting and initializing JSBsim" );
 
     // Explicitly call the superclass's
@@ -332,6 +330,21 @@ void FGJSBsim::init()
     SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << fdmex->GetAtmosphere()->GetTemperature()
      << ", " << fdmex->GetAtmosphere()->GetPressure()
      << ", " << fdmex->GetAtmosphere()->GetDensity() );
+
+// deprecate egt_degf for egt-degf to have consistent naming
+// TODO: raise log-level to ALERT in summer 2010, 
+// remove alias in fall 2010, 
+// remove this code in winter 2010
+    for (unsigned int i=0; i < Propulsion->GetNumEngines(); i++) {
+      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
+      SGPropertyNode * egtn = node->getNode( "egt_degf" );
+      if( egtn != NULL ) {
+        SG_LOG(SG_FLIGHT,SG_WARN,
+               "Aircraft uses deprecated node egt_degf. Please upgrade to egt-degf");
+        node->getNode("egt-degf", true)->alias( egtn );
+      }
+    }
+// end of egt_degf deprecation patch
 
     if (fgGetBool("/sim/presets/running")) {
           for (unsigned int i=0; i < Propulsion->GetNumEngines(); i++) {
@@ -784,7 +797,7 @@ bool FGJSBsim::copy_from_JSBsim()
         FGTurbine* eng = (FGTurbine*)Propulsion->GetEngine(i);
         node->setDoubleValue("n1", eng->GetN1());
         node->setDoubleValue("n2", eng->GetN2());
-        node->setDoubleValue("egt_degf", 32 + eng->GetEGT()*9/5);
+        node->setDoubleValue("egt-degf", 32 + eng->GetEGT()*9/5);
         node->setBoolValue("augmentation", eng->GetAugmentation());
         node->setBoolValue("water-injection", eng->GetInjection());
         node->setBoolValue("ignition", eng->GetIgnition());
@@ -827,6 +840,8 @@ bool FGJSBsim::copy_from_JSBsim()
         FGElectric* eng = (FGElectric*)Propulsion->GetEngine(i);
         node->setDoubleValue("rpm", eng->getRPM());
         } // end FGElectric code block
+        break;
+      case FGEngine::etUnknown:
         break;
       }
 
@@ -1265,7 +1280,6 @@ void FGJSBsim::update_external_forces(double t_off)
     FGColumnVector3 hook_tip_body = hook_root_body;
     hook_tip_body(1) -= hook_length * cos_fi;
     hook_tip_body(3) += hook_length * sin_fi;    
-    bool hook_tip_valid = true;
     
     double contact[3];
     double ground_normal[3];
