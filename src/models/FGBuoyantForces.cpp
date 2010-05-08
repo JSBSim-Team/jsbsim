@@ -5,7 +5,7 @@
  Date started: 01/21/08
  Purpose:      Encapsulates the buoyant forces
 
- ------------- Copyright (C) 2008 - 2009  Anders Gidenstam        -------------
+ ------------- Copyright (C) 2008 - 2010  Anders Gidenstam        -------------
  ------------- Copyright (C) 2008  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -38,14 +38,14 @@ INCLUDES
 
 #include "FGBuoyantForces.h"
 #include "FGMassBalance.h"
-#include "input_output/FGPropertyManager.h"  // Need?
+#include "input_output/FGPropertyManager.h"
 #include <iostream>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.11 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.12 2010/05/07 18:59:55 andgi Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,8 +62,6 @@ FGBuoyantForces::FGBuoyantForces(FGFDMExec* FDMExec) : FGModel(FDMExec)
   vTotalMoments.InitMatrix();
 
   gasCellJ.InitMatrix();
-
-  bind();
 
   Debug(0);
 }
@@ -140,6 +138,10 @@ bool FGBuoyantForces::Load(Element *element)
   }
   
   FGModel::PostLoad(element);
+
+  if (!NoneDefined) {
+    bind();
+  }
 
   return true;
 }
@@ -258,6 +260,19 @@ string FGBuoyantForces::GetBuoyancyValues(string delimeter)
 
 void FGBuoyantForces::bind(void)
 {
+  typedef double (FGBuoyantForces::*PMF)(int) const;
+  PropertyManager->Tie("moments/l-buoyancy-lbsft", this, eL,
+                       (PMF)&FGBuoyantForces::GetMoments);
+  PropertyManager->Tie("moments/m-buoyancy-lbsft", this, eM,
+                       (PMF)&FGBuoyantForces::GetMoments);
+  PropertyManager->Tie("moments/n-buoyancy-lbsft", this, eN,
+                       (PMF)&FGBuoyantForces::GetMoments);
+  PropertyManager->Tie("forces/fbx-buoyancy-lbs", this, eX,
+                       (PMF)&FGBuoyantForces::GetForces);
+  PropertyManager->Tie("forces/fby-buoyancy-lbs", this, eY,
+                       (PMF)&FGBuoyantForces::GetForces);
+  PropertyManager->Tie("forces/fbz-buoyancy-lbs", this, eZ,
+                       (PMF)&FGBuoyantForces::GetForces);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
