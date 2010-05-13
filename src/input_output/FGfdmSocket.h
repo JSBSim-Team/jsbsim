@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.18 2010/05/13 01:48:55 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.19 2010/05/13 03:07:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
