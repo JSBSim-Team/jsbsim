@@ -52,7 +52,7 @@ using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.25 2009/10/26 18:14:02 andgi Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.26 2010/05/13 01:48:55 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,9 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
       cout << "Could not get host net address by name..." << endl;
     }
   } else {
-    if ((host = gethostbyaddr(address.c_str(), address.size(), PF_INET)) == NULL) {
+    unsigned int ip;
+    ip = inet_addr(address.c_str());
+    if ((host = gethostbyaddr((char*)&ip, address.size(), PF_INET)) == NULL) {
       cout << "Could not get host net address by number..." << endl;
     }
   }
