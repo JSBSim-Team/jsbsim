@@ -71,7 +71,7 @@ double FGGroundCallback::GetAGLevel(double t, const FGLocation& loc,
                                     FGColumnVector3& vel) const
 {
   vel = FGColumnVector3(0.0, 0.0, 0.0);
-  normal = (-1/FGColumnVector3(loc).Magnitude())*FGColumnVector3(loc);
+  normal = FGColumnVector3(loc).Normalize();
   double radius = loc.GetRadius();
   double agl = GetAltitude(loc);
   contact = ((radius-agl)/radius)*FGColumnVector3(loc);

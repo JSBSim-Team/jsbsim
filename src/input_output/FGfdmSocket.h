@@ -51,6 +51,7 @@ INCLUDES
   #include <unistd.h>
   #include <sys/socket.h>
   #include <netinet/in.h>
+  #include <arpa/inet.h>
   #include <netdb.h>
   #include <errno.h>
   #include <sys/ioctl.h>
@@ -64,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.17 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.19 2010/05/13 03:07:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

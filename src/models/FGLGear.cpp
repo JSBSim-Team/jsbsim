@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.73 2010/03/23 22:44:36 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.74 2010/05/18 10:54:14 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -323,7 +323,7 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
     // Compute the height of the theoretical location of the wheel (if strut is not compressed) with
     // respect to the ground level
     double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
-    vGroundNormal = -1. * Propagate->GetTec2b() * normal;
+    vGroundNormal = Propagate->GetTec2b() * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction of the local
     // coordinate frame. We now need to transform this height in actual compression of the strut (BOGEY)
@@ -334,7 +334,7 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
       compressLength = verticalZProj > 0.0 ? -height / verticalZProj : 0.0;
       break;
     case ctSTRUCTURE:
-      verticalZProj = (Propagate->GetTec2l()*normal)(eZ);
+      verticalZProj = -(Propagate->GetTec2l()*normal)(eZ);
       compressLength = fabs(verticalZProj) > 0.0 ? -height / verticalZProj : 0.0;
       break;
     }

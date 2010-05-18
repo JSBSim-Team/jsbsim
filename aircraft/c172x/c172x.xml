@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.83 $</version>
+        <version>$Revision: 1.84 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -96,7 +96,8 @@
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.021</rolling_friction>
             <spring_coeff unit="LBS/FT">1800</spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC">600</damping_coeff>
+            <damping_coeff unit="LBS/FT/SEC">500</damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">2000</damping_coeff_rebound>
 
             <relaxation_velocity>
               <rolling unit="FT/SEC">0.55</rolling>
@@ -124,8 +125,8 @@
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.021</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
-            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound>
+            <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
             <relaxation_velocity>
               <rolling unit="FT/SEC">0.55</rolling>
               <side unit="FT/SEC">1.10</side>
@@ -152,8 +153,8 @@
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.021</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
-            <damping_coeff type="SQUARE" unit="LBS/FT2/SEC2">1600</damping_coeff>
-            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound>
+            <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
             <relaxation_velocity>
               <rolling unit="FT/SEC">0.55</rolling>
               <side unit="FT/SEC">1.10</side>

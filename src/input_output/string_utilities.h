@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.10 2010/01/25 19:49:27 andgi Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.11 2010/05/13 01:48:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,6 +94,14 @@ CLASS DECLARATION
     if (str.size() == 0) return str;
     string temp_str = trim_right(str);
     return str = trim_left(temp_str);
+  }
+
+  string& trim_all_space(string& str)
+  {
+    for (int ctr=0; ctr<str.size(); ctr++) {
+      if (isspace((unsigned char)str[ctr])) str = str.erase(ctr,1);
+    }
+    return str;
   }
 
   string& to_upper(string& str)
