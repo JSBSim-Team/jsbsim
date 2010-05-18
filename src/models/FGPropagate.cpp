@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.50 2010/03/28 05:57:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.51 2010/05/18 10:54:14 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,9 +150,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   VehicleRadius = GetRadius();
   radInv = 1.0/VehicleRadius;
 
-  // Initialize the State Vector elements 
-  // The local copies of the transformation matrices are for use for
-  // initial conditions only.
+  // Initialize the State Vector elements and the transformation matrices
 
   // Set the position lat/lon/radius
   VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
@@ -277,27 +275,6 @@ static int ctr;
 
   VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle());
 
-  // These local copies of the transformation matrices are for use this
-  // pass through Run() only.
-
-  // "Location-based" transformation matrices from the vLocation vector.
-
-  Ti2ec = GetTi2ec();          // ECI to ECEF transform
-  Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
-  Tl2ec = GetTl2ec();          // local to ECEF transform
-  Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
-  Ti2l  = GetTi2l();
-  Tl2i  = Ti2l.Transposed();
-
-  // "Orientation-based" transformation matrices from the orientation quaternion
-
-  Ti2b  = GetTi2b();           // ECI to body frame transform
-  Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
-  Tl2b  = Ti2b*Tl2i;           // local to body frame transform
-  Tb2l  = Tl2b.Transposed();   // body to local frame transform
-  Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
-  Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
-
   // Calculate state derivatives
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
@@ -322,6 +299,24 @@ static int ctr;
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
   vVel = Tb2l * VState.vUVW;
+
+  // Update the "Location-based" transformation matrices from the vLocation vector.
+
+  Ti2ec = GetTi2ec();          // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
+  Tl2ec = GetTl2ec();          // local to ECEF transform
+  Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
+  Ti2l  = GetTi2l();
+  Tl2i  = Ti2l.Transposed();
+
+  // Update the "Orientation-based" transformation matrices from the orientation quaternion
+
+  Ti2b  = GetTi2b();           // ECI to body frame transform
+  Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
+  Tl2b  = Ti2b*Tl2i;           // local to body frame transform
+  Tb2l  = Tl2b.Transposed();   // body to local frame transform
+  Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
+  Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
 
   RunPostFunctions();
 
