@@ -20,17 +20,17 @@
   </orientation>
 
   <!-- frame can be ECI or ECEF. -->
-  <!-- components can be u-v-w, or e-n-d -->
+  <!-- components can be u-v-w, or n-e-d -->
   <velocity unit="FT/SEC" frame="ECEF">
-    <u> 24063.28275  </u>
-    <v>     0.0      </v>
-    <w>     0.0      </w>
+    <x> 24063.28275  </x>
+    <y>     0.0      </y>
+    <z>     0.0      </z>
   </velocity>
 
   <attitude_rate unit="RAD/SEC" frame="ECI">
-    <p> 0.0 </p>
-    <q> 0.0 </q>
-    <r> 0.0 </r>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
   </attitude_rate>
 
 </initialize>

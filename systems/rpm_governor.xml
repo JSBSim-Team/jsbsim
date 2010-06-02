@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<system name="RPM Governor">
+
+  <property value="324.0">fcs/nominal-rpm</property>
+  <property value="0.0">fcs/rpm-governor-active-norm</property>
+
+  <channel name="RPM-Governor"> 
+
+    <switch name="fcs/rpm-governor-pid-inhibit">
+      <default value="-1.0"/>
+      <test value="0.0"> fcs/rpm-governor-active-norm GT 0.0 </test>
+    </switch>
+
+    <fcs_function name="fcs/rpm-delta">
+      <function>
+        <product>
+          <property> fcs/rpm-governor-active-norm </property>
+          <difference>
+            <property>fcs/nominal-rpm</property>
+            <property>propulsion/engine[0]/main-rotor-rpm</property>
+          </difference>
+        </product>
+      </function>
+      <clipto>
+        <min> -400.0 </min>
+        <max>  400 </max>
+      </clipto>
+    </fcs_function>
+
+    <pid name="fcs/throttle-pid">
+      <input>fcs/rpm-delta</input>
+      <kp> 0.0065 </kp>
+      <ki> 0.0020</ki>
+      <kd> 0.00200 </kd>
+      <trigger> fcs/rpm-governor-pid-inhibit </trigger>
+      <clipto>
+        <min>  0.00 </min>
+        <max>  1.00 </max>
+      </clipto>
+      <output>/controls/engines/engine/throttle</output>
+      <!-- <output>fcs/throttle-cmd-norm</output> -->
+    </pid>
+
+  </channel>
+
+</system>

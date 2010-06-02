@@ -116,6 +116,7 @@ aircraft/T38/Makefile \
 aircraft/X15/Makefile \
 aircraft/ZLT-NT/Makefile \
 aircraft/ZLT-NT/Systems/Makefile \
+aircraft/ah1s/Makefile \
 aircraft/ball/Makefile \
 aircraft/c172p/Makefile \
 aircraft/c172r/Makefile \

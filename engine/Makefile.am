@@ -40,4 +40,9 @@ EXTRA_DIST = \
 	SSME.xml \
 	SSME_nozzle.xml \
 	RL10.xml \
-	RL10_nozzle.xml
+	RL10_nozzle.xml \
+	ah1s_rotor.xml \
+	avco_lycoming_t53.xml \
+	s64_rotor.xml \
+	test_turbine.xml \
+	twin_pratt_and_whitney_t73.xml

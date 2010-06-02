@@ -41,6 +41,7 @@ INCLUDES
 #include "FGTank.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
+#include "FGRotor.h"
 #include "models/FGPropulsion.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
@@ -53,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.37 2010/04/02 21:54:46 andgi Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.38 2010/06/02 04:05:13 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,6 +322,8 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     Thruster = new FGPropeller(FDMExec, document, EngineNumber);
   } else if (thrType == "nozzle") {
     Thruster = new FGNozzle(FDMExec, document, EngineNumber);
+  } else if (thrType == "rotor") {
+    Thruster = new FGRotor(FDMExec, document, EngineNumber);
   } else if (thrType == "direct") {
     Thruster = new FGThruster( FDMExec, document, EngineNumber);
   }

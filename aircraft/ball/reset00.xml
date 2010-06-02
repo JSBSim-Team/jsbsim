@@ -3,14 +3,15 @@
   <!--
     This file sets up the mk82 to start off
     from altitude.
+    Velocity of Earth surface at equator: 1525.92 ft/sec.
   -->
-  <ubody unit="FT/SEC"> 24063.28275  </ubody>
-  <vbody unit="FT/SEC">     0.0  </vbody>
-  <wbody unit="FT/SEC">     0.0  </wbody>
-  <latitude unit="DEG">    28.6  </latitude>
-  <longitude unit="DEG">  -90.0  </longitude>
-  <phi unit="DEG">          0.0  </phi>
-  <theta unit="DEG">        0.0  </theta>
+<!--  <ubody unit="FT/SEC"> 24063.28275  </ubody> -->
+  <!-- Circular orbit at equator -->
+  <!-- 25464.28 ft/sec inertial velocity - s/b 25454.2 ft/sec. -->
+  <!-- <ubody unit="FT/SEC"> 23938.39  </ubody> -->
+  <ubody unit="FT/SEC"> 23889.15  </ubody>
+  <latitude unit="DEG">     0.0  </latitude>
+  <longitude unit="DEG">    0.0  </longitude>
   <psi unit="DEG">         90.0  </psi>
   <altitude unit="FT"> 800000.0  </altitude>
 </initialize>

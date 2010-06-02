@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<rotor name="s64_test_rotor">
+  <diameter  unit="FT"> 72.0 </diameter>
+  <numblades>   6 </numblades>
+  <xhub unit="IN">  -13.0 </xhub>
+  <yhub unit="IN">    0.0 </yhub>
+  <zhub unit="IN">  -89.0 </zhub>
+  <nominalrpm> 184.5 </nominalrpm>
+  <minrpm>      1 </minrpm>
+  <chord unit="IN">26.0</chord>
+  <liftcurveslope>5.73</liftcurveslope>
+  <flappingmoment unit="SLUG*FT2"> 3500 </flappingmoment>
+  <twist unit="RAD">-0.183</twist>
+  <massmoment Xunit="SLUG*FT">160</massmoment>
+  <tiplossfactor>0.97</tiplossfactor>
+  <polarmoment unit="SLUG*FT2">23090</polarmoment>
+  <inflowlag>0.2</inflowlag>
+  <shafttilt unit="RAD"> -0.0524 </shafttilt>
+  <hingeoffset unit="FT">2.0</hingeoffset>
+  <cantangle unit="RAD">0.0</cantangle>
+  <tailrotor>
+    <diameter unit="FT"> 16.0 </diameter>
+    <numblades>    4 </numblades>
+    <xhub unit="IN"> -541.0 </xhub>
+    <yhub unit="IN">  -33.0 </yhub>
+    <zhub unit="IN">  -87.5 </zhub>
+    <nominalrpm>835.6</nominalrpm>
+    <chord unit="IN">13.5</chord>
+    <liftcurveslope>5.73</liftcurveslope>
+    <flappingmoment unit="SLUG*FT2"> 10.2 </flappingmoment>
+    <twist unit="RAD">-0.140</twist>
+    <massmoment Xunit="SLUG*FT">2.66</massmoment>
+    <tiplossfactor>0.92</tiplossfactor>
+    <inflowlag>0.2</inflowlag>
+    <hingeoffset unit="IN">5.0</hingeoffset>
+    <cantangle unit="RAD">0.78</cantangle>
+  </tailrotor>
+
+  <cgroundeffect>0.28</cgroundeffect>
+  <groundeffectshift unit="IN">180</groundeffectshift>
+
+</rotor>

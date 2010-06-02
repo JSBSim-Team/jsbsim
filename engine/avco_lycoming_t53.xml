@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+     Test turbine for ah1/uh1, generated with aeromatic
+-->
+
+<turbine_engine name="avco_lycoming_t53_l_703">
+  <milthrust> 3320 </milthrust> <!-- expect 1483 shp, via 2.24 approximated to 3320 lbf -->
+  <bypassratio>     0.0  </bypassratio>
+  <tsfc>            0.60 </tsfc>
+  <bleed>           0.001 </bleed>
+  <idlen1>         30.0  </idlen1>
+  <idlen2>         60.0  </idlen2>
+  <maxn1>         100.0  </maxn1>
+  <maxn2>         100.0  </maxn2>
+  <augmented>         0  </augmented>
+  <injected>          0  </injected>
+
+  <function name="IdleThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000       0   10000   20000   30000   40000   50000
+     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.1467
+     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342
+     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
+     0.6  0.0     0.0     0.0     0.0276  0.0718  0.0430  0.0
+     0.8  0.0     0.0     0.0     0.0     0.0174  0.0086  0.0
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0
+   </tableData>
+   </table>
+  </function>
+
+  <function name="MilThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000       0   10000   20000   30000   40000   50000
+     0.0  1.1260  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
+     0.2  1.1000  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430
+     0.4  1.0000  0.6410  0.6120  0.4060  0.3570  0.2330  0.1450
+     0.6  0.4430  0.3510  0.2710  0.2020  0.1780  0.1020  0.0640
+     0.8  0.0240  0.0200  0.0160  0.0130  0.0110  0.0100  0.0
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0
+    </tableData>
+   </table>
+  </function>
+
+</turbine_engine>

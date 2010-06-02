@@ -18,6 +18,7 @@ EXTRA_DIST = \
   kml_output.xml \
   Prefix.kml \
   Postfix.kml \
+  sim_primer.xml \
   x151.xml \
   x152.xml \
   f16_runway_test.xml \
