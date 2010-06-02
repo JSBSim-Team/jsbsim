@@ -12,4 +12,8 @@ EXTRA_DIST = \
 	refuel.xml \
 	speedbrakes.xml \
 	GNCUtilities.xml \
-	Autopilot.xml
+	Autopilot.xml \
+	afcs.xml \
+	fg_glue.xml \
+	jsb_glue.xml \
+	rpm_governor.xml

@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.39 2010/04/07 03:08:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.40 2010/06/02 04:05:13 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -980,15 +980,14 @@ bool FGInitialCondition::Load_v2(void)
 
   Element* position = document->FindElement("position");
   if (position) {
+    vLoc = position->FindElementTripletConvertTo("FT");
     string frame = position->GetAttributeValue("frame");
     frame = to_lower(frame);
     if (frame == "eci") {
-      vLoc = position->FindElementTripletConvertTo("FT");
-      // Need to transform this to ECEF for storage and use in FGLocation.
+      // Need to transform vLoc to ECEF for storage and use in FGLocation.
       vLoc = Propagate->GetTi2ec()*vLoc;
     } else if (frame == "ecef") {
       // Move vLoc query until after lat/lon/alt query to eliminate spurious warning msgs.
-      vLoc = position->FindElementTripletConvertTo("FT");
       if (vLoc.Magnitude() == 0.0) {
         Propagate->SetLatitudeDeg(position->FindElementValueAsNumberConvertTo("latitude", "DEG"));
         Propagate->SetLongitudeDeg(position->FindElementValueAsNumberConvertTo("longitude", "DEG"));
@@ -1142,31 +1141,49 @@ bool FGInitialCondition::Load_v2(void)
   // Allowable frames
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
-  // - Local
   // - Body
   
+  FGColumnVector3 vInertialRate;
   Element* attrate_el = document->FindElement("attitude_rate");
   if (attrate_el) {
 
     string frame = attrate_el->GetAttributeValue("frame");
     frame = to_lower(frame);
+    FGColumnVector3 vAttRate = attrate_el->FindElementTripletConvertTo("RAD/SEC");
 
     if (frame == "eci") {
-    
+      vInertialRate = vAttRate;
     } else if (frame == "ecef") {
-    
-    } else if (frame == "local") {
-    
+//      vInertialRate = vAttRate + Inertial->omega(); 
     } else if (frame == "body") {
-    
+    //Todo: determine local frame rate
+      FGMatrix33 mTb2l = Propagate->GetTb2l();
+//      vInertialRate = mTb2l*vAttRate + Inertial->omega();
     } else if (!frame.empty()) { // misspelling of frame
-    
+      
+      cerr << endl << fgred << "  Attitude rate frame type: \"" << frame
+           << "\" is not supported!" << reset << endl << endl;
+      result = false;
+
     } else if (frame.empty()) {
     
     }
     
-  } else { // Attitude rate assumed 0 relative to local frame.
-  
+  } else { // Body frame attitude rate assumed 0 relative to local.
+/*
+    //Todo: determine local frame rate
+
+    FGMatrix33 mTi2l = Propagate->GetTi2l();
+    vVel = mTi2l * vInertialVelocity;
+
+    // Compute the local frame ECEF velocity
+    vVel = Tb2l * VState.vUVW;
+
+    FGColumnVector3 vOmegaLocal = FGColumnVector3(
+       radInv*vVel(eEast),
+      -radInv*vVel(eNorth),
+      -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
+*/  
   }
 
   // Check to see if any engines are specified to be initialized in a running state

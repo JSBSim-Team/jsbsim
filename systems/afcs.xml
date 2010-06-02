@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+   outputs:
+
+        ap/rudder-cmd
+        ap/aileron-cmd
+        ap/elevator-cmd
+        ap/collective-cmd
+
+  -->
+<system name="automated flight control">
+
+  <!-- reported h-agl-ft seems way jumpy -->
+  <channel name="tame_fg">
+    <lag_filter name="position/h-agl-ft-lag">
+      <input>position/h-agl-ft</input>
+      <c1>1</c1>
+    </lag_filter>
+  </channel>
+
+
+<!--  ==================
+         ROLL CHANNEL
+      ==================  -->
+
+  <property value="0.0">ap/afcs/roll-channel-active-norm</property>
+  <property value="0.0">ap/afcs/phi-trim-rad</property>
+  <property value="0.0">ap/afcs/x-lat-trim</property>
+
+  <channel name="afcs-roll">
+
+    <pure_gain name="ap/afcs/p-aero-rad_sec-input">
+      <input>velocities/p-aero-rad_sec</input>
+      <gain>ap/afcs/roll-channel-active-norm</gain>
+    </pure_gain>
+
+    <!-- if zero the pid integrator is enabled -->
+    <!-- if negative the pid integrator is reset -->
+    <switch name="ap/afcs/roll-err-pid-inhibit">
+      <default value="-1.0"/>
+      <test value="0.0"> ap/afcs/roll-channel-active-norm GT 0.999 </test>
+    </switch>
+
+
+    <fcs_function name="ap/afcs/phi-error-rad-input">
+      <function>
+        <product>
+          <property>ap/afcs/roll-channel-active-norm</property>
+          <difference>
+            <property> attitude/phi-rad </property><!-- [-pi:pi] -->
+            <property> ap/afcs/phi-trim-rad </property><!-- [-pi:pi] -->
+          </difference>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/afcs/x-lat-error-input">
+      <function>
+        <product>
+          <property>ap/afcs/roll-channel-active-norm</property>
+          <difference>
+            <property> fcs/x-lat </property>
+            <property> ap/afcs/x-lat-trim </property>
+          </difference>
+        </product>
+      </function>
+    </fcs_function>
+
+    <pid name="ap/afcs/roll-err-pid">
+      <input>ap/afcs/phi-error-rad-input</input>
+      <kp> -0.133 </kp><!-- G_A_phi -0.133 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <pid name="ap/afcs/roll-rate-pid">
+      <input>ap/afcs/p-aero-rad_sec-input</input>
+      <kp> -0.096 </kp><!-- G_Ap -0.096 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <pid name="ap/afcs/x-lat-pid">
+      <input>ap/afcs/x-lat-error-input</input>
+      <kp> 0.475 </kp><!-- G_A_xlat 0.475 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <summer name="ap/afcs/roll-cmd-sum">
+      <input>ap/afcs/roll-err-pid</input>
+      <input>ap/afcs/roll-rate-pid</input>
+      <input>ap/afcs/x-lat-pid</input>
+      <output>ap/aileron-cmd</output>
+    </summer>
+
+  </channel>
+
+
+<!--  ==================
+         PITCH CHANNEL
+      ==================  -->
+
+  <property value="0.0">ap/afcs/pitch-channel-active-norm</property>
+  <property value="0.0">ap/afcs/theta-trim-rad</property>
+  <property value="0.0">ap/afcs/x-lon-trim</property>
+
+  <channel name="afcs-pitch">
+
+    <pure_gain name="ap/afcs/q-aero-rad_sec-input">
+      <input>velocities/q-aero-rad_sec</input>
+      <gain>ap/afcs/pitch-channel-active-norm</gain>
+    </pure_gain>
+
+    <!-- if zero the pid integrator is enabled -->
+    <!-- if negative the pid integrator is reset -->
+    <switch name="ap/afcs/pitch-err-pid-inhibit">
+      <default value="-1.0"/>
+      <test value="0.0"> ap/afcs/pitch-channel-active-norm GT 0.999 </test>
+    </switch>
+
+
+    <fcs_function name="ap/afcs/theta-error-rad-input">
+      <function>
+        <product>
+          <property>ap/afcs/pitch-channel-active-norm</property>
+          <difference>
+            <property> attitude/theta-rad </property><!-- [-pi:pi] -->
+            <property> ap/afcs/theta-trim-rad </property><!-- [-pi:pi] -->
+          </difference>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/afcs/x-lon-error-input">
+      <function>
+        <product>
+          <property>ap/afcs/pitch-channel-active-norm</property>
+          <difference>
+            <property> fcs/x-lon </property>
+            <property> ap/afcs/x-lon-trim </property>
+          </difference>
+        </product>
+      </function>
+    </fcs_function>
+
+    <pid name="ap/afcs/pitch-err-pid">
+      <input>ap/afcs/theta-error-rad-input</input>
+      <kp> 0.281 </kp><!-- G_B_theta 0.281 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <pid name="ap/afcs/pitch-rate-pid">
+      <input>ap/afcs/q-aero-rad_sec-input</input>
+      <kp> 0.727 </kp><!-- G_Bq 0.727 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <pid name="ap/afcs/x-lon-pid">
+      <input>ap/afcs/x-lon-error-input</input>
+      <kp> 0.475 </kp><!-- G_B_xlon 0.363 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+    <summer name="ap/afcs/pitch-cmd-sum">
+      <input>ap/afcs/pitch-err-pid</input>
+      <input>ap/afcs/pitch-rate-pid</input>
+      <input>ap/afcs/x-lon-pid</input>
+      <output>ap/elevator-cmd</output>
+    </summer>
+
+  </channel>
+
+
+<!--  ==================
+          YAW CHANNEL
+      ==================  -->
+
+  <property value="0.0">ap/afcs/yaw-channel-active-norm</property>
+  <property value="0.0">ap/afcs/psi-trim-rad</property>
+
+  <channel name="afcs-yaw">
+
+    <pure_gain name="ap/afcs/r-aero-rad_sec-input">
+      <input>velocities/r-aero-rad_sec</input>
+      <gain>ap/afcs/yaw-channel-active-norm</gain>
+    </pure_gain>
+
+    <!-- if zero the pid integrator is enabled -->
+    <!-- if negative the pid integrator is reset -->
+    <switch name="ap/afcs/yaw-err-pid-inhibit">
+      <default value="-1.0"/>
+      <test value="0.0"> ap/afcs/yaw-channel-active-norm GT 0.999 </test>
+    </switch>
+
+
+    <fcs_function name="ap/afcs/psi-error-rad-raw">
+      <function>
+        <difference>
+          <property> attitude/psi-rad </property><!-- [0:2pi] -->
+          <property> ap/afcs/psi-trim-rad </property><!-- [-pi:2pi] -->
+        </difference>
+      </function>
+    </fcs_function>
+
+<!--
+   hmm, an fmod function would be cool.
+   so use trig funcs to remap angle to +/- 180 deg ...
+-->
+    <fcs_function name="ap/afcs/psi-error-rad-mapped">
+      <function>
+        <product>
+          <property>ap/afcs/yaw-channel-active-norm</property>
+          <value>2.0</value>
+          <atan>
+            <tan>
+              <product>
+                <value>0.5</value>
+                <property> ap/afcs/psi-error-rad-raw </property>
+              </product>
+            </tan>
+          </atan>
+        </product>
+      </function>
+    </fcs_function>
+
+    <!-- ... and avoid jumping when abs(delta) is around 180 deg -->
+    <fcs_function name="ap/afcs/psi-error-rad">
+      <function>
+        <product>
+          <property> ap/afcs/psi-error-rad-mapped </property>
+          <table>
+            <independentVar lookup="row">ap/afcs/psi-error-rad-mapped</independentVar>
+            <tableData>
+              -3.1416   0.0
+              -3.0      1.0
+               3.0      1.0
+               3.1416   0.0
+            </tableData>
+          </table>
+        </product>
+      </function>
+    </fcs_function>
+
+
+    <pid name="ap/afcs/yaw-err-pid">
+      <input>ap/afcs/psi-error-rad</input>
+      <kp> 0.45 </kp><!-- G_theta_t_psi 0.133 -->
+      <ki> 0.002 </ki>
+      <kd> 0.0 </kd>
+      <trigger> ap/afcs/yaw-err-pid-inhibit </trigger>
+      <clipto>
+        <min> -0.25 </min>
+        <max>  0.25 </max>
+      </clipto>
+    </pid>
+
+    <pid name="ap/afcs/yaw-rate-pid">
+      <input>ap/afcs/r-aero-rad_sec-input</input>
+      <kp> 0.5 </kp><!-- G_theta_tr 0.335 -->
+      <ki> 0.0 </ki>
+      <kd> 0.0 </kd>
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+    </pid>
+
+
+    <summer name="ap/afcs/yaw-cmd-sum">
+      <input>ap/afcs/yaw-err-pid</input>
+      <input>ap/afcs/yaw-rate-pid</input>
+      <output>ap/rudder-cmd</output>
+    </summer>
+
+  </channel>
+
+
+<!--  =====================
+         ALTITUDE CHANNEL
+      =====================  -->
+
+  <property value="0.0">ap/afcs/altitude-channel-active-norm</property>
+  <property value="50.0">ap/afcs/h-agl-trim-ft</property>
+
+  <channel name="afcs-altitude">
+
+<!--
+    <switch name="ap/afcs/altitude-pid-inhibit">
+      <default value="-1.0"/>
+      <test value="0.0"> ap/afcs/altitude-channel-active-norm GT 0.999 </test>
+    </switch>
+-->
+
+
+    <fcs_function name="ap/afcs/altitude-error-input">
+      <function>
+        <product>
+          <property>ap/afcs/altitude-channel-active-norm</property>
+          <difference>
+            <property> position/h-agl-ft-lag </property>
+            <property> ap/afcs/h-agl-trim-ft </property>
+          </difference>
+        </product>
+      </function>
+    </fcs_function>
+
+
+    <pid name="ap/afcs/altitude-pid">
+      <input>ap/afcs/altitude-error-input</input>
+      <kp> -0.00035 </kp><!-- G_theta_ch -0.00037 -->
+      <ki>  0.0 </ki><!-- -0.000005 -->
+      <kd>  0.0 </kd>
+<!--
+      <trigger> ap/afcs/altitude-pid-inhibit </trigger>
+-->
+      <clipto>
+        <min> -0.20 </min>
+        <max>  0.20 </max>
+      </clipto>
+      <output>ap/collective-cmd</output>
+    </pid>
+  </channel>
+
+
+</system>

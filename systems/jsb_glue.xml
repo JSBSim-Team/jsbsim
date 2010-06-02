@@ -1,0 +1,18 @@
+<!--
+  '/controls/engines/engine/throttle' to 'fcs/throttle-cmd-norm'
+  flightgear got a dummy system
+  here it is given back to jsb 'standalone'
+  -->
+<system name="throttle mapper">
+
+ <channel name="governor-glue">
+  <fcs_function>
+    <function>
+       <property>/controls/engines/engine/throttle</property>
+    </function>
+    <output>
+      fcs/throttle-pos-norm
+    </output>
+  </fcs_function>
+ </channel>
+</system>

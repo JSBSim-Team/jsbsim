@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+
+<rotor name="ah1s_test_rotor">
+
+  <diameter unit="FT"> 44 </diameter>
+  <numblades> 2 </numblades>
+  <xhub unit="IN"> -4.0 </xhub>
+  <zhub unit="FT"> -6.5 </zhub>
+  <nominalrpm> 324 </nominalrpm>
+  <minrpm> 1 </minrpm>
+  <chord unit="FT"> 2.25 </chord>
+  <liftcurveslope> 6 </liftcurveslope>
+  <flappingmoment unit="SLUG*FT2"> 1382 </flappingmoment>
+  <twist> -0.175 </twist>
+  <massmoment> 120 </massmoment>
+  <tiplossfactor> 0.98 </tiplossfactor>
+  <polarmoment unit="SLUG*FT2"> 2800.0 </polarmoment> <!-- pure guess 2x ib-->
+  <inflowlag> 0.2 </inflowlag>
+  <shafttilt unit="RAD"> -0.06 </shafttilt>
+  <hingeoffset unit="FT"> 2.25 </hingeoffset>
+  <cantangle unit="RAD"> 0.0 </cantangle>
+
+  <tailrotor>
+    <diameter unit="FT"> 8.5 </diameter>
+    <numblades> 2 </numblades>
+    <xhub unit="FT"> -27.125 </xhub>
+    <zhub unit="IN"> -44.0 </zhub>
+    <nominalrpm> 1660 </nominalrpm>
+    <chord unit="FT"> 0.7 </chord>
+    <flappingmoment> 4.0 </flappingmoment>  <!-- needed, guessed -->
+    <liftcurveslope> 6 </liftcurveslope>
+    <twist> 0.0 </twist>
+    <massmoment> 2.66 </massmoment>
+    <tiplossfactor> 1.0 </tiplossfactor>
+    <inflowlag> 0.2 </inflowlag>
+    <hingeoffset unit="FT"> 0.015 </hingeoffset>
+    <cantangle unit="RAD"> 0.78 </cantangle><!-- test -->
+  </tailrotor>
+
+  <!-- 
+       gnuplot> plot [-1:100] 1.0 - exp( -x / (44.0 * 0.28) )
+   -->
+  <!--cgroundeffect>0.28</cgroundeffect-->
+  <cgroundeffect> 0.4 </cgroundeffect>
+  <groundeffectshift unit="FT"> 17 </groundeffectshift>
+
+</rotor>

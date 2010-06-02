@@ -124,7 +124,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
@@ -443,6 +443,14 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGRocket.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\propulsion\FGRotor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\math\FGRungeKutta.h"
 				>
 			</File>
 			<File
@@ -806,6 +814,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\propulsion\FGRotor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\math\FGRungeKutta.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\input_output\FGScript.cpp"
 				>
 			</File>
@@ -891,6 +907,22 @@
 			>
 		</File>
 		<File
+			RelativePath=".\systems\afcs.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\aircraft\ah1s\ah1s.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\engine\ah1s_rotor.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\engine\avco_lycoming_t53.xml"
+			>
+		</File>
+		<File
 			RelativePath=".\scripts\ball_chute.xml"
 			>
 		</File>
@@ -907,16 +939,8 @@
 			>
 		</File>
 		<File
-			RelativePath=".\data_plot\ground_reactions.xml"
+			RelativePath=".\systems\fg_glue.xml"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\data_output\ground_reactions.xml"
@@ -929,6 +953,38 @@
 					Name="VCCustomBuildTool"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\data_plot\ground_reactions.xml"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\systems\jsb_glue.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\JSBSim.dox"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\aircraft\ah1s\Makefile.am"
+			>
 		</File>
 		<File
 			RelativePath=".\data_output\Makefile.am"
@@ -953,6 +1009,30 @@
 					Name="VCCustomBuildTool"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\aircraft\ah1s\reset00.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\systems\rpm_governor.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\engine\s64_rotor.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\scripts\sim_primer.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\engine\test_turbine.xml"
+			>
+		</File>
+		<File
+			RelativePath=".\engine\twin_pratt_and_whitney_t73.xml"
+			>
 		</File>
 	</Files>
 	<Globals>

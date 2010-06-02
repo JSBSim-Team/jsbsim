@@ -1,0 +1,1125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="rotor_devel" version="2.0" release="ALPHA" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd"
+            >
+  <fileheader>
+    <author> T. Kreitler </author>
+    <filecreationdate>2010-01-12</filecreationdate>
+    <version>$Revision: 1.1 $</version>
+    <description> Models a Bell209/AH1S helicopter. </description>
+  </fileheader>
+
+
+<!--
+
+Values and formulas mainly taken from following references:
+
+/SH79/  Shaugnessy, J. D., Deaux, Thomas N., and Yenni, Kenneth R.,
+        "Development and Validation of a Piloted Simulation of a 
+        Helicopter and External Sling Load",  NASA TP-1285, 1979.
+
+
+/HE88/  Heffley, Robert K., Mnich, Marc A., "Minimum-Complexity Helicopter
+        Simulation Math Model", USA AVSCOM TR-87-A-7, 1988.
+-->
+
+
+  <metrics>
+    <wingarea unit="FT2">    32.25 </wingarea>
+    <wingspan unit="FT">     10.75 </wingspan>
+    <wing_incidence unit="DEG"> 2.00 </wing_incidence>
+    <chord unit="FT">         3.00 </chord>
+    <htailarea unit="FT2">   16.0 </htailarea>
+    <htailarm unit="FT">     17.0 </htailarm>
+    <vtailarea unit="FT2">   17.0 </vtailarea>
+    <vtailarm unit="FT">     24.5 </vtailarm>
+    <!-- other relevant sizes are given in the aerodynamics section -->
+    <location name="AERORP" unit="IN">
+      <x> 175 </x>
+      <y>   0.00 </y>
+      <z>  55.00 </z>
+    </location>
+    <location name="EYEPOINT" unit="IN">
+      <x> 121.0 </x>
+      <y>   0.00 </y>
+      <z>  86.00 </z>
+    </location>
+    <location name="VRP" unit="IN">
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </location>
+  </metrics>
+
+  <mass_balance> 
+
+    <ixx unit="SLUG*FT2">      2593 </ixx>
+    <iyy unit="SLUG*FT2">     14320 </iyy>
+    <izz unit="SLUG*FT2">     12330 </izz>
+    <emptywt unit="LBS">      9000.0 </emptywt>
+
+    <location name="CG" unit="IN">
+      <x> 175 </x>
+      <y>   0.00 </y>
+      <z> 75 </z>
+      <z_lo> 20 </z_lo>
+    </location>
+
+    <pointmass name="Payload_0">
+      <weight unit="LBS"> 20.00 </weight>
+      <location name="POINTMASS" unit="IN">
+        <x> 175 </x>
+        <y> 0 </y>
+        <z> 40 </z>
+      </location>
+    </pointmass>
+
+  </mass_balance>
+
+  <ground_reactions>
+
+    <contact type="STRUCTURE" name="LEFT_FRONT">
+      <location unit="IN">
+        <x> 95 </x>
+        <y> -42 </y>
+        <z> -5 </z>
+      </location>
+      <static_friction>  0.85 </static_friction>
+      <dynamic_friction> 0.70 </dynamic_friction>
+      <rolling_friction> 0.50 </rolling_friction>
+      <spring_coeff unit="LBS/FT">      12000.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 5080.00 </damping_coeff>
+    </contact>
+    <contact type="STRUCTURE" name="RIGHT_FRONT">
+      <location unit="IN">
+        <x> 95 </x>
+        <y>  42 </y>
+        <z>  -5 </z>
+      </location>
+      <static_friction>  0.85 </static_friction>
+      <dynamic_friction> 0.70 </dynamic_friction>
+      <rolling_friction> 0.50 </rolling_friction>
+      <spring_coeff unit="LBS/FT">      12000.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 5080.00 </damping_coeff>
+    </contact>
+    <contact type="STRUCTURE" name="RIGHT_REAR">
+      <location unit="IN">
+        <x> 205 </x>
+        <y>  42.00 </y>
+        <z>  -5 </z>
+      </location>
+      <static_friction>  0.95 </static_friction>
+      <dynamic_friction> 0.80 </dynamic_friction>
+      <rolling_friction> 0.80 </rolling_friction>
+      <spring_coeff unit="LBS/FT">      18400.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 5080.00 </damping_coeff>
+    </contact>
+    <contact type="STRUCTURE" name="LEFT_REAR">
+      <location unit="IN">
+        <x> 205 </x>
+        <y> -42 </y>
+        <z>   -5 </z>
+      </location>
+      <static_friction>  0.95 </static_friction>
+      <dynamic_friction> 0.80 </dynamic_friction>
+      <rolling_friction> 0.80 </rolling_friction>
+      <spring_coeff unit="LBS/FT">      18400.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 5080.00 </damping_coeff>
+    </contact>
+    <contact type="STRUCTURE" name="REAR_BUMPER">
+      <location unit="IN">
+        <x> 490 </x>
+        <y>   0 </y>
+        <z>  40 </z>
+      </location>
+      <static_friction>  0.80 </static_friction>
+      <dynamic_friction> 0.50 </dynamic_friction>
+      <spring_coeff unit="LBS/FT">      6000.00 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 3000.00 </damping_coeff>
+    </contact>
+
+  </ground_reactions>
+
+  <propulsion>
+    <engine file="test_turbine">
+      <location unit="IN">
+        <x> 175 </x>
+        <y>   0 </y>
+        <z>  75 </z>
+      </location>
+      <orient unit="DEG">
+        <pitch>  0.000 </pitch>
+        <roll>   -0.00 </roll>
+        <yaw>    0.00 </yaw>
+      </orient>
+      <feed>0</feed>
+
+      <thruster file="ah1s_rotor">
+        <location unit="IN">
+          <x> 175 </x>
+          <y>   0 </y>
+          <z>  75 </z>
+        </location>
+        <orient unit="DEG">
+          <pitch>  0 </pitch>
+          <roll>   0 </roll>
+          <yaw>    0 </yaw>
+        </orient>
+        <sense> 1 </sense>
+        <xsense> -1 </xsense>
+      </thruster>
+    </engine>
+
+    <!-- around 225 gallons, should yield to approx 300nmi range -->
+    <tank type="FUEL" number="0">
+      <location unit="IN">
+        <x> 175 </x>
+        <y> 0.00 </y>
+        <z> 30.0 </z>
+      </location>
+      <capacity unit="LBS"> 1600.00 </capacity>
+      <contents unit="LBS"> 800.00 </contents>
+      <type>JP-4</type>
+    </tank>
+
+  </propulsion>
+
+
+  <system file="rpm_governor"/>
+
+  <!-- rpm-governor kludge for jsb standalone:  
+     /controls/engines/engine/throttle -> fcs/throttle-cmd-norm   
+    --> 
+  <system file="jsb_glue"/>
+
+  <system file="fg_glue"/>
+
+<!--
+  need to declare control props here, 'caus the AFCS reads them
+-->
+  <system name="control_decl">
+    <property value="0.0">fcs/x-col</property>
+    <property value="0.0">fcs/x-lat</property>
+    <property value="0.0">fcs/x-lon</property>
+    <property value="0.0">fcs/x-ped</property>    
+  </system>
+
+<!--
+  also declare AFCS props, so we can live without the system
+-->
+  <system name="afcs_decl">
+    <property value="0.0">ap/rudder-cmd</property>
+    <property value="0.0">ap/aileron-cmd</property>
+    <property value="0.0">ap/elevator-cmd</property>
+    <property value="0.0">ap/collective-cmd</property>    
+  </system>
+
+  <system file="afcs"/>
+
+
+  <flight_control name="ah1s_devel">
+  
+    <channel name="misc derived parameters"> 
+    
+    
+      <!-- if larger than ~3 rotor damping becomes unstable  -->
+      <fcs_function name="misc/amer-3">
+        <function>
+          <quotient>
+            <product>
+              <value> 0.065109 </value><!-- mr sigma -->
+              <sum>
+                <property> propulsion/engine/collective-ctrl-rad </property>
+                <value> -0.13125 </value><!-- 0.75 x twist -->
+              </sum>
+            </product>
+            <property> propulsion/engine/thrust-coefficient  </property>
+          </quotient>
+        </function>
+      </fcs_function>
+
+    </channel> 
+  
+
+    <channel name="All inputs">
+
+      <!-- AKA longitudinal -->
+      <summer name="Pitch Trim Sum">
+        <input>fcs/elevator-cmd-norm</input>
+        <input>fcs/pitch-trim-cmd-norm</input>
+        <clipto>
+          <min> -1 </min>
+          <max>  1 </max>
+        </clipto>
+      </summer>
+
+      <!-- AKA lateral -->
+      <summer name="Roll Trim Sum">
+        <input>fcs/aileron-cmd-norm</input>
+        <input>fcs/roll-trim-cmd-norm</input>
+        <clipto>
+          <min> -1 </min>
+          <max>  1 </max>
+        </clipto>
+      </summer>
+
+      <!-- AKA pedal -->
+      <summer name="Rudder Trim Sum">
+        <input>fcs/rudder-cmd-norm</input>
+        <input>fcs/yaw-trim-cmd-norm</input>
+        <clipto>
+          <min> -1 </min>
+          <max>  1 </max>
+        </clipto>
+      </summer>
+
+
+  <!-- scale control inputs to given displacement ranges -->
+
+  <!--
+    control displacements taken from /SH79/
+    x-col : positive displacement causes climb          0.0 - 35.0 cm
+    x-lat : positive displacement causes right-roll   -12.7 - 12.7 cm
+    x-lon : positive displacement causes pitch up     -14.0 - 14.0 cm
+    x-ped : positive displacement causes yaw left     -10.0 - 10.0 cm
+  -->      
+
+      <pure_gain name="fcs/x-col-gain">
+        <input>fcs/mixture-cmd-norm</input>
+        <gain>0.35</gain>
+        <output>fcs/x-col</output>
+      </pure_gain>
+
+      <pure_gain name="fcs/x-lat-gain">
+        <input>fcs/roll-trim-sum</input>
+        <gain>0.14</gain>
+        <output>fcs/x-lat</output>
+      </pure_gain>
+
+      <pure_gain name="fcs/x-lon-gain">
+        <input>fcs/pitch-trim-sum</input>
+        <gain>0.127</gain>
+        <output>fcs/x-lon</output>
+      </pure_gain>
+
+      <pure_gain name="fcs/x-ped-gain">
+        <input>fcs/rudder-trim-sum</input>
+        <gain>0.100</gain>
+        <output>fcs/x-ped</output>
+      </pure_gain>
+
+
+
+      <fcs_function name="Collective Ctrl Raw">
+        <function>
+          <sum>
+            <value> 0.19 </value><!-- K_c0 -->
+            <product>
+              <value>0.48</value><!-- K_c1 -->
+              <property>fcs/x-col</property>
+            </product>
+            <property>ap/collective-cmd</property>
+          </sum>
+        </function>
+      </fcs_function>
+
+      <fcs_function name="Longitudinal Ctrl Raw">
+        <function>
+          <sum>
+          <product>
+            <value>1.0</value><!-- K_c2 -->
+            <property>fcs/x-lon</property>
+          </product>
+          <property>ap/elevator-cmd</property>
+          </sum>
+        </function>
+      </fcs_function>
+
+      <fcs_function name="Lateral Ctrl Raw">
+        <function>
+          <sum>
+          <product>
+            <value>-0.096</value><!-- K_c3 -->
+            <property>fcs/x-col</property>
+          </product>
+          <product>
+            <value> 0.35 </value><!-- K_c4 -->
+            <property>fcs/x-lat</property>
+          </product>
+          <property>ap/aileron-cmd</property>
+          </sum>
+        </function>
+      </fcs_function>
+
+
+      <fcs_function name="Antitorque Ctrl Raw">
+        <function>
+          <sum>
+            <value>-0.011</value><!-- K_c5 -->
+            <product>
+              <value>2.0</value><!-- K_c6 -->
+              <property>fcs/x-ped</property>
+            </product>  
+            <product>
+              <value>0.53</value><!-- K_c7 -->
+              <property>fcs/x-col</property>
+            </product>  
+            <property>ap/rudder-cmd</property>
+          </sum>
+        </function>
+      </fcs_function>
+
+
+      <lag_filter name="collective lag">
+        <input>fcs/collective-ctrl-raw</input>
+        <c1>50</c1>
+        <output>propulsion/engine/collective-ctrl-rad</output>
+      </lag_filter>
+
+      <!-- taken from /SH79/ might be too strong -->
+      <second_order_filter name="longitudinal cyclic lag">
+        <input> fcs/longitudinal-ctrl-raw </input>
+        <c1>   0.0 </c1>
+        <c2>   0.0 </c2>
+        <c3> 196.0 </c3>
+        <c4>   1.0 </c4>
+        <c5>  28.0 </c5>
+        <c6> 196.0 </c6>
+        <output> propulsion/engine/longitudinal-ctrl-rad </output>
+      </second_order_filter>
+
+      <second_order_filter name="lateral cyclic lag">
+       <input> fcs/lateral-ctrl-raw </input>
+       <c1>   0.0 </c1>
+       <c2>   0.0 </c2>
+       <c3> 196.0 </c3>
+       <c4>   1.0 </c4>
+       <c5>  28.0 </c5>
+       <c6> 196.0 </c6>
+       <output> propulsion/engine/lateral-ctrl-rad </output>
+     </second_order_filter>
+
+      <lag_filter name="antitorque lag">
+        <input>fcs/antitorque-ctrl-raw</input>
+        <c1>50</c1>
+        <output>propulsion/engine[0]/antitorque-ctrl-rad</output>
+      </lag_filter>
+
+
+    </channel>
+
+
+  </flight_control>
+
+
+
+<!--  #################################################################
+
+       Implementation of the aerodynamic model described in /HE88/.
+       In contrast to most other models used in JSBSim it uses the
+       body system, and needs a prohibitive large amount of
+       constants and functions.
+
+      #################################################################  -->
+
+
+  <system name="declare_properties">
+
+    <property value="-30.0"> aero/constant/X_fus_uu  </property>
+    <property value="-275">  aero/constant/Y_fus_vv  </property>
+
+    <!-- seems too small, so it's doubled
+    <property value="-41.0">aero/constant/Z_fus_ww</property> 
+    -->
+    <property value="-82.0"> aero/constant/Z_fus_ww  </property>
+
+    <property value="-39.0"> aero/constant/Z_wng_uu  </property>
+    <property value="-161">  aero/constant/Z_wng_uw  </property>
+    <property value="-65.0"> aero/constant/Z_max_wng </property>
+
+    <property value="0.0">   aero/constant/Y_vt_uu   </property>
+    <property value="-62.0"> aero/constant/Y_vt_uv   </property>
+    <property value="-50.0"> aero/constant/Y_max_vt  </property>
+
+    <property value="0.0">   aero/constant/Z_ht_uu   </property>
+    <property value="-80.0"> aero/constant/Z_ht_uw   </property>
+    <property value="-32.0"> aero/constant/Z_max_ht  </property>
+
+  </system>
+
+  <system name="declare_properties_II">
+     <!-- constant: radius main rotor (TRAP: also defined in 'rotor.xml') --> 
+     <property value="22.0"> metrics/radius-mr-ft </property>
+
+     <!-- constant: height vtail ft --> 
+     <property value="0.41667"> metrics/hvt-ft </property>
+
+     <!-- constant: height htail ft --> 
+     <property value="-0.8333"> metrics/hht-ft </property>
+
+     <!-- constant: distance htail ft (TRAP: also defined in 'aero.xml') --> 
+     <property value="17.0"> metrics/dht-ft </property>
+
+     <!-- constant: height fuselage ft --> 
+     <property value="-0.8333"> metrics/hfus-ft </property>
+
+     <!-- constant: height fuselage ft --> 
+     <property value="0.3333"> metrics/dfus-ft </property>
+
+     <!-- constant: height rotor hub ft (TRAP: also defined in 'rotor.xml') --> 
+     <property value="6.5"> metrics/hhub-ft </property>
+
+     <!-- constant: distance rotor hub ft (TRAP: also defined in 'rotor.xml') --> 
+     <property value="0.3333"> metrics/dhub-ft </property>
+
+
+  </system>
+
+  <aerodynamics>
+
+
+
+    <function name="propulsion/engine/downwash-dx-ht-ft">
+      <sum>
+        <product>
+        <!-- shift of downwash over horizontal tail  +>forward -->
+        <!-- might change again  -->
+          <difference>
+            <property>metrics/hhub-ft</property>
+            <property>metrics/hht-ft</property>
+          </difference>
+          <tan>
+            <property>propulsion/engine/theta-downwash-rad</property>
+          </tan>
+        </product>  
+        <property>metrics/dht-ft</property>
+        <product><value>-1.0</value><property>metrics/radius-mr-ft</property></product>
+        <product><value>-1.0</value><property>metrics/dhub-ft</property></product>
+      </sum>
+    </function>
+
+    <function name="propulsion/engine/downwash-dx-fus-ft">
+      <sum>
+        <product>
+          <difference>
+            <property>metrics/hhub-ft</property>
+            <property>metrics/hfus-ft</property>
+          </difference>
+          <tan>
+            <property>propulsion/engine/theta-downwash-rad</property>
+          </tan>
+        </product>
+        <property>metrics/dfus-ft</property>
+        <product>
+          <value>-1.0</value>
+          <property>metrics/dhub-ft</property>
+        </product>
+      </sum>
+    </function>
+
+    <function name="propulsion/engine/downwash-dy-fus-ft">
+      <product>
+        <difference>
+          <property>metrics/hhub-ft</property>
+          <property>metrics/hfus-ft</property>
+        </difference>
+        <value>-1.0</value>
+        <tan>
+          <property>propulsion/engine/phi-downwash-rad</property>
+        </tan>
+      </product>  
+    </function>
+
+    <!-- handy shortcuts, uvw squared w/wo sign  -->
+    <function name="velocities/u-aero-fps-sqrs">
+      <product>
+        <abs><property>velocities/u-aero-fps</property></abs>
+        <property>velocities/u-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/u-aero-fps-sqr">
+      <product>
+        <property>velocities/u-aero-fps</property>
+        <property>velocities/u-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/v-aero-fps-sqrs">
+      <product>
+        <abs><property>velocities/v-aero-fps</property></abs>
+        <property>velocities/v-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/v-aero-fps-sqr">
+      <product>
+        <property>velocities/v-aero-fps</property>
+        <property>velocities/v-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/w-aero-fps-sqrs">
+      <product>
+        <abs><property>velocities/w-aero-fps</property></abs>
+        <property>velocities/w-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/w-aero-fps-sqr">
+      <product>
+        <property>velocities/w-aero-fps</property>
+        <property>velocities/w-aero-fps</property>
+      </product>  
+    </function>
+
+    <function name="velocities/uv-aero-fps-sqr">
+      <sum>
+        <product>
+          <property>velocities/u-aero-fps</property>
+          <property>velocities/u-aero-fps</property>
+        </product>  
+        <product>
+          <property>velocities/v-aero-fps</property>
+          <property>velocities/v-aero-fps</property>
+        </product>  
+      </sum>
+    </function>
+
+
+<!--
+
+     Prepare stall effect calculations
+
+-->
+    <function name="aero/velocities/wa_wn_and_fus">
+      <difference>
+        <property>velocities/w-aero-fps</property>
+        <property>propulsion/engine/vi-mr-fps</property>
+      </difference>
+    </function>
+
+
+    <function name="aero/velocities/va_vt">
+      <sum>
+        <property>velocities/w-aero-fps</property>
+        <property>propulsion/engine/vi-tr-fps</property>
+        <product>
+          <value>-1.0</value>
+          <property>metrics/lv-ft</property> <!-- $d_vt -->
+          <property>velocities/r-aero-rad_sec</property>
+        </product>
+      </sum>
+    </function>
+
+    <function name="aero/velocities/vta_vt">
+      <pow>
+        <abs>
+          <sum>
+            <property>velocities/u-aero-fps-sqr</property>
+            <product>
+              <property>aero/velocities/va_vt</property>
+              <property>aero/velocities/va_vt</property>
+            </product>
+          </sum>
+        </abs>
+        <value>0.5</value>
+      </pow>
+    </function>
+
+    <function name="aero/var/vt-stall-ratio">
+      <quotient>
+        <abs><property>aero/velocities/va_vt</property></abs>
+        <sum>
+          <abs><property>velocities/u-aero-fps</property></abs>
+          <value>0.0000000001</value><!-- avoid division by zero -->
+        </sum>
+      </quotient>
+    </function>
+
+    <!-- slope between 0.28 and 0.32  -->
+    <function name="aero/var/vt-stall-effect">
+      <table><!-- used to mix  Y-vt  -->
+        <independentVar lookup="row">aero/var/vt-stall-ratio</independentVar>
+        <tableData>
+           0.28      0.0
+           0.29      0.1
+           0.31      0.9
+           0.32      1.0
+        </tableData>
+      </table>
+    </function>
+
+
+    <function name="aero/velocities/vta_wn">
+      <pow>
+        <abs>
+        <sum>
+          <property>velocities/u-aero-fps-sqr</property>
+          <product>
+            <property>aero/velocities/wa_wn_and_fus</property>
+            <property>aero/velocities/wa_wn_and_fus</property>
+          </product>
+        </sum>
+        </abs>
+        <value>0.5</value>
+      </pow>
+    </function>
+
+    <function name="aero/var/wn-stall-ratio">
+      <quotient>
+        <abs><property>aero/velocities/wa_wn_and_fus</property></abs>
+        <sum>
+          <abs><property>velocities/u-aero-fps</property></abs>
+          <value>0.0000000001</value><!-- avoid division by zero -->
+        </sum>
+      </quotient>
+    </function>
+
+    <!-- slope between 0.29 and 0.31  -->
+    <function name="aero/var/wn-stall-effect">
+      <table><!-- used to mix  Z-ht  -->
+        <independentVar lookup="row">aero/var/wn-stall-ratio</independentVar>
+        <tableData>
+           0.29      0.0
+           0.295     0.1
+           0.305     0.9
+           0.31      1.0
+        </tableData>
+      </table>
+    </function>
+
+
+
+    <function name="aero/var/eps-ht">
+      <product>
+        <value>2.0</value>
+        <table><!-- used to get a smoothed version of the triangular field   -->
+          <independentVar lookup="row">propulsion/engine/downwash-dx-ht-ft</independentVar>
+          <tableData>
+            -25.0      0.00
+            -22.0      0.05
+             -3.0      0.95
+             -2.0      0.98
+             -0.7      1.00
+              0.0      0.98
+              0.5      0.05
+              1.0      0.00
+          </tableData>
+        </table>
+      </product>
+    </function>
+
+    <function name="aero/velocities/wa_ht">
+      <sum>
+        <property>velocities/w-aero-fps</property>
+        <product>
+          <value>-1.0</value>
+          <property>aero/var/eps-ht</property>
+          <property>propulsion/engine/vi-mr-fps</property>
+        </product>
+        <product>
+          <property>metrics/lh-ft</property>
+          <property>velocities/q-aero-rad_sec</property>
+        </product>
+      </sum>
+    </function>
+
+    <function name="aero/var/ht-stall-ratio">
+      <quotient>
+        <abs><property>aero/velocities/wa_ht</property></abs>
+        <sum>
+          <abs><property>velocities/u-aero-fps</property></abs>
+          <value>0.0000000001</value><!-- avoid division by zero -->
+        </sum>
+      </quotient>
+    </function>
+
+    <!-- slope between 0.28 and 0.32  -->
+    <function name="aero/var/ht-stall-effect">
+      <table><!-- used to mix  Z-ht  -->
+        <independentVar lookup="row">aero/var/ht-stall-ratio</independentVar>
+        <tableData>
+           0.28      0.0
+           0.29      0.1
+           0.31      0.9
+           0.32      1.0
+        </tableData>
+      </table>
+    </function>
+
+<!-- stall effect calculations done -->
+
+
+
+    <function name="aero/velocities/vta_ht">
+      <pow>
+        <abs>
+          <sum>
+            <property>velocities/u-aero-fps-sqr</property>
+            <property>velocities/v-aero-fps-sqr</property>
+            <product>
+              <property>aero/velocities/wa_ht</property>
+              <property>aero/velocities/wa_ht</property>
+            </product>
+          </sum>
+        </abs>
+        <value>0.5</value>
+      </pow>
+    </function>
+
+
+
+      <function name="aero/force/Z-fus-aero">
+        <description>down_wash_component</description>
+        <product>
+          <value>0.5</value>
+          <property>atmosphere/rho-slugs_ft3</property>
+
+          <property>aero/constant/Z_fus_ww</property>
+          <abs><property>aero/velocities/wa_wn_and_fus</property></abs>
+          <property>aero/velocities/wa_wn_and_fus</property>
+
+          <!-- fade out as the downwash moves away, added TK  -->
+          <table>
+            <independentVar lookup="row">propulsion/engine/downwash-dx-fus-ft</independentVar>
+            <tableData>
+               -55      0.000
+               -45      0.500
+               -22      1.000
+                22      1.000
+                45      0.500
+                55      0.000
+            </tableData>
+          </table>
+        </product>
+      </function>
+
+
+      <function name="aero/force/Z-wng-aero">
+        <description>Lift_from_wing</description>
+        <product>
+          <value>0.09</value>   <!-- 1/wingspan  -->
+          <value>0.5</value>
+          <property>atmosphere/rho-slugs_ft3</property>
+          <sum>
+            <product>
+              <difference>
+                <value>1.0</value>
+                <property>aero/var/wn-stall-effect</property>
+              </difference>
+              <sum>
+                <product>
+                  <property>aero/constant/Z_wng_uu</property>
+                  <property>velocities/u-aero-fps-sqr</property>
+                </product>
+                <product>
+                  <property>aero/constant/Z_wng_uw</property>
+                  <property>velocities/u-aero-fps</property>
+                  <property>aero/velocities/wa_wn_and_fus</property>
+                </product>
+              </sum>
+            </product>
+
+            <product>
+              <property>aero/var/wn-stall-effect</property>
+              <property>aero/constant/Z_max_wng</property>
+              <property>aero/velocities/wa_wn_and_fus</property>
+              <property>aero/velocities/vta_wn</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+
+
+      <function name="aero/force/Z-ht-aero">
+        <description>Lift_from_horizontal_tail</description>
+        <product>
+          <value>0.5</value>
+          <property>atmosphere/rho-slugs_ft3</property>
+          <sum>
+            <!-- no stall -->
+            <product>
+              <difference>
+                <value>1.0</value>
+                <property>aero/var/ht-stall-effect</property>
+              </difference>
+              <sum>
+                <product>
+                  <property>aero/constant/Z_ht_uu</property>
+                  <property>velocities/u-aero-fps-sqrs</property>
+                </product>
+                <product>
+                  <property>aero/constant/Z_ht_uw</property>
+                  <abs><property>velocities/u-aero-fps</property></abs>
+                  <property>aero/velocities/wa_ht</property>
+                </product>
+              </sum>
+            </product>
+            <!-- stall -->
+            <product>
+              <property>aero/var/ht-stall-effect</property>
+              <property>aero/constant/Z_max_ht</property>
+              <abs><property>aero/velocities/vta_ht</property></abs>
+              <property>aero/velocities/wa_ht</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+
+
+    
+      <function name="aero/force/X-fus-aero">
+        <description>drag_component_on_fuselage</description>
+
+        <product>
+          <value>0.5</value>
+          <value>0.35</value><!-- drag seems too large, so reduce -->
+          <property>atmosphere/rho-slugs_ft3</property>
+
+          <property>aero/constant/X_fus_uu</property>
+          <property>velocities/u-aero-fps-sqrs</property>
+
+        </product>
+      </function>
+
+
+      <function name="aero/force/X-wng-aero">
+        <description>drag_component_on_wing</description>
+        <product>
+          <value>0.09</value> <!-- 1/wingspan  -->
+          <value>0.50</value><!-- drag seems too large, so reduce -->
+          <quotient>
+            <product>
+              <value>-0.5</value>
+              <property>atmosphere/rho-slugs_ft3</property>
+            </product>  
+            <sum>
+              <product>
+                <value>3.14159265</value>
+                <property>aero/velocities/vta_wn</property>
+                <property>aero/velocities/vta_wn</property>
+              </product>
+              <value>0.0000000001</value><!-- kludge: avoid possible division by zero -->
+            </sum>
+          </quotient>
+          <pow>
+            <abs>
+
+              <sum>
+                <product>
+                  <property>aero/constant/Z_wng_uu</property>
+                  <property>velocities/u-aero-fps</property>
+                  <property>velocities/u-aero-fps</property>
+                </product>
+                <product>
+                  <property>aero/constant/Z_wng_uw</property>
+                  <property>velocities/u-aero-fps</property>
+                  <property>aero/velocities/wa_wn_and_fus</property>
+                </product>
+              </sum>
+            </abs>
+            <value>2.0</value>
+          </pow>
+        </product>
+      </function>
+
+
+      <function name="aero/force/Y-fus-aero">
+        <description>side_force_component</description>
+        <product>
+          <value>0.5</value>
+          <property>atmosphere/rho-slugs_ft3</property>
+
+          <property>aero/constant/Y_fus_vv</property>
+          <abs><property>velocities/v-aero-fps</property></abs>
+          <property>velocities/v-aero-fps</property>
+
+        </product>
+      </function>
+
+      <function name="aero/force/Y-vt-aero">
+        <description>vertical tail side force component incl stall condition</description>
+        <product>
+          <value>0.5</value>
+          <property>atmosphere/rho-slugs_ft3</property>
+          <sum>
+            <product>
+              <difference>
+                <value>1.0</value>
+                <property>aero/var/vt-stall-effect</property>
+              </difference>
+              <sum>
+                <product>
+                  <property>aero/constant/Y_vt_uu</property>
+                  <abs><property>velocities/u-aero-fps</property></abs>
+                  <property>velocities/u-aero-fps</property>
+                </product>
+                <product>
+                  <property>aero/constant/Y_vt_uv</property>
+                  <abs><property>velocities/u-aero-fps</property></abs>
+                  <property>aero/velocities/va_vt</property>
+                </product>
+              </sum>
+            </product>
+            <product>
+              <property>aero/var/vt-stall-effect</property>
+              <property>aero/constant/Y_max_vt</property>
+              <abs><property>aero/velocities/vta_vt</property></abs>
+              <property>aero/velocities/va_vt</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+
+
+
+
+
+<!--  #######################################################
+
+         REAL AXES
+
+      #######################################################  -->
+
+    <axis name="X">
+
+      <function name="aero/force/X-drag-sum">
+        <product>
+          <value>1.0</value>
+          <sum>
+            <property>aero/force/X-fus-aero</property>
+            <property>aero/force/X-wng-aero</property>
+          </sum>
+        </product>
+      </function>
+
+    </axis>
+
+    <axis name="Y">
+
+      <function name="aero/force/Y-side-sum">
+        <product>
+          <value>1.0</value>
+          <sum>
+            <property>aero/force/Y-fus-aero</property>
+            <property>aero/force/Y-vt-aero</property>
+          </sum>
+        </product>
+      </function>
+
+    </axis>
+
+
+    <axis name="Z">
+
+      <function name="aero/force/Z-lift-sum">
+        <product>
+          <value>1.0</value>
+          <sum>
+            <property>aero/force/Z-fus-aero</property>
+            <property>aero/force/Z-wng-aero</property>
+            <property>aero/force/Z-ht-aero</property>
+          </sum>
+        </product>
+      </function>
+
+    </axis>
+
+
+    <axis name="ROLL">
+
+      <function name="aero/moment/L-fus-aero">
+        <description>fuselage_roll_component</description>
+         <product>
+           <property>metrics/hfus-ft</property>
+           <property>aero/force/Y-fus-aero</property>
+         </product>
+      </function>
+
+      <function name="aero/moment/L-vt-aero">
+        <description>vertical_tail_roll_component</description>
+         <product>
+           <property>aero/force/Y-vt-aero</property>
+           <property>metrics/hvt-ft</property>
+         </product>
+      </function>
+
+    </axis>
+
+
+    <axis name="PITCH">
+
+      <function name="aero/moment/M-fus-aero">
+        <description>fuselage_pitch_component</description>
+        <sum>
+         <product>
+           <property>aero/force/Z-fus-aero</property>
+           <value > -1.0 </value>
+           <property>propulsion/engine/downwash-dx-fus-ft</property>
+         </product>
+         <product>
+           <value aim="minus">-1.0</value>
+           <property>aero/force/X-fus-aero</property>
+           <property>metrics/hfus-ft</property>
+         </product>
+        </sum>
+      </function>
+
+      <function name="aero/moment/M-ht-aero">
+        <description>horizontal_tail_pitch_component</description>
+         <product>
+           <property>aero/force/Z-ht-aero</property>
+           <property>metrics/lh-ft</property> <!-- $d_ht -->
+         </product>
+      </function>
+
+    </axis>
+
+
+    <axis name="YAW">
+
+      <function name="aero/moment/N-vt-aero">
+        <description>vertical_tail_yaw_component</description>
+         <product>
+           <value>-1.0</value>
+           <property>aero/force/Y-vt-aero</property>
+           <property>metrics/lv-ft</property> 
+         </product>
+      </function>
+
+    </axis>
+
+  </aerodynamics>
+
+<!--  ###################################
+       Logging stuff, 'TABULAR' enables
+      ################################### -->
+
+ <output name="ah1s_afcs_check.dat" type="NONE" rate="1.00">
+   <property>ap/rudder-cmd</property>
+   <property>ap/aileron-cmd</property>
+   <property>ap/elevator-cmd</property>
+   <property>ap/collective-cmd</property>
+ </output>
+
+ <output name="ah1s_rotor_log.dat" type="NONE" rate="1.00">
+   <property> velocities/vc-kts </property>
+   <property> velocities/u-aero-fps </property>
+   <property> velocities/v-aero-fps </property>
+   <property> velocities/w-aero-fps </property>
+   <property> propulsion/engine/collective-ctrl-rad  </property>
+   <property> propulsion/engine/advance-ratio        </property>
+   <property> propulsion/engine/inflow-ratio         </property>
+   <property> propulsion/engine/induced-inflow-ratio </property>
+   <property> propulsion/engine/thrust-coefficient   </property>
+   <property> propulsion/engine/thrust-mr-lbs        </property>
+   <property> propulsion/engine/torque-mr-lbsft      </property>
+   <property> misc/amer-3 </property>
+ </output>
+
+
+
+</fdm_config>
