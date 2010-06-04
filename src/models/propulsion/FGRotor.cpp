@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.7 2010/06/02 04:05:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.8 2010/06/04 21:23:05 andgi Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -657,6 +657,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   prop_mr_torque = 0.0;
   prop_thrust_coefficient = 0.0;
   prop_coning_angle = 0.0;
+
+  prop_theta_downwash = prop_phi_downwash = 0.0;
 
   hover_threshold = 0.0;
   hover_scale = 0.0;
