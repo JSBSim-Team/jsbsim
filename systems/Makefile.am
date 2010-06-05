@@ -13,6 +13,8 @@ EXTRA_DIST = \
 	speedbrakes.xml \
 	GNCUtilities.xml \
 	Autopilot.xml \
+	airship_added_mass.xml \
+	tail_wheel_lock.xml \
 	afcs.xml \
 	fg_glue.xml \
 	jsb_glue.xml \

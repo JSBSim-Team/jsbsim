@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+
+<!--
+     primer for scripted flights.
+-->
+
+
+<runscript
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd" 
+    name="sim primer"
+>
+
+  <use aircraft="ah1s" initialize="reset00"/>
+
+  <run start="0.0" end="100.0" dt="0.0083333">
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at intervals</description>
+      <condition> simulation/sim-time-sec ge simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="5.0" type="FG_DELTA"/>
+      <notify>
+        <property> velocities/vc-kts</property>
+      </notify>
+    </event>
+
+    <event name="Setup">
+      <condition>simulation/sim-time-sec ge 0.2</condition>
+      <set name="propulsion/tank/contents-lbs" value="400.0" action="FG_RAMP" tc="0.05"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="0.00" action="FG_RAMP" tc="0.05"/>
+      <set name="fcs/advance-cmd-norm[0]" value="0.00" action="FG_RAMP" tc="0.05"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.00" action="FG_RAMP" tc="0.01"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0" action="FG_RAMP" tc="0.01"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0" action="FG_RAMP" tc="0.01"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/psi-trim-rad" value="1.0" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/x-lat-trim" value="-0.0100" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/x-lon-trim" value="0.0558" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/h-agl-trim-ft" value="50.0" action="FG_RAMP" tc="0.01"/>
+      <set name="propulsion/set-running" value="-1"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="hello world">
+      <condition>simulation/sim-time-sec  ge  1</condition>
+      <notify/>
+    </event>
+
+    <event name="engage rpm governor">
+      <condition>simulation/sim-time-sec  ge  3</condition>
+      <set name="fcs/rpm-governor-active-norm" value="1.0" action="FG_RAMP" tc="1.0"/>
+      <notify/>
+    </event>
+
+    <event name="engage yaw afcs">
+      <condition> simulation/sim-time-sec  ge  8 </condition>
+      <set name="ap/afcs/yaw-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <notify/>
+    </event>
+
+    <event name="engage pitch'n'roll afcs">
+      <condition>simulation/sim-time-sec  ge  20</condition>
+      <set name="ap/afcs/pitch-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <set name="ap/afcs/roll-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <notify/>
+    </event>
+
+    <event name="off_bottom">
+      <condition>
+         simulation/sim-time-sec  ge  1
+         forces/fbx-gear-lbs eq 0
+         forces/fby-gear-lbs eq 0
+         forces/fbz-gear-lbs eq 0
+      </condition>
+      <notify>
+        <property>fcs/mixture-cmd-norm</property>
+        <property>ap/afcs/altitude-error-input</property>
+        <property>ap/collective-cmd</property>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>

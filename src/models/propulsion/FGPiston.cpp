@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.51 2010/05/03 04:54:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.52 2010/06/05 12:12:34 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,8 +283,9 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     double Ze=PeakMeanPistonSpeed_fps/RatedMeanPistonSpeed_fps; // engine impedence
     Z_airbox = (standard_pressure *Ze / maxMAP) - Ze; // impedence of airbox
   }
-  Z_throttle=(PeakMeanPistonSpeed_fps/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; // Constant for Throttle impedence
-//  Z_throttle=(MaxRPM/IdleRPM )*(standard_pressure/minMAP+2); // Constant for Throttle impedence
+  // Constant for Throttle impedence
+  Z_throttle=(PeakMeanPistonSpeed_fps/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; 
+  //  Z_throttle=(MaxRPM/IdleRPM )*(standard_pressure/minMAP+2); // Constant for Throttle impedence
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
