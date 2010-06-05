@@ -50,12 +50,11 @@ INCLUDES
 
 #include "math/FGRungeKutta.h"
 
-
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.8 2010/06/04 21:23:05 andgi Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.9 2010/06/05 12:12:34 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,13 +64,6 @@ MISC
 static int dump_req; // debug schwafel flag
 
 static inline double sqr(double x) { return x*x; }
-
-static double clamp(double val, double lo, double hi) {
-  if (val > hi) return hi;
-  if (val < lo) return lo;
-  return val;  
-}
-
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -211,7 +203,7 @@ void FGRotor::rotor::configure(int f, const rotor *xmain)
   Radius = 0.5 * cnf_elem("diameter", estimate, "FT", yell);
 
   estimate = (xmain) ? xmain->BladeNum  : 2.0;
-  estimate = clamp(estimate,1.0,4.0);
+  estimate = Constrain(1.0,estimate,4.0);
   BladeNum = (int) cnf_elem("numblades", estimate, yell);
 
   estimate = (xmain) ? - xmain->Radius * 1.05 - Radius : - 0.025 * Radius ; 
@@ -227,7 +219,7 @@ void FGRotor::rotor::configure(int f, const rotor *xmain)
   NominalRPM = cnf_elem("nominalrpm", estimate, yell);
 
   MinRPM = cnf_elem("minrpm", 1.0, silent);
-  MinRPM = clamp(MinRPM, 1.0, NominalRPM-1.0);
+  MinRPM = Constrain(1.0, MinRPM, NominalRPM-1.0);
 
   estimate = (xmain) ? 0.12 : 0.07;  // guess solidity
   estimate = estimate * M_PI*Radius/BladeNum;
@@ -237,19 +229,19 @@ void FGRotor::rotor::configure(int f, const rotor *xmain)
 
   estimate = sqr(BladeChord) * sqr(Radius) * 0.57;
   BladeFlappingMoment = cnf_elem("flappingmoment", estimate, "SLUG*FT2", yell);   
-  BladeFlappingMoment = clamp(BladeFlappingMoment, 0.1, 1e9);
+  BladeFlappingMoment = Constrain(0.1, BladeFlappingMoment, 1e9);
 
   BladeTwist = cnf_elem("twist", -0.17, "RAD", yell);
 
   estimate = sqr(BladeChord) * BladeChord * 15.66; // might be really wrong!
   BladeMassMoment = cnf_elem("massmoment", estimate, yell); // slug-ft
-  BladeMassMoment = clamp(BladeMassMoment, 0.1, 1e9);
+  BladeMassMoment = Constrain(0.1, BladeMassMoment, 1e9);
 
   TipLossB = cnf_elem("tiplossfactor", 0.98, silent);
 
   estimate = 1.1 * BladeFlappingMoment * BladeNum;
   PolarMoment = cnf_elem("polarmoment", estimate, "SLUG*FT2", silent);
-  PolarMoment = clamp(PolarMoment, 0.1, 1e9);
+  PolarMoment = Constrain(0.1, PolarMoment, 1e9);
 
   InflowLag = cnf_elem("inflowlag", 0.2, silent); // fixme, depends on size
 
@@ -285,7 +277,6 @@ void FGRotor::rotor::configure(int f, const rotor *xmain)
     phi_shaft = 0.0; 
   }
 
-
   // setup Shaft-Body transforms, see /SH79/ eqn(17,18)
   double st = sin(theta_shaft);
   double ct = cos(theta_shaft);
@@ -303,8 +294,6 @@ void FGRotor::rotor::configure(int f, const rotor *xmain)
   
   return;
 }
-
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -331,7 +320,6 @@ FGColumnVector3 FGRotor::rotor::hub_vel_body2ca( const FGColumnVector3 &uvw,
   return v_w;
 }
 
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // express fuselage angular velocity in control axes /SH79/ eqn(30,31)
@@ -353,7 +341,6 @@ FGColumnVector3 FGRotor::rotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
 
 // problem function passed to rk solver
 
-
   double FGRotor::rotor::dnuFunction::pFunc(double x, double nu) {
     double d_nu;
     d_nu =  k_sat * (ct_lambda * (k_wor - nu) + k_theta) / 
@@ -362,6 +349,7 @@ FGColumnVector3 FGRotor::rotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
     return  d_nu; 
   }; 
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   // merge params to keep the equation short
   void FGRotor::rotor::dnuFunction::update_params(rotor *r, double ct_t01, double fs, double w) {
@@ -372,8 +360,6 @@ FGColumnVector3 FGRotor::rotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
     mu2         = r->mu * r->mu;
     k_flowscale = fs;
   };
-
-
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -446,7 +432,6 @@ void FGRotor::rotor::calc_flow_and_thrust(
   }
 
 }
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -567,9 +552,7 @@ FGColumnVector3 FGRotor::rotor::body_forces(double a_ic, double b_ic)
     FGColumnVector3 F_s(
           - H_drag*cos(beta_orient) - J_side*sin(beta_orient) + Thrust*b_ic,
           - H_drag*sin(beta_orient) + J_side*cos(beta_orient) + Thrust*a_ic,
-          - Thrust
-                           );    
-
+          - Thrust);    
 
     if (dump_req && (flags & eMain) ) {
       printf("# abß:  % f % f % f\n", a_ic, b_ic, beta_orient );
@@ -666,10 +649,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   mr.zero();
   tr.zero();
 
-
   // debug stuff
   prop_DumpFlag = 0;
-
 
   /* configure */
 
@@ -823,7 +804,6 @@ double FGRotor::Calculate(double PowerAvailable)
   UVW_h = fdmex->GetAuxiliary()->GetAeroUVW();
   PQR_h = fdmex->GetAuxiliary()->GetAeroPQR();
 
-
   // handle present RPM now, calc omega values.
 
   if (RPM < mr.MinRPM) { // kludge, otherwise calculations go bananas 
@@ -879,7 +859,6 @@ double FGRotor::Calculate(double PowerAvailable)
     mr.HingeOffset_hover = 0.0;
   }
 
-
   // all set, start calculations
 
   /* MAIN ROTOR */
@@ -910,8 +889,6 @@ double FGRotor::Calculate(double PowerAvailable)
   prop_theta_downwash = atan2( - UVW_h(eU), mr.v_induced - UVW_h(eW));
   prop_phi_downwash   = atan2(   UVW_h(eV), mr.v_induced - UVW_h(eW));
 
-
-
   mr.force(eX) = F_h_mr(1);
   mr.force(eY) = F_h_mr(2);
   mr.force(eZ) = F_h_mr(3);
@@ -919,7 +896,6 @@ double FGRotor::Calculate(double PowerAvailable)
   mr.moment(eL) =  M_h_mr(1);
   mr.moment(eM) =  M_h_mr(2); 
   mr.moment(eN) =  M_h_mr(3);
-
 
   /* TAIL ROTOR */
 
@@ -961,7 +937,6 @@ double FGRotor::Calculate(double PowerAvailable)
   tr.moment(eM) =   M_h_tr(2) ;
   tr.moment(eN) =   M_h_tr(3) ;
 
-
 /* 
     TODO: 
       check negative mr.Torque conditions
@@ -978,7 +953,6 @@ double FGRotor::Calculate(double PowerAvailable)
 
   RPM += ( Omega_dot * dt )/(2.0*M_PI) * 60.0;
 
-
   if (0 && dump_req) {
     printf("# SENSE      :  % d % d\n", mr.flags & eRotCW ? -1 : 1, tr.flags & eRotCW ? -1 : 1);
     printf("# vi         :  % f % f\n", mr.v_induced, tr.v_induced);
@@ -989,11 +963,9 @@ double FGRotor::Calculate(double PowerAvailable)
     printf("# t  moments :  % f % f % f\n", tr.moment(eL), tr.moment(eM), tr.moment(eN) );
   }
 
-
   // finally set vFn & vMn
   vFn = mr.force  + tr.force;
   vMn = mr.moment + tr.moment;
-
 
   // and just lie here
   Thrust = 0.0; 
@@ -1003,9 +975,6 @@ double FGRotor::Calculate(double PowerAvailable)
   return PowerAvailable;
 
 }  // Calculate
-
-
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1022,76 +991,46 @@ double FGRotor::GetPowerRequired(void)
 
 bool FGRotor::bind(void) {
 
-  char property_name[80];
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
 
-  snprintf(property_name, 80, "propulsion/engine[%d]/rotor-rpm", EngineNum);
-  PropertyManager->Tie( property_name, this, &FGRotor::GetRPM );
-
-  snprintf(property_name, 80, "propulsion/engine[%d]/thrust-mr-lbs", EngineNum);
-  PropertyManager->Tie( property_name, &mr.Thrust );
-  snprintf(property_name, 80, "propulsion/engine[%d]/vi-mr-fps", EngineNum);
-  PropertyManager->Tie( property_name, &mr.v_induced );
-  snprintf(property_name, 80, "propulsion/engine[%d]/a0-mr-rad", EngineNum);
-  PropertyManager->Tie( property_name, &mr.a0 );
-  snprintf(property_name, 80, "propulsion/engine[%d]/a1-mr-rad", EngineNum);
-  PropertyManager->Tie( property_name, &mr.a1s ); // s means shaft axes
-  snprintf(property_name, 80, "propulsion/engine[%d]/b1-mr-rad", EngineNum);
-  PropertyManager->Tie( property_name, &mr.b1s );
-  snprintf(property_name, 80, "propulsion/engine[%d]/thrust-tr-lbs", EngineNum);
-  PropertyManager->Tie( property_name, &tr.Thrust );
-  snprintf(property_name, 80, "propulsion/engine[%d]/vi-tr-fps", EngineNum);
-  PropertyManager->Tie( property_name, &tr.v_induced );
-
+  PropertyManager->Tie( base_property_name + "/rotor-rpm", this, &FGRotor::GetRPM );
+  PropertyManager->Tie( base_property_name + "/thrust-mr-lbs", &mr.Thrust );
+  PropertyManager->Tie( base_property_name + "/vi-mr-fps", &mr.v_induced );
+  PropertyManager->Tie( base_property_name + "/a0-mr-rad", &mr.a0 );
+  PropertyManager->Tie( base_property_name + "/a1-mr-rad", &mr.a1s ); // s means shaft axes
+  PropertyManager->Tie( base_property_name + "/b1-mr-rad", &mr.b1s );
+  PropertyManager->Tie( base_property_name + "/thrust-tr-lbs", &tr.Thrust );
+  PropertyManager->Tie( base_property_name + "/vi-tr-fps", &tr.v_induced );
 
   // lambda
-  snprintf(property_name, 80, "propulsion/engine[%d]/inflow-ratio", EngineNum);
-  PropertyManager->Tie( property_name, &prop_inflow_ratio_lambda );
+  PropertyManager->Tie( base_property_name + "/inflow-ratio", &prop_inflow_ratio_lambda );
   // mu
-  snprintf(property_name, 80, "propulsion/engine[%d]/advance-ratio", EngineNum);
-  PropertyManager->Tie( property_name, &prop_advance_ratio_mu );
+  PropertyManager->Tie( base_property_name + "/advance-ratio", &prop_advance_ratio_mu );
   // nu
-  snprintf(property_name, 80, "propulsion/engine[%d]/induced-inflow-ratio", EngineNum);
-  PropertyManager->Tie( property_name, &prop_inflow_ratio_induced_nu );
+  PropertyManager->Tie( base_property_name + "/induced-inflow-ratio", &prop_inflow_ratio_induced_nu );
 
-  snprintf(property_name, 80, "propulsion/engine[%d]/torque-mr-lbsft", EngineNum);
-  PropertyManager->Tie( property_name, &prop_mr_torque );
-
-  snprintf(property_name, 80, "propulsion/engine[%d]/thrust-coefficient", EngineNum);
-  PropertyManager->Tie( property_name, &prop_thrust_coefficient );
-
-  snprintf(property_name, 80, "propulsion/engine[%d]/main-rotor-rpm", EngineNum);
-  PropertyManager->Tie( property_name, &mr.ActualRPM );
-  snprintf(property_name, 80, "propulsion/engine[%d]/tail-rotor-rpm", EngineNum);
-  PropertyManager->Tie( property_name, &tr.ActualRPM );
+  PropertyManager->Tie( base_property_name + "/torque-mr-lbsft", &prop_mr_torque );
+  PropertyManager->Tie( base_property_name + "/thrust-coefficient", &prop_thrust_coefficient );
+  PropertyManager->Tie( base_property_name + "/main-rotor-rpm", &mr.ActualRPM );
+  PropertyManager->Tie( base_property_name + "/tail-rotor-rpm", &tr.ActualRPM );
 
   // position of the downwash
-  snprintf(property_name, 80, "propulsion/engine[%d]/theta-downwash-rad", EngineNum);
-  PropertyManager->Tie( property_name, &prop_theta_downwash );
-  snprintf(property_name, 80, "propulsion/engine[%d]/phi-downwash-rad", EngineNum);
-  PropertyManager->Tie( property_name, &prop_phi_downwash );  
-
+  PropertyManager->Tie( base_property_name + "/theta-downwash-rad", &prop_theta_downwash );
+  PropertyManager->Tie( base_property_name + "/phi-downwash-rad", &prop_phi_downwash );  
 
   // nodes to use via get<xyz>Value
+  prop_collective_ctrl = PropertyManager->GetNode(base_property_name + "/collective-ctrl-rad",true);
+  prop_lateral_ctrl = PropertyManager->GetNode(base_property_name + "/lateral-ctrl-rad",true);
+  prop_longitudinal_ctrl = PropertyManager->GetNode(base_property_name + "/longitudinal-ctrl-rad",true);
+  prop_antitorque_ctrl =   PropertyManager->GetNode(base_property_name + "/antitorque-ctrl-rad",true);
 
-  snprintf(property_name, 80, "propulsion/engine[%d]/collective-ctrl-rad", EngineNum);
-  prop_collective_ctrl = PropertyManager->GetNode(property_name,true);
-  snprintf(property_name, 80, "propulsion/engine[%d]/lateral-ctrl-rad", EngineNum);
-  prop_lateral_ctrl = PropertyManager->GetNode(property_name,true);
-  snprintf(property_name, 80, "propulsion/engine[%d]/longitudinal-ctrl-rad", EngineNum);
-  prop_longitudinal_ctrl = PropertyManager->GetNode(property_name,true);
-  snprintf(property_name, 80, "propulsion/engine[%d]/antitorque-ctrl-rad", EngineNum);
-  prop_antitorque_ctrl =   PropertyManager->GetNode(property_name,true);
+  prop_rotorbrake =   PropertyManager->GetNode(base_property_name + "/rotorbrake-hp", true);
+  prop_freewheel_factor =   PropertyManager->GetNode(base_property_name + "/freewheel-factor", true);
 
-  snprintf(property_name, 80, "propulsion/engine[%d]/rotorbrake-hp", EngineNum);
-  prop_rotorbrake =   PropertyManager->GetNode(property_name, true);
-  snprintf(property_name, 80, "propulsion/engine[%d]/freewheel-factor", EngineNum);
-  prop_freewheel_factor =   PropertyManager->GetNode(property_name, true);
-
-  snprintf(property_name, 80, "propulsion/engine[%d]/dump-flag", EngineNum);
-  PropertyManager->Tie( property_name, &prop_DumpFlag );
+  PropertyManager->Tie( base_property_name + "/dump-flag", &prop_DumpFlag );
 
   return true;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
