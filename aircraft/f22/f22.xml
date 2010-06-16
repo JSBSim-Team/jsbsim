@@ -5,9 +5,9 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-             <author>Erik Hofman </author>
-             <filecreationdate> 2004-01-01 </filecreationdate>
-            <version> $Revision: 1.34 $ </version>
+             <author>Brian Mills </author>
+             <filecreationdate> 2009-05-24 </filecreationdate>
+            <version> $Revision: 1.35 $ </version>
             <description> Models an F-22A Raptor </description>
             <license>
              <licenseName>GPL (General Public License)</licenseName>
@@ -194,7 +194,7 @@
            </tank>
 		
     </propulsion>
-    <flight_control name="F-16 FC">
+    <flight_control name="F-22 FC">
 
       <!-- Declare some interface properties -->
         <property>fcs/alpha-norm</property>
@@ -211,6 +211,7 @@
 		<property>fcs/yaw-rate-integrator</property>
 		<property>fcs/roll-rate-integrator</property>
 		<property>fcs/pitch-rate-integrator</property>
+		<property>fcs/tvc-inhibit</property>
 		<channel name="Lateral">
 
 			<!-- Normalize the u-velocity to m/s-->
@@ -231,7 +232,7 @@
 			<!-- Stick filter -->
 			<lag_filter name="roll cmd filter">
 				<input>fcs/aileron-cmd-limiter</input>
-				<c1>15</c1>
+				<c1>10</c1>
 				</lag_filter>
 
 			<!-- Limit roll rate command in radians based on altitude, mach and AoA-->
@@ -247,9 +248,9 @@
 						-25	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 						-20	0.6	0.85	1	1	1	1	1	1	1
 						-15	0.6	0.85	1.5	1.5	1.5	1.5	1.5	1.5	1.5
-						-10	0.6	0.85	2.5	3.14	3.14	3.14	3.14	2.617	2.1
-						0	0.6	0.85	2.5	3.66	4	4	3.14	2.617	2.1
-						10	0.6	0.85	2.5	3.14	3.14	3.14	3.14	2.617	2.1
+						-10	0.6	1	2.5	3.14	3.14	3.14	3.14	2.617	2.1
+						0	0.6	1.5	2.5	3.66	4	4	3.14	2.617	2.1
+						10	0.6	1	2.5	3.14	3.14	3.14	3.14	2.617	2.1
 						15	0.6	0.85	2.5	2.617	2.617	2.617	2.617	2.617	2.1	
 						20	0.6	0.85	2.1	2.1	2.1	2.1	2.1	2.1	2.1
 						25	0.6	0.85	1.5	1.5	1.5	1.5	1.5	1.5	1.5
@@ -465,10 +466,10 @@
 								<independentVar lookup="column">position/h-sl-ft</independentVar>
 								<tableData>
 										0  33000	50000
-									160	0.5	0.4	0.3
-									270	0.5	0.4	0.3
+									160	0.5	0.35	0.3
+									270	0.5	0.35	0.3
 									400	0.45	0.4	0.3
-									500	0.45	0.4	0.3
+									500	0.45	0.4	0.35
 									580	0.5	0.45	0.35
 									1000	0.5	0.45	0.4
 
@@ -806,7 +807,7 @@
 			<!-- Pilot stick filter -->
 			<lag_filter name="stick filter">
 				<input>fcs/elevator-cmd-norm</input>
-				<c1>30</c1>
+				<c1>10</c1>
 				</lag_filter>
 
 			<!-- Do not allow TVC to operate when gear is down! -->
@@ -815,6 +816,7 @@
                      <test logic="AND" value="0">
                          gear/gear-pos-norm gt 0
                      </test>
+			  <output>fcs/tvc-inhibit</output>
 			</switch>
 			
 
@@ -835,8 +837,8 @@
 					<independentVar lookup="column">position/h-sl-ft</independentVar>
                     		<tableData>
 							0	30000		60000
-						0	0.4363	0.349		0.21
-						0.2	0.611		0.5236	0.349
+						0	0.7	      0.5236	0.349
+						0.2	0.8727	0.5236	0.349
 						0.4	0.8727	0.5236	0.349
 						0.6	0.8727	0.7		0.349
 						0.8	0.8727	0.7		0.349	
@@ -914,41 +916,14 @@
 				</clipto>
 			</pure_gain>
 
-		<!--FADEC function to automatically add throttle in post stall conditions for TVC pitch authority-->
-		<fcs_function name="throttle adjust">
-		<function>
-		<table>
-			  <independentVar lookup="column">position/h-sl-ft</independentVar>
-                    <independentVar lookup="row">velocities/vc-kts</independentVar>
-                    <tableData>
-					0	36000
-                    	0     1	1
-                    	50	1	1
-                     	60      1	1	
-                     	70	.8	1
-		     		80	0	1
-				90	0	1
-				100	0	1
-				110	0	0.9
-				120	0	0
-				1000	0	0
-                    </tableData>
-                </table>
-		</function>
-		</fcs_function>
-
-      	<pure_gain name="throttle gain">
-			<input>fcs/throttle-adjust</input>
-			<gain>fcs/tvc-inhibit</gain>
-			<output>fcs/throttle-override</output>		
-		</pure_gain>
+		
 
 		<deadband name="pitch windup trigger">
 				<input>fcs/pitch-rate-integrator</input>
-				<width>2</width>
+				<width>1.4</width>
 				<clipto>
-					<min>-1</min>
-					<max>1</max>
+					<min>-0.5236</min>
+					<max>0.8727</max>
 				</clipto>
 			</deadband>	
 
@@ -963,8 +938,9 @@
 				<input>fcs/pitch-rate-error</input>
 				<c1> 1 </c1>
 				<clipto>
-					<min>-1</min>
-					<max>1</max>
+					<min>-0.5236</min>
+					<max>0.8727</max>
+
 				</clipto>
 				<output>fcs/pitch-rate-integrator</output>
 			</integrator>
@@ -1010,7 +986,7 @@
 								<independentVar lookup="column">aero/alpha-deg</independentVar>
 								<tableData>
 									19	25	35
-									90	0  0  0
+									90	38.8840   25.9906   25.9906
 									180	38.8840   25.9906   25.9906
 									200	38.8840   25.9906   25.9906
    									215	58.8840   25.9906   25.9906
@@ -1033,7 +1009,7 @@
 								<independentVar lookup="column">aero/alpha-deg</independentVar>
 								<tableData>
 									19	25	35
-									90	0   0   0
+									90	-0.0231   -0.0119   -0.0119
 									180	-0.0231   -0.0119   -0.0119
 									200	-0.0231   -0.0119   -0.0119
    									215	-0.0231   -0.0119   -0.0119
@@ -1064,13 +1040,13 @@
 							</table>
 
 							<property>velocities/q-aero-rad_sec</property>
-							<value>-0.25</value>
+							<value>-0.3</value>
 							<table>
 								<independentVar lookup="row">velocities/vc-kts</independentVar>
 								<independentVar lookup="column">aero/alpha-deg</independentVar>
 								<tableData>
 									19	25	35
-									90	0  0  0
+									90	-34.0297  -19.6316  -19.6316
 									180	-34.0297  -19.6316  -19.6316
 									200	-34.0297  -19.6316  -19.6316
   									215	-44.0297  -19.6316  -19.6316
@@ -1168,15 +1144,15 @@
 								<independentVar lookup="column">aero/alpha-deg</independentVar>
 								<tableData>
 										12	20	30	60
-									70	1  1  1	1
-									100	1   1   1	1
-									200	1   1   1	1
-   									215	1   1   1	1
-   									230	1   1   1	1
-									330	1   1   1	1
-   									380	1   1   1	1
-   									500	1   1   1	1
-   									900	1   1   1	1
+									70	0.4  0.4  	0.3	0.3
+									140	0.4   0.4  	0.3	0.3
+									200	0.4   0.45   0.35	0.3
+   									215	0.4   0.45   0.35	0.3
+   									230	0.4   0.45   0.35	0.3
+									330	0.4   0.45   0.35	0.3
+   									380	0.4   0.4   0.4	0.4
+   									500	0.4   0.4   0.4	0.4
+   									900	0.4   0.4   0.4	0.4
 								</tableData>
 							  </table>
 							<property>fcs/pitch-cmd-summer</property>
@@ -1281,15 +1257,15 @@
 								<independentVar lookup="column">aero/alpha-deg</independentVar>
 								<tableData>
 										12	20	30
-									70	1  1  1
-									100	1   1   1
-									200	1   1   1
-   									215	1   1   1
-   									230	1   1   1
-									330	1   1   1
-   									380	1   1   1
-   									500	1   1   1
-   									900	1   1   1
+									70	0.2  0.2  0.2
+									140	0.2   0.2   0.2
+									200	0.2   0.2   0.2
+   									215	0.2   0.2   0.2
+   									230	0.225   0.2   0.2
+									330	0.225   0.225   0.2
+   									380	0.225   0.225   0.2
+   									500	0.225   0.225   0.2
+   									900	0.225   0.225   0.2
 								</tableData>
 							  </table>
 
@@ -1340,7 +1316,7 @@
 							</table>
 						</product>
 					</sum>
-					<value>.45</value>
+					<value>1</value>
 					
 				   </product>
 				</function>
@@ -1600,11 +1576,48 @@
 
         <channel name="Throttle">
 
-	               <summer name="t1 summer">
+		<!--FADEC function to automatically add throttle in post stall conditions for TVC pitch authority-->
+		<fcs_function name="throttle adjust">
+		<function>
+		<table>
+			  <independentVar lookup="column">aero/alpha-deg</independentVar>
+                    <independentVar lookup="row">velocities/vc-kts</independentVar>
+                    <tableData>
+					0	20	30	40	50
+                    	0     0.85	0.9	.98	1	1
+                    	50	0.8	0.85	0.95	1	1
+                     	60    0.75	0.65	0.93	1	1
+                     	70	0.7	0.55	0.9	.98	1
+		     		80	0.65	0.5	0.85	.98	1
+				90	0.6	0.7	0.8	.95	1
+				100	0.55	0.65	0.75	.85	1
+				110	0.4	0.5	0.6	.65	1
+				120	0.2	0.3	0.35	.35	1
+				130	0.1	0.2	0.25	.25	.5
+				1000	0.1	0.1	0.2	.25	.5
+                    </tableData>
+                </table>
+		</function>
+		</fcs_function>
+
+      	<pure_gain name="throttle gain">
+			<input>fcs/throttle-adjust</input>
+			<gain>fcs/tvc-inhibit</gain>
+			<output>fcs/throttle-override</output>		
+		</pure_gain>
+
+			<!-- Throttle filter -->
+			<lag_filter name="throttle filter">
 				<input>fcs/throttle-cmd-norm</input>
-				<input>fcs/throttle-override</input>
+				<c1>1</c1>
+				</lag_filter>
+
+
+	               <summer name="t1 summer">
+				<input>fcs/throttle-filter</input>
+				<!--input>fcs/throttle-override</input-->
 				<clipto>
-					<min>0</min>
+					<min>fcs/throttle-override</min>
 					<max>1</max>
 				</clipto>
                 		
@@ -1616,11 +1629,18 @@
 		<output>fcs/throttle-pos-norm</output>
 		</pure_gain>
 
-			<summer name="T2 summer">
+		<!-- Throttle filter -->
+			<lag_filter name="throttle1 filter">
 				<input>fcs/throttle-cmd-norm[1]</input>
-				<input>fcs/throttle-override</input>
+				<c1>1</c1>
+				</lag_filter>
+
+
+			<summer name="T2 summer">
+				<input>fcs/throttle1-filter</input>
+				<!--input>fcs/throttle-override</input-->
 				<clipto>
-					<min>0</min>
+					<min>fcs/throttle-override</min>
 					<max>1</max>
 				</clipto>
                 		
@@ -1742,7 +1762,7 @@
             <switch name="speedbrake alpha limiter">
                 <default value="0"/>
                 <test logic="AND" value="1">
-                    aero/alpha-deg ge 100
+                    aero/alpha-deg ge 120
                     velocities/v-fps le 10
                 </test>
             </switch>
