@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.10 2010/03/18 13:21:24 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.11 2010/06/30 03:13:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -112,17 +112,17 @@ public:
       Create copy of the matrix given in the argument.
    */
   FGMatrix33(const FGMatrix33& M) {
-    Entry(1,1) = M.Entry(1,1);
-    Entry(2,1) = M.Entry(2,1);
-    Entry(3,1) = M.Entry(3,1);
-    Entry(1,2) = M.Entry(1,2);
-    Entry(2,2) = M.Entry(2,2);
-    Entry(3,2) = M.Entry(3,2);
-    Entry(1,3) = M.Entry(1,3);
-    Entry(2,3) = M.Entry(2,3);
-    Entry(3,3) = M.Entry(3,3);
+    data[0] = M.data[0];
+    data[1] = M.data[1];
+    data[2] = M.data[2];
+    data[3] = M.data[3];
+    data[4] = M.data[4];
+    data[5] = M.data[5];
+    data[6] = M.data[6];
+    data[7] = M.data[7];
+    data[8] = M.data[8];
 
-    Debug(0);
+//    Debug(0);
   }
 
   /** Initialization by given values.
@@ -142,22 +142,22 @@ public:
   FGMatrix33(double m11, double m12, double m13,
              double m21, double m22, double m23,
              double m31, double m32, double m33) {
-    Entry(1,1) = m11;
-    Entry(2,1) = m21;
-    Entry(3,1) = m31;
-    Entry(1,2) = m12;
-    Entry(2,2) = m22;
-    Entry(3,2) = m32;
-    Entry(1,3) = m13;
-    Entry(2,3) = m23;
-    Entry(3,3) = m33;
+    data[0] = m11;
+    data[1] = m21;
+    data[2] = m31;
+    data[3] = m12;
+    data[4] = m22;
+    data[5] = m32;
+    data[6] = m13;
+    data[7] = m23;
+    data[8] = m33;
 
-    Debug(0);
+    // Debug(0);
   }
 
   /** Destructor.
    */
-  ~FGMatrix33(void) { Debug(1); }
+  ~FGMatrix33(void) { /* Debug(1); */ }
 
   /** Prints the contents of the matrix.
       @param delimeter the item separator (tab or comma)
@@ -178,7 +178,7 @@ public:
       column indices. Indices are counted starting with 1.
    */
   double operator()(unsigned int row, unsigned int col) const {
-    return Entry(row, col);
+    return data[(col-1)*eRows+row-1];
   }
 
   /** Write access the entries of the matrix.
@@ -191,7 +191,7 @@ public:
       column indices. Indices are counted starting with 1.
    */
   double& operator()(unsigned int row, unsigned int col) {
-    return Entry(row, col);
+    return data[(col-1)*eRows+row-1];
   }
 
   /** Read access the entries of the matrix.
@@ -244,9 +244,9 @@ public:
       @return the transposed matrix.
    */
   FGMatrix33 Transposed(void) const {
-    return FGMatrix33( Entry(1,1), Entry(2,1), Entry(3,1),
-                       Entry(1,2), Entry(2,2), Entry(3,2),
-                       Entry(1,3), Entry(2,3), Entry(3,3) );
+    return FGMatrix33( data[0], data[1], data[2],
+                       data[3], data[4], data[5],
+                       data[6], data[7], data[8] );
   }
 
   /** Transposes this matrix.
@@ -265,15 +265,15 @@ public:
   void InitMatrix(double m11, double m12, double m13,
                   double m21, double m22, double m23,
                   double m31, double m32, double m33) {
-    Entry(1,1) = m11;
-    Entry(2,1) = m21;
-    Entry(3,1) = m31;
-    Entry(1,2) = m12;
-    Entry(2,2) = m22;
-    Entry(3,2) = m32;
-    Entry(1,3) = m13;
-    Entry(2,3) = m23;
-    Entry(3,3) = m33;
+    data[0] = m11;
+    data[1] = m21;
+    data[2] = m31;
+    data[3] = m12;
+    data[4] = m22;
+    data[5] = m32;
+    data[6] = m13;
+    data[7] = m23;
+    data[8] = m33;
   }
 
   /** Returns the quaternion associated with this direction cosine (rotation) matrix.

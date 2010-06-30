@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.18 2010/03/18 13:21:24 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.19 2010/06/30 03:13:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.18 2010/03/18 13:21:24 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.19 2010/06/30 03:13:40 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,14 +375,14 @@ public:
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
       Note that the index given in the argument is unchecked. */
-  double operator()(unsigned int idx) const { return Entry(idx); }
+  double operator()(unsigned int idx) const { return mECLoc.Entry(idx); }
 
   /** Write access the entries of the vector.
       @param idx the component index.
       @return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
       Note that the index given in the argument is unchecked. */
-  double& operator()(unsigned int idx) { return Entry(idx); }
+  double& operator()(unsigned int idx) { mCacheValid = false; return mECLoc.Entry(idx); }
 
   /** Read access the entries of the vector.
       @param idx the component index.
@@ -517,7 +517,7 @@ private:
       transformation matrices are already computed. If so, it
       returns. If they need to be computed this is done here. */
   void ComputeDerived(void) const {
-//    if (!mCacheValid)
+    if (!mCacheValid)
       ComputeDerivedUnconditional();
   }
 
