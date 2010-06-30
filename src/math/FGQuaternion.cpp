@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.15 2010/04/07 03:08:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.16 2010/06/30 03:13:40 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,17 +65,17 @@ static const char *IdHdr = ID_QUATERNION;
 // Initialize from q
 FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
 {
-  Entry(1) = q(1);
-  Entry(2) = q(2);
-  Entry(3) = q(3);
-  Entry(4) = q(4);
-//  if (mCacheValid) {
+  data[0] = q(1);
+  data[1] = q(2);
+  data[2] = q(3);
+  data[3] = q(4);
+  if (mCacheValid) {
     mT = q.mT;
     mTInv = q.mTInv;
     mEulerAngles = q.mEulerAngles;
     mEulerSines = q.mEulerSines;
     mEulerCosines = q.mEulerCosines;
-//  }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,10 +128,10 @@ void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
   double Sphid2Sthtd2 = Sphid2*Sthtd2;
   double Sphid2Cthtd2 = Sphid2*Cthtd2;
   
-  Entry(1) = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-  Entry(2) = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-  Entry(3) = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-  Entry(4) = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+  data[0] = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
+  data[1] = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
+  data[2] = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
+  data[3] = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
 
   Normalize();
 }
@@ -140,11 +140,11 @@ void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
 
 FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
 {
-  Entry(1) = 0.50*sqrt(1.0 + m(1,1) + m(2,2) + m(3,3));
-  double t = 0.25/Entry(1);
-  Entry(2) = t*(m(2,3) - m(3,2));
-  Entry(3) = t*(m(3,1) - m(1,3));
-  Entry(4) = t*(m(1,2) - m(2,1));
+  data[0] = 0.50*sqrt(1.0 + m(1,1) + m(2,2) + m(3,3));
+  double t = 0.25/data[0];
+  data[1] = t*(m(2,3) - m(3,2));
+  data[2] = t*(m(3,1) - m(1,3));
+  data[3] = t*(m(1,2) - m(2,1));
 
   ComputeDerivedUnconditional();
 
@@ -162,10 +162,10 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR)
 {
   return FGQuaternion(
-    -0.5*( Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR)),
-    0.5*( Entry(1)*PQR(eP) - Entry(4)*PQR(eQ) + Entry(3)*PQR(eR)),
-    0.5*( Entry(4)*PQR(eP) + Entry(1)*PQR(eQ) - Entry(2)*PQR(eR)),
-    0.5*(-Entry(3)*PQR(eP) + Entry(2)*PQR(eQ) + Entry(1)*PQR(eR))
+    -0.5*( data[1]*PQR(eP) + data[2]*PQR(eQ) + data[3]*PQR(eR)),
+     0.5*( data[0]*PQR(eP) - data[3]*PQR(eQ) + data[2]*PQR(eR)),
+     0.5*( data[3]*PQR(eP) + data[0]*PQR(eQ) - data[1]*PQR(eR)),
+     0.5*(-data[2]*PQR(eP) + data[1]*PQR(eQ) + data[0]*PQR(eR))
   );
 }
 
@@ -179,10 +179,10 @@ void FGQuaternion::Normalize()
 
   double rnorm = 1.0/norm;
 
-  Entry(1) *= rnorm;
-  Entry(2) *= rnorm;
-  Entry(3) *= rnorm;
-  Entry(4) *= rnorm;
+  data[0] *= rnorm;
+  data[1] *= rnorm;
+  data[2] *= rnorm;
+  data[3] *= rnorm;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,10 +192,10 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
 {
   mCacheValid = true;
 
-  double q0 = Entry(1); // use some aliases/shorthand for the quat elements.
-  double q1 = Entry(2);
-  double q2 = Entry(3);
-  double q3 = Entry(4);
+  double q0 = data[0]; // use some aliases/shorthand for the quat elements.
+  double q1 = data[1];
+  double q2 = data[2];
+  double q3 = data[3];
 
   // Now compute the transformation matrix.
   double q0q0 = q0*q0;
@@ -219,17 +219,6 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mT(3,2) = 2.0*(q2q3 - q0q1);
   mT(3,3) = q0q0 - q1q1 - q2q2 + q3q3;
 
-/*
-  mT(1,1) = 1.0 - 2.0*(q2q2 + q3q3);
-  mT(1,2) = 2.0*(q1q2 + q0q3);
-  mT(1,3) = 2.0*(q1q3 - q0q2);
-  mT(2,1) = 2.0*(q1q2 - q0q3);
-  mT(2,2) = 1.0 - 2.0*(q1q1 + q3q3);
-  mT(2,3) = 2.0*(q2q3 + q0q1);
-  mT(3,1) = 2.0*(q1q3 + q0q2);
-  mT(3,2) = 2.0*(q2q3 - q0q1);
-  mT(3,3) = 1.0 - 2.0*(q1q1 + q2q2);
-*/
   // Since this is an orthogonal matrix, the inverse is simply the transpose.
 
   mTInv = mT;
@@ -268,7 +257,7 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mEulerCosines(eTht) = cos(mEulerAngles(eTht));
   mEulerCosines(ePsi) = cos(mEulerAngles(ePsi));
 
-  Debug(2);
+//  Debug(2);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

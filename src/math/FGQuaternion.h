@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.16 2010/03/18 13:21:24 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.17 2010/06/30 03:13:40 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -93,8 +93,8 @@ public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
   FGQuaternion() : mCacheValid(false) {
-    Entry(1) = 1.0;
-    Entry(2) = Entry(3) = Entry(4) = 0.0;
+    data[0] = 1.0;
+    data[1] = data[2] = data[3] = 0.0;
   }
 
   /** Copy constructor.
@@ -128,22 +128,22 @@ public:
     double Cangle2 = cos(angle2);
 
     if (idx == ePhi) {
-      Entry(1) = Cangle2;
-      Entry(2) = Sangle2;
-      Entry(3) = 0.0;
-      Entry(4) = 0.0;
+      data[0] = Cangle2;
+      data[1] = Sangle2;
+      data[2] = 0.0;
+      data[3] = 0.0;
 
     } else if (idx == eTht) {
-      Entry(1) = Cangle2;
-      Entry(2) = 0.0;
-      Entry(3) = Sangle2;
-      Entry(4) = 0.0;
+      data[0] = Cangle2;
+      data[1] = 0.0;
+      data[2] = Sangle2;
+      data[3] = 0.0;
 
     } else {
-      Entry(1) = Cangle2;
-      Entry(2) = 0.0;
-      Entry(3) = 0.0;
-      Entry(4) = Sangle2;
+      data[0] = Cangle2;
+      data[1] = 0.0;
+      data[2] = 0.0;
+      data[3] = Sangle2;
 
     }
   }
@@ -231,7 +231,7 @@ public:
 
       Note that the index given in the argument is unchecked.
    */
-  double operator()(unsigned int idx) const { return Entry(idx); }
+  double operator()(unsigned int idx) const { return data[idx-1]; }
 
   /** Write access the entries of the vector.
 
@@ -242,7 +242,7 @@ public:
 
       Note that the index given in the argument is unchecked.
    */
-  double& operator()(unsigned int idx) { return Entry(idx); }
+  double& operator()(unsigned int idx) { mCacheValid = false; return data[idx-1]; }
 
   /** Read access the entries of the vector.
 
@@ -257,7 +257,7 @@ public:
 
       Note that the index given in the argument is unchecked.
   */
-  double Entry(unsigned int idx) const { return mData[idx-1]; }
+  double Entry(unsigned int idx) const { return data[idx-1]; }
 
   /** Write access the entries of the vector.
 
@@ -274,7 +274,7 @@ public:
   */
   double& Entry(unsigned int idx) {
     mCacheValid = false;
-   return mData[idx-1];
+   return data[idx-1];
   }
 
   /** Assignment operator "=".
@@ -284,20 +284,20 @@ public:
       @return reference to a quaternion object  */
   const FGQuaternion& operator=(const FGQuaternion& q) {
     // Copy the master values ...
-    Entry(1) = q(1);
-    Entry(2) = q(2);
-    Entry(3) = q(3);
-    Entry(4) = q(4);
+    data[0] = q(1);
+    data[1] = q(2);
+    data[2] = q(3);
+    data[3] = q(4);
     ComputeDerived();
     // .. and copy the derived values if they are valid
     mCacheValid = q.mCacheValid;
-//    if (mCacheValid) {
+    if (mCacheValid) {
         mT = q.mT;
         mTInv = q.mTInv;
         mEulerAngles = q.mEulerAngles;
         mEulerSines = q.mEulerSines;
         mEulerCosines = q.mEulerCosines;
-//    }
+    }
     return *this;
   }
 
@@ -308,8 +308,8 @@ public:
       @param q a quaternion reference
       @return true if both quaternions represent the same rotation.  */
   bool operator==(const FGQuaternion& q) const {
-    return Entry(1) == q(1) && Entry(2) == q(2)
-      && Entry(3) == q(3) && Entry(4) == q(4);
+    return data[0] == q(1) && data[1] == q(2)
+      && data[2] == q(3) && data[3] == q(4);
   }
 
   /** Comparison operator "!=".
@@ -318,10 +318,10 @@ public:
   bool operator!=(const FGQuaternion& q) const { return ! operator==(q); }
   const FGQuaternion& operator+=(const FGQuaternion& q) {
     // Copy the master values ...
-    Entry(1) += q(1);
-    Entry(2) += q(2);
-    Entry(3) += q(3);
-    Entry(4) += q(4);
+    data[0] += q(1);
+    data[1] += q(2);
+    data[2] += q(3);
+    data[3] += q(4);
     mCacheValid = false;
     return *this;
   }
@@ -331,10 +331,10 @@ public:
       @return a quaternion reference representing Q, where Q = Q - q. */
   const FGQuaternion& operator-=(const FGQuaternion& q) {
     // Copy the master values ...
-    Entry(1) -= q(1);
-    Entry(2) -= q(2);
-    Entry(3) -= q(3);
-    Entry(4) -= q(4);
+    data[0] -= q(1);
+    data[1] -= q(2);
+    data[2] -= q(3);
+    data[3] -= q(4);
     mCacheValid = false;
     return *this;
   }
@@ -343,10 +343,10 @@ public:
       @param scalar a multiplicative value.
       @return a quaternion reference representing Q, where Q = Q * scalar. */
   const FGQuaternion& operator*=(double scalar) {
-    Entry(1) *= scalar;
-    Entry(2) *= scalar;
-    Entry(3) *= scalar;
-    Entry(4) *= scalar;
+    data[0] *= scalar;
+    data[1] *= scalar;
+    data[2] *= scalar;
+    data[3] *= scalar;
     mCacheValid = false;
     return *this;
   }
@@ -362,16 +362,16 @@ public:
       @param q a quaternion to be summed.
       @return a quaternion representing Q, where Q = Q + q. */
   FGQuaternion operator+(const FGQuaternion& q) const {
-    return FGQuaternion(Entry(1)+q(1), Entry(2)+q(2),
-                        Entry(3)+q(3), Entry(4)+q(4));
+    return FGQuaternion(data[0]+q(1), data[1]+q(2),
+                        data[2]+q(3), data[3]+q(4));
   }
 
   /** Arithmetic operator "-".
       @param q a quaternion to be subtracted.
       @return a quaternion representing Q, where Q = Q - q. */
   FGQuaternion operator-(const FGQuaternion& q) const {
-    return FGQuaternion(Entry(1)-q(1), Entry(2)-q(2),
-                        Entry(3)-q(3), Entry(4)-q(4));
+    return FGQuaternion(data[0]-q(1), data[1]-q(2),
+                        data[2]-q(3), data[3]-q(4));
   }
 
   /** Arithmetic operator "*".
@@ -379,10 +379,10 @@ public:
       @param q a quaternion to be multiplied.
       @return a quaternion representing Q, where Q = Q * q. */
   FGQuaternion operator*(const FGQuaternion& q) const {
-    return FGQuaternion(Entry(1)*q(1)-Entry(2)*q(2)-Entry(3)*q(3)-Entry(4)*q(4),
-                        Entry(1)*q(2)+Entry(2)*q(1)+Entry(3)*q(4)-Entry(4)*q(3),
-                        Entry(1)*q(3)-Entry(2)*q(4)+Entry(3)*q(1)+Entry(4)*q(2),
-                        Entry(1)*q(4)+Entry(2)*q(3)-Entry(3)*q(2)+Entry(4)*q(1));
+    return FGQuaternion(data[0]*q(1)-data[1]*q(2)-data[2]*q(3)-data[3]*q(4),
+                        data[0]*q(2)+data[1]*q(1)+data[2]*q(4)-data[3]*q(3),
+                        data[0]*q(3)-data[1]*q(4)+data[2]*q(1)+data[3]*q(2),
+                        data[0]*q(4)+data[1]*q(3)-data[2]*q(2)+data[3]*q(1));
   }
 
   /** Arithmetic operator "*=".
@@ -390,14 +390,14 @@ public:
       @param q a quaternion to be multiplied.
       @return a quaternion reference representing Q, where Q = Q * q. */
   const FGQuaternion& operator*=(const FGQuaternion& q) {
-    double q0 = Entry(1)*q(1)-Entry(2)*q(2)-Entry(3)*q(3)-Entry(4)*q(4);
-    double q1 = Entry(1)*q(2)+Entry(2)*q(1)+Entry(3)*q(4)-Entry(4)*q(3);
-    double q2 = Entry(1)*q(3)-Entry(2)*q(4)+Entry(3)*q(1)+Entry(4)*q(2);
-    double q3 = Entry(1)*q(4)+Entry(2)*q(3)-Entry(3)*q(2)+Entry(4)*q(1);
-    Entry(1) = q0;
-    Entry(2) = q1;
-    Entry(3) = q2;
-    Entry(4) = q3;
+    double q0 = data[0]*q(1)-data[1]*q(2)-data[2]*q(3)-data[3]*q(4);
+    double q1 = data[0]*q(2)+data[1]*q(1)+data[2]*q(4)-data[3]*q(3);
+    double q2 = data[0]*q(3)-data[1]*q(4)+data[2]*q(1)+data[3]*q(2);
+    double q3 = data[0]*q(4)+data[1]*q(3)-data[2]*q(2)+data[3]*q(1);
+    data[0] = q0;
+    data[1] = q1;
+    data[2] = q2;
+    data[3] = q3;
     mCacheValid = false;
     return *this;
   }
@@ -413,8 +413,8 @@ public:
     if (norm == 0.0)
       return *this;
     double rNorm = 1.0/norm;
-    return FGQuaternion( Entry(1)*rNorm, -Entry(2)*rNorm,
-                         -Entry(3)*rNorm, -Entry(4)*rNorm );
+    return FGQuaternion( data[0]*rNorm, -data[1]*rNorm,
+                         -data[2]*rNorm, -data[3]*rNorm );
   }
 
   /** Conjugate of the quaternion.
@@ -423,7 +423,7 @@ public:
       to the inverse iff the quaternion is normalized.
   */
   FGQuaternion Conjugate(void) const {
-    return FGQuaternion( Entry(1), -Entry(2), -Entry(3), -Entry(4) );
+    return FGQuaternion( data[0], -data[1], -data[2], -data[3] );
   }
 
   friend FGQuaternion operator*(double, const FGQuaternion&);
@@ -439,8 +439,8 @@ public:
       Compute and return the square of the euclidean norm of this vector.
   */
   double SqrMagnitude(void) const {
-    return Entry(1)*Entry(1)+Entry(2)*Entry(2)
-      +Entry(3)*Entry(3)+Entry(4)*Entry(4);
+    return  data[0]*data[0] + data[1]*data[1]
+          + data[2]*data[2] + data[3]*data[3];
   }
 
   /** Normalize.
@@ -457,7 +457,7 @@ public:
 private:
   /** Copying by assigning the vector valued components.  */
   FGQuaternion(double q1, double q2, double q3, double q4) : mCacheValid(false)
-    { Entry(1) = q1; Entry(2) = q2; Entry(3) = q3; Entry(4) = q4; }
+    { data[0] = q1; data[1] = q2; data[2] = q3; data[3] = q4; }
 
   /** Computation of derived values.
       This function recomputes the derived values like euler angles and
@@ -471,12 +471,12 @@ private:
       FGQuaternion::ComputeDerivedUnconditional(void) const
       is called. */
   void ComputeDerived(void) const {
-//    if (!mCacheValid)
+    if (!mCacheValid)
       ComputeDerivedUnconditional();
   }
 
   /** The quaternion values itself. This is the master copy. */
-  double mData[4];
+  double data[4];
 
   /** A data validity flag.
       This class implements caching of the derived values like the

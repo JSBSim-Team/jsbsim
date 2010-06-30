@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.11 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.12 2010/06/30 03:13:40 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,9 +65,9 @@ FGColumnVector3::FGColumnVector3(void)
 string FGColumnVector3::Dump(const string& delimiter) const
 {
   ostringstream buffer;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(1) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(2) << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << Entry(3);
+  buffer << std::setw(18) << std::setprecision(16) << data[0] << delimiter;
+  buffer << std::setw(18) << std::setprecision(16) << data[1] << delimiter;
+  buffer << std::setw(18) << std::setprecision(16) << data[2];
   return buffer.str();
 }
 
@@ -110,10 +110,10 @@ FGColumnVector3& FGColumnVector3::operator/=(const double scalar)
 
 double FGColumnVector3::Magnitude(void) const
 {
-  if (Entry(1) == 0.0 && Entry(2) == 0.0 && Entry(3) == 0.0)
+  if (data[0] == 0.0 && data[1] == 0.0 && data[2] == 0.0)
     return 0.0;
   else
-    return sqrt( Entry(1)*Entry(1) +  Entry(2)*Entry(2) +  Entry(3)*Entry(3) );
+    return sqrt( data[0]*data[0] +  data[1]*data[1] +  data[2]*data[2] );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
