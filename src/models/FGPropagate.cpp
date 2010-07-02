@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.52 2010/07/02 02:34:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.53 2010/07/02 02:43:04 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,9 +278,9 @@ static int ctr;
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
 
-  VState.qAttitudeECI.Normalize(); // Normalize the quaternion
+  VState.qAttitudeECI.Normalize(); // Normalize the ECI Attitude quaternion
 
-  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle());
+  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle()); // Update the Earth position angle (EPA)
 
   // Update the "Location-based" transformation matrices from the vLocation vector.
 
