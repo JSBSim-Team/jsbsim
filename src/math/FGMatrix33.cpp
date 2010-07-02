@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.9 2010/06/30 03:13:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.10 2010/07/01 23:13:19 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,10 +114,10 @@ FGQuaternion FGMatrix33::GetQuaternion(void)
   double tempQ[4];
   int idx;
 
-  tempQ[0] = 0.50*sqrt(1.0 + data[0] + data[4] + data[8]);
-  tempQ[1] = 0.50*sqrt(1.0 + data[0] - data[4] - data[8]);
-  tempQ[2] = 0.50*sqrt(1.0 - data[0] + data[4] - data[8]);
-  tempQ[3] = 0.50*sqrt(1.0 - data[0] - data[4] + data[8]);
+  tempQ[0] = 1.0 + data[0] + data[4] + data[8];
+  tempQ[1] = 1.0 + data[0] - data[4] - data[8];
+  tempQ[2] = 1.0 - data[0] + data[4] - data[8];
+  tempQ[3] = 1.0 - data[0] - data[4] + data[8];
 
   // Find largest of the above
   idx = 0;
@@ -125,25 +125,25 @@ FGQuaternion FGMatrix33::GetQuaternion(void)
 
   switch(idx) {
     case 0:
-      Q(1) = tempQ[0];
+      Q(1) = 0.50*sqrt(tempQ[0]);
       Q(2) = 0.25*(data[7] - data[5])/Q(1);
       Q(3) = 0.25*(data[2] - data[6])/Q(1);
       Q(4) = 0.25*(data[3] - data[1])/Q(1);
       break;
     case 1:
-      Q(2) = tempQ[1];
+      Q(2) = 0.50*sqrt(tempQ[1]);
       Q(1) = 0.25*(data[7] - data[5])/Q(2);
       Q(3) = 0.25*(data[3] + data[1])/Q(2);
       Q(4) = 0.25*(data[2] + data[6])/Q(2);
       break;
     case 2:
-      Q(3) = tempQ[2];
+      Q(3) = 0.50*sqrt(tempQ[2]);
       Q(1) = 0.25*(data[2] - data[6])/Q(3);
       Q(2) = 0.25*(data[3] + data[1])/Q(3);
       Q(4) = 0.25*(data[7] + data[5])/Q(3);
       break;
     case 3:
-      Q(4) = tempQ[3];
+      Q(4) = 0.50*sqrt(tempQ[3]);
       Q(1) = 0.25*(data[3] - data[1])/Q(4);
       Q(2) = 0.25*(data[6] + data[2])/Q(4);
       Q(3) = 0.25*(data[7] + data[5])/Q(4);
@@ -235,15 +235,15 @@ void FGMatrix33::InitMatrix(void)
 
 FGMatrix33 FGMatrix33::operator-(const FGMatrix33& M) const
 {
-  return FGMatrix33( data[0] - M(1,1),
-                     data[3] - M(1,2),
-                     data[6] - M(1,3),
-                     data[1] - M(2,1),
-                     data[4] - M(2,2),
-                     data[7] - M(2,3),
-                     data[2] - M(3,1),
-                     data[5] - M(3,2),
-                     data[8] - M(3,3) );
+  return FGMatrix33( data[0] - M.data[0],
+                     data[3] - M.data[3],
+                     data[6] - M.data[6],
+                     data[1] - M.data[1],
+                     data[4] - M.data[4],
+                     data[7] - M.data[7],
+                     data[2] - M.data[2],
+                     data[5] - M.data[5],
+                     data[8] - M.data[8] );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,30 +267,30 @@ FGMatrix33& FGMatrix33::operator-=(const FGMatrix33 &M)
 
 FGMatrix33 FGMatrix33::operator+(const FGMatrix33& M) const
 {
-  return FGMatrix33( data[0] + M(1,1),
-                     data[3] + M(1,2),
-                     data[6] + M(1,3),
-                     data[1] + M(2,1),
-                     data[4] + M(2,2),
-                     data[7] + M(2,3),
-                     data[2] + M(3,1),
-                     data[5] + M(3,2),
-                     data[8] + M(3,3) );
+  return FGMatrix33( data[0] + M.data[0],
+                     data[3] + M.data[3],
+                     data[6] + M.data[6],
+                     data[1] + M.data[1],
+                     data[4] + M.data[4],
+                     data[7] + M.data[7],
+                     data[2] + M.data[2],
+                     data[5] + M.data[5],
+                     data[8] + M.data[8] );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33& FGMatrix33::operator+=(const FGMatrix33 &M)
 {
-  data[0] += M(1,1);
-  data[3] += M(1,2);
-  data[6] += M(1,3);
-  data[1] += M(2,1);
-  data[4] += M(2,2);
-  data[7] += M(2,3);
-  data[2] += M(3,1);
-  data[5] += M(3,2);
-  data[8] += M(3,3);
+  data[0] += M.data[0];
+  data[3] += M.data[3];
+  data[6] += M.data[6];
+  data[1] += M.data[1];
+  data[4] += M.data[4];
+  data[7] += M.data[7];
+  data[2] += M.data[2];
+  data[5] += M.data[5];
+  data[8] += M.data[8];
 
   return *this;
 }
@@ -311,7 +311,7 @@ FGMatrix33 FGMatrix33::operator*(const double scalar) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*
 FGMatrix33 operator*(double scalar, FGMatrix33 &M)
 {
   return FGMatrix33( scalar * M(1,1),
@@ -324,7 +324,7 @@ FGMatrix33 operator*(double scalar, FGMatrix33 &M)
                      scalar * M(3,2),
                      scalar * M(3,3) );
 }
-
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33& FGMatrix33::operator*=(const double scalar)
@@ -346,18 +346,17 @@ FGMatrix33& FGMatrix33::operator*=(const double scalar)
 
 FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M) const
 {
-  // FIXME: Make compiler friendlier
   FGMatrix33 Product;
 
-  Product(1,1) = data[0]*M(1,1) + data[3]*M(2,1) + data[6]*M(3,1);
-  Product(1,2) = data[0]*M(1,2) + data[3]*M(2,2) + data[6]*M(3,2);
-  Product(1,3) = data[0]*M(1,3) + data[3]*M(2,3) + data[6]*M(3,3);
-  Product(2,1) = data[1]*M(1,1) + data[4]*M(2,1) + data[7]*M(3,1);
-  Product(2,2) = data[1]*M(1,2) + data[4]*M(2,2) + data[7]*M(3,2);
-  Product(2,3) = data[1]*M(1,3) + data[4]*M(2,3) + data[7]*M(3,3);
-  Product(3,1) = data[2]*M(1,1) + data[5]*M(2,1) + data[8]*M(3,1);
-  Product(3,2) = data[2]*M(1,2) + data[5]*M(2,2) + data[8]*M(3,2);
-  Product(3,3) = data[2]*M(1,3) + data[5]*M(2,3) + data[8]*M(3,3);
+  Product.data[0] = data[0]*M.data[0] + data[3]*M.data[1] + data[6]*M.data[2];
+  Product.data[3] = data[0]*M.data[3] + data[3]*M.data[4] + data[6]*M.data[5];
+  Product.data[6] = data[0]*M.data[6] + data[3]*M.data[7] + data[6]*M.data[8];
+  Product.data[1] = data[1]*M.data[0] + data[4]*M.data[1] + data[7]*M.data[2];
+  Product.data[4] = data[1]*M.data[3] + data[4]*M.data[4] + data[7]*M.data[5];
+  Product.data[7] = data[1]*M.data[6] + data[4]*M.data[7] + data[7]*M.data[8];
+  Product.data[2] = data[2]*M.data[0] + data[5]*M.data[1] + data[8]*M.data[2];
+  Product.data[5] = data[2]*M.data[3] + data[5]*M.data[4] + data[8]*M.data[5];
+  Product.data[8] = data[2]*M.data[6] + data[5]*M.data[7] + data[8]*M.data[8];
 
   return Product;
 }
@@ -370,19 +369,19 @@ FGMatrix33& FGMatrix33::operator*=(const FGMatrix33& M)
   double a,b,c;
 
   a = data[0]; b=data[3]; c=data[6];
-  data[0] = a*M(1,1) + b*M(2,1) + c*M(3,1);
-  data[3] = a*M(1,2) + b*M(2,2) + c*M(3,2);
-  data[6] = a*M(1,3) + b*M(2,3) + c*M(3,3);
+  data[0] = a*M.data[0] + b*M.data[1] + c*M.data[2];
+  data[3] = a*M.data[3] + b*M.data[4] + c*M.data[5];
+  data[6] = a*M.data[6] + b*M.data[7] + c*M.data[8];
 
   a = data[1]; b=data[4]; c=data[7];
-  data[1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
-  data[4] = a*M(1,2) + b*M(2,2) + c*M(3,2);
-  data[7] = a*M(1,3) + b*M(2,3) + c*M(3,3);
+  data[1] = a*M.data[0] + b*M.data[1] + c*M.data[2];
+  data[4] = a*M.data[3] + b*M.data[4] + c*M.data[5];
+  data[7] = a*M.data[6] + b*M.data[7] + c*M.data[8];
 
   a = data[2]; b=data[5]; c=data[8];
-  data[2] = a*M(1,1) + b*M(2,1) + c*M(3,1);
-  data[5] = a*M(1,2) + b*M(2,2) + c*M(3,2);
-  data[8] = a*M(1,3) + b*M(2,3) + c*M(3,3);
+  data[2] = a*M.data[0] + b*M.data[1] + c*M.data[2];
+  data[5] = a*M.data[3] + b*M.data[4] + c*M.data[5];
+  data[8] = a*M.data[6] + b*M.data[7] + c*M.data[8];
 
   return *this;
 }
@@ -395,15 +394,15 @@ FGMatrix33 FGMatrix33::operator/(const double scalar) const
 
   if ( scalar != 0 ) {
     double tmp = 1.0/scalar;
-    Quot(1,1) = data[0] * tmp;
-    Quot(1,2) = data[3] * tmp;
-    Quot(1,3) = data[6] * tmp;
-    Quot(2,1) = data[1] * tmp;
-    Quot(2,2) = data[4] * tmp;
-    Quot(2,3) = data[7] * tmp;
-    Quot(3,1) = data[2] * tmp;
-    Quot(3,2) = data[5] * tmp;
-    Quot(3,3) = data[8] * tmp;
+    Quot.data[0] = data[0] * tmp;
+    Quot.data[3] = data[3] * tmp;
+    Quot.data[6] = data[6] * tmp;
+    Quot.data[1] = data[1] * tmp;
+    Quot.data[4] = data[4] * tmp;
+    Quot.data[7] = data[7] * tmp;
+    Quot.data[2] = data[2] * tmp;
+    Quot.data[5] = data[5] * tmp;
+    Quot.data[8] = data[8] * tmp;
   } else {
     MatrixException mE;
     mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/(const double scalar)";
@@ -439,13 +438,19 @@ FGMatrix33& FGMatrix33::operator/=(const double scalar)
 
 void FGMatrix33::T(void)
 {
-  for (unsigned int i=1; i<=3; i++) {
-    for (unsigned int j=i+1; j<=3; j++) {
-      double tmp = Entry(i,j);
-      Entry(i,j) = Entry(j,i);
-      Entry(j,i) = tmp;
-    }
-  }
+  double tmp;
+
+  tmp = data[3];
+  data[3] = data[1];
+  data[1] = tmp;
+
+  tmp = data[6];
+  data[6] = data[2];
+  data[2] = tmp;
+
+  tmp = data[7];
+  data[7] = data[5];
+  data[5] = tmp;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

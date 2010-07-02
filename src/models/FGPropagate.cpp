@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.51 2010/05/18 10:54:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.53 2010/07/02 02:43:04 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,15 +266,6 @@ static int ctr;
 
   RunPreFunctions();
 
-  RecomputeLocalTerrainRadius();
-
-  // Calculate current aircraft radius from center of planet
-
-  VehicleRadius = GetRadius();
-  radInv = 1.0/VehicleRadius;
-
-  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle());
-
   // Calculate state derivatives
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
@@ -287,18 +278,9 @@ static int ctr;
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
 
-  // Normalize the quaternion
-  VState.qAttitudeECI.Normalize();
+  VState.qAttitudeECI.Normalize(); // Normalize the ECI Attitude quaternion
 
-  // Set auxililary state variables
-  VState.vLocation = Ti2ec*VState.vInertialPosition;
-
-  VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
-
-  VState.qAttitudeLocal = Tl2b.GetQuaternion();
-
-  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
-  vVel = Tb2l * VState.vUVW;
+  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle()); // Update the Earth position angle (EPA)
 
   // Update the "Location-based" transformation matrices from the vLocation vector.
 
@@ -317,6 +299,20 @@ static int ctr;
   Tb2l  = Tl2b.Transposed();   // body to local frame transform
   Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
+
+  // Set auxililary state variables
+  VState.vLocation = Ti2ec*VState.vInertialPosition;
+  RecomputeLocalTerrainRadius();
+
+  VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
+  radInv = 1.0/VehicleRadius;
+
+  VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
+
+  VState.qAttitudeLocal = Tl2b.GetQuaternion();
+
+  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
+  vVel = Tb2l * VState.vUVW;
 
   RunPostFunctions();
 

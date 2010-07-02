@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.20 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.21 2010/07/02 01:48:12 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,7 +252,8 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   // The distance of the location to the Z-axis, which is the axis
   // through the poles.
-  double rxy = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
+  double r02 = mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY);
+  double rxy = sqrt(r02);
 
   // Compute the sin/cos values of the longitude
   double sinLon, cosLon;
@@ -302,8 +303,10 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   mTl2ec = mTec2l.Transposed();
 
   // Calculate the inertial to ECEF and transpose matrices
-  mTi2ec = FGMatrix33( cos(epa), sin(epa), 0.0,
-                      -sin(epa), cos(epa), 0.0,
+  double cos_epa = cos(epa);
+  double sin_epa = sin(epa);
+  mTi2ec = FGMatrix33( cos_epa, sin_epa, 0.0,
+                      -sin_epa, cos_epa, 0.0,
                            0.0,      0.0, 1.0 );
   mTec2i = mTi2ec.Transposed();
 
@@ -318,10 +321,9 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // author: I. Sofair
 
   if (a != 0.0 && b != 0.0) {
-    double c, p, q, s, t, u, v, w, z, p2, u2, r02, r0;
+    double c, p, q, s, t, u, v, w, z, p2, u2, r0;
     double Ne, P, Q0, Q, signz0, sqrt_q; 
     p  = fabs(mECLoc(eZ))/eps2;
-    r02 = mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY);
     s  = r02/(e2*eps2);
     p2 = p*p;
     q  = p2 - b2 + s;
@@ -341,7 +343,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
       z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
       Ne = a*sqrt(1+eps2*z*z/b2);
       mGeodLat = asin((eps2+1.0)*(z/Ne));
-      r0 = sqrt(r02);
+      r0 = rxy;
       GeodeticAltitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
     }
   }
