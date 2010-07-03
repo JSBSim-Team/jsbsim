@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.53 2010/07/02 02:43:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.54 2010/07/03 13:04:28 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -487,7 +487,6 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
   double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
-  FGLocation contactloc;
   FGColumnVector3 dv;
   FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
   LocalTerrainRadius = contactloc.GetRadius();
