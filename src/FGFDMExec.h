@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.51 2010/04/12 12:25:19 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.52 2010/07/04 13:50:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.51 $
+    @version $Revision: 1.52 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -451,6 +451,8 @@ public:
 
   // Print the contents of the property catalog for the loaded aircraft.
   void PrintPropertyCatalog(void);
+
+  vector<string>& GetPropertyCatalog(void) {return PropertyCatalog;}
 
   /// Use the MSIS atmosphere model.
   void UseAtmosphereMSIS(void);
