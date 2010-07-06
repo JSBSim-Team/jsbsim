@@ -52,6 +52,8 @@
   <property value="0.524"> guidance/roll-angle-limit </property>
   <property value="0.174"> guidance/roll-rate-limit </property>
 
+  <property value="0"> ap/roll-angle-saturation </property>
+
 <!-- #################################################################### -->
 
   <channel name="Heading Hold">

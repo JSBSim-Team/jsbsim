@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.9 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.10 2010/07/06 12:06:04 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,12 +122,14 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
     exit(-1);
   }
 
-  TestParam1 = PropertyManager->GetNode(property1, true);
+  TestParam1 = PropertyManager->GetNode(property1, false);
+  if (!TestParam1) throw("Property " + property1 + " does not exist. Please check the name.");
   Comparison = mComparison[conditional];
   if (is_number(property2)) {
     TestValue = atof(property2.c_str());
   } else {
-    TestParam2 = PropertyManager->GetNode(property2, true);
+    TestParam2 = PropertyManager->GetNode(property2, false);
+    if (!TestParam2) throw("Property " + property2 + " does not exist. Please check the name.");
   }
 }
 

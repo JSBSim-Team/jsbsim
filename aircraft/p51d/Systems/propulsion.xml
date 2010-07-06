@@ -11,7 +11,7 @@
     <!--<property>atmosphere/density-altitude</property>-->
     
     <property>ap/ap_map_hold</property>
-    <property>ap/throttle-cmd-out</property>
+<!--    <property>ap/throttle-cmd-out</property> -->
     <property> ap/throttle-cmd-norm </property>
     <property value="0">/controls/fuel/tank-selector</property>
     <property> /controls/engines/engine/throttle </property>
