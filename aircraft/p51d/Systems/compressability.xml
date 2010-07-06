@@ -8,7 +8,7 @@
 
   <channel name="Compressabilty">
 
-    <switch name="compressabilty enable">
+    <switch name="fcs/compressabilty-enable">
         <default value="0"/>
         <test value="1">
             velocities/mach gt 0.7
@@ -16,7 +16,7 @@
         <output>systems/compressabilty/enabled</output>
     </switch>
 
-   <scheduled_gain name="Frequency">
+   <scheduled_gain name="fcs/frequency">
       <input>systems/compressabilty/enabled</input>
       <table>
         <independentVar lookup="row">velocities/mach</independentVar>
@@ -30,7 +30,7 @@
       <output>systems/compressabilty/hertz</output>
    </scheduled_gain>
 
-   <scheduled_gain name="Strength">
+   <scheduled_gain name="fcs/strength">
       <input>systems/compressabilty/enabled</input>
       <table>
         <independentVar lookup="row">velocities/mach</independentVar>
@@ -44,7 +44,7 @@
       <output>systems/compressabilty/strength</output>
    </scheduled_gain>
 
-   <fcs_function name="Sine Wave Generator">
+   <fcs_function name="fcs/sine-wave-generator">
      <function>
        <product>
        <sin>

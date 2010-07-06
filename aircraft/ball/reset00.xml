@@ -9,7 +9,8 @@
   <!-- Circular orbit at equator -->
   <!-- 25464.28 ft/sec inertial velocity - s/b 25454.2 ft/sec. -->
   <!-- <ubody unit="FT/SEC"> 23938.39  </ubody> -->
-  <ubody unit="FT/SEC"> 23889.15  </ubody>
+<!--  <ubody unit="FT/SEC"> 23889.15  </ubody> -->
+  <ubody unit="FT/SEC"> 23889.14273  </ubody>
   <latitude unit="DEG">     0.0  </latitude>
   <longitude unit="DEG">    0.0  </longitude>
   <psi unit="DEG">         90.0  </psi>

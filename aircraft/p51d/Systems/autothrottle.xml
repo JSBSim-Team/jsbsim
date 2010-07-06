@@ -1,6 +1,6 @@
 <?xml version="1.0"?> 
 
-<autopilot name="Autothrottle">
+<system name="Autothrottle">
 
     <!-- INTERFACE PROPERTIES -->
     <property value="0.0">ap/ap_map_hold</property>
@@ -110,4 +110,4 @@
         </pure_gain>      
 
    </channel>
-</autopilot>
+</system>

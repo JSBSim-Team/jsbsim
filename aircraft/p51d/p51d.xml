@@ -16,7 +16,7 @@ Hal V. Engel hvengel@astound.net
     <fileheader>
         <author> Aeromatic / Jon Berndt / DATCOM / Hal V. Engel</author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.19 $ </version>
+        <version> $Revision: 1.20 $ </version>
         <description> Advanced model of P-51D fighter (Beta) </description>
     </fileheader>
 
@@ -66,10 +66,8 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
 
          <!-- each 50 cal bullet is a little less than 180 grams but with links are
-      probably close to 180 gram each.  The inter two guns can have up to 400
-      rounds each and the outer 4 guns can be loaded with up to 270 rounds each.
-      This works out to about 106lbs for each inner gun and 71lbs for each
-      outer guns.  For a total of about 496lbs of ammo for the machine guns. -->
+      probably close to 180 gram each.  The inner two guns can have up to 400
+      rounds each and the outer 4 guns can be loaded with up to 270 rounds each. -->
 
       <pointmass name="Ammo right inner gun">
             <weight unit="LBS"> 0 </weight>
@@ -185,8 +183,8 @@ Hal V. Engel hvengel@astound.net
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.05 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 6500 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 9500 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 2500 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">6200</damping_coeff_rebound>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
@@ -201,8 +199,8 @@ Hal V. Engel hvengel@astound.net
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.05 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 6500 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 9500 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 2500 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">6200</damping_coeff_rebound>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
@@ -225,31 +223,164 @@ Hal V. Engel hvengel@astound.net
             <retractable>1</retractable>
         </contact>
         
-         <!-- <contact type="STRUCTURE" name="LEFT_WING">
+          <contact type="STRUCTURE" name="LEFT_WING_TIP">
               <location unit="IN">
-              <x> 85 </x>
+              <x> 100 </x>
               <y> -222 </y>
               <z>  -7 </z>
               </location>
               <static_friction>  0.80 </static_friction>
               <dynamic_friction> 0.50 </dynamic_friction>
-              <spring_coeff unit="LBS/FT">       4500 </spring_coeff>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
               <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
           </contact>
 
-            <contact type="STRUCTURE" name="RIGHT_WING">
-              <location unit="M">
-              <x> 85 </x>
+            <contact type="STRUCTURE" name="RIGHT_WING_TIP">
+              <location unit="IN">
+              <x> 100 </x>
               <y> 222 </y>
               <z>  -7 </z>
               </location>
               <static_friction>  0.80 </static_friction>
               <dynamic_friction> 0.50 </dynamic_friction>
-              <spring_coeff unit="LBS/FT">       4500 </spring_coeff>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
               <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
-          </contact>  -->
+          </contact>
+
+          <contact type="STRUCTURE" name="TAIL_BOTTOM">
+              <location unit="IN">
+              <x> 300 </x>
+              <y> 0 </y>
+              <z>  -25 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="TAIL_TOP">
+              <location unit="IN">
+              <x> 300 </x>
+              <y> 0 </y>
+              <z>  50 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="NOSE_BOTTOM">
+              <location unit="IN">
+              <x> 25 </x>
+              <y> 0 </y>
+              <z>  -30 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="NOSE_TOP">
+              <location unit="IN">
+              <x> 15 </x>
+              <y> 0 </y>
+              <z> 10 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="CANOPY">
+              <location unit="IN">
+                <x> 110 </x>
+                <y> 0 </y>
+                <z> 30 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+            
+           <contact type="STRUCTURE" name="BELLY">
+              <location unit="IN">
+              <x> 85 </x>
+              <y> 0 </y>
+              <z>  -27 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>  
+
+           <contact type="STRUCTURE" name="DOG_HOUSE">
+              <location unit="IN">
+              <x> 185 </x>
+              <y> 0 </y>
+              <z> -45 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="PROP_BOTTOM">
+              <location unit="IN">
+              <x> 10 </x>
+              <y> 0 </y>
+              <z> -67.5 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       50 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  5000 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="PROP_TOP">
+              <location unit="IN">
+              <x> 10 </x>
+              <y> 0 </y>
+              <z> -67.5 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       50 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  5000 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="PROP_LEFT">
+              <location unit="IN">
+              <x> 10 </x>
+              <y> -67.5 </y>
+              <z> 0 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       50 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  5000 </damping_coeff>
+          </contact>
+
+          <contact type="STRUCTURE" name="PROP_RIGHT">
+              <location unit="IN">
+              <x> 10 </x>
+              <y> 67.5 </y>
+              <z> 0 </z>
+              </location>
+              <static_friction>  0.80 </static_friction>
+              <dynamic_friction> 0.50 </dynamic_friction>
+              <spring_coeff unit="LBS/FT">       50 </spring_coeff>
+              <damping_coeff unit="LBS/FT/SEC">  5000 </damping_coeff>
+          </contact>
         
     </ground_reactions>
+
     <propulsion>
         <engine file="Packard-V-1650-7">
             <location unit="IN">
@@ -284,7 +415,7 @@ Hal V. Engel hvengel@astound.net
         </engine>
         
         <!--
-           wing tanks 
+           internal wing tanks
            capacity 92 US gallons each
         -->           
         <tank type="FUEL">    <!-- Tank number 0 left wing -->
@@ -338,7 +469,7 @@ Hal V. Engel hvengel@astound.net
             <priority> 0 </priority>
         </tank>
     </propulsion>
-    
+
     <system file="propulsion"/>
     <system file="autothrottle"/>
     <system file="mixture-control"/>
@@ -368,8 +499,23 @@ Hal V. Engel hvengel@astound.net
                     <max>0.15</max>
                 </range>
                 <output>fcs/elevator-pos-rad</output>
+            </aerosurface_scale>\
+
+            <aerosurface_scale name="Elevator Position Normalized">
+                <input>fcs/elevator-pos-rad</input>
+                <domain>
+                    <min>-0.18</min>
+                    <max>0.15</max>
+                </domain>
+                <range>
+                   <min>-1.0</min>
+                   <max>1.0</max>
+                </range>
+                <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
+            
         </channel>
+        
         <channel name="Roll">
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
@@ -397,6 +543,33 @@ Hal V. Engel hvengel@astound.net
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
             </aerosurface_scale>
+
+            <aerosurface_scale name="Left Aileron Position Normalized">
+                <input>fcs/left-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max>0.35</max>
+                </domain>
+                <range>
+                   <min>-1.0</min>
+                   <max>1.0</max>
+                </range>
+                <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right Aileron Position Normalized">
+                <input>fcs/right-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max>0.35</max>
+                </domain>
+                <range>
+                   <min>-1.0</min>
+                   <max>1.0</max>
+                </range>
+                <output>fcs/right-aileron-pos-norm</output>
+            </aerosurface_scale>
+
         </channel>
         <channel name="Yaw">
             <summer name="Rudder Command Sum">
@@ -416,6 +589,20 @@ Hal V. Engel hvengel@astound.net
                 </range>
                 <output>fcs/rudder-pos-rad</output>
             </aerosurface_scale>
+
+            <aerosurface_scale name="Rudder Position Normalized">
+                <input>fcs/rudder-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max>0.35</max>
+                </domain>
+                <range>
+                   <min>-1.0</min>
+                   <max>1.0</max>
+                </range>
+                <output>fcs/rudder-pos-norm</output>
+            </aerosurface_scale>
+
         </channel>
                 
         <channel name="Flaps">
@@ -479,29 +666,47 @@ Hal V. Engel hvengel@astound.net
             </kinematic>
         </channel>   
         
-        <!-- Teh tail wheel stuff is not workin g yet -->
+        <channel name="Brakes">
         
-        <channel name="Tail Wheel">
+           <summer name="systems/brakes/brake-left">
+                <input>/controls/gear/brake-left</input>
+                <input>/controls/gear/brake-parking</input>
+                <clipto>
+                    <min>-1</min>
+                    <max>1</max>
+                </clipto>
+            </summer>
+
+            <summer name="systems/brakes/brake-right">
+                <input>/controls/gear/brake-right</input>
+                <input>/controls/gear/brake-parking</input>
+                <clipto>
+                    <min>-1</min>
+                    <max>1</max>
+                </clipto>
+            </summer>
+            
+           <aerosurface_scale name="Brake left">
+                <input>systems/brakes/brake-left</input>
+                <range>
+                    <min>0.0</min>
+                    <max>0.60</max>
+                </range>
+                <output>fcs/left-brake-cmd-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Brake right">
+                <input>systems/brakes/brake-right</input>
+                <range>
+                    <min>0.0</min>
+                    <max>0.60</max>
+                </range>
+                <output>fcs/right-brake-cmd-norm</output>
+            </aerosurface_scale>
         
-           <switch name="systems/gear/tail-wheel-stick-back">
-              <test value="1">
-                  fcs/elevator-cmd-norm LE 0.05
-              </test>
-              <test value="0">
-                  fcs/elevator-cmd-norm GE 0.05
-              </test>
-           </switch>
-           
-         <!-- <property>/controls/gear/tailwheel-lock</property>-->        
-                 
-          <!--  <summer name="tail wheel lock control">
-                <input>tail-wheel-locked</input>
-                <output>/controls/gear/tailwheel-lock</output>
-            </summer>-->
         </channel> 
         
     </flight_control>
-    
     
     
     <aerodynamics>
@@ -582,25 +787,6 @@ Hal V. Engel hvengel@astound.net
                   </table>
                 </product>
             </function>
-            
-            <!--
-               Add in a little extra drag for higher altitudes.
-            -->
-            <!--<function name="aero/coefficient/CDaltitude-correction">
-                <description>Drag_altitude_correction</description>
-                <product>
-                    <property>aero/qbar-psf</property>
-                    <property>metrics/Sw-sqft</property>
-                    <value> 1.0 </value>
-                    <table>
-                      <independentVar lookup="row">atmosphere/density-altitude</independentVar>
-                      <tableData>  
-                           1000     0.0
-                          40000     0.003                                  
-                      </tableData>
-                  </table>        
-                </product>
-            </function>-->
             
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
@@ -709,7 +895,6 @@ Hal V. Engel hvengel@astound.net
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <value> 0.99 </value>
                     <table>
                         <independentVar>velocities/mach</independentVar>
                         <tableData>
@@ -1321,7 +1506,7 @@ Hal V. Engel hvengel@astound.net
                                   -90.0  0.0
                                    0.0   0.0
                                    5.0   0.0
-                                  10.5  -0.003
+                                  10.5  -0.001
                                   14.5  -0.03
                           </tableData>
                         </table>
