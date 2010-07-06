@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.39 2010/04/11 13:44:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.40 2010/07/06 12:06:04 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,7 +236,12 @@ bool FGScript::LoadScript(string script, double deltaT)
     // Process the conditions
     condition_element = event_element->FindElement("condition");
     if (condition_element != 0) {
-      newCondition = new FGCondition(condition_element, PropertyManager);
+      try {
+        newCondition = new FGCondition(condition_element, PropertyManager);
+      } catch(string str) {
+        cout << endl << fgred << str << reset << endl << endl;
+        return false;
+      }
       newEvent->Condition = newCondition;
     } else {
       cerr << "No condition specified in script event " << newEvent->Name << endl;
