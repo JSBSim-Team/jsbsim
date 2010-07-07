@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.12 2010/07/06 21:14:43 andgi Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.13 2010/07/07 11:59:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,6 +64,7 @@ CLASS DECLARATION
   extern std::string& trim_left(std::string& str);
   extern std::string& trim_right(std::string& str);
   extern std::string& trim(std::string& str);
+  extern std::string& trim_all_space(std::string& str);
   extern std::string& to_upper(std::string& str);
   extern std::string& to_lower(std::string& str);
   extern bool is_number(const std::string& str);
