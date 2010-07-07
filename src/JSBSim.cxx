@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.59 2010/05/18 10:54:14 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.60 2010/07/07 20:46:36 andgi Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -38,7 +38,6 @@
 
 #include <FDM/flight.hxx>
 
-#include <Aircraft/aircraft.hxx>
 #include <Aircraft/controls.hxx>
 #include <Main/globals.hxx>
 #include <Main/fg_props.hxx>
@@ -1002,7 +1001,7 @@ void FGJSBsim::set_Altitude(double alt)
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
     SG_LOG(SG_FLIGHT, SG_INFO,
-          "Terrain elevation: " << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
+          "Terrain elevation: " << FGInterface::get_Runway_altitude() * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
     fgic->SetAltitudeASLFtIC(alt);
     needTrim=true;
