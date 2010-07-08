@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.17 2010/07/08 11:36:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,6 +128,15 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * This function is very slow, so is probably useful for debugging only.
      */
     std::string GetFullyQualifiedName(void);
+
+    /**
+     * Get the qualified name of a node relative to given base path,
+     * otherwise the fully qualified name.
+     * This function is very slow, so is probably useful for debugging only.
+     *
+     * @param path The path to strip off, if found.
+     */
+    std::string GetRelativeName( const std::string &path = "/fdm/jsbsim/" );
 
     /**
      * Get a bool value for a property.

@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.9 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.10 2010/07/08 11:36:28 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -434,6 +434,10 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
+  // Save original cout format characteristics
+  std::ios_base::fmtflags originalFormat = cout.flags();
+  std::streamsize originalPrecision = cout.precision();
+  std::streamsize originalWidth = cout.width();
   cout << "  " << setw(20) << GetControlName() << ": ";
   cout << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
   cout << setw(5) << GetStateName() << ": ";
@@ -444,6 +448,10 @@ void FGTrimAxis::AxisReport(void) {
      cout << "  Passed" << endl;
   else
      cout << "  Failed" << endl;
+  // Restore original cout format characteristics
+  cout.flags(originalFormat);
+  cout.precision(originalPrecision);
+  cout.width(originalWidth);
 }
 
 /*****************************************************************************/
