@@ -26,7 +26,7 @@
     <event name="Trim">
       <description>Trim at the initial conditions state</description>
       <condition>
-        sim-time-sec gt 1.0
+        simulation/sim-time-sec gt 1.0
       </condition>
       <set name="simulation/do_simple_trim" value="1"/>
       <notify>
@@ -42,15 +42,15 @@
       <description> Do an elevator doublet from between
                     5 and 7 seconds. </description>
       <condition>
-        sim-time-sec ge 5
-        sim-time-sec le 7
+        simulation/sim-time-sec ge 5
+        simulation/sim-time-sec le 7
       </condition>
       <set name="fcs/elevator-cmd-norm">
         <function>
           <sin>
             <product>
               <difference>
-                <property> sim-time-sec </property>
+                <property> simulation/sim-time-sec </property>
                 <value> 5 </value>
               </difference>
               <value> 3.1415927 </value>
@@ -70,7 +70,7 @@
     <event name="Re-Trim at 20 seconds">
       <description>Trim at the initial conditions state</description>
       <condition>
-        sim-time-sec gt 20.0
+        simulation/sim-time-sec gt 20.0
       </condition>
       <set name="simulation/do_simple_trim" value="1"/>
       <notify>
@@ -88,15 +88,15 @@
         25 and 27 seconds.
       </description>
       <condition>
-        sim-time-sec ge 25
-        sim-time-sec le 27
+        simulation/sim-time-sec ge 25
+        simulation/sim-time-sec le 27
       </condition>
       <set name="fcs/aileron-cmd-norm">
         <function>
           <sin>
             <product>
               <difference>
-                <property> sim-time-sec </property>
+                <property> simulation/sim-time-sec </property>
                 <value> 25 </value>
               </difference>
               <value> 3.1415927 </value>

@@ -7,36 +7,36 @@
   <use aircraft="737" initialize="reset00"/>
   <run start="0.0" end="10" dt="0.0083333">
     <event name="Steering and Elevator Command Test">
-      <condition>sim-time-sec  ge  5.0</condition>
+      <condition>simulation/sim-time-sec  ge  5.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
       <set name="fcs/elevator-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
       <notify/>
     </event>
     <event name="Steering and Elevator Command to 0">
-      <condition>sim-time-sec  ge  7.0</condition>
+      <condition>simulation/sim-time-sec  ge  7.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
       <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
       <notify/>
     </event>
     <event name="Start Engines">
-      <condition>sim-time-sec  ge  15.0</condition>
+      <condition>simulation/sim-time-sec  ge  15.0</condition>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify/>
     </event>
     <event name="Advance Throttle">
-      <condition>sim-time-sec  ge  20.0</condition>
+      <condition>simulation/sim-time-sec  ge  20.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
       <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="0.6" tc="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="0.6" tc="1.0"/>
       <notify/>
     </event>
     <event name="Test Steer Command">
-      <condition>sim-time-sec  ge  50.0</condition>
+      <condition>simulation/sim-time-sec  ge  50.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="1.0" tc="1"/>
       <notify/>
     </event>
     <event name="Zero Steer Command">
-      <condition>sim-time-sec  ge  55.0</condition>
+      <condition>simulation/sim-time-sec  ge  55.0</condition>
       <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
       <notify/>
     </event>
