@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.38 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.39 2010/07/09 12:06:11 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,11 +249,12 @@ bool FGAuxiliary::Run()
 
   vPilotAccel.InitMatrix();
   if ( Vt > 1.0 ) {
-     vAircraftAccel = Aerodynamics->GetForces()
-                    + Propulsion->GetForces()
-                    + GroundReactions->GetForces()
-                    + ExternalReactions->GetForces()
-                    + BuoyantForces->GetForces();
+     // Use the "+=" operator to avoid the creation of temporary objects.
+     vAircraftAccel = Aerodynamics->GetForces();
+     vAircraftAccel += Propulsion->GetForces();
+     vAircraftAccel += GroundReactions->GetForces();
+     vAircraftAccel += ExternalReactions->GetForces();
+     vAircraftAccel += BuoyantForces->GetForces();
 
      vAircraftAccel /= MassBalance->GetMass();
      // Nz is Acceleration in "g's", along normal axis (-Z body axis)
@@ -276,7 +277,7 @@ bool FGAuxiliary::Run()
 
   // VRP computation
   const FGLocation& vLocation = Propagate->GetLocation();
-  FGColumnVector3 vrpStructural = Aircraft->GetXYZvrp();
+  FGColumnVector3& vrpStructural = Aircraft->GetXYZvrp();
   FGColumnVector3 vrpBody = MassBalance->StructuralToBody( vrpStructural );
   FGColumnVector3 vrpLocal = Propagate->GetTb2l() * vrpBody;
   vLocationVRP = vLocation.LocalToLocation( vrpLocal );
