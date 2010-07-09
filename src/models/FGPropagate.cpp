@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.54 2010/07/03 13:04:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.55 2010/07/09 04:11:45 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,7 +304,8 @@ static int ctr;
   VState.vLocation = Ti2ec*VState.vInertialPosition;
   RecomputeLocalTerrainRadius();
 
-  VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
+  // Calculate current aircraft radius from center of planet
+  VehicleRadius = VState.vInertialPosition.Magnitude();
   radInv = 1.0/VehicleRadius;
 
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
@@ -487,9 +488,9 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
   double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
-  FGColumnVector3 dv;
-  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
-  LocalTerrainRadius = contactloc.GetRadius();
+//  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
+//  LocalTerrainRadius = contactloc.GetRadius();
+  LocalTerrainRadius = FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

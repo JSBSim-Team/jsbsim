@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.40 2010/07/08 11:36:28 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.41 2010/07/09 04:11:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.40 2010/07/08 11:36:28 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.41 2010/07/09 04:11:45 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -596,6 +596,7 @@ private:
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
   FGLocation contactloc;
+  FGColumnVector3 dv;
   
   double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
   double radInv;
