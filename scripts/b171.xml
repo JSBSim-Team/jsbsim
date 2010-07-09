@@ -7,7 +7,7 @@
   <run start="0.0" end="20" dt="0.00833333">
 <!--
     <event name="Start engine">
-      <condition>sim-time-sec  ge  3.0</condition>
+      <condition>simulation/sim-time-sec  ge  3.0</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="1.0"/>
       <set name="fcs/mixture-cmd-norm[1]" value="1.0"/>
       <set name="fcs/mixture-cmd-norm[2]" value="1.0"/>

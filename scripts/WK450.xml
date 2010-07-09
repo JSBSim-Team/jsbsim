@@ -15,7 +15,7 @@
 
     <event>
       <description> initialize the run id </description>
-      <condition> sim-time-sec >= 0.00 </condition>
+      <condition> simulation/sim-time-sec >= 0.00 </condition>
       <set name="simulation/run_id" value="1"/>
       <set name="ap/heading_hold" value="1"/>
       <notify/>
@@ -24,7 +24,7 @@
     <event name="Test brakes">
       <description>Apply brakes</description>
       <condition>
-        sim-time-sec >= 10.0
+        simulation/sim-time-sec >= 10.0
       </condition>
       <set name="fcs/left-brake-cmd-norm" value="1"/>
       <set name="fcs/right-brake-cmd-norm" value="1"/>
@@ -34,7 +34,7 @@
     <event name="Test brakes">
       <description>Apply brakes</description>
       <condition>
-        sim-time-sec >= 15.0
+        simulation/sim-time-sec >= 15.0
       </condition>
       <set name="fcs/left-brake-cmd-norm" value="0"/>
       <set name="fcs/right-brake-cmd-norm" value="0"/>
@@ -44,7 +44,7 @@
     <event name="engine start">
       <description>Start the engine</description>
       <condition>
-        sim-time-sec >= 20.0
+        simulation/sim-time-sec >= 20.0
       </condition>
       <set name="fcs/throttle-cmd-norm" value="0.94" action="FG_RAMP" tc ="0.5"/>
       <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.5"/>
@@ -102,7 +102,7 @@
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
       </notify>
-      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
     </event>
 

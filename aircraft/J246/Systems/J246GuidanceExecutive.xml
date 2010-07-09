@@ -14,6 +14,8 @@
   #############################################################################
   -->
 
+  <property value="0"> guidance/second-stage-flight-flag </property>
+  
   <channel name="GNC Executive MET Clock">
 
     <switch name="guidance/executive/launch-time">
@@ -110,7 +112,7 @@
     <switch name="guidance/second-stage-flight-flag">
       <default value="0"/>
       <test value="1" logic="OR">
-        guidance/executive/leftt-srb-sep-flag eq 1
+        guidance/executive/left-srb-sep-flag eq 1
         guidance/executive/right-srb-sep-flag eq 1 </test>
     </switch>
 

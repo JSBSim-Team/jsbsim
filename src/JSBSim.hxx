@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #undef MAX_ENGINES
-#include <Aircraft/aircraft.hxx>
 #include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +86,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.12 2010/04/14 01:26:50 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.13 2010/07/07 20:46:36 andgi Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 

@@ -6,7 +6,7 @@
   <use aircraft="StellarJ" initialize="reset00"/>
   <run start="0.0" end="400" dt="0.00833333">
     <event name="Prepare engine">
-      <condition>sim-time-sec  ge  0.25</condition>
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
       <set name="propulsion/active_engine" value="-1"/>
       <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="0.3" tc="2.0"/>
       <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="0.3" tc="2.0"/>

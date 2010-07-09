@@ -152,6 +152,19 @@ string FGPropertyManager::GetFullyQualifiedName(void) {
 
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPropertyManager::GetRelativeName( const string &path )
+{
+  string temp_string = GetFullyQualifiedName();
+  size_t len = path.length();
+  if ( (len > 0) && (temp_string.substr(0,len) == path) ) {
+    temp_string = temp_string.erase(0,len);
+  }
+  return temp_string;
+}
+
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

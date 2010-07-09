@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.40 2010/07/06 12:06:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.41 2010/07/08 11:36:28 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,7 +424,7 @@ bool FGScript::RunScript(void)
         cout << endl << "  Event " << event_ctr << " (" << Events[ev_ctr].Name << ")"
              << " executed at time: " << currentTime << endl;
         for (j=0; j<Events[ev_ctr].NotifyProperties.size();j++) {
-          cout << "    " << Events[ev_ctr].NotifyProperties[j]->GetName()
+          cout << "    " << Events[ev_ctr].NotifyProperties[j]->GetRelativeName()
                << " = " << Events[ev_ctr].NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
@@ -492,7 +492,10 @@ void FGScript::Debug(int from)
 
         Events[i].Condition->PrintCondition();
 
-        cout << endl << "  Actions taken:" << endl << "    {";
+        cout << endl << "  Actions taken";
+        if (Events[i].Delay > 0.0)
+          cout << " (after a delay of " << Events[i].Delay << " secs)";
+        cout << ":" << endl << "    {";
         for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
           if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
             if (Events[i].SetParam[j] == 0) {
@@ -502,7 +505,7 @@ void FGScript::Debug(int from)
                    << reset << endl;
               exit(-1);
             }
-            cout << endl << "      set " << Events[i].SetParam[j]->GetName()
+            cout << endl << "      set " << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
                  << " to function value";
           } else {
             if (Events[i].SetParam[j] == 0) {
@@ -512,7 +515,7 @@ void FGScript::Debug(int from)
                    << reset << endl;
               exit(-1);
             }
-            cout << endl << "      set " << Events[i].SetParam[j]->GetName()
+            cout << endl << "      set " << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
                  << " to " << Events[i].SetValue[j];
           }
 
@@ -545,8 +548,21 @@ void FGScript::Debug(int from)
           if (Events[i].Action[j] == FG_RAMP || Events[i].Action[j] == FG_EXP)
             cout << " with time constant " << Events[i].TC[j] << ")";
         }
-        cout << endl << "    }" << endl << endl;
+        cout << endl << "    }" << endl;
 
+        // Print notifications
+        if (Events[i].Notify) {
+          if (Events[i].NotifyProperties.size() > 0) {
+            cout << "  Notifications" << ":" << endl << "    {" << endl;
+            for (unsigned j=0; j<Events[i].NotifyProperties.size();j++) {
+              cout << "      "
+            	   << Events[i].NotifyProperties[j]->GetRelativeName("/fdm/jsbsim/")
+                   << endl;
+            }
+            cout << "    }" << endl;
+          }
+        }
+        cout << endl;
       }
     }
   }

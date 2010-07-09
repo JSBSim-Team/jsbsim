@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.11 2010/05/13 01:48:55 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.13 2010/07/07 11:59:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,6 +64,7 @@ CLASS DECLARATION
   extern std::string& trim_left(std::string& str);
   extern std::string& trim_right(std::string& str);
   extern std::string& trim(std::string& str);
+  extern std::string& trim_all_space(std::string& str);
   extern std::string& to_upper(std::string& str);
   extern std::string& to_lower(std::string& str);
   extern bool is_number(const std::string& str);
@@ -98,8 +99,11 @@ CLASS DECLARATION
 
   string& trim_all_space(string& str)
   {
-    for (int ctr=0; ctr<str.size(); ctr++) {
-      if (isspace((unsigned char)str[ctr])) str = str.erase(ctr,1);
+    for (size_t i=0; i<str.size(); i++) {
+      if (isspace((unsigned char)str[i])) {
+        str = str.erase(i,1);
+        --i;
+      }
     }
     return str;
   }
