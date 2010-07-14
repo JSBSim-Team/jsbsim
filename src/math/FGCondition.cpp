@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.12 2010/07/13 19:26:49 ehofman Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.13 2010/07/14 05:50:40 ehofman Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,12 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
     TestValue = atof(property2.c_str());
   } else {
     TestParam2 = PropertyManager->GetNode(property2, false);
-    if (!TestParam2) throw("Property " + property2 + " does not exist. Please check the name.");
+    if (!TestParam2) {
+        cerr << fgred << "  In condition: " << test << ". Unknown property "
+             << property2 << " referenced." << endl
+             << "Creating property.  Check usage." << reset << endl;
+        TestParam2 = PropertyManager->GetNode(property2, true);
+    }
   }
 }
 

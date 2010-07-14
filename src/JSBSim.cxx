@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.61 2010/07/13 19:56:15 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.62 2010/07/14 05:50:40 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -182,7 +182,6 @@ FGJSBsim::FGJSBsim( double dt )
                                engine_path.str(),
                                systems_path.str(),
                                fgGetString("/sim/aero"), false );
-printf("done\n");
 
     if (result) {
       SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aero.");
