@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.60 2010/07/07 20:46:36 andgi Exp $
+// $Id: JSBSim.cxx,v 1.62 2010/07/14 05:50:40 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -169,6 +169,12 @@ FGJSBsim::FGJSBsim( double dt )
 
     SGPath systems_path( fgGetString("/sim/aircraft-dir") );
     systems_path.append( "Systems" );
+
+// deprecate sim-time-sec for simulation/sim-time-sec
+// remove alias with increased configuration file version number (2.1 or later)
+    SGPropertyNode * node = fgGetNode("/fdm/jsbsim/simulation/sim-time-sec");
+    fgGetNode("/fdm/jsbsim/sim-time-sec", true)->alias( node );
+// end of sim-time-sec deprecation patch
 
     fdmex->Setdt( dt );
 

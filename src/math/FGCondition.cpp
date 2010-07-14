@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.11 2010/07/08 11:36:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.13 2010/07/14 05:50:40 ehofman Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +123,12 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
   }
 
   TestParam1 = PropertyManager->GetNode(property1, false);
-  if (!TestParam1) throw("Property " + property1 + " does not exist. Please check the name.");
+  if (!TestParam1) {
+      cerr << fgred << "  In condition: " << test << ". Unknown property "
+           << property1 << " referenced." << endl
+           << "Creating property.  Check usage." << reset << endl;
+      TestParam1 = PropertyManager->GetNode(property1, true);
+  }
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
 	throw("Comparison operator: \""+conditional+"\" does not exist.  Please check the conditional.");
@@ -132,7 +137,12 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
     TestValue = atof(property2.c_str());
   } else {
     TestParam2 = PropertyManager->GetNode(property2, false);
-    if (!TestParam2) throw("Property " + property2 + " does not exist. Please check the name.");
+    if (!TestParam2) {
+        cerr << fgred << "  In condition: " << test << ". Unknown property "
+             << property2 << " referenced." << endl
+             << "Creating property.  Check usage." << reset << endl;
+        TestParam2 = PropertyManager->GetNode(property2, true);
+    }
   }
 }
 
