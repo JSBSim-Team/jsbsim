@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.41 2010/07/09 04:11:45 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.42 2010/07/25 13:53:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.41 2010/07/09 04:11:45 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.42 2010/07/25 13:53:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,10 +181,6 @@ public:
       @return false if no error */
   bool Run(void);
 
-  void CalculatePQRdot(void);
-  void CalculateQuatdot(void);
-  void CalculateInertialVelocity(void);
-  void CalculateUVWdot(void);
   const FGQuaternion& GetQuaterniondot(void) const {return vQtrndot;}
 
   /** Retrieves the velocity vector.
@@ -605,6 +601,11 @@ private:
   eIntegrateType integrator_rotational_position;
   eIntegrateType integrator_translational_position;
   int gravType;
+
+  void CalculatePQRdot(void);
+  void CalculateQuatdot(void);
+  void CalculateInertialVelocity(void);
+  void CalculateUVWdot(void);
 
   void Integrate( FGColumnVector3& Integrand,
                   FGColumnVector3& Val,
