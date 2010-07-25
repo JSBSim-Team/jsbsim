@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "models/propulsion/FGForce.h"
+#include "models/FGPropagate.h"
 #include "math/FGColumnVector3.h"
 #include <string>
 
@@ -46,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.38 2010/03/23 22:44:36 andgi Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.39 2010/07/25 15:35:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,19 +178,10 @@ CLASS DOCUMENTATION
             <retractable>{0 | 1}</retractable>
             <table type="{CORNERING_COEFF}">
             </table>
-            <relaxation_velocity>
-               <rolling unit="{FT/SEC | KTS | M/S}"> {number} </rolling>
-               <side unit="{FT/SEC | KTS | M/S}"> {number} </side>
-            </relaxation_velocity>
-            <force_lag_filter>
-               <rolling> {number} </rolling>
-               <side> {number} </side>
-            </force_lag_filter>
-            <wheel_slip_filter> {number} </wheel_slip_filter>  
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.38 2010/03/23 22:44:36 andgi Exp $
+    @version $Id: FGLGear.h,v 1.39 2010/07/25 15:35:11 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -215,6 +207,8 @@ public:
   enum ReportType {erNone=0, erTakeoff, erLand};
   /// Damping types
   enum DampType {dtLinear=0, dtSquare};
+  /// Friction types
+  enum FrictionType {ftRoll=0, ftSide, ftDynamic};
   /** Constructor
       @param el a pointer to the XML element that contains the CONTACT info.
       @param Executive a pointer to the parent executive object
@@ -289,6 +283,8 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
+  const FGPropagate::LagrangeMultiplier* GetMultiplierEntry(int entry) const;
+  void SetLagrangeMultiplier(double lambda, int entry);
 
   void bind(void);
 
@@ -338,6 +334,7 @@ private:
   bool GearUp, GearDown;
   bool Servicable;
   bool Castered;
+  bool StaticFriction;
   std::string name;
   std::string sSteerType;
   std::string sBrakeGroup;
@@ -350,22 +347,14 @@ private:
   DampType    eDampType;
   DampType    eDampTypeRebound;
   double  maxSteerAngle;
-  double RFRV;  // Rolling force relaxation velocity
-  double SFRV;  // Side force relaxation velocity
-  double LongForceLagFilterCoeff; // Longitudinal Force Lag Filter Coefficient
-  double LatForceLagFilterCoeff; // Lateral Force Lag Filter Coefficient
-  double WheelSlipLagFilterCoeff; // Wheel slip angle lag filter coefficient
 
-  Filter LongForceFilter;
-  Filter LatForceFilter;
-  Filter WheelSlipFilter;
+  FGPropagate::LagrangeMultiplier LMultiplier[3];
 
-  FGState*       State;
-  FGAircraft*    Aircraft;
-  FGPropagate*   Propagate;
-  FGAuxiliary*   Auxiliary;
-  FGFCS*         FCS;
-  FGMassBalance* MassBalance;
+  FGAuxiliary*       Auxiliary;
+  FGPropagate*       Propagate;
+  FGFCS*             FCS;
+  FGMassBalance*     MassBalance;
+  FGGroundReactions* GroundReactions;
 
   void ComputeRetractionState(void);
   void ComputeBrakeForceCoefficient(void);
@@ -374,6 +363,7 @@ private:
   void ComputeSideForceCoefficient(void);
   void ComputeVerticalStrutForce(void);
   void ComputeGroundCoordSys(void);
+  void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
   void CrashDetect(void);
   void InitializeReporting(void);
   void ResetReporting(void);

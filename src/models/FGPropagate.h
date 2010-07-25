@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.42 2010/07/25 13:53:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.43 2010/07/25 15:35:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.42 2010/07/25 13:53:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.43 2010/07/25 15:35:11 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,6 +564,14 @@ public:
     VState.vLocation -= vDeltaXYZEC;
   }
 
+  struct LagrangeMultiplier {
+    FGColumnVector3 ForceJacobian;
+    FGColumnVector3 MomentJacobian;
+    double Min;
+    double Max;
+    double value;
+  };
+
 private:
 
 // state vector
@@ -618,6 +626,8 @@ private:
                   deque <FGQuaternion>& ValDot,
                   double dt,
                   eIntegrateType integration_type);
+
+  void ResolveFrictionForces(double dt);
 
   void bind(void);
   void Debug(int from);

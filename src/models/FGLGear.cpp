@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.74 2010/05/18 10:54:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.75 2010/07/25 15:35:11 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -210,49 +210,11 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
          << sSteerType << " is undefined." << endl;
   }
 
-  RFRV = 0.7;  // Rolling force relaxation velocity, default value
-  SFRV = 0.7;  // Side force relaxation velocity, default value
-
-  Element* relax_vel = el->FindElement("relaxation_velocity");
-  if (relax_vel) {
-    if (relax_vel->FindElement("rolling")) {
-      RFRV = relax_vel->FindElementValueAsNumberConvertTo("rolling", "FT/SEC");
-    }
-    if (relax_vel->FindElement("side")) {
-      SFRV = relax_vel->FindElementValueAsNumberConvertTo("side", "FT/SEC");
-    }
-  }
-
-  Aircraft    = fdmex->GetAircraft();
-  Propagate   = fdmex->GetPropagate();
-  Auxiliary   = fdmex->GetAuxiliary();
-  FCS         = fdmex->GetFCS();
-  MassBalance = fdmex->GetMassBalance();
-
-  LongForceLagFilterCoeff = 1/fdmex->GetDeltaT(); // default longitudinal force filter coefficient
-  LatForceLagFilterCoeff  = 1/fdmex->GetDeltaT(); // default lateral force filter coefficient
-
-  Element* force_lag_filter_elem = el->FindElement("force_lag_filter");
-  if (force_lag_filter_elem) {
-    if (force_lag_filter_elem->FindElement("rolling")) {
-      LongForceLagFilterCoeff = force_lag_filter_elem->FindElementValueAsNumber("rolling");
-    }
-    if (force_lag_filter_elem->FindElement("side")) {
-      LatForceLagFilterCoeff = force_lag_filter_elem->FindElementValueAsNumber("side");
-    }
-  }
-
-  LongForceFilter = Filter(LongForceLagFilterCoeff, fdmex->GetDeltaT());
-  LatForceFilter = Filter(LatForceLagFilterCoeff, fdmex->GetDeltaT());
-
-  WheelSlipLagFilterCoeff = 1/fdmex->GetDeltaT();
-
-  Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
-  if (wheel_slip_angle_lag_elem) {
-    WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->GetDataAsNumber();
-  }
-  
-  WheelSlipFilter = Filter(WheelSlipLagFilterCoeff, fdmex->GetDeltaT());
+  Auxiliary       = fdmex->GetAuxiliary();
+  Propagate       = fdmex->GetPropagate();
+  FCS             = fdmex->GetFCS();
+  MassBalance     = fdmex->GetMassBalance();
+  GroundReactions = fdmex->GetGroundReactions();
 
   GearUp = false;
   GearDown = true;
@@ -291,6 +253,11 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   Peak = staticFCoeff;
   Curvature = 1.03;
 
+  // Initialize Lagrange multipliers
+  LMultiplier[ftRoll].value = 0.;
+  LMultiplier[ftSide].value = 0.;
+  LMultiplier[ftRoll].value = 0.;
+
   Debug(0);
 }
 
@@ -307,35 +274,35 @@ FGLGear::~FGLGear()
 FGColumnVector3& FGLGear::GetBodyForces(void)
 {
   double t = fdmex->GetSimTime();
-  dT = fdmex->GetDeltaT()*fdmex->GetGroundReactions()->GetRate();
+  dT = fdmex->GetDeltaT()*GroundReactions->GetRate();
 
   vFn.InitMatrix();
 
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
-    double verticalZProj = 0.;
-
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZn); // Get wheel in body frame
     vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
 
     gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
-    // Compute the height of the theoretical location of the wheel (if strut is not compressed) with
-    // respect to the ground level
+    // Compute the height of the theoretical location of the wheel (if strut is
+    // not compressed) with respect to the ground level
     double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
     vGroundNormal = Propagate->GetTec2b() * normal;
 
-    // The height returned above is the AGL and is expressed in the Z direction of the local
-    // coordinate frame. We now need to transform this height in actual compression of the strut (BOGEY)
-    // of in the normal direction to the ground (STRUCTURE)
+    // The height returned above is the AGL and is expressed in the Z direction
+    // of the ECEF coordinate frame. We now need to transform this height in
+    // actual compression of the strut (BOGEY) of in the normal direction to the
+    // ground (STRUCTURE)
+    double normalZ = (Propagate->GetTec2l()*normal)(eZ);
+    double LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
+
     switch (eContactType) {
     case ctBOGEY:
-      verticalZProj = (Propagate->GetTb2l()*mTGear*FGColumnVector3(0.,0.,1.))(eZ);
-      compressLength = verticalZProj > 0.0 ? -height / verticalZProj : 0.0;
+      compressLength = LGearProj > 0.0 ? height * normalZ / LGearProj : 0.0;
       break;
     case ctSTRUCTURE:
-      verticalZProj = -(Propagate->GetTec2l()*normal)(eZ);
-      compressLength = fabs(verticalZProj) > 0.0 ? -height / verticalZProj : 0.0;
+      compressLength = height * normalZ / DotProduct(normal, normal);
       break;
     }
 
@@ -343,13 +310,22 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
 
       WOW = true;
 
-      // [The next equation should really use the vector to the contact patch of
-      // the tire including the strut compression and not the original vWhlBodyVec.]
+      // The following equations use the vector to the tire contact patch
+      // including the strut compression.
+      FGColumnVector3 vWhlDisplVec;
 
-      FGColumnVector3 vWhlDisplVec = mTGear * FGColumnVector3(0., 0., compressLength);
-      FGColumnVector3 vWhlContactVec = vWhlBodyVec - vWhlDisplVec;
-      vActingXYZn = vXYZn - Tb2s * vWhlDisplVec;
-      FGColumnVector3 vBodyWhlVel  = Propagate->GetPQR() * vWhlContactVec;
+      switch(eContactType) {
+      case ctBOGEY:
+        vWhlDisplVec = mTGear * FGColumnVector3(0., 0., -compressLength);
+        break;
+      case ctSTRUCTURE:
+        vWhlDisplVec = compressLength * vGroundNormal;
+        break;
+      }
+
+      FGColumnVector3 vWhlContactVec = vWhlBodyVec + vWhlDisplVec;
+      vActingXYZn = vXYZn + Tb2s * vWhlDisplVec;
+      FGColumnVector3 vBodyWhlVel = Propagate->GetPQR() * vWhlContactVec;
       vBodyWhlVel += Propagate->GetUVW() - Propagate->GetTec2b() * cvel;
 
       vWhlVelVec = mTGear.Transposed() * vBodyWhlVel;
@@ -360,47 +336,20 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
 
       vLocalWhlVel = Transform().Transposed() * vBodyWhlVel;
 
-      switch (eContactType) {
-      case ctBOGEY:
-        // Compression speed along the strut
-        compressSpeed = -vWhlVelVec(eZ);
-      case ctSTRUCTURE:
-        // Compression speed along the ground normal
-        compressSpeed = -vLocalWhlVel(eX);
-      }
+      compressSpeed = -vLocalWhlVel(eX);
+      if (eContactType == ctBOGEY)
+        compressSpeed /= LGearProj;
 
       ComputeVerticalStrutForce();
 
-      // Compute the forces in the wheel ground plane.
+      // Compute the friction coefficients in the wheel ground plane.
       if (eContactType == ctBOGEY) {
         ComputeSlipAngle();
         ComputeBrakeForceCoefficient();
         ComputeSideForceCoefficient();
-        double sign = vLocalWhlVel(eY)>0?1.0:(vLocalWhlVel(eY)<0?-1.0:0.0);
-        vFn(eY) = - ((1.0 - TirePressureNorm) * 30 + vFn(eX) * BrakeFCoeff) * sign;
-        vFn(eZ) = vFn(eX) * FCoeff;
-      }
-      else if (eContactType == ctSTRUCTURE) {
-        FGColumnVector3 vSlipVec = vLocalWhlVel;
-        vSlipVec(eX) = 0.;
-        vSlipVec.Normalize();
-        vFn -= staticFCoeff * vFn(eX) * vSlipVec;
       }
 
-      // Lag and attenuate the XY-plane forces dependent on velocity. This code
-      // uses a lag filter, C/(s + C) where "C" is the filter coefficient. When
-      // "C" is chosen at the frame rate (in Hz), the jittering is significantly
-      // reduced. This is because the jitter is present *at* the execution rate.
-      // If a coefficient is set to something equal to or less than zero, the
-      // filter is bypassed.
-
-      if (LongForceLagFilterCoeff > 0) vFn(eY) = LongForceFilter.execute(vFn(eY));
-      if (LatForceLagFilterCoeff > 0)  vFn(eZ) = LatForceFilter.execute(vFn(eZ));
-
-      if ((fabs(vLocalWhlVel(eY)) <= RFRV) && RFRV > 0) vFn(eY) *= fabs(vLocalWhlVel(eY))/RFRV;
-      if ((fabs(vLocalWhlVel(eZ)) <= SFRV) && SFRV > 0) vFn(eZ) *= fabs(vLocalWhlVel(eZ))/SFRV;
-
-      // End section for attenuating gear jitter
+      ComputeJacobian(vWhlContactVec);
 
     } else { // Gear is NOT compressed
 
@@ -496,9 +445,6 @@ void FGLGear::ComputeSlipAngle(void)
 {
   // Calculate tire slip angle.
   WheelSlip = -atan2(vLocalWhlVel(eZ), fabs(vLocalWhlVel(eY)))*radtodeg;
-
-  // Filter the wheel slip angle
-  if (WheelSlipLagFilterCoeff > 0) WheelSlip = WheelSlipFilter.execute(WheelSlip);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -576,20 +522,18 @@ void FGLGear::InitializeReporting(void)
 
 void FGLGear::ReportTakeoffOrLanding(void)
 {
-  double deltaT = fdmex->GetDeltaT()*fdmex->GetGroundReactions()->GetRate();
-
   if (FirstContact)
-    LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
+    LandingDistanceTraveled += Auxiliary->GetVground()*dT;
 
   if (StartedGroundRun) {
-    TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
-    if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
+    TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*dT;
+    if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*dT;
   }
 
   if ( ReportEnable
        && Auxiliary->GetVground() <= 0.05
        && !LandingReported
-       && fdmex->GetGroundReactions()->GetWOW())
+       && GroundReactions->GetWOW())
   {
     if (debug_lvl > 0) Report(erLand);
   }
@@ -597,7 +541,7 @@ void FGLGear::ReportTakeoffOrLanding(void)
   if ( ReportEnable
        && !TakeoffReported
        && (Propagate->GetDistanceAGL() - vLocalGear(eZ)) > 50.0
-       && !fdmex->GetGroundReactions()->GetWOW())
+       && !GroundReactions->GetWOW())
   {
     if (debug_lvl > 0) Report(erTakeoff);
   }
@@ -739,6 +683,103 @@ double FGLGear::GetGearUnitPos(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Compute the jacobian entries for the friction forces resolution later
+// in FGPropagate
+
+void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
+{
+  // When the point of contact is moving, dynamic friction is used
+  // This type of friction is limited to ctSTRUCTURE elements because their
+  // friction coefficient is the same in every directions
+  if ((eContactType == ctSTRUCTURE) && (vLocalWhlVel.Magnitude(eY,eZ) > 1E-3)) {
+    FGColumnVector3 velocityDirection = vLocalWhlVel;
+
+    StaticFriction = false;
+
+    velocityDirection(eX) = 0.;
+    velocityDirection.Normalize();
+
+    LMultiplier[ftDynamic].ForceJacobian = Transform()*velocityDirection;
+    LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
+    LMultiplier[ftDynamic].Max = 0.;
+    LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eX));
+    LMultiplier[ftDynamic].value = Constrain(LMultiplier[ftDynamic].Min, LMultiplier[ftDynamic].value, LMultiplier[ftDynamic].Max);
+  }
+  else {
+    // Static friction is used for ctSTRUCTURE when the contact point is not moving.
+    // It is always used for ctBOGEY elements because the friction coefficients
+    // of a tyre depend on the direction of the movement (roll & side directions).
+    // This cannot be handled properly by the so-called "dynamic friction".
+    StaticFriction = true;
+
+    LMultiplier[ftRoll].ForceJacobian = Transform()*FGColumnVector3(0.,1.,0.);
+    LMultiplier[ftSide].ForceJacobian = Transform()*FGColumnVector3(0.,0.,1.);
+    LMultiplier[ftRoll].MomentJacobian = vWhlContactVec * LMultiplier[ftRoll].ForceJacobian;
+    LMultiplier[ftSide].MomentJacobian = vWhlContactVec * LMultiplier[ftSide].ForceJacobian;
+
+    switch(eContactType) {
+    case ctBOGEY:
+      LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eX));
+      LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eX));
+      break;
+    case ctSTRUCTURE:
+      LMultiplier[ftRoll].Max = fabs(staticFCoeff * vFn(eX));
+      LMultiplier[ftSide].Max = fabs(staticFCoeff * vFn(eX));
+      break;
+    }
+
+    LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
+    LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
+    LMultiplier[ftRoll].value = Constrain(LMultiplier[ftRoll].Min, LMultiplier[ftRoll].value, LMultiplier[ftRoll].Max);
+    LMultiplier[ftSide].value = Constrain(LMultiplier[ftSide].Min, LMultiplier[ftSide].value, LMultiplier[ftSide].Max);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGPropagate::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry) const
+{
+  switch(entry) {
+  case 0:
+    if (StaticFriction)
+      return &LMultiplier[ftRoll];
+    else
+      return &LMultiplier[ftDynamic];
+  case 1:
+    if (StaticFriction)
+      return &LMultiplier[ftSide];
+  default:
+    return NULL;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::SetLagrangeMultiplier(double lambda, int entry)
+{
+  switch(entry) {
+  case 0:
+    if (StaticFriction) {
+      LMultiplier[ftRoll].value = lambda;
+      vFn(eY) = lambda;
+    }
+    else {
+      LMultiplier[ftDynamic].value = lambda;
+      vFn += lambda * (Transform ().Transposed() * LMultiplier[ftRoll].ForceJacobian);
+    }
+    break;
+  case 1:
+    if (StaticFriction) {
+      LMultiplier[ftSide].value = lambda;
+      vFn(eZ) = lambda;
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLGear::bind(void)
 {
@@ -807,11 +848,11 @@ void FGLGear::Report(ReportType repType)
          << " ft,     " << TakeoffDistanceTraveled*0.3048  << " meters"  << endl;
     cout << "  Distance traveled (over 50'):     " << TakeoffDistanceTraveled50ft
          << " ft,     " << TakeoffDistanceTraveled50ft*0.3048 << " meters" << endl;
-    cout << "  [Altitude (ASL): " << fdmex->GetPropagate()->GetAltitudeASL() << " ft. / "
-         << fdmex->GetPropagate()->GetAltitudeASLmeters() << " m  | Temperature: "
+    cout << "  [Altitude (ASL): " << Propagate->GetAltitudeASL() << " ft. / "
+         << Propagate->GetAltitudeASLmeters() << " m  | Temperature: "
          << fdmex->GetAtmosphere()->GetTemperature() - 459.67 << " F / "
          << RankineToCelsius(fdmex->GetAtmosphere()->GetTemperature()) << " C]" << endl;
-    cout << "  [Velocity (KCAS): " << fdmex->GetAuxiliary()->GetVcalibratedKTS() << "]" << endl;
+    cout << "  [Velocity (KCAS): " << Auxiliary->GetVcalibratedKTS() << "]" << endl;
     TakeoffReported = true;
     break;
   case erNone:
@@ -866,9 +907,6 @@ void FGLGear::Debug(int from)
         cout << "      Grouping:         " << sBrakeGroup   << endl;
         cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
         cout << "      Retractable:      " << isRetractable  << endl;
-        cout << "      Relaxation Velocities:" << endl;
-        cout << "        Rolling:          " << RFRV << endl;
-        cout << "        Side:             " << SFRV << endl;
       }
     }
   }
