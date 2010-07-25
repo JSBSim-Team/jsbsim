@@ -46,13 +46,59 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.26 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.27 2010/07/25 15:34:51 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION for MultiplierIterator (See below for FGGroundReactions)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+MultiplierIterator::MultiplierIterator(FGGroundReactions* GndReactions)
+: GroundReactions(GndReactions),
+  multiplier(NULL),
+  gearNum(0),
+  entry(0)
+{
+  for (int i=0; i < GroundReactions->GetNumGearUnits(); i++) {
+		FGLGear* gear = GroundReactions->GetGearUnit(i);
+
+		if (!gear->GetWOW()) continue;
+
+    gearNum = i;
+    multiplier = gear->GetMultiplierEntry(0);
+    break;
+  }
+}
+
+MultiplierIterator& MultiplierIterator::operator++()
+{
+  for (int i=gearNum; i < GroundReactions->GetNumGearUnits(); i++) {
+		FGLGear* gear = GroundReactions->GetGearUnit(i);
+
+    if (!gear->GetWOW()) continue;
+
+    multiplier = gear->GetMultiplierEntry(++entry);
+    if (multiplier) {
+      gearNum = i;
+      break;
+    }
+    else
+      entry = -1;
+  }
+
+  return *this;
+}
+
+void MultiplierIterator::SetLagrangeMultiplier(double lambda)
+{
+  FGLGear* gear = GroundReactions->GetGearUnit(gearNum);
+
+  gear->SetLagrangeMultiplier(lambda, entry);
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 {
@@ -276,4 +322,5 @@ void FGGroundReactions::Debug(int from)
     }
   }
 }
+
 }

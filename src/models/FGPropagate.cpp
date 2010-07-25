@@ -48,6 +48,7 @@ COMMENTS, REFERENCES,  and NOTES
     Wiley & Sons, 1979 ISBN 0-471-03032-5
 [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
     1982 ISBN 0-471-08936-2
+[6] Erin Catto, "Iterative Dynamics with Temporal Coherence", February 22, 2005
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -70,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.55 2010/07/09 04:11:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.56 2010/07/25 15:34:51 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,6 +220,8 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   CalculateQuatdot();          // Angular orientation derivative
   CalculateInertialVelocity(); // Translational position derivative
 
+  ResolveFrictionForces(0.);
+
   // Initialize past values deques
   VState.dqPQRdot.clear();
   VState.dqUVWdot.clear();
@@ -271,6 +274,8 @@ static int ctr;
   CalculateUVWdot();           // Translational rate derivative
   CalculateQuatdot();          // Angular orientation derivative
   CalculateInertialVelocity(); // Translational position derivative
+
+  ResolveFrictionForces(dt);
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
   Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
@@ -386,9 +391,7 @@ void FGPropagate::CalculateUVWdot(void)
   vUVWdot = vForces/mass - (VState.vPQR + 2.0*(Ti2b *vOmegaEarth)) * VState.vUVW;
 
   // Include Centripetal acceleration.
-  if (!GroundReactions->GetWOW() && Aircraft->GetHoldDown() == 0) {
-    vUVWdot -= Ti2b * (vOmegaEarth*(vOmegaEarth*VState.vInertialPosition));
-  }
+  vUVWdot -= Ti2b * (vOmegaEarth*(vOmegaEarth*VState.vInertialPosition));
 
   // Include Gravitation accel
   switch (gravType) {
@@ -464,9 +467,119 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
     break;
   case eAdamsBashforth4: Integrand += (1/24.0)*dt*(55.0*ValDot[0] - 59.0*ValDot[1] + 37.0*ValDot[2] - 9.0*ValDot[3]);
     break;
-  case eNone: // do nothing, freeze translational rate
+  case eNone: // do nothing, freeze rotational rate
     break;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Resolves the contact forces just before integrating the EOM.
+// This routine is using Lagrange multipliers and the projected Gauss-Seidel
+// (PGS) method.
+// Reference: See Erin Catto, "Iterative Dynamics with Temporal Coherence", 
+//            February 22, 2005
+// In JSBSim there is only one solid (the aircraft) and there can be multiple
+// points of contact between the aircraft and the ground. As a consequence our
+// matrix J*M^-1*J^T is not sparse and the algorithm described in Catto's paper
+// has been adapted accordingly.
+
+void FGPropagate::ResolveFrictionForces(double dt)
+{
+  double invMass = 1.0 / MassBalance->GetMass();
+  const FGMatrix33& Jinv = MassBalance->GetJinv();
+  vector <FGColumnVector3> JacF, JacM;
+  FGColumnVector3 vdot, wdot;
+  FGColumnVector3 Fc, Mc;
+  int n = 0, i;
+
+  // Compiles data from the ground reactions to build up the jacobian matrix
+  for (MultiplierIterator it=MultiplierIterator(GroundReactions); *it; ++it, n++) {
+    JacF.push_back((*it)->ForceJacobian);
+    JacM.push_back((*it)->MomentJacobian);
+  }
+
+  if (!n) return;
+
+  double *a = new double[n*n]; // Will contain J*M^-1*J^T
+  double *eta = new double[n];
+  double *lambda = new double[n];
+  double *lambdaMin = new double[n];
+  double *lambdaMax = new double[n];
+
+  // Initializes the Lagrange multipliers
+  i = 0;
+  for (MultiplierIterator it=MultiplierIterator(GroundReactions); *it; ++it, i++) {
+    lambda[i] = (*it)->value;
+    lambdaMax[i] = (*it)->Max;
+    lambdaMin[i] = (*it)->Min;
+  }
+
+  vdot = vUVWdot;
+  wdot = vPQRdot;
+
+  if (dt > 0.) {
+    vdot += VState.vUVW / dt; // TODO: Takes the ground velocity into account (for example a transport carrier)
+    wdot += VState.vPQR / dt;
+  }
+
+  // Assemble the linear system of equations
+  for (i=0; i < n; i++) {
+    for (int j=0; j < i; j++)
+      a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of J^T*M^-1*J
+    for (int j=i; j < n; j++)
+      a[i*n+j] = DotProduct(JacF[i],invMass*JacF[j])+DotProduct(JacM[i],Jinv*JacM[j]);
+  }
+
+  // Prepare the linear system for the Gauss-Seidel algorithm :
+  // divide every line of 'a' and eta by a[i,i]. This is in order to save
+  // a division computation at each iteration of Gauss-Seidel.
+  for (i=0; i < n; i++) {
+    double d = 1.0 / a[i*n+i];
+
+    eta[i] = -(DotProduct(JacF[i],vdot)+DotProduct(JacM[i],wdot))*d;
+    for (int j=0; j < n; j++)
+      a[i*n+j] *= d;
+  }
+
+  // Resolve the Lagrange multipliers with the projected Gauss-Seidel method
+  for (int iter=0; iter < 50; iter++) {
+    double norm = 0.;
+
+    for (i=0; i < n; i++) {
+      double lambda0 = lambda[i];
+      double dlambda = eta[i];
+      
+      for (int j=0; j < n; j++)
+        dlambda -= a[i*n+j]*lambda[j];
+
+      lambda[i] = Constrain(lambdaMin[i], lambda0+dlambda, lambdaMax[i]);
+      dlambda = lambda[i] - lambda0;
+
+      norm += fabs(dlambda);
+    }
+
+    if (norm < 1E-5) break;
+  }
+
+  // Compute the friction forces
+  Fc.InitMatrix();
+  Mc.InitMatrix();
+
+  for (i=0; i< n; i++) {
+    Fc += lambda[i]*JacF[i];
+    Mc += lambda[i]*JacM[i];
+  }
+
+  vUVWdot += invMass * Fc;
+  vPQRdot += Jinv * Mc;
+
+  // Send the new value of the Lagrange multipliers to their owners so that they
+  // can store it for future re-use
+  i = 0;
+  for (MultiplierIterator it=MultiplierIterator(GroundReactions); *it; ++it)
+    it.SetLagrangeMultiplier(lambda[i++]);
+
+  delete a, eta, lambda, lambdaMin, lambdaMax;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -488,8 +601,6 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
   double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
-//  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
-//  LocalTerrainRadius = contactloc.GetRadius();
   LocalTerrainRadius = FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius();
 }
 
