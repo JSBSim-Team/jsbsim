@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.78 2010/04/12 12:25:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.79 2010/07/25 13:52:20 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -665,10 +665,10 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 
     modelLoaded = true;
 
-    MassBalance->Run(); // Update all mass properties for the report.
-    MassBalance->GetMassPropertiesReport();
-
     if (debug_lvl > 0) {
+      MassBalance->Run(); // Update all mass properties for the report.
+      MassBalance->GetMassPropertiesReport();
+
       cout << endl << fgblue << highint
            << "End of vehicle configuration loading." << endl
            << "-------------------------------------------------------------------------------"
