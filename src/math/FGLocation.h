@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.21 2010/07/09 04:11:45 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.22 2010/07/25 22:15:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.21 2010/07/09 04:11:45 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.22 2010/07/25 22:15:57 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +326,8 @@ public:
       @return the distance of the location represented with this class
       instance to the center of the earth in ft. The radius value is
       always positive. */
-  double GetRadius() const { return mECLoc.Magnitude(); }
+  //double GetRadius() const { return mECLoc.Magnitude(); } // may not work with FlightGear
+  double GetRadius() const { ComputeDerived(); return mRadius; }
 
   /** Transform matrix from local horizontal to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from
