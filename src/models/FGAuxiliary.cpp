@@ -4,7 +4,7 @@
  Author:       Tony Peden, Jon Berndt
  Date started: 01/26/99
  Purpose:      Calculates additional parameters needed by the visual system, etc.
- Called by:    FGSimExec
+ Called by:    FGFDMExec
 
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.40 2010/07/25 17:35:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.41 2010/07/27 03:20:32 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,7 +261,7 @@ bool FGAuxiliary::Run()
      Nz = -vPilotAccel(eZ)/Inertial->gravity();
   }
 
-  vPilotAccelN = vPilotAccel/Inertial->gravity();
+  vPilotAccelN = vPilotAccel/Inertial->SLgravity();
 
   // VRP computation
   const FGLocation& vLocation = Propagate->GetLocation();
