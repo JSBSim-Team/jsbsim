@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.41 2010/07/27 03:20:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.42 2010/07/27 23:18:19 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +246,7 @@ bool FGAuxiliary::Run()
 
      vAircraftAccel /= MassBalance->GetMass();
      // Nz is Acceleration in "g's", along normal axis (-Z body axis)
-     Nz = -vAircraftAccel(eZ)/Inertial->gravity();
+     Nz = -vAircraftAccel(eZ)/Inertial->SLgravity();
      vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
      vPilotAccel = vAircraftAccel + Propagate->GetPQRdot() * vToEyePt;
      vPilotAccel += vPQR * (vPQR * vToEyePt);
@@ -257,8 +257,8 @@ bool FGAuxiliary::Run()
      // any jitter that could be introduced by the landing gear. Theoretically,
      // this branch could be eliminated, with a penalty of having a short
      // transient at startup (lasting only a fraction of a second).
-     vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, -Inertial->gravity() );
-     Nz = -vPilotAccel(eZ)/Inertial->gravity();
+     vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, -Inertial->SLgravity() );
+     Nz = -vPilotAccel(eZ)/Inertial->SLgravity();
   }
 
   vPilotAccelN = vPilotAccel/Inertial->SLgravity();
