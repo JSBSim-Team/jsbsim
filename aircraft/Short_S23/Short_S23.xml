@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Short_S23.xml,v 1.3 2010/03/25 22:34:57 andgi Exp $ -->
+<!-- $Id: Short_S23.xml,v 1.4 2010/07/28 13:30:00 andgi Exp $ -->
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
@@ -31,7 +31,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate> 2008-11-05 </filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.3 2010/03/25 22:34:57 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.4 2010/07/28 13:30:00 andgi Exp $</version>
 
   <description> Models a Short S.23 flying boat. </description>
 
@@ -115,7 +115,7 @@
        manually set. -->
   <wingarea unit="FT2">     1510.0000  </wingarea>
   <wingspan unit="FT">       114.0000  </wingspan>
-  <chord unit="FT">           16.4698  </chord>
+  <chord unit="FT">           16.4583  </chord>
   <htailarea unit="FT2">     226.6750  </htailarea>
   <htailarm unit="FT">        12.2147  </htailarm>
   <vtailarea unit="FT2">     319.0423  </vtailarea>
@@ -134,7 +134,7 @@
    <location name="AERORP" unit="M">
      <x> 8.68 </x>
      <y> 0.00 </y>
-     <z> 0.00 </z>
+     <z> 1.00 </z>
    </location>
    <location name="EYEPOINT" unit="M">
      <x> 2.05 </x>
@@ -252,9 +252,9 @@
     <y> -9.75 </y>
     <z> -0.50 </z>
    </location>
-   <static_friction>  0.80 </static_friction>
-   <dynamic_friction> 0.80 </dynamic_friction>
-   <rolling_friction> 0.10 </rolling_friction>
+   <static_friction>  0.0 </static_friction>
+   <dynamic_friction> 0.8 </dynamic_friction>
+   <rolling_friction> 0.0 </rolling_friction>
    <spring_coeff unit="LBS/FT">      1200.0 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 1000.0 </damping_coeff>
    <max_steer unit="DEG">0</max_steer>
@@ -268,9 +268,9 @@
     <y>  9.75 </y>
     <z> -0.50 </z>
    </location>
-   <static_friction>  0.80 </static_friction>
-   <dynamic_friction> 0.80 </dynamic_friction>
-   <rolling_friction> 0.10 </rolling_friction>
+   <static_friction>  0.0 </static_friction>
+   <dynamic_friction> 0.8 </dynamic_friction>
+   <rolling_friction> 0.0 </rolling_friction>
    <spring_coeff unit="LBS/FT">      1200.0 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 1000.0 </damping_coeff>
    <max_steer unit="DEG">0</max_steer>
@@ -343,7 +343,7 @@
     <z>  2.90 </z>
    </location>
    <orient unit="DEG">
-    <pitch> 4.00 </pitch>
+    <pitch> 1.13 </pitch>
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
@@ -356,7 +356,7 @@
      <z>  2.90 </z>
     </location>
     <orient unit="DEG">
-     <pitch> 4.00 </pitch>
+     <pitch> 1.13 </pitch>
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
@@ -370,7 +370,7 @@
     <z>  2.69 </z>
    </location>
    <orient unit="DEG">
-    <pitch> 4.00 </pitch>
+    <pitch> 1.13 </pitch>
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
@@ -383,7 +383,7 @@
      <z>  2.69 </z>
     </location>
     <orient unit="DEG">
-     <pitch> 4.00 </pitch>
+     <pitch> 1.13 </pitch>
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
@@ -397,7 +397,7 @@
     <z>  2.69 </z>
    </location>
    <orient unit="DEG">
-    <pitch> 4.00 </pitch>
+    <pitch> 1.13 </pitch>
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
@@ -410,7 +410,7 @@
      <z>  2.69 </z>
     </location>
     <orient unit="DEG">
-     <pitch> 4.00 </pitch>
+     <pitch> 1.13 </pitch>
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
@@ -424,7 +424,7 @@
     <z>  2.90 </z>
    </location>
    <orient unit="DEG">
-    <pitch> 4.00 </pitch>
+    <pitch> 1.13 </pitch>
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
@@ -437,7 +437,7 @@
      <z>  2.90 </z>
     </location>
     <orient unit="DEG">
-     <pitch> 4.00 </pitch>
+     <pitch> 1.13 </pitch>
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
@@ -451,7 +451,6 @@
     <z>  2.50 </z>
    </location>
    <radius unit="M"> 1.626 </radius>
-   <!-- temperature unit="degF"> 50.0 </temperature --> <!-- Remove on error. -->
    <capacity unit="LBS"> 2352.00 </capacity>
    <contents unit="LBS"> 2352.00 </contents>
   </tank>
@@ -463,7 +462,6 @@
     <z>  2.50 </z>
    </location>
    <radius unit="M"> 1.626 </radius>
-   <!-- temperature unit="degF"> 50.0 </temperature --> <!-- Remove on error. -->
    <capacity unit="LBS"> 2352.00 </capacity>
    <contents unit="LBS"> 2352.00 </contents>
   </tank>
@@ -485,6 +483,7 @@
   </documentation>
 
   <!-- FlightGear multiplayer dual control properties. -->
+  <!-- Also used by the take-off autopilot. -->
   <property>fcs/copilot/aileron-cmd-norm</property>
   <property>fcs/copilot/elevator-cmd-norm</property>
   <property>fcs/copilot/rudder-cmd-norm</property>
@@ -504,8 +503,8 @@
    <aerosurface_scale name="Elevator Control rad">
       <input>fcs/pitch-trim-sum</input>
       <range>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3142 </min>
+        <max>  0.3142 </max>
       </range>
       <output>fcs/elevator-pos-rad</output>
    </aerosurface_scale>
@@ -518,8 +517,8 @@
    <aerosurface_scale name="elevator normalization">
       <input>fcs/elevator-pos-rad</input>
       <domain>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3142 </min>
+        <max>  0.3142 </max>
       </domain>
       <range>
         <min> -1 </min>
@@ -545,8 +544,8 @@
    <aerosurface_scale name="Left Aileron Control rad">
       <input>fcs/roll-trim-sum</input>
       <range>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3403 </min>
+        <max>  0.3403 </max>
       </range>
       <output>fcs/left-aileron-pos-rad</output>
    </aerosurface_scale>
@@ -559,8 +558,8 @@
    <aerosurface_scale name="Right Aileron Control rad">
       <input>fcs/roll-trim-sum</input>
       <range>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3403 </min>
+        <max>  0.3403 </max>
       </range>
       <output>fcs/right-aileron-pos-rad</output>
    </aerosurface_scale>
@@ -573,8 +572,8 @@
    <aerosurface_scale name="left aileron normalization">
       <input>fcs/left-aileron-pos-rad</input>
       <domain>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3403 </min>
+        <max>  0.3403 </max>
       </domain>
       <range>
         <min> -1 </min>
@@ -586,8 +585,8 @@
    <aerosurface_scale name="right aileron normalization">
       <input>fcs/right-aileron-pos-rad</input>
       <domain>
-        <min> -0.35 </min>
-        <max>  0.35 </max>
+        <min> -0.3403 </min>
+        <max>  0.3403 </max>
       </domain>
       <range>
         <min> -1 </min>
@@ -605,16 +604,16 @@
       <input>fcs/copilot/rudder-cmd-norm</input>
       <input>fcs/yaw-trim-cmd-norm</input>
       <clipto>
-        <min> -0.393 </min>
-        <max>  0.393 </max>
+        <min> -0.3927 </min>
+        <max>  0.3927 </max>
       </clipto>
    </summer>
 
    <aerosurface_scale name="Rudder Control rad">
       <input>fcs/rudder-command-sum</input>
       <range>
-        <min> -0.393 </min>
-        <max>  0.393 </max>
+        <min> -0.3927 </min>
+        <max>  0.3927 </max>
       </range>
       <output>fcs/rudder-pos-rad</output>
    </aerosurface_scale>
@@ -854,23 +853,9 @@
  <!-- Autopilot for JSBSim/standalone. -->
  <system file="take-off-ap"/>
 
- <!-- Extra engine parameters -->
+ <!-- Engine controls. -->
  <system file="engines"/>
 
- <!-- aerodynamics file="aeromatic_aero.xml"/ -->
- <aerodynamics file="datcom_aero.xml"/>
-
- <!-- Logging for JSBSim/standalone -->
- <output name="datalog.csv" type="CSV" rate="10">
-  <rates> ON </rates>
-  <velocities> ON </velocities>
-  <forces> ON </forces>
-  <moments> ON </moments>
-  <position> ON </position>
-  <propulsion> ON </propulsion>
-  <aerosurfaces> ON </aerosurfaces>
-  <fcs> ON </fcs>
-  <ground_reactions> ON </ground_reactions>
- </output>
+ <aerodynamics file="Systems/datcom_aero.xml"/>
 
 </fdm_config>

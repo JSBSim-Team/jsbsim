@@ -1,9 +1,9 @@
-<!-- $Id: hydrodynamics.xml,v 1.2 2010/02/13 19:36:32 andgi Exp $ -->
+<?xml version="1.0"?>
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@
   - hydro/v-fps         - The hull's speed relative the water.
  </documentation>
 
+ <!-- Inputs -->
  <property value="0.0">hydro/water-level-ft</property>
 
  <!-- HRP location -->
@@ -76,10 +77,10 @@
  <property value="44.74">hydro/float-beam-ft3</property>
  <property value="158.8">hydro/float-beam-ft4</property>
 
- <property value="9.75">hydro/float-arm-y-ft</property>
+ <property value="31.99">hydro/float-arm-y-ft</property>
 
  <!-- Tweak factors. :) -->
- <property value="0.5">hydro/drag-tweak-factor</property>
+ <property value="0.6">hydro/drag-tweak-factor</property>
  <property value="20.0">hydro/lift-tweak-factor</property>
  <property value="1.5">hydro/pitch-tweak-factor</property>
  <property value="4.0">hydro/yaw-tweak-factor</property>
@@ -166,10 +167,13 @@
 
   <fcs_function name="hydro/beta-rad">
    <function>
-    <difference>
-     <property> flight-path/psi-gt-rad </property>
-     <property> attitude/psi-rad </property>
-    </difference>
+    <!-- mod -->
+     <difference>
+      <property> flight-path/psi-gt-rad </property>
+      <property> attitude/psi-rad </property>
+     </difference>
+     <!-- value> 3.1415927 </value>
+    </mod -->
    </function>
   </fcs_function>
 
@@ -377,17 +381,11 @@
  <channel name="Float positions">
 
   <switch name="hydro/left-float-submersion-ft">
-   <default value="0.0"/>
-   <test value="/gear/gear[0]/compression-ft">
-     /gear/gear[0]/compression-ft NE 0.0
-   </test>
+   <default value="gear/unit[0]/compression-ft"/>
   </switch>
 
   <switch name="hydro/right-float-submersion-ft">
-   <default value="0.0"/>
-   <test value="/gear/gear[1]/compression-ft">
-     /gear/gear[1]/compression-ft NE 0.0
-   </test>
+   <default value="gear/unit[1]/compression-ft"/>
   </switch>
 
  </channel>
@@ -650,7 +648,7 @@
       <independentVar lookup="row">hydro/v-kt</independentVar>
       <independentVar lookup="column">hydro/left-float-submersion-ft</independentVar>
       <tableData>
-                                        0.0     2.0
+                                        0.0     1.0
                           0.0000        0.0     0.0000
                           3.7000        0.0     0.0678
                           6.0000        0.0     0.1356
@@ -706,7 +704,7 @@
       <independentVar lookup="row">hydro/v-kt</independentVar>
       <independentVar lookup="column">hydro/right-float-submersion-ft</independentVar>
       <tableData>
-                                        0.0     2.0
+                                        0.0     1.0
                           0.0000        0.0     0.0000
                           3.7000        0.0     0.0678
                           6.0000        0.0     0.1356
@@ -752,8 +750,8 @@
 
   <summer name="hydro/drag-lbs">
    <input> hydro/hull-drag-lbs </input>
-   <!-- input> hydro/left-float-drag-lbs </input>
-   <input> hydro/right-float-drag-lbs </input -->
+   <input> hydro/left-float-drag-lbs </input>
+   <input> hydro/right-float-drag-lbs </input>
   </summer>
 
  </channel>
@@ -956,7 +954,7 @@
                           57.000       -0.1000 -0.0800  0.0000
       </tableData>
      </table>
-     </product>
+    </product>
    </function>
   </fcs_function>
 
@@ -970,6 +968,35 @@
  </channel>
 
  <channel name="Yaw">
+
+  <fcs_function name="hydro/hull-yaw-moment-lbsft">
+   <documentation>
+    Guess based on the shape of the hull (essentially length of water line
+    forward and aft of CoG guesstimated in blender).
+   </documentation>
+   <function>
+    <description>Hydrodynamic yaw moment due to hull (per deg beta)</description>
+    <product>
+     <property>hydro/qbar-psf</property>
+     <property>hydro/hull-beam-ft3</property>
+     <property>hydro/beta-rad</property>
+     <value>-0.10</value>
+     <table>
+      <independentVar lookup="row">hydro/pitch-deg</independentVar>
+      <independentVar lookup="column">hydro/height-agl-ft</independentVar>
+      <tableData breakpoint="">
+               0.0    3.0    4.0    6.0    7.0
+        0.0   -0.10   0.10   0.10   0.10   0.0
+        2.0   -0.11  -0.05   0.05  -0.10   0.0
+        3.0   -0.12  -0.10   0.00  -0.12   0.0
+        4.0   -0.13  -0.13  -0.10  -0.13   0.0
+        9.0   -0.20  -0.20  -0.20  -0.20   0.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
 
   <fcs_function name="hydro/damping-yaw-moment-lbsft">
    <documentation>
@@ -1012,7 +1039,8 @@
   </fcs_function>
 
   <summer name="hydro/yaw-moment-lbsft">
-   <!-- input> hydro/floats-yaw-moment-lbsft </input -->
+   <input> hydro/hull-yaw-moment-lbsft </input>
+   <input> hydro/floats-yaw-moment-lbsft </input>
    <input> hydro/damping-yaw-moment-lbsft </input>
   </summer>
 
@@ -1122,28 +1150,6 @@
         8 -73.632 5.52166 -0.046139 -5.53083 73.6375
        12 249.164 305.038 -0.0882072 -307.445 -249.183
       </tableData>
-<!--
-      <tableData breakPoint="9.0" >
-            -4.0  -2.0   0.0   2.0   4.0
-       -4 9.65316 -29.3946 0.116049 28.5329 -5.39712
-       -2 7.64309 57.0959 0.159609 -58.3246 -7.97915
-        0 60.8632 37.1863 -0.114307 -37.551 -60.882
-        2 23.6346 -4.42309 0.0563764 3.36065 -23.6652
-        4 67.5136 -1.059 -0.162872 1.05356 -67.5143
-        8 -41.3204 22.1686 0.567848 -22.1814 -19.4546
-       12 -344.352 -150.311 0.887449 148.506 342.39
-      </tableData>
-      <tableData breakPoint="10.0" >
-            -4.0  -2.0   0.0   2.0   4.0
-       -4 77.9386 77.3267 -0.0510067 -76.9263 -73.442
-       -2 27.4616 28.6334 -0.0776854 -28.6312 -27.4613
-        0 58.7029 11.3491 0.116008 -11.3641 -58.6976
-        2 46.9631 22.0932 0.0209892 -22.0996 -86.1649
-        4 9.83869 0.273796 0.0987665 -0.271115 -11.1031
-        8 18.4121 35.289 0.819307 -35.5273 -20.32
-       12 -21.9244 -19.9442 -0.070781 19.9376 21.9402
-      </tableData>
--->
       <tableData breakPoint="9.0">
             -4       -2       0        2        4
        -4   0.0      0.0      0.0      0.0      0.0
@@ -1183,7 +1189,7 @@
 
  </channel>
 
- <!-- Implementation of forces  and moments below. -->
+ <!-- Implementation of forces and moments below. -->
 
  <channel name="Implementation Force X (north)">
 

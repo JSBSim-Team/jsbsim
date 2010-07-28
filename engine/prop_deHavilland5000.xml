@@ -2,7 +2,7 @@
 <!--
   Short Empire flying boat flight model for JSBSim.
 
-  Copyright (C) 2009  Anders Gidenstam  (anders(at)gidenstam.org)
+  Copyright (C) 2009 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
   This file is licensed under the GPL license version 2 or later.
 -->
 <propeller name="deHavilland5000">
