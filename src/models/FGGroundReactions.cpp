@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.28 2010/07/25 15:35:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.29 2010/07/30 11:50:01 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,13 +87,6 @@ MultiplierIterator& MultiplierIterator::operator++()
   }
 
   return *this;
-}
-
-void MultiplierIterator::SetLagrangeMultiplier(double lambda)
-{
-  FGLGear* gear = GroundReactions->GetGearUnit(gearNum);
-
-  gear->SetLagrangeMultiplier(lambda, entry);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,6 +160,20 @@ bool FGGroundReactions::GetWOW(void)
     }
   }
   return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This function must be called after friction forces are resolved in order to
+// include them in the ground reactions total force and moment.
+void FGGroundReactions::UpdateForcesAndMoments(void)
+{
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
+
+  for (unsigned int i=0; i<lGear.size(); i++) {
+    vForces  += lGear[i]->UpdateForces();
+    vMoments += lGear[i]->GetMoments();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,5 +329,4 @@ void FGGroundReactions::Debug(int from)
     }
   }
 }
-
 }

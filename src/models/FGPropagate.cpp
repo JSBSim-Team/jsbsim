@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.58 2010/07/27 23:17:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.59 2010/07/30 11:50:01 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,10 +217,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Make an initial run and set past values
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
+  ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
   CalculateInertialVelocity(); // Translational position derivative
-
-  ResolveFrictionForces(0.);
 
   // Initialize past values deques
   VState.dqPQRdot.clear();
@@ -272,10 +271,9 @@ static int ctr;
   // Calculate state derivatives
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
+  ResolveFrictionForces(dt);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
   CalculateInertialVelocity(); // Translational position derivative
-
-  ResolveFrictionForces(dt);
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
   Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
@@ -477,14 +475,14 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
 // (PGS) method.
 // Reference: See Erin Catto, "Iterative Dynamics with Temporal Coherence", 
 //            February 22, 2005
-// In JSBSim there is only one solid (the aircraft) and there can be multiple
-// points of contact between the aircraft and the ground. As a consequence our
-// matrix J*M^-1*J^T is not sparse and the algorithm described in Catto's paper
-// has been adapted accordingly.
+// In JSBSim there is only one rigid body (the aircraft) and there can be
+// multiple points of contact between the aircraft and the ground. As a
+// consequence our matrix J*M^-1*J^T is not sparse and the algorithm described
+// in Catto's paper has been adapted accordingly.
 
 void FGPropagate::ResolveFrictionForces(double dt)
 {
-  double invMass = 1.0 / MassBalance->GetMass();
+  const double invMass = 1.0 / MassBalance->GetMass();
   const FGMatrix33& Jinv = MassBalance->GetJinv();
   vector <FGColumnVector3> JacF, JacM;
   FGColumnVector3 vdot, wdot;
@@ -497,6 +495,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
     JacM.push_back((*it)->MomentJacobian);
   }
 
+  // If no gears are in contact with the ground then return
   if (!n) return;
 
   double *a = new double[n*n]; // Will contain J*M^-1*J^T
@@ -517,7 +516,15 @@ void FGPropagate::ResolveFrictionForces(double dt)
   wdot = vPQRdot;
 
   if (dt > 0.) {
-    vdot += VState.vUVW / dt; // TODO: Takes the ground velocity into account (for example a transport carrier)
+    // First compute the ground velocity below the aircraft center of gravity
+    FGLocation contact;
+    FGColumnVector3 normal, cvel;
+    double t = FDMExec->GetSimTime();
+    double height = FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contact, normal, cvel);
+
+    // Instruct the algorithm to zero out the relative movement between the
+    // aircraft and the ground.
+    vdot += (VState.vUVW - Tec2b * cvel) / dt;
     wdot += VState.vPQR / dt;
   }
 
@@ -560,7 +567,8 @@ void FGPropagate::ResolveFrictionForces(double dt)
     if (norm < 1E-5) break;
   }
 
-  // Compute the friction forces
+  // Calculate the total friction forces and moments
+
   Fc.InitMatrix();
   Mc.InitMatrix();
 
@@ -572,11 +580,13 @@ void FGPropagate::ResolveFrictionForces(double dt)
   vUVWdot += invMass * Fc;
   vPQRdot += Jinv * Mc;
 
-  // Send the new value of the Lagrange multipliers to their owners so that they
-  // can store it for future re-use
+  // Save the value of the Lagrange multipliers to accelerate the convergence
+  // of the Gauss-Seidel algorithm at next iteration.
   i = 0;
   for (MultiplierIterator it=MultiplierIterator(GroundReactions); *it; ++it)
-    it.SetLagrangeMultiplier(lambda[i++]);
+    (*it)->value = lambda[i++];
+
+  GroundReactions->UpdateForcesAndMoments();
 
   delete a, eta, lambda, lambdaMin, lambdaMax;
 }

@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.75 2010/07/25 15:35:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.76 2010/07/30 11:50:01 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -349,6 +349,8 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
         ComputeSideForceCoefficient();
       }
 
+      // Prepare the Jacobians and the Lagrange multipliers for later friction
+      // forces calculations.
       ComputeJacobian(vWhlContactVec);
 
     } else { // Gear is NOT compressed
@@ -440,11 +442,13 @@ void FGLGear::ComputeRetractionState(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Calculate tire slip angle.
 
 void FGLGear::ComputeSlipAngle(void)
 {
-  // Calculate tire slip angle.
-  WheelSlip = -atan2(vLocalWhlVel(eZ), fabs(vLocalWhlVel(eY)))*radtodeg;
+// Check that the speed is non-null otherwise use the current angle
+  if (vLocalWhlVel.Magnitude(eY,eZ) > 1E-3)
+    WheelSlip = -atan2(vLocalWhlVel(eZ), fabs(vLocalWhlVel(eY)))*radtodeg;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -465,7 +469,7 @@ void FGLGear::ComputeSteeringAngle(void)
       SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
     else {
       // Check that the speed is non-null otherwise use the current angle
-      if (vWhlVelVec.Magnitude(eX,eY) > 1E-3)
+      if (vWhlVelVec.Magnitude(eX,eY) > 0.1)
         SteerAngle = atan2(vWhlVelVec(eY), fabs(vWhlVelVec(eX)));
     }
     break;
@@ -736,8 +740,14 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This function is used by the MultiplierIterator class to enumerate the
+// Lagrange multipliers of a landing gear. This allows to encapsulate the storage
+// of the multipliers in FGLGear without exposing it. From an outside point of
+// view, each FGLGear instance has a number of Lagrange multipliers which can be
+// accessed through this routine without knowing the exact constraint which they
+// model.
 
-const FGPropagate::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry) const
+FGPropagate::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
 {
   switch(entry) {
   case 0:
@@ -754,29 +764,19 @@ const FGPropagate::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry) co
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGLGear::SetLagrangeMultiplier(double lambda, int entry)
+// This routine is called after the Lagrange multiplier has been computed. The
+// friction forces of the landing gear are then updated accordingly.
+FGColumnVector3& FGLGear::UpdateForces(void)
 {
-  switch(entry) {
-  case 0:
-    if (StaticFriction) {
-      LMultiplier[ftRoll].value = lambda;
-      vFn(eY) = lambda;
-    }
-    else {
-      LMultiplier[ftDynamic].value = lambda;
-      vFn += lambda * (Transform ().Transposed() * LMultiplier[ftRoll].ForceJacobian);
-    }
-    break;
-  case 1:
-    if (StaticFriction) {
-      LMultiplier[ftSide].value = lambda;
-      vFn(eZ) = lambda;
-    }
-    break;
-  default:
-    break;
+  if (StaticFriction) {
+    vFn(eY) = LMultiplier[ftRoll].value;
+    vFn(eZ) = LMultiplier[ftSide].value;
   }
+  else
+    vFn += LMultiplier[ftDynamic].value * (Transform ().Transposed() * LMultiplier[ftDynamic].ForceJacobian);
+
+  // Return the updated force in the body frame
+  return FGForce::GetBodyForces();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
