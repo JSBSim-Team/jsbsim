@@ -118,8 +118,8 @@ do
 	echo "Running autoheader..."
 	autoheader || { echo "**Error**: autoheader failed."; exit 1; }
       fi
-      echo "Running automake --add-missing $am_opt ..."
-      automake --add-missing $am_opt ||
+      echo "Running automake --add-missing --copy $am_opt ..."
+      automake --add-missing --copy $am_opt ||
 	{ echo "**Error**: automake failed."; exit 1; }
       echo "Running autoconf ..."
       autoconf || { echo "**Error**: autoconf failed."; exit 1; }
