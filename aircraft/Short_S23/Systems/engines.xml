@@ -1,4 +1,4 @@
-<!-- $Id: engines.xml,v 1.3 2010/03/25 22:47:58 andgi Exp $ -->
+<?xml version="1.0"?>
 <!--
 
   Short S.23 flying boat flight model for JSBSim.
@@ -21,6 +21,42 @@
   
 -->
 <system name="engines">
+
+ <documentation>
+  Engine controls (from pictures of the engine control box and other sources)
+  - Throttle levers
+    - fcs/throttle-cmd-norm[0|1|2|3]
+  - Mixture levers
+    - Might have the positions NORMAL - RICH - +1 PSI - +3 PSI
+      Currently mostly behaves as normal for JSBSim.
+    - fcs/mixture-cmd-norm[0|1|2|3]
+  - Airscrew pitch control levers
+    - Has the positions COARSE and FINE. No feathering was available.
+    - fcs/advance-cmd-norm[0|1|2|3]
+  - Engine cut-out levers
+    - Two levers cutting the fuel to the inner and outer engines, respectively.
+      Has the positions ON and OFF.
+    - fcs/inner-engines-cutoff-cmd-norm
+    - fcs/outer-engines-cutoff-cmd-norm
+ </documentation>
+
+ <property value="0.0">fcs/throttle-cmd-norm[0]</property>
+ <property value="0.0">fcs/throttle-cmd-norm[1]</property>
+ <property value="0.0">fcs/throttle-cmd-norm[2]</property>
+ <property value="0.0">fcs/throttle-cmd-norm[3]</property>
+
+ <property value="0.0">fcs/advance-cmd-norm[0]</property>
+ <property value="0.0">fcs/advance-cmd-norm[1]</property>
+ <property value="0.0">fcs/advance-cmd-norm[2]</property>
+ <property value="0.0">fcs/advance-cmd-norm[3]</property>
+
+ <property value="0.0">fcs/mixture-cmd-norm[0]</property>
+ <property value="0.0">fcs/mixture-cmd-norm[1]</property>
+ <property value="0.0">fcs/mixture-cmd-norm[2]</property>
+ <property value="0.0">fcs/mixture-cmd-norm[3]</property>
+
+ <property value="0.0">fcs/inner-engines-cutoff-cmd-norm</property>
+ <property value="0.0">fcs/outer-engines-cutoff-cmd-norm</property>
 
  <channel name="Throttle">
 
@@ -71,6 +107,49 @@
   </switch>
 
  </channel>
+
+ <channel name="Mixture">
+  <documentation>
+   "The two engine cut-out control levers were mounted either side of
+   the throttle box. The two inner engines were controlled by the
+   port side lever, while the starboard lever controlled the two
+   outer engines.", [Cassidy:2004:FE]
+  </documentation>
+
+  <switch name="fcs/mixture/mixture-pos-norm[0]">
+   <default value="fcs/mixture-cmd-norm[0]"/>
+   <test logic="AND" value="0.0">
+     fcs/outer-engines-cutoff-cmd-norm GE 1.0
+   </test>
+   <output>fcs/mixture-pos-norm[0]</output>
+  </switch>
+
+  <switch name="fcs/mixture/mixture-pos-norm[1]">
+   <default value="fcs/mixture-cmd-norm[1]"/>
+   <test logic="AND" value="0.0">
+     fcs/inner-engines-cutoff-cmd-norm GE 1.0
+   </test>
+   <output>fcs/mixture-pos-norm[1]</output>
+  </switch>
+
+  <switch name="fcs/mixture/mixture-pos-norm[2]">
+   <default value="fcs/mixture-cmd-norm[2]"/>
+   <test logic="AND" value="0.0">
+     fcs/inner-engines-cutoff-cmd-norm GE 1.0
+   </test>
+   <output>fcs/mixture-pos-norm[2]</output>
+  </switch>
+
+  <switch name="fcs/mixture/mixture-pos-norm[3]">
+   <default value="fcs/mixture-cmd-norm[3]"/>
+   <test logic="AND" value="0.0">
+     fcs/outer-engines-cutoff-cmd-norm GE 1.0
+   </test>
+   <output>fcs/mixture-pos-norm[3]</output>
+  </switch>
+
+ </channel>
+
 
  <channel name="Boost">
 
@@ -153,15 +232,15 @@
      fcs/advance-cmd-norm[2] GT 0.5
    </test>
    <output>propulsion/engine[2]/blade-angle</output>
-   </switch>
+  </switch>
 
-   <switch name="fcs/propeller/blade-angle-norm[3]">
-    <default value="0.0"/>
-    <test value="1.0">
-      fcs/advance-cmd-norm[3] GT 0.5
-    </test>
-    <output>propulsion/engine[3]/blade-angle</output>
-   </switch>
+  <switch name="fcs/propeller/blade-angle-norm[3]">
+   <default value="0.0"/>
+   <test value="1.0">
+     fcs/advance-cmd-norm[3] GT 0.5
+   </test>
+   <output>propulsion/engine[3]/blade-angle</output>
+  </switch>
 
  </channel>
 

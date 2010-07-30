@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<output name="datalog.csv" type="CSV" rate="10">
+    <rates> ON </rates>
+    <velocities> ON </velocities>
+    <forces> ON </forces>
+    <moments> ON </moments>
+    <position> ON </position>
+    <propulsion> ON </propulsion>
+    <aerosurfaces> ON </aerosurfaces>
+    <fcs> ON </fcs>
+    <ground_reactions> ON </ground_reactions>
+</output>

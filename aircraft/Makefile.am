@@ -23,7 +23,7 @@ SUBDIRS =		\
 	f104		\
 	fokker50	\
 	fokker100	\
-	J246            \ 
+	J246            \
 	minisgs		\
 	mk82		\
 	p51d		\

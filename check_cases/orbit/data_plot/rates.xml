@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the rotational rate data logged by JSBSim
+    when the rates flag is turned ON.
+    
+    These are the variables logged by JSBSim with the rate flag set to ON
+
+    Roll rate
+    Pitch rate
+    Yaw rate
+    Roll accel
+    Pitch accel
+    Yaw accel
+-->
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Roll rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">P (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Pitch rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Q (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title>Body rates</title>
+      <label axis="x"></label>
+      <label axis="y">Yaw rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="y">R (deg/s)</parameter>
+      <parameter axis="x">Time</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Roll accel (deg/sec^2)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">P dot (deg/s^2)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Pitch accel (deg/sec^2)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Q dot (deg/s^2)</parameter>
+    </plot>
+    <plot>
+      <title>Body Accelerations</title>
+      <label axis="x"></label>
+      <label axis="y">Yaw accel (deg/sec^2)</label>
+      <scale>auto</scale>
+      <parameter axis="y">R dot (deg/s^2)</parameter>
+      <parameter axis="x">Time</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Inertial Roll rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">P_{inertial} (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Inertial Pitch rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Q_{inertial} (deg/s)</parameter>
+    </plot>
+    <plot>
+      <title>Body rates (inertial)</title>
+      <label axis="x"></label>
+      <label axis="y">Inertial Yaw rate (deg/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="y">R_{inertial} (deg/s)</parameter>
+      <parameter axis="x">Time</parameter>
+    </plot>
+  </page>
+
+</plotset>

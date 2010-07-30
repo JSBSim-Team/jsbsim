@@ -109,11 +109,12 @@
       </test>
     </switch>
 
-    <switch name="guidance/second-stage-flight-flag">
+    <switch name="guidance/second-stage-flight-flag-switch">
       <default value="0"/>
       <test value="1" logic="OR">
         guidance/executive/left-srb-sep-flag eq 1
         guidance/executive/right-srb-sep-flag eq 1 </test>
+      <output> guidance/second-stage-flight-flag </output>
     </switch>
 
     <switch name="guidance/executive/las-jettison-flag">

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.39 2010/07/25 15:35:11 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.40 2010/07/30 11:50:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.39 2010/07/25 15:35:11 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.40 2010/07/30 11:50:01 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -283,8 +283,9 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
-  const FGPropagate::LagrangeMultiplier* GetMultiplierEntry(int entry) const;
+  FGPropagate::LagrangeMultiplier* GetMultiplierEntry(int entry);
   void SetLagrangeMultiplier(double lambda, int entry);
+  FGColumnVector3& UpdateForces(void);
 
   void bind(void);
 

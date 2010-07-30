@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up a ball to start off in orbit
+    Velocity of Earth surface at equator: 1525.92 ft/sec.
+  -->
+<!--  <ubody unit="FT/SEC"> 24063.28275  </ubody> -->
+  <ubody unit="FT/SEC"> 23889.14273  </ubody>
+  <latitude unit="DEG">     0.0  </latitude>
+  <longitude unit="DEG">    0.0  </longitude>
+  <psi unit="DEG">         90.0  </psi>
+  <altitude unit="FT"> 800000.0  </altitude>
+</initialize>

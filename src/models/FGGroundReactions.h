@@ -45,7 +45,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.16 2010/07/25 15:35:11 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.17 2010/07/30 11:50:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,11 +83,10 @@ class MultiplierIterator
 public:
   MultiplierIterator(FGGroundReactions* GndReactions);
   MultiplierIterator& operator++();
-  const FGPropagate::LagrangeMultiplier* operator*() { return multiplier; }
-  void SetLagrangeMultiplier(double lambda);
+  FGPropagate::LagrangeMultiplier* operator*() { return multiplier; }
 private:
   FGGroundReactions* GroundReactions;
-  const FGPropagate::LagrangeMultiplier* multiplier;
+  FGPropagate::LagrangeMultiplier* multiplier;
   int gearNum;
   int entry;
 };
@@ -108,6 +107,7 @@ public:
   string GetGroundReactionStrings(string delimeter);
   string GetGroundReactionValues(string delimeter);
   bool GetWOW(void);
+  void UpdateForcesAndMoments(void);
 
   int GetNumGearUnits(void) const { return (int)lGear.size(); }
 

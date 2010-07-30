@@ -154,4 +154,13 @@ check_cases/ground_tests/engine/Makefile \
 check_cases/ground_tests/logged_data/Makefile \
 check_cases/ground_tests/scripts/Makefile \
 check_cases/ground_tests/systems/Makefile
+check_cases/orbit/Makefile \
+check_cases/orbit/aircraft/Makefile \
+check_cases/orbit/aircraft/ball/Makefile \
+check_cases/orbit/data_output/Makefile \
+check_cases/orbit/data_plot/Makefile \
+check_cases/orbit/engine/Makefile \
+check_cases/orbit/logged_data/Makefile \
+check_cases/orbit/scripts/Makefile \
+check_cases/orbit/systems/Makefile
 )
