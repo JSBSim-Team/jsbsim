@@ -1,2 +1,3 @@
 SUBDIRS = \
-	ground_tests 
+	ground_tests \
+	orbit

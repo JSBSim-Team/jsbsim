@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="BALL" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+    <fileheader>
+        <author> Jon Berndt </author>
+        <filecreationdate> 2004-06-01 </filecreationdate>
+        <version> Version 1.0 </version>
+        <description> Test file </description>
+    </fileheader>
+
+    <metrics>
+        <wingarea unit="FT2"> 1 </wingarea>
+        <wingspan unit="FT"> 1 </wingspan>
+        <chord unit="FT"> 1 </chord>
+        <htailarea unit="FT2"> 0 </htailarea>
+        <htailarm unit="FT"> 0 </htailarm>
+        <vtailarea unit="FT2"> 0 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 10 </ixx>
+        <iyy unit="SLUG*FT2"> 10 </iyy>
+        <izz unit="SLUG*FT2"> 10 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <emptywt unit="LBS"> 50 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>
+
+    <ground_reactions>
+      <!--
+        <contact type="BOGEY" name="CONTACT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 0 </static_friction>
+            <dynamic_friction> 0 </dynamic_friction>
+            <rolling_friction> 0 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 200000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        -->
+    </ground_reactions>
+
+    <external_reactions>
+      <!-- "Declare" the reefing term -->
+      <property>fcs/parachute_reef_pos_norm</property>
+
+      <force name="parachute" frame="WIND">
+        <function>
+          <product>
+            <property>aero/qbar-psf</property>
+            <property>fcs/parachute_reef_pos_norm</property>
+            <value> 1.0 </value>  <!-- Full drag coefficient -->
+            <value> 20.0 </value> <!-- Full parachute area -->
+          </product>
+        </function>
+        <!-- The location below is in structural frame (x positive
+             aft), so this location describes a point 1 foot aft
+             of the origin. In this case, the origin is the center. -->
+        <location unit="FT">
+          <x>1</x>
+          <y>0</y>
+          <z>0</z>
+        </location>
+        <!-- The direction describes a unit vector. In this case, since
+             the selected frame is the WIND frame, the "-1" x component
+             describes a direction exactly opposite of the direction
+             into the wind vector. That is, the direction specified below
+             is the direction that the drag force acts in. -->
+        <direction>
+          <x>-1</x>
+          <y>0</y>
+          <z>0</z>
+        </direction>
+      </force>
+    </external_reactions>
+
+    <propulsion/>
+
+    <flight_control name="FGFCS"/>
+
+    <aerodynamics>
+        <axis name="DRAG">
+            <function name="aero/coefficient/CD">
+                <description>Drag</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <value>0.000</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+
+    <output name="JSBBallOut.csv" type="NONE" rate="10">
+<!--        <property> gear/unit[0]/WOW </property> -->
+<!--        <property> fcs/parachute_reef_pos_norm </property> -->
+        <rates> ON </rates>
+        <velocities> ON </velocities>
+        <forces> ON </forces>
+        <moments> ON </moments>
+        <position> ON </position>
+    </output>
+</fdm_config>
