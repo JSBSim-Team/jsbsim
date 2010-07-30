@@ -19,7 +19,7 @@
     <property value="2">simulation/integrator/rate/rotational</property>
     <property value="3">simulation/integrator/rate/translational</property>
     <property value="3">simulation/integrator/position/rotational</property>
-    <property value="3">simulation/integrator/position/translational</property>
+    <property value="4">simulation/integrator/position/translational</property>
   
     <!-- Initialize with brakes on -->
     <property> simulation/notify-time-trigger </property>
@@ -30,8 +30,10 @@
         <property>position/h-agl-ft</property>
         <property>position/lat-geod-deg</property>
         <property>position/geod-alt-ft</property>
+        <property>position/radius-to-vehicle-ft</property>
         <property>velocities/eci-velocity-mag-fps</property>
         <property>velocities/u-fps</property>
+        <property>metrics/terrain-radius</property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>
