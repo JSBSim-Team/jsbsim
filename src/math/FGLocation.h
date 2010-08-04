@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.22 2010/07/25 22:15:57 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.23 2010/08/04 07:28:21 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.22 2010/07/25 22:15:57 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.23 2010/08/04 07:28:21 ehofman Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,7 +259,7 @@ public:
       Inertial frame.
       @param EPA Earth fixed frame (ECEF) rotation offset about the axis with
                  respect to the Inertial (ECI) frame in radians. */
-  void SetEarthPositionAngle(double EPA) {epa = EPA; /*mCacheValid = false;*/ ComputeDerived();}
+  void SetEarthPositionAngle(double EPA) {epa = EPA; mCacheValid = false; ComputeDerived();}
 
   /** Get the longitude.
       @return the longitude in rad of the location represented with this
