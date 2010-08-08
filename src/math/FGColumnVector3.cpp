@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.12 2010/06/30 03:13:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.13 2010/08/08 00:19:21 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,10 +110,7 @@ FGColumnVector3& FGColumnVector3::operator/=(const double scalar)
 
 double FGColumnVector3::Magnitude(void) const
 {
-  if (data[0] == 0.0 && data[1] == 0.0 && data[2] == 0.0)
-    return 0.0;
-  else
-    return sqrt( data[0]*data[0] +  data[1]*data[1] +  data[2]*data[2] );
+  return sqrt( data[0]*data[0] +  data[1]*data[1] +  data[2]*data[2] );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
