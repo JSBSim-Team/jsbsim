@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<!--
+
+  Short S.23 flying boat flight model for JSBSim.
+
+    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="fuel-system">
+
+ <documentation>
+   The S.23 'boats as delivered (with a few exceptions) came with one of
+   3 different fuel system types. [Cassidy:2004:FE]
+    
+    Mk.I (1D) standard:
+      one 326 gallon tank in each wing.
+    Mk.II (1A/1C) Cavalier, Centarus:
+      one 179 and one 326 gallon tank in each wing.
+    Mk.III (1B) Cambria, Caledonia:
+      one 179, one 326 and one 380 gallon tank in each wing.
+      two 280 gallon tanks between the spar frames in the hull.
+ </documentation>
+
+ <property value="1.0">fcs/fuel-system/mark</property>
+ <!-- 1, 2 or 3 for Mark I, Mark II or Mark III. -->
+
+ <documentation>
+   - Fuel cocks for Mark I fuel system:
+     - One for the left tank, one for the right tank and one for balancing.
+     - Positions are OFF and ON.
+     - fcs/fuel-system/left-tank-cock-cmd-norm
+     - fcs/fuel-system/right-tank-cock-cmd-norm
+     - fcs/fuel-system/balance-cock-cmd-norm
+ </documentation>
+
+ <!-- All marks. -->
+ <property value="1.0">fcs/fuel-system/left-tank-cock-cmd-norm</property>
+ <property value="1.0">fcs/fuel-system/right-tank-cock-cmd-norm</property>
+ <property value="1.0">fcs/fuel-system/balance-cock-cmd-norm</property>
+
+ <!-- Mark II and III only. -->
+ <property value="1.0">fcs/fuel-system/left-tank-cock-cmd-norm[1]</property>
+ <property value="1.0">fcs/fuel-system/right-tank-cock-cmd-norm[1]</property>
+
+ <!-- Mark III only. -->
+ <property value="1.0">fcs/fuel-system/left-tank-cock-cmd-norm[2]</property>
+ <property value="1.0">fcs/fuel-system/right-tank-cock-cmd-norm[2]</property>
+ <property value="1.0">fcs/fuel-system/left-tank-cock-cmd-norm[3]</property>
+ <property value="1.0">fcs/fuel-system/right-tank-cock-cmd-norm[3]</property>
+
+ <channel name="Centre wing tanks">
+
+  <switch name="fcs/fuel-system/left-tank-cock-pos-norm">
+   <default value="0.0"/>
+   <test value="1.0">
+     fcs/fuel-system/left-tank-cock-cmd-norm GT 0.5
+   </test>
+   <output>propulsion/tank[0]/priority</output>
+  </switch>
+
+  <switch name="fcs/fuel-system/right-tank-cock-pos-norm">
+   <default value="0.0"/>
+   <test value="1.0">
+     fcs/fuel-system/right-tank-cock-cmd-norm GT 0.5
+   </test>
+   <output>propulsion/tank[1]/priority</output>
+  </switch>
+
+ </channel>
+
+ <channel name="Outboard wing tanks">
+
+  <switch name="fcs/fuel-system/left-tank-cock-pos-norm[1]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 2
+     fcs/fuel-system/left-tank-cock-cmd-norm[1] GT 0.5
+   </test>
+   <output>propulsion/tank[2]/priority</output>
+  </switch>
+  <switch name="fcs/fuel-system/right-tank-cock-pos-norm[1]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 2
+     fcs/fuel-system/right-tank-cock-cmd-norm[1] GT 0.5
+   </test>
+   <output>propulsion/tank[3]/priority</output>
+  </switch>
+
+  <switch name="fcs/fuel-system/internals/outboard-tank-contents-lbs[0]">
+   <default value="0"/>
+   <test value="propulsion/tank[2]/contents-lbs">
+     fcs/fuel-system/mark GE 2
+   </test>
+   <output>propulsion/tank[2]/contents-lbs</output>
+  </switch>
+  <switch name="fcs/fuel-system/internals/outboard-tank-contents-lbs[1]">
+   <default value="0"/>
+   <test value="propulsion/tank[3]/contents-lbs">
+     fcs/fuel-system/mark GE 2
+   </test>
+   <output>propulsion/tank[3]/contents-lbs</output>
+  </switch>
+
+ </channel>
+
+ <channel name="Inboard wing tanks">
+
+  <switch name="fcs/fuel-system/left-tank-cock-pos-norm[2]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 3
+     fcs/fuel-system/left-tank-cock-cmd-norm[2] GT 0.5
+   </test>
+   <output>propulsion/tank[4]/priority</output>
+  </switch>
+  <switch name="fcs/fuel-system/right-tank-cock-pos-norm[2]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 3
+     fcs/fuel-system/right-tank-cock-cmd-norm[2] GT 0.5
+   </test>
+   <output>propulsion/tank[5]/priority</output>
+  </switch>
+
+  <switch name="fcs/fuel-system/internals/inboard-tank-contents-lbs[0]">
+   <default value="0"/>
+   <test value="propulsion/tank[4]/contents-lbs">
+     fcs/fuel-system/mark GE 3
+   </test>
+   <output>propulsion/tank[4]/contents-lbs</output>
+  </switch>
+  <switch name="fcs/fuel-system/internals/inboard-tank-contents-lbs[1]">
+   <default value="0"/>
+   <test value="propulsion/tank[5]/contents-lbs">
+     fcs/fuel-system/mark GE 3
+   </test>
+   <output>propulsion/tank[5]/contents-lbs</output>
+  </switch>
+
+ </channel>
+
+ <channel name="Fuselage tanks">
+
+  <switch name="fcs/fuel-system/left-tank-cock-pos-norm[3]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 3
+     fcs/fuel-system/left-tank-cock-cmd-norm[3] GT 0.5
+   </test>
+   <output>propulsion/tank[6]/priority</output>
+  </switch>
+  <switch name="fcs/fuel-system/right-tank-cock-pos-norm[3]">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     fcs/fuel-system/mark GE 3
+     fcs/fuel-system/right-tank-cock-cmd-norm[3] GT 0.5
+   </test>
+   <output>propulsion/tank[7]/priority</output>
+  </switch>
+
+  <switch name="fcs/fuel-system/internals/fuselage-tank-contents-lbs[0]">
+   <default value="0"/>
+   <test value="propulsion/tank[6]/contents-lbs">
+     fcs/fuel-system/mark GE 3
+   </test>
+   <output>propulsion/tank[6]/contents-lbs</output>
+  </switch>
+  <switch name="fcs/fuel-system/internals/fuselage-tank-contents-lbs[1]">
+   <default value="0"/>
+   <test value="propulsion/tank[7]/contents-lbs">
+     fcs/fuel-system/mark GE 3
+   </test>
+   <output>propulsion/tank[7]/contents-lbs</output>
+  </switch>
+
+ </channel>
+
+</system>

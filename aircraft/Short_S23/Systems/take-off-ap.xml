@@ -55,7 +55,7 @@
 
  <channel name="Take-off elevator">
 
-  <fcs_function name="take-off-ap/pitch-error-deg">
+  <fcs_function name="take-off-ap/hydro-pitch-error-deg">
    <documentation>
     Deviation from target pitch angles during take-off run.
     Based on the real aircraft.
@@ -65,7 +65,7 @@
      <table>
       <independentVar lookup="row">hydro/v-kt</independentVar>
       <independentVar lookup="column">take-off-ap/landing</independentVar>
-      <!--  Real take-off pitch data, except the last three. -->
+      <!--  Real take-off pitch data, except the last two. -->
       <tableData>
                 0.0    1.0
         0.0     4.0    4.0
@@ -75,14 +75,36 @@
         60.0   12.0   11.0
         70.0   10.0    7.0
         80.0    9.0    6.0
-        100.0   5.0    5.0
-        142.0  -2.0    0.0
+        90.0    9.0    6.0
       </tableData>
      </table>
      <property> hydro/pitch-deg </property>
     </difference>
    </function>
   </fcs_function>
+
+  <fcs_function name="take-off-ap/speed-pitch-error-deg">
+   <documentation>
+    Drive pitch to fly at 100 kts IAS.
+   </documentation>
+   <function>
+    <product>
+     <value>-0.1</value>
+     <difference>
+      <property>velocities/vc-kts</property>
+      <value>100.0</value>
+     </difference>
+    </product>
+   </function>
+  </fcs_function>
+
+  <switch name="take-off-ap/pitch-error-deg">
+   <default value="take-off-ap/speed-pitch-error-deg"/>
+   <test value="take-off-ap/hydro-pitch-error-deg" logic="OR">
+     hydro/coefficients/C_Delta GT 0.0
+     hydro/alt-agl-ft LT 50
+   </test>
+  </switch>
 
   <pid name="take-off-ap/elevator-cmd-norm"> 
    <input> take-off-ap/pitch-error-deg </input>
@@ -95,7 +117,7 @@
    </clipto>
   </pid>
 
-  <switch name="Elevator Switch">
+  <switch name="take-off-ap/elevator-cmd-source">
    <default value="0.0"/>
    <test value="-1.0">
      take-off-ap/enabled GT 0.5
