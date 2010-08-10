@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.68 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.69 2010/08/10 12:39:07 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -705,18 +705,18 @@ string FGFCS::FindSystemFullPathname(const string& sysfilename)
     system_filename.append(".xml");
   }
 
-  system_file.open(string(fullpath + system_filename).c_str());
+  system_file.open(string(localpath + system_filename).c_str());
   if ( !system_file.is_open()) {
-    system_file.open(string(localpath + system_filename).c_str());
+    system_file.open(string(fullpath + system_filename).c_str());
       if ( !system_file.is_open()) {
         cerr << " Could not open system file: " << system_filename << " in path "
              << fullpath << " or " << localpath << endl;
         return string("");
       } else {
-        return string(localpath + system_filename);
+        return string(fullpath + system_filename);
       }
   }
-  return string(fullpath + system_filename);
+  return string(localpath + system_filename);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -736,9 +736,9 @@ ifstream* FGFCS::FindSystemFile(const string& sysfilename)
     system_filename.append(".xml");
   }
 
-  system_file->open(string(fullpath + system_filename).c_str());
+  system_file->open(string(localpath + system_filename).c_str());
   if ( !system_file->is_open()) {
-    system_file->open(string(localpath + system_filename).c_str());
+    system_file->open(string(fullpath + system_filename).c_str());
       if ( !system_file->is_open()) {
         cerr << " Could not open system file: " << system_filename << " in path "
              << fullpath << " or " << localpath << endl;
