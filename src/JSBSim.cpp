@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.59 2010/04/12 12:25:19 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.60 2010/08/11 11:49:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -514,6 +514,9 @@ bool options(int count, char **arg)
     } else if (keyword == "--root") {
       if (n != string::npos) {
         RootDir = value;
+        if (RootDir[RootDir.length()-1] != '/') {
+          RootDir += '/';
+        }
       } else {
         gripe;
         exit(1);

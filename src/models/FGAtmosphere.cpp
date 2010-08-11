@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.33 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.35 2010/08/11 11:51:33 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,7 +277,9 @@ void FGAtmosphere::Calculate(double altitude)
 void FGAtmosphere::CalculateDerived(void)
 {
   T_dev = (*temperature) - GetTemperature(h);
-  density_altitude = h + T_dev * 66.7;
+
+  if (T_dev == 0.0) density_altitude = h;
+  else              density_altitude = 518.4/0.00357 * (1.0 - pow(GetDensityRatio(),0.235));
 
   if (turbType != ttNone) Turbulence();
 
