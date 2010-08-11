@@ -1,3 +1,3 @@
 EXTRA_DIST = \
-	README \
-	f16.xml
+	hook.xml \
+	pushback.xml
