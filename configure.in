@@ -126,6 +126,7 @@ aircraft/c310/Makefile \
 aircraft/f104/Makefile \
 aircraft/f15/Makefile \
 aircraft/f16/Makefile \
+aircraft/f16/Systems/Makefile \
 aircraft/f22/Makefile \
 aircraft/fokker100/Makefile \
 aircraft/fokker50/Makefile \
