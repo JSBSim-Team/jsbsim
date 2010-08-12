@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.20 2010/02/04 13:09:26 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.21 2010/08/12 04:07:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -65,7 +65,11 @@ CLASS DOCUMENTATION
 
 /** Models weight, balance and moment of inertia information.  Maintains a vector
     of point masses. Sums the contribution of all, and provides this to FGPropagate.
-    Loads the \<mass_balance> section of the aircraft configuration file.
+    Loads the \<mass_balance> section of the aircraft configuration file. There
+    can be any number of <pointmasses>. Each can also have a shape which - if
+    present - causes an associated moment of inertia to be calculated based on
+    the shape. Note that a cylinder is solid, a tube is hollow, a ball is solid
+    and a sphere is hollow.
 
     <h3>Configuration File Format:</h3>
 @code
@@ -77,20 +81,24 @@ CLASS DOCUMENTATION
         <ixz unit="{SLUG*FT2 | KG*M2}"> {number} </ixz>
         <iyz unit="{SLUG*FT2 | KG*M2}"> {number} </iyz>
         <emptywt unit="{LBS | KG"> {number} </emptywt>
-        <location name="CG" unit="{IN | M}">
+        <location name="CG" unit="{IN | FT | M}">
             <x> {number} </x>
             <y> {number} </y>
             <z> {number} </z>
         </location>
-        <pointmass name="{string}">
+        [<pointmass name="{string}">
+            <form shape="{tube | cylinder | sphere | ball}">
+               <radius unit="{IN | FT | M}"> {number} </radius>
+               <length unit="{IN | FT | M}"> {number} </length>
+            </form> 
             <weight unit="{LBS | KG}"> {number} </weight>
-            <location name="POINTMASS" unit="{IN | M}">
+            <location name="{string}" unit="{IN | FT | M}">
                 <x> {number} </x>
                 <y> {number} </y>
                 <z> {number} </z>
             </location>
         </pointmass>
-        ... other point masses ...
+        ... other point masses ...]
     </mass_balance>
 @endcode
   */
@@ -197,21 +205,30 @@ private:
     void CalculateShapeInertia(void) {
       switch(eShapeType) {
         case esTube:
-          mPMInertia(1,1) = (Weight/(32.16))*Radius*Radius; // mr^2
-          mPMInertia(2,2) = (Weight/(32.16*12))*(6*Radius*Radius + Length*Length);
+          mPMInertia(1,1) = (Weight/(slugtolb))*Radius*Radius; // mr^2
+          mPMInertia(2,2) = (Weight/(slugtolb*12))*(6*Radius*Radius + Length*Length);
           mPMInertia(3,3) = mPMInertia(2,2);
           break;
         case esCylinder:
-          mPMInertia(1,1) = (Weight/(32.16*2))*Radius*Radius; // 0.5*mr^2
-          mPMInertia(2,2) = (Weight/(32.16*12))*(3*Radius*Radius + Length*Length);
+          mPMInertia(1,1) = (Weight/(slugtolb*2))*Radius*Radius; // 0.5*mr^2
+          mPMInertia(2,2) = (Weight/(slugtolb*12))*(3*Radius*Radius + Length*Length);
           mPMInertia(3,3) = mPMInertia(2,2);
+          break;
+        case esSphere:
+          mPMInertia(1,1) = (Weight/(slugtolb*3))*Radius*Radius*2; // (2mr^2)/3
+          mPMInertia(2,2) = mPMInertia(1,1);
+          mPMInertia(3,3) = mPMInertia(1,1);
+        case esBall:
+          mPMInertia(1,1) = (Weight/(slugtolb*5))*Radius*Radius*2; // (2mr^2)/5
+          mPMInertia(2,2) = mPMInertia(1,1);
+          mPMInertia(3,3) = mPMInertia(1,1);
           break;
         default:
           break;
       }
     }
 
-    enum esShape {esUnspecified, esTube, esCylinder, esSphere} eShapeType;
+    enum esShape {esUnspecified, esTube, esCylinder, esSphere, esBall} eShapeType;
     FGColumnVector3 Location;
     double Weight; /// Weight in pounds.
     double Radius; /// Radius in feet.
