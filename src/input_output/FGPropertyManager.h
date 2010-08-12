@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.17 2010/07/08 11:36:28 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.18 2010/08/12 19:40:10 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -525,7 +525,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter), useDefault))
-        std::cout << "Failed to tie property " << name << " to functions" << std::endl;
+        std::cerr << "Failed to tie property " << name << " to functions" << std::endl;
       else if (debug_lvl & 0x20)
         std::cout << name << std::endl;
     }
@@ -553,7 +553,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
                                 void (*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
-        std::cout << "Failed to tie property " << name << " to indexed functions" << std::endl;
+        std::cerr << "Failed to tie property " << name << " to indexed functions" << std::endl;
       else if (debug_lvl & 0x20)
         std::cout << name << std::endl;
     }
@@ -583,7 +583,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
-        std::cout << "Failed to tie property " << name << " to object methods" << std::endl;
+        std::cerr << "Failed to tie property " << name << " to object methods" << std::endl;
       else if (debug_lvl & 0x20)
         std::cout << name << std::endl;
     }
@@ -612,7 +612,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
                          void (T::*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
-        std::cout << "Failed to tie property " << name << " to indexed object methods" << std::endl;
+        std::cerr << "Failed to tie property " << name << " to indexed object methods" << std::endl;
       else if (debug_lvl & 0x20)
         std::cout << name << std::endl;
    }
