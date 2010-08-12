@@ -74,7 +74,7 @@ FGPropertyManager::GetNode (const string &path, bool create)
 {
   SGPropertyNode* node=this->getNode(path.c_str(), create);
   if (node == 0 && !suppress_warning) {
-    cout << "FGPropertyManager::GetNode() No node found for " << path << endl;
+    cerr << "FGPropertyManager::GetNode() No node found for " << path << endl;
   }
   return (FGPropertyManager*)node;
 }
@@ -256,8 +256,8 @@ void FGPropertyManager::SetArchivable (const string &name, bool state )
 {
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
-    cout <<
-           "Attempt to set archive flag for non-existant property "
+    cerr <<
+           "Attempt to set archive flag for non-existent property "
            << name << endl;
   else
     node->setAttribute(SGPropertyNode::ARCHIVE, state);
@@ -269,7 +269,7 @@ void FGPropertyManager::SetReadable (const string &name, bool state )
 {
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
-    cout <<
+    cerr <<
            "Attempt to set read flag for non-existant property "
            << name << endl;
   else
@@ -282,7 +282,7 @@ void FGPropertyManager::SetWritable (const string &name, bool state )
 {
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
-    cout <<
+    cerr <<
            "Attempt to set write flag for non-existant property "
            << name << endl;
   else
@@ -294,7 +294,7 @@ void FGPropertyManager::SetWritable (const string &name, bool state )
 void FGPropertyManager::Untie (const string &name)
 {
   if (!untie(name.c_str()))
-    cout << "Failed to untie property " << name << endl;
+    cerr << "Failed to untie property " << name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,7 +302,7 @@ void FGPropertyManager::Untie (const string &name)
 void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
 {
   if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer), useDefault))
-    cout << "Failed to tie property " << name << " to a pointer" << endl;
+    cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else if (debug_lvl & 0x20)
     cout << name << endl;
 }
@@ -313,7 +313,7 @@ void FGPropertyManager::Tie (const string &name, int *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<int>(pointer), useDefault))
-    cout << "Failed to tie property " << name << " to a pointer" << endl;
+    cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else if (debug_lvl & 0x20)
     cout << name << endl;
 }
@@ -324,7 +324,7 @@ void FGPropertyManager::Tie (const string &name, long *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<long>(pointer), useDefault))
-    cout << "Failed to tie property " << name << " to a pointer" << endl;
+    cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else if (debug_lvl & 0x20)
     cout << name << endl;
 }
@@ -335,7 +335,7 @@ void FGPropertyManager::Tie (const string &name, float *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<float>(pointer), useDefault))
-    cout << "Failed to tie property " << name << " to a pointer" << endl;
+    cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else if (debug_lvl & 0x20)
     cout << name << endl;
 }
@@ -345,7 +345,7 @@ void FGPropertyManager::Tie (const string &name, float *pointer,
 void FGPropertyManager::Tie (const string &name, double *pointer, bool useDefault)
 {
   if (!tie(name.c_str(), SGRawValuePointer<double>(pointer), useDefault))
-    cout << "Failed to tie property " << name << " to a pointer" << endl;
+    cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else if (debug_lvl & 0x20)
     cout << name << endl;
 }

@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.59 2010/07/30 11:50:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.60 2010/08/12 19:11:22 andgi Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,8 +259,6 @@ Inertial.
 
 bool FGPropagate::Run(void)
 {
-static int ctr;
-
   if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
   if (FDMExec->Holding()) return false;
 
@@ -498,11 +496,11 @@ void FGPropagate::ResolveFrictionForces(double dt)
   // If no gears are in contact with the ground then return
   if (!n) return;
 
-  double *a = new double[n*n]; // Will contain J*M^-1*J^T
-  double *eta = new double[n];
-  double *lambda = new double[n];
-  double *lambdaMin = new double[n];
-  double *lambdaMax = new double[n];
+  vector<double> a(n*n); // Will contain J*M^-1*J^T
+  vector<double> eta(n);
+  vector<double> lambda(n);
+  vector<double> lambdaMin(n);
+  vector<double> lambdaMax(n);
 
   // Initializes the Lagrange multipliers
   i = 0;
@@ -519,8 +517,6 @@ void FGPropagate::ResolveFrictionForces(double dt)
     // First compute the ground velocity below the aircraft center of gravity
     FGLocation contact;
     FGColumnVector3 normal, cvel;
-    double t = FDMExec->GetSimTime();
-    double height = FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contact, normal, cvel);
 
     // Instruct the algorithm to zero out the relative movement between the
     // aircraft and the ground.
@@ -587,8 +583,6 @@ void FGPropagate::ResolveFrictionForces(double dt)
     (*it)->value = lambda[i++];
 
   GroundReactions->UpdateForcesAndMoments();
-
-  delete a, eta, lambda, lambdaMin, lambdaMax;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

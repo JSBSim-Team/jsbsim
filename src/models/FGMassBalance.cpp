@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.31 2010/02/19 00:30:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.32 2010/08/12 04:07:11 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,6 +278,10 @@ void FGMassBalance::AddPointMass(Element* el)
       pm->CalculateShapeInertia();
     } else if (shape == "sphere") {
       pm->SetPointMassShapeType(PointMass::esSphere);
+      pm->SetRadius(radius);
+      pm->CalculateShapeInertia();
+    } else if (shape == "ball") {
+      pm->SetPointMassShapeType(PointMass::esBall);
       pm->SetRadius(radius);
       pm->CalculateShapeInertia();
     } else {
