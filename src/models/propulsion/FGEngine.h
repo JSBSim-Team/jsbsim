@@ -43,7 +43,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
+#include "math/FGModelFunctions.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "models/FGFCS.h"
@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.20 2010/02/25 05:21:36 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.21 2010/08/21 17:13:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,14 +118,14 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.20 2010/02/25 05:21:36 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.21 2010/08/21 17:13:48 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGEngine : public FGJSBBase, public FGXMLFileRead
+class FGEngine : public FGModelFunctions, public FGXMLFileRead
 {
 public:
   FGEngine(FGFDMExec* exec, Element* el, int engine_number);
@@ -165,9 +165,8 @@ public:
   /** Resets the Engine parameters to the initial conditions */
   void ResetToIC(void);
 
-  /** Calculates the thrust of the engine, and other engine functions.
-      @return Thrust in pounds */
-  virtual double Calculate(void) {return 0.0;}
+  /** Calculates the thrust of the engine, and other engine functions. */
+  virtual void Calculate(void) = 0;
 
   /// Sets engine placement information
   virtual void SetPlacement(FGColumnVector3& location, FGColumnVector3& orientation);
@@ -237,6 +236,7 @@ protected:
   FGThruster*     Thruster;
 
   std::vector <int> SourceTanks;
+
   void Debug(int from);
 };
 }

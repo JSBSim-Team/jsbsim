@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.27 2010/05/24 11:26:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.28 2010/08/21 17:13:48 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,9 +113,11 @@ void FGTurbine::ResetToIC(void)
 // The main purpose of Calculate() is to determine what phase the engine should
 // be in, then call the corresponding function.
 
-double FGTurbine::Calculate(void)
+void FGTurbine::Calculate(void)
 {
   double thrust;
+
+  RunPreFunctions();
 
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   double qbar = Auxiliary->Getqbar();
@@ -170,9 +172,9 @@ double FGTurbine::Calculate(void)
     default: thrust = Off();
   }
 
-  thrust = Thruster->Calculate(thrust); // allow thruster to modify thrust (i.e. reversing)
+  Thruster->Calculate(thrust); // allow thruster to modify thrust (i.e. reversing)
 
-  return thrust;
+  RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

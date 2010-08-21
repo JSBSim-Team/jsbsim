@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.12 2009/11/08 02:24:17 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.13 2010/08/21 17:13:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.12 2009/11/08 02:24:17 jberndt Exp $
+    $Id: FGRocket.h,v 1.13 2010/08/21 17:13:48 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -143,9 +143,8 @@ public:
   /** Destructor */
   ~FGRocket(void);
 
-  /** Determines the thrust.
-      @return thrust */
-  double Calculate(void);
+  /** Determines the thrust.*/
+  void Calculate(void);
 
   /** Gets the total impulse of the rocket.
       @return The cumulative total impulse of the rocket up to this time.*/
