@@ -46,7 +46,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.11 2009/10/26 03:48:42 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.12 2010/08/21 18:08:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -104,7 +104,7 @@ public:
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
 
-  double Calculate(void);
+  void Calculate(void);
   double CalcFuelNeed(void);
 
   inline double GetPowerAvailable(void) const {return (Eng_HP * hptoftlbssec);}

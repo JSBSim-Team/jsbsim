@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.13 2010/08/21 17:13:48 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.14 2010/08/21 18:08:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.13 2010/08/21 17:13:48 jberndt Exp $
+    $Id: FGRocket.h,v 1.14 2010/08/21 18:08:25 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
