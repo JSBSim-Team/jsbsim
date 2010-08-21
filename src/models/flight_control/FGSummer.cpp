@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.7 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.8 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,9 +118,9 @@ void FGSummer::Debug(int from)
       cout << "      INPUTS: " << endl;
       for (unsigned i=0;i<InputNodes.size();i++) {
         if (InputSigns[i] < 0)
-          cout << "       -" << InputNodes[i]->getName() << endl;
+          cout << "       -" << InputNames[i] << endl;
         else
-          cout << "       " << InputNodes[i]->getName() << endl;
+          cout << "       " << InputNames[i] << endl;
       }
       if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
       if (IsOutput) {

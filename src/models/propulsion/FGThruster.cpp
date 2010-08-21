@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.13 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,11 +74,11 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   element = thruster_element->FindElement("location");
   if (element)  location = element->FindElementTripletConvertTo("IN");
-  else          cerr << "No thruster location found." << endl;
+  else          cerr << fgred << "      No thruster location found." << reset << endl;
 
   element = thruster_element->FindElement("orient");
   if (element)  orientation = element->FindElementTripletConvertTo("RAD");
-  else          cerr << "No thruster orientation found." << endl;
+  else          cerr << "      No thruster orientation found." << endl;
 
   SetLocation(location);
   SetAnglesToBody(orientation);

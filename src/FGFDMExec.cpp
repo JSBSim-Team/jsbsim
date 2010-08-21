@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.79 2010/07/25 13:52:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.80 2010/08/21 22:56:10 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -683,11 +683,21 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
          << fgdef << endl;
   }
 
-  struct PropertyCatalogStructure masterPCS;
-  masterPCS.base_string = "";
-  masterPCS.node = (FGPropertyManager*)Root;
+  // Late bind previously undefined FCS inputs.
+  try {
+    FCS->LateBind();
+  } catch (string prop) {
+    cerr << endl << fgred << "  Could not late bind property " << prop 
+         << ". Aborting." << endl;
+    result = false;
+  }
 
-  BuildPropertyCatalog(&masterPCS);
+  if (result) {
+    struct PropertyCatalogStructure masterPCS;
+    masterPCS.base_string = "";
+    masterPCS.node = (FGPropertyManager*)Root;
+    BuildPropertyCatalog(&masterPCS);
+  }
 
   return result;
 }

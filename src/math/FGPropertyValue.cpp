@@ -32,7 +32,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.4 2009/08/30 03:51:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.5 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPERTYVALUE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,9 +45,23 @@ FGPropertyValue::FGPropertyValue(FGPropertyManager* propNode) : PropertyManager(
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGPropertyValue::FGPropertyValue(string propName) : PropertyManager(0L)
+{
+  PropertyName = propName;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double FGPropertyValue::GetValue(void) const
 {
-  return PropertyManager->getDoubleValue();
+  double val;
+  try {
+    val = PropertyManager->getDoubleValue();
+  } catch (...) {
+    throw(PropertyName);
+  }
+
+  return val;
 }
 
 }

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.17 2010/08/21 22:56:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.17 2010/08/21 22:56:11 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -98,6 +98,7 @@ public:
 
   virtual bool Run(void);
   virtual void SetOutput(void);
+  void LateBind(void);
   double GetOutput (void) const {return Output;}
   std::string GetName(void) const {return Name;}
   std::string GetType(void) const { return Type; }
@@ -111,6 +112,7 @@ protected:
   FGPropertyManager* ClipMinPropertyNode;
   FGPropertyManager* ClipMaxPropertyNode;
   std::vector <FGPropertyManager*> InputNodes;
+  std::vector <std::string> InputNames;
   std::vector <float> InputSigns;
   std::vector <double> output_array;
   std::string Type;
