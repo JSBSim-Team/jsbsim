@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.23 2010/02/25 05:21:36 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.24 2010/08/21 18:08:13 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.23 2010/02/25 05:21:36 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.24 2010/08/21 18:08:13 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,7 +199,7 @@ public:
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
 
-  double Calculate(void);
+  void Calculate(void);
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
 

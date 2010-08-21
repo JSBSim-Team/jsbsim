@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.19 2010/08/21 18:08:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.18 2009/10/24 22:59:30 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.19 2010/08/21 18:08:46 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,7 +166,7 @@ public:
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
 
-  double Calculate(void);
+  void Calculate(void);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
   /** A lag filter.
