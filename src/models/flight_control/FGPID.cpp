@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.16 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.17 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,9 +189,9 @@ void FGPID::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       if (InputSigns[0] < 0)
-        cout << "      INPUT: -" << InputNodes[0]->getName() << endl;
+        cout << "      INPUT: -" << InputNames[0] << endl;
       else
-        cout << "      INPUT: " << InputNodes[0]->getName() << endl;
+        cout << "      INPUT: " << InputNames[0] << endl;
 
       if (IsOutput) {
         for (unsigned int i=0; i<OutputNodes.size(); i++)

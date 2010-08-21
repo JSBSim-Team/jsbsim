@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.28 2010/01/18 13:12:25 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.29 2010/08/21 22:56:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.28 $
+    @version $Revision: 1.29 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -546,6 +546,8 @@ public:
   double GetDt(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
+
+  void LateBind(void);
 
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;

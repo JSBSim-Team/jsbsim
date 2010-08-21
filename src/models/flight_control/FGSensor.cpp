@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.20 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.21 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,9 +293,9 @@ void FGSensor::Debug(int from)
     if (from == 0) { // Constructor
       if (InputSigns.size() > 0) {
         if (InputSigns[0] < 0)
-          cout << "      INPUT: -" << InputNodes[0]->getName() << endl;
+          cout << "      INPUT: -" << InputNames[0] << endl;
         else
-          cout << "      INPUT: " << InputNodes[0]->getName() << endl;
+          cout << "      INPUT: " << InputNames[0] << endl;
       }
       if (bits != 0) {
         if (quant_property.empty())

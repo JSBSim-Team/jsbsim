@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.69 2010/08/10 12:39:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.70 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,6 +183,17 @@ bool FGFCS::InitModel(void)
   return true;
 }
   
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::LateBind(void)
+{
+  int i;
+
+  for (i=0; i<Systems.size(); i++) Systems[i]->LateBind();
+  for (i=0; i<APComponents.size(); i++) APComponents[i]->LateBind();
+  for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->LateBind();
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Notes: In this logic the default engine commands are set. This is simply a
 // sort of safe-mode method in case the user has not defined control laws for

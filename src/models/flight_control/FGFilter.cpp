@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.15 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.16 2010/08/21 22:56:11 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,7 +259,7 @@ void FGFilter::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->getName() << endl;
+      cout << "      INPUT: " << InputNames[0] << endl;
         switch (FilterType) {
         case eLag:
           if (PropertySign[1] < 0.0) sgn="-";
