@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.11 2010/06/30 03:13:40 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.12 2010/08/21 17:13:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,8 @@ public:
 
       Create copy of the matrix given in the argument.
    */
-  FGMatrix33(const FGMatrix33& M) {
+  FGMatrix33(const FGMatrix33& M)
+  {
     data[0] = M.data[0];
     data[1] = M.data[1];
     data[2] = M.data[2];
@@ -122,7 +123,7 @@ public:
     data[7] = M.data[7];
     data[8] = M.data[8];
 
-//    Debug(0);
+    // Debug(0);
   }
 
   /** Initialization by given values.

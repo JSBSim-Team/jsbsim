@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.20 2010/08/21 17:13:48 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,6 +59,7 @@ CLASS IMPLEMENTATION
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   : FGEngine(exec, el, engine_number)
 {
+  Type = etRocket;
   Element* thrust_table_element = 0;
   ThrustTable = 0L;
   BurnTime = 0.0;
@@ -72,6 +73,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   It = 0.0;
   ThrustVariation = 0.0;
   TotalIspVariation = 0.0;
+  Flameout = false;
 
   // Defaults
    MinThrottle = 0.0;
@@ -108,10 +110,6 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   bindmodel();
 
   Debug(0);
-
-  Type = etRocket;
-  Flameout = false;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,10 +122,11 @@ FGRocket::~FGRocket(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGRocket::Calculate(void)
+void FGRocket::Calculate(void)
 {
   double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
-  double thrust;
+
+  RunPreFunctions();
 
   if (!Flameout && !Starved) ConsumeFuel();
 
@@ -184,10 +183,9 @@ double FGRocket::Calculate(void)
 
   } // End thrust calculations
 
-  thrust = Thruster->Calculate(VacThrust);
-  It += thrust * dT;
+  It += Thruster->Calculate(VacThrust) * dT;
 
-  return thrust;
+  RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.8 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.9 2010/08/21 17:13:48 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,10 @@ FGElectric::~FGElectric()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGElectric::Calculate(void)
+void FGElectric::Calculate(void)
 {
+  RunPreFunctions();
+
   Throttle = FCS->GetThrottlePos(EngineNumber);
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
@@ -93,7 +95,9 @@ double FGElectric::Calculate(void)
 
   PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
 
-  return Thruster->Calculate(PowerAvailable);
+  Thruster->Calculate(PowerAvailable);
+
+  RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

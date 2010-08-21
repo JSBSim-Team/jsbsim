@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.32 2010/03/18 13:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.33 2010/08/21 17:13:47 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,6 +167,11 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     // data types
     if (operation == property_string || operation == p_string) {
       property_name = element->GetDataLine();
+      if (property_name.find("#") != string::npos) {
+        if (is_number(Prefix)) {
+          property_name = replace(property_name,"#",Prefix);
+        }
+      }
       FGPropertyManager* newNode = PropertyManager->GetNode(property_name);
       if (newNode == 0) {
         cerr << "The property " << property_name << " is undefined." << endl;
@@ -204,7 +209,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == random_string ||
                operation == avg_string )
     {
-      Parameters.push_back(new FGFunction(PropertyManager, element));
+      Parameters.push_back(new FGFunction(PropertyManager, element, Prefix));
     } else if (operation != description_string) {
       cerr << "Bad operation " << operation << " detected in configuration file" << endl;
     }
@@ -367,8 +372,16 @@ void FGFunction::bind(void)
     string tmp;
     if (Prefix.empty())
       tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper case
-    else
-      tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false); // Allow upper case
+    else {
+      if (is_number(Prefix)) {
+        if (Name.find("#") != string::npos) {
+          Name = replace(Name,"#",Prefix);
+          tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper case
+        }
+      } else {
+        tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false); // Allow upper case
+      }
+    }
 
     PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
   }

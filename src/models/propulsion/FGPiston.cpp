@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.52 2010/06/05 12:12:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.53 2010/08/21 17:13:48 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,16 +385,16 @@ void FGPiston::ResetToIC(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-double FGPiston::Calculate(void)
+void FGPiston::Calculate(void)
 {
+  RunPreFunctions();
+
   if (FuelFlow_gph > 0.0) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
   Mixture = FCS->GetMixturePos(EngineNumber);
 
-  //
   // Input values.
-  //
 
   p_amb = Atmosphere->GetPressure() * psftopa;
   double p = Auxiliary->GetTotalPressure() * psftopa;
@@ -416,8 +416,9 @@ double FGPiston::Calculate(void)
   //Assume lean limit at 22 AFR for now - thats a thi of 0.668
   //This might be a bit generous, but since there's currently no audiable warning of impending
   //cutout in the form of misfiring and/or rough running its probably reasonable for now.
-//  if (equivalence_ratio < 0.668)
-//    Running = false;
+
+  //  if (equivalence_ratio < 0.668)
+  //    Running = false;
 
   doEnginePower();
   if (IndicatedHorsePower < 0.1250) Running = false;
@@ -433,8 +434,9 @@ double FGPiston::Calculate(void)
   }
 
   PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
+  Thruster->Calculate(PowerAvailable);
 
-  return Thruster->Calculate(PowerAvailable);
+  RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

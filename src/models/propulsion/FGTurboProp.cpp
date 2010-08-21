@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.16 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.17 2010/08/21 17:13:48 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,8 +158,10 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 // The main purpose of Calculate() is to determine what phase the engine should
 // be in, then call the corresponding function.
 
-double FGTurboProp::Calculate(void)
+void FGTurboProp::Calculate(void)
 {
+  RunPreFunctions();
+
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
 
@@ -250,8 +252,9 @@ double FGTurboProp::Calculate(void)
   //printf ("EngHP: %lf / Requi: %lf\n",Eng_HP,Prop_Required_Power);
   PowerAvailable = (Eng_HP * hptoftlbssec) - Thruster->GetPowerRequired();
 
-  return Thruster->Calculate(PowerAvailable);
+  Thruster->Calculate(PowerAvailable);
 
+  RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
