@@ -32,7 +32,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.5 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.6 2010/08/24 10:30:14 jberndt Exp $";
 static const char *IdHdr = ID_PROPERTYVALUE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ FGPropertyValue::FGPropertyValue(FGPropertyManager* propNode) : PropertyManager(
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyValue::FGPropertyValue(string propName) : PropertyManager(0L)
+FGPropertyValue::FGPropertyValue(std::string propName) : PropertyManager(0L)
 {
   PropertyName = propName;
 }
