@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYVALUE "$Id: FGPropertyValue.h,v 1.7 2010/08/21 22:56:11 jberndt Exp $"
+#define ID_PROPERTYVALUE "$Id: FGPropertyValue.h,v 1.8 2010/08/24 10:30:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,7 +66,7 @@ class FGPropertyValue : public FGParameter
 public:
 
   FGPropertyValue(FGPropertyManager* propNode);
-  FGPropertyValue(string propName);
+  FGPropertyValue(std::string propName);
   ~FGPropertyValue() {};
 
   double GetValue(void) const;
@@ -74,7 +74,7 @@ public:
 
 private:
   FGPropertyManager* PropertyManager;
-  string PropertyName;
+  std::string PropertyName;
 };
 
 } // namespace JSBSim

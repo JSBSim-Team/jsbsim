@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.1 2010/08/21 17:13:48 jberndt Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.2 2010/08/24 10:30:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,9 +70,9 @@ public:
   ~FGModelFunctions();
   void RunPreFunctions(void);
   void RunPostFunctions(void);
-  bool Load(Element* el, FGPropertyManager* PropertyManager, string prefix="");
-  void PreLoad(Element* el, FGPropertyManager* PropertyManager, string prefix="");
-  void PostLoad(Element* el, FGPropertyManager* PropertyManager, string prefix="");
+  bool Load(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
+  void PreLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
+  void PostLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
 
 protected:
   std::vector <FGFunction*> PreFunctions;
