@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.23 2010/08/04 07:28:21 ehofman Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.24 2010/08/25 00:32:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.23 2010/08/04 07:28:21 ehofman Exp $
+    @version $Id: FGLocation.h,v 1.24 2010/08/25 00:32:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -450,6 +450,8 @@ public:
     f = l.f;
 
     initial_longitude = l.initial_longitude;
+    mGeodLat = l.mGeodLat;
+    GeodeticAltitude = l.GeodeticAltitude;
 
     return *this;
   }
