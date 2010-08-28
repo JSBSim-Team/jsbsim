@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.60 2010/08/12 19:11:22 andgi Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.61 2010/08/28 12:39:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   SetTerrainElevation(FGIC->GetTerrainElevationFtIC());
 
   VehicleRadius = GetRadius();
-  radInv = 1.0/VehicleRadius;
+  double radInv = 1.0/VehicleRadius;
 
   // Initialize the State Vector elements and the transformation matrices
 
@@ -194,6 +194,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   VState.vInertialPosition = Tec2i * VState.vLocation;
 
+  // Recompute the LocalTerrainRadius.
+  RecomputeLocalTerrainRadius();
+
   // Compute the local frame ECEF velocity
   vVel = Tb2l * VState.vUVW;
 
@@ -232,9 +235,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
     VState.dqInertialVelocity.push_front(VState.vInertialVelocity);
     VState.dqQtrndot.push_front(vQtrndot);
   }
-
-  // Recompute the LocalTerrainRadius.
-  RecomputeLocalTerrainRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,7 +306,6 @@ bool FGPropagate::Run(void)
   RecomputeLocalTerrainRadius();
 
   VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
-  radInv = 1.0/VehicleRadius;
 
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 
@@ -514,13 +513,9 @@ void FGPropagate::ResolveFrictionForces(double dt)
   wdot = vPQRdot;
 
   if (dt > 0.) {
-    // First compute the ground velocity below the aircraft center of gravity
-    FGLocation contact;
-    FGColumnVector3 normal, cvel;
-
     // Instruct the algorithm to zero out the relative movement between the
     // aircraft and the ground.
-    vdot += (VState.vUVW - Tec2b * cvel) / dt;
+    vdot += (VState.vUVW - Tec2b * LocalTerrainVelocity) / dt;
     wdot += VState.vPQR / dt;
   }
 
@@ -601,10 +596,13 @@ void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
 
 void FGPropagate::RecomputeLocalTerrainRadius(void)
 {
+  FGLocation contactloc;
+  FGColumnVector3 dv;
   double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
-  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
+  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv,
+                                           LocalTerrainVelocity);
   LocalTerrainRadius = contactloc.GetRadius(); 
 }
 

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.43 2010/07/25 15:35:11 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.44 2010/08/28 12:39:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.43 2010/07/25 15:35:11 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.44 2010/08/28 12:39:41 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -599,11 +599,9 @@ private:
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
-  FGLocation contactloc;
-  FGColumnVector3 dv;
   
   double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
-  double radInv;
+  FGColumnVector3 LocalTerrainVelocity;
   eIntegrateType integrator_rotational_rate;
   eIntegrateType integrator_translational_rate;
   eIntegrateType integrator_rotational_position;
