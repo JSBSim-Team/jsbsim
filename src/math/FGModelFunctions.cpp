@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.2 2010/08/21 18:04:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.3 2010/08/28 12:41:56 jberndt Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,7 +110,13 @@ void FGModelFunctions::PreLoad(Element* el, FGPropertyManager* PM, string prefix
       PreFunctions.push_back(new FGFunction(PM, function, prefix));
     } else if (function->GetAttributeValue("type").empty()) { // Assume pre-function
       string funcname = function->GetAttributeValue("name");
-      PreFunctions.push_back(new FGFunction(PM, function, prefix));
+      if (funcname.find("IdleThrust") == string::npos && // Do not process functions that are
+          funcname.find("MilThrust") == string::npos  && // already pre-defined turbine engine
+          funcname.find("AugThrust") == string::npos  && // functions. These are loaded within
+          funcname.find("Injection") == string::npos )   // the Turbine::Load() method.
+      {
+        PreFunctions.push_back(new FGFunction(PM, function, prefix));
+      }
     }
     function = el->FindNextElement("function");
   }
