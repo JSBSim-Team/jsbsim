@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="Fokker-100" version="2.0" release="ALPHA"
+<fdm_config name="Fokker 70" version="2.0" release="BETA"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate> 2010-08-08 </filecreationdate>
-  <version>$Revision: 1.27 $</version>
-  <description> Fokker-100 commercial airliner </description>
+  <version> $Revision: 1.1 $ </version>
+  <description> Fokker 70 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
   <reference title="Lissys - PIANO aircraft analysis software
@@ -18,23 +18,23 @@
  </fileheader>
 
 <!--
-  File:     Fokker-100.xml
+  File:     Fokker-70.xml
   Inputs:
-    name:          Fokker-100
+    name:          Fokker-70
     type:          two-engine transonic transport
-    max weight:    95013.45 lb
+    max weight:    81011.7 lb
     wing span:     92.13048 ft
-    length:        106.6325 ft
+    length:        91.47428 ft
     wing area:     1006.5275 sq-ft
     gear type:     tricycle
     retractable?:  yes
     # engines:     2
     engine type:   turbine
     engine layout: aft fuselage
-    yaw damper?    no
+    yaw damper?    yes
 
   Outputs:
-    wing loading:  94.40 lb/sq-ft
+    wing loading:  80.49 lb/sq-ft
     CL-alpha:      4.4 per radian
     CL-0:          0.2
     CL-max:        1.72
@@ -43,22 +43,23 @@
 
 -->
 
+
  <metrics>
    <wingarea  unit="FT2"> 1006.53 </wingarea>
    <wingspan  unit="FT" >   92.13 </wingspan>
    <wing_incidence>          2.00 </wing_incidence>
    <chord     unit="FT" >   12.4671 </chord>
    <htailarea unit="FT2">  233.792 </htailarea>
-   <htailarm  unit="FT" >   52.4934 </htailarm>
+   <htailarm  unit="FT" >   47.2440 </htailarm>
    <vtailarea unit="FT2">  132.396 </vtailarea>
-   <vtailarm  unit="FT" >   44.6194 </vtailarm>
+   <vtailarm  unit="FT" >   37.4015 </vtailarm>
    <location name="AERORP" unit="IN">
-     <x> 699.48 </x> <!-- 668.48 -->
+     <x> 587.73 </x>
      <y>   0.00 </y>
      <z>  38.00 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
-     <x> 122.04 </x>
+     <x>  76.84 </x>
      <y> -30.00 </y>
      <z>  88.94 </z>
    </location>
@@ -70,54 +71,56 @@
  </metrics>
 
  <mass_balance>
-   <ixx unit="SLUG*FT2">    234805 </ixx>
-   <iyy unit="SLUG*FT2">    726720 </iyy>
-   <izz unit="SLUG*FT2">    925012 </izz>
-   <emptywt unit="LBS" >     54217 </emptywt>
+   <ixx unit="SLUG*FT2">    200203 </ixx>
+   <iyy unit="SLUG*FT2">    455983 </iyy>
+   <izz unit="SLUG*FT2">    672987 </izz>
+   <emptywt unit="LBS" >     49985 </emptywt>
    <location name="CG" unit="IN">
-     <x> 719.81 </x> <!-- 693.81 -->
+     <x> 605.73 </x>
      <y>   0.00 </y>
      <z>  38.12 </z>
    </location>
+
    <pointmass name="pilot">
      <weight unit="LBS"> 230 </weight>
      <location name="POINTMASS" unit="IN">
-       <x> 122.04 </x>
+       <x> 96.84 </x>
        <y> -30.0 </y>
-       <z>  66.0 </z>
+       <z> 66.0 </z>
      </location>
    </pointmass>
    <pointmass name="copilot">
      <weight unit="LBS"> 230 </weight>
      <location name="POINTMASS" unit="IN">
-       <x> 122.04 </x>
-       <y>  30.0 </y>
-       <z>  66.0 </z>
+       <x> 96.84 </x>
+       <y> 30.0 </y>
+       <z> 66.0 </z>
      </location>
    </pointmass>
    <pointmass name="steward">
      <weight unit="LBS"> 400 </weight>
      <location name="POINTMASS" unit="IN">
-       <x>  218 </x>
-       <y>  32.0 </y>
-       <z>  66.0 </z>
+       <x> 206 </x>
+       <y> 30.0 </y>
+       <z> 66.0 </z>
      </location>
    </pointmass>
+
  </mass_balance>
 
  <ground_reactions>
 
   <contact type="BOGEY" name="NOSE">
    <location unit="IN">
-     <x> 172.87 </x>
+     <x> 142.70 </x>
      <y>   0.00 </y>
      <z> -63.53 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
    <rolling_friction> 0.02 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      28504.03 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC">  9501.34 </damping_coeff>
+   <spring_coeff unit="LBS/FT">      24303.51 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  8101.17 </damping_coeff>
    <max_steer unit="DEG"> 5.00 </max_steer>
    <brake_group>NONE</brake_group>
    <retractable>1</retractable>
@@ -125,15 +128,15 @@
 
   <contact type="BOGEY" name="LEFT_MAIN">
    <location unit="IN">
-     <x> 731.93 </x>
+     <x> 627.88 </x>
      <y>-101.65 </y>
      <z> -63.53 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
    <rolling_friction> 0.02 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      95013.45 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 19002.69 </damping_coeff>
+   <spring_coeff unit="LBS/FT">      81011.70 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC"> 16202.34 </damping_coeff>
    <max_steer unit="DEG">0</max_steer>
    <brake_group>LEFT</brake_group>
    <retractable>1</retractable>
@@ -141,15 +144,15 @@
 
   <contact type="BOGEY" name="RIGHT_MAIN">
    <location unit="IN">
-     <x> 731.93 </x>
+     <x> 627.88 </x>
      <y> 101.65 </y>
      <z> -63.53 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
    <rolling_friction> 0.02 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      95013.45 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 19002.69 </damping_coeff>
+   <spring_coeff unit="LBS/FT">      81011.70 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC"> 16202.34 </damping_coeff>
    <max_steer unit="DEG">0</max_steer>
    <brake_group>RIGHT</brake_group>
    <retractable>1</retractable>
@@ -157,35 +160,35 @@
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
-     <x> 753.77 </x>
+     <x> 603.73 </x>
      <y>-1105.4 </y>
-     <z>   0.0 </z>
+     <z>   0.0  </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
-    <spring_coeff unit="LBS/FT">      95013.45 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC"> 19002.69 </damping_coeff>
+    <spring_coeff unit="LBS/FT">      81011.70 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 16202.34 </damping_coeff>
  </contact>
 
   <contact type="STRUCTURE" name="RIGHT_WING">
     <location unit="IN">
-     <x> 753.77 </x>
+     <x> 603.73 </x>
      <y> 1105.4 </y>
      <z>   0.0  </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
-    <spring_coeff unit="LBS/FT">      95013.45 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC"> 19002.69 </damping_coeff>
- </contact>
+    <spring_coeff unit="LBS/FT">      81011.70 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 16202.34 </damping_coeff>
+  </contact>
 
  </ground_reactions>
 
- <propulsion>
+  <propulsion>
 
    <engine file="Tay-620">
     <location unit="IN">
-      <x>  922.52 </x>
+      <x>  893.52 </x>
       <y> -101.65 </y>
       <z>   43.53 </z>
     </location>
@@ -197,7 +200,7 @@
     <feed>0</feed>
     <thruster file="direct">
      <location unit="IN">
-       <x>  922.52 </x>
+       <x>  893.52 </x>
        <y> -101.65 </y>
        <z>   43.53 </z>
      </location>
@@ -211,7 +214,7 @@
 
    <engine file="Tay-620">
     <location unit="IN">
-      <x>  922.52 </x>
+      <x>  893.52 </x>
       <y>  101.65 </y>
       <z>   43.53 </z>
     </location>
@@ -223,7 +226,7 @@
     <feed>1</feed>
     <thruster file="direct">
      <location unit="IN">
-       <x>  922.52 </x>
+       <x>  893.52 </x>
        <y>  101.65 </y>
        <z>   43.53 </z>
      </location>
@@ -237,39 +240,39 @@
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x> 713.81 </x>
+       <x> 601.73 </x>
        <y>-190.59 </y>
        <z>   0.0  </z>
      </location>
-     <capacity unit="LBS"> 13360.01 </capacity>
-     <contents unit="LBS"> 688.50 </contents>
+     <capacity unit="LBS"> 1174.08 </capacity>
+     <contents unit="LBS"> 587.04 </contents>
   </tank>
 
   <tank type="FUEL" number="1">
      <location unit="IN">
-       <x> 713.81 </x>
+       <x> 601.73 </x>
        <y> 190.59 </y>
        <z>   0.0  </z>
      </location>
-     <capacity unit="LBS"> 13360.01 </capacity>
-     <contents unit="LBS"> 688.50 </contents>
+     <capacity unit="LBS"> 1174.08 </capacity>
+     <contents unit="LBS"> 587.04 </contents>
   </tank>
 <!--
   <tank type="FUEL" number="2">
      <location unit="IN">
-       <x> 703.77 </x>
+       <x> 603.73 </x>
        <y>   0.00 </y>
-       <z> -31.99 </z>
+       <z> -27.44 </z>
      </location>
-     <capacity unit="LBS"> 1377.01 </capacity>
-     <contents unit="LBS"> 688.50 </contents>
+     <capacity unit="LBS"> 1174.08 </capacity>
+     <contents unit="LBS"> 587.04 </contents>
   </tank>
 -->
  </propulsion>
 
  <system file="pushback"/>
 
- <flight_control name="FCS: Fokker-100">
+ <flight_control name="FCS: Fokker-70">
 
   <channel name="Pitch">
    <summer name="fcs/pitch-trim-sum">
@@ -431,7 +434,7 @@
       <output>fcs/rudder-pos-rad</output>
    </aerosurface_scale>
 
-   <aerosurface_scale name="rcs/rudder-normalization">
+   <aerosurface_scale name="fcs/rudder-normalization">
       <input>fcs/rudder-pos-rad</input>
       <domain>
         <min> -0.35 </min>
@@ -522,8 +525,8 @@
      </traverse>
      <output>fcs/speedbrake-pos-norm</output>
    </kinematic>
-  </channel>
 
+  </channel>
 
   <channel name="Spoilers">
    <kinematic name="fcs/spoiler-control">
@@ -541,7 +544,9 @@
      <output>fcs/spoiler-pos-norm</output>
    </kinematic>
   </channel>
+
  </flight_control>
+
 
     <aerodynamics>
 
@@ -605,7 +610,7 @@
                           <tableData>
                               -1.5700	1.5000
                               -0.2600	0.0400
-                              0.0000	0.01922
+                              0.0000	0.0192
                               0.2600	0.0400
                               1.5700	1.5000
                           </tableData>
