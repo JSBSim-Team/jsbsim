@@ -1,48 +1,78 @@
 EXTRA_DIST = \
-	CFM56.xml \
+	ah1s_rotor.xml \
+	AJ26-33A.xml \
+	AJ26-33_nozzle.xml \
+	avco_lycoming_t53.xml \
+	BR710.xml \
+	BR-725.xml \
+	CF6-80C2.xml \
 	CFM56_5.xml \
 	CFM56.xml \
-	GE-CF6-80C2-B1F.xml \
-	F119-PW-1.xml \
-	J69-T25.xml \
-	J85-GE-5.xml \
-	J85-GE-5.xml \
-	LM_descent_nozzle.xml \
-	LMdescent.xml \
-	PT6A-68.xml \
-	PW125B.xml \
-	R-1820-97.xml \
-	T76.xml \
-	Tay-651.xml \
-	XLR99.xml \
 	direct.xml \
+	Dr1_propeller.xml \
 	electric147kW.xml \
+	electric_1mw.xml \
+	eng_io320.xml \
 	engIO360C.xml \
 	engIO470D.xml \
 	engIO540AB1A5.xml \
 	eng_PegasusXc.xml \
-	eng_io320.xml \
+	eng_RRhawk.xml \
+	engRRMerlin61.xml \
+	engRRMerlinXII.xml \
+	engtm601.xml \
+	F100-PW-229.xml \
+	F119-PW-1.xml \
+	GE-CF6-80C2-B1F.xml \
+	HamiltonStd6243A-3.xml \
+	J33-A-35.xml \
+	J52.xml \
+	J69-T25.xml \
+	J79-GE-11A.xml \
+	J85-GE-5.xml \
+	JT9D-3.xml \
+	LM_descent_nozzle.xml \
+	LMdescent.xml \
+	MerlinV1650.xml \
+	Oberursel-UrII.xml \
+	Olympus593Mrk610.xml \
+	P51prop.xml \
 	prop30FP2B.xml \
+	prop_75in2f.xml \
+	prop_81in2v.xml \
 	propC10v.xml \
 	propC6v.xml \
 	propC8v.xml \
 	prop_Clark_Y7570.xml \
-	prop_deHavilland5000.xml \
 	propDA-R352_6-123-F_2.xml \
+	prop_deHavilland5000.xml \
+	prop_generic2f.xml \
 	propHO-V373-D.xml \
 	propHS139v.xml \
-	prop_75in2f.xml \
-	prop_81in2v.xml \
-	prop_generic2f.xml \
-	xlr99_nozzle.xml \
-	SRB.xml \
-	SRB_nozzle.xml \
-	SSME.xml \
-	SSME_nozzle.xml \
-	RL10.xml \
+	prop_PT6.xml \
+	prop_SSZ.xml \
+	PT6A-27.xml \
+	PT6A-68.xml \
+	PW125B.xml \
+	R-1820-97.xml \
+	RB211-524.xml \
 	RL10_nozzle.xml \
-	ah1s_rotor.xml \
-	avco_lycoming_t53.xml \
+	RL10.xml \
+	RollsRoyce.xml \
 	s64_rotor.xml \
+	SRB_nozzle.xml \
+	SRB.xml \
+	SSME_nozzle.xml \
+	SSME.xml \
+	t56_prop.xml \
+	t56.xml \
+	T76.xml \
+	Tay-620.xml \
+	Tay-651.xml \
 	test_turbine.xml \
-	twin_pratt_and_whitney_t73.xml
+	TRENT-900.xml \
+	twin_pratt_and_whitney_t73.xml \
+	vrtule2.xml \
+	xlr99_nozzle.xml \
+	XLR99.xml \
+	Zenoah_G-26A.xml
