@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.28 2010/08/21 17:13:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.29 2010/08/31 04:01:32 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,9 +476,6 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
       MaxThrustLookup = new FGFunction(PropertyManager, function_element, property_prefix);
     } else if (name == "Injection") {
       InjectionLookup = new FGFunction(PropertyManager, function_element, property_prefix);
-    } else {
-      cerr << "Unknown function type: " << name << " in turbine definition." <<
-      endl;
     }
   }
 

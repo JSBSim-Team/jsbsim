@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.61 2010/08/28 12:39:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.62 2010/08/31 04:01:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Debug(0);
   Name = "FGPropagate";
-  gravType = gtWGS84;
+  gravType = gtStandard;
  
   vPQRdot.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
@@ -279,20 +279,32 @@ bool FGPropagate::Run(void)
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
 
-  VState.qAttitudeECI.Normalize(); // Normalize the ECI Attitude quaternion
+  // CAUTION : the order of the operations below is very important to get transformation
+  // matrices that are consistent with the new state of the vehicle
 
-  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle()); // Update the Earth position angle (EPA)
+  // 1. Update the Earth position angle (EPA)
+  VState.vLocation.SetEarthPositionAngle(Inertial->GetEarthPositionAngle());
 
-  // Update the "Location-based" transformation matrices from the vLocation vector.
-
+  // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
   Ti2ec = GetTi2ec();          // ECI to ECEF transform
   Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
+
+  // 3. Update the location from the updated Ti2ec and inertial position
+  VState.vLocation = Ti2ec*VState.vInertialPosition;
+
+  // 4. Update the other "Location-based" transformation matrices from the updated
+  //    vLocation vector.
+
   Tl2ec = GetTl2ec();          // local to ECEF transform
   Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
   Ti2l  = GetTi2l();
   Tl2i  = Ti2l.Transposed();
 
-  // Update the "Orientation-based" transformation matrices from the orientation quaternion
+  // 5. Normalize the ECI Attitude quaternion
+  VState.qAttitudeECI.Normalize();
+
+  // 6. Update the "Orientation-based" transformation matrices from the updated 
+  //    orientation quaternion and vLocation vector.
 
   Ti2b  = GetTi2b();           // ECI to body frame transform
   Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
@@ -302,7 +314,6 @@ bool FGPropagate::Run(void)
   Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
 
   // Set auxililary state variables
-  VState.vLocation = Ti2ec*VState.vInertialPosition;
   RecomputeLocalTerrainRadius();
 
   VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
