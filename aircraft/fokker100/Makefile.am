@@ -1,2 +1,1 @@
-EXTRA_DIST = \
-	fokker100.xml
+EXTRA_DIST = fokker100.xml fokker70.xml xf100.xml info.txt
