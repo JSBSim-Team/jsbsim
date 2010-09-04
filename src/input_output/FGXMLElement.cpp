@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.29 2010/03/18 13:18:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.30 2010/09/04 14:15:15 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -95,6 +95,9 @@ Element::Element(const string& nm)
     // Angles
     convert["RAD"]["DEG"] = 360.0/(2.0*3.1415926);
     convert["DEG"]["RAD"] = 1.0/convert["RAD"]["DEG"];
+    // Angular rates
+    convert["RAD/SEC"]["DEG/SEC"] = 360.0/(2.0*3.1415926);
+    convert["DEG/SEC"]["RAD/SEC"] = 1.0/convert["RAD/SEC"]["DEG/SEC"];
     // Spring force
     convert["LBS/FT"]["N/M"] = 14.5939;
     convert["N/M"]["LBS/FT"] = 1.0/convert["LBS/FT"]["N/M"];
@@ -170,6 +173,9 @@ Element::Element(const string& nm)
     // Angles
     convert["DEG"]["DEG"] = 1.00;
     convert["RAD"]["RAD"] = 1.00;
+    // Angular rates
+    convert["DEG/SEC"]["DEG/SEC"] = 1.00;
+    convert["RAD/SEC"]["RAD/SEC"] = 1.00;
     // Spring force
     convert["LBS/FT"]["LBS/FT"] = 1.00;
     convert["N/M"]["N/M"] = 1.00;

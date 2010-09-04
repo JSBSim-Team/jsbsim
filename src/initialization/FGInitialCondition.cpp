@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.40 2010/06/02 04:05:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.41 2010/09/04 14:15:15 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -966,11 +966,17 @@ bool FGInitialCondition::Load_v2(void)
   bool result = true;
   FGInertial* Inertial = fdmex->GetInertial();
   FGPropagate* Propagate = fdmex->GetPropagate();
+  FGColumnVector3 vOmegaEarth = FGColumnVector3(0.0, 0.0, Inertial->omega());
 
   if (document->FindElement("earth_position_angle")) {
     double epa = document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD");
     Inertial->SetEarthPositionAngle(epa);
   }
+
+  Propagate->SetSeaLevelRadius(GetSeaLevelRadiusFtIC());
+
+  if (document->FindElement("elevation"))
+    Propagate->SetTerrainElevation(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
 
   // Initialize vehicle position
   //
@@ -983,25 +989,28 @@ bool FGInitialCondition::Load_v2(void)
     vLoc = position->FindElementTripletConvertTo("FT");
     string frame = position->GetAttributeValue("frame");
     frame = to_lower(frame);
-    if (frame == "eci") {
-      // Need to transform vLoc to ECEF for storage and use in FGLocation.
+    if (frame == "eci") { // Need to transform vLoc to ECEF for storage and use in FGLocation.
       vLoc = Propagate->GetTi2ec()*vLoc;
+      Propagate->SetLocation(vLoc);
     } else if (frame == "ecef") {
-      // Move vLoc query until after lat/lon/alt query to eliminate spurious warning msgs.
+      double AltitudeASL = 0.0;
       if (vLoc.Magnitude() == 0.0) {
-        Propagate->SetLatitudeDeg(position->FindElementValueAsNumberConvertTo("latitude", "DEG"));
-        Propagate->SetLongitudeDeg(position->FindElementValueAsNumberConvertTo("longitude", "DEG"));
         if (position->FindElement("radius")) {
-          radius_to_vehicle = position->FindElementValueAsNumberConvertTo("radius", "FT");
-          SetAltitudeASLFtIC(radius_to_vehicle - sea_level_radius);
+          AltitudeASL = position->FindElementValueAsNumberConvertTo("radius", "FT") - sea_level_radius;
         } else if (position->FindElement("altitudeAGL")) {
-          SetAltitudeAGLFtIC(position->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+          AltitudeASL = terrain_elevation + position->FindElementValueAsNumberConvertTo("altitudeAGL", "FT");
         } else if (position->FindElement("altitudeMSL")) {
-          SetAltitudeASLFtIC(position->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+          AltitudeASL = position->FindElementValueAsNumberConvertTo("altitudeMSL", "FT");
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
         }
+        Propagate->SetPosition(
+                         position->FindElementValueAsNumberConvertTo("longitude", "RAD"),
+                         position->FindElementValueAsNumberConvertTo("latitude", "RAD"),
+                         AltitudeASL + GetSeaLevelRadiusFtIC());
+      } else {
+        Propagate->SetLocation(vLoc);
       }
     } else {
       cerr << endl << "  Neither ECI nor ECEF frame is specified for initial position." << endl;
@@ -1103,23 +1112,23 @@ bool FGInitialCondition::Load_v2(void)
   Element* velocity_el = document->FindElement("velocity");
   FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vInitVelocity = FGColumnVector3(0.0, 0.0, 0.0);
+  FGColumnVector3 omega_cross_r = vOmegaEarth * Propagate->GetInertialPosition();
+  FGMatrix33 mTl2i = Propagate->GetTl2i();
+  FGMatrix33 mTec2i = Propagate->GetTec2i(); // Get C_i/e
+  FGMatrix33 mTb2i = Propagate->GetTb2i();
   if (velocity_el) {
 
     string frame = velocity_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
-    FGColumnVector3 omega_cross_r = Inertial->omega() * Propagate->GetInertialPosition();
 
     if (frame == "eci") {
       vInertialVelocity = vInitVelocity;
     } else if (frame == "ecef") {
-      FGMatrix33 mTec2i = Propagate->GetTec2i(); // Get C_i/e
       vInertialVelocity = mTec2i * vInitVelocity + omega_cross_r;
     } else if (frame == "local") {
-      FGMatrix33 mTl2i = Propagate->GetTl2i();
       vInertialVelocity = mTl2i * vInitVelocity + omega_cross_r;
     } else if (frame == "body") {
-      FGMatrix33 mTb2i = Propagate->GetTb2i();
       vInertialVelocity = mTb2i * vInitVelocity + omega_cross_r;
     } else {
 
@@ -1131,13 +1140,13 @@ bool FGInitialCondition::Load_v2(void)
 
   } else {
 
-    FGMatrix33 mTb2i = Propagate->GetTb2i();
-    vInertialVelocity = mTb2i * vInitVelocity + (Inertial->omega() * Propagate->GetInertialPosition());
+    vInertialVelocity = mTb2i * vInitVelocity + omega_cross_r;
 
   }
 
   Propagate->SetInertialVelocity(vInertialVelocity);
 
+  // Initialize vehicle body rates
   // Allowable frames
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
@@ -1145,6 +1154,13 @@ bool FGInitialCondition::Load_v2(void)
   
   FGColumnVector3 vInertialRate;
   Element* attrate_el = document->FindElement("attitude_rate");
+  double radInv = 1.0/Propagate->GetRadius();
+  FGColumnVector3 vVel = Propagate->GetVel();
+  FGColumnVector3 vOmegaLocal = FGColumnVector3(
+   radInv*vVel(eEast),
+  -radInv*vVel(eNorth),
+  -radInv*vVel(eEast)*Propagate->GetLocation().GetTanLatitude() );
+
   if (attrate_el) {
 
     string frame = attrate_el->GetAttributeValue("frame");
@@ -1154,11 +1170,9 @@ bool FGInitialCondition::Load_v2(void)
     if (frame == "eci") {
       vInertialRate = vAttRate;
     } else if (frame == "ecef") {
-//      vInertialRate = vAttRate + Inertial->omega(); 
-    } else if (frame == "body") {
-    //Todo: determine local frame rate
-      FGMatrix33 mTb2l = Propagate->GetTb2l();
-//      vInertialRate = mTb2l*vAttRate + Inertial->omega();
+      vInertialRate = vAttRate + vOmegaEarth; 
+    } else if (frame == "local") {
+      vInertialRate = vOmegaEarth + Propagate->GetTl2i() * vOmegaLocal + Propagate->GetTb2i() * vAttRate;
     } else if (!frame.empty()) { // misspelling of frame
       
       cerr << endl << fgred << "  Attitude rate frame type: \"" << frame
@@ -1170,21 +1184,10 @@ bool FGInitialCondition::Load_v2(void)
     }
     
   } else { // Body frame attitude rate assumed 0 relative to local.
-/*
-    //Todo: determine local frame rate
-
-    FGMatrix33 mTi2l = Propagate->GetTi2l();
-    vVel = mTi2l * vInertialVelocity;
-
-    // Compute the local frame ECEF velocity
-    vVel = Tb2l * VState.vUVW;
-
-    FGColumnVector3 vOmegaLocal = FGColumnVector3(
-       radInv*vVel(eEast),
-      -radInv*vVel(eNorth),
-      -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
-*/  
+      vInertialRate = vOmegaEarth + Propagate->GetTl2i() * vOmegaLocal;
   }
+  Propagate->SetInertialRates(vInertialRate);
+  Propagate->InitializeDerivatives();
 
   // Check to see if any engines are specified to be initialized in a running state
   FGPropulsion* propulsion = fdmex->GetPropulsion();

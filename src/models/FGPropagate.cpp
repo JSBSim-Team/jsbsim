@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.62 2010/08/31 04:01:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.63 2010/09/04 14:15:16 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   integrator_translational_position = eTrapezoidal;
 
   VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqUVWdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(4, FGQuaternion(0.0,0.0,0.0));
 
@@ -129,7 +129,7 @@ bool FGPropagate::InitModel(void)
   vInertialVelocity.InitMatrix();
 
   VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqUVWdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(4, FGColumnVector3(0.0,0.0,0.0));
 
@@ -222,16 +222,16 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   CalculateUVWdot();           // Translational rate derivative
   ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
-  CalculateInertialVelocity(); // Translational position derivative
+  CalculateInertialVelocity(); // Translational position derivative (initial conditions are set in the body frame)
 
   // Initialize past values deques
   VState.dqPQRdot.clear();
-  VState.dqUVWdot.clear();
+  VState.dqUVWidot.clear();
   VState.dqInertialVelocity.clear();
   VState.dqQtrndot.clear();
   for (int i=0; i<4; i++) {
     VState.dqPQRdot.push_front(vPQRdot);
-    VState.dqUVWdot.push_front(vUVWdot);
+    VState.dqUVWidot.push_front(vUVWidot);
     VState.dqInertialVelocity.push_front(VState.vInertialVelocity);
     VState.dqQtrndot.push_front(vQtrndot);
   }
@@ -271,11 +271,11 @@ bool FGPropagate::Run(void)
   CalculateUVWdot();           // Translational rate derivative
   ResolveFrictionForces(dt);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
-  CalculateInertialVelocity(); // Translational position derivative
+  CalculateVelocity();         // Translational position derivative (velocities are integrated in the inertial frame)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
   Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
-  Integrate(VState.vUVW,              vUVWdot,           VState.dqUVWdot,           dt, integrator_translational_rate);
+  Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
 
@@ -372,10 +372,10 @@ void FGPropagate::CalculateQuatdot(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This set of calculations results in the body frame accelerations being
-// computed.
-// Compute body frame accelerations based on the current body forces.
-// Include centripetal and coriolis accelerations.
+// This set of calculations results in the body and inertial frame accelerations
+// being computed.
+// Compute body and inertial frames accelerations based on the current body
+// forces including centripetal and coriolis accelerations for the former.
 // vOmegaEarth is the Earth angular rate - expressed in the inertial frame -
 //   so it has to be transformed to the body frame. More completely,
 //   vOmegaEarth is the rate of the ECEF frame relative to the Inertial
@@ -409,6 +409,7 @@ void FGPropagate::CalculateUVWdot(void)
   }
 
   vUVWdot += vGravAccel;
+  vUVWidot = Tb2i * (vForces/mass + vGravAccel);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -421,6 +422,16 @@ void FGPropagate::CalculateUVWdot(void)
 void FGPropagate::CalculateInertialVelocity(void)
 {
   VState.vInertialVelocity = Tb2i * VState.vUVW + (vOmegaEarth * VState.vInertialPosition);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // Transform the velocity vector of the inertial frame to be expressed in the
+  // body frame relative to the origin (Earth center), and substract the vehicle
+  // velocity contribution due to the rotation of the planet.
+
+void FGPropagate::CalculateVelocity(void)
+{
+  VState.vUVW = Ti2b * (VState.vInertialVelocity - (vOmegaEarth * VState.vInertialPosition));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -487,6 +498,8 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
 // multiple points of contact between the aircraft and the ground. As a
 // consequence our matrix J*M^-1*J^T is not sparse and the algorithm described
 // in Catto's paper has been adapted accordingly.
+// The friction forces are resolved in the body frame relative to the origin
+// (Earth center).
 
 void FGPropagate::ResolveFrictionForces(double dt)
 {
@@ -580,6 +593,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
   }
 
   vUVWdot += invMass * Fc;
+  vUVWidot += invMass * Tb2i * Fc;
   vPQRdot += Jinv * Mc;
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
@@ -595,12 +609,54 @@ void FGPropagate::ResolveFrictionForces(double dt)
 
 void FGPropagate::SetInertialOrientation(FGQuaternion Qi) {
   VState.qAttitudeECI = Qi;
+  Tl2ec = GetTl2ec();          // local to ECEF transform
+  Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
+  Ti2l  = GetTi2l();
+  Tl2i  = Ti2l.Transposed();
+  Ti2b  = GetTi2b();           // ECI to body frame transform
+  Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
+  Tl2b  = Ti2b*Tl2i;           // local to body frame transform
+  Tb2l  = Tl2b.Transposed();   // body to local frame transform
+  Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
+  Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
   VState.vInertialVelocity = Vi;
+  VState.vUVW = GetTi2b() * (VState.vInertialVelocity - (vOmegaEarth * VState.vInertialPosition));
+  vVel = GetTb2l() * VState.vUVW;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetInertialRates(FGColumnVector3 vRates) {
+  VState.vPQRi = vRates;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::InitializeDerivatives(void)
+{
+  // Make an initial run and set past values
+  CalculatePQRdot();           // Angular rate derivative
+  CalculateUVWdot();           // Translational rate derivative
+  ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
+  CalculateQuatdot();          // Angular orientation derivative
+  CalculateInertialVelocity(); // Translational position derivative
+
+  // Initialize past values deques
+  VState.dqPQRdot.clear();
+  VState.dqUVWidot.clear();
+  VState.dqInertialVelocity.clear();
+  VState.dqQtrndot.clear();
+  for (int i=0; i<4; i++) {
+    VState.dqPQRdot.push_front(vPQRdot);
+    VState.dqUVWidot.push_front(vUVWdot);
+    VState.dqInertialVelocity.push_front(VState.vInertialVelocity);
+    VState.dqQtrndot.push_front(vQtrndot);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
