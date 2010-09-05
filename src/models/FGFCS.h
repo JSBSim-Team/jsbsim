@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.29 2010/08/21 22:56:11 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.30 2010/09/05 17:31:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.29 $
+    @version $Revision: 1.30 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -278,8 +278,6 @@ public:
   double GetDaLPos( int form = ofRad )
                          const { return DaLPos[form]; }
 
-  /// @name Aerosurface position retrieval
-  //@{
   /** Gets the right aileron position.
       @return aileron position in radians */
   double GetDaRPos( int form = ofRad )
