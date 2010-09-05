@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.41 2010/09/04 14:15:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.42 2010/09/05 17:31:40 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1047,11 +1047,11 @@ bool FGInitialCondition::Load_v2(void)
   // ToDo: Do we need to deal with normalization of the quaternions here?
 
   Element* orientation_el = document->FindElement("orientation");
+  FGQuaternion QuatI2Body;
   if (orientation_el) {
     string frame = orientation_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     vOrient = orientation_el->FindElementTripletConvertTo("RAD");
-    FGQuaternion QuatI2Body;
     if (frame == "eci") {
 
       QuatI2Body = FGQuaternion(vOrient);
@@ -1097,9 +1097,9 @@ bool FGInitialCondition::Load_v2(void)
       result = false;
 
     }
-
-    Propagate->SetInertialOrientation(QuatI2Body);
   }
+
+  Propagate->SetInertialOrientation(QuatI2Body);
 
   // Initialize vehicle velocity
   // Allowable frames
