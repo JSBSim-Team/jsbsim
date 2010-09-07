@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.12 2010/05/07 18:59:55 andgi Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.13 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ bool FGBuoyantForces::Load(Element *element)
     gas_cell_element = document->FindNextElement("gas_cell");
   }
   
-  FGModel::PostLoad(element);
+  PostLoad(element, PropertyManager);
 
   if (!NoneDefined) {
     bind();

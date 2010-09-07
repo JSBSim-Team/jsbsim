@@ -68,7 +68,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.27 2010/07/27 23:18:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.28 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +206,7 @@ bool FGAircraft::Load(Element* el)
     }
   }
 
-  FGModel::PostLoad(el);
+  PostLoad(el, PropertyManager);
 
   Debug(2);
 

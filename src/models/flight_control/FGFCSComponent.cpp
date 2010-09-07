@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.28 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.29 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,13 +122,16 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InputSigns.push_back( 1.0);
     }
-    tmp = PropertyManager->GetNode(input);
+    if (PropertyManager->HasNode(input)) {
+      tmp = PropertyManager->GetNode(input);
+    } else {
+      tmp = 0L;
+      // cerr << fgcyan << "In component: " + Name + " property "
+      //      + input + " is initially undefined." << reset << endl;
+    }
     InputNodes.push_back( tmp );
     InputNames.push_back( input );
-    if (!tmp) {
-      PutMessage("In component: " + Name + " property "
-           + input + " is initially undefined.");
-    }
+
     input_element = element->FindNextElement("input");
   }
 
@@ -239,12 +242,12 @@ void FGFCSComponent::Clip(void)
 
 void FGFCSComponent::LateBind(void)
 {
-  FGPropertyManager* node=0;
+  FGPropertyManager* node = 0L;
 
-  for (int i=0; i<InputNodes.size(); i++) {
+  for (unsigned int i=0; i<InputNodes.size(); i++) {
     if (!InputNodes[i]) {
-      node = PropertyManager->GetNode(InputNames[i]);
-      if (node) {
+      if (PropertyManager->HasNode(InputNames[i])) {
+        node = PropertyManager->GetNode(InputNames[i]);
         InputNodes[i] = node;
       } else {
         throw(InputNames[i]);

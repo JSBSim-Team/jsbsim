@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.39 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.40 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -336,7 +336,7 @@ bool FGPropulsion::Load(Element* el)
   if (el->FindElement("dump-rate"))
     DumpRate = el->FindElementValueAsNumberConvertTo("dump-rate", "LBS/MIN");
 
-  FGModel::PostLoad(el);
+  PostLoad(el, PropertyManager);
 
   return true;
 }

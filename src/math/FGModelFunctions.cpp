@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.3 2010/08/28 12:41:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.4 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,7 @@ void FGModelFunctions::RunPreFunctions(void)
 {
   vector <FGFunction*>::iterator it;
   for (it = PreFunctions.begin(); it != PreFunctions.end(); it++)
-    (*it)->GetValue();
+    (*it)->cacheValue(true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

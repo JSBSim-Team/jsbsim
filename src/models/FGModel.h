@@ -38,8 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
 #include "math/FGFunction.h"
+#include "math/FGModelFunctions.h"
 
 #include <string>
 #include <vector>
@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.14 2009/11/12 13:08:11 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.15 2010/09/07 00:19:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGModel : public FGJSBBase
+class FGModel : public FGModelFunctions
 {
 public:
 
@@ -94,7 +94,6 @@ public:
   /// Destructor
   ~FGModel();
 
-  FGModel* NextModel;
   std::string Name;
 
   /** Runs the model; called by the Executive
@@ -112,15 +111,10 @@ protected:
   int exe_ctr;
   int rate;
 
-  void RunPreFunctions(void);
-  void RunPostFunctions(void);
-
   /** Loads this model.
       @param el a pointer to the element
       @return true if model is successfully loaded*/
-  virtual bool Load(Element* el);
-
-  void PostLoad(Element* el);
+  virtual bool Load(Element* el) {return FGModelFunctions::Load(el, PropertyManager);}
 
   virtual void Debug(int from);
 
@@ -139,10 +133,6 @@ protected:
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
   FGPropertyManager* PropertyManager;
-  std::vector <FGFunction*> PreFunctions;
-  std::vector <FGFunction*> PostFunctions;
-
-  std::vector <double*> interface_properties;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
