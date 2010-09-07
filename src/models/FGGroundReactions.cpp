@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.29 2010/07/30 11:50:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.30 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ bool FGGroundReactions::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGroundReactions::GetWOW(void)
+bool FGGroundReactions::GetWOW(void) const
 {
   bool result = false;
   for (unsigned int i=0; i<lGear.size(); i++) {
@@ -195,7 +195,7 @@ bool FGGroundReactions::Load(Element* el)
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 
-  FGModel::PostLoad(el);
+  PostLoad(el, PropertyManager);
 
   return true;
 }
@@ -276,6 +276,7 @@ void FGGroundReactions::bind(void)
 {
   typedef double (FGGroundReactions::*PMF)(int) const;
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
+  PropertyManager->Tie("gear/wow", this, &FGGroundReactions::GetWOW);
   PropertyManager->Tie("moments/l-gear-lbsft", this, eL, (PMF)&FGGroundReactions::GetMoments);
   PropertyManager->Tie("moments/m-gear-lbsft", this, eM, (PMF)&FGGroundReactions::GetMoments);
   PropertyManager->Tie("moments/n-gear-lbsft", this, eN, (PMF)&FGGroundReactions::GetMoments);

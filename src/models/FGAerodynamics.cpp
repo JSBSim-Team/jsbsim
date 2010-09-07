@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.31 2009/11/28 14:30:11 andgi Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.32 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -356,7 +356,7 @@ bool FGAerodynamics::Load(Element *element)
     axis_element = document->FindNextElement("axis");
   }
 
-  FGModel::PostLoad(document); // Perform base class Post-Load
+  PostLoad(document, PropertyManager); // Perform base class Post-Load
 
   return true;
 }

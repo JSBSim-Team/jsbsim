@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.32 2010/08/12 04:07:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.33 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,7 +156,7 @@ bool FGMassBalance::Load(Element* el)
 
   Mass = lbtoslug*Weight;
 
-  FGModel::PostLoad(el);
+  PostLoad(el, PropertyManager);
 
   Debug(2);
   return true;

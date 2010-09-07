@@ -45,7 +45,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.17 2010/07/30 11:50:01 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.18 2010/09/07 00:40:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +106,7 @@ public:
   double GetMoments(int idx) const {return vMoments(idx);}
   string GetGroundReactionStrings(string delimeter);
   string GetGroundReactionValues(string delimeter);
-  bool GetWOW(void);
+  bool GetWOW(void) const;
   void UpdateForcesAndMoments(void);
 
   int GetNumGearUnits(void) const { return (int)lGear.size(); }

@@ -53,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.8 2009/11/12 13:08:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.9 2010/09/07 00:40:03 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ bool FGExternalReactions::Load(Element* el)
     force_element = el->FindNextElement("force");
   }
 
-  FGModel::PostLoad(el);
+  PostLoad(el, PropertyManager);
 
   return true;
 }
