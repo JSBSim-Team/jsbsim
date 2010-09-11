@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate> 2010-08-08 </filecreationdate>
-  <version>$Revision: 1.1 $</version>
+  <version>$Revision: 1.2 $</version>
   <description> Fokker-100 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
@@ -22,7 +22,7 @@
   Inputs:
     name:          NG-Aircraft XF-100 (Fokker 100NG)
     type:          two-engine transonic transport
-    max weight:    85512.105 lb
+    max weight:    95013.45 lb
     wing span:     92.13048 ft
     length:        106.6325 ft
     wing area:     1025.9045 sq-ft
@@ -48,10 +48,10 @@
    <wingspan  unit="FT" >   92.13 </wingspan>
    <wing_incidence>          2.00 </wing_incidence>
    <chord     unit="FT" >   12.4671 </chord>
-   <htailarea unit="FT2">  256.48 </htailarea>
-   <htailarm  unit="FT" >   47.98 </htailarm>
-   <vtailarea unit="FT2">  205.18 </vtailarea>
-   <vtailarm  unit="FT" >   47.98 </vtailarm>
+   <htailarea unit="FT2">  233.792 </htailarea>
+   <htailarm  unit="FT" >   52.4934 </htailarm>
+   <vtailarea unit="FT2">  132.396 </vtailarea>
+   <vtailarm  unit="FT" >   44.6194 </vtailarm>
    <location name="AERORP" unit="IN">
      <x> 699.48 </x> <!-- 668.48 -->
      <y>   0.00 </y>
@@ -111,13 +111,13 @@
    <location unit="IN">
      <x> 172.87 </x>
      <y>   0.00 </y>
-     <z> -63.53 </z>
+     <z> -55.73 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
    <rolling_friction> 0.02 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      28504.03 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC">  9501.34 </damping_coeff>
+   <spring_coeff unit="LBS/FT">       7750.03 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  1600.34 </damping_coeff>
    <max_steer unit="DEG"> 5.00 </max_steer>
    <brake_group>NONE</brake_group>
    <retractable>1</retractable>

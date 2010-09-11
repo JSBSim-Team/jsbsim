@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<system name="pushback">
+ <property>/sim/model/pushback/target-speed-fps</property>
+ <channel name="Pushback">
+
+   <switch name="systems/pushback/linked">
+     <default value="-1"/>
+     <test value="0">
+       /sim/model/pushback/position-norm gt 0.95
+       /gear/gear/wow == 1
+       gear/unit[0]/wheel-speed-fps lt 50
+     </test>
+   </switch>
+
+   <summer name="systems/pushback/speed-error">
+     <input>/sim/model/pushback/target-speed-fps</input>
+     <input>-gear/unit[0]/wheel-speed-fps</input>
+   </summer>
+
+   <pid name="systems/pushback/force">
+     <input>systems/pushback/speed-error</input>
+     <kp>/sim/model/pushback/kp</kp>
+     <ki>/sim/model/pushback/ki</ki>
+     <kd>/sim/model/pushback/kd</kd>
+     <trigger>systems/pushback/linked</trigger>
+     <output>/sim/model/pushback/force</output>
+   </pid>
+
+   <switch name="systems/pushback/force-output">
+     <default value="0"/>
+     <test value="systems/pushback/force">
+       systems/pushback/linked == 0
+     </test>
+     <output>external_reactions/pushback/magnitude</output>
+   </switch>
+
+ </channel>
+</system>

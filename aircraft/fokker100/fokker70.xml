@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate> 2010-08-08 </filecreationdate>
-  <version> $Revision: 1.1 $ </version>
+  <version> $Revision: 1.2 $ </version>
   <description> Fokker 70 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
@@ -114,13 +114,13 @@
    <location unit="IN">
      <x> 142.70 </x>
      <y>   0.00 </y>
-     <z> -63.53 </z>
+     <z> -55.73 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
    <rolling_friction> 0.02 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      24303.51 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC">  8101.17 </damping_coeff>
+   <spring_coeff unit="LBS/FT">       7750.51 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  1600.17 </damping_coeff>
    <max_steer unit="DEG"> 5.00 </max_steer>
    <brake_group>NONE</brake_group>
    <retractable>1</retractable>
