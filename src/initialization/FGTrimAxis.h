@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.4 2006/10/01 22:47:47 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.5 2010/09/07 18:36:29 andgi Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -58,10 +58,10 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-const string StateNames[10]=   { "all","udot","vdot","wdot","qdot","pdot","rdot",
+const string StateNames[] =   { "all","udot","vdot","wdot","qdot","pdot","rdot",
                                 "hmgt","nlf" 
                               };
-const string ControlNames[14]= { "Throttle","Sideslip","Angle of Attack",
+const string ControlNames[] =  { "Throttle","Sideslip","Angle of Attack",
                                  "Elevator","Ailerons","Rudder",
                                  "Altitude AGL", "Pitch Angle",
                                  "Roll Angle", "Flight Path Angle", 

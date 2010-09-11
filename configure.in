@@ -129,6 +129,7 @@ aircraft/f16/Makefile \
 aircraft/f16/Systems/Makefile \
 aircraft/f22/Makefile \
 aircraft/fokker100/Makefile \
+aircraft/fokker100/Systems/Makefile \
 aircraft/fokker50/Makefile \
 aircraft/minisgs/Makefile \
 aircraft/mk82/Makefile \
