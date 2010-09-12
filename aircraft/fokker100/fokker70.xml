@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate> 2010-08-08 </filecreationdate>
-  <version> $Revision: 1.2 $ </version>
+  <version> $Revision: 1.3 $ </version>
   <description> Fokker 70 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
@@ -183,6 +183,21 @@
   </contact>
 
  </ground_reactions>
+
+ <external_reactions>
+    <force name="pushback" frame="BODY">
+       <location unit="IN">
+          <x>-139</x>
+          <y>0</y>
+          <z>-71</z>
+       </location>
+       <direction>
+          <x>1</x>
+          <y>0</y>
+          <z>0</z>
+       </direction>
+    </force>
+ </external_reactions>
 
   <propulsion>
 
@@ -687,7 +702,8 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>/engines/engine/reverser-pos-norm</property>
+                    <property>propulsion/engine[0]/reverser-angle-rad</property>
+                    <property>propulsion/engine[1]/reverser-angle-rad</property>
                     <value>0.0187</value>
                 </product>
             </function>
@@ -976,19 +992,4 @@
             </function>
         </axis>
     </aerodynamics>
-
-    <external_reactions>
-        <force name="pushback" frame="BODY">
-            <location unit="IN">
-                <x>-139</x>
-                <y>0</y>
-                <z>-71</z>
-            </location>
-            <direction>
-                <x>1</x>
-                <y>0</y>
-                <z>0</z>
-            </direction>
-        </force>
-    </external_reactions>
 </fdm_config>
