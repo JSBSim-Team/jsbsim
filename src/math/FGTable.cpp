@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.21 2010/04/07 03:08:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.23 2010/09/16 11:01:24 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,6 +59,20 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1), PropertyManager(0)
   Type = tt1D;
   colCounter = 0;
   rowCounter = 1;
+  nTables = 0;
+
+  Data = Allocate();
+  Debug(0);
+  lastRowIndex=lastColumnIndex=2;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols), PropertyManager(0)
+{
+  Type = tt2D;
+  colCounter = 1;
+  rowCounter = 0;
   nTables = 0;
 
   Data = Allocate();
@@ -165,7 +179,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
       node = PropertyManager->GetNode(property_string);
 
       if (node == 0) {
-        throw("IndependenVar property, " + property_string + " in Table definition is not defined.");
+        throw("IndependentVar property, " + property_string + " in Table definition is not defined.");
       }
 
       lookup_axis = axisElement->GetAttributeValue("lookup");
