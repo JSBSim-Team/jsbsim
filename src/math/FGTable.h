@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.11 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.12 2010/09/16 11:01:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -233,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.11 2009/10/24 22:59:30 jberndt Exp $
+@version $Id: FGTable.h,v 1.12 2010/09/16 11:01:24 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,6 +253,7 @@ public:
   /// The constructor for a table
   FGTable (FGPropertyManager* propMan, Element* el);
   FGTable (int );
+  FGTable (int, int);
   double GetValue(void) const;
   double GetValue(double key) const;
   double GetValue(double rowKey, double colKey) const;

@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.42 2010/09/05 17:31:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.43 2010/09/16 11:01:24 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -971,6 +971,7 @@ bool FGInitialCondition::Load_v2(void)
   if (document->FindElement("earth_position_angle")) {
     double epa = document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD");
     Inertial->SetEarthPositionAngle(epa);
+    Propagate->GetVState()->vLocation.SetEarthPositionAngle(epa);
   }
 
   Propagate->SetSeaLevelRadius(GetSeaLevelRadiusFtIC());
