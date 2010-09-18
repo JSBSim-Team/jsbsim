@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.43 2010/09/16 11:01:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.44 2010/09/18 22:48:12 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -976,8 +976,10 @@ bool FGInitialCondition::Load_v2(void)
 
   Propagate->SetSeaLevelRadius(GetSeaLevelRadiusFtIC());
 
-  if (document->FindElement("elevation"))
-    Propagate->SetTerrainElevation(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+  if (document->FindElement("elevation")) {
+    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+    Propagate->SetTerrainElevation(terrain_elevation);
+  }
 
   // Initialize vehicle position
   //

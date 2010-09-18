@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.47 2010/09/05 17:31:40 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.48 2010/09/18 22:48:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.47 2010/09/05 17:31:40 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.48 2010/09/18 22:48:12 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,13 +549,33 @@ public:
 
 // SET functions
 
-  void SetLongitude(double lon) { VState.vLocation.SetLongitude(lon); UpdateLocationMatrices(); }
-  void SetLongitudeDeg(double lon) {SetLongitude(lon*degtorad); UpdateLocationMatrices();}
-  void SetLatitude(double lat) { VState.vLocation.SetLatitude(lat); UpdateLocationMatrices(); }
-  void SetLatitudeDeg(double lat) {SetLatitude(lat*degtorad); UpdateLocationMatrices();}
-  void SetRadius(double r) { VState.vLocation.SetRadius(r); }
-  void SetLocation(const FGLocation& l) { VState.vLocation = l; UpdateLocationMatrices(); }
-  void SetLocation(const FGColumnVector3& l) { VState.vLocation = l; UpdateLocationMatrices(); }
+  void SetLongitude(double lon) {
+      VState.vLocation.SetLongitude(lon);
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
+  void SetLongitudeDeg(double lon) { SetLongitude(lon*degtorad); }
+  void SetLatitude(double lat) {
+      VState.vLocation.SetLatitude(lat);
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
+  void SetLatitudeDeg(double lat) { SetLatitude(lat*degtorad); }
+  void SetRadius(double r) {
+      VState.vLocation.SetRadius(r);
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
+  void SetLocation(const FGLocation& l) {
+      VState.vLocation = l;
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
+  void SetLocation(const FGColumnVector3& l) {
+      VState.vLocation = l;
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
   void SetAltitudeASL(double altASL);
   void SetAltitudeASLmeters(double altASL) {SetAltitudeASL(altASL/fttom);}
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
@@ -566,6 +586,7 @@ public:
       VState.vLocation.SetPosition(Lon, Lat, Radius);
       VState.vInertialPosition = GetTec2i() * VState.vLocation;
       VehicleRadius = GetRadius();
+      UpdateLocationMatrices();
   }
 
   void RecomputeLocalTerrainRadius(void);
