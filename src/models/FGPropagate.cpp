@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.64 2010/09/05 17:31:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.65 2010/09/18 22:48:12 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -609,7 +609,7 @@ void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetInertialRates(FGColumnVector3 vRates) {
-  VState.vPQRi = vRates;
+  VState.vPQRi = Ti2b * vRates;
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 }
 
