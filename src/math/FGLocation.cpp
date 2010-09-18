@@ -45,9 +45,10 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.21 2010/07/02 01:48:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.22 2010/09/18 22:47:17 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
-
+using std::cerr;
+using std::endl;
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -103,10 +104,6 @@ FGLocation::FGLocation(double lon, double lat, double radius)
                             radius*cosLat*sinLon,
                             radius*sinLat );
   mLon = mLat = mRadius = mGeodLat = GeodeticAltitude = 0.0;
-  
-//  initial_longitude = 0.0
-
-  ComputeDerived();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +179,6 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
-  ComputeDerived();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +198,6 @@ void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
   mECLoc(eX) = (RN + GeodeticAltitude)*cos(mGeodLat)*cos(mLon);
   mECLoc(eY) = (RN + GeodeticAltitude)*cos(mGeodLat)*sin(mLon);
   mECLoc(eZ) = ((1 - e2)*RN + GeodeticAltitude)*sin(mGeodLat);
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,6 +223,7 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 
 const FGMatrix33& FGLocation::GetTec2i(void)
 {
+  ComputeDerived();
   return mTec2i;
 }
 
@@ -240,6 +236,7 @@ const FGMatrix33& FGLocation::GetTec2i(void)
 
 const FGMatrix33& FGLocation::GetTi2ec(void)
 {
+  ComputeDerived();
   return mTi2ec;
 }
 
@@ -331,7 +328,8 @@ void FGLocation::ComputeDerivedUnconditional(void) const
     if (q>0)
     {
       u  = p/sqrt_q;
-      u2 = p2/q;
+//      u2 = p2/q;
+      u2 = u*u;
       v  = b2*u2/q;
       P  = 27.0*v*s/q;
       Q0 = sqrt(P+1) + sqrt(P);
@@ -340,7 +338,11 @@ void FGLocation::ComputeDerivedUnconditional(void) const
       c  = sqrt(u2 - 1 + 2.0*t);
       w  = (c - u)/2.0;
       signz0 = mECLoc(eZ)>=0?1.0:-1.0;
-      z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+      if ((sqrt(t*t+v)-u*w-0.5*t-0.25) < 0.0) {
+        z = 0.0;
+      } else {
+        z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+      }
       Ne = a*sqrt(1+eps2*z*z/b2);
       mGeodLat = asin((eps2+1.0)*(z/Ne));
       r0 = rxy;

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.24 2010/08/25 00:32:32 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.25 2010/09/18 22:47:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.24 2010/08/25 00:32:32 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.25 2010/09/18 22:47:24 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,7 +259,7 @@ public:
       Inertial frame.
       @param EPA Earth fixed frame (ECEF) rotation offset about the axis with
                  respect to the Inertial (ECI) frame in radians. */
-  void SetEarthPositionAngle(double EPA) {epa = EPA; mCacheValid = false; ComputeDerived();}
+  void SetEarthPositionAngle(double EPA) {epa = EPA; mCacheValid = false;}
 
   /** Get the longitude.
       @return the longitude in rad of the location represented with this
@@ -304,7 +304,7 @@ public:
   double GetGeodLatitudeDeg(void) const { ComputeDerived(); return radtodeg*mGeodLat; }
 
   /** Gets the geodetic altitude in feet. */
-  double GetGeodAltitude(void) const { return GeodeticAltitude;}
+  double GetGeodAltitude(void) const {ComputeDerived(); return GeodeticAltitude;}
 
   /** Get the sine of Latitude. */
   double GetSinLatitude() const { ComputeDerived(); return -mTec2l(3,3); }
@@ -349,9 +349,9 @@ public:
       the earth centered frame to the inertial frame (ECEF to ECI). */
   const FGMatrix33& GetTec2i(void);
 
-  const FGMatrix33& GetTi2l(void) const {return mTi2l;}
+  const FGMatrix33& GetTi2l(void) const {ComputeDerived(); return mTi2l;}
 
-  const FGMatrix33& GetTl2i(void) const {return mTl2i;}
+  const FGMatrix33& GetTl2i(void) const {ComputeDerived(); return mTl2i;}
 
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
