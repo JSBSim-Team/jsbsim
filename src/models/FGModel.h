@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.15 2010/09/07 00:19:46 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.16 2010/09/22 11:33:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,7 +57,6 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGState;
 class FGAtmosphere;
 class FGFCS;
 class FGPropulsion;
@@ -119,7 +118,6 @@ protected:
   virtual void Debug(int from);
 
   FGFDMExec*         FDMExec;
-  FGState*           State;
   FGAtmosphere*      Atmosphere;
   FGFCS*             FCS;
   FGPropulsion*      Propulsion;

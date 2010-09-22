@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.30 2010/09/05 17:31:40 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.31 2010/09/22 11:33:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.30 $
+    @version $Revision: 1.31 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -344,11 +344,6 @@ public:
       @return prop fether for the given engine (on / off)*/
   bool GetPropFeather(int engine) const { return PropFeather[engine]; }
   //@}
-
-  /** Retrieves the State object pointer.
-      This is used by the FGFCS-owned components.
-      @return pointer to the State object */
-  FGState* GetState(void) { return State; }
 
   /** Retrieves all component names for inclusion in output stream
       @param delimiter either a tab or comma string depending on output type
