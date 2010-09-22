@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.22 2010/09/18 22:47:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.23 2010/09/22 11:34:09 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
@@ -319,7 +319,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   if (a != 0.0 && b != 0.0) {
     double c, p, q, s, t, u, v, w, z, p2, u2, r0;
-    double Ne, P, Q0, Q, signz0, sqrt_q; 
+    double Ne, P, Q0, Q, signz0, sqrt_q, z_term; 
     p  = fabs(mECLoc(eZ))/eps2;
     s  = r02/(e2*eps2);
     p2 = p*p;
@@ -328,8 +328,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
     if (q>0)
     {
       u  = p/sqrt_q;
-//      u2 = p2/q;
-      u2 = u*u;
+      u2 = p2/q;
       v  = b2*u2/q;
       P  = 27.0*v*s/q;
       Q0 = sqrt(P+1) + sqrt(P);
@@ -338,10 +337,11 @@ void FGLocation::ComputeDerivedUnconditional(void) const
       c  = sqrt(u2 - 1 + 2.0*t);
       w  = (c - u)/2.0;
       signz0 = mECLoc(eZ)>=0?1.0:-1.0;
-      if ((sqrt(t*t+v)-u*w-0.5*t-0.25) < 0.0) {
+      z_term = sqrt(t*t+v)-u*w-0.5*t-0.25;
+      if (z_term < 0.0) {
         z = 0.0;
       } else {
-        z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+        z  = signz0*sqrt_q*(w+sqrt(z_term));
       }
       Ne = a*sqrt(1+eps2*z*z/b2);
       mGeodLat = asin((eps2+1.0)*(z/Ne));
