@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.40 2010/07/30 11:50:01 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.41 2010/09/22 11:33:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,6 @@ namespace JSBSim {
 class FGAircraft;
 class FGPropagate;
 class FGFCS;
-class FGState;
 class FGMassBalance;
 class FGAuxiliary;
 class FGTable;
@@ -181,7 +180,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.40 2010/07/30 11:50:01 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.41 2010/09/22 11:33:40 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",

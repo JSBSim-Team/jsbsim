@@ -58,7 +58,6 @@ FORWARD DECLARATIONS
 #include <FDM/JSBSim/FGFDMExec.h>
 
 namespace JSBSim {
-class FGState;
 class FGAtmosphere;
 class FGFCS;
 class FGPropulsion;
@@ -86,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.13 2010/07/07 20:46:36 andgi Exp $
+    @version $Id: JSBSim.hxx,v 1.14 2010/09/22 11:33:40 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -214,7 +213,6 @@ private:
     JSBSim::FGInitialCondition *fgic;
     bool needTrim;
 
-    JSBSim::FGState*        State;
     JSBSim::FGAtmosphere*   Atmosphere;
     JSBSim::FGFCS*          FCS;
     JSBSim::FGPropulsion*   Propulsion;
