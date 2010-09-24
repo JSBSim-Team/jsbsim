@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<!-- $Id: datcom_aero.xml,v 1.1 2009/08/03 20:36:37 andgi Exp $ -->
 <!--
 
-  ZLT NT airship flight model for JSBSim.
+  Zeppelin NT-07 airship flight model for JSBSim.
 
-    Copyright (C) 2009  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2009 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -266,7 +265,7 @@
   135.0     0.202
   150.0     0.065
   165.0     0.000
-  180.0    -0.011
+  180.0     0.011
       </tableData>
      </table>
     </product>
@@ -719,7 +718,6 @@
    -4.0    -0.071
    -2.0    -0.033
     0.0     0.000
-    0.0     0.000
     2.0     0.033
     4.0     0.071
     6.0     0.113
@@ -785,6 +783,8 @@
    <function name="aero/moment/Clp_tail">
     <description>
      Roll Moment coefficient due to roll rate (per radian/sec).
+     This is roll moment due to the difference in angle of attack
+     induced by the roll rate.
     </description>
     <product>
      <property>aero/qbar-psf</property>
@@ -797,6 +797,24 @@
      <value> 1.5  </value> <!-- 3 fins. -->
      <!--  Wing only coefficient computed by DATCOM for alpha = 0. -->
      <!--  This should be extended to use the full table. -->
+     <value> -4.574E-01 </value>
+    </product>
+   </function>
+
+   <function name="aero/moment/Cl_tail_damp">
+    <description>
+     Damping Roll Moment coefficient due to roll rate (per radian/sec).
+     Guessed and added to retain some damping effect at low airspeed.
+     Assumed to be due to the considerable area of the fins.
+    </description>
+    <product>
+     <value>1.0</value>
+     <property>metrics/Sw-sqft</property>
+     <property>metrics/bw-ft</property>
+     <property>velocities/p-aero-rad_sec</property>
+     <!-- Clp (copied) -->
+     <value> 0.10 </value> <!-- Sref scaling. -->
+     <value> 1.5  </value> <!-- 3 fins. -->
      <value> -4.574E-01 </value>
     </product>
    </function>
