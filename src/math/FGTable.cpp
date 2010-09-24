@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.23 2010/09/16 11:01:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.24 2010/09/23 11:34:29 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,6 +290,62 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     break;
   }
 
+  // Sanity checks: lookup indices must be increasing monotonically
+  unsigned int r,c,b;
+
+  // find next xml element containing a name attribute
+  // to indicate where the error occured
+  Element* nameel = el;
+  while (nameel != 0 && nameel->GetAttributeValue("name") == "")
+    nameel=nameel->GetParent();
+
+  // check breakpoints, if applicable
+  if (dimension > 2) {
+    for (b=2; b<=nTables; ++b) {
+      if (Data[b][1] <= Data[b-1][1]) {
+        cerr << fgred << highint << endl
+             << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
+             << "  in breakpoint " << b;
+        if (nameel != 0)
+          cerr << " of table in " << nameel->GetAttributeValue("name");
+        cerr << ":" << reset << endl
+             << "  " << Data[b][1] << "<=" << Data[b-1][1] << endl;
+        exit(-1);
+      }
+    }
+  }
+
+  // check columns, if applicable
+  if (dimension > 1) {
+    for (c=2; c<=nCols; ++c) {
+      if (Data[0][c] <= Data[0][c-1]) {
+        cerr << fgred << highint << endl
+             << "  FGTable: column lookup is not monotonically increasing" << endl
+             << "  in column " << c;
+        if (nameel != 0)
+          cerr << " of table in " << nameel->GetAttributeValue("name");
+        cerr << ":" << reset << endl
+             << "  " << Data[0][c] << "<=" << Data[0][c-1] << endl;
+        exit(-1);
+      }
+    }
+  }
+
+  // check rows
+  if (dimension < 3) { // in 3D tables, check only rows of subtables
+    for (r=2; r<=nRows; ++r) {
+      if (Data[r][0]<=Data[r-1][0]) {
+        cerr << fgred << highint << endl
+             << "  FGTable: row lookup is not monotonically increasing" << endl
+             << "  in row " << r;
+        if (nameel != 0)
+          cerr << " of table in " << nameel->GetAttributeValue("name");
+        cerr << ":" << reset << endl
+             << "  " << Data[r][0] << "<=" << Data[r-1][0] << endl;
+        exit(-1);
+      }
+    }
+  }
   bind();
 
   if (debug_lvl & 1) Print();

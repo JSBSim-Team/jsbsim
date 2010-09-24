@@ -48,6 +48,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "math/FGTable.h"
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.76 2010/07/30 11:50:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.77 2010/09/24 19:55:33 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -76,7 +77,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   FGForce(fdmex),
   GearNumber(number),
   SteerAngle(0.0),
-  Castered(false)
+  Castered(false),
+  StaticFriction(false)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
@@ -254,9 +256,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   Curvature = 1.03;
 
   // Initialize Lagrange multipliers
-  LMultiplier[ftRoll].value = 0.;
-  LMultiplier[ftSide].value = 0.;
-  LMultiplier[ftRoll].value = 0.;
+  memset(LMultiplier, 0, sizeof(LMultiplier));
 
   Debug(0);
 }
