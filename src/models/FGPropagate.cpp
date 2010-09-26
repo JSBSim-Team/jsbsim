@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.65 2010/09/18 22:48:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.66 2010/09/26 19:14:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,10 +246,15 @@ bool FGPropagate::Run(void)
   CalculateUVW();              // Translational position derivative (velocities are integrated in the inertial frame)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
-  Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
+  VState.vPQRi_i = Tb2i * VState.vPQRi; // ECI  integration
+
+//  Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
+  Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate); // ECI  integration
+  Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
-  Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
+
+  VState.vPQRi = Ti2b * VState.vPQRi_i; // ECI integration
 
   // CAUTION : the order of the operations below is very important to get transformation
   // matrices that are consistent with the new state of the vehicle
@@ -318,6 +323,7 @@ void FGPropagate::CalculatePQRdot(void)
   // frame.
 
   vPQRdot = Jinv*(vMoments - VState.vPQRi*(J*VState.vPQRi));
+  vPQRidot = Tb2i * vPQRdot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

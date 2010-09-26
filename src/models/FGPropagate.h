@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.48 2010/09/18 22:48:12 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.49 2010/09/26 19:14:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.48 2010/09/18 22:48:12 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.49 2010/09/26 19:14:54 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,11 @@ public:
         units rad/sec */
     FGColumnVector3 vPQRi;
 
+    /** The angular velocity vector for the vehicle body frame relative to the
+        ECI frame, expressed in the ECI frame.
+        units rad/sec */
+    FGColumnVector3 vPQRi_i;
+
     /** The current orientation of the vehicle, that is, the orientation of the
         body frame relative to the local, NED frame. */
     FGQuaternion qAttitudeLocal;
@@ -148,6 +153,7 @@ public:
     FGColumnVector3 vInertialPosition;
 
     deque <FGColumnVector3> dqPQRdot;
+    deque <FGColumnVector3> dqPQRidot;
     deque <FGColumnVector3> dqUVWidot;
     deque <FGColumnVector3> dqInertialVelocity;
     deque <FGQuaternion>    dqQtrndot;
@@ -612,6 +618,7 @@ private:
 
   FGColumnVector3 vVel;
   FGColumnVector3 vPQRdot;
+  FGColumnVector3 vPQRidot;
   FGColumnVector3 vUVWdot, vUVWidot;
   FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vLocation;
