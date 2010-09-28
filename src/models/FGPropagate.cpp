@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.66 2010/09/26 19:14:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.67 2010/09/28 02:54:03 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +95,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   integrator_translational_position = eTrapezoidal;
 
   VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(4, FGQuaternion(0.0,0.0,0.0));
@@ -129,6 +130,7 @@ bool FGPropagate::InitModel(void)
   vInertialVelocity.InitMatrix();
 
   VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(4, FGColumnVector3(0.0,0.0,0.0));
@@ -250,9 +252,9 @@ bool FGPropagate::Run(void)
 
 //  Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
   Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate); // ECI  integration
+  Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
-  Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
 
   VState.vPQRi = Ti2b * VState.vPQRi_i; // ECI integration
 
@@ -632,11 +634,13 @@ void FGPropagate::InitializeDerivatives(void)
 
   // Initialize past values deques
   VState.dqPQRdot.clear();
+  VState.dqPQRidot.clear();
   VState.dqUVWidot.clear();
   VState.dqInertialVelocity.clear();
   VState.dqQtrndot.clear();
   for (int i=0; i<4; i++) {
     VState.dqPQRdot.push_front(vPQRdot);
+    VState.dqPQRidot.push_front(vPQRidot);
     VState.dqUVWidot.push_front(vUVWdot);
     VState.dqInertialVelocity.push_front(VState.vInertialVelocity);
     VState.dqQtrndot.push_front(vQtrndot);

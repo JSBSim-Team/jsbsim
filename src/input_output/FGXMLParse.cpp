@@ -40,7 +40,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.10 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.11 2010/09/28 02:54:03 jberndt Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,7 @@ void FGXMLParse::endElement (const char * name)
 {
   if (!working_string.empty()) {
     vector <string> work_strings = split(working_string, '\n');
-    for (int i=0; i<work_strings.size(); i++) current_element->AddData(work_strings[i]);
+    for (unsigned int i=0; i<work_strings.size(); i++) current_element->AddData(work_strings[i]);
   }
 
   current_element = current_element->GetParent();
