@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.70 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.71 2010/09/28 02:54:03 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,7 +187,7 @@ bool FGFCS::InitModel(void)
 
 void FGFCS::LateBind(void)
 {
-  int i;
+  unsigned int i;
 
   for (i=0; i<Systems.size(); i++) Systems[i]->LateBind();
   for (i=0; i<APComponents.size(); i++) APComponents[i]->LateBind();
