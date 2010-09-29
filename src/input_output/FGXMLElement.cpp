@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.30 2010/09/04 14:15:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.31 2010/09/29 02:22:03 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -93,10 +93,10 @@ Element::Element(const string& nm)
     convert["SLUG*FT2"]["KG*M2"] = 1.35594;
     convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
     // Angles
-    convert["RAD"]["DEG"] = 360.0/(2.0*3.1415926);
+    convert["RAD"]["DEG"] = 180.0/M_PI;
     convert["DEG"]["RAD"] = 1.0/convert["RAD"]["DEG"];
     // Angular rates
-    convert["RAD/SEC"]["DEG/SEC"] = 360.0/(2.0*3.1415926);
+    convert["RAD/SEC"]["DEG/SEC"] = convert["RAD"]["DEG"];
     convert["DEG/SEC"]["RAD/SEC"] = 1.0/convert["RAD/SEC"]["DEG/SEC"];
     // Spring force
     convert["LBS/FT"]["N/M"] = 14.5939;
@@ -478,7 +478,6 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
   } else {
     value = 0.0;
-    cerr << "Could not find an X triplet item for this column vector." << endl;
   }
   triplet(1) = value;
 
@@ -489,7 +488,6 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
   } else {
     value = 0.0;
-    cerr << "Could not find a Y triplet item for this column vector." << endl;
   }
   triplet(2) = value;
 
@@ -500,7 +498,6 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
   } else {
     value = 0.0;
-    cerr << "Could not find a Z triplet item for this column vector." << endl;
   }
   triplet(3) = value;
 

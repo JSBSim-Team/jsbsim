@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.45 2010/09/28 02:54:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.46 2010/09/29 02:19:05 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -876,6 +876,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     result = Load_v1();
   } 
 
+  fdmex->GetPropagate()->DumpState();
+
   return result;
 }
 
@@ -1080,7 +1082,9 @@ bool FGInitialCondition::Load_v2(void)
       // Q_b/i = Q_e/i * Q_b/e
 
       FGQuaternion QuatEC2Body(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
+      QuatEC2Body.Normalize();
       FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
+      QuatI2EC.Normalize();
       QuatI2Body = QuatI2EC * QuatEC2Body; // Q_b/i = Q_e/i * Q_b/e 
 
     } else if (frame == "local") {
@@ -1097,8 +1101,11 @@ bool FGInitialCondition::Load_v2(void)
       // Q_b/i = Q_e/i * Q_n/e * Q_b/n
 
       FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_b/n
+      QuatLocal2Body.Normalize();
       FGQuaternion QuatEC2Local = Propagate->GetTec2l();   // Get Q_n/e from matrix
+      QuatEC2Local.Normalize();
       FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
+      QuatI2EC.Normalize();
       QuatI2Body = QuatI2EC * QuatEC2Local * QuatLocal2Body; // Q_b/i = Q_e/i * Q_n/e * Q_b/n
 
     } else {
@@ -1110,6 +1117,7 @@ bool FGInitialCondition::Load_v2(void)
     }
   }
 
+  QuatI2Body.Normalize();
   Propagate->SetInertialOrientation(QuatI2Body);
 
   // Initialize vehicle velocity
@@ -1209,7 +1217,9 @@ bool FGInitialCondition::Load_v2(void)
     running_elements = document->FindNextElement("running");
   }
 
-  // fdmex->RunIC();
+  fdmex->SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
+  fdmex->Run();
+  fdmex->ResumeIntegration(); // Restores the integration rate to what it was.
 
   return result;
 }

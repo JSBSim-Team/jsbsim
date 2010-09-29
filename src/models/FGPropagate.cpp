@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.67 2010/09/28 02:54:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.68 2010/09/29 02:19:05 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -718,6 +718,41 @@ double FGPropagate::GetDistanceAGL(void) const
 void FGPropagate::SetDistanceAGL(double tt)
 {
   VState.vLocation.SetRadius( tt + LocalTerrainRadius );
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::DumpState(void)
+{
+  cout << endl;
+  cout << fgblue
+       << "------------------------------------------------------------------" << reset << endl;
+  cout << highint
+       << "State Report at sim time: " << FDMExec->GetSimTime() << " seconds" << reset << endl;
+  cout << "  " << underon
+       <<   "Position" << underoff << endl;
+  cout << "    ECI:   " << VState.vInertialPosition.Dump(", ") << " (x,y,z, in ft)" << endl;
+  cout << "    ECEF:  " << VState.vLocation << " (x,y,z, in ft)"  << endl;
+  cout << "    Local: " << VState.vLocation.GetLatitudeDeg()
+                        << ", " << VState.vLocation.GetLongitudeDeg()
+                        << ", " << GetAltitudeASL() << " (lat, lon, alt in deg and ft)" << endl;
+
+  cout << endl << "  " << underon
+       <<   "Orientation" << underoff << endl;
+  cout << "    ECI:   " << VState.qAttitudeECI.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)" << endl;
+  cout << "    Local: " << VState.qAttitudeLocal.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)" << endl;
+
+  cout << endl << "  " << underon
+       <<   "Velocity" << underoff << endl;
+  cout << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)" << endl;
+  cout << "    ECEF:  " << (GetTb2ec() * VState.vUVW).Dump(", ")  << " (x,y,z in ft/s)"  << endl;
+  cout << "    Local: " << GetVel() << " (n,e,d in ft/sec)" << endl;
+  cout << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)" << endl;
+
+  cout << endl << "  " << underon
+       <<   "Body Rates (relative to given frame, expressed in body frame)" << underoff << endl;
+  cout << "    ECI:   " << (VState.vPQRi*radtodeg).Dump(", ") << " (p,q,r in deg/s)" << endl;
+  cout << "    ECEF:  " << (VState.vPQR*radtodeg).Dump(", ") << " (p,q,r in deg/s)" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

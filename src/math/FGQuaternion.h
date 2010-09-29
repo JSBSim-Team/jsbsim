@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.17 2010/06/30 03:13:40 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.18 2010/09/29 02:19:05 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -177,7 +177,7 @@ public:
   const FGMatrix33& GetTInv(void) const { ComputeDerived(); return mTInv; }
 
   /** Retrieves the Euler angles.
-      @return a reference to the triad of euler angles corresponding
+      @return a reference to the triad of Euler angles corresponding
       to this quaternion rotation.
       units radians  */
   const FGColumnVector3& GetEuler(void) const {
@@ -186,7 +186,7 @@ public:
   }
 
   /** Retrieves the Euler angles.
-      @param i the euler angle index.
+      @param i the Euler angle index.
       units radians.
       @return a reference to the i-th euler angles corresponding
       to this quaternion rotation.
@@ -197,13 +197,22 @@ public:
   }
 
   /** Retrieves the Euler angles.
-      @param i the euler angle index.
+      @param i the Euler angle index.
       @return a reference to the i-th euler angles corresponding
       to this quaternion rotation.
       units degrees */
   double GetEulerDeg(int i) const {
     ComputeDerived();
     return radtodeg*mEulerAngles(i);
+  }
+
+  /** Retrieves the Euler angle vector.
+      @return an Euler angle column vector corresponding
+      to this quaternion rotation.
+      units degrees */
+  FGColumnVector3 const GetEulerDeg(void) const {
+    ComputeDerived();
+    return radtodeg*mEulerAngles;
   }
 
   /** Retrieves sine of the given euler angle.
