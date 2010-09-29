@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.49 2010/09/26 19:14:54 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.50 2010/09/29 02:19:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.49 2010/09/26 19:14:54 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.50 2010/09/29 02:19:05 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -572,16 +572,6 @@ public:
       VState.vInertialPosition = GetTec2i() * VState.vLocation;
       UpdateLocationMatrices();
   }
-  void SetLocation(const FGLocation& l) {
-      VState.vLocation = l;
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
-  }
-  void SetLocation(const FGColumnVector3& l) {
-      VState.vLocation = l;
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
-  }
   void SetAltitudeASL(double altASL);
   void SetAltitudeASLmeters(double altASL) {SetAltitudeASL(altASL/fttom);}
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
@@ -592,6 +582,16 @@ public:
       VState.vLocation.SetPosition(Lon, Lat, Radius);
       VState.vInertialPosition = GetTec2i() * VState.vLocation;
       VehicleRadius = GetRadius();
+      UpdateLocationMatrices();
+  }
+  void SetLocation(const FGLocation& l) {
+      VState.vLocation = l;
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
+      UpdateLocationMatrices();
+  }
+  void SetLocation(const FGColumnVector3& l) {
+      VState.vLocation = l;
+      VState.vInertialPosition = GetTec2i() * VState.vLocation;
       UpdateLocationMatrices();
   }
 
@@ -609,6 +609,8 @@ public:
     double Max;
     double value;
   };
+
+  void DumpState(void);
 
 private:
 
