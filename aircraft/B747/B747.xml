@@ -7,7 +7,7 @@
     <fileheader>
       <author> Unknown </author>
       <filecreationdate> 2002-01-01 </filecreationdate>
-      <version> $Id: B747.xml,v 1.23 2008/04/04 01:12:12 jberndt Exp $ </version>
+      <version> $Id: B747.xml,v 1.24 2010/09/29 12:08:52 jberndt Exp $ </version>
       <description> Boeing 747 </description>
       <license>
         <licenseName>GPL (General Public License)</licenseName>
@@ -465,7 +465,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                     <value>0.0420</value>
                 </product>
             </function>

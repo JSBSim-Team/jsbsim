@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.80 2010/08/21 22:56:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.81 2010/09/30 02:23:51 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -439,7 +439,7 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadScript(string script, double deltaT)
+bool FGFDMExec::LoadScript(const string& script, double deltaT)
 {
   bool result;
 
@@ -451,8 +451,8 @@ bool FGFDMExec::LoadScript(string script, double deltaT)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string SystemsPath,
-                string model, bool addModelToPath)
+bool FGFDMExec::LoadModel(const string& AircraftPath, const string& EnginePath, const string& SystemsPath,
+                const string& model, bool addModelToPath)
 {
   FGFDMExec::AircraftPath = RootDir + AircraftPath;
   FGFDMExec::EnginePath = RootDir + EnginePath;
@@ -463,7 +463,7 @@ bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string Systems
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string model, bool addModelToPath)
+bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 {
   string token;
   string aircraftCfgFileName;
@@ -730,7 +730,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFDMExec::QueryPropertyCatalog(string in)
+string FGFDMExec::QueryPropertyCatalog(const string& in)
 {
   string results="";
   for (unsigned i=0; i<PropertyCatalog.size(); i++) {
@@ -922,7 +922,7 @@ void FGFDMExec::EnableOutput(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::SetOutputDirectives(string fname)
+bool FGFDMExec::SetOutputDirectives(const string& fname)
 {
   bool result;
 

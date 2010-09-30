@@ -76,6 +76,7 @@
    </table>
   </function>
 
+  <!--
   <function name="WaterFactor">
    <table>
     <independentVar lookup="row">velocities/mach</independentVar>
@@ -87,5 +88,5 @@
     </tableData>
    </table>
   </function>
-
+  -->
 </turbine_engine>

@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.52 2010/07/04 13:50:21 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.53 2010/09/30 02:23:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.52 $
+    @version $Revision: 1.53 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,8 +252,8 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful */
-  bool LoadModel(string AircraftPath, string EnginePath, string SystemsPath,
-                 string model, bool addModelToPath = true);
+  bool LoadModel(const string& AircraftPath, const string& EnginePath, const string& SystemsPath,
+                 const string& model, bool addModelToPath = true);
 
   /** Loads an aircraft model.  The paths to the aircraft and engine
       config file directories must be set prior to calling this.  See
@@ -265,28 +265,28 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful*/
-  bool LoadModel(string model, bool addModelToPath = true);
+  bool LoadModel(const string& model, bool addModelToPath = true);
 
   /** Loads a script
       @param Script the full path name and file name for the script to be loaded.
       @return true if successfully loadsd; false otherwise. */
-  bool LoadScript(string Script, double deltaT);
+  bool LoadScript(const string& Script, double deltaT);
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
       files are kept, for instance "engine"  */
-  bool SetEnginePath(string path)   { EnginePath = RootDir + path; return true; }
+  bool SetEnginePath(const string& path)   { EnginePath = RootDir + path; return true; }
 
   /** Sets the path to the aircraft config file directories.
       @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
-  bool SetAircraftPath(string path) { AircraftPath = RootDir + path; return true; }
+  bool SetAircraftPath(const string& path) { AircraftPath = RootDir + path; return true; }
   
   /** Sets the path to the systems config file directories.
       @param path path to the directory under which systems config
       files are kept, for instance "systems"  */
-  bool SetSystemsPath(string path)   { SystemsPath = RootDir + path; return true; }
+  bool SetSystemsPath(const string& path)   { SystemsPath = RootDir + path; return true; }
   
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
@@ -327,28 +327,28 @@ public:
   //@}
 
   /// Retrieves the engine path.
-  inline string GetEnginePath(void)          {return EnginePath;}
+  inline const string& GetEnginePath(void)    {return EnginePath;}
   /// Retrieves the aircraft path.
-  inline string GetAircraftPath(void)        {return AircraftPath;}
+  inline const string& GetAircraftPath(void)  {return AircraftPath;}
   /// Retrieves the systems path.
-  inline string GetSystemsPath(void)         {return SystemsPath;}
+  inline const string& GetSystemsPath(void)   {return SystemsPath;}
   /// Retrieves the full aircraft path name.
-  inline string GetFullAircraftPath(void)    {return FullAircraftPath;}
+  inline const string& GetFullAircraftPath(void) {return FullAircraftPath;}
 
   /** Retrieves the value of a property.
       @param property the name of the property
       @result the value of the specified property */
-  inline double GetPropertyValue(string property) {return instance->GetDouble(property);}
+  inline double GetPropertyValue(const string& property) {return instance->GetDouble(property);}
 
   /** Sets a property value.
       @param property the property to be set
       @param value the value to set the property to */
-  inline void SetPropertyValue(string property, double value) {
+  inline void SetPropertyValue(const string& property, double value) {
     instance->SetDouble(property, value);
   }
 
   /// Returns the model name.
-  string GetModelName(void) { return modelName; }
+  const string& GetModelName(void) { return modelName; }
 /*
   /// Returns the current time.
   double GetSimTime(void);
@@ -382,12 +382,12 @@ public:
       be logged.
       @param fname the filename of an output directives file.
     */
-  bool SetOutputDirectives(string fname);
+  bool SetOutputDirectives(const string& fname);
 
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
-  bool SetOutputFileName(string fname) {
+  bool SetOutputFileName(const string& fname) {
     if (Outputs.size() > 0) Outputs[0]->SetOutputFileName(fname);
     else return false;
     return true;
@@ -447,7 +447,7 @@ public:
   *   @param check The string to search for in the property catalog.
   *   @return the carriage-return-delimited string containing all matching strings
   *               in the catalog.  */
-  string QueryPropertyCatalog(string check);
+  string QueryPropertyCatalog(const string& check);
 
   // Print the contents of the property catalog for the loaded aircraft.
   void PrintPropertyCatalog(void);
@@ -495,11 +495,11 @@ public:
 
   /** Sets the root directory where JSBSim starts looking for its system directories.
       @param rootDir the string containing the root directory. */
-  void SetRootDir(string rootDir) {RootDir = rootDir;}
+  void SetRootDir(const string& rootDir) {RootDir = rootDir;}
 
   /** Retrieves teh Root Directory.
       @return the string representing the root (base) JSBSim directory. */
-  string GetRootDir(void) const {return RootDir;}
+  const string& GetRootDir(void) const {return RootDir;}
 
   /** Increments the simulation time.
       @return the new simulation time.     */
