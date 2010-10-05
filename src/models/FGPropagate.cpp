@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.68 2010/09/29 02:19:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.69 2010/10/05 10:56:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,6 +206,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
                                  FGIC->GetRRadpsIC() ) + Tl2b*vOmegaLocal;
 
   VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
+  VState.vPQRi_i = Tb2i * VState.vPQRi;
 
   // Make an initial run and set past values
   InitializeDerivatives();
@@ -248,15 +249,11 @@ bool FGPropagate::Run(void)
   CalculateUVW();              // Translational position derivative (velocities are integrated in the inertial frame)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
-  VState.vPQRi_i = Tb2i * VState.vPQRi; // ECI  integration
 
-//  Integrate(VState.vPQRi,             vPQRdot,           VState.dqPQRdot,           dt, integrator_rotational_rate);
   Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate); // ECI  integration
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
-
-  VState.vPQRi = Ti2b * VState.vPQRi_i; // ECI integration
 
   // CAUTION : the order of the operations below is very important to get transformation
   // matrices that are consistent with the new state of the vehicle
@@ -287,6 +284,7 @@ bool FGPropagate::Run(void)
 
   VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
 
+  VState.vPQRi = Ti2b * VState.vPQRi_i;
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
@@ -565,6 +563,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
   vUVWdot += invMass * Fc;
   vUVWidot += invMass * Tb2i * Fc;
   vPQRdot += Jinv * Mc;
+  vPQRidot += Tb2i* Jinv * Mc;
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
@@ -617,7 +616,8 @@ void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetInertialRates(FGColumnVector3 vRates) {
-  VState.vPQRi = Ti2b * vRates;
+  VState.vPQRi_i = vRates;
+  VState.vPQRi = Ti2b * VState.vPQRi_i;
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 }
 
