@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.42 2010/07/27 23:18:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.43 2010/10/07 11:41:10 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ bool FGAuxiliary::Run()
   vAeroUVW = vUVW - wind;
 
   Vt = vAeroUVW.Magnitude();
-  if ( Vt > 0.05) {
+  if ( Vt > 1.0 ) {
     if (vAeroUVW(eW) != 0.0)
       alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
     if (vAeroUVW(eV) != 0.0)
@@ -185,7 +185,7 @@ bool FGAuxiliary::Run()
     if (vAeroUVW(eU) != 0.0)
       signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
 
-    if ( (mUW == 0.0) || (Vt == 0.0) ) {
+    if ( mUW < 1.0 ) {
       adot = 0.0;
       bdot = 0.0;
     } else {
