@@ -71,15 +71,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.81 2010/09/30 02:23:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.82 2010/10/07 03:17:29 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GLOBAL DECLARATIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-unsigned int FGFDMExec::FDMctr = 0;
-FGPropertyManager* FGFDMExec::master=0;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -104,7 +97,7 @@ void checkTied ( FGPropertyManager *node )
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
-FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
+FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root), FDMctr(fdmctr)
 {
 
   Frame           = 0;
@@ -138,21 +131,25 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
                   // run in standalone mode with no initialization file.
 
-  IdFDM = FDMctr; // The main (parent) JSBSim instance is always the "zeroth"
-  FDMctr++;       // instance. "child" instances are loaded last.
-
   try {
     char* num = getenv("JSBSIM_DEBUG");
     if (num) debug_lvl = atoi(num); // set debug level
-  } catch (...) {               // if error set to 1
+  } catch (...) {                   // if error set to 1
     debug_lvl = 1;
   }
 
-  if (Root == 0) {
-    if (master == 0)
-      master = new FGPropertyManager;
-    Root = master;
+  if (Root == 0) {                 // Then this is the root FDM
+    Root = new FGPropertyManager;  // Create the property manager
+    
+    FDMctr = new unsigned int;     // Create and initialize the child FDM counter
+    (*FDMctr) = 0;
   }
+
+  // Store this FDM's ID
+  IdFDM = (*FDMctr); // The main (parent) JSBSim instance is always the "zeroth"
+                                                                      
+  // Prepare FDMctr for the next child FDM id
+  (*FDMctr)++;       // instance. "child" instances are loaded last.
 
   instance = Root->GetNode("/fdm/jsbsim",IdFDM,true);
   Debug(0);
@@ -186,7 +183,17 @@ FGFDMExec::~FGFDMExec()
   try {
     checkTied( instance );
     DeAllocate();
-    if (Root == 0)  delete master;
+    
+    if (IdFDM == 0) { // Meaning this is no child FDM
+      if(Root != 0) {
+         delete Root;
+         Root = 0;
+      }
+      if(FDMctr != 0) {
+         delete FDMctr;
+         FDMctr = 0;
+      }
+    }
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;
   }
@@ -852,7 +859,7 @@ bool FGFDMExec::ReadChild(Element* el)
 
   struct childData* child = new childData;
 
-  child->exec = new FGFDMExec();
+  child->exec = new FGFDMExec(Root, FDMctr);
   child->exec->SetChild(true);
 
   string childAircraft = el->GetAttributeValue("name");

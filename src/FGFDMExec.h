@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.53 2010/09/30 02:23:51 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.54 2010/10/07 03:17:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.53 $
+    @version $Revision: 1.54 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +207,7 @@ class FGFDMExec : public FGJSBBase, public FGXMLFileRead
 public:
 
   /// Default constructor
-  FGFDMExec(FGPropertyManager* root = 0);
+  FGFDMExec(FGPropertyManager* root = 0, unsigned int* fdmctr = 0);
 
   /// Default destructor
   ~FGFDMExec();
@@ -512,7 +512,6 @@ public:
   int GetDebugLevel(void) const {return debug_lvl;};
 
 private:
-  static unsigned int FDMctr;
   int Error;
   unsigned int Frame;
   unsigned int IdFDM;
@@ -536,8 +535,6 @@ private:
   bool trim_status;
   int ta_mode;
 
-  static FGPropertyManager *master;
-
   FGGroundCallback*   GroundCallback;
   FGAtmosphere*       Atmosphere;
   FGFCS*              FCS;
@@ -558,6 +555,9 @@ private:
 
   FGPropertyManager* Root;
   FGPropertyManager* instance;
+  
+  // The FDM counter is used to give each child FDM an unique ID. The root FDM has the ID 0
+  unsigned int*      FDMctr;
 
   vector <string> PropertyCatalog;
   vector <FGOutput*> Outputs;
