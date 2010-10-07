@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.77 2010/09/24 19:55:33 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.78 2010/10/07 03:45:40 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -281,13 +281,15 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
+    FGColumnVector3 angularVel;
+
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZn); // Get wheel in body frame
     vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
 
     gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
+    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel, angularVel);
     vGroundNormal = Propagate->GetTec2b() * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction
