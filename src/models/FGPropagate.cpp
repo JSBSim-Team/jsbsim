@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.69 2010/10/05 10:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.70 2010/10/07 03:45:40 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -508,7 +508,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
     // Instruct the algorithm to zero out the relative movement between the
     // aircraft and the ground.
     vdot += (VState.vUVW - Tec2b * LocalTerrainVelocity) / dt;
-    wdot += VState.vPQR / dt;
+    wdot += (VState.vPQR - Tec2b * LocalTerrainAngularVelocity) / dt;
   }
 
   // Assemble the linear system of equations
@@ -657,7 +657,7 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
 
   // Get the LocalTerrain radius.
   FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv,
-                                           LocalTerrainVelocity);
+                                           LocalTerrainVelocity, LocalTerrainAngularVelocity);
   LocalTerrainRadius = contactloc.GetRadius(); 
 }
 

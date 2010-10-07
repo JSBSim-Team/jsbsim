@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.62 2010/07/14 05:50:40 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.63 2010/10/07 03:45:40 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -97,14 +97,15 @@ public:
 
   /** Compute the altitude above ground. */
   virtual double GetAGLevel(double t, const FGLocation& l,
-                            FGLocation& cont,
-                            FGColumnVector3& n, FGColumnVector3& v) const {
+                            FGLocation& cont, FGColumnVector3& n,
+                            FGColumnVector3& v, FGColumnVector3& w) const {
     double loc_cart[3] = { l(eX), l(eY), l(eZ) };
-    double contact[3], normal[3], vel[3], agl = 0;
+    double contact[3], normal[3], vel[3], angularVel[3], agl = 0;
     mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
-                           vel, &agl);
+                           vel, angularVel, &agl);
     n = FGColumnVector3( normal[0], normal[1], normal[2] );
     v = FGColumnVector3( vel[0], vel[1], vel[2] );
+    w = FGColumnVector3( angularVel[0], angularVel[1], angularVel[2] );
     cont = FGColumnVector3( contact[0], contact[1], contact[2] );
     return agl;
   }
@@ -489,7 +490,7 @@ void FGJSBsim::update( double dt )
       if ( startup_trim->getBoolValue() ) {
         double contact[3], d[3], agl;
         get_agl_ft(fdmex->GetSimTime(), cart_pos, SG_METER_TO_FEET*2, contact,
-                   d, d, &agl);
+                   d, d, d, &agl);
         double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
 
@@ -743,7 +744,7 @@ bool FGJSBsim::copy_from_JSBsim()
       double loc_cart[3] = { l(FGJSBBase::eX), l(FGJSBBase::eY), l(FGJSBBase::eZ) };
       double contact[3], d[3], sd, t;
       is_valid_m(&t, d, &sd);
-      get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, d, d, &sd);
+      get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, d, d, d, &sd);
       double rwrad
         = FGColumnVector3( contact[0], contact[1], contact[2] ).Magnitude();
       _set_Runway_altitude( rwrad - get_Sea_level_radius() );
@@ -1204,9 +1205,8 @@ void FGJSBsim::update_ic(void)
 bool
 FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
                      double contact[3], double normal[3], double vel[3],
-                     double *agl)
+                     double angularVel[3], double *agl)
 {
-   double angularVel[3];
    const SGMaterial* material;
    simgear::BVHNode::Id id;
    if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
@@ -1289,10 +1289,12 @@ void FGJSBsim::update_external_forces(double t_off)
     double contact[3];
     double ground_normal[3];
     double ground_vel[3];
+    double ground_angular_vel[3];
     double root_agl_ft;
 
     if (!got_wire) {
-        bool got = get_agl_ft(t_off, hook_area[1], 0, contact, ground_normal, ground_vel, &root_agl_ft);
+        bool got = get_agl_ft(t_off, hook_area[1], 0, contact, ground_normal,
+                              ground_vel, ground_angular_vel, &root_agl_ft);
         if (got && root_agl_ft > 0 && root_agl_ft < hook_length) {
             FGColumnVector3 ground_normal_body = Tl2b * (Tec2l * FGColumnVector3(ground_normal[0], ground_normal[1], ground_normal[2]));
             FGColumnVector3 contact_body = Tl2b * Location.LocationToLocal(FGColumnVector3(contact[0], contact[1], contact[2]));

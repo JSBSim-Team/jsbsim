@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.9 2010/10/07 03:45:40 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
     ball formed earth.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGGroundCallback.h,v 1.9 2010/10/07 03:45:40 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,8 @@ public:
   virtual double GetAltitude(const FGLocation& l) const;
   /** Compute the altitude above ground. Defaults to sealevel altitude. */
   virtual double GetAGLevel(double t, const FGLocation& l, FGLocation& cont,
-                            FGColumnVector3& n, FGColumnVector3& v) const;
+                            FGColumnVector3& n, FGColumnVector3& v,
+                            FGColumnVector3& w) const;
   virtual void SetTerrainGeoCentRadius(double radius) {mReferenceRadius = radius;}
   virtual double GetTerrainGeoCentRadius(void) const {return mReferenceRadius;}
 private:
