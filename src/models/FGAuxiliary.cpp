@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.43 2010/10/07 11:41:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.44 2010/10/10 15:10:15 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,8 +182,7 @@ bool FGAuxiliary::Run()
 
     double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
     double signU=1;
-    if (vAeroUVW(eU) != 0.0)
-      signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
+    if (vAeroUVW(eU) < 0.0) signU=-1;
 
     if ( mUW < 1.0 ) {
       adot = 0.0;
