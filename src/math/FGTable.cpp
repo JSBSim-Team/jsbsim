@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.24 2010/09/23 11:34:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.25 2010/10/10 15:07:17 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,10 +249,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   case 2:
     nRows = tableData->GetNumDataLines()-1;
 
-    if (nRows >= 2) nCols = FindNumColumns(tableData->GetDataLine(0));
-    else {
-      cerr << endl << fgred << "Not enough rows in this table." << fgdef << endl;
-      abort();
+    if (nRows >= 2) {
+      nCols = FindNumColumns(tableData->GetDataLine(0));
+      if (nCols <= 2) throw(string("Not enough columns in table data."));
+    } else {
+      throw(string("Not enough rows in the table data."));
     }
 
     Type = tt2D;

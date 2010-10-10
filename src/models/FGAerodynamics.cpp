@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.32 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.33 2010/10/10 15:07:17 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,7 +349,13 @@ bool FGAerodynamics::Load(Element *element)
     axis = axis_element->GetAttributeValue("name");
     function_element = axis_element->FindElement("function");
     while (function_element) {
-      ca.push_back( new FGFunction(PropertyManager, function_element) );
+      string current_func_name = function_element->GetAttributeValue("name");
+      try {
+        ca.push_back( new FGFunction(PropertyManager, function_element) );
+      } catch (string const str) {
+        cerr << "Error loading aerodynamic function in " << current_func_name << ":" << str << " Aborting." << endl;
+        return false;
+      }
       function_element = axis_element->FindNextElement("function");
     }
     Coeff[AxisIdx[axis]] = ca;
