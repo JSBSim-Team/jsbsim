@@ -5,32 +5,22 @@
     at altitude and orbital velocity.
   -->
 
-  <earth_position_angle unit="DEG"> 45.0 </earth_position_angle>
-  
   <position frame="ECEF">
-    <latitude unit="DEG">       28.6  </latitude>
-    <longitude unit="DEG">     -90.0  </longitude>
     <altitudeMSL unit="FT"> 800000.0  </altitudeMSL>
   </position>
 
   <orientation unit="DEG" frame="LOCAL">
-    <roll>  0.0  </roll>
-    <pitch> 0.0  </pitch>
     <yaw>   90.0  </yaw>
   </orientation>
 
-  <!-- frame can be ECI or ECEF. -->
-  <!-- components can be u-v-w, or n-e-d -->
-  <velocity unit="FT/SEC" frame="ECEF">
-    <x> 24063.28275  </x>
-    <y>     0.0      </y>
-    <z>     0.0      </z>
+  <velocity unit="FT/SEC" frame="BODY">
+    <!--x> 23869.9759596 </x--> <!-- For use with standard grav model -->
+    <x> 23889.142721 </x> <!-- For use with WGS84 grav model -->
   </velocity>
 
-  <attitude_rate unit="RAD/SEC" frame="ECI">
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
+  <attitude_rate unit="DEG/SEC" frame="ECI">
+    <y>  5.0 </y>
+    <z> -5.0 </z>
   </attitude_rate>
 
 </initialize>
