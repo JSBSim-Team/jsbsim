@@ -61,9 +61,6 @@ INCLUDES
 #include <cstring>
 #include <cstdlib>
 
-#include "input_output/net_fdm.hxx"
-#include "input_output/FGfdmSocket.h"
-
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <windows.h>
 #else
@@ -77,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.48 2010/04/12 12:25:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.49 2010/10/15 11:30:29 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -132,7 +129,6 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGOutput";
   sFirstPass = dFirstPass = true;
   socket = 0;
-  flightGearSocket = 0;
   runID_postfix = 0;
   Type = otNone;
   SubSystems = 0;
@@ -153,7 +149,6 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 FGOutput::~FGOutput()
 {
   delete socket;
-  delete flightGearSocket;
   OutputProperties.clear();
   Debug(1);
 }
@@ -227,6 +222,15 @@ void FGOutput::SetType(const string& type)
     Type = otUnknown;
     cerr << "Unknown type of output specified in config file" << endl;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::SetProtocol(const string& protocol)
+{
+  if (protocol == "UDP") Protocol = FGfdmSocket::ptUDP;
+  else if (protocol == "TCP") Protocol = FGfdmSocket::ptTCP;
+  else Protocol = FGfdmSocket::ptTCP; // Default to TCP
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -566,14 +570,12 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
        }
     }
 
-
     // Consumables
     net->num_tanks = Propulsion->GetNumTanks();   // Max number of fuel tanks
 
     for (i=0; i<net->num_tanks; i++) {
        net->fuel_quantity[i] = (float)(((FGTank *)Propulsion->GetTank(i))->GetContents());
     }
-
 
     // Gear status
     net->num_wheels  = GroundReactions->GetNumGearUnits();
@@ -588,12 +590,10 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
        net->gear_compression[i] = (float)(GroundReactions->GetGearUnit(i)->GetCompLen());
     }
 
-
     // Environment
-    net->cur_time    = (long int)1234567890;	// Friday, Feb 13, 2009, 23:31:30 UTC (not processed by FGFS anyway)
+    net->cur_time    = (long int)1234567890;    // Friday, Feb 13, 2009, 23:31:30 UTC (not processed by FGFS anyway)
     net->warp        = 0;                       // offset in seconds to unix time
     net->visibility  = 25000.0;                 // visibility in meters (for env. effects)
-
 
     // Control surface positions (normalized values)
     net->elevator          = (float)(FCS->GetDePos(ofNorm));    // Norm Elevator Pos, --
@@ -606,7 +606,6 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
     net->nose_wheel        = (float)(FCS->GetDrPos(ofNorm));    // *** FIX ***  Using Rudder Pos for NWS, --
     net->speedbrake        = (float)(FCS->GetDsbPos(ofNorm));   // Norm Speedbrake Pos, --
     net->spoilers          = (float)(FCS->GetDspPos(ofNorm));   // Norm Spoiler Pos, --
-
 
     // Convert the net buffer to network format
     if ( isLittleEndian ) {
@@ -691,12 +690,11 @@ void FGOutput::FlightGearSocketOutput(void)
 {
   int length = sizeof(fgSockBuf);
 
-
-  if (flightGearSocket == NULL) return;
-  if (!flightGearSocket->GetConnectStatus()) return;
+  if (socket == NULL) return;
+  if (!socket->GetConnectStatus()) return;
 
   SocketDataFill(&fgSockBuf);
-  flightGearSocket->Send((char *)&fgSockBuf, length);
+  socket->Send((char *)&fgSockBuf, length);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -944,11 +942,9 @@ void FGOutput::SocketStatusOutput(const string& out_str)
 
 bool FGOutput::Load(Element* element)
 {
-  string type="", parameter="";
+  string parameter="";
   string name="";
-  string protocol="tcp";
   int OutRate = 0;
-  string property;
   unsigned int port;
   Element *property_element;
 
@@ -967,19 +963,12 @@ bool FGOutput::Load(Element* element)
   if (!document) return false;
 
   name = FDMExec->GetRootDir() + document->GetAttributeValue("name");
-  type = document->GetAttributeValue("type");
-  SetType(type);
-  if (!document->GetAttributeValue("port").empty() && type == string("SOCKET")) {
-    port = atoi(document->GetAttributeValue("port").c_str());
-    socket = new FGfdmSocket(name, port);
-  } else if (!document->GetAttributeValue("port").empty() && type == string("FLIGHTGEAR")) {
-    port = atoi(document->GetAttributeValue("port").c_str());
-    if (!document->GetAttributeValue("protocol").empty())
-       protocol = document->GetAttributeValue("protocol");
-    if (protocol == "udp")
-       flightGearSocket = new FGfdmSocket(name, port, FGfdmSocket::ptUDP);  // create udp socket
-    else
-       flightGearSocket = new FGfdmSocket(name, port, FGfdmSocket::ptTCP);  // create tcp socket (default)
+  SetType(document->GetAttributeValue("type"));
+  Port = document->GetAttributeValue("port");
+  if (!Port.empty() && (Type == otSocket || Type == otFlightGear)) {
+    port = atoi(Port.c_str());
+    SetProtocol(document->GetAttributeValue("protocol"));
+    socket = new FGfdmSocket(name, port, Protocol);
   } else {
     BaseFilename = Filename = name;
   }

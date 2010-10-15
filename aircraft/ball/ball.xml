@@ -37,7 +37,7 @@
     </metrics>
 
     <mass_balance>
-        <ixx unit="SLUG*FT2"> 10 </ixx>
+        <ixx unit="SLUG*FT2"> 20 </ixx>
         <iyy unit="SLUG*FT2"> 10 </iyy>
         <izz unit="SLUG*FT2"> 10 </izz>
         <ixy unit="SLUG*FT2"> -0 </ixy>
@@ -120,7 +120,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="JSBBallOut.csv" type="NONE" rate="1">
+    <output name="JSBBallOut.csv" type="CSV" rate="1">
 <!--        <property> gear/unit[0]/WOW </property> -->
 <!--        <property> fcs/parachute_reef_pos_norm </property> -->
         <rates> ON </rates>

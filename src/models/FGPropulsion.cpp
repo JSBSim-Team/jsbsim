@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.40 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.41 2010/10/15 11:32:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -295,29 +295,34 @@ bool FGPropulsion::Load(Element* el)
     document->SetParent(engine_element);
 
     type = document->GetName();
-    if (type == "piston_engine") {
-      HavePistonEngine = true;
-      if (!IsBound) bind();
-      Engines.push_back(new FGPiston(FDMExec, document, numEngines));
-    } else if (type == "turbine_engine") {
-      HaveTurbineEngine = true;
-      if (!IsBound) bind();
-      Engines.push_back(new FGTurbine(FDMExec, document, numEngines));
-    } else if (type == "turboprop_engine") {
-      HaveTurboPropEngine = true;
-      if (!IsBound) bind();
-      Engines.push_back(new FGTurboProp(FDMExec, document, numEngines));
-    } else if (type == "rocket_engine") {
-      HaveRocketEngine = true;
-      if (!IsBound) bind();
-      Engines.push_back(new FGRocket(FDMExec, document, numEngines));
-    } else if (type == "electric_engine") {
-      HaveElectricEngine = true;
-      if (!IsBound) bind();
-      Engines.push_back(new FGElectric(FDMExec, document, numEngines));
-    } else {
-      cerr << "Unknown engine type: " << type << endl;
-      exit(-5);
+    try {
+      if (type == "piston_engine") {
+        HavePistonEngine = true;
+        if (!IsBound) bind();
+        Engines.push_back(new FGPiston(FDMExec, document, numEngines));
+      } else if (type == "turbine_engine") {
+        HaveTurbineEngine = true;
+        if (!IsBound) bind();
+        Engines.push_back(new FGTurbine(FDMExec, document, numEngines));
+      } else if (type == "turboprop_engine") {
+        HaveTurboPropEngine = true;
+        if (!IsBound) bind();
+        Engines.push_back(new FGTurboProp(FDMExec, document, numEngines));
+      } else if (type == "rocket_engine") {
+        HaveRocketEngine = true;
+        if (!IsBound) bind();
+        Engines.push_back(new FGRocket(FDMExec, document, numEngines));
+      } else if (type == "electric_engine") {
+        HaveElectricEngine = true;
+        if (!IsBound) bind();
+        Engines.push_back(new FGElectric(FDMExec, document, numEngines));
+      } else {
+        cerr << "Unknown engine type: " << type << endl;
+        exit(-5);
+      }
+    } catch (std::string str) {
+      cerr << endl << fgred << str << reset << endl;
+      return false;
     }
 
     FCS->AddThrottle();
