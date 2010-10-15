@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.30 2010/05/02 15:10:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.31 2010/10/15 11:32:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,16 +105,20 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   for (int i=0; i<2; i++) {
     table_element = prop_element->FindNextElement("table");
     name = table_element->GetAttributeValue("name");
-    if (name == "C_THRUST") {
-      cThrust = new FGTable(PropertyManager, table_element);
-    } else if (name == "C_POWER") {
-      cPower = new FGTable(PropertyManager, table_element);
-    } else if (name == "CT_MACH") {
-      CtMach = new FGTable(PropertyManager, table_element);
-    } else if (name == "CP_MACH") {
-      CpMach = new FGTable(PropertyManager, table_element);
-    } else {
-      cerr << "Unknown table type: " << name << " in propeller definition." << endl;
+    try {
+      if (name == "C_THRUST") {
+        cThrust = new FGTable(PropertyManager, table_element);
+      } else if (name == "C_POWER") {
+        cPower = new FGTable(PropertyManager, table_element);
+      } else if (name == "CT_MACH") {
+        CtMach = new FGTable(PropertyManager, table_element);
+      } else if (name == "CP_MACH") {
+        CpMach = new FGTable(PropertyManager, table_element);
+      } else {
+        cerr << "Unknown table type: " << name << " in propeller definition." << endl;
+      }
+    } catch (std::string str) {
+      throw("Error loading propeller table:" + name + ". " + str);
     }
   }
 
