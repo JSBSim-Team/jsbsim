@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.31 2010/10/15 11:32:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.32 2010/10/21 03:27:40 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,7 +338,7 @@ double FGPropeller::GetPowerRequired(void)
      if (CL > 1.5) CL = 1.5;
      double BladeArea = Diameter * Diameter / 32.0 * numBlades;
      vTorque(eX) = -Sense*BladeArea*Diameter*Vel*Vel*rho*0.19*CL;
-     PowerRequired = vTorque(eX)*0.2*M_PI;
+     PowerRequired = fabs(vTorque(eX))*0.2*M_PI;
   }
 
   return PowerRequired;

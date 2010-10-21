@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.26 2010/10/15 11:33:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.27 2010/10/21 11:09:56 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,8 +248,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     nRows = tableData->GetNumDataLines()-1;
 
     if (nRows >= 2) {
-      nCols = FindNumColumns(tableData->GetDataLine(1));
-      if (nCols <= 2) throw(string("Not enough columns in table data."));
+      nCols = FindNumColumns(tableData->GetDataLine(0));
+      if (nCols < 2) throw(string("Not enough columns in table data."));
     } else {
       throw(string("Not enough rows in the table data."));
     }
@@ -302,14 +302,14 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   if (dimension > 2) {
     for (b=2; b<=nTables; ++b) {
       if (Data[b][1] <= Data[b-1][1]) {
-        cerr << fgred << highint << endl
+        stringstream errormsg;
+        errormsg << fgred << highint << endl
              << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
              << "  in breakpoint " << b;
-        if (nameel != 0)
-          cerr << " of table in " << nameel->GetAttributeValue("name");
-        cerr << ":" << reset << endl
-             << "  " << Data[b][1] << "<=" << Data[b-1][1] << endl;
-        exit(-1);
+        if (nameel != 0) errormsg << " of table in " << nameel->GetAttributeValue("name");
+        errormsg << ":" << reset << endl
+                 << "  " << Data[b][1] << "<=" << Data[b-1][1] << endl;
+        throw(errormsg.str());
       }
     }
   }
@@ -318,14 +318,14 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   if (dimension > 1) {
     for (c=2; c<=nCols; ++c) {
       if (Data[0][c] <= Data[0][c-1]) {
-        cerr << fgred << highint << endl
+        stringstream errormsg;
+        errormsg << fgred << highint << endl
              << "  FGTable: column lookup is not monotonically increasing" << endl
              << "  in column " << c;
-        if (nameel != 0)
-          cerr << " of table in " << nameel->GetAttributeValue("name");
-        cerr << ":" << reset << endl
-             << "  " << Data[0][c] << "<=" << Data[0][c-1] << endl;
-        exit(-1);
+        if (nameel != 0) errormsg << " of table in " << nameel->GetAttributeValue("name");
+        errormsg << ":" << reset << endl
+                 << "  " << Data[0][c] << "<=" << Data[0][c-1] << endl;
+        throw(errormsg.str());
       }
     }
   }
@@ -334,14 +334,14 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   if (dimension < 3) { // in 3D tables, check only rows of subtables
     for (r=2; r<=nRows; ++r) {
       if (Data[r][0]<=Data[r-1][0]) {
-        cerr << fgred << highint << endl
+        stringstream errormsg;
+        errormsg << fgred << highint << endl
              << "  FGTable: row lookup is not monotonically increasing" << endl
              << "  in row " << r;
-        if (nameel != 0)
-          cerr << " of table in " << nameel->GetAttributeValue("name");
-        cerr << ":" << reset << endl
-             << "  " << Data[r][0] << "<=" << Data[r-1][0] << endl;
-        exit(-1);
+        if (nameel != 0) errormsg << " of table in " << nameel->GetAttributeValue("name");
+        errormsg << ":" << reset << endl
+                 << "  " << Data[r][0] << "<=" << Data[r-1][0] << endl;
+        throw(errormsg.str());
       }
     }
   }
