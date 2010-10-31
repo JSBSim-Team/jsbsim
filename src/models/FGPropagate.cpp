@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.71 2010/10/15 11:34:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.72 2010/10/31 04:48:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   integrator_rotational_position = eAdamsBashforth2;
   integrator_translational_position = eTrapezoidal;
 
-  VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
@@ -129,7 +128,6 @@ bool FGPropagate::InitModel(void)
   vUVWdot.InitMatrix();
   vInertialVelocity.InitMatrix();
 
-  VState.dqPQRdot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
@@ -633,13 +631,11 @@ void FGPropagate::InitializeDerivatives(void)
   CalculateInertialVelocity(); // Translational position derivative
 
   // Initialize past values deques
-  VState.dqPQRdot.clear();
   VState.dqPQRidot.clear();
   VState.dqUVWidot.clear();
   VState.dqInertialVelocity.clear();
   VState.dqQtrndot.clear();
   for (int i=0; i<4; i++) {
-    VState.dqPQRdot.push_front(vPQRdot);
     VState.dqPQRidot.push_front(vPQRidot);
     VState.dqUVWidot.push_front(vUVWdot);
     VState.dqInertialVelocity.push_front(VState.vInertialVelocity);

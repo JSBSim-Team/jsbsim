@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.63 2010/10/07 03:45:40 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.64 2010/10/31 04:49:25 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -452,7 +452,7 @@ void FGJSBsim::update( double dt )
     // ground in this area.
     double groundCacheRadius = acrad + 2*dt*Propagate->GetUVW().Magnitude();
     double alt, slr, lat, lon;
-    FGColumnVector3 cart = Auxiliary->GetLocationVRP();
+    FGLocation cart = Auxiliary->GetLocationVRP();
     if ( needTrim && startup_trim->getBoolValue() ) {
       alt = fgic->GetAltitudeASLFtIC();
       slr = fgic->GetSeaLevelRadiusFtIC();
@@ -488,9 +488,9 @@ void FGJSBsim::update( double dt )
 
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
-        double contact[3], d[3], agl;
+        double contact[3], d[3], vel[3], agl;
         get_agl_ft(fdmex->GetSimTime(), cart_pos, SG_METER_TO_FEET*2, contact,
-                   d, d, d, &agl);
+                   d, vel, d, &agl);
         double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
              + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
 
@@ -498,6 +498,13 @@ void FGJSBsim::update( double dt )
           "Ready to trim, terrain elevation is: "
             << terrain_alt * SG_METER_TO_FEET );
 
+        if (fgGetBool("/sim/presets/onground")) {
+          FGColumnVector3 gndVelNED = cart.GetTec2l()
+                                    * FGColumnVector3(vel[0], vel[1], vel[2]);
+          fgic->SetVNorthFpsIC(gndVelNED(1));
+          fgic->SetVEastFpsIC(gndVelNED(2));
+          fgic->SetVDownFpsIC(gndVelNED(3));
+        }
         fgic->SetTerrainElevationFtIC( terrain_alt );
         do_trim();
       } else {

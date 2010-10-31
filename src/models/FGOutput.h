@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.18 2010/10/15 11:30:29 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.19 2010/10/31 04:48:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.18 2010/10/15 11:30:29 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.19 2010/10/31 04:48:46 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,7 +177,6 @@ public:
     /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
     /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
   } subsystems;
-
 
   FGNetFDM fgSockBuf;
 
