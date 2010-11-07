@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.46 2010/09/29 02:19:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.47 2010/11/07 13:35:36 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -187,7 +187,7 @@ void FGInitialCondition::WriteStateFile(int num)
     outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi) << " </psi>" << endl;
     outfile << "  <longitude unit=\"DEG\"> " << Propagate->GetLongitudeDeg() << " </longitude>" << endl;
     outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
-    outfile << "  <altitude unit=\"FT\"> " << Propagate->GetAltitudeASL() << " </altitude>" << endl;
+    outfile << "  <altitude unit=\"FT\"> " << Propagate->GetAltitudeAGL() << " </altitude>" << endl;
     outfile << "</initialize>" << endl;
     outfile.close();
   } else {
