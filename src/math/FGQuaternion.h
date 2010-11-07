@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.18 2010/09/29 02:19:05 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.19 2010/11/05 03:07:30 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -88,7 +88,7 @@ class FGMatrix33;
   CLASS DECLARATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGQuaternion : virtual FGJSBBase {
+class FGQuaternion : public FGJSBBase {
 public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
