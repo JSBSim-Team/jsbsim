@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# For debugging
+#CP="echo cp -p"
+CP="cp -p"
+
 if [ x$1 = x ]; then
    echo "Usage:"
    echo " $0 [path to the Aircraft directory of the FlightGear base package]"
@@ -14,47 +18,51 @@ if [ ! -d engine ]; then
    exit;
 fi
 
-CDIR=`pwd`
-ADIR=$1
+JSBDIR=`pwd`
+FGDIR=$1
 
 NOTFOUND=
 cd aircraft
-DIRS=`find . -type d -maxdepth 1 -printf "%f\n"`
+DIRS=`find . -maxdepth 1 -type d -print | sed s/^[\./]*// | grep -v "^CVS"`
 for n in $DIRS; do
-    if [ $n"x" != ".x" -a $n"x" != "CVSx" ]; then
-        if [ ! -f $n/INSTALL ]; then
-            INSTALL="$ADIR/$n/$n.xml";
-        else
-            INSTALL="$ADIR/`grep "^FlightGear:" $n/INSTALL | awk '{print $2}'`";
-        fi;
-
-        if [ $n"x" != ".x" -a ! -f $INSTALL ]; then
-            NOTFOUND="$NOTFOUND $INSTALL";
-        else
-            NUM=`diff $n/$n.xml $INSTALL | grep -e ">" -e "<" | wc -l`;
-            NUM_ID=`diff $n/$n.xml $INSTALL | grep -e ">" -e "<" | grep "\$Revision:" | wc -l`;
-            if [ ! $NUM -eq $NUM_ID ]; then
-                cp -p $n/$n.xml $INSTALL;
+    if [ -f $n/INSTALL ]; then
+        d1="`grep "^FlightGear:" $n/INSTALL`";
+        if [ "$d1""x" != "x" ]; then
+            d2="`echo $d1 | awk '{print $2}'`";
+            if [ "$d2""x" != "x" ]; then
+                INSTALL="$FGDIR/$d2";
+            else
+                INSTALL="$FGDIR/$n/$n.xml";
             fi;
-        fi
-    fi
+
+            if [ ! -f $INSTALL ]; then
+                NOTFOUND="$NOTFOUND $INSTALL";
+            else
+                NUM=`diff $n/$n.xml $INSTALL | grep -e "^>" | wc -l`;
+                NUM_ID=`diff $n/$n.xml $INSTALL | grep -e "^<" | grep "\$Revision" | wc -l`;
+                if [ $NUM_ID -ne $NUM ]; then
+                    $CP $n/$n.xml $INSTALL;
+                fi;
+            fi;
+        fi;
+    fi;
 done
 
 if [ "x$NOTFOUND" != "x" ]; then
-   echo "The following aircraft files could not be found in the FlightGear"
+   echo "\nThe following aircraft files could not be found in the FlightGear"
    echo "base package:"
    for n in $NOTFOUND; do echo "    "$n; done
    echo
 fi
 
 NOTFOUND=
-cd $ADIR
+cd $FGDIR
 for n in `ls -1 */Engines/*.xml`; do 
     FILE=`echo $n | awk -F'/' '{printf $3}'`;
-    if [ ! -f $CDIR/engine/$FILE ]; then 
+    if [ ! -f $JSBDIR/engine/$FILE ]; then 
         NOTFOUND="$NOTFOUND $n";
-    else
-        cp -p $CDIR/engine/$FILE $n;
+    elif [ ! -f $JSBDIR/engine/direct.xml ]; then
+        $CP $JSBDIR/engine/$FILE $n;
     fi
 done
 
@@ -62,4 +70,4 @@ if [ "x$NOTFOUND" != "x" ]; then
    echo "The following engine files could not be found in the JSBSim directory:"
    for n in $NOTFOUND; do echo "    "$n; done
 fi
-cd  $CDIR;
+cd  $JSBDIR;

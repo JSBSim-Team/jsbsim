@@ -2,11 +2,11 @@
 // install this aircraft and under what name.
 //
 // The syntax is easy;
-// * the package name at the beginning of a new line folowed by a colon
+// * the package name at the beginning of a new line followed by a colon
 // * a space as a column separator
 // * the path and filename relative to the aircraft install directory
 //
 // Currently known package names are: FlightGear
 
-// Don't install the p51d file in the FlightGear base package.
-FlightGear:
+// Don't install in the FlightGear base package.
+//FlightGear:
