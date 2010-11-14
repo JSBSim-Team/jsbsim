@@ -8,6 +8,4 @@
 //
 // Currently known package names are: FlightGear
 
-// Updating the ZLT-NT needs to be done manually due to
-// property tree differencies between JSBSim/CVS and FlightGear/CVS.
-//FlightGear:
+FlightGear:
