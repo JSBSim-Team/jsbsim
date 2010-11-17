@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.38 2010/09/16 11:01:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.39 2010/11/17 03:17:14 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -628,7 +628,7 @@ void FGAtmosphere::Turbulence(void)
       nu_v = GaussianRandomNumber(),
       nu_w = GaussianRandomNumber(),
       nu_p = GaussianRandomNumber(),
-      xi_u, xi_v, xi_w, xi_p, xi_q, xi_r;
+      xi_u=0, xi_v=0, xi_w=0, xi_p=0, xi_q=0, xi_r=0;
 
     // values of turbulence NED velocities
 

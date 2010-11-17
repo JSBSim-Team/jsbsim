@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.2 2010/08/24 10:30:14 jberndt Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.3 2010/11/17 03:18:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -56,15 +56,24 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** 
-@author Jon Berndt
+/** The model functions class provides the capability for loading, storing, and
+    executing arbitrary functions.
+    For certain classes, such as the engine, aerodynamics, ground reactions, 
+    mass balance, etc., it can be useful to incorporate special functions that
+    can operate on the local model parameters before and/or after the model
+    executes. For example, there is no inherent chamber pressure calculation
+    done in the rocket engine model. However, an arbitrary function can be added
+    to a specific rocket engine XML configuration file. It would be tagged with
+    a "pre" or "post" type attribute to denote whether the function is to be
+    executed before or after the standard model algorithm.
+    @author Jon Berndt
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DECLARATION: FGModelFunctions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-  class FGModelFunctions : public FGJSBBase
+class FGModelFunctions : public FGJSBBase
 {
 public:
   ~FGModelFunctions();

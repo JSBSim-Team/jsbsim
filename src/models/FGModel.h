@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.16 2010/09/22 11:33:40 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.17 2010/11/17 03:17:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ class FGExternalReactions;
 class FGBuoyantForces;
 class FGAircraft;
 class FGPropagate;
-class FGAuxiliary;
+class FGAuxiliary; 
 class Element;
 class FGPropertyManager;
 
@@ -129,7 +129,7 @@ protected:
   FGBuoyantForces*   BuoyantForces;
   FGAircraft*        Aircraft;
   FGPropagate*       Propagate;
-  FGAuxiliary*       Auxiliary;
+  FGAuxiliary*       Auxiliary; 
   FGPropertyManager* PropertyManager;
 };
 }

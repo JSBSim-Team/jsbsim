@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.41 2010/10/15 11:32:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.42 2010/11/17 03:17:14 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -115,6 +115,8 @@ FGPropulsion::~FGPropulsion()
 
 bool FGPropulsion::InitModel(void)
 {
+  bool result = true;
+
   if (!FGModel::InitModel()) return false;
 
   for (unsigned int i=0; i<numTanks; i++) Tanks[i]->ResetToIC();
@@ -123,18 +125,28 @@ bool FGPropulsion::InitModel(void)
     switch (Engines[i]->GetType()) {
       case FGEngine::etPiston:
         ((FGPiston*)Engines[i])->ResetToIC();
-        if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        try {
+          if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        } catch (string str) {
+          cerr << str << endl;
+          result = false;
+        }
         break;
       case FGEngine::etTurbine:
         ((FGTurbine*)Engines[i])->ResetToIC();
-        if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        try {
+          if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
+        } catch (string str) {
+          cerr << str << endl;
+          result = false;
+        }
         break;
       default:
         break;
     }
   }
 
-  return true;
+  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,11 +238,10 @@ bool FGPropulsion::GetSteadyState(void)
 
 void FGPropulsion::InitRunning(int n)
 {
-  if (n > 0) { // A specific engine is supposed to be initialized
+  if (n >= 0) { // A specific engine is supposed to be initialized
 
     if (n >= (int)GetNumEngines() ) {
-      cerr << "Tried to initialize a non-existent engine!" << endl;
-      throw;
+      throw(string("Tried to initialize a non-existent engine!"));
     }
     FCS->SetThrottleCmd(n,1);
     FCS->SetMixtureCmd(n,1);
@@ -251,8 +262,6 @@ void FGPropulsion::InitRunning(int n)
     InitializedEngines = -1;
     HasInitializedEngines = true;
 
-  } else if (n == 0) { // No engines are to be initialized
-    // Do nothing
   }
 }
 

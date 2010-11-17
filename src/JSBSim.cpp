@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.60 2010/08/11 11:49:44 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.61 2010/11/17 03:18:16 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -146,19 +146,19 @@ CLASS DOCUMENTATION
  * model (FDM) framework written in the C++ programming language.  It is
  * designed to support simulation modeling of any aerospace craft without the
  * need for specific compiled and linked program code, instead relying on a
- * relatively simple model specification written in a XML format. The format is
+ * versatile and powerful specification written in an XML format. The format is
  * formally known as JSBSim-ML (JSBSim Markup Language).
  *
  * JSBSim (www.jsbsim.org) was created initially for the open source FlightGear
- * flight simulator (www.flightgear.org), where it replaced LaRCSim (Langley
- * Research Center Simulation) as the default FDM.  JSBSim also maintains the
- * ability to run in a standalone, batch mode.  This is useful for running tests
- * or sets of tests automatically using the internal scripting capability.
+ * flight simulator (www.flightgear.org). JSBSim maintains the ability to run in
+ * as a standalone executable in soft real-time, or batch mode. This is useful
+ * for running tests or sets of tests automatically using the internal scripting
+ * capability.
  *
- * Differently from LaRCSim, JSBSim does not model specific aircraft in program
+ * JSBSim does not model specific aircraft in program
  * code. The aircraft itself is defined in a file written in an XML-based format
  * where the aircraft mass and geometric properties are specified.  Additional
- * statements define:
+ * statements define such characteristics as:
  *
  * - Landing gear location and properties.
  * - Pilot eyepoint
@@ -173,9 +173,10 @@ CLASS DOCUMENTATION
  * become immediately fluent in describing vehicles, and requiring only prior
  * basic theoretical aero knowledge.
  *
- * One of the more unique features of JSBSim is its method of modeling flight
- * control systems and an autopilot.  These are modeled by assembling strings
- * of components that represent filters, switches, summers, gains, sensors, etc.
+ * One of the more unique features of JSBSim is its method of modeling aircraft
+ * systems such as a flight control system, autopilot, electrical, etc. 
+ * These are modeled by assembling strings of components that represent filters,
+ * switches, summers, gains, sensors, and so on.
  *
  * Another unique feature is displayed in the use of "properties".  Properties
  * essentially expose chosen variables as nodes in a tree, in a directory-like
@@ -188,16 +189,9 @@ CLASS DOCUMENTATION
  *
  * The equations of motion are modeled essentially as they are presented in
  * aerospace textbooks for the benefit of student users, but quaternions are
- * used to track orientation, avoiding "gimbal lock". While JSBSim is
- * designed to model primarily atmospheric flight at lower speeds, coriolis and
- * centripetal accelerations are incorporated into the EOM to
- * permit a wider range of vehicles to be simulated.
- *
- * Currently under development is an expansion of the atmospheric modeling for
- * JSBSim.  The existing model approximates the standard atmosphere of 1976.
- * Recently, source code for the NRLMSISE-00 model was obtained and this is
- * being implemented as a C++ class that can optionally be used.  Also, a simple
- *  Mars atmosphere is being implemented.
+ * used to track orientation, avoiding "gimbal lock". JSBSim can modeling the
+ * atmospheric flight of an aircraft, or the motion of a spacecraft in orbit.
+ * Coriolis and centripetal accelerations are incorporated into the EOM.
  *
  * JSBSim can output (log) data in a configurable way.  Sets of data that are
  * logically related can be selected to be output at a chosen rate, and
@@ -223,7 +217,7 @@ CLASS DOCUMENTATION
  *
  * \section depends Dependencies
  *
- * JSBSim has no dependencies at present.
+ * JSBSim has no external dependencies at present.
  *
  * \section license Licensing
  *

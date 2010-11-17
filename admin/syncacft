@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # For debugging
-#CP="echo cp -p"
-CP="cp -p"
+CP="echo cp -p"
+#CP="cp -p"
 
 if [ x$1 = x ]; then
    echo "Usage:"
