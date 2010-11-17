@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.48 2010/11/07 18:39:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.49 2010/11/17 03:17:14 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -885,6 +885,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 
 bool FGInitialCondition::Load_v1(void)
 {
+  bool result = true;
   int n;
 
   if (document->FindElement("latitude"))
@@ -953,13 +954,18 @@ bool FGInitialCondition::Load_v1(void)
   Element* running_elements = document->FindElement("running");
   while (running_elements) {
     n = int(running_elements->GetDataAsNumber());
-    propulsion->InitRunning(n);
+    try {
+      propulsion->InitRunning(n);
+    } catch (string str) {
+      cerr << str << endl;
+      result = false;
+    }
     running_elements = document->FindNextElement("running");
   }
 
   fdmex->RunIC();
 
-  return true;
+  return result;
 }
 
 //******************************************************************************
@@ -1213,7 +1219,12 @@ bool FGInitialCondition::Load_v2(void)
   Element* running_elements = document->FindElement("running");
   while (running_elements) {
     n = int(running_elements->GetDataAsNumber());
-    propulsion->InitRunning(n);
+    try {
+      propulsion->InitRunning(n);
+    } catch (string str) {
+      cerr << str << endl;
+      result = false;
+    }
     running_elements = document->FindNextElement("running");
   }
 

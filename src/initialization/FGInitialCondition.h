@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.20 2010/02/15 03:22:57 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.21 2010/11/17 03:17:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -151,7 +151,7 @@ CLASS DOCUMENTATION
    - vc (calibrated airspeed, ft/sec)
    - mach (mach)
    - vground (ground speed, ft/sec)
-   - running (0 or 1)
+   - running (-1 for all engines, 0 for no engines, 1 ... n for specific engines)
 
    <h3>Properties</h3>
    @property ic/vc-kts (read/write) Calibrated airspeed initial condition in knots
@@ -202,7 +202,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.20 2010/02/15 03:22:57 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.21 2010/11/17 03:17:14 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
