@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.21 2010/08/12 04:07:11 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.22 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -160,15 +160,15 @@ public:
    */
   FGColumnVector3 StructuralToBody(const FGColumnVector3& r) const;
 
-  inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
-  inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
+  void SetEmptyWeight(double EW) { EmptyWeight = EW;}
+  void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
 
   void AddPointMass(Element* el);
   double GetTotalPointMassWeight(void);
 
   FGColumnVector3& GetPointMassMoment(void);
-  FGMatrix33& GetJ(void) {return mJ;}
-  FGMatrix33& GetJinv(void) {return mJinv;}
+  const FGMatrix33& GetJ(void) const {return mJ;}
+  const FGMatrix33& GetJinv(void) const {return mJinv;}
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(void) const;
   

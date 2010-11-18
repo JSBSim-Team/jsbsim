@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.34 2010/10/15 11:32:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.35 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,24 +134,28 @@ bool FGAerodynamics::InitModel(void)
 
 bool FGAerodynamics::Run(void)
 {
-  unsigned int axis_ctr, ctr;
-  double alpha, twovel;
 
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false; // if paused don't execute
 
+  unsigned int axis_ctr, ctr;
+  const double alpha=FDMExec->GetAuxiliary()->Getalpha();
+  const double twovel=2*FDMExec->GetAuxiliary()->GetVt();
+  const double qbar = FDMExec->GetAuxiliary()->Getqbar();
+  const double wingarea = FDMExec->GetAircraft()->GetWingArea();
+  const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
+  const double wingchord = FDMExec->GetAircraft()->Getcbar();
+  const double wingincidence = FDMExec->GetAircraft()->GetWingIncidence();
   RunPreFunctions();
 
   // calculate some oft-used quantities for speed
 
-  twovel = 2*Auxiliary->GetVt();
   if (twovel != 0) {
-    bi2vel = Aircraft->GetWingSpan() / twovel;
-    ci2vel = Aircraft->Getcbar() / twovel;
+    bi2vel = wingspan / twovel;
+    ci2vel = wingchord / twovel;
   }
-  alphaw = Auxiliary->Getalpha() + Aircraft->GetWingIncidence();
-  alpha = Auxiliary->Getalpha();
-  qbar_area = Aircraft->GetWingArea() * Auxiliary->Getqbar();
+  alphaw = alpha + wingincidence;
+  qbar_area = wingarea * qbar;
 
   if (alphaclmax != 0) {
     if (alpha > 0.85*alphaclmax) {
@@ -204,18 +208,18 @@ bool FGAerodynamics::Run(void)
   }
 
   // Calculate aerodynamic reference point shift, if any
-  if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar()*12.0;
+  if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*wingchord*12.0;
 
   // Calculate lift coefficient squared
-  if ( Auxiliary->Getqbar() > 0) {
-    clsq = vFw(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
+  if ( qbar > 0) {
+    clsq = vFw(eLift) / (wingarea*qbar);
     clsq *= clsq;
   }
 
   // Calculate lift Lift over Drag
   if ( fabs(vFw(eDrag)) > 0.0) lod = fabs( vFw(eLift) / vFw(eDrag) );
 
-  vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp() + vDeltaRP);
+  vDXYZcg = FDMExec->GetMassBalance()->StructuralToBody(FDMExec->GetAircraft()->GetXYZrp() + vDeltaRP);
 
   vMoments = vDXYZcg*vForces; // M = r X F
 
@@ -250,8 +254,8 @@ FGMatrix33& FGAerodynamics::GetTw2b(void)
 {
   double ca, cb, sa, sb;
 
-  double alpha = Auxiliary->Getalpha();
-  double beta  = Auxiliary->Getbeta();
+  double alpha = FDMExec->GetAuxiliary()->Getalpha();
+  double beta  = FDMExec->GetAuxiliary()->Getbeta();
 
   ca = cos(alpha);
   sa = sin(alpha);
@@ -278,8 +282,8 @@ FGMatrix33& FGAerodynamics::GetTb2w(void)
   double alpha,beta;
   double ca, cb, sa, sb;
 
-  alpha = Auxiliary->Getalpha();
-  beta  = Auxiliary->Getbeta();
+  alpha = FDMExec->GetAuxiliary()->Getalpha();
+  beta  = FDMExec->GetAuxiliary()->Getbeta();
 
   ca = cos(alpha);
   sa = sin(alpha);

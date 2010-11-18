@@ -42,13 +42,12 @@ INCLUDES
 #include "FGModel.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGLocation.h"
-#include "FGPropagate.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.18 2010/07/25 17:35:20 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.19 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +99,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.18 2010/07/25 17:35:20 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.19 2010/11/18 12:38:06 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +161,7 @@ public:
   const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;     }
   const FGLocation&      GetLocationVRP(void) const { return vLocationVRP; }
 
-  double GethVRP(void) const { return vLocationVRP.GetRadius() - Propagate->GetSeaLevelRadius(); }
+  double GethVRP(void) const;
   double GetAeroUVW (int idx) const { return vAeroUVW(idx); }
   double Getalpha   (void) const { return alpha;      }
   double Getbeta    (void) const { return beta;       }

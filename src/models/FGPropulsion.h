@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.25 2010/01/02 17:58:01 andgi Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.26 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.25 2010/01/02 17:58:01 andgi Exp $
+    @version $Id: FGPropulsion.h,v 1.26 2010/11/18 12:38:06 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -125,32 +125,32 @@ public:
   bool Load(Element* el);
 
   /// Retrieves the number of engines defined for the aircraft.
-  inline unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
+  unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
 
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
       @return the address of the specific engine, or zero if no such engine is
               available */
-  inline FGEngine* GetEngine(unsigned int index) {
+  FGEngine* GetEngine(unsigned int index) const {
                       if (index < Engines.size()) return Engines[index];
                       else                        return 0L;      }
 
   /// Retrieves the number of tanks defined for the aircraft.
-  inline unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
+  unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
 
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container
       @return the address of the specific tank, or zero if no such tank is
               available */
-  inline FGTank* GetTank(unsigned int index) {
+  FGTank* GetTank(unsigned int index) const {
                       if (index < Tanks.size()) return Tanks[index];
                       else                      return 0L;        }
 
   /** Returns the number of fuel tanks currently actively supplying fuel */
-  inline int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
+  int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
 
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
-  inline int GetnumSelectedOxiTanks(void) const {return numSelectedOxiTanks;}
+  int GetnumSelectedOxiTanks(void) const {return numSelectedOxiTanks;}
 
   /** Loops the engines until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
@@ -158,18 +158,18 @@ public:
   /** Sets up the engines as running */
   void InitRunning(int n);
 
-  std::string GetPropulsionStrings(const std::string& delimiter);
-  std::string GetPropulsionValues(const std::string& delimiter);
+  std::string GetPropulsionStrings(const std::string& delimiter) const;
+  std::string GetPropulsionValues(const std::string& delimiter) const;
 
-  inline FGColumnVector3& GetForces(void)  {return vForces; }
-  inline double GetForces(int n) const { return vForces(n);}
-  inline FGColumnVector3& GetMoments(void) {return vMoments;}
-  inline double GetMoments(int n) const {return vMoments(n);}
+  const FGColumnVector3& GetForces(void) const {return vForces; }
+  double GetForces(int n) const { return vForces(n);}
+  const FGColumnVector3& GetMoments(void) const {return vMoments;}
+  double GetMoments(int n) const {return vMoments(n);}
 
-  inline bool GetRefuel(void) const {return refuel;}
-  inline void SetRefuel(bool setting) {refuel = setting;}
-  inline bool GetFuelDump(void) const {return dump;}
-  inline void SetFuelDump(bool setting) {dump = setting;}
+  bool GetRefuel(void) const {return refuel;}
+  void SetRefuel(bool setting) {refuel = setting;}
+  bool GetFuelDump(void) const {return dump;}
+  void SetFuelDump(bool setting) {dump = setting;}
   double Transfer(int source, int target, double amount);
   void DoRefuel(double time_slice);
   void DumpFuel(double time_slice);

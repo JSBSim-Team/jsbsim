@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.39 2010/11/17 03:17:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.40 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +158,7 @@ bool FGAtmosphere::Run(void)
   RunPreFunctions();
 
   T_dev = 0.0;
-  h = Propagate->GetAltitudeASL();
+  h = FDMExec->GetPropagate()->GetAltitudeASL();
 
   if (!useExternal) {
     Calculate(h);
@@ -275,11 +275,11 @@ void FGAtmosphere::Calculate(double altitude)
 
   if (slope == 0) {
     intTemperature = reftemp;
-    intPressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
+    intPressure = refpress*exp(-FDMExec->GetInertial()->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
     intDensity = intPressure/(Reng*intTemperature);
   } else {
     intTemperature = reftemp+slope*(altitude-htab[i]);
-    intPressure = refpress*pow(intTemperature/reftemp,-Inertial->SLgravity()/(slope*Reng));
+    intPressure = refpress*pow(intTemperature/reftemp,-FDMExec->GetInertial()->SLgravity()/(slope*Reng));
     intDensity = intPressure/(Reng*intTemperature);
   }
   
@@ -404,7 +404,12 @@ void FGAtmosphere::SetWindPsi(double dir)
 
 void FGAtmosphere::Turbulence(void)
 {
-  double DeltaT = rate*FDMExec->GetDeltaT();
+  const double DeltaT = rate*FDMExec->GetDeltaT();
+  const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
+  const double HOverBMAC = FDMExec->GetAuxiliary()->GetHOverBMAC();
+  const FGMatrix33& Tl2b = FDMExec->GetPropagate()->GetTl2b();
+  const double HTailArm = FDMExec->GetAircraft()->GetHTailArm();
+  const double VTailArm = FDMExec->GetAircraft()->GetVTailArm();
 
   switch (turbType) {
   case ttStandard: {
@@ -438,7 +443,6 @@ void FGAtmosphere::Turbulence(void)
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulenceNED = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulenceNED *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
@@ -451,20 +455,20 @@ void FGAtmosphere::Turbulence(void)
     // Need to determine the turbulence change in body axes between two time points.
 
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
-    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Tl2b*vTurbulenceGrad;
 
-    if (Aircraft->GetWingSpan() > 0) {
-      vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
+    if (wingspan > 0) {
+      vTurbPQR(eP) = vBodyTurbGrad(eY)/wingspan;
     } else {
       vTurbPQR(eP) = vBodyTurbGrad(eY)/30.0;
     }
-//     if (Aircraft->GetHTailArm() != 0.0)
-//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
+//     if (HTailArm != 0.0)
+//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/HTailArm;
 //     else
 //       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
 
-    if (Aircraft->GetVTailArm() > 0)
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
+    if (VTailArm > 0)
+      vTurbPQR(eR) = vBodyTurbGrad(eX)/VTailArm;
     else
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
 
@@ -496,7 +500,6 @@ void FGAtmosphere::Turbulence(void)
     vDirection      += vDirectionAccel*DeltaT;
 
     // Diminish z-vector within two wingspans of the ground
-    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 2.0) vDirection(eZ) *= HOverBMAC / 2.0;
 
     vDirection.Normalize();
@@ -504,15 +507,15 @@ void FGAtmosphere::Turbulence(void)
     vTurbulenceNED = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Propagate->GetTl2b() * vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY) / Aircraft->GetWingSpan();
-    if (Aircraft->GetHTailArm() > 0)
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / Aircraft->GetHTailArm();
+    vBodyTurbGrad = Tl2b * vTurbulenceGrad;
+    vTurbPQR(eP) = vBodyTurbGrad(eY) / wingspan;
+    if (HTailArm > 0)
+      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / HTailArm;
     else
       vTurbPQR(eQ) = vBodyTurbGrad(eZ) / 10.0;
 
-    if (Aircraft->GetVTailArm() > 0)
-      vTurbPQR(eR) = vBodyTurbGrad(eX) / Aircraft->GetVTailArm();
+    if (VTailArm > 0)
+      vTurbPQR(eR) = vBodyTurbGrad(eX) / VTailArm;
     else
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
 
@@ -554,7 +557,6 @@ void FGAtmosphere::Turbulence(void)
     // Vertical component of turbulence.
     vTurbulenceNED(3) = sinewave * max_vs * TurbGain * Rhythmicity;
     vTurbulenceNED(3)+= delta;
-    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulenceNED(3) *= HOverBMAC * 0.3333;
  
@@ -579,9 +581,9 @@ void FGAtmosphere::Turbulence(void)
 
     // Turbulence model according to MIL-F-8785C (Flying Qualities of Piloted Aircraft)
     double
-      h = Propagate->GetDistanceAGL(),
-      V = Auxiliary->GetVt(), // true airspeed in ft/s
-      b_w = Aircraft->GetWingSpan(),
+      h = FDMExec->GetPropagate()->GetDistanceAGL(),
+      V = FDMExec->GetAuxiliary()->GetVt(), // true airspeed in ft/s
+      b_w = wingspan,
       L_u, L_w, sig_u, sig_w;
 
     // clip height functions at 10 ft
@@ -685,7 +687,7 @@ void FGAtmosphere::Turbulence(void)
     vTurbPQR(3) = xi_r;
 
     // vTurbPQR is in the body fixed frame, not NED
-    vTurbPQR = Propagate->GetTl2b()*vTurbPQR;
+    vTurbPQR = Tl2b*vTurbPQR;
 
     // hand on the values for the next timestep
     xi_u_km1 = xi_u; nu_u_km1 = nu_u;

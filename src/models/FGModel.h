@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.17 2010/11/17 03:17:14 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.18 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,18 +57,6 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGAtmosphere;
-class FGFCS;
-class FGPropulsion;
-class FGMassBalance;
-class FGAerodynamics;
-class FGInertial;
-class FGGroundReactions;
-class FGExternalReactions;
-class FGBuoyantForces;
-class FGAircraft;
-class FGPropagate;
-class FGAuxiliary; 
 class Element;
 class FGPropertyManager;
 
@@ -118,18 +106,6 @@ protected:
   virtual void Debug(int from);
 
   FGFDMExec*         FDMExec;
-  FGAtmosphere*      Atmosphere;
-  FGFCS*             FCS;
-  FGPropulsion*      Propulsion;
-  FGMassBalance*     MassBalance;
-  FGAerodynamics*    Aerodynamics;
-  FGInertial*        Inertial;
-  FGGroundReactions* GroundReactions;
-  FGExternalReactions* ExternalReactions;
-  FGBuoyantForces*   BuoyantForces;
-  FGAircraft*        Aircraft;
-  FGPropagate*       Propagate;
-  FGAuxiliary*       Auxiliary; 
   FGPropertyManager* PropertyManager;
 };
 }

@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.71 2010/09/28 02:54:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.72 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,7 +218,7 @@ bool FGFCS::Run(void)
 
   // Set the default steering angle
   for (i=0; i<SteerPosDeg.size(); i++) {
-    FGLGear* gear = GroundReactions->GetGearUnit(i);
+    FGLGear* gear = FDMExec->GetGroundReactions()->GetGearUnit(i);
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
 
@@ -760,7 +760,7 @@ ifstream* FGFCS::FindSystemFile(const string& sysfilename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentStrings(const string& delimiter)
+string FGFCS::GetComponentStrings(const string& delimiter) const
 {
   unsigned int comp;
   string CompStrings = "";
@@ -797,7 +797,7 @@ string FGFCS::GetComponentStrings(const string& delimiter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentValues(const string& delimiter)
+string FGFCS::GetComponentValues(const string& delimiter) const
 {
   std::ostringstream buf;
 
@@ -964,7 +964,7 @@ void FGFCS::bindModel(void)
   string tmp;
 
   for (i=0; i<SteerPosDeg.size(); i++) {
-    if (GroundReactions->GetGearUnit(i)->GetSteerable()) {
+    if (FDMExec->GetGroundReactions()->GetGearUnit(i)->GetSteerable()) {
       tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", i);
       PropertyManager->Tie( tmp.c_str(), this, i, &FGFCS::GetSteerPosDeg, &FGFCS::SetSteerPosDeg);
     }

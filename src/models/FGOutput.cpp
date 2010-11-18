@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.49 2010/10/15 11:30:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.50 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -237,6 +237,19 @@ void FGOutput::SetProtocol(const string& protocol)
 
 void FGOutput::DelimitedOutput(const string& fname)
 {
+  const FGAerodynamics* Aerodynamics = FDMExec->GetAerodynamics();
+  const FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
+  const FGAircraft* Aircraft = FDMExec->GetAircraft();
+  const FGAtmosphere* Atmosphere = FDMExec->GetAtmosphere();
+  const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
+  const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
+  const FGPropagate* Propagate = FDMExec->GetPropagate();
+  const FGFCS* FCS = FDMExec->GetFCS();
+  const FGInertial* Inertial = FDMExec->GetInertial();
+  const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
+  const FGExternalReactions* ExternalReactions = FDMExec->GetExternalReactions();
+  const FGBuoyantForces* BuoyantForces = FDMExec->GetBuoyantForces();
+
   streambuf* buffer;
   string scratch = "";
 
@@ -493,6 +506,13 @@ void FGOutput::DelimitedOutput(const string& fname)
 
 void FGOutput::SocketDataFill(FGNetFDM* net)
 {
+  const FGAerodynamics* Aerodynamics = FDMExec->GetAerodynamics();
+  const FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
+  const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
+  const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
+  const FGPropagate* Propagate = FDMExec->GetPropagate();
+  const FGFCS* FCS = FDMExec->GetFCS();
+  const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
     unsigned int i;
 
     // Version
@@ -701,6 +721,16 @@ void FGOutput::FlightGearSocketOutput(void)
 
 void FGOutput::SocketOutput(void)
 {
+  const FGAerodynamics* Aerodynamics = FDMExec->GetAerodynamics();
+  const FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
+  const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
+  const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
+  const FGPropagate* Propagate = FDMExec->GetPropagate();
+  const FGFCS* FCS = FDMExec->GetFCS();
+  const FGAtmosphere* Atmosphere = FDMExec->GetAtmosphere();
+  const FGAircraft* Aircraft = FDMExec->GetAircraft();
+  const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
+
   string asciiData, scratch;
 
   if (socket == NULL) return;
