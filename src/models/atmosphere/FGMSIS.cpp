@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.13 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.14 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,11 +153,11 @@ bool MSIS::Run(void)
   //do temp, pressure, and density first
   if (!useExternal) {
     // get sea-level values
-    Calculate(Auxiliary->GetDayOfYear(),
-              Auxiliary->GetSecondsInDay(),
+    Calculate(FDMExec->GetAuxiliary()->GetDayOfYear(),
+              FDMExec->GetAuxiliary()->GetSecondsInDay(),
               0.0,
-              Propagate->GetLocation().GetLatitudeDeg(),
-              Propagate->GetLocation().GetLongitudeDeg());
+              FDMExec->GetPropagate()->GetLocation().GetLatitudeDeg(),
+              FDMExec->GetPropagate()->GetLocation().GetLongitudeDeg());
     SLtemperature = output.t[1] * 1.8;
     SLdensity     = output.d[5] * 1.940321;
     SLpressure    = 1716.488 * SLdensity * SLtemperature;
@@ -168,11 +168,11 @@ bool MSIS::Run(void)
     rSLsoundspeed  = 1.0/SLsoundspeed;
 
     // get at-altitude values
-    Calculate(Auxiliary->GetDayOfYear(),
-              Auxiliary->GetSecondsInDay(),
-              Propagate->GetAltitudeASL(),
-              Propagate->GetLocation().GetLatitudeDeg(),
-              Propagate->GetLocation().GetLongitudeDeg());
+    Calculate(FDMExec->GetAuxiliary()->GetDayOfYear(),
+              FDMExec->GetAuxiliary()->GetSecondsInDay(),
+              FDMExec->GetPropagate()->GetAltitudeASL(),
+              FDMExec->GetPropagate()->GetLocation().GetLatitudeDeg(),
+              FDMExec->GetPropagate()->GetLocation().GetLongitudeDeg());
     intTemperature = output.t[1] * 1.8;
     intDensity     = output.d[5] * 1.940321;
     intPressure    = 1716.488 * intDensity * intTemperature;

@@ -45,7 +45,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.18 2010/09/07 00:40:03 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.19 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,12 +100,12 @@ public:
   bool InitModel(void);
   bool Run(void);
   bool Load(Element* el);
-  FGColumnVector3& GetForces(void) {return vForces;}
+  const FGColumnVector3& GetForces(void) const {return vForces;}
   double GetForces(int idx) const {return vForces(idx);}
-  FGColumnVector3& GetMoments(void) {return vMoments;}
+  const FGColumnVector3& GetMoments(void) const {return vMoments;}
   double GetMoments(int idx) const {return vMoments(idx);}
-  string GetGroundReactionStrings(string delimeter);
-  string GetGroundReactionValues(string delimeter);
+  string GetGroundReactionStrings(string delimeter) const;
+  string GetGroundReactionValues(string delimeter) const;
   bool GetWOW(void) const;
   void UpdateForcesAndMoments(void);
 
@@ -114,7 +114,7 @@ public:
   /** Gets a gear instance
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
-  inline FGLGear* GetGearUnit(int gear) { return lGear[gear]; }
+  FGLGear* GetGearUnit(int gear) const { return lGear[gear]; }
 
 private:
   vector <FGLGear*> lGear;

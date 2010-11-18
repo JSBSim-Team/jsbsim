@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.19 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.20 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +191,7 @@ bool FGInput::Run(void)
         ostringstream info;
         info << "JSBSim version: " << JSBSim_version << endl;
         info << "Config File version: " << needed_cfg_version << endl;
-        info << "Aircraft simulated: " << Aircraft->GetAircraftName() << endl;
+        info << "Aircraft simulated: " << FDMExec->GetAircraft()->GetAircraftName() << endl;
         info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << endl;
         socket->Reply(info.str());
 

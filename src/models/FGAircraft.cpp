@@ -40,7 +40,7 @@ INCLUDES
 
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <iostream>
 #include <cmath>
 
 #include "FGAircraft.h"
@@ -54,7 +54,6 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGPropulsion.h"
 #include "input_output/FGPropertyManager.h"
-#include <iostream>
 
 using namespace std;
 
@@ -68,7 +67,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.28 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.29 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,30 +117,30 @@ bool FGAircraft::Run(void)
 
   vForces.InitMatrix();
   if (!HoldDown) {
-    vForces += Aerodynamics->GetForces();
-    vForces += Propulsion->GetForces();
-    vForces += GroundReactions->GetForces();
-    vForces += ExternalReactions->GetForces();
-    vForces += BuoyantForces->GetForces();
+    vForces += FDMExec->GetAerodynamics()->GetForces();
+    vForces += FDMExec->GetPropulsion()->GetForces();
+    vForces += FDMExec->GetGroundReactions()->GetForces();
+    vForces += FDMExec->GetExternalReactions()->GetForces();
+    vForces += FDMExec->GetBuoyantForces()->GetForces();
   } else {
-    const FGMatrix33& mTl2b = Propagate->GetTl2b();
-    vForces = mTl2b * FGColumnVector3(0,0,-MassBalance->GetWeight());
+    const FGMatrix33& mTl2b = FDMExec->GetPropagate()->GetTl2b();
+    vForces = mTl2b * FGColumnVector3(0,0,-FDMExec->GetMassBalance()->GetWeight());
   }
 
   vMoments.InitMatrix();
   if (!HoldDown) {
-    vMoments += Aerodynamics->GetMoments();
-    vMoments += Propulsion->GetMoments();
-    vMoments += GroundReactions->GetMoments();
-    vMoments += ExternalReactions->GetMoments();
-    vMoments += BuoyantForces->GetMoments();
+    vMoments += FDMExec->GetAerodynamics()->GetMoments();
+    vMoments += FDMExec->GetPropulsion()->GetMoments();
+    vMoments += FDMExec->GetGroundReactions()->GetMoments();
+    vMoments += FDMExec->GetExternalReactions()->GetMoments();
+    vMoments += FDMExec->GetBuoyantForces()->GetMoments();
   }
 
-  vBodyAccel = vForces/MassBalance->GetMass();
+  vBodyAccel = vForces/FDMExec->GetMassBalance()->GetMass();
 
-  vNcg = vBodyAccel/Inertial->SLgravity();
+  vNcg = vBodyAccel/FDMExec->GetInertial()->SLgravity();
 
-  vNwcg = Aerodynamics->GetTb2w() * vNcg;
+  vNwcg = FDMExec->GetAerodynamics()->GetTb2w() * vNcg;
   vNwcg(3) = 1.0 - vNwcg(3);
 
   RunPostFunctions();
@@ -153,7 +152,7 @@ bool FGAircraft::Run(void)
 
 double FGAircraft::GetNlf(void) const
 {
-  return -1*Aerodynamics->GetvFw(3)/MassBalance->GetWeight();
+  return (-FDMExec->GetAerodynamics()->GetvFw(3))/FDMExec->GetMassBalance()->GetWeight();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

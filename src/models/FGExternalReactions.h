@@ -38,15 +38,15 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <vector>
 #include "FGModel.h"
 #include "FGExternalForce.h"
-#include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.9 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.10 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -147,12 +147,12 @@ public:
   /** Retrieves the total forces defined in the external reactions.
       @return the total force in pounds.
   */
-  FGColumnVector3 GetForces(void) {return vTotalForces;}
+  FGColumnVector3 GetForces(void) const {return vTotalForces;}
 
   /** Retrieves the total moment resulting from the forces defined in the external reactions.
       @return the total moment in foot-pounds.
   */
-  FGColumnVector3 GetMoments(void) {return vTotalMoments;}
+  FGColumnVector3 GetMoments(void) const {return vTotalMoments;}
 
 private:
 

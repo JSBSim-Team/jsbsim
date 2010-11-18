@@ -35,8 +35,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGAtmosphere_H
-#define FGAtmosphere_H
+#ifndef FGATMOSPHERE_H
+#define FGATMOSPHERE_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.23 2010/09/16 11:01:24 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.24 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.23 2010/09/16 11:01:24 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.24 2010/11/18 12:38:06 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 
@@ -205,7 +205,7 @@ public:
   // TOTAL WIND access functions (wind + gust + turbulence)
 
   /// Retrieves the total wind components in NED frame.
-  FGColumnVector3& GetTotalWindNED(void) { return vTotalWindNED; }
+  const FGColumnVector3& GetTotalWindNED(void) const { return vTotalWindNED; }
 
   /// Retrieves a total wind component in NED frame.
   double GetTotalWindNED(int idx) const {return vTotalWindNED(idx);}
@@ -276,8 +276,8 @@ public:
 
   double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   double GetTurbMagnitude(void) const {return Magnitude;}
-  FGColumnVector3& GetTurbDirection(void) {return vDirection;}
-  FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
+  const FGColumnVector3& GetTurbDirection(void) const {return vDirection;}
+  const FGColumnVector3& GetTurbPQR(void) const {return vTurbPQR;}
 
   void   SetWindspeed20ft(double ws) { windspeed_at_20ft = ws;}
   double GetWindspeed20ft() const { return windspeed_at_20ft;}

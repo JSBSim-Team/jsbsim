@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.20 2009/11/12 13:08:11 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.21 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.20 $
+    @version $Revision: 1.21 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +141,7 @@ public:
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
-  FGColumnVector3& GetForces(void) {return vForces;}
+  const FGColumnVector3& GetForces(void) const {return vForces;}
 
   /** Gets the aerodynamic force for an axis.
       @param n Axis index. This could be 0, 1, or 2, or one of the
@@ -151,7 +151,7 @@ public:
 
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
-  FGColumnVector3& GetMoments(void) {return vMoments;}
+  const FGColumnVector3& GetMoments(void) const {return vMoments;}
 
   /** Gets the aerodynamic moment for an axis.
       @return the moment about a single axis (as described also in the
@@ -160,7 +160,7 @@ public:
 
   /** Retrieves the aerodynamic forces in the wind axes.
       @return a reference to a column vector containing the wind axis forces. */
-  FGColumnVector3& GetvFw(void) { return vFw; }
+  const FGColumnVector3& GetvFw(void) const { return vFw; }
 
   /** Retrieves the aerodynamic forces in the wind axes, given an axis.
       @param axis the axis to return the force for (eX, eY, eZ).
@@ -169,22 +169,22 @@ public:
   double GetvFw(int axis) const { return vFw(axis); }
 
   /** Retrieves the lift over drag ratio */
-  inline double GetLoD(void) const { return lod; }
+  double GetLoD(void) const { return lod; }
 
   /** Retrieves the square of the lift coefficient. */
-  inline double GetClSquared(void) const { return clsq; }
-  inline double GetAlphaCLMax(void) const { return alphaclmax; }
-  inline double GetAlphaCLMin(void) const { return alphaclmin; }
+  double GetClSquared(void) const { return clsq; }
+  double GetAlphaCLMax(void) const { return alphaclmax; }
+  double GetAlphaCLMin(void) const { return alphaclmin; }
 
-  inline double GetHysteresisParm(void) const { return stall_hyst; }
-  inline double GetStallWarn(void) const { return impending_stall; }
+  double GetHysteresisParm(void) const { return stall_hyst; }
+  double GetStallWarn(void) const { return impending_stall; }
   double GetAlphaW(void) const { return alphaw; }
 
   double GetBI2Vel(void) const { return bi2vel; }
   double GetCI2Vel(void) const { return ci2vel; }
 
-  inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
-  inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
+  void SetAlphaCLMax(double tt) { alphaclmax=tt; }
+  void SetAlphaCLMin(double tt) { alphaclmin=tt; }
 
   /** Gets the strings for the current set of coefficients.
       @param delimeter either a tab or comma string depending on output type

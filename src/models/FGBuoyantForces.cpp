@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.13 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.14 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
   gasCellJ = FGMatrix33();
 
   for (unsigned int i=0; i < size; i++) {
-    FGColumnVector3 v = MassBalance->StructuralToBody( Cells[i]->GetXYZ() );
+    FGColumnVector3 v = FDMExec->GetMassBalance()->StructuralToBody( Cells[i]->GetXYZ() );
     // Body basis is in FT. 
     const double mass = Cells[i]->GetMass();
     

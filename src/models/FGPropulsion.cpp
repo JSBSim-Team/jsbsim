@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.42 2010/11/17 03:17:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.43 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -243,8 +243,8 @@ void FGPropulsion::InitRunning(int n)
     if (n >= (int)GetNumEngines() ) {
       throw(string("Tried to initialize a non-existent engine!"));
     }
-    FCS->SetThrottleCmd(n,1);
-    FCS->SetMixtureCmd(n,1);
+    FDMExec->GetFCS()->SetThrottleCmd(n,1);
+    FDMExec->GetFCS()->SetMixtureCmd(n,1);
     GetEngine(n)->InitRunning();
     GetSteadyState();
 
@@ -254,8 +254,8 @@ void FGPropulsion::InitRunning(int n)
   } else if (n < 0) { // -1 refers to "All Engines"
 
     for (unsigned int i=0; i<GetNumEngines(); i++) {
-      FCS->SetThrottleCmd(i,1);
-      FCS->SetMixtureCmd(i,1);
+      FDMExec->GetFCS()->SetThrottleCmd(i,1);
+      FDMExec->GetFCS()->SetMixtureCmd(i,1);
       GetEngine(i)->InitRunning();
     }
     GetSteadyState();
@@ -334,7 +334,7 @@ bool FGPropulsion::Load(Element* el)
       return false;
     }
 
-    FCS->AddThrottle();
+    FDMExec->GetFCS()->AddThrottle();
     ThrottleAdded = true;
 
     numEngines++;
@@ -344,7 +344,7 @@ bool FGPropulsion::Load(Element* el)
   }
 
   CalculateTankInertias();
-  if (!ThrottleAdded) FCS->AddThrottle(); // need to have at least one throttle
+  if (!ThrottleAdded) FDMExec->GetFCS()->AddThrottle(); // need to have at least one throttle
 
   // Process fuel dump rate
   if (el->FindElement("dump-rate"))
@@ -410,7 +410,7 @@ ifstream* FGPropulsion::FindEngineFile(const string& engine_filename)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionStrings(const string& delimiter)
+string FGPropulsion::GetPropulsionStrings(const string& delimiter) const
 {
   unsigned int i;
 
@@ -434,7 +434,7 @@ string FGPropulsion::GetPropulsionStrings(const string& delimiter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionValues(const string& delimiter)
+string FGPropulsion::GetPropulsionValues(const string& delimiter) const
 {
   unsigned int i;
 
@@ -492,7 +492,7 @@ FGMatrix33& FGPropulsion::CalculateTankInertias(void)
   tankJ = FGMatrix33();
 
   for (unsigned int i=0; i<size; i++) {
-    tankJ += MassBalance->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
+    tankJ += FDMExec->GetMassBalance()->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
                                                Tanks[i]->GetXYZ() );
     tankJ(1,1) += Tanks[i]->GetIxx();
     tankJ(2,2) += Tanks[i]->GetIyy();

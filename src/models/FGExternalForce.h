@@ -39,10 +39,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <string>
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
 #include "models/propulsion/FGForce.h"
-#include <string>
 #include "input_output/FGPropertyManager.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGFunction.h"
@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.8 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.9 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

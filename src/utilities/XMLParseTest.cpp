@@ -1,6 +1,8 @@
 #include "FGXMLParse.h"
 #include <iostream>
 #include <fstream>
+#include <cstdio>
+#include <cstdlib>
 
 /*
 g++ ../FGXMLParse.cpp ../FGXMLElement.cpp XMLParseTest.cpp -I../ -oXMLParse -L/usr/local/lib -lsgxml -lsgstructure

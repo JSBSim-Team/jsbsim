@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.19 2010/10/10 15:06:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.20 2010/11/18 12:38:06 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,7 +116,7 @@ bool FGInertial::Run(void)
   RunPreFunctions();
 
   // Gravitation accel
-  double r = Propagate->GetRadius();
+  double r = FDMExec->GetPropagate()->GetRadius();
   gAccel = GetGAccel(r);
   earthPosAngle += FDMExec->GetDeltaT()*RotationRate;
 
@@ -145,7 +145,7 @@ FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 
   // Gravitation accel
   double r = position.Magnitude();
-  double lat = Propagate->GetLatitude();
+  double lat = FDMExec->GetPropagate()->GetLatitude();
   double sinLat = sin(lat);
 
   double adivr = a/r;

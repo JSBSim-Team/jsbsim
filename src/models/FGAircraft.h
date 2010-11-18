@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.16 2010/11/18 12:38:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.16 2010/11/18 12:38:06 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -140,33 +140,33 @@ public:
   double GetWingSpan(void) const { return WingSpan; }
   /// Gets the average wing chord
   double Getcbar(void) const { return cbar; }
-  inline double GetWingIncidence(void) const { return WingIncidence; }
-  inline double GetWingIncidenceDeg(void) const { return WingIncidence*radtodeg; }
-  inline double GetHTailArea(void) const { return HTailArea; }
-  inline double GetHTailArm(void)  const { return HTailArm; }
-  inline double GetVTailArea(void) const { return VTailArea; }
-  inline double GetVTailArm(void)  const { return VTailArm; }
-  inline double Getlbarh(void) const { return lbarh; } // HTailArm / cbar
-  inline double Getlbarv(void) const { return lbarv; } // VTailArm / cbar
-  inline double Getvbarh(void) const { return vbarh; } // H. Tail Volume
-  inline double Getvbarv(void) const { return vbarv; } // V. Tail Volume
-  inline FGColumnVector3& GetMoments(void) { return vMoments; }
-  inline double GetMoments(int idx) const { return vMoments(idx); }
-  inline FGColumnVector3& GetForces(void) { return vForces; }
-  inline double GetForces(int idx) const { return vForces(idx); }
-  inline FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
-  inline double GetBodyAccel(int idx) { return vBodyAccel(idx); }
-  inline FGColumnVector3& GetNcg   (void)  { return vNcg; }
-  inline double GetNcg(int idx)  { return vNcg(idx); }
-  inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
-  inline FGColumnVector3& GetXYZvrp(void) { return vXYZvrp; }
-  inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
-  inline double GetXYZrp(int idx) const { return vXYZrp(idx); }
-  inline double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
-  inline double GetXYZep(int idx) const { return vXYZep(idx); }
-  inline void SetAircraftName(const std::string& name) {AircraftName = name;}
-  inline void SetHoldDown(int hd) {HoldDown = hd;}
-  inline int GetHoldDown(void) const {return HoldDown;}
+  double GetWingIncidence(void) const { return WingIncidence; }
+  double GetWingIncidenceDeg(void) const { return WingIncidence*radtodeg; }
+  double GetHTailArea(void) const { return HTailArea; }
+  double GetHTailArm(void)  const { return HTailArm; }
+  double GetVTailArea(void) const { return VTailArea; }
+  double GetVTailArm(void)  const { return VTailArm; }
+  double Getlbarh(void) const { return lbarh; } // HTailArm / cbar
+  double Getlbarv(void) const { return lbarv; } // VTailArm / cbar
+  double Getvbarh(void) const { return vbarh; } // H. Tail Volume
+  double Getvbarv(void) const { return vbarv; } // V. Tail Volume
+  const FGColumnVector3& GetMoments(void) const { return vMoments; }
+  double GetMoments(int idx) const { return vMoments(idx); }
+  const FGColumnVector3& GetForces(void) const { return vForces; }
+  double GetForces(int idx) const { return vForces(idx); }
+  FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
+  double GetBodyAccel(int idx) const { return vBodyAccel(idx); }
+  const FGColumnVector3& GetNcg(void) const { return vNcg; }
+  double GetNcg(int idx) const { return vNcg(idx); }
+  const FGColumnVector3& GetXYZrp(void) const { return vXYZrp; }
+  const FGColumnVector3& GetXYZvrp(void) const { return vXYZvrp; }
+  const FGColumnVector3& GetXYZep(void) const { return vXYZep; }
+  double GetXYZrp(int idx) const { return vXYZrp(idx); }
+  double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
+  double GetXYZep(int idx) const { return vXYZep(idx); }
+  void SetAircraftName(const std::string& name) {AircraftName = name;}
+  void SetHoldDown(int hd) {HoldDown = hd;}
+  int GetHoldDown(void) const {return HoldDown;}
 
   void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
 
@@ -174,7 +174,7 @@ public:
 
   double GetNlf(void) const;
 
-  inline FGColumnVector3& GetNwcg(void) { return vNwcg; }
+  FGColumnVector3& GetNwcg(void) { return vNwcg; }
 
   void bind(void);
   void unbind(void);
