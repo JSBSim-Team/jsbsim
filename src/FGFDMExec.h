@@ -41,7 +41,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "models/FGModel.h"
+#include <vector>
+#include <string>
+
+//#include "models/FGModel.h"
 #include "models/FGOutput.h"
 #include "models/FGInput.h"
 #include "initialization/FGTrim.h"
@@ -53,14 +56,11 @@ INCLUDES
 #include "models/FGPropagate.h"
 #include "math/FGColumnVector3.h"
 
-#include <vector>
-#include <string>
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.55 2010/11/07 13:30:54 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.56 2010/11/18 20:37:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,6 +70,20 @@ namespace JSBSim {
 
 class FGScript;
 class FGTrim;
+class FGAerodynamics;
+class FGAircraft;
+class FGAtmosphere;
+class FGAuxiliary;
+class FGBuoyantForces;
+class FGExternalReactions;
+class FGGroundReactions;
+class FGFCS;
+class FGInertial;
+class FGInput;
+class FGOutput;
+class FGPropagate;
+class FGPropulsion;
+class FGMassBalance;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -169,7 +183,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.55 $
+    @version $Revision: 1.56 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
