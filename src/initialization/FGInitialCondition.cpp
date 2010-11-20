@@ -62,7 +62,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.49 2010/11/17 03:17:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.50 2010/11/20 16:38:43 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -225,20 +225,37 @@ void FGInitialCondition::SetVequivalentKtsIC(double tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVgroundFpsIC(double tt) {
-  double ua,va,wa;
-  double vxz;
+void FGInitialCondition::calcAeroEuler(void)
+{
+  double ua = u + uw;
+  double va = v + vw;
+  double wa = w + ww;
+  vt = sqrt( ua*ua + va*va + wa*wa );
+  alpha = beta = 0.0;
+  calpha = cbeta = 1.0;
+  salpha = sbeta = 0.0;
+  double vxz = sqrt( u*u + w*w );
+  if( w != 0 ) alpha = atan2( w, u );
+  if( vxz != 0 ) {
+    beta = atan2( v, vxz );
+    calpha = u / vxz;
+    salpha = w / vxz;
+  }
+  double vn = sqrt(vxz*vxz + v*v);
+  if (vn != 0) {
+    cbeta = vxz / vn;
+    sbeta = v / vn;
+  }
+}
 
+//******************************************************************************
+
+void FGInitialCondition::SetVgroundFpsIC(double tt) {
   vg=tt;
   lastSpeedSet=setvg;
   vnorth = vg*cos(psi); veast = vg*sin(psi); vdown = 0;
   calcUVWfromNED();
-  ua = u + uw; va = v + vw; wa = w + ww;
-  vt = sqrt( ua*ua + va*va + wa*wa );
-  alpha = beta = 0;
-  vxz = sqrt( u*u + w*w );
-  if( w != 0 ) alpha = atan2( w, u );
-  if( vxz != 0 ) beta = atan2( v, vxz );
+  calcAeroEuler();
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
@@ -336,7 +353,7 @@ void FGInitialCondition::SetPsiRadIC(double tt) {
 
 void FGInitialCondition::SetUBodyFpsIC(double tt) {
   u=tt;
-  vt=sqrt(u*u + v*v + w*w);
+  calcAeroEuler();
   lastSpeedSet=setuvw;
 }
 
@@ -344,7 +361,7 @@ void FGInitialCondition::SetUBodyFpsIC(double tt) {
 
 void FGInitialCondition::SetVBodyFpsIC(double tt) {
   v=tt;
-  vt=sqrt(u*u + v*v + w*w);
+  calcAeroEuler();
   lastSpeedSet=setuvw;
 }
 
@@ -352,7 +369,7 @@ void FGInitialCondition::SetVBodyFpsIC(double tt) {
 
 void FGInitialCondition::SetWBodyFpsIC(double tt) {
   w=tt;
-  vt=sqrt( u*u + v*v + w*w );
+  calcAeroEuler();
   lastSpeedSet=setuvw;
 }
 
@@ -360,16 +377,9 @@ void FGInitialCondition::SetWBodyFpsIC(double tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetVNorthFpsIC(double tt) {
-  double ua,va,wa;
-  double vxz;
   vnorth = tt;
   calcUVWfromNED();
-  ua = u + uw; va = v + vw; wa = w + ww;
-  vt = sqrt( ua*ua + va*va + wa*wa );
-  alpha = beta = 0;
-  vxz = sqrt( u*u + w*w );
-  if( w != 0 ) alpha = atan2( w, u );
-  if( vxz != 0 ) beta = atan2( v, vxz );
+  calcAeroEuler();
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
@@ -379,16 +389,9 @@ void FGInitialCondition::SetVNorthFpsIC(double tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetVEastFpsIC(double tt) {
-  double ua,va,wa;
-  double vxz;
   veast = tt;
   calcUVWfromNED();
-  ua = u + uw; va = v + vw; wa = w + ww;
-  vt = sqrt( ua*ua + va*va + wa*wa );
-  alpha = beta = 0;
-  vxz = sqrt( u*u + w*w );
-  if( w != 0 ) alpha = atan2( w, u );
-  if( vxz != 0 ) beta = atan2( v, vxz );
+  calcAeroEuler();
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
@@ -398,16 +401,9 @@ void FGInitialCondition::SetVEastFpsIC(double tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetVDownFpsIC(double tt) {
-  double ua,va,wa;
-  double vxz;
   vdown = tt;
   calcUVWfromNED();
-  ua = u + uw; va = v + vw; wa = w + ww;
-  vt = sqrt( ua*ua + va*va + wa*wa );
-  alpha = beta = 0;
-  vxz = sqrt( u*u + w*w );
-  if( w != 0 ) alpha = atan2( w, u );
-  if( vxz != 0 ) beta = atan2( v, vxz );
+  calcAeroEuler();
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
