@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.41 2010/07/08 11:36:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.42 2010/11/24 12:58:39 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -376,7 +376,9 @@ bool FGScript::RunScript(void)
       Events[ev_ctr].Triggered = true;
 
     } else if (Events[ev_ctr].Persistent) { // If the event is persistent, reset the trigger.
-
+      Events[ev_ctr].Triggered = false; // Reset the trigger for persistent events
+      Events[ev_ctr].Notified = false;  // Also reset the notification flag
+    } else if (Events[ev_ctr].Continuous) { // If the event is continuous, reset the trigger.
       Events[ev_ctr].Triggered = false; // Reset the trigger for persistent events
       Events[ev_ctr].Notified = false;  // Also reset the notification flag
     }
@@ -486,9 +488,11 @@ void FGScript::Debug(int from)
         cout << ":" << endl;
 
         if (Events[i].Persistent)
-          cout << "  " << "Always executes";
+          cout << "  " << "Whenever triggered, executes once";
+        else if (Events[i].Continuous)
+          cout << "  " << "While true, always executes";
         else
-          cout << "  " << "Executes once";
+          cout << "  " << "When first triggered, executes once";
 
         Events[i].Condition->PrintCondition();
 
