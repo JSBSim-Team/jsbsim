@@ -38,7 +38,7 @@
       </notify>
     </event>
 
-    <event name="Elevator doublet" persistent="true">
+    <event name="Elevator doublet" continuous="true">
       <description> Do an elevator doublet from between
                     5 and 7 seconds. </description>
       <condition>
@@ -82,7 +82,7 @@
       </notify>
     </event>
 
-    <event name="Aileron doublet" persistent="true">
+    <event name="Aileron doublet" continuous="true">
       <description>
         Do an elevator doublet from between
         25 and 27 seconds.
