@@ -718,7 +718,7 @@
            <table>
             <independentVar lookup="row">aero/alpha-deg</independentVar>
             <tableData>
-		180.000000     0.002160
+		-180.000000    0.002160
 		-155.444580    0.049676
 		-127.381242    0.088553
 		-84.847747     0.118790
