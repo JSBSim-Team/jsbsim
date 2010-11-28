@@ -1,0 +1,21 @@
+<?xml version="1.1"?>
+
+<system name="chute">
+	<property value="0">systems/chute/deploy</property>
+	<channel name="Chute">
+		<kinematic name="Parachute Deploy">
+			<input>systems/chute/deploy</input>
+				<traverse>
+					<setting>
+						<position>0</position>
+						<time>0</time>
+					</setting>
+					<setting>
+						<position>1</position>
+						<time>1.5</time>
+					</setting>
+				</traverse>
+			<output>systems/chute/unfurl-norm</output>
+		</kinematic>
+	</channel>
+</system>

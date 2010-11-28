@@ -7,10 +7,10 @@
     <fileheader>
         <author> External model, animations and FDM by Erik Hofman.  Cockpit model in progress, work by the FlightGear community. </author>
         <filecreationdate> In progress January 2008 </filecreationdate>
-        <version> External model $Revision: 1.18 $   Cockpit model in development.</version>
+        <version> External model $Revision: 1.19 $   Cockpit model in development.</version>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.18 $ </version>
+        <version> $Revision: 1.19 $ </version>
         <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
@@ -98,7 +98,7 @@
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
         </contact>
-        <contact type="BOGEY" name="RWT">
+        <contact type="STRUCTURE" name="RWT">
             <location unit="IN">
                 <x> 497.1 </x>
                 <y> 47.575 </y>
@@ -113,7 +113,7 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="LWT">
+        <contact type="STRUCTURE" name="LWT">
             <location unit="IN">
                 <x> 497.1 </x>
                 <y> -47.575 </y>
@@ -128,7 +128,7 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="NOSE">
+        <contact type="STRUCTURE" name="NOSE">
             <location unit="IN">
                 <x> 994.143 </x>
                 <y> 0 </y>
@@ -143,7 +143,7 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="BELLY">
+        <contact type="STRUCTURE" name="BELLY">
             <location unit="IN">
                 <x> 497.1 </x>
                 <y> 0 </y>
@@ -158,7 +158,7 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="VTT">
+        <contact type="STRUCTURE" name="VTT">
             <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
@@ -766,7 +766,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
   <!--                  <value>-0.1000</value>-->
-                    <value>-0.0000</value>
+                    <value>-0.1000</value>
                 </product>
             </function>
             <function name="aero/coefficient/Clp">
@@ -878,7 +878,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
-                    <value>0.0000</value>
+                    <value>0.1200</value>
 <!--                    <value>0.1200</value>  -->
                 </product>
             </function>

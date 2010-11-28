@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<system name="canopy">
+
+  <channel>
+
+   <kinematic name="Canopy Control">
+     <input>systems/canopy/command</input>
+     <traverse>
+       <setting>
+          <position>0</position>
+          <time>0</time>
+       </setting>
+       <setting>
+          <position>1</position>
+          <time>2</time>
+       </setting>
+     </traverse>
+     <output>/canopy/position-norm</output>
+   </kinematic>
+
+  </channel>
+
+</system>

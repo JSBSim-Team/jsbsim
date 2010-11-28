@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<!--***F-104C external fuel***-->
+
+<system name="armament">
+
+  <property value="0">systems/armament/tip-tanks/release</property>
+
+  <channel name="Armament"><!--release tip tanks -->
+     <switch name="systems/armament/tip-tanks/left-tip-tank/released">
+          <default value="systems/armament/tip-tanks/left-tip-tank/released"/>
+          <test value="1">
+                systems/armament/droptanks/release == 1
+          </test>
+          <output>systems/armament/tip-tanks/left-tip-tank/released</output>
+     </switch>
+     <switch name="systems/armament/tip-tanks/right-tip-tank/released">
+          <default value="systems/armament/tip-tanks/right-tip-tank/released"/>
+          <test value="1">
+                systems/armament/tip-tanks/release == 1
+          </test>
+          <output>systems/armament/tip-tanks/right-tip-tank/released</output>
+     </switch>
+  </channel>
+
+  <channel name="Weight-loss"><!--after tip tanks released-->
+     <switch name="systems/armament/tip-tanks/left-tip-tank/weight-control">
+          <default value="inertia/pointmass-weight-lbs[0]"/>
+          <test value="0">
+                systems/armament/tip-tanks/left-tip-tank/released == 1
+          </test>
+          <output>inertia/pointmass-weight-lbs[0]</output>
+     </switch>
+     <switch name="systems/armament/tip-tanks/right-tip-tank/weight-control">
+          <default value="inertia/pointmass-weight-lbs[1]"/>
+          <test value="0">
+                systems/armament/tip-tanks/right-tip-tank/released == 1
+          </test>
+          <output>inertia/pointmass-weight-lbs[1]</output>
+     </switch>
+  </channel>
+
+  <channel name="Fuel-loss"><!--after drop tanks released-->
+     <switch name="systems/armament/tip-tanks/left-tip-tank/fuel-level-control">
+          <default value="propulsion/tank[1]/contents-lbs"/>
+          <test value="0">
+                systems/armament/tip-tanks/left-tip-tank/released == 1
+          </test>
+          <output>propulsion/tank[1]/contents-lbs</output>
+     </switch>
+     <switch name="systems/armament/tip-tanks/right-tip-tank/fuel-level-control">
+          <default value="propulsion/tank[2]/contents-lbs"/>
+          <test value="0">
+                systems/armament/tip-tanks/right-tip-tank/released == 1
+          </test>
+          <output>propulsion/tank[2]/contents-lbs</output>
+     </switch>
+  </channel>
+
+
+</system>

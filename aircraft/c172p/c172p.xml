@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.25 2009/02/06 19:55:23 ehofman Exp $ </version>
+        <version> $Id: c172p.xml,v 1.26 2010/11/28 11:05:41 ehofman Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -57,38 +57,38 @@
                 <z> 24 </z>
             </location>
         </pointmass>
-        <pointmass name="Co-Pilot">
-            <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 36 </x>
-                <y> 14 </y>
-                <z> 24 </z>
-            </location>
-        </pointmass>
-        <pointmass name="Left Passenger">
-            <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 70 </x>
-                <y> -14 </y>
-                <z> 24 </z>
-            </location>
-        </pointmass>
-        <pointmass name="Right Passenger">
-            <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 70 </x>
-                <y> 14 </y>
-                <z> 24 </z>
-            </location>
-        </pointmass>
-        <pointmass name="Baggage">
-            <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 95 </x>
-                <y>  0 </y>
-                <z> 24 </z>
-            </location>
-        </pointmass>
+        <pointmass name="Co-Pilot">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 36 </x>
+                <y> 14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Left Passenger">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 70 </x>
+                <y> -14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Right Passenger">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 70 </x>
+                <y> 14 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Baggage">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 95 </x>
+                <y>  0 </y>
+                <z> 24 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
@@ -96,7 +96,7 @@
             <location unit="IN">
                 <x> -6.8 </x>
                 <y> 0 </y>
-                <z> -20 </z>
+                <z> -19.5</z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -111,7 +111,7 @@
             <location unit="IN">
                 <x> 58.2 </x>
                 <y> -43 </y>
-                <z> -17.9 </z>
+                <z> -15.5 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -126,7 +126,7 @@
             <location unit="IN">
                 <x> 58.2 </x>
                 <y> 43 </y>
-                <z> -17.9 </z>
+                <z> -15.5 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -209,7 +209,7 @@
                     <yaw> 0.0 </yaw>
                 </orient>
                 <sense> 1 </sense>
-                <p_factor> 10 </p_factor>
+                <p_factor> 5 </p_factor>
             </thruster>
         </engine>
         <tank type="FUEL">    <!-- Tank number 0 -->
@@ -255,8 +255,8 @@
             <aerosurface_scale name="Elevator Position Normalized">
                 <input>fcs/elevator-pos-deg</input>
                 <domain>
-  	            <min>-28</min>
-  	            <max>23</max>
+                    <min>-28</min>
+                    <max>23</max>
                 </domain>
                 <range>
                     <min>-1</min>
@@ -288,8 +288,8 @@
             <aerosurface_scale name="Left Aileron Position Normalized">
                 <input>fcs/left-aileron-pos-deg</input>
                 <domain>
-  	            <min>-20</min>
-  	            <max>15</max>
+                    <min>-20</min>
+                    <max>15</max>
                 </domain>
                 <range>
                     <min>-1</min>
@@ -311,8 +311,8 @@
             <aerosurface_scale name="Right Aileron Position Normalized">
                 <input>fcs/right-aileron-pos-deg</input>
                 <domain>
-  	            <min>-15</min>
-  	            <max>20</max>
+                    <min>-15</min>
+                    <max>20</max>
                 </domain>
                 <range>
                     <min>1</min>
@@ -344,8 +344,8 @@
             <aerosurface_scale name="Rudder Position Normalized">
                 <input>fcs/rudder-pos-deg</input>
                 <domain>
-  	            <min>-16</min>
-  	            <max>16</max>
+                    <min>-16</min>
+                    <max>16</max>
                 </domain>
                 <range>
                     <min>-1</min>
@@ -409,7 +409,7 @@
                   <table>
                       <independentVar>aero/h_b-mac-ft</independentVar>
                       <tableData>
-                          0.0000	0.0480
+                          0.0000	0.4800
                           0.1000	0.5150
                           0.1500	0.6290
                           0.2000	0.7090
