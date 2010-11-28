@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.78 2010/10/07 03:45:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.79 2010/11/28 13:20:47 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -806,6 +806,10 @@ void FGLGear::bind(void)
 
     property_name = base_property_name + "/static_friction_coeff";
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
+    property_name = base_property_name + "/rolling_friction_coeff";
+    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &rollingFCoeff );
+    property_name = base_property_name + "/dynamic_friction_coeff";
+    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &dynamicFCoeff );
 
     if (eSteerType == stCaster) {
       property_name = base_property_name + "/steering-angle-deg";

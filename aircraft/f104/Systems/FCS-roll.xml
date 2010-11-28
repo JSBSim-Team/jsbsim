@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+
+<system name="FCS-roll">
+
+  <channel name="Roll">
+
+   <summer name="Roll Trim Sum">
+      <input>fcs/aileron-cmd-norm</input>
+      <input>fcs/roll-trim-cmd-norm</input>
+      <clipto>
+        <min> -1 </min>
+        <max>  1 </max>
+      </clipto>
+   </summer>
+
+<!--left aileron-->
+
+   <aerosurface_scale name="Left Aileron Control">
+      <input>fcs/roll-trim-sum</input>
+      <range>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </range>
+      <output>fcs/left-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+	<scheduled_gain name="Left Aileron Scheduled Gain">
+		<input>fcs/left-aileron-pos-rad</input>
+		<table>
+			<independentVar>gear/gear-cmd-norm</independentVar>
+			<tableData>
+			0.0   0.4875
+			1.0   1.0
+			</tableData>
+		</table>
+	</scheduled_gain>
+
+   <aerosurface_scale name="Left Aileron Normalized">
+      <input>fcs/left-aileron-pos-rad</input>
+      <domain>
+        <min>-0.35</min>
+        <max> 0.35</max>
+      </domain>
+      <range>
+        <min>-1</min>
+        <max> 1</max>
+      </range>
+      <output>fcs/left-aileron-pos-norm</output>
+   </aerosurface_scale>
+
+<!--right aileron-->
+
+   <aerosurface_scale name="Right Aileron Control">
+      <input>fcs/roll-trim-sum</input>
+      <range>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </range>
+      <output>fcs/right-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+	<scheduled_gain name="Right Aileron Scheduled Gain">
+		<input>fcs/right-aileron-pos-rad</input>
+		<table>
+			<independentVar>gear/gear-cmd-norm</independentVar>
+			<tableData>
+			0.0   0.4875
+			1.0   1.0
+			</tableData>
+		</table>
+	</scheduled_gain>
+
+   <aerosurface_scale name="Right Aileron Normalized">
+      <input>fcs/right-aileron-pos-rad</input>
+      <domain>
+        <min>-0.35</min>
+        <max> 0.35</max>
+      </domain>
+      <range>
+        <min>-1</min>
+        <max> 1</max>
+      </range>
+      <output>fcs/right-aileron-pos-norm</output>
+   </aerosurface_scale>
+
+  </channel>
+
+</system>

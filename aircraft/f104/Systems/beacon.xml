@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<system name="beacon">
+
+  <property value="0.75">systems/beacon/frequency</property>
+
+  <channel name="beacon">
+
+   <fcs_function name="systems/beacon/factor">
+     <function>
+       <sin>
+         <product>
+           <property>sim-time-sec</property>
+           <value>6.283185307</value>
+           <property>systems/beacon/frequency</property>
+         </product>
+       </sin>
+     </function>
+     <output>/sim/multiplay/generic/float[0]</output>
+   </fcs_function>
+ 
+  </channel>
+
+</system>

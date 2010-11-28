@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+  <pitot>                                                   <!-- nose probe -->
+    <name>pitot</name>
+    <number>0</number>
+  </pitot>
+
+  <pitot>                                                   <!-- right probe -->
+    <name>pitot</name>
+    <number>1</number>
+  </pitot>
+
+  <pitot>                                                   <!-- left probe -->
+    <name>pitot</name>
+    <number>2</number>
+  </pitot>
+
+  <static>                                                  <!-- nose probe -->
+    <name>static</name>
+    <number>0</number>
+  </static>
+
+  <static>                                                  <!-- right probe -->
+    <name>static</name>
+    <number>1</number>
+  </static>
+
+  <static>                                                  <!-- left probe -->
+    <name>static</name>
+    <number>2</number>
+  </static>
+
+  <vacuum>
+    <name>vacuum</name>
+    <number>0</number>
+    <rpm>/engines/engine[0]/thrust_lb</rpm>
+    <scale>1.0</scale>
+  </vacuum>
+
+  <vacuum>
+    <name>vacuum</name>
+    <number>1</number>
+    <rpm>/engines/engine[1]/thrust_lb</rpm>
+    <scale>1.0</scale>
+  </vacuum>
+
+</PropertyList>

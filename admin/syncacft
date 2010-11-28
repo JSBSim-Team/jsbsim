@@ -39,8 +39,9 @@ for n in $DIRS; do
                 NOTFOUND="$NOTFOUND $INSTALL";
             else
                 NUM=`diff $n/$n.xml $INSTALL | grep -e "^>" | wc -l`;
-                NUM_ID=`diff $n/$n.xml $INSTALL | grep -e "^<" | grep "\$Revision" | wc -l`;
-                if [ $NUM_ID -ne $NUM ]; then
+                NUM_ID=`diff $n/$n.xml $INSTALL | grep -e "^<" | grep "<version>" | wc -l`;
+
+                if [ $NUM_ID -lt $NUM ]; then
                     $CP $n/$n.xml $INSTALL;
                 fi;
             fi;
@@ -54,20 +55,3 @@ if [ "x$NOTFOUND" != "x" ]; then
    for n in $NOTFOUND; do echo "    "$n; done
    echo
 fi
-
-NOTFOUND=
-cd $FGDIR
-for n in `ls -1 */Engines/*.xml`; do 
-    FILE=`echo $n | awk -F'/' '{printf $3}'`;
-    if [ ! -f $JSBDIR/engine/$FILE ]; then 
-        NOTFOUND="$NOTFOUND $n";
-    elif [ ! -f $JSBDIR/engine/direct.xml ]; then
-        $CP $JSBDIR/engine/$FILE $n;
-    fi
-done
-
-if [ "x$NOTFOUND" != "x" ]; then
-   echo "The following engine files could not be found in the JSBSim directory:"
-   for n in $NOTFOUND; do echo "    "$n; done
-fi
-cd  $JSBDIR;

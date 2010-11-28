@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<system name="crash-detect">
+
+  <property value="0">systems/crash-detect/crashed</property>
+
+  <channel name="Over-G">
+
+     <switch name="systems/crash-detect/over-g">
+          <test value="1">
+                accelerations/Nz gt 9.0
+          </test>
+          <output>systems/crash-detect/crashed</output>
+     </switch>
+
+  </channel>
+
+  <channel name="impact-ground">
+
+     <switch name="systems/crash-detect/impact">
+          <test logic="AND" value="1">
+                position/h-agl-ft lt 1.0
+                sim-time-sec gt 1.0
+          </test>
+          <output>systems/crash-detect/crashed</output>
+     </switch>
+
+  </channel>
+
+  <channel name="freeze">
+
+    <switch name="systems/crash-detect/switch1">
+          <default value="simulation/integrator/position/rotational"/>          
+          <test value="0">
+                systems/crash-detect/crashed eq 1
+          </test>
+          <output>simulation/integrator/position/rotational</output>
+    </switch>
+    <switch name="systems/crash-detect/switch2">
+          <default value="simulation/integrator/position/translational"/>          
+          <test value="0">
+                systems/crash-detect/crashed eq 1
+          </test>
+          <output>simulation/integrator/position/translational</output>
+    </switch>
+    <switch name="systems/crash-detect/switch3">
+          <default value="simulation/integrator/rate/rotational"/>          
+          <test value="0">
+                systems/crash-detect/crashed eq 1
+          </test>
+          <output>simulation/integrator/rate/rotational</output>
+    </switch>
+    <switch name="systems/crash-detect/switch4">
+          <default value="simulation/integrator/rate/translational"/>          
+          <test value="0">
+                systems/crash-detect/crashed eq 1
+          </test>
+          <output>simulation/integrator/rate/translational</output>
+    </switch>
+
+  </channel>
+
+</system>

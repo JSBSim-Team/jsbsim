@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<system name="radar">
+
+  <channel name="Radar">
+
+   <fcs_function name="Scope scale">
+     <function>
+         <quotient>
+           <value>0.026</value>
+           <property>systems/radar/range</property>
+         </quotient>
+     </function>
+     <output>systems/radar/factor</output>
+   </fcs_function>
+
+  </channel>
+
+</system>

@@ -6,8 +6,8 @@
 
     <fileheader>
         <author> Unknown </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.16 $ </version>
+        <filecreationdate>2001-01-01</filecreationdate>
+        <version> $Revision: 1.17 $ </version>
         <description> SGS Glider </description>
     </fileheader>
 
@@ -291,7 +291,7 @@
                     <property>metrics/Sw-sqft</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+                          <!-- <independentVar lookup="column">fcs/flap-pos-deg</independentVar> -->
                           <tableData>
                               -0.0175	0.0100
                               0.0000	0.0150
@@ -310,7 +310,7 @@
                               0.7854	0.9600
                               0.8727	1.0600
                               0.9599	1.1400
-                              0.6981	1.2200
+                              1.0472	1.2200
                               1.2217	1.3800
                               1.3963	1.5000
                               1.5708	1.4600
@@ -326,9 +326,9 @@
                       <table>
                           <independentVar>fcs/elevator-pos-rad</independentVar>
                           <tableData>
-                              1.0000	0.1140
-                              0.0000	0.0000
                               -1.0000	0.1140
+                              0.0000	0.0000
+                              1.0000	0.1140
                           </tableData>
                       </table>
                 </product>
@@ -404,7 +404,7 @@
                               0.7854	0.8200
                               0.8727	0.7900
                               0.9599	0.7400
-                              0.6981	0.6600
+                              1.0472	0.6600
                               1.2217	0.4700
                               1.3963	0.2600
                               1.5708	0.0300

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.52 2010/10/31 04:48:46 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.53 2010/11/28 13:02:43 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.52 2010/10/31 04:48:46 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.53 2010/11/28 13:02:43 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -665,6 +665,14 @@ private:
                   deque <FGQuaternion>& ValDot,
                   double dt,
                   eIntegrateType integration_type);
+
+  void EvaluateRateToResistTo(FGColumnVector3& vdot,
+                              const FGColumnVector3& Val,
+                              const FGColumnVector3& ValDot,
+                              const FGColumnVector3& LocalTerrainVal,
+                              deque <FGColumnVector3>& dqValDot,
+                              const double dt,
+                              const eIntegrateType integration_type);
 
   void ResolveFrictionForces(double dt);
 

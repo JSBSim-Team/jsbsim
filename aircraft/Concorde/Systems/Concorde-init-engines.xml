@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!-- Engines ground configuration :
+
+     - create variables to avoid non-member on Nasal.
+-->
+
+
+<PropertyList>
+
+  <engine n="0">
+   <bucket-deg>21.0</bucket-deg>
+   <configuration type="bool">false</configuration>
+   <csd-diff-degc>0.0</csd-diff-degc>
+   <csd-inlet-degc>0.0</csd-inlet-degc>
+   <csd-oil-psi>0.0</csd-oil-psi>
+   <engine-num>1</engine-num>
+   <ramp-percent>0.0</ramp-percent>
+   <relight type="bool">false</relight>
+   <secondary-air-door type="bool">false</secondary-air-door>
+  </engine>
+  <engine n="1">
+   <bucket-deg>21.0</bucket-deg>
+   <configuration type="bool">false</configuration>
+   <csd-diff-degc>0.0</csd-diff-degc>
+   <csd-inlet-degc>0.0</csd-inlet-degc>
+   <csd-oil-psi>0.0</csd-oil-psi>
+   <engine-num>2</engine-num>
+   <ramp-percent>0.0</ramp-percent>
+   <relight type="bool">false</relight>
+   <secondary-air-door type="bool">false</secondary-air-door>
+  </engine>
+  <engine n="2">
+   <bucket-deg>21.0</bucket-deg>
+   <configuration type="bool">false</configuration>
+   <csd-diff-degc>0.0</csd-diff-degc>
+   <csd-inlet-degc>0.0</csd-inlet-degc>
+   <csd-oil-psi>0.0</csd-oil-psi>
+   <engine-num>3</engine-num>
+   <ramp-percent>0.0</ramp-percent>
+   <relight type="bool">false</relight>
+   <secondary-air-door type="bool">false</secondary-air-door>
+  </engine>
+  <engine n="3">
+   <bucket-deg>21.0</bucket-deg>
+   <configuration type="bool">false</configuration>
+   <csd-diff-degc>0.0</csd-diff-degc>
+   <csd-inlet-degc>0.0</csd-inlet-degc>
+   <csd-oil-psi>0.0</csd-oil-psi>
+   <engine-num>4</engine-num>
+   <ramp-percent>0.0</ramp-percent>
+   <relight type="bool">false</relight>
+   <secondary-air-door type="bool">false</secondary-air-door>
+  </engine>
+
+  <slave>
+   <asi>/instrumentation/airspeed-indicator[0]</asi>
+   <mach>/instrumentation/mach-indicator[0]</mach>
+   <radio-altimeter>/instrumentation/radio-altimeter[0]</radio-altimeter>
+  </slave>
+
+</PropertyList>
