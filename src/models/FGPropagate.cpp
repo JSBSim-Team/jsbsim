@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.73 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.74 2010/11/28 13:02:43 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -455,6 +455,55 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Evaluates the rates (translation or rotation) that the friction forces have
+// to resist to. This includes the external forces and moments as well as the
+// relative movement between the aircraft and the ground.
+// Erin Catto's paper (see ref [6]) only supports Euler integration scheme and
+// this algorithm has been adapted to handle the multistep algorithms that
+// JSBSim supports (i.e. Trapezoidal, Adams-Bashforth 2, 3 and 4). The capacity
+// to handle the multistep integration schemes adds some complexity but it
+// significantly helps stabilizing the friction forces.
+
+void FGPropagate::EvaluateRateToResistTo(FGColumnVector3& vdot,
+                                         const FGColumnVector3& Val,
+                                         const FGColumnVector3& ValDot,
+                                         const FGColumnVector3& LocalTerrainVal,
+                                         deque <FGColumnVector3>& dqValDot,
+                                         const double dt,
+                                         const eIntegrateType integration_type)
+{
+  switch(integration_type) {
+  case eAdamsBashforth4:
+    vdot = ValDot + Ti2b * (-59.*dqValDot[0]+37.*dqValDot[1]-9.*dqValDot[2])/55.;
+    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+      vdot += 24.*(Val - Tec2b * LocalTerrainVal) / (55.*dt);
+    break;
+  case eAdamsBashforth3:
+    vdot = ValDot + Ti2b * (-16.*dqValDot[0]+5.*dqValDot[1])/23.;
+    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+      vdot += 12.*(Val - Tec2b * LocalTerrainVal) / (23.*dt);
+    break;
+  case eAdamsBashforth2:
+    vdot = ValDot - Ti2b * dqValDot[0]/3.;
+    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+      vdot += 2.*(Val - Tec2b * LocalTerrainVal) / (3.*dt);
+    break;
+  case eTrapezoidal:
+    vdot = ValDot + Ti2b * dqValDot[0];
+    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+      vdot += 2.*(Val - Tec2b * LocalTerrainVal) / dt;
+    break;
+  case eRectEuler:
+    vdot = ValDot;
+    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+      vdot += (Val - Tec2b * LocalTerrainVal) / dt;
+    break;
+  case eNone:
+    break;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Resolves the contact forces just before integrating the EOM.
 // This routine is using Lagrange multipliers and the projected Gauss-Seidel
 // (PGS) method.
@@ -472,58 +521,52 @@ void FGPropagate::ResolveFrictionForces(double dt)
   const double invMass = 1.0 / FDMExec->GetMassBalance()->GetMass();
   const FGMatrix33& Jinv = FDMExec->GetMassBalance()->GetJinv();
   vector <FGColumnVector3> JacF, JacM;
+  vector<double> lambda, lambdaMin, lambdaMax;
   FGColumnVector3 vdot, wdot;
   FGColumnVector3 Fc, Mc;
-  int n = 0, i;
+  int n = 0;
 
   // Compiles data from the ground reactions to build up the jacobian matrix
   for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it, n++) {
     JacF.push_back((*it)->ForceJacobian);
     JacM.push_back((*it)->MomentJacobian);
+    lambda.push_back((*it)->value);
+    lambdaMax.push_back((*it)->Max);
+    lambdaMin.push_back((*it)->Min);
   }
 
   // If no gears are in contact with the ground then return
   if (!n) return;
 
   vector<double> a(n*n); // Will contain J*M^-1*J^T
-  vector<double> eta(n);
-  vector<double> lambda(n);
-  vector<double> lambdaMin(n);
-  vector<double> lambdaMax(n);
-
-  // Initializes the Lagrange multipliers
-  i = 0;
-  for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it, i++) {
-    lambda[i] = (*it)->value;
-    lambdaMax[i] = (*it)->Max;
-    lambdaMin[i] = (*it)->Min;
-  }
-
-  vdot = vUVWdot;
-  wdot = vPQRdot;
-
-  if (dt > 0.) {
-    // Instruct the algorithm to zero out the relative movement between the
-    // aircraft and the ground.
-    vdot += (VState.vUVW - Tec2b * LocalTerrainVelocity) / dt;
-    wdot += (VState.vPQR - Tec2b * LocalTerrainAngularVelocity) / dt;
-  }
+  vector<double> rhs(n);
 
   // Assemble the linear system of equations
-  for (i=0; i < n; i++) {
+  for (int i=0; i < n; i++) {
     for (int j=0; j < i; j++)
       a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of J^T*M^-1*J
     for (int j=i; j < n; j++)
       a[i*n+j] = DotProduct(JacF[i],invMass*JacF[j])+DotProduct(JacM[i],Jinv*JacM[j]);
   }
 
+  // Assemble the RHS member
+
+  // Translation
+  EvaluateRateToResistTo(vdot, VState.vUVW, vUVWdot, LocalTerrainVelocity,
+                         VState.dqUVWidot, dt, integrator_translational_rate);
+
+  // Rotation
+  EvaluateRateToResistTo(wdot, VState.vPQR, vPQRdot, LocalTerrainAngularVelocity,
+                         VState.dqPQRidot, dt, integrator_rotational_rate);
+
   // Prepare the linear system for the Gauss-Seidel algorithm :
-  // divide every line of 'a' and eta by a[i,i]. This is in order to save
-  // a division computation at each iteration of Gauss-Seidel.
-  for (i=0; i < n; i++) {
+  // 1. Compute the right hand side member 'rhs'
+  // 2. Divide every line of 'a' and 'lhs' by a[i,i]. This is in order to save
+  //    a division computation at each iteration of Gauss-Seidel.
+  for (int i=0; i < n; i++) {
     double d = 1.0 / a[i*n+i];
 
-    eta[i] = -(DotProduct(JacF[i],vdot)+DotProduct(JacM[i],wdot))*d;
+    rhs[i] = -(DotProduct(JacF[i],vdot)+DotProduct(JacM[i],wdot))*d;
     for (int j=0; j < n; j++)
       a[i*n+j] *= d;
   }
@@ -532,9 +575,9 @@ void FGPropagate::ResolveFrictionForces(double dt)
   for (int iter=0; iter < 50; iter++) {
     double norm = 0.;
 
-    for (i=0; i < n; i++) {
+    for (int i=0; i < n; i++) {
       double lambda0 = lambda[i];
-      double dlambda = eta[i];
+      double dlambda = rhs[i];
       
       for (int j=0; j < n; j++)
         dlambda -= a[i*n+j]*lambda[j];
@@ -553,7 +596,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
   Fc.InitMatrix();
   Mc.InitMatrix();
 
-  for (i=0; i< n; i++) {
+  for (int i=0; i< n; i++) {
     Fc += lambda[i]*JacF[i];
     Mc += lambda[i]*JacM[i];
   }
@@ -565,7 +608,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
-  i = 0;
+  int i = 0;
   for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it)
     (*it)->value = lambda[i++];
 
