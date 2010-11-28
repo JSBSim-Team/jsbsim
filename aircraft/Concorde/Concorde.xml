@@ -6,9 +6,14 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 31 December 2008 </filecreationdate>
-        <version> 1.10 </version>
+        <filecreationdate> 14 August 2010 </filecreationdate>
+        <version> 1.13 </version>
         <description>Aerospatiale/British Aerospace Concorde</description>
+
+        <license>
+           <licenseName>GPL (General Public License)</licenseName>
+           <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
+        </license>
 
         <note>Nose gear is longer.</note>
         <note>Air intake effect, which allows more drag at Mach 1.3-2.0.</note>
@@ -23,6 +28,7 @@
         <note>Shift of center of pressure.</note>
         <note>London - New York : lands below max landing weight (aloft westerly at 39 kt).</note>
         <note>Gear height adjusted by 3D model, supposed accurate.</note>
+        <note>Pushback.</note>
 
         <limitation>Model uses flaps as nose.</limitation>
         <limitation>Cross feed by additional tanks :
@@ -388,7 +394,7 @@
         <htailarea unit="FT2"> 0.0000 </htailarea>                                       <!-- aeromatic 964.0 -->
         <htailarm unit="FT"> 5.0000 </htailarm>                                          <!-- aeromatic 18.0 -->
         <vtailarea unit="FT2"> 365.0000 </vtailarea>                                     <!-- aeromatic 771.20 -->
-        <vtailarm unit="FT"> 21.6800 </vtailarm>                                         <!-- added (turbulence) -->
+        <vtailarm unit="FT"> 5.0000 </vtailarm>                                          <!-- added (turbulence) -->
         <wing_incidence unit="DEG"> 2.86 </wing_incidence>                               <!-- aeromatic none (0.0) -->
         <!-- AC_LV        91.05                                      unit ? -->
         <location name="AERORP" unit="IN">                                               <!-- aeromatic 1335.4, 0.0, 0.0 -->
@@ -592,6 +598,85 @@
         </contact>
     </ground_reactions>
 
+    <system name="Nose Wheel Steering">
+     <property>systems/NWS/engaged</property>
+     <property value="1">systems/NWS/hydraulics</property>
+
+     <channel name="Nose Wheel Steering">
+        <scheduled_gain name="systems/NWS/pedal-cmd">
+         <documentation>
+              default is rudder pedal (flight).
+         </documentation>
+         <input>fcs/rudder-cmd-norm</input>
+         <table>
+          <independentVar lookup="row">systems/NWS/engaged</independentVar>
+           <tableData>
+              0      1.0
+              1      0.0
+           </tableData>
+         </table>
+         <output>fcs/rudder-pedal-norm</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="systems/NWS/steer-cmd">
+         <documentation>
+              - default is no wheel steering (flight).
+              - default is hydraulics.
+              - rudder steering at 10 deg.
+         </documentation>
+         <input>fcs/rudder-cmd-norm</input>
+         <table>
+          <independentVar lookup="row">systems/NWS/engaged</independentVar>
+          <independentVar lookup="column">systems/NWS/hydraulics</independentVar>
+           <tableData>
+                     0.0      1.0
+              0     -0.0     -0.171
+              1     -0.0     -1.0
+           </tableData>
+         </table>
+         <output>fcs/steer-cmd-norm</output>
+      </scheduled_gain>
+     </channel>
+    </system>
+    
+    <system name="Tractor">
+     <property>/sim/model/pushback/target-speed-fps</property>
+     <channel name="Tractor">
+
+      <switch name="systems/pushback/linked">
+        <default value="-1"/>
+        <test value="0">
+          /sim/model/pushback/position-norm gt 0.95
+          /gear/gear/wow == 1
+          gear/unit[0]/wheel-speed-fps lt 50
+        </test>
+      </switch>
+
+      <summer name="systems/pushback/speed-error">
+        <input>/sim/model/pushback/target-speed-fps</input>
+        <input>-gear/unit[0]/wheel-speed-fps</input>
+      </summer>
+
+      <pid name="systems/pushback/force">
+        <input>systems/pushback/speed-error</input>
+        <kp>/sim/model/pushback/kp</kp>
+        <ki>/sim/model/pushback/ki</ki>
+        <kd>/sim/model/pushback/kd</kd>
+        <trigger>systems/pushback/linked</trigger>
+        <output>/sim/model/pushback/force</output>
+      </pid>
+
+      <switch name="systems/pushback/force-output">
+        <default value="0"/>
+        <test value="systems/pushback/force">
+          systems/pushback/linked == 0
+        </test>
+        <output>external_reactions/tractor/magnitude</output>
+      </switch>
+
+    </channel>
+   </system>
+
     <flight_control name="Concorde">
 
      <property>fcs/elevator-surface</property>
@@ -698,7 +783,7 @@
      <channel name="Yaw">
 
         <summer name="Rudder Command Sum">
-            <input>fcs/rudder-cmd-norm</input>
+            <input>fcs/rudder-pedal-norm</input>
             <input>fcs/yaw-trim-cmd-norm</input>
             <clipto>
                 <min>-1.0000</min>
@@ -1006,6 +1091,7 @@
             <radius unit="IN"> 50 </radius>
             <capacity unit="LBS"> 9255.0100 </capacity>
             <contents unit="LBS"> 9255.0100 </contents>
+            <temperature> 59 </temperature>                                           <!-- 15 deg C -->
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <documentation>
@@ -1023,6 +1109,7 @@
             <radius unit="IN"> 50 </radius>
             <capacity unit="LBS"> 10075.1300 </capacity>
             <contents unit="LBS"> 10075.1300 </contents>
+            <temperature> 59 </temperature>
         </tank>
         <tank type="FUEL">    <!-- Tank number 2 -->
             <documentation>
@@ -1040,6 +1127,7 @@
             <radius unit="IN"> 50 </radius>
             <capacity unit="LBS"> 10075.1300 </capacity>
             <contents unit="LBS"> 10075.1300 </contents>
+            <temperature> 59 </temperature>
         </tank>
         <tank type="FUEL">    <!-- Tank number 3 -->
             <documentation>
@@ -1056,6 +1144,7 @@
             <radius unit="IN"> 50 </radius>
             <capacity unit="LBS"> 9255.0100 </capacity>
             <contents unit="LBS"> 9255.0100 </contents>
+            <temperature> 59 </temperature>
         </tank>
         <tank type="FUEL">    <!-- Tank number 4 -->
             <documentation>
@@ -1301,10 +1390,12 @@
 
         <axis name="DRAG">
             <documentation>
-               Add Mach 0.0, 0.6, 1.1 and 2.4 :
+               Add Mach 0.0, 0.6, 1.1 and 1.4 :
+               - increase (x1.2) climb drag to get 10 pitch;
+               - increase (x1.2) landing drag to get 10 pitch and VREF 162 kt.
                - supersonic decreases drag (in front of the wave);
-               - increase (x1.5) climb drag to get 10 pitch;
-               - increase (x1.5) landing drag to get 10 pitch and VREF 162 kt.
+               - Mach 1.1 is end of transonic wall.
+               - Mach 1.4 is supersonic cruise.
             </documentation>
             <function name="aero/coefficient/CD0">
                 <description>Drag_at_zero_lift</description>
@@ -1317,9 +1408,9 @@
                           <tableData>
                                         0.0000	0.6000	0.8000	1.1000	1.4000
                               -1.5700	1.5000	1.5000	1.5000	1.5000	1.5000
-                              -0.2600	0.0510	0.0510	0.0340	0.0340	0.0300
-                               0.0000	0.0260	0.0260	0.0170	0.0170	0.0100
-                               0.2600	0.0510	0.0510	0.0340	0.0340	0.0300
+                              -0.2600	0.0408	0.0408	0.0340	0.0200	0.0120
+                               0.0000	0.0204	0.0204	0.0170	0.0100	0.0060
+                               0.2600	0.0408	0.0408	0.0340	0.0200	0.0120
                                1.5700	1.5000	1.5000	1.5000	1.5000	1.5000
                           </tableData>
                       </table>
@@ -1338,10 +1429,12 @@
               Add Mach 1.15, 1.3, 1.7 and 2.0 :
               - respect the thrust X 2.7 by air intakes.
               - supersonic decreases drag (in front of the wave).
-              - climb Mach 0.95 to 1.7 in 10 minutes.
-              - Mach 1.7 adjusts climb Mach 0.95 to 1.7 in 10 minutes.
-              - Mach 1.8 0.015 -> 0.018.
+              - Mach 1.8 adjusts climb rate : 0.015 -> 0.018.
               - Mach 2.0 adjusts consumption during supersonic cruise.
+              Climb from Mach 0.95 to 1.7 in 10 minutes, adjusted by :
+              - Mach 1.1 is end of transonic wall.
+              - Mach 1.3 is start of effect of air intakes.
+              - Mach 1.7 is end of reaheat.
             </documentation>
             <function name="aero/coefficient/CDmach">
                 <description>Drag_due_to_mach</description>
@@ -1354,11 +1447,11 @@
                               0.0       0.000
                               0.79      0.000
                               1.1       0.023
-                              1.15      0.012
-                              1.3       0.014
-                              1.7       0.017
-                              1.8       0.018
-                              2.0       0.019
+                              1.15      0.020
+                              1.3       0.019
+                              1.7       0.016
+                              1.8       0.013
+                              2.0       0.010
                           </tableData>
                       </table>
                 </product>
@@ -1414,15 +1507,18 @@
                 </product>
             </function>
             <documentation>
-              cannot be negativ.
+              - drag is always positiv.
+              - divide by 10.
             </documentation>
             <function name="aero/coefficient/CDde">
                 <description>Drag_due_to_Elevator_Deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-norm</property>
-                    <value>0.0550</value>
+                    <abs>
+                     <property>fcs/elevator-pos-norm</property>
+                    </abs>
+                    <value>0.0055</value>
                 </product>
             </function>
         </axis>
@@ -1661,4 +1757,19 @@
             </function>
         </axis>
     </aerodynamics>
+
+   <external_reactions>
+       <force name="tractor" frame="BODY">
+         <location unit="IN">
+           <x> 736.2000 </x>
+           <y> 0.0000 </y>
+           <z> -100.0000 </z>
+         </location>
+         <direction>
+           <x>1</x>
+           <y>0</y>
+           <z>0</z>
+         </direction>
+       </force>
+   </external_reactions>
 </fdm_config>

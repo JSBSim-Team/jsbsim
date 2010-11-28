@@ -1,0 +1,1644 @@
+<?xml version="1.0"?>
+
+<!-- intialize systems :
+
+     - avoid nil values for Nasal.
+     - avoid string numbers (comparison doesn't work in XML instrument) for Nasal.
+     - autopilot, engines and gear also to distinguish the specific additions.
+
+
+     Relations :
+
+     - <dependency> is a real dependency.
+     - <itself> is the system.
+     - <noinstrument> is to built the system; or for fuzzy decision of virtual crew :
+       visual estimation of altitude over ground, if failure of radio altimeter;
+       speed implicitly known, during a subsonic cruise.
+
+
+     Known problems :
+     ==============
+     - electrical system has a Nasal stack overflow, when above <iterations-forced>4</iterations-forced>
+     (not required).
+-->
+
+<PropertyList>
+
+  <air-bleed>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <engine n="0">
+    <bleed-psi type="double">0.0</bleed-psi>
+    <conditioning-psi type="double">0.0</conditioning-psi>
+    <cross-psi type="double">0.0</cross-psi>
+    <jet-pump type="bool">true</jet-pump>
+    <ram-air type="bool">true</ram-air>
+   </engine>
+   <engine n="1">
+    <bleed-psi type="double">0.0</bleed-psi>
+    <conditioning-psi type="double">0.0</conditioning-psi>
+    <cross-psi type="double">0.0</cross-psi>
+    <jet-pump type="bool">true</jet-pump>
+    <ram-air type="bool">true</ram-air>
+   </engine>
+   <engine n="2">
+    <bleed-psi type="double">0.0</bleed-psi>
+    <conditioning-psi type="double">0.0</conditioning-psi>
+    <cross-psi type="double">0.0</cross-psi>
+    <jet-pump type="bool">true</jet-pump>
+    <ram-air type="bool">true</ram-air>
+   </engine>
+   <engine n="3">
+    <bleed-psi type="double">0.0</bleed-psi>
+    <conditioning-psi type="double">0.0</conditioning-psi>
+    <cross-psi type="double">0.0</cross-psi>
+    <jet-pump type="bool">true</jet-pump>
+    <ram-air type="bool">true</ram-air>
+   </engine>
+
+   <ground-service>
+    <door type="bool">false</door>                                           <!-- door closed -->
+    <pressure-psi type="double">0.0</pressure-psi>
+   </ground-service>
+
+   <power>
+    <cross n="0" type="bool">false</cross>
+    <cross n="1" type="bool">false</cross>
+    <cross n="2" type="bool">false</cross>
+    <cross n="3" type="bool">false</cross>
+    <pressurization type="bool">false</pressurization>
+   </power>
+
+   <relations>
+    <dependency>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <gear>/gear/gear[0]</gear>
+    </dependency>
+
+    <itself>
+     <engine-ctrl>
+      <component>/controls/pneumatic</component>
+      <subcomponent>engine</subcomponent>
+     </engine-ctrl>
+     <engine>
+      <component>/systems/air-bleed</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <power>/systems/air-bleed/power</power>
+    </itself>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <temperature>/environment/temperature-degc</temperature>
+    </noinstrument>
+   </relations>
+  </air-bleed>
+
+  <anti-icing>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <detection>
+    <coverage type="string"></coverage>
+    <duration-min type="int">0</duration-min>
+    <icing type="bool">false</icing>
+   </detection>
+
+   <power>
+    <engine n="0" type="bool">false</engine>
+    <engine n="1" type="bool">false</engine>
+    <engine n="2" type="bool">false</engine>
+    <engine n="3" type="bool">false</engine>
+    <wing type="bool">false</wing>
+   </power>
+
+   <relations>
+    <dependency>
+     <electric>/systems/electrical/power</electric>
+    </dependency>
+
+    <itself>
+     <detection>/systems/anti-icing/detection</detection>
+     <engine>
+      <component>/controls/anti-ice</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <model>/controls/anti-ice/icing-model</model>
+     <power>/systems/anti-icing/power</power>
+     <wing>/controls/anti-ice/wing</wing>
+    </itself>
+
+    <noinstrument>
+     <altitude>/position/altitude-ft</altitude>
+     <cloud>
+      <component>/environment/clouds</component>
+      <subcomponent>layer</subcomponent>
+     </cloud>
+     <temperature>/environment/temperature-degc</temperature>
+    </noinstrument>
+   </relations>
+
+   <warning type="bool">false</warning>
+  </anti-icing>
+
+  <autopilot n="0">
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <altimeter>
+    <light-min-ft type="double">999.0</light-min-ft>
+    <light-max-ft type="double">999.0</light-max-ft>
+    <target-min-ft type="double">999.0</target-min-ft>
+    <target-max-ft type="double">999.0</target-max-ft>
+   </altimeter>
+
+   <!-- subsonic configuration -->
+
+   <config n="0">
+    <dg-heading-hold1>
+     <input>/autopilot/internal/fdm-heading-bug-error-deg-15-sec</input>
+     <Kp type="double">-1.0</Kp>
+     <u_min type="double">-30.0</u_min>
+     <u_max type="double">30.0</u_max>
+    </dg-heading-hold1>
+    <dg-heading-hold3>
+     <Kp type="double">0.1</Kp>
+    </dg-heading-hold3>
+    <nav-hold1>
+     <input>/autopilot/internal/nav1-heading-error-deg-15-sec</input>
+    </nav-hold1>
+    <true-heading-hold1>
+     <input type="string">/autopilot/internal/true-heading-error-deg-15-sec</input>
+     <Kp type="double">-1.0</Kp>
+     <u_min type="double">-30.0</u_min>
+     <u_max type="double">30.0</u_max>
+    </true-heading-hold1>
+    <true-heading-hold3>
+     <Kp type="double">0.1</Kp>
+    </true-heading-hold3>
+    <vertical-speed-hold>
+     <Kp type="double">-0.01</Kp>
+    </vertical-speed-hold>
+   </config>
+
+   <!-- supersonic configuration -->
+
+   <config n="1">
+    <dg-heading-hold1>
+     <input>/autopilot/internal/fdm-heading-bug-error-deg</input>
+     <Kp type="double">-3.0</Kp>
+     <u_min type="double">-20.0</u_min>
+     <u_max type="double">20.0</u_max>
+    </dg-heading-hold1>
+    <dg-heading-hold3>
+     <Kp type="double">0.4</Kp>
+    </dg-heading-hold3>
+    <nav-hold1>
+     <input>/autopilot/internal/nav1-heading-error-deg</input>
+    </nav-hold1>
+    <true-heading-hold1>
+     <input type="string">/autopilot/internal/true-heading-error-deg</input>
+     <Kp type="double">-3.0</Kp>
+     <u_min type="double">-20.0</u_min>
+     <u_max type="double">20.0</u_max>
+    </true-heading-hold1>
+    <true-heading-hold3>
+     <Kp type="double">0.4</Kp>
+    </true-heading-hold3>
+    <vertical-speed-hold>
+     <Kp type="double">-0.02</Kp>
+    </vertical-speed-hold>
+   </config>
+
+   <!-- default is subsonic -->
+
+   <pid>
+    <dg-heading-hold1>
+     <input alias="/autopilot/internal/fdm-heading-bug-error-deg-15-sec"/>
+     <Kp type="double">-1.0</Kp>
+     <launch-sec type="double">0.0</launch-sec>
+     <prediction-filter type="bool">true</prediction-filter>
+     <stable-sec type="double">0.0</stable-sec>
+     <u_min type="double">-30.0</u_min>
+     <u_max type="double">30.0</u_max>
+    </dg-heading-hold1>
+    <dg-heading-hold3>
+     <Kp type="double">0.1</Kp>
+    </dg-heading-hold3>
+    <nav-hold1>
+     <input alias="/autopilot/internal/nav1-heading-error-deg-15-sec"/>
+     <launch-sec type="double">0.0</launch-sec>
+     <prediction-filter type="bool">true</prediction-filter>
+     <stable-sec type="double">0.0</stable-sec>
+    </nav-hold1>
+    <prediction-filter type="bool">true</prediction-filter>                  <!-- no debug -->
+    <true-heading-hold1>
+     <input alias="/autopilot/internal/true-heading-error-deg-15-sec"/>
+     <Kp type="double">-1.0</Kp>
+     <launch-sec type="double">0.0</launch-sec>
+     <prediction-filter type="bool">true</prediction-filter>
+     <stable-sec type="double">0.0</stable-sec>
+     <u_min type="double">-30.0</u_min>
+     <u_max type="double">30.0</u_max>
+    </true-heading-hold1>
+    <true-heading-hold3>
+     <Kp type="double">0.1</Kp>
+    </true-heading-hold3>
+    <vertical-speed-hold>
+     <Kp type="double">-0.01</Kp>
+    </vertical-speed-hold>
+   </pid>
+
+   <state>
+    <failure n="0" type="bool">false</failure>
+    <failure n="1" type="bool">false</failure>
+    <land2 type="bool">false</land2>
+    <land3 type="bool">false</land3>
+    <virtual type="bool">false</virtual>                                     <!-- no copilot -->
+    <waypoint-nm type="double">0.0</waypoint-nm>
+   </state>
+
+   <relations>
+    <dependency>
+     <altimeter>
+      <component>/instrumentation</component>
+      <subcomponent>altimeter</subcomponent>
+     </altimeter>
+     <aoa>
+      <component>/instrumentation</component>
+      <subcomponent>accelerometer-aoa</subcomponent>
+     </aoa>
+     <attitude>
+      <component>/instrumentation</component>
+      <subcomponent>attitude-indicator</subcomponent>
+     </attitude>
+     <dme>/instrumentation/dme[0]</dme>
+     <electric>/systems/electrical/power</electric>
+     <hsi>
+       <component>/instrumentation</component>
+       <subcomponent>hsi</subcomponent>
+     </hsi>
+     <ins>
+       <component>/instrumentation</component>
+       <subcomponent>ins</subcomponent>
+     </ins>
+     <ivsi>
+      <component>/instrumentation</component>
+      <subcomponent>vertical-speed-indicator</subcomponent>
+     </ivsi>
+     <mach>
+      <component>/instrumentation</component>
+      <subcomponent>mach-indicator</subcomponent>
+     </mach>
+     <nav>
+       <component>/instrumentation</component>
+       <subcomponent>nav</subcomponent>
+     </nav>
+     <radio-altimeter>
+      <component>/instrumentation</component>
+      <subcomponent>radio-altimeter</subcomponent>
+     </radio-altimeter>
+     <weight>/instrumentation/ac-weight</weight>
+    </dependency>
+
+    <itself>
+     <altimeter>/systems/autopilot/altimeter</altimeter>
+     <autoflight>/controls/autoflight</autoflight>
+     <autopilot>
+      <component>/systems</component>
+      <subcomponent>autopilot</subcomponent>
+     </autopilot>
+     <channel>
+      <component>/controls/autoflight</component>
+      <subcomponent>autopilot</subcomponent>
+     </channel>
+     <config>
+      <component>/systems/autopilot</component>
+      <subcomponent>config</subcomponent>
+     </config>
+     <flight-director>
+      <component>/controls/autoflight</component>
+      <subcomponent>flight-director</subcomponent>
+     </flight-director>
+     <locks>/autopilot/locks</locks>
+     <mouse>
+      <component>/devices/status/mice/mouse</component>
+      <subcomponent>button</subcomponent>
+     </mouse>
+     <pid>/systems/autopilot/pid</pid>
+     <route>/autopilot/route-manager/route</route>
+     <route-manager>/autopilot/route-manager</route-manager>
+     <settings>/autopilot/settings</settings>
+     <sonic>/autopilot/locks/sonic</sonic>
+     <state>/systems/autopilot/state</state>
+     <waypoint>
+      <component>/autopilot/route-manager</component>
+      <subcomponent>wp</subcomponent>
+     </waypoint>
+    </itself>
+
+    <noinstrument>
+     <altitude>/position/altitude-ft</altitude>
+     <magnetic>/orientation/heading-magnetic-deg</magnetic>
+     <pitch>/orientation/pitch-deg</pitch>
+     <roll>/orientation/roll-deg</roll>
+     <speed-up>/sim/speed-up</speed-up>
+     <time>/sim/time/elapsed-sec</time>
+    </noinstrument>
+   </relations>
+  </autopilot>
+
+  <autopilot n="1">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </autopilot>
+
+  <autothrottle n="0">
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <airspeed>
+    <light-min-kt type="double">999.0</light-min-kt>
+    <light-max-kt type="double">999.0</light-max-kt>
+   </airspeed>
+
+   <pid>
+    <auto-mach n="0">
+     <u_max type="double">1.0</u_max>
+    </auto-mach>
+    <auto-mach n="1">
+     <u_max type="double">1.0</u_max>
+    </auto-mach>
+    <auto-mach n="2">
+     <u_max type="double">1.0</u_max>
+    </auto-mach>
+    <auto-mach n="3">
+     <u_max type="double">1.0</u_max>
+    </auto-mach>
+    <auto-throttle n="0">
+     <u_max type="double">1.0</u_max>
+    </auto-throttle>
+    <auto-throttle n="1">
+     <u_max type="double">1.0</u_max>
+    </auto-throttle>
+    <auto-throttle n="2">
+     <u_max type="double">1.0</u_max>
+    </auto-throttle>
+    <auto-throttle n="3">
+     <u_max type="double">1.0</u_max>
+    </auto-throttle>
+   </pid>
+
+   <relations>
+    <dependency>
+     <altimeter>/instrumentation/altimeter[0]</altimeter>
+     <asi>
+      <component>/instrumentation</component>
+      <subcomponent>airspeed-indicator</subcomponent>
+     </asi>
+     <electric>/systems/electrical/power</electric>
+     <engine>
+      <component>/controls/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <mach>
+      <component>/instrumentation</component>
+      <subcomponent>mach-indicator</subcomponent>
+     </mach>
+     <throttle>
+      <component>/systems/throttles</component>
+      <subcomponent>throttle</subcomponent>
+     </throttle>
+    </dependency>
+
+    <itself>
+     <airspeed>/systems/autothrottle/airspeed</airspeed>
+     <autoflight>/controls/autoflight</autoflight>
+     <autothrottle>
+      <component>/systems</component>
+      <subcomponent>autothrottle</subcomponent>
+     </autothrottle>
+     <channel>
+      <component>/controls/autoflight</component>
+      <subcomponent>autothrottle</subcomponent>
+     </channel>
+     <engine>
+      <component>/autopilot/locks/autothrottle</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <locks>/autopilot/locks</locks>
+     <mouse>
+      <component>/devices/status/mice/mouse</component>
+      <subcomponent>button</subcomponent>
+     </mouse>
+     <settings>/autopilot/settings</settings>
+    </itself>
+   </relations>
+  </autothrottle>
+
+  <autothrottle n="1">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </autothrottle>
+
+  <brakes>
+   <emerg-left-psi>0.0</emerg-left-psi>
+   <emerg-right-psi>0.0</emerg-right-psi>
+   <green-accu-psi>0.0</green-accu-psi>
+   <left-psi>0.0</left-psi>
+   <pedals type="bool">false</pedals>
+
+   <relations>
+    <dependency>
+     <gear>/controls/gear</gear>
+    </dependency>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <altitude>/position/altitude-ft</altitude>
+     <gear>/gear/gear[0]/wow</gear>
+     <speed-up>/sim/speed-up</speed-up>
+     <temperature>/environment/temperature-degc</temperature>
+    </noinstrument>
+   </relations>
+
+   <right-psi>0.0</right-psi>
+   <temperature-degc>15.0</temperature-degc>
+   <temp-max-degc>15.0</temp-max-degc>
+   <test type="bool">false</test>
+   <test-degc>15.0</test-degc>
+   <yellow-accu-psi>0.0</yellow-accu-psi>
+  </brakes>
+
+  <copilot>
+   <serviceable type="bool">true</serviceable>
+
+   <activ type="bool">false</activ>                                          <!-- yellow -->
+
+   <relations>
+    <dependency>
+     <altimeter>/instrumentation/altimeter[1]</altimeter>
+     <channel>/controls/flight/channel</channel>
+     <crew>/systems/crew</crew>
+     <crew-ctrl>/controls/crew</crew-ctrl>
+     <electric-ac>/controls/electric/ac</electric-ac>
+     <electric-dc>/controls/electric/dc</electric-dc>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <flaps>/sim/flaps</flaps>
+     <gear>/gear/gear[0]/position-norm</gear>
+     <gear-ctrl>/controls/gear</gear-ctrl>
+     <ins>
+      <component>/instrumentation</component>
+      <subcomponent>ins</subcomponent>
+     </ins>
+     <lighting>/controls/lighting/external</lighting>
+     <mws>/controls/mws</mws>
+     <steering>/controls/gear/steering</steering>
+     <to-monitor>/instrumentation/takeoff-monitor</to-monitor>
+     <tractor>/systems/tractor</tractor>
+     <tractor-ctrl>/controls/tractor</tractor-ctrl>
+     <voice>/systems/voice</voice>
+    </dependency>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <altitude>/position/altitude-ft</altitude>
+     <mach>/velocities/mach</mach>
+     <speed-up>/sim/speed-up</speed-up>
+     <user>/sim/user/callsign</user>
+    </noinstrument>
+   </relations>
+
+   <state></state>
+   <state-last></state-last>                                                 <!-- last action -->
+   <time></time>
+  </copilot>
+
+  <crew>
+   <completed type="bool">false</completed>                                  <!-- checklist not completed by a crew member -->
+   <dialog type="string"></dialog>
+   <minimized type="bool">true</minimized>
+   <presets>
+    <label n="0">takeoff</label>
+    <label n="1">taxi</label>
+    <label n="2">stopover</label>
+   </presets>
+   <startup type="bool">true</startup>
+   <unexpected type="bool">false</unexpected>
+  </crew>
+
+  <electrical>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <ground-service>
+    <door type="bool">false</door>                                           <!-- door closed -->
+    <volts type="double">0.0</volts>
+   </ground-service>
+
+   <internal>
+    <config include="Concorde-electrical.xml"/>
+    <iterations type="int">0</iterations>
+    <iterations-forced type="int">3</iterations-forced>                      <!-- 3 for correct parallel voltages -->
+   </internal>
+
+   <power>
+    <autopilot n="0" type="bool">false</autopilot>
+    <autopilot n="1" type="bool">false</autopilot>
+    <channel-blue type="bool">false</channel-blue>
+    <channel-green type="bool">false</channel-green>
+    <flight-control-monitoring type="bool">false</flight-control-monitoring>
+    <ground-service type="bool">false</ground-service>
+    <inverter-blue type="bool">false</inverter-blue>
+    <inverter-green type="bool">false</inverter-green>
+    <relight n="0" type="bool">false</relight>
+    <relight n="1" type="bool">false</relight>
+    <relight n="2" type="bool">false</relight>
+    <relight n="3" type="bool">false</relight>
+    <specific type="bool">false</specific>
+   </power>
+
+   <relations>
+    <dependency>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <engine-ctrl>
+      <component>/controls/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine-ctrl>
+     <engine-sys>
+      <component>/systems/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine-sys>
+     <weight>/instrumentation/weight-switch</weight>
+    </dependency>
+
+    <itself>
+     <ac>/controls/electric/ac</ac>
+     <dc>/controls/electric/dc</dc>
+     <electric>/systems/electrical/power</electric>
+     <emergency>/controls/electric/ac/emergency</emergency>
+     <generator>/controls/electric/ac/emergency/generator</generator>
+     <ground>/systems/electrical/ground-service</ground>
+     <outputs>/systems/electrical/outputs</outputs>
+     <probe>/systems/electrical/outputs/probe</probe>
+     <relight>
+      <component>/controls/electric/ac</component>
+      <subcomponent>relight</subcomponent>
+     </relight>
+     <relight-emergency>
+      <component>/controls/electric/ac/emergency</component>
+      <subcomponent>relight</subcomponent>
+     </relight-emergency>
+     <suppliers>/systems/electrical/suppliers</suppliers>
+     <transformers>/systems/electrical/transformers</transformers>
+    </itself>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+     <temperature>/environment/temperature-degc</temperature>
+    </noinstrument>
+   </relations>
+
+   <suppliers>
+    <battery n="0" type="double">0.0</battery>                               <!-- avoids string number -->
+    <battery n="1" type="double">0.0</battery>
+    <battery-amps n="0" type="double">0.0</battery-amps>
+    <battery-amps n="1" type="double">0.0</battery-amps>
+    <emergency type="double">0.0</emergency>
+    <external type="double">0.0</external>
+   </suppliers>
+  </electrical>
+
+  <engineer>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <activ type="bool">false</activ>                                         <!-- yellow -->
+
+   <cg>
+    <aft type="bool">false</aft>
+    <forward type="bool">false</forward>
+   </cg>
+
+   <navigation>
+    <wp n="0">
+     <fuel-kg type="double">-999.0</fuel-kg>                                <!-- estimated fuel -->
+     <speed-fpm type="double">0.0</speed-fpm>                               <!-- to acquired altitude -->
+    </wp>
+    <wp n="1">
+     <fuel-kg type="double">-999.0</fuel-kg>
+     <speed-fpm type="double">0.0</speed-fpm>
+    </wp>
+    <wp n="2">                                                              <!-- last waypoint -->
+     <fuel-kg type="double">-999.0</fuel-kg>
+     <speed-fpm type="double">0.0</speed-fpm>                               <!-- to land -->
+    </wp>
+   </navigation>
+
+   <relations>
+    <dependency>
+     <adc>
+      <component>/controls/adc</component>
+      <subcomponent>system</subcomponent>
+     </adc>
+     <air-bleed>
+      <component>/controls/pneumatic</component>
+      <subcomponent>engine</subcomponent>
+     </air-bleed>
+     <anti-icing>/controls/anti-ice</anti-icing>
+     <audio>/controls/audio</audio>
+     <autoflight>/controls/autoflight</autoflight>
+     <cg>/instrumentation/cg</cg>
+     <compass>
+      <component>/instrumentation</component>
+      <subcomponent>compass</subcomponent>
+     </compass>
+     <crew>/systems/crew</crew>
+     <crew-ctrl>/controls/crew</crew-ctrl>
+     <electric>/systems/electrical/power</electric>
+     <electric-ac>/controls/electric/ac</electric-ac>
+     <electric-dc>/controls/electric/dc</electric-dc>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <engine-all>/controls/engines</engine-all>
+     <engine-ctrl>
+      <component>/controls/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine-ctrl>
+     <engine-sys>
+      <component>/systems/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine-sys>
+     <fuel>/instrumentation/fuel</fuel>
+     <fuel-consumed>
+      <component>/instrumentation</component>
+      <subcomponent>fuel-consumed</subcomponent>
+     </fuel-consumed>
+     <fuel-sys>/systems/fuel</fuel-sys>
+     <gear-ctrl>/controls/gear</gear-ctrl>
+     <ins>
+      <component>/instrumentation</component>
+      <subcomponent>ins</subcomponent>
+     </ins>
+     <ivsi>/instrumentation/vertical-speed-indicator[0]</ivsi>
+     <lighting>/controls/lighting</lighting>
+     <nose>/instrumentation/nose-visor/pos-norm</nose>
+     <rat>
+      <component>/systems/hydraulic/rat</component>
+      <subcomponent>selector</subcomponent>
+     </rat>
+     <temperature>/instrumentation/temperature[2]/indicated-tmo-degc</temperature>
+     <throttle>
+      <component>/controls/throttles</component>
+      <subcomponent>throttle</subcomponent>
+     </throttle>
+     <tractor>/systems/tractor</tractor>
+     <voice>/systems/voice</voice>
+     <waypoint>
+      <component>/autopilot/route-manager</component>
+      <subcomponent>wp</subcomponent>
+     </waypoint>
+    </dependency>
+
+    <itself>
+     <waypoint>
+      <component>/systems/engineer/navigation</component>
+      <subcomponent>wp</subcomponent>
+     </waypoint>
+    </itself>
+ 
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <altitude>/position/altitude-ft</altitude>
+     <mach>/velocities/mach</mach>
+     <speed-up>/sim/speed-up</speed-up>
+     <temperature>/environment/temperature-degc</temperature>
+     <visibility>/environment/visibility-m</visibility>
+    </noinstrument>
+   </relations>
+
+   <state></state>
+   <state-last></state-last>                                                 <!-- last action -->
+   <time></time>
+  </engineer>
+
+  <engines>
+   <engine n="0">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <bucket-deg type="double">21.0</bucket-deg>
+    <configuration type="bool">false</configuration>
+    <csd-diff-degc type="double">0.0</csd-diff-degc>
+    <csd-inlet-degc type="double">0.0</csd-inlet-degc>
+    <csd-oil-psi type="double">0.0</csd-oil-psi>
+    <engine-num>1</engine-num>
+    <fuel-degc type="double">15.0</fuel-degc>
+    <intake-aux-inlet type="bool">true</intake-aux-inlet>
+    <intake-lane type="bool" n="0">true</intake-lane>
+    <intake-lane type="bool" n="1">false</intake-lane>
+    <intake-main type="bool">true</intake-main>
+    <intake-ratio-error type="double">0.0</intake-ratio-error>
+    <intake-standby type="bool">false</intake-standby>
+    <ramp-percent type="double">0.0</ramp-percent>
+    <rating></rating>
+    <relight type="bool">false</relight>
+    <schedule>low</schedule>
+    <secondary-air-door type="bool">false</secondary-air-door>
+    <spill-percent type="double">0.0</spill-percent>
+   </engine>
+   <engine n="1">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <bucket-deg type="double">21.0</bucket-deg>
+    <configuration type="bool">false</configuration>
+    <csd-diff-degc type="double">0.0</csd-diff-degc>
+    <csd-inlet-degc type="double">0.0</csd-inlet-degc>
+    <csd-oil-psi type="double">0.0</csd-oil-psi>
+    <engine-num>2</engine-num>
+    <fuel-degc type="double">15.0</fuel-degc>
+    <intake-aux-inlet type="bool">true</intake-aux-inlet>
+    <intake-lane type="bool" n="0">true</intake-lane>
+    <intake-lane type="bool" n="1">false</intake-lane>
+    <intake-main type="bool">true</intake-main>
+    <intake-ratio-error type="double">0.0</intake-ratio-error>
+    <intake-standby type="bool">false</intake-standby>
+    <ramp-percent type="double">0.0</ramp-percent>
+    <rating></rating>
+    <relight type="bool">false</relight>
+    <schedule>low</schedule>
+    <secondary-air-door type="bool">false</secondary-air-door>
+    <spill-percent type="double">0.0</spill-percent>
+   </engine>
+   <engine n="2">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <bucket-deg type="double">21.0</bucket-deg>
+    <configuration type="bool">false</configuration>
+    <csd-diff-degc type="double">0.0</csd-diff-degc>
+    <csd-inlet-degc type="double">0.0</csd-inlet-degc>
+    <csd-oil-psi type="double">0.0</csd-oil-psi>
+    <engine-num>3</engine-num>
+    <fuel-degc type="double">15.0</fuel-degc>
+    <intake-aux-inlet type="bool">true</intake-aux-inlet>
+    <intake-lane type="bool" n="0">true</intake-lane>
+    <intake-lane type="bool" n="1">false</intake-lane>
+    <intake-main type="bool">true</intake-main>
+    <intake-ratio-error type="double">0.0</intake-ratio-error>
+    <intake-standby type="bool">false</intake-standby>
+    <ramp-percent type="double">0.0</ramp-percent>
+    <rating></rating>
+    <relight type="bool">false</relight>
+    <schedule>low</schedule>
+    <secondary-air-door type="bool">false</secondary-air-door>
+    <spill-percent type="double">0.0</spill-percent>
+   </engine>
+   <engine n="3">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <bucket-deg type="double">21.0</bucket-deg>
+    <configuration type="bool">false</configuration>
+    <csd-diff-degc type="double">0.0</csd-diff-degc>
+    <csd-inlet-degc type="double">0.0</csd-inlet-degc>
+    <csd-oil-psi type="double">0.0</csd-oil-psi>
+    <engine-num>4</engine-num>
+    <fuel-degc type="double">15.0</fuel-degc>
+    <intake-aux-inlet type="bool">true</intake-aux-inlet>
+    <intake-lane type="bool" n="0">true</intake-lane>
+    <intake-lane type="bool" n="1">false</intake-lane>
+    <intake-main type="bool">true</intake-main>
+    <intake-ratio-error type="double">0.0</intake-ratio-error>
+    <intake-standby type="bool">false</intake-standby>
+    <ramp-percent type="double">0.0</ramp-percent>
+    <rating></rating>
+    <relight type="bool">false</relight>
+    <schedule>low</schedule>
+    <secondary-air-door type="bool">false</secondary-air-door>
+    <spill-percent type="double">0.0</spill-percent>
+   </engine>
+
+   <ground-idle alias="/fdm/jsbsim/fcs/ground-idle"/>
+   <intake-subsonic alias="/fdm/jsbsim/fcs/intake-subsonic-pos"/>
+ 
+   <relations>
+    <dependency>
+     <air>
+      <component>/systems/air-bleed/power</component>
+      <subcomponent>cross</subcomponent>
+     </air>
+     <asi>/instrumentation/airspeed-indicator[0]</asi>
+     <autothrottle>
+      <component>/systems/autothrottle/pid</component>
+      <subcomponent>auto-throttle</subcomponent>
+     </autothrottle>
+     <automach>
+      <component>/systems/autothrottle/pid</component>
+      <subcomponent>auto-mach</subcomponent>
+     </automach>
+     <electric>
+      <component>/systems/electrical/power</component>
+      <subcomponent>relight</subcomponent>
+     </electric>
+     <gear>
+      <component>/gear</component>
+      <subcomponent>gear</subcomponent>
+     </gear>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+     <mach>/instrumentation/mach-indicator[0]</mach>
+     <radio-altimeter>/instrumentation/radio-altimeter[0]</radio-altimeter>
+     <takeoff-monitor>/instrumentation/takeoff-monitor/armed</takeoff-monitor>
+     <throttle>
+      <component>/systems/throttles</component>
+      <subcomponent>throttle</subcomponent>
+     </throttle>
+     <throttle-ctrl>
+      <component>/controls/throttles</component>
+      <subcomponent>throttle</subcomponent>
+     </throttle-ctrl>
+     <weight>/instrumentation/weight-switch</weight>
+    </dependency>
+
+    <itself>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <engine-auto>
+      <component>/autopilot/locks/autothrottle</component>
+      <subcomponent>engine</subcomponent>
+     </engine-auto>
+     <engines-ctrl>/controls/engines</engines-ctrl>
+     <engines-sys>/systems/engines</engines-sys>
+    </itself>
+   </relations>
+
+   <transit type="double">0.0</transit>
+  </engines>
+
+  <flight>
+   <pfcu>
+    <inner-stuck alias="/fdm/jsbsim/fcs/elevator-actuator/malfunction/fail_stuck"/>
+    <inner-zero alias="/fdm/jsbsim/fcs/elevator-actuator/malfunction/fail_zero"/>
+    <outer-stuck alias="/fdm/jsbsim/fcs/aileron-actuator/malfunction/fail_stuck"/>
+    <outer-zero alias="/fdm/jsbsim/fcs/aileron-actuator/malfunction/fail_zero"/>
+    <rudder-stuck alias="/fdm/jsbsim/fcs/rudder-actuator/malfunction/fail_stuck"/>
+    <rudder-zero alias="/fdm/jsbsim/fcs/rudder-actuator/malfunction/fail_zero"/>
+   </pfcu>
+
+   <relations>
+    <dependency>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+    </dependency>
+
+    <itself>
+     <channel>/controls/flight/channel</channel>
+     <pfcu>/systems/flight/pfcu</pfcu>
+    </itself>
+
+    <noinstrument>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+    </noinstrument>
+   </relations>
+  </flight>
+ 
+  <fuel>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <internal>
+    <config include="Concorde-fuel.xml"/>
+    <iterations type="int">0</iterations>
+   </internal>
+
+   <presets type="int">0</presets>                                           <!-- max landing load -->
+
+   <relations>
+    <dependency>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+    </dependency>
+
+    <itself>
+     <jettison>
+      <component>/controls/fuel/jettison</component>
+      <subcomponent>valve</subcomponent>
+     </jettison>
+     <pumps>/controls/fuel/pumps</pumps>
+    </itself>
+
+    <noinstrument>
+     <speed-up>/sim/speed-up</speed-up>
+    </noinstrument>
+   </relations>
+
+   <reset type="bool">false</reset>                                          <!-- for virtual engineer -->
+   <tanks include="../Nasal/Concorde-fuel.xml"/>
+  </fuel>
+
+  <gear>
+   <bogie-left-deg type="double">0.0</bogie-left-deg>
+   <bogie-right-deg type="double">0.0</bogie-right-deg>
+
+   <relations>
+    <dependency>
+     <electric>/systems/electrical/power/specific</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+     <steering>/controls/crew/steering</steering>
+     <weight>/instrumentation/weight-switch</weight>
+    </dependency>
+
+    <itself>
+     <steering>/controls/gear/steering</steering>
+    </itself>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <pitch>/orientation/pitch-deg</pitch>
+    </noinstrument>
+   </relations>
+  </gear>
+
+  <gpws>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <relations>
+    <dependency>
+     <adc>
+      <component>/instrumentation</component>
+      <subcomponent>adc</subcomponent>
+     </adc>
+     <autoflight>/controls/autoflight</autoflight>
+     <gear>/gear/gear[0]/position-norm</gear>
+     <nose>/instrumentation/nose-visor/pos-norm</nose>
+     <radio-altimeter>
+      <component>/instrumentation</component>
+      <subcomponent>radio-altimeter</subcomponent>
+     </radio-altimeter>
+    </dependency>
+   </relations>
+
+   <terrain type="bool">false</terrain>
+  </gpws>
+
+  <human>
+   <serviceable type="bool" archive="y">false</serviceable>                  <!-- no 3D -->
+
+   <captain>
+    <stowe-norm type="double">0.0</stowe-norm>
+   </captain>
+
+   <copilot>
+    <eyes type="bool">true</eyes>                                            <!-- opened eyes -->
+    <heading-deg type="double">0.0</heading-deg>                             <!-- straight head -->
+    <headset type="bool">true</headset>
+    <pitch-deg type="double">0.0</pitch-deg> 
+    <stowe-norm type="double">0.0</stowe-norm>
+    <teeth type="bool">false</teeth>                                         <!-- doesn't talk -->
+   </copilot>
+
+   <engineer>
+    <eyes type="bool">true</eyes>
+    <heading-deg type="double">0.0</heading-deg>
+    <headset type="bool">true</headset>
+    <pitch-deg type="double">0.0</pitch-deg> 
+    <seat-deg type="double">0</seat-deg>
+    <seat-x-m type="double">0.0</seat-x-m>
+    <stowe-norm type="double">0.0</stowe-norm>
+    <teeth type="bool">false</teeth>
+   </engineer>
+
+   <relations>
+    <dependency>
+     <adf>
+      <component>/instrumentation</component>
+      <subcomponent>adf</subcomponent>
+     </adf>
+     <crew>/controls/crew</crew>
+     <ivsi>/instrumentation/vertical-speed-indicator[0]</ivsi>
+     <lighting>/controls/lighting/crew</lighting>
+     <lighting-captain>/controls/lighting/crew/captain</lighting-captain>
+     <lighting-copilot>/controls/lighting/crew/copilot</lighting-copilot>
+     <lighting-engineer>/controls/lighting/crew/engineer</lighting-engineer>
+     <engineer>/systems/seat/position/engineer</engineer>
+     <seat>/systems/seat</seat>
+     <sound>/sim/sound/voices</sound>
+     <voice>/systems/voice</voice>
+     <vor>
+      <component>/instrumentation</component>
+      <subcomponent>nav</subcomponent>
+     </vor>
+    </dependency>
+
+    <itself>
+     <airport>
+      <component>/systems/human/route</component>
+      <subcomponent>airport</subcomponent>
+     </airport>
+     <captain>/systems/human/captain</captain>
+     <copilot>/systems/human/copilot</copilot>
+     <engineer>/systems/human/engineer</engineer>
+     <lighting>/controls/human/lighting</lighting>
+    </itself>
+
+    <noinstrument>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <sun>/sim/time/sun-angle-rad</sun>
+     <tower>/sim/tower/airport-id</tower>
+    </noinstrument>
+   </relations>
+
+   <route include="../Nasal/Concorde-route.xml"/>
+  </human>
+
+  <hydraulic>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <internal>
+    <config include="Concorde-hydraulic.xml"/>
+    <iterations type="int">0</iterations>
+   </internal>
+
+   <power>
+    <blue type="bool">false</blue>
+    <gear type="bool">false</gear>
+    <green type="bool">false</green>
+    <steering alias="/fdm/jsbsim/systems/NWS/hydraulics"/>
+    <yellow type="bool">false</yellow>
+   </power>
+
+   <rat>
+    <selector n="0">
+     <on type="bool">false</on>
+     <guard type="bool">true</guard>                                         <!-- not deployed -->
+     <num type="int">1</num>
+     <test type="bool">false</test>
+    </selector>
+    <selector n="1">
+     <on type="bool">false</on>
+     <guard type="bool">true</guard>
+     <num type="int">2</num>
+     <test type="bool">false</test>
+    </selector>
+    <test type="bool">false</test>
+    <deploying type="bool">false</deploying>
+    <deployed type="bool">false</deployed>
+   </rat>
+
+   <relations>
+    <dependency>
+     <electric>/systems/electrical/power</electric>
+     <emergency>/controls/electric/ac/emergency</emergency>
+    </dependency>
+
+    <itself>
+     <circuit>
+      <component>/controls/hydraulic</component>
+      <subcomponent>circuit</subcomponent>
+     </circuit>
+     <ground>/controls/hydraulic/ground</ground>
+     <power>/systems/hydraulic/power</power>
+     <pump>
+      <component>/controls/hydraulic/ground</component>
+      <subcomponent>pump</subcomponent>
+     </pump>
+     <rat-ctrl>
+      <component>/systems/hydraulic/rat</component>
+      <subcomponent>selector</subcomponent>
+     </rat-ctrl>
+     <rat>/systems/hydraulic/rat</rat>
+     <sensors>/systems/hydraulic/sensors</sensors>
+    </itself>
+
+    <noinstrument>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+     <speed-up>/sim/speed-up</speed-up>
+    </noinstrument>
+   </relations>
+  </hydraulic>
+
+  <lighting>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <level>
+    <engineer>
+     <deck type="double">0.0</deck>
+     <panel type="double">0.0</panel>
+    </engineer>
+    <flood>
+     <captain type="double">0.0</captain>
+     <center type="double">0.0</center>
+     <copilot type="double">0.0</copilot>
+    </flood>
+    <human>
+     <copilot type="double">0.0</copilot>
+     <engineer type="double">0.0</engineer>
+    </human>
+    <panel>
+     <center type="double">0.0</center>
+     <console type="double">0.0</console>
+     <main type="double">0.0</main>
+    </panel>
+    <roof type="double">0.0</roof>
+    <roof-ambient type="double">0.0</roof-ambient>                           <!-- 3D warning lights -->
+   </level>
+
+   <relations>
+    <dependency>
+     <asi>/instrumentation/airspeed-indicator[0]</asi>
+     <electric>/systems/electrical/power</electric>
+     <radio-altimeter>/instrumentation/radio-altimeter[0]</radio-altimeter>
+    </dependency>
+
+    <itself>
+     <crew>/controls/lighting/crew</crew>
+     <landing-taxi>
+      <component>/controls/lighting/external</component>
+      <subcomponent>landing-taxi</subcomponent>
+     </landing-taxi>
+     <level>/systems/lighting/level</level>
+     <main-landing>
+      <component>/controls/lighting/external</component>
+      <subcomponent>main-landing</subcomponent>
+     </main-landing>
+     <overhead>/controls/lighting/crew/overhead</overhead>
+    </itself>
+
+    <noinstrument>
+     <sun>/sim/time/sun-angle-rad</sun>
+    </noinstrument>
+   </relations>
+  </lighting>
+
+  <mws>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <amber>
+    <adc type="bool">false</adc>
+    <adc-recall type="bool">true</adc-recall>
+    <air type="bool">false</air>
+    <air-recall type="bool">true</air-recall>
+    <electrical type="bool">false</electrical>
+    <electrical-recall type="bool">true</electrical-recall>
+    <fuel type="bool">false</fuel>
+    <fuel-recall type="bool">true</fuel-recall>
+    <hydraulics type="bool">false</hydraulics>
+    <hydraulics-recall type="bool">true</hydraulics-recall>
+    <intake n="0" type="bool">false</intake>
+    <intake n="1" type="bool">false</intake>
+    <intake n="2" type="bool">false</intake>
+    <intake n="3" type="bool">false</intake>
+    <intake-recall n="0" type="bool">true</intake-recall>
+    <intake-recall n="1" type="bool">true</intake-recall>
+    <intake-recall n="2" type="bool">true</intake-recall>
+    <intake-recall n="3" type="bool">true</intake-recall>
+   </amber>
+
+   <auxiliary type="bool">false</auxiliary>
+   <cavalry type="bool">false</cavalry>
+
+   <overspeed type="bool">false</overspeed>
+
+   <red>
+    <ads type="bool">false</ads>
+    <ads-recall type="bool">true</ads-recall>
+    <cg type="bool">false</cg>
+    <cg-recall type="bool">true</cg-recall>
+    <doors type="bool">false</doors>
+    <doors-recall type="bool">true</doors-recall>
+    <electrical type="bool">false</electrical>
+    <electrical-recall type="bool">true</electrical-recall>
+    <engine n="0" type="bool">false</engine>
+    <engine n="1" type="bool">false</engine>
+    <engine n="2" type="bool">false</engine>
+    <engine n="3" type="bool">false</engine>
+    <engine-recall n="0" type="bool">true</engine-recall>
+    <engine-recall n="1" type="bool">true</engine-recall>
+    <engine-recall n="2" type="bool">true</engine-recall>
+    <engine-recall n="3" type="bool">true</engine-recall>
+    <ice type="bool">false</ice>
+    <ice-recall type="bool">true</ice-recall>
+    <ins type="bool">false</ins>
+    <ins-recall type="bool">true</ins-recall>
+    <intake n="0" type="bool">false</intake>
+    <intake n="1" type="bool">false</intake>
+    <intake n="2" type="bool">false</intake>
+    <intake n="3" type="bool">false</intake>
+    <intake-recall n="0" type="bool">true</intake-recall>
+    <intake-recall n="1" type="bool">true</intake-recall>
+    <intake-recall n="2" type="bool">true</intake-recall>
+    <intake-recall n="3" type="bool">true</intake-recall>
+    <feel type="bool">false</feel>
+    <feel-recall type="bool">true</feel-recall>
+    <pfc type="bool">false</pfc>
+    <pfc-recall type="bool">true</pfc-recall>
+    <pressure type="bool">false</pressure>
+    <pressure-recall type="bool">true</pressure-recall>
+    <throttle type="bool">false</throttle>
+    <throttle-recall type="bool">true</throttle-recall>
+   </red>
+
+   <relations>
+    <dependency>
+     <adc>
+      <component>/controls/adc</component>
+      <subcomponent>system</subcomponent>
+     </adc>
+     <altimeter>
+      <component>/instrumentation</component>
+      <subcomponent>altimeter</subcomponent>
+     </altimeter>
+     <asi>
+      <component>/instrumentation</component>
+      <subcomponent>airspeed-indicator</subcomponent>
+     </asi>
+     <attitude>
+      <component>/instrumentation</component>
+      <subcomponent>attitude-indicator</subcomponent>
+     </attitude>
+     <audio>/controls/audio</audio>
+     <autopilot>/systems/autopilot/state</autopilot>
+     <cg>/instrumentation/cg</cg>
+     <crew>/controls/crew</crew>
+     <electric>/systems/electrical/power</electric>
+     <mach>/instrumentation/mach-indicator[0]</mach>
+     <nose>/instrumentation/nose-visor/pos-norm</nose>
+    </dependency>
+
+    <itself>
+     <amber>/systems/mws/amber</amber>
+     <red>/systems/mws/red</red>
+    </itself>
+
+    <noinstrument>
+     <electric>/systems/electrical/power</electric>
+     <hydraulic>/systems/hydraulic/power</hydraulic>
+    </noinstrument>
+   </relations>
+
+   <single-gong type="bool">false</single-gong>
+   <stall type="bool">false</stall>
+  </mws>
+
+  <pitot n="0">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </pitot>
+
+  <pitot n="1">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </pitot>
+
+  <pitot n="2">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </pitot>
+
+  <pressurization>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <internal>
+    <altitude-sea-ft>0.0</altitude-sea-ft>                                   <!-- sea level ISA -->
+    <atmosphere-inhg>29.92</atmosphere-inhg>
+    <outflow-inhg>0.0</outflow-inhg>
+    <target-inhg>29.92</target-inhg>
+   </internal>
+
+   <pressure-inhg>29.92</pressure-inhg>
+
+   <relations>
+    <dependency>
+     <air>/systems/air-bleed/power</air>
+     <altitude>/instrumentation/cabin-altitude</altitude>
+     <electric>/systems/electrical/power</electric>
+     <engine>
+      <component>/controls/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <static-pressure>/systems/static/pressure-inhg</static-pressure>          <!-- outside pressure -->
+     <weight>/instrumentation/weight-switch</weight>
+    </dependency>
+
+    <itself>
+     <emergency>/controls/pressurization/emergency</emergency>
+     <internal>/systems/pressurization/internal</internal>
+     <system>
+      <component>/systems/pressurization</component>
+      <subcomponent>system</subcomponent>
+     </system>
+     <system-ctrl>
+      <component>/controls/pressurization</component>
+      <subcomponent>system</subcomponent>
+     </system-ctrl>
+     <system-sys>/systems/pressurization</system-sys>
+     <valve>/systems/pressurization/valve</valve>
+    </itself>
+
+    <noinstrument>
+     <altitude>/position/altitude-ft</altitude>
+     <speed-up>/sim/speed-up</speed-up>
+    </noinstrument>
+   </relations>
+
+   <!-- human physiology tolerates 18 mbar per minute until 8000 ft. -->
+
+   <system n="0">
+    <cabin-alt-ft>8000.0</cabin-alt-ft>
+    <datum-inhg>0.0</datum-inhg>
+    <datum-mbar>1013.21</datum-mbar>
+    <discharge-aft-percent>0.0</discharge-aft-percent>
+    <discharge-fwd-percent>0.0</discharge-fwd-percent>
+    <inhg-per-min>0.0</inhg-per-min>
+    <max-diff-ft>29000.0</max-diff-ft>
+    <mbar-per-min>18.0</mbar-per-min>
+    <min-pressure-inhg>0.0</min-pressure-inhg>
+   </system>
+
+   <system n="1">
+    <cabin-alt-ft>8000.0</cabin-alt-ft>
+    <datum-inhg>0.0</datum-inhg>
+    <datum-mbar>1013.21</datum-mbar>
+    <discharge-aft-percent>0.0</discharge-aft-percent>
+    <discharge-fwd-percent>0.0</discharge-fwd-percent>
+    <inhg-per-min>0.0</inhg-per-min>
+    <max-diff-ft>29000.0</max-diff-ft>
+    <mbar-per-min>18.0</mbar-per-min>
+    <min-pressure-inhg>0.0</min-pressure-inhg>
+   </system>
+
+   <valve>
+    <air-vents type="bool">true</air-vents>
+    <ground-auto type="bool">true</ground-auto>
+    <ground-relief type="bool">false</ground-relief>
+    <ground-shut2 type="bool">false</ground-shut2>
+    <thrust type="bool">false</thrust>
+    <thrust-recuperator type="bool">false</thrust-recuperator>
+   </valve>
+  </pressurization>
+
+  <seat>
+   <captain type="bool">true</captain>
+   <copilot type="bool">false</copilot>
+   <engineer type="bool">false</engineer>
+   <observer type="bool">false</observer>
+   <observer2 type="bool">false</observer2>
+   <position>
+    <engineer>
+     <heading-deg type="double">360</heading-deg>                            <!-- OSG at 360, until ctrl-E -->
+    </engineer>
+    <observer>
+     <move type="bool">false</move>
+     <x-m type="double">0.0</x-m>
+     <y-m type="double">0.0</y-m>
+     <z-m type="double">0.0</z-m>
+    </observer>
+    <observer2>
+     <move type="bool">false</move>
+     <x-m type="double">0.0</x-m>
+     <y-m type="double">0.0</y-m>
+     <z-m type="double">0.0</z-m>
+    </observer2>
+    <steward>
+     <move type="bool">false</move>
+     <x-m type="double">0.0</x-m>
+     <y-m type="double">0.0</y-m>
+     <z-m type="double">0.0</z-m>
+    </steward>
+   </position>
+   <overhead type="bool">false</overhead>
+   <steward type="bool">false</steward>
+  </seat>
+
+  <static n="0">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </static>
+
+  <static n="1">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </static>
+
+  <static n="2">
+   <serviceable type="bool" archive="y">true</serviceable>
+  </static>
+
+  <tank>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <pressure-inhg>29.92</pressure-inhg>                                      <!-- sea level ISA -->
+
+   <relations>
+    <dependency>
+     <air>/systems/air-bleed/power</air>
+     <electric>/systems/electrical/power</electric>
+     <static-port>/systems/static/pressure-inhg</static-port>                <!-- outside pressure -->
+    </dependency>
+   </relations>
+  </tank>
+
+  <temperature>
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <cabin-fwd-degc>20.0</cabin-fwd-degc>
+   <cabin-rear-degc>20.0</cabin-rear-degc>
+   <flight-deck-degc>20.0</flight-deck-degc>
+
+   <ground-service>
+    <door type="bool">false</door>                                           <!-- door closed -->
+    <pressure-psi type="double">0.0</pressure-psi>
+   </ground-service>
+
+   <group n="0">
+    <duct-degc>15.0</duct-degc>
+    <flow-kgph>0.0</flow-kgph>
+    <inlet-degc>15.0</inlet-degc>
+    <temperature-valve>0.0</temperature-valve>
+   </group>
+   <group n="1">
+    <duct-degc>15.0</duct-degc>
+    <flow-kgph>0.0</flow-kgph>
+    <inlet-degc>15.0</inlet-degc>
+    <temperature-valve>0.0</temperature-valve>
+   </group>
+   <group n="2">
+    <duct-degc>15.0</duct-degc>
+    <flow-kgph>0.0</flow-kgph>
+    <inlet-degc>15.0</inlet-degc>
+    <temperature-valve>0.0</temperature-valve>
+   </group>
+   <group n="3">
+    <duct-degc>15.0</duct-degc>
+    <flow-kgph>0.0</flow-kgph>
+    <inlet-degc>15.0</inlet-degc>
+    <temperature-valve>0.0</temperature-valve>
+   </group>
+
+   <relations>
+    <dependency>
+     <air>
+      <component>/systems/air-bleed</component>
+      <subcomponent>engine</subcomponent>
+     </air>
+     <airbleed>
+      <component>/controls/pneumatic</component>
+      <subcomponent>engine</subcomponent>
+     </airbleed>
+     <engine>
+      <component>/systems/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <tank>
+      <component>/consumables/fuel</component>
+      <subcomponent>tank</subcomponent>
+     </tank>
+    </dependency>
+
+    <itself>
+     <group>
+      <component>/systems/temperature</component>
+      <subcomponent>group</subcomponent>
+     </group>
+     <valve>
+      <component>/controls/temperature</component>
+      <subcomponent>group</subcomponent>
+     </valve>
+    </itself>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <speed-up>/sim/speed-up</speed-up>
+     <temperature>/environment/temperature-degc</temperature>
+    </noinstrument>
+   </relations>
+  </temperature>
+
+  <throttles>
+   <throttle n="0">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <available type="bool">true</available>
+    <failure type="double">0.0</failure>
+   </throttle>
+   <throttle n="1">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <available type="bool">true</available>
+    <failure type="double">0.0</failure>
+   </throttle>
+   <throttle n="2">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <available type="bool">true</available>
+    <failure type="double">0.0</failure>
+   </throttle>
+   <throttle n="3">
+    <serviceable type="bool" archive="y">true</serviceable>
+
+    <available type="bool">true</available>
+    <failure type="double">0.0</failure>
+   </throttle>
+  </throttles>
+
+  <tractor>
+   <clear type="bool">false</clear>                                         <!-- true, when clear to start outboard engines -->
+   <distance-m></distance-m>
+   <magnitude alias="/fdm/jsbsim/external_reactions/tractor/magnitude"/>
+   <engine14 type="bool">false</engine14>                                   <!-- true, during starting of outboard engines -->
+   <pushback type="bool">false</pushback>                                   <!-- true, during pushback -->
+
+   <relations>
+    <dependency>
+     <pushback>/sim/model/pushback</pushback>
+    </dependency>
+   </relations>
+  </tractor>
+
+  <voice include="Concorde-checklists.xml">
+   <serviceable type="bool" archive="y">true</serviceable>
+
+   <argument></argument>
+   <automata n="0"></automata>
+   <automata n="1"></automata>
+   <callout></callout>
+   <checklist></checklist>
+
+   <display>
+    <captain></captain>
+    <completed></completed>
+    <copilot></copilot>
+    <engineer></engineer>
+    <processing></processing>
+   </display>
+
+   <emergency></emergency>
+   <real type="bool">false</real>                                           <!-- not a real checklist -->
+
+   <relations>
+    <dependency>
+     <asi>/instrumentation/airspeed-indicator[1]</asi>
+     <altimeter>/instrumentation/altimeter[1]</altimeter>
+     <attitude>/instrumentation/attitude-indicator[1]</attitude>
+     <autopilot>/systems/autopilot/state</autopilot>
+     <autoflight>/controls/autoflight</autoflight>
+     <captain-ctrl>/controls/captain</captain-ctrl>
+     <copilot-3d>/systems/human/copilot</copilot-3d>
+     <copilot-ctrl>/controls/copilot</copilot-ctrl>
+     <crew>/systems/crew</crew>
+     <crew-ctrl>/controls/crew</crew-ctrl>
+     <crew-presets>
+      <component>/systems/crew/presets</component>
+      <subcomponent>label</subcomponent>
+     </crew-presets>
+     <engine>
+      <component>/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine>
+     <engine-ctrl>
+      <component>/controls/engines</component>
+      <subcomponent>engine</subcomponent>
+     </engine-ctrl>
+     <engineer>/systems/engineer</engineer>
+     <engineer-3d>/systems/human/engineer</engineer-3d>
+     <engineer-ctrl>/controls/engineer</engineer-ctrl>
+     <gear>/gear/gear[0]</gear>
+     <gear-ctrl>/controls/gear</gear-ctrl>
+     <ins>/instrumentation/ins[0]/computed</ins>                            <!-- HSI -->
+     <ivsi>/instrumentation/vertical-speed-indicator[0]</ivsi>
+     <mach>/instrumentation/mach-indicator[1]</mach>
+     <nav>/instrumentation/nav[0]</nav>
+     <nose>/instrumentation/nose-visor</nose>
+     <radio-altimeter>/instrumentation/radio-altimeter[1]</radio-altimeter>
+    </dependency>
+
+    <itself>
+     <automata>
+      <component>/systems/voice</component>
+      <subcomponent>automata</subcomponent>
+     </automata>
+     <display>/systems/voice/display</display>
+     <sound>/sim/sound/voices</sound>
+    </itself>
+
+    <noinstrument>
+     <agl>/position/altitude-agl-ft</agl>
+     <airspeed>/velocities/airspeed-kt</airspeed>
+     <presets>/sim/presets</presets>
+     <weight>/instrumentation/ac-weight/weight-lb</weight>
+    </noinstrument>
+   </relations>
+
+   <text></text>
+  </voice>
+
+</PropertyList>
