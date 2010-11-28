@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# For debugging
+CP="echo cp -p"
+#CP="cp -p"
+
+if [ x$1 = x ]; then
+   echo "Usage:"
+   echo " $0 [path to the Aircraft directory of the FlightGear base package]"
+   exit;
+fi
+if [ ! -d $1 -o ! -d $1/Generic ]; then
+   echo "Not the FlightGear Aircraft directory: $1"
+   exit;
+fi
+if [ ! -d engine ]; then
+   echo "Please change to the root directory of the JSBSim package."
+   exit;
+fi
+
+JSBDIR=`pwd`
+FGDIR=$1
+
+NOTFOUND=
+cd $FGDIR
+for n in `ls -1 */Engines/*.xml`; do 
+    FILE=`echo $n | awk -F'/' '{printf $3}'`;
+    if [ ! -f $JSBDIR/engine/$FILE ]; then 
+        NOTFOUND="$NOTFOUND $n";
+    elif [ ! -f $JSBDIR/engine/direct.xml ]; then
+        $CP $JSBDIR/engine/$FILE $n;
+    fi
+done
+
+if [ "x$NOTFOUND" != "x" ]; then
+   echo "The following engine files could not be found in the JSBSim directory:"
+   for n in $NOTFOUND; do echo "    "$n; done
+fi
+cd  $JSBDIR;
