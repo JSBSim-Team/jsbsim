@@ -156,7 +156,7 @@
    <engine file="Oberursel-UrII">
     <location unit="IN">
       <x> -25.00 </x>
-      <y> -15.80 </y>
+      <y>   0.00 </y>
       <z>   0.00 </z>
     </location>
     <orient unit="DEG">
@@ -168,7 +168,7 @@
     <thruster file="Dr1_propeller">
      <location unit="IN">
        <x> -36.36 </x>
-       <y> -15.80 </y>
+       <y>   0.00 </y>
        <z>   0.00 </z>
      </location>
      <orient unit="DEG">
