@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.20 2010/08/21 17:13:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.21 2010/11/29 12:33:58 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,8 @@ FGRocket::~FGRocket(void)
 
 void FGRocket::Calculate(void)
 {
+  if (FDMExec->IntegrationSuspended()) return;
+
   double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
 
   RunPreFunctions();

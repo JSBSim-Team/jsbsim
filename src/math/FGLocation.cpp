@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.23 2010/09/22 11:34:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.24 2010/11/29 12:33:58 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
@@ -56,20 +56,14 @@ CLASS IMPLEMENTATION
 FGLocation::FGLocation(void)
 {
   mCacheValid = false;
-  initial_longitude = 0.0;
-  a = 0.0;
-  b = 0.0;
-  a2 = 0.0;
-  b2 = 0.0;
-  e2 = 1.0;
-  e = 1.0;
+
+  a = b = a2 = b2 = 0.0;
+  e = e2 = f = 1.0;
   eps2 = -1.0;
-  f = 1.0;
   epa = 0.0;
 
-  mLon = mLat = mRadius = mGeodLat = GeodeticAltitude = 0.0;
-  
-//  initial_longitude = 0.0;
+  mLon = mLat = mRadius = 0.0;
+  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
@@ -84,26 +78,117 @@ FGLocation::FGLocation(void)
 
 FGLocation::FGLocation(double lon, double lat, double radius)
 {
-  mCacheValid = false;
+
+  a = b = a2 = b2 = 0.0;
+  e = e2 = f = 1.0;
+  eps2 = -1.0;
+  epa = 0.0;
+
+  mLon = mLat = mRadius = 0.0;
+  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
+
+  mTl2ec.InitMatrix();
+  mTec2l.InitMatrix();
+  mTi2ec.InitMatrix();
+  mTec2i.InitMatrix();
+  mTi2l.InitMatrix();
+  mTl2i.InitMatrix();
 
   double sinLat = sin(lat);
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-
-  a = 0.0;
-  b = 0.0;
-  a2 = 0.0;
-  b2 = 0.0;
-  e2 = 1.0;
-  e = 1.0;
-  eps2 = -1.0;
-  f = 1.0;
-  epa = 0.0;
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
-  mLon = mLat = mRadius = mGeodLat = GeodeticAltitude = 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGLocation::FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false)
+{
+  a = b = a2 = b2 = 0.0;
+  e = e2 = f = 1.0;
+  eps2 = -1.0;
+  epa = 0.0;
+
+  mLon = mLat = mRadius = 0.0;
+  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
+
+  mTl2ec.InitMatrix();
+  mTec2l.InitMatrix();
+  mTi2ec.InitMatrix();
+  mTec2i.InitMatrix();
+  mTi2l.InitMatrix();
+  mTl2i.InitMatrix();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGLocation::FGLocation(const FGLocation& l)
+  : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
+{
+
+  a = l.a;
+  b = l.b;
+  a2 = l.a2;
+  b2 = l.b2;
+  e2 = l.e2;
+  e = l.e;
+  eps2 = l.eps2;
+  f = l.f;
+
+  /*ag
+   * if the cache is not valid, all of the following values are unset.
+   * They will be calculated once ComputeDerivedUnconditional is called.
+   * If unset, they may possibly contain NaN and could thus trigger floating
+   * point exceptions.
+   */
+  if (!mCacheValid) return;
+
+  mLon = l.mLon;
+  mLat = l.mLat;
+  mRadius = l.mRadius;
+
+  mTl2ec = l.mTl2ec;
+  mTec2l = l.mTec2l;
+
+  initial_longitude = l.initial_longitude;
+  mGeodLat = l.mGeodLat;
+  GeodeticAltitude = l.GeodeticAltitude;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGLocation& FGLocation::operator=(const FGLocation& l)
+{
+  mECLoc = l.mECLoc;
+  mCacheValid = l.mCacheValid;
+
+  a = l.a;
+  b = l.b;
+  a2 = l.a2;
+  b2 = l.b2;
+  e2 = l.e2;
+  e = l.e;
+  eps2 = l.eps2;
+  f = l.f;
+
+  //ag See comment in constructor above
+  if (!mCacheValid) return *this;
+
+  mLon = l.mLon;
+  mLat = l.mLat;
+  mRadius = l.mRadius;
+
+  mTl2ec = l.mTl2ec;
+  mTec2l = l.mTec2l;
+
+  initial_longitude = l.initial_longitude;
+  mGeodLat = l.mGeodLat;
+  GeodeticAltitude = l.GeodeticAltitude;
+
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,9 +409,9 @@ void FGLocation::ComputeDerivedUnconditional(void) const
     s  = r02/(e2*eps2);
     p2 = p*p;
     q  = p2 - b2 + s;
-    sqrt_q = sqrt(q);
     if (q>0)
     {
+      sqrt_q = sqrt(q);
       u  = p/sqrt_q;
       u2 = p2/q;
       v  = b2*u2/q;

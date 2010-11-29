@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.26 2010/11/05 03:07:30 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.27 2010/11/29 12:33:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.26 2010/11/05 03:07:30 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.27 2010/11/29 12:33:58 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,42 +163,10 @@ public:
   FGLocation(double lon, double lat, double radius);
 
   /** Column constructor. */
-  FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false)
-  {
-    a = 0.0;
-    b = 0.0;
-    a2 = 0.0;
-    b2 = 0.0;
-    e2 = 1.0;
-    e = 1.0;
-    eps2 = -1.0;
-    f = 1.0;
-  }
+  FGLocation(const FGColumnVector3& lv);
 
   /** Copy constructor. */
-  FGLocation(const FGLocation& l)
-    : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
-  {
-//    if (!mCacheValid) return; // This doesn't seem right.
-
-    mLon = l.mLon;
-    mLat = l.mLat;
-    mRadius = l.mRadius;
-
-    mTl2ec = l.mTl2ec;
-    mTec2l = l.mTec2l;
-
-    a = l.a;
-    b = l.b;
-    a2 = l.a2;
-    b2 = l.b2;
-    e2 = l.e2;
-    e = l.e;
-    eps2 = l.eps2;
-    f = l.f;
-
-    initial_longitude = l.initial_longitude;
-  }
+  FGLocation(const FGLocation& l);
 
   /** Set the longitude.
       @param longitude Longitude in rad to set.
@@ -426,35 +394,7 @@ public:
   /** Sets this location via the supplied location object.
       @param v A location object reference. 
       @return a reference to the FGLocation object. */
-  const FGLocation& operator=(const FGLocation& l)
-  {
-    mECLoc = l.mECLoc;
-    mCacheValid = l.mCacheValid;
-
-//    if (!mCacheValid) return *this; // Why is this here for an assignment operator?
-
-    mLon = l.mLon;
-    mLat = l.mLat;
-    mRadius = l.mRadius;
-
-    mTl2ec = l.mTl2ec;
-    mTec2l = l.mTec2l;
-
-    a = l.a;
-    b = l.b;
-    a2 = l.a2;
-    b2 = l.b2;
-    e2 = l.e2;
-    e = l.e;
-    eps2 = l.eps2;
-    f = l.f;
-
-    initial_longitude = l.initial_longitude;
-    mGeodLat = l.mGeodLat;
-    GeodeticAltitude = l.GeodeticAltitude;
-
-    return *this;
-  }
+  const FGLocation& operator=(const FGLocation& l);
 
   /** This operator returns true if the ECEF location vectors for the two
       location objects are equal. */
