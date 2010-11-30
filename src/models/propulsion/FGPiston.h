@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.24 2010/08/21 18:08:13 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.25 2010/11/30 12:17:10 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,7 @@ CLASS DOCUMENTATION
   <bore unit="{IN | M}"> {number} </bore>
   <stroke unit="{IN | M}"> {number} </stroke>
   <cylinders> {number} </cylinders>
+  <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <compression-ratio> {number} </compression-ratio>
   <sparkfaildrop> {number} </sparkfaildrop>
   <maxhp unit="{HP | WATTS}"> {number} </maxhp>
@@ -101,6 +102,7 @@ CLASS DOCUMENTATION
   <takeoffboost unit="{INHG | PA | ATM}"> {number} </takeoffboost>
   <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
   <ram-air-factor> {number} </ram-air-factor>
+  <cooling-factor> {number} </cooling-factor>
 </piston_engine>
 @endcode
 
@@ -160,8 +162,7 @@ CLASS DOCUMENTATION
       config file (and is above RATEDBOOST1), then the throttle position is
       interpreted as:
 
-    - 0 to 0.95 : idle manifold pressure to rated boost (where attainable)
-    - 0.96, 0.97, 0.98 : rated boost (where attainable).
+    - 0 to 0.98 : idle manifold pressure to rated boost (where attainable)
     - 0.99, 1.0 : takeoff boost (where attainable).
 
     A typical takeoff boost for an earlyish Merlin was about 12psi, compared
@@ -181,7 +182,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.24 2010/08/21 18:08:13 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.25 2010/11/30 12:17:10 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,21 +201,21 @@ public:
   std::string GetEngineValues(const std::string& delimiter);
 
   void Calculate(void);
-  double GetPowerAvailable(void) {return PowerAvailable;}
+  double GetPowerAvailable(void) const {return PowerAvailable;}
   double CalcFuelNeed(void);
 
   void ResetToIC(void);
   void SetMagnetos(int magnetos) {Magnetos = magnetos;}
 
-  double  GetEGT(void) { return EGT_degC; }
-  int     GetMagnetos(void) {return Magnetos;}
+  double  GetEGT(void) const { return EGT_degC; }
+  int     GetMagnetos(void) const {return Magnetos;}
 
-  double getExhaustGasTemp_degF(void) {return KelvinToFahrenheit(ExhaustGasTemp_degK);}
+  double getExhaustGasTemp_degF(void) const {return KelvinToFahrenheit(ExhaustGasTemp_degK);}
   double getManifoldPressure_inHg(void) const {return ManifoldPressure_inHg;}
-  double getCylinderHeadTemp_degF(void) {return KelvinToFahrenheit(CylinderHeadTemp_degK);}
+  double getCylinderHeadTemp_degF(void) const {return KelvinToFahrenheit(CylinderHeadTemp_degK);}
   double getOilPressure_psi(void) const {return OilPressure_psi;}
-  double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
-  double getRPM(void) {return RPM;}
+  double getOilTemp_degF (void) const {return KelvinToFahrenheit(OilTemp_degK);}
+  double getRPM(void) const {return RPM;}
 
 protected:
 
@@ -275,6 +276,7 @@ private:
   double Bore;                     // inches
   double Stroke;                   // inches
   double Cylinders;                // number
+  double CylinderHeadMass;         // kilograms
   double CompressionRatio;         // number
   double Z_airbox; // number representing intake impediance before the throttle
   double Z_throttle; // number representing slope of throttle impediance
@@ -321,6 +323,7 @@ private:
   double T_amb;              // degrees Kelvin
   double RPM;                // revolutions per minute
   double IAS;                // knots
+  double Cooling_Factor;     // normal
   bool Magneto_Left;
   bool Magneto_Right;
   int Magnetos;
