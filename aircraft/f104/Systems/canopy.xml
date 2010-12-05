@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 
 <system name="canopy">
+  <property>systems/canopy/command</property>
 
-  <channel>
+  <channel name="canopy">
 
    <kinematic name="Canopy Control">
      <input>systems/canopy/command</input>

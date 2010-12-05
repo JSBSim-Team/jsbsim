@@ -10,7 +10,7 @@
      <switch name="systems/armament/tip-tanks/left-tip-tank/released">
           <default value="systems/armament/tip-tanks/left-tip-tank/released"/>
           <test value="1">
-                systems/armament/droptanks/release == 1
+                systems/armament/tip-tanks/release == 1
           </test>
           <output>systems/armament/tip-tanks/left-tip-tank/released</output>
      </switch>

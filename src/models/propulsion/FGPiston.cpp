@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.53 2010/08/21 17:13:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.54 2010/11/30 12:17:10 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,13 +92,14 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   Bore = 5.125;
   Stroke = 4.375;
   Cylinders = 4;
+  CylinderHeadMass = 2; //kg
   CompressionRatio = 8.5;
   Z_airbox = -999;
   Ram_Air_Factor = 1;
   PeakMeanPistonSpeed_fps = 100;
   FMEPDynamic= 18400;
   FMEPStatic = 46500;
-
+  Cooling_Factor = 0.5144444;
 
   // These are internal program variables
 
@@ -200,10 +201,14 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Stroke = el->FindElementValueAsNumberConvertTo("stroke","IN");
   if (el->FindElement("cylinders"))
     Cylinders = el->FindElementValueAsNumber("cylinders");
+  if (el->FindElement("cylinder-head-mass"))
+    CylinderHeadMass = el->FindElementValueAsNumberConvertTo("cylinder-head-mass","KG");
   if (el->FindElement("air-intake-impedance-factor"))
     Z_airbox = el->FindElementValueAsNumber("air-intake-impedance-factor");
   if (el->FindElement("ram-air-factor"))
     Ram_Air_Factor  = el->FindElementValueAsNumber("ram-air-factor");
+  if (el->FindElement("cooling-factor"))
+    Cooling_Factor  = el->FindElementValueAsNumber("cooling-factor");
   if (el->FindElement("dynamic-fmep"))
     FMEPDynamic= el->FindElementValueAsNumberConvertTo("dynamic-fmep","PA");
   if (el->FindElement("static-fmep"))
@@ -303,8 +308,12 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   PropertyManager->Tie(property_name, &Z_airbox);
   property_name = base_property_name + "/ram-air-factor";
   PropertyManager->Tie(property_name, &Ram_Air_Factor);
+  property_name = base_property_name + "/cooling-factor";
+  PropertyManager->Tie(property_name, &Cooling_Factor);
   property_name = base_property_name + "/boost-speed";
   PropertyManager->Tie(property_name, &BoostSpeed);
+  property_name = base_property_name + "/cht-degF";
+  PropertyManager->Tie(property_name, this, &FGPiston::getCylinderHeadTemp_degF);
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -642,7 +651,7 @@ void FGPiston::doAirFlow(void)
 // loss of volumentric efficiency due to difference between MAP and exhaust pressure
 // Eq 6-10 from The Internal Combustion Engine - Charles Taylor Vol 1
   double ve =((gamma-1)/gamma) +( CompressionRatio -(p_amb/MAP))/(gamma*( CompressionRatio - 1));
-
+// FGAtmosphere::GetDensity() * FGJSBBase::m3toft3 / FGJSBBase::kgtoslug;
   rho_air = p_amb / (R_air * T_amb);
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   double v_dot_air = swept_volume * volumetric_efficiency *ve;
@@ -766,7 +775,7 @@ void FGPiston::doEGT(void)
  * Calculate the cylinder head temperature.
  *
  * Inputs: T_amb, IAS, rho_air, m_dot_fuel, calorific_value_fuel,
- *   combustion_efficiency, RPM, MaxRPM, Displacement
+ *   combustion_efficiency, RPM, MaxRPM, Displacement, Cylinders
  *
  * Outputs: CylinderHeadTemp_degK
  */
@@ -779,17 +788,17 @@ void FGPiston::doCHT(void)
 
   double arbitary_area = Displacement/360.0;
   double CpCylinderHead = 800.0;
-  double MassCylinderHead = 8.0;
+  double MassCylinderHead = CylinderHeadMass * Cylinders;
 
   double temperature_difference = CylinderHeadTemp_degK - T_amb;
-  double v_apparent = IAS * 0.5144444;
+  double v_apparent = IAS * Cooling_Factor;
   double v_dot_cooling_air = arbitary_area * v_apparent;
   double m_dot_cooling_air = v_dot_cooling_air * rho_air;
   double dqdt_from_combustion =
     m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
   double dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) +
     (h3 * RPM * temperature_difference / MaxRPM);
-  double dqdt_free = h1 * temperature_difference;
+  double dqdt_free = h1 * temperature_difference * arbitary_area;
   double dqdt_cylinder_head = dqdt_from_combustion + dqdt_forced + dqdt_free;
 
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
@@ -921,6 +930,7 @@ void FGPiston::Debug(int from)
       cout << "      Bore: "                << Bore                     << endl;
       cout << "      Stroke: "              << Stroke                   << endl;
       cout << "      Cylinders: "           << Cylinders                << endl;
+      cout << "      Cylinders Head Mass: " <<CylinderHeadMass          << endl;
       cout << "      Compression Ratio: "   << CompressionRatio         << endl;
       cout << "      MaxHP: "               << MaxHP                    << endl;
       cout << "      Cycles: "              << Cycles                   << endl;

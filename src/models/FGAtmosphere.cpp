@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.40 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.41 2010/11/30 12:19:57 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -572,8 +572,11 @@ void FGAtmosphere::Turbulence(void)
   }
   case ttMilspec:
   case ttTustin: {
+    double V = FDMExec->GetAuxiliary()->GetVt(); // true airspeed in ft/s
+
     // an index of zero means turbulence is disabled
-    if (probability_of_exceedence_index == 0) {
+    // airspeed occurs as divisor in the code below
+    if (probability_of_exceedence_index == 0 || V == 0) {
       vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
       vTurbPQR(1) = vTurbPQR(2) = vTurbPQR(3) = 0.0;
       return;
@@ -582,9 +585,10 @@ void FGAtmosphere::Turbulence(void)
     // Turbulence model according to MIL-F-8785C (Flying Qualities of Piloted Aircraft)
     double
       h = FDMExec->GetPropagate()->GetDistanceAGL(),
-      V = FDMExec->GetAuxiliary()->GetVt(), // true airspeed in ft/s
       b_w = wingspan,
       L_u, L_w, sig_u, sig_w;
+
+      if (b_w == 0.) b_w = 30.;
 
     // clip height functions at 10 ft
     if (h <= 10.) h = 10;
@@ -644,6 +648,10 @@ void FGAtmosphere::Turbulence(void)
         C_BLq = 1/tau_q/tan(T_V/2/tau_q), // eq. (24)
         C_BLr = 1/tau_r/tan(T_V/2/tau_r); // eq. (26)
 
+      // all values calculated so far are strictly positive, except for
+      // the random numbers nu_*. This means that in the code below, all
+      // divisors are strictly positive, too, and no floating point
+      // exception should occur.
       xi_u = -(1 - C_BL*tau_u)/(1 + C_BL*tau_u)*xi_u_km1
            + sig_u*sqrt(2*tau_u/T_V)/(1 + C_BL*tau_u)*(nu_u + nu_u_km1); // eq. (18)
       xi_v = -2*(sqr(omega_v) - sqr(C_BL))/sqr(omega_v + C_BL)*xi_v_km1

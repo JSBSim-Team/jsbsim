@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.13 2010/07/25 15:25:05 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.14 2010/12/05 13:16:30 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 element column vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.13 2010/07/25 15:25:05 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.14 2010/12/05 13:16:30 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,8 +269,8 @@ inline FGColumnVector3 operator*(double scalar, const FGColumnVector3& A) {
 
 /** Write vector to a stream.
     @param os Stream to write to.
-    @param M Matrix to write.
-    Write the matrix to a stream.*/
+    @param col vector to write.
+    Write the vector to a stream.*/
 std::ostream& operator<<(std::ostream& os, const FGColumnVector3& col);
 
 } // namespace JSBSim

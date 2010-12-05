@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.17 2010/11/28 13:15:26 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.18 2010/12/05 13:20:17 bcoconni Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,6 +256,14 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mEulerCosines(ePsi) = cos(mEulerAngles(ePsi));
 
 //  Debug(2);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::ostream& operator<<(std::ostream& os, const FGQuaternion& q)
+{
+  os << q(1) << " , " << q(2) << " , " << q(3) << " , " << q(4);
+  return os;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
