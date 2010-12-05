@@ -8,8 +8,8 @@ SUBDIRS = \
 aircraft = f104
 
 check-local:
-	-xmllint --noout --schema $(top_srcdir)/JSBSim.xsd $(aircraft).xml
-	$(top_srcdir)/src/JSBsim \
+	-xmllint --noout --schema $(top_builddir)/JSBSim.xsd $(aircraft).xml
+	$(top_builddir)/src/JSBsim \
 	  --root=$(top_srcdir) \
 	  --catalog=$(aircraft) \
 	  1>/dev/null
