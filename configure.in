@@ -128,6 +128,7 @@ aircraft/c172x/Makefile \
 aircraft/c182/Makefile \
 aircraft/c310/Makefile \
 aircraft/f104/Makefile \
+aircraft/f104/Systems/Makefile \
 aircraft/f15/Makefile \
 aircraft/f16/Makefile \
 aircraft/f16/Systems/Makefile \
