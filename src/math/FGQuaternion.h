@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.19 2010/11/05 03:07:30 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.20 2010/12/05 13:20:17 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -521,6 +521,12 @@ private:
 inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
   return FGQuaternion(scalar*q(1), scalar*q(2), scalar*q(3), scalar*q(4));
 }
+
+/** Write quaternion to a stream.
+    @param os Stream to write to.
+    @param q Quaternion to write.
+    Write the quaternion to a stream.*/
+std::ostream& operator<<(std::ostream& os, const FGQuaternion& q);
 
 } // namespace JSBSim
 
