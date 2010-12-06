@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.14 2010/12/05 13:16:30 bcoconni Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.15 2010/12/06 12:56:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 element column vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.14 2010/12/05 13:16:30 bcoconni Exp $
+    @version $Id: FGColumnVector3.h,v 1.15 2010/12/06 12:56:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,7 @@ public:
       @param Y value of the y-conponent.
       @param Z value of the z-conponent.
       Create a vector from the doubles given in the arguments.   */
-  FGColumnVector3(double X, double Y, double Z) {
+  FGColumnVector3(const double X, const double Y, const double Z) {
     data[0] = X;
     data[1] = Y;
     data[2] = Z;
@@ -105,14 +105,14 @@ public:
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
       Note that the index given in the argument is unchecked.   */
-  double operator()(unsigned int idx) const { return data[idx-1]; }
+  double operator()(const unsigned int idx) const { return data[idx-1]; }
 
   /** Write access the entries of the vector.
       @param idx the component index.
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
       Note that the index given in the argument is unchecked.   */
-  double& operator()(unsigned int idx) { return data[idx-1]; }
+  double& operator()(const unsigned int idx) { return data[idx-1]; }
 
   /** Read access the entries of the vector.
       @param idx the component index.
@@ -122,7 +122,7 @@ public:
       operator()(unsigned int idx) const</tt> function. It is
       used internally to access the elements in a more convenient way.
       Note that the index given in the argument is unchecked.   */
-  double Entry(unsigned int idx) const { return data[idx-1]; }
+  double Entry(const unsigned int idx) const { return data[idx-1]; }
 
   /** Write access the entries of the vector.
       @param idx the component index.
@@ -132,7 +132,7 @@ public:
       operator()(unsigned int idx)</tt> function. It is
       used internally to access the elements in a more convenient way.
       Note that the index given in the argument is unchecked.   */
-  double& Entry(unsigned int idx) { return data[idx-1]; }
+  double& Entry(const unsigned int idx) { return data[idx-1]; }
 
   /** Prints the contents of the vector
       @param delimeter the item separator (tab or comma)
@@ -181,34 +181,34 @@ public:
       Compute and return the cross product of the current vector with
       the given argument.   */
   FGColumnVector3 operator*(const FGColumnVector3& V) const {
-    return FGColumnVector3( data[1] * V(3) - data[2] * V(2),
-                            data[2] * V(1) - data[0] * V(3),
-                            data[0] * V(2) - data[1] * V(1) );
+    return FGColumnVector3( data[1] * V.data[2] - data[2] * V.data[1],
+                            data[2] * V.data[0] - data[0] * V.data[2],
+                            data[0] * V.data[1] - data[1] * V.data[0] );
   }
 
   /// Addition operator.
   FGColumnVector3 operator+(const FGColumnVector3& B) const {
-    return FGColumnVector3( data[0] + B(1), data[1] + B(2), data[2] + B(3) );
+    return FGColumnVector3( data[0] + B.data[0], data[1] + B.data[1], data[2] + B.data[2] );
   }
 
   /// Subtraction operator.
   FGColumnVector3 operator-(const FGColumnVector3& B) const {
-    return FGColumnVector3( data[0] - B(1), data[1] - B(2), data[2] - B(3) );
+    return FGColumnVector3( data[0] - B.data[0], data[1] - B.data[1], data[2] - B.data[2] );
   }
 
   /// Subtract an other vector.
   FGColumnVector3& operator-=(const FGColumnVector3 &B) {
-    data[0] -= B(1);
-    data[1] -= B(2);
-    data[2] -= B(3);
+    data[0] -= B.data[0];
+    data[1] -= B.data[1];
+    data[2] -= B.data[2];
     return *this;
   }
 
   /// Add an other vector.
   FGColumnVector3& operator+=(const FGColumnVector3 &B) {
-    data[0] += B(1);
-    data[1] += B(2);
-    data[2] += B(3);
+    data[0] += B.data[0];
+    data[1] += B.data[1];
+    data[2] += B.data[2];
     return *this;
   }
 
@@ -224,8 +224,8 @@ public:
   FGColumnVector3& operator/=(const double scalar);
 
   void InitMatrix(void) { data[0] = data[1] = data[2] = 0.0; }
-  void InitMatrix(double a) { data[0] = data[1] = data[2] = a; }
-  void InitMatrix(double a, double b, double c) {
+  void InitMatrix(const double a) { data[0] = data[1] = data[2] = a; }
+  void InitMatrix(const double a, const double b, const double c) {
     data[0]=a; data[1]=b; data[2]=c;
   }
 
@@ -236,7 +236,7 @@ public:
   /** Length of the vector in a coordinate axis plane.
       Compute and return the euclidean norm of this vector projected into
       the coordinate axis plane idx1-idx2.   */
-  double Magnitude(int idx1, int idx2) const {
+  double Magnitude(const int idx1, const int idx2) const {
     return sqrt( data[idx1-1]*data[idx1-1] +  data[idx2-1]*data[idx2-1] );
   }
 
@@ -249,7 +249,7 @@ public:
       Compute and return the euclidean dot (or scalar) product of two vectors
       v1 and v2 */
   friend inline double DotProduct(const FGColumnVector3& v1, const FGColumnVector3& v2) {
-    return v1(1)*v2(1) + v1(2)*v2(2) + v1(3)*v2(3);
+    return v1.data[0]*v2.data[0] + v1.data[1]*v2.data[1] + v1.data[2]*v2.data[2];
   }
 
 private:
@@ -261,7 +261,8 @@ private:
 /** Scalar multiplication.
     @param scalar scalar value to multiply with.
     @param A Vector to multiply.
-    Multiply the Vector with a scalar value.*/
+    Multiply the Vector with a scalar value. Note: At this time, this
+    operator MUST be inlined, or a multiple definition link error will occur.*/
 inline FGColumnVector3 operator*(double scalar, const FGColumnVector3& A) {
   // use already defined operation.
   return A*scalar;
