@@ -15,5 +15,8 @@ EXTRA_DIST = \
 	speedbrakes.xml \
 	tailhook.xml
 
+aircraft = f104
+
 check-local:
-	-xmllint --noout --schema $(top_srcdir)/JSBSimSystem.xsd $(EXTRA_DIST)
+	-xmllint --noout --schema $(top_srcdir)/JSBSimSystem.xsd \
+	  --path $(top_srcdir)/aircraft/$(aircraft)/Systems $(EXTRA_DIST)
