@@ -44,13 +44,12 @@ INCLUDES
 #include <iosfwd>
 
 #include "FGColumnVector3.h"
-#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.13 2010/12/06 12:56:34 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.14 2010/12/07 12:57:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +71,7 @@ CLASS DOCUMENTATION
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class MatrixException : public FGJSBBase
+class MatrixException //: public FGJSBBase
 {
 public:
   std::string Message;
@@ -90,7 +89,7 @@ CLASS DOCUMENTATION
 DECLARATION: FGMatrix33
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGMatrix33 : public FGJSBBase
+class FGMatrix33
 {
 public:
 
@@ -122,8 +121,6 @@ public:
     data[6] = M.data[6];
     data[7] = M.data[7];
     data[8] = M.data[8];
-
-    // Debug(0);
   }
 
   /** Initialization by given values.
@@ -153,13 +150,11 @@ public:
     data[6] = m13;
     data[7] = m23;
     data[8] = m33;
-
-    // Debug(0);
   }
 
   /** Destructor.
    */
-  ~FGMatrix33(void) { /* Debug(1); */ }
+  ~FGMatrix33(void) {}
 
   /** Prints the contents of the matrix.
       @param delimeter the item separator (tab or comma)
@@ -437,8 +432,6 @@ public:
 
 private:
   double data[eRows*eColumns];
-
-  void Debug(int from);
 };
 
 /** Scalar multiplication.

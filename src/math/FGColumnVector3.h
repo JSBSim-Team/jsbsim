@@ -41,13 +41,12 @@ INCLUDES
 
 #include <iosfwd>
 #include <string>
-#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.15 2010/12/06 12:56:34 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.16 2010/12/07 12:57:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,14 +60,14 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 element column vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.15 2010/12/06 12:56:34 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.16 2010/12/07 12:57:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGColumnVector3 : public FGJSBBase
+class FGColumnVector3
 {
 public:
   /** Default initializer.
@@ -84,7 +83,6 @@ public:
     data[0] = X;
     data[1] = Y;
     data[2] = Z;
-//    Debug(0);
   }
 
   /** Copy constructor.
@@ -94,11 +92,10 @@ public:
     data[0] = v.data[0];
     data[1] = v.data[1];
     data[2] = v.data[2];
-//    Debug(0);
   }
 
   /// Destructor.
-  ~FGColumnVector3(void) { /* Debug(1); */ }
+  ~FGColumnVector3(void) { }
 
   /** Read access the entries of the vector.
       @param idx the component index.
@@ -236,9 +233,7 @@ public:
   /** Length of the vector in a coordinate axis plane.
       Compute and return the euclidean norm of this vector projected into
       the coordinate axis plane idx1-idx2.   */
-  double Magnitude(const int idx1, const int idx2) const {
-    return sqrt( data[idx1-1]*data[idx1-1] +  data[idx2-1]*data[idx2-1] );
-  }
+  double Magnitude(const int idx1, const int idx2) const;
 
   /** Normalize.
       Normalize the vector to have the Magnitude() == 1.0. If the vector
@@ -254,8 +249,6 @@ public:
 
 private:
   double data[3];
-
-  void Debug(int from);
 };
 
 /** Scalar multiplication.

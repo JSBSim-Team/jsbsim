@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.21 2010/12/06 12:56:34 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.22 2010/12/07 12:57:14 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -505,8 +505,6 @@ private:
   /** The cached sines and cosines of the euler angles.  */
   mutable FGColumnVector3 mEulerSines;
   mutable FGColumnVector3 mEulerCosines;
-
-  void Debug(int from) const;
 
   void InitializeFromEulerAngles(double phi, double tht, double psi);
 };
