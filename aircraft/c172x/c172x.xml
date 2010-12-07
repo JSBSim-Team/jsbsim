@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.84 $</version>
+        <version>$Revision: 1.85 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -1176,23 +1176,19 @@
     <input port="1137"/>
 -->
 
-    <output name="JSBout172B.csv" type="CSV" rate="10">
+    <output name="JSBout172B.csv" type="CSV" rate="120">
         <rates> ON             </rates>
         <velocities> ON        </velocities>
         <position> ON          </position>
         <atmosphere> ON       </atmosphere>
         <fcs> ON               </fcs>
-        <ground_reactions> OFF </ground_reactions>
+        <ground_reactions> ON </ground_reactions>
         <propulsion> ON       </propulsion>
-        <property> fcs/steer-cmd-norm </property>
-<!--        <simulation> ON        </simulation>
+        <simulation> ON        </simulation>
         <massprops> OFF        </massprops>
         <forces> OFF           </forces>
         <moments> OFF          </moments>
-        <position> ON          </position>
-        <fcs> ON               </fcs>
         <aerosurfaces> ON      </aerosurfaces>
-        <ground_reactions> OFF </ground_reactions> -->
     </output>
 
 <!---

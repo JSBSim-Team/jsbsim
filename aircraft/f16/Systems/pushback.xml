@@ -10,7 +10,7 @@
      <default value="-1"/>
      <test value="0">
        /sim/model/pushback/position-norm gt 0.95
-       /gear/gear/wow == 1
+       gear/unit[0]/WOW == 1
        gear/unit[0]/wheel-speed-fps lt 50
      </test>
    </switch>
