@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.85 $</version>
+        <version>$Revision: 1.86 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -98,18 +98,6 @@
             <spring_coeff unit="LBS/FT">1800</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">500</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">2000</damping_coeff_rebound>
-
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.55</rolling>
-              <side unit="FT/SEC">1.10</side>
-            </relaxation_velocity> 
-
-            <force_lag_filter>
-              <rolling> 120 </rolling>
-              <side> 120 </side>
-            </force_lag_filter>
-            <wheel_slip_filter> 120 </wheel_slip_filter>
-
             <max_steer unit="DEG">10</max_steer>
             <brake_group>NONE</brake_group>
             <retractable>0</retractable>
@@ -127,17 +115,6 @@
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.55</rolling>
-              <side unit="FT/SEC">1.10</side>
-            </relaxation_velocity>
-
-            <force_lag_filter>
-              <rolling> 120 </rolling>
-              <side> 120 </side>
-            </force_lag_filter>
-            <wheel_slip_filter> 120 </wheel_slip_filter>
-
             <max_steer unit="DEG">0</max_steer>
             <brake_group>LEFT</brake_group>
             <retractable>0</retractable>
@@ -155,17 +132,6 @@
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
-            <relaxation_velocity>
-              <rolling unit="FT/SEC">0.55</rolling>
-              <side unit="FT/SEC">1.10</side>
-            </relaxation_velocity>
-
-            <force_lag_filter>
-              <rolling> 120 </rolling>
-              <side> 120 </side>
-            </force_lag_filter>
-            <wheel_slip_filter> 120 </wheel_slip_filter>
-
             <max_steer unit="DEG">0</max_steer>
             <brake_group>RIGHT</brake_group>
             <retractable>0</retractable>
