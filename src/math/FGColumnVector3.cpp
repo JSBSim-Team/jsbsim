@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.13 2010/08/08 00:19:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.14 2010/12/07 12:57:14 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,47 +125,11 @@ FGColumnVector3& FGColumnVector3::Normalize(void)
   return *this;
 }
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-//    The bitmasked value choices are as follows:
-//    unset: In this case (the default) JSBSim would only print
-//       out the normally expected messages, essentially echoing
-//       the config files as they are read. If the environment
-//       variable is not set, debug_lvl is set to 1 internally
-//    0: This requests JSBSim not to output any messages
-//       whatsoever.
-//    1: This value explicity requests the normal JSBSim
-//       startup messages
-//    2: This value asks for a message to be printed out when
-//       a class is instantiated
-//    4: When this value is set, a message is displayed when a
-//       FGModel object executes its Run() method
-//    8: When this value is set, various runtime state variables
-//       are printed out periodically
-//    16: When set various parameters are sanity checked and
-//       a message is printed out when they go out of bounds
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGColumnVector3::Debug(int from)
-{
-  if (debug_lvl <= 0) return;
-
-  if (debug_lvl & 1) { // Standard console startup message output
-  }
-  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGColumnVector3" << endl;
-    if (from == 1) cout << "Destroyed:    FGColumnVector3" << endl;
-  }
-  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
-  }
-  if (debug_lvl & 8 ) { // Runtime state variables
-  }
-  if (debug_lvl & 16) { // Sanity checking
-  }
-  if (debug_lvl & 64) {
-    if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
-    }
-  }
+double FGColumnVector3::Magnitude(const int idx1, const int idx2) const {
+  return sqrt( data[idx1-1]*data[idx1-1] +  data[idx2-1]*data[idx2-1] );
 }
+
 
 } // namespace JSBSim

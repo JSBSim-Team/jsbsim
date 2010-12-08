@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon S. Berndt </author>
         <filecreationdate> 2010-01-14 </filecreationdate>
-        <version> $Revision: 1.1 $ </version>
+        <version> $Revision: 1.2 $ </version>
         <description>
           Rough model of the DIRECT Jupiter-246 
           Lunar Crew Launch Vehicle Configuration.
@@ -211,8 +211,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0 </x>
+        <location unit="FT">
+          <x>   78.0 </x>
           <y>    0.0 </y>
           <z>    8.0 </z>
         </location>
@@ -225,8 +225,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0   </x>
+        <location unit="FT">
+          <x>   78.0   </x>
           <y>    6.928 </y>
           <z>    4.0   </z>
         </location>
@@ -239,8 +239,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0   </x>
+        <location unit="FT">
+          <x>   78.0   </x>
           <y>    6.928 </y>
           <z>   -4.0   </z>
         </location>
@@ -253,8 +253,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0 </x>
+        <location unit="FT">
+          <x>   78.0 </x>
           <y>    0.0 </y>
           <z>   -8.0 </z>
         </location>
@@ -267,8 +267,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0   </x>
+        <location unit="FT">
+          <x>   78.0   </x>
           <y>   -6.928 </y>
           <z>   -4.0   </z>
         </location>
@@ -281,8 +281,8 @@
           <length unit="FT"> 6 </length>
         </form>
         <weight unit="LBS"> 610 </weight>
-        <location unit="IN">
-          <x>  936.0 </x>
+        <location unit="FT">
+          <x>   78.0 </x>
           <y>   -6.928 </y>
           <z>    4.0   </z>
         </location>
@@ -384,9 +384,7 @@
           <contents unit="LBS"> 1114092 </contents>
       </tank>
 
-      <!-- Right SRB, Engine [1]-->
-      
-      <engine file="SRB">
+      <engine file="SRB"> <!-- Right SRB, Engine [1]-->
         <location unit="IN">
           <x> 2676 </x>
           <y>  225 </y>
@@ -419,7 +417,7 @@
 
       <!-- Core Stage -->
 
-      <engine file="SSME"> <!-- SSME Engine 0 -->
+      <engine file="SSME"> <!-- SSME Engine 0 (overall engine index 2) -->
             <location unit="IN">
               <x> 3500 </x>
               <y>    0 </y>
@@ -436,7 +434,7 @@
             </thruster>
       </engine>
 
-      <engine file="SSME"> <!-- SSME Engine 1 -->
+      <engine file="SSME"> <!-- SSME Engine 1 (overall engine index 3) -->
         <location unit="IN">
           <x> 3500 </x>
           <y>    0 </y>
@@ -453,7 +451,7 @@
         </thruster>
       </engine>
 
-      <engine file="SSME"> <!-- SSME Engine 2 -->
+      <engine file="SSME"> <!-- SSME Engine 2 (overall engine index 4) -->
         <location unit="IN">
           <x> 3500 </x>
           <y>    0 </y>
@@ -470,7 +468,7 @@
         </thruster>
       </engine>
 
-      <engine file="SSME"> <!-- SSME Engine 3 -->
+      <engine file="SSME"> <!-- SSME Engine 3 (overall engine index 5) -->
         <location unit="IN">
           <x> 3500 </x>
           <y>    0 </y>
@@ -488,36 +486,146 @@
       </engine>
 
       <tank type="OXIDIZER">
-          <!-- Tank number 2 (LOX) -->
-          <location unit="IN">
-            <x> 1956 </x>
-            <y>    0 </y>
-            <z>    0 </z>
-          </location>
+        <!-- Tank number 2 (LOX) -->
+        <location unit="IN">
+          <x> 1956 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </location>
         <drain_location unit="IN">
           <x> 2076 </x>
           <y>    0 </y>
           <z>    0 </z>
         </drain_location>
-          <capacity unit="LBS"> 1389500 </capacity>
-          <contents unit="LBS"> 1389500 </contents>
-        </tank>
+        <capacity unit="LBS"> 1389500 </capacity>
+        <contents unit="LBS"> 1389500 </contents>
+      </tank>
 
       <tank type="FUEL">
-          <!-- Tank number 3 (LH2) -->
-          <location unit="IN">
-            <x> 2520 </x>
-            <y>    0 </y>
-            <z>    0 </z>
-          </location>
-          <drain_location unit="IN">
-            <x>  3300 </x>
-            <y>    0 </y>
-            <z>    0 </z>
-          </drain_location>
-          <capacity unit="LBS"> 231571 </capacity>
-          <contents unit="LBS"> 231571 </contents>
+        <!-- Tank number 3 (LH2) -->
+        <location unit="IN">
+          <x> 2520 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </location>
+        <drain_location unit="IN">
+          <x>  3300 </x>
+          <y>    0 </y>
+          <z>    0 </z>
+        </drain_location>
+        <capacity unit="LBS"> 231571 </capacity>
+        <contents unit="LBS"> 231571 </contents>
       </tank>
+
+      <!-- Upper Stage -->
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #0">
+        <!-- RL10 Engine 1 (overall engine index 6) -->
+        <location unit="FT">
+          <x>   78.0 </x>
+          <y>    0.0 </y>
+          <z>    8.0 </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>   78.0 </x>
+            <y>    0.0 </y>
+            <z>    8.0 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #1">
+        <!-- RL10 Engine 2 (overall engine index 7) -->
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>    6.928 </y>
+          <z>    4.0   </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>   78.0   </x>
+            <y>    6.928 </y>
+            <z>    4.0   </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #2">
+        <!-- RL10 Engine 3 (overall engine index 8) -->
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>    6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>   78.0   </x>
+            <y>    6.928 </y>
+            <z>   -4.0   </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #3">
+        <!-- RL10 Engine 4 (overall engine index 9) -->
+        <location unit="FT">
+          <x>   78.0 </x>
+          <y>    0.0 </y>
+          <z>   -8.0 </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>   78.0 </x>
+            <y>    0.0 </y>
+            <z>   -8.0 </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #4">
+        <!-- RL10 Engine 5 (overall engine index 10) -->
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>   -6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>   78.0   </x>
+            <y>   -6.928 </y>
+            <z>   -4.0   </z>
+          </location>
+        </thruster>
+      </engine>
+
+      <engine file="RL10" name="RL10-B-2 Upper Stage Engine #5">
+        <!-- RL10 Engine 6 (overall engine index 11) -->
+        <location unit="FT">
+          <x>  78.0 </x>
+          <y>   -6.928 </y>
+          <z>    4.0   </z>
+        </location>
+        <feed>4</feed>
+        <feed>5</feed>
+        <thruster file="RL10_nozzle">
+          <location unit="FT">
+            <x>  78.0 </x>
+            <y>   -6.928 </y>
+            <z>    4.0   </z>
+          </location>
+        </thruster>
+      </engine>
 
       <tank type="OXIDIZER">
         <!-- Tank number 4 (LOX) Upper Stage -->
@@ -558,7 +666,7 @@
     <system name="J246 First Stage Effectors" file="J246FirstStageEffectors.xml"/>
     <system name="J246 Second Stage Effectors" file="J246SecondStageEffectors.xml"/>
 
-  <aerodynamics>
+    <aerodynamics>
 
         <axis name="DRAG">
             <function name="aero/coefficient/CDmin">
