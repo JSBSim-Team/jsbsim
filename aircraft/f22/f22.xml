@@ -6,9 +6,9 @@
 
     <fileheader>
         <author>Brian Mills </author>
-        <filecreationdate> 2009-05-24 </filecreationdate>
-        <version> $Revision: 1.37 $ </version>
-        <description> Models an F-22A Raptor </description>
+        <filecreationdate>2009-05-24</filecreationdate>
+        <version>$Revision: 1.38 $</version>
+        <description>Models an F-22A Raptor</description>
         <license>
             <licenseName>GPL (General Public License)</licenseName>
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -1074,7 +1074,7 @@
 
             <!-- LQR Tracker Integral TVC pitch rate controller-->
             <fcs_function name="fcs/tvc-pitch-cmd">
-                <description>thrust vector control lqr regulator</description>
+                <!-- description>thrust vector control lqr regulator</description -->
                 <function>
                     <product>
                         <sum>
@@ -1563,7 +1563,7 @@
 
             <!-- Needed to compute TVC pitch moment contribution-->
             <fcs_function name="fcs/thrust-normalized">
-                <description>Normalized thrust output</description>
+                <!-- description>Normalized thrust output</description -->
                 <function>
                     <quotient>
                         <property>propulsion/engine/thrust-lbs</property>
@@ -1770,23 +1770,21 @@
     <aerodynamics>
 
         <!-- Shift the aero ref point aft. F-22 is 10% unstable at subsonic, stable at around Mach 1.2+ -->
-        <aero_ref_pt_shift_x>
-            <function>
-                <table>
-                    <independentVar>velocities/mach</independentVar>
-                    <tableData>
-                        0.0000    0.0000
-                        0.6000  0.01
-                        0.8000  0.025
-                        0.9000  0.035
-                        1.0000  0.045
-                        1.1000  0.1
-                        1.2000  0.105    
-                        1.3000  0.11
-                    </tableData>
-                </table>
-            </function>
-        </aero_ref_pt_shift_x>
+        <function name="aero_ref_pt_shift_x">
+            <table>
+                <independentVar>velocities/mach</independentVar>
+                <tableData>
+                    0.0000    0.0000
+                    0.6000  0.01
+                    0.8000  0.025
+                    0.9000  0.035
+                    1.0000  0.045
+                    1.1000  0.1
+                    1.2000  0.105    
+                    1.3000  0.11
+                </tableData>
+            </table>
+        </function>
 
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
