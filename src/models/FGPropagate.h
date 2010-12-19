@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.53 2010/11/28 13:02:43 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.54 2010/12/19 15:31:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.53 2010/11/28 13:02:43 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.54 2010/12/19 15:31:47 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -441,7 +441,7 @@ public:
       units feet
       @return distance of the local terrain from the center of the earth.
       */
-  double GetLocalTerrainRadius(void) const;
+  double GetLocalTerrainRadius(void) const { return LocalTerrainRadius; }
 
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
   double GetTerrainElevation(void) const;
@@ -466,13 +466,13 @@ public:
       The quaternion class, being the means by which the orientation of the
       vehicle is stored, manages the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.  */
-  const FGMatrix33& GetTl2b(void) const { return VState.qAttitudeLocal.GetT(); }
+  const FGMatrix33& GetTl2b(void) const { return Tl2b; }
 
   /** Retrieves the body-to-local transformation matrix.
       The quaternion class, being the means by which the orientation of the
       vehicle is stored, manages the body-to-local transformation matrix.
       @return a reference to the body-to-local matrix.  */
-  const FGMatrix33& GetTb2l(void) const { return VState.qAttitudeLocal.GetTInv(); }
+  const FGMatrix33& GetTb2l(void) const { return Tb2l; }
 
   /** Retrieves the ECEF-to-body transformation matrix.
       @return a reference to the ECEF-to-body transformation matrix.  */
@@ -484,55 +484,43 @@ public:
 
   /** Retrieves the ECI-to-body transformation matrix.
       @return a reference to the ECI-to-body transformation matrix.  */
-  const FGMatrix33& GetTi2b(void) const { return VState.qAttitudeECI.GetT(); }
+  const FGMatrix33& GetTi2b(void) const { return Ti2b; }
 
   /** Retrieves the body-to-ECI transformation matrix.
       @return a reference to the body-to-ECI matrix.  */
-  const FGMatrix33& GetTb2i(void) const { return VState.qAttitudeECI.GetTInv(); }
+  const FGMatrix33& GetTb2i(void) const { return Tb2i; }
 
   /** Retrieves the ECEF-to-ECI transformation matrix.
       @return a reference to the ECEF-to-ECI transformation matrix.  */
-  const FGMatrix33& GetTec2i(void);
+  const FGMatrix33& GetTec2i(void) const { return Tec2i; }
 
   /** Retrieves the ECI-to-ECEF transformation matrix.
       @return a reference to the ECI-to-ECEF matrix.  */
-  const FGMatrix33& GetTi2ec(void);
+  const FGMatrix33& GetTi2ec(void) const { return Ti2ec; }
 
   /** Retrieves the ECEF-to-local transformation matrix.
       Retrieves the ECEF-to-local transformation matrix. Note that the so-called
       local from is also know as the NED frame (for North, East, Down).
       @return a reference to the ECEF-to-local matrix.  */
-  const FGMatrix33& GetTec2l(void) const { return VState.vLocation.GetTec2l(); }
+  const FGMatrix33& GetTec2l(void) const { return Tec2l; }
 
   /** Retrieves the local-to-ECEF transformation matrix.
       Retrieves the local-to-ECEF transformation matrix. Note that the so-called
       local from is also know as the NED frame (for North, East, Down).
       @return a reference to the local-to-ECEF matrix.  */
-  const FGMatrix33& GetTl2ec(void) const { return VState.vLocation.GetTl2ec(); }
+  const FGMatrix33& GetTl2ec(void) const { return Tl2ec; }
 
   /** Retrieves the local-to-inertial transformation matrix.
       @return a reference to the local-to-inertial transformation matrix.  */
-  const FGMatrix33& GetTl2i(void)  { return VState.vLocation.GetTl2i(); }
+  const FGMatrix33& GetTl2i(void) const { return Tl2i; }
 
   /** Retrieves the inertial-to-local transformation matrix.
       @return a reference to the inertial-to-local matrix.  */
-  const FGMatrix33& GetTi2l(void)  { return VState.vLocation.GetTi2l(); }
+  const FGMatrix33& GetTi2l(void) const { return Ti2l; }
 
   VehicleState* GetVState(void) { return &VState; }
 
-  void SetVState(VehicleState* vstate) {
-      VState.vLocation = vstate->vLocation;
-      UpdateLocationMatrices();
-      SetInertialOrientation(vstate->qAttitudeECI);
-      VehicleRadius = GetRadius();
-      VState.vUVW = vstate->vUVW;
-      vVel = GetTb2l() * VState.vUVW;
-      VState.vPQR = vstate->vPQR;
-      VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
-      VState.vInertialPosition = vstate->vInertialPosition;
-
-      InitializeDerivatives();
-  }
+  void SetVState(VehicleState* vstate);
 
   void InitializeDerivatives(void);
 
@@ -554,50 +542,46 @@ public:
 
 // SET functions
 
-  void SetLongitude(double lon) {
-      VState.vLocation.SetLongitude(lon);
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
+  void SetLongitude(double lon)
+  {
+    VState.vLocation.SetLongitude(lon);
+    UpdateVehicleState();
   }
   void SetLongitudeDeg(double lon) { SetLongitude(lon*degtorad); }
-  void SetLatitude(double lat) {
-      VState.vLocation.SetLatitude(lat);
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
+  void SetLatitude(double lat)
+  {
+    VState.vLocation.SetLatitude(lat);
+    UpdateVehicleState();
   }
   void SetLatitudeDeg(double lat) { SetLatitude(lat*degtorad); }
-  void SetRadius(double r) {
-      VState.vLocation.SetRadius(r);
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
+  void SetRadius(double r)
+  {
+    VState.vLocation.SetRadius(r);
+    VehicleRadius = r;
+    VState.vInertialPosition = Tec2i * VState.vLocation;
   }
-  void SetAltitudeASL(double altASL);
-  void SetAltitudeASLmeters(double altASL) {SetAltitudeASL(altASL/fttom);}
+  void SetAltitudeASL(double altASL) { SetRadius(altASL + SeaLevelRadius); }
+  void SetAltitudeASLmeters(double altASL) { SetRadius(altASL/fttom + SeaLevelRadius); }
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
   void SetTerrainElevation(double tt);
-  void SetDistanceAGL(double tt);
+  void SetDistanceAGL(double tt) { SetRadius(tt + LocalTerrainRadius); }
   void SetInitialState(const FGInitialCondition *);
-  void SetPosition(const double Lon, const double Lat, const double Radius) {
-      VState.vLocation.SetPosition(Lon, Lat, Radius);
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      VehicleRadius = GetRadius();
-      UpdateLocationMatrices();
+  void SetLocation(const FGLocation& l);
+  void SetLocation(const FGColumnVector3& lv)
+  {
+      FGLocation l = FGLocation(lv);
+      SetLocation(l);
   }
-  void SetLocation(const FGLocation& l) {
-      VState.vLocation = l;
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
-  }
-  void SetLocation(const FGColumnVector3& l) {
-      VState.vLocation = l;
-      VState.vInertialPosition = GetTec2i() * VState.vLocation;
-      UpdateLocationMatrices();
+  void SetPosition(const double Lon, const double Lat, const double Radius)
+  {
+      FGLocation l = FGLocation(Lon, Lat, Radius);
+      SetLocation(l);
   }
 
   void RecomputeLocalTerrainRadius(void);
 
   void NudgeBodyLocation(FGColumnVector3 deltaLoc) {
-    vDeltaXYZEC = GetTb2ec()*deltaLoc;
+    vDeltaXYZEC = Tb2ec*deltaLoc;
     VState.vLocation -= vDeltaXYZEC;
   }
 
@@ -678,13 +662,11 @@ private:
 
   void UpdateLocationMatrices(void);
   void UpdateBodyMatrices(void);
+  void UpdateVehicleState(void);
 
   void bind(void);
   void Debug(int from);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-#include "initialization/FGInitialCondition.h"
-
 #endif
