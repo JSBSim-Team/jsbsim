@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.74 2010/11/28 13:02:43 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.75 2010/12/19 15:31:47 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,8 +157,8 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
 
-  Ti2ec = GetTi2ec();         // ECI to ECEF transform
-  Tec2i = Ti2ec.Transposed(); // ECEF to ECI frame transform
+  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   VState.vInertialPosition = Tec2i * VState.vLocation;
 
@@ -260,8 +260,8 @@ bool FGPropagate::Run(void)
   VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
-  Ti2ec = GetTi2ec();          // ECI to ECEF transform
-  Tec2i = Ti2ec.Transposed();  // ECEF to ECI frame transform
+  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   // 3. Update the location from the updated Ti2ec and inertial position
   VState.vLocation = Ti2ec*VState.vInertialPosition;
@@ -619,22 +619,22 @@ void FGPropagate::ResolveFrictionForces(double dt)
 
 void FGPropagate::UpdateLocationMatrices(void)
 {
-  Tl2ec = GetTl2ec();          // local to ECEF transform
-  Tec2l = Tl2ec.Transposed();  // ECEF to local frame transform
-  Ti2l  = GetTi2l();
-  Tl2i  = Ti2l.Transposed();
+  Tl2ec = VState.vLocation.GetTl2ec(); // local to ECEF transform
+  Tec2l = Tl2ec.Transposed();          // ECEF to local frame transform
+  Ti2l  = VState.vLocation.GetTi2l();  // ECI to local frame transform
+  Tl2i  = Ti2l.Transposed();           // local to ECI transform
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::UpdateBodyMatrices(void)
 {
-  Ti2b  = GetTi2b();           // ECI to body frame transform
-  Tb2i  = Ti2b.Transposed();   // body to ECI frame transform
-  Tl2b  = Ti2b*Tl2i;           // local to body frame transform
-  Tb2l  = Tl2b.Transposed();   // body to local frame transform
-  Tec2b = Tl2b * Tec2l;        // ECEF to body frame transform
-  Tb2ec = Tec2b.Transposed();  // body to ECEF frame tranform
+  Ti2b  = VState.qAttitudeECI.GetT(); // ECI to body frame transform
+  Tb2i  = Ti2b.Transposed();          // body to ECI frame transform
+  Tl2b  = Ti2b*Tl2i;                  // local to body frame transform
+  Tb2l  = Tl2b.Transposed();          // body to local frame transform
+  Tec2b = Tl2b * Tec2l;               // ECEF to body frame transform
+  Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -651,7 +651,7 @@ void FGPropagate::SetInertialOrientation(FGQuaternion Qi) {
 void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
   VState.vInertialVelocity = Vi;
   CalculateUVW();
-  vVel = GetTb2l() * VState.vUVW;
+  vVel = Tb2l * VState.vUVW;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -716,36 +716,6 @@ double FGPropagate::GetTerrainElevation(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//Todo: when should this be called - when should the new EPA be used to
-// calculate the transformation matrix, so that the matrix is not a step
-// ahead of the sim and the associated calculations?
-const FGMatrix33& FGPropagate::GetTi2ec(void)
-{
-  return VState.vLocation.GetTi2ec();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-const FGMatrix33& FGPropagate::GetTec2i(void)
-{
-  return VState.vLocation.GetTec2i();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropagate::SetAltitudeASL(double altASL)
-{
-  VState.vLocation.SetRadius( altASL + SeaLevelRadius );
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropagate::GetLocalTerrainRadius(void) const
-{
-  return LocalTerrainRadius;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGL(void) const
 {
@@ -754,9 +724,48 @@ double FGPropagate::GetDistanceAGL(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetDistanceAGL(double tt)
+void FGPropagate::SetVState(VehicleState* vstate)
 {
-  VState.vLocation.SetRadius( tt + LocalTerrainRadius );
+  VState.vLocation = vstate->vLocation;
+  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
+  Tec2i = Ti2ec.Transposed();
+  UpdateLocationMatrices();
+  SetInertialOrientation(vstate->qAttitudeECI);
+  RecomputeLocalTerrainRadius();
+  VehicleRadius = GetRadius();
+  VState.vUVW = vstate->vUVW;
+  vVel = Tb2l * VState.vUVW;
+  VState.vPQR = vstate->vPQR;
+  VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
+  VState.vPQRi_i = Tb2i * VState.vPQRi;
+  VState.vInertialPosition = vstate->vInertialPosition;
+
+  InitializeDerivatives();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::UpdateVehicleState(void)
+{
+  RecomputeLocalTerrainRadius();
+  VehicleRadius = GetRadius();
+  VState.vInertialPosition = Tec2i * VState.vLocation;
+  UpdateLocationMatrices();
+  UpdateBodyMatrices();
+  vVel = Tb2l * VState.vUVW;
+  VState.qAttitudeLocal = Tl2b.GetQuaternion();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetLocation(const FGLocation& l)
+{
+  VState.vLocation = l;
+  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
+  Tec2i = Ti2ec.Transposed();
+  UpdateVehicleState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -784,7 +793,7 @@ void FGPropagate::DumpState(void)
   cout << endl << "  " << underon
        <<   "Velocity" << underoff << endl;
   cout << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)" << endl;
-  cout << "    ECEF:  " << (GetTb2ec() * VState.vUVW).Dump(", ")  << " (x,y,z in ft/s)"  << endl;
+  cout << "    ECEF:  " << (Tb2ec * VState.vUVW).Dump(", ")  << " (x,y,z in ft/s)"  << endl;
   cout << "    Local: " << GetVel() << " (n,e,d in ft/sec)" << endl;
   cout << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)" << endl;
 
