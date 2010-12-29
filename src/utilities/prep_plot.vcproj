@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\simgear\xml;..\input_output"
+				AdditionalIncludeDirectories="..\;..\simgear\xml;..\input_output"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
