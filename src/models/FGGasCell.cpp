@@ -53,7 +53,7 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.12 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.13 2010/12/29 22:39:25 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,20 +206,20 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
   base_property_name = CreateIndexedPropertyName("buoyant_forces/gas-cell", CellNum);
 
   property_name = base_property_name + "/max_volume-ft3";
-  PropertyManager->Tie( property_name.c_str(), &MaxVolume );
+  PropertyManager->Tie( property_name.c_str(), &MaxVolume, false );
   PropertyManager->SetWritable( property_name, false );
   property_name = base_property_name + "/temp-R";
-  PropertyManager->Tie( property_name.c_str(), &Temperature );
+  PropertyManager->Tie( property_name.c_str(), &Temperature, false );
   property_name = base_property_name + "/pressure-psf";
-  PropertyManager->Tie( property_name.c_str(), &Pressure );
+  PropertyManager->Tie( property_name.c_str(), &Pressure, false );
   property_name = base_property_name + "/volume-ft3";
-  PropertyManager->Tie( property_name.c_str(), &Volume );
+  PropertyManager->Tie( property_name.c_str(), &Volume, false );
   property_name = base_property_name + "/buoyancy-lbs";
-  PropertyManager->Tie( property_name.c_str(), &Buoyancy );
+  PropertyManager->Tie( property_name.c_str(), &Buoyancy, false );
   property_name = base_property_name + "/contents-mol";
-  PropertyManager->Tie( property_name.c_str(), &Contents );
+  PropertyManager->Tie( property_name.c_str(), &Contents, false );
   property_name = base_property_name + "/valve_open";
-  PropertyManager->Tie( property_name.c_str(), &ValveOpen );
+  PropertyManager->Tie( property_name.c_str(), &ValveOpen, false );
 
   Debug(0);
 
@@ -646,23 +646,23 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent)
   base_property_name = CreateIndexedPropertyName(base_property_name + "/ballonet", CellNum);
 
   property_name = base_property_name + "/max_volume-ft3";
-  PropertyManager->Tie( property_name, &MaxVolume );
+  PropertyManager->Tie( property_name, &MaxVolume, false );
   PropertyManager->SetWritable( property_name, false );
 
   property_name = base_property_name + "/temp-R";
-  PropertyManager->Tie( property_name, &Temperature );
+  PropertyManager->Tie( property_name, &Temperature, false );
 
   property_name = base_property_name + "/pressure-psf";
-  PropertyManager->Tie( property_name, &Pressure );
+  PropertyManager->Tie( property_name, &Pressure, false );
 
   property_name = base_property_name + "/volume-ft3";
-  PropertyManager->Tie( property_name, &Volume );
+  PropertyManager->Tie( property_name, &Volume, false );
 
   property_name = base_property_name + "/contents-mol";
-  PropertyManager->Tie( property_name, &Contents );
+  PropertyManager->Tie( property_name, &Contents, false );
 
   property_name = base_property_name + "/valve_open";
-  PropertyManager->Tie( property_name, &ValveOpen );
+  PropertyManager->Tie( property_name, &ValveOpen, false );
 
   Debug(0);
 
