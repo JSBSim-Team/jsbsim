@@ -15,7 +15,8 @@
   -->
 
   <property value="0"> guidance/second-stage-flight-flag </property>
-  
+  <property value="0"> guidance/upper-stage-flight-flag </property>
+
   <channel name="GNC Executive MET Clock">
 
     <switch name="guidance/executive/launch-time">
@@ -36,26 +37,32 @@
   #############################################################################
   -->
 
-  <channel name="Guidance Modes">                       <!-- Determine GNC modes                        -->
-                                                        <!-- "0" represents the vertical rise mode      -->
+  <channel name="Guidance Modes">                       <!-- Determine GNC modes                         -->
+                                                        <!-- "0" represents the vertical rise mode       -->
     <switch name="guidance/executive/current-mode">
       <default value="-1"/>
-      <test value="4">                                  <!-- "4" represents the PEG mode, in second     -->
-        guidance/second-stage-flight-flag eq 1          <!-- stage flight.                              -->
+      <test value="6">                                  <!-- "6" represents the *** mode, in upper       -->
+        guidance/upper-stage-flight-flag eq 1           <!-- stage flight.                               -->
       </test>
-      <test logic="OR" value="3">                       <!-- "3" represents the zero alpha mode, with   -->
-        aero/qbar-psf ge 100.0                          <!-- qbar exceeding 100 psf @ 14 seconds.       -->
-        guidance/executive/MET ge 30.0                  <!-- This mode "sticks", too, if MET >= 30.     -->
+      <test value="5">                                  <!-- "5" represents the *** mode, in second      -->
+        guidance/second-stage-flight-flag eq 1          <!-- stage flight.                               -->
       </test>
-      <test value="2">                                  <!-- "2" represents the gravity turn mode       -->
-        guidance/executive/MET ge 5.0                   <!-- This mode selected if MET .ge. 6 seconds,  -->
-      </test>                                           <!-- corresponding to an altitude gain of 350'. -->
-      <test value="1">                                  <!-- "1" represents the stay vertical mode.     --> 
-        guidance/executive/MET ge 999.0                 <!-- This mode selected if MET .ge. 2 seconds   -->
-      </test>                                           <!-- This mode is turned off for the moment.    -->
-      <test value="0">                                  <!-- "0" represents the vertical rise mode.     --> 
-        guidance/executive/MET ge 0.0                   <!-- This mode selected if MET .ge. 0 seconds   -->
-      </test>                                           <!-- This mode is turned off for the moment.    -->
+      <test logic="OR" value="4">                       <!-- "4" represents the zero alpha mode, with    -->
+        aero/qbar-psf ge 1000.0                         <!-- qbar exceeding 100 psf @ 14 seconds.        -->
+        guidance/executive/MET ge 999.0                 <!-- This mode "sticks", too, if MET >= 30.      -->
+      </test>
+      <test value="3">                                  <!-- "3" represents the ascent gravity turn mode -->
+        guidance/executive/MET ge 10.0                  <!-- This mode selected if MET .ge. 10 seconds.  -->
+      </test>                                           <!--                                             -->
+      <test value="2">                                  <!-- "2" represents the initial angle turn mode  -->
+        guidance/executive/MET ge 6.0                   <!-- This mode selected if MET .ge. 6 seconds,   -->
+      </test>                                           <!-- corresponding to an altitude gain of 350'.  -->
+      <test value="1">                                  <!-- "1" represents the stay vertical mode.      --> 
+        guidance/executive/MET ge 999.0                 <!-- This mode selected if MET .ge. 2 seconds    -->
+      </test>                                           <!-- This mode is turned off for the moment.     -->
+      <test value="0">                                  <!-- "0" represents the vertical rise mode.      --> 
+        guidance/executive/MET ge 0.0                   <!-- This mode selected if MET .ge. 0 seconds    -->
+      </test>                                           <!-- This mode is turned off for the moment.     -->
     </switch>
 
     <switch name="guidance/executive/integrator-wind-up-guard-0">
@@ -83,6 +90,19 @@
       <test value="0"> guidance/executive/current-mode ge 4 </test>
     </switch>
 
+    <switch name="guidance/executive/gravity-turn-pitch-rate-command">
+      <description>
+        Set the pitch rate dependent on guidance mode.
+      </description>
+      <default value="0.0"/>
+      <test value="0.008">
+        guidance/executive/current-mode eq 2
+      </test>
+      <test value="0.0035">
+        guidance/executive/current-mode ge 3
+      </test>
+    </switch>
+    
   </channel>
 
   <!--
@@ -120,6 +140,18 @@
     <switch name="guidance/executive/las-jettison-flag">
       <default value="0"/>
       <test value="1"> guidance/executive/MET ge 160.0 </test>
+    </switch>
+
+    <switch name="guidance/upper-stage-flight-flag-switch">
+      <default value="0"/>
+      <test value="1">
+        guidance/executive/MET gt 330.0
+        propulsion/engine[2]/thrust-lbs le 500.0
+        propulsion/engine[3]/thrust-lbs le 500.0
+        propulsion/engine[4]/thrust-lbs le 500.0
+        propulsion/engine[5]/thrust-lbs le 500.0
+      </test>
+      <output> guidance/upper-stage-flight-flag </output>
     </switch>
 
   </channel>
