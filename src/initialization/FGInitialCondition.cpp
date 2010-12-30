@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.51 2010/12/12 19:53:06 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.52 2010/12/30 13:37:06 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -399,7 +399,11 @@ void FGInitialCondition::SetAlphaRadIC(double alfa)
 
   alpha = alfa;
   beta = atan2(v2(eV), v2(eU));
-  double cbeta = v2(eU) / vt, sbeta = v2(eV) / vt;
+  double cbeta=0.0, sbeta=0.0;
+  if (vt != 0.0) {
+    cbeta = v2(eU) / vt;
+    sbeta = v2(eV) / vt;
+  }
   Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
                            sbeta,         cbeta,      0.0,
                     salpha*cbeta, -salpha*sbeta,   calpha);
