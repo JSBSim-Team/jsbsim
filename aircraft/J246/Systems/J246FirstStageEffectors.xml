@@ -8,13 +8,16 @@
     <switch name="fcs/pitch-output-selector">
       <default value="0.0"/>
       <test value="control/peg-pitch-controller">
-        guidance/executive/current-mode eq 4 <!-- PEG mode -->
+        guidance/executive/current-mode eq 5 <!-- *** mode, second stage -->
       </test>
       <test value="control/gravity-turn-alpha-controller">
-        guidance/executive/current-mode eq 3 <!-- Zero alpha/beta mode -->
+        guidance/executive/current-mode eq 4 <!-- Zero alpha/beta mode -->
       </test>
       <test value="control/gravity-turn-pitch-rate-command-gain">
-        guidance/executive/current-mode eq 2 <!-- Gravity turn mode -->
+        guidance/executive/current-mode eq 3 <!-- Gravity turn mode -->
+      </test>
+      <test value="control/gravity-turn-pitch-rate-command-gain">
+        guidance/executive/current-mode eq 2 <!-- Initial kick angle turn mode -->
       </test>
       <test value="control/pitch-gain">
         guidance/executive/current-mode le 1 <!-- Vertical rise mode -->
@@ -55,7 +58,8 @@
         guidance/executive/current-mode eq 1 <!-- Roll-to-heading mode               -->
         guidance/executive/current-mode eq 2 <!-- Gravity turn angle pitch rate mode -->
         guidance/executive/current-mode eq 3 <!-- Gravity turn zero beta mode        -->
-        guidance/executive/current-mode eq 4 <!-- Gravity turn zero beta mode        -->
+        guidance/executive/current-mode eq 4 <!-- Zero alpha zero beta mode          -->
+        guidance/executive/current-mode eq 5 <!-- Second stage                       -->
       </test>
     </switch>
 

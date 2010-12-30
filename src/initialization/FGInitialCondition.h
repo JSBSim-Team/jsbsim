@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.23 2010/12/12 19:53:06 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.24 2010/12/30 13:37:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -202,7 +202,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.23 2010/12/12 19:53:06 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.24 2010/12/30 13:37:06 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -568,9 +568,10 @@ public:
   void SetTargetNlfIC(double nlf) { targetNlfIC=nlf; }
 
   /** Gets the initial flight path angle.
+      If total velocity is zero, this function returns zero.
       @return Initial flight path angle in radians */
   double GetFlightPathAngleRadIC(void) const
-  { return asin(GetClimbRateFpsIC() / vt); }
+  { return (vt == 0.0)?0.0:asin(GetClimbRateFpsIC() / vt); }
 
   /** Gets the initial angle of attack.
       @return Initial alpha in radians */

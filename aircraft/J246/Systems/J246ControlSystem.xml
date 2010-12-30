@@ -52,10 +52,7 @@
 
   </channel>
 
-  <!-- Interface property for commanding the gravity turn pitch rate -->
-  <property> control/gravity-turn-pitch-rate-command</property>
-
-  <channel name="Mode 2: Gravity turn">
+  <channel name="Mode 2, 3: Gravity turn">
 
     <!-- This is a simple controller to generate a small pitch rate to
              align heads down and ascending. -->
@@ -64,7 +61,7 @@
 
     <summer name="control/gravity-turn-pitch-rate-error">
       <input>  velocities/q-rad_sec </input>
-      <input> -control/gravity-turn-pitch-rate-command </input>
+      <input> -guidance/executive/gravity-turn-pitch-rate-command </input>
     </summer>
 
     <pid name="control/gravity-turn-pitch-rate-controller">
@@ -82,7 +79,7 @@
 
   </channel>
 
-  <channel name="Mode 3: Zero Alpha/Beta">
+  <channel name="Mode 4: Zero Alpha/Beta">
 
     <pid name="control/gravity-turn-alpha-controller">
       <input> aero/alpha-rad </input>
@@ -104,7 +101,7 @@
 
   <property value="0.0"> guidance/executive/peg-target-pitch-attitude </property>
 
-  <channel name="Mode 4:PEG (Powered Explicit Guidance)">
+  <channel name="Mode 5:*** Mode, Second Stage">
 
     <summer name="control/peg-pitch-rate-command">
       <input>  attitude/theta-rad </input>

@@ -7,7 +7,7 @@
     This run is for testing the J246 Launch Vehicle
   </description>
   <use aircraft="J246" initialize="LC39"/>
-  <run start="0.0" end="450" dt="0.008333">
+  <run start="0.0" end="850" dt="0.008333">
 
     <property value="2">simulation/integrator/rate/rotational</property>
     <property value="3">simulation/integrator/rate/translational</property>
@@ -17,7 +17,6 @@
     <!--<property value="23"> atmosphere/delta-T </property>-->
     <property> simulation/notify-time-trigger </property>
     <property value="1"> forces/hold-down </property>
-    <property value="0.008"> control/gravity-turn-pitch-rate-command </property>
 
     <event name="Winds aloft" continuous="true">
       <condition>simulation/sim-time-sec  ge  10000.05</condition>
@@ -103,30 +102,21 @@
     <event name="Vehicle state:" persistent="true">
       <description>Output message at 10 second intervals</description>
       <notify>
-        <property>velocities/vc-kts</property>
+        <property>velocities/eci-velocity-mag-fps</property>
         <property>position/h-agl-ft</property>
-        <property>forces/hold-down</property>
-        <property>fcs/throttle-cmd-norm[0]</property>
+        <property>aero/alpha-deg</property>
+        <property>guidance/executive/gravity-turn-pitch-rate-command</property>
+        <property>velocities/thetadot-rad_sec</property>
         <property>attitude/phi-rad</property>
         <property>attitude/theta-rad</property>
+        <property>forces/hold-down</property>
+        <property>fcs/throttle-cmd-norm[0]</property>
         <property>attitude/psi-rad</property>
-        <property>propulsion/tank[0]/contents-lbs</property>
-        <property>propulsion/tank[1]/contents-lbs</property>
-        <property>propulsion/tank[2]/contents-lbs</property>
-        <property>propulsion/tank[3]/contents-lbs</property>
         <property>guidance/executive/current-mode</property>
-        <property>propulsion/engine[0]/thrust-lbs</property>
-        <property>propulsion/engine[1]/thrust-lbs</property>
-        <property>guidance/executive/launch-time</property>
         <property>guidance/executive/MET</property>
-        <property>guidance/executive/eccentricity</property>
-        <property>guidance/executive/semimajor-axis-length-ft</property>
         <property>guidance/executive/apoapsis</property>
         <property>guidance/executive/periapsis</property>
-        <property>simulation/integrator/rate/rotational</property>
-        <property>simulation/integrator/rate/translational</property>
-        <property>simulation/integrator/position/rotational</property>
-        <property>simulation/integrator/position/translational</property>
+        <property>guidance/executive/eccentricity</property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="10" type="delta"/>
@@ -147,6 +137,32 @@
         guidance/executive/las-jettison-flag eq 1
       </condition>
       <set name="inertia/pointmass-weight-lbs[18]" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Core Stage Separation">
+      <condition>
+        guidance/upper-stage-flight-flag eq 1
+      </condition>
+      <set name="inertia/pointmass-weight-lbs[2]" value="0"/>
+      <set name="inertia/pointmass-weight-lbs[3]" value="0"/>
+      <set name="inertia/pointmass-weight-lbs[4]" value="0"/>
+      <set name="inertia/pointmass-weight-lbs[5]" value="0"/>
+      <set name="inertia/pointmass-weight-lbs[6]" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Start Upper Stage Engines">
+      <condition>
+        guidance/upper-stage-flight-flag eq 1
+      </condition>
+      <delay> 2.0 </delay>
+      <set name="fcs/throttle-cmd-norm[6]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[7]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[8]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[9]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[10]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[11]" value="1.0"/>
       <notify/>
     </event>
 

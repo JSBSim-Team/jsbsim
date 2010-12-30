@@ -99,7 +99,7 @@ INCLUDES
 #include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Arial,10"
-#define TITLE_FONT "Arial,14"
+#define TITLE_FONT "Arial,12"
 #define LABEL_FONT "Arial,10"
 #define AXIS_FONT "Arial,10"
 #define TIMESTAMP_FONT "Arial,8"
@@ -326,89 +326,91 @@ int main(int argc, char **argv)
   bool result = false;
   plotXMLVisitor myVisitor;
 
+  // Execute this for each plot spec file e.g. --plot=data_plot/position.xml --plot=data_plot/velocities.xml ... */
   for (int fl=0; fl<plotspecfiles.size(); fl++) {
+
     ifstream plotDirectivesFile(plotspecfiles[fl].c_str());
     if (!plotDirectivesFile) {
       cerr << "Could not open autoplot file " << plotspecfiles[fl] << endl << endl;
-      exit(-1);
-    } else {
-      plotXMLVisitor *aVisitor = new plotXMLVisitor();
-      myVisitor = *aVisitor;
-      readXML (plotDirectivesFile, myVisitor);
+      continue; // if a data plot spec file doesn't exist, skip it.
+    }
 
-      for (int i=0; i<myVisitor.vPlots.size();i++) {
-        newPlot.str("");
-        struct Plots& myPlot = myVisitor.vPlots[i];
-        Title = "";
-        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-        newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
-        result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
-        if (result) cout << newPlot.str();
+    plotXMLVisitor *aVisitor = new plotXMLVisitor();
+    myVisitor = *aVisitor;
+    readXML (plotDirectivesFile, myVisitor);
+
+    for (int i=0; i<myVisitor.vPlots.size();i++) {
+      newPlot.str("");
+      struct Plots& myPlot = myVisitor.vPlots[i];
+      Title = "";
+      if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
+      result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
+      if (result) cout << newPlot.str();
+    }
+
+    // special multiple plots
+
+    for (int page=0; page<myVisitor.vPages.size(); page++) {
+      int numPlots = myVisitor.vPages[page].vPlots.size();
+      newPlot.str("");
+      
+      // Calculate margins smartly
+      float marginXLabel = 0.0;
+      for (int plot=1; plot<numPlots; plot++)
+      {
+        if (myVisitor.vPages[page].vPlots[plot].Axis_Caption[eX].size() > 0) {
+          marginXLabel = 8.0;
+          break;
+        }
       }
 
-      // special multiple plots
-
-      for (int page=0; page<myVisitor.vPages.size(); page++) {
-        int numPlots = myVisitor.vPages[page].vPlots.size();
-        newPlot.str("");
-        
-        // Calculate margins smartly
-        float marginXLabel = 0.0;
-        for (int plot=1; plot<numPlots; plot++)
-        {
-          if (myVisitor.vPages[page].vPlots[plot].Axis_Caption[eX].size() > 0) {
-            marginXLabel = 8.0;
-            break;
-          }
+      float marginTitle = 0.0;
+      for (int plot=0; plot<numPlots-1; plot++)
+      {
+        if (myVisitor.vPages[page].vPlots[plot].Title.size() > 0) {
+          marginTitle = 9.0;
+          break;
         }
+      }
 
-        float marginTitle = 0.0;
-        for (int plot=0; plot<numPlots-1; plot++)
-        {
-          if (myVisitor.vPages[page].vPlots[plot].Title.size() > 0) {
-            marginTitle = 9.0;
-            break;
-          }
-        }
-
-        float margin = (3. + marginTitle + marginXLabel)/540.;
-        float plot_margin = (2.*(numPlots-1.))*margin;
-        float size = (1.0 - plot_margin)/(float)numPlots;
+      float margin = (3. + marginTitle + marginXLabel)/540.;
+      float plot_margin = (2.*(numPlots-1.))*margin;
+      float size = (1.0 - plot_margin)/(float)numPlots;
 /*
-        if (!pdf && !png) {
-          cout << "set size 1.0,1.0" << endl;
-          cout << "set origin 0.0,0.0" << endl;
-        } else {
+      if (!pdf && !png) {
+        cout << "set size 1.0,1.0" << endl;
+        cout << "set origin 0.0,0.0" << endl;
+      } else {
 //          cout << "set size 0.9,0.9" << endl;
 //          cout << "set origin 0.05,0.05" << endl;
-        }
+      }
 */
 //        newPlot << "set size 1.0,1.0" << endl;
 //        newPlot << "set origin 0.0,0.0" << endl;
-        newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
-        newPlot << "set multiplot" << endl;
+      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
+      newPlot << "set multiplot" << endl;
 
-        for (int plot=0; plot<numPlots; plot++)
-        {
-          struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
-          float position = (float)plot*(size + 2.*margin);
-          newPlot << "set size 1.0," << size << endl;
-          newPlot << "set origin 0.0," << position << endl;
+      for (int plot=0; plot<numPlots; plot++)
+      {
+        struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
+        float position = (float)plot*(size + 2.*margin);
+        newPlot << "set size 1.0," << size << endl;
+        newPlot << "set origin 0.0," << position << endl;
 
-          Title = "";
-          if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+        Title = "";
+        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
 
-          result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
-          if (!result) break;
-          newPlot << "unset timestamp" << endl;
-        }
-      
-        newPlot << "unset multiplot" << endl;
-        newPlot << "set size 1.0,1.0" << endl;
-        newPlot << "set origin 0.0,0.0" << endl;
-
-        if (result) cout << newPlot.str();
+        result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
+        if (!result) break;
+        newPlot << "unset timestamp" << endl;
       }
+    
+      newPlot << "unset multiplot" << endl;
+      newPlot << "set size 1.0,1.0" << endl;
+      newPlot << "set origin 0.0,0.0" << endl;
+
+      if (result) cout << newPlot.str();
     }
   }
   // cout << endl << "System call here" << endl;
