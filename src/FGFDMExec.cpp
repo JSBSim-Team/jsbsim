@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.83 2010/11/07 13:30:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.84 2011/01/16 16:26:14 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -700,7 +700,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     FCS->LateBind();
   } catch (string prop) {
     cerr << endl << fgred << "  Could not late bind property " << prop 
-         << ". Aborting." << endl;
+         << ". Aborting." << reset << endl;
     result = false;
   }
 
