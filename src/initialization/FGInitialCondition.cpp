@@ -1,8 +1,7 @@
 /*******************************************************************************
 
  Header:       FGInitialCondition.cpp
- Author:       Tony Peden
-               Bertrand Coconnier
+ Author:       Tony Peden, Bertrand Coconnier
  Date started: 7/1/99
 
  ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
@@ -47,25 +46,22 @@ INCLUDES
 
 #include "FGInitialCondition.h"
 #include "FGFDMExec.h"
+#include "math/FGQuaternion.h"
 #include "models/FGInertial.h"
 #include "models/FGAtmosphere.h"
-#include "models/FGAerodynamics.h"
 #include "models/FGPropagate.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLElement.h"
 #include "models/FGPropulsion.h"
-#include "input_output/FGXMLParse.h"
-#include "math/FGQuaternion.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/string_utilities.h"
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include "input_output/string_utilities.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.52 2010/12/30 13:37:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.53 2011/01/16 15:51:50 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -75,8 +71,6 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   InitializeIC();
 
   if(FDMExec != NULL ) {
-    fdmex->GetPropagate()->SetAltitudeASL(altitudeASL);
-    fdmex->GetAtmosphere()->Run();
     PropertyManager=fdmex->GetPropertyManager();
     Constructing = true;
     bind();
@@ -113,9 +107,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   alpha = alpha0;  beta = beta0;
   phi = phi0;  theta = theta0;  psi = psi0;
 
-  latitude = latRad0;
-  longitude = lonRad0;
-  SetAltitudeAGLFtIC(altAGLFt0);
+  position.SetPosition(lonRad0, latRad0, altAGLFt0 + terrain_elevation + sea_level_radius);
 
   FGQuaternion Quat(phi, theta, psi);
   Quat.Normalize();
@@ -123,6 +115,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   Tb2l = Quat.GetTInv();
 
   vUVW_NED = Tb2l * FGColumnVector3(u0, v0, w0);
+  vt = vUVW_NED.Magnitude();
 
   Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
                            sbeta,         cbeta,      0.0,
@@ -138,8 +131,9 @@ void FGInitialCondition::InitializeIC(void)
 {
   alpha=beta=0;
   theta=phi=psi=0;
-  altitudeASL=0;
-  latitude=longitude=0;
+  position.SetPosition(0., 0., sea_level_radius);
+  position.SetEarthPositionAngle(fdmex->GetInertial()->GetEarthPositionAngle());
+  vUVW_NED.InitMatrix();
   p=q=r=0;
   vt=0;
   sea_level_radius = fdmex->GetInertial()->GetRefRadius();
@@ -192,7 +186,10 @@ void FGInitialCondition::WriteStateFile(int num)
 
 void FGInitialCondition::SetVequivalentKtsIC(double ve)
 {
-  SetVtrueFpsIC(ve*ktstofps/sqrt(fdmex->GetAtmosphere()->GetDensityRatio()));
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
+  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  SetVtrueFpsIC(ve*ktstofps/sqrt(rho/rhoSL));
   lastSpeedSet = setve;
 }
 
@@ -200,7 +197,10 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
 
 void FGInitialCondition::SetMachIC(double mach)
 {
-  SetVtrueFpsIC(mach*fdmex->GetAtmosphere()->GetSoundSpeed());
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double soundSpeed = sqrt(SHRatio*Reng*temperature);
+  SetVtrueFpsIC(mach*soundSpeed);
   lastSpeedSet = setmach;
 }
 
@@ -208,9 +208,12 @@ void FGInitialCondition::SetMachIC(double mach)
 
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
+  double altitudeASL = position.GetRadius() - sea_level_radius;
   double mach = getMachFromVcas(fabs(vcas)*ktstofps);
+  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double soundSpeed = sqrt(SHRatio*Reng*temperature);
 
-  SetVtrueFpsIC(mach*fdmex->GetAtmosphere()->GetSoundSpeed());
+  SetVtrueFpsIC(mach*soundSpeed);
   lastSpeedSet = setvc;
 }
 
@@ -673,22 +676,29 @@ void FGInitialCondition::SetWindDirDegIC(double dir)
 
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
-  double mach0 = vt / fdmex->GetAtmosphere()->GetSoundSpeed();
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double soundSpeed = sqrt(SHRatio*Reng*temperature);
+  double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
+  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+
+  double mach0 = vt / soundSpeed;
   double vc0 = calcVcas(mach0);
-  double ve0 = vt * sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+  double ve0 = vt * sqrt(rho/rhoSL);
 
   altitudeASL=alt;
-  fdmex->GetPropagate()->SetAltitudeASL(altitudeASL);
-  fdmex->GetAtmosphere()->Run();
+  temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  soundSpeed = sqrt(SHRatio*Reng*temperature);
+  rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
 
   switch(lastSpeedSet) {
     case setvc:
       mach0 = getMachFromVcas(vc0);
     case setmach:
-      SetVtrueFpsIC(mach0 * fdmex->GetAtmosphere()->GetSoundSpeed());
+      SetVtrueFpsIC(mach0 * soundSpeed);
       break;
     case setve:
-      SetVtrueFpsIC(ve0 * sqrt(fdmex->GetAtmosphere()->GetDensityRatio()));
+      SetVtrueFpsIC(ve0 * sqrt(rho/rhoSL));
       break;
   }
 }
@@ -700,7 +710,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
 double FGInitialCondition::calcVcas(double Mach) const
 {
-  double p=fdmex->GetAtmosphere()->GetPressure();
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double p=fdmex->GetAtmosphere()->GetPressure(altitudeASL);
   double psl=fdmex->GetAtmosphere()->GetPressureSL();
   double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
   double pt,A,vcas;
@@ -740,7 +751,8 @@ double FGInitialCondition::calcVcas(double Mach) const
 
 double FGInitialCondition::getMachFromVcas(double vcas)
 {
-  double p=fdmex->GetAtmosphere()->GetPressure();
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double p=fdmex->GetAtmosphere()->GetPressure(altitudeASL);
   double psl=fdmex->GetAtmosphere()->GetPressureSL();
   double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
 
@@ -817,7 +829,10 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
-  double mach = vt / fdmex->GetAtmosphere()->GetSoundSpeed();
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double soundSpeed = sqrt(SHRatio*Reng*temperature);
+  double mach = vt / soundSpeed;
   return fpstokts * calcVcas(mach);
 }
 
@@ -825,14 +840,20 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 
 double FGInitialCondition::GetVequivalentKtsIC(void) const
 {
-  return fpstokts * vt * sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
+  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  return fpstokts * vt * sqrt(rho/rhoSL);
 }
 
 //******************************************************************************
 
 double FGInitialCondition::GetMachIC(void) const
 {
-  return vt / fdmex->GetAtmosphere()->GetSoundSpeed();
+  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double soundSpeed = sqrt(SHRatio*Reng*temperature);
+  return vt / soundSpeed;
 }
 
 //******************************************************************************
@@ -880,8 +901,23 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     result = Load_v2();
   } else if (version >= 1.0) {
     result = Load_v1();
-  } 
+  }
 
+  // Check to see if any engines are specified to be initialized in a running state
+  FGPropulsion* propulsion = fdmex->GetPropulsion();
+  Element* running_elements = document->FindElement("running");
+  while (running_elements) {
+    int n = int(running_elements->GetDataAsNumber());
+    try {
+      propulsion->InitRunning(n);
+    } catch (string str) {
+      cerr << str << endl;
+      result = false;
+    }
+    running_elements = document->FindNextElement("running");
+  }
+
+  fdmex->RunIC();
   fdmex->GetPropagate()->DumpState();
 
   return result;
@@ -892,28 +928,32 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 bool FGInitialCondition::Load_v1(void)
 {
   bool result = true;
-  int n;
 
   if (document->FindElement("latitude"))
-    SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
+    position.SetLatitude(document->FindElementValueAsNumberConvertTo("latitude", "RAD"));
   if (document->FindElement("longitude"))
-    SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
+    position.SetLongitude(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
   if (document->FindElement("elevation"))
-    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+    terrain_elevation = document->FindElementValueAsNumberConvertTo("elevation", "FT");
 
   if (document->FindElement("altitude")) // This is feet above ground level
-    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
+    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitude", "FT") + sea_level_radius);
   else if (document->FindElement("altitudeAGL")) // This is feet above ground level
-    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT") + terrain_elevation + sea_level_radius);
   else if (document->FindElement("altitudeMSL")) // This is feet above sea level
-    SetAltitudeASLFtIC(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT") + sea_level_radius);
 
   if (document->FindElement("phi"))
-    SetPhiDegIC(document->FindElementValueAsNumberConvertTo("phi", "DEG"));
+    phi = document->FindElementValueAsNumberConvertTo("phi", "RAD");
   if (document->FindElement("theta"))
-    SetThetaDegIC(document->FindElementValueAsNumberConvertTo("theta", "DEG"));
+    theta = document->FindElementValueAsNumberConvertTo("theta", "RAD");
   if (document->FindElement("psi"))
-    SetPsiDegIC(document->FindElementValueAsNumberConvertTo("psi", "DEG"));
+    psi = document->FindElementValueAsNumberConvertTo("psi", "RAD");
+
+  FGQuaternion Quat(phi, theta, psi);
+  Quat.Normalize();
+  Tl2b = Quat.GetT();
+  Tb2l = Quat.GetTInv();
 
   if (document->FindElement("ubody"))
     SetUBodyFpsIC(document->FindElementValueAsNumberConvertTo("ubody", "FT/SEC"));
@@ -956,22 +996,6 @@ bool FGInitialCondition::Load_v1(void)
     SetTargetNlfIC(document->FindElementValueAsNumber("targetNlf"));
   }
 
-  // Check to see if any engines are specified to be initialized in a running state
-  FGPropulsion* propulsion = fdmex->GetPropulsion();
-  Element* running_elements = document->FindElement("running");
-  while (running_elements) {
-    n = int(running_elements->GetDataAsNumber());
-    try {
-      propulsion->InitRunning(n);
-    } catch (string str) {
-      cerr << str << endl;
-      result = false;
-    }
-    running_elements = document->FindNextElement("running");
-  }
-
-  fdmex->RunIC();
-
   return result;
 }
 
@@ -979,26 +1003,15 @@ bool FGInitialCondition::Load_v1(void)
 
 bool FGInitialCondition::Load_v2(void)
 {
-  int n;
-  double epa = 0.0;
-  FGColumnVector3 vLoc, vOrient;
+  FGColumnVector3 vOrient;
   bool result = true;
-  FGInertial* Inertial = fdmex->GetInertial();
-  FGPropagate* Propagate = fdmex->GetPropagate();
-  FGColumnVector3 vOmegaEarth = FGColumnVector3(0.0, 0.0, Inertial->omega());
+  FGColumnVector3 vOmegaEarth = FGColumnVector3(0.0, 0.0, fdmex->GetInertial()->omega());
 
-  if (document->FindElement("earth_position_angle")) {
-    epa = document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD");
-  }
-    Inertial->SetEarthPositionAngle(epa);
-    Propagate->GetVState()->vLocation.SetEarthPositionAngle(epa);
+  if (document->FindElement("earth_position_angle"))
+    position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD"));
 
-  Propagate->SetSeaLevelRadius(GetSeaLevelRadiusFtIC());
-
-  if (document->FindElement("elevation")) {
-    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
-    Propagate->SetTerrainElevation(terrain_elevation);
-  }
+  if (document->FindElement("elevation"))
+    terrain_elevation = document->FindElementValueAsNumberConvertTo("elevation", "FT");
 
   // Initialize vehicle position
   //
@@ -1006,37 +1019,30 @@ bool FGInitialCondition::Load_v2(void)
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
 
-  Element* position = document->FindElement("position");
-  if (position) {
-    string frame = position->GetAttributeValue("frame");
+  Element* position_el = document->FindElement("position");
+  if (position_el) {
+    string frame = position_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     if (frame == "eci") { // Need to transform vLoc to ECEF for storage and use in FGLocation.
-      vLoc = position->FindElementTripletConvertTo("FT");
-      vLoc = Propagate->GetTi2ec()*vLoc;
-      Propagate->SetLocation(vLoc);
+      position = position.GetTi2ec() * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
-      double AltitudeASL = 0.0;
-      if (!position->FindElement("x") && !position->FindElement("y") && !position->FindElement("z")) {
-        if (position->FindElement("radius")) {
-          AltitudeASL = position->FindElementValueAsNumberConvertTo("radius", "FT") - sea_level_radius;
-        } else if (position->FindElement("altitudeAGL")) {
-          AltitudeASL = terrain_elevation + position->FindElementValueAsNumberConvertTo("altitudeAGL", "FT");
-        } else if (position->FindElement("altitudeMSL")) {
-          AltitudeASL = position->FindElementValueAsNumberConvertTo("altitudeMSL", "FT");
+      if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
+        if (position_el->FindElement("radius")) {
+          position.SetRadius(position_el->FindElementValueAsNumberConvertTo("radius", "FT"));
+        } else if (position_el->FindElement("altitudeAGL")) {
+          position.SetRadius(sea_level_radius + terrain_elevation + position_el->FindElementValueAsNumberConvertTo("altitude", "FT"));
+        } else if (position_el->FindElement("altitudeMSL")) {
+          position.SetRadius(sea_level_radius + position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
         }
-        double lat_rad=0.0;
-        double long_rad = 0.0;
-        if (position->FindElement("longitude"))
-            long_rad = position->FindElementValueAsNumberConvertTo("longitude", "RAD");
-        if (position->FindElement("latitude"))
-            lat_rad = position->FindElementValueAsNumberConvertTo("latitude", "RAD");
-        Propagate->SetPosition(long_rad, lat_rad, AltitudeASL + GetSeaLevelRadiusFtIC());
+        if (position_el->FindElement("longitude"))
+          position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
+        if (position_el->FindElement("latitude"))
+          position.SetLatitude(position_el->FindElementValueAsNumberConvertTo("latitude", "RAD"));
       } else {
-        vLoc = position->FindElementTripletConvertTo("FT");
-        Propagate->SetLocation(vLoc);
+        position = position_el->FindElementTripletConvertTo("FT");
       }
     } else {
       cerr << endl << "  Neither ECI nor ECEF frame is specified for initial position." << endl;
@@ -1055,71 +1061,68 @@ bool FGInitialCondition::Load_v2(void)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Local
   //
-  // Need to convert the provided orientation to an ECI orientation, using 
+  // Need to convert the provided orientation to a local orientation, using
   // the given orientation and knowledge of the Earth position angle.
   // This could be done using matrices (where in the subscript "b/a",
-  // it is meant "b with respect to a", and where b=body frame, 
+  // it is meant "b with respect to a", and where b=body frame,
   // i=inertial frame, and e=ecef frame) as:
   //
-  // C_b/i =  C_b/e * C_e/i
+  // C_b/l =  C_b/e * C_e/l
   //
   // Using quaternions (note reverse ordering compared to matrix representation):
   //
-  // Q_b/i = Q_e/i * Q_b/e
+  // Q_b/l = Q_e/l * Q_b/e
   //
   // Use the specific matrices as needed. The above example of course is for the whole
-  // body to inertial orientation.
+  // body to local orientation.
   // The new orientation angles can be extracted from the matrix or the quaternion.
   // ToDo: Do we need to deal with normalization of the quaternions here?
 
   Element* orientation_el = document->FindElement("orientation");
-  FGQuaternion QuatI2Body;
+  FGQuaternion QuatLocal2Body;
   if (orientation_el) {
     string frame = orientation_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     vOrient = orientation_el->FindElementTripletConvertTo("RAD");
     if (frame == "eci") {
 
-      QuatI2Body = FGQuaternion(vOrient);
+      // In this case, we are supplying the Euler angles for the vehicle with
+      // respect to the inertial system, represented by the C_b/i Matrix.
+      // We want the body orientation with respect to the local (NED frame):
+      //
+      // C_b/l = C_b/i * C_i/l
+      //
+      // Or, using quaternions (note reverse ordering compared to matrix representation):
+      //
+      // Q_b/l = Q_e/l * Q_b/i
+
+      FGQuaternion QuatI2Body = FGQuaternion(vOrient);
+      QuatI2Body.Normalize();
+      FGQuaternion QuatLocal2I = position.GetTl2i();
+      QuatLocal2I.Normalize();
+      QuatLocal2Body = QuatLocal2I * QuatI2Body;
 
     } else if (frame == "ecef") {
 
       // In this case we are given the Euler angles representing the orientation of
       // the body with respect to the ECEF system, represented by the C_b/e Matrix.
-      // We want the body orientation with respect to the inertial system:
+      // We want the body orientation with respect to the local (NED frame):
       //
-      // C_b/i =  C_b/e * C_e/i
+      // C_b/l =  C_b/e * C_e/l
       //
       // Using quaternions (note reverse ordering compared to matrix representation):
       //
-      // Q_b/i = Q_e/i * Q_b/e
+      // Q_b/l = Q_e/l * Q_b/e
 
       FGQuaternion QuatEC2Body(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
       QuatEC2Body.Normalize();
-      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
-      QuatI2EC.Normalize();
-      QuatI2Body = QuatI2EC * QuatEC2Body; // Q_b/i = Q_e/i * Q_b/e 
+      FGQuaternion QuatLocal2EC = position.GetTl2ec(); // Get Q_e/l from matrix
+      QuatLocal2EC.Normalize();
+      QuatLocal2Body = QuatLocal2EC * QuatEC2Body; // Q_b/l = Q_e/l * Q_b/e
 
     } else if (frame == "local") {
 
-      // In this case, we are supplying the Euler angles for the vehicle with
-      // respect to the local (NED frame), also called the navigation frame.
-      // This is the most common way of initializing the orientation of
-      // aircraft. The matrix representation is:
-      //
-      // C_b/i = C_b/n * C_n/e * C_e/i
-      //
-      // Or, using quaternions (note reverse ordering compared to matrix representation):
-      //
-      // Q_b/i = Q_e/i * Q_n/e * Q_b/n
-
-      FGQuaternion QuatLocal2Body = FGQuaternion(vOrient); // Store relationship of Body frame wrt local (NED) frame, Q_b/n
-      QuatLocal2Body.Normalize();
-      FGQuaternion QuatEC2Local = Propagate->GetTec2l();   // Get Q_n/e from matrix
-      QuatEC2Local.Normalize();
-      FGQuaternion QuatI2EC = Propagate->GetTi2ec(); // Get Q_e/i from matrix
-      QuatI2EC.Normalize();
-      QuatI2Body = QuatI2EC * QuatEC2Local * QuatLocal2Body; // Q_b/i = Q_e/i * Q_n/e * Q_b/n
+      QuatLocal2Body = FGQuaternion(vOrient);
 
     } else {
 
@@ -1130,8 +1133,12 @@ bool FGInitialCondition::Load_v2(void)
     }
   }
 
-  QuatI2Body.Normalize();
-  Propagate->SetInertialOrientation(QuatI2Body);
+  QuatLocal2Body.Normalize();
+  phi = QuatLocal2Body.GetEuler(ePhi);
+  theta = QuatLocal2Body.GetEuler(eTht);
+  psi = QuatLocal2Body.GetEuler(ePsi);
+  Tl2b = QuatLocal2Body.GetT();
+  Tb2l = QuatLocal2Body.GetTInv();
 
   // Initialize vehicle velocity
   // Allowable frames
@@ -1142,12 +1149,8 @@ bool FGInitialCondition::Load_v2(void)
   // The vehicle will be defaulted to (0,0,0) in the Body frame if nothing is provided.
   
   Element* velocity_el = document->FindElement("velocity");
-  FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vInitVelocity = FGColumnVector3(0.0, 0.0, 0.0);
-  FGColumnVector3 omega_cross_r = vOmegaEarth * Propagate->GetInertialPosition();
-  FGMatrix33 mTl2i = Propagate->GetTl2i();
-  FGMatrix33 mTec2i = Propagate->GetTec2i(); // Get C_i/e
-  FGMatrix33 mTb2i = Propagate->GetTb2i();
+  FGMatrix33 mTec2l = position.GetTec2l();
   if (velocity_el) {
 
     string frame = velocity_el->GetAttributeValue("frame");
@@ -1155,13 +1158,16 @@ bool FGInitialCondition::Load_v2(void)
     FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
 
     if (frame == "eci") {
-      vInertialVelocity = vInitVelocity;
+      FGColumnVector3 omega_cross_r = vOmegaEarth * (position.GetTec2i() * position);
+      vUVW_NED = mTec2l * (vInitVelocity - omega_cross_r);
     } else if (frame == "ecef") {
-      vInertialVelocity = mTec2i * vInitVelocity + omega_cross_r;
+      vUVW_NED = mTec2l * vInitVelocity;
     } else if (frame == "local") {
-      vInertialVelocity = mTl2i * vInitVelocity + omega_cross_r;
+      vUVW_NED = vInitVelocity;
+      lastSpeedSet = setned;
     } else if (frame == "body") {
-      vInertialVelocity = mTb2i * vInitVelocity + omega_cross_r;
+      vUVW_NED = Tb2l * vInitVelocity;
+      lastSpeedSet = setuvw;
     } else {
 
       cerr << endl << fgred << "  Velocity frame type: \"" << frame
@@ -1172,11 +1178,13 @@ bool FGInitialCondition::Load_v2(void)
 
   } else {
 
-    vInertialVelocity = mTb2i * vInitVelocity + omega_cross_r;
+    vUVW_NED = Tb2l * vInitVelocity;
 
   }
 
-  Propagate->SetInertialVelocity(vInertialVelocity);
+  vt = vUVW_NED.Magnitude();
+
+  calcAeroAngles(vUVW_NED);
 
   // Initialize vehicle body rates
   // Allowable frames
@@ -1184,14 +1192,13 @@ bool FGInitialCondition::Load_v2(void)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Body
   
-  FGColumnVector3 vInertialRate;
+  FGColumnVector3 vLocalRate;
   Element* attrate_el = document->FindElement("attitude_rate");
-  double radInv = 1.0/Propagate->GetRadius();
-  FGColumnVector3 vVel = Propagate->GetVel();
+  double radInv = 1.0 / position.GetRadius();
   FGColumnVector3 vOmegaLocal = FGColumnVector3(
-   radInv*vVel(eEast),
-  -radInv*vVel(eNorth),
-  -radInv*vVel(eEast)*Propagate->GetLocation().GetTanLatitude() );
+   radInv*vUVW_NED(eEast),
+  -radInv*vUVW_NED(eNorth),
+  -radInv*vUVW_NED(eEast)*position.GetTanLatitude() );
 
   if (attrate_el) {
 
@@ -1200,11 +1207,11 @@ bool FGInitialCondition::Load_v2(void)
     FGColumnVector3 vAttRate = attrate_el->FindElementTripletConvertTo("RAD/SEC");
 
     if (frame == "eci") {
-      vInertialRate = vAttRate;
+      vLocalRate = Tl2b * (position.GetTi2l() * (vAttRate - vOmegaEarth) - vOmegaLocal);
     } else if (frame == "ecef") {
-      vInertialRate = vAttRate + vOmegaEarth; 
+      vLocalRate = Tl2b * (position.GetTec2l() * vAttRate - vOmegaLocal);
     } else if (frame == "local") {
-      vInertialRate = vOmegaEarth + Propagate->GetTl2i() * vOmegaLocal + Propagate->GetTb2i() * vAttRate;
+      vLocalRate = vAttRate;
     } else if (!frame.empty()) { // misspelling of frame
       
       cerr << endl << fgred << "  Attitude rate frame type: \"" << frame
@@ -1216,28 +1223,12 @@ bool FGInitialCondition::Load_v2(void)
     }
     
   } else { // Body frame attitude rate assumed 0 relative to local.
-      vInertialRate = vOmegaEarth + Propagate->GetTl2i() * vOmegaLocal;
-  }
-  Propagate->SetInertialRates(vInertialRate);
-  Propagate->InitializeDerivatives();
-
-  // Check to see if any engines are specified to be initialized in a running state
-  FGPropulsion* propulsion = fdmex->GetPropulsion();
-  Element* running_elements = document->FindElement("running");
-  while (running_elements) {
-    n = int(running_elements->GetDataAsNumber());
-    try {
-      propulsion->InitRunning(n);
-    } catch (string str) {
-      cerr << str << endl;
-      result = false;
-    }
-    running_elements = document->FindNextElement("running");
+      vLocalRate.InitMatrix();
   }
 
-  fdmex->SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
-  fdmex->Run();
-  fdmex->ResumeIntegration(); // Restores the integration rate to what it was.
+  p = vLocalRate(eP);
+  q = vLocalRate(eQ);
+  r = vLocalRate(eR);
 
   return result;
 }

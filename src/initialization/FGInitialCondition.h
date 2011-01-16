@@ -47,23 +47,24 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
-#include "FGJSBBase.h"
-#include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
 #include "input_output/FGXMLFileRead.h"
+#include "math/FGLocation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.24 2010/12/30 13:37:06 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.25 2011/01/16 15:51:50 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGFDMExec;
+class FGMatrix33;
+class FGColumnVector3;
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 
@@ -83,17 +84,28 @@ CLASS DOCUMENTATION
    With a valid object of FGFDMExec and an aircraft model loaded:
 
    @code
-   FGInitialCondition fgic=new FGInitialCondition(FDMExec);
-   fgic->SetVcalibratedKtsIC()
-   fgic->SetAltitudeAGLFtIC();
+   FGInitialCondition* fgic = FDMExec->GetIC();
+
+   // Reset the initial conditions and set VCAS and altitude
+   fgic->InitializeIC();
+   fgic->SetVcalibratedKtsIC(vcas);
+   fgic->SetAltitudeAGLFtIC(altitude);
 
    // directly into Run
-   FDMExec->GetPropagate()->SetInitialState(fgic)
+   FDMExec->GetPropagate()->SetInitialState(fgic);
    delete fgic;
-   FDMExec->Run()
+   FDMExec->Run();
 
    //or to loop the sim w/o integrating
-   FDMExec->RunIC(fgic)
+   FDMExec->RunIC();
+   @endcode
+
+   Alternatively, you can load initial conditions from an XML file:
+
+   @code
+   FGInitialCondition* fgic = FDMExec->GetIC();
+   fgic->Load(IC_file);
+   FDMExec->RunIC();
    @endcode
 
    <h3>Speed</h3>
@@ -202,7 +214,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.24 2010/12/30 13:37:06 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.25 2011/01/16 15:51:50 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,11 +304,11 @@ public:
 
   /** Sets the initial latitude.
       @param lat Initial latitude in degrees */
-  void SetLatitudeDegIC(double lat) { latitude=lat*degtorad; }
+  void SetLatitudeDegIC(double lat) { position.SetLatitude(lat*degtorad); }
 
   /** Sets the initial longitude.
       @param lon Initial longitude in degrees */
-  void SetLongitudeDegIC(double lon) { longitude=lon*degtorad; }
+  void SetLongitudeDegIC(double lon) { position.SetLongitude(lon*degtorad); }
 
   /** Gets the initial calibrated airspeed.
       @return Initial calibrated airspeed in knots */
@@ -350,19 +362,19 @@ public:
 
   /** Gets the initial latitude.
       @return Initial geocentric latitude in degrees */
-  double GetLatitudeDegIC(void) const { return latitude*radtodeg; }
+  double GetLatitudeDegIC(void) const { return position.GetLatitudeDeg(); }
 
   /** Gets the initial longitude.
       @return Initial longitude in degrees */
-  double GetLongitudeDegIC(void) const { return longitude*radtodeg; }
+  double GetLongitudeDegIC(void) const { return position.GetLongitudeDeg(); }
 
   /** Gets the initial altitude above sea level.
       @return Initial altitude in feet. */
-  double GetAltitudeASLFtIC(void) const { return altitudeASL; }
+  double GetAltitudeASLFtIC(void) const { return position.GetRadius() - sea_level_radius; }
 
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */
-  double GetAltitudeAGLFtIC(void) const { return altitudeASL - terrain_elevation; }
+  double GetAltitudeAGLFtIC(void) const { return position.GetRadius() - sea_level_radius - terrain_elevation; }
 
   /** Gets the initial sea level radius.
       @return Initial sea level radius */
@@ -557,11 +569,11 @@ public:
 
   /** Sets the initial latitude.
       @param lat Initial latitude in radians */
-  void SetLatitudeRadIC(double lat) { latitude=lat; }
+  void SetLatitudeRadIC(double lat) { position.SetLatitude(lat); }
 
   /** Sets the initial longitude.
       @param lon Initial longitude in radians */
-  void SetLongitudeRadIC(double lon) { longitude=lon; }
+  void SetLongitudeRadIC(double lon) { position.SetLongitude(lon); }
 
   /** Sets the target normal load factor.
       @param nlf Normal load factor*/
@@ -587,11 +599,11 @@ public:
 
   /** Gets the initial latitude.
       @return Initial latitude in radians */
-  double GetLatitudeRadIC(void) const { return latitude; }
+  double GetLatitudeRadIC(void) const { return position.GetLatitude(); }
 
   /** Gets the initial longitude.
       @return Initial longitude in radians */
-  double GetLongitudeRadIC(void) const { return longitude; }
+  double GetLongitudeRadIC(void) const { return position.GetLongitude(); }
 
   /** Gets the initial pitch angle.
       @return Initial pitch angle in radians */
@@ -603,11 +615,19 @@ public:
 
   /** Gets the initial speedset.
       @return Initial speedset */
-  inline speedset GetSpeedSet(void) { return lastSpeedSet; }
+  speedset GetSpeedSet(void) const { return lastSpeedSet; }
 
   /** Gets the target normal load factor set from IC.
       @return target normal load factor set from IC*/
-  double GetTargetNlfIC(void) { return targetNlfIC; }
+  double GetTargetNlfIC(void) const { return targetNlfIC; }
+
+  /** Sets the Earth position angle
+      @param epa Earth position angle*/
+  void SetEarthPositionAngle (double epa) { position.SetEarthPositionAngle(epa); }
+
+  /** Gets the Earth position angle
+      @return Earth position angle */
+  //double GetEarthPositionAngle(void) const { return position.GetEarthPositionAngle(); }
 
   /** Loads the initial conditions.
       @param rstname The name of an initial conditions file
@@ -617,7 +637,7 @@ public:
 
   /** Get init-file name
   */
-  string GetInitFile(void) {return init_file_name;}
+  string GetInitFile(void) const {return init_file_name;}
   /** Set init-file name
   */
   void SetInitFile(string f) { init_file_name = f;}
@@ -625,9 +645,8 @@ public:
 
 private:
   FGColumnVector3 vUVW_NED;
+  FGLocation position;
   double vt;
-  double altitudeASL;
-  double latitude,longitude;
   double p,q,r;
   double sea_level_radius;
   double terrain_elevation;
