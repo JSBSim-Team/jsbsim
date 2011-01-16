@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.42 2010/11/24 12:58:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.43 2011/01/16 15:27:34 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,8 +266,9 @@ bool FGScript::LoadScript(string script, double deltaT)
         } else {
           cout << endl << fgred << "  Could not find the property named "
                << notifyPropertyName << " in script" << endl << "  \""
-               << ScriptName << "\". This unknown property will not be "
-               << "echoed for notification." << reset << endl;
+               << ScriptName << "\". Execution is aborted. Please recheck "
+               << "your input files and scripts." << reset << endl;
+          return false;
         }
         notify_property_element = notify_element->FindNextElement("property");
       }
