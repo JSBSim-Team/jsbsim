@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.53 2011/01/16 15:51:50 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.54 2011/01/16 17:33:27 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -937,7 +937,7 @@ bool FGInitialCondition::Load_v1(void)
     terrain_elevation = document->FindElementValueAsNumberConvertTo("elevation", "FT");
 
   if (document->FindElement("altitude")) // This is feet above ground level
-    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitude", "FT") + sea_level_radius);
+    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitude", "FT") + terrain_elevation + sea_level_radius);
   else if (document->FindElement("altitudeAGL")) // This is feet above ground level
     position.SetRadius(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT") + terrain_elevation + sea_level_radius);
   else if (document->FindElement("altitudeMSL")) // This is feet above sea level
