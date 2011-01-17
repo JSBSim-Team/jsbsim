@@ -1,11 +1,11 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGRotor.cpp
- Author:       Thomas Kreitler
- Date started: 01/01/10
+ Author:       Jon S. Berndt
+ Date started: 08/24/00
  Purpose:      Encapsulates the rotor object
 
- ------------- Copyright (C) 2011  Thomas Kreitler -------------
+ ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -29,6 +29,7 @@ FUNCTIONAL DESCRIPTION
 
 HISTORY
 --------------------------------------------------------------------------------
+08/24/00  JSB  Created
 01/01/10  T.Kreitler test implementation
 11/15/10  T.Kreitler treated flow solver bug, flow and torque calculations 
                      simplified, tiploss influence removed from flapping angles
@@ -50,11 +51,12 @@ INCLUDES
 
 #include "input_output/FGXMLElement.h"
 
+
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.10 2011/01/17 14:47:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.11 2011/01/17 22:09:59 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,10 +75,8 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
-  //
-  // Initializer list !!
-  //
-  : FGThruster(exec, rotor_element, num),
+                    : FGThruster(exec, rotor_element, num),
+                    
 
   // environment
   dt(0.0), rho(0.002356),
@@ -84,7 +84,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   // configuration parameters
   Radius(0.0), BladeNum(0),
 
-  Sense(1.0), NominalRPM(0.0), ExternalRPM(0), RPMdefinition(0), ExtRPMval(0.0),
+  Sense(1.0), NominalRPM(0.0), ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL),
 
   BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
   BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
@@ -110,9 +110,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   // control
   ControlMap(eMainCtrl),
   CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0)
-  //
-  // Class begins here
-  //
+
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
   Element *thruster_element;
@@ -575,8 +573,8 @@ void FGRotor::CalcStatePart1(void)
   InvTransform = Transform().Transposed();
 
   // handle RPM requirements, calc omega.
-  if (ExternalRPM) {
-    RPM = ExtRPMval / GearRatio;
+  if (ExternalRPM && ExtRPMsource) {
+    RPM = ExtRPMsource->getDoubleValue() / GearRatio;
   }
 
   if (RPM < 1.0) { // kludge, otherwise calculations go bananas 
@@ -660,8 +658,6 @@ double FGRotor::Calculate(double PowerAvailable)
 
 bool FGRotor::BindModel(void)
 {
-  typedef double (FGRotor::*PTN)(void) const; // Used in Tie to get a 'properly typed null'
-
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
 
@@ -710,35 +706,38 @@ bool FGRotor::BindModel(void)
   switch (ControlMap) {
     case eTailCtrl:
       property_name = base_property_name + "/antitorque-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetCollectiveCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetCollectiveCtrl, &FGRotor::SetCollectiveCtrl);
       break;
     case eTandemCtrl:
       property_name = base_property_name + "/tail-collective-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetCollectiveCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetCollectiveCtrl, &FGRotor::SetCollectiveCtrl);
       property_name = base_property_name + "/lateral-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetLateralCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLateralCtrl, &FGRotor::SetLateralCtrl);
       property_name = base_property_name + "/longitudinal-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetLongitudinalCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLongitudinalCtrl, &FGRotor::SetLongitudinalCtrl);
       break;
     default: // eMainCtrl
       property_name = base_property_name + "/collective-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetCollectiveCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetCollectiveCtrl, &FGRotor::SetCollectiveCtrl);
       property_name = base_property_name + "/lateral-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetLateralCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLateralCtrl, &FGRotor::SetLateralCtrl);
       property_name = base_property_name + "/longitudinal-ctrl-rad";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetLongitudinalCtrl);
+      PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLongitudinalCtrl, &FGRotor::SetLongitudinalCtrl);
   }
 
   if (ExternalRPM) {
     if (RPMdefinition == -1) {
       property_name = base_property_name + "/x-rpm-dict";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetExtRPMval);      
+      ExtRPMsource = PropertyManager->GetNode(property_name, true);
     } else if (RPMdefinition >= 0 && RPMdefinition != EngineNum) {
-      // The value might be one iteration off (depending on the order the thrusters are
-      // defined), but this should be negligible.
       string ipn = CreateIndexedPropertyName("propulsion/engine", RPMdefinition);
       property_name = ipn + "/x-engine-rpm";
-      PropertyManager->Tie( property_name.c_str(), this, (PTN)0, &FGRotor::SetExtRPMval);      
+      ExtRPMsource = PropertyManager->GetNode(property_name, false);
+      if (! ExtRPMsource) {
+        cerr << "# Warning: Engine number " << EngineNum << "." << endl;
+        cerr << "# No 'x-engine-rpm' property found for engine " << RPMdefinition << "." << endl;
+        cerr << "# Please check order of engine definitons."  << endl;
+      }
     } else {
       cerr << "# Engine number " << EngineNum;
       cerr << ", given ExternalRPM value '" << RPMdefinition << "' unhandled."  << endl;

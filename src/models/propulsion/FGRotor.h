@@ -2,7 +2,7 @@
 
  Header:       FGRotor.h
  Author:       T. Kreitler
- Date started: 01/01/10
+ Date started: 08/24/00
 
  ------------- Copyright (C) 2010  T. Kreitler (t.kreitler@web.de) -------------
 
@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.7 2011/01/17 14:47:13 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -192,8 +192,10 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.7 2011/01/17 14:47:13 jberndt Exp $
-*/
+    @version $Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $
+  */
+
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -261,14 +263,19 @@ public:
   /// Downwash angle - currently only valid for a rotor that spins horizontally
   double GetPhiDW(void) const { return phi_downwash; }
 
+  /// Retrieves the collective control input in radians.
+  double GetCollectiveCtrl(void) const { return CollectiveCtrl; }
+  /// Retrieves the lateral control input in radians.
+  double GetLateralCtrl(void) const { return LateralCtrl; }
+  /// Retrieves the longitudinal control input in radians.
+  double GetLongitudinalCtrl(void) const { return LongitudinalCtrl; }
+
   /// Sets the collective control input in radians.
   void SetCollectiveCtrl(double c) { CollectiveCtrl = c; }
   /// Sets the lateral control input in radians.
   void SetLateralCtrl(double c) { LateralCtrl = c; }
   /// Sets the longitudinal control input in radians.
   void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
-  /// Sets the external RPM input. Used when rotor speed is defined by another rotor or the FDM.
-  void SetExtRPMval(double r) { ExtRPMval = r; }
 
   // Stubs. Only main rotor RPM is returned
   string GetThrusterLabels(int id, string delimeter);
@@ -320,7 +327,7 @@ private:
   double NominalRPM;
   int    ExternalRPM;
   int    RPMdefinition;
-  double ExtRPMval;
+  FGPropertyManager* ExtRPMsource;
 
   double BladeChord;
   double LiftCurveSlope;
