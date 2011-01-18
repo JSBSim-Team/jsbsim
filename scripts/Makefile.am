@@ -6,6 +6,7 @@ EXTRA_DIST = \
   ball_chute.xml \
   ball_orbit.xml \
   blank.xml \
+  ah1s_flight_test.xml \
   c1721.xml \
   c1722.xml \
   c1723.xml \
