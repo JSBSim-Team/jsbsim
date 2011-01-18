@@ -1,0 +1,3 @@
+<electric_engine name="turbine_substitute">
+  <power unit="HP"> 1500.00 </power>
+</electric_engine>
