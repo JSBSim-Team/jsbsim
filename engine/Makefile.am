@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	ah1s_rotor.xml \
+	ah1s_tail_rotor.xml \
 	AJ26-33A.xml \
 	AJ26-33_nozzle.xml \
 	avco_lycoming_t53.xml \
