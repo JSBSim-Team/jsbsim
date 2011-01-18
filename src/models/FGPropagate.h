@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.54 2010/12/19 15:31:47 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.55 2011/01/16 16:10:59 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.54 2010/12/19 15:31:47 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.55 2011/01/16 16:10:59 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -518,9 +518,9 @@ public:
       @return a reference to the inertial-to-local matrix.  */
   const FGMatrix33& GetTi2l(void) const { return Ti2l; }
 
-  VehicleState* GetVState(void) { return &VState; }
+  const VehicleState& GetVState(void) const { return VState; }
 
-  void SetVState(VehicleState* vstate);
+  void SetVState(const VehicleState& vstate);
 
   void InitializeDerivatives(void);
 

@@ -1,0 +1,323 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript 
+       name="AH-1S flight test" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+     A rudimentary performance test. The script could be used to test for maximum
+     speed and range of the helicopter. Since the AFCS is no autopilot 'manual' 
+     input must be provided too.
+  </description>
+
+  <use aircraft="ah1s" initialize="reset00"/>
+
+  <run start="0.0" end="3000.1" dt="0.0075">
+
+    <property value="0"> simulation/notify-time-trigger </property>
+
+    <!-- ===========
+           Actions
+         =========== -->
+
+    <event name="Start engine">
+      <condition> simulation/sim-time-sec  ge  5 </condition>
+      <set name="propulsion/tank[0]/contents-lbs" value="500.0" action="FG_RAMP" tc="0.5"/>
+      <set name="propulsion/tank[1]/contents-lbs" value="500.0" action="FG_RAMP" tc="0.5"/>
+      <set name="propulsion/set-running" value="-1"/>
+      <notify/>
+    </event>
+
+    <event name="Set controls">
+      <condition> simulation/sim-time-sec  ge  6 </condition>
+      <set name="fcs/mixture-cmd-norm"    value="0.0"/>
+      <set name="fcs/advance-cmd-norm"    value="0.0"/>
+      <set name="fcs/throttle-cmd-norm"   value="0.0"/>
+      <set name="fcs/aileron-cmd-norm"    value="0.0"/>
+      <set name="fcs/elevator-cmd-norm"   value="0.0"/>
+      <set name="fcs/rudder-cmd-norm"     value="0.0"/>
+      <set name="ap/afcs/psi-trim-rad"    value="1.0"/>
+      <set name="ap/afcs/x-lat-trim"      value="-0.0108"/>
+      <set name="ap/afcs/x-lon-trim"      value="0.025"/>
+      <set name="ap/afcs/theta-trim-rad"  value="0.0"/>
+      <set name="ap/afcs/phi-trim-rad"    value="-0.001"/>
+      <set name="ap/afcs/h-agl-trim-ft"   value="150.0"/>
+      <notify/>
+    </event>
+
+    <event name="Engage RPM governor">
+      <condition>simulation/sim-time-sec  ge  7</condition>
+      <set name="fcs/mixture-cmd-norm" value="0.0"/>
+      <set name="fcs/rpm-governor-active-norm" value="1.0" action="FG_RAMP" tc="2.0"/>
+      <notify>
+        <property> fcs/mixture-cmd-norm </property>
+        <property> ap/collective-cmd </property>
+        <property> position/h-agl-ft </property>
+        <property> propulsion/engine/rotor-rpm </property>
+        <property> propulsion/engine[1]/rotor-rpm </property>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+      </notify>
+    </event>
+
+    <!-- 
+         Example for using  x-rpm-dict, make sure to disable the RPM governor above
+      -->
+    <!-- 
+    <event name="Set RPM">
+      <condition>simulation/sim-time-sec  ge  7.1</condition>
+      <set name="fcs/mixture-cmd-norm" value="0.0"/>
+      <set name="propulsion/engine[0]/x-rpm-dict" value="6600.0" action="FG_RAMP" tc="12.0"/>
+      <set name="propulsion/engine[1]/x-rpm-dict" value="6600.0" action="FG_RAMP" tc="12.0"/>
+
+      <notify>
+        <property> fcs/mixture-cmd-norm </property>
+        <property> ap/collective-cmd </property>
+        <property> position/h-agl-ft </property>
+        <property> propulsion/engine/rotor-rpm </property>
+        <property> propulsion/engine[1]/rotor-rpm </property>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+      </notify>
+    </event>
+    -->
+
+    <event name="Raise collective">
+      <condition> simulation/sim-time-sec  ge  20 </condition>
+      <set name="fcs/mixture-cmd-norm" value="0.13" action="FG_RAMP" tc="3.0"/>
+      <notify>
+        <property> propulsion/engine/rotor-rpm </property>
+      </notify>
+    </event>
+
+    <event name="Engage yaw afcs">
+      <condition> simulation/sim-time-sec  ge  20 </condition>
+      <set name="ap/afcs/yaw-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <notify/>
+    </event>
+
+    <event name="Lift off">
+      <condition> simulation/sim-time-sec  ge  30 </condition>
+      <set name="fcs/mixture-cmd-norm" value="0.34" action="FG_RAMP" tc="5.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.00" action="FG_RAMP" tc="2.0"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0" action="FG_RAMP" tc="2.0"/>
+      <notify>
+        <property> propulsion/engine/rotor-rpm </property>
+      </notify>
+    </event>
+
+    <event name="Engage pitch'n'roll afcs">
+      <condition> simulation/sim-time-sec  ge  30 </condition>
+      <set name="ap/afcs/pitch-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <set name="ap/afcs/roll-channel-active-norm" value="1.0" action="FG_RAMP" tc="3.0"/>
+      <notify/>
+    </event>
+
+    <event name="Readjust trim values">
+      <condition> simulation/sim-time-sec  ge  40 </condition>
+      <set name="ap/afcs/x-lat-trim" value="-0.015" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/x-lon-trim" value="0.0255" action="FG_RAMP" tc="0.01"/>
+      <notify/>
+    </event>
+
+    <event name="Try to reach approx 30 kts at 100 ft">
+      <condition>simulation/sim-time-sec ge 100</condition>
+      <set name="fcs/elevator-cmd-norm" value="0.12" action="FG_RAMP" tc="25.0"/>
+      <set name="fcs/aileron-cmd-norm" value="-0.05" action="FG_RAMP" tc="25.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.40" action="FG_RAMP" tc="15.0"/>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Try to reach approx 60 kts at 1000 ft">
+      <condition> simulation/sim-time-sec  ge  200 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.26" action="FG_RAMP" tc="30.0"/>
+      <set name="fcs/aileron-cmd-norm" value="-0.12" action="FG_RAMP" tc="30.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.38" action="FG_RAMP" tc="30.0"/>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Try to reach approx 90 kts at 2000 ft">
+      <condition> simulation/sim-time-sec  ge  400 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.35" action="FG_RAMP" tc="30.0"/>
+      <set name="fcs/aileron-cmd-norm" value="-0.135" action="FG_RAMP" tc="30.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.44" action="FG_RAMP" tc="30.0"/>
+      <set name="ap/afcs/h-agl-trim-ft" value="5000.0"/>
+      <notify>
+        <property> velocities/vc-kts</property>
+        <property> position/h-agl-ft</property>
+      </notify>
+    </event>
+
+    <event name="Engage altitude afcs">
+      <condition>
+         simulation/sim-time-sec  ge  100
+         position/h-agl-ft  ge  4900
+      </condition>
+      <!-- tweak a bit (the altitude afcs is intended for hover)  -->
+      <set name="ap/afcs/altitude-channel-active-norm" value="1.0" action="FG_RAMP" tc="30.0"/>
+      <notify/>
+    </event>
+
+    <event name="Trying max speed at 5000 ft - the AFCS will now go a bit haywire">
+      <condition> simulation/sim-time-sec  ge  600 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.96" action="FG_RAMP" tc="300.0"/>
+      <set name="fcs/aileron-cmd-norm" value="-0.155" action="FG_RAMP" tc="300.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.96" action="FG_RAMP" tc="300.0"/>
+      <notify>
+        <property> velocities/vc-kts</property>
+        <property> position/h-agl-ft</property>
+      </notify>
+    </event>
+
+    <event name="Correct comtrols">
+      <condition> simulation/sim-time-sec  ge  1000 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.98" action="FG_RAMP" tc="100.0"/>
+      <set name="fcs/aileron-cmd-norm" value="-0.21" action="FG_RAMP" tc="100.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.98" action="FG_RAMP" tc="100.0"/>
+      <notify>
+        <property> velocities/vc-kts</property>
+        <property> position/h-agl-ft</property>
+      </notify>
+    </event>
+
+    <!-- ===========
+          Reporters
+         =========== -->
+
+    <event name="Time Notify" persistent="true">
+      <condition>
+         simulation/sim-time-sec ge simulation/notify-time-trigger
+      </condition>
+      <set name="simulation/notify-time-trigger" value="100.0" type="FG_DELTA"/>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/heading-true-rad </property>
+        <property> aero/alpha-deg </property>
+        <property> aero/beta-deg </property>
+        <property> aero/mu </property>
+        <property> aero/force/D0_fus </property>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+        <property> propulsion/engine/rotor-rpm </property>
+        <property> propulsion/engine[1]/rotor-rpm </property>
+        <property> propulsion/tank[0]/contents-lbs </property>
+        <property> propulsion/tank[1]/contents-lbs </property>
+        <property> position/distance-from-start-mag-mt </property>
+        <property> forces/fbx-prop-lbs  </property>
+        <property> forces/fby-prop-lbs  </property>
+        <property> forces/fbz-prop-lbs  </property>
+        <property> moments/l-prop-lbsft </property>
+        <property> moments/m-prop-lbsft </property>
+        <property> moments/n-prop-lbsft </property>
+        <property> propulsion/engine/vi-fps </property>
+        <property> propulsion/engine[1]/vi-fps </property>
+      </notify>
+    </event>
+
+    <event name="Off bottom">
+      <condition>
+         simulation/sim-time-sec  ge  1
+         forces/fbx-gear-lbs eq 0
+         forces/fby-gear-lbs eq 0
+         forces/fbz-gear-lbs eq 0
+      </condition>
+      <notify>
+        <property> fcs/mixture-cmd-norm </property>
+        <property> ap/collective-cmd </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+      </notify>
+    </event>
+
+    <event name="9 feet high">
+      <description> Check for a more or less straight start </description>
+      <condition> position/h-agl-ft  ge  9 </condition>
+      <notify>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+      </notify>
+    </event>
+
+    <event name="Catch 30kts and 100ft">
+      <condition>
+          velocities/vc-kts ge 30
+          position/h-agl-ft ge 100
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Catch 60kts and 1000ft">
+      <condition>
+          velocities/vc-kts ge 60
+          position/h-agl-ft ge 1000
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Catch 90kts and 2000ft">
+      <condition>
+          velocities/vc-kts ge 90
+          position/h-agl-ft ge 2000
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Catch 150 kts">
+      <condition>
+          velocities/vc-kts ge 150
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="Nearly out of fuel">
+      <condition>
+          propulsion/tank[0]/contents-lbs  lt  50
+          propulsion/tank[1]/contents-lbs  lt  50
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+        <property> position/distance-from-start-mag-mt </property>
+      </notify>
+    </event>
+
+    <event name="Out of fuel">
+      <condition>
+          propulsion/tank[0]/contents-lbs  lt  0.001
+          propulsion/tank[1]/contents-lbs  lt  0.001
+      </condition>
+      <notify>
+        <property> velocities/vc-kts </property>
+        <property> position/h-agl-ft </property>
+        <property> position/distance-from-start-mag-mt </property>
+      </notify>
+    </event>
+
+  </run>
+</runscript>

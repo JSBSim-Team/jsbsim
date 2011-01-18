@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 
 <!--
-     primer for scripted flights.
+     primer for scripted helicopter flights.
 -->
 
 
@@ -15,6 +15,8 @@
   <use aircraft="ah1s" initialize="reset00"/>
 
   <run start="0.0" end="100.0" dt="0.0083333">
+
+    <property> simulation/notify-time-trigger </property>
 
     <event name="Time Notify" persistent="true">
       <description>Output message at intervals</description>
@@ -39,7 +41,9 @@
       <set name="ap/afcs/x-lon-trim" value="0.0558" action="FG_RAMP" tc="0.01"/>
       <set name="ap/afcs/h-agl-trim-ft" value="50.0" action="FG_RAMP" tc="0.01"/>
       <set name="propulsion/set-running" value="-1"/>
+      <!-- do not use this with the electric_engine substitute
       <set name="propulsion/starter_cmd" value="1"/>
+      -->
       <notify/>
     </event>
 
@@ -76,7 +80,6 @@
       </condition>
       <notify>
         <property>fcs/mixture-cmd-norm</property>
-        <property>ap/afcs/altitude-error-input</property>
         <property>ap/collective-cmd</property>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>

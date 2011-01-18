@@ -1,47 +1,60 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
+
+<!--  =================================================================
+
+        A very generic RPM governor.
+
+        You need to declare the target RPM 'fcs/nominal-rpm' in your
+        fdm_config, eg:
+
+          <system name="governor_decl">
+            <property value="300.0"> fcs/nominal-rpm </property>
+          </system>
+
+        When developing a new helicopter fdm you should run the rotor
+        in constant-speed mode (by setting ExternalRPM to -1 and 
+        manipulate propulsion/engine[x]/x-rpm-dict accordingly),
+        and implement a proper governor as last step. Otherwise a
+        bad governor might spoil a good model.
+
+      =================================================================  -->
 
 <system name="RPM Governor">
 
-  <property value="324.0">fcs/nominal-rpm</property>
   <property value="0.0">fcs/rpm-governor-active-norm</property>
 
-  <channel name="RPM-Governor"> 
-
+  <channel name="RPM-Governor">
     <switch name="fcs/rpm-governor-pid-inhibit">
       <default value="-1.0"/>
       <test value="0.0"> fcs/rpm-governor-active-norm GT 0.0 </test>
     </switch>
-
     <fcs_function name="fcs/rpm-delta">
       <function>
         <product>
           <property> fcs/rpm-governor-active-norm </property>
           <difference>
-            <property>fcs/nominal-rpm</property>
-            <property>propulsion/engine[0]/main-rotor-rpm</property>
+            <property> fcs/nominal-rpm </property>
+            <property> propulsion/engine/rotor-rpm </property>
           </difference>
         </product>
       </function>
       <clipto>
-        <min> -400.0 </min>
-        <max>  400 </max>
+        <min> -50.0 </min>
+        <max>  50.0 </max>
       </clipto>
     </fcs_function>
-
     <pid name="fcs/throttle-pid">
       <input>fcs/rpm-delta</input>
-      <kp> 0.0065 </kp>
-      <ki> 0.0020</ki>
-      <kd> 0.00200 </kd>
+      <kp> 0.0035 </kp>
+      <ki> 0.001  </ki>
+      <kd> 0.0    </kd>
       <trigger> fcs/rpm-governor-pid-inhibit </trigger>
       <clipto>
         <min>  0.00 </min>
         <max>  1.00 </max>
       </clipto>
-      <output>/controls/engines/engine/throttle</output>
-      <!-- <output>fcs/throttle-cmd-norm</output> -->
+      <output>fcs/throttle-pos-norm</output> 
     </pid>
-
   </channel>
 
 </system>

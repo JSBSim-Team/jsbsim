@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.75 2010/12/19 15:31:47 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.76 2011/01/16 16:10:59 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -561,7 +561,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
 
   // Prepare the linear system for the Gauss-Seidel algorithm :
   // 1. Compute the right hand side member 'rhs'
-  // 2. Divide every line of 'a' and 'lhs' by a[i,i]. This is in order to save
+  // 2. Divide every line of 'a' and 'rhs' by a[i,i]. This is in order to save
   //    a division computation at each iteration of Gauss-Seidel.
   for (int i=0; i < n; i++) {
     double d = 1.0 / a[i*n+i];
@@ -724,22 +724,22 @@ double FGPropagate::GetDistanceAGL(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetVState(VehicleState* vstate)
+void FGPropagate::SetVState(const VehicleState& vstate)
 {
-  VState.vLocation = vstate->vLocation;
+  VState.vLocation = vstate.vLocation;
   VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();
-  SetInertialOrientation(vstate->qAttitudeECI);
+  SetInertialOrientation(vstate.qAttitudeECI);
   RecomputeLocalTerrainRadius();
   VehicleRadius = GetRadius();
-  VState.vUVW = vstate->vUVW;
+  VState.vUVW = vstate.vUVW;
   vVel = Tb2l * VState.vUVW;
-  VState.vPQR = vstate->vPQR;
+  VState.vPQR = vstate.vPQR;
   VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
   VState.vPQRi_i = Tb2i * VState.vPQRi;
-  VState.vInertialPosition = vstate->vInertialPosition;
+  VState.vInertialPosition = vstate.vInertialPosition;
 
   InitializeDerivatives();
 }

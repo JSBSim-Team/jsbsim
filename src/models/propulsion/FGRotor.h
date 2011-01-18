@@ -4,7 +4,7 @@
  Author:       T. Kreitler
  Date started: 08/24/00
 
- ------------- Copyright (C) 2010  T. Kreitler -------------
+ ------------- Copyright (C) 2010  T. Kreitler (t.kreitler@web.de) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 01/01/10  T.Kreitler test implementation
+01/10/11  T.Kreitler changed to single rotor model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -39,14 +40,12 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGThruster.h"
-#include "math/FGTable.h"
-#include "math/FGRungeKutta.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.6 2010/06/02 04:05:13 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,58 +57,35 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models a rotor system. The default configuration consists of main and
-    tail rotor. A practical way to define the positions is to start with an
-    imaginary gear-box near the cg of the vehicle. 
-
-    In this case the location in the thruster definition should be
-    approximately equal to the cg defined in the <tt>fdm_config/mass_balance</tt>
-    section. If the default orientation (roll=pitch=yaw=0) is used the
-    positions of the rotor hubs are now defined relative to the location
-    of the thruster (i.e. the cg-centered body coordinate system).
+/** Models a helicopter rotor.
 
 
-<h3>Configuration File Format:</h3>
+<h3>Configuration File Format</h3>
 @code
-<rotor name="{string}" variant="{string}">
+<rotor name="{string}">
   <diameter unit="{LENGTH}"> {number} </diameter>
   <numblades> {number} </numblades>
-  <xhub unit="{LENGTH}">  {number} </xhub>
-  <zhub unit="{LENGTH}"> {number} </zhub>
+  <gearratio> {number} </gearratio>
   <nominalrpm> {number} </nominalrpm>
-  <minrpm>   {number} </minrpm>
   <chord unit="{LENGTH}"> {number} </chord>
   <liftcurveslope Xunit="1/RAD"> {number} </liftcurveslope>
-  <flappingmoment unit="{MOMENT}"> {number} </flappingmoment>
   <twist unit="{ANGLE}"> {number} </twist>
-  <massmoment Xunit="SLUG*FT"> {number} </massmoment>
-  <tiplossfactor> {number} </tiplossfactor>
-  <polarmoment unit="{MOMENT}"> {number}</polarmoment>
-  <inflowlag> {number} </inflowlag>
-  <shafttilt unit="{ANGLE}"> {number} </shafttilt>
   <hingeoffset unit="{LENGTH}"> {number} </hingeoffset>
-  <tailrotor>
-    <diameter unit="{LENGTH}"> {number} </diameter>
-    <numblades> {number} </numblades>
-    <xhub unit="{LENGTH}">{number} </xhub>
-    <zhub unit="{LENGTH}">{number} </zhub>
-    <nominalrpm> {number} </nominalrpm>
-    <chord unit="{LENGTH}"> {number} </chord>
-    <liftcurveslope Xunit="1/RAD"> {number} </liftcurveslope>
-    <flappingmoment unit="{MOMENT}"> {number} </flappingmoment>
-    <twist unit="RAD"> {number} </twist>
-    <massmoment Xunit="SLUG*FT"> {number} </massmoment>
-    <tiplossfactor> {number} </tiplossfactor>
-    <inflowlag> {number} </inflowlag>
-    <hingeoffset unit="{LENGTH}"> {number} </hingeoffset>
-    <cantangle unit="{ANGLE}"> {number} </cantangle>
-  </tailrotor>
-  <cgroundeffect> {number} </cgroundeffect>
+  <flappingmoment unit="{MOMENT}"> {number} </flappingmoment>
+  <massmoment Xunit="SLUG*FT"> {number} </massmoment>
+  <polarmoment unit="{MOMENT}"> {number} </polarmoment>
+  <inflowlag> {number} </inflowlag>
+  <tiplossfactor> {number} </tiplossfactor>
+
+  <controlmap> {MAIN|TAIL|TANDEM} </controlmap>
+  <ExternalRPM> {number} </ExternalRPM>
+
+  <groundeffectexp> {number} </groundeffectexp>
   <groundeffectshift unit="{LENGTH}"> {number} </groundeffectshift>
 </rotor>
 
 //  LENGTH means any of the supported units, same for ANGLE and MOMENT.
-//  Xunit-attributes are a hint for currently unsupported units, so 
+//  Xunit-attributes are a hint for currently unsupported units, so
 //  values must be provided accordingly.
 
 @endcode
@@ -119,67 +95,87 @@ CLASS DOCUMENTATION
   Brief description and the symbol frequently found in the literature.
 
 <pre>
-    \<diameter>           - Rotor disk diameter (R).
+    \<diameter>           - Rotor disk diameter (2x R).
     \<numblades>          - Number of blades (b).
-    \<xhub>               - Relative height in body coordinate system, thus usually negative.
-    \<zhub>               - Relative distance in body coordinate system, close to zero 
-                             for main rotor, and usually negative for the tail rotor. 
+    \<gearratio>          - Ratio of (engine rpm) / (rotor rpm), usually > 1.
     \<nominalrpm>         - RPM at which the rotor usally operates. 
-    \<minrpm>             - Lowest RPM generated by the code, optional.
     \<chord>              - Blade chord, (c).
     \<liftcurveslope>     - Slope of curve of section lift against section angle of attack,
                              per rad (a).
-    \<flappingmoment>     - Flapping moment of inertia (I_b).
     \<twist>              - Blade twist from root to tip, (theta_1).
-    \<massmoment>         - Blade mass moment. (Biege/Widerstands-moment)
+    \<hingeoffset>        - Rotor flapping-hinge offset (e).
+    \<flappingmoment>     - Flapping moment of inertia (I_b).
+    \<massmoment>         - Blade mass moment. Mass of a single blade times the blade's
+                             cg-distance from the hub, optional.
+    \<polarmoment>        - Moment of inertia for the whole rotor disk, optional.
+    \<inflowlag>          - Rotor inflow time constant, sec. Smaller values yield to
+                              quicker responses to control input (defaults to 0.2).
     \<tiplossfactor>      - Tip-loss factor. The Blade fraction that produces lift.
                               Value usually ranges between 0.95 - 1.0, optional (B).
-    \<polarmoment>        - Moment of inertia for the whole rotor disk, optional.
-    \<inflowlag>          - Rotor inflow time constant, sec.
-    \<shafttilt>          - Orientation of the rotor shaft, negative angles define
-                              a 'forward' tilt. Used by main rotor, optional.
-    \<hingeoffset>        - Rotor flapping-hinge offset (e).
-    
+
+    \<controlmap>         - Defines the control inputs used (see notes).
+    \<ExternalRPM>        - Links the rotor to another rotor, or an user controllable property.
+
     Experimental properties
     
-    \<cantangle>          - Flapping hinge cantangle used by tail rotor, optional.
-    \<cgroundeffect>      - Parameter for exponent in ground effect approximation. Value should
-                              be in the range 0.2 - 0.35, 0.0 disables, optional.
-    \<groundeffectshift>  - Further adjustment of ground effect. 
+    \<groundeffectexp>    - Exponent for ground effect approximation. Values usually range from 0.04
+                            for large rotors to 0.1 for smaller ones. As a rule of thumb the effect 
+                            vanishes at a height 2-3 times the rotor diameter.
+                              formula used: exp ( - groundeffectexp * (height+groundeffectshift) )
+                            Omitting or setting to 0.0 disables the effect calculation.
+    \<groundeffectshift>  - Further adjustment of ground effect, approx. hub height or slightly above. 
 
 </pre>
 
 <h3>Notes:</h3>  
 
-   The behavior of the rotor is controlled/influenced by 5 inputs.<ul>
-     <li> The power provided by the engine. This is handled by the regular engine controls.</li>
-     <li> The collective control input. This is read from the <tt>fdm</tt> property 
-          <tt>propulsion/engine[x]/collective-ctrl-rad</tt>.</li>
-     <li> The lateral cyclic input. Read from
-          <tt>propulsion/engine[x]/lateral-ctrl-rad</tt>.</li>
-     <li> The longitudinal cyclic input. Read from 
-          <tt>propulsion/engine[x]/longitudinal-ctrl-rad</tt>.</li>
-     <li> The tail collective (aka antitorque, aka pedal) control input. Read from
-          <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt>.</li>
+  <h4>- Controls -</h4>
 
-   </ul>
+    The behavior of the rotor is controlled/influenced by following inputs.<ul>
+      <li> The power provided by the engine. This is handled by the regular engine controls.</li>
+      <li> The collective control input. This is read from the <tt>fdm</tt> property 
+           <tt>propulsion/engine[x]/collective-ctrl-rad</tt>. See below for tail rotor</li>
+      <li> The lateral cyclic input. Read from
+           <tt>propulsion/engine[x]/lateral-ctrl-rad</tt>.</li>
+      <li> The longitudinal cyclic input. Read from 
+           <tt>propulsion/engine[x]/longitudinal-ctrl-rad</tt>.</li>
+      <li> The tail collective (aka antitorque, aka pedal) control input. Read from
+           <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt> or 
+           <tt>propulsion/engine[x]/tail-collective-ctrl-rad</tt>.</li> 
 
-   In order to keep the rotor speed constant, use of a RPM-Governor system is encouraged.
+    </ul>
 
-   It is possible to use different orientation/locations for the rotor system, but then xhub
-   and zhub are no longer aligned to the body frame and need proper recalculation.
+  <h4>- Tail/tandem rotor -</h4>
 
-   To model a standalone main rotor just omit the <tailrotor/> element. If you provide
-   a plain <tailrotor/> element all tail rotor parameters are estimated.
-   
-   The 'sense' parameter from the thruster is interpreted as follows, sense=1 means
-   counter clockwise rotation of the main rotor, as viewed from above. This is as a far
-   as I know more popular than clockwise rotation, which is defined by setting sense to
-   -1 (to be honest, I'm just 99.9% sure that the orientation is handled properly).
-   
-   Concerning coaxial designs: By providing the 'variant' attribute with value 'coaxial'
-   a Kamov-style rotor is modeled - i.e. the rotor produces no torque.
+    Providing <tt>\<ExternalRPM\> 0 \</ExternalRPM\></tt> the tail rotor's RPM
+    is linked to to the main (=first, =0) rotor, and specifing
+    <tt>\<controlmap\> TAIL \</controlmap\></tt> tells this rotor to read the
+    collective input from <tt>propulsion/engine[1]/antitorque-ctrl-rad</tt>
+    (The TAIL-map ignores lateral and longitudinal input). The rotor needs to be 
+    attached to a dummy engine, e.g. an 1HP electrical engine.
+    A tandem rotor is setup analogous. 
 
+  <h4>- Sense -</h4>
+
+    The 'sense' parameter from the thruster is interpreted as follows, sense=1 means
+    counter clockwise rotation of the main rotor, as viewed from above. This is as a far
+    as I know more popular than clockwise rotation, which is defined by setting sense to
+    -1. Concerning coaxial designs - by setting 'sense' to zero, a Kamov-style rotor is
+    modeled (i.e. the rotor produces no torque).
+
+  <h4>- Engine issues -</h4>
+
+    Currently the rotor can only be driven with piston and electrical engines. An adaption
+    for the turboprop engine might become available in the future.
+    In order to keep the rotor speed constant, use of a RPM-Governor system is 
+    encouraged (see examples).
+
+  <h4>- Development hints -</h4>
+
+    Setting <tt>\<ExternalRPM> -1 \</ExternalRPM></tt> the rotor's RPM is controlled  by
+    the <tt>propulsion/engine[x]/x-rpm-dict</tt> property. This feature can be useful
+    when developing a FDM.
+  
 
 <h3>References:</h3>  
 
@@ -196,147 +192,90 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.6 2010/06/02 04:05:13 jberndt Exp $
+    @version $Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $
   */
+
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGRotor : public FGThruster {
+class FGRotor :  public FGThruster {
 
-   enum eRotorFlags {eNone=0, eMain=1, eTail=2, eCoaxial=4, eRotCW=8} ;
-   struct rotor {
-
-     virtual ~rotor();
-     void zero();
-     void configure(int f, const rotor *xmain = NULL);
-
-     // assist in parameter retrieval
-     double cnf_elem(const string& ename, double default_val=0.0, const string& unit = "", bool tell=false);
-     double cnf_elem(const string& ename, double default_val=0.0, bool tell=false);
-
-     // rotor dynamics
-     void calc_flow_and_thrust(double dt, double rho, double theta_0, double Uw, double Ww, double flow_scale = 1.0);
-
-     void calc_torque(double rho, double theta_0);
-     void calc_coning_angle(double rho, double theta_0);
-     void calc_flapping_angles(double rho, double theta_0, const FGColumnVector3 &pqr_fus_w);
-     void calc_drag_and_side_forces(double rho, double theta_0);
-
-     // transformations
-     FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
-                                      double a_ic = 0.0 , double b_ic = 0.0 );
-     FGColumnVector3 fus_angvel_body2ca( const FGColumnVector3 &pqr);
-
-     FGColumnVector3 body_forces(double a_ic = 0.0 , double b_ic = 0.0 );
-     FGColumnVector3 body_moments(FGColumnVector3 F_h, double a_ic = 0.0 , double b_ic = 0.0 );
-         
-     // bookkeeping
-     int flags                  ;
-     Element *parent            ;
-
-     // used in flow calculation
-     // FGRK4 rk                  ;  // use this after checking
-     FGRKFehlberg rk            ;
-     int          reports       ;
-
-     // configuration parameters
-     double Radius              ;
-     int    BladeNum            ;
-     double RelDistance_xhub    ;
-     double RelShift_yhub       ;
-     double RelHeight_zhub      ;
-     double NominalRPM          ;
-     double MinRPM              ;
-     double BladeChord          ;
-     double LiftCurveSlope      ;
-     double BladeFlappingMoment ;
-     double BladeTwist          ;
-     double BladeMassMoment     ;
-     double TipLossB            ;
-     double PolarMoment         ;
-     double InflowLag           ;
-     double ShaftTilt           ;
-     double HingeOffset         ;
-     double HingeOffset_hover   ;
-     double CantAngleD3         ;
-
-     double theta_shaft         ;
-     double phi_shaft           ;
-
-     // derived parameters
-     double LockNumberByRho     ;
-     double solidity            ; // aka sigma
-     double RpmRatio            ; // main_to_tail, hmm
-     double R[5]                ; // Radius powers
-     double B[6]                ; // TipLossB powers
-
-     FGMatrix33 BodyToShaft     ; // [S]T, see /SH79/ eqn(17,18)
-     FGMatrix33 ShaftToBody     ; // [S]
-
-     // dynamic values
-     double ActualRPM           ;
-     double Omega               ; // must be > 0 
-     double beta_orient         ;
-     double a0                  ; // coning angle (rad)
-     double a_1, b_1, a_dw      ;
-     double a1s, b1s            ; // cyclic flapping relative to shaft axes, /SH79/ eqn(43)
-     double H_drag, J_side      ;
-
-     double Torque              ;
-     double Thrust              ;
-     double Ct                  ;
-     double lambda              ; // inflow ratio
-     double mu                  ; // tip-speed ratio 
-     double nu                  ; // induced inflow ratio
-     double v_induced           ; // always positive [ft/s]
-
-     // results
-     FGColumnVector3 force      ;
-     FGColumnVector3 moment     ;
-
-
-     // declare the problem function
-     class dnuFunction : public FGRungeKuttaProblem {
-       public:
-         void update_params(rotor *r, double ct_t01, double fs, double w);
-       private:
-         double pFunc(double x, double y);
-         // some shortcuts
-         double k_sat, ct_lambda, k_wor, k_theta, mu2, k_flowscale;
-     } flowEquation;
-
-
-   };
-
+  enum eCtrlMapping {eMainCtrl=0, eTailCtrl, eTandemCtrl};
 
 public:
-  /** Constructor
-      @param exec pointer to executive structure
-      @param rotor_element pointer to XML element in the config file
-      @param num the number of this rotor  */
+
+  /** Constructor for FGRotor.
+      @param exec a pointer to the main executive object
+      @param rotor_element a pointer to the thruster config file XML element
+      @param num the number of this rotor */
   FGRotor(FGFDMExec *exec, Element* rotor_element, int num);
 
-  /// Destructor
+  /// Destructor for FGRotor
   ~FGRotor();
 
-  void SetRPM(double rpm) {RPM = rpm;}
+  /** Returns the power required by the rotor. Well, to achieve this the rotor
+      is cycled through the whole machinery, yielding to a new state.
+      (hmm, sort of a huge side effect)
+  */
+  double GetPowerRequired(void);
 
-  /** Calculates forces and moments created by the rotor(s) and updates 
-      vFn,vMn state variables. RPM changes are handled inside, too. 
-      The RPM change is based on estimating the torque provided by the engine.
+  /** Returns the scalar thrust of the rotor, and adjusts the RPM value. */
+  double Calculate(double PowerAvailable);
 
-      @param PowerAvailable here this is the thrust (not power) provided by a turbine
-      @return PowerAvailable */
-  double Calculate(double);
 
-  double GetRPM(void)     const { return RPM;           }
-  double GetDiameter(void)      { return mr.Radius*2.0; }
+  /// Retrieves the RPMs of the rotor.
+  double GetRPM(void) const { return RPM; }
+  
+  // void   SetRPM(double rpm) { RPM = rpm; }
+  
+  /// Retrieves the RPMs of the Engine, as seen from this rotor.
+  double GetEngineRPM(void) const { return GearRatio*RPM; } // bit of a hack.
+  /// Tells the rotor's gear ratio, usually the engine asks for this.
+  double GetGearRatio(void) { return GearRatio; }
+  /// Retrieves the thrust of the rotor.
+  double GetThrust(void) const { return Thrust; }
 
-  // Stubs. Right now this rotor-to-engine interface is just a hack.
-  double GetTorque(void)        { return 0.0; /* return mr.Torque;*/  }
-  double GetPowerRequired(void); 
+  /// Retrieves the rotor's coning angle 
+  double GetA0(void) const { return a0; }
+  /// Retrieves the longitudinal flapping angle with respect to the rotor shaft
+  double GetA1(void) const { return a1s; }
+  /// Retrieves the lateral flapping angle with respect to the rotor shaft
+  double GetB1(void) const { return b1s; }
+
+  /// Retrieves the inflow ratio
+  double GetLambda(void) const { return lambda; }
+  /// Retrieves the tip-speed (aka advance) ratio
+  double GetMu(void) const { return mu; }
+  /// Retrieves the induced inflow ratio
+  double GetNu(void) const { return nu; }
+  /// Retrieves the induced velocity
+  double GetVi(void) const { return v_induced; }
+  /// Retrieves the thrust coefficient
+  double GetCT(void) const { return C_T; }
+  /// Retrieves the torque
+  double GetTorque(void) const { return Torque; }
+  
+  /// Downwash angle - currently only valid for a rotor that spins horizontally
+  double GetThetaDW(void) const { return theta_downwash; }
+  /// Downwash angle - currently only valid for a rotor that spins horizontally
+  double GetPhiDW(void) const { return phi_downwash; }
+
+  /// Retrieves the collective control input in radians.
+  double GetCollectiveCtrl(void) const { return CollectiveCtrl; }
+  /// Retrieves the lateral control input in radians.
+  double GetLateralCtrl(void) const { return LateralCtrl; }
+  /// Retrieves the longitudinal control input in radians.
+  double GetLongitudinalCtrl(void) const { return LongitudinalCtrl; }
+
+  /// Sets the collective control input in radians.
+  void SetCollectiveCtrl(double c) { CollectiveCtrl = c; }
+  /// Sets the lateral control input in radians.
+  void SetLateralCtrl(double c) { LateralCtrl = c; }
+  /// Sets the longitudinal control input in radians.
+  void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
 
   // Stubs. Only main rotor RPM is returned
   string GetThrusterLabels(int id, string delimeter);
@@ -344,59 +283,105 @@ public:
 
 private:
 
-  bool bind(void);
+  // assist in parameter retrieval
+  double ConfigValueConv( Element* e, const string& ename, double default_val=0.0, 
+                                      const string& unit = "", bool tell=false);
 
-  double RPM;
-  double Sense; // default is counter clockwise rotation of the main rotor (viewed from above)
-  bool   tailRotorPresent;
+  double ConfigValue( Element* e, const string& ename, double default_val=0.0,
+                                  bool tell=false);
 
+  void Configure(Element* rotor_element);
+
+  // true entry points
+  void CalcStatePart1(void);
+  void CalcStatePart2(double PowerAvailable);
+
+  // rotor dynamics
+  void calc_flow_and_thrust(double theta_0, double Uw, double Ww, double flow_scale = 1.0);
+  void calc_coning_angle(double theta_0);
+  void calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fus_w);
+  void calc_drag_and_side_forces(double theta_0);
+  void calc_torque(double theta_0);
+
+  // transformations
+  FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
+                                   double a_ic = 0.0 , double b_ic = 0.0 );
+  FGColumnVector3 fus_angvel_body2ca( const FGColumnVector3 &pqr);
+  FGColumnVector3 body_forces(double a_ic = 0.0 , double b_ic = 0.0 );
+  FGColumnVector3 body_moments(double a_ic = 0.0 , double b_ic = 0.0 );
+
+  // interface
+  bool BindModel(void);
   void Debug(int from);
 
-  FGPropertyManager* PropertyManager;
-
-  rotor mr;
-  rotor tr; 
-
+  // environment
+  double dt;
+  double rho;
   Filter damp_hagl;
 
-  double rho;
-  
-  double effective_tail_col; // /SH79/ eqn(47)
+  // configuration parameters
+  double Radius;
+  int    BladeNum;
 
-  double ground_effect_exp;
-  double ground_effect_shift;
+  double Sense;
+  double NominalRPM;
+  int    ExternalRPM;
+  int    RPMdefinition;
+  FGPropertyManager* ExtRPMsource;
 
-  double hover_threshold;
-  double hover_scale;
+  double BladeChord;
+  double LiftCurveSlope;
+  double BladeTwist;
+  double HingeOffset;
+  double BladeFlappingMoment;
+  double BladeMassMoment;
+  double PolarMoment;
+  double InflowLag;
+  double TipLossB;
 
-  // fdm imported controls
-  FGPropertyManager* prop_collective_ctrl;
-  FGPropertyManager* prop_lateral_ctrl;
-  FGPropertyManager* prop_longitudinal_ctrl;
-  FGPropertyManager* prop_antitorque_ctrl;
+  double GroundEffectExp;
+  double GroundEffectShift;
 
-  FGPropertyManager* prop_freewheel_factor;
-  FGPropertyManager* prop_rotorbrake;
+  // derived parameters
+  double LockNumberByRho;
+  double Solidity; // aka sigma
+  double R[5]; // Radius powers
+  double B[5]; // TipLossB powers
 
-  // fdm export ...
-  double prop_inflow_ratio_lambda;
-  double prop_advance_ratio_mu;
-  double prop_inflow_ratio_induced_nu;
-  double prop_mr_torque;
-  double prop_coning_angle;
+  // Some of the calculations require shaft axes. So the
+  // thruster orientation (Tbo, with b for body) needs to be
+  // expressed/represented in helicopter shaft coordinates (Hsr).
+  FGMatrix33 InvTransform;
+  FGMatrix33 TboToHsr;
+  FGMatrix33 HsrToTbo;
 
-  double prop_theta_downwash;
-  double prop_phi_downwash;
+  // dynamic values
+  double RPM;
+  double Omega;          // must be > 0 
+  double beta_orient;    // rotor orientation angle (rad)
+  double a0;             // coning angle (rad)
+  double a_1, b_1, a_dw; // flapping angles
+  double a1s, b1s;       // cyclic flapping relative to shaft axes, /SH79/ eqn(43)
+  double H_drag, J_side; // Forces
 
-  double prop_thrust_coefficient;
-  double prop_lift_coefficient;
+  double Torque;
+  double C_T;        // rotor thrust coefficient
+  double lambda;     // inflow ratio
+  double mu;         // tip-speed ratio 
+  double nu;         // induced inflow ratio
+  double v_induced;  // induced velocity, always positive [ft/s]
 
-  double dt; // deltaT doesn't do the thing 
+  double theta_downwash;
+  double phi_downwash;
 
-  // devel/debug stuff  
-  int prop_DumpFlag;   // causes 1-time dump on stdout
+  // control
+  eCtrlMapping ControlMap;
+  double CollectiveCtrl;
+  double LateralCtrl;
+  double LongitudinalCtrl;
 
 };
+
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

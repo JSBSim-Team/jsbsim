@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<rotor name="ah1s_tail_rotor">
+
+    <diameter unit="FT">                  8.5 </diameter>
+    <numblades>                             2 </numblades>
+    <gearratio>                        3.9759 </gearratio>
+    <nominalrpm>                       1660.0 </nominalrpm>
+    <chord unit="FT">                     0.7 </chord>
+    <flappingmoment unit="SLUG*FT2">     1.45 </flappingmoment> <!-- guessed from ah1g lock number 2.23 -->
+    <liftcurveslope>                      6.0 </liftcurveslope>
+    <twist>                               0.0 </twist>
+    <massmoment>                         0.46 </massmoment> <!-- SLUG*FT -->
+    <tiplossfactor>                       1.0 </tiplossfactor>
+    <inflowlag>                          0.09 </inflowlag> 
+    <hingeoffset unit="FT">             0.015 </hingeoffset>
+
+    <groundeffectexp>                   0.081 </groundeffectexp>
+    <groundeffectshift unit="FT">        14.0 </groundeffectshift>
+
+    <ExternalRPM> 0 </ExternalRPM>
+    <controlmap> TAIL </controlmap>
+
+</rotor>

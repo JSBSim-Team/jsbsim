@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.25 2011/01/16 15:51:50 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.26 2011/01/16 16:10:59 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -105,7 +105,6 @@ CLASS DOCUMENTATION
    @code
    FGInitialCondition* fgic = FDMExec->GetIC();
    fgic->Load(IC_file);
-   FDMExec->RunIC();
    @endcode
 
    <h3>Speed</h3>
@@ -214,7 +213,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.25 2011/01/16 15:51:50 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.26 2011/01/16 16:10:59 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -620,14 +619,6 @@ public:
   /** Gets the target normal load factor set from IC.
       @return target normal load factor set from IC*/
   double GetTargetNlfIC(void) const { return targetNlfIC; }
-
-  /** Sets the Earth position angle
-      @param epa Earth position angle*/
-  void SetEarthPositionAngle (double epa) { position.SetEarthPositionAngle(epa); }
-
-  /** Gets the Earth position angle
-      @return Earth position angle */
-  //double GetEarthPositionAngle(void) const { return position.GetEarthPositionAngle(); }
 
   /** Loads the initial conditions.
       @param rstname The name of an initial conditions file
