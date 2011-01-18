@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AF971B4F-3D53-4655-8A03-97E8054DC58B}</ProjectGuid>
+    <RootNamespace>JSBSim</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <ShowProgress>LinkVerbose</ShowProgress>
+      <Version>1.0</Version>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <ShowProgress>LinkVerbose</ShowProgress>
+      <Version>0.9.13</Version>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Manifest>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <VerboseOutput>true</VerboseOutput>
+    </Manifest>
+    <Xdcmake>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Xdcmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\simgear\xml\ascii.h" />
+    <ClInclude Include="src\simgear\xml\asciitab.h" />
+    <ClInclude Include="src\simgear\compiler.h" />
+    <ClInclude Include="src\simgear\magvar\coremag.hxx" />
+    <ClInclude Include="src\simgear\xml\easyxml.hxx" />
+    <ClInclude Include="src\simgear\xml\expat.h" />
+    <ClInclude Include="src\simgear\xml\expat_config.h" />
+    <ClInclude Include="src\simgear\xml\expat_external.h" />
+    <ClInclude Include="src\models\flight_control\FGAccelerometer.h" />
+    <ClInclude Include="src\models\flight_control\FGActuator.h" />
+    <ClInclude Include="src\models\FGAerodynamics.h" />
+    <ClInclude Include="src\models\FGAircraft.h" />
+    <ClInclude Include="src\models\FGAtmosphere.h" />
+    <ClInclude Include="src\models\FGAuxiliary.h" />
+    <ClInclude Include="src\models\FGBuoyantForces.h" />
+    <ClInclude Include="src\FGChildModel.h" />
+    <ClInclude Include="src\math\FGColumnVector3.h" />
+    <ClInclude Include="src\math\FGCondition.h" />
+    <ClInclude Include="src\models\flight_control\FGDeadBand.h" />
+    <ClInclude Include="src\models\propulsion\FGElectric.h" />
+    <ClInclude Include="src\models\propulsion\FGEngine.h" />
+    <ClInclude Include="src\models\FGExternalForce.h" />
+    <ClInclude Include="src\models\FGExternalReactions.h" />
+    <ClInclude Include="src\models\FGFCS.h" />
+    <ClInclude Include="src\models\flight_control\FGFCSComponent.h" />
+    <ClInclude Include="src\models\flight_control\FGFCSFunction.h" />
+    <ClInclude Include="src\FGFDMExec.h" />
+    <ClInclude Include="src\input_output\FGfdmSocket.h" />
+    <ClInclude Include="src\models\flight_control\FGFilter.h" />
+    <ClInclude Include="src\models\propulsion\FGForce.h" />
+    <ClInclude Include="src\math\FGFunction.h" />
+    <ClInclude Include="src\models\flight_control\FGGain.h" />
+    <ClInclude Include="src\models\FGGasCell.h" />
+    <ClInclude Include="src\input_output\FGGroundCallback.h" />
+    <ClInclude Include="src\models\FGGroundReactions.h" />
+    <ClInclude Include="src\models\flight_control\FGGyro.h" />
+    <ClInclude Include="src\models\FGInertial.h" />
+    <ClInclude Include="src\initialization\FGInitialCondition.h" />
+    <ClInclude Include="src\models\FGInput.h" />
+    <ClInclude Include="src\FGJSBBase.h" />
+    <ClInclude Include="src\models\flight_control\FGKinemat.h" />
+    <ClInclude Include="src\models\FGLGear.h" />
+    <ClInclude Include="src\math\FGLocation.h" />
+    <ClInclude Include="src\models\flight_control\FGMagnetometer.h" />
+    <ClInclude Include="src\models\atmosphere\FGMars.h" />
+    <ClInclude Include="src\models\FGMassBalance.h" />
+    <ClInclude Include="src\math\FGMatrix33.h" />
+    <ClInclude Include="src\models\FGModel.h" />
+    <ClInclude Include="src\math\FGModelFunctions.h" />
+    <ClInclude Include="src\models\atmosphere\FGMSIS.h" />
+    <ClInclude Include="src\models\propulsion\FGNozzle.h" />
+    <ClInclude Include="src\models\FGOutput.h" />
+    <ClInclude Include="src\math\FGParameter.h" />
+    <ClInclude Include="src\models\flight_control\FGPID.h" />
+    <ClInclude Include="src\models\propulsion\FGPiston.h" />
+    <ClInclude Include="src\models\FGPropagate.h" />
+    <ClInclude Include="src\models\propulsion\FGPropeller.h" />
+    <ClInclude Include="src\input_output\FGPropertyManager.h" />
+    <ClInclude Include="src\math\FGPropertyValue.h" />
+    <ClInclude Include="src\models\FGPropulsion.h" />
+    <ClInclude Include="src\math\FGQuaternion.h" />
+    <ClInclude Include="src\math\FGRealValue.h" />
+    <ClInclude Include="src\models\propulsion\FGRocket.h" />
+    <ClInclude Include="src\models\propulsion\FGRotor.h" />
+    <ClInclude Include="src\math\FGRungeKutta.h" />
+    <ClInclude Include="src\input_output\FGScript.h" />
+    <ClInclude Include="src\models\flight_control\FGSensor.h" />
+    <ClInclude Include="src\models\flight_control\FGSensorOrientation.h" />
+    <ClInclude Include="src\models\flight_control\FGSummer.h" />
+    <ClInclude Include="src\models\flight_control\FGSwitch.h" />
+    <ClInclude Include="src\math\FGTable.h" />
+    <ClInclude Include="src\models\propulsion\FGTank.h" />
+    <ClInclude Include="src\models\propulsion\FGThruster.h" />
+    <ClInclude Include="src\initialization\FGTrim.h" />
+    <ClInclude Include="src\initialization\FGTrimAxis.h" />
+    <ClInclude Include="src\models\propulsion\FGTurbine.h" />
+    <ClInclude Include="src\models\propulsion\FGTurboProp.h" />
+    <ClInclude Include="src\input_output\FGXMLElement.h" />
+    <ClInclude Include="src\input_output\FGXMLFileRead.h" />
+    <ClInclude Include="src\input_output\FGXMLParse.h" />
+    <ClInclude Include="src\simgear\xml\iasciitab.h" />
+    <ClInclude Include="src\simgear\xml\internal.h" />
+    <ClInclude Include="src\simgear\xml\latin1tab.h" />
+    <ClInclude Include="src\simgear\xml\macconfig.h" />
+    <ClInclude Include="src\simgear\xml\nametab.h" />
+    <ClInclude Include="src\input_output\net_fdm.hxx" />
+    <ClInclude Include="src\simgear\props\props.hxx" />
+    <ClInclude Include="src\simgear\props\SGReferenced.hxx" />
+    <ClInclude Include="src\simgear\props\SGSharedPtr.hxx" />
+    <ClInclude Include="src\simgear\misc\stdint.hxx" />
+    <ClInclude Include="src\simgear\xml\utf8tab.h" />
+    <ClInclude Include="src\simgear\xml\winconfig.h" />
+    <ClInclude Include="src\simgear\xml\xmlrole.h" />
+    <ClInclude Include="src\simgear\xml\xmltok.h" />
+    <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\simgear\magvar\coremag.cxx" />
+    <ClCompile Include="src\simgear\xml\easyxml.cxx" />
+    <ClCompile Include="src\models\flight_control\FGAccelerometer.cpp" />
+    <ClCompile Include="src\models\flight_control\FGActuator.cpp" />
+    <ClCompile Include="src\models\FGAerodynamics.cpp" />
+    <ClCompile Include="src\models\FGAircraft.cpp">
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAtmosphere.cpp" />
+    <ClCompile Include="src\models\FGAuxiliary.cpp" />
+    <ClCompile Include="src\models\FGBuoyantForces.cpp" />
+    <ClCompile Include="src\math\FGColumnVector3.cpp" />
+    <ClCompile Include="src\math\FGCondition.cpp" />
+    <ClCompile Include="src\models\flight_control\FGDeadBand.cpp" />
+    <ClCompile Include="src\models\propulsion\FGElectric.cpp" />
+    <ClCompile Include="src\models\propulsion\FGEngine.cpp" />
+    <ClCompile Include="src\models\FGExternalForce.cpp" />
+    <ClCompile Include="src\models\FGExternalReactions.cpp" />
+    <ClCompile Include="src\models\FGFCS.cpp" />
+    <ClCompile Include="src\models\flight_control\FGFCSComponent.cpp" />
+    <ClCompile Include="src\models\flight_control\FGFCSFunction.cpp" />
+    <ClCompile Include="src\FGFDMExec.cpp" />
+    <ClCompile Include="src\input_output\FGfdmSocket.cpp" />
+    <ClCompile Include="src\models\flight_control\FGFilter.cpp" />
+    <ClCompile Include="src\models\propulsion\FGForce.cpp" />
+    <ClCompile Include="src\math\FGFunction.cpp" />
+    <ClCompile Include="src\models\flight_control\FGGain.cpp" />
+    <ClCompile Include="src\models\FGGasCell.cpp" />
+    <ClCompile Include="src\input_output\FGGroundCallback.cpp" />
+    <ClCompile Include="src\models\FGGroundReactions.cpp" />
+    <ClCompile Include="src\models\flight_control\FGGyro.cpp" />
+    <ClCompile Include="src\models\FGInertial.cpp" />
+    <ClCompile Include="src\initialization\FGInitialCondition.cpp" />
+    <ClCompile Include="src\models\FGInput.cpp" />
+    <ClCompile Include="src\FGJSBBase.cpp" />
+    <ClCompile Include="src\models\flight_control\FGKinemat.cpp" />
+    <ClCompile Include="src\models\FGLGear.cpp" />
+    <ClCompile Include="src\math\FGLocation.cpp" />
+    <ClCompile Include="src\models\flight_control\FGMagnetometer.cpp" />
+    <ClCompile Include="src\models\atmosphere\FGMars.cpp" />
+    <ClCompile Include="src\models\FGMassBalance.cpp" />
+    <ClCompile Include="src\math\FGMatrix33.cpp" />
+    <ClCompile Include="src\models\FGModel.cpp" />
+    <ClCompile Include="src\math\FGModelFunctions.cpp" />
+    <ClCompile Include="src\models\atmosphere\FGMSIS.cpp" />
+    <ClCompile Include="src\models\atmosphere\FGMSISData.cpp" />
+    <ClCompile Include="src\models\propulsion\FGNozzle.cpp" />
+    <ClCompile Include="src\models\FGOutput.cpp" />
+    <ClCompile Include="src\models\flight_control\FGPID.cpp" />
+    <ClCompile Include="src\models\propulsion\FGPiston.cpp" />
+    <ClCompile Include="src\models\FGPropagate.cpp" />
+    <ClCompile Include="src\models\propulsion\FGPropeller.cpp" />
+    <ClCompile Include="src\input_output\FGPropertyManager.cpp" />
+    <ClCompile Include="src\math\FGPropertyValue.cpp" />
+    <ClCompile Include="src\models\FGPropulsion.cpp" />
+    <ClCompile Include="src\math\FGQuaternion.cpp" />
+    <ClCompile Include="src\math\FGRealValue.cpp" />
+    <ClCompile Include="src\models\propulsion\FGRocket.cpp" />
+    <ClCompile Include="src\models\propulsion\FGRotor.cpp" />
+    <ClCompile Include="src\math\FGRungeKutta.cpp" />
+    <ClCompile Include="src\input_output\FGScript.cpp" />
+    <ClCompile Include="src\models\flight_control\FGSensor.cpp" />
+    <ClCompile Include="src\models\flight_control\FGSummer.cpp" />
+    <ClCompile Include="src\models\flight_control\FGSwitch.cpp" />
+    <ClCompile Include="src\math\FGTable.cpp" />
+    <ClCompile Include="src\models\propulsion\FGTank.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGThruster.cpp" />
+    <ClCompile Include="src\initialization\FGTrim.cpp" />
+    <ClCompile Include="src\initialization\FGTrimAxis.cpp" />
+    <ClCompile Include="src\models\propulsion\FGTurbine.cpp" />
+    <ClCompile Include="src\models\propulsion\FGTurboProp.cpp" />
+    <ClCompile Include="src\input_output\FGXMLElement.cpp" />
+    <ClCompile Include="src\input_output\FGXMLParse.cpp" />
+    <ClCompile Include="src\JSBSim.cpp" />
+    <ClCompile Include="src\simgear\props\props.cxx" />
+    <ClCompile Include="src\simgear\xml\xmlparse.c" />
+    <ClCompile Include="src\simgear\xml\xmlrole.c" />
+    <ClCompile Include="src\simgear\xml\xmltok.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="aircraft\aa1\aa1.xml" />
+    <None Include="systems\afcs.xml" />
+    <None Include="aircraft\ah1s\ah1s.xml" />
+    <None Include="engine\ah1s_rotor.xml" />
+    <None Include="engine\avco_lycoming_t53.xml" />
+    <None Include="scripts\ball_chute.xml" />
+    <None Include="scripts\ball_orbit.xml" />
+    <None Include="scripts\c172pbrake.xml" />
+    <None Include="aircraft\F4N\F4N.xml" />
+    <None Include="systems\fg_glue.xml" />
+    <CustomBuildStep Include="data_output\ground_reactions.xml">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <CustomBuildStep Include="data_plot\ground_reactions.xml">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <None Include="systems\jsb_glue.xml" />
+    <CustomBuildStep Include="JSBSim.dox">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <None Include="aircraft\ah1s\Makefile.am" />
+    <CustomBuildStep Include="data_output\Makefile.am">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <CustomBuildStep Include="data_plot\Makefile.am">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <None Include="aircraft\ah1s\reset00.xml" />
+    <None Include="systems\rpm_governor.xml" />
+    <None Include="engine\s64_rotor.xml" />
+    <None Include="scripts\sim_primer.xml" />
+    <None Include="engine\test_turbine.xml" />
+    <None Include="engine\twin_pratt_and_whitney_t73.xml" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
