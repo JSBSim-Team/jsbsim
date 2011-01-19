@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.35 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.36 2011/01/19 12:41:19 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -388,23 +388,28 @@ void FGAerodynamics::DetermineAxisSystem()
   string axis;
   while (axis_element) {
     axis = axis_element->GetAttributeValue("name");
-    if (axis == "LIFT" || axis == "DRAG" || axis == "SIDE") {
+    if (axis == "LIFT" || axis == "DRAG") {
       if (axisType == atNone) axisType = atLiftDrag;
       else if (axisType != atLiftDrag) {
         cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
-                     << " aircraft config file." << endl;
+                     << " aircraft config file. (LIFT DRAG)" << endl;
+      }
+    } else if (axis == "SIDE") {
+      if (axisType != atNone && axisType != atLiftDrag && axisType != atAxialNormal) {
+        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+                     << " aircraft config file. (SIDE)" << endl;
       }
     } else if (axis == "AXIAL" || axis == "NORMAL") {
       if (axisType == atNone) axisType = atAxialNormal;
       else if (axisType != atAxialNormal) {
         cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
-                     << " aircraft config file." << endl;
+                     << " aircraft config file. (NORMAL AXIAL)" << endl;
       }
     } else if (axis == "X" || axis == "Y" || axis == "Z") {
       if (axisType == atNone) axisType = atBodyXYZ;
       else if (axisType != atBodyXYZ) {
         cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
-                     << " aircraft config file." << endl;
+                     << " aircraft config file. (XYZ)" << endl;
       }
     } else if (axis != "ROLL" && axis != "PITCH" && axis != "YAW") { // error
       cerr << endl << "  An unknown axis type, " << axis << " has been specified"
