@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.54 2011/01/16 17:33:27 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.55 2011/01/19 20:49:20 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -701,6 +701,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       SetVtrueFpsIC(ve0 * sqrt(rho/rhoSL));
       break;
   }
+
+  position.SetRadius(alt + sea_level_radius);
 }
 
 //******************************************************************************
