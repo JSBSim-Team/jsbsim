@@ -7,7 +7,7 @@
   <fileheader>
     <author> Aeromatic v 0.9, refined by Jon Berndt </author>
     <filecreationdate> 2008-12-22 </filecreationdate>
-    <version>$Revision: 1.6 $</version>
+    <version>$Revision: 1.7 $</version>
     <description> Models a Boeing B-17G. </description>
   </fileheader>
 
@@ -84,10 +84,6 @@
       <rolling_friction> 0.02 </rolling_friction>
       <spring_coeff unit="LBS/FT">      30000.00 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC">  3000.00 </damping_coeff>
-      <relaxation_velocity>
-        <rolling unit="FT/SEC">0.066666</rolling>
-        <side unit="FT/SEC">0.2</side>
-      </relaxation_velocity>
       <max_steer unit="DEG">0</max_steer>
       <brake_group>LEFT</brake_group>
       <retractable>1</retractable>
@@ -104,10 +100,6 @@
       <rolling_friction> 0.02 </rolling_friction>
       <spring_coeff unit="LBS/FT">      30000.00 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC">  3000.00 </damping_coeff>
-      <relaxation_velocity>
-        <rolling unit="FT/SEC">0.066666</rolling>
-        <side unit="FT/SEC">0.2</side>
-      </relaxation_velocity>
       <max_steer unit="DEG">0</max_steer>
       <brake_group>RIGHT</brake_group>
       <retractable>1</retractable>
@@ -124,10 +116,6 @@
       <rolling_friction> 0.02 </rolling_friction>
       <spring_coeff unit="LBS/FT">      6500.0 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 650.00 </damping_coeff>
-      <relaxation_velocity>
-        <rolling unit="FT/SEC">0.066666</rolling>
-        <side unit="FT/SEC">0.2</side>
-      </relaxation_velocity>
       <max_steer unit="DEG"> 5.00 </max_steer>
       <brake_group>NONE</brake_group>
       <retractable>1</retractable>
