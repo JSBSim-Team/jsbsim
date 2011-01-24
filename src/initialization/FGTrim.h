@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.7 2010/04/23 17:23:40 dpculp Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.8 2011/01/24 13:01:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,7 +120,7 @@ CLASS DOCUMENTATION
     @endcode
     
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.7 2010/04/23 17:23:40 dpculp Exp $"
+    @version "$Id: FGTrim.h,v 1.8 2011/01/24 13:01:55 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,7 +176,6 @@ private:
   void setupTurn(void);
 
   void updateRates(void);
-  void setEngineTrimMode(bool mode);
   void setDebug(void);
 
 public:

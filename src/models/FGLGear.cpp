@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.79 2010/11/28 13:20:47 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.80 2011/01/24 13:01:56 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -374,13 +374,15 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
     }
   }
 
-  ReportTakeoffOrLanding();
+  if (!fdmex->GetTrimStatus()) {
+    ReportTakeoffOrLanding();
 
-  // Require both WOW and LastWOW to be true before checking crash conditions
-  // to allow the WOW flag to be used in terminating a scripted run.
-  if (WOW && lastWOW) CrashDetect();
+    // Require both WOW and LastWOW to be true before checking crash conditions
+    // to allow the WOW flag to be used in terminating a scripted run.
+    if (WOW && lastWOW) CrashDetect();
 
-  lastWOW = WOW;
+    lastWOW = WOW;
+  }
 
   return FGForce::GetBodyForces();
 }

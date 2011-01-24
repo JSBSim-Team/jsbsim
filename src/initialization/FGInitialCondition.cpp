@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.55 2011/01/19 20:49:20 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.56 2011/01/23 12:13:44 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -131,13 +131,13 @@ void FGInitialCondition::InitializeIC(void)
 {
   alpha=beta=0;
   theta=phi=psi=0;
+  terrain_elevation = 0;
+  sea_level_radius = fdmex->GetInertial()->GetRefRadius();
   position.SetPosition(0., 0., sea_level_radius);
   position.SetEarthPositionAngle(fdmex->GetInertial()->GetEarthPositionAngle());
   vUVW_NED.InitMatrix();
   p=q=r=0;
   vt=0;
-  sea_level_radius = fdmex->GetInertial()->GetRefRadius();
-  terrain_elevation = 0;
 
   targetNlfIC = 1.0;
 

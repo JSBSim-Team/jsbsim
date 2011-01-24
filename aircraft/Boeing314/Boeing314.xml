@@ -382,15 +382,6 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>0</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="NOSE_LG">
             <location unit="IN">
@@ -405,16 +396,7 @@
             <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>                 <!-- aeromatic 8400 -->
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NOSE </brake_group>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
             <retractable>0</retractable>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
@@ -429,16 +411,7 @@
             <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>                 <!-- aeromatic 16800 -->
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
             <retractable>0</retractable>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
@@ -453,16 +426,7 @@
             <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
             <retractable>0</retractable>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="STEP_MLG">
             <location unit="IN">
@@ -478,15 +442,6 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> TAIL </brake_group>
             <retractable>0</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="REAR_MLG">
             <location unit="IN">
@@ -502,15 +457,6 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> TAIL </brake_group>
             <retractable>0</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">0</rolling>
-                <side unit="FT/SEC">0</side>
-            </relaxation_velocity>
-            <force_lag_filter>
-                <rolling>0</rolling>
-                <side>0</side>
-            </force_lag_filter>
-            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
     </ground_reactions>
 
