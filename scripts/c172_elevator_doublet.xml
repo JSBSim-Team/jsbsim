@@ -12,6 +12,19 @@
 
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
+    
+    <event name="Engine start">
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
+      <set name="fcs/throttle-cmd-norm" value="0.65"/>
+      <set name="fcs/mixture-cmd-norm" value="0.87"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <set name="ap/heading_hold" value="0"/>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+      </notify>
+    </event>
 
 <!--
       For "do_simple_trim" (Classic trim):
