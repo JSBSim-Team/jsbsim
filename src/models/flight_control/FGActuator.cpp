@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.15 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.16 2011/01/24 13:01:56 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,10 +114,12 @@ bool FGActuator::Run(void )
                   // the Input will be further processed and the eventual Output
                   // will be overwritten from this perfect value.
 
-  if (lag != 0.0)              Lag();        // models actuator lag
-  if (rate_limit != 0)         RateLimit();  // limit the actuator rate
+  if (!fcs->GetTrimStatus()) {
+    if (lag != 0.0)              Lag();        // models actuator lag
+    if (rate_limit != 0)         RateLimit();  // limit the actuator rate
+  }
   if (deadband_width != 0.0)   Deadband();
-  if (hysteresis_width != 0.0) Hysteresis();
+  if (!fcs->GetTrimStatus() && hysteresis_width != 0.0) Hysteresis();
   if (bias != 0.0)             Bias();       // models a finite bias
 
   if (fail_stuck) Output = PreviousOutput;

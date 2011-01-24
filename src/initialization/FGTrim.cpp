@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.13 2010/04/23 17:23:40 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.14 2011/01/24 13:01:55 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,7 +241,7 @@ bool FGTrim::DoTrim(void) {
 
   fdmex->DisableOutput();
 
-  setEngineTrimMode(true);
+  fdmex->SetTrimStatus(true);
 
   fgic->SetPRadpsIC(0.0);
   fgic->SetQRadpsIC(0.0);
@@ -358,7 +358,7 @@ bool FGTrim::DoTrim(void) {
   for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
-  setEngineTrimMode(false);
+  fdmex->SetTrimStatus(false);
   fdmex->EnableOutput();
   return !trim_failed;
 }
@@ -620,15 +620,6 @@ void FGTrim::setDebug(void) {
   } else {
     Debug=0;
     return;
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGTrim::setEngineTrimMode(bool mode) {
-  FGPropulsion* prop = fdmex->GetPropulsion();
-  for (unsigned int i=0; i<prop->GetNumEngines(); i++) {
-    prop->GetEngine(i)->SetTrimMode(mode);
   }
 }
 

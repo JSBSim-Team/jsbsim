@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.21 2010/08/21 17:13:48 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.22 2011/01/24 13:01:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.21 2010/08/21 17:13:48 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.22 2011/01/24 13:01:56 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,9 +173,6 @@ public:
 
   virtual double GetPowerAvailable(void) {return 0.0;};
 
-  virtual bool GetTrimMode(void) {return TrimMode;}
-  virtual void SetTrimMode(bool state) {TrimMode = state;}
-
   virtual FGColumnVector3& GetBodyForces(void);
   virtual FGColumnVector3& GetMoments(void);
 
@@ -219,7 +216,6 @@ protected:
   bool  Starved;
   bool  Running;
   bool  Cranking;
-  bool  TrimMode;
   bool  FuelFreeze;
 
   double FuelFlow_gph;

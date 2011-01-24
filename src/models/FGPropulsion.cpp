@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.43 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.44 2011/01/24 13:01:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -194,14 +194,16 @@ bool FGPropulsion::GetSteadyState(void)
   double currentThrust = 0, lastThrust = -1;
   int steady_count = 0, j = 0;
   bool steady = false;
+  bool TrimMode = FDMExec->GetTrimStatus();
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
   if (!FGModel::Run()) {
+    FDMExec->SetTrimStatus(true);
+
     for (unsigned int i=0; i<numEngines; i++) {
 //      cout << "  Finding steady state for engine " << i << endl;
-      Engines[i]->SetTrimMode(true);
       steady=false;
       steady_count=0;
       j=0;
@@ -225,8 +227,9 @@ bool FGPropulsion::GetSteadyState(void)
 //      }
       vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
       vMoments += Engines[i]->GetMoments();     // sum body frame moments
-      Engines[i]->SetTrimMode(false);
     }
+
+    FDMExec->SetTrimStatus(TrimMode);
 
     return false;
   } else {

@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.22 2010/12/30 13:35:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.23 2011/01/24 13:01:56 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +202,7 @@ void FGRocket::ConsumeFuel(void)
   double Fshortage=0, Oshortage=0, TanksWithFuel=0, TanksWithOxidizer=0;
 
   if (FuelFreeze) return;
-  if (TrimMode) return;
+  if (FDMExec->GetTrimStatus()) return;
 
   // Count how many assigned tanks have fuel for this engine at this time.
   // If there is/are fuel tanks but no oxidizer tanks, this indicates
