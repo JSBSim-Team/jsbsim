@@ -99,6 +99,7 @@ src/simgear/magvar/Makefile \
 src/simgear/misc/Makefile \
 src/utilities/Makefile \
 src/utilities/aeromatic/Makefile \
+examples/Makefile \
 aircraft/Makefile \
 aircraft/737/Makefile \
 aircraft/A320/Makefile \
