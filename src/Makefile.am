@@ -1,8 +1,5 @@
 includedir = @includedir@/JSBSim
 
-EXTRA_DIST = \
-	JSBSim.hxx JSBSim.cxx
-
 SUBDIRS = initialization models input_output math simgear utilities
 
 LIBRARY_SOURCES = FGFDMExec.cpp FGJSBBase.cpp

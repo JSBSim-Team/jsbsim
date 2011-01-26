@@ -8,7 +8,7 @@
   <latitude unit="DEG">   28.0  </latitude>
   <longitude unit="DEG"> -90.0  </longitude>
   <phi unit="DEG">         0.0  </phi>
-  <theta unit="DEG">      40.0  </theta>
+  <theta unit="DEG">       0.0  </theta>
   <psi unit="DEG">        40.0  </psi>
   <altitude unit="FT"> 10000.0  </altitude>
   <winddir unit="DEG">     0.0  </winddir>

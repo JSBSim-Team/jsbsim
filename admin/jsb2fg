@@ -23,7 +23,10 @@ CUR_DIR=`pwd`
 CP="cp -p"
 #CP="echo"
 
-for n in `find . -path './simgear' -prune -o -path './utilities' -prune -o -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name '*.h' -o -name string_utilities.h`; do
+$CP $FG_SRC/src/FDM/JSBSim/JSBSim.cxx ../examples/FlightGear.cxx
+$CP $FG_SRC/src/FDM/JSBSim/JSBSim.hxx ../examples/FlightGear.hxx
+
+for n in `find . -path './simgear' -prune -o -path './utilities' -prune -o -type f -name 'FG*.cpp' -o -name '*.h' -o -name string_utilities.h`; do
 
    if [ -f $FG_SRC/src/FDM/JSBSim/$n ]; then
 
@@ -52,7 +55,7 @@ if [ "x$NEW_FILES" != "x" ]; then
 fi;
 
 cd $FG_SRC/src/FDM/JSBSim;
-for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h'`; do
+for n in `find . -type f -name 'FG*.cpp' -o -name 'FG*.h'`; do
 
     if [ ! -f $CUR_DIR/$n ]; then
         REMOVED_FILES="$REMOVED_FILES $n";

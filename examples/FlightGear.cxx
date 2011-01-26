@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.64 2010/10/31 04:49:25 jberndt Exp $
+// $Id: FlightGear.cxx,v 1.3 2011/01/26 12:08:27 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -144,6 +144,8 @@ FGJSBsim::FGJSBsim( double dt )
         }
     }
 
+    resetPropertyState();
+    
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
 
     // Register ground callback.
@@ -290,6 +292,8 @@ FGJSBsim::FGJSBsim( double dt )
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-x-in", 196),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-y-in", 0),
         fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-offset-z-in", -16));
+    last_hook_tip[0] = 0; last_hook_tip[1] = 0; last_hook_tip[2] = 0;
+    last_hook_root[0] = 0; last_hook_root[1] = 0; last_hook_root[2] = 0;
 
     crashed = false;
 }
@@ -1409,5 +1413,23 @@ void FGJSBsim::update_external_forces(double t_off)
     last_hook_root[2] = hook_area[1][2];
     
     fgSetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-deg", fi);
+}
+
+void FGJSBsim::resetPropertyState()
+{
+// this code works-around bug #222:
+// http://code.google.com/p/flightgear-bugs/issues/detail?id=222
+// for whatever reason, having an existing value for the WOW
+// property causes the NaNs. Should that be fixed, this code can die
+  SGPropertyNode* gear = fgGetNode("/fdm/jsbsim/gear", false);
+  if (!gear) {
+    return;
+  }
+  
+  int index = 0;
+  SGPropertyNode* unitNode = NULL;
+  for (; (unitNode = gear->getChild("unit", index)) != NULL; ++index) {
+    unitNode->removeChild("WOW", 0, false);
+  }
 }
 
