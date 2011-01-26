@@ -71,14 +71,18 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.76 2011/01/16 16:10:59 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.77 2011/01/26 12:03:39 ehofman Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
+FGPropagate::FGPropagate(FGFDMExec* fdmex)
+  : FGModel(fdmex),
+    LocalTerrainRadius(0),
+    SeaLevelRadius(0),
+    VehicleRadius(0)
 {
   Debug(0);
   Name = "FGPropagate";
