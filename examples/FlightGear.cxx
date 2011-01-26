@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FlightGear.cxx,v 1.1 2011/01/26 11:42:46 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.2 2011/01/26 11:49:40 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
