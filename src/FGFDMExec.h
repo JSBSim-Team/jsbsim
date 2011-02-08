@@ -101,8 +101,8 @@ CLASS DOCUMENTATION
     file:
 
     @code
-    fdmex = new FGFDMExec( … );
-    result = fdmex->LoadModel( … );
+    fdmex = new FGFDMExec( ... );
+    result = fdmex->LoadModel( ... );
     @endcode
 
     When an aircraft model is loaded, the config file is parsed and for each of the
@@ -225,6 +225,9 @@ public:
 
   /// Default destructor
   ~FGFDMExec();
+
+  /** Unbind all tied JSBSim properties. */
+  void Unbind(void) {instance->Unbind();}
 
   /** This routine places a model into the runlist at the specified rate. The
       "rate" is not really a clock rate. It represents how many calls to the

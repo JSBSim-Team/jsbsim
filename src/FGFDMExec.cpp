@@ -78,22 +78,6 @@ static const char *IdHdr = ID_FDMEXEC;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void checkTied ( FGPropertyManager *node )
-{
-  int N = node->nChildren();
-  string name;
-
-  for (int i=0; i<N; i++) {
-    if (node->getChild(i)->nChildren() ) {
-      checkTied( (FGPropertyManager*)node->getChild(i) );
-    }
-    if ( node->getChild(i)->isTied() ) {
-      name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
-      node->Untie(name);
-    }
-  }
-}
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
@@ -185,7 +169,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 FGFDMExec::~FGFDMExec()
 {
   try {
-    checkTied( instance );
+    Unbind();
     DeAllocate();
     
     if (IdFDM == 0) { // Meaning this is no child FDM

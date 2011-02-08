@@ -215,8 +215,10 @@ private:
     double           StartTime;
     double           TimeSpan;
     string           Name;
+    string           Description;
     vector <FGPropertyManager*>  SetParam;
     vector <FGPropertyManager*>  NotifyProperties;
+    vector <string>              DisplayString;
     vector <eAction> Action;
     vector <eType>   Type;
     vector <double>  SetValue;

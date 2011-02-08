@@ -30,7 +30,7 @@
       <set name="ap/roll-attitude-mode" value="1"/>
       <set name="ap/autopilot-roll-on" value="1"/>
       <notify>
-        <property>simulation/run_id</property>
+        <property caption="Sim Run ID: ">simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
       </notify>
     </event>
@@ -75,10 +75,10 @@
     <event name="Time Notify" persistent="true">
       <description>Output message at 1 minute intervals</description>
       <notify>
-        <property>velocities/vc-kts</property>
-        <property>position/h-agl-ft</property>
-        <property>position/lat-geod-deg</property>
-        <property>position/geod-alt-ft</property>
+        <property caption="Velocity (kts):       ">velocities/vc-kts</property>
+        <property caption="Altitude (AGL, ft):   ">position/h-agl-ft</property>
+        <property caption="Latitude (geod, deg): ">position/lat-geod-deg</property>
+        <property caption="Altitude (geod, ft):  ">position/geod-alt-ft</property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
