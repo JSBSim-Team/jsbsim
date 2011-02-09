@@ -4,6 +4,8 @@ Makefile.in
 *.o
 *.a
 *.csv
+*.lo
+*.la
 COPYING
 CVS
 INSTALL
@@ -22,5 +24,7 @@ libtool
 ltmain.sh
 missing
 src/JSBSim*
+src/.libs/
 ./dotest
 *.patch
+*.catalog
