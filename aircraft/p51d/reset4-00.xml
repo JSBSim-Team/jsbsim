@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<initialize name="reset4-00">
+  <!--
+    This file sets up the aircraft 10 feet above
+    the runway to see how the gear bounces
+  -->
+  <ubody>       0.0 </ubody>
+  <vbody>       0.0 </vbody>
+  <wbody>       0.0 </wbody>
+  <latitude>   47.0 </latitude>
+  <longitude> 122.0 </longitude>
+  <phi>         0.0 </phi>
+  <theta>       0.0 </theta>
+  <psi>       150.0 </psi>
+  <altitude>   10.7  </altitude>
+</initialize>
