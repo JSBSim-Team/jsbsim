@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.85 2011/02/11 12:15:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.86 2011/02/11 12:42:58 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   sim_time = 0.0;
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
                   // run in standalone mode with no initialization file.
+
+  AircraftPath = "aircraft";
+  EnginePath = "engine";
+  SystemsPath = "systems";
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
