@@ -49,6 +49,19 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 namespace JSBSim {
 
 bool FGPropertyManager::suppress_warning = true;
+std::vector<std::string> FGPropertyManager::tied_properties;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropertyManager::Unbind(void)
+{
+    vector<string>::iterator it;
+    for (it = tied_properties.begin();it < tied_properties.end();it++)
+    {
+        Untie(*it);
+    }
+    tied_properties.clear();
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,7 +101,6 @@ FGPropertyManager::GetNode (const string &relpath, int index, bool create)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 bool FGPropertyManager::HasNode (const string &path)
 {
@@ -303,8 +315,10 @@ void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
 {
   if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
-  else if (debug_lvl & 0x20)
-    cout << name << endl;
+  else {
+    tied_properties.push_back(name);
+    if (debug_lvl & 0x20) std::cout << name << std::endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -314,8 +328,10 @@ void FGPropertyManager::Tie (const string &name, int *pointer,
 {
   if (!tie(name.c_str(), SGRawValuePointer<int>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
-  else if (debug_lvl & 0x20)
-    cout << name << endl;
+  else {
+    tied_properties.push_back(name);
+    if (debug_lvl & 0x20) std::cout << name << std::endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,8 +341,10 @@ void FGPropertyManager::Tie (const string &name, long *pointer,
 {
   if (!tie(name.c_str(), SGRawValuePointer<long>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
-  else if (debug_lvl & 0x20)
-    cout << name << endl;
+  else {
+    tied_properties.push_back(name);
+    if (debug_lvl & 0x20) std::cout << name << std::endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,8 +354,10 @@ void FGPropertyManager::Tie (const string &name, float *pointer,
 {
   if (!tie(name.c_str(), SGRawValuePointer<float>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
-  else if (debug_lvl & 0x20)
-    cout << name << endl;
+  else {
+    tied_properties.push_back(name);
+    if (debug_lvl & 0x20) std::cout << name << std::endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -346,8 +366,10 @@ void FGPropertyManager::Tie (const string &name, double *pointer, bool useDefaul
 {
   if (!tie(name.c_str(), SGRawValuePointer<double>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
-  else if (debug_lvl & 0x20)
-    cout << name << endl;
+  else {
+    tied_properties.push_back(name);
+    if (debug_lvl & 0x20) std::cout << name << std::endl;
+  }
 }
 
 } // namespace JSBSim

@@ -150,4 +150,10 @@
          1114092.6        0.0 <!-- 297462734.3        0.0    125.0  -->
     </tableData>
   </thrust_table>
+  <function name="propulsion/engine[#]/chamber-pressure_psia" type="post">
+    <product>
+      <p>propulsion/engine[#]/thrust-lbs</p>
+      <v>0.000314</v>
+    </product>
+  </function>
 </rocket_engine>

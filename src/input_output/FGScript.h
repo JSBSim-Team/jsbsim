@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.19 2011/02/11 12:15:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.19 2011/02/11 12:15:16 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,8 +215,10 @@ private:
     double           StartTime;
     double           TimeSpan;
     string           Name;
+    string           Description;
     vector <FGPropertyManager*>  SetParam;
     vector <FGPropertyManager*>  NotifyProperties;
+    vector <string>              DisplayString;
     vector <eAction> Action;
     vector <eType>   Type;
     vector <double>  SetValue;

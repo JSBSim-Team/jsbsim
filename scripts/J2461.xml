@@ -102,21 +102,22 @@
     <event name="Vehicle state:" persistent="true">
       <description>Output message at 10 second intervals</description>
       <notify>
-        <property>velocities/eci-velocity-mag-fps</property>
-        <property>position/h-agl-ft</property>
-        <property>aero/alpha-deg</property>
-        <property>guidance/executive/gravity-turn-pitch-rate-command</property>
-        <property>velocities/thetadot-rad_sec</property>
-        <property>attitude/phi-rad</property>
-        <property>attitude/theta-rad</property>
-        <property>forces/hold-down</property>
-        <property>fcs/throttle-cmd-norm[0]</property>
-        <property>attitude/psi-rad</property>
-        <property>guidance/executive/current-mode</property>
-        <property>guidance/executive/MET</property>
-        <property>guidance/executive/apoapsis</property>
-        <property>guidance/executive/periapsis</property>
-        <property>guidance/executive/eccentricity</property>
+        <description>Vehicle state:</description>
+        <property caption="Mission Elapsed Time:    "> guidance/executive/MET </property>
+        <property caption="ECI Velocity (fps):      "> velocities/eci-velocity-mag-fps </property>
+        <property caption="Orbital apogee (miles):  "> guidance/executive/apoapsis </property>
+        <property caption="Orbital perigee (miles): "> guidance/executive/periapsis </property>
+        <property caption="Orbital eccentricity:    "> guidance/executive/eccentricity </property>
+        <property caption="Altitude AGL (ft):       "> position/h-agl-ft </property>
+        <property caption="Alpha (deg):             "> aero/alpha-deg </property>
+        <property caption="Pitch rate cmd:          "> guidance/executive/gravity-turn-pitch-rate-command </property>
+        <property caption="Thetadot (rad/sec):      "> velocities/thetadot-rad_sec </property>
+        <property caption="Roll angle (rad):        "> attitude/phi-rad </property>
+        <property caption="Pitch angle (rad):       "> attitude/theta-rad </property>
+        <property caption="Heading (rad):           "> attitude/psi-rad </property>
+        <property caption="Hold-down discrete:      "> forces/hold-down </property>
+        <property caption="Throttle (norm):         "> fcs/throttle-cmd-norm[0] </property>
+        <property caption="GNC Mode:                "> guidance/executive/current-mode </property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="10" type="delta"/>

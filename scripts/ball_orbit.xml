@@ -3,8 +3,8 @@
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="cannon ball test">
-  <use aircraft="ball" initialize="reset00"/>
-  <run start="0.0" end="10800" dt="0.01">
+  <use aircraft="ball" initialize="reset00_v2"/>
+  <run start="0.0" end="10800" dt="0.0083333333">
       <description>
       Integrators
       
@@ -18,7 +18,7 @@
     </description>
     <property value="2">simulation/integrator/rate/rotational</property>
     <property value="3">simulation/integrator/rate/translational</property>
-    <property value="3">simulation/integrator/position/rotational</property>
+    <property value="2">simulation/integrator/position/rotational</property>
     <property value="4">simulation/integrator/position/translational</property>
   
     <!-- Initialize with brakes on -->

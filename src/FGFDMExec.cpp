@@ -71,28 +71,12 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.84 2011/01/16 16:26:14 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.85 2011/02/11 12:15:16 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-void checkTied ( FGPropertyManager *node )
-{
-  int N = node->nChildren();
-  string name;
-
-  for (int i=0; i<N; i++) {
-    if (node->getChild(i)->nChildren() ) {
-      checkTied( (FGPropertyManager*)node->getChild(i) );
-    }
-    if ( node->getChild(i)->isTied() ) {
-      name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
-      node->Untie(name);
-    }
-  }
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
@@ -185,7 +169,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 FGFDMExec::~FGFDMExec()
 {
   try {
-    checkTied( instance );
+    Unbind();
     DeAllocate();
     
     if (IdFDM == 0) { // Meaning this is no child FDM

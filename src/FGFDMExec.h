@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.56 2010/11/18 20:37:10 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.57 2011/02/11 12:15:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,8 +101,8 @@ CLASS DOCUMENTATION
     file:
 
     @code
-    fdmex = new FGFDMExec( … );
-    result = fdmex->LoadModel( … );
+    fdmex = new FGFDMExec( ... );
+    result = fdmex->LoadModel( ... );
     @endcode
 
     When an aircraft model is loaded, the config file is parsed and for each of the
@@ -183,7 +183,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.56 $
+    @version $Revision: 1.57 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,6 +225,9 @@ public:
 
   /// Default destructor
   ~FGFDMExec();
+
+  /** Unbind all tied JSBSim properties. */
+  void Unbind(void) {instance->Unbind();}
 
   /** This routine places a model into the runlist at the specified rate. The
       "rate" is not really a clock rate. It represents how many calls to the

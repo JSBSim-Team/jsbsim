@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.43 2011/01/16 15:27:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.44 2011/02/11 12:15:16 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,11 +258,22 @@ bool FGScript::LoadScript(string script, double deltaT)
     // Notify about when this event is triggered?
     if ((notify_element = event_element->FindElement("notify")) != 0) {
       newEvent->Notify = true;
+      // Check here for new <description> tag that gets echoed
+      string notify_description = notify_element->FindElementValue("description");
+      if (!notify_description.empty()) {
+        newEvent->Description = notify_description;
+      }
       notify_property_element = notify_element->FindElement("property");
       while (notify_property_element) {
         notifyPropertyName = notify_property_element->GetDataLine();
         if (PropertyManager->GetNode(notifyPropertyName)) {
           newEvent->NotifyProperties.push_back( PropertyManager->GetNode(notifyPropertyName) );
+          string caption_attribute = notify_property_element->GetAttributeValue("caption");
+          if (caption_attribute.empty()) {
+            newEvent->DisplayString.push_back(notifyPropertyName);
+          } else {
+            newEvent->DisplayString.push_back(caption_attribute);
+          }
         } else {
           cout << endl << fgred << "  Could not find the property named "
                << notifyPropertyName << " in script" << endl << "  \""
@@ -426,8 +437,12 @@ bool FGScript::RunScript(void)
       if (Events[ev_ctr].Notify && !Events[ev_ctr].Notified) {
         cout << endl << "  Event " << event_ctr << " (" << Events[ev_ctr].Name << ")"
              << " executed at time: " << currentTime << endl;
+        if (!Events[ev_ctr].Description.empty()) {
+          cout << "    " << Events[ev_ctr].Description << endl;
+        }
         for (j=0; j<Events[ev_ctr].NotifyProperties.size();j++) {
-          cout << "    " << Events[ev_ctr].NotifyProperties[j]->GetRelativeName()
+//          cout << "    " << Events[ev_ctr].NotifyProperties[j]->GetRelativeName()
+          cout << "    " << Events[ev_ctr].DisplayString[j]
                << " = " << Events[ev_ctr].NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
