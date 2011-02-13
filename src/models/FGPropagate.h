@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.55 2011/01/16 16:10:59 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.56 2011/02/13 23:34:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.55 2011/01/16 16:10:59 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.56 2011/02/13 23:34:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,6 +337,10 @@ public:
   /** Retrieves the inertial position vector.
   */
   const FGColumnVector3& GetInertialPosition(void) const { return VState.vInertialPosition; }
+
+  /** Calculates and retrieves the velocity vector relative to the earth centered earth fixed (ECEF) frame.
+  */
+  const FGColumnVector3 GetECEFVelocity(void) const {return Tb2ec * VState.vUVW; }
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.

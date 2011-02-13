@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.78 2011/02/13 00:42:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.79 2011/02/13 23:34:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,8 +86,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
 {
   Debug(0);
   Name = "FGPropagate";
-//  gravType = gtWGS84;
-  gravType = gtStandard;
+  gravType = gtWGS84;
  
   vPQRdot.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);

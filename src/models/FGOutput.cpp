@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.50 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.51 2011/02/13 23:34:32 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -296,6 +296,7 @@ void FGOutput::DelimitedOutput(const string& fname)
       outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
       outstream << "Aero V_{X Body} (ft/s)" + delimeter + "Aero V_{Y Body} (ft/s)" + delimeter + "Aero V_{Z Body} (ft/s)" + delimeter;
       outstream << "V_{X_{inertial}} (ft/s)" + delimeter + "V_{Y_{inertial}} (ft/s)" + delimeter + "V_{Z_{inertial}} (ft/s)" + delimeter;
+      outstream << "V_{X_{ecef}} (ft/s)" + delimeter + "V_{Y_{ecef}} (ft/s)" + delimeter + "V_{Z_{ecef}} (ft/s)" + delimeter;
       outstream << "V_{North} (ft/s)" + delimeter + "V_{East} (ft/s)" + delimeter + "V_{Down} (ft/s)";
     }
     if (SubSystems & ssForces) {
@@ -415,6 +416,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
     outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
     outstream << Propagate->GetInertialVelocity().Dump(delimeter) << delimeter;
+    outstream << Propagate->GetECEFVelocity().Dump(delimeter) << delimeter;
     outstream << Propagate->GetVel().Dump(delimeter);
     outstream.precision(10);
   }
