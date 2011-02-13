@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.19 2011/02/11 12:15:16 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.20 2011/02/13 00:42:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
 {
   private:
     static bool suppress_warning;
-    static std::vector<std::string> tied_properties;
+    static std::vector<SGPropertyNode_ptr> tied_properties;
   public:
     /// Constructor
     FGPropertyManager(void) {suppress_warning = false;}
@@ -532,10 +532,16 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     template <class V> inline void
     Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
     {
-      if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter), useDefault))
+      SGPropertyNode* property = getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueFunctions<V>(getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to functions" << std::endl;
       else {
-        tied_properties.push_back(name);
+        tied_properties.push_back(property);
         if (debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -562,10 +568,16 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     template <class V> inline void Tie (const std::string &name, int index, V (*getter)(int),
                                 void (*setter)(int, V) = 0, bool useDefault = true)
     {
-      if (!tie(name.c_str(), SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
+      SGPropertyNode* property = getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to indexed functions" << std::endl;
       else {
-        tied_properties.push_back(name);
+        tied_properties.push_back(property);
         if (debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -594,10 +606,16 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     Tie (const std::string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
-      if (!tie(name.c_str(), SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
+      SGPropertyNode* property = getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to object methods" << std::endl;
       else {
-        tied_properties.push_back(name);
+        tied_properties.push_back(property);
         if (debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -625,10 +643,16 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     Tie (const std::string &name, T * obj, int index, V (T::*getter)(int) const,
                          void (T::*setter)(int, V) = 0, bool useDefault = true)
     {
-      if (!tie(name.c_str(), SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
+      SGPropertyNode* property = getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to indexed object methods" << std::endl;
       else {
-        tied_properties.push_back(name);
+        tied_properties.push_back(property);
         if (debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }

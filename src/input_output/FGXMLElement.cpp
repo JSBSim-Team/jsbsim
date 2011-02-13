@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.31 2010/09/29 02:22:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.32 2011/02/13 00:42:45 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -64,6 +64,8 @@ Element::Element(const string& nm)
     // Length
     convert["M"]["FT"] = 3.2808399;
     convert["FT"]["M"] = 1.0/convert["M"]["FT"];
+    convert["KM"]["FT"] = 3280.8399;
+    convert["FT"]["KM"] = 1.0/convert["KM"]["FT"];
     convert["FT"]["IN"] = 12.0;
     convert["IN"]["FT"] = 1.0/convert["FT"]["IN"];
     convert["IN"]["M"] = convert["IN"]["FT"] * convert["FT"]["M"];
@@ -121,6 +123,8 @@ Element::Element(const string& nm)
     convert["FT/S"]["M/S"] = 1.0/convert["M/S"]["FT/S"];
     convert["M/SEC"]["FT/SEC"] = 3.2808399;
     convert["FT/SEC"]["M/SEC"] = 1.0/convert["M/SEC"]["FT/SEC"];
+    convert["KM/SEC"]["FT/SEC"] = 3280.8399;
+    convert["FT/SEC"]["KM/SEC"] = 1.0/convert["KM/SEC"]["FT/SEC"];
     // Torque
     convert["FT*LBS"]["N*M"] = 1.35581795;
     convert["N*M"]["FT*LBS"] = 1/convert["FT*LBS"]["N*M"];
@@ -153,6 +157,7 @@ Element::Element(const string& nm)
 
     // Length
     convert["M"]["M"] = 1.00;
+    convert["KM"]["KM"] = 1.00;
     convert["FT"]["FT"] = 1.00;
     convert["IN"]["IN"] = 1.00;
     // Area
@@ -195,6 +200,7 @@ Element::Element(const string& nm)
     convert["KTS"]["KTS"] = 1.00;
     convert["M/S"]["M/S"] = 1.0;
     convert["M/SEC"]["M/SEC"] = 1.0;
+    convert["KM/SEC"]["KM/SEC"] = 1.0;
     // Torque
     convert["FT*LBS"]["FT*LBS"] = 1.00;
     convert["N*M"]["N*M"] = 1.00;

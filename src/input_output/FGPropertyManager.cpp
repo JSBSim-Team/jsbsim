@@ -49,17 +49,17 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 namespace JSBSim {
 
 bool FGPropertyManager::suppress_warning = true;
-std::vector<std::string> FGPropertyManager::tied_properties;
+std::vector<SGPropertyNode_ptr> FGPropertyManager::tied_properties;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropertyManager::Unbind(void)
 {
-    vector<string>::iterator it;
+    vector<SGPropertyNode_ptr>::iterator it;
+
     for (it = tied_properties.begin();it < tied_properties.end();it++)
-    {
-        Untie(*it);
-    }
+        (*it)->untie();
+
     tied_properties.clear();
 }
 
@@ -313,11 +313,17 @@ void FGPropertyManager::Untie (const string &name)
 
 void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
 {
-  if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer), useDefault))
+  SGPropertyNode* property = getNode(name.c_str(), true);
+  if (!property) {
+    cerr << "Could not get or create property " << name << endl;
+    return;
+  }
+
+  if (!property->tie(SGRawValuePointer<bool>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
-    tied_properties.push_back(name);
-    if (debug_lvl & 0x20) std::cout << name << std::endl;
+    tied_properties.push_back(property);
+    if (debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -326,11 +332,17 @@ void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
 void FGPropertyManager::Tie (const string &name, int *pointer,
                                           bool useDefault )
 {
-  if (!tie(name.c_str(), SGRawValuePointer<int>(pointer), useDefault))
+  SGPropertyNode* property = getNode(name.c_str(), true);
+  if (!property) {
+    cerr << "Could not get or create property " << name << endl;
+    return;
+  }
+
+  if (!property->tie(SGRawValuePointer<int>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
-    tied_properties.push_back(name);
-    if (debug_lvl & 0x20) std::cout << name << std::endl;
+    tied_properties.push_back(property);
+    if (debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -339,11 +351,17 @@ void FGPropertyManager::Tie (const string &name, int *pointer,
 void FGPropertyManager::Tie (const string &name, long *pointer,
                                           bool useDefault )
 {
-  if (!tie(name.c_str(), SGRawValuePointer<long>(pointer), useDefault))
+  SGPropertyNode* property = getNode(name.c_str(), true);
+  if (!property) {
+    cerr << "Could not get or create property " << name << endl;
+    return;
+  }
+
+  if (!property->tie(SGRawValuePointer<long>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
-    tied_properties.push_back(name);
-    if (debug_lvl & 0x20) std::cout << name << std::endl;
+    tied_properties.push_back(property);
+    if (debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -352,11 +370,17 @@ void FGPropertyManager::Tie (const string &name, long *pointer,
 void FGPropertyManager::Tie (const string &name, float *pointer,
                                           bool useDefault )
 {
-  if (!tie(name.c_str(), SGRawValuePointer<float>(pointer), useDefault))
+  SGPropertyNode* property = getNode(name.c_str(), true);
+  if (!property) {
+    cerr << "Could not get or create property " << name << endl;
+    return;
+  }
+
+  if (!property->tie(SGRawValuePointer<float>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
-    tied_properties.push_back(name);
-    if (debug_lvl & 0x20) std::cout << name << std::endl;
+    tied_properties.push_back(property);
+    if (debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -364,11 +388,17 @@ void FGPropertyManager::Tie (const string &name, float *pointer,
 
 void FGPropertyManager::Tie (const string &name, double *pointer, bool useDefault)
 {
-  if (!tie(name.c_str(), SGRawValuePointer<double>(pointer), useDefault))
+  SGPropertyNode* property = getNode(name.c_str(), true);
+  if (!property) {
+    cerr << "Could not get or create property " << name << endl;
+    return;
+  }
+
+  if (!property->tie(SGRawValuePointer<double>(pointer), useDefault))
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
-    tied_properties.push_back(name);
-    if (debug_lvl & 0x20) std::cout << name << std::endl;
+    tied_properties.push_back(property);
+    if (debug_lvl & 0x20) cout << name << endl;
   }
 }
 
