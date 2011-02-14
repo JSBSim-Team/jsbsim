@@ -68,7 +68,7 @@ using namespace std;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.61 2010/11/17 03:18:16 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.62 2011/02/14 12:03:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -453,6 +453,10 @@ quit:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#define gripe cerr << "Option '" << keyword 	\
+	<< "' requires a value, as in '"	\
+	<< keyword << "=something'" << endl << endl;/**/
+
 bool options(int count, char **arg)
 {
   int i;
@@ -465,15 +469,12 @@ bool options(int count, char **arg)
 
   cout.setf(ios_base::fixed);
 
-#define gripe cerr << "Option '" << keyword 	\
-	<< "' requires a value, as in '"	\
-	<< keyword << "=something'" << endl << endl;/**/
-
   for (i=1; i<count; i++) {
     string argument = string(arg[i]);
     string keyword(argument);
     string value("");
     string::size_type n=argument.find("=");
+
     if (n != string::npos && n > 0) {
       keyword = argument.substr(0, n);
       value = argument.substr(n+1);
@@ -579,9 +580,14 @@ bool options(int count, char **arg)
     } else if (keyword == "--catalog") {
         catalog = true;
         if (value.size() > 0) AircraftName=value;
+
     } else {
-      cerr << endl << "  Parameter: " << argument << " not understood" << endl;
-      result = false;
+      if (i == 1 && value.empty()) {
+        ScriptName = keyword;
+      } else {
+        gripe;
+        result = false;
+      }
     }
   }
 
@@ -609,7 +615,7 @@ bool options(int count, char **arg)
 void PrintHelp(void)
 {
   cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
-  cout << "  Usage: jsbsim <options>" << endl << endl;
+  cout << "  Usage: jsbsim [script file name] <options>" << endl << endl;
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;
@@ -629,7 +635,7 @@ void PrintHelp(void)
     cout << "    --simulation-rate=<rate (double)> specifies the sim dT time or frequency" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
-  cout << "  NOTE: There can be no spaces around the = sign when" << endl;
-  cout << "        an option is followed by a filename" << endl << endl;
+    cout << "  NOTE: There can be no spaces around the = sign when" << endl;
+    cout << "        an option is followed by a filename" << endl << endl;
 }
 
