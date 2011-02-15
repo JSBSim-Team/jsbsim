@@ -27,6 +27,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 05/14/2004  Created
+02/08/2011  T. Kreitler, added rotor support
 
 //JVK (mark)
 
@@ -46,7 +47,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.12 2010/08/21 18:08:37 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.13 2011/02/15 12:44:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,11 +108,10 @@ public:
   void Calculate(void);
   double CalcFuelNeed(void);
 
-  inline double GetPowerAvailable(void) const {return (Eng_HP * hptoftlbssec);}
-  inline double GetPowerAvailable_HP(void) const {return (Eng_HP);}
-  inline double GetPropRPM(void) const {return (Prop_RPM);}
-  inline double GetThrottleCmd(void) const {return (ThrottleCmd);}
-  inline bool GetIeluIntervent(void) const { return Ielu_intervent; }
+  double GetPowerAvailable(void) const { return (PowerAvailable); }
+  double GetRPM(void) const { return (RPM); }
+  double GetIeluThrottle(void) const { return (Throttle); }
+  bool GetIeluIntervent(void) const { return Ielu_intervent; }
 
   double Seek(double* var, double target, double accel, double decel);
   double ExpSeek(double* var, double target, double accel, double decel);
@@ -165,7 +165,7 @@ private:
   double dt;               ///< Simulator time slice
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
-  double ThrottleCmd;      ///< FCS-supplied throttle position
+  double Throttle;         ///< FCS-supplied throttle position
   double TAT;              ///< total air temperature (deg C)
   double PowerAvailable;
   bool Stalled;            ///< true if engine is compressor-stalled
@@ -189,26 +189,27 @@ private:
   double BetaRangeThrottleEnd; // coef (0-1) where is end of beta-range
   double ReverseMaxPower;      // coef (0-1) multiplies max throttle on reverse
 
-  double Idle_Max_Delay;       // time delay for exponencial
+  double Idle_Max_Delay;       // time delay for exponential
   double MaxPower;             // max engine power [HP]
-  double StarterN1;	       // rotates of generator maked by starter [%]
+  double StarterN1;            // rotates of generator maked by starter [%]
   double MaxStartingTime;      // maximal time for start [s] (-1 means not used)
-  double Prop_RPM;             // propeller RPM
+  double RPM;                  // shaft RPM
   double Velocity;
   double rho;
   double PSFC;                 // Power specific fuel comsumption [lb/(HP*hr)] at best efficiency
 
   double Eng_HP;               // current engine power
 
-  double StartTime;	       // engine strating time [s] (0 when start button pushed)
+  double StartTime;            // engine starting time [s] (0 when start button pushed)
 
-  double  ITT_Delay;	       // time delay for exponencial grow of ITT
+  double  ITT_Delay;           // time delay for exponential growth of ITT
   double  Eng_ITT_degC;
   double  Eng_Temperature;     // temperature inside engine
 
   bool EngStarting;            // logicaly output - TRUE if engine is starting
   bool GeneratorPower;
   int Condition;
+  int thrusterType;            // the attached thruster
 
   double Off(void);
   double Run(void);
