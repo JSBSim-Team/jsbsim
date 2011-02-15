@@ -700,6 +700,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
     case setve:
       SetVtrueFpsIC(ve0 * sqrt(rho/rhoSL));
       break;
+    default: // Make the compiler stop complaining about missing enums
+      break;
   }
 
   position.SetRadius(alt + sea_level_radius);
