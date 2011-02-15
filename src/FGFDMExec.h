@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.56 2010/11/18 20:37:10 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.58 2011/02/11 12:43:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +183,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.56 $
+    @version $Revision: 1.58 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,8 +286,11 @@ public:
 
   /** Loads a script
       @param Script the full path name and file name for the script to be loaded.
+      @param deltaT The simulation integration step size, if given.  If no value is supplied
+                    then 0.0 is used and the value is expected to be supplied in
+                    the script file itself.
       @return true if successfully loadsd; false otherwise. */
-  bool LoadScript(const string& Script, double deltaT);
+  bool LoadScript(const string& Script, double deltaT=0.0);
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config

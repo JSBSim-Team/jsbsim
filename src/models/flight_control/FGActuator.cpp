@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.16 2011/01/24 13:01:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.17 2011/02/13 00:42:45 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,6 +189,18 @@ void FGActuator::RateLimit(void)
 
 void FGActuator::Deadband(void)
 {
+  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
+  // is - for the purposes of this Deadband method - really the input to the
+  // method.
+  double input = Output;
+
+  if (input < -deadband_width/2.0) {
+    Output = (input + deadband_width/2.0);
+  } else if (input > deadband_width/2.0) {
+    Output = (input - deadband_width/2.0);
+  } else {
+    Output = 0.0;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

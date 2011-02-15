@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.20 2011/02/11 12:43:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.18 2010/04/11 13:44:42 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.20 2011/02/11 12:43:28 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +178,7 @@ public:
       has been supplied on the command line, it will be override the script-
       specified simulation step size.
       @param script the filename (including path name, if any) for the script.
-      @param deltaT a simulation step size from the command line
+      @param deltaT a simulation step size.
       @return true if successful */
   bool LoadScript(string script, double deltaT);
 

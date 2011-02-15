@@ -34,6 +34,7 @@ based on parameters given in the engine config file for this class
 HISTORY
 --------------------------------------------------------------------------------
 05/14/2004  Created
+02/08/2011  T. Kreitler, added rotor support
 
 //JVK (mark)
 
@@ -45,6 +46,7 @@ INCLUDES
 #include <sstream>
 #include "FGTurboProp.h"
 #include "FGPropeller.h"
+#include "FGRotor.h"
 #include "models/FGPropulsion.h"
 #include "models/FGAuxiliary.h"
 
@@ -52,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.17 2010/08/21 17:13:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.18 2011/02/15 12:44:00 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,8 +66,10 @@ FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number)
     ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL)
 {
   SetDefaults();
+  thrusterType = Thruster->GetType();
 
   Load(exec, el);
+  bindmodel();
   Debug(0);
 }
 
@@ -101,6 +105,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     MaxN2 = el->FindElementValueAsNumber("maxn2");
   if (el->FindElement("betarangeend"))
     BetaRangeThrottleEnd = el->FindElementValueAsNumber("betarangeend")/100.0;
+  BetaRangeThrottleEnd = Constrain(0.0, BetaRangeThrottleEnd, 0.99999);
   if (el->FindElement("reversemaxpower"))
     ReverseMaxPower = el->FindElementValueAsNumber("reversemaxpower")/100.0;
 
@@ -146,10 +151,10 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   delay=1;
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
-  OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
+  OilTemp_degK = Auxiliary->GetTAT_C() + 273.0;
   if (IdleFF==-1) IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
-  cout << "ENG POWER:" << EnginePowerRPM_N1->GetValue(1200,90) << "\n";
+  // cout << "ENG POWER:" << EnginePowerRPM_N1->GetValue(1200,90) << endl;
 
   return true;
 }
@@ -162,29 +167,29 @@ void FGTurboProp::Calculate(void)
 {
   RunPreFunctions();
 
-  TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
+  TAT = Auxiliary->GetTAT_C();
   dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
 
-  ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
+  Throttle = FCS->GetThrottlePos(EngineNumber);
 
-  Prop_RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
-  if (Thruster->GetType() == FGThruster::ttPropeller) {
+  RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
+  if (thrusterType == FGThruster::ttPropeller) {
     ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
     ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
     ((FGPropeller*)Thruster)->SetReverse(Reversed);
     if (Reversed) {
-      ((FGPropeller*)Thruster)->SetReverseCoef(ThrottleCmd);
+      ((FGPropeller*)Thruster)->SetReverseCoef(Throttle);
     } else {
       ((FGPropeller*)Thruster)->SetReverseCoef(0.0);
     }
-  }
 
-  if (Reversed) {
-    if (ThrottleCmd < BetaRangeThrottleEnd) {
-        ThrottleCmd = 0.0;  // idle when in Beta-range
-    } else {
-      // when reversed:
-      ThrottleCmd = (ThrottleCmd-BetaRangeThrottleEnd)/(1-BetaRangeThrottleEnd) * ReverseMaxPower;
+    if (Reversed) {
+      if (Throttle < BetaRangeThrottleEnd) {
+          Throttle = 0.0;  // idle when in Beta-range
+      } else {
+        // when reversed:
+        Throttle = (Throttle-BetaRangeThrottleEnd)/(1-BetaRangeThrottleEnd) * ReverseMaxPower;
+      }
     }
   }
 
@@ -223,23 +228,31 @@ void FGTurboProp::Calculate(void)
     StartTime=-1;
   }
 
-  if (Condition < 1) {
-    if (Ielu_max_torque > 0
-      && -Ielu_max_torque > ((FGPropeller*)(Thruster))->GetTorque()
-      && ThrottleCmd >= OldThrottle ) {
-      ThrottleCmd = OldThrottle - 0.1 * dt; //IELU down
-      Ielu_intervent = true;
-    } else if (Ielu_max_torque > 0 && Ielu_intervent && ThrottleCmd >= OldThrottle) {
-      ThrottleCmd = OldThrottle;
-      ThrottleCmd = OldThrottle + 0.05 * dt; //IELU up
-      Ielu_intervent = true;
+  // limiter intervention wanted?
+  if (Ielu_max_torque > 0.0) {
+    double torque = 0.0;
+    
+    if (thrusterType == FGThruster::ttPropeller) {
+      torque = ((FGPropeller*)(Thruster))->GetTorque();
+    } else if (thrusterType == FGThruster::ttRotor) {
+      torque = ((FGRotor*)(Thruster))->GetTorque();
+    }
+
+    if (Condition < 1) {
+      if ( abs(torque) > Ielu_max_torque && Throttle >= OldThrottle ) {
+        Throttle = OldThrottle - 0.1 * dt; //IELU down
+        Ielu_intervent = true;
+      } else if ( Ielu_intervent && Throttle >= OldThrottle) {
+        Throttle = OldThrottle + 0.05 * dt; //IELU up
+        Ielu_intervent = true;
+      } else {
+        Ielu_intervent = false;
+      }
     } else {
       Ielu_intervent = false;
     }
-  } else {
-    Ielu_intervent = false;
+    OldThrottle = Throttle;
   }
-  OldThrottle = ThrottleCmd;
 
   switch (phase) {
     case tpOff:    Eng_HP = Off(); break;
@@ -280,7 +293,7 @@ double FGTurboProp::Off(void)
   ConsumeFuel(); // for possible setting Starved = false when fuel tank
                  // is refilled (fuel crossfeed etc.)
 
-  if (Prop_RPM>5) return -0.012; // friction in engine when propeller spining (estimate)
+  if (RPM>5) return -0.012; // friction in engine when propeller spining (estimate)
   return 0.0;
 }
 
@@ -293,9 +306,9 @@ double FGTurboProp::Run(void)
 
 //---
   double old_N1 = N1;
-  N1 = ExpSeek(&N1, IdleN1 + ThrottleCmd * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
+  N1 = ExpSeek(&N1, IdleN1 + Throttle * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
 
-  EngPower_HP = EnginePowerRPM_N1->GetValue(Prop_RPM,N1);
+  EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
   EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
@@ -346,7 +359,7 @@ double FGTurboProp::SpinUp(void)
   OilPressure_psi = (N1/100.0*0.25+(0.1-(OilTemp_degK-273.15)*0.1/80.0)*N1/100.0) / 7692.0e-6; //from MPa to psi
   NozzlePosition = 1.0;
 
-  EngPower_HP = EnginePowerRPM_N1->GetValue(Prop_RPM,N1);
+  EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
   EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
@@ -366,13 +379,15 @@ double FGTurboProp::SpinUp(void)
 
 double FGTurboProp::Start(void)
 {
-  double EngPower_HP,eff_coef;
+  double EngPower_HP = 0.0;
+  double eff_coef;
+
   EngStarting = false;
   if ((N1 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
     double old_N1 = N1;
     Cranking = true;                   // provided for sound effects signal
     if (N1 < IdleN1) {
-      EngPower_HP = EnginePowerRPM_N1->GetValue(Prop_RPM,N1);
+      EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
       EngPower_HP *= EnginePowerVC->GetValue();
       if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
       N1 = ExpSeek(&N1, IdleN1*1.1, Idle_Max_Delay*4, Idle_Max_Delay * 2.4);
@@ -391,7 +406,6 @@ double FGTurboProp::Start(void)
       Starter = false;
       Cranking = false;
       FuelFlow_pph = 0;
-      EngPower_HP=0.0;
     }
   } else {                 // no start if N2 < 15% or Starved
     phase = tpOff;
@@ -449,13 +463,14 @@ void FGTurboProp::SetDefaults(void)
 {
 //  Name = "Not defined";
   N1 = N2 = 0.0;
+  Eng_HP = 0.0;
   Type = etTurboprop;
   MilThrust = 10000.0;
   IdleN1 = 30.0;
   IdleN2 = 60.0;
   MaxN1 = 100.0;
   MaxN2 = 100.0;
-  ThrottleCmd = 0.0;
+  Throttle = 0.0;
   InletPosition = 1.0;
   NozzlePosition = 1.0;
   Reversed = false;
@@ -472,6 +487,11 @@ void FGTurboProp::SetDefaults(void)
   Ielu_intervent=false;
 
   Idle_Max_Delay = 1.0;
+
+  Throttle = OldThrottle = 0.0;
+  ITT_Delay = 0.05;
+  ReverseMaxPower = 0.0;
+  BetaRangeThrottleEnd = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -524,10 +544,18 @@ void FGTurboProp::bindmodel()
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
   property_name = base_property_name + "/n1";
   PropertyManager->Tie( property_name.c_str(), &N1);
-  property_name = base_property_name + "/n2";
-  PropertyManager->Tie( property_name.c_str(), &N2);
+  // property_name = base_property_name + "/n2";
+  // PropertyManager->Tie( property_name.c_str(), &N2);
   property_name = base_property_name + "/reverser";
   PropertyManager->Tie( property_name.c_str(), &Reversed);
+  property_name = base_property_name + "/power-hp";
+  PropertyManager->Tie( property_name.c_str(), &Eng_HP);
+  property_name = base_property_name + "/itt-c";
+  PropertyManager->Tie( property_name.c_str(), &Eng_ITT_degC);
+  property_name = base_property_name + "/engtemp-c";
+  PropertyManager->Tie( property_name.c_str(), &Eng_Temperature);
+  property_name = base_property_name + "/ielu_intervent";
+  PropertyManager->Tie( property_name.c_str(), &Ielu_intervent);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

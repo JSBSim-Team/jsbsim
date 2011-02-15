@@ -42,6 +42,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
+    <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EmbedManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -301,7 +302,9 @@
     <None Include="engine\ah1s_rotor.xml" />
     <None Include="engine\avco_lycoming_t53.xml" />
     <None Include="scripts\ball_chute.xml" />
-    <None Include="scripts\ball_orbit.xml" />
+    <None Include="scripts\ball_orbit.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="scripts\c172pbrake.xml" />
     <None Include="aircraft\F4N\F4N.xml" />
     <None Include="systems\fg_glue.xml" />

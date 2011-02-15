@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.84 2011/01/16 16:26:14 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.87 2011/02/13 00:42:44 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,6 +116,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
                   // run in standalone mode with no initialization file.
 
+  AircraftPath = "aircraft";
+  EnginePath = "engine";
+  SystemsPath = "systems";
+
   try {
     char* num = getenv("JSBSIM_DEBUG");
     if (num) debug_lvl = atoi(num); // set debug level
@@ -154,9 +158,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-//  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
-  instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
-  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
+//  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
+  instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
+  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
@@ -643,7 +647,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       } else {
         Outputs.push_back(Output);
         string outputProp = CreateIndexedPropertyName("simulation/output",idx);
-        instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
+        instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
         idx++;
       }
       element = document->FindNextElement("output");
@@ -932,7 +936,7 @@ bool FGFDMExec::SetOutputDirectives(const string& fname)
     Outputs.push_back(Output);
     typedef int (FGOutput::*iOPMF)(void) const;
     string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
-    instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate);
+    instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
   }
 
   return result;
