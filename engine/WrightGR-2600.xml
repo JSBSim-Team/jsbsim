@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<!--
+  File:     WrightGR-2600.xml
+  Author:   Aero-Matic v 0.7
+  Date:     14 March 2010
+  Version   1.02
+
+  Inputs:
+    name:           WrightGR-2600
+    type:           piston
+    power:          1600.0 hp
+    augmented?      no
+    injected?       no
+
+
+  References :
+  ==========
+  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+  (FAA certificate, TC704 - 25 january 1939, B-314) :
+
+  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 33.2 in. hg. 2100 rpm (1200 hp)
+                  at 5400 ft, 35.0 in. hg. 2100 rpm (1200 hp) at sea level.
+                  * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
+
+  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+  (FAA certificate, TC704 - 2 may 1941 B-314A) :
+
+  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 35.8 in. hg. 2300 rpm (1350 hp)
+                  at 6200 ft, 37.5 in. hg. 2300 rpm (1350 hp) at sea level.
+                  * take-off (2 minutes), 43.5 in. hg. 2400 rpm (1600 hp).
+
+  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+  (FAA certificate, TC176 - Wright Double row Cyclone GR-260025) :
+
+  Displacement : 2603 cu. in.
+  Bore         : 6.125 in.
+  Stroke       : 6.312 in.
+  Compression  : 6.85.
+
+-->
+
+<!-- this is an engine of B-314 A. -->
+
+<piston_engine name="Wright Double Row Cyclone GR-2600 709C14AC1">
+
+<!-- Range is adjusted to the economic cruise, by volumetric efficiency :
+
+     - in the FAA certificate the fuel capacity of 314A is 5688 gallons where 1 gallon = 6 lb !
+
+     - the economic cruise speed is 110 kt indicated, or 130 kt true (KSFO - PHNL 2080 NM / 16 h),
+     that is a range of 34.75 h = 5200 miles / 130 kt,
+     or 5688 US gal / 34.75 h = 164 gallons/h for all engines, or 41 gallons/h per engine.
+
+     The 314A (314) was unable to reach 5200 (3500) miles at the cruise speed of 160 kt.
+
+
+     To be above atmospheric pressure :
+     - 10 PSI for 43.5 inhg max at 2400 RPM, sea level : takeoff, full throttle.
+     -  7 PSI for 37.5 inhg max at 2300 RPM, sea level.
+     -  6 PSI for 35.8 inhg max at 2300 RPM, 6200 ft.
+-->
+
+   <minmp unit="INHG"> 6.0 </minmp>
+   <maxmp unit="INHG"> 43.5 </maxmp>                        <!-- aeromatic 30.0 -->
+   <displacement unit="IN3"> 2603.00 </displacement>
+   <bore unit="IN">6.125</bore>
+   <stroke unit="IN">6.312</stroke>
+   <compression-ratio>6.85</compression-ratio>
+   <volumetric-efficiency>0.6</volumetric-efficiency>
+   <maxhp> 1600.00 </maxhp>
+   <cycles> 2.0 </cycles>
+   <idlerpm> 700.0 </idlerpm>
+   <maxrpm> 2400.0 </maxrpm>
+   <maxthrottle> 1.0 </maxthrottle>
+   <minthrottle> 0.1 </minthrottle>
+   <sparkfaildrop>      0.0 </sparkfaildrop>
+   <numboostspeeds>     2 </numboostspeeds>
+   <boostoverride>      0 </boostoverride>
+   <takeoffboost>      10 </takeoffboost>
+   <ratedboost1>        7 </ratedboost1>
+   <ratedpower1>     1350 </ratedpower1>
+   <ratedrpm1>       2300 </ratedrpm1>
+   <ratedaltitude1 >    0 </ratedaltitude1>
+   <ratedboost1>        6 </ratedboost1>
+   <ratedpower1>     1350 </ratedpower1>
+   <ratedrpm1>       2300 </ratedrpm1>
+   <ratedaltitude1 > 6200 </ratedaltitude1>
+
+</piston_engine>
