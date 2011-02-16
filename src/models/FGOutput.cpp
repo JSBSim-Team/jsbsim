@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.51 2011/02/13 23:34:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.52 2011/02/16 12:30:28 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -976,7 +976,7 @@ bool FGOutput::Load(Element* element)
 {
   string parameter="";
   string name="";
-  int OutRate = 0;
+  double OutRate = 0.0;
   unsigned int port;
   Element *property_element;
 
@@ -1005,7 +1005,7 @@ bool FGOutput::Load(Element* element)
     BaseFilename = Filename = name;
   }
   if (!document->GetAttributeValue("rate").empty()) {
-    OutRate = (int)document->GetAttributeValueAsNumber("rate");
+    OutRate = document->GetAttributeValueAsNumber("rate");
   } else {
     OutRate = 1;
   }
@@ -1060,7 +1060,7 @@ bool FGOutput::Load(Element* element)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::SetRate(int rtHz)
+void FGOutput::SetRate(double rtHz)
 {
   rtHz = rtHz>1000?1000:(rtHz<0?0:rtHz);
   if (rtHz > 0) {
