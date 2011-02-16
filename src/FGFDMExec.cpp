@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.87 2011/02/13 00:42:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.88 2011/02/16 12:28:53 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +164,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
+  instance->Tie("simulation/frame", (int *)&Frame, false);
 
   Constructing = false;
 }
@@ -633,7 +634,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 
     // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
     unsigned int idx=0;
-    typedef int (FGOutput::*iOPMF)(void) const;
+    typedef double (FGOutput::*iOPMF)(void) const;
     element = document->FindElement("output");
     while (element) {
       if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
@@ -934,7 +935,7 @@ bool FGFDMExec::SetOutputDirectives(const string& fname)
 
   if (result) {
     Outputs.push_back(Output);
-    typedef int (FGOutput::*iOPMF)(void) const;
+    typedef double (FGOutput::*iOPMF)(void) const;
     string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
     instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
   }

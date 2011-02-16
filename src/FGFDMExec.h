@@ -44,7 +44,6 @@ INCLUDES
 #include <vector>
 #include <string>
 
-//#include "models/FGModel.h"
 #include "models/FGOutput.h"
 #include "models/FGInput.h"
 #include "initialization/FGTrim.h"
@@ -60,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.58 2011/02/11 12:43:04 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.59 2011/02/16 12:28:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.58 $
+    @version $Revision: 1.59 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
