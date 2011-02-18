@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.41 2010/11/30 12:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.42 2011/02/18 12:44:16 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAtmosphere::~FGAtmosphere()
 {
+  delete(POE_Table);
   Debug(1);
 }
 

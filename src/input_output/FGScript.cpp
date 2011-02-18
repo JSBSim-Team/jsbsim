@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.45 2011/02/18 05:03:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.46 2011/02/18 12:44:16 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,12 +78,19 @@ FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
 
 FGScript::~FGScript()
 {
-  unsigned int i;
+  unsigned int i, j;
 
-  for (i=0; i<local_properties.size(); i++) delete local_properties[i];
+  for (i=0; i<local_properties.size(); i++) {
+    delete local_properties[i]->value;
+    delete local_properties[i];
+  }
   local_properties.clear();
 
-  for (i=0; i<Events.size(); i++) delete Events[i].Condition;
+  for (i=0; i<Events.size(); i++) {
+    delete Events[i].Condition;
+    for (j=0; j<Events[i].Functions.size(); j++)
+      delete Events[i].Functions[j];
+  }
   Events.clear();
 
   Debug(1);
@@ -242,11 +249,13 @@ bool FGScript::LoadScript(string script, double deltaT)
         newCondition = new FGCondition(condition_element, PropertyManager);
       } catch(string str) {
         cout << endl << fgred << str << reset << endl << endl;
+        delete newEvent;
         return false;
       }
       newEvent->Condition = newCondition;
     } else {
       cerr << "No condition specified in script event " << newEvent->Name << endl;
+      delete newEvent;
       return false;
     }
 
@@ -281,6 +290,8 @@ bool FGScript::LoadScript(string script, double deltaT)
                << notifyPropertyName << " in script" << endl << "  \""
                << ScriptName << "\". Execution is aborted. Please recheck "
                << "your input files and scripts." << reset << endl;
+          delete newEvent->Condition;
+          delete newEvent;
           return false;
         }
         notify_property_element = notify_element->FindNextElement("property");
