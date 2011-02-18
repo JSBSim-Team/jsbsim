@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.52 2011/02/16 12:30:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.53 2011/02/18 05:03:58 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -182,24 +182,31 @@ bool FGOutput::Run(void)
 {
   if (FGModel::Run()) return true;
 
-  if (enabled && !FDMExec->IntegrationSuspended()&& !FDMExec->Holding()) {
+  if (enabled && !FDMExec->IntegrationSuspended() && !FDMExec->Holding()) {
     RunPreFunctions();
-    if (Type == otSocket) {
-      SocketOutput();
-    } else if (Type == otFlightGear) {
-      FlightGearSocketOutput();
-    } else if (Type == otCSV || Type == otTab) {
-      DelimitedOutput(Filename);
-    } else if (Type == otTerminal) {
-      // Not done yet
-    } else if (Type == otNone) {
-      // Do nothing
-    } else {
-      // Not a valid type of output
-    }
+    Print();
     RunPostFunctions();
   }
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::Print(void)
+{
+  if (Type == otSocket) {
+    SocketOutput();
+  } else if (Type == otFlightGear) {
+    FlightGearSocketOutput();
+  } else if (Type == otCSV || Type == otTab) {
+    DelimitedOutput(Filename);
+  } else if (Type == otTerminal) {
+    // Not done yet
+  } else if (Type == otNone) {
+    // Do nothing
+  } else {
+    // Not a valid type of output
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

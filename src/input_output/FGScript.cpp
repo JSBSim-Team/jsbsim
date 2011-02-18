@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.44 2011/02/11 12:15:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.45 2011/02/18 05:03:58 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,6 +139,8 @@ bool FGScript::LoadScript(string script, double deltaT)
   StartTime = run_element->GetAttributeValueAsNumber("start");
   FDMExec->Setsim_time(StartTime);
   EndTime   = run_element->GetAttributeValueAsNumber("end");
+  // Make sure that the desired time is reached and executed.
+  EndTime += 0.99*FDMExec->GetDeltaT();
 
   if (deltaT == 0.0)
     dt = run_element->GetAttributeValueAsNumber("dt");
@@ -350,7 +352,7 @@ bool FGScript::RunScript(void)
   double currentTime = FDMExec->GetSimTime();
   double newSetValue = 0;
 
-  if (currentTime > EndTime) return false; //Script done!
+  if (currentTime > EndTime) return false;
 
   // Iterate over all events.
   for (unsigned int ev_ctr=0; ev_ctr < Events.size(); ev_ctr++) {

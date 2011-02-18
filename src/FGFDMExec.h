@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.59 2011/02/16 12:28:53 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.60 2011/02/18 05:03:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.59 $
+    @version $Revision: 1.60 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,6 +403,9 @@ public:
     */
   bool SetOutputDirectives(const string& fname);
 
+  /** Forces the specified output object to print its items once */
+  void ForceOutput(int idx=0);
+
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
@@ -523,7 +526,8 @@ public:
   /** Increments the simulation time.
       @return the new simulation time.     */
   double IncrTime(void) {
-    sim_time += dT;
+    //sim_time += dT;
+    sim_time = Frame * dT;
     return sim_time;
   }
 

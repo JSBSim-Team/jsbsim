@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.88 2011/02/16 12:28:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.89 2011/02/18 05:03:58 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,6 +363,9 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
                           FGIC->GetWindDFpsIC() );
 
   FGColumnVector3 vAeroUVW;
+
+  //ToDo: move this to the Auxiliary class !?
+
   vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
 
   double alpha, beta;
@@ -635,6 +638,8 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
     unsigned int idx=0;
     typedef double (FGOutput::*iOPMF)(void) const;
+    typedef int (FGFDMExec::*iOPV)(void) const;
+    typedef void (FGFDMExec::*vOPI)(int) const;
     element = document->FindElement("output");
     while (element) {
       if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
@@ -649,6 +654,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
         Outputs.push_back(Output);
         string outputProp = CreateIndexedPropertyName("simulation/output",idx);
         instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
+        instance->Tie("simulation/force-output", this, (iOPV)0, &FGFDMExec::ForceOutput, false);
         idx++;
       }
       element = document->FindNextElement("output");
@@ -921,6 +927,13 @@ void FGFDMExec::EnableOutput(void)
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::ForceOutput(int idx)
+{
+  if (idx >= 0 && idx < Outputs.size()) Outputs[idx]->Print();
+}
+	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::SetOutputDirectives(const string& fname)
