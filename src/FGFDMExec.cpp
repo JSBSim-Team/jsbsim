@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.89 2011/02/18 05:03:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.90 2011/02/18 12:43:50 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -355,6 +355,8 @@ bool FGFDMExec::RunIC(void)
 
 void FGFDMExec::Initialize(FGInitialCondition *FGIC)
 {
+  Setsim_time(0.0);
+
   Propagate->SetInitialState( FGIC );
 
   Atmosphere->Run();

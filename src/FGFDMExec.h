@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.60 2011/02/18 05:03:58 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.61 2011/02/18 12:43:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.60 $
+    @version $Revision: 1.61 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -526,8 +526,7 @@ public:
   /** Increments the simulation time.
       @return the new simulation time.     */
   double IncrTime(void) {
-    //sim_time += dT;
-    sim_time = Frame * dT;
+    sim_time += dT;
     return sim_time;
   }
 
