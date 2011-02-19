@@ -44,11 +44,9 @@ INCLUDES
 #include <vector>
 #include <string>
 
-//#include "models/FGModel.h"
 #include "models/FGOutput.h"
 #include "models/FGInput.h"
 #include "initialization/FGTrim.h"
-#include "initialization/FGInitialCondition.h"
 #include "FGJSBBase.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGGroundCallback.h"
@@ -60,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.58 2011/02/11 12:43:04 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.63 2011/02/19 16:44:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +181,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.58 $
+    @version $Revision: 1.63 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -404,6 +402,9 @@ public:
     */
   bool SetOutputDirectives(const string& fname);
 
+  /** Forces the specified output object to print its items once */
+  void ForceOutput(int idx=0);
+
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
@@ -517,7 +518,7 @@ public:
       @param rootDir the string containing the root directory. */
   void SetRootDir(const string& rootDir) {RootDir = rootDir;}
 
-  /** Retrieves teh Root Directory.
+  /** Retrieves the Root Directory.
       @return the string representing the root (base) JSBSim directory. */
   const string& GetRootDir(void) const {return RootDir;}
 

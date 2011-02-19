@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.29 2010/08/31 04:01:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.30 2011/02/18 12:44:17 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number)
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
   N1_spinup = 1.0; N2_spinup = 3.0; 
+  EPR = 1.0;
 
   ResetToIC();
 

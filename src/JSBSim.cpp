@@ -40,7 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
-//#include <initialization/FGTrimAnalysis.h>
+#include "input_output/FGXMLFileRead.h"
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -63,12 +63,13 @@ INCLUDES
 #include <cstdlib>
 
 using namespace std;
+using JSBSim::FGXMLFileRead;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.62 2011/02/14 12:03:44 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.64 2011/02/19 16:44:41 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -132,6 +133,40 @@ void PrintHelp(void);
     nanosleep(&ts, &ts1);
   }
 #endif
+
+/** This class is solely for the purpose of determining what type
+    of file is given on the command line */
+class XMLFile : public FGXMLFileRead {
+public:
+  bool IsScriptFile(std::string filename) {
+    bool result=false;
+    document = LoadXMLDocument(filename);
+    if (document->GetName() == "runscript") result = true;
+    ResetParser();
+    return result;
+  }
+  bool IsLogDirectiveFile(std::string filename) {
+    bool result=false;
+    document = LoadXMLDocument(filename);
+    if (document->GetName() == "output") result = true;
+    ResetParser();
+    return result;
+  }
+  bool IsAircraftFile(std::string filename) {
+    bool result=false;
+    document = LoadXMLDocument(filename);
+    if (document->GetName() == "fdm_config") result = true;
+    ResetParser();
+    return result;
+  }
+  bool IsInitFile(std::string filename) {
+    bool result=false;
+    document = LoadXMLDocument(filename);
+    if (document->GetName() == "initialize") result = true;
+    ResetParser();
+    return result;
+  }
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -581,13 +616,20 @@ bool options(int count, char **arg)
         catalog = true;
         if (value.size() > 0) AircraftName=value;
 
-    } else {
-      if (i == 1 && value.empty()) {
-        ScriptName = keyword;
-      } else {
-        gripe;
-        result = false;
+    } else if (keyword.substr(0,2) != "--" && value.empty() ) {
+      // See what kind of files we are specifying on the command line
+
+      XMLFile xmlFile;
+      
+      if (xmlFile.IsScriptFile(keyword)) ScriptName = keyword;
+      else if (xmlFile.IsLogDirectiveFile(keyword))  LogDirectiveName.push_back(keyword);
+      // else if (xmlFile.IsAircraftFile(keyword)) AircraftName = keyword;
+      // else if (xmlFile.IsInitFile(keyword)) ResetName = keyword;
+      else {
+        cerr << "The argument, \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
+        exit(1);
       }
+
     }
   }
 
@@ -615,7 +657,7 @@ bool options(int count, char **arg)
 void PrintHelp(void)
 {
   cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
-  cout << "  Usage: jsbsim [script file name] <options>" << endl << endl;
+  cout << "  Usage: jsbsim [script file name] [output file names] <options>" << endl << endl;
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;

@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.14 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.15 2011/02/17 00:20:52 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,9 +62,20 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
                  fdmex(FDMExec),
                  ttype(tNone)
 {
-  mT(1,1) = 1; //identity matrix
-  mT(2,2) = 1;
-  mT(3,3) = 1;
+  vFn.InitMatrix();
+  vMn.InitMatrix();
+  vH.InitMatrix();
+  vOrient.InitMatrix();
+  vXYZn.InitMatrix();
+  vActingXYZn.InitMatrix();
+
+  vFb.InitMatrix();
+  vM.InitMatrix();
+  vDXYZ.InitMatrix();
+
+  mT.InitMatrix(1., 0., 0.,
+                0., 1., 0.,
+                0., 0., 1.);
 
   Debug(0);
 }

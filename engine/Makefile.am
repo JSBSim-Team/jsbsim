@@ -74,6 +74,7 @@ EXTRA_DIST = \
 	TRENT-900.xml \
 	twin_pratt_and_whitney_t73.xml \
 	vrtule2.xml \
+	WrightGR-2600.xml \
 	xlr99_nozzle.xml \
 	XLR99.xml \
 	Zenoah_G-26A.xml

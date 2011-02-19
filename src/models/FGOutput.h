@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.19 2010/10/31 04:48:46 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.21 2011/02/18 05:03:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.19 2010/10/31 04:48:46 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.21 2011/02/18 05:03:58 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,6 +140,7 @@ public:
   bool InitModel(void);
   bool Run(void);
 
+  void Print(void);
   void DelimitedOutput(const std::string&);
   void SocketOutput(void);
   void FlightGearSocketOutput(void);
@@ -153,7 +154,7 @@ public:
   void SetSubsystems(int tt) {SubSystems = tt;}
   void SetOutputFileName(const std::string& fname) {Filename = fname;}
   void SetDirectivesFile(const std::string& fname) {DirectivesFile = fname;}
-  void SetRate(int rt);
+  void SetRate(double rt);
   void Enable(void) { enabled = true; }
   void Disable(void) { enabled = false; }
   bool Toggle(void) {enabled = !enabled; return enabled;}

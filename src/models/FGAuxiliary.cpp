@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.45 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.46 2011/02/18 12:44:16 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,6 +291,7 @@ bool FGAuxiliary::Run()
 //
 // A positive headwind is blowing with you, a negative headwind is blowing against you.
 // psi is the direction the wind is blowing *towards*.
+// ToDo: should this simply be in the atmosphere class? Same with Get Crosswind.
 
 double FGAuxiliary::GetHeadWind(void) const
 {

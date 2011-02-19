@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.51 2011/02/13 23:34:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.53 2011/02/18 05:03:58 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -182,24 +182,31 @@ bool FGOutput::Run(void)
 {
   if (FGModel::Run()) return true;
 
-  if (enabled && !FDMExec->IntegrationSuspended()&& !FDMExec->Holding()) {
+  if (enabled && !FDMExec->IntegrationSuspended() && !FDMExec->Holding()) {
     RunPreFunctions();
-    if (Type == otSocket) {
-      SocketOutput();
-    } else if (Type == otFlightGear) {
-      FlightGearSocketOutput();
-    } else if (Type == otCSV || Type == otTab) {
-      DelimitedOutput(Filename);
-    } else if (Type == otTerminal) {
-      // Not done yet
-    } else if (Type == otNone) {
-      // Do nothing
-    } else {
-      // Not a valid type of output
-    }
+    Print();
     RunPostFunctions();
   }
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::Print(void)
+{
+  if (Type == otSocket) {
+    SocketOutput();
+  } else if (Type == otFlightGear) {
+    FlightGearSocketOutput();
+  } else if (Type == otCSV || Type == otTab) {
+    DelimitedOutput(Filename);
+  } else if (Type == otTerminal) {
+    // Not done yet
+  } else if (Type == otNone) {
+    // Do nothing
+  } else {
+    // Not a valid type of output
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -976,7 +983,7 @@ bool FGOutput::Load(Element* element)
 {
   string parameter="";
   string name="";
-  int OutRate = 0;
+  double OutRate = 0.0;
   unsigned int port;
   Element *property_element;
 
@@ -1005,7 +1012,7 @@ bool FGOutput::Load(Element* element)
     BaseFilename = Filename = name;
   }
   if (!document->GetAttributeValue("rate").empty()) {
-    OutRate = (int)document->GetAttributeValueAsNumber("rate");
+    OutRate = document->GetAttributeValueAsNumber("rate");
   } else {
     OutRate = 1;
   }
@@ -1060,7 +1067,7 @@ bool FGOutput::Load(Element* element)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::SetRate(int rtHz)
+void FGOutput::SetRate(double rtHz)
 {
   rtHz = rtHz>1000?1000:(rtHz<0?0:rtHz);
   if (rtHz > 0) {
