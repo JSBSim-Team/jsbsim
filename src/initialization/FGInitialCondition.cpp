@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.56 2011/01/23 12:13:44 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.57 2011/02/19 16:29:29 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -699,6 +699,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       break;
     case setve:
       SetVtrueFpsIC(ve0 * sqrt(rho/rhoSL));
+      break;
+    default: // Make the compiler stop complaining about missing enums
       break;
   }
 
