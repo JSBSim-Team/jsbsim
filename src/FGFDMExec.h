@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.62 2011/02/19 16:29:29 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.63 2011/02/19 16:44:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.62 $
+    @version $Revision: 1.63 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -518,7 +518,7 @@ public:
       @param rootDir the string containing the root directory. */
   void SetRootDir(const string& rootDir) {RootDir = rootDir;}
 
-  /** Retrieves teh Root Directory.
+  /** Retrieves the Root Directory.
       @return the string representing the root (base) JSBSim directory. */
   const string& GetRootDir(void) const {return RootDir;}
 

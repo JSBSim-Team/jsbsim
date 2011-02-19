@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.63 2011/02/16 12:27:31 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.64 2011/02/19 16:44:41 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -657,7 +657,7 @@ bool options(int count, char **arg)
 void PrintHelp(void)
 {
   cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
-  cout << "  Usage: jsbsim [script file name] <options>" << endl << endl;
+  cout << "  Usage: jsbsim [script file name] [output file names] <options>" << endl << endl;
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;
