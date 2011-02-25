@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.86 $</version>
+        <version>$Revision: 1.87 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -1146,15 +1146,18 @@
         <rates> ON             </rates>
         <velocities> ON        </velocities>
         <position> ON          </position>
-        <atmosphere> ON       </atmosphere>
-        <fcs> ON               </fcs>
+        <atmosphere> OFF       </atmosphere>
+        <fcs> OFF               </fcs>
         <ground_reactions> ON </ground_reactions>
-        <propulsion> ON       </propulsion>
+        <propulsion> OFF       </propulsion>
         <simulation> ON        </simulation>
-        <massprops> OFF        </massprops>
+        <massprops> ON        </massprops>
         <forces> OFF           </forces>
         <moments> OFF          </moments>
-        <aerosurfaces> ON      </aerosurfaces>
+        <aerosurfaces> OFF      </aerosurfaces>
+        <property> position/vrp-gc-latitude_deg </property>
+        <property> position/vrp-longitude_deg   </property>
+        <property> position/vrp-radius-ft       </property>
     </output>
 
 <!---
