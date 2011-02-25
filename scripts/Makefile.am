@@ -23,4 +23,5 @@ EXTRA_DIST = \
   x151.xml \
   x152.xml \
   f16_runway_test.xml \
-  c172_elevation_test.xml
+  c172_elevation_test.xml \
+  c172_runway_at_rest_cg_shift.xml

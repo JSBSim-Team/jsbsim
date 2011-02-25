@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.56 2011/02/13 23:34:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.57 2011/02/25 12:24:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.56 2011/02/13 23:34:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.57 2011/02/25 12:24:14 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -585,8 +585,8 @@ public:
   void RecomputeLocalTerrainRadius(void);
 
   void NudgeBodyLocation(FGColumnVector3 deltaLoc) {
-    vDeltaXYZEC = Tb2ec*deltaLoc;
-    VState.vLocation -= vDeltaXYZEC;
+    VState.vInertialPosition -= Tb2i*deltaLoc;
+    VState.vLocation -= Tb2ec*deltaLoc;
   }
 
   struct LagrangeMultiplier {
