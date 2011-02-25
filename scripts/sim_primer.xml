@@ -9,8 +9,7 @@
 <runscript
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd" 
-    name="sim primer"
->
+    name="sim primer"> 
 
   <use aircraft="ah1s" initialize="reset00"/>
 
@@ -80,6 +79,7 @@
       </condition>
       <notify>
         <property>fcs/mixture-cmd-norm</property>
+        <property>ap/afcs/altitude-error-input</property>
         <property>ap/collective-cmd</property>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
