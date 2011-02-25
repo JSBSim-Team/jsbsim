@@ -4,8 +4,8 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="cannon ball test">
   <use aircraft="ball" initialize="reset00_v2"/>
-  <run start="0.0" end="10800" dt="0.0083333333">
-      <description>
+  <run start="0.0" end="10600" dt="0.005">
+    <description>
       Integrators
       
       0: No integrator (Freeze)
@@ -16,27 +16,44 @@
       5: Adams Bashforth 4
       
     </description>
-    <property value="2">simulation/integrator/rate/rotational</property>
-    <property value="3">simulation/integrator/rate/translational</property>
-    <property value="2">simulation/integrator/position/rotational</property>
-    <property value="4">simulation/integrator/position/translational</property>
-  
-    <!-- Initialize with brakes on -->
+    <property value="2"> simulation/integrator/rate/rotational </property>
+    <property value="3"> simulation/integrator/rate/translational </property>
+    <property value="2"> simulation/integrator/position/rotational </property>
+    <property value="4"> simulation/integrator/position/translational </property>
+    <property value="1"> simulation/gravity-model </property>
+    <property value="0"> simulation/output[0]/log-rate-hz </property>
+
     <property> simulation/notify-time-trigger </property>
 
     <event name="Time Notify" persistent="true">
       <description>Output message at 10 minute intervals</description>
       <notify>
-        <property>position/h-agl-ft</property>
-        <property>position/lat-geod-deg</property>
-        <property>position/geod-alt-ft</property>
-        <property>position/radius-to-vehicle-ft</property>
-        <property>velocities/eci-velocity-mag-fps</property>
-        <property>velocities/u-fps</property>
-        <property>metrics/terrain-radius</property>
+        <property caption="Height AGL (ft):         "> position/h-agl-ft               </property>
+        <property caption="Altitude (Geod, ft):     "> position/geod-alt-ft            </property>
+        <property caption="Latitude (Geod, deg):    "> position/lat-geod-deg           </property>
+        <property caption="Vehicle Radius (ft):     "> position/radius-to-vehicle-ft   </property>
+        <property caption="Inertial Vel Mag (ft/s): "> velocities/eci-velocity-mag-fps </property>
+        <property caption="Body X Velocity (ft/s):  "> velocities/u-fps                </property>
+        <property caption="Simulation Frame:        "> simulation/frame                </property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>
+    </event>
+
+    <event name="Final Data Point">
+      <description> Log data on command </description>
+      <notify>
+        <property caption="Simulation Time:         "> simulation/sim-time-sec         </property>
+        <property caption="Height AGL (ft):         "> position/h-agl-ft               </property>
+        <property caption="Altitude (Geod, ft):     "> position/geod-alt-ft            </property>
+        <property caption="Latitude (Geod, deg):    "> position/lat-geod-deg           </property>
+        <property caption="Vehicle Radius (ft):     "> position/radius-to-vehicle-ft   </property>
+        <property caption="Inertial Vel Mag (ft/s): "> velocities/eci-velocity-mag-fps </property>
+        <property caption="Body X Velocity (ft/s):  "> velocities/u-fps                </property>
+        <property caption="Simulation Frame:        "> simulation/frame                </property>
+      </notify>
+      <condition> simulation/sim-time-sec >= 86400.0 </condition>
+      <set name="simulation/force-output" value="0"/>
     </event>
 
   </run>
