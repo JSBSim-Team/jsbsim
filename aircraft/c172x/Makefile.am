@@ -4,4 +4,4 @@ EXTRA_DIST = \
 	output.xml \
 	reset00.xml \
 	reset01.xml \
-	reset_at_reset.xml
+	reset_at_rest.xml
