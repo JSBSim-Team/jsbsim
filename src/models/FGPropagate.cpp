@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.79 2011/02/13 23:34:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.80 2011/02/25 04:49:08 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,7 +248,6 @@ bool FGPropagate::Run(void)
   CalculateUVWdot();           // Translational rate derivative
   ResolveFrictionForces(dt);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
-  CalculateUVW();              // Translational position derivative (velocities are integrated in the inertial frame)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
@@ -280,6 +279,8 @@ bool FGPropagate::Run(void)
   // 6. Update the "Orientation-based" transformation matrices from the updated 
   //    orientation quaternion and vLocation vector.
   UpdateBodyMatrices();
+
+  CalculateUVW();              // Translational position derivative (velocities are integrated in the inertial frame)
 
   // Set auxililary state variables
   RecomputeLocalTerrainRadius();
