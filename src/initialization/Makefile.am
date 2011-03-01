@@ -1,4 +1,4 @@
-includedir@/JSBSim/initialization
+includedir = @includedir@/JSBSim/initialization
 
 LIBRARY_SOURCES = FGInitialCondition.cpp FGTrim.cpp FGTrimAxis.cpp
 
