@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.30 2011/02/18 12:44:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.31 2011/03/03 12:16:26 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,9 @@ FGTurbine::~FGTurbine()
 
 void FGTurbine::ResetToIC(void)
 {
+    
+  FGEngine::ResetToIC();
+    
   N1 = N2 = 0.0;
   N2norm = 0.0;
   correctedTSFC = TSFC;
@@ -535,6 +538,8 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name.c_str(), &Seized);
   property_name = base_property_name + "/stalled";
   PropertyManager->Tie( property_name.c_str(), &Stalled);
+  property_name = base_property_name + "/bleed-factor";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
