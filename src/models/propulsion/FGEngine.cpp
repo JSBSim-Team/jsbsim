@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.41 2011/01/24 13:01:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.42 2011/03/03 12:16:26 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,6 +151,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
   property_name = base_property_name + "/fuel-flow-rate-pps";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRate);
+  property_name = base_property_name + "/fuel-used-lbs";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
 
   PostLoad(engine_element, PropertyManager, to_string(EngineNumber));
 
@@ -181,6 +183,7 @@ void FGEngine::ResetToIC(void)
   FuelFlow_pph = 0.0;
   FuelFlowRate = 0.0;
   FuelFreeze = false;
+  FuelUsedLbs = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,6 +242,7 @@ void FGEngine::ConsumeFuel(void)
     Tank = Propulsion->GetTank(FeedList[i]);
     Tank->Drain(FuelNeeded); 
   }
+  FuelUsedLbs += FuelToBurn;
 
 }
 
