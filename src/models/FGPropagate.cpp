@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.80 2011/02/25 04:49:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.81 2011/03/05 16:24:25 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -685,7 +685,7 @@ void FGPropagate::InitializeDerivatives(void)
   VState.dqQtrndot.clear();
   for (int i=0; i<4; i++) {
     VState.dqPQRidot.push_front(vPQRidot);
-    VState.dqUVWidot.push_front(vUVWdot);
+    VState.dqUVWidot.push_front(vUVWidot);
     VState.dqInertialVelocity.push_front(VState.vInertialVelocity);
     VState.dqQtrndot.push_front(vQtrndot);
   }
