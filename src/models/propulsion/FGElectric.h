@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.9 2010/08/21 18:07:59 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.10 2011/03/10 01:35:25 dpculp Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
     there is no battery model available, so this motor does not consume any
     energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.9 2010/08/21 18:07:59 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.10 2011/03/10 01:35:25 dpculp Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ public:
   ~FGElectric();
 
   void Calculate(void);
-  double GetPowerAvailable(void) {return PowerAvailable;}
+  double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
   double getRPM(void) {return RPM;}
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
@@ -91,7 +91,6 @@ private:
   double CalcFuelNeed(void);
 
   double BrakeHorsePower;
-  double PowerAvailable;
 
   // timestep
   double dt;
@@ -101,7 +100,7 @@ private:
 
   double PowerWatts;         // maximum engine power
   double RPM;                // revolutions per minute
-  double HP;
+  double HP;                 // engine output, in horsepower
 
   void Debug(int from);
 };

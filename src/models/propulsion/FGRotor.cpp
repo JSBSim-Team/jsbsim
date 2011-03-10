@@ -34,6 +34,8 @@ HISTORY
 11/15/10  T.Kreitler treated flow solver bug, flow and torque calculations 
                      simplified, tiploss influence removed from flapping angles
 01/10/11  T.Kreitler changed to single rotor model
+03/06/11  T.Kreitler added brake, clutch, and experimental free-wheeling-unit,
+                     reasonable estimate for inflowlag
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -56,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.11 2011/01/17 22:09:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.12 2011/03/10 01:35:25 dpculp Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +111,11 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 
   // control
   ControlMap(eMainCtrl),
-  CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0)
+  CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0),
+  BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
+
+  // free-wheeling-unit (FWU)
+  FreeWheelPresent(0), FreeWheelThresh(0.0), FreeWheelTransmission(0.0)
 
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
@@ -190,6 +196,9 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   // calculation would cause jumps too. 1Hz seems sufficient.
   damp_hagl = Filter(1.0,dt);
 
+  // avoid too abrupt changes in power transmission
+  FreeWheelLag = Filter(200.0,dt);
+
   // enable import-export
   BindModel();
 
@@ -248,7 +257,7 @@ double FGRotor::ConfigValue(Element* el, const string& ename, double default_val
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // 1. read configuration and try to fill holes, ymmv
-// 2. calculate derived parameters and transforms
+// 2. calculate derived parameters
 void FGRotor::Configure(Element* rotor_element)
 {
 
@@ -279,22 +288,24 @@ void FGRotor::Configure(Element* rotor_element)
 
   estimate = sqr(BladeChord) * sqr(Radius - HingeOffset) * 0.57;
   BladeFlappingMoment = ConfigValueConv(rotor_element, "flappingmoment", estimate, "SLUG*FT2");   
-  BladeFlappingMoment = Constrain(0.001, BladeFlappingMoment, 1e9);
+  BladeFlappingMoment = Constrain(1.0e-6, BladeFlappingMoment, 1e9);
 
   // guess mass from moment of a thin stick, and multiply by the blades cg distance
   estimate = ( 3.0 * BladeFlappingMoment / sqr(Radius) ) * (0.45 * Radius) ;
   BladeMassMoment = ConfigValue(rotor_element, "massmoment", estimate); // unit is slug-ft
   BladeMassMoment = Constrain(0.001, BladeMassMoment, 1e9);
 
-  TipLossB = ConfigValue(rotor_element, "tiplossfactor", 1.0, silent);
-
   estimate = 1.1 * BladeFlappingMoment * BladeNum;
   PolarMoment = ConfigValueConv(rotor_element, "polarmoment", estimate, "SLUG*FT2");
-  PolarMoment = Constrain(0.001, PolarMoment, 1e9);
+  PolarMoment = Constrain(1e-6, PolarMoment, 1e9);
 
-  InflowLag = ConfigValue(rotor_element, "inflowlag", 0.2, yell); // fixme, depends on size
-  InflowLag = Constrain(1e-6, InflowLag, 2.0);
+  // "inflowlag" is treated further down.
 
+  TipLossB = ConfigValue(rotor_element, "tiplossfactor", 1.0, silent);
+
+  estimate = 0.01 * PolarMoment ; // guesses for huey, bo105 20-30hp
+  MaxBrakePower  = ConfigValueConv(rotor_element, "maxbrakepower", estimate, "HP");
+  MaxBrakePower *= hptoftlbssec;
 
   // ground effect
   if (rotor_element->FindElement("cgroundeffect")) {
@@ -309,6 +320,17 @@ void FGRotor::Configure(Element* rotor_element)
   GroundEffectExp = ConfigValue(rotor_element, "groundeffectexp", 0.0);
   GroundEffectShift = ConfigValueConv(rotor_element, "groundeffectshift", 0.0, "FT");
 
+  // handle optional free-wheeling-unit (FWU)
+  FreeWheelPresent = 0;
+  FreeWheelTransmission = 1.0;
+  if (rotor_element->FindElement("freewheelthresh")) {
+    FreeWheelThresh = rotor_element->FindElementValueAsNumber("freewheelthresh");
+    if (FreeWheelThresh > 1.0) {
+      FreeWheelPresent = 1;
+      FreeWheelTransmission = 0.0;
+    }
+  }
+
   // precalc often used powers
   R[0]=1.0; R[1]=Radius;   R[2]=R[1]*R[1]; R[3]=R[2]*R[1]; R[4]=R[3]*R[1];
   B[0]=1.0; B[1]=TipLossB; B[2]=B[1]*B[1]; B[3]=B[2]*B[1]; B[4]=B[3]*B[1];
@@ -316,6 +338,13 @@ void FGRotor::Configure(Element* rotor_element)
   // derived parameters
   LockNumberByRho = LiftCurveSlope * BladeChord * R[4] / BladeFlappingMoment;
   Solidity = BladeNum * BladeChord / (M_PI * Radius);
+
+  // estimate inflow lag, see /GE49/ eqn(1)
+  double omega_tmp = (NominalRPM/60.0)*2.0*M_PI;
+  estimate = 16.0/(LockNumberByRho*rho * omega_tmp ); // 16/(gamma*Omega)
+  // printf("# Est. InflowLag: %f\n", estimate);
+  InflowLag = ConfigValue(rotor_element, "inflowlag", estimate, yell);
+  InflowLag = Constrain(1.0e-6, InflowLag, 2.0);
 
   return;
 } // Configure
@@ -362,7 +391,7 @@ FGColumnVector3 FGRotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
   av_w_fus(eP)=   av_s_fus(eP)*cos(beta_orient) + av_s_fus(eQ)*sin(beta_orient);
   av_w_fus(eQ)= - av_s_fus(eP)*sin(beta_orient) + av_s_fus(eQ)*cos(beta_orient);
   av_w_fus(eR)=   av_s_fus(eR);
-         
+
   return av_w_fus;
 }
 
@@ -382,7 +411,7 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
 
   double ct_over_sigma = 0.0;
   double c0, ct_l, ct_t0, ct_t1;
-  double mu2;  
+  double mu2;
 
   mu = Uw/(Omega*Radius); // /SH79/ eqn(24)
   mu2 = sqr(mu);
@@ -390,7 +419,7 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
   ct_t0 = (1.0/3.0*B[3] + 1.0/2.0 * TipLossB*mu2 - 4.0/(9.0*M_PI) * mu*mu2 ) * theta_0;
   ct_t1 = (1.0/4.0*B[4] + 1.0/4.0 * B[2]*mu2) * BladeTwist;
 
-  ct_l  = (1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda; // first time  
+  ct_l  = (1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda; // first time
 
   c0 = (LiftCurveSlope/2.0)*(ct_l + ct_t0 + ct_t1) * Solidity;
   c0 = c0 / ( 2.0 * sqrt( sqr(mu) + sqr(lambda) ) + 1e-15);
@@ -473,7 +502,7 @@ void FGRotor::calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fu
 
 void FGRotor::calc_drag_and_side_forces(double theta_0)
 {
-  double cy_over_sigma  ;
+  double cy_over_sigma;
   double t075 = theta_0 + 0.75 * BladeTwist;
 
   H_drag = Thrust * a_dw;
@@ -494,7 +523,7 @@ void FGRotor::calc_drag_and_side_forces(double theta_0)
 
 // Simplified version of /SH79/ eqn(36). Uses an estimate for blade drag
 // (a new config parameter to come...).
-// From "Bramwell's Helicopter Dynamics" ­ second edition, eqn(3.43) and (3.44)
+// From "Bramwell's Helicopter Dynamics", second edition, eqn(3.43) and (3.44)
 
 void FGRotor::calc_torque(double theta_0)
 {
@@ -560,7 +589,7 @@ void FGRotor::CalcStatePart1(void)
   FGColumnVector3 vHub_ca, avFus_ca;
 
   double h_agl_ft, filtered_hagl = 0.0;
-  double ge_factor = 1.0;  
+  double ge_factor = 1.0;
 
   // fetch needed values from environment
   Vt = fdmex->GetAuxiliary()->GetVt(); // total vehicle velocity including wind
@@ -637,18 +666,52 @@ void FGRotor::CalcStatePart2(double PowerAvailable)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGRotor::GetPowerRequired(void)
-{
-  CalcStatePart1();
-  PowerRequired = Torque * Omega;
-  return PowerRequired;
+// Simulation of a free-wheeling-unit (FWU). Might need improvements.
+
+void FGRotor::calc_freewheel_state(double p_source, double p_load) {
+
+  // engine is off/detached, release.
+  if (p_source<1e-3) { 
+    FreeWheelTransmission = 0.0;
+    return;
+  }
+
+  // engine is driving the rotor, engage.
+  if (p_source >= p_load) {
+    FreeWheelTransmission = 1.0;
+    return;
+  }
+
+  // releases if engine is detached, but stays calm if
+  // the load changes due to rotor dynamics.
+  if (p_source > 0.0 && p_load/(p_source+0.1) > FreeWheelThresh ) {
+    FreeWheelTransmission = 0.0;
+    return;
+  }
+
+  return;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGRotor::Calculate(double PowerAvailable)
+double FGRotor::Calculate(double EnginePower)
 {
-  CalcStatePart2(PowerAvailable);
+  double FWmult = 1.0;
+  double DeltaPower;
+
+  CalcStatePart1();
+
+  PowerRequired = Torque * Omega + BrakeCtrlNorm * MaxBrakePower;
+
+  if (FreeWheelPresent) {
+    calc_freewheel_state(EnginePower * ClutchCtrlNorm, PowerRequired);
+    FWmult = FreeWheelLag.execute(FreeWheelTransmission);
+  }
+
+  DeltaPower = EnginePower * ClutchCtrlNorm * FWmult - PowerRequired;
+
+  CalcStatePart2(DeltaPower);
+
   return Thrust;
 }
 
@@ -702,7 +765,7 @@ bool FGRotor::BindModel(void)
 
   property_name = base_property_name + "/phi-downwash-rad";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetPhiDW );
-  
+
   switch (ControlMap) {
     case eTailCtrl:
       property_name = base_property_name + "/antitorque-ctrl-rad";
@@ -724,6 +787,11 @@ bool FGRotor::BindModel(void)
       property_name = base_property_name + "/longitudinal-ctrl-rad";
       PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLongitudinalCtrl, &FGRotor::SetLongitudinalCtrl);
   }
+
+  property_name = base_property_name + "/brake-ctrl-norm";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetBrakeCtrl, &FGRotor::SetBrakeCtrl);
+  property_name = base_property_name + "/free-wheel-transmission";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetFreeWheelTransmission);
 
   if (ExternalRPM) {
     if (RPMdefinition == -1) {
@@ -826,6 +894,7 @@ void FGRotor::Debug(int from)
       cout << "      Tip Loss = " << TipLossB << endl;
       cout << "      Lock Number = " << LockNumberByRho * 0.002356 << " (SL)" << endl;
       cout << "      Solidity = " << Solidity << endl;
+      cout << "      Max Brake Power = " << MaxBrakePower/hptoftlbssec << " HP" << endl;
 
       switch (ControlMap) {
         case eTailCtrl:    ControlMapName = "Tail Rotor";   break;
@@ -833,6 +902,12 @@ void FGRotor::Debug(int from)
         default:           ControlMapName = "Main Rotor";
       }
       cout << "      Control Mapping = " << ControlMapName << endl;
+
+      if (FreeWheelPresent) {
+        cout << "      Free Wheel Threshold = " << FreeWheelThresh << endl;
+      } else {
+        cout << "      No FWU present" << endl;
+      }
 
     }
   }

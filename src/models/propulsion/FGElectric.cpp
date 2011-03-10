@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.9 2010/08/21 17:13:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.10 2011/03/10 01:35:25 dpculp Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,12 +92,17 @@ void FGElectric::Calculate(void)
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
 
   HP = PowerWatts * Throttle / hptowatts;
-
-  PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
-
-  Thruster->Calculate(PowerAvailable);
+  
+  Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGElectric::CalcFuelNeed(void)
+{
+  return 0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,12 +177,6 @@ void FGElectric::Debug(int from)
       cout << IdHdr << endl;
     }
   }
-}
-
-double
-FGElectric::CalcFuelNeed(void)
-{
-  return 0;
 }
 
 } // namespace JSBSim

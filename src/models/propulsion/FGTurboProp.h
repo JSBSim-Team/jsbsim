@@ -47,7 +47,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.13 2011/02/15 12:44:00 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.14 2011/03/10 01:35:25 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ public:
   void Calculate(void);
   double CalcFuelNeed(void);
 
-  double GetPowerAvailable(void) const { return (PowerAvailable); }
+  double GetPowerAvailable(void) const { return (HP * hptoftlbssec); }
   double GetRPM(void) const { return (RPM); }
   double GetIeluThrottle(void) const { return (Throttle); }
   bool GetIeluIntervent(void) const { return Ielu_intervent; }
@@ -167,7 +167,6 @@ private:
   double N2_factor;        ///< factor to tie N2 and throttle
   double Throttle;         ///< FCS-supplied throttle position
   double TAT;              ///< total air temperature (deg C)
-  double PowerAvailable;
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
@@ -198,7 +197,7 @@ private:
   double rho;
   double PSFC;                 // Power specific fuel comsumption [lb/(HP*hr)] at best efficiency
 
-  double Eng_HP;               // current engine power
+  double HP;                   // engine power output
 
   double StartTime;            // engine starting time [s] (0 when start button pushed)
 

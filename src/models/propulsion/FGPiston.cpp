@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.54 2010/11/30 12:17:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.55 2011/03/10 01:35:25 dpculp Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -442,8 +442,7 @@ void FGPiston::Calculate(void)
     ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
   }
 
-  PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
-  Thruster->Calculate(PowerAvailable);
+  Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();
 }
@@ -872,7 +871,7 @@ string FGPiston::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << " Power Available (engine " << EngineNumber << " in HP)" << delimiter
+  buf << Name << " Power Available (engine " << EngineNumber << " in ft-lbs/sec)" << delimiter
       << Name << " HP (engine " << EngineNumber << ")" << delimiter
       << Name << " equivalent ratio (engine " << EngineNumber << ")" << delimiter
       << Name << " MAP (engine " << EngineNumber << " in inHg)" << delimiter
@@ -887,7 +886,7 @@ string FGPiston::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << PowerAvailable << delimiter << HP << delimiter
+  buf << (HP * hptoftlbssec) << delimiter << HP << delimiter
       << equivalence_ratio << delimiter << ManifoldPressure_inHg << delimiter
       << Thruster->GetThrusterValues(EngineNumber, delimiter);
 
