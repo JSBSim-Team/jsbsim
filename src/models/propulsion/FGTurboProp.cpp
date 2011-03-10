@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.18 2011/02/15 12:44:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.19 2011/03/10 01:35:25 dpculp Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,17 +255,14 @@ void FGTurboProp::Calculate(void)
   }
 
   switch (phase) {
-    case tpOff:    Eng_HP = Off(); break;
-    case tpRun:    Eng_HP = Run(); break;
-    case tpSpinUp: Eng_HP = SpinUp(); break;
-    case tpStart:  Eng_HP = Start(); break;
-    default: Eng_HP = 0;
+    case tpOff:    HP = Off(); break;
+    case tpRun:    HP = Run(); break;
+    case tpSpinUp: HP = SpinUp(); break;
+    case tpStart:  HP = Start(); break;
+    default: HP = 0;
   }
-
-  //printf ("EngHP: %lf / Requi: %lf\n",Eng_HP,Prop_Required_Power);
-  PowerAvailable = (Eng_HP * hptoftlbssec) - Thruster->GetPowerRequired();
-
-  Thruster->Calculate(PowerAvailable);
+ 
+  Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();
 }
@@ -463,7 +460,7 @@ void FGTurboProp::SetDefaults(void)
 {
 //  Name = "Not defined";
   N1 = N2 = 0.0;
-  Eng_HP = 0.0;
+  HP = 0.0;
   Type = etTurboprop;
   MilThrust = 10000.0;
   IdleN1 = 30.0;
@@ -515,9 +512,9 @@ string FGTurboProp::GetEngineValues(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << PowerAvailable << delimiter
-      << N1 << delimiter
+  buf << N1 << delimiter
       << N2 << delimiter
+      << HP << delimiter
       << Thruster->GetThrusterValues(EngineNumber,delimiter);
 
   return buf.str();
@@ -549,7 +546,7 @@ void FGTurboProp::bindmodel()
   property_name = base_property_name + "/reverser";
   PropertyManager->Tie( property_name.c_str(), &Reversed);
   property_name = base_property_name + "/power-hp";
-  PropertyManager->Tie( property_name.c_str(), &Eng_HP);
+  PropertyManager->Tie( property_name.c_str(), &HP);
   property_name = base_property_name + "/itt-c";
   PropertyManager->Tie( property_name.c_str(), &Eng_ITT_degC);
   property_name = base_property_name + "/engtemp-c";

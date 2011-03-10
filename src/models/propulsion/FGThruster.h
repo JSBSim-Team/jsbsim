@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.16 2011/03/10 01:35:25 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.15 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.16 2011/03/10 01:35:25 dpculp Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,8 @@ public:
   string GetName(void) {return Name;}
   void SetReverserAngle(double angle) {ReverserAngle = angle;}
   double GetReverserAngle(void) const {return ReverserAngle;}
+  double GetClutchCtrl(void) const { return ClutchCtrlNorm; }
+  void SetClutchCtrl(double c) { ClutchCtrlNorm = c; }
   virtual double GetRPM(void) const { return 0.0; };
   double GetGearRatio(void) {return GearRatio; }
   virtual string GetThrusterLabels(int id, string delimeter);
@@ -119,6 +121,7 @@ protected:
   double GearRatio;
   double ThrustCoeff;
   double ReverserAngle;
+  double ClutchCtrlNorm;  
   int EngineNum;
   FGPropertyManager* PropertyManager;
   virtual void Debug(int from);

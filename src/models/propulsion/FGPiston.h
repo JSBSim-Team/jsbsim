@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.25 2010/11/30 12:17:10 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.26 2011/03/10 01:35:25 dpculp Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.25 2010/11/30 12:17:10 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.26 2011/03/10 01:35:25 dpculp Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +201,7 @@ public:
   std::string GetEngineValues(const std::string& delimiter);
 
   void Calculate(void);
-  double GetPowerAvailable(void) const {return PowerAvailable;}
+  double GetPowerAvailable(void) const {return (HP * hptoftlbssec);}
   double CalcFuelNeed(void);
 
   void ResetToIC(void);
@@ -227,7 +227,6 @@ private:
   double FMEP;
   double FMEPDynamic;
   double FMEPStatic;
-  double PowerAvailable;
 
   // timestep
   double dt;

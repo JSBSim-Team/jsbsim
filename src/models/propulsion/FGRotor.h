@@ -27,6 +27,7 @@ HISTORY
 --------------------------------------------------------------------------------
 01/01/10  T.Kreitler test implementation
 01/10/11  T.Kreitler changed to single rotor model
+03/06/11  T.Kreitler added brake, clutch, and experimental free-wheeling-unit
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -45,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.9 2011/03/10 01:35:25 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,12 +77,15 @@ CLASS DOCUMENTATION
   <polarmoment unit="{MOMENT}"> {number} </polarmoment>
   <inflowlag> {number} </inflowlag>
   <tiplossfactor> {number} </tiplossfactor>
+  <maxbrakepower unit="{POWER}"> {number} </maxbrakepower>
 
   <controlmap> {MAIN|TAIL|TANDEM} </controlmap>
   <ExternalRPM> {number} </ExternalRPM>
 
   <groundeffectexp> {number} </groundeffectexp>
   <groundeffectshift unit="{LENGTH}"> {number} </groundeffectshift>
+
+  <freewheelthresh> {number} </freewheelthresh>
 </rotor>
 
 //  LENGTH means any of the supported units, same for ANGLE and MOMENT.
@@ -108,10 +112,11 @@ CLASS DOCUMENTATION
     \<massmoment>         - Blade mass moment. Mass of a single blade times the blade's
                              cg-distance from the hub, optional.
     \<polarmoment>        - Moment of inertia for the whole rotor disk, optional.
-    \<inflowlag>          - Rotor inflow time constant, sec. Smaller values yield to
-                              quicker responses to control input (defaults to 0.2).
+    \<inflowlag>          - Rotor inflow time constant, sec. Smaller values yield to quicker
+                              responses (typical values for main rotor: 0.1 - 0.2 s).
     \<tiplossfactor>      - Tip-loss factor. The Blade fraction that produces lift.
                               Value usually ranges between 0.95 - 1.0, optional (B).
+    \<maxbrakepower>      - Rotor brake, 20-30 hp should work for a mid size helicopter.
 
     \<controlmap>         - Defines the control inputs used (see notes).
     \<ExternalRPM>        - Links the rotor to another rotor, or an user controllable property.
@@ -124,6 +129,10 @@ CLASS DOCUMENTATION
                               formula used: exp ( - groundeffectexp * (height+groundeffectshift) )
                             Omitting or setting to 0.0 disables the effect calculation.
     \<groundeffectshift>  - Further adjustment of ground effect, approx. hub height or slightly above. 
+
+    \<freewheelthresh>    - Ratio of thruster power to engine power. The FWU will release when above
+                              the threshold. The value shouldn't be too close to 1.0, 1.5 seems ok.
+                              0 disables this feature, which is also the default.
 
 </pre>
 
@@ -165,8 +174,6 @@ CLASS DOCUMENTATION
 
   <h4>- Engine issues -</h4>
 
-    Currently the rotor can only be driven with piston and electrical engines. An adaption
-    for the turboprop engine might become available in the future.
     In order to keep the rotor speed constant, use of a RPM-Governor system is 
     encouraged (see examples).
 
@@ -188,11 +195,13 @@ CLASS DOCUMENTATION
     <dt>/AM50/</dt><dd>Amer, Kenneth B.,"Theory of Helicopter Damping in Pitch or Roll and a
               Comparison With Flight Measurements", NACA TN-2136, 1950.</dd>
     <dt>/TA77/</dt><dd>Talbot, Peter D., Corliss, Lloyd D., "A Mathematical Force and Moment
-              Model of a UH-1H Helicopter for Flight Dynamics Simulations", NASA TM-73,254, 1977.</dd>   
+              Model of a UH-1H Helicopter for Flight Dynamics Simulations", NASA TM-73,254, 1977.</dd> 
+    <dt>/GE49/</dt><dd>Gessow, Alfred, Amer, Kenneth B. "An Introduction to the Physical 
+              Aspects of Helicopter Stability", NACA TN-1982, 1949.</dd>  
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.8 2011/01/17 22:09:59 jberndt Exp $
+    @version $Id: FGRotor.h,v 1.9 2011/03/10 01:35:25 dpculp Exp $
   */
 
 
@@ -216,14 +225,11 @@ public:
   /// Destructor for FGRotor
   ~FGRotor();
 
-  /** Returns the power required by the rotor. Well, to achieve this the rotor
-      is cycled through the whole machinery, yielding to a new state.
-      (hmm, sort of a huge side effect)
-  */
-  double GetPowerRequired(void);
+  /** Returns the power required by the rotor. */
+  double GetPowerRequired(void)const { return PowerRequired; }
 
   /** Returns the scalar thrust of the rotor, and adjusts the RPM value. */
-  double Calculate(double PowerAvailable);
+  double Calculate(double EnginePower);
 
 
   /// Retrieves the RPMs of the rotor.
@@ -257,6 +263,8 @@ public:
   double GetCT(void) const { return C_T; }
   /// Retrieves the torque
   double GetTorque(void) const { return Torque; }
+  /// Retrieves the state of the free-wheeling-unit (FWU).
+  double GetFreeWheelTransmission(void) const { return FreeWheelTransmission; }
   
   /// Downwash angle - currently only valid for a rotor that spins horizontally
   double GetThetaDW(void) const { return theta_downwash; }
@@ -269,6 +277,8 @@ public:
   double GetLateralCtrl(void) const { return LateralCtrl; }
   /// Retrieves the longitudinal control input in radians.
   double GetLongitudinalCtrl(void) const { return LongitudinalCtrl; }
+  /// Retrieves the normalized brake control input.
+  double GetBrakeCtrl(void) const { return BrakeCtrlNorm; }
 
   /// Sets the collective control input in radians.
   void SetCollectiveCtrl(double c) { CollectiveCtrl = c; }
@@ -276,6 +286,8 @@ public:
   void SetLateralCtrl(double c) { LateralCtrl = c; }
   /// Sets the longitudinal control input in radians.
   void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
+  /// Sets the normalized brake control input.
+  void SetBrakeCtrl(double c) { BrakeCtrlNorm = c; }
 
   // Stubs. Only main rotor RPM is returned
   string GetThrusterLabels(int id, string delimeter);
@@ -302,6 +314,8 @@ private:
   void calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fus_w);
   void calc_drag_and_side_forces(double theta_0);
   void calc_torque(double theta_0);
+
+  void calc_freewheel_state(double pwr_in, double pwr_out);
 
   // transformations
   FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
@@ -379,6 +393,15 @@ private:
   double CollectiveCtrl;
   double LateralCtrl;
   double LongitudinalCtrl;
+
+  double BrakeCtrlNorm, MaxBrakePower;
+
+  // free-wheeling-unit (FWU)
+  int    FreeWheelPresent;        // 'installed' or not
+  double FreeWheelThresh;         // when to release
+  Filter FreeWheelLag;
+  double FreeWheelTransmission;   // state, 0: free, 1:locked
+
 
 };
 

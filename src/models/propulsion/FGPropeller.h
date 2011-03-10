@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.16 2010/04/09 12:44:06 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.17 2011/03/10 01:35:25 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.16 2010/04/09 12:44:06 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.17 2011/03/10 01:35:25 dpculp Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -247,7 +247,7 @@ public:
       accelerate the prop. It could be negative, dictating that the propeller
       would be slowed.
       @return the thrust in pounds */
-  double Calculate(double PowerAvailable);
+  double Calculate(double EnginePower);
   FGColumnVector3 GetPFactor(void);
   string GetThrusterLabels(int id, string delimeter);
   string GetThrusterValues(int id, string delimeter);

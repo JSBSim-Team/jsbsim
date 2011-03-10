@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.32 2010/10/21 03:27:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.33 2011/03/10 01:35:25 dpculp Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,22 +185,21 @@ FGPropeller::~FGPropeller()
 // We must be getting the aerodynamic velocity here, NOT the inertial velocity.
 // We need the velocity with respect to the wind.
 //
-// Note that PowerAvailable is the excess power available after the drag of the
-// propeller has been subtracted. At equilibrium, PowerAvailable will be zero -
-// indicating that the propeller will not accelerate or decelerate.
 // Remembering that Torque * omega = Power, we can derive the torque on the
 // propeller and its acceleration to give a new RPM. The current RPM will be
 // used to calculate thrust.
 //
 // Because RPM could be zero, we need to be creative about what RPM is stated as.
 
-double FGPropeller::Calculate(double PowerAvailable)
+double FGPropeller::Calculate(double EnginePower)
 {
-  double omega, alpha, beta;
+  double omega, alpha, beta, PowerAvailable;
 
   double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
+
+  PowerAvailable = EnginePower - GetPowerRequired();
 
   // Calculate helical tip Mach
   double Area = 0.25*Diameter*Diameter*M_PI;
