@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.36 2011/01/19 12:41:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.37 2011/03/11 13:02:26 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 
   axisType = atNone;
 
-  Coeff = new CoeffArray[6];
+  AeroFunctions = new AeroFunctionArray[6];
 
   impending_stall = stall_hyst = 0.0;
   alphaclmin = alphaclmax = 0.0;
@@ -103,10 +103,10 @@ FGAerodynamics::~FGAerodynamics()
   unsigned int i,j;
 
   for (i=0; i<6; i++)
-    for (j=0; j<Coeff[i].size(); j++)
-      delete Coeff[i][j];
+    for (j=0; j<AeroFunctions[i].size(); j++)
+      delete AeroFunctions[i][j];
 
-  delete[] Coeff;
+  delete[] AeroFunctions;
 
   delete AeroRPShift;
 
@@ -142,7 +142,7 @@ bool FGAerodynamics::Run(void)
   const double alpha=FDMExec->GetAuxiliary()->Getalpha();
   const double twovel=2*FDMExec->GetAuxiliary()->GetVt();
   const double qbar = FDMExec->GetAuxiliary()->Getqbar();
-  const double wingarea = FDMExec->GetAircraft()->GetWingArea();
+  const double wingarea = FDMExec->GetAircraft()->GetWingArea();  // TODO: Make these constants constant!
   const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
   const double wingchord = FDMExec->GetAircraft()->Getcbar();
   const double wingincidence = FDMExec->GetAircraft()->GetWingIncidence();
@@ -177,8 +177,8 @@ bool FGAerodynamics::Run(void)
   vFnative.InitMatrix();
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-      vFnative(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
+    for (ctr=0; ctr < AeroFunctions[axis_ctr].size(); ctr++) {
+      vFnative(axis_ctr+1) += AeroFunctions[axis_ctr][ctr]->GetValue();
     }
   }
 
@@ -224,8 +224,8 @@ bool FGAerodynamics::Run(void)
   vMoments = vDXYZcg*vForces; // M = r X F
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
-      vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->GetValue();
+    for (ctr = 0; ctr < AeroFunctions[axis_ctr+3].size(); ctr++) {
+      vMoments(axis_ctr+1) += AeroFunctions[axis_ctr+3][ctr]->GetValue();
     }
   }
 
@@ -349,7 +349,7 @@ bool FGAerodynamics::Load(Element *element)
 
   axis_element = document->FindElement("axis");
   while (axis_element) {
-    CoeffArray ca;
+    AeroFunctionArray ca;
     axis = axis_element->GetAttributeValue("name");
     function_element = axis_element->FindElement("function");
     while (function_element) {
@@ -363,7 +363,7 @@ bool FGAerodynamics::Load(Element *element)
       }
       function_element = axis_element->FindNextElement("function");
     }
-    Coeff[AxisIdx[axis]] = ca;
+    AeroFunctions[AxisIdx[axis]] = ca;
     axis_element = document->FindNextElement("axis");
   }
 
@@ -427,35 +427,35 @@ void FGAerodynamics::DetermineAxisSystem()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientStrings(const string& delimeter) const
+string FGAerodynamics::GetAeroFunctionStrings(const string& delimeter) const
 {
-  string CoeffStrings = "";
+  string AeroFunctionStrings = "";
   bool firstime = true;
   unsigned int axis, sd;
 
   for (axis = 0; axis < 6; axis++) {
-    for (sd = 0; sd < Coeff[axis].size(); sd++) {
+    for (sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (firstime) {
         firstime = false;
       } else {
-        CoeffStrings += delimeter;
+        AeroFunctionStrings += delimeter;
       }
-      CoeffStrings += Coeff[axis][sd]->GetName();
+      AeroFunctionStrings += AeroFunctions[axis][sd]->GetName();
     }
   }
-  return CoeffStrings;
+  return AeroFunctionStrings;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientValues(const string& delimeter) const
+string FGAerodynamics::GetAeroFunctionValues(const string& delimeter) const
 {
   ostringstream buf;
 
   for (unsigned int axis = 0; axis < 6; axis++) {
-    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+    for (unsigned int sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (buf.tellp() > 0) buf << delimeter;
-      buf << setw(9) << Coeff[axis][sd]->GetValue();
+      buf << setw(9) << AeroFunctions[axis][sd]->GetValue();
     }
   }
 

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.21 2011/02/18 05:03:58 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.22 2011/03/11 13:02:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.21 2011/02/18 05:03:58 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.22 2011/03/11 13:02:26 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,7 +172,7 @@ public:
     /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
     /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
     /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
-    /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
+    /** Subsystem: Coefficients (= 256)      */ ssAeroFunctions    = 256,
     /** Subsystem: Propagate (= 512)         */ ssPropagate       = 512,
     /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
     /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,

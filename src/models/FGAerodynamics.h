@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.21 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.22 2011/03/11 13:02:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
          {function contents}
        </function>
        <axis name="{LIFT | DRAG | SIDE | ROLL | PITCH | YAW}">
-         {force coefficient definitions}
+         {force or moment definitions}
        </axis>
        {additional axis definitions}
     </aerodynamics>
@@ -103,13 +103,13 @@ CLASS DOCUMENTATION
     <br>
     2) Axial-Normal coordinate system:
     @code
-       <axis name="{AXIAL | NORMAL}">
+       <axis name="{AXIAL | NORMAL | SIDE}">
     @endcode
     <br>
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.21 $
+    @version $Revision: 1.22 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,16 +186,16 @@ public:
   void SetAlphaCLMax(double tt) { alphaclmax=tt; }
   void SetAlphaCLMin(double tt) { alphaclmin=tt; }
 
-  /** Gets the strings for the current set of coefficients.
+  /** Gets the strings for the current set of aero functions.
       @param delimeter either a tab or comma string depending on output type
-      @return a string containing the descriptive names for all coefficients */
-  std::string GetCoefficientStrings(const std::string& delimeter) const;
+      @return a string containing the descriptive names for all aero functions */
+  std::string GetAeroFunctionStrings(const std::string& delimeter) const;
 
-  /** Gets the coefficient values.
+  /** Gets the aero function values.
       @param delimeter either a tab or comma string depending on output type
       @return a string containing the numeric values for the current set of
-      coefficients */
-  std::string GetCoefficientValues(const std::string& delimeter) const;
+      aero functions */
+  std::string GetAeroFunctionValues(const std::string& delimeter) const;
 
   /** Calculates and returns the wind-to-body axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
@@ -207,15 +207,15 @@ public:
       */
   FGMatrix33& GetTb2w(void);
 
-  std::vector <FGFunction*> * GetCoeff(void) const { return Coeff; }
+  std::vector <FGFunction*> * GetAeroFunctions(void) const { return AeroFunctions; }
 
 private:
   enum eAxisType {atNone, atLiftDrag, atAxialNormal, atBodyXYZ} axisType;
   typedef std::map<std::string,int> AxisIndex;
   AxisIndex AxisIdx;
   FGFunction* AeroRPShift;
-  typedef vector <FGFunction*> CoeffArray;
-  CoeffArray* Coeff;
+  typedef vector <FGFunction*> AeroFunctionArray;
+  AeroFunctionArray* AeroFunctions;
   FGColumnVector3 vFnative;
   FGColumnVector3 vFw;
   FGColumnVector3 vForces;
