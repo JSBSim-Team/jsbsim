@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.15 2010/12/29 22:39:25 andgi Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.16 2011/03/23 11:58:29 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,13 +213,13 @@ string FGBuoyantForces::GetBuoyancyStrings(string delimeter)
   }
 
   for (axis = 0; axis < 6; axis++) {
-    for (sd = 0; sd < Coeff[axis].size(); sd++) {
+    for (sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (firstime) {
         firstime = false;
       } else {
         CoeffStrings += delimeter;
       }
-      CoeffStrings += Coeff[axis][sd]->GetName();
+      CoeffStrings += AeroFunctions[axis][sd]->GetName();
     }
   }
 */
@@ -243,13 +243,13 @@ string FGBuoyantForces::GetBuoyancyValues(string delimeter)
   }
 
   for (unsigned int axis = 0; axis < 6; axis++) {
-    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+    for (unsigned int sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (firstime) {
         firstime = false;
       } else {
         SDValues += delimeter;
       }
-      SDValues += Coeff[axis][sd]->GetValueAsString();
+      SDValues += AeroFunctions[axis][sd]->GetValueAsString();
     }
   }
 */

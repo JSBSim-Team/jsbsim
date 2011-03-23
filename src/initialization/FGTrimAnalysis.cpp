@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.13 2009/10/02 10:30:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.14 2011/03/23 11:58:29 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -1242,7 +1242,7 @@ bool FGTrimAnalysis::calculateAerodynamics(
     Aerodynamics->Run();
 
     // get the Aerodynamics internat data
-    vector <FGFunction*> * Coeff = Aerodynamics->GetCoeff();
+    vector <FGFunction*> * Coeff = Aerodynamics->GetAeroFunctions();
 
     if ( Coeff->empty() ) return false;
 
