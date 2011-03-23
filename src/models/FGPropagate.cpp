@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.81 2011/03/05 16:24:25 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.82 2011/03/23 11:58:29 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +251,7 @@ bool FGPropagate::Run(void)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
-  Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate); // ECI  integration
+  Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
