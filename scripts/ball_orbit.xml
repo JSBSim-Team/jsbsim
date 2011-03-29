@@ -16,9 +16,9 @@
       5: Adams Bashforth 4
       
     </description>
-    <property value="2"> simulation/integrator/rate/rotational </property>
+    <property value="1"> simulation/integrator/rate/rotational </property>
     <property value="3"> simulation/integrator/rate/translational </property>
-    <property value="2"> simulation/integrator/position/rotational </property>
+    <property value="1"> simulation/integrator/position/rotational </property>
     <property value="4"> simulation/integrator/position/translational </property>
     <property value="1"> simulation/gravity-model </property>
     <property value="0"> simulation/output[0]/log-rate-hz </property>
