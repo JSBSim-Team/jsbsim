@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.46 2011/02/18 12:44:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.47 2011/03/29 11:49:27 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,33 +180,30 @@ bool FGAuxiliary::Run()
   vAeroUVW = vUVW - wind;
 
   Vt = vAeroUVW.Magnitude();
+  double Vt2 = Vt*Vt;
+  alpha = beta = adot = bdot = 0;
+  double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+
   if ( Vt > 1.0 ) {
     if (vAeroUVW(eW) != 0.0)
       alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
     if (vAeroUVW(eV) != 0.0)
-      beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
-             sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
+      beta = mUW > 0.0 ? atan2(vAeroUVW(eV), sqrt(mUW)) : 0.0;
 
-    double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
     double signU=1;
     if (vAeroUVW(eU) < 0.0) signU=-1;
 
-    if ( mUW < 1.0 ) {
-      adot = 0.0;
-      bdot = 0.0;
-    } else {
+    if ( mUW >= 1.0 ) {
       adot = (vAeroUVW(eU)*vUVWdot(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
-      bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
-              + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+      bdot = (signU*mUW*vUVWdot(eV)
+             - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU) + vAeroUVW(eW)*vUVWdot(eW)))/(Vt2*sqrt(mUW));
     }
-  } else {
-    alpha = beta = adot = bdot = 0;
   }
 
   Re = Vt * FDMExec->GetAircraft()->Getcbar() / FDMExec->GetAtmosphere()->GetKinematicViscosity();
 
-  qbar = 0.5*density*Vt*Vt;
-  qbarUW = 0.5*density*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+  qbar = 0.5*density*Vt2;
+  qbarUW = 0.5*density*(mUW);
   qbarUV = 0.5*density*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
   Mach = Vt / soundspeed;
   MachU = vMachUVW(eU) = vAeroUVW(eU) / soundspeed;

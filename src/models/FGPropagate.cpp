@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.82 2011/03/23 11:58:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.83 2011/03/29 11:48:50 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,10 +93,13 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   vUVWdot.InitMatrix();
   vInertialVelocity.InitMatrix();
 
-  integrator_rotational_rate = eAdamsBashforth2;
-  integrator_translational_rate = eTrapezoidal;
-  integrator_rotational_position = eAdamsBashforth2;
-  integrator_translational_position = eTrapezoidal;
+  /// These define the indices use to select the various integrators.
+  // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
+
+  integrator_rotational_rate = eRectEuler;
+  integrator_translational_rate = eAdamsBashforth2;
+  integrator_rotational_position = eRectEuler;
+  integrator_translational_position = eAdamsBashforth3;
 
   VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
