@@ -19,7 +19,7 @@
   </velocity>
 
   <attitude_rate unit="DEG/SEC" frame="ECI">
-    <y>  5.0 </y>
+    <y>  15.0 </y>
     <z> -5.0 </z>
   </attitude_rate>
 
