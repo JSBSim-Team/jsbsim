@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.3 2011/01/26 12:08:27 ehofman Exp $
+    @version $Id: FlightGear.hxx,v 1.4 2011/04/03 10:29:03 bcoconni Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -109,6 +109,15 @@ public:
 
     /// Reset flight params to a specific position
     void init();
+
+    /// Unbind properties
+    void unbind();
+
+    /// Suspend integration
+    void suspend();
+
+    /// Resume integration
+    void resume();
 
     /// @name Position Parameter Set
     //@{
@@ -283,8 +292,6 @@ private:
     void update_gear(void);
 
     void update_external_forces(double t_off);
-
-    void resetPropertyState();
 };
 
 
