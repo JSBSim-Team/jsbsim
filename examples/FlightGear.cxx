@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FlightGear.cxx,v 1.3 2011/01/26 12:08:27 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.4 2011/04/03 10:29:03 bcoconni Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -26,6 +26,7 @@
 #endif
 
 #include <simgear/compiler.h>
+#include <simgear/sg_inlines.h>
 
 #include <stdio.h>    //    size_t
 #include <string>
@@ -144,8 +145,6 @@ FGJSBsim::FGJSBsim( double dt )
         }
     }
 
-    resetPropertyState();
-    
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
 
     // Register ground callback.
@@ -214,15 +213,25 @@ FGJSBsim::FGJSBsim( double dt )
 
     // Set initial fuel levels if provided.
     for (unsigned int i = 0; i < Propulsion->GetNumTanks(); i++) {
+      double d;
       SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
-      if (node->getChild("level-gal_us", 0, false) != 0) {
-        Propulsion->GetTank(i)->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
+      FGTank* tank = Propulsion->GetTank(i);
+
+      d = node->getNode( "density-ppg", true )->getDoubleValue();
+      if( d > 0.0 ) {
+        tank->SetDensity( d );
       } else {
-        node->setDoubleValue("level-lbs", Propulsion->GetTank(i)->GetContents());
-        node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
+        node->getNode( "density-ppg", true )->setDoubleValue( SG_MAX2<double>(tank->GetDensity(), 0.1) );
       }
-      node->setDoubleValue("capacity-gal_us",
-                           Propulsion->GetTank(i)->GetCapacity() / 6.6);
+
+      d = node->getNode( "level-lbs", true )->getDoubleValue();
+      if( d > 0.0 ) {
+        tank->SetContents( d );
+      } else {
+        node->getNode( "level-lbs", true )->setDoubleValue( tank->GetContents() );
+      }
+      /* Capacity is read-only in FGTank and can't be overwritten from FlightGear */
+      node->getNode("capacity-gal_us", true )->setDoubleValue( tank->GetCapacityGallons() );
     }
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
 
@@ -424,6 +433,14 @@ void FGJSBsim::init()
 
 /******************************************************************************/
 
+void FGJSBsim::unbind()
+{
+  fdmex->Unbind();
+  FGInterface::unbind();
+}
+
+/******************************************************************************/
+
 // Run an iteration of the EOM (equations of motion)
 
 void FGJSBsim::update( double dt )
@@ -523,7 +540,7 @@ void FGJSBsim::update( double dt )
     }
 
     FGJSBBase::Message* msg;
-    while (msg = fdmex->ProcessNextMessage()) {
+    while ((msg = fdmex->ProcessNextMessage()) != NULL) {
 //      msg = fdmex->ProcessNextMessage();
       switch (msg->type) {
       case FGJSBBase::Message::eText:
@@ -549,6 +566,22 @@ void FGJSBsim::update( double dt )
     // translate JSBsim back to FG structure so that the
     // autopilot (and the rest of the sim can use the updated values
     copy_from_JSBsim();
+}
+
+/******************************************************************************/
+
+void FGJSBsim::suspend()
+{
+  fdmex->Hold();
+  SGSubsystem::suspend();
+}
+
+/******************************************************************************/
+
+void FGJSBsim::resume()
+{
+  fdmex->Resume();
+  SGSubsystem::resume();
 }
 
 /******************************************************************************/
@@ -619,7 +652,7 @@ bool FGJSBsim::copy_to_JSBsim()
         } // end FGTurbine code block
       case FGEngine::etRocket:
         { // FGRocket code block
-        FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
+//        FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
         break;
         } // end FGRocket code block
       case FGEngine::etTurboprop:
@@ -670,8 +703,13 @@ bool FGJSBsim::copy_to_JSBsim()
     for (i = 0; i < Propulsion->GetNumTanks(); i++) {
       SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
       FGTank * tank = Propulsion->GetTank(i);
-      tank->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
-//       tank->SetContents(node->getDoubleValue("level-lbs"));
+      double fuelDensity = node->getDoubleValue("density-ppg");
+
+      if (fuelDensity < 0.1)
+        fuelDensity = 6.0; // Use average fuel value
+
+      tank->SetDensity(fuelDensity);
+      tank->SetContents(node->getDoubleValue("level-lbs"));
     }
 
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
@@ -806,7 +844,7 @@ bool FGJSBsim::copy_from_JSBsim()
         break;
       case FGEngine::etRocket:
         { // FGRocket code block
-        FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
+//        FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
         } // end FGRocket code block
         break;
       case FGEngine::etTurbine:
@@ -817,7 +855,7 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("egt-degf", 32 + eng->GetEGT()*9/5);
         node->setBoolValue("augmentation", eng->GetAugmentation());
         node->setBoolValue("water-injection", eng->GetInjection());
-        node->setBoolValue("ignition", eng->GetIgnition());
+        node->setBoolValue("ignition", eng->GetIgnition() != 0);
         node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
         node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
@@ -836,7 +874,7 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("n1", eng->GetN1());
         //node->setDoubleValue("n2", eng->GetN2());
         node->setDoubleValue("itt_degf", 32 + eng->GetITT()*9/5);
-        node->setBoolValue("ignition", eng->GetIgnition());
+        node->setBoolValue("ignition", eng->GetIgnition() != 0);
         node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
         node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
@@ -844,7 +882,7 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setBoolValue("cutoff", eng->GetCutoff());
         node->setBoolValue("starting", eng->GetEngStarting());
         node->setBoolValue("generator-power", eng->GetGeneratorPower());
-        node->setBoolValue("damaged", eng->GetCondition());
+        node->setBoolValue("damaged", eng->GetCondition() != 0);
         node->setBoolValue("ielu-intervent", eng->GetIeluIntervent());
         node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
 //        node->setBoolValue("onfire", eng->GetFire());
@@ -876,7 +914,7 @@ bool FGJSBsim::copy_from_JSBsim()
       switch (thruster->GetType()) {
       case FGThruster::ttNozzle:
         { // FGNozzle code block
-        FGNozzle* noz = (FGNozzle*)thruster;
+//        FGNozzle* noz = (FGNozzle*)thruster;
         } // end FGNozzle code block
         break;
       case FGThruster::ttPropeller:
@@ -890,7 +928,7 @@ bool FGJSBsim::copy_from_JSBsim()
         break;
       case FGThruster::ttRotor:
         { // FGRotor code block
-        FGRotor* rotor = (FGRotor*)thruster;
+//        FGRotor* rotor = (FGRotor*)thruster;
         } // end FGRotor code block
         break;
       case FGThruster::ttDirect:
@@ -909,7 +947,12 @@ bool FGJSBsim::copy_from_JSBsim()
         FGTank* tank = Propulsion->GetTank(i);
         double contents = tank->GetContents();
         double temp = tank->GetTemperature_degC();
-        node->setDoubleValue("level-gal_us", contents/6.6);
+        double fuelDensity = tank->GetDensity();
+
+        if (fuelDensity < 0.1)
+          fuelDensity = 6.0; // Use average fuel value
+
+        node->setDoubleValue("density-ppg" , fuelDensity);
         node->setDoubleValue("level-lbs", contents);
         if (temp != -9999.0) node->setDoubleValue("temperature_degC", temp);
       }
@@ -984,7 +1027,9 @@ void FGJSBsim::set_Latitude(double lat)
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetLatitudeRadIC( lat_geoc );
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 
@@ -997,7 +1042,9 @@ void FGJSBsim::set_Longitude(double lon)
 
     update_ic();
     fgic->SetLongitudeRadIC( lon );
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 // Sets the altitude above sea level.
@@ -1022,7 +1069,9 @@ void FGJSBsim::set_Altitude(double alt)
           "Terrain elevation: " << FGInterface::get_Runway_altitude() * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
     fgic->SetAltitudeASLFtIC(alt);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::set_V_calibrated_kts(double vc)
@@ -1034,7 +1083,9 @@ void FGJSBsim::set_V_calibrated_kts(double vc)
 
     update_ic();
     fgic->SetVcalibratedKtsIC(vc);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::set_Mach_number(double mach)
@@ -1046,7 +1097,9 @@ void FGJSBsim::set_Mach_number(double mach)
 
     update_ic();
     fgic->SetMachIC(mach);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::set_Velocities_Local( double north, double east, double down )
@@ -1061,7 +1114,9 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down )
     fgic->SetVNorthFpsIC(north);
     fgic->SetVEastFpsIC(east);
     fgic->SetVDownFpsIC(down);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
@@ -1076,7 +1131,9 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
     fgic->SetUBodyFpsIC(u);
     fgic->SetVBodyFpsIC(v);
     fgic->SetWBodyFpsIC(w);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 //Euler angles
@@ -1092,7 +1149,9 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi )
     fgic->SetThetaRadIC(theta);
     fgic->SetPhiRadIC(phi);
     fgic->SetPsiRadIC(psi);
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 //Flight Path
@@ -1110,7 +1169,9 @@ void FGJSBsim::set_Climb_Rate( double roc)
     if( !(fabs(roc) > 1 && fabs(fgic->GetFlightPathAngleRadIC()) < 0.01) ) {
       fgic->SetClimbRateFpsIC(roc);
     }
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::set_Gamma_vert_rad( double gamma)
@@ -1121,7 +1182,9 @@ void FGJSBsim::set_Gamma_vert_rad( double gamma)
     if( !(fabs(gamma) < 0.01 && fabs(fgic->GetClimbRateFpsIC()) > 1) ) {
       fgic->SetFlightPathAngleRadIC(gamma);
     }
-    needTrim=true;
+
+    if (!fdmex->Holding())
+      needTrim=true;
 }
 
 void FGJSBsim::init_gear(void )
@@ -1190,8 +1253,8 @@ void FGJSBsim::do_trim(void)
 
   globals->get_controls()->set_elevator_trim(FCS->GetPitchTrimCmd());
   globals->get_controls()->set_elevator(FCS->GetDeCmd());
-  globals->get_controls()->set_throttle(FGControls::ALL_ENGINES,
-  FCS->GetThrottleCmd(0));
+  for( unsigned i = 0; i < Propulsion->GetNumEngines(); i++ )
+    globals->get_controls()->set_throttle(i, FCS->GetThrottleCmd(i));
 
   globals->get_controls()->set_aileron(FCS->GetDaCmd());
   globals->get_controls()->set_rudder( FCS->GetDrCmd());
@@ -1413,23 +1476,5 @@ void FGJSBsim::update_external_forces(double t_off)
     last_hook_root[2] = hook_area[1][2];
     
     fgSetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-deg", fi);
-}
-
-void FGJSBsim::resetPropertyState()
-{
-// this code works-around bug #222:
-// http://code.google.com/p/flightgear-bugs/issues/detail?id=222
-// for whatever reason, having an existing value for the WOW
-// property causes the NaNs. Should that be fixed, this code can die
-  SGPropertyNode* gear = fgGetNode("/fdm/jsbsim/gear", false);
-  if (!gear) {
-    return;
-  }
-  
-  int index = 0;
-  SGPropertyNode* unitNode = NULL;
-  for (; (unitNode = gear->getChild("unit", index)) != NULL; ++index) {
-    unitNode->removeChild("WOW", 0, false);
-  }
 }
 
