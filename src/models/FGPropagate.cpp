@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.83 2011/03/29 11:48:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.84 2011/04/03 13:18:51 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,20 +195,11 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   VehicleRadius = GetRadius();
   double radInv = 1.0/VehicleRadius;
 
-  // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
-  // This is the rotation rate of the "Local" frame, expressed in the local frame.
-
-  FGColumnVector3 vOmegaLocal = FGColumnVector3(
-     radInv*vVel(eEast),
-    -radInv*vVel(eNorth),
-    -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
-
   // Set the angular velocities of the body frame relative to the ECEF frame,
-  // expressed in the body frame. Effectively, this is:
-  //   w_b/e = w_b/l + w_l/e
+  // expressed in the body frame.
   VState.vPQR = FGColumnVector3( FGIC->GetPRadpsIC(),
                                  FGIC->GetQRadpsIC(),
-                                 FGIC->GetRRadpsIC() ) + Tl2b*vOmegaLocal;
+                                 FGIC->GetRRadpsIC() );
 
   VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
   VState.vPQRi_i = Tb2i * VState.vPQRi;
