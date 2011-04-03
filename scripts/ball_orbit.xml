@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="cannon ball test">
   <use aircraft="ball" initialize="reset00_v2"/>
-  <run start="0.0" end="10600" dt="0.005">
+  <run start="0.0" end="5400" dt="0.005">
     <description>
       Integrators
       
@@ -16,12 +16,12 @@
       5: Adams Bashforth 4
       
     </description>
-    <property value="1"> simulation/integrator/rate/rotational </property>
+    <property value="3"> simulation/integrator/rate/rotational </property>
     <property value="3"> simulation/integrator/rate/translational </property>
     <property value="1"> simulation/integrator/position/rotational </property>
     <property value="4"> simulation/integrator/position/translational </property>
     <property value="1"> simulation/gravity-model </property>
-    <property value="0"> simulation/output[0]/log-rate-hz </property>
+    <!--property value="0"> simulation/output[0]/log-rate-hz </property-->
 
     <property> simulation/notify-time-trigger </property>
 
@@ -40,7 +40,7 @@
       <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>
     </event>
 
-    <event name="Final Data Point">
+    <!--event name="Final Data Point">
       <description> Log data on command </description>
       <notify>
         <property caption="Simulation Time:         "> simulation/sim-time-sec         </property>
@@ -54,7 +54,7 @@
       </notify>
       <condition> simulation/sim-time-sec >= 86400.0 </condition>
       <set name="simulation/force-output" value="0"/>
-    </event>
+    </event-->
 
   </run>
 </runscript>

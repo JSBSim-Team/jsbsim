@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.84 2011/04/03 13:18:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.85 2011/04/03 19:24:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,9 +88,9 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   Name = "FGPropagate";
   gravType = gtWGS84;
  
-  vPQRdot.InitMatrix();
+  vPQRidot.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
-  vUVWdot.InitMatrix();
+  vUVWidot.InitMatrix();
   vInertialVelocity.InitMatrix();
 
   /// These define the indices use to select the various integrators.
@@ -130,9 +130,9 @@ bool FGPropagate::InitModel(void)
   VState.vLocation.SetEllipse(FDMExec->GetInertial()->GetSemimajor(), FDMExec->GetInertial()->GetSemiminor());
   vOmegaEarth = FGColumnVector3( 0.0, 0.0, FDMExec->GetInertial()->omega() ); // Earth rotation vector
 
-  vPQRdot.InitMatrix();
+  vPQRidot.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
-  vUVWdot.InitMatrix();
+  vUVWidot.InitMatrix();
   vInertialVelocity.InitMatrix();
 
   VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
@@ -202,7 +202,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
                                  FGIC->GetRRadpsIC() );
 
   VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
-  VState.vPQRi_i = Tb2i * VState.vPQRi;
 
   // Make an initial run and set past values
   InitializeDerivatives();
@@ -245,7 +244,7 @@ bool FGPropagate::Run(void)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
-  Integrate(VState.vPQRi_i,           vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
+  Integrate(VState.vPQRi,             vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
   Integrate(VState.qAttitudeECI,      vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
@@ -281,7 +280,6 @@ bool FGPropagate::Run(void)
 
   VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
 
-  VState.vPQRi = Ti2b * VState.vPQRi_i;
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
@@ -319,8 +317,8 @@ void FGPropagate::CalculatePQRdot(void)
   // moments and the total inertial angular velocity expressed in the body
   // frame.
 
-  vPQRdot = Jinv*(vMoments - VState.vPQRi*(J*VState.vPQRi));
-  vPQRidot = Tb2i * vPQRdot;
+  vPQRidot = Jinv*(vMoments - VState.vPQRi*(J*VState.vPQRi));
+  vPQRdot = vPQRidot - VState.vPQRi * (Ti2b * vOmegaEarth);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -603,7 +601,7 @@ void FGPropagate::ResolveFrictionForces(double dt)
   vUVWdot += invMass * Fc;
   vUVWidot += invMass * Tb2i * Fc;
   vPQRdot += Jinv * Mc;
-  vPQRidot += Tb2i* Jinv * Mc;
+  vPQRidot += Jinv * Mc;
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
@@ -656,8 +654,7 @@ void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetInertialRates(FGColumnVector3 vRates) {
-  VState.vPQRi_i = vRates;
-  VState.vPQRi = Ti2b * VState.vPQRi_i;
+  VState.vPQRi = Ti2b * vRates;
   VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
 }
 
@@ -737,7 +734,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
   vVel = Tb2l * VState.vUVW;
   VState.vPQR = vstate.vPQR;
   VState.vPQRi = VState.vPQR + Ti2b * vOmegaEarth;
-  VState.vPQRi_i = Tb2i * VState.vPQRi;
   VState.vInertialPosition = vstate.vInertialPosition;
 
   InitializeDerivatives();
