@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.35 2010/08/28 12:41:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.36 2011/04/05 20:20:21 andgi Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,9 +177,10 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
         newNode = PropertyManager->GetNode(property_name);
         Parameters.push_back(new FGPropertyValue( newNode ));
       } else {
-        cerr << fgcyan << "The property " + property_name + " is initially undefined."
+        cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
              << reset << endl;
-        Parameters.push_back(new FGPropertyValue( property_name ));
+        Parameters.push_back(new FGPropertyValue( property_name,
+                                                  PropertyManager ));
       }
     } else if (operation == value_string || operation == v_string) {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));
@@ -252,17 +253,8 @@ double FGFunction::GetValue(void) const
 
   if (cached) return cachedValue;
 
-  try {
-    temp = Parameters[0]->GetValue();
-  } catch (string prop) {
-    if (PropertyManager->HasNode(prop)) {
-      ((FGPropertyValue*)Parameters[0])->SetNode(PropertyManager->GetNode(prop));
-      temp = Parameters[0]->GetValue();
-    } else {
-      throw("Property " + prop + " was not defined anywhere.");
-    }
-  }
-
+  temp = Parameters[0]->GetValue();
+  
   switch (Type) {
   case eTopLevel:
     break;

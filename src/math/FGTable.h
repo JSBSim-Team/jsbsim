@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.12 2010/09/16 11:01:24 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.13 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -233,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.12 2010/09/16 11:01:24 jberndt Exp $
+@version $Id: FGTable.h,v 1.13 2011/04/05 20:20:21 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,6 +291,8 @@ public:
   void SetColumnIndexProperty(FGPropertyManager *node) {lookupProperty[eColumn] = node;}
 
   void Print(void);
+
+  std::string GetName(void) const {return Name;}
 
 private:
   enum type {tt1D, tt2D, tt3D} Type;

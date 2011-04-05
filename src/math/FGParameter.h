@@ -40,7 +40,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PARAMETER "$Id: FGParameter.h,v 1.5 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_PARAMETER "$Id: FGParameter.h,v 1.6 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,6 +65,10 @@ class FGParameter : public FGJSBBase
 public:
   virtual ~FGParameter(void) {};
   virtual double GetValue(void) const = 0;
+  virtual std::string GetName(void) const = 0;
+
+  // SGPropertyNode impersonation.
+  double getDoubleValue(void) const { return GetValue(); }
 
 protected:
 };

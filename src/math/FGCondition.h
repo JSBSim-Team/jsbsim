@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.5 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.6 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -53,6 +53,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGPropertyManager;
+class FGPropertyValue;
 class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +83,8 @@ private:
   std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
-  FGPropertyManager *TestParam1, *TestParam2, *PropertyManager;
+  FGPropertyManager *PropertyManager;
+  FGPropertyValue *TestParam1, *TestParam2;
   double TestValue;
   eComparison Comparison;
   bool isGroup;

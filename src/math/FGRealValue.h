@@ -40,7 +40,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_REALVALUE "$Id: FGRealValue.h,v 1.4 2009/08/30 03:51:28 jberndt Exp $"
+#define ID_REALVALUE "$Id: FGRealValue.h,v 1.5 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,6 +68,7 @@ public:
   ~FGRealValue() {};
 
   double GetValue(void) const;
+  std::string GetName(void) const {return "constant";}
 
 private:
   double Value;

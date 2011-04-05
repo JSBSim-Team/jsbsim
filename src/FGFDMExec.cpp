@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.90 2011/02/18 12:43:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.91 2011/04/05 20:20:21 andgi Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -690,15 +690,6 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     cerr << fgred
          << "  JSBSim failed to open the configuration file: " << aircraftCfgFileName
          << fgdef << endl;
-  }
-
-  // Late bind previously undefined FCS inputs.
-  try {
-    FCS->LateBind();
-  } catch (string prop) {
-    cerr << endl << fgred << "  Could not late bind property " << prop 
-         << ". Aborting." << reset << endl;
-    result = false;
   }
 
   if (result) {

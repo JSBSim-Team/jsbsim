@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.19 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.20 2011/04/05 20:20:21 andgi Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,13 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
           } else {
             current_test->sign = 1.0;
           }
-          current_test->OutputProp = PropertyManager->GetNode(value);
+          FGPropertyManager *node = PropertyManager->GetNode(value, false);
+          if (node) {
+            current_test->OutputProp = new FGPropertyValue(node);
+          } else {
+            current_test->OutputProp = new FGPropertyValue(value,
+                                                           PropertyManager);
+          }
         }
       }
     }
@@ -151,6 +157,7 @@ FGSwitch::~FGSwitch()
 {
   for (unsigned int i=0; i<tests.size(); i++) {
     for (unsigned int j=0; j<tests[i]->conditions.size(); j++) delete tests[i]->conditions[j];
+    delete tests[i]->OutputProp;
     delete tests[i];
   }
 
