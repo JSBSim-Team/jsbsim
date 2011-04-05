@@ -40,6 +40,7 @@ INCLUDES
 #include "FGFCSComponent.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGPropertyValue.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -47,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.29 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.30 2011/04/05 20:20:21 andgi Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,8 +112,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Name = element->GetAttributeValue("name");
 
-  FGPropertyManager *tmp=0;
-
   input_element = element->FindElement("input");
   while (input_element) {
     input = input_element->GetDataLine();
@@ -122,14 +121,14 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InputSigns.push_back( 1.0);
     }
+    FGPropertyManager* node = 0L;
     if (PropertyManager->HasNode(input)) {
-      tmp = PropertyManager->GetNode(input);
+      node = PropertyManager->GetNode(input);
+      InputNodes.push_back(new FGPropertyValue( node ));
     } else {
-      tmp = 0L;
-      // cerr << fgcyan << "In component: " + Name + " property "
-      //      + input + " is initially undefined." << reset << endl;
+      InputNodes.push_back(new FGPropertyValue( input,
+                                                PropertyManager ));
     }
-    InputNodes.push_back( tmp );
     InputNames.push_back( input );
 
     input_element = element->FindNextElement("input");
@@ -235,24 +234,6 @@ void FGFCSComponent::Clip(void)
     if (ClipMaxPropertyNode != 0) clipmax = clipMaxSign*ClipMaxPropertyNode->getDoubleValue();
     if (Output > clipmax)      Output = clipmax;
     else if (Output < clipmin) Output = clipmin;
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCSComponent::LateBind(void)
-{
-  FGPropertyManager* node = 0L;
-
-  for (unsigned int i=0; i<InputNodes.size(); i++) {
-    if (!InputNodes[i]) {
-      if (PropertyManager->HasNode(InputNames[i])) {
-        node = PropertyManager->GetNode(InputNames[i]);
-        InputNodes[i] = node;
-      } else {
-        throw(InputNames[i]);
-      }
-    }
   }
 }
 

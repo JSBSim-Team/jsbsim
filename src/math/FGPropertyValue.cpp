@@ -6,6 +6,7 @@ Date started: 12/10/2004
 Purpose: Stores property values
 
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------ Copyright (C) 2010 - 2011  Anders Gidenstam (anders(at)gidenstam.org) -
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -32,36 +33,53 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.6 2010/08/24 10:30:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.7 2011/04/05 20:20:21 andgi Exp $";
 static const char *IdHdr = ID_PROPERTYVALUE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropertyValue::FGPropertyValue(FGPropertyManager* propNode) : PropertyManager(propNode)
+FGPropertyValue::FGPropertyValue(FGPropertyManager* propNode)
+  : PropertyManager(0L), PropertyNode(propNode)
 {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyValue::FGPropertyValue(std::string propName) : PropertyManager(0L)
+FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* propertyManager)
+  : PropertyManager(propertyManager), PropertyNode(0L), PropertyName(propName)
 {
-  PropertyName = propName;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropertyValue::GetValue(void) const
 {
-  double val;
-  try {
-    val = PropertyManager->getDoubleValue();
-  } catch (...) {
-    throw(PropertyName);
+  FGPropertyManager* node = PropertyNode;
+
+  if (!PropertyNode) {
+    // The node cannot be cached since this is a const method.
+    node = PropertyManager->GetNode(PropertyName);
+    
+    if (!node) {
+      throw(std::string("FGPropertyValue::GetValue() The property " +
+                        PropertyName + " does not exist."));
+    }
   }
 
-  return val;
+  return node->getDoubleValue();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::string FGPropertyValue::GetName(void) const
+{
+  if (PropertyNode) {
+    return PropertyNode->GetName();
+  } else {
+    return PropertyName;
+  }
 }
 
 }

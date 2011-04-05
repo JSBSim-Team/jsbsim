@@ -40,12 +40,13 @@ INCLUDES
 #include "FGFCSComponent.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGCondition.h"
+#include "math/FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.13 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.14 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +125,7 @@ ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.13 2009/10/02 10:30:09 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.14 2011/04/05 20:20:21 andgi Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,12 +157,12 @@ private:
     vector <FGCondition*> conditions;
     eLogic Logic;
     double OutputVal;
-    FGPropertyManager *OutputProp;
+    FGPropertyValue *OutputProp;
     float sign;
 
     double GetValue(void) {
       if (OutputProp == 0L) return OutputVal;
-      else                  return OutputProp->getDoubleValue()*sign;
+      else                  return OutputProp->GetValue()*sign;
     }
 
     test(void) { // constructor for the test structure

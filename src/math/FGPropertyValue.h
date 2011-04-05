@@ -5,6 +5,7 @@ Author: Jon Berndt
 Date started: December 10 2004
 
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------ Copyright (C) 2010 - 2011  Anders Gidenstam (anders(at)gidenstam.org) -
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -41,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYVALUE "$Id: FGPropertyValue.h,v 1.8 2010/08/24 10:30:14 jberndt Exp $"
+#define ID_PROPERTYVALUE "$Id: FGPropertyValue.h,v 1.9 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -53,8 +54,8 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-  /** Represents a property value
-      @author Jon Berndt
+  /** Represents a property value which can use late binding.
+      @author Jon Berndt, Anders Gidenstam
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,14 +67,17 @@ class FGPropertyValue : public FGParameter
 public:
 
   FGPropertyValue(FGPropertyManager* propNode);
-  FGPropertyValue(std::string propName);
+  FGPropertyValue(std::string propName, FGPropertyManager* propertyManager);
   ~FGPropertyValue() {};
 
   double GetValue(void) const;
-  void SetNode(FGPropertyManager* node) {PropertyManager = node;} 
+  void SetNode(FGPropertyManager* node) {PropertyNode = node;} 
+
+  std::string GetName(void) const;
 
 private:
-  FGPropertyManager* PropertyManager;
+  FGPropertyManager* PropertyManager; // Property root used to do late binding.
+  FGPropertyManager* PropertyNode;
   std::string PropertyName;
 };
 

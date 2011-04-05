@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
+#include "math/FGParameter.h"
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.17 2010/08/21 22:56:11 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.18 2011/04/05 20:20:21 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,7 +81,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.17 2010/08/21 22:56:11 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.18 2011/04/05 20:20:21 andgi Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -98,7 +99,6 @@ public:
 
   virtual bool Run(void);
   virtual void SetOutput(void);
-  void LateBind(void);
   double GetOutput (void) const {return Output;}
   std::string GetName(void) const {return Name;}
   std::string GetType(void) const { return Type; }
@@ -111,7 +111,7 @@ protected:
   std::vector <FGPropertyManager*> OutputNodes;
   FGPropertyManager* ClipMinPropertyNode;
   FGPropertyManager* ClipMaxPropertyNode;
-  std::vector <FGPropertyManager*> InputNodes;
+  std::vector <FGParameter*> InputNodes;
   std::vector <std::string> InputNames;
   std::vector <float> InputSigns;
   std::vector <double> output_array;
