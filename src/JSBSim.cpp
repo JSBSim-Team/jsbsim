@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.65 2011/04/09 17:22:01 andgi Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.66 2011/04/09 17:23:01 andgi Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -282,7 +282,7 @@ int main(int argc, char* argv[])
   }
 }
 
-static int real_main(int argc, char* argv[])
+int real_main(int argc, char* argv[])
 {
   // *** INITIALIZATIONS *** //
 
