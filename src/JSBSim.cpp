@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.64 2011/02/19 16:44:41 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.65 2011/04/09 17:22:01 andgi Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -98,6 +98,7 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 bool options(int, char**);
+int real_main(int argc, char* argv[]);
 void PrintHelp(void);
 
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
@@ -268,6 +269,20 @@ IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 int main(int argc, char* argv[])
+{
+  try {
+    real_main(argc, argv);
+  } catch (string msg) {
+    std::cerr << "FATAL ERROR: JSBSim terminated with an exception."
+              << std::endl << "The message was: " << msg << std::endl;
+  } catch (...) {
+    std::cerr << "FATAL ERROR: JSBSim terminated with an unknown exception."
+              << std::endl;
+    throw;
+  }
+}
+
+static int real_main(int argc, char* argv[])
 {
   // *** INITIALIZATIONS *** //
 
