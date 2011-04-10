@@ -142,7 +142,7 @@ void FGDeadBand::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNames[0] << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       if (WidthPropertyNode != 0) {
         cout << "      DEADBAND WIDTH: " << WidthPropertyNode->GetName() << endl;
       } else {
