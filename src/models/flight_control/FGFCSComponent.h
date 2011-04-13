@@ -38,7 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
-#include "math/FGParameter.h"
+#include "math/FGPropertyValue.h"
 #include <string>
 #include <vector>
 
@@ -111,7 +111,7 @@ protected:
   std::vector <FGPropertyManager*> OutputNodes;
   FGPropertyManager* ClipMinPropertyNode;
   FGPropertyManager* ClipMaxPropertyNode;
-  std::vector <FGParameter*> InputNodes;
+  std::vector <FGPropertyValue*> InputNodes;
   std::vector <std::string> InputNames;
   std::vector <float> InputSigns;
   std::vector <double> output_array;
