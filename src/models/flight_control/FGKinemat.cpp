@@ -188,7 +188,7 @@ void FGKinemat::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNames[0] << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       cout << "      DETENTS: " << NumDetents << endl;
       for (int i=0;i<NumDetents;i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;

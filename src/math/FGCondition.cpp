@@ -173,6 +173,8 @@ void FGCondition::InitializeConditionals(void)
 
 FGCondition::~FGCondition(void)
 {
+  delete TestParam1;
+  delete TestParam2;
   for (unsigned int i=0; i<conditions.size(); i++) delete conditions[i];
 
   Debug(1);

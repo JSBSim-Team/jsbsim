@@ -121,7 +121,7 @@ void FGFCSFunction::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       if (InputNodes.size()>0)
-        cout << "      INPUT: " << InputNames[0] << endl;
+        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
 //    cout << "      Function: " << endl;
       if (IsOutput) {
         for (unsigned int i=0; i<OutputNodes.size(); i++)

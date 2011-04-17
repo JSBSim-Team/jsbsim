@@ -293,9 +293,9 @@ void FGSensor::Debug(int from)
     if (from == 0) { // Constructor
       if (InputSigns.size() > 0) {
         if (InputSigns[0] < 0)
-          cout << "      INPUT: -" << InputNames[0] << endl;
+          cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
         else
-          cout << "      INPUT: " << InputNames[0] << endl;
+          cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       }
       if (bits != 0) {
         if (quant_property.empty())

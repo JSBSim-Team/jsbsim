@@ -199,6 +199,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 FGFCSComponent::~FGFCSComponent()
 {
   Debug(1);
+  for (unsigned int i=0; i<InputNodes.size(); i++) {
+    delete InputNodes[i];
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -259,7 +259,7 @@ void FGFilter::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNames[0] << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
         switch (FilterType) {
         case eLag:
           if (PropertySign[1] < 0.0) sgn="-";
