@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.85 2011/04/03 19:24:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.86 2011/04/17 11:27:14 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,7 +193,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   RecomputeLocalTerrainRadius();
 
   VehicleRadius = GetRadius();
-  double radInv = 1.0/VehicleRadius;
 
   // Set the angular velocities of the body frame relative to the ECEF frame,
   // expressed in the body frame.
@@ -273,9 +272,10 @@ bool FGPropagate::Run(void)
   //    orientation quaternion and vLocation vector.
   UpdateBodyMatrices();
 
-  CalculateUVW();              // Translational position derivative (velocities are integrated in the inertial frame)
+  // Translational position derivative (velocities are integrated in the inertial frame)
+  CalculateUVW();
 
-  // Set auxililary state variables
+  // Set auxilliary state variables
   RecomputeLocalTerrainRadius();
 
   VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
@@ -628,9 +628,9 @@ void FGPropagate::UpdateBodyMatrices(void)
 {
   Ti2b  = VState.qAttitudeECI.GetT(); // ECI to body frame transform
   Tb2i  = Ti2b.Transposed();          // body to ECI frame transform
-  Tl2b  = Ti2b*Tl2i;                  // local to body frame transform
+  Tl2b  = Ti2b * Tl2i;                // local to body frame transform
   Tb2l  = Tl2b.Transposed();          // body to local frame transform
-  Tec2b = Tl2b * Tec2l;               // ECEF to body frame transform
+  Tec2b = Ti2b * Tec2i;               // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
 }
 
