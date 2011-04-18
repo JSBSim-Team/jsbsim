@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.14 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.15 2011/04/18 08:52:16 andgi Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,6 +173,8 @@ void FGCondition::InitializeConditionals(void)
 
 FGCondition::~FGCondition(void)
 {
+  delete TestParam1;
+  delete TestParam2;
   for (unsigned int i=0; i<conditions.size(); i++) delete conditions[i];
 
   Debug(1);
