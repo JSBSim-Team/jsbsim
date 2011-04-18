@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.22 2010/08/24 10:37:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.23 2011/04/18 08:51:12 andgi Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,9 +209,9 @@ void FGGain::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       if (InputSigns[0] < 0)
-        cout << "      INPUT: -" << InputNames[0] << endl;
+        cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
       else
-        cout << "      INPUT: " << InputNames[0] << endl;
+        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
 
       if (GainPropertyNode != 0) {
         cout << "      GAIN: " << GainPropertyNode->GetName() << endl;

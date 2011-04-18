@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.10 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.11 2011/04/18 08:51:12 andgi Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +142,7 @@ void FGDeadBand::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNames[0] << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       if (WidthPropertyNode != 0) {
         cout << "      DEADBAND WIDTH: " << WidthPropertyNode->GetName() << endl;
       } else {

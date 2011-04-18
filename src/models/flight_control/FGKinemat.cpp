@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.11 2010/08/21 22:56:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.12 2011/04/18 08:51:12 andgi Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +188,7 @@ void FGKinemat::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNames[0] << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       cout << "      DETENTS: " << NumDetents << endl;
       for (int i=0;i<NumDetents;i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
