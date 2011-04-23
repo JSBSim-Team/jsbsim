@@ -15,27 +15,30 @@ if [ ! -d engine ]; then
 fi
 
 FG_SRC=`(cd $1; pwd)`
+FG_DIR="$FG_SRC/src/FDM/JSBSim"
 
 cd src
-NEW_FILES=
-REMOVED_FILES=
 CUR_DIR=`pwd`
+
 CP="cp -p"
 #CP="echo"
 
-$CP $FG_SRC/src/FDM/JSBSim/JSBSim.cxx ../examples/FlightGear.cxx
-$CP $FG_SRC/src/FDM/JSBSim/JSBSim.hxx ../examples/FlightGear.hxx
+NEW_FILES=
+REMOVED_FILES=
+
+$CP $FG_DIR/JSBSim.cxx ../examples/FlightGear.cxx
+$CP $FG_DIR/JSBSim.hxx ../examples/FlightGear.hxx
 
 for n in `find . -path './simgear' -prune -o -path './utilities' -prune -o -type f -name 'FG*.cpp' -o -name '*.h' -o -name string_utilities.h`; do
 
-   if [ -f $FG_SRC/src/FDM/JSBSim/$n ]; then
+   if [ -f $FG_DIR/$n ]; then
 
-      NUM=`diff $n $FG_SRC/src/FDM/JSBSim/$n | grep -e ">" -e "<" | wc -l`;
-      NUM_ID=`diff $n $FG_SRC/src/FDM/JSBSim/$n | grep -e ">" -e "<" | grep "\$Id:" | wc -l`;
+      NUM=`diff $n $FG_DIR/$n | grep -e "^>" -e "^<" | wc -l`;
+      NID=`diff $n $FG_DIR/$n | grep -e "^>" -e "^<" | grep "\\$Id:" | wc -l`;
 
-      if [ ! $NUM -eq $NUM_ID ]; then
-         echo "$FG_SRC/src/FDM/JSBSim/$n";
-         $CP $n $FG_SRC/src/FDM/JSBSim/$n
+      if [ ! $NUM -eq $NID ]; then
+         echo "$FG_DIR/$n";
+         $CP $n $FG_DIR/$n
       fi;
 
    else
@@ -54,7 +57,7 @@ if [ "x$NEW_FILES" != "x" ]; then
    echo
 fi;
 
-cd $FG_SRC/src/FDM/JSBSim;
+cd $FG_DIR;
 for n in `find . -type f -name 'FG*.cpp' -o -name 'FG*.h'`; do
 
     if [ ! -f $CUR_DIR/$n ]; then
