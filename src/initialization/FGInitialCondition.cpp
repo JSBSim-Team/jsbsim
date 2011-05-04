@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.59 2011/04/03 13:18:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.60 2011/05/04 22:19:36 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -112,7 +112,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   FGQuaternion Quat(phi, theta, psi);
   Quat.Normalize();
   Tl2b = Quat.GetT();
-  Tb2l = Quat.GetTInv();
+  Tb2l = Tl2b.Transposed();
 
   vUVW_NED = Tb2l * FGColumnVector3(u0, v0, w0);
   vt = vUVW_NED.Magnitude();
@@ -398,7 +398,7 @@ void FGInitialCondition::SetAlphaRadIC(double alfa)
   Tl2b = Quat.GetT();
   Tb2l = Quat.GetTInv();
 
-  FGColumnVector3 v2 = Talpha * Quat.GetT() * _vt_NED;
+  FGColumnVector3 v2 = Talpha * Tl2b * _vt_NED;
 
   alpha = alfa;
   beta = atan2(v2(eV), v2(eU));
@@ -687,6 +687,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double ve0 = vt * sqrt(rho/rhoSL);
 
   altitudeASL=alt;
+  position.SetRadius(alt + sea_level_radius);
+
   temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
   soundSpeed = sqrt(SHRatio*Reng*temperature);
   rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
@@ -703,8 +705,6 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
     default: // Make the compiler stop complaining about missing enums
       break;
   }
-
-  position.SetRadius(alt + sea_level_radius);
 }
 
 //******************************************************************************
