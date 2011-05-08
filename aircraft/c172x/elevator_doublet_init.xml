@@ -10,4 +10,5 @@
   <psi unit="DEG">       200.0  </psi>
   <altitude unit="FT">  2000.0  </altitude>
   <gamma unit="DEG">       0.0  </gamma>
+  <running> 0 </running>
 </initialize>

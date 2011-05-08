@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.47 2011/03/29 11:49:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.48 2011/05/08 17:00:56 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,13 +70,14 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  vcas = veas = pt = tat = 0;
-  psl = rhosl = 1;
-  qbar = 0;
-  qbarUW = 0.0;
-  qbarUV = 0.0;
-  Re = 0.0;
-  Mach = 0.0;
+  pt = p = psl = 1.0;
+  rho = rhosl = 1.0;
+  tat = sat = 1.0;
+  tatc = RankineToCelsius(tat);
+
+  vcas = veas = 0.0;
+  qbar = qbarUW = qbarUV = 0.0;
+  Mach = MachU = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
   gamma = Vt = Vground = 0.0;
@@ -84,13 +85,19 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   day_of_year = 1;
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
-  tatc = RankineToCelsius(tat);
+  Re = 0.0;
+  Nz = 0.0;
+  lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
   vToEyePt.InitMatrix();
+  vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
+  vMachUVW.InitMatrix();
+  vEuler.InitMatrix();
   vEulerRates.InitMatrix();
+  vAircraftAccel.InitMatrix();
 
   bind();
 
@@ -103,12 +110,16 @@ bool FGAuxiliary::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  vcas = veas = pt = tat = 0;
-  psl = rhosl = 1;
-  qbar = 0;
-  qbarUW = 0.0;
-  qbarUV = 0.0;
-  Mach = 0.0;
+  pt = p = FDMExec->GetAtmosphere()->GetPressure();
+  rho = FDMExec->GetAtmosphere()->GetDensity();
+  rhosl = FDMExec->GetAtmosphere()->GetDensitySL();
+  psl = FDMExec->GetAtmosphere()->GetPressureSL();
+  tat = sat = FDMExec->GetAtmosphere()->GetTemperature();
+  tatc = RankineToCelsius(tat);
+
+  vcas = veas = 0.0;
+  qbar = qbarUW = qbarUV = 0.0;
+  Mach = MachU = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
   gamma = Vt = Vground = 0.0;
@@ -116,12 +127,19 @@ bool FGAuxiliary::InitModel(void)
   day_of_year = 1;
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
+  Re = 0.0;
+  Nz = 0.0;
+  lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
   vToEyePt.InitMatrix();
+  vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
+  vMachUVW.InitMatrix();
+  vEuler.InitMatrix();
   vEulerRates.InitMatrix();
+  vAircraftAccel.InitMatrix();
 
   return true;
 }
