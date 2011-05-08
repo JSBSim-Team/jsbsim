@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.91 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.92 2011/05/08 17:00:56 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -364,31 +364,7 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
                           FGIC->GetWindEFpsIC(),
                           FGIC->GetWindDFpsIC() );
 
-  FGColumnVector3 vAeroUVW;
-
-  //ToDo: move this to the Auxiliary class !?
-
-  vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetTotalWindNED();
-
-  double alpha, beta;
-  if (vAeroUVW(eW) != 0.0)
-    alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
-  else
-    alpha = 0.0;
-  if (vAeroUVW(eV) != 0.0)
-    beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV), (fabs(vAeroUVW(eU))/vAeroUVW(eU))*sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
-  else
-    beta = 0.0;
-
-  Auxiliary->SetAB(alpha, beta);
-
-  double Vt = vAeroUVW.Magnitude();
-  Auxiliary->SetVt(Vt);
-
-  Auxiliary->SetMach(Vt/Atmosphere->GetSoundSpeed());
-
-  double qbar = 0.5*Vt*Vt*Atmosphere->GetDensity();
-  Auxiliary->Setqbar(qbar);
+  Auxiliary->Run();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
