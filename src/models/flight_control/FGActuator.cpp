@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.17 2011/02/13 00:42:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.18 2011/05/13 17:14:47 bcoconni Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,13 @@ bool FGActuator::Run(void )
 
   if (fail_stuck) Output = PreviousOutput;
   PreviousOutput = Output; // previous value needed for "stuck" malfunction
+
+  if (fcs->GetTrimStatus()) {
+    PreviousHystOutput = Output;
+    PreviousRateLimOutput = Output;
+    PreviousLagInput = Output;
+    PreviousLagOutput = Output;
+  }
 
   Clip();
   if (IsOutput) SetOutput();
