@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.86 2011/04/17 11:27:14 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.87 2011/05/14 11:34:38 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,10 +140,10 @@ bool FGPropagate::InitModel(void)
   VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(4, FGColumnVector3(0.0,0.0,0.0));
 
-  integrator_rotational_rate = eAdamsBashforth2;
-  integrator_translational_rate = eTrapezoidal;
-  integrator_rotational_position = eAdamsBashforth2;
-  integrator_translational_position = eTrapezoidal;
+  integrator_rotational_rate = eRectEuler;
+  integrator_translational_rate = eAdamsBashforth2;
+  integrator_rotational_position = eRectEuler;
+  integrator_translational_position = eAdamsBashforth3;
 
   return true;
 }
