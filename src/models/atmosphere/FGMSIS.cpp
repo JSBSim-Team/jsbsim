@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.14 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.15 2011/05/17 11:41:20 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1186,6 +1186,8 @@ void MSIS::gtd7d(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] +
                    28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4]
                    + output->d[6] + 14.0 * output->d[7] + 16.0 * output->d[8]);
+  if (flags->sw[0])
+    output->d[5]=output->d[5]/1000;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1480,7 +1482,7 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
         /**** AR DENSITY ****/
 
         /*   Density variation factor at Zlb */
-  g40= flags->sw[20]*globe7(pd[5],input,flags);
+  g40= flags->sw[21]*globe7(pd[5],input,flags);
         /*  Diffusive density at Zlb */
   db40 = pdm[4][0]*exp(g40)*pd[5][0];
   /*   Diffusive density at Alt */
