@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.15 2011/05/17 11:41:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.16 2011/05/18 03:59:22 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,19 @@ CLASS IMPLEMENTATION
 MSIS::MSIS(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 {
   Name = "MSIS";
-  bind();
+
+  for (int i=0; i<9; i++) output.d[i] = 0.0;
+  for (int i=0; i<2; i++) output.t[i] = 0.0;
+
+  dm04 = dm16 = dm28 = dm32 = dm40 = dm01 = dm14 = dfa = 0.0;
+
+  for (int i=0; i<5; i++) meso_tn1[i] = 0.0;
+  for (int i=0; i<4; i++) meso_tn2[i] = 0.0;
+  for (int i=0; i<5; i++) meso_tn3[i] = 0.0;
+  for (int i=0; i<2; i++) meso_tgn1[i] = 0.0;
+  for (int i=0; i<2; i++) meso_tgn2[i] = 0.0;
+  for (int i=0; i<2; i++) meso_tgn3[i] = 0.0;
+
   Debug(0);
 }
 
@@ -110,12 +122,18 @@ MSIS::~MSIS()
 
 bool MSIS::InitModel(void)
 {
-  FGModel::InitModel();
+  if (!FGModel::InitModel()) return false;
 
   unsigned int i;
 
   flags.switches[0] = 0;
-  for (i=1;i<24;i++) flags.switches[i] = 1;
+  flags.sw[0] = 0;
+  flags.swc[0] = 0;
+  for (i=1;i<24;i++) {
+    flags.switches[i] = 1;
+    flags.sw[i] = 1;
+    flags.swc[i] = 1;
+  }
 
   for (i=0;i<7;i++) aph.a[i] = 100.0;
 
@@ -123,6 +141,8 @@ bool MSIS::InitModel(void)
   input.f107A = 150.0;
   input.f107 = 150.0;
   input.ap = 4.0;
+
+  UseInternal();
 
   SLtemperature = intTemperature = 518.0;
   SLpressure    = intPressure = 2116.7;
@@ -132,11 +152,6 @@ bool MSIS::InitModel(void)
   rSLpressure    = 1.0/intPressure;
   rSLdensity     = 1.0/intDensity;
   rSLsoundspeed  = 1.0/SLsoundspeed;
-  temperature = &intTemperature;
-  pressure = &intPressure;
-  density = &intDensity;
-
-  UseInternal();
 
   return true;
 }
@@ -149,6 +164,8 @@ bool MSIS::Run(void)
   if (FDMExec->Holding()) return false;
 
   RunPreFunctions();
+
+  h = FDMExec->GetPropagate()->GetAltitudeASL();
 
   //do temp, pressure, and density first
   if (!useExternal) {
@@ -170,7 +187,7 @@ bool MSIS::Run(void)
     // get at-altitude values
     Calculate(FDMExec->GetAuxiliary()->GetDayOfYear(),
               FDMExec->GetAuxiliary()->GetSecondsInDay(),
-              FDMExec->GetPropagate()->GetAltitudeASL(),
+              h,
               FDMExec->GetPropagate()->GetLocation().GetLatitudeDeg(),
               FDMExec->GetPropagate()->GetLocation().GetLongitudeDeg());
     intTemperature = output.t[1] * 1.8;
@@ -357,7 +374,7 @@ void MSIS::splini (double *xa, double *ya, double *y2a, int n, double x, double 
   double yi=0;
   int klo=0;
   int khi=1;
-  double xx, h, a, b, a2, b2;
+  double xx=0.0, h=0.0, a=0.0, b=0.0, a2=0.0, b2=0.0;
   while ((x>xa[klo]) && (khi<n)) {
     xx=x;
     if (khi<(n-1)) {
@@ -472,15 +489,17 @@ double MSIS::densm(double alt, double d0, double xm, double *tz, int mn3,
                      double *tn2, double *tgn2)
 {
 /*      Calculate Temperature and Density Profiles for lower atmos.  */
-  double xs[10], ys[10], y2out[10];
+  double xs[10] = {0,0,0,0,0,0,0,0,0,0};
+  double ys[10] = {0,0,0,0,0,0,0,0,0,0};
+  double y2out[10] = {0,0,0,0,0,0,0,0,0,0};
   double rgas = 831.4;
-  double z, z1, z2, t1, t2, zg, zgdif;
-  double yd1, yd2;
-  double x, y, yi;
-  double expl, gamm, glb;
-  double densm_tmp;
-  int mn;
-  int k;
+  double z=0, z1=0, z2=0, t1=0, t2=0, zg=0, zgdif=0;
+  double yd1=0, yd2=0;
+  double x=0, y=0, yi=0;
+  double expl=0, gamm=0, glb=0;
+  double densm_tmp=0;
+  int mn=0;
+  int k=0;
   densm_tmp=d0;
   if (alt>zn2[0]) {
     if (xm==0.0)
@@ -593,19 +612,19 @@ double MSIS::densu(double alt, double dlb, double tinf, double tlb, double xm,
 /*      Calculate Temperature and Density Profiles for MSIS models
  *      New lower thermo polynomial
  */
-  double yd2, yd1, x=0.0, y=0.0;
+  double yd2=0.0, yd1=0.0, x=0.0, y=0.0;
   double rgas=831.4;
   double densu_temp=1.0;
-  double za, z, zg2, tt, ta=0.0;
-  double dta, z1=0.0, z2, t1=0.0, t2, zg, zgdif=0.0;
+  double za=0.0, z=0.0, zg2=0.0, tt=0.0, ta=0.0;
+  double dta=0.0, z1=0.0, z2=0.0, t1=0.0, t2=0.0, zg=0.0, zgdif=0.0;
   int mn=0;
-  int k;
-  double glb;
-  double expl;
-  double yi;
-  double densa;
-  double gamma, gamm;
-  double xs[5], ys[5], y2out[5];
+  int k=0;
+  double glb=0.0;
+  double expl=0.0;
+  double yi=0.0;
+  double densa=0.0;
+  double gamma=0.0, gamm=0.0;
+  double xs[5]={0.0,0.0,0.0,0.0,0.0}, ys[5]={0.0,0.0,0.0,0.0,0.0}, y2out[5]={0.0,0.0,0.0,0.0,0.0};
   /* joining altitudes of Bates and spline */
   za=zn1[0];
   if (alt>za)
@@ -739,7 +758,7 @@ double MSIS::globe7(double *p, struct nrlmsise_input *input,
   double hr = 0.2618;
   double cd32, cd18, cd14, cd39;
   double p32, p18, p14, p39;
-  double df, dfa;
+  double df;
   double f1, f2;
   double tinf;
   struct ap_array *ap;
@@ -957,11 +976,11 @@ double MSIS::glob7s(double *p, struct nrlmsise_input *input,
 /*    VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99
  */
   double pset=2.0;
-  double t[14];
-  double tt;
-  double cd32, cd18, cd14, cd39;
-  double p32, p18, p14, p39;
-  int i,j;
+  double t[14] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,};
+  double tt=0.0;
+  double cd32=0.0, cd18=0.0, cd14=0.0, cd39=0.0;
+  double p32=0.0, p18=0.0, p14=0.0, p39=0.0;
+  int i=0,j=0;
   double dr=1.72142E-2;
   double dgtr=1.74533E-2;
   /* confirm parameter set */
@@ -1053,22 +1072,25 @@ double MSIS::glob7s(double *p, struct nrlmsise_input *input,
 void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
                   struct nrlmsise_output *output)
 {
-  double xlat;
-  double xmm;
+  double xlat=0.0;
+  double xmm=0.0;
   int mn3 = 5;
   double zn3[5]={32.5,20.0,15.0,10.0,0.0};
   int mn2 = 4;
   double zn2[4]={72.5,55.0,45.0,32.5};
-  double altt;
+  double altt=0.0;
   double zmix=62.5;
-  double tmp;
-  double dm28m;
-  double tz;
-  double dmc;
-  double dmr;
-  double dz28;
+  double tmp=0.0;
+  double dm28m=0.0;
+  double tz=0.0;
+  double dmc=0.0;
+  double dmr=0.0;
+  double dz28=0.0;
   struct nrlmsise_output soutput;
   int i;
+
+  for (int i=0; i<9; i++) soutput.d[i] = 0.0;
+  for (int i=0; i<2; i++) soutput.t[i] = 0.0;
 
   tselec(flags);
 
@@ -1279,36 +1301,36 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
  *     See GTD7 for more extensive comments
  *     alt > 72.5 km!
  */
-  double za;
+  double za=0.0;
   int i, j;
-  double ddum, z;
+  double ddum=0.0, z=0.0;
   double zn1[5] = {120.0, 110.0, 100.0, 90.0, 72.5};
-  double tinf;
+  double tinf=0.0;
   int mn1 = 5;
-  double g0;
-  double tlb;
-  double s, z0, t0, tr12;
-  double db01, db04, db14, db16, db28, db32, db40, db48;
-  double zh28, zh04, zh16, zh32, zh40, zh01, zh14;
-  double zhm28, zhm04, zhm16, zhm32, zhm40, zhm01, zhm14;
-  double xmd;
-  double b28, b04, b16, b32, b40, b01, b14;
-  double tz;
-  double g28, g4, g16, g32, g40, g1, g14;
-  double zhf, xmm;
-  double zc04, zc16, zc32, zc40, zc01, zc14;
-  double hc04, hc16, hc32, hc40, hc01, hc14;
-  double hcc16, hcc32, hcc01, hcc14;
-  double zcc16, zcc32, zcc01, zcc14;
-  double rc16, rc32, rc01, rc14;
-  double rl;
-  double g16h, db16h, tho, zsht, zmho, zsho;
+  double g0=0.0;
+  double tlb=0.0;
+  double s=0.0, z0=0.0, t0=0.0, tr12=0.0;
+  double db01=0.0, db04=0.0, db14=0.0, db16=0.0, db28=0.0, db32=0.0, db40=0.0, db48=0.0;
+  double zh28=0.0, zh04=0.0, zh16=0.0, zh32=0.0, zh40=0.0, zh01=0.0, zh14=0.0;
+  double zhm28=0.0, zhm04=0.0, zhm16=0.0, zhm32=0.0, zhm40=0.0, zhm01=0.0, zhm14=0.0;
+  double xmd=0.0;
+  double b28=0.0, b04=0.0, b16=0.0, b32=0.0, b40=0.0, b01=0.0, b14=0.0;
+  double tz=0.0;
+  double g28=0.0, g4=0.0, g16=0.0, g32=0.0, g40=0.0, g1=0.0, g14=0.0;
+  double zhf=0.0, xmm=0.0;
+  double zc04=0.0, zc16=0.0, zc32=0.0, zc40=0.0, zc01=0.0, zc14=0.0;
+  double hc04=0.0, hc16=0.0, hc32=0.0, hc40=0.0, hc01=0.0, hc14=0.0;
+  double hcc16=0.0, hcc32=0.0, hcc01=0.0, hcc14=0.0;
+  double zcc16=0.0, zcc32=0.0, zcc01=0.0, zcc14=0.0;
+  double rc16=0.0, rc32=0.0, rc01=0.0, rc14=0.0;
+  double rl=0.0;
+  double g16h=0.0, db16h=0.0, tho=0.0, zsht=0.0, zmho=0.0, zsho=0.0;
   double dgtr=1.74533E-2;
   double dr=1.72142E-2;
   double alpha[9]={-0.38, 0.0, 0.0, 0.0, 0.17, 0.0, -0.38, 0.0, 0.0};
   double altl[8]={200.0, 300.0, 160.0, 250.0, 240.0, 450.0, 320.0, 450.0};
-  double dd;
-  double hc216, hcc232;
+  double dd=0.0;
+  double hc216=0.0, hcc232=0.0;
   za = pdl[1][15];
   zn1[0] = za;
   for (j=0;j<9;j++)
