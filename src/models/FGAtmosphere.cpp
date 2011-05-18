@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.43 2011/05/12 12:05:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.44 2011/05/18 03:59:22 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -482,45 +482,7 @@ void FGAtmosphere::Turbulence(void)
 
     break;
   }
-  case ttBerndt: { // This is very experimental and incomplete at the moment.
 
-    vDirectiondAccelDt(eX) = GaussianRandomNumber();
-    vDirectiondAccelDt(eY) = GaussianRandomNumber();
-    vDirectiondAccelDt(eZ) = GaussianRandomNumber();
-/*
-    MagnitudedAccelDt = GaussianRandomNumber();
-    MagnitudeAccel    += MagnitudedAccelDt * DeltaT;
-    Magnitude         += MagnitudeAccel * DeltaT;
-*/
-    Magnitude         += GaussianRandomNumber() * DeltaT;
-
-    vDirectiondAccelDt.Normalize();
-    vDirectionAccel += TurbRate * vDirectiondAccelDt * DeltaT;
-    vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*DeltaT;
-
-    // Diminish z-vector within two wingspans of the ground
-    if (HOverBMAC < 2.0) vDirection(eZ) *= HOverBMAC / 2.0;
-
-    vDirection.Normalize();
-
-    vTurbulenceNED = TurbGain*Magnitude * vDirection;
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
-
-    vBodyTurbGrad = Tl2b * vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY) / wingspan;
-    if (HTailArm > 0)
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / HTailArm;
-    else
-      vTurbPQR(eQ) = vBodyTurbGrad(eZ) / 10.0;
-
-    if (VTailArm > 0)
-      vTurbPQR(eR) = vBodyTurbGrad(eX) / VTailArm;
-    else
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
-
-    break;
-  }
   case ttCulp: { 
 
     vTurbPQR(eP) = wind_from_clockwise;

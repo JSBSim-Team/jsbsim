@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.24 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.25 2011/05/18 03:59:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.24 2010/11/18 12:38:06 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.25 2011/05/18 03:59:22 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 
@@ -135,99 +135,99 @@ public:
       @return false if no error */
   bool Run(void);
   bool InitModel(void);
-  enum tType {ttNone, ttStandard, ttBerndt, ttCulp, ttMilspec, ttTustin} turbType;
+  enum tType {ttNone, ttStandard, ttCulp, ttMilspec, ttTustin} turbType;
 
   /// Returns the temperature in degrees Rankine.
-  double GetTemperature(void) const {return *temperature;}
+  virtual double GetTemperature(void) const {return *temperature;}
   /** Returns the density in slugs/ft^3.
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  double GetDensity(void)  const {return *density;}
+  virtual double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
-  double GetPressure(void)  const {return *pressure;}
+  virtual double GetPressure(void)  const {return *pressure;}
   /// Returns the standard pressure at a specified altitude
-  double GetPressure(double altitude);
+  virtual double GetPressure(double altitude);
   /// Returns the standard temperature at a specified altitude
-  double GetTemperature(double altitude);
+  virtual double GetTemperature(double altitude);
   /// Returns the standard density at a specified altitude
-  double GetDensity(double altitude);
+  virtual double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
-  double GetSoundSpeed(void) const {return soundspeed;}
+  virtual double GetSoundSpeed(void) const {return soundspeed;}
   /// Returns the absolute viscosity.
-  double GetAbsoluteViscosity(void) const {return intViscosity;}
+  virtual double GetAbsoluteViscosity(void) const {return intViscosity;}
   /// Returns the kinematic viscosity.
-  double GetKinematicViscosity(void) const {return intKinematicViscosity;}
+  virtual double GetKinematicViscosity(void) const {return intKinematicViscosity;}
 
   /// Returns the sea level temperature in degrees Rankine.
-  double GetTemperatureSL(void) const { return SLtemperature; }
+  virtual double GetTemperatureSL(void) const { return SLtemperature; }
   /// Returns the sea level density in slugs/ft^3
-  double GetDensitySL(void)  const { return SLdensity; }
+  virtual double GetDensitySL(void)  const { return SLdensity; }
   /// Returns the sea level pressure in psf.
-  double GetPressureSL(void) const { return SLpressure; }
+  virtual double GetPressureSL(void) const { return SLpressure; }
   /// Returns the sea level speed of sound in ft/sec.
-  double GetSoundSpeedSL(void) const { return SLsoundspeed; }
+  virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
-  double GetTemperatureRatio(void) const { return (*temperature)*rSLtemperature; }
+  virtual double GetTemperatureRatio(void) const { return (*temperature)*rSLtemperature; }
   /// Returns the ratio of at-altitude density over the sea level value.
-  double GetDensityRatio(void) const { return (*density)*rSLdensity; }
+  virtual double GetDensityRatio(void) const { return (*density)*rSLdensity; }
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  double GetPressureRatio(void) const { return (*pressure)*rSLpressure; }
+  virtual double GetPressureRatio(void) const { return (*pressure)*rSLpressure; }
   /// Returns the ratio of at-altitude sound speed over the sea level value.
-  double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
+  virtual double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
 
   /// Tells the simulator to use an externally calculated atmosphere model.
-  void UseExternal(void);
+  virtual void UseExternal(void);
   /// Tells the simulator to use the internal atmosphere model.
-  void UseInternal(void);  //this is the default
+  virtual void UseInternal(void);  //this is the default
   /// Gets the boolean that tells if the external atmosphere model is being used.
-  bool External(void) { return useExternal; }
+  virtual bool External(void) { return useExternal; }
 
   /// Provides the external atmosphere model with an interface to set the temperature.
-  void SetExTemperature(double t)  { exTemperature=t; }
+  virtual void SetExTemperature(double t)  { exTemperature=t; }
   /// Provides the external atmosphere model with an interface to set the density.
-  void SetExDensity(double d)      { exDensity=d; }
+  virtual void SetExDensity(double d)      { exDensity=d; }
   /// Provides the external atmosphere model with an interface to set the pressure.
-  void SetExPressure(double p)     { exPressure=p; }
+  virtual void SetExPressure(double p)     { exPressure=p; }
 
   /// Sets the temperature deviation at sea-level in degrees Fahrenheit
-  void SetSLTempDev(double d)  { T_dev_sl = d; }
+  virtual void SetSLTempDev(double d)  { T_dev_sl = d; }
   /// Gets the temperature deviation at sea-level in degrees Fahrenheit
-  double GetSLTempDev(void) const { return T_dev_sl; }
+  virtual double GetSLTempDev(void) const { return T_dev_sl; }
   /// Sets the current delta-T in degrees Fahrenheit
-  void SetDeltaT(double d)  { delta_T = d; }
+  virtual void SetDeltaT(double d)  { delta_T = d; }
   /// Gets the current delta-T in degrees Fahrenheit
-  double GetDeltaT(void) const  { return delta_T; }
+  virtual double GetDeltaT(void) const  { return delta_T; }
   /// Gets the at-altitude temperature deviation in degrees Fahrenheit
-  double GetTempDev(void) const { return T_dev; }
+  virtual double GetTempDev(void) const { return T_dev; }
   /// Gets the density altitude in feet
-  double GetDensityAltitude(void) const { return density_altitude; }
+  virtual double GetDensityAltitude(void) const { return density_altitude; }
 
   // TOTAL WIND access functions (wind + gust + turbulence)
 
   /// Retrieves the total wind components in NED frame.
-  const FGColumnVector3& GetTotalWindNED(void) const { return vTotalWindNED; }
+  virtual const FGColumnVector3& GetTotalWindNED(void) const { return vTotalWindNED; }
 
   /// Retrieves a total wind component in NED frame.
-  double GetTotalWindNED(int idx) const {return vTotalWindNED(idx);}
+  virtual double GetTotalWindNED(int idx) const {return vTotalWindNED(idx);}
 
   // WIND access functions
 
   /// Sets the wind components in NED frame.
-  void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
+  virtual void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
   /// Sets a wind component in NED frame.
-  void SetWindNED(int idx, double wind) { vWindNED(idx)=wind;}
+  virtual void SetWindNED(int idx, double wind) { vWindNED(idx)=wind;}
 
   /// Retrieves the wind components in NED frame.
-  FGColumnVector3& GetWindNED(void) { return vWindNED; }
+  virtual FGColumnVector3& GetWindNED(void) { return vWindNED; }
 
   /// Retrieves a wind component in NED frame.
-  double GetWindNED(int idx) const {return vWindNED(idx);}
+  virtual double GetWindNED(int idx) const {return vWindNED(idx);}
 
   /** Retrieves the direction that the wind is coming from.
       The direction is defined as north=0 and increases counterclockwise.
       The wind heading is returned in radians.*/
-  double GetWindPsi(void) const { return psiw; }
+  virtual double GetWindPsi(void) const { return psiw; }
 
   /** Sets the direction that the wind is coming from.
       The direction is defined as north=0 and increases counterclockwise to 2*pi (radians). The
@@ -235,56 +235,56 @@ public:
       sets the vWindNED vector components based on the supplied direction. The magnitude of
       the wind set in the vector is preserved (assuming the vertical component is non-zero).
       @param dir wind direction in the horizontal plane, in radians.*/
-  void SetWindPsi(double dir);
+  virtual void SetWindPsi(double dir);
 
-  void SetWindspeed(double speed);
+  virtual void SetWindspeed(double speed);
 
-  double GetWindspeed(void) const;
+  virtual double GetWindspeed(void) const;
 
   // GUST access functions
 
   /// Sets a gust component in NED frame.
-  void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
+  virtual void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
 
   /// Sets a turbulence component in NED frame.
-  void SetTurbNED(int idx, double turb) { vTurbulenceNED(idx)=turb;}
+  virtual void SetTurbNED(int idx, double turb) { vTurbulenceNED(idx)=turb;}
 
   /// Sets the gust components in NED frame.
-  void SetGustNED(double gN, double gE, double gD) { vGustNED(eNorth)=gN; vGustNED(eEast)=gE; vGustNED(eDown)=gD;}
+  virtual void SetGustNED(double gN, double gE, double gD) { vGustNED(eNorth)=gN; vGustNED(eEast)=gE; vGustNED(eDown)=gD;}
 
   /// Retrieves a gust component in NED frame.
-  double GetGustNED(int idx) const {return vGustNED(idx);}
+  virtual double GetGustNED(int idx) const {return vGustNED(idx);}
 
   /// Retrieves a turbulence component in NED frame.
-  double GetTurbNED(int idx) const {return vTurbulenceNED(idx);}
+  virtual double GetTurbNED(int idx) const {return vTurbulenceNED(idx);}
 
   /// Retrieves the gust components in NED frame.
-  FGColumnVector3& GetGustNED(void) {return vGustNED;}
+  virtual FGColumnVector3& GetGustNED(void) {return vGustNED;}
 
   /** Turbulence models available: ttNone, ttStandard, ttBerndt, ttCulp, ttMilspec, ttTustin */
-  void   SetTurbType(tType tt) {turbType = tt;}
-  tType  GetTurbType() const {return turbType;}
+  virtual void   SetTurbType(tType tt) {turbType = tt;}
+  virtual tType  GetTurbType() const {return turbType;}
 
-  void   SetTurbGain(double tg) {TurbGain = tg;}
-  double GetTurbGain() const {return TurbGain;}
+  virtual void   SetTurbGain(double tg) {TurbGain = tg;}
+  virtual double GetTurbGain() const {return TurbGain;}
 
-  void   SetTurbRate(double tr) {TurbRate = tr;}
-  double GetTurbRate() const {return TurbRate;}
+  virtual void   SetTurbRate(double tr) {TurbRate = tr;}
+  virtual double GetTurbRate() const {return TurbRate;}
 
-  void   SetRhythmicity(double r) {Rhythmicity=r;}
-  double GetRhythmicity() const {return Rhythmicity;}
+  virtual void   SetRhythmicity(double r) {Rhythmicity=r;}
+  virtual double GetRhythmicity() const {return Rhythmicity;}
 
-  double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
-  double GetTurbMagnitude(void) const {return Magnitude;}
-  const FGColumnVector3& GetTurbDirection(void) const {return vDirection;}
-  const FGColumnVector3& GetTurbPQR(void) const {return vTurbPQR;}
+  virtual double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
+  virtual double GetTurbMagnitude(void) const {return Magnitude;}
+  virtual const FGColumnVector3& GetTurbDirection(void) const {return vDirection;}
+  virtual const FGColumnVector3& GetTurbPQR(void) const {return vTurbPQR;}
 
-  void   SetWindspeed20ft(double ws) { windspeed_at_20ft = ws;}
-  double GetWindspeed20ft() const { return windspeed_at_20ft;}
+  virtual void   SetWindspeed20ft(double ws) { windspeed_at_20ft = ws;}
+  virtual double GetWindspeed20ft() const { return windspeed_at_20ft;}
 
   /// allowable range: 0-7, 3=light, 4=moderate, 6=severe turbulence
-  void   SetProbabilityOfExceedence( int idx) {probability_of_exceedence_index = idx;}
-  int    GetProbabilityOfExceedence() const { return probability_of_exceedence_index;}
+  virtual void   SetProbabilityOfExceedence( int idx) {probability_of_exceedence_index = idx;}
+  virtual int    GetProbabilityOfExceedence() const { return probability_of_exceedence_index;}
 
 protected:
   double rho;
@@ -338,7 +338,7 @@ protected:
   /// Get T, P and rho for a standard atmosphere at the given altitude.
   void GetStdAtmosphere(double altitude);
   void Turbulence(void);
-  void bind(void);
+  virtual void bind(void);
   void Debug(int from);
 };
 
