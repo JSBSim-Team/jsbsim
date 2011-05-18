@@ -1,3 +1,3 @@
 EXTRA_DIST = \
-        JSBSim.hxx JSBSim.cxx
+        FlightGear.hxx FlightGear.cxx
 
