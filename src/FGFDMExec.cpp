@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.92 2011/05/08 17:00:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.93 2011/05/17 11:41:20 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,19 +228,19 @@ bool FGFDMExec::Allocate(void)
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model could get executed every fifth pass it is called.
   
-  Schedule(Input,           1);
-  Schedule(Atmosphere,      1);
-  Schedule(FCS,             1);
-  Schedule(Propulsion,      1);
-  Schedule(MassBalance,     1);
-  Schedule(Aerodynamics,    1);
-  Schedule(Inertial,        1);
-  Schedule(GroundReactions, 1);
-  Schedule(ExternalReactions, 1);
-  Schedule(BuoyantForces,   1);
-  Schedule(Aircraft,        1);
-  Schedule(Propagate,       1);
-  Schedule(Auxiliary,       1);
+  Schedule(Input,           1);   // Input model is Models[0]
+  Schedule(Atmosphere,      1);   // Input model is Models[1]
+  Schedule(FCS,             1);   // Input model is Models[2]
+  Schedule(Propulsion,      1);   // Input model is Models[3]
+  Schedule(MassBalance,     1);   // Input model is Models[4]
+  Schedule(Aerodynamics,    1);   // Input model is Models[5]
+  Schedule(Inertial,        1);   // Input model is Models[6]
+  Schedule(GroundReactions, 1);   // Input model is Models[7]
+  Schedule(ExternalReactions, 1); // Input model is Models[8]
+  Schedule(BuoyantForces,   1);   // Input model is Models[9]
+  Schedule(Aircraft,        1);   // Input model is Models[10]
+  Schedule(Propagate,       1);   // Input model is Models[11]
+  Schedule(Auxiliary,       1);   // Input model is Models[12]
 
   // Initialize models so they can communicate with each other
 
@@ -986,6 +986,8 @@ void FGFDMExec::UseAtmosphereMSIS(void)
     cerr << fgred << "MSIS Atmosphere model init failed" << fgdef << endl;
     Error+=1;
   }
+  Models[1] = Atmosphere; // Reassign the atmosphere model that has already been scheduled
+                          // to the new atmosphere.
   delete oldAtmosphere;
 }
 
@@ -1000,6 +1002,8 @@ void FGFDMExec::UseAtmosphereMars(void)
     cerr << fgred << "Mars Atmosphere model init failed" << fgdef << endl;
     Error+=1;
   }
+  Models[1] = Atmosphere; // Reassign the atmosphere model that has already been scheduled
+                          // to the new atmosphere.
   delete oldAtmosphere;
 */
 }
