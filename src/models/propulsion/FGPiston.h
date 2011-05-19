@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.26 2011/03/10 01:35:25 dpculp Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.27 2011/05/19 13:39:39 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,7 @@ CLASS DOCUMENTATION
   <compression-ratio> {number} </compression-ratio>
   <sparkfaildrop> {number} </sparkfaildrop>
   <maxhp unit="{HP | WATTS}"> {number} </maxhp>
+  <static-friction unit="{HP | WATTS}"> {number} </static-friction>
   <cycles> {number} </cycles>
   <idlerpm> {number} </idlerpm>
   <maxrpm> {number} </maxrpm>
@@ -182,7 +183,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.26 2011/03/10 01:35:25 dpculp Exp $
+    @version $Id: FGPiston.h,v 1.27 2011/05/19 13:39:39 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,6 +269,7 @@ private:
   double Displacement;             // cubic inches
   double displacement_SI;          // cubic meters
   double MaxHP;                    // horsepower
+  double StaticFriction_HP;        // horsepower: amount subtracted from final engine power
   double SparkFailDrop;            // drop of power due to spark failure
   double Cycles;                   // cycles/power stroke
   double IdleRPM;                  // revolutions per minute

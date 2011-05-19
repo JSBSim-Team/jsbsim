@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.55 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.56 2011/05/19 13:39:39 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +100,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   FMEPDynamic= 18400;
   FMEPStatic = 46500;
   Cooling_Factor = 0.5144444;
+  StaticFriction_HP = 1.5;
 
   // These are internal program variables
 
@@ -177,6 +178,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Displacement = el->FindElementValueAsNumberConvertTo("displacement","IN3");
   if (el->FindElement("maxhp"))
     MaxHP = el->FindElementValueAsNumberConvertTo("maxhp","HP");
+  if (el->FindElement("static-friction"))
+    StaticFriction_HP = el->FindElementValueAsNumberConvertTo("static-friction","HP");
   if (el->FindElement("sparkfaildrop"))
     SparkFailDrop = Constrain(0, 1 - el->FindElementValueAsNumber("sparkfaildrop"), 1);
   if (el->FindElement("cycles"))
@@ -259,7 +262,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
       pmep *= inhgtopa  * volumetric_efficiency;
       double fmep = (FMEPDynamic * RatedMeanPistonSpeed_fps * fttom + FMEPStatic);
       double hp_loss = ((pmep + fmep) * displacement_SI * MaxRPM)/(Cycles*22371);
-      ISFC = ( 1.1*Displacement * MaxRPM * volumetric_efficiency *(MaxManifoldPressure_inHg / 29.92) ) / (9411 * (MaxHP+hp_loss));
+      ISFC = ( 1.1*Displacement * MaxRPM * volumetric_efficiency *(MaxManifoldPressure_inHg / 29.92) ) / (9411 * (MaxHP+hp_loss-StaticFriction_HP));
 // cout <<"FMEP: "<< fmep <<" PMEP: "<< pmep << " hp_loss: " <<hp_loss <<endl;
   }
   if ( MaxManifoldPressure_inHg > 29.9 ) {   // Don't allow boosting with a bogus number
@@ -730,7 +733,7 @@ void FGPiston::doEnginePower(void)
   // (1/2) convert cycles, 60 minutes to seconds, 745.7 watts to hp.
   double pumping_hp = ((PMEP + FMEP) * displacement_SI * RPM)/(Cycles*22371);
 
-  HP = IndicatedHorsePower + pumping_hp - 1.5; //FIXME 1.5 static friction should depend on oil temp and configuration
+  HP = IndicatedHorsePower + pumping_hp - StaticFriction_HP; //FIXME static friction should depend on oil temp and configuration
 //  cout << "pumping_hp " <<pumping_hp << FMEP << PMEP <<endl;
   PctPower = HP / MaxHP ;
 //  cout << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << endl;
