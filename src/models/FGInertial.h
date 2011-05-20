@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.15 2010/01/27 04:01:09 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.16 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,14 @@ public:
 
   bool InitModel(void);
 
-  bool Run(void);
+  /** Runs the Inertial model; called by the Executive
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
+      @return false if no error */
+  bool Run(bool Holding);
   double SLgravity(void) const {return gAccelReference;}
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}

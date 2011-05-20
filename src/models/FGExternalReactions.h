@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.10 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.11 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,9 +132,13 @@ public:
   bool InitModel(void);
 
   /** Sum all the constituent forces for this cycle.
-      @return true always.
-  */
-  bool Run(void);
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
+      @return true always.  */
+  bool Run(bool Holding);
   
   /** Loads the external forces from the XML configuration file.
       If the external_reactions section is encountered in the vehicle configuration

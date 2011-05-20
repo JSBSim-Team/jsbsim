@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.45 2011/02/13 00:42:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.46 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -117,8 +117,6 @@ bool FGPropulsion::InitModel(void)
 {
   bool result = true;
 
-  if (!FGModel::InitModel()) return false;
-
   for (unsigned int i=0; i<numTanks; i++) Tanks[i]->ResetToIC();
 
   for (unsigned int i=0; i<numEngines; i++) {
@@ -151,12 +149,12 @@ bool FGPropulsion::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::Run(void)
+bool FGPropulsion::Run(bool Holding)
 {
   unsigned int i;
 
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 
@@ -199,7 +197,7 @@ bool FGPropulsion::GetSteadyState(void)
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
-  if (!FGModel::Run()) {
+  if (!FGModel::Run(false)) {
     FDMExec->SetTrimStatus(true);
 
     for (unsigned int i=0; i<numEngines; i++) {

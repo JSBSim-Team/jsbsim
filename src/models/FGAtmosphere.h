@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.25 2011/05/18 03:59:22 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.26 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.25 2011/05/18 03:59:22 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.26 2011/05/20 03:18:36 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 
@@ -132,8 +132,13 @@ public:
   /// Destructor
   ~FGAtmosphere();
   /** Runs the Atmosphere model; called by the Executive
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
       @return false if no error */
-  bool Run(void);
+  bool Run(bool Holding);
   bool InitModel(void);
   enum tType {ttNone, ttStandard, ttCulp, ttMilspec, ttTustin} turbType;
 

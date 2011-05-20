@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.8 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.9 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,14 @@ public:
   ~FGInput();
 
   bool InitModel(void);
-  bool Run(void);
+  /** Runs the Input model; called by the Executive
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
+      @return false if no error */
+  bool Run(bool Holding);
 
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }

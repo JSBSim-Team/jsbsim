@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.8 2011/05/18 03:59:22 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.9 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.8 2011/05/18 03:59:22 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.9 2011/05/20 03:18:36 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,8 +235,13 @@ public:
   /// Destructor
   ~MSIS();
   /** Runs the MSIS-00 atmosphere model; called by the Executive
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
       @return false if no error */
-  bool Run(void);
+  bool Run(bool Holding);
 
   bool InitModel(void);
 

@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.16 2011/03/23 11:58:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.17 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,17 +80,15 @@ FGBuoyantForces::~FGBuoyantForces()
 
 bool FGBuoyantForces::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGBuoyantForces::Run(void)
+bool FGBuoyantForces::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false; // if paused don't execute
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false; // if paused don't execute
   if (NoneDefined) return true;
 
   RunPreFunctions();

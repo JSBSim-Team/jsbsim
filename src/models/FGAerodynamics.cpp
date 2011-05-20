@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.37 2011/03/11 13:02:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.38 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,11 +132,11 @@ bool FGAerodynamics::InitModel(void)
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAerodynamics::Run(void)
+bool FGAerodynamics::Run(bool Holding)
 {
 
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false; // if paused don't execute
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false; // if paused don't execute
 
   unsigned int axis_ctr, ctr;
   const double alpha=FDMExec->GetAuxiliary()->Getalpha();

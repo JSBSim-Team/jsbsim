@@ -67,7 +67,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.30 2010/11/29 12:33:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.31 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,17 +101,15 @@ FGAircraft::~FGAircraft()
 
 bool FGAircraft::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAircraft::Run(void)
+bool FGAircraft::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 

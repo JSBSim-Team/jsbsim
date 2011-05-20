@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.26 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.27 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.26 2010/11/18 12:38:06 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.27 2011/05/20 03:18:36 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -112,9 +112,13 @@ public:
   /** Executes the propulsion model.
       The initial plan for the FGPropulsion class calls for Run() to be executed,
       calculating the power available from the engine.
-
-      [Note: Should we be checking the Starved flag here?] */
-  bool Run(void);
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given.
+      @return false if no error */
+  bool Run(bool Holding);
 
   bool InitModel(void);
 

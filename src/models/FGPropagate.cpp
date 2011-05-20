@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.87 2011/05/14 11:34:38 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.88 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,8 +121,6 @@ FGPropagate::~FGPropagate(void)
 
 bool FGPropagate::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   // For initialization ONLY:
   SeaLevelRadius = LocalTerrainRadius = FDMExec->GetInertial()->GetRefRadius();
 
@@ -226,10 +224,10 @@ Inertial.
 
 */
 
-bool FGPropagate::Run(void)
+bool FGPropagate::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;  // Fast return if we have nothing to do ...
+  if (Holding) return false;
 
   double dt = FDMExec->GetDeltaT()*rate;  // The 'stepsize'
 

@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.48 2011/05/08 17:00:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.49 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,8 +108,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGAuxiliary::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   pt = p = FDMExec->GetAtmosphere()->GetPressure();
   rho = FDMExec->GetAtmosphere()->GetDensity();
   rhosl = FDMExec->GetAtmosphere()->GetDensitySL();
@@ -153,12 +151,12 @@ FGAuxiliary::~FGAuxiliary()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAuxiliary::Run()
+bool FGAuxiliary::Run(bool Holding)
 {
   double A,B,D;
 
-  if (FGModel::Run()) return true; // return true if error returned from base class
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true; // return true if error returned from base class
+  if (Holding) return false;
 
   RunPreFunctions();
 
