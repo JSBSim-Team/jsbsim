@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.94 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.95 2011/05/20 10:35:25 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +208,7 @@ bool FGFDMExec::Allocate(void)
 {
   bool result=true;
 
-  Atmosphere      = new MSIS(this);
+  Atmosphere      = new FGAtmosphere(this);
   FCS             = new FGFCS(this);
   Propulsion      = new FGPropulsion(this);
   MassBalance     = new FGMassBalance(this);
