@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.26 2011/01/16 16:10:59 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.27 2011/05/20 00:47:03 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -213,7 +213,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.26 2011/01/16 16:10:59 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.27 2011/05/20 00:47:03 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -666,6 +666,7 @@ private:
   double getMachFromVcas(double vcas);
   double calcVcas(double Mach) const;
   void calcAeroAngles(const FGColumnVector3& _vt_BODY);
+  void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
   void bind(void);
   void Debug(int from);
 
