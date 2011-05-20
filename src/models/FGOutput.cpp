@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.54 2011/03/11 13:02:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.55 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -157,8 +157,6 @@ FGOutput::~FGOutput()
 
 bool FGOutput::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   if (Filename.size() > 0 && StartNewFile) {
     ostringstream buf;
     string::size_type dot = BaseFilename.find_last_of('.');
@@ -178,11 +176,11 @@ bool FGOutput::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::Run(void)
+bool FGOutput::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
+  if (FGModel::Run(Holding)) return true;
 
-  if (enabled && !FDMExec->IntegrationSuspended() && !FDMExec->Holding()) {
+  if (enabled && !FDMExec->IntegrationSuspended() && !Holding) {
     RunPreFunctions();
     Print();
     RunPostFunctions();

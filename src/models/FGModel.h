@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.18 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.19 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,10 +83,17 @@ public:
 
   std::string Name;
 
-  /** Runs the model; called by the Executive
+  /** Runs the model; called by the Executive.
+      Can pass in a value indicating if the executive is directing the simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim from 
+                     advancing time. Some models may ignore this flag, such as the Input
+                     model, which may need to be active to listen on a socket for the
+                     "Resume" command to be given. The Holding flag is not used in the base
+                     FGModel class.
       @see JSBSim.cpp documentation
       @return false if no error */
-  virtual bool Run(void);
+  virtual bool Run(bool Holding);
+
   virtual bool InitModel(void);
   virtual void SetRate(int tt) {rate = tt;}
   virtual int  GetRate(void)   {return rate;}

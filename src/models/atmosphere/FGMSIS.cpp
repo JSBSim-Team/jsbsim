@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.16 2011/05/18 03:59:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.17 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,8 +122,6 @@ MSIS::~MSIS()
 
 bool MSIS::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   unsigned int i;
 
   flags.switches[0] = 0;
@@ -158,10 +156,10 @@ bool MSIS::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool MSIS::Run(void)
+bool MSIS::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 

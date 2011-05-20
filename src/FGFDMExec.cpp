@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.93 2011/05/17 11:41:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.94 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +208,7 @@ bool FGFDMExec::Allocate(void)
 {
   bool result=true;
 
-  Atmosphere      = new FGAtmosphere(this);
+  Atmosphere      = new MSIS(this);
   FCS             = new FGFCS(this);
   Propulsion      = new FGPropulsion(this);
   MassBalance     = new FGMassBalance(this);
@@ -329,10 +329,9 @@ bool FGFDMExec::Run(void)
   if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
 
   vector <FGModel*>::iterator it;
-  for (it = Models.begin(); it != Models.end(); ++it) (*it)->Run();
+  for (it = Models.begin(); it != Models.end(); ++it) (*it)->Run(holding);
 
-  Frame++;
-  if (!Holding()) IncrTime();
+  IncrTime();
   if (Terminate) success = false;
 
   return (success);
@@ -359,12 +358,12 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
 
   Propagate->SetInitialState( FGIC );
 
-  Atmosphere->Run();
+  Atmosphere->Run(false);
   Atmosphere->SetWindNED( FGIC->GetWindNFpsIC(),
                           FGIC->GetWindEFpsIC(),
                           FGIC->GetWindDFpsIC() );
 
-  Auxiliary->Run();
+  Auxiliary->Run(false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -651,7 +650,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     modelLoaded = true;
 
     if (debug_lvl > 0) {
-      MassBalance->Run(); // Update all mass properties for the report.
+      MassBalance->Run(false); // Update all mass properties for the report.
       MassBalance->GetMassPropertiesReport();
 
       cout << endl << fgblue << highint
@@ -944,38 +943,6 @@ void FGFDMExec::DoTrim(int mode)
   sim_time = saved_time;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
-void FGFDMExec::DoTrimAnalysis(int mode)
-{
-  double saved_time;
-  if (Constructing) return;
-
-  if (mode < 0 || mode > JSBSim::taNone) {
-    cerr << endl << "Illegal trimming mode!" << endl << endl;
-    return;
-  }
-  saved_time = sim_time;
-
-  FGTrimAnalysis trimAnalysis(this, (JSBSim::TrimAnalysisMode)mode);
-
-  if ( !trimAnalysis.Load(IC->GetInitFile(), false) ) {
-    cerr << "A problem occurred with trim configuration file " << trimAnalysis.Load(IC->GetInitFile()) << endl;
-    exit(-1);
-  }
-
-  bool result = trimAnalysis.DoTrim();
-
-  if ( !result ) cerr << endl << "Trim Failed" << endl << endl;
-
-  trimAnalysis.Report();
-  Setsim_time(saved_time);
-
-  EnableOutput();
-  cout << "\nOutput: " << GetOutputFileName() << endl;
-
-}
-*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFDMExec::UseAtmosphereMSIS(void)

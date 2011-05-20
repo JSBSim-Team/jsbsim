@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.20 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.21 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,8 +98,6 @@ FGInertial::~FGInertial(void)
 
 bool FGInertial::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   earthPosAngle   = 0.0;
 
   return true;
@@ -107,11 +105,11 @@ bool FGInertial::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGInertial::Run(void)
+bool FGInertial::Run(bool Holding)
 {
   // Fast return if we have nothing to do ...
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 

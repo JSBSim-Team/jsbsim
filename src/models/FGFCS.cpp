@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.73 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.74 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,8 +122,6 @@ FGFCS::~FGFCS()
 bool FGFCS::InitModel(void)
 {
   unsigned int i;
-
-  if (!FGModel::InitModel()) return false;
 
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = 0.0;
   for (i=0; i<MixturePos.size(); i++) MixturePos[i] = 0.0;
@@ -191,12 +189,12 @@ bool FGFCS::InitModel(void)
 // actually present in the flight_control or autopilot section will override
 // these simple assignments.
 
-bool FGFCS::Run(void)
+bool FGFCS::Run(bool Holding)
 {
   unsigned int i;
 
-  if (FGModel::Run()) return true; // fast exit if nothing to do
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true; // fast exit if nothing to do
+  if (Holding) return false;
 
   RunPreFunctions();
 

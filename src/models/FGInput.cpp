@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.20 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.21 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,6 @@ FGInput::~FGInput()
 
 bool FGInput::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   return true;
 }
 
@@ -93,14 +91,14 @@ bool FGInput::InitModel(void)
 // This function handles accepting input commands from the socket interface.
 //
 
-bool FGInput::Run(void)
+bool FGInput::Run(bool Holding)
 {
   string line, token;
   size_t start=0, string_start=0, string_end=0;
   double value=0;
   FGPropertyManager* node=0;
 
-  if (FGModel::Run()) return true; // fast exit if nothing to do
+  if (FGModel::Run(Holding)) return true; // fast exit if nothing to do
   if (port == 0) return false;      // Do nothing here if port not defined
                                     // return false if no error
   // This model DOES execute if "Exec->Holding"
@@ -157,7 +155,7 @@ bool FGInput::Run(void)
           break;
         }
         if (node == 0) {
-          if (FDMExec->Holding()) { // if holding can query property list
+          if (Holding) { // if holding can query property list
             string query = FDMExec->QueryPropertyCatalog(argument);
             socket->Reply(query);
           } else {

@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.44 2011/05/18 03:59:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.45 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,8 +131,6 @@ FGAtmosphere::~FGAtmosphere()
 
 bool FGAtmosphere::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   UseInternal();  // this is the default
 
   Calculate(h);
@@ -150,10 +148,10 @@ bool FGAtmosphere::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAtmosphere::Run(void)
+bool FGAtmosphere::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 

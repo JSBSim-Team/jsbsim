@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.34 2010/11/18 12:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.35 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +92,6 @@ FGMassBalance::~FGMassBalance()
 
 bool FGMassBalance::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   vLastXYZcg.InitMatrix(0.0);
   vDeltaXYZcg.InitMatrix(0.0);
 
@@ -164,13 +162,13 @@ bool FGMassBalance::Load(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGMassBalance::Run(void)
+bool FGMassBalance::Run(bool Holding)
 {
   double denom, k1, k2, k3, k4, k5, k6;
   double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
 
   RunPreFunctions();
 

@@ -53,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.9 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.10 2011/05/20 03:18:36 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,17 +104,15 @@ FGExternalReactions::~FGExternalReactions()
 
 bool FGExternalReactions::InitModel(void)
 {
-  if (!FGModel::InitModel()) return false;
-
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGExternalReactions::Run()
+bool FGExternalReactions::Run(bool Holding)
 {
-  if (FGModel::Run()) return true;
-  if (FDMExec->Holding()) return false; // if paused don't execute
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false; // if paused don't execute
   if (NoneDefined) return true;
 
   RunPreFunctions();

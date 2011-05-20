@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.63 2011/02/19 16:44:41 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.64 2011/05/20 03:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.63 $
+    @version $Revision: 1.64 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -432,7 +432,6 @@ public:
   * - tTurn
   * - tNone  */
   void DoTrim(int mode);
-//  void DoTrimAnalysis(int mode);
 
   /// Disables data logging to all outputs.
   void DisableOutput(void);
@@ -522,10 +521,12 @@ public:
       @return the string representing the root (base) JSBSim directory. */
   const string& GetRootDir(void) const {return RootDir;}
 
-  /** Increments the simulation time.
+  /** Increments the simulation time if not in Holding mode. The Frame counter
+      is also incremented.
       @return the new simulation time.     */
   double IncrTime(void) {
-    sim_time += dT;
+    if (!holding) sim_time += dT;
+    Frame++;
     return sim_time;
   }
 
