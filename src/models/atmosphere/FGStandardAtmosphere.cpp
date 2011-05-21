@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.1 2011/05/20 03:09:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.2 2011/05/21 13:44:45 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,11 +114,11 @@ FGStandardAtmosphere::~FGStandardAtmosphere()
 
 bool FGStandardAtmosphere::InitModel(void)
 {
-  Calculate(h);
-  StdSLtemperature = SLtemperature = 518.67;
-  StdSLpressure    = SLpressure = 2116.22;
-  StdSLdensity     = SLdensity = 0.00237767;
-  StdSLsoundspeed  = SLsoundspeed = sqrt(SHRatio*Reng*StdSLtemperature);
+  Calculate(0.0);
+  StdSLtemperature = SLtemperature = Temperature;
+  StdSLpressure    = SLpressure = Pressure;
+  StdSLdensity     = SLdensity = Density;
+  StdSLsoundspeed  = SLsoundspeed = Soundspeed;
 
   rSLtemperature = 1/SLtemperature ;
   rSLpressure    = 1/SLpressure    ;
@@ -149,7 +149,6 @@ bool FGStandardAtmosphere::Run(bool Holding)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
 
 void FGStandardAtmosphere::Calculate(double altitude)
 {
@@ -165,7 +164,7 @@ void FGStandardAtmosphere::CalculateDerived(void)
 {
 //  T_dev = (*temperature) - GetTemperature(hNOTE_SET);
 
-//  if (T_dev == 0.0) density_altitude = hNOTE_SET;
+//  if (T_dev == 0.0) density_altitude = hNOT_SET;
 //  else              density_altitude = 518.67/0.00356616 * (1.0 - pow(GetDensityRatio(),0.235));
 
   Soundspeed = sqrt(SHRatio*Reng*(Temperature));
@@ -179,17 +178,15 @@ void FGStandardAtmosphere::CalculateDerived(void)
 
 double FGStandardAtmosphere::GetPressure(double altitude)
 {
-//  GetStdAtmosphere(altitude);
-//  return atmosphere.Pressure;
+  return StdAtmosPressureTable->GetValue(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Get the standard temperature at a specified altitude
 
-double FGStandardAtmosphere::GetTemperature(double altitude)
+double FGStandardAtmosphere::GetTemperature(double altitude) const
 {
-//  GetStdAtmosphere(altitude);
-//  return atmosphere.Temperature;
+  return StdAtmosTemperatureTable->GetValue(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,25 +194,8 @@ double FGStandardAtmosphere::GetTemperature(double altitude)
 
 double FGStandardAtmosphere::GetDensity(double altitude)
 {
-//  GetStdAtmosphere(altitude);
-//  return atmosphere.Density;
+  return StdAtmosPressureTable->GetValue(altitude)/(Reng * StdAtmosTemperatureTable->GetValue(altitude));
 }
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// square a value, but preserve the original sign
-
-static inline double square_signed (double value)
-{
-    if (value < 0)
-        return value * value * -1;
-    else
-        return value * value;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/// simply square a value
-static inline double sqr(double x) { return x*x; }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -230,10 +210,10 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this, &FGStandardAtmosphere::GetDensitySL);
   PropertyManager->Tie("atmosphere/P-sl-psf", this, &FGStandardAtmosphere::GetPressureSL);
   PropertyManager->Tie("atmosphere/a-sl-fps", this, &FGStandardAtmosphere::GetSoundSpeedSL);
-//  PropertyManager->Tie("atmosphere/theta", this, &FGStandardAtmosphere::GetTemperatureRatio);
-//  PropertyManager->Tie("atmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
-//  PropertyManager->Tie("atmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
-//  PropertyManager->Tie("atmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
+  PropertyManager->Tie("atmosphere/theta", this, &FGStandardAtmosphere::GetTemperatureRatio);
+  PropertyManager->Tie("atmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
+  PropertyManager->Tie("atmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
+  PropertyManager->Tie("atmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
   PropertyManager->Tie("atmosphere/delta-T", this, &FGStandardAtmosphere::GetDeltaT, &FGStandardAtmosphere::SetDeltaT);
   PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGStandardAtmosphere::GetSLTempDev, &FGStandardAtmosphere::SetSLTempDev);
 //  PropertyManager->Tie("atmosphere/density-altitude", this, &FGStandardAtmosphere::GetDensityAltitude);

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.1 2011/05/20 03:10:00 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.2 2011/05/21 13:44:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,8 +58,25 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models the 1976 Standard Atmosphere.
-    @author Jon Berndt
-    @version $Id: FGStandardAtmosphere.h,v 1.1 2011/05/20 03:10:00 jberndt Exp $
+
+  <h2> Properties </h2>
+  @property atmosphere/T-R
+  @property atmosphere/rho-slugs_ft3
+  @property atmosphere/P-psf
+  @property atmosphere/a-fps
+  @property atmosphere/T-sl-R
+  @property atmosphere/rho-sl-slugs_ft3
+  @property atmosphere/P-sl-psf
+  @property atmosphere/a-sl-fps
+  @property atmosphere/theta
+  @property atmosphere/sigma
+  @property atmosphere/delta
+  @property atmosphere/a-ratio
+  @property atmosphere/delta-T
+  @property atmosphere/T-sl-dev-F
+
+  @author Jon Berndt
+  @version $Id: FGStandardAtmosphere.h,v 1.2 2011/05/21 13:44:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,72 +100,92 @@ public:
   bool Run(bool Holding);
   bool InitModel(void);
 
+  //  *************************************************************************
+  /// @name Temperature access functions.
+  //@{
   /// Returns the temperature in degrees Rankine.
   virtual double GetTemperature(void) const {return Temperature;}
 
-  /** Returns the density in slugs/ft^3.
-      <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  virtual double GetDensity(void)  const {return Density;}
-
-  /// Returns the pressure in psf.
-  virtual double GetPressure(void)  const {return Pressure;}
-
-  /// Returns the standard pressure at a specified altitude
-  virtual double GetPressure(double altitude);
-
   /// Returns the standard temperature at a specified altitude
-  virtual double GetTemperature(double altitude);
-
-  /// Returns the standard density at a specified altitude
-  virtual double GetDensity(double altitude);
-
-  /// Returns the speed of sound in ft/sec.
-  virtual double GetSoundSpeed(void) const {return Soundspeed;}
-
-  /// Returns the absolute viscosity.
-  virtual double GetAbsoluteViscosity(void) const {return Viscosity;}
-
-  /// Returns the kinematic viscosity.
-  virtual double GetKinematicViscosity(void) const {return KinematicViscosity;}
+  virtual double GetTemperature(double altitude) const;
 
   /// Returns the sea level temperature in degrees Rankine.
   virtual double GetTemperatureSL(void) const { return SLtemperature; }
 
-  /// Returns the sea level density in slugs/ft^3
-  virtual double GetDensitySL(void)  const { return SLdensity; }
-
-  /// Returns the sea level pressure in psf.
-  virtual double GetPressureSL(void) const { return SLpressure; }
-
-  /// Returns the sea level speed of sound in ft/sec.
-  virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
-
   /// Returns the ratio of at-altitude temperature over the sea level value.
   virtual double GetTemperatureRatio(void) const { return Temperature*rSLtemperature; }
 
-  /// Returns the ratio of at-altitude density over the sea level value.
-  virtual double GetDensityRatio(void) const { return Density*rSLdensity; }
-
-  /// Returns the ratio of at-altitude pressure over the sea level value.
-  virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
-
-  /// Returns the ratio of at-altitude sound speed over the sea level value.
-  virtual double GetSoundSpeedRatio(void) const { return Soundspeed*rSLsoundspeed; }
-
-  /// Sets the temperature deviation at sea-level in degrees Fahrenheit
-  virtual void SetSLTempDev(double d)  { T_dev_sl = d; }
-
   /// Gets the temperature deviation at sea-level in degrees Fahrenheit
   virtual double GetSLTempDev(void) const { return T_dev_sl; }
-
-  /// Sets the current delta-T in degrees Fahrenheit
-  virtual void SetDeltaT(double d)  { delta_T = d; }
 
   /// Gets the current delta-T in degrees Fahrenheit
   virtual double GetDeltaT(void) const  { return delta_T; }
 
   /// Gets the at-altitude temperature deviation in degrees Fahrenheit
   virtual double GetTempDev(void) const { return T_dev; }
+
+  /// Sets the temperature deviation at sea-level in degrees Fahrenheit
+  virtual void SetSLTempDev(double d)  { T_dev_sl = d; }
+
+  /// Sets the current delta-T in degrees Fahrenheit
+  virtual void SetDeltaT(double d)  { delta_T = d; }
+  //@}
+
+  //  *************************************************************************
+  /// @name Pressure access functions.
+  //@{
+  /// Returns the pressure in psf.
+  virtual double GetPressure(void)  const {return Pressure;}
+
+  /// Returns the standard pressure at a specified altitude
+  virtual double GetPressure(double altitude) const;
+
+  /// Returns the sea level pressure in psf.
+  virtual double GetPressureSL(void) const { return SLpressure; }
+
+  /// Returns the ratio of at-altitude pressure over the sea level value.
+  virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
+  //@}
+
+  //  *************************************************************************
+  /// @name Density access functions.
+  //@{
+  /** Returns the density in slugs/ft^3.
+      This function may only be used if Run() is called first. */
+  virtual double GetDensity(void)  const {return Density;}
+
+  /// Returns the standard density at a specified altitude
+  virtual double GetDensity(double altitude);
+
+  /// Returns the sea level density in slugs/ft^3
+  virtual double GetDensitySL(void)  const { return SLdensity; }
+
+  /// Returns the ratio of at-altitude density over the sea level value.
+  virtual double GetDensityRatio(void) const { return Density*rSLdensity; }
+  //@}
+
+  //  *************************************************************************
+  /// @name Speed of sound access functions.
+  //@{
+  /// Returns the speed of sound in ft/sec.
+  virtual double GetSoundSpeed(void) const {return Soundspeed;}
+
+  /// Returns the sea level speed of sound in ft/sec.
+  virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
+
+  /// Returns the ratio of at-altitude sound speed over the sea level value.
+  virtual double GetSoundSpeedRatio(void) const { return Soundspeed*rSLsoundspeed; }
+  //@}
+
+  //  *************************************************************************
+  /// @name Viscosity access functions.
+  //@{
+  /// Returns the absolute viscosity.
+  virtual double GetAbsoluteViscosity(void) const {return Viscosity;}
+
+  /// Returns the kinematic viscosity.
+  virtual double GetKinematicViscosity(void) const {return KinematicViscosity;}
+  //@}
 
   /// Gets the density altitude in feet
 //  virtual double GetDensityAltitude(void) const { return density_altitude; }
