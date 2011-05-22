@@ -63,7 +63,7 @@ namespace std
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.30 2010/07/01 23:13:19 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.31 2011/05/22 12:51:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.30 2010/07/01 23:13:19 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.31 2011/05/22 12:51:11 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +92,7 @@ public:
   FGJSBBase() {};
 
   /// Destructor for FGJSBBase.
-  ~FGJSBBase() {};
+  virtual ~FGJSBBase() {};
 
   /// JSBSim Message structure
   class Message {
