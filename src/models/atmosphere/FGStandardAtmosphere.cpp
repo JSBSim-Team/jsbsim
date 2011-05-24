@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.2 2011/05/21 13:44:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.3 2011/05/24 11:41:11 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,6 @@ bool FGStandardAtmosphere::Run(bool Holding)
 //  double altitude = FDMExec->GetPropagate()->GetAltitudeASL();
 
   Calculate(altitude);
-  CalculateDerived();
 
   RunPostFunctions();
 
@@ -155,6 +154,8 @@ void FGStandardAtmosphere::Calculate(double altitude)
   Temperature = StdAtmosTemperatureTable->GetValue(altitude);
   Pressure    = StdAtmosPressureTable->GetValue(altitude);
   Density     = Pressure/(Reng*Temperature);
+
+  CalculateDerived();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

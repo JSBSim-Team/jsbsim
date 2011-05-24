@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.2 2011/05/21 13:44:45 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.3 2011/05/24 11:41:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
   @property atmosphere/T-sl-dev-F
 
   @author Jon Berndt
-  @version $Id: FGStandardAtmosphere.h,v 1.2 2011/05/21 13:44:45 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.3 2011/05/24 11:41:11 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,7 @@ public:
 
   //  *************************************************************************
   /// @name Temperature access functions.
-  //@{
+  // @{
   /// Returns the temperature in degrees Rankine.
   virtual double GetTemperature(void) const {return Temperature;}
 
