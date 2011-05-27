@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.4 2011/05/27 12:25:50 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.5 2011/05/27 12:37:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.4 2011/05/27 12:25:50 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.5 2011/05/27 12:37:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,21 +118,6 @@ public:
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
   virtual double GetTemperatureRatio(void) const { return Temperature*rSLtemperature; }
-
-  /// Gets the temperature deviation at sea-level in degrees Fahrenheit
-  virtual double GetSLTempDev(void) const { return T_dev_sl; }
-
-  /// Gets the current delta-T in degrees Fahrenheit
-  virtual double GetDeltaT(void) const  { return delta_T; }
-
-  /// Gets the at-altitude temperature deviation in degrees Fahrenheit
-  virtual double GetTempDev(void) const { return T_dev; }
-
-  /// Sets the temperature deviation at sea-level in degrees Fahrenheit
-  virtual void SetSLTempDev(double d)  { T_dev_sl = d; }
-
-  /// Sets the current delta-T in degrees Fahrenheit
-  virtual void SetDeltaT(double d)  { delta_T = d; }
 
   /// Sets the Sea Level temperature, if it is to be different than the standard.
   /// This function will calculate a bias - a difference - from the standard
