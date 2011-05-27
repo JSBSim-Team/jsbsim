@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.3 2011/05/24 11:41:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.4 2011/05/27 12:25:50 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                                               h(0.0),                     // ft
+                                                               PressureAltitude(0.0),      // ft
+                                                               DensityAltitude(0.0),       // ft
                                                                SutherlandConstant(198.72), // deg Rankine
                                                                Beta(2.269690E-08)          // slug/(sec ft R^0.5)
 {
@@ -137,7 +138,7 @@ bool FGStandardAtmosphere::Run(bool Holding)
 
   RunPreFunctions();
 
-//  double altitude = FDMExec->GetPropagate()->GetAltitudeASL();
+  double altitude = FDMExec->GetPropagate()->GetAltitudeASL();
 
   Calculate(altitude);
 
@@ -154,21 +155,10 @@ void FGStandardAtmosphere::Calculate(double altitude)
   Temperature = StdAtmosTemperatureTable->GetValue(altitude);
   Pressure    = StdAtmosPressureTable->GetValue(altitude);
   Density     = Pressure/(Reng*Temperature);
+  Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
 
-  CalculateDerived();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Calculate parameters derived from T, P and rho
-
-void FGStandardAtmosphere::CalculateDerived(void)
-{
-//  T_dev = (*temperature) - GetTemperature(hNOTE_SET);
-
-//  if (T_dev == 0.0) density_altitude = hNOT_SET;
-//  else              density_altitude = 518.67/0.00356616 * (1.0 - pow(GetDensityRatio(),0.235));
-
-  Soundspeed = sqrt(SHRatio*Reng*(Temperature));
+//  PressureAltitude = ;
+//  DensityAltitude = 518.67/0.00356616 * (1.0 - pow(GetDensityRatio(),0.235));
 
   Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
   KinematicViscosity = Viscosity / Density;
@@ -215,8 +205,8 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
   PropertyManager->Tie("atmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
   PropertyManager->Tie("atmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("atmosphere/delta-T", this, &FGStandardAtmosphere::GetDeltaT, &FGStandardAtmosphere::SetDeltaT);
-  PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGStandardAtmosphere::GetSLTempDev, &FGStandardAtmosphere::SetSLTempDev);
+  PropertyManager->Tie("atmosphere/delta-T", this, &FGStandardAtmosphere::GetDeltaT, &FGStandardAtmosphere::SetTemperatureBias);
+  PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGStandardAtmosphere::GetSLTempDev, &FGStandardAtmosphere::SetSLTemperatureSkew);
 //  PropertyManager->Tie("atmosphere/density-altitude", this, &FGStandardAtmosphere::GetDensityAltitude);
 }
 

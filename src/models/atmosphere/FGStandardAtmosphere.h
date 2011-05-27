@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.3 2011/05/24 11:41:11 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.4 2011/05/27 12:25:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,8 @@ CLASS DOCUMENTATION
   @property atmosphere/T-sl-dev-F
 
   @author Jon Berndt
-  @version $Id: FGStandardAtmosphere.h,v 1.3 2011/05/24 11:41:11 jberndt Exp $
+  @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
+  @version $Id: FGStandardAtmosphere.h,v 1.4 2011/05/27 12:25:50 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,11 +87,14 @@ CLASS DECLARATION
 class FGStandardAtmosphere : public FGModel {
 public:
 
+  /// Enums for specifying temperature units.
+  enum eTemperature {eNone=0, eFahrenheit, eCelsius, eRankine, eKelvin};
+
   /// Constructor
   FGStandardAtmosphere(FGFDMExec*);
   /// Destructor
   ~FGStandardAtmosphere();
-  /** Runs the standard atmosphere forces model; called by the Executive
+  /** Runs the standard atmosphere forces model; called by the Executive.
       Can pass in a value indicating if the executive is directing the simulation to Hold.
       @param Holding if true, the executive has been directed to hold the sim from 
                      advancing time. Some models may ignore this flag, such as the Input
@@ -106,7 +110,7 @@ public:
   /// Returns the temperature in degrees Rankine.
   virtual double GetTemperature(void) const {return Temperature;}
 
-  /// Returns the standard temperature at a specified altitude
+  /// Returns the standard temperature in degrees Rankine at a specified altitude.
   virtual double GetTemperature(double altitude) const;
 
   /// Returns the sea level temperature in degrees Rankine.
@@ -129,6 +133,61 @@ public:
 
   /// Sets the current delta-T in degrees Fahrenheit
   virtual void SetDeltaT(double d)  { delta_T = d; }
+
+  /// Sets the Sea Level temperature, if it is to be different than the standard.
+  /// This function will calculate a bias - a difference - from the standard
+  /// atmosphere temperature and will apply that bias to the entire
+  /// temperature profile. This is one way to set the temperature bias. Using
+  /// the SetTemperatureBias function will replace the value calculated by
+  /// this function.
+  /// @param t the temperature value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetSLTemperature(double t, eTemperature unit=eFahrenheit);
+
+  /// Sets the temperature at the current flight altitude, if it is to be different
+  /// than the standard temperature.
+  /// This function will calculate a bias - a difference - from the standard
+  /// atmosphere temperature at the current flight altitude and will apply that
+  /// calculated bias to the entire temperature profile.
+  /// @param t the temperature value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetTemperature(double t, enum unit=eFahrenheit);
+
+  /// Sets the temperature bias to be added to the standard temperature at all altitudes.
+  /// This function sets the bias - the difference - from the standard
+  /// atmosphere temperature. This bias applies to the entire
+  /// temperature profile. Another way to set the temperature bias is to use the
+  /// SetSLTemperature function, which replaces the value calculated by
+  /// this function with a calculated bias.
+  /// @param t the temperature value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetTemperatureBias(double t, enum unit=eFahrenheit);
+
+  /// Sets the Sea Level temperature skew value, to be added to the standard temperature,
+  /// ramped out at high altitude.
+  /// This function sets the skew - the "distorted" difference - from the standard
+  /// atmosphere temperature at sea level. The value of the skew applied to the 
+  /// temperature profile is ramped out as altitude increases, becoming 0.0 at 91 km.
+  /// The skew can be used along with the bias to tailor the temperature profile as desired.
+  /// @param t the temperature skew value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetSLTemperatureSkew(double t, enum unit=eFahrenheit);
+
+  /// Sets the temperature skew value at the current altitude, to be added to
+  /// the standard temperature, ramped out at high altitude.
+  /// This function computes the sea level skew - the "distorted" difference -
+  /// from the standard atmosphere temperature at sea level. The value of the
+  /// skew applied to the temperature profile is ramped out as altitude increases,
+  /// becoming 0.0 at 91 km. The skew can be used along with the bias to tailor
+  /// the temperature profile as desired.
+  /// @param t the temperature skew value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetTemperatureSkew(double t, enum unit=eFahrenheit);
+
+  /// This function resets the model to use no bias or skew to the temperature.
+  /// The skew and bias values are reset to 0.0, and the standard temperature
+  /// is used for the entire temperature profile at all altitudes.
+  virtual void ResetSLTemperature();
   //@}
 
   //  *************************************************************************
@@ -191,11 +250,13 @@ public:
 //  virtual double GetDensityAltitude(void) const { return density_altitude; }
 
 protected:
-  double h;
   double StdSLtemperature, StdSLdensity, StdSLpressure, StdSLsoundspeed; // Standard sea level conditions
   double    SLtemperature,    SLdensity,    SLpressure,    SLsoundspeed; // Sea level conditions
   double      Temperature,      Density,      Pressure,      Soundspeed; // Current actual conditions at altitude
   double   rSLtemperature,   rSLdensity,   rSLpressure,   rSLsoundspeed; // Reciprocal of sea level conditions
+
+  double PressureAltitude;
+  double DensityAltitude;
 
   double delta_T;
   double T_dev_sl;
@@ -209,9 +270,6 @@ protected:
 
   /// Calculate the atmosphere for the given altitude, including effects of temperature deviation.
   void Calculate(double altitude);
-
-  /// Calculate atmospheric properties other than the basic T, P and rho.
-  void CalculateDerived(void);
 
   virtual void bind(void);
   void Debug(int from);
