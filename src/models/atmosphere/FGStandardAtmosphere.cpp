@@ -43,15 +43,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
-//#include "FGFDMExec.h"
+#include "FGFDMExec.h"
 #include "FGStandardAtmosphere.h"
-
-using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.4 2011/05/27 12:25:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.5 2011/06/05 02:01:20 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,6 +58,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
+                                                               TemperatureDeltaGradient(0.0),
+                                                               TemperatureBias(0.0),
                                                                PressureAltitude(0.0),      // ft
                                                                DensityAltitude(0.0),       // ft
                                                                SutherlandConstant(198.72), // deg Rankine
@@ -67,7 +68,6 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   Name = "FGStandardAtmosphere";
 
   StdAtmosTemperatureTable = new FGTable(8);
-  StdAtmosPressureTable    = new FGTable(8);
 
   // This is the U.S. Standard Atmosphere table for temperature in degrees
   // Rankine, based on geometric altitude. The table values are often given
@@ -76,7 +76,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   //                        GeoMet Alt    Temp      GeoPot Alt  GeoMet Alt
   //                           (ft)      (deg R)      (km)        (km)
   //                         --------   --------    ----------  ----------
-  *StdAtmosTemperatureTable <<      0.0 << 518.7  //    0.000       0.000
+  *StdAtmosTemperatureTable <<      0.0 << 518.67 //    0.000       0.000
                             <<  36151.6 << 390.0  //   11.000      11.019
                             <<  65823.5 << 390.0  //   20.000      20.063
                             << 105518.4 << 411.6  //   32.000      32.162
@@ -85,21 +85,14 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                             << 235570.9 << 386.4  //   71.000      71.802
                             << 282152.2 << 336.5; //   84.852      86.000
 
-  // This is the U.S. Standard Atmosphere table for pressure in pounds/square
-  // foot, based on geometric altitude. The table values are often given
-  // in literature relative to geopotential altitude. 
-  //
-  //                        GeoMet Alt   Pressure   GeoPot Alt  GeoMet Alt   Pressure
-  //                           (ft)       (psf)        (km)        (km)        (Pa)
-  //                         --------   --------    ----------  ---------- ----------
-  *StdAtmosPressureTable <<      0.0 << 2116.2166  //    0.000       0.000  101325.00
-                         <<  36151.6 <<  472.6791  //   11.000      11.019   22632.00
-                         <<  65823.5 <<  114.3457  //   20.000      20.063    5474.90
-                         << 105518.4 <<   18.1290  //   32.000      32.162     868.00
-                         << 155347.8 <<    2.3164  //   47.000      47.350     110.90
-                         << 168677.8 <<    1.3981  //   51.000      51.413      66.94
-                         << 235570.9 <<    0.0826  //   71.000      71.802       3.96
-                         << 282152.2 <<    0.0078; //   84.852      86.000       0.37
+  LapseRateVector.resize(StdAtmosTemperatureTable->GetNumRows()-1);
+  PressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
+
+  // Assume the altitude to fade out the gradient at is at the highest
+  // altitude in the table. Above that, other functions are used to
+  // calculate temperature.
+  GradientFadeoutAltitude = (*StdAtmosTemperatureTable)(StdAtmosTemperatureTable->GetNumRows(),0);
+
   bind();
   Debug(0);
 }
@@ -108,6 +101,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
 
 FGStandardAtmosphere::~FGStandardAtmosphere()
 {
+  LapseRateVector.clear();
   Debug(1);
 }
 
@@ -115,9 +109,14 @@ FGStandardAtmosphere::~FGStandardAtmosphere()
 
 bool FGStandardAtmosphere::InitModel(void)
 {
+  PressureBreakpointVector[0] = StdSLpressure = 2116.22; // psf
+  TemperatureDeltaGradient = 0.0;
+  TemperatureBias = 0.0;
+  CalculateLapseRates();
+  CalculatePressureBreakpoints();
   Calculate(0.0);
   StdSLtemperature = SLtemperature = Temperature;
-  StdSLpressure    = SLpressure = Pressure;
+  SLpressure = Pressure;
   StdSLdensity     = SLdensity = Density;
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
 
@@ -125,6 +124,8 @@ bool FGStandardAtmosphere::InitModel(void)
   rSLpressure    = 1/SLpressure    ;
   rSLdensity     = 1/SLdensity     ;
   rSLsoundspeed  = 1/SLsoundspeed  ;
+
+  PrintStandardAtmosphereTable();
 
   return true;
 }
@@ -152,61 +153,248 @@ bool FGStandardAtmosphere::Run(bool Holding)
 
 void FGStandardAtmosphere::Calculate(double altitude)
 {
-  Temperature = StdAtmosTemperatureTable->GetValue(altitude);
-  Pressure    = StdAtmosPressureTable->GetValue(altitude);
+  Temperature = GetTemperature(altitude);
+  Pressure = GetPressure(altitude);
   Density     = Pressure/(Reng*Temperature);
   Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
-
-//  PressureAltitude = ;
-//  DensityAltitude = 518.67/0.00356616 * (1.0 - pow(GetDensityRatio(),0.235));
 
   Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
   KinematicViscosity = Viscosity / Density;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard pressure at a specified altitude
+// Get the actual pressure as modeled at a specified altitude
+// These calculations are from equations 33a and 33b in the U.S. Standard Atmosphere
+// document referenced in the documentation for this code.
 
-double FGStandardAtmosphere::GetPressure(double altitude)
+double FGStandardAtmosphere::GetPressure(double altitude) const
 {
-  return StdAtmosPressureTable->GetValue(altitude);
+  unsigned int b=0;
+  double pressure = 0.0;
+  double Lmb, Exp, Tmb, deltaH, factor;
+
+  // Iterate through the altitudes to find the current Base Altitude
+  // in the table. That is, if the current altitude (the argument passed in)
+  // is 20000 ft, then the base altitude from the table is 0.0. If the
+  // passed-in altitude is 40000 ft, the base altitude is 36151.6 ft (and
+  // the index "b" is 2 - the second entry in the table).
+  double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
+  while (altitude >= testAlt) {
+    testAlt = (*StdAtmosTemperatureTable)(++b+1,0);
+  }
+  if (b>0) b--;
+
+  double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
+  Tmb = GetTemperature(BaseAlt)
+        + TemperatureBias 
+        + (GradientFadeoutAltitude - altitude)*TemperatureDeltaGradient;
+  deltaH = altitude - BaseAlt;
+
+  if (LapseRateVector[b] != 0.00) {
+    Lmb = LapseRateVector[b];
+    Exp = Mair/(Rstar*Lmb);
+    factor = Tmb/(Tmb + Lmb*deltaH);
+    pressure = PressureBreakpointVector[b]*pow(factor, Exp);
+  } else {
+    pressure = PressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+  }
+
+  return pressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard temperature at a specified altitude
+// Get the modeled temperature at a specified altitude, including any bias or gradient
+// effects.
 
 double FGStandardAtmosphere::GetTemperature(double altitude) const
+{
+  double T = StdAtmosTemperatureTable->GetValue(altitude) + TemperatureBias;
+  if (altitude <= GradientFadeoutAltitude)
+    T += TemperatureDeltaGradient * (GradientFadeoutAltitude - altitude);
+
+  return T;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Retrieves the standard temperature at a particular altitude.
+
+double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 {
   return StdAtmosTemperatureTable->GetValue(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Get the standard density at a specified altitude
-
-double FGStandardAtmosphere::GetDensity(double altitude)
+//ToDo - this is not right - does not return the standard pressure.
+double FGStandardAtmosphere::GetStdDensity(double altitude)
 {
-  return StdAtmosPressureTable->GetValue(altitude)/(Reng * StdAtmosTemperatureTable->GetValue(altitude));
+  return (StdSLpressure*exp(-altitude/22809.24))/(Reng * StdAtmosTemperatureTable->GetValue(altitude));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetTemperatureBias(double t, eTemperature unit)
+{
+  TemperatureBias = ConvertToRankine(t, unit);
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This function calculates a bias based on the supplied temperature for sea
+// level. The bias is applied to the entire temperature profile at all altitudes.
+// Internally, the Rankine scale is used for calculations, so any temperature
+// supplied must be converted to that unit.
+
+void FGStandardAtmosphere::SetSLTemperature(double t, eTemperature unit)
+{
+  double targetSLtemp = ConvertToRankine(t, unit);
+
+  TemperatureBias = targetSLtemp - GetStdTemperatureSL();
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Sets a Sea Level temperature delta that is ramped out by 86 km (282,152 ft).
+
+void FGStandardAtmosphere::SetSLTemperatureGradedDelta(double deltemp, eTemperature unit)
+{
+  SetTemperatureGradedDelta(deltemp, 0.0, unit);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Sets a temperature delta at the supplied altitude that is ramped out by 86 km.
+// After this calculation is performed, the lapse rates and pressure breakpoints
+// must be recalculated. Since we are calculating a delta here and not an actual
+// temperature, we only need to be concerned about a scale factor and not
+// the actual temperature itself.
+
+void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, eTemperature unit)
+{
+  switch(unit) {
+  case eCelsius:
+  case eKelvin:
+    deltemp *= 9.0/5.0; // If temp delta is given in metric, scale up to English
+    break;
+  }
+  TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - h);
+  CalculateLapseRates();
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  void FGStandardAtmosphere::PrintStandardAtmosphereTable()
+{
+  std::cout << "Altitude (ft)   Temp (F)   Pressure (psf)   Density (sl/ft3)" << std::endl;
+  std::cout << "-------------   --------   --------------   ----------------" << std::endl;
+  for (int i=0; i<280000; i+=1000) {
+    Calculate(i);
+    std::cout  << std::setw(12) << std::setprecision(2) << i
+       << "  " << std::setw(9)  << std::setprecision(2) << Temperature-459.67
+       << "  " << std::setw(13)  << std::setprecision(4) << Pressure
+       << "  " << std::setw(18) << std::setprecision(8) << Density
+       << std::endl;
+  }
+
+  // Re-execute the Run() method to reset the calculated values
+  Run(false);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This function calculates (or recalculates) the lapse rate over an altitude range
+// where the "bh" in this case refers to the index of the base height in the 
+// StdAtmosTemperatureTable table. This function should be called anytime the 
+// temperature table is altered, such as when a gradient is applied across the 
+// temperature table for a range of altitudes.
+
+void FGStandardAtmosphere::CalculateLapseRates()
+{
+  for (unsigned int bh=0; bh<LapseRateVector.size(); bh++)
+  {
+    double t0 = (*StdAtmosTemperatureTable)(bh+1,1);
+    double t1 = (*StdAtmosTemperatureTable)(bh+2,1);
+    double h0 = (*StdAtmosTemperatureTable)(bh+1,0);
+    double h1 = (*StdAtmosTemperatureTable)(bh+2,0);
+    LapseRateVector[bh] = (t1 - t0) / (h1 - h0) + TemperatureDeltaGradient;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::CalculatePressureBreakpoints()
+{
+  for (unsigned int b=0; b<PressureBreakpointVector.size()-1; b++) {
+    double BaseTemp = (*StdAtmosTemperatureTable)(b+1,1);
+    double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
+    double UpperAlt = (*StdAtmosTemperatureTable)(b+2,0);
+    double deltaH = UpperAlt - BaseAlt;
+    double Tmb = BaseTemp
+                 + TemperatureBias 
+                 + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
+    if (LapseRateVector[b] != 0.00) {
+      double Lmb = LapseRateVector[b];
+      double Exp = Mair/(Rstar*Lmb);
+      double factor = Tmb/(Tmb + Lmb*deltaH);
+      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*pow(factor, Exp);
+    } else {
+      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::ResetSLTemperature()
+{
+  TemperatureBias = TemperatureDeltaGradient = 0.0;
+  CalculateLapseRates();
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::ConvertToRankine(double t, eTemperature unit)
+{
+  double targetTemp=0; // in degrees Rankine
+
+  switch(unit) {
+  case eFahrenheit:
+    targetTemp = t + 459.67;
+    break;
+  case eCelsius:
+    targetTemp = t*9.0/5.0 + 32.0 + 459.67;
+    break;
+  case eRankine:
+    targetTemp = t;
+    break;
+  case eKelvin:
+    targetTemp = t*9.0/5.0;
+  }
+
+  return targetTemp;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGStandardAtmosphere::bind(void)
 {
-  typedef double (FGStandardAtmosphere::*PMFv)(void) const;
-  PropertyManager->Tie("atmosphere/T-R", this, (PMFv)&FGStandardAtmosphere::GetTemperature);
-  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, (PMFv)&FGStandardAtmosphere::GetDensity);
-  PropertyManager->Tie("atmosphere/P-psf", this, (PMFv)&FGStandardAtmosphere::GetPressure);
-  PropertyManager->Tie("atmosphere/a-fps", this, &FGStandardAtmosphere::GetSoundSpeed);
-  PropertyManager->Tie("atmosphere/T-sl-R", this, &FGStandardAtmosphere::GetTemperatureSL);
-  PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this, &FGStandardAtmosphere::GetDensitySL);
-  PropertyManager->Tie("atmosphere/P-sl-psf", this, &FGStandardAtmosphere::GetPressureSL);
-  PropertyManager->Tie("atmosphere/a-sl-fps", this, &FGStandardAtmosphere::GetSoundSpeedSL);
-  PropertyManager->Tie("atmosphere/theta", this, &FGStandardAtmosphere::GetTemperatureRatio);
-  PropertyManager->Tie("atmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
-  PropertyManager->Tie("atmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
-  PropertyManager->Tie("atmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("atmosphere/delta-T", this, &FGStandardAtmosphere::GetDeltaT, &FGStandardAtmosphere::SetTemperatureBias);
-  PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGStandardAtmosphere::GetSLTempDev, &FGStandardAtmosphere::SetSLTemperatureSkew);
+  typedef double (FGStandardAtmosphere::*PMFi)(int) const;
+  typedef void (FGStandardAtmosphere::*PMF)(int, double);
+  PropertyManager->Tie("stdatmosphere/T-R", this, &FGStandardAtmosphere::GetTemperature);
+  PropertyManager->Tie("stdatmosphere/rho-slugs_ft3", this, &FGStandardAtmosphere::GetDensity);
+  PropertyManager->Tie("stdatmosphere/P-psf", this, &FGStandardAtmosphere::GetPressure);
+  PropertyManager->Tie("stdatmosphere/a-fps", this, &FGStandardAtmosphere::GetSoundSpeed);
+  PropertyManager->Tie("stdatmosphere/T-sl-R", this, &FGStandardAtmosphere::GetTemperatureSL);
+  PropertyManager->Tie("stdatmosphere/rho-sl-slugs_ft3", this, &FGStandardAtmosphere::GetDensitySL);
+  PropertyManager->Tie("stdatmosphere/P-sl-psf", this, &FGStandardAtmosphere::GetPressureSL);
+  PropertyManager->Tie("stdatmosphere/a-sl-fps", this, &FGStandardAtmosphere::GetSoundSpeedSL);
+  PropertyManager->Tie("stdatmosphere/theta", this, &FGStandardAtmosphere::GetTemperatureRatio);
+  PropertyManager->Tie("stdatmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
+  PropertyManager->Tie("stdatmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
+  PropertyManager->Tie("stdatmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
+  PropertyManager->Tie("stdatmosphere/delta-T", this, eRankine,
+                                    (PMFi)&FGStandardAtmosphere::GetTemperatureBias,
+                                    (PMF)&FGStandardAtmosphere::SetTemperatureBias);
 //  PropertyManager->Tie("atmosphere/density-altitude", this, &FGStandardAtmosphere::GetDensityAltitude);
 }
 
@@ -238,8 +426,8 @@ void FGStandardAtmosphere::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGStandardAtmosphere" << endl;
-    if (from == 1) cout << "Destroyed:    FGStandardAtmosphere" << endl;
+    if (from == 0) std::cout << "Instantiated: FGStandardAtmosphere" << std::endl;
+    if (from == 1) std::cout << "Destroyed:    FGStandardAtmosphere" << std::endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -251,8 +439,8 @@ void FGStandardAtmosphere::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
+      std::cout << IdSrc << std::endl;
+      std::cout << IdHdr << std::endl;
     }
   }
 }

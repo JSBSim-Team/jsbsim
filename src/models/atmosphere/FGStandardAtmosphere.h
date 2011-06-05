@@ -38,14 +38,15 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGModel.h"
+#include <vector>
+#include "models/FGModel.h"
 #include "math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.5 2011/05/27 12:37:37 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.6 2011/06/05 02:01:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +78,7 @@ CLASS DOCUMENTATION
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.5 2011/05/27 12:37:37 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.6 2011/06/05 02:01:20 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,18 +107,43 @@ public:
 
   //  *************************************************************************
   /// @name Temperature access functions.
+  /// There are several ways to get the temperature, and several modeled temperature
+  /// values that can be retrieved. The U.S. Standard Atmosphere temperature either
+  /// at a specified altitude, or at sea level can be retrieved. These two temperatures
+  /// do NOT include the effects of any bias or delta gradient that may have been
+  /// supplied by the user. The modeled temperature and the modeled temperature
+  /// at sea level can also be retrieved. These two temperatures DO include the
+  /// effects of an optionally user-supplied bias or delta gradient.
   // @{
-  /// Returns the temperature in degrees Rankine.
-  virtual double GetTemperature(void) const {return Temperature;}
+  /// Returns the actual, modeled temperature at the current altitude in degrees Rankine.
+  virtual double GetTemperature() const {return Temperature;}
 
-  /// Returns the standard temperature in degrees Rankine at a specified altitude.
+  /// Returns the actual modeled temperature in degrees Rankine at a specified altitude.
   virtual double GetTemperature(double altitude) const;
 
-  /// Returns the sea level temperature in degrees Rankine.
-  virtual double GetTemperatureSL(void) const { return SLtemperature; }
+  /// Returns the actual, modeled sea level temperature in degrees Rankine.
+  virtual double GetTemperatureSL() const { return GetTemperature(0.0); }
 
-  /// Returns the ratio of at-altitude temperature over the sea level value.
-  virtual double GetTemperatureRatio(void) const { return Temperature*rSLtemperature; }
+  /// Returns the standard temperature in degrees Rankine at a specified altitude.
+  virtual double GetStdTemperature(double altitude) const;
+
+  /// Returns the standard sea level temperature in degrees Rankine.
+  virtual double GetStdTemperatureSL() const { return GetStdTemperature(0.0); }
+
+  /// Returns the ratio of the at-current-altitude temperature as modeled
+  /// over the standard sea level value.
+  virtual double GetTemperatureRatio() const { return GetTemperature()*rSLtemperature; }
+
+  /// Returns the ratio of the standard temperature at the supplied altitude 
+  /// over the standard sea level temperature.
+  virtual double GetStdTemperatureRatio(double h) const { return GetStdTemperature(h)*rSLtemperature; }
+
+  /// Returns the temperature bias over the sea level value in degrees Rankine.
+  double GetTemperatureBias(eTemperature to) const {return TemperatureBias;}
+
+  /// Returns the temperature gradient to be applied on top of the standard
+  /// temperature gradient.
+  virtual double GetTemperatureDeltaGradient() { return TemperatureDeltaGradient;}
 
   /// Sets the Sea Level temperature, if it is to be different than the standard.
   /// This function will calculate a bias - a difference - from the standard
@@ -136,7 +162,7 @@ public:
   /// calculated bias to the entire temperature profile.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetTemperature(double t, enum unit=eFahrenheit);
+  virtual void SetTemperature(double t, eTemperature unit=eFahrenheit) {};
 
   /// Sets the temperature bias to be added to the standard temperature at all altitudes.
   /// This function sets the bias - the difference - from the standard
@@ -146,32 +172,36 @@ public:
   /// this function with a calculated bias.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetTemperatureBias(double t, enum unit=eFahrenheit);
+  void SetTemperatureBias(double t, eTemperature unit=eFahrenheit);
 
-  /// Sets the Sea Level temperature skew value, to be added to the standard temperature,
-  /// ramped out at high altitude.
-  /// This function sets the skew - the "distorted" difference - from the standard
-  /// atmosphere temperature at sea level. The value of the skew applied to the 
-  /// temperature profile is ramped out as altitude increases, becoming 0.0 at 91 km.
-  /// The skew can be used along with the bias to tailor the temperature profile as desired.
+  /// Sets a Sea Level temperature delta that is ramped out by 86 km.
+  /// The value of the delta is used to calculate a delta gradient that is
+  /// applied to the temperature at all altitudes below 86 km (282152 ft). 
+  /// For instance, if a temperature of 20 degrees F is supplied, the delta
+  /// gradient would be 20/282152 - or, about 7.09E-5 degrees/ft. At sea level,
+  /// the full 20 degrees would be added to the standard temperature,
+  /// but that 20 degree delta would be reduced by 7.09E-5 degrees for every
+  /// foot of altitude above sea level, so that by 86 km, there would be no
+  /// further delta added to the standard temperature.
+  /// The graded delta can be used along with the a bias to tailor the
+  /// temperature profile as desired.
+  /// @param t the sea level temperature delta value in the unit provided.
+  /// @param unit the unit of the temperature.
+  virtual void SetSLTemperatureGradedDelta(double t, eTemperature unit=eFahrenheit);
+
+  /// Sets the temperature delta value at the supplied altitude/elevation above
+  /// sea level, to be added to the standard temperature and ramped out by
+  /// 86 km.
+  /// This function computes the sea level delta from the standard atmosphere
+  /// temperature at sea level.
   /// @param t the temperature skew value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetSLTemperatureSkew(double t, enum unit=eFahrenheit);
+  virtual void SetTemperatureGradedDelta(double t, double h, eTemperature unit=eFahrenheit);
 
-  /// Sets the temperature skew value at the current altitude, to be added to
-  /// the standard temperature, ramped out at high altitude.
-  /// This function computes the sea level skew - the "distorted" difference -
-  /// from the standard atmosphere temperature at sea level. The value of the
-  /// skew applied to the temperature profile is ramped out as altitude increases,
-  /// becoming 0.0 at 91 km. The skew can be used along with the bias to tailor
-  /// the temperature profile as desired.
-  /// @param t the temperature skew value in the unit provided.
-  /// @param unit the unit of the temperature.
-  virtual void SetTemperatureSkew(double t, enum unit=eFahrenheit);
-
-  /// This function resets the model to use no bias or skew to the temperature.
-  /// The skew and bias values are reset to 0.0, and the standard temperature
-  /// is used for the entire temperature profile at all altitudes.
+  /// This function resets the model to apply no bias or delta gradient to the
+  /// temperature.
+  /// The delta gradient and bias values are reset to 0.0, and the standard
+  /// temperature is used for the entire temperature profile at all altitudes.
   virtual void ResetSLTemperature();
   //@}
 
@@ -199,7 +229,7 @@ public:
   virtual double GetDensity(void)  const {return Density;}
 
   /// Returns the standard density at a specified altitude
-  virtual double GetDensity(double altitude);
+  virtual double GetStdDensity(double altitude);
 
   /// Returns the sea level density in slugs/ft^3
   virtual double GetDensitySL(void)  const { return SLdensity; }
@@ -231,8 +261,11 @@ public:
   virtual double GetKinematicViscosity(void) const {return KinematicViscosity;}
   //@}
 
-  /// Gets the density altitude in feet
+  /* /// Gets the density altitude in feet */
 //  virtual double GetDensityAltitude(void) const { return density_altitude; }
+
+  /// Prints the U.S. Standard Atmosphere table.
+  virtual void PrintStandardAtmosphereTable();
 
 protected:
   double StdSLtemperature, StdSLdensity, StdSLpressure, StdSLsoundspeed; // Standard sea level conditions
@@ -243,18 +276,31 @@ protected:
   double PressureAltitude;
   double DensityAltitude;
 
-  double delta_T;
-  double T_dev_sl;
-  double T_dev;
+  double TemperatureBias;
+  double TemperatureDeltaGradient;
+  double GradientFadeoutAltitude;
 
   FGTable* StdAtmosTemperatureTable;
-  FGTable* StdAtmosPressureTable;
+  std::vector<double> LapseRateVector;
+  std::vector<double> PressureBreakpointVector;
 
   const double SutherlandConstant, Beta;
   double Viscosity, KinematicViscosity;
 
   /// Calculate the atmosphere for the given altitude, including effects of temperature deviation.
   void Calculate(double altitude);
+
+  /// Recalculate the lapse rate vectors when the temperature profile is altered
+  /// in a way that would change the lapse rates, such as when a gradient is applied.
+  /// This function is also called to initialize the lapse rate vector.
+  void CalculateLapseRates();
+
+  /// Calculate (or recalculate) the atmospheric pressure breakpoints at the 
+  /// altitudes in the standard temperature table.
+  void CalculatePressureBreakpoints();
+
+  // Converts to Rankine from one of several unit systems.
+  double ConvertToRankine(double t, eTemperature unit);
 
   virtual void bind(void);
   void Debug(int from);
