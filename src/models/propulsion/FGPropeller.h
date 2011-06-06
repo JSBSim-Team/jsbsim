@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.17 2011/03/10 01:35:25 dpculp Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.18 2011/06/06 22:39:52 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,6 +62,7 @@ CLASS DOCUMENTATION
 
 <h3>Configuration File Format:</h3>
 @code
+<sense> {1 | -1} </sense> 
 <propeller name="{string}">
   <ixx> {number} </ixx>
   <diameter unit="IN"> {number} </diameter>
@@ -73,7 +74,6 @@ CLASS DOCUMENTATION
   <maxrpm> {number} </maxrpm>
   <constspeed> {number} </constspeed>
   <reversepitch> {number} </reversepitch>
-  <sense> {1 | -1} </sense>
   <p_factor> {number} </p_factor>
   <ct_factor> {number} </ct_factor>
   <cp_factor> {number} </cp_factor>
@@ -119,7 +119,8 @@ CLASS DOCUMENTATION
     \<constspeed>    - 1 = constant speed mode, 0 = manual pitch mode. 
     \<reversepitch>  - Blade pitch angle for reverse.
     \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
-                        -1=anti-clockwise as viewed from cockpit).
+                        -1=anti-clockwise as viewed from cockpit). Sense is
+                       specified in the parent tag of the propeller.
     \<p_factor>      - P factor.
     \<ct_factor>     - A multiplier for the coefficients of thrust.
     \<cp_factor>     - A multiplier for the coefficients of power.
@@ -141,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.17 2011/03/10 01:35:25 dpculp Exp $
+    @version $Id: FGPropeller.h,v 1.18 2011/06/06 22:39:52 jentron Exp $
     @see FGEngine
     @see FGThruster
 */

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.28 2010/01/24 19:26:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.29 2011/06/06 22:39:52 jentron Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +66,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   InitialTemperature = Temperature = -9999.0;
   Ixx = Iyy = Izz = 0.0;
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
+  ExternalFlow = 0.0;
   InitialStandpipe = 0.0;
   Capacity = 0.00001;
   Priority = InitialPriority = 1;
@@ -162,6 +163,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   property_name = base_property_name + "/priority";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
                                        &FGTank::SetPriority );
+  property_name = base_property_name + "/external-flow-rate-pps";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetExternalFlow,
+                                       &FGTank::SetExternalFlow );
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
@@ -269,6 +273,9 @@ void FGTank::SetContentsGallons(double gallons)
 
 double FGTank::Calculate(double dt)
 {
+  if(ExternalFlow < 0.) Drain( -ExternalFlow *dt);
+  else Fill(ExternalFlow * dt);
+
   if (Temperature == -9999.0) return 0.0;
   double HeatCapacity = 900.0;        // Joules/lbm/C
   double TempFlowFactor = 1.115;      // Watts/sqft/C
@@ -278,6 +285,7 @@ double FGTank::Calculate(double dt)
   if (fabs(Tdiff) > 0.1) {
     dTemp = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
   }
+
   return Temperature += (dTemp + dTemp);    // For now, assume upper/lower the same
 }
 
