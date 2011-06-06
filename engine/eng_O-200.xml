@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+  File:     eng_O-200.xml
+  Author:   Ron Jensen
+
+O-200: 100 hp (75 kW)
+specifications
+
+4-cylinder, horizontally-opposed, air-cooled piston engine
+Displacement: 201 cubic inches  (3.3 litres)
+Bore x stroke: 4.0625 x 3.875 inches
+used by
+
+Aeronca 7EC Champion
+Cessna 150 
+
+Reference TCDS E-252
+-->
+
+<piston_engine name="o-200">
+  <minmp unit="INHG">         10.5 </minmp>
+  <maxmp unit="INHG">         28.5 </maxmp>
+  <displacement unit="IN3"> 201.00 </displacement>
+  <maxhp>        100.00 </maxhp>
+  <cycles>         4.0 </cycles>
+  <idlerpm>      550.0 </idlerpm>
+  <maxrpm>      2750.0 </maxrpm>
+  <bore unit="IN"> 4.0625 </bore>
+  <stroke unit="IN">3.875 </stroke>
+  <compression-ratio> 7.0 </compression-ratio>
+  <cylinders> 4 </cylinders>
+  <sparkfaildrop> 0.1 </sparkfaildrop>
+  <bsfc> 0.42 </bsfc>
+</piston_engine>
