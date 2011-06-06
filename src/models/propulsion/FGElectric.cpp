@@ -42,6 +42,7 @@ INCLUDES
 #include "FGElectric.h"
 #include "models/FGPropulsion.h"
 #include "models/propulsion/FGThruster.h"
+#include "FGPropeller.h"
 
 #include <iostream>
 #include <sstream>
@@ -50,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.10 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.11 2011/06/06 22:35:08 jentron Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +72,11 @@ FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number)
   if (el->FindElement("power"))
     PowerWatts = el->FindElementValueAsNumberConvertTo("power","WATTS");
 
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  property_name = base_property_name + "/power-hp";
+  PropertyManager->Tie(property_name, &HP);
+
   Debug(0); // Call Debug() routine from constructor if needed
 }
 
@@ -88,6 +94,11 @@ void FGElectric::Calculate(void)
   RunPreFunctions();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
+
+  if (Thruster->GetType() == FGThruster::ttPropeller) {
+      ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
+      ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
+  } 
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
 
