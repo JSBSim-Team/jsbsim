@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.21 2010/02/05 05:53:00 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.22 2011/06/06 22:39:52 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -275,6 +275,9 @@ public:
   double GetDensity(void) const {return Density;}
   void   SetDensity(double d) { Density = d; }
 
+  double GetExternalFlow(void) const {return ExternalFlow;}
+  void   SetExternalFlow(double f) { ExternalFlow = f; }
+
   const FGColumnVector3 GetXYZ(void);
   const double GetXYZ(int idx);
 
@@ -309,6 +312,7 @@ private:
   double Area;
   double Temperature, InitialTemperature;
   double Standpipe, InitialStandpipe;
+  double ExternalFlow;
   bool  Selected;
   int Priority, InitialPriority;
   FGFDMExec* Exec;
