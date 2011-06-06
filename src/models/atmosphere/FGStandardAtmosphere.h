@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.6 2011/06/05 02:01:20 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.7 2011/06/06 12:27:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,10 +58,35 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the 1976 Standard Atmosphere.
+/** Models the 1976 Standard Atmosphere, with the ability to modify the 
+    temperature and pressure. A base feature of the model is the temperature 
+    profile that is stored as an FGTable object with this data:
+
+@code
+GeoMet Alt    Temp      GeoPot Alt  GeoMet Alt
+   (ft)      (deg R)      (km)        (km)
+ ---------  --------    ----------  ----------
+       0.0    518.67 //    0.000       0.000
+   36151.6    390.0  //   11.000      11.019
+   65823.5    390.0  //   20.000      20.063
+  105518.4    411.6  //   32.000      32.162
+  155347.8    487.2  //   47.000      47.350
+  168677.8    487.2  //   51.000      51.413
+  235570.9    386.4  //   71.000      71.802
+  282152.2    336.5; //   84.852      86.000
+@endcode
+
+The pressure is calculated through the use of two equations that are presented in
+the U.S. Standard Atmosphere document (see references). Density, kinematic viscosity,
+speed of sound, etc., are all calculated based on various constants and 
+temperature and pressure.
+The temperature may be modified through the use of several methods. Ultimately,
+these access methods allow the user to modify the sea level standard temperature,
+and/or the sea level standard pressure, so that the entire profile will be 
+consistently and accurately calculated.
 
   <h2> Properties </h2>
-  @property atmosphere/T-R
+  @property atmosphere/T-R The current modeled temperature in degrees Rankine.
   @property atmosphere/rho-slugs_ft3
   @property atmosphere/P-psf
   @property atmosphere/a-fps
@@ -78,7 +103,7 @@ CLASS DOCUMENTATION
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.6 2011/06/05 02:01:20 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.7 2011/06/06 12:27:06 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +114,10 @@ class FGStandardAtmosphere : public FGModel {
 public:
 
   /// Enums for specifying temperature units.
-  enum eTemperature {eNone=0, eFahrenheit, eCelsius, eRankine, eKelvin};
+  enum eTemperature {eNoTempUnit=0, eFahrenheit, eCelsius, eRankine, eKelvin};
+
+  /// Enums for specifying pressure units.
+  enum ePressure {eNoPressUnit=0, ePSF, eMillibars, ePascals, eInchesHg};
 
   /// Constructor
   FGStandardAtmosphere(FGFDMExec*);
@@ -116,30 +144,41 @@ public:
   /// effects of an optionally user-supplied bias or delta gradient.
   // @{
   /// Returns the actual, modeled temperature at the current altitude in degrees Rankine.
+  /// @return Modeled temperature in degrees Rankine.
   virtual double GetTemperature() const {return Temperature;}
 
   /// Returns the actual modeled temperature in degrees Rankine at a specified altitude.
+  /// @param altitude The altitude above sea level (ASL) in feet.
+  /// @return Modeled temperature in degrees Rankine at the specified altitude.
   virtual double GetTemperature(double altitude) const;
 
   /// Returns the actual, modeled sea level temperature in degrees Rankine.
+  /// @return The modeled temperature in degrees Rankine at sea level.
   virtual double GetTemperatureSL() const { return GetTemperature(0.0); }
 
   /// Returns the standard temperature in degrees Rankine at a specified altitude.
+  /// @param altitude The altitude in feet above sea level (ASL) to get the temperature at.
+  /// @return The STANDARD temperature in degrees Rankine at the specified altitude.
   virtual double GetStdTemperature(double altitude) const;
 
   /// Returns the standard sea level temperature in degrees Rankine.
+  /// @return The STANDARD temperature at sea level in degrees Rankine.
   virtual double GetStdTemperatureSL() const { return GetStdTemperature(0.0); }
 
   /// Returns the ratio of the at-current-altitude temperature as modeled
   /// over the standard sea level value.
   virtual double GetTemperatureRatio() const { return GetTemperature()*rSLtemperature; }
 
+  /// Returns the ratio of the temperature as modeled at the supplied altitude
+  /// over the standard sea level value.
+  virtual double GetTemperatureRatio(double h) const { return GetTemperature(h)*rSLtemperature; }
+
   /// Returns the ratio of the standard temperature at the supplied altitude 
   /// over the standard sea level temperature.
   virtual double GetStdTemperatureRatio(double h) const { return GetStdTemperature(h)*rSLtemperature; }
 
   /// Returns the temperature bias over the sea level value in degrees Rankine.
-  double GetTemperatureBias(eTemperature to) const {return TemperatureBias;}
+  virtual double GetTemperatureBias(eTemperature to) const {return TemperatureBias;}
 
   /// Returns the temperature gradient to be applied on top of the standard
   /// temperature gradient.
@@ -155,14 +194,15 @@ public:
   /// @param unit the unit of the temperature.
   virtual void SetSLTemperature(double t, eTemperature unit=eFahrenheit);
 
-  /// Sets the temperature at the current flight altitude, if it is to be different
+  /// Sets the temperature at the supplied altitude, if it is to be different
   /// than the standard temperature.
   /// This function will calculate a bias - a difference - from the standard
-  /// atmosphere temperature at the current flight altitude and will apply that
+  /// atmosphere temperature at the supplied altitude and will apply that
   /// calculated bias to the entire temperature profile.
-  /// @param t the temperature value in the unit provided.
-  /// @param unit the unit of the temperature.
-  virtual void SetTemperature(double t, eTemperature unit=eFahrenheit) {};
+  /// @param t The temperature value in the unit provided.
+  /// @param h The altitude in feet above sea level.
+  /// @param unit The unit of the temperature.
+  virtual void SetTemperature(double t, double h, eTemperature unit=eFahrenheit) {};
 
   /// Sets the temperature bias to be added to the standard temperature at all altitudes.
   /// This function sets the bias - the difference - from the standard
@@ -172,7 +212,7 @@ public:
   /// this function with a calculated bias.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  void SetTemperatureBias(double t, eTemperature unit=eFahrenheit);
+  virtual void SetTemperatureBias(double t, eTemperature unit=eFahrenheit);
 
   /// Sets a Sea Level temperature delta that is ramped out by 86 km.
   /// The value of the delta is used to calculate a delta gradient that is
@@ -211,14 +251,32 @@ public:
   /// Returns the pressure in psf.
   virtual double GetPressure(void)  const {return Pressure;}
 
-  /// Returns the standard pressure at a specified altitude
+  /// Returns the pressure at a specified altitude in psf.
   virtual double GetPressure(double altitude) const;
+
+  /// Returns the standard pressure at a specified altitude in psf
+  virtual double GetStdPressure100K(double altitude) const;
+
+  /// Returns the standard pressure at the specified altitude.
+  virtual double GetStdPressure(double altitude) const;
 
   /// Returns the sea level pressure in psf.
   virtual double GetPressureSL(void) const { return SLpressure; }
 
   /// Returns the ratio of at-altitude pressure over the sea level value.
   virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
+
+  /** Sets the sea level pressure for modeling an off-standard pressure
+      profile. This could be useful in the case where the pressure at an
+      airfield is known or set for a particular simulation run.
+      @param pressure The pressure in the units specified (PSF by default).
+      @param unit the unit of measure that the specified pressure is
+                       supplied in.*/
+  virtual void SetSeaLevelPressure(double pressure, ePressure unit=ePSF);
+
+  /** Resets the sea level to the Standard sea level pressure, and recalculates
+      dependent parameters so that the pressure calculations are standard. */
+  virtual void ResetSLPressure();
   //@}
 
   //  *************************************************************************
@@ -228,8 +286,11 @@ public:
       This function may only be used if Run() is called first. */
   virtual double GetDensity(void)  const {return Density;}
 
+  /** Returns the density in slugs/ft^3 at a given altitude in ft. */
+  virtual double GetDensity(double altitude) const;
+
   /// Returns the standard density at a specified altitude
-  virtual double GetStdDensity(double altitude);
+  virtual double GetStdDensity(double altitude) const;
 
   /// Returns the sea level density in slugs/ft^3
   virtual double GetDensitySL(void)  const { return SLdensity; }
@@ -300,7 +361,10 @@ protected:
   void CalculatePressureBreakpoints();
 
   // Converts to Rankine from one of several unit systems.
-  double ConvertToRankine(double t, eTemperature unit);
+  virtual double ConvertToRankine(double t, eTemperature unit) const;
+  
+  // Converts to PSF (pounds per square foot) from one of several unit systems.
+  virtual double ConvertToPSF(double t, ePressure unit=ePSF) const;
 
   virtual void bind(void);
   void Debug(int from);

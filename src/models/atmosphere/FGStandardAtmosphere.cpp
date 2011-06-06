@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.5 2011/06/05 02:01:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.6 2011/06/06 12:26:56 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,7 @@ bool FGStandardAtmosphere::InitModel(void)
   rSLdensity     = 1/SLdensity     ;
   rSLsoundspeed  = 1/SLsoundspeed  ;
 
-  PrintStandardAtmosphereTable();
+//  PrintStandardAtmosphereTable();
 
   return true;
 }
@@ -185,9 +185,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   if (b>0) b--;
 
   double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
-  Tmb = GetTemperature(BaseAlt)
-        + TemperatureBias 
-        + (GradientFadeoutAltitude - altitude)*TemperatureDeltaGradient;
+  Tmb = GetTemperature(BaseAlt);
   deltaH = altitude - BaseAlt;
 
   if (LapseRateVector[b] != 0.00) {
@@ -200,6 +198,16 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   }
 
   return pressure;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetSeaLevelPressure(double pressure, ePressure unit)
+{
+  double press = ConvertToPSF(pressure, unit);
+
+  PressureBreakpointVector[0] = press;
+  CalculatePressureBreakpoints();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,11 +232,62 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard density at a specified altitude
-//ToDo - this is not right - does not return the standard pressure.
-double FGStandardAtmosphere::GetStdDensity(double altitude)
+
+double FGStandardAtmosphere::GetStdPressure(double altitude) const
 {
-  return (StdSLpressure*exp(-altitude/22809.24))/(Reng * StdAtmosTemperatureTable->GetValue(altitude));
+  double press=0;
+  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
+    press = GetPressure(altitude);
+  } else if (altitude <= 100000.0) {
+    GetStdPressure100K(altitude);
+  } else {
+    // Cannot currently retrieve the standard pressure
+  }
+  return press;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This function calculates an approximation of the standard atmospheric pressure
+// up to an altitude of about 100,000 ft. If the temperature and pressure are not
+// altered for local conditions, the GetPressure(h) function should be used,
+// as that is valid to a much higher altitude. This function is accurate to within
+// a couple of psf up to 100K ft. This polynomial fit was determined using Excel.
+
+double FGStandardAtmosphere::GetStdPressure100K(double altitude) const
+{
+  // Limit this equation to input altitudes of 100000 ft.
+  if (altitude > 100000.0) altitude = 100000.0;
+
+  double alt[6];
+  double coef[6] = { 2116.22,
+                    -7.583514352598E-02,
+                     1.045494405501E-06,
+                    -5.881341527124E-12,
+                     3.482031690718E-18,
+                     5.683922549284E-23 };
+
+  alt[0] = 1;
+  for (int pwr=1; pwr<=5; pwr++) alt[pwr] = alt[pwr-1]*altitude;
+
+  double press = 0.0;
+  for (int ctr=0; ctr<=5; ctr++) press += coef[ctr]*alt[ctr];
+  return press;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the modeled density at a specified altitude
+
+double FGStandardAtmosphere::GetDensity(double altitude) const
+{
+  return GetPressure(altitude)/(Reng * GetTemperature(altitude));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the standard density at a specified altitude
+
+double FGStandardAtmosphere::GetStdDensity(double altitude) const
+{
+  return GetStdPressure(altitude)/(Reng * GetStdTemperature(altitude));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,7 +412,15 @@ void FGStandardAtmosphere::ResetSLTemperature()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::ConvertToRankine(double t, eTemperature unit)
+void FGStandardAtmosphere::ResetSLPressure()
+{
+  PressureBreakpointVector[0] = StdSLpressure; // psf
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::ConvertToRankine(double t, eTemperature unit) const
 {
   double targetTemp=0; // in degrees Rankine
 
@@ -372,6 +439,32 @@ double FGStandardAtmosphere::ConvertToRankine(double t, eTemperature unit)
   }
 
   return targetTemp;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::ConvertToPSF(double p, ePressure unit) const
+{
+  double targetPressure=0; // Pressure in PSF
+
+  switch(unit) {
+  case ePSF:
+    targetPressure = p;
+    break;
+  case eMillibars:
+    targetPressure = p*2.08854342;
+    break;
+  case ePascals:
+    targetPressure = p*0.0208854342;
+    break;
+  case eInchesHg:
+    targetPressure = p*70.7180803;
+    break;
+  default:
+    throw("Undefined pressure unit given");
+  }
+
+  return targetPressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
