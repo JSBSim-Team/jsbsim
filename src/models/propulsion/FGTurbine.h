@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.19 2010/08/21 18:08:46 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.20 2011/06/07 00:28:03 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,6 +93,8 @@ CLASS DOCUMENTATION
   <atsfc> {number} </atsfc>
   <idlen1> {number} </idlen1>
   <idlen2> {number} </idlen2>
+  <n1spinup> {number} </n1spinup>
+  <n2spinup> {number} </n2spinup>
   <maxn1> {number} </maxn1>
   <maxn2> {number} </maxn2>
   <augmented> {0 | 1} </augmented>
@@ -113,6 +115,8 @@ CLASS DOCUMENTATION
   atsfc       - Afterburning TSFC, lbm/hr/lbf
   idlen1      - Fan rotor rpm (% of max) at idle
   idlen2      - Core rotor rpm (% of max) at idle
+  n1spinup    - Fan rotor rpm starter acceleration (default 1.0)
+  n2spinup    - Core rotor rpm starter acceleration (default 3.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -146,7 +150,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.19 2010/08/21 18:08:46 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.20 2011/06/07 00:28:03 jentron Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

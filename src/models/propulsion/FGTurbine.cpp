@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.31 2011/03/03 12:16:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.32 2011/06/07 00:28:03 jentron Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,7 +360,7 @@ double FGTurbine::Seize(void)
 
 double FGTurbine::Trim()
 {
-    double idlethrust, milthrust, thrust, tdiff;
+    double idlethrust, milthrust, thrust, tdiff, N2, N2norm;
     idlethrust = MilThrust * IdleThrustLookup->GetValue();
     milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
     N2 = IdleN2 + ThrottlePos * N2_factor;
