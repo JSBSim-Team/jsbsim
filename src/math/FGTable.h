@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.13 2011/04/05 20:20:21 andgi Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.14 2011/06/13 11:46:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -233,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.13 2011/04/05 20:20:21 andgi Exp $
+@version $Id: FGTable.h,v 1.14 2011/06/13 11:46:08 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,11 +284,16 @@ public:
   FGTable& operator<<(const double n);
   FGTable& operator<<(const int n);
 
-  inline double GetElement(int r, int c) {return Data[r][c];}
-  inline double GetElement(int r, int c, int t);
+  inline double GetElement(int r, int c) const {return Data[r][c];}
+//  inline double GetElement(int r, int c, int t);
+
+  double operator()(unsigned int r, unsigned int c) const {return GetElement(r, c);}
+//  double operator()(unsigned int r, unsigned int c, unsigned int t) {GetElement(r, c, t);}
 
   void SetRowIndexProperty(FGPropertyManager *node) {lookupProperty[eRow] = node;}
   void SetColumnIndexProperty(FGPropertyManager *node) {lookupProperty[eColumn] = node;}
+
+  unsigned int GetNumRows() const {return nRows;}
 
   void Print(void);
 

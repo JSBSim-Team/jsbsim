@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.61 2011/05/20 00:47:03 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.63 2011/06/13 10:30:22 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -189,7 +189,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
   double altitudeASL = position.GetRadius() - sea_level_radius;
   double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
   double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
-  SetVtrueFpsIC(ve*ktstofps/sqrt(rho/rhoSL));
+  SetVtrueFpsIC(ve*ktstofps*sqrt(rhoSL/rho));
   lastSpeedSet = setve;
 }
 
@@ -324,7 +324,7 @@ void FGInitialCondition::SetClimbRateFpsIC(double hdot)
   FGColumnVector3 _WIND_NED = _vt_NED - vUVW_NED;
   double hdot0 = -_vt_NED(eW);
 
-  if (fabs(hdot0) < vt) {
+  if (fabs(hdot0) < vt) { // Is this check really needed ?
     double scale = sqrt((vt*vt-hdot*hdot)/(vt*vt-hdot0*hdot0));
     _vt_NED(eU) *= scale;
     _vt_NED(eV) *= scale;
@@ -606,7 +606,7 @@ void FGInitialCondition::SetHeadWindKtsIC(double head)
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
   FGColumnVector3 _vHEAD(cos(psi), sin(psi), 0.);
 
-  // Gram-Schmidt process is used to remove the existing cross wind component
+  // Gram-Schmidt process is used to remove the existing head wind component
   _vWIND_NED -= DotProduct(_vWIND_NED, _vHEAD) * _vHEAD;
   // which is now replaced by the new value.
   _vWIND_NED += head * _vHEAD;
@@ -707,7 +707,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
     case setve:
-      SetVtrueFpsIC(ve0 * sqrt(rho/rhoSL));
+      SetVtrueFpsIC(ve0 * sqrt(rhoSL/rho));
       break;
     default: // Make the compiler stop complaining about missing enums
       break;
@@ -1088,7 +1088,7 @@ bool FGInitialCondition::Load_v2(void)
   // the given orientation and knowledge of the Earth position angle.
   // This could be done using matrices (where in the subscript "b/a",
   // it is meant "b with respect to a", and where b=body frame,
-  // i=inertial frame, and e=ecef frame) as:
+  // i=inertial frame, l=local NED frame and e=ecef frame) as:
   //
   // C_b/l =  C_b/e * C_e/l
   //

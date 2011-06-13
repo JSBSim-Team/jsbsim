@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.7 2011/06/06 12:27:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.9 2011/06/13 12:06:29 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
 {
   Name = "FGStandardAtmosphere";
 
-  StdAtmosTemperatureTable = new FGTable(8);
+  StdAtmosTemperatureTable = new FGTable(9);
 
   // This is the U.S. Standard Atmosphere table for temperature in degrees
   // Rankine, based on geometric altitude. The table values are often given
@@ -83,7 +83,8 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                             << 155347.8 << 487.2  //   47.000      47.350
                             << 168677.8 << 487.2  //   51.000      51.413
                             << 235570.9 << 386.4  //   71.000      71.802
-                            << 282152.2 << 336.5; //   84.852      86.000
+                            << 282152.2 << 336.5  //   84.852      86.000
+                            << 298556.4 << 336.5; //               91.000 - First layer in high altitude regime 
 
   LapseRateVector.resize(StdAtmosTemperatureTable->GetNumRows()-1);
   PressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
@@ -180,7 +181,9 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   // the index "b" is 2 - the second entry in the table).
   double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
   while (altitude >= testAlt) {
-    testAlt = (*StdAtmosTemperatureTable)(++b+1,0);
+    b++;
+    if (b+1 > StdAtmosTemperatureTable->GetNumRows()) break;
+    testAlt = (*StdAtmosTemperatureTable)(b+1,0);
   }
   if (b>0) b--;
 
@@ -228,7 +231,31 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
 
 double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 {
-  return StdAtmosTemperatureTable->GetValue(altitude);
+  double Lk9 = 0.00658368; // deg R per foot
+  double Tinf = 1800.0; // Same as 1000 Kelvin
+  double temp = Tinf;
+
+  if (altitude < 298556.4) {                // 91 km - station 8
+
+    temp = StdAtmosTemperatureTable->GetValue(altitude);
+
+  } else if (altitude < 360892.4) {        // 110 km - station 9
+
+    temp = 473.7429 - 137.38176 * sqrt(1.0 - pow((altitude - 298556.4)/65429.462, 2.0));
+
+  } else if (altitude < 393700.8) {        // 120 km - station 10
+
+    temp = 432 + Lk9 * (altitude - 360892.4);
+
+  } else if (altitude < 3280839.9) {        // 1000 km station 12
+
+    double lambda = 0.00001870364;
+    double eps = (altitude - 393700.8) * (20855531.5 + 393700.8) / (20855531.5 + altitude);
+    temp = Tinf - (Tinf - 648.0) * exp(-lambda*eps);
+
+  }
+
+  return temp;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -350,7 +377,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
     Calculate(i);
     std::cout  << std::setw(12) << std::setprecision(2) << i
        << "  " << std::setw(9)  << std::setprecision(2) << Temperature-459.67
-       << "  " << std::setw(13)  << std::setprecision(4) << Pressure
+       << "  " << std::setw(13) << std::setprecision(4) << Pressure
        << "  " << std::setw(18) << std::setprecision(8) << Density
        << std::endl;
   }

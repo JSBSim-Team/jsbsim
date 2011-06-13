@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.27 2011/05/19 13:39:39 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.28 2011/06/13 04:55:52 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,7 +183,7 @@ CLASS DOCUMENTATION
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.27 2011/05/19 13:39:39 jentron Exp $
+    @version $Id: FGPiston.h,v 1.28 2011/06/13 04:55:52 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +251,7 @@ private:
 
   const double R_air;
   const double rho_fuel;    // kg/m^3
-  const double calorific_value_fuel;  // W/Kg (approximate)
+  const double calorific_value_fuel;  // J/Kg (approximate)
   const double Cp_air;      // J/KgK
   const double Cp_fuel;     // J/KgK
   const double standard_pressure; //Pa
