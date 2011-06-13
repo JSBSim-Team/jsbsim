@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.56 2011/05/19 13:39:39 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.57 2011/06/13 04:55:52 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   : FGEngine(exec, el, engine_number),
   R_air(287.3),                  // Gas constant for air J/Kg/K
   rho_fuel(800),                 // estimate
-  calorific_value_fuel(47.3e6),
+  calorific_value_fuel(47.3e6),  // J/Kg
   Cp_air(1005),                  // Specific heat (constant pressure) J/Kg/K
   Cp_fuel(1700),
   standard_pressure(101320.73)
@@ -317,6 +317,14 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   PropertyManager->Tie(property_name, &BoostSpeed);
   property_name = base_property_name + "/cht-degF";
   PropertyManager->Tie(property_name, this, &FGPiston::getCylinderHeadTemp_degF);
+  property_name = base_property_name + "/engine-rpm";
+  PropertyManager->Tie(property_name, this, &FGPiston::getRPM);
+  property_name = base_property_name + "/oil-temperature-degF";
+  PropertyManager->Tie(property_name, this, &FGPiston::getOilTemp_degF);
+  property_name = base_property_name + "/oil-pressure-psi";
+  PropertyManager->Tie(property_name, this, &FGPiston::getOilPressure_psi);
+  property_name = base_property_name + "/egt-degF";
+  PropertyManager->Tie(property_name, this, &FGPiston::getExhaustGasTemp_degF);
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -412,6 +420,7 @@ void FGPiston::Calculate(void)
   double p = Auxiliary->GetTotalPressure() * psftopa;
   p_ram = (p - p_amb) * Ram_Air_Factor + p_amb;
   T_amb = RankineToKelvin(Atmosphere->GetTemperature());
+//  calorific_value_fuel=1.776e7/ISFC; //3*((kg/J)((hp*h)/lb)
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
   MeanPistonSpeed_fps =  ( RPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
@@ -759,11 +768,10 @@ void FGPiston::doEGT(void)
   if ((Running) && (m_dot_air > 0.0)) {  // do the energy balance
     combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
     enthalpy_exhaust = m_dot_fuel * calorific_value_fuel *
-                              combustion_efficiency * 0.33;
+                              combustion_efficiency * 0.30;
     heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
     delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
     ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
-    ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * PctPower);
   } else {  // Drop towards ambient - guess an appropriate time constant for now
     combustion_efficiency = 0;
     dEGTdt = (RankineToKelvin(Atmosphere->GetTemperature()) - ExhaustGasTemp_degK) / 100.0;
