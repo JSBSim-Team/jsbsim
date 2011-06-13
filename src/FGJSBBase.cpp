@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.29 2010/03/18 13:19:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.30 2011/06/13 11:47:04 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,9 @@ const double FGJSBBase::in3tom3 = 1.638706E-5;
 const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
 const double FGJSBBase::inhgtopa = 3386.38;
 const double FGJSBBase::fttom = 0.3048;
-double FGJSBBase::Reng = 1716.0;
+double FGJSBBase::Reng = 1716.56;   // Gas constant for Air (ft-lb/slug-R)
+double FGJSBBase::Rstar = 1545.348; // Universal gas constant
+double FGJSBBase::Mair = 28.9645;   //
 const double FGJSBBase::SHRatio = 1.40;
 
 // Note that definition of lbtoslug by the inverse of slugtolb and not
