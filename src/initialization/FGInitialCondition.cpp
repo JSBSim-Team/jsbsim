@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.62 2011/06/12 17:05:34 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.63 2011/06/13 10:30:22 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -189,7 +189,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
   double altitudeASL = position.GetRadius() - sea_level_radius;
   double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
   double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
-  SetVtrueFpsIC(ve*ktstofps/sqrt(rhoSL/rho));
+  SetVtrueFpsIC(ve*ktstofps*sqrt(rhoSL/rho));
   lastSpeedSet = setve;
 }
 
