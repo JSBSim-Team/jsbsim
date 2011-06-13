@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.57 2011/06/13 04:55:52 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.58 2011/06/13 15:23:09 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -420,7 +420,6 @@ void FGPiston::Calculate(void)
   double p = Auxiliary->GetTotalPressure() * psftopa;
   p_ram = (p - p_amb) * Ram_Air_Factor + p_amb;
   T_amb = RankineToKelvin(Atmosphere->GetTemperature());
-//  calorific_value_fuel=1.776e7/ISFC; //3*((kg/J)((hp*h)/lb)
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
   MeanPistonSpeed_fps =  ( RPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
