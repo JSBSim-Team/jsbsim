@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.8 2011/06/13 11:45:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.9 2011/06/13 12:06:29 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
 {
   Name = "FGStandardAtmosphere";
 
-  StdAtmosTemperatureTable = new FGTable(8);
+  StdAtmosTemperatureTable = new FGTable(9);
 
   // This is the U.S. Standard Atmosphere table for temperature in degrees
   // Rankine, based on geometric altitude. The table values are often given

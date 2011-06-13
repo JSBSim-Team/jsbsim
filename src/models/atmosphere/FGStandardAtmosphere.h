@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.8 2011/06/13 11:45:23 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.9 2011/06/13 12:06:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the 1976 Standard Atmosphere, with the ability to modify the 
+/** Models the 1976 U.S. Standard Atmosphere, with the ability to modify the 
     temperature and pressure. A base feature of the model is the temperature 
     profile that is stored as an FGTable object with this data:
 
@@ -76,10 +76,12 @@ GeoMet Alt    Temp      GeoPot Alt  GeoMet Alt
   282152.2    336.5; //   84.852      86.000
 @endcode
 
-The pressure is calculated through the use of two equations that are presented in
-the U.S. Standard Atmosphere document (see references). Density, kinematic viscosity,
-speed of sound, etc., are all calculated based on various constants and 
-temperature and pressure.
+The pressure is calculated at lower altitudes through the use of two equations
+that are presented in the U.S. Standard Atmosphere document (see references).
+Density, kinematic viscosity, speed of sound, etc., are all calculated based
+on various constants and temperature and pressure. At higher altitudes (above 
+86 km (282152 ft) a different and more complicated method of calculating
+pressure is used.
 The temperature may be modified through the use of several methods. Ultimately,
 these access methods allow the user to modify the sea level standard temperature,
 and/or the sea level standard pressure, so that the entire profile will be 
@@ -103,7 +105,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.8 2011/06/13 11:45:23 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.9 2011/06/13 12:06:21 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
