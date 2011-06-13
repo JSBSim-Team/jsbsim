@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.27 2010/10/21 11:09:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.28 2011/06/13 12:07:10 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -558,6 +558,8 @@ void FGTable::operator<<(istream& in_stream)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Put some error handling in here if trying to access out of range row, col.
 
 FGTable& FGTable::operator<<(const double n)
 {
