@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.19 2011/04/18 08:52:16 andgi Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.20 2011/06/16 03:39:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
     - FGActuator
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.19 2011/04/18 08:52:16 andgi Exp $
+    @version $Id: FGFCSComponent.h,v 1.20 2011/06/16 03:39:38 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -120,7 +120,8 @@ protected:
   double Input;
   double Output;
   double clipmax, clipmin;
-  int delay;
+  double delay_time;
+  unsigned int delay;
   int index;
   float clipMinSign, clipMaxSign;
   double dt;

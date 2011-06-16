@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.20 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.21 2011/06/16 03:39:38 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,6 +196,7 @@ bool FGSwitch::Run(void )
   
   if (!pass) Output = default_output;
 
+  if (delay != 0) Delay();
   Clip();
   if (IsOutput) SetOutput();
 

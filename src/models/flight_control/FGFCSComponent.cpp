@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.31 2011/04/18 08:52:16 andgi Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.32 2011/06/16 03:39:38 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ CLASS IMPLEMENTATION
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
   Element *input_element, *clip_el;
-  Input = Output = clipmin = clipmax = 0.0;
+  Input = Output = clipmin = clipmax = delay_time = 0.0;
   treenode = 0;
   delay = index = 0;
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
@@ -149,18 +149,18 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Element* delay_elem = element->FindElement("delay");
   if ( delay_elem ) {
-    delay = (unsigned int)delay_elem->GetDataAsNumber();
+    delay_time = delay_elem->GetDataAsNumber();
     string delayType = delay_elem->GetAttributeValue("type");
     if (delayType.length() > 0) {
       if (delayType == "time") {
-        delay = (int)(delay / dt);
+        delay = (unsigned int)(delay_time / dt);
       } else if (delayType == "frames") {
-        // no op. the delay type of "frames" is assumed and is the default.
+        delay = (unsigned int)delay_time;
       } else {
         cerr << "Unallowed delay type" << endl;
       }
     } else {
-      delay = (int)(delay / dt);
+      delay = (unsigned int)(delay_time / dt);
     }
     output_array.resize(delay);
     for (int i=0; i<delay; i++) output_array[i] = 0.0;
