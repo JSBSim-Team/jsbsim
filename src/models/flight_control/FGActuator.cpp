@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.19 2011/06/18 13:30:27 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.20 2011/06/18 17:46:21 bcoconni Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
     hysteresis_width = element->FindElementValueAsNumber("hysteresis_width");
   }
   if ( element->FindElement("rate_limit") ) {
-    rate_limit = element->FindElementValueAsNumber("rate_limit");
+    rate_limit = fabs(element->FindElementValueAsNumber("rate_limit"));
   }
   if ( element->FindElement("bias") ) {
     bias = element->FindElementValueAsNumber("bias");
@@ -179,9 +179,10 @@ void FGActuator::RateLimit(void)
   // method.
   double input = Output;
   if (!fcs->GetTrimStatus()) {
-    double rate = (input - PreviousRateLimOutput)/dt;
-    if (fabs(rate) > rate_limit) {
-      Output = PreviousRateLimOutput + (rate_limit*fabs(rate)/rate)*dt;
+    double delta = input - PreviousRateLimOutput;
+    if (fabs(delta) > dt * rate_limit) {
+      double signed_rate_limit = delta > 0.0 ? rate_limit : -rate_limit;
+      Output = PreviousRateLimOutput + signed_rate_limit * dt;
     }
   }
   PreviousRateLimOutput = Output;
