@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.28 2011/06/13 04:55:52 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.29 2011/06/16 16:32:10 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models Dave Luff's Turbo/Supercharged Piston engine model.
+/** Models a Supercharged Piston engine. Based on Dave Luff's model.
 
 <h3>Configuration File Format:</h3>
 
@@ -67,20 +67,21 @@ CLASS DOCUMENTATION
 <piston_engine name="{string}">
   <minmp unit="{INHG | PA | ATM}"> {number} </minmp>
   <maxmp unit="{INHG | PA | ATM}"> {number} </maxmp>
+  <idlerpm> {number} </idlerpm>
+  <maxrpm> {number} </maxrpm>
+  <maxhp unit="{HP | WATTS}"> {number} </maxhp>
   <displacement unit="{IN3 | LTR | CC}"> {number} </displacement>
+  <cycles> {number} </cycles>
   <bore unit="{IN | M}"> {number} </bore>
   <stroke unit="{IN | M}"> {number} </stroke>
   <cylinders> {number} </cylinders>
-  <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <compression-ratio> {number} </compression-ratio>
   <sparkfaildrop> {number} </sparkfaildrop>
-  <maxhp unit="{HP | WATTS}"> {number} </maxhp>
   <static-friction unit="{HP | WATTS}"> {number} </static-friction>
-  <cycles> {number} </cycles>
-  <idlerpm> {number} </idlerpm>
-  <maxrpm> {number} </maxrpm>
-  <maxthrottle> {number} </maxthrottle>
-  <minthrottle> {number} </minthrottle>
+  <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
+  <ram-air-factor> {number} </ram-air-factor>
+  <cooling-factor> {number} </cooling-factor>
+  <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
   <volumetric-efficiency> {number} </volumetric-efficiency>
   <dynamic-fmep unit="{INHG | PA | ATM}"> {number} </dynamic-fmep>
@@ -101,89 +102,103 @@ CLASS DOCUMENTATION
   <ratedrpm3> {number} </ratedrpm3>
   <ratedaltitude3 unit="{FT | M}"> {number} </ratedaltitude3>
   <takeoffboost unit="{INHG | PA | ATM}"> {number} </takeoffboost>
-  <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
-  <ram-air-factor> {number} </ram-air-factor>
-  <cooling-factor> {number} </cooling-factor>
 </piston_engine>
 @endcode
 
-<pre>
-    Additional elements are required for a supercharged engine.  These can be
-    left off a non-supercharged engine, ie. the changes are all backward
-    compatible at present.
+<h3>Definition of the piston engine configuration file parameters:</h3>
+Basic parameters:
+- \b minmp - this value is the nominal idle manifold pressure at sea-level
+      without boost. Along with idlerpm, it determines throttle response slope.
+- \b maxmp - this value is the nominal maximum manifold pressure at sea-level
+      without boost. Along with maxrpm it determines the resistance of the
+      aircraft intake system. Overridden by air-intake-impedance-factor
+- \b idlerpm - this value affects the throttle fall off and the engine stops
+      running if it is slowed below 80% of this value. The engine starts
+      running when it reaches 80% of this value.
+- \b maxrpm - this value is used to calculate air-box resistance and BSFC. It 
+      also affects oil pressure among other things.
+- \b maxhp - this value is the nominal power the engine creates at maxrpm. It
+      will determine bsfc if that tag is not input. It also determines the
+      starter motor power.
+- \b displacement - this value is used to determine mass air and fuel flow
+      which impacts engine power and cooling.
+- \b cycles - Designate a 2 or 4 stroke engine. Currently only the 4 stroke
+      engine is supported.
+- \b bore - cylinder bore is currently unused.
+- \b stroke - piston stroke is used to determine the mean piston speed. Longer
+      strokes result in an engine that does not work as well at higher RPMs.
+- \b compression-ratio - the compression ratio affects the change in volumetric
+      efficiency with altitude.
+- \b sparkfaildrop - this is the percentage drop in horsepower for single
+      magneto operation.
+- \b static-friction - this value is the power required to turn an engine that 
+      is not running. Used to control and slow a windmilling propeller. Choose
+      a small percentage of maxhp.
 
-    - NUMBOOSTSPEEDS - zero (or not present) for a naturally-aspirated engine,
+Advanced parameters
+- \b bsfc - Indicated Specific Fuel Consumption. The power produced per unit of
+      fuel. Higher numbers give worse fuel economy. This number may need to be
+      lowered slightly from actual BSFC numbers because some internal engine 
+      losses are modeled separately. Typically between 0.3 and 0.5
+- \b volumetric-efficiency - the nominal volumetric efficiency of the engine.
+      This is the primary way to control fuel flow  Boosted engines may require
+      values above 1. Typical engines are 0.80 to 0.82
+- \b air-intake-impedance-factor - this number is the pressure drop across the
+      intake system. Increasing it reduces available manifold pressure. Also a 
+      property for run-time adjustment.
+- \b ram-air-factor - this number creates increases manifold pressure with an
+      increase in dynamic pressure (aircraft speed).
+      Also a property for run-time adjustment.
+
+Cooling control:
+- \b cylinders  - number of cylinders scales the cylinder head mass.
+- \b cylinder-head-mass - the nominal mass of a cylinder head. A larger value
+      slows changes in engine temperature
+- \b cooling-factor - this number models the efficiency of the aircraft cooling
+      system. Also a property for run-time adjustment.
+
+Supercharge parameters:
+- \b numboostspeed -  zero (or not present) for a naturally-aspirated engine,
       either 1, 2 or 3 for a boosted engine.  This corresponds to the number of
       supercharger speeds.  Merlin XII had 1 speed, Merlin 61 had 2, a late
       Griffon engine apparently had 3.  No known engine more than 3, although
-      some German engines apparently had a continuously variable-speed
-      supercharger.
+      some German engines had continuously variable-speed superchargers.
+- \b boostoverride - unused
+- \b boostmanual - whether a multispeed supercharger will manually or
+      automatically shift boost speeds. On manual shifting the boost speeds is
+      accomplished by controlling the property propulsion/engine/boostspeed.
+- \b takeoffboost - boost in psi above sea level ambient. Typically used for
+      takeoff, and emergency situations, generally for not more than five
+      minutes.  This is a change in the boost control setting, not the actual
+      supercharger speed, and so would only give extra power below the rated altitude.
+      A typical takeoff boost for an early Merlin was about 12psi, compared
+      with a rated boost of 9psi.
 
-    - BOOSTOVERRIDE - whether the boost pressure control system (either a boost
-      control valve for superchargers or wastegate for turbochargers) can be
-      overriden by the pilot.  During wartime this was commonly possible, and
-      known as "War Emergency Power" by the Brits.  1 or 0 in the config file.
-      This isn't implemented in the model yet though, there would need to be
-      some way of getting the boost control cutout lever position (on or off)
-      from FlightGear first.
+      When TAKEOFFBOOST is specified in the config file (and is above RATEDBOOST1), 
+      the throttle position is interpreted as:
+     - 0 to 0.98 : idle manifold pressure to rated boost (where attainable)
+     - 0.99, 1.0 : takeoff boost (where attainable).
 
-    - BOOSTMANUAL - whether a multispeed supercharger will manually or
-      automatically shift boost speeds.  On manual shifting the boost speeds
-      is accomplished by controling propulsion/engine/boostspeed
+The next items are all appended with either 1, 2 or 3 depending on which
+boostspeed they refer to:
+- \b ratedboost[123] - the absolute rated boost above sea level ambient
+      (14.7 PSI, 29.92 inHg) for a given boost speed.
 
-    - The next items are all appended with either 1, 2 or 3 depending on which
-      boost speed they refer to, eg RATEDBOOST1.  The rated values seems to have
-      been a common convention at the time to express the maximum continuously
-      available power, and the conditions to attain that power.
-
-    - RATEDBOOST[123] - the absolute rated boost above sea level ambient for a
-      given boost speed, in psi.  Eg the Merlin XII had a rated boost of 9psi,
-      giving approximately 42inHg manifold pressure up to the rated altitude.
-
-    - RATEDALTITUDE[123] - The altitude up to which rated boost can be
-      maintained.  Up to this altitude the boost is maintained constant for a
-      given throttle position by the BCV or wastegate.  Beyond this altitude the
-      manifold pressure must drop, since the supercharger is now at maximum
-      unregulated output.  The actual pressure multiplier of the supercharger
-      system is calculated at initialisation from this value.
-
-    - RATEDPOWER[123] - The power developed at rated boost at rated altitude at
-      rated rpm.
-
-    - RATEDRPM[123] - The rpm at which rated power is developed.
-
-    - TAKEOFFBOOST - Takeoff boost in psi above ambient.  Many aircraft had an
-      extra boost setting beyond rated boost, but not totally uncontrolled as in
-      the already mentioned boost-control-cutout, typically attained by pushing
-      the throttle past a mechanical 'gate' preventing its inadvertant use. This
-      was typically used for takeoff, and emergency situations, generally for
-      not more than five minutes.  This is a change in the boost control
-      setting, not the actual supercharger speed, and so would only give extra
-      power below the rated altitude.  When TAKEOFFBOOST is specified in the
-      config file (and is above RATEDBOOST1), then the throttle position is
-      interpreted as:
-
-    - 0 to 0.98 : idle manifold pressure to rated boost (where attainable)
-    - 0.99, 1.0 : takeoff boost (where attainable).
-
-    A typical takeoff boost for an earlyish Merlin was about 12psi, compared
-    with a rated boost of 9psi.
-
-    It is quite possible that other boost control settings could have been used
-    on some aircraft, or that takeoff/extra boost could have activated by other
-    means than pushing the throttle full forward through a gate, but this will
-    suffice for now.
-
-    Note that MAXMP is still the non-boosted max manifold pressure even for
-    boosted engines - effectively this is simply a measure of the pressure drop
-    through the fully open throttle.
-</pre>
+- \b ratedpower[123] - unused
+- \b ratedrpm[123] - The rpm at which rated boost is developed
+- \b ratedaltitude[123] - The altitude up to which the rated boost can be
+      maintained. Up to this altitude the boost is clipped to rated boost or
+      takeoffboost. Beyond this altitude the manifold pressure must drop,
+      since the supercharger is now at maximum unregulated output. The actual
+      pressure multiplier of the supercharger system is calculated at
+      initialization from this value.
 
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
-    @version $Id: FGPiston.h,v 1.28 2011/06/13 04:55:52 jentron Exp $
+    @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
+    @version $Id: FGPiston.h,v 1.29 2011/06/16 16:32:10 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,29 +301,29 @@ private:
   double Ram_Air_Factor;           // number
 
   double StarterHP;                // initial horsepower of starter motor
-  int BoostSpeeds;	// Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
-  int BoostSpeed;	// The current boost-speed (zero-based).
-  bool Boosted;		// Set true for boosted engine.
-  int BoostManual;	// The raw value read in from the config file - should be 1 or 0 - see description below.
-  bool bBoostManual;	// Set true if pilot must manually control the boost speed.
-  int BoostOverride;	// The raw value read in from the config file - should be 1 or 0 - see description below.
-  bool bBoostOverride;	// Set true if pilot override of the boost regulator was fitted.
+  int BoostSpeeds;  // Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
+  int BoostSpeed;   // The current boost-speed (zero-based).
+  bool Boosted;     // Set true for boosted engine.
+  int BoostManual;  // The raw value read in from the config file - should be 1 or 0 - see description below.
+  bool bBoostManual;    // Set true if pilot must manually control the boost speed.
+  int BoostOverride;    // The raw value read in from the config file - should be 1 or 0 - see description below.
+  bool bBoostOverride;  // Set true if pilot override of the boost regulator was fitted.
               // (Typically called 'war emergency power').
-  bool bTakeoffBoost;	// Set true if extra takeoff / emergency boost above rated boost could be attained.
+  bool bTakeoffBoost;   // Set true if extra takeoff / emergency boost above rated boost could be attained.
               // (Typically by extra throttle movement past a mechanical 'gate').
-  double TakeoffBoost;	// Sea-level takeoff boost in psi. (if fitted).
-  double RatedBoost[FG_MAX_BOOST_SPEEDS];	// Sea-level rated boost in psi.
-  double RatedAltitude[FG_MAX_BOOST_SPEEDS];	// Altitude at which full boost is reached (boost regulation ends)
+  double TakeoffBoost;  // Sea-level takeoff boost in psi. (if fitted).
+  double RatedBoost[FG_MAX_BOOST_SPEEDS];   // Sea-level rated boost in psi.
+  double RatedAltitude[FG_MAX_BOOST_SPEEDS];    // Altitude at which full boost is reached (boost regulation ends)
                           // and at which power starts to fall with altitude [ft].
   double RatedRPM[FG_MAX_BOOST_SPEEDS]; // Engine speed at which the rated power for each boost speed is delivered [rpm].
-  double RatedPower[FG_MAX_BOOST_SPEEDS];	// Power at rated throttle position at rated altitude [HP].
-  double BoostSwitchAltitude[FG_MAX_BOOST_SPEEDS - 1];	// Altitude at which switchover (currently assumed automatic)
+  double RatedPower[FG_MAX_BOOST_SPEEDS];   // Power at rated throttle position at rated altitude [HP].
+  double BoostSwitchAltitude[FG_MAX_BOOST_SPEEDS - 1];  // Altitude at which switchover (currently assumed automatic)
                               // from one boost speed to next occurs [ft].
   double BoostSwitchPressure[FG_MAX_BOOST_SPEEDS - 1];  // Pressure at which boost speed switchover occurs [Pa]
-  double BoostMul[FG_MAX_BOOST_SPEEDS];	// Pressure multipier of unregulated supercharger
-  double RatedMAP[FG_MAX_BOOST_SPEEDS];	// Rated manifold absolute pressure [Pa] (BCV clamp)
-  double TakeoffMAP[FG_MAX_BOOST_SPEEDS];	// Takeoff setting manifold absolute pressure [Pa] (BCV clamp)
-  double BoostSwitchHysteresis;	// Pa.
+  double BoostMul[FG_MAX_BOOST_SPEEDS]; // Pressure multipier of unregulated supercharger
+  double RatedMAP[FG_MAX_BOOST_SPEEDS]; // Rated manifold absolute pressure [Pa] (BCV clamp)
+  double TakeoffMAP[FG_MAX_BOOST_SPEEDS];   // Takeoff setting manifold absolute pressure [Pa] (BCV clamp)
+  double BoostSwitchHysteresis; // Pa.
 
   double minMAP;  // Pa
   double maxMAP;  // Pa

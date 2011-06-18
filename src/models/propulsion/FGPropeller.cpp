@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.33 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.34 2011/06/16 14:54:06 jentron Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,8 +102,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     ConstantSpeed = (int)prop_element->FindElementValueAsNumber("constspeed");
   if (prop_element->FindElement("reversepitch"))
     ReversePitch = prop_element->FindElementValueAsNumber("reversepitch");
-  for (int i=0; i<2; i++) {
-    table_element = prop_element->FindNextElement("table");
+  while(table_element = prop_element->FindNextElement("table")) {
     name = table_element->GetAttributeValue("name");
     try {
       if (name == "C_THRUST") {
@@ -121,6 +120,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       throw("Error loading propeller table:" + name + ". " + str);
     }
   }
+  if( (cPower == 0) || (cThrust == 0)){
+      cerr << "Propeller configuration must contain C_THRUST and C_POWER tables!" << endl;
+  }
 
   local_element = prop_element->GetParent()->FindElement("sense");
   if (local_element) {
@@ -132,7 +134,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     P_Factor = local_element->GetDataAsNumber();
   }
   if (P_Factor < 0) {
-    cerr << "P-Factor value in config file must be greater than zero" << endl;
+    cerr << "P-Factor value in propeller configuration file must be greater than zero" << endl;
   }
   if (prop_element->FindElement("ct_factor"))
     SetCtFactor( prop_element->FindElementValueAsNumber("ct_factor") );
@@ -424,10 +426,25 @@ void FGPropeller::Debug(int from)
       cout << "      Maximum Pitch  = " << MaxPitch << endl;
       cout << "      Minimum RPM  = " << MinRPM << endl;
       cout << "      Maximum RPM  = " << MaxRPM << endl;
+// Tables are being printed elsewhere...
 //      cout << "      Thrust Coefficient: " <<  endl;
 //      cThrust->Print();
 //      cout << "      Power Coefficient: " <<  endl;
 //      cPower->Print();
+//      cout << "      Mach Thrust Coefficient: " <<  endl;
+//      if(CtMach)
+//      {
+//          CtMach->Print();
+//      } else {
+//          cout << "        NONE" <<  endl;
+//      }
+//      cout << "      Mach Power Coefficient: " <<  endl;
+//      if(CpMach)
+//      {
+//          CpMach->Print();
+//      } else {
+//          cout << "        NONE" <<  endl;
+//      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
