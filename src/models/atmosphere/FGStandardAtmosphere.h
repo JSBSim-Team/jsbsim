@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.9 2011/06/13 12:06:21 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.10 2011/06/20 12:14:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -105,7 +105,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.9 2011/06/13 12:06:21 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.10 2011/06/20 12:14:52 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,7 +194,7 @@ public:
   /// this function.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetSLTemperature(double t, eTemperature unit=eFahrenheit);
+  virtual void SetTemperatureSL(double t, eTemperature unit=eFahrenheit);
 
   /// Sets the temperature at the supplied altitude, if it is to be different
   /// than the standard temperature.
@@ -274,7 +274,7 @@ public:
       @param pressure The pressure in the units specified (PSF by default).
       @param unit the unit of measure that the specified pressure is
                        supplied in.*/
-  virtual void SetSeaLevelPressure(double pressure, ePressure unit=ePSF);
+  virtual void SetPressureSL(double pressure, ePressure unit=ePSF);
 
   /** Resets the sea level to the Standard sea level pressure, and recalculates
       dependent parameters so that the pressure calculations are standard. */

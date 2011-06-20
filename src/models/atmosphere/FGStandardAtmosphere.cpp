@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.9 2011/06/13 12:06:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.10 2011/06/20 12:14:52 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGStandardAtmosphere::SetSeaLevelPressure(double pressure, ePressure unit)
+void FGStandardAtmosphere::SetPressureSL(double pressure, ePressure unit)
 {
   double press = ConvertToPSF(pressure, unit);
 
@@ -331,7 +331,7 @@ void FGStandardAtmosphere::SetTemperatureBias(double t, eTemperature unit)
 // Internally, the Rankine scale is used for calculations, so any temperature
 // supplied must be converted to that unit.
 
-void FGStandardAtmosphere::SetSLTemperature(double t, eTemperature unit)
+void FGStandardAtmosphere::SetTemperatureSL(double t, eTemperature unit)
 {
   double targetSLtemp = ConvertToRankine(t, unit);
 
