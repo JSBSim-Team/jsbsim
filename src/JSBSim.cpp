@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.66 2011/04/09 17:23:01 andgi Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.67 2011/06/21 13:54:39 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -122,7 +122,7 @@ void PrintHelp(void);
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
   void sim_nsleep(long nanosec)
   {
-    Sleep(nanosec*1e-6); // convert nanoseconds (passed in) to milliseconds for Win32.
+    Sleep((DWORD)(nanosec*1e-6)); // convert nanoseconds (passed in) to milliseconds for Win32.
   }
 #else
   void sim_nsleep(long nanosec)

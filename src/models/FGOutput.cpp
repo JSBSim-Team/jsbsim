@@ -42,6 +42,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
+#include "atmosphere/FGWinds.h"
 #include "FGFCS.h"
 #include "FGAerodynamics.h"
 #include "FGGroundReactions.h"
@@ -74,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.55 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.56 2011/06/21 13:54:40 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -246,6 +247,7 @@ void FGOutput::DelimitedOutput(const string& fname)
   const FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
   const FGAircraft* Aircraft = FDMExec->GetAircraft();
   const FGAtmosphere* Atmosphere = FDMExec->GetAtmosphere();
+  const FGWinds* Winds = FDMExec->GetWinds();
   const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
   const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
   const FGPropagate* Propagate = FDMExec->GetPropagate();
@@ -453,9 +455,9 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << Atmosphere->GetTemperature() << delimeter;
     outstream << Atmosphere->GetPressureSL() << delimeter;
     outstream << Atmosphere->GetPressure() << delimeter;
-    outstream << Atmosphere->GetTurbMagnitude() << delimeter;
-    outstream << Atmosphere->GetTurbDirection().Dump(delimeter) << delimeter;
-    outstream << Atmosphere->GetTotalWindNED().Dump(delimeter);
+    outstream << Winds->GetTurbMagnitude() << delimeter;
+    outstream << Winds->GetTurbDirection().Dump(delimeter) << delimeter;
+    outstream << Winds->GetTotalWindNED().Dump(delimeter);
   }
   if (SubSystems & ssMassProps) {
     outstream << delimeter;
@@ -735,6 +737,7 @@ void FGOutput::SocketOutput(void)
   const FGPropagate* Propagate = FDMExec->GetPropagate();
   const FGFCS* FCS = FDMExec->GetFCS();
   const FGAtmosphere* Atmosphere = FDMExec->GetAtmosphere();
+  const FGWinds* Winds = FDMExec->GetWinds();
   const FGAircraft* Aircraft = FDMExec->GetAircraft();
   const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
 
@@ -910,9 +913,9 @@ void FGOutput::SocketOutput(void)
     socket->Append(Atmosphere->GetDensity());
     socket->Append(Atmosphere->GetPressureSL());
     socket->Append(Atmosphere->GetPressure());
-    socket->Append(Atmosphere->GetTurbMagnitude());
-    socket->Append(Atmosphere->GetTurbDirection().Dump(","));
-    socket->Append(Atmosphere->GetTotalWindNED().Dump(","));
+    socket->Append(Winds->GetTurbMagnitude());
+    socket->Append(Winds->GetTurbDirection().Dump(","));
+    socket->Append(Winds->GetTotalWindNED().Dump(","));
   }
   if (SubSystems & ssMassProps) {
     socket->Append(MassBalance->GetJ()(1,1));

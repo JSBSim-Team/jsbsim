@@ -44,6 +44,7 @@ INCLUDES
 #include "FGAerodynamics.h"
 #include "FGPropagate.h"
 #include "FGAtmosphere.h"
+#include "atmosphere/FGWinds.h"
 #include "FGFDMExec.h"
 #include "FGAircraft.h"
 #include "FGInertial.h"
@@ -59,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.49 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.50 2011/06/21 13:54:40 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,8 +192,8 @@ bool FGAuxiliary::Run(bool Holding)
   }
 
 // Combine the wind speed with aircraft speed to obtain wind relative speed
-  FGColumnVector3 wind = Tl2b*FDMExec->GetAtmosphere()->GetTotalWindNED();
-  vAeroPQR = vPQR - FDMExec->GetAtmosphere()->GetTurbPQR();
+  FGColumnVector3 wind = Tl2b*FDMExec->GetWinds()->GetTotalWindNED();
+  vAeroPQR = vPQR - FDMExec->GetWinds()->GetTurbPQR();
   vAeroUVW = vUVW - wind;
 
   Vt = vAeroUVW.Magnitude();
@@ -310,8 +311,8 @@ double FGAuxiliary::GetHeadWind(void) const
 {
   double psiw,vw;
 
-  psiw = FDMExec->GetAtmosphere()->GetWindPsi();
-  vw = FDMExec->GetAtmosphere()->GetTotalWindNED().Magnitude();
+  psiw = FDMExec->GetWinds()->GetWindPsi();
+  vw = FDMExec->GetWinds()->GetTotalWindNED().Magnitude();
 
   return vw*cos(psiw - FDMExec->GetPropagate()->GetEuler(ePsi));
 }
@@ -326,8 +327,8 @@ double FGAuxiliary::GetCrossWind(void) const
 {
   double psiw,vw;
 
-  psiw = FDMExec->GetAtmosphere()->GetWindPsi();
-  vw = FDMExec->GetAtmosphere()->GetTotalWindNED().Magnitude();
+  psiw = FDMExec->GetWinds()->GetWindPsi();
+  vw = FDMExec->GetWinds()->GetTotalWindNED().Magnitude();
 
   return  vw*sin(psiw - FDMExec->GetPropagate()->GetEuler(ePsi));
 }
