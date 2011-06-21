@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.29 2011/06/06 22:39:52 jentron Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.30 2011/06/21 04:41:54 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   if (el->FindElement("standpipe"))
     InitialStandpipe = Standpipe = el->FindElementValueAsNumberConvertTo("standpipe", "LBS");
   if (el->FindElement("priority"))
-    InitialPriority = Priority = el->FindElementValueAsNumber("priority");
+    InitialPriority = Priority = (int)el->FindElementValueAsNumber("priority");
   if (el->FindElement("density"))
     Density = el->FindElementValueAsNumberConvertTo("density", "LBS/GAL");
   if (el->FindElement("type"))

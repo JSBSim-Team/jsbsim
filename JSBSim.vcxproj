@@ -117,6 +117,8 @@
     </Xdcmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
+    <ClInclude Include="src\models\atmosphere\FGWinds.h" />
     <ClInclude Include="src\simgear\xml\ascii.h" />
     <ClInclude Include="src\simgear\xml\asciitab.h" />
     <ClInclude Include="src\simgear\compiler.h" />
@@ -214,6 +216,8 @@
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
+    <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
     <ClCompile Include="src\simgear\magvar\coremag.cxx" />
     <ClCompile Include="src\simgear\xml\easyxml.cxx" />
     <ClCompile Include="src\models\flight_control\FGAccelerometer.cpp" />
@@ -302,9 +306,7 @@
     <None Include="engine\ah1s_rotor.xml" />
     <None Include="engine\avco_lycoming_t53.xml" />
     <None Include="scripts\ball_chute.xml" />
-    <None Include="scripts\ball_orbit.xml">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="scripts\ball_orbit.xml" />
     <None Include="scripts\c172pbrake.xml" />
     <None Include="aircraft\F4N\F4N.xml" />
     <None Include="systems\fg_glue.xml" />

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.19 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.20 2011/06/21 04:41:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ public:
   /// Constructor
   FGModel(FGFDMExec*);
   /// Destructor
-  ~FGModel();
+  virtual ~FGModel();
 
   std::string Name;
 

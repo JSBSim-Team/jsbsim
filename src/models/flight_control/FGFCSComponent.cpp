@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.32 2011/06/16 03:39:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.33 2011/06/21 04:41:54 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,7 +163,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       delay = (unsigned int)(delay_time / dt);
     }
     output_array.resize(delay);
-    for (int i=0; i<delay; i++) output_array[i] = 0.0;
+    for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
   }
 
   clip_el = element->FindElement("clipto");

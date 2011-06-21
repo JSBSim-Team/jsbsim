@@ -1,13 +1,12 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGAtmosphere.cpp
- Author:       Jon Berndt
-               Implementation of 1959 Standard Atmosphere added by Tony Peden
- Date started: 11/24/98
- Purpose:      Models the atmosphere
- Called by:    FGSimExec
+ Author:       Jon Berndt, Tony Peden
+ Date started: 6/2011
+ Purpose:      Models an atmosphere interface class
+ Called by:    FGFDMExec
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -28,92 +27,43 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-Models the atmosphere. The equation used below was determined by a third order
-curve fit using Excel. The data is from the ICAO atmosphere model.
+This models a base atmosphere class to serve as a common interface to any derived
+atmosphere models.
 
 HISTORY
 --------------------------------------------------------------------------------
-11/24/98   JSB   Created
-07/23/99   TP    Added implementation of 1959 Standard Atmosphere
-                 Moved calculation of Mach number to FGPropagate
-                 Later updated to '76 model
+6/18/2011 Started Jon S. Berndt
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[1]   Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
-      1989, ISBN 0-07-001641-0
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGAtmosphere.h"
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGInertial.h"
-#include "FGAuxiliary.h"
-#include "FGFDMExec.h"
-#include "input_output/FGPropertyManager.h"
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
-
-using namespace std;
+#include "FGFDMExec.h"
+#include "FGAtmosphere.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.45 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.46 2011/06/21 04:41:54 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
+                                               PressureAltitude(0.0),      // ft
+                                               DensityAltitude(0.0),       // ft
+                                               SutherlandConstant(198.72), // deg Rankine
+                                               Beta(2.269690E-08)          // slug/(sec ft R^0.5)
 {
   Name = "FGAtmosphere";
-  lastIndex = 0;
-  h = 0.0;
-  psiw = 0.0;
-  htab[0]=0;
-  htab[1]= 36089.0;
-  htab[2]= 65617.0;
-  htab[3]=104987.0;
-  htab[4]=154199.0;
-  htab[5]=167322.0;
-  htab[6]=232940.0;
-  htab[7]=278385.0; //ft.
-
-  MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-  SetTurbType( ttMilspec );
-  TurbGain = 1.0;
-  TurbRate = 10.0;
-  Rhythmicity = 0.1;
-  spike = target_time = strength = 0.0;
-  wind_from_clockwise = 0.0;
-  SutherlandConstant = 198.72; // deg Rankine
-  Beta = 2.269690E-08; // slug/(sec ft R^0.5)
-
-  T_dev_sl = T_dev = delta_T = 0.0;
-  StandardTempOnly = false;
-  first_pass = true;
-  vGustNED.InitMatrix();
-  vTurbulenceNED.InitMatrix();
-
-  // Milspec turbulence model
-  windspeed_at_20ft = 0.;
-  probability_of_exceedence_index = 0;
-  POE_Table = new FGTable(7,12);
-  // this is Figure 7 from p. 49 of MIL-F-8785C
-  // rows: probability of exceedance curve index, cols: altitude in ft
-  *POE_Table
-           << 500.0 << 1750.0 << 3750.0 << 7500.0 << 15000.0 << 25000.0 << 35000.0 << 45000.0 << 55000.0 << 65000.0 << 75000.0 << 80000.0
-    << 1   <<   3.2 <<    2.2 <<    1.5 <<    0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0
-    << 2   <<   4.2 <<    3.6 <<    3.3 <<    1.6 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0
-    << 3   <<   6.6 <<    6.9 <<    7.4 <<    6.7 <<     4.6 <<     2.7 <<     0.4 <<     0.0 <<     0.0 <<     0.0 <<     0.0 <<     0.0
-    << 4   <<   8.6 <<    9.6 <<   10.6 <<   10.1 <<     8.0 <<     6.6 <<     5.0 <<     4.2 <<     2.7 <<     0.0 <<     0.0 <<     0.0
-    << 5   <<  11.8 <<   13.0 <<   16.0 <<   15.1 <<    11.6 <<     9.7 <<     8.1 <<     8.2 <<     7.9 <<     4.9 <<     3.2 <<     2.1
-    << 6   <<  15.6 <<   17.6 <<   23.0 <<   23.6 <<    22.1 <<    20.0 <<    16.0 <<    15.1 <<    12.1 <<     7.9 <<     6.2 <<     5.1
-    << 7   <<  18.7 <<   21.5 <<   28.4 <<   30.2 <<    30.7 <<    31.0 <<    25.2 <<    23.1 <<    17.5 <<    10.7 <<     8.4 <<     7.2;
 
   bind();
   Debug(0);
@@ -123,7 +73,6 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAtmosphere::~FGAtmosphere()
 {
-  delete(POE_Table);
   Debug(1);
 }
 
@@ -131,17 +80,16 @@ FGAtmosphere::~FGAtmosphere()
 
 bool FGAtmosphere::InitModel(void)
 {
-  UseInternal();  // this is the default
+  Calculate(0.0);
+  SLtemperature = Temperature = 518.67;
+  SLpressure = Pressure = 2116.22;
+  SLdensity = Density = Pressure/(Reng*Temperature);
+  SLsoundspeed = Soundspeed = sqrt(SHRatio*Reng*(Temperature));
 
-  Calculate(h);
-  StdSLtemperature = SLtemperature = 518.67;
-  StdSLpressure    = SLpressure = 2116.22;
-  StdSLdensity     = SLdensity = 0.00237767;
-  StdSLsoundspeed  = SLsoundspeed = sqrt(SHRatio*Reng*StdSLtemperature);
-  rSLtemperature = 1.0/StdSLtemperature;
-  rSLpressure    = 1.0/StdSLpressure;
-  rSLdensity     = 1.0/StdSLdensity;
-  rSLsoundspeed  = 1.0/StdSLsoundspeed;
+  rSLtemperature = 1/SLtemperature ;
+  rSLpressure    = 1/SLpressure    ;
+  rSLdensity     = 1/SLdensity     ;
+  rSLsoundspeed  = 1/SLsoundspeed  ;
 
   return true;
 }
@@ -155,15 +103,9 @@ bool FGAtmosphere::Run(bool Holding)
 
   RunPreFunctions();
 
-  T_dev = 0.0;
-  h = FDMExec->GetPropagate()->GetAltitudeASL();
+  double altitude = FDMExec->GetPropagate()->GetAltitudeASL();
 
-  if (!useExternal) {
-    Calculate(h);
-    CalculateDerived();
-  } else {
-    CalculateDerived();
-  }
+  Calculate(altitude);
 
   RunPostFunctions();
 
@@ -172,537 +114,103 @@ bool FGAtmosphere::Run(bool Holding)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// See reference 1
 
 void FGAtmosphere::Calculate(double altitude)
 {
-  double slope, reftemp, refpress;
-  int i = lastIndex;
+  Temperature = GetTemperature(altitude);
+  Pressure    = GetPressure(altitude);
+  Density     = Pressure/(Reng*Temperature);
+  Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
 
-  if (altitude < htab[lastIndex]) {
-    if (altitude <= 0) {
-      i = 0;
-      altitude=0;
-    } else {
-       i = lastIndex-1;
-       while (htab[i] > altitude) i--;
-    }
-  } else if (altitude > htab[lastIndex+1]) {
-    if (altitude >= htab[7]) {
-      i = 7;
-      altitude = htab[7];
-    } else {
-      i = lastIndex+1;
-      while (htab[i+1] < altitude) i++;
-    }
-  }
-
-  switch(i) {
-  case 0: // Sea level
-    slope     = -0.00356616; // R/ft.
-    reftemp   = 518.67;   // in degrees Rankine, 288.15 Kelvin
-    refpress  = 2116.22;    // psf
-    //refdens   = 0.00237767;  // slugs/cubic ft.
-    break;
-  case 1:     // 36089 ft. or 11 km
-    slope     = 0;
-    reftemp   = 389.97; // in degrees Rankine, 216.65 Kelvin
-    refpress  = 472.763;
-    //refdens   = 0.000706032;
-    break;
-  case 2:     // 65616 ft. or 20 km
-    slope     = 0.00054864;
-    reftemp   = 389.97; // in degrees Rankine, 216.65 Kelvin
-    refpress  = 114.636;
-    //refdens   = 0.000171306;
-    break;
-  case 3:     // 104986 ft. or 32 km
-    slope     = 0.001536192;
-    reftemp   = 411.57; // in degrees Rankine, 228.65 Kelvin
-    refpress  = 18.128;
-    //refdens   = 1.18422e-05;
-    break;
-  case 4:     // 154199 ft. 47 km
-    slope     = 0;
-    reftemp   = 487.17; // in degrees Rankine, 270.65 Kelvin
-    refpress  = 2.316;
-    //refdens   = 4.00585e-7;
-    break;
-  case 5:     // 167322 ft. or 51 km
-    slope     = -0.001536192;
-    reftemp   = 487.17; // in degrees Rankine, 270.65 Kelvin
-    refpress  = 1.398;
-    //refdens   = 8.17102e-7;
-    break;
-  case 6:     // 232940 ft. or 71 km
-    slope     = -0.00109728;
-    reftemp   = 386.368; // in degrees Rankine, 214.649 Kelvin
-    refpress  = 0.0826;
-    //refdens   = 8.77702e-9;
-    break;
-  case 7:     // 278385 ft. or 84.8520 km
-    slope     = 0;
-    reftemp   = 336.5; // in degrees Rankine, 186.94 Kelvin
-    refpress  = 0.00831;
-    //refdens   = 2.19541e-10;
-    break;
-  default:     // sea level
-    slope     = -0.00356616; // R/ft.
-    reftemp   = 518.67;   // in degrees Rankine, 288.15 Kelvin
-    refpress  = 2116.22;    // psf
-    //refdens   = 0.00237767;  // slugs/cubic ft.
-    break;
-
-  }
-
-  // If delta_T is set, then that is our temperature deviation at any altitude.
-  // If not, then we'll estimate a deviation based on the sea level deviation (if set).
-
-  if(!StandardTempOnly) {
-    T_dev = 0.0;
-    if (delta_T != 0.0) {
-      T_dev = delta_T;
-    } else {
-      if ((altitude < 36089.239) && (T_dev_sl != 0.0)) {
-        T_dev = T_dev_sl * ( 1.0 - (altitude/36089.239));
-      }
-    }
-    reftemp+=T_dev;
-  }
-
-  if (slope == 0) {
-    intTemperature = reftemp;
-    intPressure = refpress*exp(-FDMExec->GetInertial()->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
-    intDensity = intPressure/(Reng*intTemperature);
-  } else {
-    intTemperature = reftemp+slope*(altitude-htab[i]);
-    intPressure = refpress*pow(intTemperature/reftemp,-FDMExec->GetInertial()->SLgravity()/(slope*Reng));
-    intDensity = intPressure/(Reng*intTemperature);
-  }
-  
-  lastIndex=i;
+  Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
+  KinematicViscosity = Viscosity / Density;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Calculate parameters derived from T, P and rho
-// Sum gust and turbulence values in NED frame into the wind vector.
 
-void FGAtmosphere::CalculateDerived(void)
+void FGAtmosphere::SetPressureSL(double pressure, ePressure unit)
 {
-  T_dev = (*temperature) - GetTemperature(h);
+  double press = ConvertToPSF(pressure, unit);
 
-  if (T_dev == 0.0) density_altitude = h;
-  else              density_altitude = 518.67/0.00356616 * (1.0 - pow(GetDensityRatio(),0.235));
-
-  if (turbType != ttNone) Turbulence();
-
-  vTotalWindNED = vWindNED + vGustNED + vTurbulenceNED;
-
-   // psiw (Wind heading) is the direction the wind is blowing towards
-  if (vWindNED(eX) != 0.0) psiw = atan2( vWindNED(eY), vWindNED(eX) );
-  if (psiw < 0) psiw += 2*M_PI;
-
-  soundspeed = sqrt(SHRatio*Reng*(*temperature));
-
-  intViscosity = Beta * pow(intTemperature, 1.5) / (SutherlandConstant + intTemperature);
-  intKinematicViscosity = intViscosity / intDensity;
-}
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard atmospheric properties at a specified altitude
-
-void FGAtmosphere::GetStdAtmosphere(double altitude) {
-  StandardTempOnly = true;
-  Calculate(altitude);
-  StandardTempOnly = false;
-  atmosphere.Temperature = intTemperature;
-  atmosphere.Pressure = intPressure;
-  atmosphere.Density = intDensity;
-
-  // Reset the internal atmospheric state
-  Calculate(h);
+  SLpressure = press;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard pressure at a specified altitude
+// Get the modeled density at a specified altitude
 
-double FGAtmosphere::GetPressure(double altitude) {
-  GetStdAtmosphere(altitude);
-  return atmosphere.Pressure;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard temperature at a specified altitude
-
-double FGAtmosphere::GetTemperature(double altitude) {
-  GetStdAtmosphere(altitude);
-  return atmosphere.Temperature;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the standard density at a specified altitude
-
-double FGAtmosphere::GetDensity(double altitude) {
-  GetStdAtmosphere(altitude);
-  return atmosphere.Density;
-}
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// square a value, but preserve the original sign
-
-static inline double square_signed (double value)
+double FGAtmosphere::GetDensity(double altitude) const
 {
-    if (value < 0)
-        return value * value * -1;
-    else
-        return value * value;
+  return GetPressure(altitude)/(Reng * GetTemperature(altitude));
 }
 
-/// simply square a value
-static inline double sqr(double x) { return x*x; }
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// psi is the angle that the wind is blowing *towards*
+// This function sets the sea level temperature.
+// Internally, the Rankine scale is used for calculations, so any temperature
+// supplied must be converted to that unit.
 
-void FGAtmosphere::SetWindspeed(double speed)
+void FGAtmosphere::SetTemperatureSL(double t, eTemperature unit)
 {
-  if (vWindNED.Magnitude() == 0.0) {
-    psiw = 0.0;
-    vWindNED(eNorth) = speed;
-  } else {
-    vWindNED(eNorth) = speed * cos(psiw);
-    vWindNED(eEast) = speed * sin(psiw);
-    vWindNED(eDown) = 0.0;
-  }
+  SLtemperature = ConvertToRankine(t, unit);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAtmosphere::GetWindspeed(void) const
+double FGAtmosphere::ConvertToRankine(double t, eTemperature unit) const
 {
-  return vWindNED.Magnitude();
-}
+  double targetTemp=0; // in degrees Rankine
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// psi is the angle that the wind is blowing *towards*
-
-void FGAtmosphere::SetWindPsi(double dir)
-{
-  double mag = GetWindspeed();
-  psiw = dir;
-  SetWindspeed(mag);  
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAtmosphere::Turbulence(void)
-{
-  const double DeltaT = rate*FDMExec->GetDeltaT();
-  const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
-  const double HOverBMAC = FDMExec->GetAuxiliary()->GetHOverBMAC();
-  const FGMatrix33& Tl2b = FDMExec->GetPropagate()->GetTl2b();
-  const double HTailArm = FDMExec->GetAircraft()->GetHTailArm();
-  const double VTailArm = FDMExec->GetAircraft()->GetVTailArm();
-
-  switch (turbType) {
-  case ttStandard: {
-    // TurbGain = TurbGain * TurbGain * 100.0; // what is this!?
-
-    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
-
-    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
-                                // Scale the magnitude so that it moves
-                                // away from the peaks
-    MagnitudedAccelDt = ((MagnitudedAccelDt - Magnitude) /
-                         (1 + fabs(Magnitude)));
-    MagnitudeAccel    += MagnitudedAccelDt*TurbRate*DeltaT;
-    Magnitude         += MagnitudeAccel*DeltaT;
-    Magnitude          = fabs(Magnitude);
-
-    vDirectiondAccelDt.Normalize();
-
-                                // deemphasise non-vertical forces
-    vDirectiondAccelDt(eX) = square_signed(vDirectiondAccelDt(eX));
-    vDirectiondAccelDt(eY) = square_signed(vDirectiondAccelDt(eY));
-
-    vDirectionAccel += vDirectiondAccelDt*TurbRate*DeltaT;
-    vDirectionAccel.Normalize();
-    vDirection      += vDirectionAccel*DeltaT;
-
-    vDirection.Normalize();
-
-                                // Diminish turbulence within three wingspans
-                                // of the ground
-    vTurbulenceNED = TurbGain * Magnitude * vDirection;
-    if (HOverBMAC < 3.0)
-        vTurbulenceNED *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
-
-    // I don't believe these next two statements calculate the proper gradient over
-    // the aircraft body. One reason is because this has no relationship with the
-    // orientation or velocity of the aircraft, which it must have. What is vTurbulenceGrad
-    // supposed to represent? And the direction and magnitude of the turbulence can change,
-    // so both accelerations need to be accounted for, no?
-
-    // Need to determine the turbulence change in body axes between two time points.
-
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
-    vBodyTurbGrad = Tl2b*vTurbulenceGrad;
-
-    if (wingspan > 0) {
-      vTurbPQR(eP) = vBodyTurbGrad(eY)/wingspan;
-    } else {
-      vTurbPQR(eP) = vBodyTurbGrad(eY)/30.0;
-    }
-//     if (HTailArm != 0.0)
-//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/HTailArm;
-//     else
-//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
-
-    if (VTailArm > 0)
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/VTailArm;
-    else
-      vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
-
-                                // Clear the horizontal forces
-                                // actually felt by the plane, now
-                                // that we've used them to calculate
-                                // moments.
-                                // Why? (JSB)
-//    vTurbulenceNED(eX) = 0.0;
-//    vTurbulenceNED(eY) = 0.0;
-
+  switch(unit) {
+  case eFahrenheit:
+    targetTemp = t + 459.67;
     break;
-  }
-
-  case ttCulp: { 
-
-    vTurbPQR(eP) = wind_from_clockwise;
-    if (TurbGain == 0.0) return;
-  
-    // keep the inputs within allowable limts for this model
-    if (TurbGain < 0.0) TurbGain = 0.0;
-    if (TurbGain > 1.0) TurbGain = 1.0;
-    if (TurbRate < 0.0) TurbRate = 0.0;
-    if (TurbRate > 30.0) TurbRate = 30.0;
-    if (Rhythmicity < 0.0) Rhythmicity = 0.0;
-    if (Rhythmicity > 1.0) Rhythmicity = 1.0;
-
-    // generate a sine wave corresponding to turbulence rate in hertz
-    double time = FDMExec->GetSimTime();
-    double sinewave = sin( time * TurbRate * 6.283185307 );
-
-    double random = 0.0;
-    if (target_time == 0.0) {
-      strength = random = 1 - 2.0*(double(rand())/double(RAND_MAX));
-      target_time = time + 0.71 + (random * 0.5);
-    }
-    if (time > target_time) {
-      spike = 1.0;
-      target_time = 0.0;
-    }    
-
-    // max vertical wind speed in fps, corresponds to TurbGain = 1.0
-    double max_vs = 40;
-
-    vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
-    double delta = strength * max_vs * TurbGain * (1-Rhythmicity) * spike;
-
-    // Vertical component of turbulence.
-    vTurbulenceNED(3) = sinewave * max_vs * TurbGain * Rhythmicity;
-    vTurbulenceNED(3)+= delta;
-    if (HOverBMAC < 3.0)
-        vTurbulenceNED(3) *= HOverBMAC * 0.3333;
- 
-    // Yaw component of turbulence.
-    vTurbulenceNED(1) = sin( delta * 3.0 );
-    vTurbulenceNED(2) = cos( delta * 3.0 );
-
-    // Roll component of turbulence. Clockwise vortex causes left roll.
-    vTurbPQR(eP) += delta * 0.04;
-
-    spike = spike * 0.9;
+  case eCelsius:
+    targetTemp = t*9.0/5.0 + 32.0 + 459.67;
     break;
+  case eRankine:
+    targetTemp = t;
+    break;
+  case eKelvin:
+    targetTemp = t*9.0/5.0;
   }
-  case ttMilspec:
-  case ttTustin: {
-    double V = FDMExec->GetAuxiliary()->GetVt(); // true airspeed in ft/s
 
-    // an index of zero means turbulence is disabled
-    // airspeed occurs as divisor in the code below
-    if (probability_of_exceedence_index == 0 || V == 0) {
-      vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
-      vTurbPQR(1) = vTurbPQR(2) = vTurbPQR(3) = 0.0;
-      return;
-    }
+  return targetTemp;
+}
 
-    // Turbulence model according to MIL-F-8785C (Flying Qualities of Piloted Aircraft)
-    double
-      h = FDMExec->GetPropagate()->GetDistanceAGL(),
-      b_w = wingspan,
-      L_u, L_w, sig_u, sig_w;
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-      if (b_w == 0.) b_w = 30.;
+double FGAtmosphere::ConvertToPSF(double p, ePressure unit) const
+{
+  double targetPressure=0; // Pressure in PSF
 
-    // clip height functions at 10 ft
-    if (h <= 10.) h = 10;
-
-    // Scale lengths L and amplitudes sigma as function of height
-    if (h <= 1000) {
-      L_u = h/pow(0.177 + 0.000823*h, 1.2); // MIL-F-8785c, Fig. 10, p. 55
-      L_w = h;
-      sig_w = 0.1*windspeed_at_20ft;
-      sig_u = sig_w/pow(0.177 + 0.000823*h, 0.4); // MIL-F-8785c, Fig. 11, p. 56
-    } else if (h <= 2000) {
-      // linear interpolation between low altitude and high altitude models
-      L_u = L_w = 1000 + (h-1000.)/1000.*750.;
-      sig_u = sig_w = 0.1*windspeed_at_20ft
-                    + (h-1000.)/1000.*(POE_Table->GetValue(probability_of_exceedence_index, h) - 0.1*windspeed_at_20ft);
-    } else {
-      L_u = L_w = 1750.; //  MIL-F-8785c, Sec. 3.7.2.1, p. 48
-      sig_u = sig_w = POE_Table->GetValue(probability_of_exceedence_index, h);
-    }
-
-    // keep values from last timesteps
-    // TODO maybe use deque?
-    static double
-      xi_u_km1 = 0, nu_u_km1 = 0,
-      xi_v_km1 = 0, xi_v_km2 = 0, nu_v_km1 = 0, nu_v_km2 = 0,
-      xi_w_km1 = 0, xi_w_km2 = 0, nu_w_km1 = 0, nu_w_km2 = 0,
-      xi_p_km1 = 0, nu_p_km1 = 0,
-      xi_q_km1 = 0, xi_r_km1 = 0;
-
-
-    double
-      T_V = DeltaT, // for compatibility of nomenclature
-      sig_p = 1.9/sqrt(L_w*b_w)*sig_w, // Yeager1998, eq. (8)
-      sig_q = sqrt(M_PI/2/L_w/b_w), // eq. (14)
-      sig_r = sqrt(2*M_PI/3/L_w/b_w), // eq. (17)
-      L_p = sqrt(L_w*b_w)/2.6, // eq. (10)
-      tau_u = L_u/V, // eq. (6)
-      tau_w = L_w/V, // eq. (3)
-      tau_p = L_p/V, // eq. (9)
-      tau_q = 4*b_w/M_PI/V, // eq. (13)
-      tau_r =3*b_w/M_PI/V, // eq. (17)
-      nu_u = GaussianRandomNumber(),
-      nu_v = GaussianRandomNumber(),
-      nu_w = GaussianRandomNumber(),
-      nu_p = GaussianRandomNumber(),
-      xi_u=0, xi_v=0, xi_w=0, xi_p=0, xi_q=0, xi_r=0;
-
-    // values of turbulence NED velocities
-
-    if (turbType == ttTustin) {
-      // the following is the Tustin formulation of Yeager's report
-      double
-        omega_w = V/L_w, // hidden in nomenclature p. 3
-        omega_v = V/L_u, // this is defined nowhere
-        C_BL  = 1/tau_u/tan(T_V/2/tau_u), // eq. (19)
-        C_BLp = 1/tau_p/tan(T_V/2/tau_p), // eq. (22)
-        C_BLq = 1/tau_q/tan(T_V/2/tau_q), // eq. (24)
-        C_BLr = 1/tau_r/tan(T_V/2/tau_r); // eq. (26)
-
-      // all values calculated so far are strictly positive, except for
-      // the random numbers nu_*. This means that in the code below, all
-      // divisors are strictly positive, too, and no floating point
-      // exception should occur.
-      xi_u = -(1 - C_BL*tau_u)/(1 + C_BL*tau_u)*xi_u_km1
-           + sig_u*sqrt(2*tau_u/T_V)/(1 + C_BL*tau_u)*(nu_u + nu_u_km1); // eq. (18)
-      xi_v = -2*(sqr(omega_v) - sqr(C_BL))/sqr(omega_v + C_BL)*xi_v_km1
-           - sqr(omega_v - C_BL)/sqr(omega_v + C_BL) * xi_v_km2
-           + sig_u*sqrt(3*omega_v/T_V)/sqr(omega_v + C_BL)*(
-                 (C_BL + omega_v/sqrt(3.))*nu_v
-               + 2/sqrt(3.)*omega_v*nu_v_km1
-               + (omega_v/sqrt(3.) - C_BL)*nu_v_km2); // eq. (20) for v
-      xi_w = -2*(sqr(omega_w) - sqr(C_BL))/sqr(omega_w + C_BL)*xi_w_km1
-           - sqr(omega_w - C_BL)/sqr(omega_w + C_BL) * xi_w_km2
-           + sig_w*sqrt(3*omega_w/T_V)/sqr(omega_w + C_BL)*(
-                 (C_BL + omega_w/sqrt(3.))*nu_w
-               + 2/sqrt(3.)*omega_w*nu_w_km1
-               + (omega_w/sqrt(3.) - C_BL)*nu_w_km2); // eq. (20) for w
-      xi_p = -(1 - C_BLp*tau_p)/(1 + C_BLp*tau_p)*xi_p_km1
-           + sig_p*sqrt(2*tau_p/T_V)/(1 + C_BLp*tau_p) * (nu_p + nu_p_km1); // eq. (21)
-      xi_q = -(1 - 4*b_w*C_BLq/M_PI/V)/(1 + 4*b_w*C_BLq/M_PI/V) * xi_q_km1
-           + C_BLq/V/(1 + 4*b_w*C_BLq/M_PI/V) * (xi_w - xi_w_km1); // eq. (23)
-      xi_r = - (1 - 3*b_w*C_BLr/M_PI/V)/(1 + 3*b_w*C_BLr/M_PI/V) * xi_r_km1
-           + C_BLr/V/(1 + 3*b_w*C_BLr/M_PI/V) * (xi_v - xi_v_km1); // eq. (25)
-
-    } else if (turbType == ttMilspec) {
-      // the following is the MIL-STD-1797A formulation
-      // as cited in Yeager's report
-      xi_u = (1 - T_V/tau_u)  *xi_u_km1 + sig_u*sqrt(2*T_V/tau_u)*nu_u;  // eq. (30)
-      xi_v = (1 - 2*T_V/tau_u)*xi_v_km1 + sig_u*sqrt(4*T_V/tau_u)*nu_v;  // eq. (31)
-      xi_w = (1 - 2*T_V/tau_w)*xi_w_km1 + sig_w*sqrt(4*T_V/tau_w)*nu_w;  // eq. (32)
-      xi_p = (1 - T_V/tau_p)  *xi_p_km1 + sig_p*sqrt(2*T_V/tau_p)*nu_p;  // eq. (33)
-      xi_q = (1 - T_V/tau_q)  *xi_q_km1 + M_PI/4/b_w*(xi_w - xi_w_km1);  // eq. (34)
-      xi_r = (1 - T_V/tau_r)  *xi_r_km1 + M_PI/3/b_w*(xi_v - xi_v_km1);  // eq. (35)
-    }
-
-    // rotate by wind azimuth and assign the velocities
-    double cospsi = cos(psiw), sinpsi = sin(psiw);
-    vTurbulenceNED(1) =  cospsi*xi_u + sinpsi*xi_v;
-    vTurbulenceNED(2) = -sinpsi*xi_u + cospsi*xi_v;
-    vTurbulenceNED(3) = xi_w;
-
-    vTurbPQR(1) =  cospsi*xi_p + sinpsi*xi_q;
-    vTurbPQR(2) = -sinpsi*xi_p + cospsi*xi_q;
-    vTurbPQR(3) = xi_r;
-
-    // vTurbPQR is in the body fixed frame, not NED
-    vTurbPQR = Tl2b*vTurbPQR;
-
-    // hand on the values for the next timestep
-    xi_u_km1 = xi_u; nu_u_km1 = nu_u;
-    xi_v_km2 = xi_v_km1; xi_v_km1 = xi_v; nu_v_km2 = nu_v_km1; nu_v_km1 = nu_v;
-    xi_w_km2 = xi_w_km1; xi_w_km1 = xi_w; nu_w_km2 = nu_w_km1; nu_w_km1 = nu_w;
-    xi_p_km1 = xi_p; nu_p_km1 = nu_p;
-    xi_q_km1 = xi_q;
-    xi_r_km1 = xi_r;
-
-  }
+  switch(unit) {
+  case ePSF:
+    targetPressure = p;
+    break;
+  case eMillibars:
+    targetPressure = p*2.08854342;
+    break;
+  case ePascals:
+    targetPressure = p*0.0208854342;
+    break;
+  case eInchesHg:
+    targetPressure = p*70.7180803;
+    break;
   default:
-    break;
+    throw("Undefined pressure unit given");
   }
-}
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAtmosphere::UseExternal(void)
-{
-  temperature=&exTemperature;
-  pressure=&exPressure;
-  density=&exDensity;
-  useExternal=true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAtmosphere::UseInternal(void)
-{
-  temperature=&intTemperature;
-  pressure=&intPressure;
-  density=&intDensity;
-  useExternal=false;
+  return targetPressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAtmosphere::bind(void)
 {
-  typedef double (FGAtmosphere::*PMF)(int) const;
-  typedef double (FGAtmosphere::*PMFv)(void) const;
-  typedef int (FGAtmosphere::*PMFt)(void) const;
-  typedef void   (FGAtmosphere::*PMFd)(int,double);
-  typedef void   (FGAtmosphere::*PMFi)(int);
-  PropertyManager->Tie("atmosphere/T-R", this, (PMFv)&FGAtmosphere::GetTemperature);
-  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, (PMFv)&FGAtmosphere::GetDensity);
-  PropertyManager->Tie("atmosphere/P-psf", this, (PMFv)&FGAtmosphere::GetPressure);
+  typedef double (FGAtmosphere::*PMFi)(int) const;
+  typedef void (FGAtmosphere::*PMF)(int, double);
+  PropertyManager->Tie("atmosphere/T-R", this, &FGAtmosphere::GetTemperature);
+  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, &FGAtmosphere::GetDensity);
+  PropertyManager->Tie("atmosphere/P-psf", this, &FGAtmosphere::GetPressure);
   PropertyManager->Tie("atmosphere/a-fps", this, &FGAtmosphere::GetSoundSpeed);
   PropertyManager->Tie("atmosphere/T-sl-R", this, &FGAtmosphere::GetTemperatureSL);
   PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this, &FGAtmosphere::GetDensitySL);
@@ -712,53 +220,6 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/sigma", this, &FGAtmosphere::GetDensityRatio);
   PropertyManager->Tie("atmosphere/delta", this, &FGAtmosphere::GetPressureRatio);
   PropertyManager->Tie("atmosphere/a-ratio", this, &FGAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("atmosphere/psiw-rad", this, &FGAtmosphere::GetWindPsi, &FGAtmosphere::SetWindPsi);
-  PropertyManager->Tie("atmosphere/delta-T", this, &FGAtmosphere::GetDeltaT, &FGAtmosphere::SetDeltaT);
-  PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGAtmosphere::GetSLTempDev, &FGAtmosphere::SetSLTempDev);
-  PropertyManager->Tie("atmosphere/density-altitude", this, &FGAtmosphere::GetDensityAltitude);
-
-  PropertyManager->Tie("atmosphere/wind-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetWindNED,
-                                                          (PMFd)&FGAtmosphere::SetWindNED);
-  PropertyManager->Tie("atmosphere/wind-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetWindNED,
-                                                          (PMFd)&FGAtmosphere::SetWindNED);
-  PropertyManager->Tie("atmosphere/wind-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetWindNED,
-                                                          (PMFd)&FGAtmosphere::SetWindNED);
-  PropertyManager->Tie("atmosphere/wind-mag-fps", this, &FGAtmosphere::GetWindspeed,
-                                                        &FGAtmosphere::SetWindspeed);
-  PropertyManager->Tie("atmosphere/total-wind-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetTotalWindNED);
-  PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGAtmosphere::GetTotalWindNED);
-  PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGAtmosphere::GetTotalWindNED);
-
-  PropertyManager->Tie("atmosphere/gust-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-  PropertyManager->Tie("atmosphere/gust-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-  PropertyManager->Tie("atmosphere/gust-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetGustNED,
-                                                          (PMFd)&FGAtmosphere::SetGustNED);
-
-  PropertyManager->Tie("atmosphere/turb-north-fps", this, eNorth, (PMF)&FGAtmosphere::GetTurbNED,
-                                                          (PMFd)&FGAtmosphere::SetTurbNED);
-  PropertyManager->Tie("atmosphere/turb-east-fps",  this, eEast, (PMF)&FGAtmosphere::GetTurbNED,
-                                                          (PMFd)&FGAtmosphere::SetTurbNED);
-  PropertyManager->Tie("atmosphere/turb-down-fps",  this, eDown, (PMF)&FGAtmosphere::GetTurbNED,
-                                                          (PMFd)&FGAtmosphere::SetTurbNED);
-
-  PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGAtmosphere::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGAtmosphere::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGAtmosphere::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/turb-type", this, (PMFt)&FGAtmosphere::GetTurbType, (PMFi)&FGAtmosphere::SetTurbType);
-  PropertyManager->Tie("atmosphere/turb-rate", this, &FGAtmosphere::GetTurbRate, &FGAtmosphere::SetTurbRate);
-  PropertyManager->Tie("atmosphere/turb-gain", this, &FGAtmosphere::GetTurbGain, &FGAtmosphere::SetTurbGain);
-  PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGAtmosphere::GetRhythmicity,
-                                                            &FGAtmosphere::SetRhythmicity);
-
-  PropertyManager->Tie("atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps",
-                       this, &FGAtmosphere::GetWindspeed20ft,
-                             &FGAtmosphere::SetWindspeed20ft);
-  PropertyManager->Tie("atmosphere/turbulence/milspec/severity",
-                       this, &FGAtmosphere::GetProbabilityOfExceedence,
-                             &FGAtmosphere::SetProbabilityOfExceedence);
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -789,8 +250,8 @@ void FGAtmosphere::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAtmosphere" << endl;
-    if (from == 1) cout << "Destroyed:    FGAtmosphere" << endl;
+    if (from == 0) std::cout << "Instantiated: FGAtmosphere" << std::endl;
+    if (from == 1) std::cout << "Destroyed:    FGAtmosphere" << std::endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -798,23 +259,12 @@ void FGAtmosphere::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
   }
-  if (debug_lvl & 128) { // Turbulence
-    if (first_pass && from == 2) {
-      first_pass = false;
-      cout << "vTurbulenceNED(X), vTurbulenceNED(Y), vTurbulenceNED(Z), "
-           << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
-           << "vDirection(X), vDirection(Y), vDirection(Z), "
-           << "Magnitude, "
-           << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
-    } 
-    if (from == 2) {
-      cout << vTurbulenceNED << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
-    }
+  if (debug_lvl & 128) { // 
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
+      std::cout << IdSrc << std::endl;
+      std::cout << IdHdr << std::endl;
     }
   }
 }

@@ -50,20 +50,16 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.10 2011/06/20 12:14:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.11 2011/06/21 04:41:54 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
+FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGAtmosphere(fdmex),
                                                                TemperatureDeltaGradient(0.0),
-                                                               TemperatureBias(0.0),
-                                                               PressureAltitude(0.0),      // ft
-                                                               DensityAltitude(0.0),       // ft
-                                                               SutherlandConstant(198.72), // deg Rankine
-                                                               Beta(2.269690E-08)          // slug/(sec ft R^0.5)
+                                                               TemperatureBias(0.0)
 {
   Name = "FGStandardAtmosphere";
 
@@ -129,38 +125,6 @@ bool FGStandardAtmosphere::InitModel(void)
 //  PrintStandardAtmosphereTable();
 
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGStandardAtmosphere::Run(bool Holding)
-{
-  if (FGModel::Run(Holding)) return true;
-  if (Holding) return false;
-
-  RunPreFunctions();
-
-  double altitude = FDMExec->GetPropagate()->GetAltitudeASL();
-
-  Calculate(altitude);
-
-  RunPostFunctions();
-
-  Debug(2);
-  return false;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGStandardAtmosphere::Calculate(double altitude)
-{
-  Temperature = GetTemperature(altitude);
-  Pressure = GetPressure(altitude);
-  Density     = Pressure/(Reng*Temperature);
-  Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
-
-  Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
-  KinematicViscosity = Viscosity / Density;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,14 +266,6 @@ double FGStandardAtmosphere::GetStdPressure100K(double altitude) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the modeled density at a specified altitude
-
-double FGStandardAtmosphere::GetDensity(double altitude) const
-{
-  return GetPressure(altitude)/(Reng * GetTemperature(altitude));
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Get the standard density at a specified altitude
 
 double FGStandardAtmosphere::GetStdDensity(double altitude) const
@@ -447,75 +403,13 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::ConvertToRankine(double t, eTemperature unit) const
-{
-  double targetTemp=0; // in degrees Rankine
-
-  switch(unit) {
-  case eFahrenheit:
-    targetTemp = t + 459.67;
-    break;
-  case eCelsius:
-    targetTemp = t*9.0/5.0 + 32.0 + 459.67;
-    break;
-  case eRankine:
-    targetTemp = t;
-    break;
-  case eKelvin:
-    targetTemp = t*9.0/5.0;
-  }
-
-  return targetTemp;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGStandardAtmosphere::ConvertToPSF(double p, ePressure unit) const
-{
-  double targetPressure=0; // Pressure in PSF
-
-  switch(unit) {
-  case ePSF:
-    targetPressure = p;
-    break;
-  case eMillibars:
-    targetPressure = p*2.08854342;
-    break;
-  case ePascals:
-    targetPressure = p*0.0208854342;
-    break;
-  case eInchesHg:
-    targetPressure = p*70.7180803;
-    break;
-  default:
-    throw("Undefined pressure unit given");
-  }
-
-  return targetPressure;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGStandardAtmosphere::bind(void)
 {
   typedef double (FGStandardAtmosphere::*PMFi)(int) const;
   typedef void (FGStandardAtmosphere::*PMF)(int, double);
-  PropertyManager->Tie("stdatmosphere/T-R", this, &FGStandardAtmosphere::GetTemperature);
-  PropertyManager->Tie("stdatmosphere/rho-slugs_ft3", this, &FGStandardAtmosphere::GetDensity);
-  PropertyManager->Tie("stdatmosphere/P-psf", this, &FGStandardAtmosphere::GetPressure);
-  PropertyManager->Tie("stdatmosphere/a-fps", this, &FGStandardAtmosphere::GetSoundSpeed);
-  PropertyManager->Tie("stdatmosphere/T-sl-R", this, &FGStandardAtmosphere::GetTemperatureSL);
-  PropertyManager->Tie("stdatmosphere/rho-sl-slugs_ft3", this, &FGStandardAtmosphere::GetDensitySL);
-  PropertyManager->Tie("stdatmosphere/P-sl-psf", this, &FGStandardAtmosphere::GetPressureSL);
-  PropertyManager->Tie("stdatmosphere/a-sl-fps", this, &FGStandardAtmosphere::GetSoundSpeedSL);
-  PropertyManager->Tie("stdatmosphere/theta", this, &FGStandardAtmosphere::GetTemperatureRatio);
-  PropertyManager->Tie("stdatmosphere/sigma", this, &FGStandardAtmosphere::GetDensityRatio);
-  PropertyManager->Tie("stdatmosphere/delta", this, &FGStandardAtmosphere::GetPressureRatio);
-  PropertyManager->Tie("stdatmosphere/a-ratio", this, &FGStandardAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("stdatmosphere/delta-T", this, eRankine,
+  PropertyManager->Tie("atmosphere/delta-T", this, eRankine,
                                     (PMFi)&FGStandardAtmosphere::GetTemperatureBias,
                                     (PMF)&FGStandardAtmosphere::SetTemperatureBias);
-//  PropertyManager->Tie("atmosphere/density-altitude", this, &FGStandardAtmosphere::GetDensityAltitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
