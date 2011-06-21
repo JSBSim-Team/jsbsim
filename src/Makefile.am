@@ -16,9 +16,9 @@ include_HEADERS = $(LIBRARY_INCLUDES)
 libJSBSim_la_SOURCES = $(LIBRARY_SOURCES)
 libJSBSim_la_LIBADD = \
 	initialization/libInit.la \
+	models/atmosphere/libAtmosphere.la \
 	models/libModels.la \
 	models/flight_control/libFlightControl.la \
-	models/atmosphere/libAtmosphere.la \
 	models/propulsion/libPropulsion.la \
 	input_output/libInputOutput.la \
 	math/libMath.la \
@@ -37,9 +37,9 @@ noinst_HEADERS = $(LIBRARY_INCLUDES)
 JSBSim_SOURCES = JSBSim.cpp $(LIBRARY_SOURCES)
 JSBSim_LDADD = \
 	initialization/libInit.a \
+	models/atmosphere/libAtmosphere.a \
 	models/libModels.a \
 	models/flight_control/libFlightControl.a \
-	models/atmosphere/libAtmosphere.a \
 	models/propulsion/libPropulsion.a \
 	input_output/libInputOutput.a \
 	math/libMath.a \

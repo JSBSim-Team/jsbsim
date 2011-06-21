@@ -42,9 +42,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
-#include "models/FGAtmosphere.h"
-#include "models/atmosphere/FGMSIS.h"
-#include "models/atmosphere/FGMars.h"
+#include "models/atmosphere/FGStandardAtmosphere.h"
+#include "models/atmosphere/FGWinds.h"
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
 #include "models/FGMassBalance.h"
@@ -59,7 +58,6 @@ INCLUDES
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
 #include "initialization/FGInitialCondition.h"
-//#include "initialization/FGTrimAnalysis.h" // Remove until later
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
 
@@ -71,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.95 2011/05/20 10:35:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.96 2011/06/21 04:41:54 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,6 +86,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   Error           = 0;
   GroundCallback  = 0;
   Atmosphere      = 0;
+  Winds           = 0;
   FCS             = 0;
   Propulsion      = 0;
   MassBalance     = 0;
@@ -208,7 +207,8 @@ bool FGFDMExec::Allocate(void)
 {
   bool result=true;
 
-  Atmosphere      = new FGAtmosphere(this);
+  Atmosphere      = new FGStandardAtmosphere(this);
+  Winds           = new FGWinds(this);
   FCS             = new FGFCS(this);
   Propulsion      = new FGPropulsion(this);
   MassBalance     = new FGMassBalance(this);
@@ -230,17 +230,18 @@ bool FGFDMExec::Allocate(void)
   
   Schedule(Input,           1);   // Input model is Models[0]
   Schedule(Atmosphere,      1);   // Input model is Models[1]
-  Schedule(FCS,             1);   // Input model is Models[2]
-  Schedule(Propulsion,      1);   // Input model is Models[3]
-  Schedule(MassBalance,     1);   // Input model is Models[4]
-  Schedule(Aerodynamics,    1);   // Input model is Models[5]
-  Schedule(Inertial,        1);   // Input model is Models[6]
-  Schedule(GroundReactions, 1);   // Input model is Models[7]
-  Schedule(ExternalReactions, 1); // Input model is Models[8]
-  Schedule(BuoyantForces,   1);   // Input model is Models[9]
-  Schedule(Aircraft,        1);   // Input model is Models[10]
-  Schedule(Propagate,       1);   // Input model is Models[11]
-  Schedule(Auxiliary,       1);   // Input model is Models[12]
+  Schedule(Winds,           1);   // Input model is Models[2]
+  Schedule(FCS,             1);   // Input model is Models[3]
+  Schedule(Propulsion,      1);   // Input model is Models[4]
+  Schedule(MassBalance,     1);   // Input model is Models[5]
+  Schedule(Aerodynamics,    1);   // Input model is Models[6]
+  Schedule(Inertial,        1);   // Input model is Models[7]
+  Schedule(GroundReactions, 1);   // Input model is Models[8]
+  Schedule(ExternalReactions, 1); // Input model is Models[9]
+  Schedule(BuoyantForces,   1);   // Input model is Models[10]
+  Schedule(Aircraft,        1);   // Input model is Models[11]
+  Schedule(Propagate,       1);   // Input model is Models[12]
+  Schedule(Auxiliary,       1);   // Input model is Models[13]
 
   // Initialize models so they can communicate with each other
 
@@ -260,6 +261,7 @@ bool FGFDMExec::DeAllocate(void)
 {
   delete Input;
   delete Atmosphere;
+  delete Winds;
   delete FCS;
   delete Propulsion;
   delete MassBalance;
@@ -285,6 +287,7 @@ bool FGFDMExec::DeAllocate(void)
 
   Input           = 0;
   Atmosphere      = 0;
+  Winds           = 0;
   FCS             = 0;
   Propulsion      = 0;
   MassBalance     = 0;
@@ -359,7 +362,7 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   Propagate->SetInitialState( FGIC );
 
   Atmosphere->Run(false);
-  Atmosphere->SetWindNED( FGIC->GetWindNFpsIC(),
+  Winds->SetWindNED( FGIC->GetWindNFpsIC(),
                           FGIC->GetWindEFpsIC(),
                           FGIC->GetWindDFpsIC() );
 
@@ -899,7 +902,7 @@ void FGFDMExec::EnableOutput(void)
 
 void FGFDMExec::ForceOutput(int idx)
 {
-  if (idx >= 0 && idx < Outputs.size()) Outputs[idx]->Print();
+  if (idx >= (int)0 && idx < (int)Outputs.size()) Outputs[idx]->Print();
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -941,38 +944,6 @@ void FGFDMExec::DoTrim(int mode)
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
   sim_time = saved_time;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::UseAtmosphereMSIS(void)
-{
-  FGAtmosphere *oldAtmosphere = Atmosphere;
-  Atmosphere = new MSIS(this);
-  if (!Atmosphere->InitModel()) {
-    cerr << fgred << "MSIS Atmosphere model init failed" << fgdef << endl;
-    Error+=1;
-  }
-  Models[1] = Atmosphere; // Reassign the atmosphere model that has already been scheduled
-                          // to the new atmosphere.
-  delete oldAtmosphere;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::UseAtmosphereMars(void)
-{
-/*
-  FGAtmosphere *oldAtmosphere = Atmosphere;
-  Atmosphere = new FGMars(this);
-  if (!Atmosphere->InitModel()) {
-    cerr << fgred << "Mars Atmosphere model init failed" << fgdef << endl;
-    Error+=1;
-  }
-  Models[1] = Atmosphere; // Reassign the atmosphere model that has already been scheduled
-                          // to the new atmosphere.
-  delete oldAtmosphere;
-*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

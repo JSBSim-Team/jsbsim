@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.64 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.65 2011/06/21 04:41:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,6 +71,7 @@ class FGTrim;
 class FGAerodynamics;
 class FGAircraft;
 class FGAtmosphere;
+class FGWinds;
 class FGAuxiliary;
 class FGBuoyantForces;
 class FGExternalReactions;
@@ -181,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.64 $
+    @version $Revision: 1.65 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,6 +311,8 @@ public:
   //@{
   /// Returns the FGAtmosphere pointer.
   FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
+  /// Returns the FGWinds pointer.
+  FGWinds* GetWinds(void)    {return Winds;}
   /// Returns the FGFCS pointer.
   FGFCS* GetFCS(void)                  {return FCS;}
   /// Returns the FGPropulsion pointer.
@@ -474,12 +477,6 @@ public:
 
   vector<string>& GetPropertyCatalog(void) {return PropertyCatalog;}
 
-  /// Use the MSIS atmosphere model.
-  void UseAtmosphereMSIS(void);
-
-  /// Use the Mars atmosphere model. (Not operative yet.)
-  void UseAtmosphereMars(void);
-
   void SetTrimStatus(bool status){ trim_status = status; }
   bool GetTrimStatus(void) const { return trim_status; }
   void SetTrimMode(int mode){ ta_mode = mode; }
@@ -559,6 +556,7 @@ private:
 
   FGGroundCallback*   GroundCallback;
   FGAtmosphere*       Atmosphere;
+  FGWinds*            Winds;
   FGFCS*              FCS;
   FGPropulsion*       Propulsion;
   FGMassBalance*      MassBalance;

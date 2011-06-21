@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.3 2010/11/17 03:18:37 jberndt Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.4 2011/06/21 04:41:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ DECLARATION: FGModelFunctions
 class FGModelFunctions : public FGJSBBase
 {
 public:
-  ~FGModelFunctions();
+  virtual ~FGModelFunctions();
   void RunPreFunctions(void);
   void RunPostFunctions(void);
   bool Load(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
