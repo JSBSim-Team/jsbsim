@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.10 2010/02/25 05:21:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.11 2011/06/21 13:54:40 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,12 +74,12 @@ void FGMars::Calculate(double altitude)
   // LIMIT the temperatures so they do not descend below absolute zero.
 
   if (altitude < 22960.0) {
-    intTemperature = -25.68 - 0.000548*altitude; // Deg Fahrenheit
+    Temperature = -25.68 - 0.000548*altitude; // Deg Fahrenheit
   } else {
-    intTemperature = -10.34 - 0.001217*altitude; // Deg Fahrenheit
+    Temperature = -10.34 - 0.001217*altitude; // Deg Fahrenheit
   }
-  intPressure = 14.62*exp(-0.00003*altitude); // psf - 14.62 psf =~ 7 millibars
-  intDensity = intPressure/(Reng*intTemperature); // slugs/ft^3 (needs deg R. as input
+  Pressure = 14.62*exp(-0.00003*altitude); // psf - 14.62 psf =~ 7 millibars
+  Density = Pressure/(Reng*Temperature); // slugs/ft^3 (needs deg R. as input
 
   //cout << "Atmosphere:  h=" << altitude << " rho= " << intDensity << endl;
 }
@@ -122,15 +122,6 @@ void FGMars::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
   }
   if (debug_lvl & 32) { // Turbulence
-    if (first_pass && from == 2) {
-      cout << "vTurbulenceNED(X), vTurbulenceNED(Y), vTurbulenceNED(Z), "
-           << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
-           << "vDirection(X), vDirection(Y), vDirection(Z), "
-           << "Magnitude, "
-           << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
-    } else if (from == 2) {
-      cout << vTurbulenceNED << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
-    }
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
