@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.11 2011/06/21 04:41:54 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.12 2011/06/21 12:38:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.11 2011/06/21 04:41:54 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.12 2011/06/21 12:38:22 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,11 +159,14 @@ public:
   /// than the standard temperature.
   /// This function will calculate a bias - a difference - from the standard
   /// atmosphere temperature at the supplied altitude and will apply that
-  /// calculated bias to the entire temperature profile.
+  /// calculated bias to the entire temperature profile. If a graded delta is
+  /// present, that will be included in the calculation - that is, regardless
+  /// of any graded delta present, a temperature bias will be determined so that
+  /// the temperature requested in this function call will be reached.
   /// @param t The temperature value in the unit provided.
   /// @param h The altitude in feet above sea level.
   /// @param unit The unit of the temperature.
-  virtual void SetTemperature(double t, double h, eTemperature unit=eFahrenheit) {};
+  virtual void SetTemperature(double t, double h, eTemperature unit=eFahrenheit);
 
   /// Sets the temperature bias to be added to the standard temperature at all altitudes.
   /// This function sets the bias - the difference - from the standard

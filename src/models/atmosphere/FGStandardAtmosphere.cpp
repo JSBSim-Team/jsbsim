@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.11 2011/06/21 04:41:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.12 2011/06/21 12:38:22 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,9 +275,24 @@ double FGStandardAtmosphere::GetStdDensity(double altitude) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
+{
+  if (unit == eCelsius || unit == eKelvin)
+    t *= 1.80; // If temp delta "t" is given in metric, scale up to English
+
+  TemperatureBias = 0.0;
+  TemperatureBias = t - GetTemperature(h);
+  CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGStandardAtmosphere::SetTemperatureBias(double t, eTemperature unit)
 {
-  TemperatureBias = ConvertToRankine(t, unit);
+  if (unit == eCelsius || unit == eKelvin)
+    t *= 1.80; // If temp delta "t" is given in metric, scale up to English
+
+  TemperatureBias = t;
   CalculatePressureBreakpoints();
 }
 
@@ -312,12 +327,9 @@ void FGStandardAtmosphere::SetSLTemperatureGradedDelta(double deltemp, eTemperat
 
 void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, eTemperature unit)
 {
-  switch(unit) {
-  case eCelsius:
-  case eKelvin:
-    deltemp *= 9.0/5.0; // If temp delta is given in metric, scale up to English
-    break;
-  }
+  if (unit == eCelsius || unit == eKelvin)
+    deltemp *= 1.80; // If temp delta "t" is given in metric, scale up to English
+
   TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - h);
   CalculateLapseRates();
   CalculatePressureBreakpoints();
