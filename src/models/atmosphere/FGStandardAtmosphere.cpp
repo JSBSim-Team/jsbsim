@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.12 2011/06/21 12:38:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.13 2011/06/23 13:08:35 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,11 +277,10 @@ double FGStandardAtmosphere::GetStdDensity(double altitude) const
 
 void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 {
-  if (unit == eCelsius || unit == eKelvin)
-    t *= 1.80; // If temp delta "t" is given in metric, scale up to English
+  double targetSLtemp = ConvertToRankine(t, unit);
 
   TemperatureBias = 0.0;
-  TemperatureBias = t - GetTemperature(h);
+  TemperatureBias = targetSLtemp - GetTemperature(h);
   CalculatePressureBreakpoints();
 }
 
@@ -304,10 +303,7 @@ void FGStandardAtmosphere::SetTemperatureBias(double t, eTemperature unit)
 
 void FGStandardAtmosphere::SetTemperatureSL(double t, eTemperature unit)
 {
-  double targetSLtemp = ConvertToRankine(t, unit);
-
-  TemperatureBias = targetSLtemp - GetStdTemperatureSL();
-  CalculatePressureBreakpoints();
+  SetTemperature(t, 0.0, unit);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,6 +418,9 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/delta-T", this, eRankine,
                                     (PMFi)&FGStandardAtmosphere::GetTemperatureBias,
                                     (PMF)&FGStandardAtmosphere::SetTemperatureBias);
+  PropertyManager->Tie("atmosphere/SL-graded-delta-T", this, eRankine,
+                                    (PMFi)&FGStandardAtmosphere::GetTemperatureDeltaGradient,
+                                    (PMF)&FGStandardAtmosphere::SetSLTemperatureGradedDelta);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
