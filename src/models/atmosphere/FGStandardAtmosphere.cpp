@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.13 2011/06/23 13:08:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.14 2011/06/25 13:47:57 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   unsigned int b=0;
   double pressure = 0.0;
   double Lmb, Exp, Tmb, deltaH, factor;
+  double numRows = StdAtmosTemperatureTable->GetNumRows();
 
   // Iterate through the altitudes to find the current Base Altitude
   // in the table. That is, if the current altitude (the argument passed in)
@@ -144,9 +145,8 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   // passed-in altitude is 40000 ft, the base altitude is 36151.6 ft (and
   // the index "b" is 2 - the second entry in the table).
   double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
-  while (altitude >= testAlt) {
+  while ((altitude >= testAlt) && (b <= numRows-2)) {
     b++;
-    if (b+1 > StdAtmosTemperatureTable->GetNumRows()) break;
     testAlt = (*StdAtmosTemperatureTable)(b+1,0);
   }
   if (b>0) b--;
