@@ -4,9 +4,10 @@
 
 /* External API definitions */
 
-#if defined(_MSC_EXTENSIONS) && !defined(__BEOS__) && !defined(__CYGWIN__)
-#define XML_USE_MSC_EXTENSIONS 1
-#endif
+// These lines commented out. They cause problems with MSVC++
+// #if defined(_MSC_EXTENSIONS) && !defined(__BEOS__) && !defined(__CYGWIN__)
+// #define XML_USE_MSC_EXTENSIONS 1
+// #endif
 
 /* Expat tries very hard to make the API boundary very specifically
    defined.  There are two macros defined to control this boundary;
