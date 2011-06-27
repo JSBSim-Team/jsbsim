@@ -43,27 +43,20 @@ INCLUDES
 #include <string>
 #include <cmath>
 
+using std::min;
+using std::max;
+
 #include "input_output/string_utilities.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
 
-#if defined(_MSC_VER) && (_MSC_VER < 1300)
-namespace std
-{
-  template <class T> inline T max(const T& a, const T& b)
-  {
-    return (a > b) ? a : b;
-  }
-}
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.32 2011/06/13 11:47:04 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.33 2011/06/27 03:14:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +72,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.32 2011/06/13 11:47:04 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.33 2011/06/27 03:14:25 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,7 +262,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(double a, double b) {
     double eps = 2.0*DBL_EPSILON;
-    return std::fabs(a - b) <= eps*std::max(std::fabs(a), std::fabs(b));
+    return std::fabs(a - b) <= eps * max(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
@@ -278,7 +271,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(float a, float b) {
     float eps = 2.0*FLT_EPSILON;
-    return std::fabs(a - b) <= eps*std::max(std::fabs(a), std::fabs(b));
+    return std::fabs(a - b) <= eps * max(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
