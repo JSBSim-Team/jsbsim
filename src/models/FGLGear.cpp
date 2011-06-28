@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.80 2011/01/24 13:01:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.81 2011/06/28 23:44:29 dpculp Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -100,6 +100,15 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   } else {
     // Unknown contact point types will be treated as STRUCTURE.
     eContactType = ctSTRUCTURE;
+  }
+
+  // Default values for structural contact points 
+  if (eContactType == ctSTRUCTURE) {
+    kSpring = fdmex->GetMassBalance()->GetEmptyWeight();
+    bDamp = kSpring;
+    bDampRebound = kSpring * 10;
+    staticFCoeff = 1.0;
+    dynamicFCoeff = 1.0;
   }
 
   if (el->FindElement("spring_coeff"))
@@ -789,29 +798,40 @@ void FGLGear::bind(void)
 {
   string property_name;
   string base_property_name;
-  base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
+
+  switch(eContactType) {
+  case ctBOGEY:
+    base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
+    break;
+  case ctSTRUCTURE:
+    base_property_name = CreateIndexedPropertyName("contact/unit", GearNumber);
+    break;
+  default:
+    return;
+  }
+
+  property_name = base_property_name + "/WOW";
+  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &WOW );
+  property_name = base_property_name + "/z-position";
+  fdmex->GetPropertyManager()->Tie( property_name.c_str(), (FGForce*)this,
+                          &FGForce::GetLocationZ, &FGForce::SetLocationZ);
+  property_name = base_property_name + "/compression-ft";
+  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
+  property_name = base_property_name + "/static_friction_coeff";
+  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
+  property_name = base_property_name + "/dynamic_friction_coeff";
+  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &dynamicFCoeff );
+
   if (eContactType == ctBOGEY) {
     property_name = base_property_name + "/slip-angle-deg";
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), &WheelSlip );
-    property_name = base_property_name + "/WOW";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &WOW );
     property_name = base_property_name + "/wheel-speed-fps";
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), (FGLGear*)this,
                           &FGLGear::GetWheelRollVel);
-    property_name = base_property_name + "/z-position";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), (FGForce*)this,
-                          &FGForce::GetLocationZ, &FGForce::SetLocationZ);
-    property_name = base_property_name + "/compression-ft";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
     property_name = base_property_name + "/side_friction_coeff";
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), &FCoeff );
-
-    property_name = base_property_name + "/static_friction_coeff";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
     property_name = base_property_name + "/rolling_friction_coeff";
     fdmex->GetPropertyManager()->Tie( property_name.c_str(), &rollingFCoeff );
-    property_name = base_property_name + "/dynamic_friction_coeff";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &dynamicFCoeff );
 
     if (eSteerType == stCaster) {
       property_name = base_property_name + "/steering-angle-deg";
