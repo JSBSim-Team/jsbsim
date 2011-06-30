@@ -2,11 +2,13 @@
 
 <system name="holdback">
 
+  <property value="0">systems/holdback/holdback-cmd</property>
+
   <channel name="Holdback_Launchbar">
 
      <summer name="systems/holdback/total_thrust">
-        <input>propulsion/engine/thrust</input>
-        <input>propulsion/engine[1]/thrust</input>
+        <input>propulsion/engine/thrust-lbs</input>
+        <input>propulsion/engine[1]/thrust-lbs</input>
      </summer>
 
      <switch name="systems/holdback/switch">
