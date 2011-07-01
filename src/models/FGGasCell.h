@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ----- Copyright (C) 2006 - 2008  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2011  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.11 2011/07/01 21:22:25 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -189,12 +189,12 @@ public:
 
   /** Get the center of gravity location of the gas cell
       (including any ballonets)
-      @return CoG location in the structural frame. */
+      @return CoG location in the structural frame in inches. */
   const FGColumnVector3& GetXYZ(void) const {return vXYZ;}
 
   /** Get the center of gravity location of the gas cell
       (including any ballonets)
-      @return CoG location in the structural frame. */
+      @return CoG location in the structural frame in inches. */
   double GetXYZ(int idx) const {return vXYZ(idx);}
 
   /** Get the current mass of the gas cell (including any ballonets)
@@ -202,7 +202,7 @@ public:
   double GetMass(void) const {return Mass;}
 
   /** Get the moments of inertia of the gas cell (including any ballonets)
-      @return moments of inertia matrix relative the gas cell location
+      @return moments of inertia matrix in the body frame
       in slug ft<sup>2</sup>. */
   const FGMatrix33& GetInertia(void) const {return gasCellJ;}
 
@@ -210,7 +210,7 @@ public:
 
       Note that the buoyancy of the gas cell is handled separately by the
       FGForce part and not included here.
-      @return moment vector in lbs ft. */
+      @return moment vector in the structural frame in lbs in. */
   const FGColumnVector3& GetMassMoment(void) const {return gasCellM;}
 
   /** Get the current gas temperature inside the gas cell
@@ -229,8 +229,8 @@ private:
   std::string type;
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft�]
-  double MaxOverpressure;           // [lbs/ft�]
+  double MaxVolume;                 // [ft^2]
+  double MaxOverpressure;           // [lbs/ft^2]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
@@ -240,17 +240,17 @@ private:
   typedef vector <FGBallonet*> BallonetArray;
   BallonetArray Ballonet;
   // Variables
-  double Pressure;          // [lbs/ft�]
+  double Pressure;          // [lbs/ft^2]
   double Contents;          // [mol]
-  double Volume;            // [ft�]
-  double dVolumeIdeal;      // [ft�]
+  double Volume;            // [ft^2]
+  double dVolumeIdeal;      // [ft^2]
   double Temperature;       // [Rankine]
   double Buoyancy;          // [lbs] Note: Gross lift.
                             // Does not include the weight of the gas itself.
   double ValveOpen;         // 0 <= ValveOpen <= 1 (or higher).
   double Mass;              // [slug]
-  FGMatrix33 gasCellJ;      // [slug foot�]
-  FGColumnVector3 gasCellM; // [lbs ft]
+  FGMatrix33 gasCellJ;      // [slug foot^2]
+  FGColumnVector3 gasCellM; // [lbs in]
 
   FGAuxiliary* Auxiliary;
   FGAtmosphere* Atmosphere;
@@ -295,7 +295,6 @@ private:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /** Models a ballonet inside a gas cell.
-    Models a ballonet inside a gas cell.
     Not intended to be used outside FGGasCell.
     See FGGasCell for the configuration file format.
     @author Anders Gidenstam
@@ -312,10 +311,10 @@ public:
 
 
   /** Get the center of gravity location of the ballonet
-      @return CoG location in the structural frame. */
+      @return CoG location in the structural frame in inches. */
   const FGColumnVector3& GetXYZ(void) const {return vXYZ;}
   /** Get the center of gravity location of the ballonet
-      @return CoG location in the structural frame. */
+      @return CoG location in the structural frame in inches. */
   double GetXYZ(int idx) const {return vXYZ(idx);}
 
   /** Get the current mass of the ballonets
@@ -323,7 +322,8 @@ public:
   double GetMass(void) const {return Contents * M_air;}
 
   /** Get the moments of inertia of the ballonet
-      @return moments of inertia matrix in slug ft<sup>2</sup>. */
+      @return moments of inertia matrix in the body frame in
+      slug ft<sup>2</sup>. */
   const FGMatrix33& GetInertia(void) const {return ballonetJ;}
 
   /** Get the current volume of the ballonet
@@ -336,8 +336,8 @@ public:
 private:
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft�]
-  double MaxOverpressure;           // [lbs/ft�]
+  double MaxVolume;                 // [ft^2]
+  double MaxOverpressure;           // [lbs/ft^2]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
@@ -347,19 +347,20 @@ private:
   FGFunction* BlowerInput;          // [ft^3 / sec]
   FGGasCell* Parent;
   // Variables
-  double Pressure;         // [lbs/ft�]
+  double Pressure;         // [lbs/ft^2]
   double Contents;         // [mol]
-  double Volume;           // [ft�]
-  double dVolumeIdeal;     // [ft�]
+  double Volume;           // [ft^2]
+  double dVolumeIdeal;     // [ft^2]
   double dU;               // [lbs ft / sec]
   double Temperature;      // [Rankine]
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
-  FGMatrix33 ballonetJ;     // [slug foot�]
+  FGMatrix33 ballonetJ;     // [slug foot^2]
 
   FGAuxiliary* Auxiliary;
   FGAtmosphere* Atmosphere;
   FGPropertyManager* PropertyManager;
   FGInertial* Inertial;
+  FGMassBalance* MassBalance;
   void Debug(int from);
 
   /* Constants. */

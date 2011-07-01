@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ----- Copyright (C) 2006 - 2008  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2011  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -53,7 +53,7 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.13 2010/12/29 22:39:25 andgi Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.14 2011/07/01 21:22:25 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -405,6 +405,9 @@ void FGGasCell::Calculate(double dt)
   gasCellJ(2,2) = Iyy;
   gasCellJ(3,3) = Izz;
   Mass = mass;
+  // Transform the moments of inertia to the body frame.
+  gasCellJ += MassBalance->GetPointmassInertia(Mass, GetXYZ());
+
   gasCellM.InitMatrix();
   gasCellM(eX) +=
     GetXYZ(eX) * Mass*slugtolb;
@@ -415,12 +418,10 @@ void FGGasCell::Calculate(double dt)
 
   if (no_ballonets > 0) {
     // Add the mass, moment and inertia of any ballonets.
-    const FGColumnVector3 p = MassBalance->StructuralToBody( GetXYZ() );
-
     for (i = 0; i < no_ballonets; i++) {
       Mass += Ballonet[i]->GetMass();
        
-      // Add ballonet moments.
+      // Add ballonet moments due to mass (in the structural frame).
       gasCellM(eX) +=
         Ballonet[i]->GetXYZ(eX) * Ballonet[i]->GetMass()*slugtolb;
       gasCellM(eY) +=
@@ -428,15 +429,7 @@ void FGGasCell::Calculate(double dt)
       gasCellM(eZ) +=
         Ballonet[i]->GetXYZ(eZ) * Ballonet[i]->GetMass()*slugtolb;
       
-      // Moments of inertia must be converted to the gas cell frame here.
-      FGColumnVector3 v =
-        MassBalance->StructuralToBody( Ballonet[i]->GetXYZ() ) - p;
-      // Body basis is in FT. 
-      const double mass = Ballonet[i]->GetMass();
-      gasCellJ += Ballonet[i]->GetInertia() +
-        FGMatrix33( 0,                - mass*v(1)*v(2), - mass*v(1)*v(3),
-                    - mass*v(2)*v(1), 0,                - mass*v(2)*v(3),
-                    - mass*v(3)*v(1), - mass*v(3)*v(2), 0 );
+      gasCellJ += Ballonet[i]->GetInertia();
     }
   }
 }
@@ -525,6 +518,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent)
   Atmosphere = exec->GetAtmosphere();
   PropertyManager = exec->GetPropertyManager();
   Inertial = exec->GetInertial();
+  MassBalance = exec->GetMassBalance();
 
   ballonetJ = FGMatrix33();
 
@@ -791,6 +785,8 @@ void FGBallonet::Calculate(double dt)
   ballonetJ(1,1) = Ixx;
   ballonetJ(2,2) = Iyy;
   ballonetJ(3,3) = Izz;
+  // Transform the moments of inertia to the body frame.
+  ballonetJ += MassBalance->GetPointmassInertia(GetMass(), GetXYZ());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
