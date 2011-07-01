@@ -5,7 +5,7 @@
  Date started: 01/21/08
  Purpose:      Encapsulates the buoyant forces
 
- ------------- Copyright (C) 2008 - 2010  Anders Gidenstam        -------------
+ ------------- Copyright (C) 2008 - 2011  Anders Gidenstam        -------------
  ------------- Copyright (C) 2008  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.17 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.18 2011/07/01 16:46:38 andgi Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,16 +179,12 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
   gasCellJ = FGMatrix33();
 
   for (unsigned int i=0; i < size; i++) {
-    FGColumnVector3 v = FDMExec->GetMassBalance()->StructuralToBody( Cells[i]->GetXYZ() );
     // Body basis is in FT. 
     const double mass = Cells[i]->GetMass();
     
-    // FIXME: Verify that this is the correct way to change between the
-    //        coordinate frames.
-    gasCellJ += Cells[i]->GetInertia() + 
-      FGMatrix33( 0,                - mass*v(1)*v(2), - mass*v(1)*v(3),
-                  - mass*v(2)*v(1), 0,                - mass*v(2)*v(3),
-                  - mass*v(3)*v(1), - mass*v(3)*v(2), 0 );
+    gasCellJ +=
+      Cells[i]->GetInertia() + 
+      FDMExec->GetMassBalance()->GetPointmassInertia(mass, Cells[i]->GetXYZ()); 
   }
   
   return gasCellJ;
