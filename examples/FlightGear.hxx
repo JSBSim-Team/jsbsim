@@ -59,6 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 class FGAtmosphere;
+class FGWinds;
 class FGFCS;
 class FGPropulsion;
 class FGMassBalance;
@@ -223,6 +224,7 @@ private:
     bool needTrim;
 
     JSBSim::FGAtmosphere*   Atmosphere;
+    JSBSim::FGWinds*        Winds;
     JSBSim::FGFCS*          FCS;
     JSBSim::FGPropulsion*   Propulsion;
     JSBSim::FGMassBalance*  MassBalance;

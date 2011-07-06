@@ -55,6 +55,7 @@
 #include <FDM/JSBSim/models/FGAuxiliary.h>
 #include <FDM/JSBSim/models/FGInertial.h>
 #include <FDM/JSBSim/models/FGAtmosphere.h>
+#include <FDM/JSBSim/models/atmosphere/FGWinds.h>
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
 #include <FDM/JSBSim/models/FGLGear.h>
@@ -151,6 +152,7 @@ FGJSBsim::FGJSBsim( double dt )
     fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
 
     Atmosphere      = fdmex->GetAtmosphere();
+    Winds           = fdmex->GetWinds();
     FCS             = fdmex->GetFCS();
     MassBalance     = fdmex->GetMassBalance();
     Propulsion      = fdmex->GetPropulsion();
@@ -326,29 +328,19 @@ void FGJSBsim::init()
     // init method first.
 
     if (fgGetBool("/environment/params/control-fdm-atmosphere")) {
-      Atmosphere->UseExternal();
-      Atmosphere->SetExTemperature(
-                  9.0/5.0*(temperature->getDoubleValue()+273.15) );
-      Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
-      Atmosphere->SetExDensity(density->getDoubleValue());
-      Atmosphere->SetTurbType(FGAtmosphere::ttCulp);
-      Atmosphere->SetTurbGain(turbulence_gain->getDoubleValue());
-      Atmosphere->SetTurbRate(turbulence_rate->getDoubleValue());
+      Atmosphere->SetTemperature(temperature->getDoubleValue(), JSBSim::FGAtmosphere::eCelsius );
+      Atmosphere->SetPressure(pressure->getDoubleValue(), JSBSim::FGAtmosphere::eInchesHg);
 
-    } else {
-      Atmosphere->UseInternal();
+	  Wind->SetTurbType(FGAtmosphere::ttMilspec);
     }
 
     fgic->SetVNorthFpsIC( -wind_from_north->getDoubleValue() );
     fgic->SetVEastFpsIC( -wind_from_east->getDoubleValue() );
     fgic->SetVDownFpsIC( -wind_from_down->getDoubleValue() );
 
-    //Atmosphere->SetExTemperature(get_Static_temperature());
-    //Atmosphere->SetExPressure(get_Static_pressure());
-    //Atmosphere->SetExDensity(get_Density());
-    SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << fdmex->GetAtmosphere()->GetTemperature()
-     << ", " << fdmex->GetAtmosphere()->GetPressure()
-     << ", " << fdmex->GetAtmosphere()->GetDensity() );
+    SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << Atmosphere->GetTemperature()
+     << ", " << Atmosphere->GetPressure()
+     << ", " << Atmosphere->GetDensity() );
 
 // deprecate egt_degf for egt-degf to have consistent naming
 // TODO: raise log-level to ALERT in summer 2010, 
@@ -681,18 +673,13 @@ bool FGJSBsim::copy_to_JSBsim()
 
     Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
 
-    Atmosphere->SetExTemperature(
-                  9.0/5.0*(temperature->getDoubleValue()+273.15) );
-    Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
-    Atmosphere->SetExDensity(density->getDoubleValue());
+    Atmosphere->SetTemperature(temperature->getDoubleValue(), JSBSim::FGAtmosphere::eCelsius );
+    Atmosphere->SetPressure(pressure->getDoubleValue(), JSBSim::FGAtmosphere::eInchesHg);
 
     tmp = turbulence_gain->getDoubleValue();
-    //Atmosphere->SetTurbGain(tmp * tmp * 100.0);
-
     tmp = turbulence_rate->getDoubleValue();
-    //Atmosphere->SetTurbRate(tmp);
 
-    Atmosphere->SetWindNED( -wind_from_north->getDoubleValue(),
+    Winds->SetWindNED( -wind_from_north->getDoubleValue(),
                             -wind_from_east->getDoubleValue(),
                             -wind_from_down->getDoubleValue() );
 //    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
