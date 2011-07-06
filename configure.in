@@ -86,8 +86,8 @@ AC_OUTPUT( \
 Makefile \
 src/Makefile \
 src/initialization/Makefile \
-src/models/Makefile \
 src/models/atmosphere/Makefile \
+src/models/Makefile \
 src/models/propulsion/Makefile \
 src/models/flight_control/Makefile \
 src/input_output/Makefile \
