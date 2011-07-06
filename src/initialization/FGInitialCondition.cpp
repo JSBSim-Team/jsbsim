@@ -1325,10 +1325,6 @@ void FGInitialCondition::bind(void)
                        &FGInitialCondition::GetAltitudeAGLFtIC,
                        &FGInitialCondition::SetAltitudeAGLFtIC,
                        true);
-  PropertyManager->Tie("ic/sea-level-radius-ft", this,
-                       &FGInitialCondition::GetSeaLevelRadiusFtIC,
-                       &FGInitialCondition::SetSeaLevelRadiusFtIC,
-                       true);
   PropertyManager->Tie("ic/terrain-elevation-ft", this,
                        &FGInitialCondition::GetTerrainElevationFtIC,
                        &FGInitialCondition::SetTerrainElevationFtIC,

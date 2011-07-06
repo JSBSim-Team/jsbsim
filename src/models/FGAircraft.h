@@ -44,6 +44,7 @@ INCLUDES
 #include "FGModel.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -159,10 +160,6 @@ public:
   double GetMoments(int idx) const { return vMoments(idx); }
   const FGColumnVector3& GetForces(void) const { return vForces; }
   double GetForces(int idx) const { return vForces(idx); }
-  FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
-  double GetBodyAccel(int idx) const { return vBodyAccel(idx); }
-  const FGColumnVector3& GetNcg(void) const { return vNcg; }
-  double GetNcg(int idx) const { return vNcg(idx); }
   const FGColumnVector3& GetXYZrp(void) const { return vXYZrp; }
   const FGColumnVector3& GetXYZvrp(void) const { return vXYZvrp; }
   const FGColumnVector3& GetXYZep(void) const { return vXYZep; }
@@ -177,12 +174,23 @@ public:
 
   void SetWingArea(double S) {WingArea = S;}
 
-  double GetNlf(void) const;
-
-  FGColumnVector3& GetNwcg(void) { return vNwcg; }
-
   void bind(void);
   void unbind(void);
+
+  struct Inputs {
+    FGColumnVector3 AeroForce;
+    FGColumnVector3 PropForce;
+    FGColumnVector3 GroundForce;
+    FGColumnVector3 ExternalForce;
+    FGColumnVector3 BuoyantForce;
+    FGColumnVector3 AeroMoment;
+    FGColumnVector3 PropMoment;
+    FGColumnVector3 GroundMoment;
+    FGColumnVector3 ExternalMoment;
+    FGColumnVector3 BuoyantMoment;
+    FGMatrix33 Tl2b;
+    double Weight;
+  } in;
 
 private:
   FGColumnVector3 vMoments;
@@ -191,9 +199,6 @@ private:
   FGColumnVector3 vXYZvrp;
   FGColumnVector3 vXYZep;
   FGColumnVector3 vDXYZcg;
-  FGColumnVector3 vBodyAccel;
-  FGColumnVector3 vNcg;
-  FGColumnVector3 vNwcg;
 
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;

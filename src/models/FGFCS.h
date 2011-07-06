@@ -540,12 +540,16 @@ public:
   std::string FindSystemFullPathname(const std::string& system_filename);
 
   void AddThrottle(void);
-  void AddGear(void);
+  void AddGear(unsigned int NumGear);
   double GetDt(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
   bool GetTrimStatus(void) const { return FDMExec->GetTrimStatus(); }
+
+  struct Inputs {
+    unsigned int NumGear;
+  } in;
 
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;

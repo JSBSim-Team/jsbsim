@@ -41,18 +41,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAuxiliary.h"
-#include "FGAerodynamics.h"
-#include "FGPropagate.h"
-#include "FGAtmosphere.h"
-#include "atmosphere/FGWinds.h"
 #include "FGFDMExec.h"
-#include "FGAircraft.h"
-#include "FGInertial.h"
-#include "FGExternalReactions.h"
-#include "FGBuoyantForces.h"
-#include "FGGroundReactions.h"
-#include "FGPropulsion.h"
-#include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
 #include <iostream>
 
@@ -71,9 +60,8 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  pt = p = psl = 1.0;
-  rho = rhosl = 1.0;
-  tat = sat = 1.0;
+  pt = 1.0;
+  tat = 1.0;
   tatc = RankineToCelsius(tat);
 
   vcas = veas = 0.0;
@@ -92,13 +80,11 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
-  vToEyePt.InitMatrix();
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
   vEuler.InitMatrix();
   vEulerRates.InitMatrix();
-  vAircraftAccel.InitMatrix();
 
   bind();
 
@@ -109,11 +95,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGAuxiliary::InitModel(void)
 {
-  pt = p = FDMExec->GetAtmosphere()->GetPressure();
-  rho = FDMExec->GetAtmosphere()->GetDensity();
-  rhosl = FDMExec->GetAtmosphere()->GetDensitySL();
-  psl = FDMExec->GetAtmosphere()->GetPressureSL();
-  tat = sat = FDMExec->GetAtmosphere()->GetTemperature();
+  pt = in.Pressure;
+  tat = in.Temperature;
   tatc = RankineToCelsius(tat);
 
   vcas = veas = 0.0;
@@ -132,13 +115,11 @@ bool FGAuxiliary::InitModel(void)
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
-  vToEyePt.InitMatrix();
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
   vEuler.InitMatrix();
   vEulerRates.InitMatrix();
-  vAircraftAccel.InitMatrix();
 
   return true;
 }
@@ -161,139 +142,117 @@ bool FGAuxiliary::Run(bool Holding)
 
   RunPreFunctions();
 
-  const double density = FDMExec->GetAtmosphere()->GetDensity();
-  const double soundspeed = FDMExec->GetAtmosphere()->GetSoundSpeed();
-  const double DistanceAGL = FDMExec->GetPropagate()->GetDistanceAGL();
-  const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
-  const FGMatrix33& Tl2b = FDMExec->GetPropagate()->GetTl2b();
-  const FGMatrix33& Tb2l = FDMExec->GetPropagate()->GetTb2l();
-
-  const FGColumnVector3& vPQR = FDMExec->GetPropagate()->GetPQR();
-  const FGColumnVector3& vUVW = FDMExec->GetPropagate()->GetUVW();
-  const FGColumnVector3& vUVWdot = FDMExec->GetPropagate()->GetUVWdot();
-  const FGColumnVector3& vVel = FDMExec->GetPropagate()->GetVel();
-
-  p = FDMExec->GetAtmosphere()->GetPressure();
-  rhosl = FDMExec->GetAtmosphere()->GetDensitySL();
-  psl = FDMExec->GetAtmosphere()->GetPressureSL();
-  sat = FDMExec->GetAtmosphere()->GetTemperature();
-
 // Rotation
 
-  double cTht = FDMExec->GetPropagate()->GetCosEuler(eTht);
-  double sTht = FDMExec->GetPropagate()->GetSinEuler(eTht);
-  double cPhi = FDMExec->GetPropagate()->GetCosEuler(ePhi);
-  double sPhi = FDMExec->GetPropagate()->GetSinEuler(ePhi);
-
-  vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
-  if (cTht != 0.0) {
-    vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
-    vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sTht;
+  vEulerRates(eTht) = in.vPQR(eQ)*in.CosPhi - in.vPQR(eR)*in.SinPhi;
+  if (in.CosTht != 0.0) {
+    vEulerRates(ePsi) = (in.vPQR(eQ)*in.SinPhi + in.vPQR(eR)*in.CosPhi)/in.CosTht;
+    vEulerRates(ePhi) = in.vPQR(eP) + vEulerRates(ePsi)*in.SinTht;
   }
 
 // Combine the wind speed with aircraft speed to obtain wind relative speed
-  FGColumnVector3 wind = Tl2b*FDMExec->GetWinds()->GetTotalWindNED();
-  vAeroPQR = vPQR - FDMExec->GetWinds()->GetTurbPQR();
-  vAeroUVW = vUVW - wind;
+  vAeroPQR = in.vPQR - in.TurbPQR;
+  vAeroUVW = in.vUVW - in.Tl2b * in.TotalWindNED;
 
   Vt = vAeroUVW.Magnitude();
-  double Vt2 = Vt*Vt;
   alpha = beta = adot = bdot = 0;
-  double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+  double AeroU2 = vAeroUVW(eU)*vAeroUVW(eU);
+  double AeroV2 = vAeroUVW(eV)*vAeroUVW(eV);
+  double AeroW2 = vAeroUVW(eW)*vAeroUVW(eW);
+  double mUW = AeroU2 + AeroW2;
+
+  double Vt2 = Vt*Vt;
 
   if ( Vt > 1.0 ) {
     if (vAeroUVW(eW) != 0.0)
-      alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
+      alpha = AeroU2 > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
     if (vAeroUVW(eV) != 0.0)
-      beta = mUW > 0.0 ? atan2(vAeroUVW(eV), sqrt(mUW)) : 0.0;
+      beta  =    mUW > 0.0 ? atan2(vAeroUVW(eV), sqrt(mUW)) : 0.0;
 
     double signU=1;
     if (vAeroUVW(eU) < 0.0) signU=-1;
 
     if ( mUW >= 1.0 ) {
-      adot = (vAeroUVW(eU)*vUVWdot(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
-      bdot = (signU*mUW*vUVWdot(eV)
-             - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU) + vAeroUVW(eW)*vUVWdot(eW)))/(Vt2*sqrt(mUW));
+      adot = (vAeroUVW(eU)*in.vUVWdot(eW) - vAeroUVW(eW)*in.vUVWdot(eU))/mUW;
+      bdot = (signU*mUW*in.vUVWdot(eV)
+             - vAeroUVW(eV)*(vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eW)*in.vUVWdot(eW)))/(Vt2*sqrt(mUW));
     }
   }
 
-  Re = Vt * FDMExec->GetAircraft()->Getcbar() / FDMExec->GetAtmosphere()->GetKinematicViscosity();
+  Re = Vt * in.Wingchord / in.KinematicViscosity;
 
-  qbar = 0.5*density*Vt2;
-  qbarUW = 0.5*density*(mUW);
-  qbarUV = 0.5*density*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
-  Mach = Vt / soundspeed;
-  MachU = vMachUVW(eU) = vAeroUVW(eU) / soundspeed;
-  vMachUVW(eV) = vAeroUVW(eV) / soundspeed;
-  vMachUVW(eW) = vAeroUVW(eW) / soundspeed;
+  double densityD2 = 0.5*in.Density;
+
+  qbar = densityD2 * Vt2;
+  qbarUW = densityD2 * (mUW);
+  qbarUV = densityD2 * (AeroU2 + AeroV2);
+  Mach = Vt / in.SoundSpeed;
+  MachU = vMachUVW(eU) = vAeroUVW(eU) / in.SoundSpeed;
+  vMachUVW(eV) = vAeroUVW(eV) / in.SoundSpeed;
+  vMachUVW(eW) = vAeroUVW(eW) / in.SoundSpeed;
+  double MachU2 = MachU * MachU;
 
 // Position
 
-  Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
+  Vground = sqrt( in.vVel(eNorth)*in.vVel(eNorth) + in.vVel(eEast)*in.vVel(eEast) );
 
-  psigt = atan2(vVel(eEast), vVel(eNorth));
+  psigt = atan2(in.vVel(eEast), in.vVel(eNorth));
   if (psigt < 0.0) psigt += 2*M_PI;
-  gamma = atan2(-vVel(eDown), Vground);
+  gamma = atan2(-in.vVel(eDown), Vground);
 
-  tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
+  tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
   tatc = RankineToCelsius(tat);
 
   if (MachU < 1) {   // Calculate total pressure assuming isentropic flow
-    pt = p*pow((1 + 0.2*MachU*MachU),3.5);
+    pt = in.Pressure*pow((1 + 0.2*MachU2),3.5);
   } else {
     // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
-    B = 5.76*MachU*MachU/(5.6*MachU*MachU - 0.8);
-    D = (2.8*MachU*MachU-0.4)*0.4167;
-    pt = p*pow(B,3.5)*D;
+    B = 5.76 * MachU2 / (5.6*MachU2 - 0.8);
+    D = (2.8 * MachU2 - 0.4) * 0.4167;
+    pt = in.Pressure*pow(B,3.5)*D;
   }
 
-  A = pow(((pt-p)/psl+1),0.28571);
+  A = pow(((pt-in.Pressure)/in.PressureSL + 1),0.28571);
   if (MachU > 0.0) {
-    vcas = sqrt(7*psl/rhosl*(A-1));
-    veas = sqrt(2*qbar/rhosl);
+    vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
+    veas = sqrt(2 * qbar / in.DensitySL);
   } else {
     vcas = veas = 0.0;
   }
 
-  const double SLgravity = FDMExec->GetInertial()->SLgravity();
-
   vPilotAccel.InitMatrix();
+  vNcg = in.vBodyAccel/in.SLGravity;
   if ( Vt > 1.0 ) {
-     vAircraftAccel = FDMExec->GetAircraft()->GetBodyAccel();
-     // Nz is Acceleration in "g's", along normal axis (-Z body axis)
-     Nz = -vAircraftAccel(eZ)/SLgravity;
-     vToEyePt = FDMExec->GetMassBalance()->StructuralToBody(FDMExec->GetAircraft()->GetXYZep());
-     vPilotAccel = vAircraftAccel + FDMExec->GetPropagate()->GetPQRdot() * vToEyePt;
-     vPilotAccel += vPQR * (vPQR * vToEyePt);
+    // Nz is Acceleration in "g's", along normal axis (-Z body axis)
+    Nz = -vNcg(eZ);
+    vPilotAccel = in.vBodyAccel + in.vPQRdot * in.ToEyePt;
+    vPilotAccel += in.vPQR * (in.vPQR * in.ToEyePt);
   } else {
-     // The line below handles low velocity (and on-ground) cases, basically
-     // representing the opposite of the force that the landing gear would
-     // exert on the ground (which is just the total weight). This eliminates
-     // any jitter that could be introduced by the landing gear. Theoretically,
-     // this branch could be eliminated, with a penalty of having a short
-     // transient at startup (lasting only a fraction of a second).
-     vPilotAccel = Tl2b * FGColumnVector3( 0.0, 0.0, -SLgravity );
-     Nz = -vPilotAccel(eZ)/SLgravity;
+    // The line below handles low velocity (and on-ground) cases, basically
+    // representing the opposite of the force that the landing gear would
+    // exert on the ground (which is just the total weight). This eliminates
+    // any jitter that could be introduced by the landing gear. Theoretically,
+    // this branch could be eliminated, with a penalty of having a short
+    // transient at startup (lasting only a fraction of a second).
+    vPilotAccel = in.Tl2b * FGColumnVector3( 0.0, 0.0, -in.SLGravity );
+    Nz = -vPilotAccel(eZ) / in.SLGravity;
   }
 
-  vPilotAccelN = vPilotAccel/SLgravity;
+  vNwcg = in.Tb2w * vNcg;
+  vNwcg(eZ) = 1.0 - vNwcg(eZ);
+
+  vPilotAccelN = vPilotAccel / in.SLGravity;
 
   // VRP computation
-  const FGLocation& vLocation = FDMExec->GetPropagate()->GetLocation();
-  const FGColumnVector3& vrpStructural = FDMExec->GetAircraft()->GetXYZvrp();
-  const FGColumnVector3 vrpBody = FDMExec->GetMassBalance()->StructuralToBody( vrpStructural );
-  const FGColumnVector3 vrpLocal = Tb2l * vrpBody;
-  vLocationVRP = vLocation.LocalToLocation( vrpLocal );
+  vLocationVRP = in.vLocation.LocalToLocation( in.Tb2l * in.VRPBody );
 
   // Recompute some derived values now that we know the dependent parameters values ...
-  hoverbcg = DistanceAGL / wingspan;
+  hoverbcg = in.DistanceAGL / in.Wingspan;
 
-  FGColumnVector3 vMac = Tb2l*FDMExec->GetMassBalance()->StructuralToBody(FDMExec->GetAircraft()->GetXYZrp());
-  hoverbmac = (DistanceAGL + vMac(3)) / wingspan;
+  FGColumnVector3 vMac = in.Tb2l * in.RPBody;
+  hoverbmac = (in.DistanceAGL + vMac(3)) / in.Wingspan;
 
-  // when all model are executed, 
-  // please calculate the distance from the initial point
-
+  // When all models are executed calculate the distance from the initial point.
   CalculateRelativePosition();
 
   RunPostFunctions();
@@ -309,12 +268,7 @@ bool FGAuxiliary::Run(bool Holding)
 
 double FGAuxiliary::GetHeadWind(void) const
 {
-  double psiw,vw;
-
-  psiw = FDMExec->GetWinds()->GetWindPsi();
-  vw = FDMExec->GetWinds()->GetTotalWindNED().Magnitude();
-
-  return vw*cos(psiw - FDMExec->GetPropagate()->GetEuler(ePsi));
+  return in.Vwind * cos(in.WindPsi - in.Psi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,20 +279,35 @@ double FGAuxiliary::GetHeadWind(void) const
 
 double FGAuxiliary::GetCrossWind(void) const
 {
-  double psiw,vw;
-
-  psiw = FDMExec->GetWinds()->GetWindPsi();
-  vw = FDMExec->GetWinds()->GetTotalWindNED().Magnitude();
-
-  return  vw*sin(psiw - FDMExec->GetPropagate()->GetEuler(ePsi));
+  return in.Vwind * sin(in.WindPsi - in.Psi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAuxiliary::GethVRP(void) const
 {
-  return vLocationVRP.GetRadius() - FDMExec->GetPropagate()->GetSeaLevelRadius();
+  return vLocationVRP.GetRadius() - in.ReferenceRadius;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::GetNlf(void) const
+{
+  if (in.Mass != 0)
+    return (-in.vFw(3))/(in.Mass*slugtolb);
+  else
+    return 0.;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAuxiliary::CalculateRelativePosition(void)
+{ 
+  const double earth_radius_mt = in.ReferenceRadius*fttom;
+  lat_relative_position=(in.Latitude  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
+  lon_relative_position=(in.Longitude - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
+  relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
+};
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -363,8 +332,8 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("velocities/u-aero-fps", this, eU, (PMF)&FGAuxiliary::GetAeroUVW);
   PropertyManager->Tie("velocities/v-aero-fps", this, eV, (PMF)&FGAuxiliary::GetAeroUVW);
   PropertyManager->Tie("velocities/w-aero-fps", this, eW, (PMF)&FGAuxiliary::GetAeroUVW);
-  PropertyManager->Tie("velocities/vt-fps", this, &FGAuxiliary::GetVt, &FGAuxiliary::SetVt, true);
-  PropertyManager->Tie("velocities/mach", this, &FGAuxiliary::GetMach, &FGAuxiliary::SetMach, true);
+  PropertyManager->Tie("velocities/vt-fps", this, &FGAuxiliary::GetVt);
+  PropertyManager->Tie("velocities/mach", this, &FGAuxiliary::GetMach);
   PropertyManager->Tie("velocities/vg-fps", this, &FGAuxiliary::GetVground);
   PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this, eX, (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this, eY, (PMF)&FGAuxiliary::GetPilotAccel);
@@ -373,25 +342,26 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
+  PropertyManager->Tie("forces/load-factor", this, &FGAuxiliary::GetNlf);
   /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
   PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */
-  PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha, &FGAuxiliary::Setalpha, true);
-  PropertyManager->Tie("aero/beta-rad", this, (PF)&FGAuxiliary::Getbeta, &FGAuxiliary::Setbeta, true);
+  PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha);
+  PropertyManager->Tie("aero/beta-rad", this, (PF)&FGAuxiliary::Getbeta);
   PropertyManager->Tie("aero/mag-beta-rad", this, (PF)&FGAuxiliary::GetMagBeta);
   PropertyManager->Tie("aero/alpha-deg", this, inDegrees, (PMF)&FGAuxiliary::Getalpha);
   PropertyManager->Tie("aero/beta-deg", this, inDegrees, (PMF)&FGAuxiliary::Getbeta);
   PropertyManager->Tie("aero/mag-beta-deg", this, inDegrees, (PMF)&FGAuxiliary::GetMagBeta);
   PropertyManager->Tie("aero/Re", this, &FGAuxiliary::GetReynoldsNumber);
-  PropertyManager->Tie("aero/qbar-psf", this, &FGAuxiliary::Getqbar, &FGAuxiliary::Setqbar, true);
-  PropertyManager->Tie("aero/qbarUW-psf", this, &FGAuxiliary::GetqbarUW, &FGAuxiliary::SetqbarUW, true);
-  PropertyManager->Tie("aero/qbarUV-psf", this, &FGAuxiliary::GetqbarUV, &FGAuxiliary::SetqbarUV, true);
-  PropertyManager->Tie("aero/alphadot-rad_sec", this, (PF)&FGAuxiliary::Getadot, &FGAuxiliary::Setadot, true);
-  PropertyManager->Tie("aero/betadot-rad_sec", this, (PF)&FGAuxiliary::Getbdot, &FGAuxiliary::Setbdot, true);
+  PropertyManager->Tie("aero/qbar-psf", this, &FGAuxiliary::Getqbar);
+  PropertyManager->Tie("aero/qbarUW-psf", this, &FGAuxiliary::GetqbarUW);
+  PropertyManager->Tie("aero/qbarUV-psf", this, &FGAuxiliary::GetqbarUV);
+  PropertyManager->Tie("aero/alphadot-rad_sec", this, (PF)&FGAuxiliary::Getadot);
+  PropertyManager->Tie("aero/betadot-rad_sec", this, (PF)&FGAuxiliary::Getbdot);
   PropertyManager->Tie("aero/alphadot-deg_sec", this, inDegrees, (PMF)&FGAuxiliary::Getadot);
   PropertyManager->Tie("aero/betadot-deg_sec", this, inDegrees, (PMF)&FGAuxiliary::Getbdot);
   PropertyManager->Tie("aero/h_b-cg-ft", this, &FGAuxiliary::GetHOverBCG);
   PropertyManager->Tie("aero/h_b-mac-ft", this, &FGAuxiliary::GetHOverBMAC);
-  PropertyManager->Tie("flight-path/gamma-rad", this, &FGAuxiliary::GetGamma, &FGAuxiliary::SetGamma);
+  PropertyManager->Tie("flight-path/gamma-rad", this, &FGAuxiliary::GetGamma);
   PropertyManager->Tie("flight-path/psi-gt-rad", this, &FGAuxiliary::GetGroundTrack);
 
   PropertyManager->Tie("position/distance-from-start-lon-mt", this, &FGAuxiliary::GetLongitudeRelativePosition);
@@ -401,16 +371,6 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("position/vrp-longitude_deg", &vLocationVRP, &FGLocation::GetLongitudeDeg);
   PropertyManager->Tie("position/vrp-radius-ft", &vLocationVRP, &FGLocation::GetRadius);
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAuxiliary::CalculateRelativePosition(void)
-{ 
-  const double earth_radius_mt = FDMExec->GetInertial()->GetRefRadius()*fttom;
-  lat_relative_position=(FDMExec->GetPropagate()->GetLatitude()  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
-  lon_relative_position=(FDMExec->GetPropagate()->GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
-  relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
-};
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -37,8 +37,6 @@ INCLUDES
 
 #include "FGInertial.h"
 #include "FGFDMExec.h"
-#include "FGPropagate.h"
-#include "FGMassBalance.h"
 #include <iostream>
 
 using namespace std;
@@ -114,9 +112,8 @@ bool FGInertial::Run(bool Holding)
   RunPreFunctions();
 
   // Gravitation accel
-  double r = FDMExec->GetPropagate()->GetRadius();
-  gAccel = GetGAccel(r);
-  earthPosAngle += FDMExec->GetDeltaT()*RotationRate;
+  gAccel = GetGAccel(in.Radius);
+  earthPosAngle += in.DeltaT * RotationRate;
 
   RunPostFunctions();
 
@@ -143,8 +140,7 @@ FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 
   // Gravitation accel
   double r = position.Magnitude();
-  double lat = FDMExec->GetPropagate()->GetLatitude();
-  double sinLat = sin(lat);
+  double sinLat = sin(in.Latitude);
 
   double adivr = a/r;
   double preCommon = 1.5*J2*adivr*adivr;
@@ -164,6 +160,7 @@ FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 void FGInertial::bind(void)
 {
   PropertyManager->Tie("position/epa-rad", this, &FGInertial::GetEarthPositionAngle);
+  PropertyManager->Tie("inertial/sea-level-radius_ft", this, &FGInertial::GetRefRadius);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

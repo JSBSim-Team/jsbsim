@@ -40,12 +40,8 @@ INCLUDES
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
-#include <FGFDMExec.h>
+#include "FGFDMExec.h"
 #include "FGAerodynamics.h"
-#include "FGPropagate.h"
-#include "FGAircraft.h"
-#include "FGAuxiliary.h"
-#include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
@@ -139,36 +135,31 @@ bool FGAerodynamics::Run(bool Holding)
   if (Holding) return false; // if paused don't execute
 
   unsigned int axis_ctr, ctr;
-  const double alpha=FDMExec->GetAuxiliary()->Getalpha();
-  const double twovel=2*FDMExec->GetAuxiliary()->GetVt();
-  const double qbar = FDMExec->GetAuxiliary()->Getqbar();
-  const double wingarea = FDMExec->GetAircraft()->GetWingArea();  // TODO: Make these constants constant!
-  const double wingspan = FDMExec->GetAircraft()->GetWingSpan();
-  const double wingchord = FDMExec->GetAircraft()->Getcbar();
-  const double wingincidence = FDMExec->GetAircraft()->GetWingIncidence();
+  const double twovel=2*in.Vt;
+
   RunPreFunctions();
 
   // calculate some oft-used quantities for speed
 
   if (twovel != 0) {
-    bi2vel = wingspan / twovel;
-    ci2vel = wingchord / twovel;
+    bi2vel = in.Wingspan / twovel;
+    ci2vel = in.Wingchord / twovel;
   }
-  alphaw = alpha + wingincidence;
-  qbar_area = wingarea * qbar;
+  alphaw = in.Alpha + in.Wingincidence;
+  qbar_area = in.Wingarea * in.Qbar;
 
   if (alphaclmax != 0) {
-    if (alpha > 0.85*alphaclmax) {
-      impending_stall = 10*(alpha/alphaclmax - 0.85);
+    if (in.Alpha > 0.85*alphaclmax) {
+      impending_stall = 10*(in.Alpha/alphaclmax - 0.85);
     } else {
       impending_stall = 0;
     }
   }
 
   if (alphahystmax != 0.0 && alphahystmin != 0.0) {
-    if (alpha > alphahystmax) {
+    if (in.Alpha > alphahystmax) {
        stall_hyst = 1;
-    } else if (alpha < alphahystmin) {
+    } else if (in.Alpha < alphahystmin) {
        stall_hyst = 0;
     }
   }
@@ -207,19 +198,23 @@ bool FGAerodynamics::Run(bool Holding)
       exit(-1);
   }
 
-  // Calculate aerodynamic reference point shift, if any
-  if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*wingchord*12.0;
-
   // Calculate lift coefficient squared
-  if ( qbar > 0) {
-    clsq = vFw(eLift) / (wingarea*qbar);
+  if ( in.Qbar > 0) {
+    clsq = vFw(eLift) / (in.Wingarea*in.Qbar);
     clsq *= clsq;
   }
 
   // Calculate lift Lift over Drag
   if ( fabs(vFw(eDrag)) > 0.0) lod = fabs( vFw(eLift) / vFw(eDrag) );
 
-  vDXYZcg = FDMExec->GetMassBalance()->StructuralToBody(FDMExec->GetAircraft()->GetXYZrp() + vDeltaRP);
+  // Calculate aerodynamic reference point shift, if any. The shift
+  // takes place in the body axis. That is, if the shift is negative,
+  // it is towards the back (tail) of the vehicle. The AeroRPShift
+  // function should be non-dimensionalized by the wing chord. The
+  // calculated vDeltaRP will be in feet.
+  if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*in.Wingchord;
+
+  vDXYZcg = in.RPBody + vDeltaRP;
 
   vMoments = vDXYZcg*vForces; // M = r X F
 
@@ -254,13 +249,10 @@ FGMatrix33& FGAerodynamics::GetTw2b(void)
 {
   double ca, cb, sa, sb;
 
-  double alpha = FDMExec->GetAuxiliary()->Getalpha();
-  double beta  = FDMExec->GetAuxiliary()->Getbeta();
-
-  ca = cos(alpha);
-  sa = sin(alpha);
-  cb = cos(beta);
-  sb = sin(beta);
+  ca = cos(in.Alpha);
+  sa = sin(in.Alpha);
+  cb = cos(in.Beta);
+  sb = sin(in.Beta);
 
   mTw2b(1,1) =  ca*cb;
   mTw2b(1,2) = -ca*sb;
@@ -279,16 +271,12 @@ FGMatrix33& FGAerodynamics::GetTw2b(void)
 
 FGMatrix33& FGAerodynamics::GetTb2w(void)
 {
-  double alpha,beta;
   double ca, cb, sa, sb;
 
-  alpha = FDMExec->GetAuxiliary()->Getalpha();
-  beta  = FDMExec->GetAuxiliary()->Getbeta();
-
-  ca = cos(alpha);
-  sa = sin(alpha);
-  cb = cos(beta);
-  sb = sin(beta);
+  ca = cos(in.Alpha);
+  sa = sin(in.Alpha);
+  cb = cos(in.Beta);
+  sb = sin(in.Beta);
 
   mTb2w(1,1) = ca*cb;
   mTb2w(1,2) = sb;

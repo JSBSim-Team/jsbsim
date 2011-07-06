@@ -313,6 +313,10 @@ public:
   */
   double GetUVWdot(int idx) const { return vUVWdot(idx); }
 
+  FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
+
+  double GetBodyAccel(int idx) const { return vBodyAccel(idx); }
+
   /** Retrieves a Local frame velocity component.
       Retrieves a Local frame velocity component. The velocity returned is
       extracted from the vVel vector (an FGColumnVector). The vector for the
@@ -447,7 +451,6 @@ public:
       */
   double GetLocalTerrainRadius(void) const { return LocalTerrainRadius; }
 
-  double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
   double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {
@@ -599,6 +602,22 @@ public:
 
   void DumpState(void);
 
+  struct Inputs {
+    double RefRadius;
+    double SemiMajor;
+    double SemiMinor;
+    double OmegaPlanet;
+    double EPA;
+    double Mass;
+    double GAccel;
+    double DeltaT;
+    FGColumnVector3 J2Grav;
+    FGColumnVector3 Moment;
+    FGColumnVector3 Force;
+    FGMatrix33 J;
+    FGMatrix33 Jinv;
+  } in;
+
 private:
 
 // state vector
@@ -611,6 +630,7 @@ private:
   FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vLocation;
   FGColumnVector3 vDeltaXYZEC;
+  FGColumnVector3 vBodyAccel;
   FGColumnVector3 vGravAccel;
   FGColumnVector3 vOmegaEarth;  // The Earth angular velocity vector
   FGQuaternion vQtrndot;

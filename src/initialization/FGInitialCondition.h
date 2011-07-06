@@ -375,10 +375,6 @@ public:
       @return Initial altitude AGL in feet */
   double GetAltitudeAGLFtIC(void) const { return position.GetRadius() - sea_level_radius - terrain_elevation; }
 
-  /** Gets the initial sea level radius.
-      @return Initial sea level radius */
-  double GetSeaLevelRadiusFtIC(void) const { return sea_level_radius; }
-
   /** Gets the initial terrain elevation.
       @return Initial terrain elevation in feet */
   double GetTerrainElevationFtIC(void) const { return terrain_elevation; }

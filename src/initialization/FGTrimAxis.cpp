@@ -43,7 +43,6 @@ INCLUDES
 #include "models/FGAtmosphere.h"
 #include "FGInitialCondition.h"
 #include "FGTrimAxis.h"
-#include "models/FGAircraft.h"
 #include "models/FGPropulsion.h"
 #include "models/FGAerodynamics.h"
 #include "models/FGFCS.h"
@@ -174,7 +173,7 @@ void FGTrimAxis::getState(void) {
   case tPdot: state_value=fdmex->GetPropagate()->GetPQRdot(1)-state_target; break;
   case tRdot: state_value=fdmex->GetPropagate()->GetPQRdot(3)-state_target; break;
   case tHmgt: state_value=computeHmgt()-state_target; break;
-  case tNlf:  state_value=fdmex->GetAircraft()->GetNlf()-state_target; break;
+  case tNlf:  state_value=fdmex->GetAuxiliary()->GetNlf()-state_target; break;
   case tAll: break;
   }
 }

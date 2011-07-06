@@ -164,6 +164,7 @@ public:
 
   std::string GetPropulsionStrings(const std::string& delimiter) const;
   std::string GetPropulsionValues(const std::string& delimiter) const;
+  std::string GetPropulsionTankReport();
 
   const FGColumnVector3& GetForces(void) const {return vForces; }
   double GetForces(int n) const { return vForces(n);}

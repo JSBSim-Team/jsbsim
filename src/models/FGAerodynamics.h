@@ -214,6 +214,18 @@ public:
 
   std::vector <FGFunction*> * GetAeroFunctions(void) const { return AeroFunctions; }
 
+  struct Inputs {
+    double Alpha;
+    double Beta;
+    double Vt;
+    double Qbar;
+    double Wingarea;
+    double Wingspan;
+    double Wingchord;
+    double Wingincidence;
+    FGColumnVector3 RPBody;
+  } in;
+
 private:
   enum eAxisType {atNone, atLiftDrag, atAxialNormal, atBodyXYZ} axisType;
   typedef std::map<std::string,int> AxisIndex;

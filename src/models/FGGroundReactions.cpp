@@ -39,7 +39,6 @@ INCLUDES
 #include <iomanip>
 
 #include "FGGroundReactions.h"
-#include "FGFCS.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
@@ -185,7 +184,6 @@ bool FGGroundReactions::Load(Element* el)
   Element* contact_element = el->FindElement("contact");
   while (contact_element) {
     lGear.push_back(new FGLGear(contact_element, FDMExec, num++));
-    FDMExec->GetFCS()->AddGear(); // make the FCS aware of the landing gear
     contact_element = el->FindNextElement("contact");
   }
   

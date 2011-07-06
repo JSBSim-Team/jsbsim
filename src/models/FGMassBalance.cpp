@@ -38,14 +38,12 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGMassBalance.h"
-#include "FGPropulsion.h"
-#include "propulsion/FGTank.h"
-#include "FGBuoyantForces.h"
-#include "input_output/FGPropertyManager.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include "FGMassBalance.h"
+#include "FGFDMExec.h"
+#include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
@@ -149,8 +147,8 @@ bool FGMassBalance::Load(Element* el)
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
-  Weight = EmptyWeight + FDMExec->GetPropulsion()->GetTanksWeight() + GetTotalPointMassWeight()
-    + FDMExec->GetBuoyantForces()->GetGasMass()*slugtolb + ChildFDMWeight;
+  Weight = EmptyWeight + in.TanksWeight + GetTotalPointMassWeight()
+    + in.GasMass*slugtolb + ChildFDMWeight;
 
   Mass = lbtoslug*Weight;
 
@@ -177,16 +175,17 @@ bool FGMassBalance::Run(bool Holding)
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
-  Weight = EmptyWeight + FDMExec->GetPropulsion()->GetTanksWeight() + GetTotalPointMassWeight()
-    + FDMExec->GetBuoyantForces()->GetGasMass()*slugtolb + ChildFDMWeight;
+  Weight = EmptyWeight + in.TanksWeight + GetTotalPointMassWeight()
+    + in.GasMass*slugtolb + ChildFDMWeight;
 
   Mass = lbtoslug*Weight;
 
 // Calculate new CG
 
-  vXYZcg = (FDMExec->GetPropulsion()->GetTanksMoment() + EmptyWeight*vbaseXYZcg
+  vXYZcg = (EmptyWeight*vbaseXYZcg
             + GetPointMassMoment()
-            + FDMExec->GetBuoyantForces()->GetGasMassMoment()) / Weight;
+            + in.TanksMoment
+            + in.GasMoment) / Weight;
 
   // Track frame-by-frame delta CG, and move the EOM-tracked location
   // by this amount.
@@ -204,8 +203,8 @@ bool FGMassBalance::Run(bool Holding)
   mJ += GetPointmassInertia( lbtoslug * EmptyWeight, vbaseXYZcg );
   // Then add the contributions from the additional pointmasses.
   mJ += CalculatePMInertias();
-  mJ += FDMExec->GetPropulsion()->CalculateTankInertias();
-  mJ += FDMExec->GetBuoyantForces()->GetGasMassInertia();
+  mJ += in.TankInertia;
+  mJ += in.GasInertia;
 
   Ixx = mJ(1,1);
   Iyy = mJ(2,2);
@@ -430,24 +429,7 @@ void FGMassBalance::GetMassPropertiesReport(void) const
          << setw(12) << pm->GetPointMassMoI(3,3) << endl;
   }
 
-  for (unsigned int i=0;i<FDMExec->GetPropulsion()->GetNumTanks() ;i++) {
-    FGTank* tank = FDMExec->GetPropulsion()->GetTank(i);
-    string tankname="";
-    if (tank->GetType() == FGTank::ttFUEL && tank->GetGrainType() != FGTank::gtUNKNOWN) {
-      tankname = "Solid Fuel";
-    } else if (tank->GetType() == FGTank::ttFUEL) {
-      tankname = "Fuel";
-    } else if (tank->GetType() == FGTank::ttOXIDIZER) {
-      tankname = "Oxidizer";
-    } else {
-      tankname = "(Unknown tank type)";
-    }
-    cout << highint << left << setw(4) << i << setw(30) << tankname << normint
-      << right << setw(10) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
-         << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
-         << setw(12) << "*" << setw(12) << "*"
-         << setw(12) << "*" << endl;
-  }
+  FDMExec->GetPropulsionTankReport();
 
   cout << underon << setw(104) << " " << underoff << endl;
   cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight 

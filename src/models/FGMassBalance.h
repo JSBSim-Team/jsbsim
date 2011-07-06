@@ -179,6 +179,15 @@ public:
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(void) const;
   
+  struct Inputs {
+    double GasMass;
+    double TanksWeight;
+    FGColumnVector3 GasMoment;
+    FGMatrix33 GasInertia;
+    FGColumnVector3 TanksMoment;
+    FGMatrix33 TankInertia;
+  } in;
+
 private:
   double Weight;
   double EmptyWeight;

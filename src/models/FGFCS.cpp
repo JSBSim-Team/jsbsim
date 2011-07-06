@@ -37,13 +37,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+
 #include "FGFCS.h"
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
 #include "input_output/FGPropertyManager.h"
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 
 #include "models/flight_control/FGFilter.h"
 #include "models/flight_control/FGDeadBand.h"
@@ -838,9 +839,10 @@ void FGFCS::AddThrottle(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::AddGear(void)
+void FGFCS::AddGear(unsigned int NumGear)
 {
-  SteerPosDeg.push_back(0.0);
+  SteerPosDeg.clear();
+  for (unsigned int i=0; i<NumGear; i++) SteerPosDeg.push_back(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -96,6 +96,12 @@ public:
 
   void SetEarthPositionAngle(double epa) {earthPosAngle = epa;}
 
+  struct Inputs {
+    double Radius;
+    double Latitude;
+    double DeltaT;
+  } in;
+
 private:
   double gAccel;
   double gAccelReference;
