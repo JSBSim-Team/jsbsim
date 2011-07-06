@@ -7,7 +7,7 @@
     This run is for testing the J246 Launch Vehicle
   </description>
   <use aircraft="J246" initialize="LC39"/>
-  <run start="0.0" end="850" dt="0.008333">
+  <run start="0.0" end="850" dt="0.0083333333333333333">
 
     <property value="2">simulation/integrator/rate/rotational</property>
     <property value="3">simulation/integrator/rate/translational</property>
