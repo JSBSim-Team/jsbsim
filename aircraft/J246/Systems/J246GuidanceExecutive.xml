@@ -225,7 +225,7 @@
                 <property>guidance/executive/eccentricity</property>
               </sum>
             </product>
-            <property>ic/sea-level-radius-ft</property>
+            <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
         </quotient>
@@ -243,7 +243,7 @@
                 <property>guidance/executive/eccentricity</property>
               </difference>
             </product>
-            <property>ic/sea-level-radius-ft</property>
+            <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
         </quotient>
