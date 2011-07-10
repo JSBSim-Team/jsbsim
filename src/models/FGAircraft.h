@@ -44,12 +44,13 @@ INCLUDES
 #include "FGModel.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.17 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.18 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +91,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.17 2011/05/20 03:18:36 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.18 2011/07/10 20:18:14 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -159,10 +160,6 @@ public:
   double GetMoments(int idx) const { return vMoments(idx); }
   const FGColumnVector3& GetForces(void) const { return vForces; }
   double GetForces(int idx) const { return vForces(idx); }
-  FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
-  double GetBodyAccel(int idx) const { return vBodyAccel(idx); }
-  const FGColumnVector3& GetNcg(void) const { return vNcg; }
-  double GetNcg(int idx) const { return vNcg(idx); }
   const FGColumnVector3& GetXYZrp(void) const { return vXYZrp; }
   const FGColumnVector3& GetXYZvrp(void) const { return vXYZvrp; }
   const FGColumnVector3& GetXYZep(void) const { return vXYZep; }
@@ -177,12 +174,23 @@ public:
 
   void SetWingArea(double S) {WingArea = S;}
 
-  double GetNlf(void) const;
-
-  FGColumnVector3& GetNwcg(void) { return vNwcg; }
-
   void bind(void);
   void unbind(void);
+
+  struct Inputs {
+    FGColumnVector3 AeroForce;
+    FGColumnVector3 PropForce;
+    FGColumnVector3 GroundForce;
+    FGColumnVector3 ExternalForce;
+    FGColumnVector3 BuoyantForce;
+    FGColumnVector3 AeroMoment;
+    FGColumnVector3 PropMoment;
+    FGColumnVector3 GroundMoment;
+    FGColumnVector3 ExternalMoment;
+    FGColumnVector3 BuoyantMoment;
+    FGMatrix33 Tl2b;
+    double Weight;
+  } in;
 
 private:
   FGColumnVector3 vMoments;
@@ -191,9 +199,6 @@ private:
   FGColumnVector3 vXYZvrp;
   FGColumnVector3 vXYZep;
   FGColumnVector3 vDXYZcg;
-  FGColumnVector3 vBodyAccel;
-  FGColumnVector3 vNcg;
-  FGColumnVector3 vNwcg;
 
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;

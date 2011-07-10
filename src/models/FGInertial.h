@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.16 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.17 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,6 +95,12 @@ public:
   double GetSemiminor(void) const {return b;}
 
   void SetEarthPositionAngle(double epa) {earthPosAngle = epa;}
+
+  struct Inputs {
+    double Radius;
+    double Latitude;
+    double DeltaT;
+  } in;
 
 private:
   double gAccel;

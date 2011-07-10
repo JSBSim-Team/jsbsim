@@ -40,13 +40,14 @@ INCLUDES
 
 #include "models/FGModel.h"
 #include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 #include "math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.1 2011/06/21 10:33:29 jberndt Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.2 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,6 +217,14 @@ public:
   /// allowable range: 0-7, 3=light, 4=moderate, 6=severe turbulence
   virtual void   SetProbabilityOfExceedence( int idx) {probability_of_exceedence_index = idx;}
   virtual int    GetProbabilityOfExceedence() const { return probability_of_exceedence_index;}
+
+  struct Inputs {
+    double wingspan;
+    double HOverBMAC;
+    double V;
+    double AltitudeASL;
+    FGMatrix33 Tl2b;
+  } in;
 
 private:
 

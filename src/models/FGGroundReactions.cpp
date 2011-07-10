@@ -39,14 +39,13 @@ INCLUDES
 #include <iomanip>
 
 #include "FGGroundReactions.h"
-#include "FGFCS.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.32 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.33 2011/07/10 20:18:14 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +184,6 @@ bool FGGroundReactions::Load(Element* el)
   Element* contact_element = el->FindElement("contact");
   while (contact_element) {
     lGear.push_back(new FGLGear(contact_element, FDMExec, num++));
-    FDMExec->GetFCS()->AddGear(); // make the FCS aware of the landing gear
     contact_element = el->FindNextElement("contact");
   }
   

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.36 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.37 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.36 $
+    @version $Revision: 1.37 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -540,12 +540,16 @@ public:
   std::string FindSystemFullPathname(const std::string& system_filename);
 
   void AddThrottle(void);
-  void AddGear(void);
+  void AddGear(unsigned int NumGear);
   double GetDt(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
   bool GetTrimStatus(void) const { return FDMExec->GetTrimStatus(); }
+
+  struct Inputs {
+    unsigned int NumGear;
+  } in;
 
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;

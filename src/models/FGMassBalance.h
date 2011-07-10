@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.23 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.24 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -179,6 +179,15 @@ public:
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(void) const;
   
+  struct Inputs {
+    double GasMass;
+    double TanksWeight;
+    FGColumnVector3 GasMoment;
+    FGMatrix33 GasInertia;
+    FGColumnVector3 TanksMoment;
+    FGMatrix33 TankInertia;
+  } in;
+
 private:
   double Weight;
   double EmptyWeight;

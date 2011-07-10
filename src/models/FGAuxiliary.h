@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.20 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.21 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,10 +96,9 @@ CLASS DOCUMENTATION
     by the F = ma relation. If the vForces vector is divided by the aircraft
     mass, the acceleration vector is calculated. The term wdot is equivalent
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
-    The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.20 2011/05/20 03:18:36 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.21 2011/07/10 20:18:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,9 +146,9 @@ public:
   /** Returns the total temperature.
     The total temperature ("tat", isentropic flow) is calculated:
     @code
-    tat = sat*(1 + 0.2*Mach*Mach)
+    tat = in.Temperature*(1 + 0.2*Mach*Mach)
     @endcode
-    (where "sat" is standard temperature) */
+    (where "in.Temperature" is standard temperature calculated by the atmosphere model) */
 
   double GetTotalTemperature(void) const { return tat; }
   double GetTAT_C(void) const { return tatc; }
@@ -161,6 +160,9 @@ public:
 
   const FGColumnVector3& GetPilotAccel (void) const { return vPilotAccel;  }
   const FGColumnVector3& GetNpilot     (void) const { return vPilotAccelN; }
+  const FGColumnVector3& GetNcg        (void) const { return vNcg;         }
+  double GetNcg                     (int idx) const { return vNcg(idx);    }
+  double GetNlf                        (void) const;
   const FGColumnVector3& GetAeroPQR    (void) const { return vAeroPQR;     }
   const FGColumnVector3& GetEulerRates (void) const { return vEulerRates;  }
   const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;     }
@@ -208,6 +210,8 @@ public:
   /** The vertical acceleration in g's of the aircraft center of gravity. */
   double GetNz            (void) const { return Nz;         }
 
+  FGColumnVector3& GetNwcg(void) { return vNwcg; }
+
   double GetHOverBCG(void) const { return hoverbcg; }
   double GetHOverBMAC(void) const { return hoverbmac; }
 
@@ -216,23 +220,6 @@ public:
 
   double GetHeadWind(void) const;
   double GetCrossWind(void) const;
-
-// SET functions
-
-  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
-
-  void Setalpha  (double tt) { alpha = tt;  }
-  void Setbeta   (double tt) { beta  = tt;  }
-  void Setqbar   (double tt) { qbar = tt;   }
-  void SetqbarUW (double tt) { qbarUW = tt; }
-  void SetqbarUV (double tt) { qbarUV = tt; }
-  void SetVt     (double tt) { Vt = tt;     }
-  void SetMach   (double tt) { Mach=tt;     }
-  void Setadot   (double tt) { adot = tt;   }
-  void Setbdot   (double tt) { bdot = tt;   }
-
-  void SetAB    (double t1, double t2) { alpha=t1; beta=t2; }
-  void SetGamma (double tt)            { gamma = tt;        }
 
 // Time routines, SET and GET functions, used by FGMSIS atmosphere
 
@@ -248,19 +235,62 @@ public:
 
   void SetAeroPQR(FGColumnVector3 tt) { vAeroPQR = tt; }
 
+  struct Inputs {
+    double Pressure;
+    double Density;
+    double DensitySL;
+    double PressureSL;
+    double Temperature;
+    double SoundSpeed;
+    double KinematicViscosity;
+    double DistanceAGL;
+    double Wingspan;
+    double Wingchord;
+    double SLGravity;
+    double Mass;
+    FGMatrix33 Tl2b;
+    FGMatrix33 Tb2l;
+    FGMatrix33 Tb2w;
+    FGColumnVector3 vPQR;
+    FGColumnVector3 vPQRdot;
+    FGColumnVector3 vUVW;
+    FGColumnVector3 vUVWdot;
+    FGColumnVector3 vVel;
+    FGColumnVector3 vBodyAccel;
+    FGColumnVector3 ToEyePt;
+    FGColumnVector3 RPBody;
+    FGColumnVector3 VRPBody;
+    FGColumnVector3 vFw;
+    FGLocation vLocation;
+    double Latitude;
+    double Longitude;
+    double InitialLatitude;
+    double InitialLongitude;
+    double ReferenceRadius;
+    double CosTht;
+    double SinTht;
+    double CosPhi;
+    double SinPhi;
+    double Psi;
+    FGColumnVector3 TotalWindNED;
+    FGColumnVector3 TurbPQR;
+    double WindPsi;
+    double Vwind;
+  } in;
+
 private:
   double vcas, veas;
-  double rhosl, rho, p, psl, pt, tat, sat, tatc; // Don't add a getter for pt!
+  double pt, tat, tatc; // Don't add a getter for pt!
 
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vPilotAccelN;
-  FGColumnVector3 vToEyePt;
+  FGColumnVector3 vNcg;
+  FGColumnVector3 vNwcg;
   FGColumnVector3 vAeroPQR;
   FGColumnVector3 vAeroUVW;
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
-  FGColumnVector3 vAircraftAccel;
   FGLocation vLocationVRP;
 
   double Vt, Vground, Mach, MachU;
