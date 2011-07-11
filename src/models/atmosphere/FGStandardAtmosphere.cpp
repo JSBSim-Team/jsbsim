@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.14 2011/06/25 13:47:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.15 2011/07/10 20:18:14 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,7 +340,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
   for (int i=0; i<280000; i+=1000) {
     Calculate(i);
     std::cout  << std::setw(12) << std::setprecision(2) << i
-       << "  " << std::setw(9)  << std::setprecision(2) << Temperature-459.67
+       << "  " << std::setw(9)  << std::setprecision(2) << Temperature - 459.67
        << "  " << std::setw(13) << std::setprecision(4) << Pressure
        << "  " << std::setw(18) << std::setprecision(8) << Density
        << std::endl;
@@ -420,7 +420,7 @@ void FGStandardAtmosphere::bind(void)
                                     (PMF)&FGStandardAtmosphere::SetTemperatureBias);
   PropertyManager->Tie("atmosphere/SL-graded-delta-T", this, eRankine,
                                     (PMFi)&FGStandardAtmosphere::GetTemperatureDeltaGradient,
-                                    (PMF)&FGStandardAtmosphere::SetSLTemperatureGradedDelta);
+									(PMF)&FGStandardAtmosphere::SetSLTemperatureGradedDelta);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

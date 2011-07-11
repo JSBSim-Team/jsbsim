@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.27 2011/05/20 00:47:03 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.28 2011/07/10 19:03:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -213,7 +213,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.27 2011/05/20 00:47:03 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.28 2011/07/10 19:03:49 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -237,7 +237,7 @@ public:
   void SetVequivalentKtsIC(double ve);
 
   /** Set true airspeed initial condition in knots.
-      @param vt True airspeed in knots  */
+      @param vtrue True airspeed in knots  */
   void SetVtrueKtsIC(double vtrue) { SetVtrueFpsIC(vtrue*ktstofps); }
 
   /** Set ground speed initial condition in knots.
@@ -374,10 +374,6 @@ public:
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */
   double GetAltitudeAGLFtIC(void) const { return position.GetRadius() - sea_level_radius - terrain_elevation; }
-
-  /** Gets the initial sea level radius.
-      @return Initial sea level radius */
-  double GetSeaLevelRadiusFtIC(void) const { return sea_level_radius; }
 
   /** Gets the initial terrain elevation.
       @return Initial terrain elevation in feet */

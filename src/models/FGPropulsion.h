@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.27 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.28 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.27 2011/05/20 03:18:36 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.28 2011/07/10 20:18:14 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -164,6 +164,7 @@ public:
 
   std::string GetPropulsionStrings(const std::string& delimiter) const;
   std::string GetPropulsionValues(const std::string& delimiter) const;
+  std::string GetPropulsionTankReport();
 
   const FGColumnVector3& GetForces(void) const {return vForces; }
   double GetForces(int n) const { return vForces(n);}

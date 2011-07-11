@@ -37,13 +37,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+
 #include "FGFCS.h"
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
 #include "input_output/FGPropertyManager.h"
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 
 #include "models/flight_control/FGFilter.h"
 #include "models/flight_control/FGDeadBand.h"
@@ -63,7 +64,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.74 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.75 2011/07/10 20:18:14 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -838,9 +839,10 @@ void FGFCS::AddThrottle(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::AddGear(void)
+void FGFCS::AddGear(unsigned int NumGear)
 {
-  SteerPosDeg.push_back(0.0);
+  SteerPosDeg.clear();
+  for (unsigned int i=0; i<NumGear; i++) SteerPosDeg.push_back(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

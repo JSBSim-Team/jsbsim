@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.28 2011/06/23 13:08:34 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.29 2011/07/10 20:18:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
   @property atmosphere/a-ratio
 
   @author Jon Berndt
-  @version $Id: FGAtmosphere.h,v 1.28 2011/06/23 13:08:34 jberndt Exp $
+  @version $Id: FGAtmosphere.h,v 1.29 2011/07/10 20:18:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +210,10 @@ public:
   virtual double GetDensityAltitude() const {return DensityAltitude;}
 
   virtual double GetPressureAltitude() const {return PressureAltitude;}
+
+  struct Inputs {
+    double altitudeASL;
+  } in;
 
 protected:
   double    SLtemperature,    SLdensity,    SLpressure,    SLsoundspeed; // Sea level conditions

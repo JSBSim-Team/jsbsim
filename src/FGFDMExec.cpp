@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.96 2011/06/21 04:41:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.98 2011/07/11 05:09:22 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,25 +228,29 @@ bool FGFDMExec::Allocate(void)
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model could get executed every fifth pass it is called.
   
-  Schedule(Input,           1);   // Input model is Models[0]
-  Schedule(Atmosphere,      1);   // Input model is Models[1]
-  Schedule(Winds,           1);   // Input model is Models[2]
-  Schedule(FCS,             1);   // Input model is Models[3]
-  Schedule(Propulsion,      1);   // Input model is Models[4]
-  Schedule(MassBalance,     1);   // Input model is Models[5]
-  Schedule(Aerodynamics,    1);   // Input model is Models[6]
-  Schedule(Inertial,        1);   // Input model is Models[7]
-  Schedule(GroundReactions, 1);   // Input model is Models[8]
-  Schedule(ExternalReactions, 1); // Input model is Models[9]
-  Schedule(BuoyantForces,   1);   // Input model is Models[10]
-  Schedule(Aircraft,        1);   // Input model is Models[11]
-  Schedule(Propagate,       1);   // Input model is Models[12]
-  Schedule(Auxiliary,       1);   // Input model is Models[13]
+  Schedule(Input,             1);   
+  Schedule(Atmosphere,        1);   
+  Schedule(Winds,             1);   
+  Schedule(FCS,               1);   
+  Schedule(Propulsion,        1);   
+  Schedule(Aerodynamics,      1);   
+  Schedule(GroundReactions,   1);   
+  Schedule(ExternalReactions, 1); 
+  Schedule(BuoyantForces,     1);   
+  Schedule(MassBalance,       1);   
+  Schedule(Aircraft,          1);   
+  Schedule(Inertial,          1);   
+  Schedule(Propagate,         1);   
+  Schedule(Auxiliary,         1);   
+
+  // Initialize planet (environment) constants
+  LoadPlanetConstants();
 
   // Initialize models so they can communicate with each other
-
-  vector <FGModel*>::iterator it;
-  for (it = Models.begin(); it != Models.end(); ++it) (*it)->InitModel();
+  for (unsigned int i = 0; i < Models.size(); i++) {
+    LoadInputs(i);
+    Models[i]->InitModel();
+  }
 
   IC = new FGInitialCondition(this);
 
@@ -331,13 +335,164 @@ bool FGFDMExec::Run(void)
   // returns true if success, false if complete
   if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
 
-  vector <FGModel*>::iterator it;
-  for (it = Models.begin(); it != Models.end(); ++it) (*it)->Run(holding);
+  for (unsigned int i = 0; i < Models.size(); i++) {
+    LoadInputs(i);
+    Models[i]->Run(holding);
+  }
 
   IncrTime();
   if (Terminate) success = false;
 
   return (success);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::LoadInputs(unsigned int idx)
+{
+  switch(idx) {
+  case eInput:
+    break;
+  case eAtmosphere:
+    Atmosphere->in.altitudeASL = Propagate->GetAltitudeASL();
+    break;
+  case eWinds:
+    Winds->in.AltitudeASL      = Propagate->GetAltitudeASL();
+    Winds->in.HOverBMAC        = Auxiliary->GetHOverBMAC();
+    Winds->in.Tl2b             = Propagate->GetTl2b();
+    Winds->in.V                = Auxiliary->GetVt();
+    break;
+  case eSystems:
+    // Dynamic inputs come into the components that FCS manages through properties
+    break;
+  case ePropulsion:
+    // Dynamic inputs come into the engines that propulsion manages through properties
+    break;
+  case eAerodynamics:
+    Aerodynamics->in.Alpha     = Auxiliary->Getalpha();
+    Aerodynamics->in.Beta      = Auxiliary->Getbeta();
+    Aerodynamics->in.Qbar      = Auxiliary->Getqbar();
+    Aerodynamics->in.Vt        = Auxiliary->GetVt();
+    Aerodynamics->in.RPBody    = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    break;
+  case eGroundReactions:
+    // There are no external inputs to this model.
+    break;
+  case eExternalReactions:
+    // There are no external inputs to this model.
+    break;
+  case eBuoyantForces:
+    // There are no external inputs to this model.
+    break;
+  case eMassBalance:
+    MassBalance->in.GasInertia  = BuoyantForces->GetGasMassInertia();
+    MassBalance->in.GasMass     = BuoyantForces->GetGasMass();
+    MassBalance->in.GasMoment   = BuoyantForces->GetGasMassMoment();
+    MassBalance->in.TanksWeight = Propulsion->GetTanksWeight();
+    MassBalance->in.TanksMoment = Propulsion->GetTanksMoment();
+    MassBalance->in.TankInertia = Propulsion->CalculateTankInertias();
+    break;
+  case eAircraft:
+    Aircraft->in.AeroForce     = Aerodynamics->GetForces();
+    Aircraft->in.PropForce     = Propulsion->GetForces();
+    Aircraft->in.GroundForce   = GroundReactions->GetForces();
+    Aircraft->in.ExternalForce = ExternalReactions->GetForces();
+    Aircraft->in.BuoyantForce  = BuoyantForces->GetForces();
+    Aircraft->in.AeroMoment    = Aerodynamics->GetMoments();
+    Aircraft->in.PropMoment    = Propulsion->GetMoments();
+    Aircraft->in.GroundMoment  = GroundReactions->GetMoments();
+    Aircraft->in.ExternalMoment = ExternalReactions->GetMoments();
+    Aircraft->in.BuoyantMoment = BuoyantForces->GetMoments();
+    Aircraft->in.Weight        = MassBalance->GetWeight();
+    Aircraft->in.Tl2b          = Propagate->GetTl2b();
+    break;
+  case eInertial:
+    Inertial->in.Radius        = Propagate->GetRadius();
+    Inertial->in.Latitude      = Propagate->GetLatitude();
+    Inertial->in.DeltaT        = dT;
+    break;
+  case ePropagate:
+    Propagate->in.EPA          = Inertial->GetEarthPositionAngle();
+    Propagate->in.Force        = Aircraft->GetForces();
+    Propagate->in.GAccel       = Inertial->GetGAccel(Propagate->GetRadius());
+    Propagate->in.J2Grav       = Inertial->GetGravityJ2(Propagate->GetLocation());
+    Propagate->in.J            = MassBalance->GetJ();
+    Propagate->in.Jinv         = MassBalance->GetJinv();
+    Propagate->in.Mass         = MassBalance->GetMass();
+    Propagate->in.Moment       = Aircraft->GetMoments();
+    Propagate->in.DeltaT       = dT;
+    break;
+  case eAuxiliary:
+    Auxiliary->in.Pressure     = Atmosphere->GetPressure();
+    Auxiliary->in.Density      = Atmosphere->GetDensity();
+    Auxiliary->in.DensitySL    = Atmosphere->GetDensitySL();
+    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
+    Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
+    Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
+    Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
+    Auxiliary->in.DistanceAGL  = Propagate->GetDistanceAGL();
+    Auxiliary->in.Mass         = MassBalance->GetMass();
+    Auxiliary->in.Tl2b         = Propagate->GetTl2b();
+    Auxiliary->in.Tb2l         = Propagate->GetTb2l();
+    Auxiliary->in.Tb2w         = Aerodynamics->GetTb2w();
+    Auxiliary->in.vPQR         = Propagate->GetPQR();
+    Auxiliary->in.vPQRdot      = Propagate->GetPQRdot();
+    Auxiliary->in.vUVW         = Propagate->GetUVW();
+    Auxiliary->in.vUVWdot      = Propagate->GetUVWdot();
+    Auxiliary->in.vVel         = Propagate->GetVel();
+    Auxiliary->in.vBodyAccel   = Propagate->GetBodyAccel();
+    Auxiliary->in.ToEyePt      = MassBalance->StructuralToBody(Aircraft->GetXYZep());
+    Auxiliary->in.VRPBody      = MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
+    Auxiliary->in.RPBody       = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    Auxiliary->in.vFw          = Aerodynamics->GetvFw();
+    Auxiliary->in.vLocation    = Propagate->GetLocation();
+    Auxiliary->in.Latitude     = Propagate->GetLatitude();
+    Auxiliary->in.Longitude    = Propagate->GetLongitude();
+    Auxiliary->in.CosTht       = Propagate->GetCosEuler(eTht);
+    Auxiliary->in.SinTht       = Propagate->GetSinEuler(eTht);
+    Auxiliary->in.CosPhi       = Propagate->GetCosEuler(ePhi);
+    Auxiliary->in.SinPhi       = Propagate->GetSinEuler(ePhi);
+    Auxiliary->in.Psi          = Propagate->GetEuler(ePsi);
+    Auxiliary->in.TotalWindNED = Winds->GetTotalWindNED();
+    Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
+    Auxiliary->in.WindPsi      = Winds->GetWindPsi();
+    Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
+    break;
+  default:
+    break;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::LoadPlanetConstants(void)
+{
+  Propagate->in.OmegaPlanet     = Inertial->omega();
+  Propagate->in.RefRadius       = Inertial->GetRefRadius();
+  Propagate->in.SemiMajor       = Inertial->GetSemimajor();
+  Propagate->in.SemiMinor       = Inertial->GetSemiminor();
+  Auxiliary->in.SLGravity       = Inertial->SLgravity();
+  Auxiliary->in.ReferenceRadius = Inertial->GetRefRadius();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::LoadModelConstants(void)
+{
+  Winds->in.wingspan         = Aircraft->GetWingSpan();
+  FCS->in.NumGear            = GroundReactions->GetNumGearUnits();
+  Aerodynamics->in.Wingarea  = Aircraft->GetWingArea();
+  Aerodynamics->in.Wingchord = Aircraft->Getcbar();
+  Aerodynamics->in.Wingincidence = Aircraft->GetWingIncidence();
+  Aerodynamics->in.Wingspan  = Aircraft->GetWingSpan();
+  Propagate->in.OmegaPlanet  = Inertial->omega();
+  Propagate->in.RefRadius    = Inertial->GetRefRadius();
+  Propagate->in.SemiMajor    = Inertial->GetSemimajor();
+  Propagate->in.SemiMinor    = Inertial->GetSemiminor();
+  Auxiliary->in.Wingspan     = Aircraft->GetWingSpan();
+  Auxiliary->in.Wingchord    = Aircraft->Getcbar();
+  Auxiliary->in.SLGravity    = Inertial->SLgravity();
+  Auxiliary->in.ReferenceRadius = Inertial->GetRefRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,7 +515,7 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   Setsim_time(0.0);
 
   Propagate->SetInitialState( FGIC );
-
+  LoadInputs(eAtmosphere);
   Atmosphere->Run(false);
   Winds->SetWindNED( FGIC->GetWindNFpsIC(),
                           FGIC->GetWindEFpsIC(),
@@ -527,6 +682,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
         cerr << endl << "Aircraft ground_reactions element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
+      FCS->AddGear(GroundReactions->GetNumGearUnits());
     } else {
       cerr << endl << "No ground_reactions element was found in the aircraft config file." << endl;
       return false;
@@ -650,6 +806,10 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       }
     }
 
+    // Since all vehicle characteristics have been loaded, place the values in the Inputs
+    // structure for the FGModel-derived classes.
+    LoadModelConstants();
+
     modelLoaded = true;
 
     if (debug_lvl > 0) {
@@ -670,6 +830,8 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
          << fgdef << endl;
   }
 
+  for (unsigned int i=0; i< Models.size(); i++) LoadInputs(i);
+
   if (result) {
     struct PropertyCatalogStructure masterPCS;
     masterPCS.base_string = "";
@@ -678,6 +840,13 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   }
 
   return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGFDMExec::GetPropulsionTankReport()
+{
+  return Propulsion->GetPropulsionTankReport();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

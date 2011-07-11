@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.65 2011/06/21 04:41:54 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.67 2011/07/11 05:09:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.65 $
+    @version $Revision: 1.67 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +224,10 @@ public:
 
   /// Default destructor
   ~FGFDMExec();
+
+  enum Models { eInput, eAtmosphere, eWinds, eSystems, ePropulsion, eAerodynamics, 
+                eGroundReactions, eExternalReactions, eBuoyantForces, eMassBalance, 
+                eAircraft, eInertial, ePropagate, eAuxiliary };
 
   /** Unbind all tied JSBSim properties. */
   void Unbind(void) {instance->Unbind();}
@@ -482,6 +486,8 @@ public:
   void SetTrimMode(int mode){ ta_mode = mode; }
   int GetTrimMode(void) const { return ta_mode; }
 
+  string GetPropulsionTankReport();
+
   /// Returns the cumulative simulation time in seconds.
   double GetSimTime(void) const { return sim_time; }
 
@@ -589,6 +595,9 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void ResetToInitialConditions(int mode);
+  void LoadInputs(unsigned int idx);
+  void LoadPlanetConstants(void);
+  void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);
   void Initialize(FGInitialCondition *FGIC);

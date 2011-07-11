@@ -62,16 +62,13 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGGroundReactions.h"
 #include "FGFDMExec.h"
-#include "FGAircraft.h"
-#include "FGMassBalance.h"
-#include "FGInertial.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.88 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.89 2011/07/10 20:18:14 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,11 +119,11 @@ FGPropagate::~FGPropagate(void)
 bool FGPropagate::InitModel(void)
 {
   // For initialization ONLY:
-  SeaLevelRadius = LocalTerrainRadius = FDMExec->GetInertial()->GetRefRadius();
+  SeaLevelRadius = LocalTerrainRadius = in.RefRadius;
 
   VState.vLocation.SetRadius( LocalTerrainRadius + 4.0 );
-  VState.vLocation.SetEllipse(FDMExec->GetInertial()->GetSemimajor(), FDMExec->GetInertial()->GetSemiminor());
-  vOmegaEarth = FGColumnVector3( 0.0, 0.0, FDMExec->GetInertial()->omega() ); // Earth rotation vector
+  VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
+  vOmegaEarth = FGColumnVector3( 0.0, 0.0, in.OmegaPlanet ); // Earth rotation vector
 
   vPQRidot.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
@@ -150,7 +147,6 @@ bool FGPropagate::InitModel(void)
 
 void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
-  SetSeaLevelRadius(FGIC->GetSeaLevelRadiusFtIC());
   SetTerrainElevation(FGIC->GetTerrainElevationFtIC());
 
   // Initialize the State Vector elements and the transformation matrices
@@ -158,9 +154,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Set the position lat/lon/radius
   VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
                                 FGIC->GetLatitudeRadIC(),
-                                FGIC->GetAltitudeASLFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
+                                FGIC->GetAltitudeASLFtIC() + SeaLevelRadius);
 
-  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  VState.vLocation.SetEarthPositionAngle(in.EPA);
 
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
@@ -229,7 +225,7 @@ bool FGPropagate::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;  // Fast return if we have nothing to do ...
   if (Holding) return false;
 
-  double dt = FDMExec->GetDeltaT()*rate;  // The 'stepsize'
+  double dt = in.DeltaT * rate;  // The 'stepsize'
 
   RunPreFunctions();
 
@@ -250,7 +246,7 @@ bool FGPropagate::Run(bool Holding)
   // matrices that are consistent with the new state of the vehicle
 
   // 1. Update the Earth position angle (EPA)
-  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  VState.vLocation.SetEarthPositionAngle(in.EPA);
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
@@ -307,15 +303,11 @@ bool FGPropagate::Run(bool Holding)
 
 void FGPropagate::CalculatePQRdot(void)
 {
-  const FGColumnVector3& vMoments = FDMExec->GetAircraft()->GetMoments(); // current moments
-  const FGMatrix33& J = FDMExec->GetMassBalance()->GetJ();                // inertia matrix
-  const FGMatrix33& Jinv = FDMExec->GetMassBalance()->GetJinv();          // inertia matrix inverse
-
   // Compute body frame rotational accelerations based on the current body
   // moments and the total inertial angular velocity expressed in the body
   // frame.
 
-  vPQRidot = Jinv*(vMoments - VState.vPQRi*(J*VState.vPQRi));
+  vPQRidot = in.Jinv*(in.Moment - VState.vPQRi*(in.J*VState.vPQRi));
   vPQRdot = vPQRidot - VState.vPQRi * (Ti2b * vOmegaEarth);
 }
 
@@ -351,10 +343,9 @@ void FGPropagate::CalculateQuatdot(void)
 
 void FGPropagate::CalculateUVWdot(void)
 {
-  double mass = FDMExec->GetMassBalance()->GetMass();                      // mass
-  const FGColumnVector3& vForces = FDMExec->GetAircraft()->GetForces();    // current forces
+  vBodyAccel = in.Force/in.Mass;
 
-  vUVWdot = vForces/mass - (VState.vPQR + 2.0*(Ti2b *vOmegaEarth)) * VState.vUVW;
+  vUVWdot = vBodyAccel - (VState.vPQR + 2.0*(Ti2b *vOmegaEarth)) * VState.vUVW;
 
   // Include Centripetal acceleration.
   vUVWdot -= Ti2b * (vOmegaEarth*(vOmegaEarth*VState.vInertialPosition));
@@ -362,15 +353,15 @@ void FGPropagate::CalculateUVWdot(void)
   // Include Gravitation accel
   switch (gravType) {
     case gtStandard:
-      vGravAccel = Tl2b * FGColumnVector3( 0.0, 0.0, FDMExec->GetInertial()->GetGAccel(VehicleRadius) );
+      vGravAccel = Tl2b * FGColumnVector3( 0.0, 0.0, in.GAccel );
       break;
     case gtWGS84:
-      vGravAccel = Tec2b * FDMExec->GetInertial()->GetGravityJ2(VState.vLocation);
+      vGravAccel = Tec2b * in.J2Grav;
       break;
   }
 
   vUVWdot += vGravAccel;
-  vUVWidot = Tb2i * (vForces/mass + vGravAccel);
+  vUVWidot = Tb2i * (in.Force/in.Mass + vGravAccel);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -513,8 +504,8 @@ void FGPropagate::EvaluateRateToResistTo(FGColumnVector3& vdot,
 
 void FGPropagate::ResolveFrictionForces(double dt)
 {
-  const double invMass = 1.0 / FDMExec->GetMassBalance()->GetMass();
-  const FGMatrix33& Jinv = FDMExec->GetMassBalance()->GetJinv();
+  const double invMass = 1.0 / in.Mass;
+  const FGMatrix33& Jinv = in.Jinv;
   vector <FGColumnVector3> JacF, JacM;
   vector<double> lambda, lambdaMin, lambdaMax;
   FGColumnVector3 vdot, wdot;
@@ -721,7 +712,7 @@ double FGPropagate::GetDistanceAGL(void) const
 void FGPropagate::SetVState(const VehicleState& vstate)
 {
   VState.vLocation = vstate.vLocation;
-  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  VState.vLocation.SetEarthPositionAngle(in.EPA);
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();
@@ -755,7 +746,7 @@ void FGPropagate::UpdateVehicleState(void)
 void FGPropagate::SetLocation(const FGLocation& l)
 {
   VState.vLocation = l;
-  VState.vLocation.SetEarthPositionAngle(FDMExec->GetInertial()->GetEarthPositionAngle());
+  VState.vLocation.SetEarthPositionAngle(in.EPA);
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
@@ -902,7 +893,7 @@ void FGPropagate::Debug(int from)
          << reset << endl;
     cout << endl;
     cout << highint << "  Earth Position Angle (deg): " << setw(8) << setprecision(3) << reset
-                    << FDMExec->GetInertial()->GetEarthPositionAngleDeg() << endl;
+                    << in.EPA << endl;
     cout << endl;
     cout << highint << "  Body velocity (ft/sec): " << setw(8) << setprecision(3) << reset << VState.vUVW << endl;
     cout << highint << "  Local velocity (ft/sec): " << setw(8) << setprecision(3) << reset << vVel << endl;
