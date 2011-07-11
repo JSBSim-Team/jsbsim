@@ -69,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.97 2011/07/10 20:18:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.98 2011/07/11 05:09:22 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,7 +247,10 @@ bool FGFDMExec::Allocate(void)
   LoadPlanetConstants();
 
   // Initialize models so they can communicate with each other
-  for (unsigned int i = 0; i < Models.size(); i++) Models[i]->InitModel();
+  for (unsigned int i = 0; i < Models.size(); i++) {
+    LoadInputs(i);
+    Models[i]->InitModel();
+  }
 
   IC = new FGInitialCondition(this);
 
@@ -345,7 +348,7 @@ bool FGFDMExec::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::LoadInputs(int idx)
+void FGFDMExec::LoadInputs(unsigned int idx)
 {
   switch(idx) {
   case eInput:
@@ -365,25 +368,12 @@ void FGFDMExec::LoadInputs(int idx)
   case ePropulsion:
     // Dynamic inputs come into the engines that propulsion manages through properties
     break;
-  case eMassBalance:
-    MassBalance->in.GasInertia  = BuoyantForces->GetGasMassInertia();
-    MassBalance->in.GasMass     = BuoyantForces->GetGasMass();
-    MassBalance->in.GasMoment   = BuoyantForces->GetGasMassMoment();
-    MassBalance->in.TanksWeight = Propulsion->GetTanksWeight();
-    MassBalance->in.TanksMoment = Propulsion->GetTanksMoment();
-    MassBalance->in.TankInertia = Propulsion->CalculateTankInertias();
-    break;
   case eAerodynamics:
     Aerodynamics->in.Alpha     = Auxiliary->Getalpha();
     Aerodynamics->in.Beta      = Auxiliary->Getbeta();
     Aerodynamics->in.Qbar      = Auxiliary->Getqbar();
     Aerodynamics->in.Vt        = Auxiliary->GetVt();
     Aerodynamics->in.RPBody    = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-    break;
-  case eInertial:
-    Inertial->in.Radius        = Propagate->GetRadius();
-    Inertial->in.Latitude      = Propagate->GetLatitude();
-    Inertial->in.DeltaT        = dT;
     break;
   case eGroundReactions:
     // There are no external inputs to this model.
@@ -393,6 +383,14 @@ void FGFDMExec::LoadInputs(int idx)
     break;
   case eBuoyantForces:
     // There are no external inputs to this model.
+    break;
+  case eMassBalance:
+    MassBalance->in.GasInertia  = BuoyantForces->GetGasMassInertia();
+    MassBalance->in.GasMass     = BuoyantForces->GetGasMass();
+    MassBalance->in.GasMoment   = BuoyantForces->GetGasMassMoment();
+    MassBalance->in.TanksWeight = Propulsion->GetTanksWeight();
+    MassBalance->in.TanksMoment = Propulsion->GetTanksMoment();
+    MassBalance->in.TankInertia = Propulsion->CalculateTankInertias();
     break;
   case eAircraft:
     Aircraft->in.AeroForce     = Aerodynamics->GetForces();
@@ -407,6 +405,11 @@ void FGFDMExec::LoadInputs(int idx)
     Aircraft->in.BuoyantMoment = BuoyantForces->GetMoments();
     Aircraft->in.Weight        = MassBalance->GetWeight();
     Aircraft->in.Tl2b          = Propagate->GetTl2b();
+    break;
+  case eInertial:
+    Inertial->in.Radius        = Propagate->GetRadius();
+    Inertial->in.Latitude      = Propagate->GetLatitude();
+    Inertial->in.DeltaT        = dT;
     break;
   case ePropagate:
     Propagate->in.EPA          = Inertial->GetEarthPositionAngle();

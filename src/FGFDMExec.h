@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.66 2011/07/10 20:18:13 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.67 2011/07/11 05:09:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.66 $
+    @version $Revision: 1.67 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,9 +225,9 @@ public:
   /// Default destructor
   ~FGFDMExec();
 
-  enum Models { eInput, eAtmosphere, eWinds, eSystems, ePropulsion, eMassBalance, 
-                eAerodynamics, eInertial, eGroundReactions, eExternalReactions,
-                eBuoyantForces, eAircraft, ePropagate, eAuxiliary };
+  enum Models { eInput, eAtmosphere, eWinds, eSystems, ePropulsion, eAerodynamics, 
+                eGroundReactions, eExternalReactions, eBuoyantForces, eMassBalance, 
+                eAircraft, eInertial, ePropagate, eAuxiliary };
 
   /** Unbind all tied JSBSim properties. */
   void Unbind(void) {instance->Unbind();}
@@ -595,7 +595,7 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void ResetToInitialConditions(int mode);
-  void LoadInputs(int idx);
+  void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);
   bool Allocate(void);
