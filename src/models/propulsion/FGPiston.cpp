@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.58 2011/06/13 15:23:09 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.59 2011/07/12 23:36:35 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -409,8 +409,6 @@ void FGPiston::Calculate(void)
 {
   RunPreFunctions();
 
-  if (FuelFlow_gph > 0.0) ConsumeFuel();
-
   Throttle = FCS->GetThrottlePos(EngineNumber);
   Mixture = FCS->GetMixturePos(EngineNumber);
 
@@ -688,6 +686,15 @@ void FGPiston::doFuelFlow(void)
 //  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
   FuelFlowRate =  m_dot_fuel * 2.2046;  // kg to lb
+// At this point, we have enough data to ask for fuel from
+// the engine base class
+  ConsumeFuel();
+  if(Starved) // There is no fuel, so zero out the flows we've calculated so far
+  {
+    equivalence_ratio = 0.0;
+    FuelFlowRate = 0.0;
+    m_dot_fuel = 0.0;
+  }
   FuelFlow_pph = FuelFlowRate  * 3600;  // seconds to hours
   FuelFlow_gph = FuelFlow_pph / 6.0;    // Assumes 6 lbs / gallon
 }
