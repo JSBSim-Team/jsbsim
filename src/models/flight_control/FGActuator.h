@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.11 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.12 2011/07/12 21:40:32 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ Syntax:
 <actuator name="name">
   <input> {[-]property} </input>
   <lag> number </lag>
-  <rate_limit> number <rate_limit>
+  <rate_limit> number </rate_limit>
   <bias> number </bias>
   <deadband_width> number </deadband_width>
   <hysteresis_width> number </hysteresis_width>
@@ -96,14 +96,14 @@ Syntax:
 Example:
 
 @code
-<actuator name="fcs/gimbal_pitch_position">
+<actuator name="fcs/gimbal_pitch_position_radians">
   <input> fcs/gimbal_pitch_command </input>
   <lag> 60 </lag>
-  <rate_limit> 0.085 <rate_limit> <!-- 5 degrees/sec -->
+  <rate_limit> 0.085 </rate_limit> <!-- 0.085 radians/sec -->
   <bias> 0.002 </bias>
   <deadband_width> 0.002 </deadband_width>
   <hysteresis_width> 0.05 </hysteresis_width>
-  <clipto> <!-- +/- 10 degrees -->
+  <clipto> <!-- +/- 0.17 radians -->
     <min> -0.17 </min>
     <max>  0.17 </max>
    </clipto>
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.11 $
+@version $Revision: 1.12 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,6 +160,7 @@ private:
   bool fail_zero;
   bool fail_hardover;
   bool fail_stuck;
+  bool initialized;
 
   void Hysteresis(void);
   void Lag(void);
