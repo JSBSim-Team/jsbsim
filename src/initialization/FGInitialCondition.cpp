@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.64 2011/07/10 19:03:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.65 2011/07/12 10:56:30 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -581,14 +581,15 @@ void FGInitialCondition::SetWindNEDFpsIC(double wN, double wE, double wD )
 
 void FGInitialCondition::SetCrossWindKtsIC(double cross)
 {
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt*fpstokts, 0., 0.);
+  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
   FGColumnVector3 _vCROSS(-sin(psi), cos(psi), 0.);
 
   // Gram-Schmidt process is used to remove the existing cross wind component
   _vWIND_NED -= DotProduct(_vWIND_NED, _vCROSS) * _vCROSS;
-  // which is now replaced by the new value.
-  _vWIND_NED += cross * _vCROSS;
+  // Which is now replaced by the new value. The input cross wind is expected
+  // in knots, so first convert to fps, which is the internal unit used.
+  _vWIND_NED += (cross * ktstofps) * _vCROSS;
   _vt_NED = vUVW_NED + _vWIND_NED;
   vt = _vt_NED.Magnitude();
 
@@ -602,15 +603,21 @@ void FGInitialCondition::SetCrossWindKtsIC(double cross)
 
 void FGInitialCondition::SetHeadWindKtsIC(double head)
 {
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt*fpstokts, 0., 0.);
+  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-  FGColumnVector3 _vHEAD(cos(psi), sin(psi), 0.);
+  // This is a head wind, so the direction vector for the wind
+  // needs to be set opposite to the heading the aircraft
+  // is taking. So, the cos and sin of the heading (psi)
+  // are negated in the line below.
+  FGColumnVector3 _vHEAD(-cos(psi), -sin(psi), 0.);
 
   // Gram-Schmidt process is used to remove the existing head wind component
   _vWIND_NED -= DotProduct(_vWIND_NED, _vHEAD) * _vHEAD;
-  // which is now replaced by the new value.
-  _vWIND_NED += head * _vHEAD;
+  // Which is now replaced by the new value. The input head wind is expected
+  // in knots, so first convert to fps, which is the internal unit used.
+  _vWIND_NED += (head * ktstofps) * _vHEAD;
   _vt_NED = vUVW_NED + _vWIND_NED;
+
   vt = _vt_NED.Magnitude();
 
   calcAeroAngles(_vt_NED);
@@ -638,15 +645,15 @@ void FGInitialCondition::SetWindDownKtsIC(double wD)
 
 void FGInitialCondition::SetWindMagKtsIC(double mag)
 {
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt*fpstokts, 0., 0.);
+  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
   FGColumnVector3 _vHEAD(_vWIND_NED(eU), _vWIND_NED(eV), 0.);
   double windMag = _vHEAD.Magnitude();
 
   if (windMag > 0.001)
-    _vHEAD *= mag / windMag;
+    _vHEAD *= (mag*ktstofps) / windMag;
   else
-    _vHEAD = FGColumnVector3(mag, 0., 0.);
+    _vHEAD = FGColumnVector3((mag*ktstofps), 0., 0.);
 
   _vWIND_NED(eU) = _vHEAD(eU);
   _vWIND_NED(eV) = _vHEAD(eV);
