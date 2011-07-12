@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.21 2011/06/30 03:16:10 jentron Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.22 2011/07/12 21:40:32 jentron Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   rate_limit = 0.0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
+  initialized = 0;
 
   if ( element->FindElement("deadband_width") ) {
     deadband_width = element->FindElementValueAsNumber("deadband_width");
@@ -104,6 +105,8 @@ bool FGActuator::Run(void )
 {
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
+  if( fcs->GetTrimStatus() ) initialized = 0;
+
   if (fail_zero) Input = 0;
   if (fail_hardover) Input =  clipmax*sign(Input);
 
@@ -125,6 +128,8 @@ bool FGActuator::Run(void )
   }
 
   PreviousOutput = Output; // previous value needed for "stuck" malfunction
+  
+  initialized = 1;
 
   Clip();
   if (IsOutput) SetOutput();
@@ -147,7 +152,7 @@ void FGActuator::Lag(void)
   // for this Lag filter
   double input = Output;
 
-  if (!fcs->GetTrimStatus())
+  if ( initialized )
     Output = ca * (input + PreviousLagInput) + PreviousLagOutput * cb;
 
   PreviousLagInput = input;
@@ -163,7 +168,7 @@ void FGActuator::Hysteresis(void)
   // method.
   double input = Output;
   
-  if (!fcs->GetTrimStatus()) {
+  if ( initialized ) {
     if (input > PreviousHystOutput)
       Output = max(PreviousHystOutput, input-0.5*hysteresis_width);
     else if (input < PreviousHystOutput)
@@ -181,7 +186,7 @@ void FGActuator::RateLimit(void)
   // is - for the purposes of this RateLimit method - really the input to the
   // method.
   double input = Output;
-  if (!fcs->GetTrimStatus()) {
+  if ( initialized ) {
     double delta = input - PreviousRateLimOutput;
     if (fabs(delta) > dt * rate_limit) {
       double signed_rate_limit = delta > 0.0 ? rate_limit : -rate_limit;
