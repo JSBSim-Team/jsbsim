@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.36 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.37 2011/07/12 01:52:49 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -429,7 +429,7 @@ void FGMassBalance::GetMassPropertiesReport(void) const
          << setw(12) << pm->GetPointMassMoI(3,3) << endl;
   }
 
-  FDMExec->GetPropulsionTankReport();
+  cout << FDMExec->GetPropulsionTankReport();
 
   cout << underon << setw(104) << " " << underoff << endl;
   cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight 
