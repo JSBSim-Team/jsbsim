@@ -61,7 +61,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.65 2011/07/12 10:56:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.66 2011/07/17 16:38:50 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1035,7 +1035,7 @@ bool FGInitialCondition::Load_v2(void)
 {
   FGColumnVector3 vOrient;
   bool result = true;
-  FGColumnVector3 vOmegaEarth = FGColumnVector3(0.0, 0.0, fdmex->GetInertial()->omega());
+  FGColumnVector3 vOmegaEarth = fdmex->GetInertial()->GetOmegaPlanet();
 
   if (document->FindElement("earth_position_angle"))
     position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD"));

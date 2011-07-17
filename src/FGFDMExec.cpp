@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.101 2011/07/17 13:57:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.102 2011/07/17 16:38:49 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -357,6 +357,13 @@ bool FGFDMExec::Run(void)
 void FGFDMExec::LoadInputs(unsigned int idx)
 {
   switch(idx) {
+  case ePropagate:
+    Propagate->in.vPQRidot     = Accelerations->GetPQRidot();
+    Propagate->in.vQtrndot     = Accelerations->GetQuaterniondot();
+    Propagate->in.vUVWidot     = Accelerations->GetUVWidot();
+    Propagate->in.EPA          = Inertial->GetEarthPositionAngle();
+    Propagate->in.DeltaT       = dT;
+    break;
   case eInput:
     break;
   case eAtmosphere:
@@ -367,6 +374,42 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Winds->in.HOverBMAC        = Auxiliary->GetHOverBMAC();
     Winds->in.Tl2b             = Propagate->GetTl2b();
     Winds->in.V                = Auxiliary->GetVt();
+    break;
+  case eAuxiliary:
+    Auxiliary->in.Pressure     = Atmosphere->GetPressure();
+    Auxiliary->in.Density      = Atmosphere->GetDensity();
+    Auxiliary->in.DensitySL    = Atmosphere->GetDensitySL();
+    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
+    Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
+    Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
+    Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
+    Auxiliary->in.DistanceAGL  = Propagate->GetDistanceAGL();
+    Auxiliary->in.Mass         = MassBalance->GetMass();
+    Auxiliary->in.Tl2b         = Propagate->GetTl2b();
+    Auxiliary->in.Tb2l         = Propagate->GetTb2l();
+    Auxiliary->in.Tb2w         = Aerodynamics->GetTb2w();
+    Auxiliary->in.vPQR         = Propagate->GetPQR();
+    Auxiliary->in.vPQRdot      = Accelerations->GetPQRdot();
+    Auxiliary->in.vUVW         = Propagate->GetUVW();
+    Auxiliary->in.vUVWdot      = Accelerations->GetUVWdot();
+    Auxiliary->in.vVel         = Propagate->GetVel();
+    Auxiliary->in.vBodyAccel   = Accelerations->GetBodyAccel();
+    Auxiliary->in.ToEyePt      = MassBalance->StructuralToBody(Aircraft->GetXYZep());
+    Auxiliary->in.VRPBody      = MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
+    Auxiliary->in.RPBody       = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    Auxiliary->in.vFw          = Aerodynamics->GetvFw();
+    Auxiliary->in.vLocation    = Propagate->GetLocation();
+    Auxiliary->in.Latitude     = Propagate->GetLatitude();
+    Auxiliary->in.Longitude    = Propagate->GetLongitude();
+    Auxiliary->in.CosTht       = Propagate->GetCosEuler(eTht);
+    Auxiliary->in.SinTht       = Propagate->GetSinEuler(eTht);
+    Auxiliary->in.CosPhi       = Propagate->GetCosEuler(ePhi);
+    Auxiliary->in.SinPhi       = Propagate->GetSinEuler(ePhi);
+    Auxiliary->in.Psi          = Propagate->GetEuler(ePsi);
+    Auxiliary->in.TotalWindNED = Winds->GetTotalWindNED();
+    Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
+    Auxiliary->in.WindPsi      = Winds->GetWindPsi();
+    Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
     break;
   case eSystems:
     // Dynamic inputs come into the components that FCS manages through properties
@@ -433,56 +476,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.vPQR     = Propagate->GetPQR();
     Accelerations->in.vUVW     = Propagate->GetUVW();
     Accelerations->in.vInertialPosition = Propagate->GetInertialPosition();
-    Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
     Accelerations->in.DeltaT   = dT;
     Accelerations->in.Mass     = MassBalance->GetMass();
-    break;
-  case ePropagate:
-    Propagate->in.vPQRidot     = Accelerations->GetPQRidot();
-    Propagate->in.vQtrndot     = Accelerations->GetQuaterniondot();
-    Propagate->in.vUVWidot     = Accelerations->GetUVWidot();
-    Propagate->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
-    Propagate->in.RefRadius    = Inertial->GetRefRadius();
-    Propagate->in.SemiMajor    = Inertial->GetSemimajor();
-    Propagate->in.SemiMinor    = Inertial->GetSemiminor();
-    Propagate->in.EPA          = Inertial->GetEarthPositionAngle();
-    Propagate->in.DeltaT       = dT;
-    break;
-  case eAuxiliary:
-    Auxiliary->in.Pressure     = Atmosphere->GetPressure();
-    Auxiliary->in.Density      = Atmosphere->GetDensity();
-    Auxiliary->in.DensitySL    = Atmosphere->GetDensitySL();
-    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
-    Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
-    Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
-    Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
-    Auxiliary->in.DistanceAGL  = Propagate->GetDistanceAGL();
-    Auxiliary->in.Mass         = MassBalance->GetMass();
-    Auxiliary->in.Tl2b         = Propagate->GetTl2b();
-    Auxiliary->in.Tb2l         = Propagate->GetTb2l();
-    Auxiliary->in.Tb2w         = Aerodynamics->GetTb2w();
-    Auxiliary->in.vPQR         = Propagate->GetPQR();
-    Auxiliary->in.vPQRdot      = Accelerations->GetPQRdot();
-    Auxiliary->in.vUVW         = Propagate->GetUVW();
-    Auxiliary->in.vUVWdot      = Accelerations->GetUVWdot();
-    Auxiliary->in.vVel         = Propagate->GetVel();
-    Auxiliary->in.vBodyAccel   = Accelerations->GetBodyAccel();
-    Auxiliary->in.ToEyePt      = MassBalance->StructuralToBody(Aircraft->GetXYZep());
-    Auxiliary->in.VRPBody      = MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
-    Auxiliary->in.RPBody       = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-    Auxiliary->in.vFw          = Aerodynamics->GetvFw();
-    Auxiliary->in.vLocation    = Propagate->GetLocation();
-    Auxiliary->in.Latitude     = Propagate->GetLatitude();
-    Auxiliary->in.Longitude    = Propagate->GetLongitude();
-    Auxiliary->in.CosTht       = Propagate->GetCosEuler(eTht);
-    Auxiliary->in.SinTht       = Propagate->GetSinEuler(eTht);
-    Auxiliary->in.CosPhi       = Propagate->GetCosEuler(ePhi);
-    Auxiliary->in.SinPhi       = Propagate->GetSinEuler(ePhi);
-    Auxiliary->in.Psi          = Propagate->GetEuler(ePsi);
-    Auxiliary->in.TotalWindNED = Winds->GetTotalWindNED();
-    Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
-    Auxiliary->in.WindPsi      = Winds->GetWindPsi();
-    Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
     break;
   default:
     break;
@@ -493,12 +488,13 @@ void FGFDMExec::LoadInputs(unsigned int idx)
 
 void FGFDMExec::LoadPlanetConstants(void)
 {
-  Propagate->in.vOmegaPlanet    = Inertial->GetOmegaPlanet();
-  Propagate->in.RefRadius       = Inertial->GetRefRadius();
-  Propagate->in.SemiMajor       = Inertial->GetSemimajor();
-  Propagate->in.SemiMinor       = Inertial->GetSemiminor();
-  Auxiliary->in.SLGravity       = Inertial->SLgravity();
-  Auxiliary->in.ReferenceRadius = Inertial->GetRefRadius();
+  Propagate->in.vOmegaPlanet     = Inertial->GetOmegaPlanet();
+  Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
+  Propagate->in.RefRadius        = Inertial->GetRefRadius();
+  Propagate->in.SemiMajor        = Inertial->GetSemimajor();
+  Propagate->in.SemiMinor        = Inertial->GetSemiminor();
+  Auxiliary->in.SLGravity        = Inertial->SLgravity();
+  Auxiliary->in.ReferenceRadius  = Inertial->GetRefRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
