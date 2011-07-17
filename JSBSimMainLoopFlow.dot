@@ -2,7 +2,7 @@
 
 digraph G {
   rankdir = LR;
-  ranksep=1.1;
+  ranksep=1.3;
 //  size = "17, 11";
   concentrate=true;
 
@@ -91,11 +91,22 @@ digraph G {
     rank=same;
     Propagate;
     Input;
+    Atmosphere;
 }
 {
     rank=same;
+    Aircraft
     Inertial;
     Accelerations;
+    Output;
+}
+{
+    rank=same;
+//    Propulsion;
+    Aerodynamics;
+    GroundReactions;
+    ExternalReactions;
+    BuoyantForces;
 }
 {
     rank=same;
@@ -171,10 +182,10 @@ digraph G {
 }
 
   // Propagate
-  Accelerations -> PQRidot -> Propagate;
-  Accelerations -> Quaterniondot -> Propagate;
-  Accelerations -> UVWidot -> Propagate;
-  Inertial -> EPA -> Propagate;
+  Accelerations -> PQRidot -> Propagate [color=orange, style=bold];
+  Accelerations -> Quaterniondot -> Propagate [color=orange, style=bold];
+  Accelerations -> UVWidot -> Propagate [color=orange, style=bold];
+  Inertial -> EPA -> Propagate [color=orange, style=bold];
   Executive -> "Delta T" -> Propagate;
 
   // Atmosphere & Winds
@@ -182,9 +193,9 @@ digraph G {
   Propagate -> AltitudeASL -> Winds;
 
   // Winds
-  Auxiliary -> HOverBMAC -> Winds;
+  Auxiliary -> HOverBMAC -> Winds [color=orange, style=bold];
   Propagate -> Tl2b -> Winds;
-  Auxiliary -> Vtotal -> Winds;
+  Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
 
   // Auxiliary
   Atmosphere -> Pressure -> Auxiliary;
@@ -195,20 +206,20 @@ digraph G {
   Atmosphere -> SoundSpeed -> Auxiliary;
   Atmosphere -> KinematicViscosity -> Auxiliary;
   Propagate -> DistanceAGL -> Auxiliary;
-  MassBalance -> Mass -> Auxiliary;
+  MassBalance -> Mass -> Auxiliary [color=orange, style=bold];
   Propagate -> Tl2b -> Auxiliary;
   Propagate -> Tb2l ->Auxiliary;
-  Aerodynamics -> Tb2w -> Auxiliary;
+  Aerodynamics -> Tb2w -> Auxiliary [color=orange, style=bold];
   Propagate -> PQR -> Auxiliary;
-  Accelerations -> PQRdot -> Auxiliary;
+  Accelerations -> PQRdot -> Auxiliary [color=orange, style=bold];
   Propagate -> UVW -> Auxiliary;
-  Accelerations -> UVWdot -> Auxiliary;
+  Accelerations -> UVWdot -> Auxiliary [color=orange, style=bold];
   Propagate -> VelocityNED -> Auxiliary;
   Propagate -> BodyAccel -> Auxiliary;
-  MassBalance -> EyePtBody -> Auxiliary;
-  MassBalance -> VRPBody -> Auxiliary;
-  MassBalance -> RPBody -> Auxiliary;
-  Aerodynamics -> Force_w -> Auxiliary;
+  MassBalance -> EyePtBody -> Auxiliary [color=orange, style=bold];
+  MassBalance -> VRPBody -> Auxiliary [color=orange, style=bold];
+  MassBalance -> RPBody -> Auxiliary [color=orange, style=bold];
+  Aerodynamics -> Force_w -> Auxiliary [color=orange, style=bold];
   Propagate -> Location -> Auxiliary;
   Propagate -> Latitude -> Auxiliary;
   Propagate -> Longitude -> Auxiliary;
