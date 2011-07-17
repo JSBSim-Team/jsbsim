@@ -39,7 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "models/propulsion/FGForce.h"
-#include "models/FGPropagate.h"
+#include "models/FGAccelerations.h"
 #include "math/FGColumnVector3.h"
 #include <string>
 
@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.41 2010/09/22 11:33:40 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.42 2011/07/17 13:51:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -56,7 +56,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGAircraft;
-class FGPropagate;
+class FGAccelerations;
 class FGFCS;
 class FGMassBalance;
 class FGAuxiliary;
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.41 2010/09/22 11:33:40 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.42 2011/07/17 13:51:23 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -282,9 +282,9 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
-  FGPropagate::LagrangeMultiplier* GetMultiplierEntry(int entry);
-  void SetLagrangeMultiplier(double lambda, int entry);
   FGColumnVector3& UpdateForces(void);
+  FGAccelerations::LagrangeMultiplier* GetMultiplierEntry(int entry);
+  void SetLagrangeMultiplier(double lambda, int entry);
 
   void bind(void);
 
@@ -348,7 +348,7 @@ private:
   DampType    eDampTypeRebound;
   double  maxSteerAngle;
 
-  FGPropagate::LagrangeMultiplier LMultiplier[3];
+  FGAccelerations::LagrangeMultiplier LMultiplier[3];
 
   FGAuxiliary*       Auxiliary;
   FGPropagate*       Propagate;

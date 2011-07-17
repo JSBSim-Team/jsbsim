@@ -49,12 +49,14 @@ INCLUDES
 #include "models/propulsion/FGEngine.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGGroundReactions.h"
+#include "models/FGPropagate.h"
+#include "models/FGAccelerations.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.11 2011/07/10 19:03:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.12 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -166,12 +168,12 @@ FGTrimAxis::~FGTrimAxis(void)
 
 void FGTrimAxis::getState(void) {
   switch(state) {
-  case tUdot: state_value=fdmex->GetPropagate()->GetUVWdot(1)-state_target; break;
-  case tVdot: state_value=fdmex->GetPropagate()->GetUVWdot(2)-state_target; break;
-  case tWdot: state_value=fdmex->GetPropagate()->GetUVWdot(3)-state_target; break;
-  case tQdot: state_value=fdmex->GetPropagate()->GetPQRdot(2)-state_target;break;
-  case tPdot: state_value=fdmex->GetPropagate()->GetPQRdot(1)-state_target; break;
-  case tRdot: state_value=fdmex->GetPropagate()->GetPQRdot(3)-state_target; break;
+  case tUdot: state_value=fdmex->GetAccelerations()->GetUVWdot(1)-state_target; break;
+  case tVdot: state_value=fdmex->GetAccelerations()->GetUVWdot(2)-state_target; break;
+  case tWdot: state_value=fdmex->GetAccelerations()->GetUVWdot(3)-state_target; break;
+  case tQdot: state_value=fdmex->GetAccelerations()->GetPQRdot(2)-state_target;break;
+  case tPdot: state_value=fdmex->GetAccelerations()->GetPQRdot(1)-state_target; break;
+  case tRdot: state_value=fdmex->GetAccelerations()->GetPQRdot(3)-state_target; break;
   case tHmgt: state_value=computeHmgt()-state_target; break;
   case tNlf:  state_value=fdmex->GetAuxiliary()->GetNlf()-state_target; break;
   case tAll: break;

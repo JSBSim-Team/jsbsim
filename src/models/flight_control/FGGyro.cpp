@@ -40,11 +40,13 @@ INCLUDES
 #include "FGGyro.h"
 #include <iostream>
 
+#include "models/FGAccelerations.h"
+
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGyro.cpp,v 1.5 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGyro.cpp,v 1.6 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_GYRO;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +56,7 @@ CLASS IMPLEMENTATION
 FGGyro::FGGyro(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
                                                FGSensorOrientation(element)
 {
-  Propagate = fcs->GetExec()->GetPropagate();
+  Accelerations = fcs->GetExec()->GetAccelerations();
   
   Debug(0);
 }
@@ -73,7 +75,7 @@ bool FGGyro::Run(void )
   // There is no input assumed. This is a dedicated angular acceleration sensor.
   
   //aircraft rates
-  vAccel = mT * Propagate->GetPQRdot();
+  vAccel = mT * Accelerations->GetPQRdot();
 
   Input = vAccel(axis);
 

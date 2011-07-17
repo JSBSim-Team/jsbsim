@@ -41,6 +41,10 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <iterator>
+#include <cstdlib>
+
 #include "FGFDMExec.h"
 #include "models/atmosphere/FGStandardAtmosphere.h"
 #include "models/atmosphere/FGWinds.h"
@@ -53,6 +57,7 @@ INCLUDES
 #include "models/FGAerodynamics.h"
 #include "models/FGInertial.h"
 #include "models/FGAircraft.h"
+#include "models/FGAccelerations.h"
 #include "models/FGPropagate.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
@@ -61,15 +66,11 @@ INCLUDES
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
 
-#include <iostream>
-#include <iterator>
-#include <cstdlib>
-
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.99 2011/07/12 10:23:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.100 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +97,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   ExternalReactions = 0;
   BuoyantForces   = 0;
   Aircraft        = 0;
+  Accelerations   = 0;
   Propagate       = 0;
   Auxiliary       = 0;
   Input           = 0;
@@ -221,6 +223,7 @@ bool FGFDMExec::Allocate(void)
   ExternalReactions = new FGExternalReactions(this);
   BuoyantForces   = new FGBuoyantForces(this);
   Aircraft        = new FGAircraft(this);
+  Accelerations   = new FGAccelerations(this);
   Propagate       = new FGPropagate(this);
   Auxiliary       = new FGAuxiliary(this);
   Input           = new FGInput(this);
@@ -228,20 +231,21 @@ bool FGFDMExec::Allocate(void)
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model could get executed every fifth pass it is called.
   
-  Schedule(Input,             1);   
-  Schedule(Atmosphere,        1);   
-  Schedule(Winds,             1);   
-  Schedule(FCS,               1);   
-  Schedule(Propulsion,        1);   
-  Schedule(Aerodynamics,      1);   
-  Schedule(GroundReactions,   1);   
-  Schedule(ExternalReactions, 1); 
-  Schedule(BuoyantForces,     1);   
-  Schedule(MassBalance,       1);   
-  Schedule(Aircraft,          1);   
-  Schedule(Inertial,          1);   
-  Schedule(Propagate,         1);   
-  Schedule(Auxiliary,         1);   
+  Schedule(Propagate,         1);  // Propagate (advance) the simulation
+  Schedule(Input,             1);  // Accept inputs (if any)
+  Schedule(Atmosphere,        1);  // Calculate atmospheric properties
+  Schedule(Winds,             1);  // Calculate winds
+  Schedule(Auxiliary,         1);  // Calculate auxiliary parameters
+  Schedule(FCS,               1);  // Process system models
+  Schedule(Propulsion,        1);  // Process propulsion models
+  Schedule(Aerodynamics,      1);  // Process aerodynamics model
+  Schedule(GroundReactions,   1);  // Process Ground Reactions
+  Schedule(ExternalReactions, 1);  // Process external reactions
+  Schedule(BuoyantForces,     1);  // Process buoyancy model
+  Schedule(MassBalance,       1);  // Calculate mass properties
+  Schedule(Aircraft,          1);  // Sum forces and moments
+  Schedule(Inertial,          1);  // Calculate planet parameters
+  Schedule(Accelerations,     1);  // Calculate vehicle accelerations
 
   // Initialize planet (environment) constants
   LoadPlanetConstants();
@@ -275,6 +279,7 @@ bool FGFDMExec::DeAllocate(void)
   delete ExternalReactions;
   delete BuoyantForces;
   delete Aircraft;
+  delete Accelerations;
   delete Propagate;
   delete Auxiliary;
   delete Script;
@@ -301,6 +306,7 @@ bool FGFDMExec::DeAllocate(void)
   ExternalReactions = 0;
   BuoyantForces   = 0;
   Aircraft        = 0;
+  Accelerations   = 0;
   Propagate       = 0;
   Auxiliary       = 0;
   Script          = 0;
@@ -411,15 +417,35 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Inertial->in.Latitude      = Propagate->GetLatitude();
     Inertial->in.DeltaT        = dT;
     break;
+  case eAccelerations:
+    Accelerations->in.J        = MassBalance->GetJ();
+    Accelerations->in.Jinv     = MassBalance->GetJinv();
+    Accelerations->in.Ti2b     = Propagate->GetTi2b();
+    Accelerations->in.Tb2i     = Propagate->GetTb2i();
+    Accelerations->in.Tec2b    = Propagate->GetTec2b();
+    Accelerations->in.Tl2b     = Propagate->GetTl2b();
+    Accelerations->in.qAttitudeECI = Propagate->GetQuaternionECI();
+    Accelerations->in.Moment   = Aircraft->GetMoments();
+    Accelerations->in.Force    = Aircraft->GetForces();
+    Accelerations->in.GAccel   = Inertial->GetGAccel(Propagate->GetRadius());
+    Accelerations->in.J2Grav  = Inertial->GetGravityJ2(Propagate->GetLocation());
+    Accelerations->in.vPQRi    = Propagate->GetPQRi();
+    Accelerations->in.vPQR     = Propagate->GetPQR();
+    Accelerations->in.vUVW     = Propagate->GetUVW();
+    Accelerations->in.vInertialPosition = Propagate->GetInertialPosition();
+    Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
+    Accelerations->in.DeltaT   = dT;
+    Accelerations->in.Mass     = MassBalance->GetMass();
+    break;
   case ePropagate:
+    Propagate->in.vPQRidot     = Accelerations->GetPQRidot();
+    Propagate->in.vQtrndot     = Accelerations->GetQuaterniondot();
+    Propagate->in.vUVWidot     = Accelerations->GetUVWidot();
+    Propagate->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
+    Propagate->in.RefRadius    = Inertial->GetRefRadius();
+    Propagate->in.SemiMajor    = Inertial->GetSemimajor();
+    Propagate->in.SemiMinor    = Inertial->GetSemiminor();
     Propagate->in.EPA          = Inertial->GetEarthPositionAngle();
-    Propagate->in.Force        = Aircraft->GetForces();
-    Propagate->in.GAccel       = Inertial->GetGAccel(Propagate->GetRadius());
-    Propagate->in.J2Grav       = Inertial->GetGravityJ2(Propagate->GetLocation());
-    Propagate->in.J            = MassBalance->GetJ();
-    Propagate->in.Jinv         = MassBalance->GetJinv();
-    Propagate->in.Mass         = MassBalance->GetMass();
-    Propagate->in.Moment       = Aircraft->GetMoments();
     Propagate->in.DeltaT       = dT;
     break;
   case eAuxiliary:
@@ -436,11 +462,11 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.Tb2l         = Propagate->GetTb2l();
     Auxiliary->in.Tb2w         = Aerodynamics->GetTb2w();
     Auxiliary->in.vPQR         = Propagate->GetPQR();
-    Auxiliary->in.vPQRdot      = Propagate->GetPQRdot();
+    Auxiliary->in.vPQRdot      = Accelerations->GetPQRdot();
     Auxiliary->in.vUVW         = Propagate->GetUVW();
-    Auxiliary->in.vUVWdot      = Propagate->GetUVWdot();
+    Auxiliary->in.vUVWdot      = Accelerations->GetUVWdot();
     Auxiliary->in.vVel         = Propagate->GetVel();
-    Auxiliary->in.vBodyAccel   = Propagate->GetBodyAccel();
+    Auxiliary->in.vBodyAccel   = Accelerations->GetBodyAccel();
     Auxiliary->in.ToEyePt      = MassBalance->StructuralToBody(Aircraft->GetXYZep());
     Auxiliary->in.VRPBody      = MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
     Auxiliary->in.RPBody       = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
@@ -467,7 +493,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
 
 void FGFDMExec::LoadPlanetConstants(void)
 {
-  Propagate->in.OmegaPlanet     = Inertial->omega();
+  Propagate->in.vOmegaPlanet    = Inertial->GetOmegaPlanet();
   Propagate->in.RefRadius       = Inertial->GetRefRadius();
   Propagate->in.SemiMajor       = Inertial->GetSemimajor();
   Propagate->in.SemiMinor       = Inertial->GetSemiminor();
@@ -479,20 +505,20 @@ void FGFDMExec::LoadPlanetConstants(void)
 
 void FGFDMExec::LoadModelConstants(void)
 {
-  Winds->in.wingspan         = Aircraft->GetWingSpan();
-  FCS->in.NumGear            = GroundReactions->GetNumGearUnits();
-  Aerodynamics->in.Wingarea  = Aircraft->GetWingArea();
-  Aerodynamics->in.Wingchord = Aircraft->Getcbar();
+  Winds->in.wingspan             = Aircraft->GetWingSpan();
+  FCS->in.NumGear                = GroundReactions->GetNumGearUnits();
+  Aerodynamics->in.Wingarea      = Aircraft->GetWingArea();
+  Aerodynamics->in.Wingchord     = Aircraft->Getcbar();
   Aerodynamics->in.Wingincidence = Aircraft->GetWingIncidence();
-  Aerodynamics->in.Wingspan  = Aircraft->GetWingSpan();
-  Propagate->in.OmegaPlanet  = Inertial->omega();
-  Propagate->in.RefRadius    = Inertial->GetRefRadius();
-  Propagate->in.SemiMajor    = Inertial->GetSemimajor();
-  Propagate->in.SemiMinor    = Inertial->GetSemiminor();
-  Auxiliary->in.Wingspan     = Aircraft->GetWingSpan();
-  Auxiliary->in.Wingchord    = Aircraft->Getcbar();
-  Auxiliary->in.SLGravity    = Inertial->SLgravity();
-  Auxiliary->in.ReferenceRadius = Inertial->GetRefRadius();
+  Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
+  Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
+  Auxiliary->in.Wingchord        = Aircraft->Getcbar();
+  Propagate->in.vOmegaPlanet     = Inertial->GetOmegaPlanet(); // unneeded? Or just call LoadPlanetConstants?
+  Propagate->in.RefRadius        = Inertial->GetRefRadius();   // unneeded?
+  Propagate->in.SemiMajor        = Inertial->GetSemimajor();   // unneeded?
+  Propagate->in.SemiMinor        = Inertial->GetSemiminor();   // unneeded?
+  Auxiliary->in.SLGravity        = Inertial->SLgravity();      // unneeded?
+  Auxiliary->in.ReferenceRadius  = Inertial->GetRefRadius();   // unneeded?
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -515,12 +541,15 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   Setsim_time(0.0);
 
   Propagate->SetInitialState( FGIC );
+  LoadInputs(eAccelerations);
+  Accelerations->Run(false);
+  LoadInputs(ePropagate);
+  Propagate->InitializeDerivatives();
   LoadInputs(eAtmosphere);
   Atmosphere->Run(false);
   Winds->SetWindNED( FGIC->GetWindNFpsIC(),
                           FGIC->GetWindEFpsIC(),
                           FGIC->GetWindDFpsIC() );
-
   Auxiliary->Run(false);
 }
 

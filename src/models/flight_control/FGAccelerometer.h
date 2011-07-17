@@ -39,9 +39,6 @@ INCLUDES
 
 #include "FGSensor.h"
 #include "input_output/FGXMLElement.h"
-#include "models/FGPropagate.h"
-#include "models/FGMassBalance.h"
-#include "models/FGInertial.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 #include "FGSensorOrientation.h"
@@ -50,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.4 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.5 2011/07/17 13:51:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +56,10 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFCS;
+class FGPropagate;
+class FGAccelerations;
+class FGInertial;
+class FGMassBalance;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -110,7 +111,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.4 $
+@version $Revision: 1.5 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,6 +128,7 @@ public:
 
 private:
   FGPropagate* Propagate;
+  FGAccelerations* Accelerations;
   FGMassBalance* MassBalance;
   FGInertial* Inertial;
   FGColumnVector3 vLocation;
