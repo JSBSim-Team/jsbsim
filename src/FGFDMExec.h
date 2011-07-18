@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.68 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.69 2011/07/18 04:37:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +183,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.68 $
+    @version $Revision: 1.69 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,7 +316,7 @@ public:
   //@{
   /// Returns the FGAtmosphere pointer.
   FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
-  /// Returns the FGAtmosphere pointer.
+  /// Returns the FGAccelerations pointer.
   FGAccelerations* GetAccelerations(void)    {return Accelerations;}
   /// Returns the FGWinds pointer.
   FGWinds* GetWinds(void)    {return Winds;}

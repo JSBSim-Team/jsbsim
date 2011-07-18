@@ -3,7 +3,8 @@
  Module:       FGAccelerations.cpp
  Author:       Jon S. Berndt
  Date started: 07/12/11
- Purpose:      Determine vehicle accelerations
+ Purpose:      Calculates derivatives of rotational and translational rates, and
+               of the attitude quaternion.
  Called by:    FGFDMExec
 
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
@@ -27,8 +28,10 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This class encapsulates the integration of rates and accelerations to get the
-current position of the aircraft.
+This class encapsulates the calculation of the derivatives of the state vectors
+UVW and PQR - the translational and rotational rates relative to the planet 
+fixed frame. The derivatives relative to the inertial frame are also calculated
+as a side effect. Also, the derivative of the attitude quaterion is also calculated.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -37,18 +40,11 @@ HISTORY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-    Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-    School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-    JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+[1] Stevens and Lewis, "Aircraft Control and Simulation", Second edition (2004)
+    Wiley
+[2] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
     NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-    Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-    1982 ISBN 0-471-08936-2
-[6] Erin Catto, "Iterative Dynamics with Temporal Coherence", February 22, 2005
+[3] Erin Catto, "Iterative Dynamics with Temporal Coherence", February 22, 2005
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -63,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.1 2011/07/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.2 2011/07/18 04:37:34 jberndt Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,12 +105,7 @@ bool FGAccelerations::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
-Purpose: Called on a schedule to calculate integrations.
-
-In the code below, variables named beginning with a small "v" refer to a 
-a column vector, variables named beginning with a "T" refer to a transformation
-matrix. ECEF refers to Earth Centered Earth Fixed. ECI refers to Earth Centered
-Inertial.
+Purpose: Called on a schedule to calculate derivatives.
 */
 
 bool FGAccelerations::Run(bool Holding)
@@ -182,7 +173,7 @@ void FGAccelerations::CalculateQuatdot(void)
 //   so it has to be transformed to the body frame. More completely,
 //   in.vOmegaPlanet is the rate of the ECEF frame relative to the Inertial
 //   frame (ECI), expressed in the Inertial frame.
-// vForces is the total force on the vehicle in the body frame.
+// in.Force is the total force on the vehicle in the body frame.
 // in.vPQR is the vehicle body rate relative to the ECEF frame, expressed
 //   in the body frame.
 // in.vUVW is the vehicle velocity relative to the ECEF frame, expressed
@@ -362,9 +353,9 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   }
 
   vUVWdot += invMass * Fc;
-  vUVWidot += invMass * in.Tb2i * Fc;
-  vPQRdot += Jinv * Mc;
-  vPQRidot += Jinv * Mc;
+  vUVWidot += invMass * in.Tb2i * Fc;  // ToDo: Use value from previous line and transform
+  vPQRdot += Jinv * Mc;                //
+  vPQRidot += Jinv * Mc;               // ToDo: Extraneous calculation; use value from previous line?
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
