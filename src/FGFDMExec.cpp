@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.102 2011/07/17 16:38:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.103 2011/07/20 12:26:41 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +198,7 @@ FGFDMExec::~FGFDMExec()
 
   PropertyCatalog.clear();
 
-  FDMctr--;
+  if (FDMctr > 0) (*FDMctr)--;
 
   Debug(1);
 }

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.39 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.40 2011/07/20 12:26:41 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,6 +306,7 @@ bool FGAerodynamics::Load(Element *element)
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
     document = LoadXMLDocument(file);
+    if (document == 0L) return false;
   } else {
     document = element;
   }

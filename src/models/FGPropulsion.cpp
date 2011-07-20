@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.47 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.48 2011/07/20 12:26:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -302,6 +302,11 @@ bool FGPropulsion::Load(Element* el)
     }
 
     engine_filename = FindEngineFullPathname(engine_filename);
+    if (engine_filename.empty()) {
+      // error message already printed by FindEngineFullPathname()
+      return false;
+    }
+
     document = LoadXMLDocument(engine_filename);
     document->SetParent(engine_element);
 
