@@ -53,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.10 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.11 2011/07/20 12:14:57 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,6 +63,7 @@ CLASS IMPLEMENTATION
 FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   NoneDefined = true;
+
   Debug(0);
 }
 
@@ -86,6 +87,8 @@ bool FGExternalReactions::Load(Element* el)
   }
 
   PostLoad(el, PropertyManager);
+
+  if (!NoneDefined) bind();
 
   return true;
 }
@@ -129,6 +132,20 @@ bool FGExternalReactions::Run(bool Holding)
 
   return false;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGExternalReactions::bind(void)
+{
+  typedef double (FGExternalReactions::*PMF)(int) const;
+  PropertyManager->Tie("moments/l-external-lbsft", this, eL, (PMF)&FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/m-external-lbsft", this, eM, (PMF)&FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/n-external-lbsft", this, eN, (PMF)&FGExternalReactions::GetMoments);
+  PropertyManager->Tie("forces/fbx-external-lbs", this, eX, (PMF)&FGExternalReactions::GetForces);
+  PropertyManager->Tie("forces/fby-external-lbs", this, eY, (PMF)&FGExternalReactions::GetForces);
+  PropertyManager->Tie("forces/fbz-external-lbs", this, eZ, (PMF)&FGExternalReactions::GetForces);
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
