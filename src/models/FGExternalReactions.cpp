@@ -53,7 +53,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.11 2011/07/20 12:14:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.12 2011/07/20 12:16:34 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,14 @@ FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGExternalReactions::Load(Element* el)
 {
+  // check if a file attribute was specified
+  string fname = el->GetAttributeValue("file");
+  if (!fname.empty()) {
+    string file = FDMExec->GetFullAircraftPath() + "/" + fname;
+    el = LoadXMLDocument(file);
+    if (el == 0L) return false;
+  }
+
   FGModel::Load(el); // Call the base class Load() function to load interface properties.
 
   Debug(2);
