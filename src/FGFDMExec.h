@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.67 2011/07/11 05:09:22 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.69 2011/07/18 04:37:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,6 +71,7 @@ class FGTrim;
 class FGAerodynamics;
 class FGAircraft;
 class FGAtmosphere;
+class FGAccelerations;
 class FGWinds;
 class FGAuxiliary;
 class FGBuoyantForces;
@@ -182,7 +183,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.67 $
+    @version $Revision: 1.69 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,9 +226,9 @@ public:
   /// Default destructor
   ~FGFDMExec();
 
-  enum Models { eInput, eAtmosphere, eWinds, eSystems, ePropulsion, eAerodynamics, 
-                eGroundReactions, eExternalReactions, eBuoyantForces, eMassBalance, 
-                eAircraft, eInertial, ePropagate, eAuxiliary };
+  enum eModels { ePropagate, eInput, eAtmosphere, eWinds, eAuxiliary, eSystems,
+                 ePropulsion, eAerodynamics, eGroundReactions, eExternalReactions,
+                 eBuoyantForces, eMassBalance, eAircraft, eInertial, eAccelerations };
 
   /** Unbind all tied JSBSim properties. */
   void Unbind(void) {instance->Unbind();}
@@ -315,6 +316,8 @@ public:
   //@{
   /// Returns the FGAtmosphere pointer.
   FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
+  /// Returns the FGAccelerations pointer.
+  FGAccelerations* GetAccelerations(void)    {return Accelerations;}
   /// Returns the FGWinds pointer.
   FGWinds* GetWinds(void)    {return Winds;}
   /// Returns the FGFCS pointer.
@@ -562,6 +565,7 @@ private:
 
   FGGroundCallback*   GroundCallback;
   FGAtmosphere*       Atmosphere;
+  FGAccelerations*    Accelerations;
   FGWinds*            Winds;
   FGFCS*              FCS;
   FGPropulsion*       Propulsion;

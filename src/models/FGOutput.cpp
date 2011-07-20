@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.56 2011/06/21 13:54:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.57 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -251,6 +251,7 @@ void FGOutput::DelimitedOutput(const string& fname)
   const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
   const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
   const FGPropagate* Propagate = FDMExec->GetPropagate();
+  const FGAccelerations* Accelerations = FDMExec->GetAccelerations();
   const FGFCS* FCS = FDMExec->GetFCS();
   const FGInertial* Inertial = FDMExec->GetInertial();
   const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
@@ -411,7 +412,7 @@ void FGOutput::DelimitedOutput(const string& fname)
   if (SubSystems & ssRates) {
     outstream << delimeter;
     outstream << (radtodeg*Propagate->GetPQR()).Dump(delimeter) << delimeter;
-    outstream << (radtodeg*Propagate->GetPQRdot()).Dump(delimeter) << delimeter;
+    outstream << (radtodeg*Accelerations->GetPQRdot()).Dump(delimeter) << delimeter;
     outstream << (radtodeg*Propagate->GetPQRi()).Dump(delimeter);
   }
   if (SubSystems & ssVelocities) {
@@ -735,6 +736,7 @@ void FGOutput::SocketOutput(void)
   const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
   const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
   const FGPropagate* Propagate = FDMExec->GetPropagate();
+  const FGAccelerations* Accelerations = FDMExec->GetAccelerations();
   const FGFCS* FCS = FDMExec->GetFCS();
   const FGAtmosphere* Atmosphere = FDMExec->GetAtmosphere();
   const FGWinds* Winds = FDMExec->GetWinds();
@@ -878,9 +880,9 @@ void FGOutput::SocketOutput(void)
     socket->Append(radtodeg*Propagate->GetPQR(eP));
     socket->Append(radtodeg*Propagate->GetPQR(eQ));
     socket->Append(radtodeg*Propagate->GetPQR(eR));
-    socket->Append(radtodeg*Propagate->GetPQRdot(eP));
-    socket->Append(radtodeg*Propagate->GetPQRdot(eQ));
-    socket->Append(radtodeg*Propagate->GetPQRdot(eR));
+    socket->Append(radtodeg*Accelerations->GetPQRdot(eP));
+    socket->Append(radtodeg*Accelerations->GetPQRdot(eQ));
+    socket->Append(radtodeg*Accelerations->GetPQRdot(eR));
   }
   if (SubSystems & ssVelocities) {
     socket->Append(Auxiliary->Getqbar());

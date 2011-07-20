@@ -1,0 +1,288 @@
+/* Main loop model I/O */
+
+digraph G {
+  rankdir = LR;
+  ranksep=1.3;
+//  size = "17, 11";
+  concentrate=true;
+
+  {
+    node [shape = box, fillcolor=grey, style=filled, group=model];
+    Input; Atmosphere; Winds; "Control Systems"; 
+    Propulsion; MassBalance; Aerodynamics; Inertial;
+    GroundReactions; ExternalReactions; BuoyantForces;
+    Aircraft; Accelerations; Propagate [fillcolor=red]; Auxiliary; Output;
+  }
+  
+  Executive  [shape = box, fillcolor=yellow, style=filled];
+  
+  /* Order of execution of main loop models */
+
+
+  {
+  node [shape = box, fillcolor=grey, style=filled, group=model];
+  Propagate ->
+  Input ->  
+  Atmosphere ->
+  Winds ->
+  Auxiliary ->
+  "Control Systems" ->
+  Propulsion ->
+  Aerodynamics ->
+  GroundReactions ->
+  ExternalReactions ->
+  BuoyantForces ->
+  MassBalance ->
+  Aircraft ->
+  Inertial ->
+  Accelerations->
+  Output [color=blue, style=bold];
+  }
+
+  {
+    node [shape=plaintext];
+    AltitudeASL;
+    HOverBMAC;
+    Tl2b;
+    Tb2l;
+    Ti2b;
+    Tb2i;
+    Tec2b;
+    Tb2w;
+    Vtotal;
+    RadiusToVehicle;
+    Latitude;
+    "Delta T";
+    Mass;
+    Weight;
+    Tb2w;
+    Force_w;
+    EPA;
+    Forces;
+    Gravity;
+    GravityJ2;
+    J;
+    Jinv;
+    Moments;
+    DistanceAGL;
+    PQR;
+    PQRi;
+    PQRdot;
+    PQRidot;
+    UVW;
+    UVWdot;
+    UVWidot;
+    InertialPosition;
+    Quaterniondot;
+    QuaternionECI;
+    VelocityNED;
+    BodyAccel;
+    Location;
+    Latitude;
+    Longitude;
+    CosTheta;
+    SinTheta;
+    CosPhi;
+    SinPhi;
+    Psi;
+}
+/* Alignment blocks */
+{
+    rank=same;
+    Propagate;
+    Input;
+    Atmosphere;
+}
+{
+    rank=same;
+    Aircraft
+    Inertial;
+    Accelerations;
+    Output;
+}
+{
+    rank=same;
+//    Propulsion;
+    Aerodynamics;
+    GroundReactions;
+    ExternalReactions;
+    BuoyantForces;
+}
+{
+    rank=same;
+    PQRi;
+    UVW;
+    PQR;
+    InertialPosition;
+    Ti2b;
+    Tb2i;
+    Tec2b;
+    Tl2b;
+    QuaternionECI;
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    GasMassInertia;
+    GasMass;
+    GasMassMoment;
+    TanksInertia;
+    TanksWeight;
+    TanksMoment;
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    // ExternalReactions [shape = box, fillcolor=grey, style=filled, group=model];
+    Alpha;
+    Beta;
+    qbar;
+    Vtotal;
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    // Aerodynamics [shape = box, fillcolor=grey, style=filled, group=model];
+    TotalWindNED;
+    TurbPQR;
+    WindPsi;
+    Vwind;
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    VRPBody;
+    RPBody;
+    EyePtBody;
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    "Aero Forces";
+    "Prop Forces";
+    "Ground Forces";
+    "External Forces";
+    "Buoyant Forces";
+    "Aero Moments";
+    "Prop Moments";
+    "Ground Moments";
+    "External Moments";
+    "Buoyant Moments";
+}
+{
+    node [shape=plaintext];
+    rank=same;
+    Pressure;
+    Density;
+    Temperature;
+    PressureSL;
+    DensitySL;
+    SoundSpeed;
+    KinematicViscosity;
+}
+
+  // Propagate
+  Accelerations -> PQRidot -> Propagate [color=orange, style=bold];
+  Accelerations -> Quaterniondot -> Propagate [color=orange, style=bold];
+  Accelerations -> UVWidot -> Propagate [color=orange, style=bold];
+  Inertial -> EPA -> Propagate [color=orange, style=bold];
+  Executive -> "Delta T" -> Propagate;
+
+  // Atmosphere & Winds
+  Propagate -> AltitudeASL -> Atmosphere;
+  Propagate -> AltitudeASL -> Winds;
+
+  // Winds
+  Auxiliary -> HOverBMAC -> Winds [color=orange, style=bold];
+  Propagate -> Tl2b -> Winds;
+  Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
+
+  // Auxiliary
+  Atmosphere -> Pressure -> Auxiliary;
+  Atmosphere -> Density -> Auxiliary;
+  Atmosphere -> DensitySL -> Auxiliary;
+  Atmosphere -> PressureSL -> Auxiliary;
+  Atmosphere -> Temperature -> Auxiliary;
+  Atmosphere -> SoundSpeed -> Auxiliary;
+  Atmosphere -> KinematicViscosity -> Auxiliary;
+  Propagate -> DistanceAGL -> Auxiliary;
+  MassBalance -> Mass -> Auxiliary [color=orange, style=bold];
+  Propagate -> Tl2b -> Auxiliary;
+  Propagate -> Tb2l ->Auxiliary;
+  Aerodynamics -> Tb2w -> Auxiliary [color=orange, style=bold];
+  Propagate -> PQR -> Auxiliary;
+  Accelerations -> PQRdot -> Auxiliary [color=orange, style=bold];
+  Propagate -> UVW -> Auxiliary;
+  Accelerations -> UVWdot -> Auxiliary [color=orange, style=bold];
+  Propagate -> VelocityNED -> Auxiliary;
+  Propagate -> BodyAccel -> Auxiliary;
+  MassBalance -> EyePtBody -> Auxiliary [color=orange, style=bold];
+  MassBalance -> VRPBody -> Auxiliary [color=orange, style=bold];
+  MassBalance -> RPBody -> Auxiliary [color=orange, style=bold];
+  Aerodynamics -> Force_w -> Auxiliary [color=orange, style=bold];
+  Propagate -> Location -> Auxiliary;
+  Propagate -> Latitude -> Auxiliary;
+  Propagate -> Longitude -> Auxiliary;
+  Propagate -> CosTheta -> Auxiliary;
+  Propagate -> SinTheta -> Auxiliary;
+  Propagate -> CosPhi -> Auxiliary;
+  Propagate -> SinPhi -> Auxiliary;
+  Propagate -> Psi -> Auxiliary;
+  Winds -> TotalWindNED -> Auxiliary;
+  Winds -> TurbPQR -> Auxiliary;
+  Winds -> WindPsi -> Auxiliary;
+  Winds -> Vwind -> Auxiliary;
+
+  // Aerodynamics
+  Auxiliary -> Alpha -> Aerodynamics;
+  Auxiliary -> Beta -> Aerodynamics;
+  Auxiliary -> qbar -> Aerodynamics;
+  Auxiliary -> Vtotal -> Aerodynamics;
+  Auxiliary -> RPBody -> Aerodynamics;
+
+  // MassBalance
+  BuoyantForces -> GasMassInertia -> MassBalance;
+  BuoyantForces -> GasMass -> MassBalance;
+  BuoyantForces -> GasMassMoment -> MassBalance;
+  Propulsion -> TanksInertia -> MassBalance;
+  Propulsion -> TanksWeight -> MassBalance;
+  Propulsion -> TanksMoment -> MassBalance;
+
+  // Aircraft
+  Aerodynamics -> "Aero Forces" -> Aircraft;
+  Propulsion -> "Prop Forces" -> Aircraft;
+  GroundReactions -> "Ground Forces" -> Aircraft;
+  ExternalReactions -> "External Forces" -> Aircraft;
+  BuoyantForces -> "Buoyant Forces" -> Aircraft;
+  Aerodynamics -> "Aero Moments" -> Aircraft;
+  Propulsion -> "Prop Moments" -> Aircraft;
+  GroundReactions -> "Ground Moments" -> Aircraft;
+  ExternalReactions -> "External Moments" -> Aircraft;
+  BuoyantForces -> "Buoyant Moments" -> Aircraft;
+  MassBalance -> Weight -> Aircraft;
+  Propagate -> Tl2b -> Aircraft;
+
+  // Inertial
+  Propagate -> RadiusToVehicle -> Inertial;
+  Propagate -> Latitude -> Inertial;
+  Executive -> "Delta T" -> Inertial;
+
+  // Accelerations
+  MassBalance -> J -> Accelerations;
+  MassBalance -> Jinv -> Accelerations;
+  MassBalance -> Mass -> Accelerations;
+  Propagate -> Ti2b -> Accelerations;
+  Propagate -> Tb2i -> Accelerations;
+  Propagate -> Tec2b -> Accelerations;
+  Propagate -> Tl2b -> Accelerations;
+  Propagate -> QuaternionECI -> Accelerations;
+  Aircraft -> Moments -> Accelerations;
+  Aircraft -> Forces -> Accelerations;
+  Inertial -> Gravity -> Accelerations;
+  Inertial -> GravityJ2 -> Accelerations;
+  Propagate -> PQRi -> Accelerations;
+  Propagate -> PQR -> Accelerations;
+  Propagate -> UVW -> Accelerations;
+  Propagate -> InertialPosition -> Accelerations;
+  Executive -> "Delta T" -> Accelerations;
+}

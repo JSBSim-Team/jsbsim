@@ -41,11 +41,16 @@ INCLUDES
 #include <iostream>
 #include <cstdlib>
 
+#include "models/FGPropagate.h"
+#include "models/FGAccelerations.h"
+#include "models/FGMassBalance.h"
+#include "models/FGInertial.h"
+
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.8 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.9 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,6 +62,7 @@ FGAccelerometer::FGAccelerometer(FGFCS* fcs, Element* element)
     FGSensorOrientation(element)
 {
   Propagate = fcs->GetExec()->GetPropagate();
+  Accelerations = fcs->GetExec()->GetAccelerations();
   MassBalance = fcs->GetExec()->GetMassBalance();
   Inertial = fcs->GetExec()->GetInertial();
   
@@ -88,8 +94,8 @@ bool FGAccelerometer::Run(void )
   vAccel = Propagate->GetTl2b() * FGColumnVector3(0, 0, Inertial->gravity());
 
   //aircraft forces
-  vAccel += (Propagate->GetUVWdot()
-              + Propagate->GetPQRdot() * vRadius
+  vAccel += (Accelerations->GetUVWdot()
+              + Accelerations->GetPQRdot() * vRadius
               + Propagate->GetPQR() * (Propagate->GetPQR() * vRadius));
 
   // transform to the specified orientation

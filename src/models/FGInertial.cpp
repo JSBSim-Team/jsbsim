@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.22 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.23 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   earthPosAngle   = 0.0;
   */
 
+  vOmegaPlanet = FGColumnVector3( 0.0, 0.0, RotationRate );
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
 

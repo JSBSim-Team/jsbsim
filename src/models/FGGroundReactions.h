@@ -45,7 +45,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.20 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.21 2011/07/17 13:51:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,10 +83,10 @@ class MultiplierIterator
 public:
   MultiplierIterator(FGGroundReactions* GndReactions);
   MultiplierIterator& operator++();
-  FGPropagate::LagrangeMultiplier* operator*() { return multiplier; }
+  FGAccelerations::LagrangeMultiplier* operator*() { return multiplier; }
 private:
   FGGroundReactions* GroundReactions;
-  FGPropagate::LagrangeMultiplier* multiplier;
+  FGAccelerations::LagrangeMultiplier* multiplier;
   int gearNum;
   int entry;
 };

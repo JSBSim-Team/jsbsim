@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.81 2011/06/28 23:44:29 dpculp Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.82 2011/07/17 13:51:23 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -760,7 +760,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 // accessed through this routine without knowing the exact constraint which they
 // model.
 
-FGPropagate::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
+FGAccelerations::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
 {
   switch(entry) {
   case 0:

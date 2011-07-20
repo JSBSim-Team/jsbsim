@@ -39,9 +39,6 @@ INCLUDES
 
 #include "FGSensor.h"
 #include "input_output/FGXMLElement.h"
-#include "models/FGPropagate.h"
-#include "models/FGMassBalance.h"
-#include "models/FGInertial.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 #include "FGSensorOrientation.h"
@@ -50,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GYRO "$Id: FGGyro.h,v 1.5 2009/12/11 06:03:06 jberndt Exp $"
+#define ID_GYRO "$Id: FGGyro.h,v 1.6 2011/07/17 13:51:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +56,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFCS;
+class FGAccelerations;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -106,7 +104,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.5 $
+@version $Revision: 1.6 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +120,7 @@ public:
   bool Run (void);
 
 private:
-  FGPropagate* Propagate;
+  FGAccelerations* Accelerations;
   FGColumnVector3 vAccel;
   void CalculateTransformMatrix(void);
   
