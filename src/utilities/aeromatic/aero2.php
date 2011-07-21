@@ -20,6 +20,8 @@ $version = 0.95;
 // Updated: 29 Dec 2005, DPC - more v2.0 updates, added incidence
 // Updated: 21 Oct 2008, DPC - fixed drag due to elevator with <abs>
 // Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
+// Updated: 21 Jul 2011, DPC - fix rudder travel limit bug
+
 
 header("Content-type: text/plain");
 
@@ -69,16 +71,16 @@ if ($ac_units == 1) {
 
 // first, estimate wing loading in psf
 switch($ac_type) { 
-  case 0: $ac_wingloading = 7.0; break;   // glider
-  case 1: $ac_wingloading = 14.0; break;  // light single
-  case 2: $ac_wingloading = 29.0; break;  // light twin
-  case 3: $ac_wingloading = 45.0; break;  // WW2 fighter, racer
-  case 4: $ac_wingloading = 95.0; break;  // single-eng jet fighter
-  case 5: $ac_wingloading = 100.0; break; // 2-eng jet fighter
-  case 6: $ac_wingloading = 110.0; break; // 2-eng jet transport
-  case 7: $ac_wingloading = 110.0; break; // 3-eng jet transport
-  case 8: $ac_wingloading = 110.0; break; // 4-eng jet transport
-  case 9: $ac_wingloading = 57.0; break;  // prop transport
+  case 0: $ac_wingloading = 7.0;   break;  // glider
+  case 1: $ac_wingloading = 14.0;  break;  // light single
+  case 2: $ac_wingloading = 29.0;  break;  // light twin
+  case 3: $ac_wingloading = 45.0;  break;  // WW2 fighter, racer
+  case 4: $ac_wingloading = 95.0;  break;  // single-eng jet fighter
+  case 5: $ac_wingloading = 100.0; break;  // 2-eng jet fighter
+  case 6: $ac_wingloading = 110.0; break;  // 2-eng jet transport
+  case 7: $ac_wingloading = 110.0; break;  // 3-eng jet transport
+  case 8: $ac_wingloading = 110.0; break;  // 4-eng jet transport
+  case 9: $ac_wingloading = 57.0;  break;  // prop transport
   }
 
 // if no wing area given, use wing loading to estimate
@@ -170,7 +172,7 @@ if ($ac_vtailarm == 0) {
 
 //***** EMPTY WEIGHT *********************************
 
-// estimate empty weight
+// estimate empty weight, based on max weight
 if ($ac_emptyweight == 0) {
   switch($ac_type) {
     case 0:  $ac_emptyweight = $ac_weight * .84;
@@ -246,12 +248,12 @@ switch($ac_type) {
   }
 
 switch($ac_type) {
-  case 0: $ac_eyeptlocy = 0; break;
+  case 0: $ac_eyeptlocy =   0; break;
   case 1: $ac_eyeptlocy = -18; break;
   case 2: $ac_eyeptlocy = -18; break;
-  case 3: $ac_eyeptlocy = 0; break;
-  case 4: $ac_eyeptlocy = 0; break;
-  case 5: $ac_eyeptlocy = 0; break;
+  case 3: $ac_eyeptlocy =   0; break;
+  case 4: $ac_eyeptlocy =   0; break;
+  case 5: $ac_eyeptlocy =   0; break;
   case 6: $ac_eyeptlocy = -30; break;
   case 7: $ac_eyeptlocy = -30; break;
   case 8: $ac_eyeptlocy = -32; break;
@@ -259,7 +261,7 @@ switch($ac_type) {
   }
 
 switch($ac_type) {
-  case 0: $ac_eyeptlocz = 9; break;
+  case 0: $ac_eyeptlocz =  9; break;
   case 1: $ac_eyeptlocz = 45; break;
   case 2: $ac_eyeptlocz = 45; break;
   case 3: $ac_eyeptlocz = 40; break;
@@ -282,15 +284,15 @@ switch($ac_geartype) {
 // set main gear lateral location
 switch($ac_type) {
   case 0: $ac_gearlocy_main = $ac_wingspan * 0.005 * 12; break;
-  case 1: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 2: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 3: $ac_gearlocy_main = $ac_wingspan * 0.15 * 12; break;
-  case 4: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 5: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 6: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 7: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 8: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12; break;
-  case 9: $ac_gearlocy_main = $ac_wingspan * 0.11 * 12; break;
+  case 1: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 2: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 3: $ac_gearlocy_main = $ac_wingspan * 0.15 * 12;  break;
+  case 4: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 5: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 6: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 7: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 8: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
+  case 9: $ac_gearlocy_main = $ac_wingspan * 0.11 * 12;  break;
   }
 
 // set main gear length (from aircraft centerline, extended)
@@ -313,8 +315,8 @@ $ac_gearspring_main = $ac_weight * 1.0;
 $ac_gearspring_nose = $ac_weight * 0.3;
 $ac_gearspring_tail = $ac_weight * 1.0;
 
-$ac_geardamp_main = $ac_weight * 0.2;
-$ac_geardamp_nose = $ac_weight * 0.1;
+$ac_geardamp_main = $ac_weight * 0.5;
+$ac_geardamp_nose = $ac_weight * 0.5;
 $ac_geardamp_tail = $ac_weight * 0.8;
 
 $ac_geardynamic = 0.5;
@@ -373,7 +375,7 @@ if ($ac_enginelayout == 3) {
   $remainder = $ac_numengines - ($halfcount * 2);
   for($i=0; $i<$halfcount; $i++) {                 //left wing
       $ac_englocx[$i] = $ac_cglocx;
-      $ac_englocy[$i] = $ac_wingspan * -2.0;       // span/-2/3*12
+      $ac_englocy[$i] = $ac_wingspan * -2.0;       //span/-2/3*12
       $ac_englocz[$i] = -40; 
      }    
   for($j=$i; $j<$halfcount+$remainder; $j++) {     //center
@@ -383,7 +385,7 @@ if ($ac_enginelayout == 3) {
      }    
   for($k=$j; $k<$ac_numengines; $k++) {            //right wing
       $ac_englocx[$k] = $ac_cglocx;
-      $ac_englocy[$k] = $ac_wingspan * 2.0;        // span/2/3*12
+      $ac_englocy[$k] = $ac_wingspan * 2.0;        //span/2/3*12
       $ac_englocz[$k] = -40; 
      }    
   }
@@ -394,7 +396,7 @@ if ($ac_enginelayout == 4) {
   $remainder = $ac_numengines - ($halfcount * 2);
   for($i=0; $i<$halfcount; $i++) {                 //left wing
       $ac_englocx[$i] = $ac_cglocx;
-      $ac_englocy[$i] = $ac_wingspan * -2.0;       // span/-2/3*12
+      $ac_englocy[$i] = $ac_wingspan * -2.0;       //span/-2/3*12
       $ac_englocz[$i] = -40; 
      }    
   for($j=$i; $j<$halfcount+$remainder; $j++) {     //center
@@ -404,7 +406,7 @@ if ($ac_enginelayout == 4) {
      }    
   for($k=$j; $i<$ac_numengines; $i++) {            //right wing
       $ac_englocx[$k] = $ac_cglocx;
-      $ac_englocy[$k] = $ac_wingspan * 2.0;        // span/2/3*12 
+      $ac_englocy[$k] = $ac_wingspan * 2.0;        //span/2/3*12 
       $ac_englocz[$k] = -40; 
      }    
   }
@@ -444,7 +446,7 @@ for($i=0; $i<$ac_numengines; $i++) {
 
 // thruster type (note: only piston engine gets a propeller)
 switch($ac_enginetype) {
-  case 0: $ac_thrustertype = 'prop'; break;
+  case 0: $ac_thrustertype = 'prop';   break;
   case 1: $ac_thrustertype = 'direct'; break;
   case 2: $ac_thrustertype = 'direct'; break;
   case 3: $ac_thrustertype = 'direct'; break;
@@ -459,9 +461,9 @@ $ac_tanklocy = $ac_cglocy;
 $ac_tanklocz = $ac_cglocz;
 $ac_tankradius = 1;
 switch($ac_type) {  // capacity in pounds
-  case 0: $ac_tankcapacity = 0; break;
-  case 1: $ac_tankcapacity = 100; break;
-  case 2: $ac_tankcapacity = 300; break;
+  case 0: $ac_tankcapacity =    0; break;
+  case 1: $ac_tankcapacity =  100; break;
+  case 2: $ac_tankcapacity =  300; break;
   case 3: $ac_tankcapacity = 1000; break;
   case 4: $ac_tankcapacity = 3000; break;
   case 5: $ac_tankcapacity = 4500; break;
@@ -534,15 +536,15 @@ switch($ac_type) {
 // some types have speedbrakes in wings, affecting lift
 switch($ac_type) {
   case 0: $ac_dCLspeedbrake = -0.05; break;
-  case 1: $ac_dCLspeedbrake = 0.00; break;
-  case 2: $ac_dCLspeedbrake = 0.00; break;
-  case 3: $ac_dCLspeedbrake = 0.00; break;
-  case 4: $ac_dCLspeedbrake = 0.00; break;
-  case 5: $ac_dCLspeedbrake = 0.00; break;
+  case 1: $ac_dCLspeedbrake =  0.00; break;
+  case 2: $ac_dCLspeedbrake =  0.00; break;
+  case 3: $ac_dCLspeedbrake =  0.00; break;
+  case 4: $ac_dCLspeedbrake =  0.00; break;
+  case 5: $ac_dCLspeedbrake =  0.00; break;
   case 6: $ac_dCLspeedbrake = -0.10; break;
   case 7: $ac_dCLspeedbrake = -0.09; break;
   case 8: $ac_dCLspeedbrake = -0.08; break;
-  case 9: $ac_dCLspeedbrake = 0.00; break;
+  case 9: $ac_dCLspeedbrake =  0.00; break;
   }
 
 // estimate lift due to elevator deflection
@@ -741,15 +743,15 @@ $ac_Cndr = -0.10;      // rudder deflection
 if($ac_type == 0) $ac_Cndr = -0.03;  // glider
 
 switch($ac_type) {                   // adverse yaw
-  case 0: $ac_Cnda = -0.02; break;
-  case 1: $ac_Cnda = -0.01; break;
-  case 2: $ac_Cnda = -0.01; break;
+  case 0: $ac_Cnda = -0.02;  break;
+  case 1: $ac_Cnda = -0.01;  break;
+  case 2: $ac_Cnda = -0.01;  break;
   case 3: $ac_Cnda = -0.003; break;
-  case 4: $ac_Cnda = 0.0; break;
-  case 5: $ac_Cnda = 0.0; break;
-  case 6: $ac_Cnda = 0.0; break;
-  case 7: $ac_Cnda = 0.0; break;
-  case 8: $ac_Cnda = 0.0; break;
+  case 4: $ac_Cnda =  0.0;   break;
+  case 5: $ac_Cnda =  0.0;   break;
+  case 6: $ac_Cnda =  0.0;   break;
+  case 7: $ac_Cnda =  0.0;   break;
+  case 8: $ac_Cnda =  0.0;   break;
   case 9: $ac_Cnda = -0.008; break;
   }
 
@@ -771,7 +773,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate> $date_string </filecreationdate>\n");
-print("  <version>\$Revision: 1.11 $</version>\n");
+print("  <version>\$Revision: 1.12 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -830,7 +832,7 @@ print("    CL-alpha:      $ac_CLalpha per radian\n");
 print("    CL-0:          $ac_CL0\n");
 print("    CL-max:        $ac_CLmax\n");
 print("    CD-0:          $ac_CD0\n");
-print("    K:             $ac_K\n"); 
+print("    K:             $ac_K"); 
 print("\n-->\n\n"); 
 
 //***** METRICS **********************************
@@ -913,7 +915,7 @@ if($ac_type == 0) {  // if this is a glider
   print("   <max_steer unit=\"DEG\">0</max_steer>\n");
   print("   <brake_group>NONE</brake_group>\n");
   print("   <retractable>$ac_retract</retractable>\n");
-  print(" </contact>\n\n");
+  print("  </contact>\n\n");
 
   print("  <contact type=\"BOGEY\" name=\"NOSE\">\n");
   print("    <location unit=\"IN\">\n");
@@ -921,15 +923,15 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", $ac_gearlocy_nose);
   printf("     <z> %6.2f </z>\n", $ac_gearlocz_nose);
   print("   </location>\n");
-  printf("  <static_friction>  %4.3f </static_friction>\n", $ac_gearstatic);
-  printf("  <dynamic_friction> %4.3f </dynamic_friction>\n", $ac_geardynamic);
-  printf("  <rolling_friction> %4.3f </rolling_friction>\n", $ac_gearrolling);
-  printf("  <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_nose);
-  printf("  <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_nose);
-  print("  <max_steer unit=\"DEG\">0</max_steer>\n");
-  print("  <brake_group>NONE</brake_group>\n");
-  print("  <retractable>$ac_retract</retractable>\n");
-  print(" </contact>\n\n");
+  printf("   <static_friction>  %4.3f </static_friction>\n", $ac_gearstatic);
+  printf("   <dynamic_friction> %4.3f </dynamic_friction>\n", $ac_geardynamic);
+  printf("   <rolling_friction> %4.3f </rolling_friction>\n", $ac_gearrolling);
+  printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_nose);
+  printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_nose);
+  print("   <max_steer unit=\"DEG\">0</max_steer>\n");
+  print("   <brake_group>NONE</brake_group>\n");
+  print("   <retractable>$ac_retract</retractable>\n");
+  print("  </contact>\n\n");
 
   print("  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">\n");
   print("    <location unit=\"IN\">\n");
@@ -937,11 +939,11 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", -$ac_halfspan);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
-  printf("  <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
-  printf("  <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-  printf("  <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
-  printf("  <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
-  print(" </contact>\n\n");
+  printf("   <static_friction>  %2.2f </static_friction>\n", 1.0);
+  printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", 1.0);
+  printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
+  printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_gearspring_main);
+  print("  </contact>\n\n");
 
   print("  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">\n");
   print("    <location unit=\"IN\">\n");
@@ -949,11 +951,11 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", $ac_halfspan);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
-  printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
-  printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
+  printf("   <static_friction>  %2.2f </static_friction>\n", 1.0);
+  printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", 1.0);
   printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
-  printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
-  print(" </contact>\n\n");
+  printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_gearspring_main);
+  print("  </contact>\n\n");
  }
  else {
    if ($ac_geartype == 0) {  // if this is a tricycle gear
@@ -972,7 +974,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
     print("   <brake_group>NONE</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
-    print(" </contact>\n\n");
+    print("  </contact>\n\n");
 
    }
 
@@ -990,7 +992,7 @@ if($ac_type == 0) {  // if this is a glider
     print("   <max_steer unit=\"DEG\">0</max_steer>\n");
     print("   <brake_group>LEFT</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
-    print(" </contact>\n\n");
+    print("  </contact>\n\n");
   
     print("  <contact type=\"BOGEY\" name=\"RIGHT_MAIN\">\n");
     print("   <location unit=\"IN\">\n");
@@ -1006,7 +1008,7 @@ if($ac_type == 0) {  // if this is a glider
     print("   <max_steer unit=\"DEG\">0</max_steer>\n");
     print("   <brake_group>RIGHT</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
-    print(" </contact>\n\n");
+    print("  </contact>\n\n");
 
    if ($ac_geartype == 1) {  // if this is a taildragger
 
@@ -1024,7 +1026,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
     print("   <brake_group>NONE</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
-    print(" </contact>\n\n");
+    print("  </contact>\n\n");
 
    }
 
@@ -1034,11 +1036,11 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", -$ac_halfspan);
     printf("     <z> %6.2f </z>\n", $ac_cglocz);
     print("    </location>\n");
-    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
-    printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
+    printf("    <static_friction>  %2.2f </static_friction>\n", 1.0);
+    printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", 1.0);
     printf("    <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
-    printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
-    print(" </contact>\n\n");
+    printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_gearspring_main);
+    print("  </contact>\n\n");
 
     print("  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">\n");
     print("    <location unit=\"IN\">\n");
@@ -1046,11 +1048,11 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", $ac_halfspan);
     printf("     <z> %6.2f </z>\n", $ac_cglocz);
     print("    </location>\n");
-    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
-    printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
+    printf("    <static_friction>  %2.2f </static_friction>\n", 1.0);
+    printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", 1.0);
     printf("    <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
-    printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
-    print(" </contact>\n\n");  
+    printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_gearspring_main);
+    print("  </contact>\n\n");  
  }
 print(" </ground_reactions>\n\n");
 
@@ -1074,7 +1076,7 @@ if($ac_type == 0) { // if glider, do nothing here
   print("    </location>\n");
   print("    <orient unit=\"DEG\">\n");
   printf("      <pitch> %2.2f </pitch>\n", $ac_engpitch[$i]);
-  print("      <roll>   0.00 </roll>\n");
+  print("      <roll>  0.00 </roll>\n");
   printf("      <yaw>   %2.2f </yaw>\n", $ac_engyaw[$i]);
   print("    </orient>\n");
   print("    <feed>$ac_engfeed[$i]</feed>\n");
@@ -1092,7 +1094,7 @@ if($ac_type == 0) { // if glider, do nothing here
   print("     </location>\n");
   print("     <orient unit=\"DEG\">\n");
   printf("       <pitch> %2.2f </pitch>\n", $ac_thrusterpitch[$i]);
-  print("       <roll>   0.00 </roll>\n");
+  print("       <roll>  0.00 </roll>\n");
   printf("       <yaw>   %2.2f </yaw>\n", $ac_thrusteryaw[$i]);
   print("     </orient>\n");
 
@@ -1121,7 +1123,7 @@ print(" </propulsion>\n\n");
 
 print(" <flight_control name=\"FCS: $ac_name\">\n\n");
 
-print("  <channel name=\"Pitch\">\n");
+print("  <channel name=\"Pitch\">\n\n");
 
 print("   <summer name=\"Pitch Trim Sum\">\n");
 print("      <input>fcs/elevator-cmd-norm</input>\n");
@@ -1155,7 +1157,7 @@ print("      <output>fcs/elevator-pos-norm</output>\n");
 print("   </aerosurface_scale>\n\n");
 
 print("  </channel>\n\n");
-print("  <channel name=\"Roll\">\n");
+print("  <channel name=\"Roll\">\n\n");
 
 print("   <summer name=\"Roll Trim Sum\">\n");
 print("      <input>fcs/aileron-cmd-norm</input>\n");
@@ -1211,14 +1213,17 @@ print("      <output>fcs/right-aileron-pos-norm</output>\n");
 print("   </aerosurface_scale>\n\n");
 
 print("  </channel>\n\n");
-print("  <channel name=\"Yaw\">\n");
+if($ac_yawdamper == 1) {
+  print("  <property value=\"1\">fcs/yaw-damper-enable</property>\n");
+}
+print("  <channel name=\"Yaw\">\n\n");
 
 print("   <summer name=\"Rudder Command Sum\">\n");
 print("      <input>fcs/rudder-cmd-norm</input>\n");
 print("      <input>fcs/yaw-trim-cmd-norm</input>\n");
 print("      <clipto>\n");
-print("        <min> -0.35 </min>\n");
-print("        <max>  0.35 </max>\n");
+print("        <min> -1 </min>\n");
+print("        <max>  1 </max>\n");
 print("      </clipto>\n");
 print("   </summer>\n\n");
 
@@ -1232,50 +1237,24 @@ if($ac_yawdamper == 1) {
   print("            60     2.00\n");
   print("         </tableData>\n");
   print("      </table>\n");
-  print("   </scheduled_gain>\n\n");
-
-  print("   <scheduled_gain name=\"Yaw Damper Beta\">\n");
-  print("      <input>aero/beta-rad</input>\n");
-  print("      <table>\n");
-  print("        <independentVar lookup=\"row\">velocities/ve-kts</independentVar>\n");
-  print("        <tableData>\n");
-  print("           30     0.00\n");
-  print("           60     0.00\n");
-  print("        </tableData>\n");
-  print("      </table>\n");
-  print("   </scheduled_gain>\n\n");
-
-  print("   <summer name=\"Yaw Damper Sum\">\n");
-  print("      <input>fcs/yaw-damper-beta</input>\n");
-  print("      <input>fcs/yaw-damper-rate</input>\n");
-  print("      <clipto>\n");
-  print("        <min> -0.1 </min>\n");
-  print("        <max>  0.1 </max>\n");
-  print("      </clipto>\n");
-  print("   </summer>\n\n");
-
-  print("   <scheduled_gain name=\"Yaw Damper Final\">\n");
-  print("      <input>fcs/yaw-damper-sum</input>\n");
-  print("      <table>\n");
-  print("        <independentVar lookup=\"row\">velocities/ve-kts</independentVar>\n");
-  print("        <tableData>\n");
-  print("           30         0.0\n");
-  print("           31         1.0\n");
-  print("        </tableData>\n");
-  print("      </table>\n");
+  print("      <gain>fcs/yaw-damper-enable</gain>\n");
   print("   </scheduled_gain>\n\n");
 
   print("   <summer name=\"Rudder Sum\">\n");
   print("      <input>fcs/rudder-command-sum</input>\n");
-  print("      <input>fcs/yaw-damper-final</input>\n");
+  print("      <input>fcs/yaw-damper-rate</input>\n");
   print("      <clipto>\n");
-  print("        <min> -1 </min>\n");
-  print("        <max>  1 </max>\n");
+  print("        <min> -1.1 </min>\n");
+  print("        <max>  1.1 </max>\n");
   print("      </clipto>\n");
   print("   </summer>\n\n");
 
   print("   <aerosurface_scale name=\"Rudder Control\">\n");
   print("      <input>fcs/rudder-sum</input>\n");
+  print("      <domain>\n");
+  print("        <min> -1.1 </min>\n");
+  print("        <max>  1.1 </max>\n");
+  print("      </domain>\n");
   print("      <range>\n");
   print("        <min> -0.35 </min>\n");
   print("        <max>  0.35 </max>\n");
@@ -1407,11 +1386,11 @@ print("            <independentVar lookup=\"row\">aero/alpha-rad</independentVar
 print("            <tableData>\n");
 $point = -($ac_CLalpha * 0.2) + $ac_CL0;
 printf("              -0.20 %4.3f\n", $point);
-printf("               0.00 %4.3f\n", $ac_CL0);
+printf("               0.00  %4.3f\n", $ac_CL0);
 $alpha = ($ac_CLmax - $ac_CL0) / $ac_CLalpha;
-printf("             %3.2f    %4.3f\n", $alpha, $ac_CLmax);
+printf("               %3.2f  %4.3f\n", $alpha, $ac_CLmax);
 $point = $ac_CLmax - (0.6 * $alpha * $ac_CLalpha);
-printf("               0.60 %4.3f\n", $point);
+printf("               0.60  %4.3f\n", $point);
 print("            </tableData>\n");
 print("          </table>\n");
 print("      </product>\n");
@@ -1462,12 +1441,12 @@ print("          <property>metrics/Sw-sqft</property>\n");
 print("          <table>\n");
 print("            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>\n");
 print("            <tableData>\n");
-print( "             -1.57       1.500\n");
+print( "             -1.57    1.500\n");
 $ac_CD02 = $ac_CD0 * 1.3;
 printf("             -0.26    %4.3f\n", $ac_CD02);   
 printf("              0.00    %4.3f\n", $ac_CD0);
 printf("              0.26    %4.3f\n", $ac_CD02);   
-print( "              1.57       1.500\n");
+print( "              1.57    1.500\n");
 print("            </tableData>\n");
 print("          </table>\n");
 print("       </product>\n");
@@ -1541,12 +1520,12 @@ print("          <property>metrics/Sw-sqft</property>\n");
 print("          <table>\n");
 print("            <independentVar lookup=\"row\">aero/beta-rad</independentVar>\n");
 print("            <tableData>\n");
-print( "              -1.57       1.230\n");
+print( "              -1.57    1.230\n");
 $ac_CDb26 = $ac_CDbeta * 0.25;  // CD at beta of 0.26 radians
 printf("              -0.26    %4.3f\n", $ac_CDb26);   
-printf("               0.00       0.000\n");
+printf("               0.00    0.000\n");
 printf("               0.26    %4.3f\n", $ac_CDb26);   
-print( "               1.57       1.230\n");
+print( "               1.57    1.230\n");
 print("            </tableData>\n");
 print("          </table>\n");
 print("       </product>\n");
@@ -1626,14 +1605,7 @@ print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <property>metrics/bw-ft</property>\n");
 print("          <property>fcs/left-aileron-pos-rad</property>\n");
-print("          <table>\n");
-print("            <independentVar lookup=\"row\">velocities/mach</independentVar>\n");
-print("            <tableData>\n");
-printf("              0.0    %4.3f\n", $ac_Clda);
-$ac_Clda3 = $ac_Clda * 0.333;
-printf("              2.0    %4.3f\n", $ac_Clda3);
-print("            </tableData>\n");
-print("          </table>\n");
+print("          <value>$ac_Clda</value>\n");
 print("       </product>\n");
 print("    </function>\n\n");
 
@@ -1760,6 +1732,8 @@ print("    </function>\n\n");
 
 print("  </axis>\n\n");
 print(" </aerodynamics>\n\n");
+print(" <external_reactions>\n");
+print(" </external_reactions>\n\n");
 print("</fdm_config>\n");
 
 ?>
