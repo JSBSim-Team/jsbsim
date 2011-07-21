@@ -772,8 +772,8 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
-print("  <filecreationdate> $date_string </filecreationdate>\n");
-print("  <version>\$Revision: 1.12 $</version>\n");
+print("  <filecreationdate>$date_string</filecreationdate>\n");
+print("  <version>\$Revision: 1.13 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
