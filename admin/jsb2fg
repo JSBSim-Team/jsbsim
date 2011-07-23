@@ -20,7 +20,7 @@ FG_DIR="$FG_SRC/src/FDM/JSBSim"
 cd src
 CUR_DIR=`pwd`
 
-CP="cp"
+CP="cp -p"
 #CP="echo"
 
 NEW_FILES=
