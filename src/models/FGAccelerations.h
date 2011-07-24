@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.1 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.2 2011/07/24 19:44:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,7 +67,7 @@ CLASS DOCUMENTATION
     -Calculate the translational velocity
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.1 2011/07/17 13:51:23 jberndt Exp $
+    @version $Id: FGAccelerations.h,v 1.2 2011/07/24 19:44:13 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,17 +212,17 @@ private:
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);
   void CalculateUVWdot(void);
-  /*
-  void EvaluateRateToResistTo(FGColumnVector3& vdot,
+
+  /*void EvaluateRateToResistTo(FGColumnVector3& vdot,
                               const FGColumnVector3& Val,
                               const FGColumnVector3& ValDot,
                               const FGColumnVector3& LocalTerrainVal,
                               deque <FGColumnVector3>& dqValDot,
                               const double dt,
-                              const eIntegrateType integration_type);
+                              const eIntegrateType integration_type);*/
 
   void ResolveFrictionForces(double dt);
-  */
+
   void bind(void);
   void Debug(int from);
 };

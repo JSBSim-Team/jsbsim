@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.82 2011/07/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.83 2011/07/24 19:44:13 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -290,15 +290,13 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
-    FGColumnVector3 angularVel;
-
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZn); // Get wheel in body frame
     vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
 
     gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel, angularVel);
+    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal);
     vGroundNormal = Propagate->GetTec2b() * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction
@@ -318,6 +316,7 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
     }
 
     if (compressLength > 0.00) {
+      FGColumnVector3 terrainVel =  fdmex->GetGroundCallback()->GetTerrainVelocity();
 
       WOW = true;
 
@@ -337,7 +336,7 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
       FGColumnVector3 vWhlContactVec = vWhlBodyVec + vWhlDisplVec;
       vActingXYZn = vXYZn + Tb2s * vWhlDisplVec;
       FGColumnVector3 vBodyWhlVel = Propagate->GetPQR() * vWhlContactVec;
-      vBodyWhlVel += Propagate->GetUVW() - Propagate->GetTec2b() * cvel;
+      vBodyWhlVel += Propagate->GetUVW() - Propagate->GetTec2b() * terrainVel;
 
       vWhlVelVec = mTGear.Transposed() * vBodyWhlVel;
 
@@ -777,8 +776,9 @@ FGAccelerations::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This routine is called after the Lagrange multiplier has been computed. The
-// friction forces of the landing gear are then updated accordingly.
+// This routine is called after the Lagrange multiplier has been computed in
+// the FGAccelerations class. The friction forces of the landing gear are then
+// updated accordingly.
 FGColumnVector3& FGLGear::UpdateForces(void)
 {
   if (StaticFriction) {

@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.2 2011/07/18 04:37:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.3 2011/07/24 19:44:13 jberndt Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ bool FGAccelerations::Run(bool Holding)
   CalculateUVWdot();   // Translational rate derivative
   CalculateQuatdot();  // Angular orientation derivative
 
-//  ResolveFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
+  ResolveFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
 
   RunPostFunctions();
 
@@ -204,12 +204,12 @@ void FGAccelerations::CalculateUVWdot(void)
   vUVWidot = in.Tb2i * (vBodyAccel + vGravAccel);
 }
 
-#if defined(undefined)
+#if 0
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Evaluates the rates (translation or rotation) that the friction forces have
 // to resist to. This includes the external forces and moments as well as the
 // relative movement between the aircraft and the ground.
-// Erin Catto's paper (see ref [6]) only supports Euler integration scheme and
+// Erin Catto's paper (see ref [3]) only supports Euler integration scheme and
 // this algorithm has been adapted to handle the multistep algorithms that
 // JSBSim supports (i.e. Trapezoidal, Adams-Bashforth 2, 3 and 4). The capacity
 // to handle the multistep integration schemes adds some complexity but it
@@ -253,6 +253,7 @@ void FGAccelerations::EvaluateRateToResistTo(FGColumnVector3& vdot,
     break;
   }
 }
+#endif
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Resolves the contact forces just before integrating the EOM.
@@ -301,14 +302,18 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   }
 
   // Assemble the RHS member
+  FGColumnVector3 terrainVel =  FDMExec->GetGroundCallback()->GetTerrainVelocity();
+  FGColumnVector3 terrainAngularVel =  FDMExec->GetGroundCallback()->GetTerrainAngularVelocity();
 
   // Translation
-  EvaluateRateToResistTo(vdot, in.vUVW, vUVWdot, LocalTerrainVelocity,
-                         VState.dqUVWidot, dt, integrator_translational_rate);
+  vdot = vUVWdot;
+  if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+    vdot += (in.vUVW - in.Tec2b * terrainVel) / dt;
 
   // Rotation
-  EvaluateRateToResistTo(wdot, in.vPQR, vPQRdot, LocalTerrainAngularVelocity,
-                         VState.dqPQRidot, dt, integrator_rotational_rate);
+  wdot = vPQRdot;
+  if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+    wdot += (in.vPQR - in.Tec2b * terrainAngularVel) / dt;
 
   // Prepare the linear system for the Gauss-Seidel algorithm :
   // 1. Compute the right hand side member 'rhs'
@@ -352,10 +357,13 @@ void FGAccelerations::ResolveFrictionForces(double dt)
     Mc += lambda[i]*JacM[i];
   }
 
-  vUVWdot += invMass * Fc;
-  vUVWidot += invMass * in.Tb2i * Fc;  // ToDo: Use value from previous line and transform
-  vPQRdot += Jinv * Mc;                //
-  vPQRidot += Jinv * Mc;               // ToDo: Extraneous calculation; use value from previous line?
+  FGColumnVector3 accel = invMass * Fc;
+  FGColumnVector3 omegadot = Jinv * Mc;
+
+  vUVWdot += accel;
+  vUVWidot += in.Tb2i * accel;
+  vPQRdot += omegadot;
+  vPQRidot += omegadot;
 
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
@@ -365,7 +373,6 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   FDMExec->GetGroundReactions()->UpdateForcesAndMoments();
 }
-#endif
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAccelerations::InitializeDerivatives(void)
@@ -373,8 +380,8 @@ void FGAccelerations::InitializeDerivatives(void)
   // Make an initial run and set past values
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
-//  ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
   CalculateQuatdot();          // Angular orientation derivative
+  ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

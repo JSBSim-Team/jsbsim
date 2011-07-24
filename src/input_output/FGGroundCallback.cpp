@@ -42,6 +42,8 @@ namespace JSBSim {
 FGGroundCallback::FGGroundCallback()
 {
   mReferenceRadius = 20925650.0; // Sea level radius
+  mTerrainVelocity = FGColumnVector3(0.0, 0.0, 0.0);
+  mTerrainAngularVelocity = FGColumnVector3(0.0, 0.0, 0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,11 +69,8 @@ double FGGroundCallback::GetAltitude(const FGLocation& loc) const
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGGroundCallback::GetAGLevel(double t, const FGLocation& loc,
-                                    FGLocation& contact, FGColumnVector3& normal,
-                                    FGColumnVector3& vel, FGColumnVector3& angularVel) const
+                                    FGLocation& contact, FGColumnVector3& normal) const
 {
-  vel = FGColumnVector3(0.0, 0.0, 0.0);
-  angularVel = FGColumnVector3(0.0, 0.0, 0.0);
   normal = FGColumnVector3(loc).Normalize();
   double loc_radius = loc.GetRadius();  // Get the radius of the given location
                                         // (e.g. the CG)
