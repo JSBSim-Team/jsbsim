@@ -12,7 +12,9 @@ SENTRY
 #ifndef __EASYXML_HXX
 #define __EASYXML_HXX
 
-#pragma warning (disable : 4100)
+#ifdef _MSC_VER
+#  pragma warning (disable : 4100)
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HEADERS

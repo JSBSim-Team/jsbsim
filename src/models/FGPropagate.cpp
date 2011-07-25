@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.91 2011/07/17 13:57:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.92 2011/07/24 19:44:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,6 +116,7 @@ bool FGPropagate::InitModel(void)
 {
   // For initialization ONLY:
   SeaLevelRadius = LocalTerrainRadius = in.RefRadius;
+  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(LocalTerrainRadius);
 
   VState.vLocation.SetRadius( LocalTerrainRadius + 4.0 );
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
@@ -416,9 +417,9 @@ void FGPropagate::RecomputeLocalTerrainRadius(void)
   double t = FDMExec->GetSimTime();
 
   // Get the LocalTerrain radius.
-  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv,
-                                           LocalTerrainVelocity, LocalTerrainAngularVelocity);
-  LocalTerrainRadius = contactloc.GetRadius(); 
+  FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, contactloc, dv);
+  LocalTerrainRadius = contactloc.GetRadius();
+  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(LocalTerrainRadius);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

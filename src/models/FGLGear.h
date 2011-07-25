@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.43 2011/07/17 13:57:04 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.44 2011/07/24 19:44:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.43 2011/07/17 13:57:04 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.44 2011/07/24 19:44:13 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -296,7 +296,7 @@ private:
   FGColumnVector3 vWhlBodyVec;
   FGColumnVector3 vLocalGear;
   FGColumnVector3 vWhlVelVec, vLocalWhlVel;     // Velocity of this wheel
-  FGColumnVector3 normal, cvel, vGroundNormal;
+  FGColumnVector3 normal, vGroundNormal;
   FGLocation contact, gearLoc;
   FGTable *ForceY_Table;
   double dT;

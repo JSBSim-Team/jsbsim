@@ -92,8 +92,7 @@ $ixx_blades = $blades * (0.33333 * $mass_blade * $L * $L);
 $ixx_hub = 0.5 * $mass_hub * $R * $R;
 $ixx = $ixx_blades + $ixx_hub;
 
-// estimate P-factor
-$pf = 0.079 * $ac_diameter * 12;
+
 
 //*****************************************************
 //                                                    *
@@ -124,7 +123,8 @@ printf("  <ixx> %6.2f </ixx>\n", $ixx);
 printf("  <diameter unit=\"IN\"> %5.1f </diameter>\n", $ac_diameter * 12);
 print("  <numblades> $blades </numblades>\n");
 printf("  <gearratio> %5.2f </gearratio>\n", $gearratio);
-printf("  <p_factor> %6.2f </p_factor>\n", $pf);
+print("  <cp_factor> 1.00 </cp_factor>\n");
+print("  <ct_factor> 1.00 </ct_factor>\n");
 
 if($ac_pitch == 1) {
   print("  <minpitch> 12 </minpitch>\n");
