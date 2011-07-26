@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.67 2011/06/21 13:54:39 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.68 2011/07/26 03:51:49 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -88,6 +88,7 @@ bool realtime;
 bool play_nice;
 bool suspend;
 bool catalog;
+bool nohighlight;
 
 double end_time = 1e99;
 double simulation_rate = 1./120.;
@@ -309,7 +310,8 @@ int real_main(int argc, char* argv[])
   realtime = false;
   play_nice = false;
   suspend = false;
-  catalog=false;
+  catalog = false;
+  nohighlight = false;
 
   // *** PARSE OPTIONS PASSED INTO THIS SPECIFIC APPLICATION: JSBSim *** //
   success = options(argc, argv);
@@ -326,6 +328,8 @@ int real_main(int argc, char* argv[])
   FDMExec->SetSystemsPath("systems");
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
+
+  if (nohighlight) FDMExec->disableHighLighting();
 
   if (simulation_rate < 1.0 )
     FDMExec->Setdt(simulation_rate);
@@ -542,6 +546,8 @@ bool options(int count, char **arg)
       play_nice = true;
     } else if (keyword == "--suspend") {
       suspend = true;
+    } else if (keyword == "--nohighlight") {
+        nohighlight = true;
     } else if (keyword == "--outputlogfile") {
       if (n != string::npos) {
         LogOutputName = value;
@@ -630,7 +636,6 @@ bool options(int count, char **arg)
     } else if (keyword == "--catalog") {
         catalog = true;
         if (value.size() > 0) AircraftName=value;
-
     } else if (keyword.substr(0,2) != "--" && value.empty() ) {
       // See what kind of files we are specifying on the command line
 
@@ -684,12 +689,15 @@ void PrintHelp(void)
     cout << "    --script=<filename>  specifies a script to run" << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
+    cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
     cout << "    --simulation-rate=<rate (double)> specifies the sim dT time or frequency" << endl;
+    cout << "                      If rate specified is less than 1, it is interpreted as" << endl;
+    cout << "                      a time step size, otherwise it is assumed to be a rate in Hertz." << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
