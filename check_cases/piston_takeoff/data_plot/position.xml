@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the position data logged by JSBSim
+    when the position flag is turned ON.
+    
+    These are the variables logged by JSBSim with the position flag set to ON
+
+      Altitude ASL (ft)
+      Altitude AGL (ft)
+      Phi (deg)
+      Theta (deg)
+      Psi (deg)
+      Alpha (deg)
+      Beta (deg)
+      Latitude (deg)
+      Longitude (deg)
+      ECEF X (ft)
+      ECEF Y (ft)
+      ECEF Z (ft)
+      EPA (deg)
+      Distance AGL (ft)
+      Terrain Elevation (ft)
+
+-->
+  <plot>
+    <title>Ground Track</title>
+    <label axis="x">Longitude (deg)</label>
+    <label axis="y">Latitude (deg)</label>
+    <scale>auto</scale>
+    <parameter axis="x">Longitude (deg)</parameter>
+    <parameter axis="y">Latitude (deg)</parameter>
+  </plot>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Terrain Elevation (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Terrain Elevation (ft)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y">Altitude ASL (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Altitude ASL (ft)</parameter>
+    </plot>
+    <plot>
+      <title>Altitudes</title>
+      <label axis="x"></label>
+      <label axis="y">Altitude AGL (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="y">Altitude AGL (ft)</parameter>
+      <parameter axis="x">Time</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> Phi (deg) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Phi (deg)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y"> Theta (deg) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Theta (deg)</parameter>
+    </plot>
+    <plot>
+      <title> Euler Angles Time History </title>
+      <label axis="x"></label>
+      <label axis="y">Psi (deg)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Psi (deg)</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> X_{ECEF} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">X_{ECEF} (ft)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y"> Y_{ECEF} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Y_{ECEF} (ft)</parameter>
+    </plot>
+    <plot>
+      <title>ECEF Position Time History</title>
+      <label axis="x"></label>
+      <label axis="y"> Z_{ECEF} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Z_{ECEF} (ft)</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> X_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">X_{ECI} (ft)</parameter>
+    </plot>
+    <plot>
+      <title></title>
+      <label axis="x"></label>
+      <label axis="y"> Y_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Y_{ECI} (ft)</parameter>
+    </plot>
+    <plot>
+      <title>ECI Position Time History</title>
+      <label axis="x"></label>
+      <label axis="y"> Z_{ECI} (ft) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Z_{ECI} (ft)</parameter>
+    </plot>
+  </page>
+
+  <page>
+    <plot>
+      <title></title>
+      <label axis="x"> Time (sec) </label>
+      <label axis="y"> Beta (deg) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Beta (deg)</parameter>
+    </plot>
+    <plot>
+      <title>Aerodynamic Angle Time History</title>
+      <label axis="x"></label>
+      <label axis="y"> Alpha (deg) </label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Alpha (deg)</parameter>
+    </plot>
+  </page>
+</plotset>

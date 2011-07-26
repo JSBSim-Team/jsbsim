@@ -1,3 +1,4 @@
 SUBDIRS = \
 	ground_tests \
-	orbit
+	orbit \
+	piston_takeoff

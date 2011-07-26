@@ -1,0 +1,2 @@
+SUBDIRS = \
+	c172x

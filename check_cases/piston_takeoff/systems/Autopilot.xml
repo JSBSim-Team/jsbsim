@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<system name="Autopilot"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+<!-- #######################################################################
+
+  Author:   Jon Berndt
+  Date:     January 2009
+  Function: Autopilot
+
+  Description:
+
+  This file contains general purpose autopilot functions for JSBSim aircraft.
+  
+  Usage
+  =====
+  
+  This file contains algorithms that depend on parameters calculated in the
+  file, GNCUtilities.xml, which should be included prior to the inclusion of
+  this file, e.g.,
+  
+  <system file="GNCUtilities"/>
+
+  <system file="Autopilot"/>
+   
+  Inputs: 
+
+    [Declared Interface Parameters]
+    ap/roll-attitude-mode - This should be set to 0 for wings level or to 1
+                            for roll angle hold.
+    ap/autopilot-roll-on - this is either 0 (off) or 1. This turns the roll
+                           autopilot on or off.
+
+    [Overridable constants]
+    guidance/roll-angle-limit = 0.524 (default value in radians)
+    guidance/roll-rate-limit = 0.174 (default value in radians)
+
+  Introduced parameters (temporary terms):
+
+  Outputs:
+    ap/roll-cmd-norm-output - roll command to the flight control roll channel
+                              in a normalized range from -1 to +1.
+
+######################################################################## -->
+
+  <property> ap/roll-attitude-mode </property>
+  <property> ap/autopilot-roll-on  </property>
+  
+  <!-- Initial constants (can be overridden in the aircraft file) -->
+
+  <property value="0.524"> guidance/roll-angle-limit </property>
+  <property value="0.174"> guidance/roll-rate-limit </property>
+
+  <property value="0"> ap/roll-angle-saturation </property>
+
+<!-- #################################################################### -->
+
+  <channel name="Heading Hold">
+
+    <switch name="ap/roll-control-autopilot-on">
+      <default value="0"/>
+      <test value="1">
+        ap/autopilot-roll-on ne 0.0
+      </test>
+    </switch>
+
+    <switch name="ap/roll-autopilot-windup-trigger">
+      <default value="1"/>
+      <test value="1">
+        ap/roll-angle-saturation ne 0.0
+      </test>
+      <test value="0">
+        ap/roll-control-autopilot-on gt 0
+      </test>
+    </switch>
+
+    <pure_gain name="ap/limited-roll-angle-rad">
+      <description>
+        This component takes as input the angle to the target heading from
+        the current heading, as calculated by the Angle to Heading channel
+        in the GNC Utilities system file. The output of this component (stored)
+        in the component property "ap/limited-roll-angle-rad" is the roll
+        angle command, which is just the correct-sense heading error, but 
+        nominally limited at 30 degrees (0.524 radians), though this can be
+        overridden.
+      </description>
+      <input> guidance/angle-to-heading-rad </input>
+      <gain> guidance/angle-to-heading-sense </gain>
+      <clipto>
+        <min> -guidance/roll-angle-limit </min>
+        <max>  guidance/roll-angle-limit </max>
+      </clipto>
+    </pure_gain>
+
+    <switch name="ap/roll-attitude-selector">
+      <description>
+        This component selects whether to use a roll angle of "0" - which
+        is a wings-level attitude - or to use the roll angle commanded by the 
+        ap/limited-roll-angle-rad component, above, which is used to acquire
+        and hold a heading.
+        Set ap/roll-attitude-mode to 1 for roll angle hold,
+                                  to 0 for wings level (roll attitude of zero).
+      </description>
+      <default value="0"/>
+      <test value="ap/limited-roll-angle-rad">
+        ap/roll-attitude-mode eq 1
+      </test>
+    </switch>
+    
+    <summer name="ap/limited-roll-angle-error">
+      <description>
+        This component computes the error between the calculated target roll
+        angle and the actual roll angle. The output is interpreted as a roll
+        rate command.
+      </description>
+      <input>  ap/roll-attitude-selector </input>
+      <input> -attitude/phi-rad </input>
+    </summer>
+
+    <pid name="ap/roll-rate-pid-control">
+      <input> ap/limited-roll-angle-error </input>
+      <kp> 30 </kp>
+      <ki> 0.1  </ki>
+      <kd> 0.1  </kd>
+      <trigger> ap/roll-autopilot-windup-trigger </trigger>
+      <clipto>
+        <min> -guidance/roll-rate-limit </min>
+        <max>  guidance/roll-rate-limit </max>
+      </clipto>
+    </pid>
+
+    <pure_gain name="ap/total-limited-roll-rate">
+      <input>guidance/roll-rate-limit</input>
+      <gain>2.0</gain>
+    </pure_gain>
+    
+    <deadband name="ap/roll-rate-saturation">
+      <input> ap/roll-rate-pid-control </input>
+      <width> ap/total-limited-roll-rate </width>
+    </deadband>
+
+    <summer name="ap/limited-roll-rate-error">
+      <description>
+        This component computes the error between the calculated target roll
+        rate and the actual roll rate. The output is interpreted as an aileron
+        command.
+      </description>
+      <input> ap/roll-rate-pid-control </input>
+      <input> -velocities/p-aero-rad_sec </input>
+    </summer>
+
+    <pid name="ap/roll-command-pid-control">
+      <input> ap/limited-roll-rate-error </input>
+      <kp>2.5</kp>
+      <ki>0.0</ki>
+      <kd>0.0</kd>
+      <trigger> ap/roll-autopilot-windup-trigger </trigger>
+    </pid>
+
+    <lag_filter name="ap/roll-cmd-smoother">
+      <input> ap/roll-command-pid-control </input>
+      <c1> 100.0 </c1>
+    </lag_filter>
+
+    <switch name="ap/roll-cmd-norm-output">
+      <default value="0"/>
+      <test value="ap/roll-cmd-smoother">
+        ap/roll-control-autopilot-on ne 0.0
+      </test>
+    </switch>
+
+    <switch name="ap/roll-command-selector-steering">
+      <default value="0.0"/>
+      <test value="ap/roll-cmd-norm-output">
+        ap/roll-control-autopilot-on == 1
+        gear/unit[0]/WOW == 1
+      </test>
+      <output>fcs/steer-cmd-norm</output>
+    </switch>
+
+  </channel>
+
+</system>

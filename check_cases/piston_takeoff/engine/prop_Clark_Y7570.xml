@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<propeller name="Simulated Clark Y Airfoil McCauley 7570 Propeller">
+  <ixx>       1.8 </ixx>
+  <diameter unit="IN"> 75   </diameter>
+  <numblades> 2   </numblades>
+  <minpitch> 21.6 </minpitch>
+  <maxpitch> 21.6 </maxpitch>
+  <table name="C_THRUST" type="internal">
+    <tableData>
+      0.0   0.108
+      0.2   0.104
+      0.4   0.100
+      0.6   0.080
+      0.8   0.052
+      1.0   0.020
+      1.11  0.000
+    </tableData>
+  </table>
+  <table name="C_POWER" type="internal">
+    <tableData>
+      0.0   0.080
+      0.2   0.075
+      0.4   0.069
+      0.6   0.061
+      0.8   0.050
+      1.0   0.022
+      1.11  0.000
+    </tableData>
+  </table>
+</propeller>
