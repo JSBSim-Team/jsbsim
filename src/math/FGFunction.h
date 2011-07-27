@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.21 2009/11/18 04:49:02 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.22 2011/07/27 04:31:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -230,10 +230,17 @@ private:
   std::string mod_string;
   std::string random_string;
   std::string integer_string;
+  std::string rotation_alpha_local_string;
+  std::string rotation_beta_local_string;
+  std::string rotation_gamma_local_string;
+  std::string rotation_bf_to_wf_string;
+  std::string rotation_wf_to_bf_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn, eLog10} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn,
+                     eLog10, eRotation_alpha_local, eRotation_beta_local,
+                     eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf,} Type;
   std::string Name;
   void bind(void);
   void Debug(int from);
