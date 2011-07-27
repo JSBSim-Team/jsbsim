@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.37 2011/07/27 04:31:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.38 2011/07/27 12:59:52 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -444,7 +444,7 @@ double FGFunction::GetValue(void) const
     else // 
     {temp = 1;}
     break;
-case eRotation_gamma_local:
+  case eRotation_gamma_local:
     if (Parameters.size()==6) // calculates local angle of attack for skydiver body component
         //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
         {
@@ -481,7 +481,7 @@ case eRotation_gamma_local:
     else // 
     {temp = 1;}
     break;
-case eRotation_bf_to_wf:
+  case eRotation_bf_to_wf:
     if (Parameters.size()==7) // transforms the input vector from a body frame to a wind frame.  The origin of the vector remains the same.
     {
         double rx = Parameters[0]->GetValue();             //x component of input vector
@@ -521,7 +521,7 @@ case eRotation_bf_to_wf:
     else // 
     {temp = 1;}
     break;
-case eRotation_wf_to_bf:
+  case eRotation_wf_to_bf:
     if (Parameters.size()==7) // transforms the input vector from q wind frame to a body frame.  The origin of the vector remains the same.
     {
         double rx = Parameters[0]->GetValue();             //x component of input vector
