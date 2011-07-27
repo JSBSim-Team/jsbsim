@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.83 2011/07/24 19:44:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.84 2011/07/27 03:55:25 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -521,6 +521,8 @@ void FGLGear::InitializeReporting(void)
   }
 
   // If the takeoff run is starting, initialize.
+
+  if (FCS->GetThrottlePos().size() == 0) return;
 
   if ((Propagate->GetVel().Magnitude() > 0.1) &&
       (FCS->GetBrake(bgLeft) == 0) &&
