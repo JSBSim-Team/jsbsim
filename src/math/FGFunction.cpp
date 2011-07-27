@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.36 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.38 2011/07/27 12:59:52 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,11 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   mod_string = "mod";
   random_string = "random";
   integer_string = "integer";
+  rotation_alpha_local_string = "rotation_alpha_local";
+  rotation_beta_local_string = "rotation_beta_local";
+  rotation_gamma_local_string = "rotation_gamma_local";
+  rotation_bf_to_wf_string = "rotation_bf_to_wf";
+  rotation_wf_to_bf_string = "rotation_wf_to_bf";
 
   Name = el->GetAttributeValue("name");
   operation = el->GetName();
@@ -146,6 +151,16 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eMod;
   } else if (operation == random_string) {
     Type = eRandom;
+  } else if (operation == rotation_alpha_local_string) {
+    Type = eRotation_alpha_local;
+  } else if (operation == rotation_beta_local_string) {
+    Type = eRotation_beta_local;
+  } else if (operation == rotation_gamma_local_string) {
+    Type = eRotation_gamma_local;
+  } else if (operation == rotation_bf_to_wf_string) {
+    Type = eRotation_bf_to_wf;
+  } else if (operation == rotation_wf_to_bf_string) {
+    Type = eRotation_wf_to_bf;
   } else if (operation != description_string) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -210,7 +225,12 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == integer_string ||
                operation == mod_string ||
                operation == random_string ||
-               operation == avg_string )
+               operation == avg_string ||
+               operation == rotation_alpha_local_string||
+               operation == rotation_beta_local_string||
+               operation == rotation_gamma_local_string||
+               operation == rotation_bf_to_wf_string||
+               operation == rotation_wf_to_bf_string)
     {
       Parameters.push_back(new FGFunction(PropertyManager, element, Prefix));
     } else if (operation != description_string) {
@@ -349,6 +369,197 @@ double FGFunction::GetValue(void) const
     break;
   case eRandom:
     temp = GaussianRandomNumber();
+    break;
+  case eRotation_alpha_local:
+    if (Parameters.size()==6) // calculates local angle of attack for skydiver body component
+        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
+    {
+        double alpha = Parameters[0]->GetValue()*degtorad;
+        double beta = Parameters[1]->GetValue()*degtorad;
+        double gamma = Parameters[2]->GetValue()*degtorad;
+        double phi = Parameters[3]->GetValue()*degtorad;
+        double theta = Parameters[4]->GetValue()*degtorad;
+        double psi = Parameters[5]->GetValue()*degtorad;
+        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
+        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
+        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
+        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
+        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
+        //calculate local body frame to the intermediate body frame rotation quaternion
+        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
+        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
+        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
+        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
+        //calculate the intermediate body frame to global wind frame rotation quaternion
+        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
+        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
+        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
+        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
+        //multiply quaternions
+        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
+        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
+        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
+        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
+        //calculate alpha_local
+        temp = -atan2(2*(Cy*Ct-Cx*Cz),(Ct*Ct+Cx*Cx-Cy*Cy-Cz*Cz));
+        temp *= radtodeg;
+    } else {
+      temp = 1;
+    }
+    break;
+  case eRotation_beta_local:
+    if (Parameters.size()==6) // calculates local angle of sideslip for skydiver body component
+        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
+    {
+        double alpha = Parameters[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
+        double beta = Parameters[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
+        double gamma = Parameters[2]->GetValue()*degtorad; //roll angle of intermediate body frame
+        double phi = Parameters[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
+        double theta = Parameters[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
+        double psi = Parameters[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
+        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
+        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
+        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
+        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
+        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
+        //calculate local body frame to the intermediate body frame rotation quaternion
+        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
+        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
+        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
+        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
+        //calculate the intermediate body frame to global wind frame rotation quaternion
+        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
+        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
+        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
+        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
+        //multiply quaternions
+        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
+        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
+        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
+        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
+        //calculate beta_local
+        temp = asin(2*(Cx*Cy+Cz*Ct));
+        temp *= radtodeg;
+    }
+    else // 
+    {temp = 1;}
+    break;
+  case eRotation_gamma_local:
+    if (Parameters.size()==6) // calculates local angle of attack for skydiver body component
+        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
+        {
+        double alpha = Parameters[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
+        double beta = Parameters[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
+        double gamma = Parameters[2]->GetValue()*degtorad; //roll angle of intermediate body frame
+        double phi = Parameters[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
+        double theta = Parameters[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
+        double psi = Parameters[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
+        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
+        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
+        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
+        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
+        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
+        //calculate local body frame to the intermediate body frame rotation quaternion
+        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
+        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
+        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
+        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
+        //calculate the intermediate body frame to global wind frame rotation quaternion
+        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
+        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
+        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
+        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
+        //multiply quaternions
+        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
+        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
+        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
+        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
+        //calculate local roll anlge
+        temp = -atan2(2*(Cx*Ct-Cz*Cy),(Ct*Ct-Cx*Cx+Cy*Cy-Cz*Cz));
+        temp *= radtodeg;
+    }
+    else // 
+    {temp = 1;}
+    break;
+  case eRotation_bf_to_wf:
+    if (Parameters.size()==7) // transforms the input vector from a body frame to a wind frame.  The origin of the vector remains the same.
+    {
+        double rx = Parameters[0]->GetValue();             //x component of input vector
+        double ry = Parameters[1]->GetValue();             //y component of input vector
+        double rz = Parameters[2]->GetValue();             //z component of input vector
+        double alpha = Parameters[3]->GetValue()*degtorad; //angle of attack of the body frame
+        double beta = Parameters[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+        double gamma = Parameters[5]->GetValue()*degtorad; //roll angle of the body frame
+        double index = Parameters[6]->GetValue();
+        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
+        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
+        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
+        //calculate the body frame to wind frame quaternion
+        double qt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
+        double qx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
+        double qy = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
+        double qz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
+        //calculate the quaternion conjugate
+        double qstart = qt;
+        double qstarx = -qx;
+        double qstary = -qy;
+        double qstarz = -qz;
+        //multiply quaternions v*q
+        double vqt = -rx*qx - ry*qy - rz*qz;
+        double vqx =  rx*qt + ry*qz - rz*qy;
+        double vqy = -rx*qz + ry*qt + rz*qx;
+        double vqz =  rx*qy - ry*qx + rz*qt;
+        //multiply quaternions qstar*vq
+        double Cx = qstart*vqx + qstarx*vqt + qstary*vqz - qstarz*vqy;
+        double Cy = qstart*vqy - qstarx*vqz + qstary*vqt + qstarz*vqx;
+        double Cz = qstart*vqz + qstarx*vqy - qstary*vqx + qstarz*vqt;
+
+        if (index == 1)     temp = Cx;
+        else if (index ==2) temp = Cy;
+        else                temp = Cz;
+    }
+    else // 
+    {temp = 1;}
+    break;
+  case eRotation_wf_to_bf:
+    if (Parameters.size()==7) // transforms the input vector from q wind frame to a body frame.  The origin of the vector remains the same.
+    {
+        double rx = Parameters[0]->GetValue();             //x component of input vector
+        double ry = Parameters[1]->GetValue();             //y component of input vector
+        double rz = Parameters[2]->GetValue();             //z component of input vector
+        double alpha = Parameters[3]->GetValue()*degtorad; //angle of attack of the body frame
+        double beta = Parameters[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+        double gamma = Parameters[5]->GetValue()*degtorad; //roll angle of the body frame
+        double index = Parameters[6]->GetValue();
+        double calpha2 = cos(alpha/2), salpha2 = sin(alpha/2);
+        double cbeta2 = cos(-beta/2), sbeta2 = sin(-beta/2);
+        double cgamma2 = cos(gamma/2), sgamma2 = sin(gamma/2);
+        //calculate the wind frame to body frame quaternion
+        double qt =  cgamma2*cbeta2*calpha2 + sgamma2*sbeta2*salpha2;
+        double qx = -cgamma2*sbeta2*salpha2 + sgamma2*cbeta2*calpha2;
+        double qy =  cgamma2*cbeta2*salpha2 - sgamma2*sbeta2*calpha2;
+        double qz =  cgamma2*sbeta2*calpha2 + sgamma2*cbeta2*salpha2;
+        //calculate the quaternion conjugate
+        double qstart =  qt;
+        double qstarx = -qx;
+        double qstary = -qy;
+        double qstarz = -qz;
+        //multiply quaternions v*q
+        double vqt = -rx*qx - ry*qy - rz*qz;
+        double vqx =  rx*qt + ry*qz - rz*qy;
+        double vqy = -rx*qz + ry*qt + rz*qx;
+        double vqz =  rx*qy - ry*qx + rz*qt;
+        //multiply quaternions qstar*vq
+        double Cx = qstart*vqx + qstarx*vqt + qstary*vqz - qstarz*vqy;
+        double Cy = qstart*vqy - qstarx*vqz + qstary*vqt + qstarz*vqx;
+        double Cz = qstart*vqz + qstarx*vqy - qstary*vqx + qstarz*vqt;
+
+        if (index == 1)     temp = Cx;
+        else if (index ==2) temp = Cy;
+        else                temp = Cz;
+    }
+    else // 
+    {temp = 1;}
     break;
   default:
     cerr << "Unknown function operation type" << endl;

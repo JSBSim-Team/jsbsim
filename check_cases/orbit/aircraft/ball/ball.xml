@@ -37,7 +37,7 @@
     </metrics>
 
     <mass_balance>
-        <ixx unit="SLUG*FT2"> 10 </ixx>
+        <ixx unit="SLUG*FT2"> 20 </ixx>
         <iyy unit="SLUG*FT2"> 10 </iyy>
         <izz unit="SLUG*FT2"> 10 </izz>
         <ixy unit="SLUG*FT2"> -0 </ixy>
@@ -52,7 +52,6 @@
     </mass_balance>
 
     <ground_reactions>
-      <!--
         <contact type="BOGEY" name="CONTACT">
             <location unit="IN">
                 <x> 0 </x>
@@ -68,7 +67,6 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        -->
     </ground_reactions>
 
     <external_reactions>
@@ -122,9 +120,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="JSBBallOut.csv" type="NONE" rate="10">
-<!--        <property> gear/unit[0]/WOW </property> -->
-<!--        <property> fcs/parachute_reef_pos_norm </property> -->
+    <output name="BallOut.csv" type="CSV" rate="0.001">
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>

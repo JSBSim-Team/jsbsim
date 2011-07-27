@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<plotset>
+  <!--
+    This file contains plot descriptions for the velocities data logged by JSBSim
+    when the velocities flag is turned ON.
+    
+    These are the variables logged by JSBSim with the velocities flag set to ON
+
+      
+-->
+  <plot>
+    <title>Total (Earth Relative) Velocity</title>
+    <label axis="x">Time (sec)</label>
+    <label axis="y">Earth Relative Velocity (ft/sec)</label>
+    <scale>auto</scale>
+    <parameter axis="x">Time</parameter>
+    <parameter axis="y">V_{Total} (ft/s)</parameter>
+  </plot>
+
+  <plot>
+    <title>Total Inertial Velocity</title>
+    <label axis="x">Time (sec)</label>
+    <label axis="y">Inertial Velocity (ft/sec)</label>
+    <scale>auto</scale>
+    <parameter axis="x">Time</parameter>
+    <parameter axis="y">V_{Inertial} (ft/s)</parameter>
+  </plot>
+
+</plotset>

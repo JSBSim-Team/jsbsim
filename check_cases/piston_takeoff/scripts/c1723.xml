@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A takeoff run">
+  <!--
+    This run is for testing the C172 altitude hold autopilot
+  -->
+
+  <use aircraft="c172x" initialize="reset00"/>
+  <run start="0.0" end="200" dt="0.00833333333333333333">
+
+    <!-- Initialize with brakes on -->
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> simulation/run_id </property>
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+    <property value="1"> fcs/center-brake-cmd-norm </property>
+    <property value="3.49"> guidance/specified-heading-rad </property>
+    <property value="1"> guidance/heading-selector-switch </property>
+
+    <event name="engine start">
+      <description>Start the engine and set roll control to heading hold</description>
+      <condition> simulation/sim-time-sec >= 0.25 </condition>
+      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm" value="1.00" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
+      <set name="ap/autopilot-roll-on" value="1"/>
+      <notify>
+        <property caption="Sim Run ID: ">simulation/run_id</property>
+        <property>ap/hdg-roll-err-c1</property>
+      </notify>
+    </event>
+
+    <event name="Begin roll">
+      <description>Release brakes and get rolling with flaps at 10 degrees. </description>
+      <condition> simulation/sim-time-sec >= 2.0 </condition>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <set name="fcs/right-brake-cmd-norm" value="0"/>
+      <set name="fcs/center-brake-cmd-norm" value="0"/>
+      <set name="fcs/flap-cmd-norm" value="0.33"/>
+      <notify/>
+    </event>
+
+    <event name="Rotate">
+      <description>Set Autopilot for 400 ft and rotate at 49 keas. </description>
+      <notify/>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <set name="ap/altitude_setpoint" value="400.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
+    </event>
+
+    <event name="Set autopilot for 6000 ft.">
+      <description>Set Autopilot for 6000 ft after a five second delay. </description>
+      <notify/>
+      <condition> velocities/vc-kts >= 49 </condition>
+      <delay>5.0</delay>
+      <set name="ap/altitude_setpoint" value="6000.0"/>
+    </event>
+
+    <event name="Adjust throttle/flaps">
+      <description>Remove flaps at 50 ft and set heading to 100; acquire heading.</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 2000
+      </condition>
+      <set name="fcs/flap-cmd-norm" value="0"/>
+      <set name="guidance/specified-heading-rad" value="1.75"/>
+      <set name="ap/roll-attitude-mode" value="1"/>
+    </event>
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at 1 minute intervals</description>
+      <notify>
+        <property caption="Velocity (kts):       ">velocities/vc-kts</property>
+        <property caption="Altitude (AGL, ft):   ">position/h-agl-ft</property>
+        <property caption="Latitude (geod, deg): ">position/lat-geod-deg</property>
+        <property caption="Altitude (geod, ft):  ">position/geod-alt-ft</property>
+      </notify>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+  </run>
+</runscript>

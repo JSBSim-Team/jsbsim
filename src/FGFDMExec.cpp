@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.103 2011/07/20 12:26:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.104 2011/07/27 03:56:47 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,7 +415,28 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     // Dynamic inputs come into the components that FCS manages through properties
     break;
   case ePropulsion:
-    // Dynamic inputs come into the engines that propulsion manages through properties
+//    Propulsion->in.Pressure = Atmosphere->GetPressure(h);
+    Propulsion->in.SLPressure       = Atmosphere->GetPressureSL();
+    Propulsion->in.Pressure         = Atmosphere->GetPressure();
+    Propulsion->in.Temperature      = Atmosphere->GetTemperature();
+    Propulsion->in.DensityRatio     = Atmosphere->GetDensityRatio();
+    Propulsion->in.Density          = Atmosphere->GetDensity();
+    Propulsion->in.Soundspeed       = Atmosphere->GetSoundSpeed();
+    Propulsion->in.TotalPressure    = Auxiliary->GetTotalPressure();
+    Propulsion->in.TotalTempearture = Auxiliary->GetTotalTemperature();
+    Propulsion->in.Vc               = Auxiliary->GetVcalibratedKTS();
+    Propulsion->in.Vt               = Auxiliary->GetVt();
+    Propulsion->in.qbar             = Auxiliary->Getqbar();
+    Propulsion->in.TAT_c            = Auxiliary->GetTAT_C();
+    Propulsion->in.AeroUVW          = Auxiliary->GetAeroUVW();
+    Propulsion->in.AeroPQR          = Auxiliary->GetAeroPQR();
+    Propulsion->in.alpha            = Auxiliary->Getalpha();
+    Propulsion->in.beta             = Auxiliary->Getbeta();
+    Propulsion->in.TotalDeltaT      = dT * Propulsion->GetRate();
+    Propulsion->in.ThrottlePos      = FCS->GetThrottlePos();
+    Propulsion->in.MixturePos       = FCS->GetMixturePos();
+    Propulsion->in.PropAdvance      = FCS->GetPropAdvance();
+    Propulsion->in.PropFeather      = FCS->GetPropFeather();
     break;
   case eAerodynamics:
     Aerodynamics->in.Alpha     = Auxiliary->Getalpha();
@@ -741,6 +762,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
         cerr << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
+      for (unsigned int i=0; i<Propulsion->GetNumEngines(); i++) FCS->AddThrottle();
     }
 
     // Process the system element[s]. This element is OPTIONAL, and there may be more than one.
@@ -1166,10 +1188,10 @@ void FGFDMExec::Debug(int from)
 
   if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
-                                     << JSBSim_version << underoff << normint << endl;
-      cout << halfint << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
-      cout << normint << "JSBSim startup beginning ...\n\n";
+      cout << "\n\n     " 
+           << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
+      cout << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
+      cout << "JSBSim startup beginning ...\n\n";
     } else if (from == 3) {
       cout << "\n\nJSBSim startup complete\n\n";
     }

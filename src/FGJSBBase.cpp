@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.30 2011/06/13 11:47:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.31 2011/07/27 03:55:48 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,7 +228,8 @@ FGJSBBase::Message* FGJSBBase::ProcessNextMessage(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGJSBBase::disableHighLighting(void) {
+void FGJSBBase::disableHighLighting(void)
+{
   highint[0]='\0';
   halfint[0]='\0';
   normint[0]='\0';

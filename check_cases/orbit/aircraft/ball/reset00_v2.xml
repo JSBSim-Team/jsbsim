@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<initialize name="reset00" version="2.0">
+  <!--
+    This file sets up the spacecraft to start off
+    at altitude and orbital velocity.
+  -->
+
+  <position frame="ECEF">
+    <altitudeMSL unit="FT"> 800000.0  </altitudeMSL>
+  </position>
+
+  <orientation unit="DEG" frame="LOCAL">
+    <yaw>   90.0  </yaw>
+  </orientation>
+
+  <velocity unit="FT/SEC" frame="BODY">
+    <!--x> 23869.9759596 </x--> <!-- For use with standard grav model -->
+    <x> 23889.142721 </x> <!-- For use with WGS84 grav model -->
+  </velocity>
+
+  <attitude_rate unit="DEG/SEC" frame="ECI">
+    <y>  15.0 </y>
+    <z> -5.0 </z>
+  </attitude_rate>
+
+</initialize>

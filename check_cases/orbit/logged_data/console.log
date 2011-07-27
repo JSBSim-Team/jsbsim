@@ -1,0 +1,359 @@
+
+
+     JSBSim Flight Dynamics Model v1.0 Jul 25 2011 22:28:55
+            [JSBSim-ML v2.0]
+
+JSBSim startup beginning ...
+
+Reading Aircraft Configuration File: BALL
+                            Version: 2.0
+
+
+This aircraft model is a BETA release!!!
+
+This aircraft model probably will not fly as expected.
+
+Use this model for development purposes ONLY!!!
+
+  Description:   Test file
+  Model Author:  Jon Berndt
+  Creation Date: 2004-06-01
+  Version:       Version 1.0
+
+  Aircraft Metrics:
+    WingArea: 1.000000
+    WingSpan: 1.000000
+    Incidence: 0.000000
+    Chord: 1.000000
+    H. Tail Area: 0.000000
+    H. Tail Arm: 0.000000
+    V. Tail Area: 0.000000
+    V. Tail Arm: 0.000000
+    Eyepoint (x, y, z): 0.000000 , 0.000000 , 0.000000
+    Ref Pt (x, y, z): 0.000000 , 0.000000 , 0.000000
+    Visual Ref Pt (x, y, z): 0.000000 , 0.000000 , 0.000000
+
+  Mass and Balance:
+    baseIxx: 20.000000 slug-ft2
+    baseIyy: 10.000000 slug-ft2
+    baseIzz: 10.000000 slug-ft2
+    baseIxy: 0.000000 slug-ft2
+    baseIxz: -0.000000 slug-ft2
+    baseIyz: 0.000000 slug-ft2
+    Empty Weight: 50.000000 lbm
+    CG (x, y, z): 0.000000 , 0.000000 , 0.000000
+
+  Ground Reactions: 
+    BOGEY CONTACT
+      Location: 0.000000 , 0.000000 , 0.000000
+      Spring Constant:  10000.000000
+      Damping Constant: 200000.000000 (linear)
+      Rebound Damping Constant: 200000.000000 (linear)
+      Dynamic Friction: 0.000000
+      Static Friction:  0.000000
+      Rolling Friction: 0.000000
+      Steering Type:    FIXED
+      Grouping:         NONE
+      Max Steer Angle:  0.000000
+      Retractable:      0
+
+    Declared properties
+
+      fcs/parachute_reef_pos_norm (initial value: 0.000000)
+
+
+  External Reactions: 
+    Function: 
+    parachute
+    Frame: 
+    Location: (12.000000, 0.000000, 0.000000)
+
+  Propulsion:
+
+  FCS: FGFCS
+
+  Aerodynamics (Lift|Side|Drag axes):
+
+    Function: aero/coefficient/CD
+
+  Output data set: 0    Output parameters read inline
+    Log output goes to file: BallOut.csv in CSV format output at rate 0.001000 Hz
+    Rate parameters logged
+    Velocity parameters logged
+    Force parameters logged
+    Moments parameters logged
+    Propagate parameters logged
+
+  Mass Properties Report (English units: lbf, in, slug-ft^2)
+                                      Weight    CG-X    CG-Y    CG-Z         Ixx         Iyy         Izz
+    Base Vehicle                        50.0     0.0     0.0     0.0        20.0        10.0        10.0
+                                                                                                        
+    Total:                              50.0     0.0     0.0     0.0        20.0        10.0        10.0
+
+End of vehicle configuration loading.
+-------------------------------------------------------------------------------
+
+Script: "Orbital EOM Test"
+  begins at 0.0 seconds and runs to 10800.0 seconds with dt = 0.010000 (100.000000 Hz)
+
+Local property: simulation/integrator/rate/rotational = 3.000000
+Local property: simulation/integrator/rate/translational = 3.000000
+Local property: simulation/integrator/position/rotational = 1.000000
+Local property: simulation/integrator/position/translational = 4.000000
+Local property: simulation/gravity-model = 1.000000
+Local property: simulation/notify-time-trigger = 0.000000
+
+Event 0 (Time Notify):
+  Whenever triggered, executes once if all of the following are true:
+    sim-time-sec >= notify-time-trigger
+  Actions taken:
+    {
+      set simulation/notify-time-trigger to 600.000000 (delta via step)
+    }
+  Notifications:
+    {
+      position/h-agl-ft
+      position/geod-alt-ft
+      position/lat-geod-deg
+      position/radius-to-vehicle-ft
+      velocities/eci-velocity-mag-fps
+      velocities/u-fps
+      simulation/frame
+      atmosphere/rho-slugs_ft3
+    }
+
+
+------------------------------------------------------------------
+State Report at sim time: 0.000000 seconds
+  Position
+    ECI:             21725650,                  0,                  0 (x,y,z, in ft)
+    ECEF:  21725650.000000 , 0.000000 , 0.000000 (x,y,z, in ft)
+    Local: 0.000000, 0.000000, 800000.000000 (lat, lon, alt in deg and ft)
+
+  Orientation
+    ECI:   -89.99999999999999, -1.272221872585407e-14,                 90 (phi, theta, psi in deg)
+    Local: 1.272221872585407e-14, 1.127959961009537e-30,  89.99999999999999 (phi, theta, psi in deg)
+
+  Velocity
+    ECI:   -2.907694313473995e-44,   25473.4021034975, 5.304455257482132e-12 (x,y,z in ft/s)
+    ECEF:  -1.177825671990125e-27,       23889.142721, 5.304455257482132e-12 (x,y,z in ft/s)
+    Local: 0.000000 , 23889.142721 , 0.000000 (n,e,d in ft/sec)
+    Body:  23889.142721 , 0.000000 , 0.000000 (u,v,w in ft/sec)
+
+  Body Rates (relative to given frame, expressed in body frame)
+    ECI:                   15,  5.000000000000003, 9.277188200408133e-19 (p,q,r in deg/s)
+    ECEF:                  15,  5.004178074132243,                  0 (p,q,r in deg/s)
+
+---- JSBSim Execution beginning ... --------------------------------------------
+
+
+  Event 0 (Time Notify) executed at time: 0.000000
+    Height AGL (ft):          = 800000.000000
+    Altitude (Geod, ft):      = 800003.674500
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.000000
+    Inertial Vel Mag (ft/s):  = 25473.402103
+    Body X Velocity (ft/s):   = 23889.142721
+    Simulation Frame:         = 1.000000
+    Density:                  = 0.000000
+
+Start: Monday July 25 2011 22:35:59 (HH:MM:SS)
+
+  Event 0 (Time Notify) executed at time: 600.010000
+    Height AGL (ft):          = 800000.000419
+    Altitude (Geod, ft):      = 800003.674919
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000419
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 19906.510158
+    Simulation Frame:         = 60002.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 1200.010000
+    Height AGL (ft):          = 800000.000848
+    Altitude (Geod, ft):      = 800003.675348
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000848
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 1057.806650
+    Simulation Frame:         = 120002.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 1800.010000
+    Height AGL (ft):          = 800000.001334
+    Altitude (Geod, ft):      = 800003.675833
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.001333
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -13681.485757
+    Simulation Frame:         = 180002.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 2400.000000
+    Height AGL (ft):          = 800000.001646
+    Altitude (Geod, ft):      = 800003.676145
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.001645
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -20781.871317
+    Simulation Frame:         = 240001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 3000.000000
+    Height AGL (ft):          = 800000.001638
+    Altitude (Geod, ft):      = 800003.676136
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.001636
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -20590.714208
+    Simulation Frame:         = 300001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 3600.000000
+    Height AGL (ft):          = 800000.001312
+    Altitude (Geod, ft):      = 800003.675810
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.001310
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -8514.970030
+    Simulation Frame:         = 360001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 4200.000000
+    Height AGL (ft):          = 800000.000823
+    Altitude (Geod, ft):      = 800003.675321
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.000821
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 1575.809816
+    Simulation Frame:         = 420001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 4800.000000
+    Height AGL (ft):          = 800000.000402
+    Altitude (Geod, ft):      = 800003.674899
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.000399
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 17658.236757
+    Simulation Frame:         = 480001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 5400.000000
+    Height AGL (ft):          = 800000.000248
+    Altitude (Geod, ft):      = 800003.674745
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000245
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 23202.236433
+    Simulation Frame:         = 540001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 6000.000000
+    Height AGL (ft):          = 800000.000435
+    Altitude (Geod, ft):      = 800003.674933
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000433
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 18964.759368
+    Simulation Frame:         = 600001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 6600.000000
+    Height AGL (ft):          = 800000.000874
+    Altitude (Geod, ft):      = 800003.675372
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000872
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 4638.332192
+    Simulation Frame:         = 660001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 7200.000000
+    Height AGL (ft):          = 800000.001358
+    Altitude (Geod, ft):      = 800003.675856
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.001356
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -16059.092873
+    Simulation Frame:         = 720001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 7800.000000
+    Height AGL (ft):          = 800000.001658
+    Altitude (Geod, ft):      = 800003.676155
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.001655
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -22725.971063
+    Simulation Frame:         = 780001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 8400.000000
+    Height AGL (ft):          = 800000.001632
+    Altitude (Geod, ft):      = 800003.676129
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.001629
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -22199.441580
+    Simulation Frame:         = 840001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 9000.000000
+    Height AGL (ft):          = 800000.001292
+    Altitude (Geod, ft):      = 800003.675789
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.001289
+    Inertial Vel Mag (ft/s):  = 25473.402104
+    Body X Velocity (ft/s):   = -6881.322112
+    Simulation Frame:         = 900001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 9600.000000
+    Height AGL (ft):          = 800000.000799
+    Altitude (Geod, ft):      = 800003.675296
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.000796
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 7000.390154
+    Simulation Frame:         = 960001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 10200.000000
+    Height AGL (ft):          = 800000.000387
+    Altitude (Geod, ft):      = 800003.674884
+    Latitude (Geod, deg):     = 0.000000
+    Vehicle Radius (ft):      = 21725650.000384
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 16802.708905
+    Simulation Frame:         = 1020001.000000
+    Density:                  = 0.000000
+
+
+  Event 0 (Time Notify) executed at time: 10800.000000
+    Height AGL (ft):          = 800000.000250
+    Altitude (Geod, ft):      = 800003.674748
+    Latitude (Geod, deg):     = -0.000000
+    Vehicle Radius (ft):      = 21725650.000248
+    Inertial Vel Mag (ft/s):  = 25473.402105
+    Body X Velocity (ft/s):   = 22387.938284
+    Simulation Frame:         = 1080001.000000
+    Density:                  = 0.000000
+
+End: Monday July 25 2011 22:36:11 (HH:MM:SS)
