@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.34 2011/06/16 14:54:06 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.35 2011/07/27 03:52:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,13 +201,13 @@ double FGPropeller::Calculate(double EnginePower)
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
 
-  PowerAvailable = EnginePower - GetPowerRequired();
-
   // Calculate helical tip Mach
   double Area = 0.25*Diameter*Diameter*M_PI;
   double Vtip = RPS * Diameter * M_PI;
   HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / 
                    fdmex->GetAtmosphere()->GetSoundSpeed(); 
+
+  PowerAvailable = EnginePower - GetPowerRequired();
 
   if (RPS > 0.0) J = Vel / (Diameter * RPS); // Calculate J normally
   else           J = Vel / Diameter;      
