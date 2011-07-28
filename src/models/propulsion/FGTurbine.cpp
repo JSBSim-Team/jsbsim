@@ -41,17 +41,15 @@ INCLUDES
 
 #include <iostream>
 #include <sstream>
+
 #include "FGTurbine.h"
 #include "FGThruster.h"
-#include "models/FGPropulsion.h"
-#include "models/FGAuxiliary.h"
-#include "models/FGAtmosphere.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.32 2011/06/07 00:28:03 jentron Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.33 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,8 +57,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number)
-  : FGEngine(exec, el, engine_number)
+FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, const struct Inputs& input)
+  : FGEngine(exec, el, engine_number, input)
 {
   Type = etTurbine;
 
@@ -103,12 +101,12 @@ void FGTurbine::ResetToIC(void)
   N1 = N2 = 0.0;
   N2norm = 0.0;
   correctedTSFC = TSFC;
-  ThrottlePos = AugmentCmd = 0.0;
+  AugmentCmd = 0.0;
   InletPosition = NozzlePosition = 1.0;
   Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
   Cutoff = true;
   phase = tpOff;
-  TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
+  TAT = (in.TotalTempearture - 491.69) * 0.5555556;
   EGT_degC = TAT;
   OilTemp_degK = TAT + 273.0;
 }
@@ -123,10 +121,9 @@ void FGTurbine::Calculate(void)
 
   RunPreFunctions();
 
-  TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
-  double qbar = Auxiliary->Getqbar();
-  dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
-  ThrottlePos = FCS->GetThrottlePos(EngineNumber);
+  ThrottlePos = in.ThrottlePos[EngineNumber];
+
+  TAT = (in.TotalTempearture - 491.69) * 0.5555556;
   if (ThrottlePos > 1.0) {
     AugmentCmd = ThrottlePos - 1.0;
     ThrottlePos -= AugmentCmd;
@@ -135,7 +132,7 @@ void FGTurbine::Calculate(void)
   }
 
   // When trimming is finished check if user wants engine OFF or RUNNING
-  if ((phase == tpTrim) && (dt > 0)) {
+  if ((phase == tpTrim) && (in.TotalDeltaT > 0)) {
     if (Running && !Starved) {
       phase = tpRun;
       N2 = IdleN2 + ThrottlePos * N2_factor;
@@ -155,12 +152,12 @@ void FGTurbine::Calculate(void)
   }
 
   // start
-  if ((Starter == true) || (qbar > 30.0)) {
+  if ((Starter == true) || (in.qbar > 30.0)) {
     if (!Running && !Cutoff && (N2 > 15.0)) phase = tpStart;
   }
 
   if (Cutoff && (phase != tpSpinUp)) phase = tpOff;
-  if (dt == 0) phase = tpTrim;
+  if (in.TotalDeltaT == 0) phase = tpTrim;
   if (Starved) phase = tpOff;
   if (Stalled) phase = tpStall;
   if (Seized) phase = tpSeize;
@@ -185,11 +182,10 @@ void FGTurbine::Calculate(void)
 
 double FGTurbine::Off(void)
 {
-  double qbar = Auxiliary->Getqbar();
   Running = false;
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
-  N1 = Seek(&N1, qbar/10.0, N1/2.0, N1/2.0);
-  N2 = Seek(&N2, qbar/15.0, N2/2.0, N2/2.0);
+  N1 = Seek(&N1, in.qbar/10.0, N1/2.0, N1/2.0);
+  N2 = Seek(&N2, in.qbar/15.0, N2/2.0, N2/2.0);
   EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
   OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
   OilPressure_psi = N2 * 0.62;
@@ -206,8 +202,8 @@ double FGTurbine::Run()
 {
   double idlethrust, milthrust, thrust;
   double spoolup;                        // acceleration in pct/sec
-  double sigma = Atmosphere->GetDensityRatio();
-  double T = Atmosphere->GetTemperature();
+  double sigma = in.DensityRatio;
+  double T = in.Temperature;
 
   idlethrust = MilThrust * IdleThrustLookup->GetValue();
   milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
@@ -261,7 +257,7 @@ double FGTurbine::Run()
   }
 
   if ((Injected == 1) && Injection) {
-    InjectionTimer += dt;
+    InjectionTimer += in.TotalDeltaT;
     if (InjectionTimer < InjectionTime) {
        thrust = thrust * InjectionLookup->GetValue();
     } else {
@@ -297,7 +293,6 @@ double FGTurbine::SpinUp(void)
 
 double FGTurbine::Start(void)
 {
-  double qbar = Auxiliary->Getqbar();
   if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
     Cranking = true;                   // provided for sound effects signal
     if (N2 < IdleN2) {
@@ -307,7 +302,7 @@ double FGTurbine::Start(void)
       FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
       ConsumeFuel();
-      if ((Starter == false) && (qbar < 30.0)) phase = tpOff; // aborted start
+      if ((Starter == false) && (in.qbar < 30.0)) phase = tpOff; // aborted start
       }
     else {
       phase = tpRun;
@@ -328,11 +323,10 @@ double FGTurbine::Start(void)
 
 double FGTurbine::Stall(void)
 {
-  double qbar = Auxiliary->Getqbar();
   EGT_degC = TAT + 903.14;
   FuelFlow_pph = IdleFF;
-  N1 = Seek(&N1, qbar/10.0, 0, N1/10.0);
-  N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
+  N1 = Seek(&N1, in.qbar/10.0, 0, N1/10.0);
+  N2 = Seek(&N2, in.qbar/15.0, 0, N2/10.0);
   ConsumeFuel();
   if (ThrottlePos < 0.01) {
     phase = tpRun;               // clear the stall with throttle to idle
@@ -345,9 +339,8 @@ double FGTurbine::Stall(void)
 
 double FGTurbine::Seize(void)
 {
-    double qbar = Auxiliary->Getqbar();
     N2 = 0.0;
-    N1 = Seek(&N1, qbar/20.0, 0, N1/15.0);
+    N1 = Seek(&N1, in.qbar/20.0, 0, N1/15.0);
     FuelFlow_pph = Cutoff ? 0.0 : IdleFF;
     ConsumeFuel();
     OilPressure_psi = 0.0;
@@ -395,9 +388,8 @@ double FGTurbine::Trim()
 
 double FGTurbine::CalcFuelNeed(void)
 {
-  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
-  FuelExpended = FuelFlowRate * dT;     // Calculates fuel expended in this time step
+  FuelExpended = FuelFlowRate * in.TotalDeltaT;     // Calculates fuel expended in this time step
   return FuelExpended;
 }
 
@@ -415,10 +407,10 @@ double FGTurbine::GetPowerAvailable(void) {
 double FGTurbine::Seek(double *var, double target, double accel, double decel) {
   double v = *var;
   if (v > target) {
-    v -= dt * decel;
+    v -= in.TotalDeltaT * decel;
     if (v < target) v = target;
   } else if (v < target) {
-    v += dt * accel;
+    v += in.TotalDeltaT * accel;
     if (v > target) v = target;
   }
   return v;
@@ -488,7 +480,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   delay = 90.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
-  OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
+  OilTemp_degK = (in.TotalTempearture - 491.69) * 0.5555556 + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
   bindmodel();

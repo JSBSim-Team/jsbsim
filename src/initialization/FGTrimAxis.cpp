@@ -56,7 +56,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.12 2011/07/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.13 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -424,9 +424,12 @@ void FGTrimAxis::setThrottlesPct(void) {
   for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++) {
       tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
       tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-      //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
+
+      // Both the main throttle setting in FGFCS and the copy of the position
+      // in the Propulsion::Inputs structure need to be set at this time.
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
-      //cout << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << endl;
+      fdmex->GetPropulsion()->in.ThrottlePos[i] = tMin +control_value*(tMax - tMin);
+
       fdmex->RunIC(); //apply throttle change
       fdmex->GetPropulsion()->GetSteadyState();
   }

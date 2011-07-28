@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.20 2011/06/07 00:28:03 jentron Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.21 2011/07/28 12:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -150,7 +150,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.20 2011/06/07 00:28:03 jentron Exp $"
+    @version "$Id: FGTurbine.h,v 1.21 2011/07/28 12:48:19 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ public:
       @param Executive pointer to executive structure
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number  */
-  FGTurbine(FGFDMExec* Executive, Element *el, int engine_number);
+  FGTurbine(FGFDMExec* Executive, Element *el, int engine_number, const struct Inputs& input);
   /// Destructor
   ~FGTurbine();
 
@@ -233,10 +233,9 @@ private:
   double MaxN2;            ///< N2 at 100% throttle
   double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
   double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
-  double dt;               ///< Simulator time slice
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
-  double ThrottlePos;      ///< FCS-supplied throttle position
+  double ThrottlePos;      ///< FCS-supplied throttle position - modified for local use!
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
   double TAT;              ///< total air temperature (deg C)
   double N1_spinup;        ///< N1 spin up rate from starter (per second)

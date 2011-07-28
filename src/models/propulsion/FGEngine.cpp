@@ -37,6 +37,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+
 #include "FGEngine.h"
 #include "FGTank.h"
 #include "FGPropeller.h"
@@ -46,23 +50,19 @@ INCLUDES
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.42 2011/03/03 12:16:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.43 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
-                      : EngineNumber(engine_number)
+FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, const struct Inputs& input)
+                      : EngineNumber(engine_number), in(input)
 {
   Element* local_element;
   FGColumnVector3 location, orientation;
@@ -80,12 +80,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   ResetToIC(); // initialize dynamic terms
 
   FDMExec = exec;
-  Atmosphere = FDMExec->GetAtmosphere();
-  FCS = FDMExec->GetFCS();
   Propulsion = FDMExec->GetPropulsion();
-  Aircraft = FDMExec->GetAircraft();
-  Propagate = FDMExec->GetPropagate();
-  Auxiliary = FDMExec->GetAuxiliary();
 
   PropertyManager = FDMExec->GetPropertyManager();
 
@@ -173,8 +168,6 @@ FGEngine::~FGEngine()
 
 void FGEngine::ResetToIC(void)
 {
-  Throttle = 0.0;
-  Mixture = 1.0;
   Starter = false;
   FuelExpended = 0.0;
   Starved = Running = Cranking = false;

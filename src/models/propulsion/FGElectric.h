@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.10 2011/03/10 01:35:25 dpculp Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.11 2011/07/28 12:48:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
     there is no battery model available, so this motor does not consume any
     energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.10 2011/03/10 01:35:25 dpculp Exp $"
+    @version "$Id: FGElectric.h,v 1.11 2011/07/28 12:48:19 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,7 @@ class FGElectric : public FGEngine
 {
 public:
   /// Constructor
-  FGElectric(FGFDMExec* exec, Element *el, int engine_number);
+  FGElectric(FGFDMExec* exec, Element *el, int engine_number, FGEngine::Inputs& input);
   /// Destructor
   ~FGElectric();
 
@@ -91,9 +91,6 @@ private:
   double CalcFuelNeed(void);
 
   double BrakeHorsePower;
-
-  // timestep
-  double dt;
 
   // constants
   double hptowatts;

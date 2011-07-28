@@ -44,6 +44,10 @@ you have chosen your IC's wisely) even after setting it up with this class.
 INCLUDES
 *******************************************************************************/
 
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+
 #include "FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "math/FGQuaternion.h"
@@ -51,17 +55,15 @@ INCLUDES
 #include "models/FGAtmosphere.h"
 #include "models/FGPropagate.h"
 #include "models/FGPropulsion.h"
+#include "models/FGFCS.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/string_utilities.h"
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.66 2011/07/17 16:38:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.67 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -927,6 +929,24 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   while (running_elements) {
     int n = int(running_elements->GetDataAsNumber());
     try {
+/*
+      if (n >= 0) { // A specific engine is supposed to be initialized
+        if (n >= (int)fdmex->GetPropulsion()->GetNumEngines() ) {
+          throw(string("Tried to initialize a non-existent engine!"));
+        }
+        fdmex->GetFCS()->SetThrottleCmd(n,1);
+        fdmex->GetFCS()->SetMixtureCmd(n,1);
+        fdmex->GetPropulsion()->in.ThrottlePos[n] = 1;
+        fdmex->GetPropulsion()->in.MixturePos[n] = 1;
+      } else if (n < 0) { // -1 refers to "All Engines"
+        for (unsigned int i=0; i<fdmex->GetPropulsion()->GetNumEngines(); i++) {
+          fdmex->GetFCS()->SetThrottleCmd(i,1);
+          fdmex->GetFCS()->SetMixtureCmd(i,1);
+          fdmex->GetPropulsion()->in.ThrottlePos[i] = 1;
+          fdmex->GetPropulsion()->in.MixturePos[i] = 1;
+        }
+      }
+*/
       propulsion->InitRunning(n);
     } catch (string str) {
       cerr << str << endl;
