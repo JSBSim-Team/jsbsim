@@ -42,6 +42,7 @@ INCLUDES
 #include <iosfwd>
 
 #include "FGModel.h"
+#include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -49,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.28 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.29 2011/07/28 12:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +92,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.28 2011/07/10 20:18:14 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.29 2011/07/28 12:48:19 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -194,6 +195,8 @@ public:
   void SetActiveEngine(int engine);
   void SetFuelFreeze(bool f);
   FGMatrix33& CalculateTankInertias(void);
+
+  struct FGEngine::Inputs in;
 
 private:
   std::vector <FGEngine*>   Engines;

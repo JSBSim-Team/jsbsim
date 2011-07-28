@@ -40,28 +40,25 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
 #include <sstream>
 
 #include "FGPiston.h"
-#include "models/FGAtmosphere.h"
-#include "models/FGAuxiliary.h"
-#include "models/FGPropulsion.h"
 #include "FGPropeller.h"
-#include <iostream>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.59 2011/07/12 23:36:35 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.60 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
-  : FGEngine(exec, el, engine_number),
+FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct Inputs& input)
+  : FGEngine(exec, el, engine_number, input),
   R_air(287.3),                  // Gas constant for air J/Kg/K
   rho_fuel(800),                 // estimate
   calorific_value_fuel(47.3e6),  // J/Kg
@@ -74,7 +71,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // Defaults and initializations
 
   Type = etPiston;
-  dt = FDMExec->GetDeltaT();
 
   // These items are read from the configuration file
   // Defaults are from a Lycoming O-360, more or less
@@ -166,7 +162,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   *Mixture_Efficiency_Correlation << 0.12158 << 0.45690;
   *Mixture_Efficiency_Correlation << 0.12435 << 0.23276;
   *Mixture_Efficiency_Correlation << 0.12500 << 0.00000;
-
 
   // Read inputs from engine data file where present.
 
@@ -347,13 +342,13 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
         // But we can also make a reasonable estimate, as below.
         BoostSwitchAltitude[i] = RatedAltitude[i] + 1000;
       }
-      BoostSwitchPressure[i] = Atmosphere->GetPressure(BoostSwitchAltitude[i]) * psftopa;
+      BoostSwitchPressure[i] = GetStdPressure100K(BoostSwitchAltitude[i]) * psftopa;
       //cout << "BoostSwitchAlt = " << BoostSwitchAltitude[i] << ", pressure = " << BoostSwitchPressure[i] << '\n';
       // Assume there is some hysteresis on the supercharger gear switch, and guess the value for now
       BoostSwitchHysteresis = 1000;
     }
     // Now work out the supercharger pressure multiplier of this speed from the rated boost and altitude.
-    RatedMAP[i] = Atmosphere->GetPressureSL() * psftopa + RatedBoost[i] * 6895;  // psi*6895 = Pa.
+    RatedMAP[i] = standard_pressure + RatedBoost[i] * 6895;  // psi*6895 = Pa.
     // Sometimes a separate BCV setting for takeoff or extra power is fitted.
     if (TakeoffBoost > RatedBoost[0]) {
       // Assume that the effect on the BCV is the same whichever speed is in use.
@@ -363,7 +358,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
       TakeoffMAP[i] = RatedMAP[i];
       bTakeoffBoost = false;
     }
-    BoostMul[i] = RatedMAP[i] / (Atmosphere->GetPressure(RatedAltitude[i]) * psftopa);
+    BoostMul[i] = RatedMAP[i] / (GetStdPressure100K(RatedAltitude[i]) * psftopa);
 
   }
 
@@ -391,10 +386,10 @@ void FGPiston::ResetToIC(void)
 {
   FGEngine::ResetToIC();
 
-  ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
-  MAP = Atmosphere->GetPressure() * psftopa;
+  ManifoldPressure_inHg = in.Pressure * psftoinhg; // psf to in Hg
+  MAP = in.Pressure * psftopa;
   TMAP = MAP;
-  double airTemperature_degK = RankineToKelvin(Atmosphere->GetTemperature());
+  double airTemperature_degK = RankineToKelvin(in.Temperature);
   OilTemp_degK = airTemperature_degK;
   CylinderHeadTemp_degK = airTemperature_degK;
   ExhaustGasTemp_degK = airTemperature_degK;
@@ -409,20 +404,17 @@ void FGPiston::Calculate(void)
 {
   RunPreFunctions();
 
-  Throttle = FCS->GetThrottlePos(EngineNumber);
-  Mixture = FCS->GetMixturePos(EngineNumber);
-
   // Input values.
 
-  p_amb = Atmosphere->GetPressure() * psftopa;
-  double p = Auxiliary->GetTotalPressure() * psftopa;
+  p_amb = in.Pressure * psftopa;
+  double p = in.TotalPressure * psftopa;
   p_ram = (p - p_amb) * Ram_Air_Factor + p_amb;
-  T_amb = RankineToKelvin(Atmosphere->GetTemperature());
+  T_amb = RankineToKelvin(in.Temperature);
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
   MeanPistonSpeed_fps =  ( RPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
 
-  IAS = Auxiliary->GetVcalibratedKTS();
+  IAS = in.Vc;
 
   doEngineStartup();
   if (Boosted) doBoostControl();
@@ -447,8 +439,8 @@ void FGPiston::Calculate(void)
   doOilPressure();
 
   if (Thruster->GetType() == FGThruster::ttPropeller) {
-    ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
-    ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
+    ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
+    ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
   }
 
   Thruster->Calculate(HP * hptoftlbssec);
@@ -460,22 +452,17 @@ void FGPiston::Calculate(void)
 
 double FGPiston::CalcFuelNeed(void)
 {
-  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
-  FuelExpended = FuelFlowRate * dT;
+  FuelExpended = FuelFlowRate * in.TotalDeltaT;
   return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGPiston::InitRunning(void) {
+int FGPiston::InitRunning(void)
+{
   Magnetos=3;
-  p_amb = Atmosphere->GetPressure() * psftopa;
-  double mix= p_amb / (101325.0*1.3);
-  FCS->SetMixturePos(EngineNumber, mix);
-  Thruster->SetRPM( 2.*IdleRPM/Thruster->GetGearRatio() );
-  //Thruster->SetRPM( 1000 );
-  Running=true;
-// cout <<"Set Running in FGPiston. RPM:" << Thruster->GetRPM()*Thruster->GetGearRatio() <<" Pressure:"<<p_amb<<" Mixture:"<< mix <<endl;
+  Thruster->SetRPM( 2.0*IdleRPM/Thruster->GetGearRatio() );
+  Running = true;
   return 1;
 }
 
@@ -595,13 +582,18 @@ void FGPiston::doBoostControl(void)
 
 void FGPiston::doMAP(void)
 {
-  double Zt = (1-Throttle)*(1-Throttle)*Z_throttle; // throttle impedence
+  double Zt = (1 - in.ThrottlePos[EngineNumber])*(1 - in.ThrottlePos[EngineNumber])*Z_throttle; // throttle impedence
   double Ze= MeanPistonSpeed_fps > 0 ? PeakMeanPistonSpeed_fps/MeanPistonSpeed_fps : 999999; // engine impedence
 
   double map_coefficient = Ze/(Ze+Z_airbox+Zt);
 
   // Add a one second lag to manifold pressure changes
-  double dMAP = (TMAP - p_ram * map_coefficient) * dt;
+  double dMAP=0;
+  if (in.TotalDeltaT > 0.0) 
+    dMAP = (TMAP - p_ram * map_coefficient) * in.TotalDeltaT;
+  else 
+    dMAP = (TMAP - p_ram * map_coefficient) / 120;
+
   TMAP -=dMAP;
 
   // Find the mean effective pressure required to achieve this manifold pressure
@@ -618,7 +610,7 @@ void FGPiston::doMAP(void)
 
     bool bTakeoffPos = false;
     if (bTakeoffBoost) {
-      if (Throttle > 0.98) {
+      if (in.ThrottlePos[EngineNumber] > 0.98) {
         bTakeoffPos = true;
       }
     }
@@ -659,7 +651,7 @@ void FGPiston::doAirFlow(void)
 // loss of volumentric efficiency due to difference between MAP and exhaust pressure
 // Eq 6-10 from The Internal Combustion Engine - Charles Taylor Vol 1
   double ve =((gamma-1)/gamma) +( CompressionRatio -(p_amb/MAP))/(gamma*( CompressionRatio - 1));
-// FGAtmosphere::GetDensity() * FGJSBBase::m3toft3 / FGJSBBase::kgtoslug;
+
   rho_air = p_amb / (R_air * T_amb);
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   double v_dot_air = swept_volume * volumetric_efficiency *ve;
@@ -680,9 +672,9 @@ void FGPiston::doAirFlow(void)
 
 void FGPiston::doFuelFlow(void)
 {
-  double thi_sea_level = 1.3 * Mixture; // Allows an AFR of infinity:1 to 11.3075:1
+  double thi_sea_level = 1.3 * in.MixturePos[EngineNumber]; // Allows an AFR of infinity:1 to 11.3075:1
   equivalence_ratio = thi_sea_level * 101325.0 / p_amb;
-//  double AFR = 10+(12*(1-Mixture));// mixture 10:1 to 22:1
+//  double AFR = 10+(12*(1-in.Mixture[EngineNumber]));// mixture 10:1 to 22:1
 //  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
   FuelFlowRate =  m_dot_fuel * 2.2046;  // kg to lb
@@ -780,8 +772,12 @@ void FGPiston::doEGT(void)
     ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
   } else {  // Drop towards ambient - guess an appropriate time constant for now
     combustion_efficiency = 0;
-    dEGTdt = (RankineToKelvin(Atmosphere->GetTemperature()) - ExhaustGasTemp_degK) / 100.0;
-    delta_T_exhaust = dEGTdt * dt;
+    dEGTdt = (RankineToKelvin(in.Temperature) - ExhaustGasTemp_degK) / 100.0;
+    if (in.TotalDeltaT > 0.0)
+      delta_T_exhaust = dEGTdt * in.TotalDeltaT;
+    else
+      delta_T_exhaust = dEGTdt / 120;
+
     ExhaustGasTemp_degK += delta_T_exhaust;
   }
 }
@@ -819,8 +815,12 @@ void FGPiston::doCHT(void)
 
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
 
-  CylinderHeadTemp_degK +=
-    (dqdt_cylinder_head / HeatCapacityCylinderHead) * dt;
+  if (in.TotalDeltaT > 0.0)
+    CylinderHeadTemp_degK +=
+      (dqdt_cylinder_head / HeatCapacityCylinderHead) * in.TotalDeltaT;
+  else 
+    CylinderHeadTemp_degK +=
+      (dqdt_cylinder_head / HeatCapacityCylinderHead) / 120.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -854,7 +854,10 @@ void FGPiston::doOilTemperature(void)
 
   double dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
 
-  OilTemp_degK += (dOilTempdt * dt);
+  if (in.TotalDeltaT > 0.0)
+    OilTemp_degK += (dOilTempdt * in.TotalDeltaT);
+  else 
+    OilTemp_degK += (dOilTempdt / 120.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -880,6 +883,30 @@ void FGPiston::doOilPressure(void)
   }
 
   OilPressure_psi += (Design_Oil_Temp - OilTemp_degK) * Oil_Viscosity_Index * OilPressure_psi / Oil_Press_Relief_Valve;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// This is a local copy of the same function in FGStandardAtmosphere.
+
+double FGPiston::GetStdPressure100K(double altitude) const
+{
+  // Limit this equation to input altitudes of 100000 ft.
+  if (altitude > 100000.0) altitude = 100000.0;
+
+  double alt[5];
+  const double coef[5] = {  2116.217,
+                          -7.648932746E-2,
+                           1.0925498604E-6,
+                          -7.1135726027E-12,
+                           1.7470331356E-17 };
+
+  alt[0] = 1;
+  for (int pwr=1; pwr<=4; pwr++) alt[pwr] = alt[pwr-1]*altitude;
+
+  double press = 0.0;
+  for (int ctr=0; ctr<=4; ctr++) press += coef[ctr]*alt[ctr];
+  return press;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

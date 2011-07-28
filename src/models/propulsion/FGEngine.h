@@ -43,19 +43,19 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <vector>
+#include <string>
+
 #include "math/FGModelFunctions.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
-#include "models/FGFCS.h"
 #include "math/FGColumnVector3.h"
-#include <vector>
-#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.23 2011/03/03 12:16:26 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.24 2011/07/28 12:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,11 +64,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGAtmosphere;
-class FGAircraft;
-class FGPropagate;
 class FGPropulsion;
-class FGAuxiliary;
 class FGThruster;
 class Element;
 class FGPropertyManager;
@@ -118,7 +114,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.23 2011/03/03 12:16:26 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.24 2011/07/28 12:48:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +124,33 @@ CLASS DECLARATION
 class FGEngine : public FGModelFunctions, public FGXMLFileRead
 {
 public:
-  FGEngine(FGFDMExec* exec, Element* el, int engine_number);
+  struct Inputs {
+    double SLPressure;
+    double Pressure;
+    double Temperature;
+    double Density;
+    double DensityRatio;
+    double Soundspeed;
+    double TotalPressure;
+    double TotalTempearture;
+    double TAT_c;
+    double Vt;
+    double Vc;
+    double qbar;
+    double alpha;
+    double beta;
+    FGColumnVector3 AeroUVW;
+    FGColumnVector3 AeroPQR;
+    vector <double> ThrottleCmd;
+    vector <double> MixtureCmd;
+    vector <double> ThrottlePos;
+    vector <double> MixturePos;
+    vector <double> PropAdvance;
+    vector <bool> PropFeather;
+    double TotalDeltaT;
+  };
+
+  FGEngine(FGFDMExec* exec, Element* el, int engine_number, const struct Inputs& input);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
@@ -139,8 +161,6 @@ public:
   // Engine controls
   virtual double  GetThrottleMin(void) { return MinThrottle; }
   virtual double  GetThrottleMax(void) { return MaxThrottle; }
-  virtual double  GetThrottle(void) { return Throttle; }
-  virtual double  GetMixture(void) { return Mixture; }
   virtual bool    GetStarter(void) { return Starter; }
 
   virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
@@ -183,6 +203,8 @@ public:
   virtual std::string GetEngineLabels(const std::string& delimiter) = 0;
   virtual std::string GetEngineValues(const std::string& delimiter) = 0;
 
+  const struct Inputs& in;
+
 protected:
   /** Reduces the fuel in the active tanks by the amount required.
       This function should be called from within the
@@ -208,8 +230,6 @@ protected:
   double MaxThrottle;
   double MinThrottle;
 
-  double Throttle;
-  double Mixture;
   double FuelExpended;
   double FuelFlowRate;
   double PctPower;
@@ -225,12 +245,7 @@ protected:
   double FuelUsedLbs;
 
   FGFDMExec*      FDMExec;
-  FGAtmosphere*   Atmosphere;
-  FGFCS*          FCS;
   FGPropulsion*   Propulsion;
-  FGAircraft*     Aircraft;
-  FGPropagate*    Propagate;
-  FGAuxiliary*    Auxiliary;
   FGThruster*     Thruster;
 
   std::vector <int> SourceTanks;

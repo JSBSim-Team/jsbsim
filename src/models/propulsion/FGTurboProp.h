@@ -47,7 +47,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.14 2011/03/10 01:35:25 dpculp Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.15 2011/07/28 12:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ public:
       @param Executive pointer to executive structure
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number*/
-  FGTurboProp(FGFDMExec* Executive, Element *el, int engine_number);
+  FGTurboProp(FGFDMExec* Executive, Element *el, int engine_number, const struct Inputs& input);
   /// Destructor
   ~FGTurboProp();
 
@@ -110,7 +110,7 @@ public:
 
   double GetPowerAvailable(void) const { return (HP * hptoftlbssec); }
   double GetRPM(void) const { return (RPM); }
-  double GetIeluThrottle(void) const { return (Throttle); }
+  double GetIeluThrottle(void) const { return (ThrottlePos); }
   bool GetIeluIntervent(void) const { return Ielu_intervent; }
 
   double Seek(double* var, double target, double accel, double decel);
@@ -162,10 +162,9 @@ private:
   double MaxN2;            ///< N2 at 100% throttle
   double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
   double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
-  double dt;               ///< Simulator time slice
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
-  double Throttle;         ///< FCS-supplied throttle position
+  double ThrottlePos;      ///< FCS-supplied throttle position, modified locally
   double TAT;              ///< total air temperature (deg C)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized

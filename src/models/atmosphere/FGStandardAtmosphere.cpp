@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.16 2011/07/20 12:26:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.17 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,19 +250,18 @@ double FGStandardAtmosphere::GetStdPressure100K(double altitude) const
   // Limit this equation to input altitudes of 100000 ft.
   if (altitude > 100000.0) altitude = 100000.0;
 
-  double alt[6];
-  double coef[6] = { 2116.22,
-                    -7.583514352598E-02,
-                     1.045494405501E-06,
-                    -5.881341527124E-12,
-                     3.482031690718E-18,
-                     5.683922549284E-23 };
+  double alt[5];
+  const double coef[5] = {  2116.217,
+                          -7.648932746E-2,
+                           1.0925498604E-6,
+                          -7.1135726027E-12,
+                           1.7470331356E-17 };
 
   alt[0] = 1;
-  for (int pwr=1; pwr<=5; pwr++) alt[pwr] = alt[pwr-1]*altitude;
+  for (int pwr=1; pwr<=4; pwr++) alt[pwr] = alt[pwr-1]*altitude;
 
   double press = 0.0;
-  for (int ctr=0; ctr<=5; ctr++) press += coef[ctr]*alt[ctr];
+  for (int ctr=0; ctr<=4; ctr++) press += coef[ctr]*alt[ctr];
   return press;
 }
 

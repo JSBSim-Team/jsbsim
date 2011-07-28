@@ -39,35 +39,31 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGElectric.h"
-#include "models/FGPropulsion.h"
-#include "models/propulsion/FGThruster.h"
-#include "FGPropeller.h"
-
 #include <iostream>
 #include <sstream>
+
+#include "FGElectric.h"
+#include "FGPropeller.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.11 2011/06/06 22:35:08 jentron Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.12 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number)
-  : FGEngine(exec, el, engine_number)
+FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine::Inputs& input)
+  : FGEngine(exec, el, engine_number, input)
 {
   string token;
 
   Type = etElectric;
   PowerWatts = 745.7;
   hptowatts = 745.7;
-
-  dt = FDMExec->GetDeltaT();
 
   if (el->FindElement("power"))
     PowerWatts = el->FindElementValueAsNumberConvertTo("power","WATTS");
@@ -93,16 +89,14 @@ void FGElectric::Calculate(void)
 {
   RunPreFunctions();
 
-  Throttle = FCS->GetThrottlePos(EngineNumber);
-
   if (Thruster->GetType() == FGThruster::ttPropeller) {
-      ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
-      ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
+    ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
+    ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
   } 
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
 
-  HP = PowerWatts * Throttle / hptowatts;
+  HP = PowerWatts * in.ThrottlePos[EngineNumber] / hptowatts;
   
   Thruster->Calculate(HP * hptoftlbssec);
 

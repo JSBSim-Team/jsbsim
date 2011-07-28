@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.37 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.38 2011/07/28 12:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.37 $
+    @version $Revision: 1.38 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -243,10 +243,14 @@ public:
       @return throttle command in range from 0 - 1.0 for the given engine */
   double GetThrottleCmd(int engine) const;
 
+  vector <double> GetThrottleCmd() const {return ThrottleCmd;}
+
   /** Gets the mixture command.
       @param engine engine ID number
       @return mixture command in range from 0 - 1.0 for the given engine */
   double GetMixtureCmd(int engine) const { return MixtureCmd[engine]; }
+
+  vector <double> GetMixtureCmd() const {return MixtureCmd;}
 
   /** Gets the prop pitch command.
       @param engine engine ID number
@@ -318,10 +322,14 @@ public:
       @return throttle position for the given engine in range from 0 - 1.0 */
   double GetThrottlePos(int engine) const;
 
+  vector <double> GetThrottlePos() const {return ThrottlePos;}
+
   /** Gets the mixture position.
       @param engine engine ID number
       @return mixture position for the given engine in range from 0 - 1.0 */
   double GetMixturePos(int engine) const { return MixturePos[engine]; }
+
+  vector <double> GetMixturePos() const {return MixturePos;}
 
   /** Gets the steering position.
       @return steering position in degrees */
@@ -344,10 +352,14 @@ public:
       @return prop pitch position for the given engine in range from 0 - 1.0 */
   double GetPropAdvance(int engine) const { return PropAdvance[engine]; }
 
+  vector <double> GetPropAdvance() const { return PropAdvance; }
+
   /** Gets the prop feather position.
       @param engine engine ID number
       @return prop fether for the given engine (on / off)*/
   bool GetPropFeather(int engine) const { return PropFeather[engine]; }
+
+  vector <bool> GetPropFeather() const { return PropFeather; }
   //@}
 
   /** Retrieves all component names for inclusion in output stream

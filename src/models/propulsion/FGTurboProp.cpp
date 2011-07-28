@@ -44,25 +44,25 @@ INCLUDES
 
 #include <iostream>
 #include <sstream>
+
 #include "FGTurboProp.h"
 #include "FGPropeller.h"
 #include "FGRotor.h"
 #include "models/FGPropulsion.h"
-#include "models/FGAuxiliary.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.19 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.20 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number)
-  : FGEngine(exec, el, engine_number),
+FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, const struct Inputs& input)
+  : FGEngine(exec, el, engine_number, input),
     ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL)
 {
   SetDefaults();
@@ -151,7 +151,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   delay=1;
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
-  OilTemp_degK = Auxiliary->GetTAT_C() + 273.0;
+  OilTemp_degK = in.TAT_c + 273.0;
   if (IdleFF==-1) IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
   // cout << "ENG POWER:" << EnginePowerRPM_N1->GetValue(1200,90) << endl;
@@ -167,34 +167,33 @@ void FGTurboProp::Calculate(void)
 {
   RunPreFunctions();
 
-  TAT = Auxiliary->GetTAT_C();
-  dt = FDMExec->GetDeltaT() * Propulsion->GetRate();
+  TAT = in.TAT_c;
 
-  Throttle = FCS->GetThrottlePos(EngineNumber);
+  ThrottlePos = in.ThrottlePos[EngineNumber];
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
   if (thrusterType == FGThruster::ttPropeller) {
-    ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
-    ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
+    ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
+    ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
     ((FGPropeller*)Thruster)->SetReverse(Reversed);
     if (Reversed) {
-      ((FGPropeller*)Thruster)->SetReverseCoef(Throttle);
+      ((FGPropeller*)Thruster)->SetReverseCoef(ThrottlePos);
     } else {
       ((FGPropeller*)Thruster)->SetReverseCoef(0.0);
     }
 
     if (Reversed) {
-      if (Throttle < BetaRangeThrottleEnd) {
-          Throttle = 0.0;  // idle when in Beta-range
+      if (ThrottlePos < BetaRangeThrottleEnd) {
+          ThrottlePos = 0.0;  // idle when in Beta-range
       } else {
         // when reversed:
-        Throttle = (Throttle-BetaRangeThrottleEnd)/(1-BetaRangeThrottleEnd) * ReverseMaxPower;
+        ThrottlePos = (ThrottlePos-BetaRangeThrottleEnd)/(1-BetaRangeThrottleEnd) * ReverseMaxPower;
       }
     }
   }
 
   // When trimming is finished check if user wants engine OFF or RUNNING
-  if ((phase == tpTrim) && (dt > 0)) {
+  if ((phase == tpTrim) && (in.TotalDeltaT > 0)) {
     if (Running && !Starved) {
       phase = tpRun;
       N2 = IdleN2;
@@ -221,7 +220,7 @@ void FGTurboProp::Calculate(void)
     StartTime = -1;
   }
   if (Cutoff && (phase != tpSpinUp)) phase = tpOff;
-  if (dt == 0) phase = tpTrim;
+  if (in.TotalDeltaT == 0) phase = tpTrim;
   if (Starved) phase = tpOff;
   if (Condition >= 10) {
     phase = tpOff;
@@ -239,11 +238,11 @@ void FGTurboProp::Calculate(void)
     }
 
     if (Condition < 1) {
-      if ( abs(torque) > Ielu_max_torque && Throttle >= OldThrottle ) {
-        Throttle = OldThrottle - 0.1 * dt; //IELU down
+      if ( abs(torque) > Ielu_max_torque && ThrottlePos >= OldThrottle ) {
+        ThrottlePos = OldThrottle - 0.1 * in.TotalDeltaT; //IELU down
         Ielu_intervent = true;
-      } else if ( Ielu_intervent && Throttle >= OldThrottle) {
-        Throttle = OldThrottle + 0.05 * dt; //IELU up
+      } else if ( Ielu_intervent && ThrottlePos >= OldThrottle) {
+        ThrottlePos = OldThrottle + 0.05 * in.TotalDeltaT; //IELU up
         Ielu_intervent = true;
       } else {
         Ielu_intervent = false;
@@ -251,7 +250,7 @@ void FGTurboProp::Calculate(void)
     } else {
       Ielu_intervent = false;
     }
-    OldThrottle = Throttle;
+    OldThrottle = ThrottlePos;
   }
 
   switch (phase) {
@@ -271,13 +270,12 @@ void FGTurboProp::Calculate(void)
 
 double FGTurboProp::Off(void)
 {
-  double qbar = Auxiliary->Getqbar();
   Running = false; EngStarting = false;
 
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 800.0, 800.0);
 
   //allow the air turn with generator
-  N1 = ExpSeek(&N1, qbar/15.0, Idle_Max_Delay*2.5, Idle_Max_Delay * 5);
+  N1 = ExpSeek(&N1, in.qbar/15.0, Idle_Max_Delay*2.5, Idle_Max_Delay * 5);
 
   OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + TAT, 400 , 400);
 
@@ -303,7 +301,7 @@ double FGTurboProp::Run(void)
 
 //---
   double old_N1 = N1;
-  N1 = ExpSeek(&N1, IdleN1 + Throttle * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
+  N1 = ExpSeek(&N1, IdleN1 + ThrottlePos * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
   EngPower_HP *= EnginePowerVC->GetValue();
@@ -360,7 +358,7 @@ double FGTurboProp::SpinUp(void)
   EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
-  if (StartTime>=0) StartTime+=dt;
+  if (StartTime>=0) StartTime+=in.TotalDeltaT;
   if (StartTime > MaxStartingTime && MaxStartingTime > 0) { //start failed due timeout
     phase = tpOff;
     StartTime = -1;
@@ -431,10 +429,10 @@ double FGTurboProp::Seek(double *var, double target, double accel, double decel)
 {
   double v = *var;
   if (v > target) {
-    v -= dt * decel;
+    v -= in.TotalDeltaT * decel;
     if (v < target) v = target;
   } else if (v < target) {
-    v += dt * accel;
+    v += in.TotalDeltaT * accel;
     if (v > target) v = target;
   }
   return v;
@@ -447,9 +445,9 @@ double FGTurboProp::ExpSeek(double *var, double target, double accel_tau, double
 // exponential delay instead of the linear delay used in Seek
   double v = *var;
   if (v > target) {
-    v = (v - target) * exp ( -dt / decel_tau) + target;
+    v = (v - target) * exp ( -in.TotalDeltaT / decel_tau) + target;
   } else if (v < target) {
-    v = (target - v) * (1 - exp ( -dt / accel_tau)) + v;
+    v = (target - v) * (1 - exp ( -in.TotalDeltaT / accel_tau)) + v;
   }
   return v;
 }
@@ -467,7 +465,6 @@ void FGTurboProp::SetDefaults(void)
   IdleN2 = 60.0;
   MaxN1 = 100.0;
   MaxN2 = 100.0;
-  Throttle = 0.0;
   InletPosition = 1.0;
   NozzlePosition = 1.0;
   Reversed = false;
@@ -485,7 +482,7 @@ void FGTurboProp::SetDefaults(void)
 
   Idle_Max_Delay = 1.0;
 
-  Throttle = OldThrottle = 0.0;
+  ThrottlePos = OldThrottle = 0.0;
   ITT_Delay = 0.05;
   ReverseMaxPower = 0.0;
   BetaRangeThrottleEnd = 0.0;

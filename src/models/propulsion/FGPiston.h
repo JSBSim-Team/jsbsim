@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.29 2011/06/16 16:32:10 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.30 2011/07/28 12:48:19 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +198,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.29 2011/06/16 16:32:10 jentron Exp $
+    @version $Id: FGPiston.h,v 1.30 2011/07/28 12:48:19 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,7 +209,7 @@ class FGPiston : public FGEngine
 {
 public:
   /// Constructor
-  FGPiston(FGFDMExec* exec, Element* el, int engine_number);
+  FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct Inputs& input);
   /// Destructor
   ~FGPiston();
 
@@ -244,9 +244,6 @@ private:
   double FMEPDynamic;
   double FMEPStatic;
 
-  // timestep
-  double dt;
-
   void doEngineStartup(void);
   void doBoostControl(void);
   void doMAP(void);
@@ -257,6 +254,7 @@ private:
   void doCHT(void);
   void doOilPressure(void);
   void doOilTemperature(void);
+  double GetStdPressure100K(double altitude) const;
 
   int InitRunning(void);
 

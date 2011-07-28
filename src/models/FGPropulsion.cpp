@@ -49,7 +49,6 @@ INCLUDES
 #include <cstdlib>
 #include <iomanip>
 #include "FGPropulsion.h"
-#include "models/FGFCS.h"
 #include "models/FGMassBalance.h"
 #include "models/propulsion/FGThruster.h"
 #include "models/propulsion/FGRocket.h"
@@ -66,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.48 2011/07/20 12:26:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.49 2011/07/28 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -159,8 +158,6 @@ bool FGPropulsion::Run(bool Holding)
 
   RunPreFunctions();
 
-  double dt = FDMExec->GetDeltaT();
-
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
@@ -172,14 +169,14 @@ bool FGPropulsion::Run(bool Holding)
 
   TotalFuelQuantity = 0.0;
   for (i=0; i<numTanks; i++) {
-    Tanks[i]->Calculate( dt * rate );
+    Tanks[i]->Calculate( in.TotalDeltaT );
     if (Tanks[i]->GetType() == FGTank::ttFUEL) {
       TotalFuelQuantity += Tanks[i]->GetContents();
     }
   }
 
-  if (refuel) DoRefuel( dt * rate );
-  if (dump) DumpFuel( dt * rate );
+  if (refuel) DoRefuel( in.TotalDeltaT );
+  if (dump) DumpFuel( in.TotalDeltaT );
 
   RunPostFunctions();
 
@@ -202,7 +199,6 @@ bool FGPropulsion::GetSteadyState(void)
     FDMExec->SetTrimStatus(true);
 
     for (unsigned int i=0; i<numEngines; i++) {
-//      cout << "  Finding steady state for engine " << i << endl;
       steady=false;
       steady_count=0;
       j=0;
@@ -214,16 +210,12 @@ bool FGPropulsion::GetSteadyState(void)
           steady_count++;
           if (steady_count > 120) {
             steady=true;
-//            cout << "    Steady state found at thrust: " << currentThrust << " lbs." << endl;
           }
         } else {
           steady_count=0;
         }
         j++;
       }
-//      if (j >= 6000) {
-//        cout << "    Could not find a steady state for this engine." << endl;
-//      }
       vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
       vMoments += Engines[i]->GetMoments();     // sum body frame moments
     }
@@ -245,8 +237,10 @@ void FGPropulsion::InitRunning(int n)
     if (n >= (int)GetNumEngines() ) {
       throw(string("Tried to initialize a non-existent engine!"));
     }
-    FDMExec->GetFCS()->SetThrottleCmd(n,1);
-    FDMExec->GetFCS()->SetMixtureCmd(n,1);
+
+    in.ThrottleCmd[n] = in.ThrottlePos[n] = 1; // Set the throttle command and position
+    in.MixtureCmd[n] = in.MixturePos[n] = 1;   // Set the mixture command and position
+
     GetEngine(n)->InitRunning();
     GetSteadyState();
 
@@ -256,14 +250,14 @@ void FGPropulsion::InitRunning(int n)
   } else if (n < 0) { // -1 refers to "All Engines"
 
     for (unsigned int i=0; i<GetNumEngines(); i++) {
-      FDMExec->GetFCS()->SetThrottleCmd(i,1);
-      FDMExec->GetFCS()->SetMixtureCmd(i,1);
+      in.ThrottleCmd[i] = in.ThrottlePos[i] = 1; // Set the throttle command and position
+      in.MixtureCmd[i] = in.MixturePos[i] = 1;   // Set the mixture command and position
       GetEngine(i)->InitRunning();
     }
+
     GetSteadyState();
     InitializedEngines = -1;
     HasInitializedEngines = true;
-
   }
 }
 
@@ -315,23 +309,23 @@ bool FGPropulsion::Load(Element* el)
       if (type == "piston_engine") {
         HavePistonEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGPiston(FDMExec, document, numEngines));
+        Engines.push_back(new FGPiston(FDMExec, document, numEngines, in));
       } else if (type == "turbine_engine") {
         HaveTurbineEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGTurbine(FDMExec, document, numEngines));
+        Engines.push_back(new FGTurbine(FDMExec, document, numEngines, in));
       } else if (type == "turboprop_engine") {
         HaveTurboPropEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGTurboProp(FDMExec, document, numEngines));
+        Engines.push_back(new FGTurboProp(FDMExec, document, numEngines, in));
       } else if (type == "rocket_engine") {
         HaveRocketEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGRocket(FDMExec, document, numEngines));
+        Engines.push_back(new FGRocket(FDMExec, document, numEngines, in));
       } else if (type == "electric_engine") {
         HaveElectricEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGElectric(FDMExec, document, numEngines));
+        Engines.push_back(new FGElectric(FDMExec, document, numEngines, in));
       } else {
         cerr << "Unknown engine type: " << type << endl;
         exit(-5);
@@ -341,9 +335,6 @@ bool FGPropulsion::Load(Element* el)
       return false;
     }
 
-    FDMExec->GetFCS()->AddThrottle();
-    ThrottleAdded = true;
-
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
@@ -351,7 +342,6 @@ bool FGPropulsion::Load(Element* el)
   }
 
   CalculateTankInertias();
-  if (!ThrottleAdded) FDMExec->GetFCS()->AddThrottle(); // need to have at least one throttle
 
   // Process fuel dump rate
   if (el->FindElement("dump-rate"))

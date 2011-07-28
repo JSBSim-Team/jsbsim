@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.104 2011/07/27 03:56:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.105 2011/07/28 12:48:18 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,7 +415,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     // Dynamic inputs come into the components that FCS manages through properties
     break;
   case ePropulsion:
-//    Propulsion->in.Pressure = Atmosphere->GetPressure(h);
     Propulsion->in.SLPressure       = Atmosphere->GetPressureSL();
     Propulsion->in.Pressure         = Atmosphere->GetPressure();
     Propulsion->in.Temperature      = Atmosphere->GetTemperature();
@@ -435,6 +434,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.TotalDeltaT      = dT * Propulsion->GetRate();
     Propulsion->in.ThrottlePos      = FCS->GetThrottlePos();
     Propulsion->in.MixturePos       = FCS->GetMixturePos();
+    Propulsion->in.ThrottleCmd      = FCS->GetThrottleCmd();
+    Propulsion->in.MixtureCmd       = FCS->GetMixtureCmd();
     Propulsion->in.PropAdvance      = FCS->GetPropAdvance();
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     break;
