@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.61 2011/07/28 20:22:35 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.62 2011/07/28 21:07:14 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,9 +226,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
       if (name == "COMBUSTION") {
         Lookup_Combustion_Efficiency = new FGTable(PropertyManager, table_element);
       } else if (name == "MIXTURE") {
-    cerr << "fuckme: " << name << " in piston engine definition." << endl;
         Mixture_Efficiency_Correlation = new FGTable(PropertyManager, table_element);
-    cerr << "fuckme: " << name << " in piston engine definition." << endl;
       } else {
         cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
       }
