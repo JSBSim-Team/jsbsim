@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.60 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.62 2011/07/28 21:07:14 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,11 +66,14 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
   Cp_fuel(1700),
   standard_pressure(101320.73)
 {
+  Element *table_element;
   string token;
+  string name="";
 
   // Defaults and initializations
 
   Type = etPiston;
+ 
 
   // These items are read from the configuration file
   // Defaults are from a Lycoming O-360, more or less
@@ -100,6 +103,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
 
   // These are internal program variables
 
+  Lookup_Combustion_Efficiency = 0;
+  Mixture_Efficiency_Correlation = 0;
   crank_counter = 0;
   Magnetos = 0;
   minMAP = 21950;
@@ -130,38 +135,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
     BoostSwitchAltitude[i] = 0.0;
     BoostSwitchPressure[i] = 0.0;
   }
-
-  // First column is thi, second is neta (combustion efficiency)
-  Lookup_Combustion_Efficiency = new FGTable(12);
-  *Lookup_Combustion_Efficiency << 0.00 << 0.980;
-  *Lookup_Combustion_Efficiency << 0.90 << 0.980;
-  *Lookup_Combustion_Efficiency << 1.00 << 0.970;
-  *Lookup_Combustion_Efficiency << 1.05 << 0.950;
-  *Lookup_Combustion_Efficiency << 1.10 << 0.900;
-  *Lookup_Combustion_Efficiency << 1.15 << 0.850;
-  *Lookup_Combustion_Efficiency << 1.20 << 0.790;
-  *Lookup_Combustion_Efficiency << 1.30 << 0.700;
-  *Lookup_Combustion_Efficiency << 1.40 << 0.630;
-  *Lookup_Combustion_Efficiency << 1.50 << 0.570;
-  *Lookup_Combustion_Efficiency << 1.60 << 0.525;
-  *Lookup_Combustion_Efficiency << 2.00 << 0.345;
-
-  Mixture_Efficiency_Correlation = new FGTable(15);
-  *Mixture_Efficiency_Correlation << 0.05000 << 0.00000;
-  *Mixture_Efficiency_Correlation << 0.05137 << 0.00862;
-  *Mixture_Efficiency_Correlation << 0.05179 << 0.21552;
-  *Mixture_Efficiency_Correlation << 0.05430 << 0.48276;
-  *Mixture_Efficiency_Correlation << 0.05842 << 0.70690;
-  *Mixture_Efficiency_Correlation << 0.06312 << 0.83621;
-  *Mixture_Efficiency_Correlation << 0.06942 << 0.93103;
-  *Mixture_Efficiency_Correlation << 0.07786 << 1.00000;
-  *Mixture_Efficiency_Correlation << 0.08845 << 1.00000;
-  *Mixture_Efficiency_Correlation << 0.09270 << 0.98276;
-  *Mixture_Efficiency_Correlation << 0.10120 << 0.93103;
-  *Mixture_Efficiency_Correlation << 0.11455 << 0.72414;
-  *Mixture_Efficiency_Correlation << 0.12158 << 0.45690;
-  *Mixture_Efficiency_Correlation << 0.12435 << 0.23276;
-  *Mixture_Efficiency_Correlation << 0.12500 << 0.00000;
 
   // Read inputs from engine data file where present.
 
@@ -247,6 +220,21 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
 
+  while(table_element = el->FindNextElement("table")) {
+    name = table_element->GetAttributeValue("name");
+    try {
+      if (name == "COMBUSTION") {
+        Lookup_Combustion_Efficiency = new FGTable(PropertyManager, table_element);
+      } else if (name == "MIXTURE") {
+        Mixture_Efficiency_Correlation = new FGTable(PropertyManager, table_element);
+      } else {
+        cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
+      }
+    } catch (std::string str) {
+      throw("Error loading piston engine table:" + name + ". " + str);
+    }
+  }
+
   StarterHP = sqrt(MaxHP) * 0.4;
   displacement_SI = Displacement * in3tom3;
   RatedMeanPistonSpeed_fps =  ( MaxRPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
@@ -281,7 +269,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
  *
  *
  */
-
   if(Z_airbox < 0.0){
     double Ze=PeakMeanPistonSpeed_fps/RatedMeanPistonSpeed_fps; // engine impedence
     Z_airbox = (standard_pressure *Ze / maxMAP) - Ze; // impedence of airbox
@@ -289,6 +276,45 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
   // Constant for Throttle impedence
   Z_throttle=(PeakMeanPistonSpeed_fps/((IdleRPM * Stroke) / 360))*(standard_pressure/minMAP - 1) - Z_airbox; 
   //  Z_throttle=(MaxRPM/IdleRPM )*(standard_pressure/minMAP+2); // Constant for Throttle impedence
+
+// Default tables if not provided in the configuration file
+  if(Lookup_Combustion_Efficiency == 0) {
+    // First column is thi, second is neta (combustion efficiency)
+    Lookup_Combustion_Efficiency = new FGTable(12);
+    *Lookup_Combustion_Efficiency << 0.00 << 0.980;
+    *Lookup_Combustion_Efficiency << 0.90 << 0.980;
+    *Lookup_Combustion_Efficiency << 1.00 << 0.970;
+    *Lookup_Combustion_Efficiency << 1.05 << 0.950;
+    *Lookup_Combustion_Efficiency << 1.10 << 0.900;
+    *Lookup_Combustion_Efficiency << 1.15 << 0.850;
+    *Lookup_Combustion_Efficiency << 1.20 << 0.790;
+    *Lookup_Combustion_Efficiency << 1.30 << 0.700;
+    *Lookup_Combustion_Efficiency << 1.40 << 0.630;
+    *Lookup_Combustion_Efficiency << 1.50 << 0.570;
+    *Lookup_Combustion_Efficiency << 1.60 << 0.525;
+    *Lookup_Combustion_Efficiency << 2.00 << 0.345;
+  }
+
+    // First column is Fuel/Air Ratio, second is neta (mixture efficiency)
+  if( Mixture_Efficiency_Correlation == 0) {
+    Mixture_Efficiency_Correlation = new FGTable(15);
+    *Mixture_Efficiency_Correlation << 0.05000 << 0.00000;
+    *Mixture_Efficiency_Correlation << 0.05137 << 0.00862;
+    *Mixture_Efficiency_Correlation << 0.05179 << 0.21552;
+    *Mixture_Efficiency_Correlation << 0.05430 << 0.48276;
+    *Mixture_Efficiency_Correlation << 0.05842 << 0.70690;
+    *Mixture_Efficiency_Correlation << 0.06312 << 0.83621;
+    *Mixture_Efficiency_Correlation << 0.06942 << 0.93103;
+    *Mixture_Efficiency_Correlation << 0.07786 << 1.00000;
+    *Mixture_Efficiency_Correlation << 0.08845 << 1.00000;
+    *Mixture_Efficiency_Correlation << 0.09270 << 0.98276;
+    *Mixture_Efficiency_Correlation << 0.10120 << 0.93103;
+    *Mixture_Efficiency_Correlation << 0.11455 << 0.72414;
+    *Mixture_Efficiency_Correlation << 0.12158 << 0.45690;
+    *Mixture_Efficiency_Correlation << 0.12435 << 0.23276;
+    *Mixture_Efficiency_Correlation << 0.12500 << 0.00000;
+  }
+
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
