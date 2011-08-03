@@ -48,9 +48,10 @@ INCLUDES
 #include <sstream>
 #include <cstdlib>
 #include <iomanip>
+
+#include "FGFDMExec.h"
 #include "FGPropulsion.h"
 #include "models/FGMassBalance.h"
-#include "models/propulsion/FGThruster.h"
 #include "models/propulsion/FGRocket.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGPiston.h"
@@ -65,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.49 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.50 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -87,7 +88,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   tankJ.InitMatrix();
   refuel = dump = false;
   DumpRate = 0.0;
-  fuel_freeze = false;
+  FuelFreeze = false;
   TotalFuelQuantity = 0.0;
   IsBound =
   HavePistonEngine =
@@ -163,13 +164,14 @@ bool FGPropulsion::Run(bool Holding)
 
   for (i=0; i<numEngines; i++) {
     Engines[i]->Calculate();
+    ConsumeFuel(Engines[i]);
     vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
     vMoments += Engines[i]->GetMoments();     // sum body frame moments
   }
 
   TotalFuelQuantity = 0.0;
   for (i=0; i<numTanks; i++) {
-    Tanks[i]->Calculate( in.TotalDeltaT );
+    Tanks[i]->Calculate( in.TotalDeltaT, in.TAT_c);
     if (Tanks[i]->GetType() == FGTank::ttFUEL) {
       TotalFuelQuantity += Tanks[i]->GetContents();
     }
@@ -181,6 +183,106 @@ bool FGPropulsion::Run(bool Holding)
   RunPostFunctions();
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// The engine can tell us how much fuel it needs, but it is up to the propulsion
+// subsystem manager class FGPropulsion to manage fuel flow amongst tanks. Engines
+// May burn fuel from more than one tank at a time, and may burn from one tank
+// before another - that is, may burn from one tank until the tank is depleted,
+// then burn from the next highest priority tank. This can be accompished
+// by defining a fuel management system, but this way of specifying priorities
+// is more automatic from a user perspective.
+
+void FGPropulsion::ConsumeFuel(FGEngine* engine)
+{
+  if (FuelFreeze) return;
+  if (FDMExec->GetTrimStatus()) return;
+
+  unsigned int TanksWithFuel=0, CurrentFuelTankPriority=1;
+  unsigned int TanksWithOxidizer=0, CurrentOxidizerTankPriority=1;
+  vector <int> FeedListFuel, FeedListOxi;
+  bool Starved = true; // Initially set Starved to true. Set to false in code below.
+//  bool hasOxTanks = false;
+
+  // For this engine,
+  // 1) Count how many fuel tanks with the current priority level have fuel
+  // 2) If there none, then try next lower priority (higher number) - that is,
+  //    increment CurrentPriority.
+  // 3) Build the feed list.
+  // 4) Do the same for oxidizer tanks, if needed.
+
+  // Process fuel tanks, if any
+  while ((TanksWithFuel == 0) && (CurrentFuelTankPriority <= numTanks)) {
+    for (unsigned int i=0; i<engine->GetNumSourceTanks(); i++) {
+      unsigned int TankId = engine->GetSourceTank(i);
+      FGTank* Tank = Tanks[TankId];
+      unsigned int TankPriority = Tank->GetPriority();
+      if (TankPriority != 0) {
+        switch(Tank->GetType()) {
+        case FGTank::ttFUEL:
+          if ((Tank->GetContents() > 0.0) && Tank->GetSelected() && (TankPriority == CurrentFuelTankPriority)) {
+            TanksWithFuel++;
+            Starved = false;
+            FeedListFuel.push_back(TankId);
+          } 
+          break;
+        case FGTank::ttOXIDIZER:
+          // Skip this here (done below)
+          break;
+        }
+      }
+    }
+    if (TanksWithFuel == 0) CurrentFuelTankPriority++; // No tanks at this priority, try next priority
+  }
+
+  // Process Oxidizer tanks, if any
+  if (engine->GetType() == FGEngine::etRocket) {
+    while ((TanksWithOxidizer == 0) && (CurrentOxidizerTankPriority <= numTanks)) {
+      for (unsigned int i=0; i<engine->GetNumSourceTanks(); i++) {
+        unsigned int TankId = engine->GetSourceTank(i);
+        FGTank* Tank = Tanks[TankId];
+        unsigned int TankPriority = Tank->GetPriority();
+        if (TankPriority != 0) {
+          switch(Tank->GetType()) {
+          case FGTank::ttFUEL:
+            // Skip this here (done above)
+            break;
+          case FGTank::ttOXIDIZER:
+//            hasOxTanks = true;
+            if (Tank->GetContents() > 0.0 && Tank->GetSelected() && TankPriority == CurrentOxidizerTankPriority) {
+              TanksWithOxidizer++;
+              if (TanksWithFuel > 0) Starved = false;
+              FeedListOxi.push_back(TankId);
+            }
+            break;
+          }
+        }
+      }
+      if (TanksWithOxidizer == 0) CurrentOxidizerTankPriority++; // No tanks at this priority, try next priority
+    }
+  }
+
+  engine->SetStarved(Starved); // Tanks can be refilled, so be sure to reset engine Starved flag here.
+
+  // No fuel or fuel/oxidizer found at any priority!
+  if (Starved) return;
+
+  double FuelToBurn = engine->CalcFuelNeed();            // How much fuel does this engine need?
+  double FuelNeededPerTank = FuelToBurn / TanksWithFuel; // Determine fuel needed per tank.  
+  for (unsigned int i=0; i<FeedListFuel.size(); i++) {
+    Tanks[FeedListFuel[i]]->Drain(FuelNeededPerTank); 
+  }
+
+  if (engine->GetType() == FGEngine::etRocket) {
+    double OxidizerToBurn = engine->CalcOxidizerNeed();                // How much fuel does this engine need?
+    double OxidizerNeededPerTank = OxidizerToBurn / TanksWithOxidizer; // Determine fuel needed per tank.  
+    for (unsigned int i=0; i<FeedListOxi.size(); i++) {
+      Tanks[FeedListOxi[i]]->Drain(OxidizerNeededPerTank); 
+    }
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +307,7 @@ bool FGPropulsion::GetSteadyState(void)
       while (!steady && j < 6000) {
         Engines[i]->Calculate();
         lastThrust = currentThrust;
-        currentThrust = Engines[i]->GetThruster()->GetThrust();
+        currentThrust = Engines[i]->GetThrust();
         if (fabs(lastThrust-currentThrust) < 0.0001) {
           steady_count++;
           if (steady_count > 120) {
@@ -657,7 +759,7 @@ void FGPropulsion::DumpFuel(double time_slice)
 
 void FGPropulsion::SetFuelFreeze(bool f)
 {
-  fuel_freeze = f;
+  FuelFreeze = f;
   for (unsigned int i=0; i<numEngines; i++) {
     Engines[i]->SetFuelFreeze(f);
   }

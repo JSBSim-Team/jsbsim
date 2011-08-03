@@ -39,16 +39,13 @@ INCLUDES
 #include <sstream>
 
 #include "FGPropeller.h"
-#include "models/FGPropagate.h"
-#include "models/FGAtmosphere.h"
-#include "models/FGAuxiliary.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.35 2011/07/27 03:52:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.36 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,17 +192,16 @@ FGPropeller::~FGPropeller()
 
 double FGPropeller::Calculate(double EnginePower)
 {
-  double omega, alpha, beta, PowerAvailable;
+  double omega, PowerAvailable;
 
-  double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
-  double rho = fdmex->GetAtmosphere()->GetDensity();
+  double Vel = in.AeroUVW(eU);
+  double rho = in.Density;
   double RPS = RPM/60.0;
 
   // Calculate helical tip Mach
   double Area = 0.25*Diameter*Diameter*M_PI;
   double Vtip = RPS * Diameter * M_PI;
-  HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / 
-                   fdmex->GetAtmosphere()->GetSoundSpeed(); 
+  HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / in.Soundspeed; 
 
   PowerAvailable = EnginePower - GetPowerRequired();
 
@@ -225,10 +221,8 @@ double FGPropeller::Calculate(double EnginePower)
   if (CtMach) ThrustCoeff *= CtMach->GetValue(HelicalTipMach);
 
   if (P_Factor > 0.0001) {
-    alpha = fdmex->GetAuxiliary()->Getalpha();
-    beta  = fdmex->GetAuxiliary()->Getbeta();
-    SetActingLocationY( GetLocationY() + P_Factor*alpha*Sense);
-    SetActingLocationZ( GetLocationZ() + P_Factor*beta*Sense);
+    SetActingLocationY( GetLocationY() + P_Factor*in.Alpha*Sense);
+    SetActingLocationZ( GetLocationZ() + P_Factor*in.Beta*Sense);
   }
 
   Thrust = ThrustCoeff*RPS*RPS*D4*rho;
@@ -258,7 +252,7 @@ double FGPropeller::Calculate(double EnginePower)
 
   // Transform Torque and momentum first, as PQR is used in this
   // equation and cannot be transformed itself.
-  vMn = fdmex->GetPropagate()->GetPQR()*(Transform()*vH) + Transform()*vTorque;
+  vMn = in.PQR*(Transform()*vH) + Transform()*vTorque;
 
   return Thrust; // return thrust in pounds
 }
@@ -268,8 +262,8 @@ double FGPropeller::Calculate(double EnginePower)
 double FGPropeller::GetPowerRequired(void)
 {
   double cPReq, J;
-  double rho = fdmex->GetAtmosphere()->GetDensity();
-  double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
+  double rho = in.Density;
+  double Vel = in.AeroUVW(eU);
   double RPS = RPM / 60.0;
 
   if (RPS != 0.0) J = Vel / (Diameter * RPS);

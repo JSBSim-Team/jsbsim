@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.16 2011/03/10 01:35:25 dpculp Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.17 2011/08/03 03:21:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.16 2011/03/10 01:35:25 dpculp Exp $
+    @version $Id: FGThruster.h,v 1.17 2011/08/03 03:21:06 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,20 @@ public:
   double GetGearRatio(void) {return GearRatio; }
   virtual string GetThrusterLabels(int id, string delimeter);
   virtual string GetThrusterValues(int id, string delimeter);
+
+  struct Inputs {
+    double TotalDeltaT;
+    double H_agl;
+    FGColumnVector3 PQR;
+    FGColumnVector3 AeroPQR;
+    FGColumnVector3 AeroUVW;
+    double Density;
+    double Pressure;
+    double Soundspeed;
+    double Alpha;
+    double Beta;
+    double Vt;
+  } in;
 
 protected:
   eType Type;

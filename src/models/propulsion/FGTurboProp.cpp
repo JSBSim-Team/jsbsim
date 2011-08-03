@@ -48,13 +48,12 @@ INCLUDES
 #include "FGTurboProp.h"
 #include "FGPropeller.h"
 #include "FGRotor.h"
-#include "models/FGPropulsion.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.20 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.21 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,6 +260,7 @@ void FGTurboProp::Calculate(void)
     default: HP = 0;
   }
  
+  LoadThrusterInputs();
   Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();
@@ -284,9 +284,6 @@ double FGTurboProp::Off(void)
   Eng_ITT_degC  = ExpSeek(&Eng_ITT_degC,ITT_goal,ITT_Delay,ITT_Delay*1.2);
 
   OilPressure_psi = (N1/100.0*0.25+(0.1-(OilTemp_degK-273.15)*0.1/80.0)*N1/100.0) / 7692.0e-6; //from MPa to psi
-
-  ConsumeFuel(); // for possible setting Starved = false when fuel tank
-                 // is refilled (fuel crossfeed etc.)
 
   if (RPM>5) return -0.012; // friction in engine when propeller spining (estimate)
   return 0.0;
@@ -319,8 +316,6 @@ double FGTurboProp::Run(void)
   EPR = 1.0 + thrust/MilThrust;
 
   OilTemp_degK = Seek(&OilTemp_degK, 353.15, 0.4-N1*0.001, 0.04);
-
-  ConsumeFuel();
 
   if (Cutoff) phase = tpOff;
   if (Starved) phase = tpOff;
@@ -364,9 +359,6 @@ double FGTurboProp::SpinUp(void)
     StartTime = -1;
   }
 
-  ConsumeFuel(); // for possible setting Starved = false when fuel tank
-                 // is refilled (fuel crossfeed etc.)
-
   return EngPower_HP;
 }
 
@@ -407,8 +399,6 @@ double FGTurboProp::Start(void)
     Starter = false;
   }
 
-  ConsumeFuel();
-
   return EngPower_HP;
 }
 
@@ -417,9 +407,8 @@ double FGTurboProp::Start(void)
 
 double FGTurboProp::CalcFuelNeed(void)
 {
-  double dT = FDMExec->GetDeltaT() * Propulsion->GetRate();
   FuelFlowRate = FuelFlow_pph / 3600.0;
-  FuelExpended = FuelFlowRate * dT;
+  FuelExpended = FuelFlowRate * in.TotalDeltaT;
   return FuelExpended;
 }
 

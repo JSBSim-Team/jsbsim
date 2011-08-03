@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.33 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.34 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,7 +192,6 @@ double FGTurbine::Off(void)
   NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   EPR = Seek(&EPR, 1.0, 0.2, 0.2);
   Augmentation = false;
-  ConsumeFuel();  
   return 0.0;
 }
 
@@ -265,7 +264,6 @@ double FGTurbine::Run()
     }
   }
 
-  ConsumeFuel();
   if (Cutoff) phase = tpOff;
   if (Starved) phase = tpOff;
 
@@ -301,7 +299,6 @@ double FGTurbine::Start(void)
       EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
       FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
-      ConsumeFuel();
       if ((Starter == false) && (in.qbar < 30.0)) phase = tpOff; // aborted start
       }
     else {
@@ -327,7 +324,6 @@ double FGTurbine::Stall(void)
   FuelFlow_pph = IdleFF;
   N1 = Seek(&N1, in.qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, in.qbar/15.0, 0, N2/10.0);
-  ConsumeFuel();
   if (ThrottlePos < 0.01) {
     phase = tpRun;               // clear the stall with throttle to idle
     Stalled = false;
@@ -342,7 +338,6 @@ double FGTurbine::Seize(void)
     N2 = 0.0;
     N1 = Seek(&N1, in.qbar/20.0, 0, N1/15.0);
     FuelFlow_pph = Cutoff ? 0.0 : IdleFF;
-    ConsumeFuel();
     OilPressure_psi = 0.0;
     OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0, 0.2);
     Running = false;
@@ -536,7 +531,8 @@ void FGTurbine::bindmodel()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGTurbine::InitRunning(void) {
+int FGTurbine::InitRunning(void)
+{
   FDMExec->SuspendIntegration();
   Cutoff=false;
   Running=true;  

@@ -38,7 +38,6 @@ INCLUDES
 
 #include "FGTank.h"
 #include "FGFDMExec.h"
-#include "models/FGAuxiliary.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
 #include <iostream>
@@ -48,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.30 2011/06/21 04:41:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.31 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +65,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   InitialTemperature = Temperature = -9999.0;
   Ixx = Iyy = Izz = 0.0;
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
+  PreviousUsed = 0.0;
   ExternalFlow = 0.0;
   InitialStandpipe = 0.0;
   Capacity = 0.00001;
@@ -192,6 +192,7 @@ void FGTank::ResetToIC(void)
   SetContents ( InitialContents );
   PctFull = 100.0*Contents/Capacity;
   SetPriority( InitialPriority );
+  PreviousUsed = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,6 +213,7 @@ const double FGTank::GetXYZ(int idx)
 
 double FGTank::Drain(double used)
 {
+//  double AmountToDrain = 2.0*used - PreviousUsed;
   double remaining = Contents - used;
 
   if (remaining >= 0) { // Reduce contents by amount used.
@@ -224,7 +226,7 @@ double FGTank::Drain(double used)
     Contents = 0.0;
     PctFull = 0.0;
   }
-
+//  PreviousUsed = AmountToDrain;
   if (grainType != gtUNKNOWN) CalculateInertias();
 
   return remaining;
@@ -271,7 +273,7 @@ void FGTank::SetContentsGallons(double gallons)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTank::Calculate(double dt)
+double FGTank::Calculate(double dt, double TAT_C)
 {
   if(ExternalFlow < 0.) Drain( -ExternalFlow *dt);
   else Fill(ExternalFlow * dt);
@@ -279,8 +281,7 @@ double FGTank::Calculate(double dt)
   if (Temperature == -9999.0) return 0.0;
   double HeatCapacity = 900.0;        // Joules/lbm/C
   double TempFlowFactor = 1.115;      // Watts/sqft/C
-  double TAT = Exec->GetAuxiliary()->GetTAT_C();
-  double Tdiff = TAT - Temperature;
+  double Tdiff = TAT_C - Temperature;
   double dTemp = 0.0;                 // Temp change due to one surface
   if (fabs(Tdiff) > 0.1) {
     dTemp = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
