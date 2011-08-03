@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.29 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.30 2011/08/03 03:21:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.29 2011/07/28 12:48:19 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.30 2011/08/03 03:21:06 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -186,7 +186,7 @@ public:
   std::ifstream* FindEngineFile(const std::string& filename);
   std::string FindEngineFullPathname(const std::string& engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
-  inline bool GetFuelFreeze(void) {return fuel_freeze;}
+  inline bool GetFuelFreeze(void) {return FuelFreeze;}
   double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
 
   void SetMagnetos(int setting);
@@ -215,7 +215,7 @@ private:
   FGMatrix33 tankJ;
   bool refuel;
   bool dump;
-  bool fuel_freeze;
+  bool FuelFreeze;
   double TotalFuelQuantity;
   double DumpRate;
   bool IsBound;
@@ -224,6 +224,7 @@ private:
   bool HaveTurboPropEngine;
   bool HaveRocketEngine;
   bool HaveElectricEngine;
+  void ConsumeFuel(FGEngine* engine);
 
   int InitializedEngines;
   bool HasInitializedEngines;

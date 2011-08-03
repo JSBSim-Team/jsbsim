@@ -41,15 +41,13 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include "FGRocket.h"
-#include "models/FGPropulsion.h"
 #include "FGThruster.h"
-#include "FGTank.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.24 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.25 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +64,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, const struct
   previousFuelNeedPerTank = 0.0;
   previousOxiNeedPerTank = 0.0;
   PropellantFlowRate = 0.0;
+  TotalPropellantExpended = 0.0;
   FuelFlowRate = FuelExpended = 0.0;
   OxidizerFlowRate = OxidizerExpended = 0.0;
   SLOxiFlowMax = SLFuelFlowMax = 0.0;
@@ -128,9 +127,8 @@ void FGRocket::Calculate(void)
 
   RunPreFunctions();
 
-  if (!Flameout && !Starved) ConsumeFuel();
-
   PropellantFlowRate = (FuelExpended + OxidizerExpended)/in.TotalDeltaT;
+  TotalPropellantExpended += FuelExpended + OxidizerExpended;
 
   // If there is a thrust table, it is a function of propellant burned. The
   // engine is started when the throttle is advanced to 1.0. After that, it
@@ -139,22 +137,15 @@ void FGRocket::Calculate(void)
   if (ThrustTable != 0L) { // Thrust table given -> Solid fuel used
 
     if ((in.ThrottlePos[EngineNumber] == 1 || BurnTime > 0.0 ) && !Starved) {
-      double TotalEngineFuelBurned=0.0;
-      for (int i=0; i<(int)SourceTanks.size(); i++) {
-        FGTank* tank = Propulsion->GetTank(i);
-        if (SourceTanks[i] == 1) {
-          TotalEngineFuelBurned += tank->GetCapacity() - tank->GetContents();
-        }
-      }
 
-      VacThrust = ThrustTable->GetValue(TotalEngineFuelBurned)
+      VacThrust = ThrustTable->GetValue(TotalPropellantExpended)
                 * (ThrustVariation + 1)
                 * (TotalIspVariation + 1);
       if (BurnTime <= BuildupTime && BuildupTime > 0.0) {
         VacThrust *= sin((BurnTime/BuildupTime)*M_PI/2.0);
         // VacThrust *= (1-cos((BurnTime/BuildupTime)*M_PI))/2.0; // 1 - cos approach
       }
-      BurnTime += FDMExec->GetDeltaT(); // Increment burn time
+      BurnTime += in.TotalDeltaT; // Increment burn time
     } else {
       VacThrust = 0.0;
     }
@@ -169,9 +160,6 @@ void FGRocket::Calculate(void)
 
     } else { // Calculate thrust
 
-      // This is nonsensical. Max throttle should be assumed to be 1.0. One might
-      // conceivably have a throttle setting > 1.0 for some rocket engines. But, 1.0
-      // should always be the default.
       // PctPower = Throttle / MaxThrottle; // Min and MaxThrottle range from 0.0 to 1.0, normally.
       
       PctPower = in.ThrottlePos[EngineNumber];
@@ -182,77 +170,10 @@ void FGRocket::Calculate(void)
 
   } // End thrust calculations
 
+  LoadThrusterInputs();
   It += Thruster->Calculate(VacThrust) * in.TotalDeltaT;
 
   RunPostFunctions();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This overrides the base class ConsumeFuel() function, for special rocket
-// engine processing.
-
-void FGRocket::ConsumeFuel(void)
-{
-  unsigned int i;
-  FGTank* Tank;
-  bool haveOxTanks = false;
-  double Fshortage=0, Oshortage=0, TanksWithFuel=0, TanksWithOxidizer=0;
-
-  if (FuelFreeze) return;
-  if (FDMExec->GetTrimStatus()) return;
-
-  // Count how many assigned tanks have fuel for this engine at this time.
-  // If there is/are fuel tanks but no oxidizer tanks, this indicates
-  // a solid rocket is being modeled.
-
-  for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(i);
-    switch(Tank->GetType()) {
-      case FGTank::ttFUEL:
-        if (Tank->GetContents() > 0.0 && Tank->GetSelected() && SourceTanks[i] > 0) ++TanksWithFuel;
-        break;
-      case FGTank::ttOXIDIZER:
-        if (Tank->GetSelected() && SourceTanks[i] > 0) {
-          haveOxTanks = true;
-          if (Tank->GetContents() > 0.0) ++TanksWithOxidizer;
-        }
-        break;
-    }
-  }
-
-  // If this engine has burned out, it is starved.
-
-  if (TanksWithFuel==0 || (haveOxTanks && TanksWithOxidizer==0)) {
-    Starved = true;
-    return;
-  }
-
-  // Expend fuel from the engine's tanks if the tank is selected as a source
-  // for this engine.
-
-  double fuelNeedPerTank = 0;
-  double oxiNeedPerTank = 0;
-
-  if (TanksWithFuel > 0) fuelNeedPerTank = CalcFuelNeed()/TanksWithFuel;
-  if (TanksWithOxidizer > 0) oxiNeedPerTank = CalcOxidizerNeed()/TanksWithOxidizer;
-
-  for (i=0; i<SourceTanks.size(); i++) {
-    Tank = Propulsion->GetTank(i);
-    if ( ! Tank->GetSelected() || SourceTanks[i] == 0) continue; // If this tank is not selected as a source, skip it.
-    switch(Tank->GetType()) {
-      case FGTank::ttFUEL:
-        Fshortage += Tank->Drain(2.0*fuelNeedPerTank - previousFuelNeedPerTank);
-        previousFuelNeedPerTank = fuelNeedPerTank;
-        break;
-      case FGTank::ttOXIDIZER:
-        Oshortage += Tank->Drain(2.0*oxiNeedPerTank - previousOxiNeedPerTank);
-        previousOxiNeedPerTank = oxiNeedPerTank;
-        break;
-    }
-  }
-
-  if (Fshortage < 0.00 || (haveOxTanks && Oshortage < 0.00)) Starved = true;
-  else Starved = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

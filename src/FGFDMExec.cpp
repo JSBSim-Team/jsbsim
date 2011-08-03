@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.105 2011/07/28 12:48:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.106 2011/08/03 03:21:05 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -438,6 +438,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.MixtureCmd       = FCS->GetMixtureCmd();
     Propulsion->in.PropAdvance      = FCS->GetPropAdvance();
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
+    Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
+    Propulsion->in.PQR              = Propagate->GetPQR();
     break;
   case eAerodynamics:
     Aerodynamics->in.Alpha     = Auxiliary->Getalpha();

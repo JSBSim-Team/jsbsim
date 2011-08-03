@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.15 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.16 2011/08/03 03:21:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,13 +118,11 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.15 2011/07/28 12:48:19 jberndt Exp $
+    $Id: FGRocket.h,v 1.16 2011/08/03 03:21:06 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
     FGEngine,
-    FGPropulsion,
-    FGTank
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,6 +143,18 @@ public:
 
   /** Determines the thrust.*/
   void Calculate(void);
+
+  /** The fuel need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total fuel requirement for this engine in pounds. */
+  double CalcFuelNeed(void);
+
+  /** The oxidizer need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total oxidizer requirement for this engine in pounds. */
+  double CalcOxidizerNeed(void);
 
   /** Gets the total impulse of the rocket.
       @return The cumulative total impulse of the rocket up to this time.*/
@@ -188,25 +198,6 @@ public:
   double GetTotalIspVariation(void) const {return TotalIspVariation;}
 
 private:
-  /** Reduces the fuel in the active tanks by the amount required.
-      This function should be called from within the
-      derived class' Calculate() function before any other calculations are
-      done. This base class method removes fuel from the fuel tanks as
-      appropriate, and sets the starved flag if necessary. */
-  void ConsumeFuel(void);
-
-  /** The fuel need is calculated based on power levels and flow rate for that
-      power level. It is also turned from a rate into an actual amount (pounds)
-      by multiplying it by the delta T and the rate.
-      @return Total fuel requirement for this engine in pounds. */
-  double CalcFuelNeed(void);
-
-  /** The oxidizer need is calculated based on power levels and flow rate for that
-      power level. It is also turned from a rate into an actual amount (pounds)
-      by multiplying it by the delta T and the rate.
-      @return Total oxidizer requirement for this engine in pounds. */
-  double CalcOxidizerNeed(void);
-
   /** Returns the vacuum thrust.
       @return The vacuum thrust in lbs. */
   double GetVacThrust(void) const {return VacThrust;}
@@ -223,6 +214,7 @@ private:
   double previousFuelNeedPerTank;
   double previousOxiNeedPerTank;
   double OxidizerExpended;
+  double TotalPropellantExpended;
   double SLOxiFlowMax;
   double OxidizerFlowRate;
   double PropellantFlowRate;

@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.12 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.13 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,6 +98,7 @@ void FGElectric::Calculate(void)
 
   HP = PowerWatts * in.ThrottlePos[EngineNumber] / hptowatts;
   
+  LoadThrusterInputs();
   Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();

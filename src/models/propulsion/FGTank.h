@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.23 2011/06/13 15:23:09 jentron Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.24 2011/08/03 03:21:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -218,9 +218,10 @@ public:
   /** Performs local, tanks-specific calculations, such as fuel temperature.
       This function calculates the temperature of the fuel in the tank.
       @param dt the time step for this model.
+      @param TempC the Total Air Temperature in degrees Celsius.
       @return the current temperature in degrees Celsius.
   */
-  double Calculate(double dt);
+  double Calculate(double dt, double TempC);
 
   /** Retrieves the type of tank: Fuel or Oxidizer.
       @return the tank type, 0 for undefined, 1 for fuel, and 2 for oxidizer.
@@ -318,6 +319,7 @@ private:
   double Izz;
   double PctFull;
   double Contents, InitialContents;
+  double PreviousUsed;
   double Area;
   double Temperature, InitialTemperature;
   double Standpipe, InitialStandpipe;
@@ -326,6 +328,7 @@ private:
   int Priority, InitialPriority;
   FGFDMExec* Exec;
   FGPropertyManager* PropertyManager;
+
   void CalculateInertias(void);
   void Debug(int from);
 };

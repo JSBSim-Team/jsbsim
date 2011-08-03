@@ -46,7 +46,6 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGRotor.h"
-#include "models/FGPropulsion.h"
 #include "input_output/FGXMLParse.h"
 #include "math/FGColumnVector3.h"
 
@@ -54,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.43 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.44 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,15 +71,13 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   X = Y = Z = 0.0;
   EnginePitch = EngineYaw = 0.0;
   SLFuelFlowMax = 0.0;
+  FuelExpended = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
-  FuelDensity = 6.0;
-  unsigned int i;
 
   ResetToIC(); // initialize dynamic terms
 
   FDMExec = exec;
-  Propulsion = FDMExec->GetPropulsion();
 
   PropertyManager = FDMExec->GetPropertyManager();
 
@@ -113,28 +110,12 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
     cerr << "No thruster definition supplied with engine definition." << endl;
   }
 
-  // Build and initialize the feed tank vector.
-  for (i=0; i<(Propulsion->GetNumTanks()); i++) {
-    SourceTanks.push_back(0);
-  }
-
   // Load feed tank[s] references
   local_element = engine_element->GetParent()->FindElement("feed");
-  if (local_element) {
-    while (local_element) {
-      int tankID = (int)local_element->GetDataAsNumber();
-      FGTank* tank = Propulsion->GetTank(tankID); 
-      if (tank) {
-        AddFeedTank(tankID, tank->GetPriority());
-        FuelDensity = tank->GetDensity();
-      } else {
-        cerr << "Feed tank " << tankID <<
-          " specified in engine definition does not exist." << endl;
-      }
-      local_element = engine_element->GetParent()->FindNextElement("feed");
-    }
-  } else {
-    cerr << "No feed tank specified in engine definition." << endl;
+  while (local_element) {
+    int tankID = (int)local_element->GetDataAsNumber();
+    SourceTanks.push_back(tankID);
+    local_element = engine_element->GetParent()->FindNextElement("feed");
   }
 
   string property_name, base_property_name;
@@ -150,8 +131,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
 
   PostLoad(engine_element, PropertyManager, to_string(EngineNumber));
-
-  //cout << "Engine[" << EngineNumber << "] using fuel density: " << FuelDensity << endl;
 
   Debug(0);
 }
@@ -180,73 +159,24 @@ void FGEngine::ResetToIC(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This base class function should be called from within the
-// derived class' Calculate() function before any other calculations are done.
-// This base class method removes fuel from the fuel tanks as appropriate,
-// and sets the starved flag if necessary.
-// This version of the fuel consumption code should never see an oxidizer tank.
 
-void FGEngine::ConsumeFuel(void)
+double FGEngine::CalcFuelNeed(void)
 {
-  if (FuelFreeze) return;
-  if (FDMExec->GetTrimStatus()) return;
-
-  unsigned int i;
-  double Fshortage, FuelNeeded;
-  FGTank* Tank;
-  unsigned int TanksWithFuel = 0;
-  Fshortage = FuelNeeded = 0.0;
-  double FuelToBurn;
-  unsigned int CurrentPriority = 1;
-  vector <int> FeedList;
-  Starved = false;
-
-  FuelToBurn = CalcFuelNeed();
-  if (FuelToBurn == 0.0) return;
-
-  // Count how many fuel tanks with the current priority level have fuel.
-  // If none, then try next lower priority.  Build the feed list.
-  while ((TanksWithFuel == 0) && (CurrentPriority <= Propulsion->GetNumTanks())) {
-    for (i=0; i<Propulsion->GetNumTanks(); i++) {
-      if (SourceTanks[i] != 0) {
-        Tank = Propulsion->GetTank(i);
-        if (Tank->GetType() == FGTank::ttFUEL) {
-          if ((Tank->GetContents() > 0.0) && ((unsigned int)Tank->GetPriority() == CurrentPriority)) {
-             ++TanksWithFuel;
-             FeedList.push_back(i);
-           } 
-        } else {
-           cerr << "No oxidizer tanks should be used for this engine type." << endl;
-        }
-      }
-    }
-    if (TanksWithFuel == 0) CurrentPriority++;
-  }
-
-  // No fuel found at any priority!
-  if (TanksWithFuel == 0) {
-    Starved = true;
-    return;
-  }
-
-  // Remove equal amount of fuel from each feed tank.  
-  FuelNeeded = FuelToBurn/TanksWithFuel;
-  for (i=0; i<FeedList.size(); i++) {
-    Tank = Propulsion->GetTank(FeedList[i]);
-    Tank->Drain(FuelNeeded); 
-  }
-  FuelUsedLbs += FuelToBurn;
-
+  FuelFlowRate = SLFuelFlowMax*PctPower;
+  FuelExpended = FuelFlowRate*in.TotalDeltaT;
+  if (!Starved) FuelUsedLbs += FuelExpended;
+  return FuelExpended;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGEngine::CalcFuelNeed(void)
+unsigned int FGEngine::GetSourceTank(unsigned int i) const
 {
-  double dT = FDMExec->GetDeltaT()*Propulsion->GetRate();
-  FuelFlowRate = SLFuelFlowMax*PctPower;
-  FuelExpended = FuelFlowRate*dT;
-  return FuelExpended;
+  if (i >= 0 && i < SourceTanks.size()) {
+    return SourceTanks[i];
+  } else {
+    throw("No such source tank is available for this engine");
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,14 +192,14 @@ void FGEngine::SetPlacement(FGColumnVector3& location, FGColumnVector3& orientat
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGEngine::AddFeedTank(int tkID, int priority)
+double FGEngine::GetThrust(void) const 
 {
-  SourceTanks[tkID] = priority;
+  return Thruster->GetThrust();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGEngine::GetBodyForces(void)
+  FGColumnVector3& FGEngine::GetBodyForces(void)
 {
   return Thruster->GetBodyForces();
 }
@@ -279,6 +209,23 @@ FGColumnVector3& FGEngine::GetBodyForces(void)
 FGColumnVector3& FGEngine::GetMoments(void)
 {
   return Thruster->GetMoments();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGEngine::LoadThrusterInputs()
+{
+  Thruster->in.TotalDeltaT     = in.TotalDeltaT;
+  Thruster->in.H_agl           = in.H_agl;
+  Thruster->in.PQR             = in.PQR;
+  Thruster->in.AeroPQR         = in.AeroPQR;
+  Thruster->in.AeroUVW         = in.AeroUVW;
+  Thruster->in.Density         = in.Density;
+  Thruster->in.Pressure        = in.Pressure;
+  Thruster->in.Soundspeed      = in.Soundspeed;
+  Thruster->in.Alpha           = in.alpha;
+  Thruster->in.Beta            = in.beta;
+  Thruster->in.Vt              = in.Vt;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,7 +279,7 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     Thruster = new FGThruster( FDMExec, document, EngineNumber);
   }
 
-  Thruster->SetdeltaT(FDMExec->GetDeltaT() * Propulsion->GetRate());
+  Thruster->SetdeltaT(in.TotalDeltaT);
 
   Debug(2);
   return true;

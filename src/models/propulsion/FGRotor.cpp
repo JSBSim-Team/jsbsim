@@ -45,20 +45,17 @@ INCLUDES
 #include <sstream>
 
 #include "FGRotor.h"
-
-#include "models/FGPropagate.h"
-#include "models/FGAtmosphere.h"
-#include "models/FGAuxiliary.h"
+#include "input_output/FGXMLElement.h"
 #include "models/FGMassBalance.h"
 
-#include "input_output/FGXMLElement.h"
-
-
-using namespace std;
+using std::cerr;
+using std::endl;
+using std::ostringstream;
+using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.12 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.13 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,46 +74,28 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
-                    : FGThruster(exec, rotor_element, num),
-                    
-
-  // environment
-  dt(0.0), rho(0.002356),
-
-  // configuration parameters
-  Radius(0.0), BladeNum(0),
-
-  Sense(1.0), NominalRPM(0.0), ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL),
-
-  BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
-  BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
-  InflowLag(0.0),
-  TipLossB(0.0),
-
-  GroundEffectExp(0.0), GroundEffectShift(0.0),
-
-  // derived parameters
-  LockNumberByRho(0.0), Solidity(0.0), 
-
-  // dynamic values
-  RPM(0.0), Omega(0.0),
-
-  beta_orient(0.0),
-  a0(0.0), a_1(0.0), b_1(0.0), a_dw(0.0), a1s(0.0), b1s(0.0),
-
-  H_drag(0.0), J_side(0.0), Torque(0.0), C_T(0.0),
-
-  lambda(-0.001), mu(0.0), nu(0.001), v_induced(0.0),
-  theta_downwash(0.0), phi_downwash(0.0),
-
-  // control
-  ControlMap(eMainCtrl),
-  CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0),
-  BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
-
-  // free-wheeling-unit (FWU)
-  FreeWheelPresent(0), FreeWheelThresh(0.0), FreeWheelTransmission(0.0)
-
+  : FGThruster(exec, rotor_element, num),
+    rho(0.002356),                                  // environment
+    Radius(0.0), BladeNum(0),                       // configuration parameters
+    Sense(1.0), NominalRPM(0.0), ExternalRPM(0),
+    RPMdefinition(0), ExtRPMsource(NULL),
+    BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
+    BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
+    InflowLag(0.0), TipLossB(0.0),
+    GroundEffectExp(0.0), GroundEffectShift(0.0),
+    LockNumberByRho(0.0), Solidity(0.0),            // derived parameters
+    RPM(0.0), Omega(0.0),                           // dynamic values
+    beta_orient(0.0),
+    a0(0.0), a_1(0.0), b_1(0.0), a_dw(0.0),
+    a1s(0.0), b1s(0.0),
+    H_drag(0.0), J_side(0.0), Torque(0.0), C_T(0.0),
+    lambda(-0.001), mu(0.0), nu(0.001), v_induced(0.0),
+    theta_downwash(0.0), phi_downwash(0.0),
+    ControlMap(eMainCtrl),                          // control
+    CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0),
+    BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
+    FreeWheelPresent(0), FreeWheelThresh(0.0),      // free-wheeling-unit (FWU)
+    FreeWheelTransmission(0.0)
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
   Element *thruster_element;
@@ -194,7 +173,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 
   // smooth out jumps in hagl reported, otherwise the ground effect
   // calculation would cause jumps too. 1Hz seems sufficient.
-  damp_hagl = Filter(1.0,dt);
+  damp_hagl = Filter(1.0, dt);
 
   // avoid too abrupt changes in power transmission
   FreeWheelLag = Filter(200.0,dt);
@@ -583,21 +562,14 @@ void FGRotor::CalcStatePart1(void)
   double B_IC;       // longitudinal (pitch) control in radians
   double theta_col;  // rotor collective pitch in radians
 
-  double Vt ;
-
-  FGColumnVector3 UVW_h, PQR_h;
   FGColumnVector3 vHub_ca, avFus_ca;
 
-  double h_agl_ft, filtered_hagl = 0.0;
+  double filtered_hagl = 0.0;
   double ge_factor = 1.0;
 
   // fetch needed values from environment
-  Vt = fdmex->GetAuxiliary()->GetVt(); // total vehicle velocity including wind
-  dt = fdmex->GetDeltaT();
-  rho = fdmex->GetAtmosphere()->GetDensity(); // slugs/ft^3.
-  UVW_h = fdmex->GetAuxiliary()->GetAeroUVW();
-  PQR_h = fdmex->GetAuxiliary()->GetAeroPQR();
-  h_agl_ft = fdmex->GetPropagate()->GetDistanceAGL();
+  rho = in.Density; // slugs/ft^3.
+  double h_agl_ft = in.H_agl;
   // update InvTransform, the rotor orientation could have been altered
   InvTransform = Transform().Transposed();
 
@@ -628,9 +600,9 @@ void FGRotor::CalcStatePart1(void)
 
   // all set, start calculations
 
-  vHub_ca  = hub_vel_body2ca(UVW_h, PQR_h, A_IC, B_IC);
+  vHub_ca  = hub_vel_body2ca(in.AeroUVW, in.AeroPQR, A_IC, B_IC);
 
-  avFus_ca = fus_angvel_body2ca(PQR_h);
+  avFus_ca = fus_angvel_body2ca(in.AeroPQR);
 
   calc_flow_and_thrust(theta_col, vHub_ca(eU), vHub_ca(eW), ge_factor);
 
@@ -643,8 +615,8 @@ void FGRotor::CalcStatePart1(void)
   calc_torque(theta_col);
 
   // Fixme: only valid for a 'decent' rotor
-  theta_downwash = atan2( - UVW_h(eU), v_induced - UVW_h(eW));
-  phi_downwash   = atan2(   UVW_h(eV), v_induced - UVW_h(eW));
+  theta_downwash = atan2( -in.AeroUVW(eU), v_induced - in.AeroUVW(eW));
+  phi_downwash   = atan2(  in.AeroUVW(eV), v_induced - in.AeroUVW(eW));
 
   vFn = body_forces(A_IC, B_IC);
   vMn = Transform() * body_moments(A_IC, B_IC); 
@@ -658,7 +630,7 @@ void FGRotor::CalcStatePart2(double PowerAvailable)
   if (! ExternalRPM) {
     // calculate new RPM
     double ExcessTorque = PowerAvailable / Omega;
-    double deltaOmega   = ExcessTorque / PolarMoment * dt;
+    double deltaOmega   = ExcessTorque / PolarMoment * in.TotalDeltaT;
     RPM += deltaOmega/(2.0*M_PI) * 60.0;
     if (RPM < 0.0) RPM = 0.0; // Engine won't turn backwards
   }

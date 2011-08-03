@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.62 2011/07/28 21:07:14 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.63 2011/08/03 03:21:06 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
   // Defaults and initializations
 
   Type = etPiston;
- 
 
   // These items are read from the configuration file
   // Defaults are from a Lycoming O-360, more or less
@@ -315,7 +314,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct
     *Mixture_Efficiency_Correlation << 0.12500 << 0.00000;
   }
 
-
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
   property_name = base_property_name + "/power-hp";
@@ -426,16 +424,17 @@ void FGPiston::ResetToIC(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPiston::Calculate(void)
 {
-  RunPreFunctions();
-
   // Input values.
 
   p_amb = in.Pressure * psftopa;
   double p = in.TotalPressure * psftopa;
   p_ram = (p - p_amb) * Ram_Air_Factor + p_amb;
   T_amb = RankineToKelvin(in.Temperature);
+
+  RunPreFunctions();
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
   MeanPistonSpeed_fps =  ( RPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
@@ -469,6 +468,7 @@ void FGPiston::Calculate(void)
     ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
   }
 
+  LoadThrusterInputs();
   Thruster->Calculate(HP * hptoftlbssec);
 
   RunPostFunctions();
@@ -704,9 +704,6 @@ void FGPiston::doFuelFlow(void)
 //  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
   FuelFlowRate =  m_dot_fuel * 2.2046;  // kg to lb
-// At this point, we have enough data to ask for fuel from
-// the engine base class
-  ConsumeFuel();
   if(Starved) // There is no fuel, so zero out the flows we've calculated so far
   {
     equivalence_ratio = 0.0;
