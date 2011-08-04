@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.92 2011/07/24 19:44:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.93 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
                                 FGIC->GetLatitudeRadIC(),
                                 FGIC->GetAltitudeASLFtIC() + SeaLevelRadius);
 
-  VState.vLocation.SetEarthPositionAngle(in.EPA);
+  VState.vLocation.SetEarthPositionAngle(0.0);
 
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
@@ -245,7 +245,7 @@ bool FGPropagate::Run(bool Holding)
   // matrices that are consistent with the new state of the vehicle
 
   // 1. Update the Earth position angle (EPA)
-  VState.vLocation.SetEarthPositionAngle(in.EPA);
+  VState.vLocation.IncrementEarthPositionAngle(in.vOmegaPlanet(eZ)*(in.DeltaT*rate));
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
@@ -448,8 +448,9 @@ double FGPropagate::GetDistanceAGL(void) const
 
 void FGPropagate::SetVState(const VehicleState& vstate)
 {
+  //ToDo: Shouldn't all of these be set from the vstate vector passed in?
   VState.vLocation = vstate.vLocation;
-  VState.vLocation.SetEarthPositionAngle(in.EPA);
+  VState.vLocation.SetEarthPositionAngle(vstate.vLocation.GetEPA());
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();
@@ -481,7 +482,7 @@ void FGPropagate::UpdateVehicleState(void)
 void FGPropagate::SetLocation(const FGLocation& l)
 {
   VState.vLocation = l;
-  VState.vLocation.SetEarthPositionAngle(in.EPA);
+  VState.vLocation.SetEarthPositionAngle(l.GetEPA());
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
@@ -563,6 +564,7 @@ void FGPropagate::bind(void)
                           &FGPropagate::GetTerrainElevation,
                           &FGPropagate::SetTerrainElevation, false);
 
+  PropertyManager->Tie("position/epa-rad", this, &FGPropagate::GetEarthPositionAngle);
   PropertyManager->Tie("metrics/terrain-radius", this, &FGPropagate::GetLocalTerrainRadius);
 
   PropertyManager->Tie("attitude/phi-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
@@ -619,7 +621,7 @@ void FGPropagate::Debug(int from)
          << reset << endl;
     cout << endl;
     cout << highint << "  Earth Position Angle (deg): " << setw(8) << setprecision(3) << reset
-                    << in.EPA << endl;
+         << GetEarthPositionAngleDeg() << endl;
     cout << endl;
     cout << highint << "  Body velocity (ft/sec): " << setw(8) << setprecision(3) << reset << VState.vUVW << endl;
     cout << highint << "  Local velocity (ft/sec): " << setw(8) << setprecision(3) << reset << vVel << endl;

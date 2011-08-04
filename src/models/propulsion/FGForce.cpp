@@ -40,20 +40,20 @@ and the cg.
 
 */
 
-#include "FGForce.h"
-#include "FGFDMExec.h"
-#include "models/FGAircraft.h"
-#include "models/FGPropagate.h"
-#include "models/FGMassBalance.h"
-#include "models/FGAerodynamics.h"
 #include <iostream>
 #include <cstdlib>
+
+#include "FGForce.h"
+#include "FGFDMExec.h"
+#include "models/FGPropagate.h"
+#include "models/FGMassBalance.h"
+#include "models/FGAuxiliary.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.15 2011/02/17 00:20:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.16 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,7 +110,7 @@ FGMatrix33 FGForce::Transform(void)
 {
   switch(ttype) {
   case tWindBody:
-    return fdmex->GetAerodynamics()->GetTw2b();
+    return fdmex->GetAuxiliary()->GetTw2b();
   case tLocalBody:
     return fdmex->GetPropagate()->GetTl2b();
   case tCustom:

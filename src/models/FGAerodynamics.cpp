@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.40 2011/07/20 12:26:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.41 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,16 +179,16 @@ bool FGAerodynamics::Run(bool Holding)
 
   switch (axisType) {
     case atBodyXYZ:       // Forces already in body axes; no manipulation needed
-      vFw = GetTb2w()*vFnative;
+      vFw = in.Tb2w*vFnative;
       vForces = vFnative;
       break;
     case atLiftDrag:      // Copy forces into wind axes
       vFw = vFnative;
       vFw(eDrag)*=-1; vFw(eLift)*=-1;
-      vForces = GetTw2b()*vFw;
+      vForces = in.Tw2b*vFw;
       break;
     case atAxialNormal:   // Convert native forces into Axial|Normal|Side system
-      vFw = GetTb2w()*vFnative;
+      vFw = in.Tb2w*vFnative;
       vFnative(eX)*=-1; vFnative(eZ)*=-1;
       vForces = vFnative;
       break;
@@ -227,68 +227,6 @@ bool FGAerodynamics::Run(bool Holding)
   RunPostFunctions();
 
   return false;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// From Stevens and Lewis, "Aircraft Control and Simulation", 3rd Ed., the
-// transformation from body to wind axes is defined (where "a" is alpha and "B"
-// is beta):
-//
-//   cos(a)*cos(B)     sin(B)    sin(a)*cos(B)
-//  -cos(a)*sin(B)     cos(B)   -sin(a)*sin(B)
-//  -sin(a)              0       cos(a)
-//
-// The transform from wind to body axes is then,
-//
-//   cos(a)*cos(B)  -cos(a)*sin(B)  -sin(a)
-//          sin(B)          cos(B)     0
-//   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
-
-FGMatrix33& FGAerodynamics::GetTw2b(void)
-{
-  double ca, cb, sa, sb;
-
-  ca = cos(in.Alpha);
-  sa = sin(in.Alpha);
-  cb = cos(in.Beta);
-  sb = sin(in.Beta);
-
-  mTw2b(1,1) =  ca*cb;
-  mTw2b(1,2) = -ca*sb;
-  mTw2b(1,3) = -sa;
-  mTw2b(2,1) =  sb;
-  mTw2b(2,2) =  cb;
-  mTw2b(2,3) =  0.0;
-  mTw2b(3,1) =  sa*cb;
-  mTw2b(3,2) = -sa*sb;
-  mTw2b(3,3) =  ca;
-
-  return mTw2b;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33& FGAerodynamics::GetTb2w(void)
-{
-  double ca, cb, sa, sb;
-
-  ca = cos(in.Alpha);
-  sa = sin(in.Alpha);
-  cb = cos(in.Beta);
-  sb = sin(in.Beta);
-
-  mTb2w(1,1) = ca*cb;
-  mTb2w(1,2) = sb;
-  mTb2w(1,3) = sa*cb;
-  mTb2w(2,1) = -ca*sb;
-  mTb2w(2,2) = cb;
-  mTb2w(2,3) = -sa*sb;
-  mTb2w(3,1) = -sa;
-  mTb2w(3,2) = 0.0;
-  mTb2w(3,3) = ca;
-
-  return mTb2w;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

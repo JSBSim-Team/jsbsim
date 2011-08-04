@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.61 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.62 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.61 2011/07/17 13:51:23 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.62 2011/08/04 12:46:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -379,6 +379,10 @@ public:
       */
   double GetLocalTerrainRadius(void) const { return LocalTerrainRadius; }
 
+  double GetEarthPositionAngle(void) const { return VState.vLocation.GetEPA(); }
+
+  double GetEarthPositionAngleDeg(void) const { return GetEarthPositionAngle()*radtodeg;}
+
   double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {
@@ -457,6 +461,8 @@ public:
 
   void SetVState(const VehicleState& vstate);
 
+  void SetEarthPositionAngle(double epa) {VState.vLocation.SetEarthPositionAngle(epa);}
+
   void SetInertialOrientation(FGQuaternion Qi);
   void SetInertialVelocity(FGColumnVector3 Vi);
   void SetInertialRates(FGColumnVector3 vRates);
@@ -529,7 +535,6 @@ public:
     double RefRadius;
     double SemiMajor;
     double SemiMinor;
-    double EPA;
     double DeltaT;
   } in;
 

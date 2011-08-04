@@ -41,20 +41,21 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <cstdlib>
+#include <iomanip>
+
 #include "FGScript.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGXMLParse.h"
 #include "initialization/FGTrim.h"
-
-#include <iostream>
-#include <cstdlib>
-#include <iomanip>
+#include "models/FGInput.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.46 2011/02/18 12:44:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.47 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

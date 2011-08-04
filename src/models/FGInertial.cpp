@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.23 2011/07/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.24 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,7 +63,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   J2              = 1.0826266836E-03;   // WGS84 value for J2
   a               = 20925646.3255;      // WGS84 semimajor axis length in feet 
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
-  earthPosAngle   = 0.0;
 
   // Lunar defaults
   /*
@@ -74,7 +73,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   J2              = 2.033542482111609E-4; // value for J2
   a               = 5702559.05;           // semimajor axis length in feet 
   b               = 5695439.63;           // semiminor axis length in feet
-  earthPosAngle   = 0.0;
   */
 
   vOmegaPlanet = FGColumnVector3( 0.0, 0.0, RotationRate );
@@ -97,8 +95,6 @@ FGInertial::~FGInertial(void)
 
 bool FGInertial::InitModel(void)
 {
-  earthPosAngle   = 0.0;
-
   return true;
 }
 
@@ -114,7 +110,6 @@ bool FGInertial::Run(bool Holding)
 
   // Gravitation accel
   gAccel = GetGAccel(in.Radius);
-  earthPosAngle += in.DeltaT * RotationRate;
 
   RunPostFunctions();
 
@@ -160,7 +155,6 @@ FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
 
 void FGInertial::bind(void)
 {
-  PropertyManager->Tie("position/epa-rad", this, &FGInertial::GetEarthPositionAngle);
   PropertyManager->Tie("inertial/sea-level-radius_ft", this, &FGInertial::GetRefRadius);
 }
 
