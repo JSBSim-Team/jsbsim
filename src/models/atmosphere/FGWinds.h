@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.2 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.3 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -219,9 +219,9 @@ public:
   virtual int    GetProbabilityOfExceedence() const { return probability_of_exceedence_index;}
 
   struct Inputs {
-    double wingspan;
-    double HOverBMAC;
     double V;
+    double wingspan;
+    double DistanceAGL;
     double AltitudeASL;
     FGMatrix33 Tl2b;
   } in;

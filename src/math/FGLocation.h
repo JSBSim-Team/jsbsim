@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.27 2010/11/29 12:33:58 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.28 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.27 2010/11/29 12:33:58 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.28 2011/08/04 12:46:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,6 +229,13 @@ public:
                  respect to the Inertial (ECI) frame in radians. */
   void SetEarthPositionAngle(double EPA) {epa = EPA; mCacheValid = false;}
 
+  /** Increments the Earth position angle.
+      This is the relative orientation of the ECEF frame with respect to the
+      Inertial frame.
+      @param delta delta to the Earth fixed frame (ECEF) rotation offset about the axis with
+                 respect to the Inertial (ECI) frame in radians. */
+  void IncrementEarthPositionAngle(double delta) {epa += delta; mCacheValid = false;}
+
   /** Get the longitude.
       @return the longitude in rad of the location represented with this
       class instance. The returned values are in the range between
@@ -289,6 +296,8 @@ public:
     else
       return -mTec2l(3,3)/cLat;
   }
+
+  double GetEPA() const {return epa;}
 
   /** Get the distance from the center of the earth.
       @return the distance of the location represented with this class

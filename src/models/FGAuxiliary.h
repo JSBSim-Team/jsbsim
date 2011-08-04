@@ -41,13 +41,14 @@ INCLUDES
 
 #include "FGModel.h"
 #include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
 #include "math/FGLocation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.21 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.22 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.21 2011/07/10 20:18:14 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.22 2011/08/04 12:46:32 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,6 +187,16 @@ public:
                                        else return BadUnits(); }
   double GetMagBeta (int unit) const { if (unit == inDegrees) return fabs(beta)*radtodeg;
                                        else return BadUnits(); }
+
+  /** Calculates and returns the wind-to-body axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
+      */
+  FGMatrix33& GetTw2b(void);
+
+  /** Calculates and returns the body-to-wind axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
+      */
+  FGMatrix33& GetTb2w(void);
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
@@ -281,6 +292,9 @@ public:
 private:
   double vcas, veas;
   double pt, tat, tatc; // Don't add a getter for pt!
+
+  FGMatrix33 mTw2b;
+  FGMatrix33 mTb2w;
 
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vPilotAccelN;

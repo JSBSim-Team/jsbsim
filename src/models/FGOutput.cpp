@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.57 2011/07/17 13:51:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.58 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -480,7 +480,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << ((FGColumnVector3)Propagate->GetInertialPosition()).Dump(delimeter) << delimeter;
     outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;
     outstream.precision(14);
-    outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;
+    outstream << Propagate->GetEarthPositionAngleDeg() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << Propagate->GetTerrainElevation();
     outstream.precision(10);

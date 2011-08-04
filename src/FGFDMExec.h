@@ -44,8 +44,6 @@ INCLUDES
 #include <vector>
 #include <string>
 
-#include "models/FGOutput.h"
-#include "models/FGInput.h"
 #include "initialization/FGTrim.h"
 #include "FGJSBBase.h"
 #include "input_output/FGPropertyManager.h"
@@ -58,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.69 2011/07/18 04:37:34 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.70 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +181,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.69 $
+    @version $Revision: 1.70 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,9 +224,24 @@ public:
   /// Default destructor
   ~FGFDMExec();
 
-  enum eModels { ePropagate, eInput, eAtmosphere, eWinds, eAuxiliary, eSystems,
-                 ePropulsion, eAerodynamics, eGroundReactions, eExternalReactions,
-                 eBuoyantForces, eMassBalance, eAircraft, eInertial, eAccelerations };
+  // This list of enums is very important! The order in which models are listed here
+  // determines the order of execution of the models.
+  enum eModels { ePropagate=0,
+                 eInput,
+                 eInertial,
+                 eAtmosphere,
+                 eWinds,
+                 eAuxiliary,
+                 eSystems,
+                 ePropulsion,
+                 eAerodynamics,
+                 eGroundReactions,
+                 eExternalReactions,
+                 eBuoyantForces,
+                 eMassBalance,
+                 eAircraft,
+                 eAccelerations,
+                 eNumStandardModels };
 
   /** Unbind all tied JSBSim properties. */
   void Unbind(void) {instance->Unbind();}
@@ -242,8 +255,9 @@ public:
       one is at this time not recommended.
       @param model A pointer to the model being scheduled.
       @param rate The rate at which to execute the model as described above.
+                  Default is every frame (rate=1).
       @return Currently returns 0 always. */
-  void Schedule(FGModel* model, int rate);
+  void Schedule(FGModel* model, int rate=1);
 
   /** This function executes each scheduled model in succession.
       @return true if successful, false if sim should be ended  */
@@ -315,35 +329,35 @@ public:
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
   /// Returns the FGAtmosphere pointer.
-  FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
+  FGAtmosphere* GetAtmosphere(void)    {return (FGAtmosphere*)Models[eAtmosphere];}
   /// Returns the FGAccelerations pointer.
-  FGAccelerations* GetAccelerations(void)    {return Accelerations;}
+  FGAccelerations* GetAccelerations(void)    {return (FGAccelerations*)Models[eAccelerations];}
   /// Returns the FGWinds pointer.
-  FGWinds* GetWinds(void)    {return Winds;}
+  FGWinds* GetWinds(void)    {return (FGWinds*)Models[eWinds];}
   /// Returns the FGFCS pointer.
-  FGFCS* GetFCS(void)                  {return FCS;}
+  FGFCS* GetFCS(void)                  {return (FGFCS*)Models[eSystems];}
   /// Returns the FGPropulsion pointer.
-  FGPropulsion* GetPropulsion(void)    {return Propulsion;}
+  FGPropulsion* GetPropulsion(void)    {return (FGPropulsion*)Models[ePropulsion];}
   /// Returns the FGAircraft pointer.
-  FGMassBalance* GetMassBalance(void)  {return MassBalance;}
+  FGMassBalance* GetMassBalance(void)  {return (FGMassBalance*)Models[eMassBalance];}
   /// Returns the FGAerodynamics pointer
-  FGAerodynamics* GetAerodynamics(void){return Aerodynamics;}
+  FGAerodynamics* GetAerodynamics(void){return (FGAerodynamics*)Models[eAerodynamics];}
   /// Returns the FGInertial pointer.
-  FGInertial* GetInertial(void)        {return Inertial;}
+  FGInertial* GetInertial(void)        {return (FGInertial*)Models[eInertial];}
   /// Returns the FGGroundReactions pointer.
-  FGGroundReactions* GetGroundReactions(void) {return GroundReactions;}
+  FGGroundReactions* GetGroundReactions(void) {return (FGGroundReactions*)Models[eGroundReactions];}
   /// Returns the FGExternalReactions pointer.
-  FGExternalReactions* GetExternalReactions(void) {return ExternalReactions;}
+  FGExternalReactions* GetExternalReactions(void) {return (FGExternalReactions*)Models[eExternalReactions];}
   /// Returns the FGBuoyantForces pointer.
-  FGBuoyantForces* GetBuoyantForces(void) {return BuoyantForces;}
+  FGBuoyantForces* GetBuoyantForces(void) {return (FGBuoyantForces*)Models[eBuoyantForces];}
   /// Returns the FGAircraft pointer.
-  FGAircraft* GetAircraft(void)        {return Aircraft;}
+  FGAircraft* GetAircraft(void)        {return (FGAircraft*)Models[eAircraft];}
   /// Returns the FGPropagate pointer.
-  FGPropagate* GetPropagate(void)      {return Propagate;}
+  FGPropagate* GetPropagate(void)      {return (FGPropagate*)Models[ePropagate];}
   /// Returns the FGAuxiliary pointer.
-  FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
+  FGAuxiliary* GetAuxiliary(void)      {return (FGAuxiliary*)Models[eAuxiliary];}
   /// Returns the FGInput pointer.
-  FGInput* GetInput(void)              {return Input;}
+  FGInput* GetInput(void)              {return (FGInput*)Models[eInput];}
   /// Returns the FGGroundCallback pointer.
   FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
   /// Retrieves the script object
@@ -418,19 +432,12 @@ public:
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
-  bool SetOutputFileName(const string& fname) {
-    if (Outputs.size() > 0) Outputs[0]->SetOutputFileName(fname);
-    else return false;
-    return true;
-  }
+  bool SetOutputFileName(const string& fname);
 
   /** Retrieves the current output filename.
       @return the name of the output file for the first output specified by the flight model.
               If none is specified, the empty string is returned. */
-  string GetOutputFileName(void) {
-    if (Outputs.size() > 0) return Outputs[0]->GetOutputFileName();
-    else return string("");
-  }
+  string GetOutputFileName(void);
 
   /** Executes trimming in the selected mode.
   *   @param mode Specifies how to trim:
@@ -560,25 +567,26 @@ private:
   string Release;
   string RootDir;
 
+  // Standard Model pointers - shortcuts for internal executive use only.
+  FGPropagate* Propagate;
+  FGInertial* Inertial;
+  FGAtmosphere* Atmosphere;
+  FGWinds* Winds;
+  FGAuxiliary* Auxiliary;
+  FGFCS* FCS;
+  FGPropulsion* Propulsion;
+  FGAerodynamics* Aerodynamics;
+  FGGroundReactions* GroundReactions;
+  FGExternalReactions* ExternalReactions;
+  FGBuoyantForces* BuoyantForces;
+  FGMassBalance* MassBalance;
+  FGAircraft* Aircraft;
+  FGAccelerations* Accelerations;
+
   bool trim_status;
   int ta_mode;
 
   FGGroundCallback*   GroundCallback;
-  FGAtmosphere*       Atmosphere;
-  FGAccelerations*    Accelerations;
-  FGWinds*            Winds;
-  FGFCS*              FCS;
-  FGPropulsion*       Propulsion;
-  FGMassBalance*      MassBalance;
-  FGAerodynamics*     Aerodynamics;
-  FGInertial*         Inertial;
-  FGGroundReactions*  GroundReactions;
-  FGExternalReactions* ExternalReactions;
-  FGBuoyantForces*    BuoyantForces;
-  FGAircraft*         Aircraft;
-  FGPropagate*        Propagate;
-  FGAuxiliary*        Auxiliary;
-  FGInput*            Input;
   FGScript*           Script;
   FGInitialCondition* IC;
   FGTrim*             Trim;

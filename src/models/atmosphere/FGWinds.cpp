@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.2 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.3 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,8 +224,8 @@ void FGWinds::Turbulence(double h)
     // Vertical component of turbulence.
     vTurbulenceNED(3) = sinewave * max_vs * TurbGain * Rhythmicity;
     vTurbulenceNED(3)+= delta;
-    if (in.HOverBMAC < 3.0)
-        vTurbulenceNED(3) *= in.HOverBMAC * 0.3333;
+    if (in.DistanceAGL/in.wingspan < 3.0)
+        vTurbulenceNED(3) *= in.DistanceAGL/in.wingspan * 0.3333;
  
     // Yaw component of turbulence.
     vTurbulenceNED(1) = sin( delta * 3.0 );

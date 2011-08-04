@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.18 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.19 2011/08/04 12:46:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,20 +87,15 @@ public:
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
   FGColumnVector3 GetOmegaPlanet() const {return vOmegaPlanet;}
-  double GetEarthPositionAngle(void) const { return earthPosAngle; }
-  double GetEarthPositionAngleDeg(void) const { return earthPosAngle*radtodeg;}
   double GetGAccel(double r) const;
   FGColumnVector3 GetGravityJ2(FGColumnVector3 position) const;
   double GetRefRadius(void) const {return RadiusReference;}
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
 
-  void SetEarthPositionAngle(double epa) {earthPosAngle = epa;}
-
   struct Inputs {
     double Radius;
     double Latitude;
-    double DeltaT;
   } in;
 
 private:

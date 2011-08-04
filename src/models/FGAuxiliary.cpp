@@ -40,16 +40,17 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+
 #include "FGAuxiliary.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
-#include <iostream>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.51 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.52 2011/08/04 12:46:32 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,7 +239,7 @@ bool FGAuxiliary::Run(bool Holding)
     Nz = -vPilotAccel(eZ) / in.SLGravity;
   }
 
-  vNwcg = in.Tb2w * vNcg;
+  vNwcg = mTb2w * vNcg;
   vNwcg(eZ) = 1.0 - vNwcg(eZ);
 
   vPilotAccelN = vPilotAccel / in.SLGravity;
@@ -258,6 +259,68 @@ bool FGAuxiliary::Run(bool Holding)
   RunPostFunctions();
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// From Stevens and Lewis, "Aircraft Control and Simulation", 3rd Ed., the
+// transformation from body to wind axes is defined (where "a" is alpha and "B"
+// is beta):
+//
+//   cos(a)*cos(B)     sin(B)    sin(a)*cos(B)
+//  -cos(a)*sin(B)     cos(B)   -sin(a)*sin(B)
+//  -sin(a)              0       cos(a)
+//
+// The transform from wind to body axes is then,
+//
+//   cos(a)*cos(B)  -cos(a)*sin(B)  -sin(a)
+//          sin(B)          cos(B)     0
+//   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
+
+FGMatrix33& FGAuxiliary::GetTw2b(void)
+{
+  double ca, cb, sa, sb;
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTw2b(1,1) =  ca*cb;
+  mTw2b(1,2) = -ca*sb;
+  mTw2b(1,3) = -sa;
+  mTw2b(2,1) =  sb;
+  mTw2b(2,2) =  cb;
+  mTw2b(2,3) =  0.0;
+  mTw2b(3,1) =  sa*cb;
+  mTw2b(3,2) = -sa*sb;
+  mTw2b(3,3) =  ca;
+
+  return mTw2b;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGMatrix33& FGAuxiliary::GetTb2w(void)
+{
+  double ca, cb, sa, sb;
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTb2w(1,1) = ca*cb;
+  mTb2w(1,2) = sb;
+  mTb2w(1,3) = sa*cb;
+  mTb2w(2,1) = -ca*sb;
+  mTb2w(2,2) = cb;
+  mTb2w(2,3) = -sa*sb;
+  mTb2w(3,1) = -sa;
+  mTb2w(3,2) = 0.0;
+  mTb2w(3,3) = ca;
+
+  return mTb2w;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +364,7 @@ double FGAuxiliary::GetNlf(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAuxiliary::CalculateRelativePosition(void)
+void FGAuxiliary::CalculateRelativePosition(void)  //ToDo: This belongs elsewhere - perhaps in FGPropagate or Exec
 { 
   const double earth_radius_mt = in.ReferenceRadius*fttom;
   lat_relative_position=(in.Latitude  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
