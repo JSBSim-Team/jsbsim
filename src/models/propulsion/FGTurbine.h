@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.21 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.22 2011/08/04 13:45:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -150,7 +150,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.21 2011/07/28 12:48:19 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.22 2011/08/04 13:45:42 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ public:
       @param Executive pointer to executive structure
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number  */
-  FGTurbine(FGFDMExec* Executive, Element *el, int engine_number, const struct Inputs& input);
+  FGTurbine(FGFDMExec* Executive, Element *el, int engine_number, struct Inputs& input);
   /// Destructor
   ~FGTurbine();
 

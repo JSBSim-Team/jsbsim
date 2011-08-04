@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.25 2011/08/03 03:21:06 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.26 2011/08/04 13:45:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,7 +113,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.25 2011/08/03 03:21:06 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.26 2011/08/04 13:45:42 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +126,7 @@ public:
   struct Inputs {
     double SLPressure;
     double Pressure;
+    double PressureRatio;
     double Temperature;
     double Density;
     double DensityRatio;
@@ -151,7 +152,7 @@ public:
     double TotalDeltaT;
   };
 
-  FGEngine(FGFDMExec* exec, Element* el, int engine_number, const struct Inputs& input);
+  FGEngine(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
@@ -216,7 +217,7 @@ public:
   virtual std::string GetEngineLabels(const std::string& delimiter) = 0;
   virtual std::string GetEngineValues(const std::string& delimiter) = 0;
 
-  const struct Inputs& in;
+  struct Inputs& in;
   void LoadThrusterInputs();
 
 protected:

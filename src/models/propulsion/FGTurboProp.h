@@ -47,7 +47,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.15 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.16 2011/08/04 13:45:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ public:
       @param Executive pointer to executive structure
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number*/
-  FGTurboProp(FGFDMExec* Executive, Element *el, int engine_number, const struct Inputs& input);
+  FGTurboProp(FGFDMExec* Executive, Element *el, int engine_number, struct Inputs& input);
   /// Destructor
   ~FGTurboProp();
 

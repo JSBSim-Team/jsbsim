@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.16 2011/08/03 03:21:06 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.17 2011/08/04 13:45:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.16 2011/08/03 03:21:06 jberndt Exp $
+    $Id: FGRocket.h,v 1.17 2011/08/04 13:45:42 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -136,7 +136,7 @@ public:
       @param exec pointer to JSBSim parent object, the FDM Executive.
       @param el a pointer to the XML Element instance representing the engine.
       @param engine_number engine number */
-  FGRocket(FGFDMExec* exec, Element *el, int engine_number, const struct FGEngine::Inputs& input);
+  FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine::Inputs& input);
 
   /** Destructor */
   ~FGRocket(void);
