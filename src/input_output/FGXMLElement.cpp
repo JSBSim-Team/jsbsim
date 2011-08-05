@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.32 2011/02/13 00:42:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.33 2011/08/05 12:28:20 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -64,6 +64,8 @@ Element::Element(const string& nm)
     // Length
     convert["M"]["FT"] = 3.2808399;
     convert["FT"]["M"] = 1.0/convert["M"]["FT"];
+    convert["CM"]["FT"] = 0.032808399;
+    convert["FT"]["CM"] = 1.0/convert["CM"]["FT"];
     convert["KM"]["FT"] = 3280.8399;
     convert["FT"]["KM"] = 1.0/convert["KM"]["FT"];
     convert["FT"]["IN"] = 12.0;
@@ -73,6 +75,8 @@ Element::Element(const string& nm)
     // Area
     convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
     convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
+    convert["CM2"]["FT2"] = convert["CM"]["FT"]*convert["CM"]["FT"];
+    convert["FT2"]["CM2"] = 1.0/convert["CM2"]["FT2"];
     convert["M2"]["IN2"] = convert["M"]["IN"]*convert["M"]["IN"];
     convert["IN2"]["M2"] = 1.0/convert["M2"]["IN2"];
     convert["FT2"]["IN2"] = 144.0;

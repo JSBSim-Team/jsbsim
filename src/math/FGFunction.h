@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.22 2011/07/27 04:31:25 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.23 2011/08/05 12:03:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,6 +86,17 @@ A function definition consists of an operation, a value, a table, or a property
 - avg (takes n args)
 - fraction
 - mod
+- lt (less than, takes 2 args)
+- le (less equal, takes 2 args)
+- gt (greater than, takes 2 args)
+- ge (greater than, takes 2 args)
+- eq (equal, takes 2 args)
+- nq (not equal, takes 2 args)
+- and (takes n args)
+- or (takes n args)
+- not (takes 1 args)
+- if-then (takes 2-3 args)
+- switch (takes 2 or more args)
 - random (Gaussian random number)
 - integer
 
@@ -198,49 +209,61 @@ private:
   bool cached;
   double invlog2val;
   std::string Prefix;
-  std::string description_string;
-  std::string property_string;
-  std::string value_string;
-  std::string table_string;
-  std::string p_string;
-  std::string v_string;
-  std::string t_string;
-  std::string function_string;
-  std::string sum_string;
-  std::string difference_string;
-  std::string product_string;
-  std::string quotient_string;
-  std::string pow_string;
-  std::string exp_string;
-  std::string log2_string;
-  std::string ln_string;
-  std::string log10_string;
-  std::string abs_string;
-  std::string sin_string;
-  std::string cos_string;
-  std::string tan_string;
-  std::string asin_string;
-  std::string acos_string;
-  std::string atan_string;
-  std::string atan2_string;
-  std::string min_string;
-  std::string max_string;
-  std::string avg_string;
-  std::string fraction_string;
-  std::string mod_string;
-  std::string random_string;
-  std::string integer_string;
-  std::string rotation_alpha_local_string;
-  std::string rotation_beta_local_string;
-  std::string rotation_gamma_local_string;
-  std::string rotation_bf_to_wf_string;
-  std::string rotation_wf_to_bf_string;
+  static const std::string description_string;
+  static const std::string property_string;
+  static const std::string value_string;
+  static const std::string table_string;
+  static const std::string p_string;
+  static const std::string v_string;
+  static const std::string t_string;
+  static const std::string function_string;
+  static const std::string sum_string;
+  static const std::string difference_string;
+  static const std::string product_string;
+  static const std::string quotient_string;
+  static const std::string pow_string;
+  static const std::string exp_string;
+  static const std::string log2_string;
+  static const std::string ln_string;
+  static const std::string log10_string;
+  static const std::string abs_string;
+  static const std::string sin_string;
+  static const std::string cos_string;
+  static const std::string tan_string;
+  static const std::string asin_string;
+  static const std::string acos_string;
+  static const std::string atan_string;
+  static const std::string atan2_string;
+  static const std::string min_string;
+  static const std::string max_string;
+  static const std::string avg_string;
+  static const std::string fraction_string;
+  static const std::string mod_string;
+  static const std::string random_string;
+  static const std::string integer_string;
+  static const std::string rotation_alpha_local_string;
+  static const std::string rotation_beta_local_string;
+  static const std::string rotation_gamma_local_string;
+  static const std::string rotation_bf_to_wf_string;
+  static const std::string rotation_wf_to_bf_string;
+  static const std::string lessthan_string;
+  static const std::string lessequal_string;
+  static const std::string greatthan_string;
+  static const std::string greatequal_string;
+  static const std::string equal_string;
+  static const std::string notequal_string;
+  static const std::string and_string;
+  static const std::string or_string;
+  static const std::string not_string;
+  static const std::string ifthen_string;
+  static const std::string switch_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn,
-                     eLog10, eRotation_alpha_local, eRotation_beta_local,
-                     eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf,} Type;
+                     eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
+                     eIfThen, eSwitch, eRotation_alpha_local, eRotation_beta_local,
+                     eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf} Type;
   std::string Name;
   void bind(void);
   void Debug(int from);

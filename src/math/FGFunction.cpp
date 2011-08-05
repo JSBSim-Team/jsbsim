@@ -43,12 +43,63 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.38 2011/07/27 12:59:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.39 2011/08/05 12:03:01 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+const std::string FGFunction::property_string = "property";
+const std::string FGFunction::value_string = "value";
+const std::string FGFunction::table_string = "table";
+const std::string FGFunction::p_string = "p";
+const std::string FGFunction::v_string = "v";
+const std::string FGFunction::t_string = "t";
+
+const std::string FGFunction::function_string = "function";
+const std::string FGFunction::description_string = "description";
+const std::string FGFunction::sum_string = "sum";
+const std::string FGFunction::difference_string = "difference";
+const std::string FGFunction::product_string = "product";
+const std::string FGFunction::quotient_string = "quotient";
+const std::string FGFunction::pow_string = "pow";
+const std::string FGFunction::exp_string = "exp";
+const std::string FGFunction::log2_string = "log2";
+const std::string FGFunction::ln_string = "ln";
+const std::string FGFunction::log10_string = "log10";
+const std::string FGFunction::abs_string = "abs";
+const std::string FGFunction::sin_string = "sin";
+const std::string FGFunction::cos_string = "cos";
+const std::string FGFunction::tan_string = "tan";
+const std::string FGFunction::asin_string = "asin";
+const std::string FGFunction::acos_string = "acos";
+const std::string FGFunction::atan_string = "atan";
+const std::string FGFunction::atan2_string = "atan2";
+const std::string FGFunction::min_string = "min";
+const std::string FGFunction::max_string = "max";
+const std::string FGFunction::avg_string = "avg";
+const std::string FGFunction::fraction_string = "fraction";
+const std::string FGFunction::mod_string = "mod";
+const std::string FGFunction::random_string = "random";
+const std::string FGFunction::integer_string = "integer";
+const std::string FGFunction::rotation_alpha_local_string = "rotation_alpha_local";
+const std::string FGFunction::rotation_beta_local_string = "rotation_beta_local";
+const std::string FGFunction::rotation_gamma_local_string = "rotation_gamma_local";
+const std::string FGFunction::rotation_bf_to_wf_string = "rotation_bf_to_wf";
+const std::string FGFunction::rotation_wf_to_bf_string = "rotation_wf_to_bf";
+
+const std::string FGFunction::lessthan_string = "lt";
+const std::string FGFunction::lessequal_string = "le";
+const std::string FGFunction::greatthan_string = "gt";
+const std::string FGFunction::greatequal_string = "ge";
+const std::string FGFunction::equal_string = "eq";
+const std::string FGFunction::notequal_string = "nq";
+const std::string FGFunction::and_string = "and";
+const std::string FGFunction::or_string = "or";
+const std::string FGFunction::not_string = "not";
+const std::string FGFunction::ifthen_string = "ifthen";
+const std::string FGFunction::switch_string = "switch";
 
 FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& prefix)
                                       : PropertyManager(propMan), Prefix(prefix)
@@ -58,45 +109,6 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   cached = false;
   cachedValue = -HUGE_VAL;
   invlog2val = 1.0/log10(2.0);
-
-  property_string = "property";
-  value_string = "value";
-  table_string = "table";
-  p_string = "p";
-  v_string = "v";
-  t_string = "t";
-
-  function_string = "function";
-  description_string = "description";
-  sum_string = "sum";
-  difference_string = "difference";
-  product_string = "product";
-  quotient_string = "quotient";
-  pow_string = "pow";
-  exp_string = "exp";
-  log2_string = "log2";
-  ln_string = "ln";
-  log10_string = "log10";
-  abs_string = "abs";
-  sin_string = "sin";
-  cos_string = "cos";
-  tan_string = "tan";
-  asin_string = "asin";
-  acos_string = "acos";
-  atan_string = "atan";
-  atan2_string = "atan2";
-  min_string = "min";
-  max_string = "max";
-  avg_string = "avg";
-  fraction_string = "fraction";
-  mod_string = "mod";
-  random_string = "random";
-  integer_string = "integer";
-  rotation_alpha_local_string = "rotation_alpha_local";
-  rotation_beta_local_string = "rotation_beta_local";
-  rotation_gamma_local_string = "rotation_gamma_local";
-  rotation_bf_to_wf_string = "rotation_bf_to_wf";
-  rotation_wf_to_bf_string = "rotation_wf_to_bf";
 
   Name = el->GetAttributeValue("name");
   operation = el->GetName();
@@ -161,6 +173,28 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eRotation_bf_to_wf;
   } else if (operation == rotation_wf_to_bf_string) {
     Type = eRotation_wf_to_bf;
+  } else if (operation == lessthan_string) {
+    Type = eLT;
+  } else if (operation == lessequal_string) {
+    Type = eLE;
+  } else if (operation == greatthan_string) {
+    Type = eGT;
+  } else if (operation == greatequal_string) {
+    Type = eGE;
+  } else if (operation == equal_string) {
+    Type = eEQ;
+  } else if (operation == notequal_string) {
+    Type = eNE;
+  } else if (operation == and_string) {
+    Type = eAND;
+  } else if (operation == or_string) {
+    Type = eOR;
+  } else if (operation == not_string) {
+    Type = eNOT;
+  } else if (operation == ifthen_string) {
+    Type = eIfThen;
+  } else if (operation == switch_string) {
+    Type = eSwitch;
   } else if (operation != description_string) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -230,7 +264,18 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == rotation_beta_local_string||
                operation == rotation_gamma_local_string||
                operation == rotation_bf_to_wf_string||
-               operation == rotation_wf_to_bf_string)
+               operation == rotation_wf_to_bf_string ||
+               operation == lessthan_string ||
+               operation == lessequal_string ||
+               operation == greatthan_string ||
+               operation == greatequal_string ||
+               operation == equal_string ||
+               operation == notequal_string ||
+               operation == and_string ||
+               operation == or_string ||
+               operation == not_string ||
+               operation == ifthen_string ||
+               operation == switch_string)
     {
       Parameters.push_back(new FGFunction(PropertyManager, element, Prefix));
     } else if (operation != description_string) {
@@ -369,6 +414,74 @@ double FGFunction::GetValue(void) const
     break;
   case eRandom:
     temp = GaussianRandomNumber();
+    break;
+  case eLT:
+    temp = (temp < Parameters[1]->GetValue())?1:0;
+    break;
+  case eLE:
+    temp = (temp <= Parameters[1]->GetValue())?1:0;
+    break;
+  case eGT:
+    temp = (temp > Parameters[1]->GetValue())?1:0;
+    break;
+  case eGE:
+    temp = (temp >= Parameters[1]->GetValue())?1:0;
+    break;
+  case eEQ:
+    temp = (temp == Parameters[1]->GetValue())?1:0;
+    break;
+  case eNE:
+    temp = (temp != Parameters[1]->GetValue())?1:0;
+    break;
+  case eAND:
+    {
+      bool flag = (int(temp+0.5) != 0);
+      for (i=1; i<Parameters.size() && flag; i++) {
+        flag = (int(Parameters[i]->GetValue()+0.5) != 0);
+      }
+      temp = flag ? 1 : 0;
+    }
+    break;
+  case eOR:
+    {
+      bool flag = (int(temp+0.5) != 0);
+      for (i=1; i<Parameters.size() && !flag; i++) {
+        flag = (int(Parameters[i]->GetValue()+0.5) != 0);
+      }
+      temp = flag ? 1 : 0;
+    }
+    break;
+  case eNOT:
+    temp = (int(temp+0.5) != 0) ? 0 : 1;
+    break;
+  case eIfThen:
+    {
+      i = Parameters.size();
+      if (int(temp+0.5) != 0) {
+        if (i >= 2u) {
+          temp = Parameters[1]->GetValue();
+        } else {
+          temp = 0.0;
+        }
+      } else {
+        if (i >= 3u) {
+          temp = Parameters[2]->GetValue();
+        } else {
+          temp = 0.0;
+        }
+      }
+    }
+    break;
+  case eSwitch:
+    {
+      int n = Parameters.size()-1;
+      i = int(temp+0.5);
+      if (i >=0 && i < n) {
+        temp = Parameters[i+1]->GetValue();
+      } else {
+        temp = 0.0;
+      }
+    }
     break;
   case eRotation_alpha_local:
     if (Parameters.size()==6) // calculates local angle of attack for skydiver body component

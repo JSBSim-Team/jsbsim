@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.34 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.35 2011/08/04 13:45:42 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, const struct Inputs& input)
+FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
   : FGEngine(exec, el, engine_number, input)
 {
   Type = etTurbine;

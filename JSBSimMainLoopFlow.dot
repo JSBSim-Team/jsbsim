@@ -3,26 +3,37 @@
 digraph G {
   rankdir = LR;
   ranksep=1.3;
-//  size = "17, 11";
+  // size = "17, 11";
   concentrate=true;
 
   {
     node [shape = box, fillcolor=grey, style=filled, group=model];
-    Input; Atmosphere; Winds; "Control Systems"; 
-    Propulsion; MassBalance; Aerodynamics; Inertial;
-    GroundReactions; ExternalReactions; BuoyantForces;
-    Aircraft; Accelerations; Propagate [fillcolor=red]; Auxiliary; Output;
-  }
-  
+    Propagate [fillcolor=red];
+    Input;
+    Inertial [fillcolor=green];
+    Atmosphere [fillcolor=green];
+    Winds [fillcolor=green];
+    "Control Systems"; 
+    Propulsion [fillcolor=gold];
+    MassBalance;
+    Aerodynamics [fillcolor=gold]; 
+    GroundReactions [fillcolor=gold];
+    ExternalReactions [fillcolor=gold];
+    BuoyantForces [fillcolor=gold];
+    Aircraft;
+    Accelerations;
+    Auxiliary;
+    Output;
+  };
+
   Executive  [shape = box, fillcolor=yellow, style=filled];
   
   /* Order of execution of main loop models */
-
-
   {
   node [shape = box, fillcolor=grey, style=filled, group=model];
   Propagate ->
   Input ->  
+  Inertial ->
   Atmosphere ->
   Winds ->
   Auxiliary ->
@@ -34,30 +45,39 @@ digraph G {
   BuoyantForces ->
   MassBalance ->
   Aircraft ->
-  Inertial ->
   Accelerations->
   Output [color=blue, style=bold];
   }
-
+  /*
+  subgraph cluster0 {
+    label="Environment Models";
+    Atmosphere;
+    Winds;
+    Inertial;
+  };
+  
+  subgraph cluster1 {
+    label="Force Models";
+    Propulsion; Aerodynamics; GroundReactions; ExternalReactions; BuoyantForces;
+  };
+  */
   {
     node [shape=plaintext];
     AltitudeASL;
-    HOverBMAC;
     Tl2b;
     Tb2l;
     Ti2b;
     Tb2i;
     Tec2b;
     Tb2w;
+    Tw2b;
     Vtotal;
     RadiusToVehicle;
     Latitude;
     "Delta T";
     Mass;
     Weight;
-    Tb2w;
     Force_w;
-    EPA;
     Forces;
     Gravity;
     GravityJ2;
@@ -82,6 +102,8 @@ digraph G {
     Psi;
     ThrottlePos;
     MixturePos;
+    ThrottleCmd;
+    MixtureCmd;
     PropAdvance;
     PropFeather;
 }
@@ -89,7 +111,7 @@ digraph G {
 {
     node [shape=plaintext];
     rank=same;
-    GroundReactions;
+//    GroundReactions;
     PQRdot;
     PQRidot;
     UVWdot;
@@ -98,27 +120,10 @@ digraph G {
 }
 {
     rank=same;
-    Executive;
+ //   Executive;
     Propagate;
-//    Input;
-    Atmosphere;
+    Input;
 }
-/*{
-    rank=same;
-//    MassBalance;
-    Aircraft
-    Inertial;
-    Accelerations;
-//    Output;
-}*/
-/*{
-    rank=same;
-//    Propulsion;
-    Aerodynamics;
-    GroundReactions;
-    ExternalReactions;
-    BuoyantForces;
-}*/
 {
     rank=same;
     PQRi;
@@ -144,7 +149,6 @@ digraph G {
 {
     node [shape=plaintext];
     rank=same;
-    // ExternalReactions [shape = box, fillcolor=grey, style=filled, group=model];
     Alpha;
     Beta;
     qbar;
@@ -159,7 +163,6 @@ digraph G {
 {
     node [shape=plaintext];
     rank=same;
-    // Aerodynamics [shape = box, fillcolor=grey, style=filled, group=model];
     TotalWindNED;
     TurbPQR;
     WindPsi;
@@ -175,16 +178,16 @@ digraph G {
 {
     node [shape=plaintext];
     rank=same;
-    "Aero Forces";
-    "Prop Forces";
-    "Ground Forces";
-    "External Forces";
     "Buoyant Forces";
-    "Aero Moments";
-    "Prop Moments";
-    "Ground Moments";
-    "External Moments";
     "Buoyant Moments";
+    "External Forces";
+    "External Moments";
+    "Ground Forces";
+    "Ground Moments";
+    "Aero Forces";
+    "Aero Moments";
+    "Prop Forces";
+    "Prop Moments";
 }
 {
     node [shape=plaintext];
@@ -203,15 +206,14 @@ digraph G {
   Accelerations -> PQRidot -> Propagate [color=orange, style=bold];
   Accelerations -> Quaterniondot -> Propagate [color=orange, style=bold];
   Accelerations -> UVWidot -> Propagate [color=orange, style=bold];
-  Inertial -> EPA -> Propagate [color=orange, style=bold];
   Executive -> "Delta T" -> Propagate;
 
   // Atmosphere & Winds
   Propagate -> AltitudeASL -> Atmosphere;
-  Propagate -> AltitudeASL -> Winds;
 
   // Winds
-  Auxiliary -> HOverBMAC -> Winds [color=orange, style=bold];
+  Propagate -> AltitudeASL -> Winds;
+  Propagate -> DistanceAGL -> Winds;
   Propagate -> Tl2b -> Winds;
   Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
 
@@ -224,19 +226,18 @@ digraph G {
   Atmosphere -> SoundSpeed -> Auxiliary;
   Atmosphere -> KinematicViscosity -> Auxiliary;
   Propagate -> DistanceAGL -> Auxiliary;
-  MassBalance -> Mass -> Auxiliary [color=orange, style=bold];
+  MassBalance -> Mass -> Auxiliary;
   Propagate -> Tl2b -> Auxiliary;
   Propagate -> Tb2l ->Auxiliary;
-  Aerodynamics -> Tb2w -> Auxiliary [color=orange, style=bold];
   Propagate -> PQR -> Auxiliary;
-  Accelerations -> PQRdot -> Auxiliary [color=orange, style=bold];
+  Accelerations -> PQRdot -> Auxiliary;
   Propagate -> UVW -> Auxiliary;
-  Accelerations -> UVWdot -> Auxiliary [color=orange, style=bold];
+  Accelerations -> UVWdot -> Auxiliary;
   Propagate -> VelocityNED -> Auxiliary;
   Propagate -> BodyAccel -> Auxiliary;
-  MassBalance -> EyePtBody -> Auxiliary [color=orange, style=bold];
-  MassBalance -> VRPBody -> Auxiliary [color=orange, style=bold];
-  MassBalance -> RPBody -> Auxiliary [color=orange, style=bold];
+  MassBalance -> EyePtBody -> Auxiliary;
+  MassBalance -> VRPBody -> Auxiliary;
+  MassBalance -> RPBody -> Auxiliary;
   Aerodynamics -> Force_w -> Auxiliary [color=orange, style=bold];
   Propagate -> Location -> Auxiliary;
   Propagate -> Latitude -> Auxiliary;
@@ -252,31 +253,37 @@ digraph G {
   Winds -> Vwind -> Auxiliary;
 
   // Propulsion
-  Atmosphere -> PressureSL -> Propulsion
-  Atmosphere -> Pressure -> Propulsion
-  Atmosphere -> Temperature -> Propulsion
-  Atmosphere -> Density -> Propulsion
-  Atmosphere -> DensityRatio -> Propulsion
-  Atmosphere -> SoundSpeed -> Propulsion
-  Auxiliary -> TotalPressure -> Propulsion
-  Auxiliary -> TotalTemperature -> Propulsion
-  Auxiliary -> Vcalibrated -> Propulsion
-  Auxiliary -> Vtotal -> Propulsion
-  Auxiliary -> qbar -> Propulsion
-  Auxiliary -> Alpha -> Propulsion
-  Auxiliary -> Beta -> Propulsion
-  Auxiliary -> TAT -> Propulsion
-  Auxiliary -> AeroUVW -> Propulsion
-  Auxiliary -> AeroPQR -> Propulsion
-  Executive -> "Delta T" -> Propulsion
-  "Control Systems" -> ThrottlePos -> Propulsion
-  "Control Systems" -> MixturePos -> Propulsion
-  "Control Systems" -> PropAdvance -> Propulsion
-  "Control Systems" -> PropFeather -> Propulsion
+  Atmosphere -> PressureSL -> Propulsion;
+  Atmosphere -> Pressure -> Propulsion;
+  Atmosphere -> Temperature -> Propulsion;
+  Atmosphere -> Density -> Propulsion;
+  Atmosphere -> DensityRatio -> Propulsion;
+  Atmosphere -> SoundSpeed -> Propulsion;
+  Auxiliary -> TotalPressure -> Propulsion;
+  Auxiliary -> TotalTemperature -> Propulsion;
+  Auxiliary -> Vcalibrated -> Propulsion;
+  Auxiliary -> Vtotal -> Propulsion;
+  Auxiliary -> qbar -> Propulsion;
+  Auxiliary -> Alpha -> Propulsion;
+  Auxiliary -> Beta -> Propulsion;
+  Auxiliary -> TAT -> Propulsion;
+  Auxiliary -> AeroUVW -> Propulsion;
+  Auxiliary -> AeroPQR -> Propulsion;
+  Executive -> "Delta T" -> Propulsion;
+  "Control Systems" -> ThrottlePos -> Propulsion;
+  "Control Systems" -> MixturePos -> Propulsion;
+  "Control Systems" -> ThrottleCmd -> Propulsion;
+  "Control Systems" -> MixtureCmd -> Propulsion;
+  "Control Systems" -> PropAdvance -> Propulsion;
+  "Control Systems" -> PropFeather -> Propulsion;
+  Propagate -> DistanceAGL -> Propulsion;
+  Propagate -> PQR -> Propulsion;
 
   // Aerodynamics
   Auxiliary -> Alpha -> Aerodynamics;
   Auxiliary -> Beta -> Aerodynamics;
+  Auxiliary -> Tb2w -> Aerodynamics;
+  Auxiliary -> Tw2b -> Aerodynamics;
   Auxiliary -> qbar -> Aerodynamics;
   Auxiliary -> Vtotal -> Aerodynamics;
   Auxiliary -> RPBody -> Aerodynamics;
@@ -306,7 +313,6 @@ digraph G {
   // Inertial
   Propagate -> RadiusToVehicle -> Inertial;
   Propagate -> Latitude -> Inertial;
-  Executive -> "Delta T" -> Inertial;
 
   // Accelerations
   MassBalance -> J -> Accelerations;

@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.107 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.108 2011/08/04 13:45:42 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,6 +375,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   case ePropulsion:
     Propulsion->in.SLPressure       = Atmosphere->GetPressureSL();
     Propulsion->in.Pressure         = Atmosphere->GetPressure();
+    Propulsion->in.PressureRatio    = Atmosphere->GetPressureRatio();
     Propulsion->in.Temperature      = Atmosphere->GetTemperature();
     Propulsion->in.DensityRatio     = Atmosphere->GetDensityRatio();
     Propulsion->in.Density          = Atmosphere->GetDensity();

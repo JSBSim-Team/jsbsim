@@ -50,14 +50,14 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.63 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.64 2011/08/04 13:45:42 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, const struct Inputs& input)
+FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input)
   : FGEngine(exec, el, engine_number, input),
   R_air(287.3),                  // Gas constant for air J/Kg/K
   rho_fuel(800),                 // estimate
@@ -487,6 +487,8 @@ double FGPiston::CalcFuelNeed(void)
 int FGPiston::InitRunning(void)
 {
   Magnetos=3;
+  in.MixtureCmd[EngineNumber] = in.PressureRatio/1.3;
+  in.MixturePos[EngineNumber] = in.PressureRatio/1.3;
   Thruster->SetRPM( 2.0*IdleRPM/Thruster->GetGearRatio() );
   Running = true;
   return 1;
