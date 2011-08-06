@@ -36,9 +36,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
-#include "models/FGAuxiliary.h"
-#include "models/FGAtmosphere.h"
-#include "models/FGInertial.h"
 #include "models/FGMassBalance.h"
 #include "FGGasCell.h"
 #include "input_output/FGXMLElement.h"
@@ -53,7 +50,7 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.14 2011/07/01 21:22:25 andgi Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.15 2011/08/06 13:47:59 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,15 +62,13 @@ const double FGGasCell::M_air = 0.0019186;       // [slug/mol]
 const double FGGasCell::M_hydrogen = 0.00013841; // [slug/mol]
 const double FGGasCell::M_helium = 0.00027409;   // [slug/mol]
 
-FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
+FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs& input)
+  : FGForce(exec), in(input)
 {
   string token;
   Element* element;
 
-  Auxiliary = exec->GetAuxiliary();
-  Atmosphere = exec->GetAtmosphere();
   PropertyManager = exec->GetPropertyManager();
-  Inertial = exec->GetInertial();
   MassBalance = exec->GetMassBalance();
 
   gasCellJ = FGMatrix33();
@@ -175,10 +170,10 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
   SetLocation(vXYZ);
 
   if (Temperature == 0.0) {
-    Temperature = Atmosphere->GetTemperature();
+    Temperature = in.Temperature;
   }
   if (Pressure == 0.0) {
-    Pressure = Atmosphere->GetPressure();
+    Pressure = in.Pressure;
   }
   if (Volume != 0.0) {
     // Calculate initial gas content.
@@ -239,7 +234,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
       Ballonet.push_back(new FGBallonet(exec,
                                         ballonet_element,
                                         Ballonet.size(),
-                                        this));
+                                        this, in));
       ballonet_element = el->FindNextElement("ballonet");
     }
   }
@@ -265,10 +260,10 @@ FGGasCell::~FGGasCell()
 
 void FGGasCell::Calculate(double dt)
 {
-  const double AirTemperature = Atmosphere->GetTemperature();  // [Rankine]
-  const double AirPressure    = Atmosphere->GetPressure();     // [lbs/ft²]
-  const double AirDensity     = Atmosphere->GetDensity();      // [slug/ft³]
-  const double g = Inertial->gravity();                        // [lbs/slug]
+  const double AirTemperature = in.Temperature;  // [Rankine]
+  const double AirPressure    = in.Pressure;     // [lbs/ft²]
+  const double AirDensity     = in.Density;      // [slug/ft³]
+  const double g = in.gravity;                   // [lbs/slug]
 
   const double OldTemperature = Temperature;
   const double OldPressure    = Pressure;
@@ -509,15 +504,13 @@ const double FGBallonet::R = 3.4071;              // [lbs ft/(mol Rankine)]
 const double FGBallonet::M_air = 0.0019186;       // [slug/mol]
 const double FGBallonet::Cv_air = 5.0/2.0;        // [??]
 
-FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent)
+FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent, const struct FGGasCell::Inputs& input)
+  : in(input)
 {
   string token;
   Element* element;
 
-  Auxiliary = exec->GetAuxiliary();
-  Atmosphere = exec->GetAtmosphere();
   PropertyManager = exec->GetPropertyManager();
-  Inertial = exec->GetInertial();
   MassBalance = exec->GetMassBalance();
 
   ballonetJ = FGMatrix33();
@@ -696,8 +689,8 @@ FGBallonet::~FGBallonet()
 
 void FGBallonet::Calculate(double dt)
 {
-  const double ParentPressure = Parent->GetPressure();         // [lbs/ft²]
-  const double AirPressure    = Atmosphere->GetPressure();     // [lbs/ft²]
+  const double ParentPressure = Parent->GetPressure(); // [lbs/ft²]
+  const double AirPressure    = Pressure;              // [lbs/ft²]
 
   const double OldTemperature = Temperature;
   const double OldPressure    = Pressure;
