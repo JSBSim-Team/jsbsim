@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.23 2011/08/05 12:03:02 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.24 2011/08/06 13:10:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -227,6 +227,7 @@ private:
   static const std::string ln_string;
   static const std::string log10_string;
   static const std::string abs_string;
+  static const std::string sign_string;
   static const std::string sin_string;
   static const std::string cos_string;
   static const std::string tan_string;
@@ -259,12 +260,14 @@ private:
   static const std::string switch_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
-                     eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
+                     eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn,
                      eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
                      eIfThen, eSwitch, eRotation_alpha_local, eRotation_beta_local,
                      eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf} Type;
   std::string Name;
+
+  unsigned int GetBinary(double) const;
   void bind(void);
   void Debug(int from);
 };

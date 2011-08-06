@@ -32,8 +32,8 @@ This class simulates a generic gas cell for static buoyancy.
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGGasCell_H
-#define FGGasCell_H
+#ifndef FGGASCELL_H
+#define FGGASCELL_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.11 2011/07/01 21:22:25 andgi Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.12 2011/08/06 13:47:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -172,11 +172,18 @@ CLASS DECLARATION
 class FGGasCell : public FGForce
 {
 public:
+  struct Inputs {
+    double Pressure;
+    double Temperature;
+    double Density;
+    double gravity;
+  };
+
   /** Constructor
       @param exec Executive a pointer to the parent executive object
       @param el   Pointer to configuration file XML node
       @param num  Gas cell index number. */
-  FGGasCell(FGFDMExec* exec, Element* el, int num);
+  FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs& input);
   ~FGGasCell();
 
   /** Runs the gas cell model; called by BuoyantForces
@@ -221,6 +228,8 @@ public:
       @return gas pressure in lbs / ft<sup>2</sup>. */
   double GetPressure(void) const {return Pressure;}
 
+  const struct Inputs& in;
+
 private:
 
   enum GasType {ttUNKNOWN, ttHYDROGEN, ttHELIUM, ttAIR};
@@ -252,10 +261,7 @@ private:
   FGMatrix33 gasCellJ;      // [slug foot^2]
   FGColumnVector3 gasCellM; // [lbs in]
 
-  FGAuxiliary* Auxiliary;
-  FGAtmosphere* Atmosphere;
   FGPropertyManager* PropertyManager;
-  FGInertial* Inertial;
   FGMassBalance* MassBalance;
   void Debug(int from);
 
@@ -302,7 +308,7 @@ private:
 class FGBallonet : public FGJSBBase
 {
 public:
-  FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent);
+  FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent, const struct FGGasCell::Inputs& input);
   ~FGBallonet();
 
   /** Runs the ballonet model; called by FGGasCell
@@ -333,6 +339,8 @@ public:
       @return heat flow in lbs ft / sec. */
   double GetHeatFlow(void) const {return dU;}       // [lbs ft / sec]
 
+  const struct FGGasCell::Inputs& in;
+
 private:
   int CellNum;
   // Structural constants
@@ -356,10 +364,7 @@ private:
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
   FGMatrix33 ballonetJ;     // [slug foot^2]
 
-  FGAuxiliary* Auxiliary;
-  FGAtmosphere* Atmosphere;
   FGPropertyManager* PropertyManager;
-  FGInertial* Inertial;
   FGMassBalance* MassBalance;
   void Debug(int from);
 

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.13 2011/07/01 21:22:25 andgi Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.14 2011/08/06 13:47:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.13 2011/07/01 21:22:25 andgi Exp $
+    @version $Id: FGBuoyantForces.h,v 1.14 2011/08/06 13:47:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,6 +171,8 @@ public:
       @return a string containing the numeric values for the current set of
       parameters */
   string GetBuoyancyValues(string delimeter);
+
+  FGGasCell::Inputs in;
 
 private:
   vector <FGGasCell*> Cells;
