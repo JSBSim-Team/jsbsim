@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.39 2011/08/05 12:03:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.40 2011/08/06 13:10:00 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ const std::string FGFunction::log2_string = "log2";
 const std::string FGFunction::ln_string = "ln";
 const std::string FGFunction::log10_string = "log10";
 const std::string FGFunction::abs_string = "abs";
+const std::string FGFunction::sign_string = "sign";
 const std::string FGFunction::sin_string = "sin";
 const std::string FGFunction::cos_string = "cos";
 const std::string FGFunction::tan_string = "tan";
@@ -133,6 +134,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eLog10;
   } else if (operation == abs_string) {
     Type = eAbs;
+  } else if (operation == sign_string) {
+    Type = eSign;
   } else if (operation == sin_string) {
     Type = eSin;
   } else if (operation == exp_string) {
@@ -246,6 +249,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == ln_string ||
                operation == log10_string ||
                operation == abs_string ||
+               operation == sign_string ||
                operation == sin_string ||
                operation == cos_string ||
                operation == tan_string ||
@@ -310,6 +314,18 @@ void FGFunction::cacheValue(bool cache)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+unsigned int FGFunction::GetBinary(double val) const
+{
+  val = fabs(val);
+  if (val < 1E-9) return 0;
+  else if (val-1 < 1E-9) return 1;
+  else {
+    throw("Malformed conditional check in function definition.");
+  }
+}
+  
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double FGFunction::GetValue(void) const
 {
   unsigned int i;
@@ -364,6 +380,9 @@ double FGFunction::GetValue(void) const
     break;
   case eAbs:
     temp = fabs(temp);
+    break;
+  case eSign:
+    temp =  temp < 0 ? -1:1; // 0.0 counts as positive.
     break;
   case eSin:
     temp = sin(temp);
@@ -435,51 +454,47 @@ double FGFunction::GetValue(void) const
     break;
   case eAND:
     {
-      bool flag = (int(temp+0.5) != 0);
+      bool flag = (GetBinary(temp) != 0u);
       for (i=1; i<Parameters.size() && flag; i++) {
-        flag = (int(Parameters[i]->GetValue()+0.5) != 0);
+        flag = (GetBinary(Parameters[i]->GetValue()) != 0);
       }
       temp = flag ? 1 : 0;
     }
     break;
   case eOR:
     {
-      bool flag = (int(temp+0.5) != 0);
+      bool flag = (GetBinary(temp) != 0);
       for (i=1; i<Parameters.size() && !flag; i++) {
-        flag = (int(Parameters[i]->GetValue()+0.5) != 0);
+        flag = (GetBinary(Parameters[i]->GetValue()) != 0);
       }
       temp = flag ? 1 : 0;
     }
     break;
   case eNOT:
-    temp = (int(temp+0.5) != 0) ? 0 : 1;
+    temp = (GetBinary(temp) != 0) ? 0 : 1;
     break;
   case eIfThen:
     {
       i = Parameters.size();
-      if (int(temp+0.5) != 0) {
-        if (i >= 2u) {
+      if (i != 3) {
+        if (GetBinary(temp) == 1) {
           temp = Parameters[1]->GetValue();
         } else {
-          temp = 0.0;
+          temp = Parameters[2]->GetValue();
         }
       } else {
-        if (i >= 3u) {
-          temp = Parameters[2]->GetValue();
-        } else {
-          temp = 0.0;
-        }
+        throw("Malformed if/then function statement");
       }
     }
     break;
   case eSwitch:
     {
-      int n = Parameters.size()-1;
+      unsigned int n = Parameters.size()-1;
       i = int(temp+0.5);
-      if (i >=0 && i < n) {
+      if (i >= 0u && i < n) {
         temp = Parameters[i+1]->GetValue();
       } else {
-        temp = 0.0;
+        throw("Malformed switch in function statement");
       }
     }
     break;
