@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.3 2011/07/24 19:44:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.4 2011/08/14 20:15:56 jberndt Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,57 +203,6 @@ void FGAccelerations::CalculateUVWdot(void)
   vUVWdot += vGravAccel;
   vUVWidot = in.Tb2i * (vBodyAccel + vGravAccel);
 }
-
-#if 0
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Evaluates the rates (translation or rotation) that the friction forces have
-// to resist to. This includes the external forces and moments as well as the
-// relative movement between the aircraft and the ground.
-// Erin Catto's paper (see ref [3]) only supports Euler integration scheme and
-// this algorithm has been adapted to handle the multistep algorithms that
-// JSBSim supports (i.e. Trapezoidal, Adams-Bashforth 2, 3 and 4). The capacity
-// to handle the multistep integration schemes adds some complexity but it
-// significantly helps stabilizing the friction forces.
-
-void FGAccelerations::EvaluateRateToResistTo(FGColumnVector3& vdot,
-                                         const FGColumnVector3& Val,
-                                         const FGColumnVector3& ValDot,
-                                         const FGColumnVector3& LocalTerrainVal,
-                                         deque <FGColumnVector3>& dqValDot,
-                                         const double dt,
-                                         const eIntegrateType integration_type)
-{
-  switch(integration_type) {
-  case eAdamsBashforth4:
-    vdot = ValDot + in.Ti2b * (-59.*dqValDot[0]+37.*dqValDot[1]-9.*dqValDot[2])/55.;
-    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-      vdot += 24.*(Val - in.Tec2b * LocalTerrainVal) / (55.*dt);
-    break;
-  case eAdamsBashforth3:
-    vdot = ValDot + in.Ti2b * (-16.*dqValDot[0]+5.*dqValDot[1])/23.;
-    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-      vdot += 12.*(Val - in.Tec2b * LocalTerrainVal) / (23.*dt);
-    break;
-  case eAdamsBashforth2:
-    vdot = ValDot - in.Ti2b * dqValDot[0]/3.;
-    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-      vdot += 2.*(Val - in.Tec2b * LocalTerrainVal) / (3.*dt);
-    break;
-  case eTrapezoidal:
-    vdot = ValDot + in.Ti2b * dqValDot[0];
-    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-      vdot += 2.*(Val - in.Tec2b * LocalTerrainVal) / dt;
-    break;
-  case eRectEuler:
-    vdot = ValDot;
-    if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-      vdot += (Val - in.Tec2b * LocalTerrainVal) / dt;
-    break;
-  case eNone:
-    break;
-  }
-}
-#endif
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Resolves the contact forces just before integrating the EOM.

@@ -39,13 +39,14 @@ INCLUDES
 #include <iomanip>
 
 #include "FGGroundReactions.h"
+#include "FGLGear.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.33 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.34 2011/08/14 20:15:56 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,13 +182,17 @@ bool FGGroundReactions::Load(Element* el)
 
   Debug(2);
 
+  unsigned int numContacts = el->GetNumElements("contact");
+  lGear.resize(numContacts);
   Element* contact_element = el->FindElement("contact");
-  while (contact_element) {
-    lGear.push_back(new FGLGear(contact_element, FDMExec, num++));
+  for (unsigned int idx=0; idx<numContacts; idx++) {
+    lGear[idx] = new FGLGear(contact_element, FDMExec, num++, in);
     contact_element = el->FindNextElement("contact");
   }
-  
+
   FGModel::Load(el); // Perform base class Load
+
+  in.vWhlBodyVec.resize(lGear.size());
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 

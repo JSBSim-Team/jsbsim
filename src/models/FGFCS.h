@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.38 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.39 2011/08/14 20:15:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.38 $
+    @version $Revision: 1.39 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -334,6 +334,8 @@ public:
   /** Gets the steering position.
       @return steering position in degrees */
   double GetSteerPosDeg(int gear) const { return SteerPosDeg[gear]; }
+
+  vector <double> GetSteerPosDeg() const {return SteerPosDeg;}
 
   /** Gets the gear position (0 up, 1 down), defaults to down
       @return gear position (0 up, 1 down) */
@@ -511,32 +513,34 @@ public:
   //@{
   /** Sets the left brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetLBrake(double cmd) {LeftBrake = cmd;}
+  void SetLBrake(double cmd) {BrakePos[FGLGear::bgLeft] = cmd;}
 
   /** Sets the right brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetRBrake(double cmd) {RightBrake = cmd;}
+  void SetRBrake(double cmd) {BrakePos[FGLGear::bgRight] = cmd;}
 
   /** Sets the center brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetCBrake(double cmd) {CenterBrake = cmd;}
+  void SetCBrake(double cmd) {BrakePos[FGLGear::bgCenter] = cmd;}
 
   /** Gets the brake for a specified group.
       @param bg which brakegroup to retrieve the command for
       @return the brake setting for the supplied brake group argument */
   double GetBrake(FGLGear::BrakeGroup bg);
 
+  vector <double> GetBrakePos() const {return BrakePos;}
+
   /** Gets the left brake.
       @return the left brake setting. */
-  double GetLBrake(void) const {return LeftBrake;}
+  double GetLBrake(void) const {return BrakePos[FGLGear::bgLeft];}
 
   /** Gets the right brake.
       @return the right brake setting. */
-  double GetRBrake(void) const {return RightBrake;}
+  double GetRBrake(void) const {return BrakePos[FGLGear::bgRight];}
 
   /** Gets the center brake.
       @return the center brake setting. */
-  double GetCBrake(void) const {return CenterBrake;}
+  double GetCBrake(void) const {return BrakePos[FGLGear::bgCenter];}
   //@}
 
   enum SystemType { stFCS, stSystem, stAutoPilot }; 
@@ -578,6 +582,7 @@ private:
   std::vector <bool> PropFeather;
   std::vector <double> SteerPosDeg;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
+  vector <double> BrakePos; // left, center, right - defined by FGLGear:: enum
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
 

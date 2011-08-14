@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.108 2011/08/04 13:45:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.109 2011/08/14 20:15:56 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -411,12 +411,36 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     break;
   case eGroundReactions:
     // There are no external inputs to this model.
+    GroundReactions->in.Vground         = Auxiliary->GetVground();
+    GroundReactions->in.VcalibratedKts  = Auxiliary->GetVcalibratedKTS();
+    GroundReactions->in.Temperature     = Atmosphere->GetTemperature();
+    GroundReactions->in.TakeoffThrottle = (FCS->GetThrottlePos().size() > 0) ? (FCS->GetThrottlePos(0) > 0.90) : false;
+    GroundReactions->in.SteerPosDeg     = FCS->GetSteerPosDeg();
+    GroundReactions->in.BrakePos        = FCS->GetBrakePos();
+    GroundReactions->in.FCSGearPos      = FCS->GetGearPos();
+    GroundReactions->in.EmptyWeight     = MassBalance->GetEmptyWeight();
+    GroundReactions->in.Tb2l            = Propagate->GetTb2l();
+    GroundReactions->in.Tec2l           = Propagate->GetTec2l();
+    GroundReactions->in.Tec2b           = Propagate->GetTec2b();
+    GroundReactions->in.PQR             = Propagate->GetPQR();
+    GroundReactions->in.UVW             = Propagate->GetUVW();
+    GroundReactions->in.DistanceAGL     = Propagate->GetDistanceAGL();
+    GroundReactions->in.DistanceASL     = Propagate->GetAltitudeASL();
+    GroundReactions->in.TotalDeltaT     = dT * GroundReactions->GetRate();
+    GroundReactions->in.WOW             = GroundReactions->GetWOW();
+    GroundReactions->in.Location        = Propagate->GetLocation();
+    for (unsigned int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
+      GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
+    }
     break;
   case eExternalReactions:
     // There are no external inputs to this model.
     break;
   case eBuoyantForces:
-    // There are no external inputs to this model.
+    BuoyantForces->in.Density     = Atmosphere->GetDensity();
+    BuoyantForces->in.Pressure    = Atmosphere->GetPressure();
+    BuoyantForces->in.Temperature = Atmosphere->GetTemperature();
+    BuoyantForces->in.gravity     = Inertial->gravity();
     break;
   case eMassBalance:
     MassBalance->in.GasInertia  = BuoyantForces->GetGasMassInertia();
@@ -489,6 +513,9 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
+  for (unsigned int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
+    GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
+  }
 
   LoadPlanetConstants();
 }

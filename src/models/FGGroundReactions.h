@@ -45,7 +45,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "input_output/FGXMLElement.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.21 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.22 2011/08/14 20:15:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,10 +83,10 @@ class MultiplierIterator
 public:
   MultiplierIterator(FGGroundReactions* GndReactions);
   MultiplierIterator& operator++();
-  FGAccelerations::LagrangeMultiplier* operator*() { return multiplier; }
+  LagrangeMultiplier* operator*() { return multiplier; }
 private:
   FGGroundReactions* GroundReactions;
-  FGAccelerations::LagrangeMultiplier* multiplier;
+  LagrangeMultiplier* multiplier;
   int gearNum;
   int entry;
 };
@@ -122,6 +122,8 @@ public:
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
   FGLGear* GetGearUnit(int gear) const { return lGear[gear]; }
+
+  FGLGear::Inputs in;
 
 private:
   vector <FGLGear*> lGear;

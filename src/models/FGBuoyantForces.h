@@ -32,8 +32,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGBuoyanTFORCES_H
-#define FGBuoyanTFORCES_H
+#ifndef FGBUOYANTFORCES_H
+#define FGBUOYANTFORCES_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.14 2011/08/06 13:47:59 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.15 2011/08/14 20:15:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.14 2011/08/06 13:47:59 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.15 2011/08/14 20:15:56 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -69,6 +69,7 @@ digraph G {
     Ti2b;
     Tb2i;
     Tec2b;
+    Tec2l;
     Tb2w;
     Tw2b;
     Vtotal;
@@ -93,6 +94,7 @@ digraph G {
     VelocityNED;
     BodyAccel;
     Location;
+    LocationBody;
     Latitude;
     Longitude;
     CosTheta;
@@ -101,11 +103,15 @@ digraph G {
     SinPhi;
     Psi;
     ThrottlePos;
+    TakeoffThrottle
     MixturePos;
     ThrottleCmd;
     MixtureCmd;
     PropAdvance;
     PropFeather;
+    BrakePos;
+    SteerPosDeg;
+    FCSGearPos;
 }
 /* Alignment blocks */
 {
@@ -153,6 +159,7 @@ digraph G {
     Beta;
     qbar;
     Vtotal;
+    Vground;
     Vcalibrated;
     TotalTemperature;
     TotalPressure;
@@ -287,6 +294,32 @@ digraph G {
   Auxiliary -> qbar -> Aerodynamics;
   Auxiliary -> Vtotal -> Aerodynamics;
   Auxiliary -> RPBody -> Aerodynamics;
+
+  // Ground Reactions
+  Auxiliary -> Vground -> GroundReactions;
+  Auxiliary -> Vcalibrated -> GroundReactions;
+  Atmosphere -> Temperature -> GroundReactions;
+  "Control Systems" -> TakeoffThrottle -> GroundReactions;
+  "Control Systems" -> SteerPosDeg -> GroundReactions;
+  "Control Systems" -> BrakePos -> GroundReactions;
+  "Control Systems" -> FCSGearPos -> GroundReactions;
+  MassBalance -> EmptyWeight -> GroundReactions;
+  Propagate -> Tb2l -> GroundReactions;
+  Propagate -> Tec2l -> GroundReactions;
+  Propagate -> Tec2b -> GroundReactions;
+  Propagate -> PQR -> GroundReactions;
+  Propagate -> UVW -> GroundReactions;
+  Propagate -> AltitudeASL -> GroundReactions;
+  Propagate -> DistanceAGL -> GroundReactions;
+  Executive -> "Delta T" -> GroundReactions;
+  Propagate -> Location -> GroundReactions;
+  MassBalance -> LocationBody -> GroundReactions;
+
+  // Buoyant Forces
+  Atmosphere -> Pressure -> BuoyantForces
+  Atmosphere -> Density -> BuoyantForces
+  Atmosphere -> Temperature -> BuoyantForces
+  Inertial -> Gravity -> BuoyantForces
 
   // MassBalance
   BuoyantForces -> GasMassInertia -> MassBalance;

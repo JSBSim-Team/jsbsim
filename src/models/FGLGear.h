@@ -38,16 +38,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "models/propulsion/FGForce.h"
-#include "models/FGAccelerations.h"
-#include "math/FGColumnVector3.h"
 #include <string>
+
+#include "models/propulsion/FGForce.h"
+#include "math/FGColumnVector3.h"
+#include "math/FGMatrix33.h"
+#include "math/LagrangeMultiplier.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.44 2011/07/24 19:44:13 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.45 2011/08/14 20:15:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -55,13 +57,9 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGAircraft;
-class FGAccelerations;
-class FGFCS;
-class FGMassBalance;
-class FGAuxiliary;
 class FGTable;
 class Element;
+class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -180,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.44 2011/07/24 19:44:13 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.45 2011/08/14 20:15:56 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -196,8 +194,30 @@ CLASS DECLARATION
 class FGLGear : public FGForce
 {
 public:
+  struct Inputs {
+    double Vground;
+    double VcalibratedKts;
+    double Temperature;
+    double DistanceAGL;
+    double DistanceASL;
+    double TotalDeltaT;
+    bool TakeoffThrottle;
+    bool WOW;
+    FGMatrix33 Tb2l;
+    FGMatrix33 Tec2l;
+    FGMatrix33 Tec2b;
+    FGColumnVector3 PQR;
+    FGColumnVector3 UVW;
+    FGLocation Location;
+    std::vector <double> SteerPosDeg;
+    std::vector <double> BrakePos;
+    std::vector <FGColumnVector3> vWhlBodyVec;
+    double FCSGearPos;
+    double EmptyWeight;
+  };
+
   /// Brake grouping enumerators
-  enum BrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
+  enum BrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail, bgNumBrakeGroups };
   /// Steering group membership enumerators
   enum SteerType {stSteer, stFixed, stCaster};
   /// Contact point type
@@ -213,7 +233,7 @@ public:
       @param Executive a pointer to the parent executive object
       @param number integer identifier for this instance of FGLGear
   */
-  FGLGear(Element* el, FGFDMExec* Executive, int number);
+  FGLGear(Element* el, FGFDMExec* Executive, int number, const struct Inputs& input);
   /// Destructor
   ~FGLGear();
 
@@ -221,8 +241,8 @@ public:
   FGColumnVector3& GetBodyForces(void);
 
   /// Gets the location of the gear in Body axes
-  FGColumnVector3& GetBodyLocation(void) { return vWhlBodyVec; }
-  double GetBodyLocation(int idx) const { return vWhlBodyVec(idx); }
+  FGColumnVector3 GetBodyLocation(void) const { return in.vWhlBodyVec[GearNumber]; }
+  double GetBodyLocation(int idx) const { return in.vWhlBodyVec[GearNumber](idx); }
 
   FGColumnVector3& GetLocalGear(void) { return vLocalGear; }
   double GetLocalGear(int idx) const { return vLocalGear(idx); }
@@ -283,8 +303,10 @@ public:
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
   FGColumnVector3& UpdateForces(void);
-  FGAccelerations::LagrangeMultiplier* GetMultiplierEntry(int entry);
+  LagrangeMultiplier* GetMultiplierEntry(int entry);
   void SetLagrangeMultiplier(double lambda, int entry);
+
+  const struct Inputs& in;
 
   void bind(void);
 
@@ -293,13 +315,11 @@ private:
   static const FGMatrix33 Tb2s;
   FGMatrix33 mTGear;
   FGColumnVector3 vGearOrient;
-  FGColumnVector3 vWhlBodyVec;
   FGColumnVector3 vLocalGear;
   FGColumnVector3 vWhlVelVec, vLocalWhlVel;     // Velocity of this wheel
   FGColumnVector3 normal, vGroundNormal;
   FGLocation contact, gearLoc;
   FGTable *ForceY_Table;
-  double dT;
   double SteerAngle;
   double kSpring;
   double bDamp;
@@ -348,13 +368,9 @@ private:
   DampType    eDampTypeRebound;
   double  maxSteerAngle;
 
-  FGAccelerations::LagrangeMultiplier LMultiplier[3];
+  LagrangeMultiplier LMultiplier[3];
 
-  FGAuxiliary*       Auxiliary;
-  FGPropagate*       Propagate;
-  FGFCS*             FCS;
-  FGMassBalance*     MassBalance;
-  FGGroundReactions* GroundReactions;
+  FGPropertyManager* PropertyManager;
 
   void ComputeRetractionState(void);
   void ComputeBrakeForceCoefficient(void);

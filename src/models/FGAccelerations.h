@@ -40,6 +40,7 @@ INCLUDES
 
 #include "models/FGModel.h"
 #include "math/FGColumnVector3.h"
+#include "math/LagrangeMultiplier.h"
 #include "math/FGMatrix33.h"
 #include "math/FGQuaternion.h"
 
@@ -47,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.2 2011/07/24 19:44:13 jberndt Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.3 2011/08/14 20:15:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,7 +68,7 @@ CLASS DOCUMENTATION
     -Calculate the translational velocity
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.2 2011/07/24 19:44:13 jberndt Exp $
+    @version $Id: FGAccelerations.h,v 1.3 2011/08/14 20:15:56 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,14 +169,6 @@ public:
 
   void InitializeDerivatives(void);
 
-  struct LagrangeMultiplier {
-    FGColumnVector3 ForceJacobian;
-    FGColumnVector3 MomentJacobian;
-    double Min;
-    double Max;
-    double value;
-  };
-
   void DumpState(void);
 
   struct Inputs {
@@ -212,14 +205,6 @@ private:
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);
   void CalculateUVWdot(void);
-
-  /*void EvaluateRateToResistTo(FGColumnVector3& vdot,
-                              const FGColumnVector3& Val,
-                              const FGColumnVector3& ValDot,
-                              const FGColumnVector3& LocalTerrainVal,
-                              deque <FGColumnVector3>& dqValDot,
-                              const double dt,
-                              const eIntegrateType integration_type);*/
 
   void ResolveFrictionForces(double dt);
 
