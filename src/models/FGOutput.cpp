@@ -39,9 +39,15 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+#include <iomanip>
+#include <cstring>
+#include <cstdlib>
+
 #include "FGOutput.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
+#include "FGAccelerations.h"
 #include "atmosphere/FGWinds.h"
 #include "FGFCS.h"
 #include "FGAerodynamics.h"
@@ -57,10 +63,6 @@ INCLUDES
 #include "models/propulsion/FGEngine.h"
 #include "models/propulsion/FGTank.h"
 #include "models/propulsion/FGPiston.h"
-#include <sstream>
-#include <iomanip>
-#include <cstring>
-#include <cstdlib>
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <windows.h>
@@ -75,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.58 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.59 2011/08/14 20:15:56 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)

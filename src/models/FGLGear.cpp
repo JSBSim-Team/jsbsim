@@ -40,15 +40,12 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGLGear.h"
-#include "FGGroundReactions.h"
-#include "FGFCS.h"
-#include "FGAuxiliary.h"
-#include "FGAtmosphere.h"
-#include "FGMassBalance.h"
-#include "math/FGTable.h"
 #include <cstdlib>
 #include <cstring>
+
+#include "FGLGear.h"
+#include "input_output/FGPropertyManager.h"
+#include "math/FGTable.h"
 
 using namespace std;
 
@@ -62,7 +59,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.84 2011/07/27 03:55:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.85 2011/08/14 20:15:56 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -73,12 +70,13 @@ const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0.
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
+FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs& inputs) :
   FGForce(fdmex),
   GearNumber(number),
   SteerAngle(0.0),
   Castered(false),
-  StaticFriction(false)
+  StaticFriction(false),
+  in(inputs)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
@@ -104,7 +102,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
 
   // Default values for structural contact points 
   if (eContactType == ctSTRUCTURE) {
-    kSpring = fdmex->GetMassBalance()->GetEmptyWeight();
+    kSpring = in.EmptyWeight;
     bDamp = kSpring;
     bDampRebound = kSpring * 10;
     staticFCoeff = 1.0;
@@ -147,12 +145,14 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   if (el->FindElement("retractable"))
     isRetractable = ((unsigned int)el->FindElementValueAsNumber("retractable"))>0.0?true:false;
 
+  PropertyManager = fdmex->GetPropertyManager();
+
   ForceY_Table = 0;
   force_table = el->FindElement("table");
   while (force_table) {
     force_type = force_table->GetAttributeValue("type");
     if (force_type == "CORNERING_COEFF") {
-      ForceY_Table = new FGTable(fdmex->GetPropertyManager(), force_table);
+      ForceY_Table = new FGTable(PropertyManager, force_table);
     } else {
       cerr << "Undefined force table for " << name << " contact point" << endl;
     }
@@ -221,12 +221,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
          << sSteerType << " is undefined." << endl;
   }
 
-  Auxiliary       = fdmex->GetAuxiliary();
-  Propagate       = fdmex->GetPropagate();
-  FCS             = fdmex->GetFCS();
-  MassBalance     = fdmex->GetMassBalance();
-  GroundReactions = fdmex->GetGroundReactions();
-
   GearUp = false;
   GearDown = true;
   GearPos  = 1.0;
@@ -245,8 +239,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) :
   MaximumStrutForce = MaximumStrutTravel = 0.0;
   SinkRate = GroundSpeed = 0.0;
 
-  vWhlBodyVec = MassBalance->StructuralToBody(vXYZn);
-  vLocalGear = Propagate->GetTb2l() * vWhlBodyVec;
   vWhlVelVec.InitMatrix();
 
   compressLength  = 0.0;
@@ -283,27 +275,25 @@ FGLGear::~FGLGear()
 FGColumnVector3& FGLGear::GetBodyForces(void)
 {
   double t = fdmex->GetSimTime();
-  dT = fdmex->GetDeltaT()*GroundReactions->GetRate();
 
   vFn.InitMatrix();
 
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
-    vWhlBodyVec = MassBalance->StructuralToBody(vXYZn); // Get wheel in body frame
-    vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
+    vLocalGear = in.Tb2l * in.vWhlBodyVec[GearNumber]; // Get local frame wheel location
 
-    gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
+    gearLoc = in.Location.LocalToLocation(vLocalGear);
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
     double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal);
-    vGroundNormal = Propagate->GetTec2b() * normal;
+    vGroundNormal = in.Tec2b * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction
     // of the ECEF coordinate frame. We now need to transform this height in
     // actual compression of the strut (BOGEY) of in the normal direction to the
     // ground (STRUCTURE)
-    double normalZ = (Propagate->GetTec2l()*normal)(eZ);
+    double normalZ = (in.Tec2l*normal)(eZ);
     double LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
 
     switch (eContactType) {
@@ -333,10 +323,10 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
         break;
       }
 
-      FGColumnVector3 vWhlContactVec = vWhlBodyVec + vWhlDisplVec;
+      FGColumnVector3 vWhlContactVec = in.vWhlBodyVec[GearNumber] + vWhlDisplVec;
       vActingXYZn = vXYZn + Tb2s * vWhlDisplVec;
-      FGColumnVector3 vBodyWhlVel = Propagate->GetPQR() * vWhlContactVec;
-      vBodyWhlVel += Propagate->GetUVW() - Propagate->GetTec2b() * terrainVel;
+      FGColumnVector3 vBodyWhlVel = in.PQR * vWhlContactVec;
+      vBodyWhlVel += in.UVW - in.Tec2b * terrainVel;
 
       vWhlVelVec = mTGear.Transposed() * vBodyWhlVel;
 
@@ -372,7 +362,7 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
       StrutForce = 0.0;
 
       // Let wheel spin down slowly
-      vWhlVelVec(eX) -= 13.0*dT;
+      vWhlVelVec(eX) -= 13.0 * in.TotalDeltaT;
       if (vWhlVelVec(eX) < 0.0) vWhlVelVec(eX) = 0.0;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
@@ -471,14 +461,14 @@ void FGLGear::ComputeSteeringAngle(void)
 {
   switch (eSteerType) {
   case stSteer:
-    SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
+    SteerAngle = degtorad * in.SteerPosDeg[GearNumber];
     break;
   case stFixed:
     SteerAngle = 0.0;
     break;
   case stCaster:
     if (!Castered)
-      SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
+      SteerAngle = degtorad * in.SteerPosDeg[GearNumber];
     else {
       // Check that the speed is non-null otherwise use the current angle
       if (vWhlVelVec.Magnitude(eX,eY) > 0.1)
@@ -496,7 +486,7 @@ void FGLGear::ComputeSteeringAngle(void)
 
 void FGLGear::ResetReporting(void)
 {
-  if (Propagate->GetDistanceAGL() > 200.0) {
+  if (in.DistanceAGL > 200.0) {
     FirstContact = false;
     StartedGroundRun = false;
     LandingReported = false;
@@ -516,18 +506,16 @@ void FGLGear::InitializeReporting(void)
   if (!FirstContact) {
     FirstContact  = true;
     SinkRate      =  compressSpeed;
-    GroundSpeed   =  Propagate->GetVel().Magnitude();
+    GroundSpeed   =  in.Vground;
     TakeoffReported = false;
   }
 
   // If the takeoff run is starting, initialize.
 
-  if (FCS->GetThrottlePos().size() == 0) return;
-
-  if ((Propagate->GetVel().Magnitude() > 0.1) &&
-      (FCS->GetBrake(bgLeft) == 0) &&
-      (FCS->GetBrake(bgRight) == 0) &&
-      (FCS->GetThrottlePos(0) > 0.90) && !StartedGroundRun)
+  if ((in.Vground > 0.1) &&
+      (in.BrakePos[bgLeft] == 0) &&
+      (in.BrakePos[bgRight] == 0) &&
+      (in.TakeoffThrottle && !StartedGroundRun))
   {
     TakeoffDistanceTraveled = 0;
     TakeoffDistanceTraveled50ft = 0;
@@ -541,25 +529,25 @@ void FGLGear::InitializeReporting(void)
 void FGLGear::ReportTakeoffOrLanding(void)
 {
   if (FirstContact)
-    LandingDistanceTraveled += Auxiliary->GetVground()*dT;
+    LandingDistanceTraveled += in.Vground * in.TotalDeltaT;
 
   if (StartedGroundRun) {
-    TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*dT;
-    if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*dT;
+    TakeoffDistanceTraveled50ft += in.Vground * in.TotalDeltaT;
+    if (WOW) TakeoffDistanceTraveled += in.Vground * in.TotalDeltaT;
   }
 
   if ( ReportEnable
-       && Auxiliary->GetVground() <= 0.05
+       && in.Vground <= 0.05
        && !LandingReported
-       && GroundReactions->GetWOW())
+       && in.WOW)
   {
     if (debug_lvl > 0) Report(erLand);
   }
 
   if ( ReportEnable
        && !TakeoffReported
-       && (Propagate->GetDistanceAGL() - vLocalGear(eZ)) > 50.0
-       && !GroundReactions->GetWOW())
+       && (in.DistanceAGL - vLocalGear(eZ)) > 50.0
+       && !in.WOW)
   {
     if (debug_lvl > 0) Report(erTakeoff);
   }
@@ -594,24 +582,24 @@ void FGLGear::ComputeBrakeForceCoefficient(void)
 {
   switch (eBrakeGrp) {
   case bgLeft:
-    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                     staticFCoeff*FCS->GetBrake(bgLeft) );
+    BrakeFCoeff =  ( rollingFCoeff * (1.0 - in.BrakePos[bgLeft]) +
+                     staticFCoeff * in.BrakePos[bgLeft] );
     break;
   case bgRight:
-    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
-                     staticFCoeff*FCS->GetBrake(bgRight) );
+    BrakeFCoeff =  ( rollingFCoeff * (1.0 - in.BrakePos[bgRight]) +
+                     staticFCoeff * in.BrakePos[bgRight] );
     break;
   case bgCenter:
-    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    BrakeFCoeff =  ( rollingFCoeff * (1.0 - in.BrakePos[bgCenter]) +
+                     staticFCoeff * in.BrakePos[bgCenter] );
     break;
   case bgNose:
-    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    BrakeFCoeff =  ( rollingFCoeff * (1.0 - in.BrakePos[bgCenter]) +
+                     staticFCoeff * in.BrakePos[bgCenter] );
     break;
   case bgTail:
-    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    BrakeFCoeff =  ( rollingFCoeff * (1.0 - in.BrakePos[bgCenter]) +
+                     staticFCoeff * in.BrakePos[bgCenter] );
     break;
   case bgNone:
     BrakeFCoeff =  rollingFCoeff;
@@ -693,9 +681,9 @@ void FGLGear::ComputeVerticalStrutForce(void)
 double FGLGear::GetGearUnitPos(void)
 {
   // hack to provide backward compatibility to gear/gear-pos-norm property
-  if( useFCSGearPos || FCS->GetGearPos() != 1.0 ) {
+  if( useFCSGearPos || in.FCSGearPos != 1.0 ) {
     useFCSGearPos = true;
-    return FCS->GetGearPos();
+    return in.FCSGearPos;
   }
   return GearPos;
 }
@@ -761,7 +749,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 // accessed through this routine without knowing the exact constraint which they
 // model.
 
-FGAccelerations::LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
+LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
 {
   switch(entry) {
   case 0:
@@ -813,39 +801,39 @@ void FGLGear::bind(void)
   }
 
   property_name = base_property_name + "/WOW";
-  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &WOW );
+  PropertyManager->Tie( property_name.c_str(), &WOW );
   property_name = base_property_name + "/z-position";
-  fdmex->GetPropertyManager()->Tie( property_name.c_str(), (FGForce*)this,
+  PropertyManager->Tie( property_name.c_str(), (FGForce*)this,
                           &FGForce::GetLocationZ, &FGForce::SetLocationZ);
   property_name = base_property_name + "/compression-ft";
-  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &compressLength );
+  PropertyManager->Tie( property_name.c_str(), &compressLength );
   property_name = base_property_name + "/static_friction_coeff";
-  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &staticFCoeff );
+  PropertyManager->Tie( property_name.c_str(), &staticFCoeff );
   property_name = base_property_name + "/dynamic_friction_coeff";
-  fdmex->GetPropertyManager()->Tie( property_name.c_str(), &dynamicFCoeff );
+  PropertyManager->Tie( property_name.c_str(), &dynamicFCoeff );
 
   if (eContactType == ctBOGEY) {
     property_name = base_property_name + "/slip-angle-deg";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &WheelSlip );
+    PropertyManager->Tie( property_name.c_str(), &WheelSlip );
     property_name = base_property_name + "/wheel-speed-fps";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), (FGLGear*)this,
+    PropertyManager->Tie( property_name.c_str(), (FGLGear*)this,
                           &FGLGear::GetWheelRollVel);
     property_name = base_property_name + "/side_friction_coeff";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &FCoeff );
+    PropertyManager->Tie( property_name.c_str(), &FCoeff );
     property_name = base_property_name + "/rolling_friction_coeff";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &rollingFCoeff );
+    PropertyManager->Tie( property_name.c_str(), &rollingFCoeff );
 
     if (eSteerType == stCaster) {
       property_name = base_property_name + "/steering-angle-deg";
-      fdmex->GetPropertyManager()->Tie( property_name.c_str(), this, &FGLGear::GetSteerAngleDeg );
+      PropertyManager->Tie( property_name.c_str(), this, &FGLGear::GetSteerAngleDeg );
       property_name = base_property_name + "/castered";
-      fdmex->GetPropertyManager()->Tie( property_name.c_str(), &Castered);
+      PropertyManager->Tie( property_name.c_str(), &Castered);
     }
   }
 
   if( isRetractable ) {
     property_name = base_property_name + "/pos-norm";
-    fdmex->GetPropertyManager()->Tie( property_name.c_str(), &GearPos );
+    PropertyManager->Tie( property_name.c_str(), &GearPos );
   }
 }
 
@@ -878,11 +866,11 @@ void FGLGear::Report(ReportType repType)
          << " ft,     " << TakeoffDistanceTraveled*0.3048  << " meters"  << endl;
     cout << "  Distance traveled (over 50'):     " << TakeoffDistanceTraveled50ft
          << " ft,     " << TakeoffDistanceTraveled50ft*0.3048 << " meters" << endl;
-    cout << "  [Altitude (ASL): " << Propagate->GetAltitudeASL() << " ft. / "
-         << Propagate->GetAltitudeASLmeters() << " m  | Temperature: "
-         << fdmex->GetAtmosphere()->GetTemperature() - 459.67 << " F / "
-         << RankineToCelsius(fdmex->GetAtmosphere()->GetTemperature()) << " C]" << endl;
-    cout << "  [Velocity (KCAS): " << Auxiliary->GetVcalibratedKTS() << "]" << endl;
+    cout << "  [Altitude (ASL): " << in.DistanceASL << " ft. / "
+         << in.DistanceASL*FGJSBBase::fttom << " m  | Temperature: "
+         << in.Temperature - 459.67 << " F / "
+         << RankineToCelsius(in.Temperature) << " C]" << endl;
+    cout << "  [Velocity (KCAS): " << in.VcalibratedKts << "]" << endl;
     TakeoffReported = true;
     break;
   case erNone:
