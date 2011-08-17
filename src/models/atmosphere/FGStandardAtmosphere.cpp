@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.17 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.18 2011/08/17 23:56:01 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,7 +286,7 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGStandardAtmosphere::SetTemperatureBias(double t, eTemperature unit)
+void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
 {
   if (unit == eCelsius || unit == eKelvin)
     t *= 1.80; // If temp delta "t" is given in metric, scale up to English
@@ -309,7 +309,7 @@ void FGStandardAtmosphere::SetTemperatureSL(double t, eTemperature unit)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Sets a Sea Level temperature delta that is ramped out by 86 km (282,152 ft).
 
-void FGStandardAtmosphere::SetSLTemperatureGradedDelta(double deltemp, eTemperature unit)
+void FGStandardAtmosphere::SetSLTemperatureGradedDelta(eTemperature unit, double deltemp)
 {
   SetTemperatureGradedDelta(deltemp, 0.0, unit);
 }

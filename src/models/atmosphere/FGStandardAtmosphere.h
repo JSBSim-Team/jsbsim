@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.14 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.15 2011/08/17 23:56:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.14 2011/07/10 20:18:14 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.15 2011/08/17 23:56:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,7 +176,7 @@ public:
   /// this function with a calculated bias.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetTemperatureBias(double t, eTemperature unit=eFahrenheit);
+  virtual void SetTemperatureBias(eTemperature unit, double t);
 
   /// Sets a Sea Level temperature delta that is ramped out by 86 km.
   /// The value of the delta is used to calculate a delta gradient that is
@@ -191,7 +191,7 @@ public:
   /// temperature profile as desired.
   /// @param t the sea level temperature delta value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetSLTemperatureGradedDelta(double t, eTemperature unit=eFahrenheit);
+  virtual void SetSLTemperatureGradedDelta(eTemperature unit, double t);
 
   /// Sets the temperature delta value at the supplied altitude/elevation above
   /// sea level, to be added to the standard temperature and ramped out by
