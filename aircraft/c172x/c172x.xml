@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="Cessna C-172 Skyhawk"  version="2.0" release="BETA"
+<fdm_config name="Cessna C-172 Skyhawk II"  version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
     <fileheader>
@@ -20,12 +20,22 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.87 $</version>
-        <description>Models a 1997 Cessna 172R.</description>
+        <version>$Revision: 1.88 $</version>
+        <description>Models a 1982 Cessna 172P.</description>
+      <reference
+        refID=  "1"
+        author= "Cessna Aircraft Company"
+        title=  "Information Manual Skyhawk Model 172P"
+        date=   "1982"/>
+      <reference
+        refID=  "2"
+        author= "FAA"
+        title=  "Type Certificate Data Sheet No. 3A12"
+        date=   "5 May 2011"/>
     </fileheader>
     <metrics>
         <wingarea unit="FT2"> 174.0 </wingarea>
-        <wingspan unit="FT"> 35.8 </wingspan>
+        <wingspan unit="FT"> 36.0 </wingspan>
         <chord unit="FT"> 4.9 </chord>
         <htailarea unit="FT2"> 21.9 </htailarea>
         <htailarm unit="FT"> 15.7 </htailarm>
@@ -52,14 +62,14 @@
         <iyy unit="SLUG*FT2"> 1346.0 </iyy>
         <izz unit="SLUG*FT2"> 1967.0 </izz>
         <ixz unit="SLUG*FT2"> 0.0 </ixz>
-        <emptywt unit="LBS"> 1620.0 </emptywt>
+        <emptywt unit="LBS"> 1454.0 </emptywt>
         <location name="CG" unit="IN">
             <x> 41.0 </x>
             <y> 0.0 </y>
             <z> 36.5 </z>
         </location>
         <pointmass name="PILOT">
-            <weight unit="LBS">170.0</weight>
+            <weight unit="LBS">190.0</weight>
             <location unit="IN">
                 <x> 36.0 </x>
                 <y> -14.0 </y>
@@ -67,15 +77,31 @@
             </location>
         </pointmass>
         <pointmass name="CO-PILOT">
-            <weight unit="LBS">110.0</weight>
+            <weight unit="LBS">140.0</weight>
             <location unit="IN">
                 <x> 36.0 </x>
                 <y> 14.0 </y>
                 <z> 24.0 </z>
             </location>
         </pointmass>
+        <pointmass name="PASSENGER 1">
+            <weight unit="LBS">130.0</weight>
+            <location unit="IN">
+                <x> 60.0 </x>
+                <y> -14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="PASSENGER 2">
+            <weight unit="LBS">106.0</weight>
+            <location unit="IN">
+                <x> 60.0 </x>
+                <y> 14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
         <pointmass name="LUGGAGE">
-            <weight unit="LBS">80.0</weight>
+            <weight unit="LBS">120.0</weight>
             <location unit="IN">
                 <x> 95.0 </x>
                 <y>  0.0 </y>
@@ -94,7 +120,7 @@
             </location>
             <static_friction>0.8</static_friction>
             <dynamic_friction>0.5</dynamic_friction>
-            <rolling_friction>0.021</rolling_friction>
+            <rolling_friction>0.022</rolling_friction>
             <spring_coeff unit="LBS/FT">1800</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">500</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">2000</damping_coeff_rebound>
@@ -106,12 +132,12 @@
         <contact type="BOGEY" name="Left Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
-                <y> -43.0 </y>
+                <y> -50.25 </y>
                 <z> -18.46 </z>
             </location>
             <static_friction>0.8</static_friction>
             <dynamic_friction>0.5</dynamic_friction>
-            <rolling_friction>0.021</rolling_friction>
+            <rolling_friction>0.022</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
@@ -123,12 +149,12 @@
         <contact type="BOGEY" name="Right Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
-                <y> 43.0 </y>
+                <y> 50.25 </y>
                 <z> -18.46 </z>
             </location>
             <static_friction>0.8</static_friction>
             <dynamic_friction>0.5</dynamic_friction>
-            <rolling_friction>0.021</rolling_friction>
+            <rolling_friction>0.022</rolling_friction>
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
@@ -186,7 +212,7 @@
             </orient>
             <feed>0</feed>
             <feed>1</feed>
-            <thruster file="prop_Clark_Y7570">
+            <thruster file="prop_75in2f">
                 <location unit="IN">
                     <x>-37.7</x>
                     <y>0</y>
@@ -208,8 +234,8 @@
                 <z>59.4</z>
             </location>
             <radius unit="IN">29.4</radius>
-            <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">100</contents>
+            <capacity unit="LBS">130</capacity>
+            <contents unit="LBS">130</contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -218,8 +244,8 @@
                 <z>59.4</z>
             </location>
             <radius unit="IN">29.4</radius>
-            <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">100</contents>
+            <capacity unit="LBS">130</capacity>
+            <contents unit="LBS">130</contents>
         </tank>
     </propulsion>
     
@@ -238,18 +264,21 @@
       <!--
       E = 1.3 * Mixture * P_std / P_amb
   
-      Mixture = P_amb / P_std
+      Mixture = (P_amb / P_std) / 1.3
       -->
       <channel name="Automatic Mixture Control">
-        <fcs_function name="systems/mixture-pos-norm">
+        <fcs_function name="systems/mixture-cmd-norm">
           <function>
-            <table>
-              <independentVar lookup="row">atmosphere/P-psf</independentVar>
-              <tableData>
-                0    0.0
-                2117 1.0
-              </tableData>
-            </table>
+            <quotient>
+              <table>
+                <independentVar lookup="row">atmosphere/P-psf</independentVar>
+                <tableData>
+                     0  0.0
+                  2117  1.0
+                </tableData>
+              </table>
+              <value>1.0</value>
+            </quotient>
           </function>
           <output>fcs/mixture-cmd-norm</output>
         </fcs_function>
@@ -553,7 +582,7 @@
                         <independentVar>fcs/flap-pos-deg</independentVar>
                         <tableData>
                             0.0  0.0
-                           10.0  0.20
+                           10.0  0.25
                            20.0  0.30
                            30.0  0.35
                         </tableData>
@@ -1142,19 +1171,19 @@
     <input port="1137"/>
 -->
 
-    <output name="JSBout172B.csv" type="CSV" rate="120">
+    <output name="JSBout172B.csv" type="CSV" rate="20">
         <rates> ON             </rates>
         <velocities> ON        </velocities>
         <position> ON          </position>
-        <atmosphere> OFF       </atmosphere>
-        <fcs> OFF               </fcs>
+        <atmosphere> ON       </atmosphere>
+        <fcs> ON               </fcs>
         <ground_reactions> ON </ground_reactions>
-        <propulsion> OFF       </propulsion>
+        <propulsion> ON       </propulsion>
         <simulation> ON        </simulation>
         <massprops> ON        </massprops>
-        <forces> OFF           </forces>
-        <moments> OFF          </moments>
-        <aerosurfaces> OFF      </aerosurfaces>
+        <forces> ON           </forces>
+        <moments> ON          </moments>
+        <aerosurfaces> ON      </aerosurfaces>
         <property> position/vrp-gc-latitude_deg </property>
         <property> position/vrp-longitude_deg   </property>
         <property> position/vrp-radius-ft       </property>

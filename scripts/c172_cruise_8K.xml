@@ -10,6 +10,22 @@
   
     <property value="0"> simulation/run_id </property>
 
+    <event name="Set Temperature">
+      <condition>
+        simulation/sim-time-sec  ge  0.0
+      </condition>
+      <set name="atmosphere/delta-T">
+        <function>
+          <switch>
+            <p> simulation/run_id </p>
+            <v>   0.0 </v>
+            <v> -36.0 </v>
+            <v>  36.0 </v>
+          </switch>
+        </function>
+      </set>
+    </event>
+    
     <event name="Start engine">
       <condition>
         simulation/sim-time-sec  ge  0.01
@@ -48,6 +64,15 @@
         <property> fcs/elevator-pos-norm </property>
         <property> fcs/right-aileron-pos-norm </property>
         <property> fcs/rudder-pos-norm </property>
+        <property> fcs/throttle-pos-norm[0] </property>
+        <property> fcs/mixture-pos-norm[0] </property>
+        <property> inertia/weight-lbs </property>
+        <property> velocities/vc-kts </property>
+        <property> velocities/ve-kts </property>
+        <property> velocities/vtrue-kts </property>
+        <property> atmosphere/T-R </property>
+        <property> propulsion/engine/fuel-flow-rate-gph </property>
+        <property> propulsion/engine/power-hp </property>
       </notify>
     </event>
 
@@ -62,14 +87,19 @@
 
     <event name="Terminate on run ID">
       <condition>
-        simulation/run_id  ge  5
+        simulation/sim-time-sec >= 10.0
+        simulation/run_id  ge  2
       </condition>
       <set name="simulation/terminate" value="1"/>
+      <notify>
+        <property caption="Terminate: "> simulation/terminate </property>
+      </notify>
     </event>
 
     <event name="Reset">
-      <condition>
-        simulation/sim-time-sec  ge  10.0
+      <condition logic="AND">
+        simulation/sim-time-sec >= 10.0
+        simulation/terminate != 1
       </condition>
       <set name="ap/heading_setpoint" value="0"/>
       <set name="ap/altitude_setpoint" value="0"/>

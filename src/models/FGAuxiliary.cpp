@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.52 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.53 2011/08/17 23:56:01 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,8 +217,9 @@ bool FGAuxiliary::Run(bool Holding)
   if (MachU > 0.0) {
     vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
     veas = sqrt(2 * qbar / in.DensitySL);
+    vtrue = 1116.43559 * MachU * sqrt(in.Temperature / 518.67);
   } else {
-    vcas = veas = 0.0;
+    vcas = veas = vtrue = 0.0;
   }
 
   vPilotAccel.InitMatrix();
@@ -385,6 +386,8 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("velocities/vc-kts", this, &FGAuxiliary::GetVcalibratedKTS);
   PropertyManager->Tie("velocities/ve-fps", this, &FGAuxiliary::GetVequivalentFPS);
   PropertyManager->Tie("velocities/ve-kts", this, &FGAuxiliary::GetVequivalentKTS);
+  PropertyManager->Tie("velocities/vtrue-fps", this, &FGAuxiliary::GetVtrueFPS);
+  PropertyManager->Tie("velocities/vtrue-kts", this, &FGAuxiliary::GetVtrueKTS);
   PropertyManager->Tie("velocities/machU", this, &FGAuxiliary::GetMachU);
   PropertyManager->Tie("velocities/p-aero-rad_sec", this, eX, (PMF)&FGAuxiliary::GetAeroPQR);
   PropertyManager->Tie("velocities/q-aero-rad_sec", this, eY, (PMF)&FGAuxiliary::GetAeroPQR);

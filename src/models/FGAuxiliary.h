@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.22 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.23 2011/08/17 23:56:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.22 2011/08/04 12:46:32 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.23 2011/08/17 23:56:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,10 @@ public:
   double GetVequivalentFPS(void) const { return veas; }
   /** Returns equivalent airspeed in knots. */
   double GetVequivalentKTS(void) const { return veas*fpstokts; }
+  /** Returns the true airspeed in feet per second. */
+  double GetVtrueFPS() const { return vtrue; }
+  /** Returns the true airspeed in knots. */
+  double GetVtrueKTS() const { return vtrue * fpstokts; }
 
   /** Returns the total pressure.
       Total pressure is freestream total pressure for
@@ -290,7 +294,7 @@ public:
   } in;
 
 private:
-  double vcas, veas;
+  double vcas, veas, vtrue;
   double pt, tat, tatc; // Don't add a getter for pt!
 
   FGMatrix33 mTw2b;

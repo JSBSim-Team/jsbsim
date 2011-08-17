@@ -1,5 +1,7 @@
 EXTRA_DIST = \
   B747_script1.xml \
+  737_cruise.xml \
+  737_cruise_steady_turn.xml \
   Short_S23_1.xml \
   T37.xml \
   T38.xml \
