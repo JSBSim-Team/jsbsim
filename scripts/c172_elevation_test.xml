@@ -13,7 +13,7 @@
   -->
 
   <use aircraft="c172x" initialize="reset00"/>
-  <run start="0.0" end="1000" dt="0.0083333">
+  <run start="0.0" end="1000" dt="0.008333333333333333333">
 
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<output name="GroundTrack.kml.csv" type="CSV" rate="2">
+<output name="GroundTrack.kml.csv" type="CSV" rate="1">
 <description>
   This is an output file that can be used to get a data file that
   is almost in Google Earth "KML" file format.  To run JSBSim in standalone
