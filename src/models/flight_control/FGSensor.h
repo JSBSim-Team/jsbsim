@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.19 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.20 2011/08/18 12:42:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,7 +67,7 @@ Syntax:
 <sensor name="name">
   <input> property </input>
   <lag> number </lag>
-  <noise variation="PERCENT|ABSOLUTE"> number </noise>
+  <noise [variation="PERCENT|ABSOLUTE"] [distribution="UNIFORM|GAUSSIAN"]> number </noise>
   <quantization name="name">
     <bits> number </bits>
     <min> number </min>
@@ -98,16 +98,32 @@ Example:
 The only required element in the sensor definition is the input element. In that
 case, no degradation would be modeled, and the output would simply be the input.
 
-For noise, if the type is PERCENT, then the value supplied is understood to be a
-percentage variance. That is, if the number given is 0.05, the the variance is
-understood to be +/-0.05 percent maximum variance. So, the actual value for the sensor
-will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
-even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
-time. The delay element can specify a frame delay. The integer number provided is
+Noise can be Gaussian or uniform, and the noise can be applied as a factor (PERCENT)
+or additively (ABSOLUTE). The noise that can be applied at each frame of the
+simulation execution is calculated as a random factor times a noise value that
+is specified in the config file. When the noise distribution type is Gaussian,
+the random number can be between roughly -3 and +3 for a span of six sigma. When
+the distribution type is UNIFORM, the random value can be between -1.0 and +1.0.
+This random value is multiplied against the specified noise to arrive at a random
+noise value for the frame. If the noise type is PERCENT, then random noise value
+is added to one, and that sum is then multiplied against the input signal for the
+sensor. In this case, the specified noise value in the config file would be
+expected to actually be a percent value, such as 0.05 (for a 5% variance). If the
+noise type is ABSOLUTE, then the random noise value specified in the config file
+is understood to be an absolute value of noise to be added to the input signal
+instead of being added to 1.0 and having that sum be multiplied against the input
+signal as in the PERCENT type. For the ABSOLUTE noise case, the noise number
+specified in the config file could be any number.
+
+If the type is ABSOLUTE, then the noise number times the random number is
+added to the input signal instead of being multiplied against it as with the
+PERCENT type of noise.
+
+The delay element can specify a frame delay. The integer number provided is
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.19 $
+@version $Revision: 1.20 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
