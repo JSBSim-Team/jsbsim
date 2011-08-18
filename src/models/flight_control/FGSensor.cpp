@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.22 2011/04/18 08:51:12 andgi Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.23 2011/08/18 12:42:17 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ void FGSensor::Noise(void)
   double random_value=0.0;
 
   if (DistributionType == eUniform) {
-    random_value = ((double)rand()/(double)RAND_MAX) - 0.5;
+    random_value = 2.0*(((double)rand()/(double)RAND_MAX) - 0.5);
   } else {
     random_value = GaussianRandomNumber();
   }
