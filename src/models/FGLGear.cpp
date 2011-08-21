@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.86 2011/08/21 15:13:22 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.87 2011/08/21 15:35:39 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -283,12 +283,14 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
   if (isRetractable) ComputeRetractionState();
 
   if (GearDown) {
+    FGColumnVector3 terrainVel, dummy;
+
     vLocalGear = in.Tb2l * in.vWhlBodyVec[GearNumber]; // Get local frame wheel location
 
     gearLoc = in.Location.LocalToLocation(vLocalGear);
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal);
+    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, terrainVel, dummy);
     vGroundNormal = in.Tec2b * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction
@@ -308,8 +310,6 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
     }
 
     if (compressLength > 0.00) {
-      FGColumnVector3 terrainVel =  fdmex->GetGroundCallback()->GetTerrainVelocity();
-
       WOW = true;
 
       // The following equations use the vector to the tire contact patch

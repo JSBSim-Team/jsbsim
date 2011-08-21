@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.5 2011/08/21 15:13:22 bcoconni Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.6 2011/08/21 15:35:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
     -Calculate the translational velocity
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.5 2011/08/21 15:13:22 bcoconni Exp $
+    @version $Id: FGAccelerations.h,v 1.6 2011/08/21 15:35:39 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,6 +194,8 @@ public:
     FGColumnVector3 vUVW;
     FGColumnVector3 vInertialPosition;
     FGColumnVector3 vOmegaPlanet;
+    FGColumnVector3 TerrainVelocity;
+    FGColumnVector3 TerrainAngularVel;
     double DeltaT;
     double Mass;
     double GAccel;

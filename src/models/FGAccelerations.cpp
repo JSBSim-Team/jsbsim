@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.6 2011/08/21 15:13:22 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.7 2011/08/21 15:35:39 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,18 +253,16 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   }
 
   // Assemble the RHS member
-  FGColumnVector3 terrainVel =  FDMExec->GetGroundCallback()->GetTerrainVelocity();
-  FGColumnVector3 terrainAngularVel =  FDMExec->GetGroundCallback()->GetTerrainAngularVelocity();
 
   // Translation
   vdot = vUVWdot;
   if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-    vdot += (in.vUVW - in.Tec2b * terrainVel) / dt;
+    vdot += (in.vUVW - in.Tec2b * in.TerrainVelocity) / dt;
 
   // Rotation
   wdot = vPQRdot;
   if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-    wdot += (in.vPQR - in.Tec2b * terrainAngularVel) / dt;
+    wdot += (in.vPQR - in.Tec2b * in.TerrainAngularVel) / dt;
 
   // Prepare the linear system for the Gauss-Seidel algorithm :
   // 1. Compute the right hand side member 'rhs'
