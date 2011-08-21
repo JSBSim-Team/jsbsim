@@ -46,48 +46,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.35 2011/08/21 15:06:38 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.36 2011/08/21 15:13:22 bcoconni Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CLASS IMPLEMENTATION for MultiplierIterator (See below for FGGroundReactions)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-MultiplierIterator::MultiplierIterator(FGGroundReactions* GndReactions)
-: GroundReactions(GndReactions),
-  multiplier(NULL),
-  gearNum(0),
-  entry(0)
-{
-  for (int i=0; i < GroundReactions->GetNumGearUnits(); i++) {
-		FGLGear* gear = GroundReactions->GetGearUnit(i);
-
-		if (!gear->GetWOW()) continue;
-
-    gearNum = i;
-    multiplier = gear->GetMultiplierEntry(0);
-    break;
-  }
-}
-
-MultiplierIterator& MultiplierIterator::operator++()
-{
-  for (int i=gearNum; i < GroundReactions->GetNumGearUnits(); i++) {
-		FGLGear* gear = GroundReactions->GetGearUnit(i);
-
-    if (!gear->GetWOW()) continue;
-
-    multiplier = gear->GetMultiplierEntry(++entry);
-    if (multiplier) {
-      gearNum = i;
-      break;
-    }
-    else
-      entry = -1;
-  }
-
-  return *this;
-}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -130,6 +90,8 @@ bool FGGroundReactions::Run(bool Holding)
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
+
+  multipliers.clear();
 
   // Sum forces and moments for all gear, here.
   // Some optimizations may be made here - or rather in the gear code itself.

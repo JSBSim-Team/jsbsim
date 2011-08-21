@@ -45,6 +45,7 @@ INCLUDES
 
 #include "FGLGear.h"
 #include "input_output/FGPropertyManager.h"
+#include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
 
 using namespace std;
@@ -59,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.85 2011/08/14 20:15:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.86 2011/08/21 15:13:22 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -145,6 +146,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   if (el->FindElement("retractable"))
     isRetractable = ((unsigned int)el->FindElementValueAsNumber("retractable"))>0.0?true:false;
 
+  GroundReactions = fdmex->GetGroundReactions();
   PropertyManager = fdmex->GetPropertyManager();
 
   ForceY_Table = 0;
@@ -710,6 +712,8 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftDynamic].Max = 0.;
     LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eX));
     LMultiplier[ftDynamic].value = Constrain(LMultiplier[ftDynamic].Min, LMultiplier[ftDynamic].value, LMultiplier[ftDynamic].Max);
+
+    GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftDynamic]);
   }
   else {
     // Static friction is used for ctSTRUCTURE when the contact point is not moving.
@@ -738,30 +742,9 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
     LMultiplier[ftRoll].value = Constrain(LMultiplier[ftRoll].Min, LMultiplier[ftRoll].value, LMultiplier[ftRoll].Max);
     LMultiplier[ftSide].value = Constrain(LMultiplier[ftSide].Min, LMultiplier[ftSide].value, LMultiplier[ftSide].Max);
-  }
-}
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This function is used by the MultiplierIterator class to enumerate the
-// Lagrange multipliers of a landing gear. This allows to encapsulate the storage
-// of the multipliers in FGLGear without exposing it. From an outside point of
-// view, each FGLGear instance has a number of Lagrange multipliers which can be
-// accessed through this routine without knowing the exact constraint which they
-// model.
-
-LagrangeMultiplier* FGLGear::GetMultiplierEntry(int entry)
-{
-  switch(entry) {
-  case 0:
-    if (StaticFriction)
-      return &LMultiplier[ftRoll];
-    else
-      return &LMultiplier[ftDynamic];
-  case 1:
-    if (StaticFriction)
-      return &LMultiplier[ftSide];
-  default:
-    return NULL;
+    GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftRoll]);
+    GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftSide]);
   }
 }
 

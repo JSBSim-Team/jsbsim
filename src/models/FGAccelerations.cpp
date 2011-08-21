@@ -51,7 +51,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAccelerations.h"
-#include "FGGroundReactions.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -59,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.5 2011/08/21 15:06:38 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.6 2011/08/21 15:13:22 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,12 +224,13 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   vector<double> lambda, lambdaMin, lambdaMax;
   FGColumnVector3 vdot, wdot;
   int n = 0;
+  vector <LagrangeMultiplier*>::iterator it;
 
   vFrictionForces.InitMatrix();
   vFrictionMoments.InitMatrix();
 
   // Compiles data from the ground reactions to build up the jacobian matrix
-  for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it, n++) {
+  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it, n++) {
     JacF.push_back((*it)->ForceJacobian);
     JacM.push_back((*it)->MomentJacobian);
     lambda.push_back((*it)->value);
@@ -317,7 +317,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
   int i = 0;
-  for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it)
+  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it)
     (*it)->value = lambda[i++];
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
