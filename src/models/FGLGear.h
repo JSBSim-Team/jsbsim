@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.45 2011/08/14 20:15:56 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.46 2011/08/21 15:13:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.45 2011/08/14 20:15:56 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.46 2011/08/21 15:13:22 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -303,8 +303,6 @@ public:
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
   FGColumnVector3& UpdateForces(void);
-  LagrangeMultiplier* GetMultiplierEntry(int entry);
-  void SetLagrangeMultiplier(double lambda, int entry);
 
   const struct Inputs& in;
 
@@ -370,6 +368,7 @@ private:
 
   LagrangeMultiplier LMultiplier[3];
 
+  FGGroundReactions* GroundReactions;
   FGPropertyManager* PropertyManager;
 
   void ComputeRetractionState(void);

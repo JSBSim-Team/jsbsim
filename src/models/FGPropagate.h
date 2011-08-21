@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.62 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.63 2011/08/21 15:35:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.62 2011/08/04 12:46:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.63 2011/08/21 15:35:39 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -383,6 +383,8 @@ public:
 
   double GetEarthPositionAngleDeg(void) const { return GetEarthPositionAngle()*radtodeg;}
 
+  const FGColumnVector3& GetTerrainVelocity(void) const { return LocalTerrainVelocity; }
+  const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
   double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {

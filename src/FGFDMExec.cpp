@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.109 2011/08/14 20:15:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.112 2011/08/21 15:35:39 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -473,7 +473,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.Tl2b     = Propagate->GetTl2b();
     Accelerations->in.qAttitudeECI = Propagate->GetQuaternionECI();
     Accelerations->in.Moment   = Aircraft->GetMoments();
+    Accelerations->in.GroundMoment  = GroundReactions->GetMoments();
     Accelerations->in.Force    = Aircraft->GetForces();
+    Accelerations->in.GroundForce   = GroundReactions->GetForces();
     Accelerations->in.GAccel   = Inertial->GetGAccel(Propagate->GetRadius());
     Accelerations->in.J2Grav  = Inertial->GetGravityJ2(Propagate->GetLocation());
     Accelerations->in.vPQRi    = Propagate->GetPQRi();
@@ -482,6 +484,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.vInertialPosition = Propagate->GetInertialPosition();
     Accelerations->in.DeltaT   = dT;
     Accelerations->in.Mass     = MassBalance->GetMass();
+    Accelerations->in.MultipliersList = GroundReactions->GetMultipliersList();
+    Accelerations->in.TerrainVelocity = Propagate->GetTerrainVelocity();
+    Accelerations->in.TerrainAngularVel = Propagate->GetTerrainAngularVelocity();
     break;
   default:
     break;

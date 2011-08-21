@@ -51,7 +51,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAccelerations.h"
-#include "FGGroundReactions.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -59,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.4 2011/08/14 20:15:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.7 2011/08/21 15:35:39 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,11 +223,14 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   vector <FGColumnVector3> JacF, JacM;
   vector<double> lambda, lambdaMin, lambdaMax;
   FGColumnVector3 vdot, wdot;
-  FGColumnVector3 Fc, Mc;
   int n = 0;
+  vector <LagrangeMultiplier*>::iterator it;
+
+  vFrictionForces.InitMatrix();
+  vFrictionMoments.InitMatrix();
 
   // Compiles data from the ground reactions to build up the jacobian matrix
-  for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it, n++) {
+  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it, n++) {
     JacF.push_back((*it)->ForceJacobian);
     JacM.push_back((*it)->MomentJacobian);
     lambda.push_back((*it)->value);
@@ -251,18 +253,16 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   }
 
   // Assemble the RHS member
-  FGColumnVector3 terrainVel =  FDMExec->GetGroundCallback()->GetTerrainVelocity();
-  FGColumnVector3 terrainAngularVel =  FDMExec->GetGroundCallback()->GetTerrainAngularVelocity();
 
   // Translation
   vdot = vUVWdot;
   if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-    vdot += (in.vUVW - in.Tec2b * terrainVel) / dt;
+    vdot += (in.vUVW - in.Tec2b * in.TerrainVelocity) / dt;
 
   // Rotation
   wdot = vPQRdot;
   if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
-    wdot += (in.vPQR - in.Tec2b * terrainAngularVel) / dt;
+    wdot += (in.vPQR - in.Tec2b * in.TerrainAngularVel) / dt;
 
   // Prepare the linear system for the Gauss-Seidel algorithm :
   // 1. Compute the right hand side member 'rhs'
@@ -298,17 +298,15 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // Calculate the total friction forces and moments
 
-  Fc.InitMatrix();
-  Mc.InitMatrix();
-
   for (int i=0; i< n; i++) {
-    Fc += lambda[i]*JacF[i];
-    Mc += lambda[i]*JacM[i];
+    vFrictionForces += lambda[i]*JacF[i];
+    vFrictionMoments += lambda[i]*JacM[i];
   }
 
-  FGColumnVector3 accel = invMass * Fc;
-  FGColumnVector3 omegadot = Jinv * Mc;
+  FGColumnVector3 accel = invMass * vFrictionForces;
+  FGColumnVector3 omegadot = Jinv * vFrictionMoments;
 
+  vBodyAccel += accel;
   vUVWdot += accel;
   vUVWidot += in.Tb2i * accel;
   vPQRdot += omegadot;
@@ -317,10 +315,8 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // Save the value of the Lagrange multipliers to accelerate the convergence
   // of the Gauss-Seidel algorithm at next iteration.
   int i = 0;
-  for (MultiplierIterator it=MultiplierIterator(FDMExec->GetGroundReactions()); *it; ++it)
+  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it)
     (*it)->value = lambda[i++];
-
-  FDMExec->GetGroundReactions()->UpdateForcesAndMoments();
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -348,6 +344,20 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
   PropertyManager->Tie("simulation/gravity-model", &gravType);
+
+  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAccelerations::GetForces);
+  PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAccelerations::GetForces);
+  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, (PMF)&FGAccelerations::GetForces);
+  PropertyManager->Tie("moments/l-total-lbsft", this, eL, (PMF)&FGAccelerations::GetMoments);
+  PropertyManager->Tie("moments/m-total-lbsft", this, eM, (PMF)&FGAccelerations::GetMoments);
+  PropertyManager->Tie("moments/n-total-lbsft", this, eN, (PMF)&FGAccelerations::GetMoments);
+
+  PropertyManager->Tie("moments/l-gear-lbsft", this, eL, (PMF)&FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("moments/m-gear-lbsft", this, eM, (PMF)&FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("moments/n-gear-lbsft", this, eN, (PMF)&FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("forces/fbx-gear-lbs", this, eX, (PMF)&FGAccelerations::GetGroundForces);
+  PropertyManager->Tie("forces/fby-gear-lbs", this, eY, (PMF)&FGAccelerations::GetGroundForces);
+  PropertyManager->Tie("forces/fbz-gear-lbs", this, eZ, (PMF)&FGAccelerations::GetGroundForces);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

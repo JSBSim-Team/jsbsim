@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <vector>
+
 #include "models/FGModel.h"
 #include "math/FGColumnVector3.h"
 #include "math/LagrangeMultiplier.h"
@@ -48,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.3 2011/08/14 20:15:56 jberndt Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.7 2011/08/21 15:46:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +70,7 @@ CLASS DOCUMENTATION
     -Calculate the translational velocity
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.3 2011/08/14 20:15:56 jberndt Exp $
+    @version $Id: FGAccelerations.h,v 1.7 2011/08/21 15:46:48 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,6 +169,11 @@ public:
   */
   double GetPQRdot(int axis) const {return vPQRdot(axis);}
 
+  double GetMoments(int idx) const { return in.Moment(idx) + vFrictionMoments(idx); }
+  double GetForces(int idx) const { return in.Force(idx) + vFrictionForces(idx); }
+  double GetGroundMoments(int idx) const { return in.GroundMoment(idx) + vFrictionMoments(idx); }
+  double GetGroundForces(int idx) const { return in.GroundForce(idx) + vFrictionForces(idx); }
+
   void InitializeDerivatives(void);
 
   void DumpState(void);
@@ -180,16 +187,21 @@ public:
     FGMatrix33 Tl2b;
     FGQuaternion qAttitudeECI;
     FGColumnVector3 Moment;
+    FGColumnVector3 GroundMoment;
     FGColumnVector3 Force;
+    FGColumnVector3 GroundForce;
     FGColumnVector3 J2Grav;
     FGColumnVector3 vPQRi;
     FGColumnVector3 vPQR;
     FGColumnVector3 vUVW;
     FGColumnVector3 vInertialPosition;
     FGColumnVector3 vOmegaPlanet;
+    FGColumnVector3 TerrainVelocity;
+    FGColumnVector3 TerrainAngularVel;
     double DeltaT;
     double Mass;
     double GAccel;
+    std::vector<LagrangeMultiplier*> *MultipliersList;
   } in;
 
 private:
@@ -199,6 +211,8 @@ private:
   FGQuaternion vQtrndot;
   FGColumnVector3 vBodyAccel;
   FGColumnVector3 vGravAccel;
+  FGColumnVector3 vFrictionForces;
+  FGColumnVector3 vFrictionMoments;
 
   int gravType;
 

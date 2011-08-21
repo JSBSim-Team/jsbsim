@@ -59,7 +59,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.32 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.33 2011/08/21 15:06:38 bcoconni Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,13 +216,7 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZvrp);
-  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAircraft::GetForces);
-  PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAircraft::GetForces);
-  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("forces/hold-down", this, &FGAircraft::GetHoldDown, &FGAircraft::SetHoldDown);
-  PropertyManager->Tie("moments/l-total-lbsft", this, eL, (PMF)&FGAircraft::GetMoments);
-  PropertyManager->Tie("moments/m-total-lbsft", this, eM, (PMF)&FGAircraft::GetMoments);
-  PropertyManager->Tie("moments/n-total-lbsft", this, eN, (PMF)&FGAircraft::GetMoments);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

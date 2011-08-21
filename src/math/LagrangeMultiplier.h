@@ -1,7 +1,7 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       LaGrangeMultiplier.h
- Author:      Bertrand Coconnier
+ Author:       Bertrand Coconnier
  Date started: 07/01/11
 
  ------------- Copyright (C) 2011  Bertrand Coconnier -------------
@@ -38,7 +38,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LAGRANGEMULTIPLIER "$Id: "
+#define ID_LAGRANGEMULTIPLIER "$Id: LagrangeMultiplier.h,v 1.2 2011/08/21 15:13:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
