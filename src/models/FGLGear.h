@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.46 2011/08/21 15:13:22 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.47 2011/08/30 21:05:56 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.46 2011/08/21 15:13:22 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.47 2011/08/30 21:05:56 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -288,9 +288,11 @@ public:
   bool GetGearUnitUp(void) const       { return GearUp;          }
   bool GetGearUnitDown(void) const     { return GearDown;        }
   double GetWheelRollForce(void) {
+    UpdateForces();
     FGColumnVector3 vForce = mTGear.Transposed() * FGForce::GetBodyForces();
     return vForce(eX)*cos(SteerAngle) + vForce(eY)*sin(SteerAngle); }
   double GetWheelSideForce(void) {
+    UpdateForces();
     FGColumnVector3 vForce = mTGear.Transposed() * FGForce::GetBodyForces();
     return vForce(eY)*cos(SteerAngle) - vForce(eX)*sin(SteerAngle); }
   double GetWheelRollVel(void) const   { return vWhlVelVec(eX)*cos(SteerAngle)
@@ -302,7 +304,6 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void);
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
-  FGColumnVector3& UpdateForces(void);
 
   const struct Inputs& in;
 
@@ -379,6 +380,7 @@ private:
   void ComputeVerticalStrutForce(void);
   void ComputeGroundCoordSys(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
+  void UpdateForces(void);
   void CrashDetect(void);
   void InitializeReporting(void);
   void ResetReporting(void);
