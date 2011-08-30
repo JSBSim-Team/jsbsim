@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.7 2011/08/21 15:35:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.8 2011/08/30 20:49:04 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -220,23 +220,12 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 {
   const double invMass = 1.0 / in.Mass;
   const FGMatrix33& Jinv = in.Jinv;
-  vector <FGColumnVector3> JacF, JacM;
-  vector<double> lambda, lambdaMin, lambdaMax;
   FGColumnVector3 vdot, wdot;
-  int n = 0;
-  vector <LagrangeMultiplier*>::iterator it;
+  vector<LagrangeMultiplier*>& multipliers = *in.MultipliersList;
+  int n = multipliers.size();
 
   vFrictionForces.InitMatrix();
   vFrictionMoments.InitMatrix();
-
-  // Compiles data from the ground reactions to build up the jacobian matrix
-  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it, n++) {
-    JacF.push_back((*it)->ForceJacobian);
-    JacM.push_back((*it)->MomentJacobian);
-    lambda.push_back((*it)->value);
-    lambdaMax.push_back((*it)->Max);
-    lambdaMin.push_back((*it)->Min);
-  }
 
   // If no gears are in contact with the ground then return
   if (!n) return;
@@ -246,10 +235,14 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // Assemble the linear system of equations
   for (int i=0; i < n; i++) {
+    FGColumnVector3 v1 = invMass * multipliers[i]->ForceJacobian;
+    FGColumnVector3 v2 = Jinv * multipliers[i]->MomentJacobian; // Should be J^-T but J is symmetric and so is J^-1
+
     for (int j=0; j < i; j++)
       a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of J^T*M^-1*J
     for (int j=i; j < n; j++)
-      a[i*n+j] = DotProduct(JacF[i],invMass*JacF[j])+DotProduct(JacM[i],Jinv*JacM[j]);
+      a[i*n+j] = DotProduct(v1, multipliers[j]->ForceJacobian)
+               + DotProduct(v2, multipliers[j]->MomentJacobian);
   }
 
   // Assemble the RHS member
@@ -271,7 +264,8 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   for (int i=0; i < n; i++) {
     double d = 1.0 / a[i*n+i];
 
-    rhs[i] = -(DotProduct(JacF[i],vdot)+DotProduct(JacM[i],wdot))*d;
+    rhs[i] = -(DotProduct(multipliers[i]->ForceJacobian, vdot)
+              +DotProduct(multipliers[i]->MomentJacobian, wdot))*d;
     for (int j=0; j < n; j++)
       a[i*n+j] *= d;
   }
@@ -281,14 +275,14 @@ void FGAccelerations::ResolveFrictionForces(double dt)
     double norm = 0.;
 
     for (int i=0; i < n; i++) {
-      double lambda0 = lambda[i];
+      double lambda0 = multipliers[i]->value;
       double dlambda = rhs[i];
       
       for (int j=0; j < n; j++)
-        dlambda -= a[i*n+j]*lambda[j];
+        dlambda -= a[i*n+j]*multipliers[j]->value;
 
-      lambda[i] = Constrain(lambdaMin[i], lambda0+dlambda, lambdaMax[i]);
-      dlambda = lambda[i] - lambda0;
+      multipliers[i]->value = Constrain(multipliers[i]->Min, lambda0+dlambda, multipliers[i]->Max);
+      dlambda = multipliers[i]->value - lambda0;
 
       norm += fabs(dlambda);
     }
@@ -299,8 +293,9 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // Calculate the total friction forces and moments
 
   for (int i=0; i< n; i++) {
-    vFrictionForces += lambda[i]*JacF[i];
-    vFrictionMoments += lambda[i]*JacM[i];
+    double lambda = multipliers[i]->value;
+    vFrictionForces += lambda * multipliers[i]->ForceJacobian;
+    vFrictionMoments += lambda * multipliers[i]->MomentJacobian;
   }
 
   FGColumnVector3 accel = invMass * vFrictionForces;
@@ -311,12 +306,6 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   vUVWidot += in.Tb2i * accel;
   vPQRdot += omegadot;
   vPQRidot += omegadot;
-
-  // Save the value of the Lagrange multipliers to accelerate the convergence
-  // of the Gauss-Seidel algorithm at next iteration.
-  int i = 0;
-  for (it = in.MultipliersList->begin(); it != in.MultipliersList->end(); ++it)
-    (*it)->value = lambda[i++];
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
