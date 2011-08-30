@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.87 2011/08/21 15:35:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.88 2011/08/30 21:05:56 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -338,9 +338,13 @@ FGColumnVector3& FGLGear::GetBodyForces(void)
 
       vLocalWhlVel = Transform().Transposed() * vBodyWhlVel;
 
-      compressSpeed = -vLocalWhlVel(eX);
-      if (eContactType == ctBOGEY)
-        compressSpeed /= LGearProj;
+      if (fdmex->GetTrimStatus())
+	compressSpeed = 0.0; // Steady state is sought during trimming
+      else {
+	compressSpeed = -vLocalWhlVel(eX);
+	if (eContactType == ctBOGEY)
+	  compressSpeed /= LGearProj;
+      }
 
       ComputeVerticalStrutForce();
 
@@ -711,6 +715,11 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
     LMultiplier[ftDynamic].Max = 0.;
     LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eX));
+
+    // The Lagrange multiplier value obtained from the previous iteration is kept
+    // This is supposed to accelerate the convergence of the projected Gauss-Seidel
+    // algorithm. The code just below is to make sure that the initial value
+    // is consistent with the current friction coefficient and normal reaction.
     LMultiplier[ftDynamic].value = Constrain(LMultiplier[ftDynamic].Min, LMultiplier[ftDynamic].value, LMultiplier[ftDynamic].Max);
 
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftDynamic]);
@@ -740,6 +749,11 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
     LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
+
+    // The Lagrange multiplier value obtained from the previous iteration is kept
+    // This is supposed to accelerate the convergence of the projected Gauss-Seidel
+    // algorithm. The code just below is to make sure that the initial value
+    // is consistent with the current friction coefficient and normal reaction.
     LMultiplier[ftRoll].value = Constrain(LMultiplier[ftRoll].Min, LMultiplier[ftRoll].value, LMultiplier[ftRoll].Max);
     LMultiplier[ftSide].value = Constrain(LMultiplier[ftSide].Min, LMultiplier[ftSide].value, LMultiplier[ftSide].Max);
 
@@ -752,7 +766,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 // This routine is called after the Lagrange multiplier has been computed in
 // the FGAccelerations class. The friction forces of the landing gear are then
 // updated accordingly.
-FGColumnVector3& FGLGear::UpdateForces(void)
+void FGLGear::UpdateForces(void)
 {
   if (StaticFriction) {
     vFn(eY) = LMultiplier[ftRoll].value;
@@ -760,9 +774,6 @@ FGColumnVector3& FGLGear::UpdateForces(void)
   }
   else
     vFn += LMultiplier[ftDynamic].value * (Transform ().Transposed() * LMultiplier[ftDynamic].ForceJacobian);
-
-  // Return the updated force in the body frame
-  return FGForce::GetBodyForces();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
