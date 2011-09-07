@@ -2,7 +2,7 @@
 
 digraph G {
   rankdir = LR;
-  ranksep=1.3;
+  ranksep=1.4;
   // size = "17, 11";
   concentrate=true;
 
@@ -78,6 +78,7 @@ digraph G {
     "Delta T";
     Mass;
     Weight;
+    EmptyWeight;
     Force_w;
     Forces;
     Gravity;
@@ -112,6 +113,9 @@ digraph G {
     BrakePos;
     SteerPosDeg;
     FCSGearPos;
+    LagrangeMultipliersList;
+    TerrainVelocity;
+    TerrainAngularVelocity;
 }
 /* Alignment blocks */
 {
@@ -222,6 +226,8 @@ digraph G {
   Propagate -> AltitudeASL -> Winds;
   Propagate -> DistanceAGL -> Winds;
   Propagate -> Tl2b -> Winds;
+  Executive -> "Delta T" -> Winds;
+  Auxiliary -> Tw2b -> Winds;
   Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
 
   // Auxiliary
@@ -358,11 +364,16 @@ digraph G {
   Propagate -> QuaternionECI -> Accelerations;
   Aircraft -> Moments -> Accelerations;
   Aircraft -> Forces -> Accelerations;
+  GroundReactions -> "Ground Forces" -> Accelerations;
+  GroundReactions -> "Ground Moments" -> Accelerations;
+  GroundReactions -> LagrangeMultipliersList -> Accelerations;
   Inertial -> Gravity -> Accelerations;
   Inertial -> GravityJ2 -> Accelerations;
   Propagate -> PQRi -> Accelerations;
   Propagate -> PQR -> Accelerations;
   Propagate -> UVW -> Accelerations;
   Propagate -> InertialPosition -> Accelerations;
+  Propagate -> TerrainVelocity -> Accelerations;
+  Propagate -> TerrainAngularVelocity -> Accelerations;
   Executive -> "Delta T" -> Accelerations;
 }

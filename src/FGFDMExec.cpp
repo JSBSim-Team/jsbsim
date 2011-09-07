@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.112 2011/08/21 15:35:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.113 2011/09/07 02:37:04 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   holding = false;
   Terminate = false;
   StandAlone = false;
+  firstPass = true;
 
   sim_time = 0.0;
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
@@ -294,15 +295,24 @@ bool FGFDMExec::Run(void)
     ChildFDMList[i]->Run();
   }
 
+  if (firstPass && !IntegrationSuspended()) {
+    // Outputs the initial conditions
+    for (unsigned int i = 0; i < Outputs.size(); i++)
+      Outputs[i]->Run(holding);
+
+    firstPass = false;
+  }
+
   // returns true if success, false if complete
   if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
+
+  IncrTime();
 
   for (unsigned int i = 0; i < Models.size(); i++) {
     LoadInputs(i);
     Models[i]->Run(holding);
   }
 
-  IncrTime();
   if (Terminate) success = false;
 
   return (success);
@@ -332,7 +342,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Winds->in.AltitudeASL      = Propagate->GetAltitudeASL();
     Winds->in.DistanceAGL      = Propagate->GetDistanceAGL();
     Winds->in.Tl2b             = Propagate->GetTl2b();
+    Winds->in.Tw2b             = Auxiliary->GetTw2b();
     Winds->in.V                = Auxiliary->GetVt();
+    Winds->in.totalDeltaT      = dT * Winds->GetRate();
     break;
   case eAuxiliary:
     Auxiliary->in.Pressure     = Atmosphere->GetPressure();

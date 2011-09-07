@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.3 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.4 2011/09/07 02:37:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -218,12 +218,69 @@ public:
   virtual void   SetProbabilityOfExceedence( int idx) {probability_of_exceedence_index = idx;}
   virtual int    GetProbabilityOfExceedence() const { return probability_of_exceedence_index;}
 
+  // Stores data defining a 1 - cosine gust profile that builds up, holds steady
+  // and fades out over specified durations.
+  struct OneMinusCosineProfile {
+    bool Running;           ///<- This flag is set true through FGWinds::StartGust().
+    double elapsedTime;     ///<- Stores the elapsed time for the ongoing gust.
+    double startupDuration; ///<- Specifies the time it takes for the gust startup transient.
+    double steadyDuration;  ///<- Specifies the duration of the steady gust.
+    double endDuration;     ///<- Specifies the time it takes for the gust to subsude.
+    OneMinusCosineProfile() ///<- The constructor.
+    {
+      elapsedTime = 0.0;
+      Running = false;
+      startupDuration = 2;
+      steadyDuration = 4;
+      endDuration = 2;
+    }
+  };
+
+  enum eGustFrame {gfNone=0, gfBody, gfWind, gfLocal};
+
+  struct OneMinusCosineGust {
+    FGColumnVector3 vWind;                   ///<- The input normalized wind vector.
+    FGColumnVector3 vWindTransformed;        ///<- The transformed normal vector at the time the gust is started.
+    double magnitude;                        ///<- The magnitude of the wind vector.
+    eGustFrame gustFrame;
+    struct OneMinusCosineProfile gustProfile;
+    OneMinusCosineGust()
+    {
+      vWind.InitMatrix(0.0);
+      gustFrame = gfLocal;
+      magnitude = 1.0;
+    };
+  };
+
+  struct UpDownBurst {
+    double ringLatitude;
+    double ringLongitude;
+    double ringAltitude;
+    double ringRadius;
+    double ringCoreRadius;
+    double circulation;
+    struct OneMinusCosineProfile oneMCosineProfile;
+  };
+
+  // 1 - Cosine gust setters
+  virtual void StartGust(bool running) {oneMinusCosineGust.gustProfile.Running = running;}
+  virtual void StartupGustDuration(double dur) {oneMinusCosineGust.gustProfile.startupDuration = dur;}
+  virtual void SteadyGustDuration(double dur) {oneMinusCosineGust.gustProfile.steadyDuration = dur;}
+  virtual void EndGustDuration(double dur) {oneMinusCosineGust.gustProfile.endDuration = dur;}
+  virtual void GustMagnitude(double mag) {oneMinusCosineGust.magnitude = mag;}
+  virtual void GustFrame(eGustFrame gFrame) {oneMinusCosineGust.gustFrame = gFrame;}
+  virtual void GustXComponent(double x) {oneMinusCosineGust.vWind(eX) = x;}
+  virtual void GustYComponent(double y) {oneMinusCosineGust.vWind(eY) = y;}
+  virtual void GustZComponent(double z) {oneMinusCosineGust.vWind(eZ) = z;}
+
   struct Inputs {
     double V;
     double wingspan;
     double DistanceAGL;
     double AltitudeASL;
     FGMatrix33 Tl2b;
+    FGMatrix33 Tw2b;
+    double totalDeltaT;
   } in;
 
 private:
@@ -242,6 +299,8 @@ private:
   FGColumnVector3 vBodyTurbGrad;
   FGColumnVector3 vTurbPQR;
 
+  struct OneMinusCosineGust oneMinusCosineGust;
+
   // Dryden turbulence model
   double windspeed_at_20ft; ///< in ft/s
   int probability_of_exceedence_index; ///< this is bound as the severity property
@@ -251,10 +310,16 @@ private:
   FGColumnVector3 vTotalWindNED;
   FGColumnVector3 vWindNED;
   FGColumnVector3 vGustNED;
+  FGColumnVector3 vCosineGust;
+  FGColumnVector3 vBurstGust;
   FGColumnVector3 vTurbulenceNED;
 
   /// Get T, P and rho for a standard atmosphere at the given altitude.
   void Turbulence(double h);
+
+  void CosineGust();
+  double CosineGustProfile( double startDuration, double steadyDuration,
+                            double endDuration, double elapsedTime);
 
   virtual void bind(void);
   void Debug(int from);

@@ -120,11 +120,11 @@
         </axis>
     </aerodynamics>
 
-    <output name="BallOut.csv" type="CSV" rate="5">
+    <output name="BallOut.csv" type="CSV" rate="120">
         <rates> ON </rates>
         <velocities> ON </velocities>
-        <forces> OFF </forces>
-        <moments> OFF </moments>
+        <forces> ON </forces>
+        <moments> ON </moments>
         <position> ON </position>
     </output>
 </fdm_config>

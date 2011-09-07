@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.3 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.4 2011/09/07 02:37:04 jberndt Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,8 +133,9 @@ bool FGWinds::Run(bool Holding)
   RunPreFunctions();
 
   if (turbType != ttNone) Turbulence(in.AltitudeASL);
+  if (oneMinusCosineGust.gustProfile.Running) CosineGust();
 
-  vTotalWindNED = vWindNED + vGustNED + vTurbulenceNED;
+  vTotalWindNED = vWindNED + vGustNED + vCosineGust + vTurbulenceNED;
 
    // psiw (Wind heading) is the direction the wind is blowing towards
   if (vWindNED(eX) != 0.0) psiw = atan2( vWindNED(eY), vWindNED(eX) );
@@ -184,8 +185,6 @@ void FGWinds::SetWindPsi(double dir)
 
 void FGWinds::Turbulence(double h)
 {
-  const double DeltaT = rate*FDMExec->GetDeltaT();
-
   switch (turbType) {
 
   case ttCulp: { 
@@ -283,7 +282,7 @@ void FGWinds::Turbulence(double h)
 
 
     double
-      T_V = DeltaT, // for compatibility of nomenclature
+      T_V = in.totalDeltaT, // for compatibility of nomenclature
       sig_p = 1.9/sqrt(L_w*b_w)*sig_w, // Yeager1998, eq. (8)
       sig_q = sqrt(M_PI/2/L_w/b_w), // eq. (14)
       sig_r = sqrt(2*M_PI/3/L_w/b_w), // eq. (17)
@@ -376,12 +375,73 @@ void FGWinds::Turbulence(double h)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGWinds::CosineGustProfile(double startDuration, double steadyDuration, double endDuration, double elapsedTime)
+{
+  double factor = 0.0;
+  if (elapsedTime >= 0 && elapsedTime <= startDuration) {
+    factor = (1.0 - cos(M_PI*elapsedTime/startDuration))/2.0;
+  } else if (elapsedTime > startDuration && (elapsedTime <= (startDuration + steadyDuration))) {
+    factor = 1.0;
+  } else if (elapsedTime > (startDuration + steadyDuration) && elapsedTime <= (startDuration + steadyDuration + endDuration)) {
+    factor = (1-cos(M_PI*(1-(elapsedTime-(startDuration + steadyDuration))/endDuration)))/2.0;
+  } else {
+    factor = 0.0;
+  }
+
+  return factor;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGWinds::CosineGust()
+{
+  struct OneMinusCosineProfile& profile = oneMinusCosineGust.gustProfile;
+
+  double factor = CosineGustProfile( profile.startupDuration,
+                                     profile.steadyDuration,
+                                     profile.endDuration,
+                                     profile.elapsedTime);
+  // Normalize the gust wind vector
+  oneMinusCosineGust.vWind.Normalize();
+
+  if (oneMinusCosineGust.vWindTransformed.Magnitude() == 0.0) {
+    switch (oneMinusCosineGust.gustFrame) {
+    case gfBody:
+      oneMinusCosineGust.vWindTransformed = in.Tl2b.Inverse() * oneMinusCosineGust.vWind;
+      break;
+    case gfWind:
+      oneMinusCosineGust.vWindTransformed = in.Tl2b.Inverse() * in.Tw2b * oneMinusCosineGust.vWind;
+      break;
+    case gfLocal:
+      // this is the native frame - and the default.
+      oneMinusCosineGust.vWindTransformed = oneMinusCosineGust.vWind;
+      break;
+    }
+  }
+
+  vCosineGust = factor * oneMinusCosineGust.vWindTransformed * oneMinusCosineGust.magnitude;
+
+  profile.elapsedTime += in.totalDeltaT;
+
+  if (profile.elapsedTime > (profile.startupDuration + profile.steadyDuration + profile.endDuration)) {
+    profile.Running = false;
+    profile.elapsedTime = 0.0;
+    oneMinusCosineGust.vWindTransformed.InitMatrix(0.0);
+    vCosineGust.InitMatrix(0);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGWinds::bind(void)
 {
   typedef double (FGWinds::*PMF)(int) const;
   typedef int (FGWinds::*PMFt)(void) const;
   typedef void   (FGWinds::*PMFd)(int,double);
   typedef void   (FGWinds::*PMFi)(int);
+  typedef double (FGWinds::*Ptr)(void) const;
+
+  // User-specified steady, constant, wind properties (local navigational/geographic frame: N-E-D)
   PropertyManager->Tie("atmosphere/psiw-rad", this, &FGWinds::GetWindPsi, &FGWinds::SetWindPsi);
   PropertyManager->Tie("atmosphere/wind-north-fps", this, eNorth, (PMF)&FGWinds::GetWindNED,
                                                           (PMFd)&FGWinds::SetWindNED);
@@ -391,24 +451,34 @@ void FGWinds::bind(void)
                                                           (PMFd)&FGWinds::SetWindNED);
   PropertyManager->Tie("atmosphere/wind-mag-fps", this, &FGWinds::GetWindspeed,
                                                         &FGWinds::SetWindspeed);
-  PropertyManager->Tie("atmosphere/total-wind-north-fps", this, eNorth, (PMF)&FGWinds::GetTotalWindNED);
-  PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGWinds::GetTotalWindNED);
-  PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGWinds::GetTotalWindNED);
 
+  // User-specifieded gust (local navigational/geographic frame: N-E-D)
   PropertyManager->Tie("atmosphere/gust-north-fps", this, eNorth, (PMF)&FGWinds::GetGustNED,
                                                           (PMFd)&FGWinds::SetGustNED);
   PropertyManager->Tie("atmosphere/gust-east-fps",  this, eEast, (PMF)&FGWinds::GetGustNED,
                                                           (PMFd)&FGWinds::SetGustNED);
   PropertyManager->Tie("atmosphere/gust-down-fps",  this, eDown, (PMF)&FGWinds::GetGustNED,
                                                           (PMFd)&FGWinds::SetGustNED);
+  
+  // User-specified 1 - cosine gust parameters (in specified frame)
+  PropertyManager->Tie("atmosphere/cosine-gust/startup-duration-sec", this, (Ptr)0L, &FGWinds::StartupGustDuration);
+  PropertyManager->Tie("atmosphere/cosine-gust/steady-duration-sec", this, (Ptr)0L, &FGWinds::SteadyGustDuration);
+  PropertyManager->Tie("atmosphere/cosine-gust/end-duration-sec", this, (Ptr)0L, &FGWinds::EndGustDuration);
+  PropertyManager->Tie("atmosphere/cosine-gust/magnitude-ft_sec", this, (Ptr)0L, &FGWinds::GustMagnitude);
+  PropertyManager->Tie("atmosphere/cosine-gust/frame", this, (PMFt)0L, (PMFi)&FGWinds::GustFrame);
+  PropertyManager->Tie("atmosphere/cosine-gust/X-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustXComponent);
+  PropertyManager->Tie("atmosphere/cosine-gust/Y-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustYComponent);
+  PropertyManager->Tie("atmosphere/cosine-gust/Z-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustZComponent);
+  PropertyManager->Tie("atmosphere/cosine-gust/start", this, (PMFt)0L, (PMFi)&FGWinds::StartGust);
 
+  // User-specified turbulence (local navigational/geographic frame: N-E-D)
   PropertyManager->Tie("atmosphere/turb-north-fps", this, eNorth, (PMF)&FGWinds::GetTurbNED,
                                                           (PMFd)&FGWinds::SetTurbNED);
   PropertyManager->Tie("atmosphere/turb-east-fps",  this, eEast, (PMF)&FGWinds::GetTurbNED,
                                                           (PMFd)&FGWinds::SetTurbNED);
   PropertyManager->Tie("atmosphere/turb-down-fps",  this, eDown, (PMF)&FGWinds::GetTurbNED,
                                                           (PMFd)&FGWinds::SetTurbNED);
-
+  // Experimental turbulence parameters
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGWinds::GetTurbPQR);
@@ -418,12 +488,19 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGWinds::GetRhythmicity,
                                                             &FGWinds::SetRhythmicity);
 
+  // Parameters for milspec turbulence
   PropertyManager->Tie("atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps",
                        this, &FGWinds::GetWindspeed20ft,
                              &FGWinds::SetWindspeed20ft);
   PropertyManager->Tie("atmosphere/turbulence/milspec/severity",
                        this, &FGWinds::GetProbabilityOfExceedence,
                              &FGWinds::SetProbabilityOfExceedence);
+
+  // Total, calculated winds (local navigational/geographic frame: N-E-D). Read only.
+  PropertyManager->Tie("atmosphere/total-wind-north-fps", this, eNorth, (PMF)&FGWinds::GetTotalWindNED);
+  PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGWinds::GetTotalWindNED);
+  PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGWinds::GetTotalWindNED);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

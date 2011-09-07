@@ -5,8 +5,8 @@
   <vt unit="KTS">        100.0  </vt>
   <latitude unit="DEG">   28.0  </latitude>
   <longitude unit="DEG"> -90.0  </longitude>
-  <psi unit="DEG">        40.0  </psi>
-  <altitude unit="FT">  8000.0  </altitude>
+  <psi unit="DEG">       200.0  </psi>
+  <altitude unit="FT">   4000.0  </altitude>
   <running>                0    </running>
 </initialize>
 

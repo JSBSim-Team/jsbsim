@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="JSBSim"
 	ProjectGUID="{AF971B4F-3D53-4655-8A03-97E8054DC58B}"
 	RootNamespace="JSBSim"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -73,8 +72,6 @@
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -97,6 +94,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -105,7 +105,7 @@
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
-			WholeProgramOptimization="3"
+			WholeProgramOptimization="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -127,9 +127,8 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\simgear\xml&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H;_USE_MATH_DEFINES"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
@@ -137,6 +136,7 @@
 				UsePrecompiledHeader="0"
 				GenerateXMLDocumentationFiles="false"
 				WarningLevel="4"
+				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
@@ -160,10 +160,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
+				Profile="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -185,6 +183,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -472,6 +473,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\atmosphere\FGStandardAtmosphere.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\models\flight_control\FGSummer.h"
 				>
 			</File>
@@ -505,6 +510,10 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGTurboProp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\atmosphere\FGWinds.h"
 				>
 			</File>
 			<File
@@ -840,6 +849,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\atmosphere\FGStandardAtmosphere.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\models\flight_control\FGSummer.cpp"
 				>
 			</File>
@@ -881,6 +894,10 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGTurboProp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\atmosphere\FGWinds.cpp"
 				>
 			</File>
 			<File
@@ -993,10 +1010,6 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\aircraft\ah1s\Makefile.am"
-			>
-		</File>
-		<File
 			RelativePath=".\data_output\Makefile.am"
 			>
 			<FileConfiguration
@@ -1019,6 +1032,10 @@
 					Name="VCCustomBuildTool"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\aircraft\ah1s\Makefile.am"
+			>
 		</File>
 		<File
 			RelativePath=".\aircraft\ah1s\reset00.xml"

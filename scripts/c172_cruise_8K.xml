@@ -24,6 +24,7 @@
           </switch>
         </function>
       </set>
+      <set name="ap/altitude_setpoint" value="4000.0"/>
     </event>
     
     <event name="Start engine">
@@ -77,7 +78,7 @@
     </event>
 
     <event name="Hold heading and altitude">
-      <condition>simulation/sim-time-sec  ge  5</condition>
+      <condition>simulation/sim-time-sec ge 5</condition>
       <set name="ap/heading_setpoint" value="200"/>
       <set name="ap/heading_hold" value="1"/>
       <set name="ap/altitude_setpoint" value="4000.0"/>
@@ -85,30 +86,43 @@
       <notify/>
     </event>
 
-    <event name="Terminate on run ID">
-      <condition>
-        simulation/sim-time-sec >= 10.0
-        simulation/run_id  ge  2
-      </condition>
-      <set name="simulation/terminate" value="1"/>
-      <notify>
-        <property caption="Terminate: "> simulation/terminate </property>
-      </notify>
+    <event name="Introduce gust">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="atmosphere/cosine-gust/startup-duration-sec" value="5"/>
+      <set name="atmosphere/cosine-gust/steady-duration-sec" value="1"/>
+      <set name="atmosphere/cosine-gust/end-duration-sec" value="5"/>
+      <set name="atmosphere/cosine-gust/magnitude-ft_sec" value="30"/>
+      <set name="atmosphere/cosine-gust/frame" value="2"/>
+      <set name="atmosphere/cosine-gust/X-velocity-ft_sec" value="-1"/>
+      <set name="atmosphere/cosine-gust/Y-velocity-ft_sec" value="0"/>
+      <set name="atmosphere/cosine-gust/Z-velocity-ft_sec" value="0"/>
+      <set name="atmosphere/cosine-gust/start" value="1"/>
+      <notify/>
     </event>
 
     <event name="Reset">
       <condition logic="AND">
-        simulation/sim-time-sec >= 10.0
+        simulation/sim-time-sec >= 30.0
         simulation/terminate != 1
       </condition>
       <set name="ap/heading_setpoint" value="0"/>
-      <set name="ap/altitude_setpoint" value="0"/>
+<!--      <set name="ap/altitude_setpoint" value="0"/> -->
       <set name="ap/altitude_hold" value="0"/>
       <set name="ap/heading_hold" value="0"/>
       <set name="simulation/reset" value="1"/>
       <set name="simulation/run_id" type="FG_DELTA" value="1"/>
       <notify>
         <property> simulation/run_id </property>
+      </notify>
+    </event>
+
+    <event name="Terminate on run ID">
+      <condition>
+        simulation/run_id  ge  3
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+      <notify>
+        <property caption="Terminate: "> simulation/terminate </property>
       </notify>
     </event>
 
