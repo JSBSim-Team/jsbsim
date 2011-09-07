@@ -298,9 +298,9 @@ PITCH CHANNEL
 
   <pid name="fcs/altitude-hold-pid">
     <input> fcs/ap-alt-hold-switch </input>
-    <kp> 0.05 </kp>
-<!--    <ki> 0.00015 </ki>
-    <kd> 0.0003 </kd> -->
+    <kp> 0.01 </kp>
+    <ki> 0.00015 </ki>
+    <kd> 0.0003 </kd>
     <trigger> fcs/windup-trigger </trigger>
     <clipto> <min>-1.0</min>
              <max> 1.0</max> </clipto>

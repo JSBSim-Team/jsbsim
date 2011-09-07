@@ -79,7 +79,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.26 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.27 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -195,7 +195,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.26 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.27 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1080,11 +1080,12 @@
 
   <!--EXTERNAL REACTIONS SECTION -->
   <xs:element name="external_reactions">
-    <xs:complexType mixed="true">
+    <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="force" />
       </xs:sequence>
+      <xs:attribute name="file" use="optional" type="xs:string" />
     </xs:complexType>
   </xs:element>
 

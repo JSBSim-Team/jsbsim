@@ -7,10 +7,10 @@
     <fileheader>
         <author> External model, animations and FDM by Erik Hofman.  Cockpit model in progress, work by the FlightGear community. </author>
         <filecreationdate> In progress January 2008 </filecreationdate>
-        <version> External model $Revision: 1.19 $   Cockpit model in development.</version>
+        <version> External model $Revision: 1.20 $   Cockpit model in development.</version>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.19 $ </version>
+        <version> $Revision: 1.20 $ </version>
         <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
@@ -178,7 +178,7 @@
 
     <propulsion>
 <!--        <engine file="PWC125B_Aeromatic">  -->
-        <engine file="PW125BX">  -->
+        <engine file="PW125BX">  
             <location unit="IN">
                 <x> 497.072 </x>
                 <y> -190.298 </y>
