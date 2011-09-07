@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.41 2011/08/06 13:11:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.42 2011/09/07 02:36:04 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -494,7 +494,8 @@ double FGFunction::GetValue(void) const
       if (i >= 0u && i < n) {
         temp = Parameters[i+1]->GetValue();
       } else {
-        throw("Malformed switch in function statement");
+        throw(string("The switch function index selected a value above the range of supplied values"
+                     " - not enough values were supplied."));
       }
     }
     break;
