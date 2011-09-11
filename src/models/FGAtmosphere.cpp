@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.48 2011/07/10 20:18:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.49 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,6 +171,9 @@ double FGAtmosphere::ConvertToRankine(double t, eTemperature unit) const
     break;
   case eKelvin:
     targetTemp = t*9.0/5.0;
+    break;
+  default:
+    break;
   }
 
   return targetTemp;

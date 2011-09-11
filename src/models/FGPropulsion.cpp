@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.50 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.51 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -368,7 +368,6 @@ void FGPropulsion::InitRunning(int n)
 bool FGPropulsion::Load(Element* el)
 {
   string type, engine_filename;
-  bool ThrottleAdded = false;
 
   Debug(2);
 

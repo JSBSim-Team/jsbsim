@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.59 2011/08/14 20:15:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.60 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -255,7 +255,6 @@ void FGOutput::DelimitedOutput(const string& fname)
   const FGPropagate* Propagate = FDMExec->GetPropagate();
   const FGAccelerations* Accelerations = FDMExec->GetAccelerations();
   const FGFCS* FCS = FDMExec->GetFCS();
-  const FGInertial* Inertial = FDMExec->GetInertial();
   const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();
   const FGExternalReactions* ExternalReactions = FDMExec->GetExternalReactions();
   const FGBuoyantForces* BuoyantForces = FDMExec->GetBuoyantForces();
@@ -518,10 +517,8 @@ void FGOutput::DelimitedOutput(const string& fname)
 
 void FGOutput::SocketDataFill(FGNetFDM* net)
 {
-  const FGAerodynamics* Aerodynamics = FDMExec->GetAerodynamics();
   const FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
   const FGPropulsion* Propulsion = FDMExec->GetPropulsion();
-  const FGMassBalance* MassBalance = FDMExec->GetMassBalance();
   const FGPropagate* Propagate = FDMExec->GetPropagate();
   const FGFCS* FCS = FDMExec->GetFCS();
   const FGGroundReactions* GroundReactions = FDMExec->GetGroundReactions();

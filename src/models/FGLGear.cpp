@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.88 2011/08/30 21:05:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.89 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -73,11 +73,11 @@ CLASS IMPLEMENTATION
 
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs& inputs) :
   FGForce(fdmex),
+  in(inputs),
   GearNumber(number),
   SteerAngle(0.0),
   Castered(false),
-  StaticFriction(false),
-  in(inputs)
+  StaticFriction(false)
 {
   Element *force_table=0;
   Element *dampCoeff=0;
