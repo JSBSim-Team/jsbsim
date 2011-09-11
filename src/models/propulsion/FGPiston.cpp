@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.64 2011/08/04 13:45:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.65 2011/09/11 12:06:54 bcoconni Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,7 +219,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
 
-  while(table_element = el->FindNextElement("table")) {
+  while((table_element = el->FindNextElement("table")) != 0) {
     name = table_element->GetAttributeValue("name");
     try {
       if (name == "COMBUSTION") {

@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.46 2011/08/17 23:56:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.47 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, struct Inputs& input)
-                      : EngineNumber(engine_number), in(input)
+                      : in(input), EngineNumber(engine_number)
 {
   Element* local_element;
   FGColumnVector3 location, orientation;

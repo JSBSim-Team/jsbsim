@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.4 2011/09/07 02:37:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.5 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,8 +284,8 @@ void FGWinds::Turbulence(double h)
     double
       T_V = in.totalDeltaT, // for compatibility of nomenclature
       sig_p = 1.9/sqrt(L_w*b_w)*sig_w, // Yeager1998, eq. (8)
-      sig_q = sqrt(M_PI/2/L_w/b_w), // eq. (14)
-      sig_r = sqrt(2*M_PI/3/L_w/b_w), // eq. (17)
+      //sig_q = sqrt(M_PI/2/L_w/b_w), // eq. (14)
+      //sig_r = sqrt(2*M_PI/3/L_w/b_w), // eq. (17)
       L_p = sqrt(L_w*b_w)/2.6, // eq. (10)
       tau_u = L_u/in.V, // eq. (6)
       tau_w = L_w/in.V, // eq. (3)
@@ -415,6 +415,8 @@ void FGWinds::CosineGust()
     case gfLocal:
       // this is the native frame - and the default.
       oneMinusCosineGust.vWindTransformed = oneMinusCosineGust.vWind;
+      break;
+    default:
       break;
     }
   }

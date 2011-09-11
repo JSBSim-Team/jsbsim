@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.33 2011/06/21 04:41:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.34 2011/09/11 11:36:04 bcoconni Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,7 +223,7 @@ bool FGFCSComponent::Run(void)
 void FGFCSComponent::Delay(void)
 {
   output_array[index] = Output;
-  if (index == delay-1) index = 0;
+  if ((unsigned int)index == delay-1) index = 0;
   else index++;
   Output = output_array[index];
 }
