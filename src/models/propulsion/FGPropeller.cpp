@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.36 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.37 2011/09/11 12:06:54 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     ConstantSpeed = (int)prop_element->FindElementValueAsNumber("constspeed");
   if (prop_element->FindElement("reversepitch"))
     ReversePitch = prop_element->FindElementValueAsNumber("reversepitch");
-  while(table_element = prop_element->FindNextElement("table")) {
+  while((table_element = prop_element->FindNextElement("table")) != 0) {
     name = table_element->GetAttributeValue("name");
     try {
       if (name == "C_THRUST") {
