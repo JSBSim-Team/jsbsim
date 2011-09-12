@@ -55,7 +55,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.13 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.15 2011/09/12 12:15:33 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -393,6 +393,7 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
   double mu2;
 
   mu = Uw/(Omega*Radius); // /SH79/ eqn(24)
+  if (mu > 0.7) mu = 0.7;
   mu2 = sqr(mu);
   
   ct_t0 = (1.0/3.0*B[3] + 1.0/2.0 * TipLossB*mu2 - 4.0/(9.0*M_PI) * mu*mu2 ) * theta_0;
