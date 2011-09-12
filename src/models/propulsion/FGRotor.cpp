@@ -55,7 +55,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.14 2011/09/12 12:09:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.15 2011/09/12 12:15:33 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
