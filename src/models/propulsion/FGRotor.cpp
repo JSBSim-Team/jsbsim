@@ -55,7 +55,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.15 2011/09/12 12:15:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.16 2011/09/17 16:39:19 bcoconni Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,8 +77,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   : FGThruster(exec, rotor_element, num),
     rho(0.002356),                                  // environment
     Radius(0.0), BladeNum(0),                       // configuration parameters
-    Sense(1.0), NominalRPM(0.0), ExternalRPM(0),
-    RPMdefinition(0), ExtRPMsource(NULL),
+    Sense(1.0), NominalRPM(0.0), MinimalRPM(0.0), MaximalRPM(0.0), 
+    ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL),
     BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
     BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
     InflowLag(0.0), TipLossB(0.0),
@@ -255,6 +255,13 @@ void FGRotor::Configure(Element* rotor_element)
   // make sure that v_tip (omega*r) is below 0.7mach ~ 750ft/s
   estimate = (750.0/Radius)/(2.0*M_PI) * 60.0;  // 7160/Radius
   NominalRPM = ConfigValue(rotor_element, "nominalrpm", estimate, yell);
+  NominalRPM = Constrain(2.0, NominalRPM, 1e9);
+
+  MinimalRPM = ConfigValue(rotor_element, "minrpm", 1.0);
+  MinimalRPM = Constrain(1.0, MinimalRPM, NominalRPM - 1.0);
+
+  MaximalRPM = ConfigValue(rotor_element, "maxrpm", 2.0*NominalRPM);
+  MaximalRPM = Constrain(NominalRPM, MaximalRPM, 1e9);
 
   estimate = Constrain(0.07, 2.0/Radius , 0.14); // guess solidity
   estimate = estimate * M_PI*Radius/BladeNum;
@@ -579,9 +586,8 @@ void FGRotor::CalcStatePart1(void)
     RPM = ExtRPMsource->getDoubleValue() / GearRatio;
   }
 
-  if (RPM < 1.0) { // kludge, otherwise calculations go bananas 
-    RPM = 1.0;
-  }
+  // MinimalRPM is always >= 1. MaximalRPM is always >= NominalRPM
+  RPM = Constrain(MinimalRPM, RPM, MaximalRPM);
 
   Omega = (RPM/60.0)*2.0*M_PI;
 
@@ -633,8 +639,8 @@ void FGRotor::CalcStatePart2(double PowerAvailable)
     double ExcessTorque = PowerAvailable / Omega;
     double deltaOmega   = ExcessTorque / PolarMoment * in.TotalDeltaT;
     RPM += deltaOmega/(2.0*M_PI) * 60.0;
-    if (RPM < 0.0) RPM = 0.0; // Engine won't turn backwards
   }
+  RPM = Constrain(MinimalRPM, RPM, MaximalRPM); // trim again
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -847,6 +853,8 @@ void FGRotor::Debug(int from)
       cout << "      Gear Ratio = " << GearRatio << endl;
       cout << "      Sense = " << Sense << endl;
       cout << "      Nominal RPM = " << NominalRPM << endl;
+      cout << "      Minimal RPM = " << MinimalRPM << endl;
+      cout << "      Maximal RPM = " << MaximalRPM << endl;
 
       if (ExternalRPM) {
         if (RPMdefinition == -1) {
