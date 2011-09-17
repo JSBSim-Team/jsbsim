@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.9 2011/03/10 01:35:25 dpculp Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.10 2011/09/17 16:39:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,6 +68,8 @@ CLASS DOCUMENTATION
   <numblades> {number} </numblades>
   <gearratio> {number} </gearratio>
   <nominalrpm> {number} </nominalrpm>
+  <minrpm> {number} </minrpm>
+  <maxrpm> {number} </maxrpm>
   <chord unit="{LENGTH}"> {number} </chord>
   <liftcurveslope Xunit="1/RAD"> {number} </liftcurveslope>
   <twist unit="{ANGLE}"> {number} </twist>
@@ -102,7 +104,9 @@ CLASS DOCUMENTATION
     \<diameter>           - Rotor disk diameter (2x R).
     \<numblades>          - Number of blades (b).
     \<gearratio>          - Ratio of (engine rpm) / (rotor rpm), usually > 1.
-    \<nominalrpm>         - RPM at which the rotor usally operates. 
+    \<nominalrpm>         - RPM at which the rotor usally operates.
+    \<minrpm>             - Lowest RPM used in the model, optional and defaults to 1.
+    \<maxrpm>             - Largest RPM used in the model, optional and defaults to 2 x nominalrpm.
     \<chord>              - Blade chord, (c).
     \<liftcurveslope>     - Slope of curve of section lift against section angle of attack,
                              per rad (a).
@@ -201,7 +205,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.9 2011/03/10 01:35:25 dpculp Exp $
+    @version $Id: FGRotor.h,v 1.10 2011/09/17 16:39:19 bcoconni Exp $
   */
 
 
@@ -339,6 +343,8 @@ private:
 
   double Sense;
   double NominalRPM;
+  double MinimalRPM;
+  double MaximalRPM;
   int    ExternalRPM;
   int    RPMdefinition;
   FGPropertyManager* ExtRPMsource;
