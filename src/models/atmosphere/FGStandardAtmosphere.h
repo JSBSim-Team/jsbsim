@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.15 2011/08/17 23:56:01 jberndt Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.16 2011/09/18 12:06:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.15 2011/08/17 23:56:01 jberndt Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.16 2011/09/18 12:06:21 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,11 +139,13 @@ public:
   virtual double GetStdTemperatureRatio(double h) const { return GetStdTemperature(h)*rSLtemperature; }
 
   /// Returns the temperature bias over the sea level value in degrees Rankine.
-  virtual double GetTemperatureBias(eTemperature to) const {return TemperatureBias;}
+  virtual double GetTemperatureBias(eTemperature to) const
+  { if (to == eCelsius || to == eKelvin) return TemperatureBias/1.80; else return TemperatureBias; }
 
   /// Returns the temperature gradient to be applied on top of the standard
   /// temperature gradient.
-  virtual double GetTemperatureDeltaGradient() { return TemperatureDeltaGradient;}
+  virtual double GetTemperatureDeltaGradient(eTemperature to)
+  { if (to == eCelsius || to == eKelvin) return TemperatureDeltaGradient/1.80; else return TemperatureDeltaGradient; }
 
   /// Sets the Sea Level temperature, if it is to be different than the standard.
   /// This function will calculate a bias - a difference - from the standard

@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.90 $ </version>
+        <version> $Revision: 1.91 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -906,7 +906,7 @@
                         1    0.71667
                     </tableData>
                 </table>
-                <output>fcs/steer-pos-deg</output>
+                <!-- <output>fcs/speedbrake-pos-norm</output> -->
             </scheduled_gain>
 
             <kinematic name="fcs/speedbrake-control">
