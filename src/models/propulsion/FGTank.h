@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.24 2011/08/03 03:21:06 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.25 2011/09/18 13:04:34 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -289,7 +289,7 @@ public:
   void   SetExternalFlow(double f) { ExternalFlow = f; }
 
   const FGColumnVector3 GetXYZ(void);
-  const double GetXYZ(int idx);
+  double GetXYZ(int idx);
 
   const GrainType GetGrainType(void) {return grainType;}
 
