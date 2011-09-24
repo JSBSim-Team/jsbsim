@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.18 2011/06/06 22:39:52 jentron Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.19 2011/09/24 14:26:46 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.18 2011/06/06 22:39:52 jentron Exp $
+    @version $Id: FGPropeller.h,v 1.19 2011/09/24 14:26:46 jentron Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -170,6 +170,9 @@ public:
       I is moment of inertia for the propeller.
       @param rpm the rotational velocity of the propeller */
   void SetRPM(double rpm) {RPM = rpm;}
+
+  /** Sets the Revolutions Per Minute for the propeller using the engine gear ratio **/
+  void SetEngineRPM(double rpm) {RPM = rpm/GearRatio;}
 
   /// Returns true of this propeller is variable pitch
   bool IsVPitch(void) {return MaxPitch != MinPitch;}
@@ -208,6 +211,9 @@ public:
 
   /// Retrieves the RPMs of the propeller
   double GetRPM(void)     const { return RPM;           } 
+
+  /// Calculates the RPMs of the engine based on gear ratio
+  double GetEngineRPM(void)     const { return RPM * GearRatio;  } 
 
   /// Retrieves the propeller moment of inertia
   double GetIxx(void)           { return Ixx;           }

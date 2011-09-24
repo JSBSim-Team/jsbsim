@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.65 2011/09/11 12:06:54 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.66 2011/09/24 14:26:46 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,8 +336,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   PropertyManager->Tie(property_name, &BoostSpeed);
   property_name = base_property_name + "/cht-degF";
   PropertyManager->Tie(property_name, this, &FGPiston::getCylinderHeadTemp_degF);
-  property_name = base_property_name + "/engine-rpm";
-  PropertyManager->Tie(property_name, this, &FGPiston::getRPM);
   property_name = base_property_name + "/oil-temperature-degF";
   PropertyManager->Tie(property_name, this, &FGPiston::getOilTemp_degF);
   property_name = base_property_name + "/oil-pressure-psi";
@@ -436,7 +434,9 @@ void FGPiston::Calculate(void)
 
   RunPreFunctions();
 
-  RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
+/* The thruster controls the engine RPM because it encapsulates the gear ratio and other transmission variables */
+  RPM = Thruster->GetEngineRPM();
+
   MeanPistonSpeed_fps =  ( RPM * Stroke) / (360); // AKA 2 * (RPM/60) * ( Stroke / 12) or 2NS
 
   IAS = in.Vc;
