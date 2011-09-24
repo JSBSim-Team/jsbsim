@@ -55,7 +55,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.16 2011/09/17 16:39:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.17 2011/09/24 14:26:46 jentron Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -706,7 +706,7 @@ bool FGRotor::BindModel(void)
   property_name = base_property_name + "/rotor-rpm";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetRPM );
 
-  property_name = base_property_name + "/x-engine-rpm"; // used for RPM eXchange
+  property_name = base_property_name + "/engine-rpm";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetEngineRPM );
 
   property_name = base_property_name + "/rotor-thrust-lbs"; // might be redundant - check!
@@ -778,11 +778,11 @@ bool FGRotor::BindModel(void)
       ExtRPMsource = PropertyManager->GetNode(property_name, true);
     } else if (RPMdefinition >= 0 && RPMdefinition != EngineNum) {
       string ipn = CreateIndexedPropertyName("propulsion/engine", RPMdefinition);
-      property_name = ipn + "/x-engine-rpm";
+      property_name = ipn + "/engine-rpm";
       ExtRPMsource = PropertyManager->GetNode(property_name, false);
       if (! ExtRPMsource) {
         cerr << "# Warning: Engine number " << EngineNum << "." << endl;
-        cerr << "# No 'x-engine-rpm' property found for engine " << RPMdefinition << "." << endl;
+        cerr << "# No 'engine-rpm' property found for engine " << RPMdefinition << "." << endl;
         cerr << "# Please check order of engine definitons."  << endl;
       }
     } else {

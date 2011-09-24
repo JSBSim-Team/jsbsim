@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.37 2011/09/11 12:06:54 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.38 2011/09/24 14:26:46 jentron Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +147,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
+  property_name = base_property_name + "/engine-rpm";
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetEngineRPM );
   property_name = base_property_name + "/advance-ratio";
   PropertyManager->Tie( property_name.c_str(), &J );
   property_name = base_property_name + "/blade-angle";

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.10 2011/09/17 16:39:19 bcoconni Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.11 2011/09/24 14:26:46 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -205,7 +205,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.10 2011/09/17 16:39:19 bcoconni Exp $
+    @version $Id: FGRotor.h,v 1.11 2011/09/24 14:26:46 jentron Exp $
   */
 
 
@@ -238,11 +238,11 @@ public:
 
   /// Retrieves the RPMs of the rotor.
   double GetRPM(void) const { return RPM; }
-  
-  // void   SetRPM(double rpm) { RPM = rpm; }
+  void   SetRPM(double rpm) { RPM = rpm; }
   
   /// Retrieves the RPMs of the Engine, as seen from this rotor.
   double GetEngineRPM(void) const { return GearRatio*RPM; } // bit of a hack.
+  void SetEngineRPM(double rpm) { RPM = rpm/GearRatio; } // bit of a hack.
   /// Tells the rotor's gear ratio, usually the engine asks for this.
   double GetGearRatio(void) { return GearRatio; }
   /// Retrieves the thrust of the rotor.
