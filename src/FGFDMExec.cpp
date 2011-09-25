@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.114 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.115 2011/09/25 11:56:00 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,8 +564,8 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   LoadInputs(eAtmosphere);
   Atmosphere->Run(false);
   Winds->SetWindNED( FGIC->GetWindNFpsIC(),
-                          FGIC->GetWindEFpsIC(),
-                          FGIC->GetWindDFpsIC() );
+                     FGIC->GetWindEFpsIC(),
+                     FGIC->GetWindDFpsIC() );
   Auxiliary->Run(false);
 }
 
@@ -1152,11 +1152,14 @@ bool FGFDMExec::SetOutputDirectives(const string& fname)
   result = Output->Load(0);
 
   if (result) {
+    Output->Run(holding);
     Outputs.push_back(Output);
     typedef double (FGOutput::*iOPMF)(void) const;
     string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
     instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
   }
+  else
+    delete Output;
 
   return result;
 }
