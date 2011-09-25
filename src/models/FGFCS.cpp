@@ -64,7 +64,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.76 2011/08/14 20:15:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.77 2011/09/25 14:05:40 bcoconni Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -664,6 +664,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
     }
     channel_element = document->FindNextElement("channel");
   }
+
+  PostLoad(document, PropertyManager);
 
   ResetParser();
 
