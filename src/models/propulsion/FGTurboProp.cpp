@@ -410,6 +410,7 @@ double FGTurboProp::CalcFuelNeed(void)
 {
   FuelFlowRate = FuelFlow_pph / 3600.0;
   FuelExpended = FuelFlowRate * in.TotalDeltaT;
+  if (!Starved) FuelUsedLbs += FuelExpended;
   return FuelExpended;
 }
 

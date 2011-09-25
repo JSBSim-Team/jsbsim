@@ -385,6 +385,7 @@ double FGTurbine::CalcFuelNeed(void)
 {
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
   FuelExpended = FuelFlowRate * in.TotalDeltaT;     // Calculates fuel expended in this time step
+  if (!Starved) FuelUsedLbs += FuelExpended; 
   return FuelExpended;
 }
 

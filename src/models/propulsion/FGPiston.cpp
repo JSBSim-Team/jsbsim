@@ -479,6 +479,7 @@ void FGPiston::Calculate(void)
 double FGPiston::CalcFuelNeed(void)
 {
   FuelExpended = FuelFlowRate * in.TotalDeltaT;
+  if (!Starved) FuelUsedLbs += FuelExpended; 
   return FuelExpended;
 }
 
