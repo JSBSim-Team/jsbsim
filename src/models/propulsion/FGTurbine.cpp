@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.35 2011/08/04 13:45:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.36 2011/09/25 23:56:11 jentron Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,6 +385,7 @@ double FGTurbine::CalcFuelNeed(void)
 {
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
   FuelExpended = FuelFlowRate * in.TotalDeltaT;     // Calculates fuel expended in this time step
+  if (!Starved) FuelUsedLbs += FuelExpended; 
   return FuelExpended;
 }
 

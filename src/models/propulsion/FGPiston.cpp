@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.66 2011/09/24 14:26:46 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.67 2011/09/25 23:56:11 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -479,6 +479,7 @@ void FGPiston::Calculate(void)
 double FGPiston::CalcFuelNeed(void)
 {
   FuelExpended = FuelFlowRate * in.TotalDeltaT;
+  if (!Starved) FuelUsedLbs += FuelExpended; 
   return FuelExpended;
 }
 
