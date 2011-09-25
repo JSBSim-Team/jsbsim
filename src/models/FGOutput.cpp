@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.61 2011/09/18 16:47:26 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.62 2011/09/25 15:38:30 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -1006,7 +1006,7 @@ bool FGOutput::Load(Element* element)
   SetType(document->GetAttributeValue("type"));
 
   name = document->GetAttributeValue("name");
-  if ((Type == otCSV) || (Type == otTab) && (name != "cout") && (name !="COUT"))
+  if (((Type == otCSV) || (Type == otTab)) && (name != "cout") && (name !="COUT"))
     name = FDMExec->GetRootDir() + name;
 
   Port = document->GetAttributeValue("port");
