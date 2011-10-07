@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Concorde runway test">
+  <description>For testing Concorde ground reactions</description>
+  <use aircraft="Concorde" initialize="reset00"/>
+  <run start="0.0" end="90" dt="0.00833333">
+
+    <event name="On-ground trim">
+      <description>The aircraft is trimmed on-ground.</description>
+      <condition>simulation/sim-time-sec ge 0.25</condition>
+      <set name="simulation/do_simple_trim" value="2"/> <!-- on-ground trim -->
+      <notify/>
+    </event>
+
+    <event name="Left brake applied">
+      <description>Brake testing</description>
+      <condition>simulation/sim-time-sec ge 5</condition>
+      <set name="fcs/left-brake-cmd-norm" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Right brake applied">
+      <description>Brake testing</description>
+      <condition>simulation/sim-time-sec ge 10</condition>
+      <set name="fcs/right-brake-cmd-norm" value="1"/>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Both brakes applied">
+      <description>Brake testing</description>
+      <condition>simulation/sim-time-sec ge 15</condition>
+      <set name="fcs/right-brake-cmd-norm" value="1"/>
+      <set name="fcs/left-brake-cmd-norm" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Brakes released">
+      <description>Brake testing</description>
+      <condition>simulation/sim-time-sec ge 20</condition>
+      <set name="fcs/right-brake-cmd-norm" value="0"/>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <notify/>
+    </event>
+
+    <event name="Steer left">
+      <description>Steer left</description>
+      <condition>simulation/sim-time-sec ge 20</condition>
+      <set name="fcs/steer-cmd-norm[0]" value="-1" action="FG_RAMP" tc="1"/>
+      <notify/>
+    </event>
+
+    <event name="Steer right">
+      <description>Steer right</description>
+      <condition>simulation/sim-time-sec ge 21</condition>
+      <set name="fcs/steer-cmd-norm[0]" value="1" action="FG_RAMP" tc="2"/>
+      <notify/>
+    </event>
+
+    <event name="Steer straight">
+      <description>Steer straight</description>
+      <condition>simulation/sim-time-sec ge 23</condition>
+      <set name="fcs/steer-cmd-norm[0]" value="0" action="FG_RAMP" tc="1"/>
+      <notify/>
+    </event>
+
+    <event name="Start engine: Starter">
+      <description>The starter for both engines is turned on.</description>
+      <condition>simulation/sim-time-sec ge 25.0</condition>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Start engine: Cutoff">
+      <description>Cutoff is turned off, allowing fuel to flow.</description>
+      <condition>propulsion/engine[0]/n2 ge 15.0</condition>
+      <set name="propulsion/cutoff_cmd" value="0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.4"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.4"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.4"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.4"/>
+       <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/starter_cmd</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Throttle-up">
+      <description>Move throttle to full for take-off.</description>
+      <condition>propulsion/engine[0]/n2 ge 15.0</condition>
+      <delay>5.0</delay>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1.0"/>
+       <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+      </notify>
+    </event>
+
+    <event name="Notify Velocity">
+      <description>Notify when velocity goes above 10 kts.</description>
+      <condition>velocities/vc-kts ge 10.0</condition>
+      <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+      </notify>
+    </event>
+
+    <event name="Both brakes applied at speed">
+      <description>Brake testing</description>
+      <condition>velocities/vc-kts ge 10.0</condition>
+      <delay>5.0</delay>
+      <set name="fcs/right-brake-cmd-norm" value="1"/>
+      <set name="fcs/left-brake-cmd-norm" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Brakes released at speed and throttle-down">
+      <description>Brake testing</description>
+      <condition>velocities/vc-kts ge 10.0</condition>
+      <delay>10.0</delay>
+      <set name="fcs/right-brake-cmd-norm" value="0"/>
+      <set name="fcs/left-brake-cmd-norm" value="0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.3"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.3"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.3"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.3"/>
+      <notify/>
+    </event>
+
+    <event name="Both brakes applied until stop">
+      <description>Brake testing</description>
+      <condition>velocities/vc-kts ge 10.0</condition>
+      <delay>15.0</delay>
+      <set name="fcs/right-brake-cmd-norm" value="1"/>
+      <set name="fcs/left-brake-cmd-norm" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Notify stop">
+      <description>Slowed to stop</description>
+      <condition>
+        velocities/vc-kts le 1.0
+        fcs/throttle-cmd-norm[0] eq 0.3
+      </condition>
+      <notify/>
+    </event>
+
+  </run>
+
+</runscript>
+

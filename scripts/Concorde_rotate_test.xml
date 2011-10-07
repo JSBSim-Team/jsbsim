@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Concorde Takeoff test">
+  <description>For testing Concorde Takeoff</description>
+  <use aircraft="Concorde" initialize="reset00"/>
+  <run start="0.0" end="100" dt="0.00833333">
+
+    <event name="On-ground trim">
+      <description>The aircraft is trimmed on-ground.</description>
+      <condition>simulation/sim-time-sec ge 0.25</condition>
+      <set name="simulation/do_simple_trim" value="2"/> <!-- on-ground trim -->
+      <notify/>
+    </event>
+
+    <event name="Start engine: Starter">
+      <description>The starter for both engines is turned on.</description>
+      <condition>simulation/sim-time-sec ge 5.0</condition>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Start engine: Cutoff">
+      <description>Cutoff is turned off, allowing fuel to flow.</description>
+      <condition>propulsion/engine[0]/n2 ge 15.0</condition>
+      <set name="propulsion/cutoff_cmd" value="0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.2"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.2"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.2"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.2"/>
+       <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/starter_cmd</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Set_Takeoff_Power">    
+      <description>Move throttle to full for take-off.</description>
+      <condition>propulsion/engine[0]/n2 ge 60.0</condition>
+      <delay>5.0</delay>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1.0"/>
+       <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+      </notify>
+    </event>
+
+    <event name="Rotate">     
+    <condition>velocities/vc-kts ge 170</condition>    
+    <set name="fcs/elevator-cmd-norm" value="0.1" action="FG_RAMP" tc="1.0"></set>            
+    <notify>
+       <property>velocities/vc-kts</property>
+       <property>position/h-agl-ft</property>
+       <property>aero/alpha-deg</property>           
+       <property>gear/gear-pos-norm</property>
+       </notify>     
+    </event>                  
+
+    <event name="Set_Climb_Elevator">    
+      <condition>simulation/sim-time-sec  ge  80</condition> 
+      <set name="fcs/elevator-cmd-norm" value="0.1" action="FG_RAMP" tc="5.0"></set>            
+      <notify>
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[2]/n2</property>
+        <property>propulsion/engine[3]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+       </notify> 
+    </event>         
+  </run>
+
+</runscript>
+

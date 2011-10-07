@@ -70,6 +70,7 @@ class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
 class FGLocation;
+class FGAccelerations;
 }
 
 // Adding it here will cause a namespace clash in FlightGear -EMH-
@@ -86,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.7 2011/09/07 02:37:04 jberndt Exp $
+    @version $Id: FlightGear.hxx,v 1.8 2011/09/26 08:54:57 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -222,17 +223,18 @@ private:
     JSBSim::FGInitialCondition *fgic;
     bool needTrim;
 
-    JSBSim::FGAtmosphere*   Atmosphere;
-    JSBSim::FGWinds*        Winds;
-    JSBSim::FGFCS*          FCS;
-    JSBSim::FGPropulsion*   Propulsion;
-    JSBSim::FGMassBalance*  MassBalance;
-    JSBSim::FGAircraft*     Aircraft;
-    JSBSim::FGPropagate*    Propagate;
-    JSBSim::FGAuxiliary*    Auxiliary;
-    JSBSim::FGAerodynamics* Aerodynamics;
+    JSBSim::FGAtmosphere*      Atmosphere;
+    JSBSim::FGWinds*           Winds;
+    JSBSim::FGFCS*             FCS;
+    JSBSim::FGPropulsion*      Propulsion;
+    JSBSim::FGMassBalance*     MassBalance;
+    JSBSim::FGAircraft*        Aircraft;
+    JSBSim::FGPropagate*       Propagate;
+    JSBSim::FGAuxiliary*       Auxiliary;
+    JSBSim::FGAerodynamics*    Aerodynamics;
     JSBSim::FGGroundReactions* GroundReactions;
-    JSBSim::FGInertial*     Inertial;
+    JSBSim::FGInertial*        Inertial;
+    JSBSim::FGAccelerations*   Accelerations;
 
     int runcount;
     double trim_elev;
@@ -271,7 +273,7 @@ private:
 
     SGPropertyNode_ptr temperature;
     SGPropertyNode_ptr pressure;
-    SGPropertyNode_ptr density;
+    SGPropertyNode_ptr pressureSL;
     SGPropertyNode_ptr ground_wind;
     SGPropertyNode_ptr turbulence_gain;
     SGPropertyNode_ptr turbulence_rate;
