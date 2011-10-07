@@ -641,13 +641,14 @@
     
     <system name="Tractor">
      <property>/sim/model/pushback/target-speed-fps</property>
+     <property>/sim/model/pushback/position-norm</property>     
      <channel name="Tractor">
 
       <switch name="systems/pushback/linked">
         <default value="-1"/>
         <test value="0">
           /sim/model/pushback/position-norm gt 0.95
-          /gear/gear/wow == 1
+          gear/unit[0]/WOW == 1
           gear/unit[0]/wheel-speed-fps lt 50
         </test>
       </switch>
