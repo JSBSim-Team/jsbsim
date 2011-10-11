@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.41 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.42 2011/10/10 02:33:34 jentron Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -382,7 +382,7 @@ string FGAerodynamics::GetAeroFunctionValues(const string& delimeter) const
   for (unsigned int axis = 0; axis < 6; axis++) {
     for (unsigned int sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (buf.tellp() > 0) buf << delimeter;
-      buf << setw(9) << AeroFunctions[axis][sd]->GetValue();
+      buf << AeroFunctions[axis][sd]->GetValue();
     }
   }
 

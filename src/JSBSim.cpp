@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.68 2011/07/26 03:51:49 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.70 2011/10/11 02:25:46 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -143,28 +143,28 @@ public:
   bool IsScriptFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "runscript") result = true;
+    if (document) if (document->GetName() == "runscript") result = true;
     ResetParser();
     return result;
   }
   bool IsLogDirectiveFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "output") result = true;
+    if (document) if (document->GetName() == "output") result = true;
     ResetParser();
     return result;
   }
   bool IsAircraftFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "fdm_config") result = true;
+    if (document) if (document->GetName() == "fdm_config") result = true;
     ResetParser();
     return result;
   }
   bool IsInitFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "initialize") result = true;
+    if (document) if (document->GetName() == "initialize") result = true;
     ResetParser();
     return result;
   }
@@ -507,9 +507,9 @@ quit:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#define gripe cerr << "Option '" << keyword 	\
-	<< "' requires a value, as in '"	\
-	<< keyword << "=something'" << endl << endl;/**/
+#define gripe cerr << "Option '" << keyword     \
+    << "' requires a value, as in '"    \
+    << keyword << "=something'" << endl << endl;/**/
 
 bool options(int count, char **arg)
 {
@@ -646,11 +646,18 @@ bool options(int count, char **arg)
       // else if (xmlFile.IsAircraftFile(keyword)) AircraftName = keyword;
       // else if (xmlFile.IsInitFile(keyword)) ResetName = keyword;
       else {
-        cerr << "The argument, \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
+        cerr << "The argument \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
         exit(1);
       }
 
     }
+    else //Unknown keyword so print the help file, the bad keyword and abort
+    {
+          PrintHelp();
+          cerr << "The argument \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
+          exit(1);
+    }
+
   }
 
   // Post-processing for script options. check for incompatible options.

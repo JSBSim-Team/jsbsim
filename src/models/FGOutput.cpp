@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.62 2011/09/25 15:38:30 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.63 2011/10/10 02:33:34 jentron Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -216,7 +216,7 @@ void FGOutput::SetType(const string& type)
 {
   if (type == "CSV") {
     Type = otCSV;
-    delimeter = ", ";
+    delimeter = ",";
   } else if (type == "TABULAR") {
     Type = otTab;
     delimeter = "\t";
