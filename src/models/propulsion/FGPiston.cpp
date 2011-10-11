@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.67 2011/09/25 23:56:11 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.68 2011/10/11 15:13:34 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -434,6 +434,8 @@ void FGPiston::Calculate(void)
 
   RunPreFunctions();
 
+  TotalDeltaT = ( in.TotalDeltaT < 1e-9 ) ? 1.0 : in.TotalDeltaT;
+
 /* The thruster controls the engine RPM because it encapsulates the gear ratio and other transmission variables */
   RPM = Thruster->GetEngineRPM();
 
@@ -618,10 +620,7 @@ void FGPiston::doMAP(void)
 
   // Add a one second lag to manifold pressure changes
   double dMAP=0;
-  if (in.TotalDeltaT > 0.0) 
-    dMAP = (TMAP - p_ram * map_coefficient) * in.TotalDeltaT;
-  else 
-    dMAP = (TMAP - p_ram * map_coefficient) / 120;
+  dMAP = (TMAP - p_ram * map_coefficient) * TotalDeltaT;
 
   TMAP -=dMAP;
 
@@ -799,10 +798,7 @@ void FGPiston::doEGT(void)
   } else {  // Drop towards ambient - guess an appropriate time constant for now
     combustion_efficiency = 0;
     dEGTdt = (RankineToKelvin(in.Temperature) - ExhaustGasTemp_degK) / 100.0;
-    if (in.TotalDeltaT > 0.0)
-      delta_T_exhaust = dEGTdt * in.TotalDeltaT;
-    else
-      delta_T_exhaust = dEGTdt / 120;
+    delta_T_exhaust = dEGTdt * TotalDeltaT;
 
     ExhaustGasTemp_degK += delta_T_exhaust;
   }
@@ -841,12 +837,9 @@ void FGPiston::doCHT(void)
 
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
 
-  if (in.TotalDeltaT > 0.0)
-    CylinderHeadTemp_degK +=
-      (dqdt_cylinder_head / HeatCapacityCylinderHead) * in.TotalDeltaT;
-  else 
-    CylinderHeadTemp_degK +=
-      (dqdt_cylinder_head / HeatCapacityCylinderHead) / 120.0;
+  CylinderHeadTemp_degK +=
+    (dqdt_cylinder_head / HeatCapacityCylinderHead) * TotalDeltaT;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -880,10 +873,7 @@ void FGPiston::doOilTemperature(void)
 
   double dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
 
-  if (in.TotalDeltaT > 0.0)
-    OilTemp_degK += (dOilTempdt * in.TotalDeltaT);
-  else 
-    OilTemp_degK += (dOilTempdt / 120.0);
+  OilTemp_degK += (dOilTempdt * TotalDeltaT);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
