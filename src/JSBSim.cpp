@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.69 2011/10/09 22:23:54 jentron Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.70 2011/10/11 02:25:46 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -143,28 +143,28 @@ public:
   bool IsScriptFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "runscript") result = true;
+    if (document) if (document->GetName() == "runscript") result = true;
     ResetParser();
     return result;
   }
   bool IsLogDirectiveFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "output") result = true;
+    if (document) if (document->GetName() == "output") result = true;
     ResetParser();
     return result;
   }
   bool IsAircraftFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "fdm_config") result = true;
+    if (document) if (document->GetName() == "fdm_config") result = true;
     ResetParser();
     return result;
   }
   bool IsInitFile(std::string filename) {
     bool result=false;
     document = LoadXMLDocument(filename);
-    if (document->GetName() == "initialize") result = true;
+    if (document) if (document->GetName() == "initialize") result = true;
     ResetParser();
     return result;
   }
