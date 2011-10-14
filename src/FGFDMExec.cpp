@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.115 2011/09/25 11:56:00 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.116 2011/10/14 22:46:49 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Frame           = 0;
   Error           = 0;
-  GroundCallback  = 0;
+  GroundCallback  = new FGDefaultGroundCallback();
   IC              = 0;
   Trim            = 0;
   Script          = 0;
@@ -186,6 +186,9 @@ FGFDMExec::~FGFDMExec()
 
   if (FDMctr > 0) (*FDMctr)--;
 
+  if(GroundCallback)
+     delete GroundCallback;
+
   Debug(1);
 }
 
@@ -210,7 +213,7 @@ bool FGFDMExec::Allocate(void)
   Models[ePropulsion]        = new FGPropulsion(this);
   Models[eAerodynamics]      = new FGAerodynamics (this);
 
-  GroundCallback  = new FGGroundCallback(((FGInertial*)Models[eInertial])->GetRefRadius());
+  GroundCallback->SetSeaLevelRadius(((FGInertial*)Models[eInertial])->GetRefRadius());
 
   Models[eGroundReactions]   = new FGGroundReactions(this);
   Models[eExternalReactions] = new FGExternalReactions(this);
@@ -265,8 +268,6 @@ bool FGFDMExec::DeAllocate(void)
   delete Script;
   delete IC;
   delete Trim;
-
-  delete GroundCallback;
 
   Error       = 0;
 
