@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.71 2011/09/07 02:37:04 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.72 2011/10/14 22:46:49 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.71 $
+    @version $Revision: 1.72 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,7 +269,8 @@ public:
   bool RunIC(void);
 
   /** Sets the ground callback pointer.
-      @param gc A pointer to a ground callback object.  */
+      @param gc A pointer to a ground callback object.
+   */
   void SetGroundCallback(FGGroundCallback* gc);
 
   /** Loads an aircraft model.

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.63 2011/08/21 15:35:39 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.64 2011/10/14 22:46:49 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.63 2011/08/21 15:35:39 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.64 2011/10/14 22:46:49 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,7 +293,7 @@ public:
       units ft
       @return The current altitude above sea level in feet.
   */
-  double GetAltitudeASL(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
+  double GetAltitudeASL(void)   const;
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.
@@ -377,7 +377,7 @@ public:
       units feet
       @return distance of the local terrain from the center of the earth.
       */
-  double GetLocalTerrainRadius(void) const { return LocalTerrainRadius; }
+  double GetLocalTerrainRadius(void) const;
 
   double GetEarthPositionAngle(void) const { return VState.vLocation.GetEPA(); }
 
@@ -385,6 +385,8 @@ public:
 
   const FGColumnVector3& GetTerrainVelocity(void) const { return LocalTerrainVelocity; }
   const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
+  void RecomputeLocalTerrainVelocity();
+
   double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {
@@ -502,11 +504,14 @@ public:
     VehicleRadius = r;
     VState.vInertialPosition = Tec2i * VState.vLocation;
   }
-  void SetAltitudeASL(double altASL) { SetRadius(altASL + SeaLevelRadius); }
-  void SetAltitudeASLmeters(double altASL) { SetRadius(altASL/fttom + SeaLevelRadius); }
-  void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
+
+  void SetAltitudeASL(double altASL);
+  void SetAltitudeASLmeters(double altASL) { SetAltitudeASL(altASL/fttom); }
+
+  void SetSeaLevelRadius(double tt);
   void SetTerrainElevation(double tt);
-  void SetDistanceAGL(double tt) { SetRadius(tt + LocalTerrainRadius); }
+  void SetDistanceAGL(double tt);
+
   void SetInitialState(const FGInitialCondition *);
   void SetLocation(const FGLocation& l);
   void SetLocation(const FGColumnVector3& lv)
@@ -519,8 +524,6 @@ public:
       FGLocation l = FGLocation(Lon, Lat, Radius);
       SetLocation(l);
   }
-
-  void RecomputeLocalTerrainRadius(void);
 
   void NudgeBodyLocation(FGColumnVector3 deltaLoc) {
     VState.vInertialPosition -= Tb2i*deltaLoc;
@@ -563,8 +566,9 @@ private:
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
   
-  double LocalTerrainRadius, SeaLevelRadius, VehicleRadius;
+  double VehicleRadius;
   FGColumnVector3 LocalTerrainVelocity, LocalTerrainAngularVelocity;
+
   eIntegrateType integrator_rotational_rate;
   eIntegrateType integrator_translational_rate;
   eIntegrateType integrator_rotational_position;

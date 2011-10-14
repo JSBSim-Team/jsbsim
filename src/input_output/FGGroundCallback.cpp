@@ -39,34 +39,22 @@ namespace JSBSim {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGGroundCallback::FGGroundCallback()
+FGDefaultGroundCallback::FGDefaultGroundCallback(double referenceRadius)
 {
-  mReferenceRadius = 20925650.0; // Sea level radius
+  mSeaLevelRadius = referenceRadius; // Sea level radius
+  mTerrainLevelRadius = mSeaLevelRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGGroundCallback::FGGroundCallback(double ReferenceRadius)
+double FGDefaultGroundCallback::GetAltitude(const FGLocation& loc) const
 {
-  mReferenceRadius = ReferenceRadius;
+  return loc.GetRadius() - mSeaLevelRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGGroundCallback::~FGGroundCallback()
-{
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGGroundCallback::GetAltitude(const FGLocation& loc) const
-{
-  return loc.GetRadius() - mReferenceRadius;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGGroundCallback::GetAGLevel(double t, const FGLocation& loc,
+double FGDefaultGroundCallback::GetAGLevel(double t, const FGLocation& loc,
                                     FGLocation& contact, FGColumnVector3& normal,
                                     FGColumnVector3& vel, FGColumnVector3& angularVel) const
 {
@@ -75,9 +63,11 @@ double FGGroundCallback::GetAGLevel(double t, const FGLocation& loc,
   normal = FGColumnVector3(loc).Normalize();
   double loc_radius = loc.GetRadius();  // Get the radius of the given location
                                         // (e.g. the CG)
-  double agl = loc_radius - mReferenceRadius;
-  contact = (mReferenceRadius/loc_radius)*FGColumnVector3(loc);
+  double agl = loc_radius - mTerrainLevelRadius;
+  contact = (mTerrainLevelRadius/loc_radius)*FGColumnVector3(loc);
   return agl;
 }
 
-}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+} // namespace JSBSim
