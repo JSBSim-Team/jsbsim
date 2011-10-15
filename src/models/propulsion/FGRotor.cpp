@@ -47,6 +47,7 @@ INCLUDES
 #include "FGRotor.h"
 #include "input_output/FGXMLElement.h"
 #include "models/FGMassBalance.h"
+#include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
 
 using std::cerr;
 using std::endl;
@@ -55,7 +56,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.17 2011/09/24 14:26:46 jentron Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.18 2011/10/15 21:30:28 jentron Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +72,113 @@ CLASS IMPLEMENTATION
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// Note: The FGTransmission class is currently carried 'pick-a-pack' by
+// FGRotor.
+
+FGTransmission::FGTransmission(FGFDMExec *exec, int num) :
+  FreeWheelTransmission(1.0),
+  ThrusterMoment(1.0), EngineMoment(1.0), EngineFriction(0.0),
+  ClutchCtrlNorm(1.0), BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
+  EngineRPM(0.0), ThrusterRPM(0.0)
+{
+  double dt;
+  PropertyManager = exec->GetPropertyManager();
+  dt = exec->GetDeltaT();
+
+  // avoid too abrupt changes in transmission
+  FreeWheelLag = Filter(200.0,dt);
+  BindModel(num);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTransmission::~FGTransmission(){
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// basically P = Q*w and Q_Engine + (-Q_Rotor) = J * dw/dt, J = Moment
+//
+void FGTransmission::Calculate(double EnginePower, double ThrusterTorque, double dt) {
+
+  double coupling = 1.0, coupling_sq = 1.0;
+  double fw_mult = 1.0;
+
+  double d_omega = 0.0, engine_d_omega = 0.0, thruster_d_omega = 0.0; // relative changes
+
+  double engine_omega = rpm_to_omega(EngineRPM);
+  double safe_engine_omega = engine_omega < 1e-1 ? 1e-1 : engine_omega;
+  double engine_torque = EnginePower / safe_engine_omega;
+
+  double thruster_omega = rpm_to_omega(ThrusterRPM);
+  double safe_thruster_omega = thruster_omega < 1e-1 ? 1e-1 : thruster_omega;
+
+  engine_torque  -= EngineFriction / safe_engine_omega;
+  ThrusterTorque += Constrain(0.0, BrakeCtrlNorm, 1.0) * MaxBrakePower / safe_thruster_omega;
+
+  // would the FWU release ?
+  engine_d_omega = engine_torque/EngineMoment * dt;
+  thruster_d_omega =  - ThrusterTorque/ThrusterMoment * dt;
+
+  if ( thruster_omega+thruster_d_omega > engine_omega+engine_d_omega ) {
+    // don't drive the engine
+    FreeWheelTransmission = 0.0;
+  } else {
+    FreeWheelTransmission = 1.0;
+  }
+
+  fw_mult = FreeWheelLag.execute(FreeWheelTransmission);
+  coupling = fw_mult * Constrain(0.0, ClutchCtrlNorm, 1.0);
+
+  if (coupling < 0.999999) { // are the separate calculations needed ?
+    // assume linear transfer 
+    engine_d_omega   =
+       (engine_torque - ThrusterTorque*coupling)/(ThrusterMoment*coupling + EngineMoment) * dt;
+    thruster_d_omega = 
+       (engine_torque*coupling - ThrusterTorque)/(ThrusterMoment + EngineMoment*coupling) * dt;
+
+    EngineRPM += omega_to_rpm(engine_d_omega);
+    ThrusterRPM += omega_to_rpm(thruster_d_omega);
+
+    // simulate friction in clutch
+    coupling_sq = coupling*coupling;
+    EngineRPM   = (1.0-coupling_sq) * EngineRPM    + coupling_sq * 0.02 * (49.0*EngineRPM + ThrusterRPM);
+    ThrusterRPM = (1.0-coupling_sq) * ThrusterRPM  + coupling_sq * 0.02 * (EngineRPM + 49.0*ThrusterRPM);
+
+    // enforce equal rpm
+    if ( fabs(EngineRPM-ThrusterRPM) < 1e-3 ) {
+      EngineRPM = ThrusterRPM = 0.5 * (EngineRPM+ThrusterRPM);
+    }
+  } else {
+    d_omega = (engine_torque - ThrusterTorque)/(ThrusterMoment + EngineMoment) * dt;
+    EngineRPM = ThrusterRPM += omega_to_rpm(d_omega);
+  }
+
+  // nothing will turn backward
+  if (EngineRPM < 0.0 ) EngineRPM = 0.0;
+  if (ThrusterRPM < 0.0 ) ThrusterRPM = 0.0;
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGTransmission::BindModel(int num)
+{
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", num);
+
+  property_name = base_property_name + "/brake-ctrl-norm";
+  PropertyManager->Tie( property_name.c_str(), this, &FGTransmission::GetBrakeCtrl, &FGTransmission::SetBrakeCtrl);
+  property_name = base_property_name + "/free-wheel-transmission";
+  PropertyManager->Tie( property_name.c_str(), this, &FGTransmission::GetFreeWheelTransmission);
+
+  return true;
+}
+
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 // Constructor
 
 FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
@@ -78,7 +186,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     rho(0.002356),                                  // environment
     Radius(0.0), BladeNum(0),                       // configuration parameters
     Sense(1.0), NominalRPM(0.0), MinimalRPM(0.0), MaximalRPM(0.0), 
-    ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL),
+    ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL), SourceGearRatio(1.0),
     BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
     BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
     InflowLag(0.0), TipLossB(0.0),
@@ -93,9 +201,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     theta_downwash(0.0), phi_downwash(0.0),
     ControlMap(eMainCtrl),                          // control
     CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0),
-    BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
-    FreeWheelPresent(0), FreeWheelThresh(0.0),      // free-wheeling-unit (FWU)
-    FreeWheelTransmission(0.0)
+    Transmission(NULL),                             // interaction with engine
+    EngineRPM(0.0), MaxBrakePower(0.0), GearLoss(0.0), GearMoment(0.0)
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
   Element *thruster_element;
@@ -158,11 +265,57 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   // ExternalRPM -- is the RPM dictated ?
   if (rotor_element->FindElement("ExternalRPM")) {
     ExternalRPM = 1;
+    SourceGearRatio = 1.0;
     RPMdefinition = (int) rotor_element->FindElementValueAsNumber("ExternalRPM");
+    int rdef = RPMdefinition;
+    if (RPMdefinition>=0) {
+      // avoid ourself and (still) unknown engines.
+      if (!exec->GetPropulsion()->GetEngine(RPMdefinition) || RPMdefinition==num) {
+        RPMdefinition = -1;
+      } else {
+        FGThruster *tr = exec->GetPropulsion()->GetEngine(RPMdefinition)->GetThruster();
+        SourceGearRatio = tr->GetGearRatio();
+        // cout << "# got sources' GearRatio: " << SourceGearRatio << endl;
+      }
+    }
+    if (RPMdefinition != rdef) {
+      cerr << "# discarded given RPM source (" << rdef << ") and switched to external control (-1)." << endl;
+    }
   }
 
   // configure the rotor parameters
   Configure(rotor_element);
+
+  // configure the transmission parameters
+  if (!ExternalRPM) {
+    Transmission = new FGTransmission(exec, num);
+
+    Transmission->SetMaxBrakePower(MaxBrakePower);
+
+    if (rotor_element->FindElement("gearloss")) {
+      GearLoss = rotor_element->FindElementValueAsNumberConvertTo("gearloss","HP");
+      GearLoss *= hptoftlbssec;
+    }
+
+    if (GearLoss<1e-6) { // TODO, allow 0 ?
+      double ehp = 0.5 * BladeNum*BladeChord*Radius*Radius; // guess engine power
+      //cout << "# guessed engine power: " << ehp << endl;
+      GearLoss = 0.0025 * ehp * hptoftlbssec;
+    }
+    Transmission->SetEngineFriction(GearLoss);
+
+    // The MOI sensed behind the gear ( MOI_engine*sqr(GearRatio) ).
+    if (rotor_element->FindElement("gearmoment")) {
+      GearMoment = rotor_element->FindElementValueAsNumberConvertTo("gearmoment","SLUG*FT2");
+    }
+
+    if (GearMoment<1e-2) { // TODO, need better check for lower limit
+      GearMoment = 0.1*PolarMoment;
+    }
+    Transmission->SetEngineMoment(GearMoment);
+
+    Transmission->SetThrusterMoment(PolarMoment);
+  }
 
   // shaft representation - a rather simple transform, 
   // but using a matrix is safer.
@@ -175,9 +328,6 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   // calculation would cause jumps too. 1Hz seems sufficient.
   damp_hagl = Filter(1.0, dt);
 
-  // avoid too abrupt changes in power transmission
-  FreeWheelLag = Filter(200.0,dt);
-
   // enable import-export
   BindModel();
 
@@ -188,6 +338,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGRotor::~FGRotor(){
+  if (Transmission) delete Transmission;
   Debug(1);
 }
 
@@ -305,17 +456,6 @@ void FGRotor::Configure(Element* rotor_element)
 
   GroundEffectExp = ConfigValue(rotor_element, "groundeffectexp", 0.0);
   GroundEffectShift = ConfigValueConv(rotor_element, "groundeffectshift", 0.0, "FT");
-
-  // handle optional free-wheeling-unit (FWU)
-  FreeWheelPresent = 0;
-  FreeWheelTransmission = 1.0;
-  if (rotor_element->FindElement("freewheelthresh")) {
-    FreeWheelThresh = rotor_element->FindElementValueAsNumber("freewheelthresh");
-    if (FreeWheelThresh > 1.0) {
-      FreeWheelPresent = 1;
-      FreeWheelTransmission = 0.0;
-    }
-  }
 
   // precalc often used powers
   R[0]=1.0; R[1]=Radius;   R[2]=R[1]*R[1]; R[3]=R[2]*R[1]; R[4]=R[3]*R[1];
@@ -564,7 +704,7 @@ FGColumnVector3 FGRotor::body_moments(double a_ic, double b_ic)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGRotor::CalcStatePart1(void)
+void FGRotor::CalcRotorState(void)
 {
   double A_IC;       // lateral (roll) control in radians
   double B_IC;       // longitudinal (pitch) control in radians
@@ -583,7 +723,7 @@ void FGRotor::CalcStatePart1(void)
 
   // handle RPM requirements, calc omega.
   if (ExternalRPM && ExtRPMsource) {
-    RPM = ExtRPMsource->getDoubleValue() / GearRatio;
+    RPM = ExtRPMsource->getDoubleValue() * ( SourceGearRatio / GearRatio );
   }
 
   // MinimalRPM is always >= 1. MaximalRPM is always >= NominalRPM
@@ -632,64 +772,24 @@ void FGRotor::CalcStatePart1(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGRotor::CalcStatePart2(double PowerAvailable)
-{
-  if (! ExternalRPM) {
-    // calculate new RPM
-    double ExcessTorque = PowerAvailable / Omega;
-    double deltaOmega   = ExcessTorque / PolarMoment * in.TotalDeltaT;
-    RPM += deltaOmega/(2.0*M_PI) * 60.0;
-  }
-  RPM = Constrain(MinimalRPM, RPM, MaximalRPM); // trim again
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// Simulation of a free-wheeling-unit (FWU). Might need improvements.
-
-void FGRotor::calc_freewheel_state(double p_source, double p_load) {
-
-  // engine is off/detached, release.
-  if (p_source<1e-3) { 
-    FreeWheelTransmission = 0.0;
-    return;
-  }
-
-  // engine is driving the rotor, engage.
-  if (p_source >= p_load) {
-    FreeWheelTransmission = 1.0;
-    return;
-  }
-
-  // releases if engine is detached, but stays calm if
-  // the load changes due to rotor dynamics.
-  if (p_source > 0.0 && p_load/(p_source+0.1) > FreeWheelThresh ) {
-    FreeWheelTransmission = 0.0;
-    return;
-  }
-
-  return;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGRotor::Calculate(double EnginePower)
 {
-  double FWmult = 1.0;
-  double DeltaPower;
 
-  CalcStatePart1();
+  CalcRotorState();
 
-  PowerRequired = Torque * Omega + BrakeCtrlNorm * MaxBrakePower;
+  if (! ExternalRPM) {
+    Transmission->SetClutchCtrlNorm(ClutchCtrlNorm);
 
-  if (FreeWheelPresent) {
-    calc_freewheel_state(EnginePower * ClutchCtrlNorm, PowerRequired);
-    FWmult = FreeWheelLag.execute(FreeWheelTransmission);
+    // the RPM values are handled inside Transmission
+    Transmission->Calculate(EnginePower, Torque, in.TotalDeltaT);
+
+    EngineRPM = Transmission->GetEngineRPM() * GearRatio;
+    RPM = Transmission->GetThrusterRPM();
+  } else {
+    EngineRPM = RPM * GearRatio;
   }
 
-  DeltaPower = EnginePower * ClutchCtrlNorm * FWmult - PowerRequired;
-
-  CalcStatePart2(DeltaPower);
+  RPM = Constrain(MinimalRPM, RPM, MaximalRPM); // trim again
 
   return Thrust;
 }
@@ -767,22 +867,17 @@ bool FGRotor::BindModel(void)
       PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetLongitudinalCtrl, &FGRotor::SetLongitudinalCtrl);
   }
 
-  property_name = base_property_name + "/brake-ctrl-norm";
-  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetBrakeCtrl, &FGRotor::SetBrakeCtrl);
-  property_name = base_property_name + "/free-wheel-transmission";
-  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetFreeWheelTransmission);
-
   if (ExternalRPM) {
     if (RPMdefinition == -1) {
       property_name = base_property_name + "/x-rpm-dict";
       ExtRPMsource = PropertyManager->GetNode(property_name, true);
     } else if (RPMdefinition >= 0 && RPMdefinition != EngineNum) {
       string ipn = CreateIndexedPropertyName("propulsion/engine", RPMdefinition);
-      property_name = ipn + "/engine-rpm";
+      property_name = ipn + "/rotor-rpm";
       ExtRPMsource = PropertyManager->GetNode(property_name, false);
       if (! ExtRPMsource) {
         cerr << "# Warning: Engine number " << EngineNum << "." << endl;
-        cerr << "# No 'engine-rpm' property found for engine " << RPMdefinition << "." << endl;
+        cerr << "# No 'rotor-rpm' property found for engine " << RPMdefinition << "." << endl;
         cerr << "# Please check order of engine definitons."  << endl;
       }
     } else {
@@ -860,7 +955,7 @@ void FGRotor::Debug(int from)
         if (RPMdefinition == -1) {
           cout << "      RPM is controlled externally" << endl;
         } else {
-          cout << "      RPM source set to engine " << RPMdefinition << endl;
+          cout << "      RPM source set to thruster " << RPMdefinition << endl;
         }
       }
 
@@ -876,6 +971,8 @@ void FGRotor::Debug(int from)
       cout << "      Lock Number = " << LockNumberByRho * 0.002356 << " (SL)" << endl;
       cout << "      Solidity = " << Solidity << endl;
       cout << "      Max Brake Power = " << MaxBrakePower/hptoftlbssec << " HP" << endl;
+      cout << "      Gear Loss = " << GearLoss/hptoftlbssec << " HP" << endl;
+      cout << "      Gear Moment = " << GearMoment << endl;
 
       switch (ControlMap) {
         case eTailCtrl:    ControlMapName = "Tail Rotor";   break;
@@ -883,12 +980,6 @@ void FGRotor::Debug(int from)
         default:           ControlMapName = "Main Rotor";
       }
       cout << "      Control Mapping = " << ControlMapName << endl;
-
-      if (FreeWheelPresent) {
-        cout << "      Free Wheel Threshold = " << FreeWheelThresh << endl;
-      } else {
-        cout << "      No FWU present" << endl;
-      }
 
     }
   }
