@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.11 2011/09/24 14:26:46 jentron Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.12 2011/10/15 21:30:28 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,6 +80,8 @@ CLASS DOCUMENTATION
   <inflowlag> {number} </inflowlag>
   <tiplossfactor> {number} </tiplossfactor>
   <maxbrakepower unit="{POWER}"> {number} </maxbrakepower>
+  <gearloss unit="{POWER}"> {number} </gearloss>
+  <gearmoment unit="{MOMENT}"> {number} </gearmoment>
 
   <controlmap> {MAIN|TAIL|TANDEM} </controlmap>
   <ExternalRPM> {number} </ExternalRPM>
@@ -120,23 +122,24 @@ CLASS DOCUMENTATION
                               responses (typical values for main rotor: 0.1 - 0.2 s).
     \<tiplossfactor>      - Tip-loss factor. The Blade fraction that produces lift.
                               Value usually ranges between 0.95 - 1.0, optional (B).
+
     \<maxbrakepower>      - Rotor brake, 20-30 hp should work for a mid size helicopter.
+    \<gearloss>           - Friction in gear, 0.2% to 3% of the engine power, optional (see notes).
+    \<gearmoment>         - Approximation for the moment of inertia of the gear (and engine),
+                              defaults to 0.1 * polarmoment, optional.
 
     \<controlmap>         - Defines the control inputs used (see notes).
+
     \<ExternalRPM>        - Links the rotor to another rotor, or an user controllable property.
 
     Experimental properties
-    
+
     \<groundeffectexp>    - Exponent for ground effect approximation. Values usually range from 0.04
                             for large rotors to 0.1 for smaller ones. As a rule of thumb the effect 
                             vanishes at a height 2-3 times the rotor diameter.
                               formula used: exp ( - groundeffectexp * (height+groundeffectshift) )
                             Omitting or setting to 0.0 disables the effect calculation.
     \<groundeffectshift>  - Further adjustment of ground effect, approx. hub height or slightly above. 
-
-    \<freewheelthresh>    - Ratio of thruster power to engine power. The FWU will release when above
-                              the threshold. The value shouldn't be too close to 1.0, 1.5 seems ok.
-                              0 disables this feature, which is also the default.
 
 </pre>
 
@@ -154,7 +157,7 @@ CLASS DOCUMENTATION
            <tt>propulsion/engine[x]/longitudinal-ctrl-rad</tt>.</li>
       <li> The tail collective (aka antitorque, aka pedal) control input. Read from
            <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt> or 
-           <tt>propulsion/engine[x]/tail-collective-ctrl-rad</tt>.</li> 
+           <tt>propulsion/engine[x]/tail-collective-ctrl-rad</tt>.</li>
 
     </ul>
 
@@ -178,8 +181,22 @@ CLASS DOCUMENTATION
 
   <h4>- Engine issues -</h4>
 
-    In order to keep the rotor speed constant, use of a RPM-Governor system is 
+    In order to keep the rotor/engine speed constant, use of a RPM-Governor system is
     encouraged (see examples).
+
+    In case the model requires the manual use of a clutch the <tt>\<gearloss\></tt>
+    property might need attention.<ul>
+
+    <li> Electrical: here the gear-loss should be rather large to keep the engine
+         controllable when the clutch is open (although full throttle might still make it
+         spin away).</li>
+    <li> Piston: this engine model already has some internal friction loss and also
+         looses power if it spins too high. Here the gear-loss could be set to 0.25%
+         of the engine power (which is also the approximated default).</li>
+    <li> Turboprop: Here the default value might be a bit too small. Also it's advisable
+         to adjust the power table for rpm values that are far beyond the nominal value.</li>
+
+    </ul>
 
   <h4>- Development hints -</h4>
 
@@ -205,7 +222,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.11 2011/09/24 14:26:46 jentron Exp $
+    @version $Id: FGRotor.h,v 1.12 2011/10/15 21:30:28 jentron Exp $
   */
 
 
@@ -213,6 +230,57 @@ CLASS DOCUMENTATION
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+class FGTransmission :  public FGJSBBase {
+
+public:
+  FGTransmission(FGFDMExec *exec, int num);
+  ~FGTransmission();
+
+  void Calculate(double EnginePower, double ThrusterTorque, double dt);
+
+  void   SetMaxBrakePower(double x) {MaxBrakePower=x;}
+  double GetMaxBrakePower() const {return MaxBrakePower;}
+  void   SetEngineFriction(double x) {EngineFriction=x;}
+  double GetEngineFriction() const {return EngineFriction;}
+  void   SetEngineMoment(double x) {EngineMoment=x;}
+  double GetEngineMoment() const {return EngineMoment;}
+  void   SetThrusterMoment(double x) {ThrusterMoment=x;}
+  double GetThrusterMoment() const {return ThrusterMoment;}
+
+  double GetFreeWheelTransmission() const {return FreeWheelTransmission;}
+  double GetEngineRPM() {return EngineRPM;}
+  double GetThrusterRPM() {return ThrusterRPM;}
+
+  double GetBrakeCtrl() const {return BrakeCtrlNorm;}
+  void   SetBrakeCtrl(double x) {BrakeCtrlNorm=x;}
+  void   SetClutchCtrlNorm(double x) {ClutchCtrlNorm=x;}
+
+private:
+  bool BindModel(int num);
+  // void Debug(int from);
+
+  inline double omega_to_rpm(double w) {return w * 9.54929658551372014613302580235;} // omega/(2.0*PI) * 60.0
+  inline double rpm_to_omega(double r) {return r * .104719755119659774615421446109;} // (rpm/60.0)*2.0*PI
+
+  Filter FreeWheelLag;
+  double FreeWheelTransmission; // state, 0: free, 1:locked
+
+  double ThrusterMoment;
+  double EngineMoment;   // estimated MOI of gear and engine, influences acceleration
+  double EngineFriction; // estimated friction in gear and possibly engine
+
+  double ClutchCtrlNorm; // also in FGThruster.h
+  double BrakeCtrlNorm;
+  double MaxBrakePower;
+
+  double EngineRPM;
+  double ThrusterRPM;
+  FGPropertyManager* PropertyManager;
+
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 class FGRotor :  public FGThruster {
 
@@ -241,8 +309,8 @@ public:
   void   SetRPM(double rpm) { RPM = rpm; }
   
   /// Retrieves the RPMs of the Engine, as seen from this rotor.
-  double GetEngineRPM(void) const { return GearRatio*RPM; } // bit of a hack.
-  void SetEngineRPM(double rpm) { RPM = rpm/GearRatio; } // bit of a hack.
+  double GetEngineRPM(void) const {return EngineRPM;} //{ return GearRatio*RPM; }
+  void SetEngineRPM(double rpm) {EngineRPM = rpm;} //{ RPM = rpm/GearRatio; }
   /// Tells the rotor's gear ratio, usually the engine asks for this.
   double GetGearRatio(void) { return GearRatio; }
   /// Retrieves the thrust of the rotor.
@@ -267,8 +335,6 @@ public:
   double GetCT(void) const { return C_T; }
   /// Retrieves the torque
   double GetTorque(void) const { return Torque; }
-  /// Retrieves the state of the free-wheeling-unit (FWU).
-  double GetFreeWheelTransmission(void) const { return FreeWheelTransmission; }
   
   /// Downwash angle - currently only valid for a rotor that spins horizontally
   double GetThetaDW(void) const { return theta_downwash; }
@@ -281,8 +347,6 @@ public:
   double GetLateralCtrl(void) const { return LateralCtrl; }
   /// Retrieves the longitudinal control input in radians.
   double GetLongitudinalCtrl(void) const { return LongitudinalCtrl; }
-  /// Retrieves the normalized brake control input.
-  double GetBrakeCtrl(void) const { return BrakeCtrlNorm; }
 
   /// Sets the collective control input in radians.
   void SetCollectiveCtrl(double c) { CollectiveCtrl = c; }
@@ -290,8 +354,6 @@ public:
   void SetLateralCtrl(double c) { LateralCtrl = c; }
   /// Sets the longitudinal control input in radians.
   void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
-  /// Sets the normalized brake control input.
-  void SetBrakeCtrl(double c) { BrakeCtrlNorm = c; }
 
   // Stubs. Only main rotor RPM is returned
   string GetThrusterLabels(int id, string delimeter);
@@ -308,9 +370,7 @@ private:
 
   void Configure(Element* rotor_element);
 
-  // true entry points
-  void CalcStatePart1(void);
-  void CalcStatePart2(double PowerAvailable);
+  void CalcRotorState(void);
 
   // rotor dynamics
   void calc_flow_and_thrust(double theta_0, double Uw, double Ww, double flow_scale = 1.0);
@@ -318,8 +378,6 @@ private:
   void calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fus_w);
   void calc_drag_and_side_forces(double theta_0);
   void calc_torque(double theta_0);
-
-  void calc_freewheel_state(double pwr_in, double pwr_out);
 
   // transformations
   FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
@@ -341,6 +399,7 @@ private:
   double Radius;
   int    BladeNum;
 
+  // rpm control
   double Sense;
   double NominalRPM;
   double MinimalRPM;
@@ -348,6 +407,7 @@ private:
   int    ExternalRPM;
   int    RPMdefinition;
   FGPropertyManager* ExtRPMsource;
+  double SourceGearRatio;
 
   double BladeChord;
   double LiftCurveSlope;
@@ -400,14 +460,12 @@ private:
   double LateralCtrl;
   double LongitudinalCtrl;
 
-  double BrakeCtrlNorm, MaxBrakePower;
-
-  // free-wheeling-unit (FWU)
-  int    FreeWheelPresent;        // 'installed' or not
-  double FreeWheelThresh;         // when to release
-  Filter FreeWheelLag;
-  double FreeWheelTransmission;   // state, 0: free, 1:locked
-
+  // interaction with engine
+  FGTransmission *Transmission;
+  double EngineRPM;
+  double MaxBrakePower;
+  double GearLoss;
+  double GearMoment;
 
 };
 

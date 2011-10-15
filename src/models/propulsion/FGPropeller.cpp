@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.38 2011/09/24 14:26:46 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.39 2011/10/15 13:00:57 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   local_element = prop_element->GetParent()->FindElement("sense");
   if (local_element) {
     double Sense = local_element->GetDataAsNumber();
-    SetSense(fabs(Sense)/Sense);
+    SetSense(Sense >= 0.0 ? 1.0 : -1.0);
   }
   local_element = prop_element->GetParent()->FindElement("p_factor");
   if (local_element) {
