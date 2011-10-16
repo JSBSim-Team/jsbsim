@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.24 2010/11/29 12:33:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.25 2011/10/16 00:19:56 bcoconni Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
@@ -137,6 +137,7 @@ FGLocation::FGLocation(const FGLocation& l)
   e = l.e;
   eps2 = l.eps2;
   f = l.f;
+  epa = l.epa;
 
   /*ag
    * if the cache is not valid, all of the following values are unset.
@@ -152,6 +153,10 @@ FGLocation::FGLocation(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
+  mTi2ec = l.mTi2ec;
+  mTec2i = l.mTec2i;
+  mTi2l = l.mTi2l;
+  mTl2i = l.mTl2i;
 
   initial_longitude = l.initial_longitude;
   mGeodLat = l.mGeodLat;
@@ -173,6 +178,7 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
   e = l.e;
   eps2 = l.eps2;
   f = l.f;
+  epa = l.epa;
 
   //ag See comment in constructor above
   if (!mCacheValid) return *this;
@@ -183,6 +189,10 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
+  mTi2ec = l.mTi2ec;
+  mTec2i = l.mTec2i;
+  mTi2l = l.mTi2l;
+  mTl2i = l.mTl2i;
 
   initial_longitude = l.initial_longitude;
   mGeodLat = l.mGeodLat;
