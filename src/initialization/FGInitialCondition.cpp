@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.69 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.70 2011/10/16 17:29:48 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -171,9 +171,9 @@ void FGInitialCondition::WriteStateFile(int num)
     outfile << "  <ubody unit=\"FT/SEC\"> " << Propagate->GetUVW(eX) << " </ubody> " << endl;
     outfile << "  <vbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eY) << " </vbody> " << endl;
     outfile << "  <wbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eZ) << " </wbody> " << endl;
-    outfile << "  <phi unit=\"DEG\"> " << Propagate->GetEuler(ePhi) << " </phi>" << endl;
-    outfile << "  <theta unit=\"DEG\"> " << Propagate->GetEuler(eTht) << " </theta>" << endl;
-    outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi) << " </psi>" << endl;
+    outfile << "  <phi unit=\"DEG\"> " << Propagate->GetEuler(ePhi)*radtodeg << " </phi>" << endl;
+    outfile << "  <theta unit=\"DEG\"> " << Propagate->GetEuler(eTht)*radtodeg << " </theta>" << endl;
+    outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi)*radtodeg << " </psi>" << endl;
     outfile << "  <longitude unit=\"DEG\"> " << Propagate->GetLongitudeDeg() << " </longitude>" << endl;
     outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
     outfile << "  <altitude unit=\"FT\"> " << Propagate->GetDistanceAGL() << " </altitude>" << endl;
