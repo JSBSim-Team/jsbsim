@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.116 2011/10/14 22:46:49 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.117 2011/10/16 00:14:07 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,10 +304,10 @@ bool FGFDMExec::Run(void)
     firstPass = false;
   }
 
+  IncrTime();
+
   // returns true if success, false if complete
   if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
-
-  IncrTime();
 
   for (unsigned int i = 0; i < Models.size(); i++) {
     LoadInputs(i);
