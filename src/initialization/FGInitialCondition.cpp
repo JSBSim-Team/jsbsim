@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.72 2011/10/22 15:11:24 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.73 2011/10/22 18:43:08 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -208,11 +208,11 @@ void FGInitialCondition::SetMachIC(double mach)
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
+  double rhoSL = Atmosphere->GetDensitySL();
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure, pressureSL, rhoSL);
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
 
   SetVtrueFpsIC(mach*soundSpeed);
@@ -735,12 +735,12 @@ void FGInitialCondition::SetWindDirDegIC(double dir)
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
-  double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double rho = Atmosphere->GetDensity(altitudeASL);
+  double rhoSL = Atmosphere->GetDensitySL();
 
   double mach0 = vt / soundSpeed;
   double vc0 = VcalibratedFromMach(mach0, pressure, pressureSL, rhoSL);
@@ -749,9 +749,10 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   altitudeASL=alt;
   position.SetRadius(alt + sea_level_radius);
 
-  temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  temperature = Atmosphere->GetTemperature(altitudeASL);
   soundSpeed = sqrt(SHRatio*Reng*temperature);
-  rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
+  rho = Atmosphere->GetDensity(altitudeASL);
+  pressure = Atmosphere->GetPressure(altitudeASL);
 
   switch(lastSpeedSet) {
     case setvc:
@@ -818,10 +819,10 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
+  double rhoSL = Atmosphere->GetDensitySL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   double mach = vt / soundSpeed;
   return fpstokts * VcalibratedFromMach(mach, pressure, pressureSL, rhoSL);
