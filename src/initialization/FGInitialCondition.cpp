@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.70 2011/10/16 17:29:48 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.71 2011/10/22 14:38:31 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -211,7 +211,10 @@ void FGInitialCondition::SetMachIC(double mach)
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double mach = getMachFromVcas(fabs(vcas)*ktstofps);
+  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
+  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
+  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure, pressureSL, rhoSL);
   double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
 
@@ -694,12 +697,14 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
   double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
+  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
   double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
 
   double mach0 = vt / soundSpeed;
-  double vc0 = calcVcas(mach0);
+  double vc0 = VcalibratedFromMach(mach0, pressure, pressureSL, rhoSL);
   double ve0 = vt * sqrt(rho/rhoSL);
 
   altitudeASL=alt;
@@ -711,7 +716,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = getMachFromVcas(vc0);
+      mach0 = MachFromVcalibrated(vc0, pressure, pressureSL, rhoSL);
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
@@ -720,86 +725,6 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       break;
     default: // Make the compiler stop complaining about missing enums
       break;
-  }
-}
-
-//******************************************************************************
-// Calculate the VCAS. Uses the Rayleigh formula for supersonic speeds
-// (See "Introduction to Aerodynamics of a Compressible Fluid - H.W. Liepmann,
-// A.E. Puckett - Wiley & sons (1947)" §5.4 pp 75-80)
-
-double FGInitialCondition::calcVcas(double Mach) const
-{
-  double altitudeASL = position.GetRadius() - sea_level_radius;
-  double p=fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double psl=fdmex->GetAtmosphere()->GetPressureSL();
-  double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
-  double pt,A,vcas;
-
-  if (Mach < 0) Mach=0;
-  if (Mach < 1)    //calculate total pressure assuming isentropic flow
-    pt=p*pow((1 + 0.2*Mach*Mach),3.5);
-  else {
-    // shock in front of pitot tube, we'll assume its normal and use
-    // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
-    // pressure behind the shock to the static pressure in front of
-    // the normal shock assumption should not be a bad one -- most supersonic
-    // aircraft place the pitot probe out front so that it is the forward
-    // most point on the aircraft.  The real shock would, of course, take
-    // on something like the shape of a rounded-off cone but, here again,
-    // the assumption should be good since the opening of the pitot probe
-    // is very small and, therefore, the effects of the shock curvature
-    // should be small as well. AFAIK, this approach is fairly well accepted
-    // within the aerospace community
-
-    // The denominator below is zero for Mach ~ 0.38, for which
-    // we'll never be here, so we're safe
-
-    pt = p*166.92158*pow(Mach,7.0)/pow(7*Mach*Mach-1,2.5);
-  }
-
-  A = pow(((pt-p)/psl+1),0.28571);
-  vcas = sqrt(7*psl/rhosl*(A-1));
-  //cout << "calcVcas: vcas= " << vcas*fpstokts << " mach= " << Mach << " pressure: " << pt << endl;
-  return vcas;
-}
-
-//******************************************************************************
-// Reverse the VCAS formula to obtain the corresponding Mach number. For subsonic
-// speeds, the reversed formula has a closed form. For supersonic speeds, the
-// formula is reversed by the Newton-Raphson algorithm.
-
-double FGInitialCondition::getMachFromVcas(double vcas)
-{
-  double altitudeASL = position.GetRadius() - sea_level_radius;
-  double p=fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double psl=fdmex->GetAtmosphere()->GetPressureSL();
-  double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
-
-  double pt = p + psl*(pow(1+vcas*vcas*rhosl/(7.0*psl),3.5)-1);
-
-  if (pt/p < 1.89293)
-    return sqrt(5.0*(pow(pt/p, 0.2857143) -1)); // Mach < 1
-  else {
-    // Mach >= 1
-    double mach = sqrt(0.77666*pt/p); // Initial guess is based on a quadratic approximation of the Rayleigh formula
-    double delta = 1.;
-    double target = pt/(166.92158*p);
-    int iter = 0;
-
-    // Find the root with Newton-Raphson. Since the differential is never zero,
-    // the function is monotonic and has only one root with a multiplicity of one.
-    // Convergence is certain.
-    while (delta > 1E-5 && iter < 10) {
-      double m2 = mach*mach; // Mach^2
-      double m6 = m2*m2*m2;  // Mach^6
-      delta = mach*m6/pow(7.0*m2-1.0,2.5) - target;
-      double diff = 7.0*m6*(2.0*m2-1)/pow(7.0*m2-1.0,3.5); // Never zero when Mach >= 1
-      mach -= delta/diff;
-      iter++;
-    }
-
-    return mach;
   }
 }
 
@@ -851,9 +776,12 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
   double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
+  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
+  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   double mach = vt / soundSpeed;
-  return fpstokts * calcVcas(mach);
+  return fpstokts * VcalibratedFromMach(mach, pressure, pressureSL, rhoSL);
 }
 
 //******************************************************************************
