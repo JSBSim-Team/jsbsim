@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.97 2011/10/14 22:46:49 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.98 2011/10/22 15:11:24 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,12 +142,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Initialize the State Vector elements and the transformation matrices
 
   // Set the position lat/lon/radius
-  VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
-                                FGIC->GetLatitudeRadIC(),
-                                FGIC->GetAltitudeASLFtIC()
-                                 + FDMExec->GetGroundCallback()->GetSeaLevelRadius(VState.vLocation));
-
-  VState.vLocation.SetEarthPositionAngle(0.0);
+  VState.vLocation = FGIC->GetPosition();
 
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
@@ -159,17 +154,13 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Set the orientation from the euler angles (is normalized within the
   // constructor). The Euler angles represent the orientation of the body
   // frame relative to the local frame.
-  VState.qAttitudeLocal = FGQuaternion( FGIC->GetPhiRadIC(),
-                                        FGIC->GetThetaRadIC(),
-                                        FGIC->GetPsiRadIC() );
+  VState.qAttitudeLocal = FGIC->GetOrientation();
 
   VState.qAttitudeECI = Ti2l.GetQuaternion()*VState.qAttitudeLocal;
   UpdateBodyMatrices();
 
   // Set the velocities in the instantaneus body frame
-  VState.vUVW = FGColumnVector3( FGIC->GetUBodyFpsIC(),
-                                 FGIC->GetVBodyFpsIC(),
-                                 FGIC->GetWBodyFpsIC() );
+  VState.vUVW = FGIC->GetUVWFpsIC();
 
   // Compute the local frame ECEF velocity
   vVel = Tb2l * VState.vUVW;
@@ -180,9 +171,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   // Set the angular velocities of the body frame relative to the ECEF frame,
   // expressed in the body frame.
-  VState.vPQR = FGColumnVector3( FGIC->GetPRadpsIC(),
-                                 FGIC->GetQRadpsIC(),
-                                 FGIC->GetRRadpsIC() );
+  VState.vPQR = FGIC->GetPQRRadpsIC();
 
   VState.vPQRi = VState.vPQR + Ti2b * in.vOmegaPlanet;
 

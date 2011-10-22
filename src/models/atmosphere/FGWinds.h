@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.5 2011/09/07 12:21:45 jberndt Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.6 2011/10/22 15:11:24 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -149,6 +149,9 @@ public:
 
   /// Sets a wind component in NED frame.
   virtual void SetWindNED(int idx, double wind) { vWindNED(idx)=wind;}
+
+  /// Sets the wind components in NED frame.
+  virtual void SetWindNED(const FGColumnVector3& wind) { vWindNED=wind; }
 
   /// Retrieves the wind components in NED frame.
   virtual FGColumnVector3& GetWindNED(void) { return vWindNED; }

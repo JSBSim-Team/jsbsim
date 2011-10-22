@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.117 2011/10/16 00:14:07 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.118 2011/10/22 15:11:23 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,9 +564,7 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   Propagate->InitializeDerivatives();
   LoadInputs(eAtmosphere);
   Atmosphere->Run(false);
-  Winds->SetWindNED( FGIC->GetWindNFpsIC(),
-                     FGIC->GetWindEFpsIC(),
-                     FGIC->GetWindDFpsIC() );
+  Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
   Auxiliary->Run(false);
 }
 
