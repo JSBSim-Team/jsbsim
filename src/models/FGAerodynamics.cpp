@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.43 2011/10/22 16:55:15 jentron Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.44 2011/10/23 14:23:13 jentron Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,7 +214,9 @@ bool FGAerodynamics::Run(bool Holding)
   // calculated vDeltaRP will be in feet.
   if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*in.Wingchord;
 
-  vDXYZcg = in.RPBody - vDeltaRP;
+  vDXYZcg(eX) = in.RPBody(eX) - vDeltaRP(eX); // vDeltaRP is given in the structural frame
+  vDXYZcg(eY) = in.RPBody(eY) + vDeltaRP(eY);
+  vDXYZcg(eZ) = in.RPBody(eZ) - vDeltaRP(eZ);
 
   vMoments = vDXYZcg*vForces; // M = r X F
 
