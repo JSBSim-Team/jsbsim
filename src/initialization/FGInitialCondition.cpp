@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.72 2011/10/22 15:11:24 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.75 2011/10/23 15:05:32 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -208,11 +208,11 @@ void FGInitialCondition::SetMachIC(double mach)
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
+  double rhoSL = Atmosphere->GetDensitySL();
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure, pressureSL, rhoSL);
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
 
   SetVtrueFpsIC(mach*soundSpeed);
@@ -478,11 +478,9 @@ void FGInitialCondition::SetBetaRadIC(double bta)
 }
 
 //******************************************************************************
-// Modifies the body frame orientation (roll angle phi). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
+// Modifies the body frame orientation.
 
-void FGInitialCondition::SetPhiRadIC(double phi)
+void FGInitialCondition::SetEulerAngleRadIC(int idx, double angle)
 {
   const FGMatrix33& Tb2l = orientation.GetTInv();
   const FGMatrix33& Tl2b = orientation.GetT();
@@ -491,61 +489,7 @@ void FGInitialCondition::SetPhiRadIC(double phi)
   FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
   FGColumnVector3 vOrient = orientation.GetEuler();
 
-  vOrient(ePhi) = phi;
-  orientation = FGQuaternion(vOrient);
-
-  if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
-    const FGMatrix33& newTb2l = orientation.GetTInv();
-    vUVW_NED = newTb2l * _vUVW_BODY;
-    _vt_NED = vUVW_NED + _vWIND_NED;
-    vt = _vt_NED.Magnitude();
-  }
-
-  calcAeroAngles(_vt_NED);
-}
-
-//******************************************************************************
-// Modifies the body frame orientation (pitch angle theta). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
-
-void FGInitialCondition::SetThetaRadIC(double theta)
-{
-  const FGMatrix33& Tb2l = orientation.GetTInv();
-  const FGMatrix33& Tl2b = orientation.GetT();
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-  FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-  FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
-  FGColumnVector3 vOrient = orientation.GetEuler();
-
-  vOrient(eTht) = theta;
-  orientation = FGQuaternion(vOrient);
-
-  if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
-    const FGMatrix33& newTb2l = orientation.GetTInv();
-    vUVW_NED = newTb2l * _vUVW_BODY;
-    _vt_NED = vUVW_NED + _vWIND_NED;
-    vt = _vt_NED.Magnitude();
-  }
-
-  calcAeroAngles(_vt_NED);
-}
-
-//******************************************************************************
-// Modifies the body frame orientation (yaw angle psi). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
-
-void FGInitialCondition::SetPsiRadIC(double psi)
-{
-  const FGMatrix33& Tb2l = orientation.GetTInv();
-  const FGMatrix33& Tl2b = orientation.GetT();
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-  FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-  FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
-  FGColumnVector3 vOrient = orientation.GetEuler();
-
-  vOrient(ePsi) = psi;
+  vOrient(idx) = angle;
   orientation = FGQuaternion(vOrient);
 
   if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
@@ -735,12 +679,12 @@ void FGInitialCondition::SetWindDirDegIC(double dir)
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
-  double rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double rho = Atmosphere->GetDensity(altitudeASL);
+  double rhoSL = Atmosphere->GetDensitySL();
 
   double mach0 = vt / soundSpeed;
   double vc0 = VcalibratedFromMach(mach0, pressure, pressureSL, rhoSL);
@@ -749,13 +693,16 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   altitudeASL=alt;
   position.SetRadius(alt + sea_level_radius);
 
-  temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
+  temperature = Atmosphere->GetTemperature(altitudeASL);
   soundSpeed = sqrt(SHRatio*Reng*temperature);
-  rho = fdmex->GetAtmosphere()->GetDensity(altitudeASL);
+  rho = Atmosphere->GetDensity(altitudeASL);
+  pressure = Atmosphere->GetPressure(altitudeASL);
 
   switch(lastSpeedSet) {
     case setvc:
       mach0 = MachFromVcalibrated(vc0, pressure, pressureSL, rhoSL);
+      SetVtrueFpsIC(mach0 * soundSpeed);
+      break;
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
@@ -818,10 +765,10 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
   double altitudeASL = position.GetRadius() - sea_level_radius;
-  double temperature = fdmex->GetAtmosphere()->GetTemperature(altitudeASL);
-  double pressure = fdmex->GetAtmosphere()->GetPressure(altitudeASL);
-  double pressureSL = fdmex->GetAtmosphere()->GetPressureSL();
-  double rhoSL = fdmex->GetAtmosphere()->GetDensitySL();
+  double temperature = Atmosphere->GetTemperature(altitudeASL);
+  double pressure = Atmosphere->GetPressure(altitudeASL);
+  double pressureSL = Atmosphere->GetPressureSL();
+  double rhoSL = Atmosphere->GetDensitySL();
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   double mach = vt / soundSpeed;
   return fpstokts * VcalibratedFromMach(mach, pressure, pressureSL, rhoSL);
@@ -895,6 +842,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     result = Load_v1();
   }
 
+  fdmex->RunIC();
+
   // Check to see if any engines are specified to be initialized in a running state
   FGPropulsion* propulsion = fdmex->GetPropulsion();
   Element* running_elements = document->FindElement("running");
@@ -908,9 +857,6 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     }
     running_elements = document->FindNextElement("running");
   }
-
-  fdmex->RunIC();
-  fdmex->GetPropagate()->DumpState();
 
   return result;
 }
