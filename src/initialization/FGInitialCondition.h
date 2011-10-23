@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.30 2011/10/22 15:11:24 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.31 2011/10/23 15:05:32 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -214,7 +214,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.30 2011/10/22 15:11:24 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.31 2011/10/23 15:05:32 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,21 +567,21 @@ public:
       @param alpha Initial angle of attack in radians */
   void SetAlphaRadIC(double alpha);
 
-  /** Sets the initial pitch angle.
-      @param theta Initial pitch angle in radians */
-  void SetThetaRadIC(double theta);
-
   /** Sets the initial sideslip angle.
       @param beta Initial angle of sideslip in radians. */
   void SetBetaRadIC(double beta);
 
   /** Sets the initial roll angle.
       @param phi Initial roll angle in radians */
-  void SetPhiRadIC(double phi);
+  void SetPhiRadIC(double phi) { SetEulerAngleRadIC(ePhi, phi); }
+
+  /** Sets the initial pitch angle.
+      @param theta Initial pitch angle in radians */
+  void SetThetaRadIC(double theta) { SetEulerAngleRadIC(eTht, theta); }
 
   /** Sets the initial heading angle.
       @param psi Initial heading angle in radians */
-  void SetPsiRadIC(double psi);
+  void SetPsiRadIC(double psi) { SetEulerAngleRadIC(ePsi, psi); }
 
   /** Sets the initial latitude.
       @param lat Initial latitude in radians */
@@ -684,6 +684,7 @@ private:
   bool Constructing;
 
   void InitializeIC(void);
+  void SetEulerAngleRadIC(int idx, double angle);
   void SetBodyVelFpsIC(int idx, double vel);
   void SetNEDVelFpsIC(int idx, double vel);
   double GetBodyWindFpsIC(int idx) const;

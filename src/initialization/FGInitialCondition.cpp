@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.74 2011/10/23 14:20:18 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.75 2011/10/23 15:05:32 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -478,11 +478,9 @@ void FGInitialCondition::SetBetaRadIC(double bta)
 }
 
 //******************************************************************************
-// Modifies the body frame orientation (roll angle phi). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
+// Modifies the body frame orientation.
 
-void FGInitialCondition::SetPhiRadIC(double phi)
+void FGInitialCondition::SetEulerAngleRadIC(int idx, double angle)
 {
   const FGMatrix33& Tb2l = orientation.GetTInv();
   const FGMatrix33& Tl2b = orientation.GetT();
@@ -491,61 +489,7 @@ void FGInitialCondition::SetPhiRadIC(double phi)
   FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
   FGColumnVector3 vOrient = orientation.GetEuler();
 
-  vOrient(ePhi) = phi;
-  orientation = FGQuaternion(vOrient);
-
-  if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
-    const FGMatrix33& newTb2l = orientation.GetTInv();
-    vUVW_NED = newTb2l * _vUVW_BODY;
-    _vt_NED = vUVW_NED + _vWIND_NED;
-    vt = _vt_NED.Magnitude();
-  }
-
-  calcAeroAngles(_vt_NED);
-}
-
-//******************************************************************************
-// Modifies the body frame orientation (pitch angle theta). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
-
-void FGInitialCondition::SetThetaRadIC(double theta)
-{
-  const FGMatrix33& Tb2l = orientation.GetTInv();
-  const FGMatrix33& Tl2b = orientation.GetT();
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-  FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-  FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
-  FGColumnVector3 vOrient = orientation.GetEuler();
-
-  vOrient(eTht) = theta;
-  orientation = FGQuaternion(vOrient);
-
-  if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
-    const FGMatrix33& newTb2l = orientation.GetTInv();
-    vUVW_NED = newTb2l * _vUVW_BODY;
-    _vt_NED = vUVW_NED + _vWIND_NED;
-    vt = _vt_NED.Magnitude();
-  }
-
-  calcAeroAngles(_vt_NED);
-}
-
-//******************************************************************************
-// Modifies the body frame orientation (yaw angle psi). The true airspeed in
-// the local NED frame is kept unchanged. Hence the true airspeed in the body
-// frame is modified.
-
-void FGInitialCondition::SetPsiRadIC(double psi)
-{
-  const FGMatrix33& Tb2l = orientation.GetTInv();
-  const FGMatrix33& Tl2b = orientation.GetT();
-  FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-  FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-  FGColumnVector3 _vUVW_BODY = Tl2b * vUVW_NED;
-  FGColumnVector3 vOrient = orientation.GetEuler();
-
-  vOrient(ePsi) = psi;
+  vOrient(idx) = angle;
   orientation = FGQuaternion(vOrient);
 
   if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
