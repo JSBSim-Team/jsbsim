@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.73 2011/10/22 18:43:08 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.74 2011/10/23 14:20:18 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -757,6 +757,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   switch(lastSpeedSet) {
     case setvc:
       mach0 = MachFromVcalibrated(vc0, pressure, pressureSL, rhoSL);
+      SetVtrueFpsIC(mach0 * soundSpeed);
+      break;
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
@@ -896,6 +898,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     result = Load_v1();
   }
 
+  fdmex->RunIC();
+
   // Check to see if any engines are specified to be initialized in a running state
   FGPropulsion* propulsion = fdmex->GetPropulsion();
   Element* running_elements = document->FindElement("running");
@@ -909,9 +913,6 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     }
     running_elements = document->FindNextElement("running");
   }
-
-  fdmex->RunIC();
-  fdmex->GetPropagate()->DumpState();
 
   return result;
 }
