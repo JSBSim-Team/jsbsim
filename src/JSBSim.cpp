@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.70 2011/10/11 02:25:46 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.71 2011/10/23 14:21:49 bcoconni Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -419,6 +419,9 @@ int real_main(int argc, char* argv[])
       FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
     }
   }
+
+  FDMExec->RunIC();
+  FDMExec->GetPropagate()->DumpState();
 
   cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
        << "---- JSBSim Execution beginning ... --------------------------------------------"
