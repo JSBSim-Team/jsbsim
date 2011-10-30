@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.8 2011/09/26 08:54:57 ehofman Exp $
+    @version $Id: FlightGear.hxx,v 1.9 2011/10/30 12:37:13 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -297,7 +297,6 @@ private:
 
     void do_trim(void);
 
-    double getMachFromVcas(double vcas);
     bool update_ground_cache(JSBSim::FGLocation cart, double* cart_pos, double dt);
     void init_gear(void);
     void update_gear(void);
