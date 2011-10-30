@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FlightGear.cxx,v 1.7 2011/09/26 08:54:57 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.8 2011/10/30 12:37:13 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -112,6 +112,26 @@ public:
     cont = FGColumnVector3( contact[0], contact[1], contact[2] );
     return agl;
   }
+
+  virtual double GetTerrainGeoCentRadius(double t, const FGLocation& l) const {
+    double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+    double contact[3], normal[3], vel[3], angularVel[3], agl = 0;
+    mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
+                           vel, angularVel, &agl);
+    return sqrt(contact[0]*contact[0]+contact[1]*contact[1]+contact[2]*contact[2]);
+  }
+
+  virtual double GetSeaLevelRadius(const FGLocation& l) const {
+    double seaLevelRadius, latGeoc;
+
+    sgGeodToGeoc(l.GetGeodLatitudeRad(), l.GetGeodAltitude(),
+                 &seaLevelRadius, &latGeoc);
+
+    return seaLevelRadius * SG_METER_TO_FEET;
+  }
+
+  virtual void SetTerrainGeoCentRadius(double radius) {}
+  virtual void SetSeaLevelRadius(double radius) {}
 private:
   FGJSBsim* mInterface;
 };
@@ -371,9 +391,6 @@ void FGJSBsim::init()
                            -wind_from_east->getDoubleValue(),
                            -wind_from_down->getDoubleValue() );
 
-    //Atmosphere->SetExTemperature(get_Static_temperature());
-    //Atmosphere->SetExPressure(get_Static_pressure());
-    //Atmosphere->SetExDensity(get_Density());
     SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << Atmosphere->GetTemperature()
      << ", " << Atmosphere->GetPressure()
      << ", " << Atmosphere->GetDensity() );
@@ -394,7 +411,6 @@ void FGJSBsim::init()
 
     needTrim = startup_trim->getBoolValue();
     common_init();
-    fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
 
     copy_to_JSBsim();
     fdmex->RunIC();     //loop JSBSim once w/o integrating
@@ -660,9 +676,6 @@ bool FGJSBsim::copy_to_JSBsim()
       eng->SetRunning( node->getBoolValue("running") );
       } // end FGEngine code block
     }
-
-
-    Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
 
     Atmosphere->SetTemperature(temperature->getDoubleValue(), get_Altitude(), FGAtmosphere::eCelsius);
     Atmosphere->SetPressureSL(pressureSL->getDoubleValue(), FGAtmosphere::eInchesHg);
@@ -1024,11 +1037,10 @@ void FGJSBsim::set_Latitude(double lat)
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_ft );
     fgic->SetLatitudeRadIC( lat_geoc );
   }
-  else {
-    Propagate->SetSeaLevelRadius( sea_level_radius_ft );
+  else
     Propagate->SetLatitude(lat_geoc);
-    FGInterface::set_Latitude(lat);
-  }
+
+  FGInterface::set_Latitude(lat);
 }
 
 
@@ -1038,10 +1050,10 @@ void FGJSBsim::set_Longitude(double lon)
 
   if (needTrim)
     fgic->SetLongitudeRadIC(lon);
-  else {
+  else
     Propagate->SetLongitude(lon);
-    FGInterface::set_Longitude(lon);
-  }
+
+  FGInterface::set_Longitude(lon);
 }
 
 // Sets the altitude above sea level.
@@ -1051,10 +1063,10 @@ void FGJSBsim::set_Altitude(double alt)
 
   if (needTrim)
     fgic->SetAltitudeASLFtIC(alt);
-  else {
+  else
     Propagate->SetAltitudeASL(alt);
-    FGInterface::set_Altitude(alt);
-  }
+
+  FGInterface::set_Altitude(alt);
 }
 
 void FGJSBsim::set_V_calibrated_kts(double vc)
@@ -1064,7 +1076,10 @@ void FGJSBsim::set_V_calibrated_kts(double vc)
   if (needTrim)
     fgic->SetVcalibratedKtsIC(vc);
   else {
-    double mach = getMachFromVcas(vc);
+    double p=pressure->getDoubleValue();
+    double psl=fdmex->GetAtmosphere()->GetPressureSL();
+    double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
+    double mach = FGJSBBase::MachFromVcalibrated(vc, p, psl, rhosl);
     double temp = 1.8*(temperature->getDoubleValue()+273.15);
     double soundSpeed = sqrt(1.4*1716.0*temp);
     FGColumnVector3 vUVW = Propagate->GetUVW();
@@ -1073,9 +1088,9 @@ void FGJSBsim::set_V_calibrated_kts(double vc)
     Propagate->SetUVW(1, vUVW(1));
     Propagate->SetUVW(2, vUVW(2));
     Propagate->SetUVW(3, vUVW(3));
-
-    FGInterface::set_V_calibrated_kts(vc);
   }
+
+  FGInterface::set_V_calibrated_kts(vc);
 }
 
 void FGJSBsim::set_Mach_number(double mach)
@@ -1093,9 +1108,9 @@ void FGJSBsim::set_Mach_number(double mach)
     Propagate->SetUVW(1, vUVW(1));
     Propagate->SetUVW(2, vUVW(2));
     Propagate->SetUVW(3, vUVW(3));
-
-    FGInterface::set_Mach_number(mach);
   }
+
+  FGInterface::set_Mach_number(mach);
 }
 
 void FGJSBsim::set_Velocities_Local( double north, double east, double down )
@@ -1114,9 +1129,9 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down )
     Propagate->SetUVW(1, vUVW(1));
     Propagate->SetUVW(2, vUVW(2));
     Propagate->SetUVW(3, vUVW(3));
-
-    FGInterface::set_Velocities_Local(north, east, down);
   }
+
+  FGInterface::set_Velocities_Local(north, east, down);
 }
 
 void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
@@ -1133,9 +1148,9 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
     Propagate->SetUVW(1, u);
     Propagate->SetUVW(2, v);
     Propagate->SetUVW(3, w);
-
-    FGInterface::set_Velocities_Wind_Body(u, v, w);
   }
+
+  FGInterface::set_Velocities_Wind_Body(u, v, w);
 }
 
 //Euler angles
@@ -1155,9 +1170,9 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi )
     FGMatrix33 Ti2b = Tl2b*Propagate->GetTi2l();
     FGQuaternion Qi = Ti2b.GetQuaternion();
     Propagate->SetInertialOrientation(Qi);
-
-    FGInterface::set_Euler_Angles(phi, theta, psi);
   }
+
+  FGInterface::set_Euler_Angles(phi, theta, psi);
 }
 
 //Flight Path
@@ -1178,9 +1193,9 @@ void FGJSBsim::set_Climb_Rate( double roc)
       Propagate->SetUVW(1, vUVW(1));
       Propagate->SetUVW(2, vUVW(2));
       Propagate->SetUVW(3, vUVW(3));
-
-      FGInterface::set_Climb_Rate(roc);
     }
+
+    FGInterface::set_Climb_Rate(roc);
   }
 }
 
@@ -1199,45 +1214,9 @@ void FGJSBsim::set_Gamma_vert_rad( double gamma)
       Propagate->SetUVW(1, vUVW(1));
       Propagate->SetUVW(2, vUVW(2));
       Propagate->SetUVW(3, vUVW(3));
-
-      FGInterface::set_Gamma_vert_rad(gamma);
-    }
-  }
-}
-// Reverse the VCAS formula to obtain the corresponding Mach number. For subsonic
-// speeds, the reversed formula has a closed form. For supersonic speeds, the
-// formula is reversed by the Newton-Raphson algorithm.
-
-double FGJSBsim::getMachFromVcas(double vcas)
-{
-  double p=pressure->getDoubleValue();
-  double psl=fdmex->GetAtmosphere()->GetPressureSL();
-  double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
-
-  double pt = p + psl*(pow(1+vcas*vcas*rhosl/(7.0*psl),3.5)-1);
-
-  if (pt/p < 1.89293)
-    return sqrt(5.0*(pow(pt/p, 0.2857143) -1)); // Mach < 1
-  else {
-    // Mach >= 1
-    double mach = sqrt(0.77666*pt/p); // Initial guess is based on a quadratic approximation of the Rayleigh formula
-    double delta = 1.;
-    double target = pt/(166.92158*p);
-    int iter = 0;
-
-    // Find the root with Newton-Raphson. Since the differential is never zero,
-    // the function is monotonic and has only one root with a multiplicity of one.
-    // Convergence is certain.
-    while (delta > 1E-5 && iter < 10) {
-      double m2 = mach*mach; // Mach^2
-      double m6 = m2*m2*m2;  // Mach^6
-      delta = mach*m6/pow(7.0*m2-1.0,2.5) - target;
-      double diff = 7.0*m6*(2.0*m2-1)/pow(7.0*m2-1.0,3.5); // Never zero when Mach >= 1
-      mach -= delta/diff;
-      iter++;
     }
 
-    return mach;
+    FGInterface::set_Gamma_vert_rad(gamma);
   }
 }
 
