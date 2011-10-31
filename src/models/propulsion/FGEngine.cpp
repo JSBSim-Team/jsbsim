@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.47 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.48 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,7 +183,8 @@ unsigned int FGEngine::GetSourceTank(unsigned int i) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGEngine::SetPlacement(FGColumnVector3& location, FGColumnVector3& orientation)
+void FGEngine::SetPlacement(const FGColumnVector3& location,
+                            const FGColumnVector3& orientation)
 {
   X = location(eX);
   Y = location(eY);
@@ -201,14 +202,14 @@ double FGEngine::GetThrust(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  FGColumnVector3& FGEngine::GetBodyForces(void)
+const FGColumnVector3& FGEngine::GetBodyForces(void)
 {
   return Thruster->GetBodyForces();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGEngine::GetMoments(void)
+const FGColumnVector3& FGEngine::GetMoments(void)
 {
   return Thruster->GetMoments();
 }

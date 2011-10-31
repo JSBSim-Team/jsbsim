@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.27 2011/08/17 23:56:01 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.28 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,7 +113,7 @@ CLASS DOCUMENTATION
 	documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.27 2011/08/17 23:56:01 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.28 2011/10/31 14:54:41 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,28 +157,28 @@ public:
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
 
-  EngineType      GetType(void) { return Type; }
-  virtual string  GetName(void) { return Name; }
+  EngineType             GetType(void) const { return Type; }
+  virtual const string&  GetName(void) const { return Name; }
 
   // Engine controls
-  virtual double  GetThrottleMin(void) { return MinThrottle; }
-  virtual double  GetThrottleMax(void) { return MaxThrottle; }
-  virtual bool    GetStarter(void) { return Starter; }
+  virtual double  GetThrottleMin(void) const { return MinThrottle; }
+  virtual double  GetThrottleMax(void) const { return MaxThrottle; }
+  virtual bool    GetStarter(void) const     { return Starter; }
 
   virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
   virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
   virtual double GetFuelFlowRate(void) const {return FuelFlowRate;}
   virtual double GetFuelFlowRateGPH(void) const {return FuelFlowRate*3600/6.02;}
   virtual double GetFuelUsedLbs(void) const {return FuelUsedLbs;}
-  virtual bool   GetStarved(void) { return Starved; }
+  virtual bool   GetStarved(void) const { return Starved; }
   virtual bool   GetRunning(void) const { return Running; }
-  virtual bool   GetCranking(void) { return Cranking; }
+  virtual bool   GetCranking(void) const { return Cranking; }
 
   virtual void SetStarved(bool tt) { Starved = tt; }
   virtual void SetStarved(void)    { Starved = true; }
 
   virtual void SetRunning(bool bb) { Running=bb; }
-  virtual void SetName(string name) { Name = name; }
+  virtual void SetName(const string& name) { Name = name; }
   virtual void SetFuelFreeze(bool f) { FuelFreeze = f; }
 
   virtual void SetStarter(bool s) { Starter = s; }
@@ -194,7 +194,7 @@ public:
   virtual double GetThrust(void) const;
     
   /// Sets engine placement information
-  virtual void SetPlacement(FGColumnVector3& location, FGColumnVector3& orientation);
+  virtual void SetPlacement(const FGColumnVector3& location, const FGColumnVector3& orientation);
 
   /** The fuel need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
@@ -206,11 +206,11 @@ public:
 
   virtual double GetPowerAvailable(void) {return 0.0;};
 
-  virtual FGColumnVector3& GetBodyForces(void);
-  virtual FGColumnVector3& GetMoments(void);
+  virtual const FGColumnVector3& GetBodyForces(void);
+  virtual const FGColumnVector3& GetMoments(void);
 
   bool LoadThruster(Element *el);
-  FGThruster* GetThruster(void) {return Thruster;}
+  FGThruster* GetThruster(void) const {return Thruster;}
 
   unsigned int GetSourceTank(unsigned int i) const;
   unsigned int GetNumSourceTanks() const {return SourceTanks.size();}

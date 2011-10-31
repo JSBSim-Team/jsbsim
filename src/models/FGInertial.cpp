@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.24 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.25 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +130,7 @@ double FGInertial::GetGAccel(double r) const
 // and therefore may need to be expressed (transformed) in another frame,
 // depending on how it is used. See Stevens and Lewis eqn. 1.4-16.
 
-FGColumnVector3 FGInertial::GetGravityJ2(FGColumnVector3 position) const
+FGColumnVector3 FGInertial::GetGravityJ2(const FGColumnVector3& position) const
 {
   FGColumnVector3 J2Gravity;
 

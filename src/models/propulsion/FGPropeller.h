@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.19 2011/09/24 14:26:46 jentron Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.19 2011/09/24 14:26:46 jentron Exp $
+    @version $Id: FGPropeller.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -175,7 +175,7 @@ public:
   void SetEngineRPM(double rpm) {RPM = rpm/GearRatio;}
 
   /// Returns true of this propeller is variable pitch
-  bool IsVPitch(void) {return MaxPitch != MinPitch;}
+  bool IsVPitch(void) const {return MaxPitch != MinPitch;}
 
   /** This commands the pitch of the blade to change to the value supplied.
       This call is meant to be issued either from the cockpit or by the flight
@@ -207,25 +207,25 @@ public:
   void SetSense(double s) { Sense = s;}
 
   /// Retrieves the pitch of the propeller in degrees.
-  double GetPitch(void)         { return Pitch;         }
+  double GetPitch(void) const     { return Pitch;         }
 
   /// Retrieves the RPMs of the propeller
-  double GetRPM(void)     const { return RPM;           } 
+  double GetRPM(void) const       { return RPM;           } 
 
   /// Calculates the RPMs of the engine based on gear ratio
-  double GetEngineRPM(void)     const { return RPM * GearRatio;  } 
+  double GetEngineRPM(void) const { return RPM * GearRatio;  } 
 
   /// Retrieves the propeller moment of inertia
-  double GetIxx(void)           { return Ixx;           }
+  double GetIxx(void) const       { return Ixx;           }
 
   /// Retrieves the coefficient of thrust multiplier
-  double GetCtFactor(void)      { return CtFactor;      }
+  double GetCtFactor(void) const  { return CtFactor;      }
 
   /// Retrieves the coefficient of power multiplier
-  double GetCpFactor(void)      { return CpFactor;      }
+  double GetCpFactor(void) const  { return CpFactor;      }
 
   /// Retrieves the propeller diameter
-  double GetDiameter(void)      { return Diameter;      }
+  double GetDiameter(void) const  { return Diameter;      }
 
   /// Retrieves propeller thrust table
   FGTable* GetCThrustTable(void) const { return cThrust;}
@@ -238,7 +238,7 @@ public:
   FGTable* GetCpMachTable(void) const { return CpMach; }
 
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
-  double GetTorque(void)        { return vTorque(eX);    }
+  double GetTorque(void) const  { return vTorque(eX); }
 
   /** Retrieves the power required (or "absorbed") by the propeller -
       i.e. the power required to keep spinning the propeller at the current
@@ -255,16 +255,16 @@ public:
       would be slowed.
       @return the thrust in pounds */
   double Calculate(double EnginePower);
-  FGColumnVector3 GetPFactor(void);
-  string GetThrusterLabels(int id, string delimeter);
-  string GetThrusterValues(int id, string delimeter);
+  FGColumnVector3 GetPFactor(void) const;
+  string GetThrusterLabels(int id, const string& delimeter);
+  string GetThrusterValues(int id, const string& delimeter);
 
   void   SetReverseCoef (double c) { Reverse_coef = c; }
-  double GetReverseCoef (void) { return Reverse_coef; }
+  double GetReverseCoef (void) const { return Reverse_coef; }
   void   SetReverse (bool r) { Reversed = r; }
-  bool   GetReverse (void) { return Reversed; }
+  bool   GetReverse (void) const { return Reversed; }
   void   SetFeather (bool f) { Feathered = f; }
-  bool   GetFeather (void) { return Feathered; }
+  bool   GetFeather (void) const { return Feathered; }
   double GetThrustCoefficient(void) const {return ThrustCoeff;}
   double GetHelicalTipMach(void) const {return HelicalTipMach;}
   int    GetConstantSpeed(void) const {return ConstantSpeed;}

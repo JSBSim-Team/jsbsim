@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.39 2011/10/15 13:00:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.40 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -343,7 +343,7 @@ double FGPropeller::GetPowerRequired(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGPropeller::GetPFactor()
+FGColumnVector3 FGPropeller::GetPFactor() const
 {
   double px=0.0, py, pz;
 
@@ -355,7 +355,7 @@ FGColumnVector3 FGPropeller::GetPFactor()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropeller::GetThrusterLabels(int id, string delimeter)
+string FGPropeller::GetThrusterLabels(int id, const string& delimeter)
 {
   std::ostringstream buf;
 
@@ -372,7 +372,7 @@ string FGPropeller::GetThrusterLabels(int id, string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropeller::GetThrusterValues(int id, string delimeter)
+string FGPropeller::GetThrusterValues(int id, const string& delimeter)
 {
   std::ostringstream buf;
 

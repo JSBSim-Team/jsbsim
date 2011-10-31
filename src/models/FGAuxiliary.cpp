@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.53 2011/08/17 23:56:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.54 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,7 +278,7 @@ bool FGAuxiliary::Run(bool Holding)
 //          sin(B)          cos(B)     0
 //   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
 
-FGMatrix33& FGAuxiliary::GetTw2b(void)
+const FGMatrix33& FGAuxiliary::GetTw2b(void)
 {
   double ca, cb, sa, sb;
 
@@ -302,7 +302,7 @@ FGMatrix33& FGAuxiliary::GetTw2b(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGAuxiliary::GetTb2w(void)
+const FGMatrix33& FGAuxiliary::GetTb2w(void)
 {
   double ca, cb, sa, sb;
 

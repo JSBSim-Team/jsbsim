@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.37 2011/07/12 01:52:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.38 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,7 +291,7 @@ void FGMassBalance::AddPointMass(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGMassBalance::GetTotalPointMassWeight(void)
+double FGMassBalance::GetTotalPointMassWeight(void) const
 {
   double PM_total_weight = 0.0;
 
@@ -303,7 +303,7 @@ double FGMassBalance::GetTotalPointMassWeight(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
+const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 {
   PointMassCG.InitMatrix();
 
@@ -315,7 +315,7 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGMassBalance::CalculatePMInertias(void)
+FGMatrix33 FGMassBalance::CalculatePMInertias(void)
 {
   unsigned int size;
 

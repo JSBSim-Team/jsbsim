@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.47 2011/08/30 21:05:56 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.48 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.47 2011/08/30 21:05:56 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.48 2011/10/31 14:54:41 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -238,19 +238,19 @@ public:
   ~FGLGear();
 
   /// The Force vector for this gear
-  FGColumnVector3& GetBodyForces(void);
+  const FGColumnVector3& GetBodyForces(void);
 
   /// Gets the location of the gear in Body axes
-  FGColumnVector3 GetBodyLocation(void) const { return in.vWhlBodyVec[GearNumber]; }
+  const FGColumnVector3& GetBodyLocation(void) const { return in.vWhlBodyVec[GearNumber]; }
   double GetBodyLocation(int idx) const { return in.vWhlBodyVec[GearNumber](idx); }
 
-  FGColumnVector3& GetLocalGear(void) { return vLocalGear; }
+  const FGColumnVector3& GetLocalGear(void) const { return vLocalGear; }
   double GetLocalGear(int idx) const { return vLocalGear(idx); }
 
   /// Gets the name of the gear
-  string GetName(void) const {return name;          }
+  const string& GetName(void) const {return name; }
   /// Gets the Weight On Wheels flag value
-  bool   GetWOW(void) const {return WOW;           }
+  bool    GetWOW(void) const {return WOW; }
   /// Gets the current compressed length of the gear in feet
   double  GetCompLen(void) const {return compressLength;}
   /// Gets the current gear compression velocity in ft/sec
@@ -276,17 +276,17 @@ public:
   /** Get the console touchdown reporting feature
       @return true if reporting is turned on */
   bool GetReport(void) const  { return ReportEnable; }
-  double GetSteerNorm(void) const    { return radtodeg/maxSteerAngle*SteerAngle; }
+  double GetSteerNorm(void) const { return radtodeg/maxSteerAngle*SteerAngle; }
   double GetDefaultSteerAngle(double cmd) const { return cmd*maxSteerAngle; }
   double GetstaticFCoeff(void) const { return staticFCoeff; }
 
-  int GetBrakeGroup(void) const { return (int)eBrakeGrp; }
-  int GetSteerType(void) const  { return (int)eSteerType; }
+  int  GetBrakeGroup(void) const   { return (int)eBrakeGrp; }
+  int  GetSteerType(void) const    { return (int)eSteerType; }
 
-  bool GetSteerable(void) const        { return eSteerType != stFixed; }
-  bool GetRetractable(void) const      { return isRetractable;   }
-  bool GetGearUnitUp(void) const       { return GearUp;          }
-  bool GetGearUnitDown(void) const     { return GearDown;        }
+  bool GetSteerable(void) const    { return eSteerType != stFixed; }
+  bool GetRetractable(void) const  { return isRetractable;   }
+  bool GetGearUnitUp(void) const   { return GearUp;          }
+  bool GetGearUnitDown(void) const { return GearDown;        }
   double GetWheelRollForce(void) {
     UpdateForces();
     FGColumnVector3 vForce = mTGear.Transposed() * FGForce::GetBodyForces();

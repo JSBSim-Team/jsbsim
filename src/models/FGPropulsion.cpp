@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.51 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.52 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -584,7 +584,7 @@ string FGPropulsion::GetPropulsionTankReport()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGPropulsion::GetTanksMoment(void)
+const FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 {
   vXYZtank_arm.InitMatrix();
   for (unsigned int i=0; i<Tanks.size(); i++) {
@@ -597,7 +597,7 @@ FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropulsion::GetTanksWeight(void)
+double FGPropulsion::GetTanksWeight(void) const
 {
   double Tw = 0.0;
 
@@ -608,7 +608,7 @@ double FGPropulsion::GetTanksWeight(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGPropulsion::CalculateTankInertias(void)
+const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 {
   unsigned int size;
 

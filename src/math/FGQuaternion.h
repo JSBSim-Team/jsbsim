@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.22 2010/12/07 12:57:14 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.23 2011/10/31 14:54:40 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -164,7 +164,7 @@ public:
       @return the quaternion derivative
       @see Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
            Equation 1.3-36. */
-  FGQuaternion GetQDot(const FGColumnVector3& PQR);
+  FGQuaternion GetQDot(const FGColumnVector3& PQR) const;
 
   /** Transformation matrix.
       @return a reference to the transformation/rotation matrix
@@ -527,7 +527,4 @@ inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
 std::ostream& operator<<(std::ostream& os, const FGQuaternion& q);
 
 } // namespace JSBSim
-
-#include "FGMatrix33.h"
-
 #endif

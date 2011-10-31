@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.10 2009/10/24 22:59:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.11 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,7 +168,7 @@ void FGExternalForce::SetMagnitude(double mag)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGExternalForce::GetBodyForces(void)
+const FGColumnVector3& FGExternalForce::GetBodyForces(void)
 {
   if (Magnitude_Function) {
     double mag = Magnitude_Function->GetValue();

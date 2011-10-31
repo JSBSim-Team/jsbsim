@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.13 2011/07/20 12:16:34 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.14 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -153,13 +153,13 @@ public:
   /** Retrieves the total forces defined in the external reactions.
       @return the total force in pounds.
   */
-  FGColumnVector3 GetForces(void) const {return vTotalForces;}
+  const FGColumnVector3& GetForces(void) const {return vTotalForces;}
   double GetForces(int idx) const {return vTotalForces(idx);}
 
   /** Retrieves the total moment resulting from the forces defined in the external reactions.
       @return the total moment in foot-pounds.
   */
-  FGColumnVector3 GetMoments(void) const {return vTotalMoments;}
+  const FGColumnVector3& GetMoments(void) const {return vTotalMoments;}
   double GetMoments(int idx) const {return vTotalMoments(idx);}
 
 private:

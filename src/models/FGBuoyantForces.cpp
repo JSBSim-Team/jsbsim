@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.20 2011/08/06 13:47:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.21 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,7 @@ bool FGBuoyantForces::Load(Element *element)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGBuoyantForces::GetGasMass(void)
+double FGBuoyantForces::GetGasMass(void) const
 {
   double Gw = 0.0;
 
@@ -187,7 +187,7 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGBuoyantForces::GetBuoyancyStrings(string delimeter)
+string FGBuoyantForces::GetBuoyancyStrings(const string& delimeter)
 {
   string CoeffStrings = "";
 /*
@@ -217,7 +217,7 @@ string FGBuoyantForces::GetBuoyancyStrings(string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGBuoyantForces::GetBuoyancyValues(string delimeter)
+string FGBuoyantForces::GetBuoyancyValues(const string& delimeter)
 {
   string SDValues = "";
 /*
