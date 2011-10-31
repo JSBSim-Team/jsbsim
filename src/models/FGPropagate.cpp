@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.98 2011/10/22 15:11:24 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.99 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -371,7 +371,7 @@ void FGPropagate::UpdateBodyMatrices(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInertialOrientation(FGQuaternion Qi) {
+void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi) {
   VState.qAttitudeECI = Qi;
   VState.qAttitudeECI.Normalize();
   UpdateBodyMatrices();
@@ -380,7 +380,7 @@ void FGPropagate::SetInertialOrientation(FGQuaternion Qi) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
+void FGPropagate::SetInertialVelocity(const FGColumnVector3& Vi) {
   VState.vInertialVelocity = Vi;
   CalculateUVW();
   vVel = Tb2l * VState.vUVW;
@@ -388,7 +388,7 @@ void FGPropagate::SetInertialVelocity(FGColumnVector3 Vi) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInertialRates(FGColumnVector3 vRates) {
+void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
   VState.vPQRi = Ti2b * vRates;
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
 }

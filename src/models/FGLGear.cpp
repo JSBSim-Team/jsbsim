@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.89 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.90 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -274,7 +274,7 @@ FGLGear::~FGLGear()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGLGear::GetBodyForces(void)
+const FGColumnVector3& FGLGear::GetBodyForces(void)
 {
   double t = fdmex->GetSimTime();
 

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.6 2011/10/22 15:11:24 bcoconni Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.7 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -154,7 +154,7 @@ public:
   virtual void SetWindNED(const FGColumnVector3& wind) { vWindNED=wind; }
 
   /// Retrieves the wind components in NED frame.
-  virtual FGColumnVector3& GetWindNED(void) { return vWindNED; }
+  virtual const FGColumnVector3& GetWindNED(void) const { return vWindNED; }
 
   /// Retrieves a wind component in NED frame.
   virtual double GetWindNED(int idx) const {return vWindNED(idx);}
@@ -194,7 +194,7 @@ public:
   virtual double GetTurbNED(int idx) const {return vTurbulenceNED(idx);}
 
   /// Retrieves the gust components in NED frame.
-  virtual FGColumnVector3& GetGustNED(void) {return vGustNED;}
+  virtual const FGColumnVector3& GetGustNED(void) const {return vGustNED;}
 
   /** Turbulence models available: ttNone, ttStandard, ttBerndt, ttCulp, ttMilspec, ttTustin */
   virtual void   SetTurbType(tType tt) {turbType = tt;}

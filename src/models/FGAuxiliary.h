@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.23 2011/08/17 23:56:01 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.24 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.23 2011/08/17 23:56:01 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.24 2011/10/31 14:54:41 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,12 +195,12 @@ public:
   /** Calculates and returns the wind-to-body axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  FGMatrix33& GetTw2b(void);
+  const FGMatrix33& GetTw2b(void);
 
   /** Calculates and returns the body-to-wind axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  FGMatrix33& GetTb2w(void);
+  const FGMatrix33& GetTb2w(void);
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
@@ -225,7 +225,7 @@ public:
   /** The vertical acceleration in g's of the aircraft center of gravity. */
   double GetNz            (void) const { return Nz;         }
 
-  FGColumnVector3& GetNwcg(void) { return vNwcg; }
+  const FGColumnVector3& GetNwcg(void) const { return vNwcg; }
 
   double GetHOverBCG(void) const { return hoverbcg; }
   double GetHOverBMAC(void) const { return hoverbmac; }
@@ -248,7 +248,7 @@ public:
   double GetLatitudeRelativePosition  (void) const { return lat_relative_position; }
   double GetDistanceRelativePosition  (void) const { return relative_position; }
 
-  void SetAeroPQR(FGColumnVector3 tt) { vAeroPQR = tt; }
+  void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
   struct Inputs {
     double Pressure;

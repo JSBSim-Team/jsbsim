@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.19 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,9 +86,9 @@ public:
   double SLgravity(void) const {return gAccelReference;}
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
-  FGColumnVector3 GetOmegaPlanet() const {return vOmegaPlanet;}
+  const FGColumnVector3& GetOmegaPlanet() const {return vOmegaPlanet;}
   double GetGAccel(double r) const;
-  FGColumnVector3 GetGravityJ2(FGColumnVector3 position) const;
+  FGColumnVector3 GetGravityJ2(const FGColumnVector3& position) const;
   double GetRefRadius(void) const {return RadiusReference;}
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}

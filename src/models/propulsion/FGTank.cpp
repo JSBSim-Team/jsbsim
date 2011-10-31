@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.32 2011/09/18 13:04:34 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.33 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,14 +197,14 @@ void FGTank::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGColumnVector3 FGTank::GetXYZ(void)
+FGColumnVector3 FGTank::GetXYZ(void) const
 {
   return vXYZ_drain + (Contents/Capacity)*(vXYZ - vXYZ_drain);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTank::GetXYZ(int idx)
+double FGTank::GetXYZ(int idx) const
 {
   return vXYZ_drain(idx) + (Contents/Capacity)*(vXYZ(idx)-vXYZ_drain(idx));
 }
@@ -331,7 +331,7 @@ void FGTank::CalculateInertias(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTank::ProcessFuelName(std::string const& name)
+double FGTank::ProcessFuelName(const std::string& name)
 {
    if      (name == "AVGAS")    return 6.02; 
    else if (name == "JET-A")    return 6.74;

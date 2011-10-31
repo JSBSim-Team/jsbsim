@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.13 2009/10/05 04:48:03 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.14 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.13 2009/10/05 04:48:03 jberndt Exp $
+    @version $Id: FGForce.h,v 1.14 2011/10/31 14:54:41 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,12 +238,12 @@ public:
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
 
-  virtual FGColumnVector3& GetBodyForces(void);
+  virtual const FGColumnVector3& GetBodyForces(void);
 
   inline double GetBodyXForce(void) const { return vFb(eX); }
   inline double GetBodyYForce(void) const { return vFb(eY); }
   inline double GetBodyZForce(void) const { return vFb(eZ); }
-  inline FGColumnVector3& GetMoments(void) { return vM; }
+  inline const FGColumnVector3& GetMoments(void) const { return vM; }
 
   // Normal point of application, JSBsim structural coords
   // (inches, x +back, y +right, z +up)
@@ -273,8 +273,8 @@ public:
   inline double SetActingLocationX(double x) {vActingXYZn(eX) = x; return x;}
   inline double SetActingLocationY(double y) {vActingXYZn(eY) = y; return y;}
   inline double SetActingLocationZ(double z) {vActingXYZn(eZ) = z; return z;}
-  inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; SetActingLocation(vv);}
-  inline void SetActingLocation(FGColumnVector3 vv) { vActingXYZn = vv; }
+  inline void SetLocation(const FGColumnVector3& vv) { vXYZn = vv; SetActingLocation(vv);}
+  inline void SetActingLocation(const FGColumnVector3& vv) { vActingXYZn = vv; }
 
   inline double GetLocationX( void ) const { return vXYZn(eX);}
   inline double GetLocationY( void ) const { return vXYZn(eY);}
@@ -282,8 +282,8 @@ public:
   inline double GetActingLocationX( void ) const { return vActingXYZn(eX);}
   inline double GetActingLocationY( void ) const { return vActingXYZn(eY);}
   inline double GetActingLocationZ( void ) const { return vActingXYZn(eZ);}
-  FGColumnVector3& GetLocation(void) { return vXYZn; }
-  FGColumnVector3& GetActingLocation(void) { return vActingXYZn; }
+  const FGColumnVector3& GetLocation(void) const { return vXYZn; }
+  const FGColumnVector3& GetActingLocation(void) const { return vActingXYZn; }
 
   //these angles are relative to body axes, not earth!!!!!
   //I'm using these because pitch, roll, and yaw are easy to visualize,
@@ -293,7 +293,7 @@ public:
   //They are in radians.
 
   void SetAnglesToBody(double broll, double bpitch, double byaw);
-  inline void  SetAnglesToBody(FGColumnVector3 vv) {
+  inline void  SetAnglesToBody(const FGColumnVector3& vv) {
     SetAnglesToBody(vv(eRoll), vv(ePitch), vv(eYaw));
   }
 
@@ -304,13 +304,13 @@ public:
   double GetPitch(void) const {return vOrient(ePitch);}
   double GetYaw(void) const {return vOrient(eYaw);}
 
-  inline FGColumnVector3& GetAnglesToBody(void) {return vOrient;}
+  inline const FGColumnVector3& GetAnglesToBody(void) const {return vOrient;}
   inline double GetAnglesToBody(int axis) const {return vOrient(axis);}
 
   inline void SetTransformType(TransformType ii) { ttype=ii; }
   inline TransformType GetTransformType(void) const { return ttype; }
 
-  FGMatrix33 Transform(void);
+  const FGMatrix33& Transform(void) const;
 
 protected:
   FGFDMExec *fdmex;

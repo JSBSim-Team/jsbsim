@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.25 2011/09/18 13:04:34 bcoconni Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.26 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -226,26 +226,26 @@ public:
   /** Retrieves the type of tank: Fuel or Oxidizer.
       @return the tank type, 0 for undefined, 1 for fuel, and 2 for oxidizer.
   */
-  int GetType(void) {return Type;}
+  int GetType(void) const {return Type;}
 
   /** Resets the tank parameters to the initial conditions */
   void ResetToIC(void);
 
   /** If the tank is set to supply fuel, this function returns true.
       @return true if this tank is set to a non-zero priority.*/
-  bool GetSelected(void) {return Selected;}
+  bool GetSelected(void) const {return Selected;}
 
   /** Gets the tank fill level.
       @return the fill level in percent, from 0 to 100.*/
-  double GetPctFull(void) {return PctFull;}
+  double GetPctFull(void) const {return PctFull;}
 
   /** Gets the capacity of the tank.
       @return the capacity of the tank in pounds. */
-  double GetCapacity(void) {return Capacity;}
+  double GetCapacity(void) const {return Capacity;}
 
   /** Gets the capacity of the tank.
       @return the capacity of the tank in gallons. */
-  double GetCapacityGallons(void) {return Capacity/Density;}
+  double GetCapacityGallons(void) const {return Capacity/Density;}
 
   /** Gets the contents of the tank.
       @return the contents of the tank in pounds. */
@@ -260,24 +260,24 @@ public:
       given in the configuration file. 
       @return the temperature of the fuel in degrees C IF an initial temperature
       is given, otherwise 0.0 C is returned. */
-  double GetTemperature_degC(void) {return Temperature;}
+  double GetTemperature_degC(void) const {return Temperature;}
 
   /** Gets the temperature of the fuel.
       The temperature of the fuel is calculated if an initial tempearture is
       given in the configuration file. 
       @return the temperature of the fuel in degrees F IF an initial temperature
       is given, otherwise 32 degrees F is returned. */
-  double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
+  double GetTemperature(void) const {return CelsiusToFahrenheit(Temperature);}
 
   /** Returns the density of a named fuel type.
       @return the density, in lbs/gal, or 6.6 if name cannot be resolved. */
-  double ProcessFuelName(std::string const& name); 
+  double ProcessFuelName(const std::string& name); 
 
-  double GetIxx(void) {return Ixx;}
-  double GetIyy(void) {return Iyy;}
-  double GetIzz(void) {return Izz;}
+  double GetIxx(void) const {return Ixx;}
+  double GetIyy(void) const {return Iyy;}
+  double GetIzz(void) const {return Izz;}
 
-  double GetStandpipe(void) {return Standpipe;}
+  double GetStandpipe(void) const {return Standpipe;}
 
   int  GetPriority(void) const {return Priority;}
   void SetPriority(int p) { Priority = p; Selected = p>0 ? true:false; } 
@@ -288,10 +288,10 @@ public:
   double GetExternalFlow(void) const {return ExternalFlow;}
   void   SetExternalFlow(double f) { ExternalFlow = f; }
 
-  const FGColumnVector3 GetXYZ(void);
-  double GetXYZ(int idx);
+  FGColumnVector3 GetXYZ(void) const;
+  double GetXYZ(int idx) const;
 
-  const GrainType GetGrainType(void) {return grainType;}
+  const GrainType GetGrainType(void) const {return grainType;}
 
   double Fill(double amount);
   void SetContents(double amount);

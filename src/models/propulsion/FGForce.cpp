@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.16 2011/08/04 12:46:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.17 2011/10/31 14:54:41 bcoconni Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,7 @@ FGForce::~FGForce()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGForce::GetBodyForces(void)
+const FGColumnVector3& FGForce::GetBodyForces(void)
 {
   vFb = Transform()*vFn;
 
@@ -106,7 +106,7 @@ FGColumnVector3& FGForce::GetBodyForces(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGForce::Transform(void)
+const FGMatrix33& FGForce::Transform(void) const
 {
   switch(ttype) {
   case tWindBody:

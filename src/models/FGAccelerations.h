@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.7 2011/08/21 15:46:48 bcoconni Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.8 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
     -Calculate the translational velocity
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.7 2011/08/21 15:46:48 bcoconni Exp $
+    @version $Id: FGAccelerations.h,v 1.8 2011/10/31 14:54:41 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,7 +151,7 @@ public:
   */
   double GetUVWdot(int idx) const { return vUVWdot(idx); }
 
-  FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
+  const FGColumnVector3& GetBodyAccel(void) const { return vBodyAccel; }
 
   double GetBodyAccel(int idx) const { return vBodyAccel(idx); }
 

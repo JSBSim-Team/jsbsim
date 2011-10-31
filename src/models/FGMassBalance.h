@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.25 2011/07/28 12:48:19 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.26 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -171,12 +171,12 @@ public:
   void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
 
   void AddPointMass(Element* el);
-  double GetTotalPointMassWeight(void);
+  double GetTotalPointMassWeight(void) const;
 
-  FGColumnVector3& GetPointMassMoment(void);
+  const FGColumnVector3& GetPointMassMoment(void);
   const FGMatrix33& GetJ(void) const {return mJ;}
   const FGMatrix33& GetJinv(void) const {return mJinv;}
-  void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
+  void SetAircraftBaseInertias(const FGMatrix33& BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(void) const;
   
   struct Inputs {
@@ -204,7 +204,7 @@ private:
   FGColumnVector3 vbaseXYZcg;
   FGColumnVector3 vPMxyz;
   FGColumnVector3 PointMassCG;
-  FGMatrix33& CalculatePMInertias(void);
+  FGMatrix33 CalculatePMInertias(void);
 
 
   /** The PointMass structure encapsulates a point mass object, moments of inertia
@@ -255,9 +255,9 @@ private:
     double GetPointMassLocation(int axis) const {return Location(axis);}
     double GetPointMassWeight(void) const {return Weight;}
     esShape GetShapeType(void) {return eShapeType;}
-    FGColumnVector3 GetLocation(void) {return Location;}
-    FGMatrix33 GetPointMassInertia(void) {return mPMInertia;}
-    string GetName(void) {return Name;}
+    const FGColumnVector3& GetLocation(void) {return Location;}
+    const FGMatrix33& GetPointMassInertia(void) {return mPMInertia;}
+    const string& GetName(void) {return Name;}
 
     void SetPointMassLocation(int axis, double value) {Location(axis) = value;}
     void SetPointMassWeight(double wt) {Weight = wt;}

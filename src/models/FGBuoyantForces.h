@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.15 2011/08/14 20:15:56 jberndt Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.16 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @version $Id: FGBuoyantForces.h,v 1.15 2011/08/14 20:15:56 jberndt Exp $
+    @version $Id: FGBuoyantForces.h,v 1.16 2011/10/31 14:54:41 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ public:
   /** Gets the total gas mass. The gas mass is part of the aircraft's
       inertia.
       @return mass in slugs. */
-  double GetGasMass(void);
+  double GetGasMass(void) const;
 
   /** Gets the total moment from the gas mass.
       @return a moment vector in the structural frame in lbs in. */
@@ -164,13 +164,13 @@ public:
   /** Gets the strings for the current set of gas cells.
       @param delimeter either a tab or comma string depending on output type
       @return a string containing the descriptive names for all parameters */
-  string GetBuoyancyStrings(string delimeter);
+  string GetBuoyancyStrings(const string& delimeter);
 
   /** Gets the coefficient values.
       @param delimeter either a tab or comma string depending on output type
       @return a string containing the numeric values for the current set of
       parameters */
-  string GetBuoyancyValues(string delimeter);
+  string GetBuoyancyValues(const string& delimeter);
 
   FGGasCell::Inputs in;
 

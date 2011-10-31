@@ -57,7 +57,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.19 2010/12/07 12:57:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.20 2011/10/31 14:54:40 bcoconni Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,10 +154,10 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
 /** Returns the derivative of the quaternion corresponding to the
     angular velocities PQR.
     See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
-    Equation 1.3-36. 
+    Equation 1.3-36.
     Also see Jack Kuipers, "Quaternions and Rotation Sequences", Equation 11.12.
 */
-FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR)
+FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
 {
   return FGQuaternion(
     -0.5*( data[1]*PQR(eP) + data[2]*PQR(eQ) + data[3]*PQR(eR)),

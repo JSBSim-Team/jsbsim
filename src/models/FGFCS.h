@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.39 2011/08/14 20:15:56 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.40 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.39 $
+    @version $Revision: 1.40 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -243,14 +243,14 @@ public:
       @return throttle command in range from 0 - 1.0 for the given engine */
   double GetThrottleCmd(int engine) const;
 
-  vector <double> GetThrottleCmd() const {return ThrottleCmd;}
+  const vector<double>& GetThrottleCmd() const {return ThrottleCmd;}
 
   /** Gets the mixture command.
       @param engine engine ID number
       @return mixture command in range from 0 - 1.0 for the given engine */
   double GetMixtureCmd(int engine) const { return MixtureCmd[engine]; }
 
-  vector <double> GetMixtureCmd() const {return MixtureCmd;}
+  const vector<double>& GetMixtureCmd() const {return MixtureCmd;}
 
   /** Gets the prop pitch command.
       @param engine engine ID number
@@ -322,20 +322,20 @@ public:
       @return throttle position for the given engine in range from 0 - 1.0 */
   double GetThrottlePos(int engine) const;
 
-  vector <double> GetThrottlePos() const {return ThrottlePos;}
+  const vector<double>& GetThrottlePos() const {return ThrottlePos;}
 
   /** Gets the mixture position.
       @param engine engine ID number
       @return mixture position for the given engine in range from 0 - 1.0 */
   double GetMixturePos(int engine) const { return MixturePos[engine]; }
 
-  vector <double> GetMixturePos() const {return MixturePos;}
+  const vector<double>& GetMixturePos() const {return MixturePos;}
 
   /** Gets the steering position.
       @return steering position in degrees */
   double GetSteerPosDeg(int gear) const { return SteerPosDeg[gear]; }
 
-  vector <double> GetSteerPosDeg() const {return SteerPosDeg;}
+  const vector<double>& GetSteerPosDeg() const {return SteerPosDeg;}
 
   /** Gets the gear position (0 up, 1 down), defaults to down
       @return gear position (0 up, 1 down) */
@@ -354,14 +354,14 @@ public:
       @return prop pitch position for the given engine in range from 0 - 1.0 */
   double GetPropAdvance(int engine) const { return PropAdvance[engine]; }
 
-  vector <double> GetPropAdvance() const { return PropAdvance; }
+  const vector<double>& GetPropAdvance() const { return PropAdvance; }
 
   /** Gets the prop feather position.
       @param engine engine ID number
       @return prop fether for the given engine (on / off)*/
   bool GetPropFeather(int engine) const { return PropFeather[engine]; }
 
-  vector <bool> GetPropFeather() const { return PropFeather; }
+  const vector<bool>& GetPropFeather() const { return PropFeather; }
   //@}
 
   /** Retrieves all component names for inclusion in output stream
@@ -528,7 +528,7 @@ public:
       @return the brake setting for the supplied brake group argument */
   double GetBrake(FGLGear::BrakeGroup bg);
 
-  vector <double> GetBrakePos() const {return BrakePos;}
+  const vector<double>& GetBrakePos() const {return BrakePos;}
 
   /** Gets the left brake.
       @return the left brake setting. */

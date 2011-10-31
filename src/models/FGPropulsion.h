@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.30 2011/08/03 03:21:06 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.31 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.30 2011/08/03 03:21:06 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.31 2011/10/31 14:54:41 bcoconni Exp $
     @see
     FGEngine
     FGTank
@@ -180,13 +180,13 @@ public:
   void DoRefuel(double time_slice);
   void DumpFuel(double time_slice);
 
-  FGColumnVector3& GetTanksMoment(void);
-  double GetTanksWeight(void);
+  const FGColumnVector3& GetTanksMoment(void);
+  double GetTanksWeight(void) const;
 
   std::ifstream* FindEngineFile(const std::string& filename);
   std::string FindEngineFullPathname(const std::string& engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
-  inline bool GetFuelFreeze(void) {return FuelFreeze;}
+  inline bool GetFuelFreeze(void) const {return FuelFreeze;}
   double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
 
   void SetMagnetos(int setting);
@@ -194,7 +194,7 @@ public:
   void SetCutoff(int setting=0);
   void SetActiveEngine(int engine);
   void SetFuelFreeze(bool f);
-  FGMatrix33& CalculateTankInertias(void);
+  const FGMatrix33& CalculateTankInertias(void);
 
   struct FGEngine::Inputs in;
 

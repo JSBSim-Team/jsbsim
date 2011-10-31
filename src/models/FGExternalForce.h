@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.9 2010/11/18 12:38:06 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.10 2011/10/31 14:54:41 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -154,7 +154,7 @@ public:
   void SetMagnitude(double mag);
   void SetAzimuth(double az) {azimuth = az;}
 
-  FGColumnVector3& GetBodyForces(void);
+  const FGColumnVector3& GetBodyForces(void);
   double GetMagnitude(void) const {return magnitude;}
   double GetAzimuth(void) const {return azimuth;}
   double GetX(void) const {return vDirection(eX);}
