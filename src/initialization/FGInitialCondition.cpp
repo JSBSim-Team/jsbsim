@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.76 2011/11/06 18:14:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.77 2011/11/06 21:08:04 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -685,7 +685,12 @@ void FGInitialCondition::SetSeaLevelRadiusFtIC(double slr)
 
 void FGInitialCondition::SetTerrainElevationFtIC(double elev)
 {
+  double agl = GetAltitudeAGLFtIC();
+
   fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(elev + position.GetSeaLevelRadius());
+
+  if (lastAltitudeSet == setagl)
+    SetAltitudeAGLFtIC(agl);
 }
 
 //******************************************************************************
