@@ -38,16 +38,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "math/FGColumnVector3.h"
-#include "math/FGLocation.h"
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.12 2011/10/14 22:46:49 bcoconni Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.13 2011/11/06 18:14:51 bcoconni Exp $"
 
 namespace JSBSim {
+
+class FGLocation;
+class FGColumnVector3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -59,14 +61,14 @@ CLASS DOCUMENTATION
     ball formed earth with an adjustable terrain elevation.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.12 2011/10/14 22:46:49 bcoconni Exp $
+    @version $Id: FGGroundCallback.h,v 1.13 2011/11/06 18:14:51 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundCallback : public FGJSBBase
+class FGGroundCallback : public FGJSBBase, public SGReferenced
 {
 public:
 
@@ -118,6 +120,8 @@ public:
   virtual void SetSeaLevelRadius(double radius) {  }
 
 };
+
+typedef SGSharedPtr<FGGroundCallback> FGGroundCallback_ptr;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // The default sphere earth implementation:

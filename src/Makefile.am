@@ -20,8 +20,8 @@ libJSBSim_la_LIBADD = \
 	models/libModels.la \
 	models/flight_control/libFlightControl.la \
 	models/propulsion/libPropulsion.la \
-	input_output/libInputOutput.la \
 	math/libMath.la \
+	input_output/libInputOutput.la \
 	simgear/props/libProperties.la \
 	simgear/xml/libExpat.la \
 	simgear/magvar/libcoremag.la
@@ -41,8 +41,8 @@ JSBSim_LDADD = \
 	models/libModels.a \
 	models/flight_control/libFlightControl.a \
 	models/propulsion/libPropulsion.a \
-	input_output/libInputOutput.a \
 	math/libMath.a \
+	input_output/libInputOutput.a \
 	simgear/props/libProperties.a \
 	simgear/xml/libExpat.a \
 	simgear/magvar/libcoremag.a \

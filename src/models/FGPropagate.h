@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.65 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.66 2011/11/06 18:14:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.65 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.66 2011/11/06 18:14:51 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,7 +293,7 @@ public:
       units ft
       @return The current altitude above sea level in feet.
   */
-  double GetAltitudeASL(void)   const;
+  double GetAltitudeASL(void) const { return VState.vLocation.GetAltitudeASL(); }
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.
@@ -387,7 +387,7 @@ public:
   const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
   void RecomputeLocalTerrainVelocity();
 
-  double GetTerrainElevation(void) const;
+  double GetTerrainElevation(void) const { return GetLocalTerrainRadius() - VState.vLocation.GetSeaLevelRadius(); }
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const {
       if (VState.vLocation.GetRadius() == 0) return 1.0;
@@ -505,7 +505,11 @@ public:
     VState.vInertialPosition = Tec2i * VState.vLocation;
   }
 
-  void SetAltitudeASL(double altASL);
+  void SetAltitudeASL(double altASL)
+  {
+    VState.vLocation.SetAltitudeASL(altASL);
+    UpdateVehicleState();
+  }
   void SetAltitudeASLmeters(double altASL) { SetAltitudeASL(altASL/fttom); }
 
   void SetSeaLevelRadius(double tt);

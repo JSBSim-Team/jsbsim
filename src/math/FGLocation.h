@@ -6,6 +6,7 @@
 
  ------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) ------------------
  -------           (C) 2004  Mathias Froehlich (Mathias.Froehlich@web.de) ----
+ -------           (C) 2011  Ola Røer Thorsen (ola@silentwings.no) -----------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -27,6 +28,8 @@
 HISTORY
 -------------------------------------------------------------------------------
 04/04/2004   MF   Created from code previously in the old positions class.
+11/01/2011   ORT  Encapsulated ground callback code in FGLocation and removed
+                  it from FGFDMExec.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -43,12 +46,13 @@ INCLUDES
 #include "input_output/FGPropertyManager.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
+#include "input_output/FGGroundCallback.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.28 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.29 2011/11/06 18:14:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +146,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.28 2011/08/04 12:46:32 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.29 2011/11/06 18:14:51 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -305,6 +309,70 @@ public:
       always positive. */
   //double GetRadius() const { return mECLoc.Magnitude(); } // may not work with FlightGear
   double GetRadius() const { ComputeDerived(); return mRadius; }
+
+  /// @name Functions that need the ground callback to be set
+  ///@{
+  /** Set the altitude above sea level.
+      @param altitudeASL altitude above Sea Level in feet. */
+  void SetAltitudeASL(double altitudeASL)
+  { SetRadius(GroundCallback->GetSeaLevelRadius(*this) + altitudeASL); }
+
+  /** Set the altitude above ground level.
+      @param altitudeAGL altitude above Ground Level in feet. */
+  void SetAltitudeAGL(double altitudeAGL, double time)
+  { SetRadius(GroundCallback->GetTerrainGeoCentRadius(time, *this) + altitudeAGL); }
+
+  /** Get the local sea level radius
+      @return the sea level radius at the location in feet. */
+  double GetSeaLevelRadius(void) const
+  { ComputeDerived(); return GroundCallback->GetSeaLevelRadius(*this); }
+
+  /** Get the local terrain radius
+      @return the terrain level radius at the location in feet. */
+  double GetTerrainRadius(double time) const
+  { ComputeDerived(); return GroundCallback->GetTerrainGeoCentRadius(time, *this); }
+
+  /** Get the altitude above sea level.
+      @return the altitude ASL in feet. */
+  double GetAltitudeASL() const
+  { ComputeDerived(); return GroundCallback->GetAltitude(*this); }
+
+  /** Get the altitude above ground level.
+      @return the altitude AGL in feet. */
+  double GetAltitudeAGL(double time) const {
+    FGLocation c;
+    FGColumnVector3 n,v,w;
+    return GetContactPoint(time,c,n,v,w);
+  }
+
+  /** Get terrain contact point information below the current location.
+      @param time    Simulation time
+      @param contact Contact point location
+      @param normal  Terrain normal vector in contact point    (ECEF frame)
+      @param v       Terrain linear velocity in contact point  (ECEF frame)
+      @param w       Terrain angular velocity in contact point (ECEF frame)
+      @return Location altitude above contact point (AGL) in feet. */
+  double GetContactPoint(double time,
+                         FGLocation& contact, FGColumnVector3& normal,
+                         FGColumnVector3& v, FGColumnVector3& w) const
+  { ComputeDerived(); return GroundCallback->GetAGLevel(time, *this, contact, normal, v, w); }
+
+  /** Sets the ground callback pointer. For optimal memory management, a shared
+      pointer is used internally that maintains a reference counter. The calling
+      application must therefore use FGGroundCallback_ptr 'smart pointers' to
+      manage their copy of the ground callback.
+      @param gc A pointer to a ground callback object
+      @see FGGroundCallback
+   */
+  static void SetGroundCallback(FGGroundCallback* gc) { GroundCallback = gc; }
+
+  /** Get a pointer to the ground callback currently used. It is recommanded
+      to store the returned pointer in a 'smart pointer' FGGroundCallback_ptr.
+      @return A pointer to the current ground callback object.
+      @see FGGroundCallback
+   */
+  static FGGroundCallback* GetGroundCallback(void) { return GroundCallback; }
+  ///@}
 
   /** Transform matrix from local horizontal to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from
@@ -520,6 +588,9 @@ private:
       The C++ keyword "mutable" tells the compiler that the data member is
       allowed to change during a const member function. */
   mutable bool mCacheValid;
+
+  /** The ground callback object pointer */
+  static FGGroundCallback_ptr GroundCallback;
 };
 
 /** Scalar multiplication.

@@ -33,6 +33,10 @@
       <notify>
         <property>simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
+        <property> position/terrain-elevation-asl-ft </property>
+        <property> position/h-agl-ft </property>
+        <property> position/h-sl-ft </property>
+        <property> metrics/terrain-radius </property>
       </notify>
     </event>
 
@@ -100,8 +104,8 @@
       <description>
         This event is very critical with regard to when the various properties
         below are set. When the terrain elevation is set (AFTER the reset is
-        performed) the height AGL MUST ALSO be set, otherwise the landing gear
-        is compressed a LOT.
+        performed) the height AGL MUST ALSO be set as well as the INITIAL height
+        AGL, otherwise the landing gear is compressed a LOT.
       </description>
       <condition>
         simulation/sim-time-sec  ge  300.0
@@ -121,8 +125,13 @@
         </function>
       </set>
       <set name="position/h-agl-ft" value="4.6"/>
+      <set name="ic/h-agl-ft" value="4.6"/>
       <notify>
         <property> simulation/run_id </property>
+        <property> position/terrain-elevation-asl-ft </property>
+        <property> position/h-agl-ft </property>
+        <property> position/h-sl-ft </property>
+        <property> metrics/terrain-radius </property>
       </notify>
     </event>
 
