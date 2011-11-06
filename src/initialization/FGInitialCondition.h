@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.31 2011/10/23 15:05:32 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.32 2011/11/06 18:14:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,6 +68,7 @@ class FGColumnVector3;
 class FGAtmosphere;
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
+typedef enum { setasl, setagl} altitudeset;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -214,7 +215,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.31 2011/10/23 15:05:32 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.32 2011/11/06 18:14:51 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,24 +292,23 @@ public:
 
   /** Sets the initial Altitude above ground level.
       @param agl Altitude above ground level in feet */
-  void SetAltitudeAGLFtIC(double agl)
-  { SetAltitudeASLFtIC(terrain_elevation + agl); }
+  void SetAltitudeAGLFtIC(double agl);
 
   /** Sets the initial sea level radius from planet center
       @param sl_rad sea level radius in feet */
-  void SetSeaLevelRadiusFtIC(double sl_rad) { sea_level_radius = sl_rad; }
+  void SetSeaLevelRadiusFtIC(double slr);
 
   /** Sets the initial terrain elevation.
       @param elev Initial terrain elevation in feet */
-  void SetTerrainElevationFtIC(double elev) { terrain_elevation = elev; }
+  void SetTerrainElevationFtIC(double elev);
 
   /** Sets the initial latitude.
       @param lat Initial latitude in degrees */
-  void SetLatitudeDegIC(double lat) { position.SetLatitude(lat*degtorad); }
+  void SetLatitudeDegIC(double lat) { SetLatitudeRadIC(lat*degtorad); }
 
   /** Sets the initial longitude.
       @param lon Initial longitude in degrees */
-  void SetLongitudeDegIC(double lon) { position.SetLongitude(lon*degtorad); }
+  void SetLongitudeDegIC(double lon) { SetLongitudeRadIC(lon*degtorad); }
 
   /** Gets the initial calibrated airspeed.
       @return Initial calibrated airspeed in knots */
@@ -370,15 +370,15 @@ public:
 
   /** Gets the initial altitude above sea level.
       @return Initial altitude in feet. */
-  double GetAltitudeASLFtIC(void) const { return position.GetRadius() - sea_level_radius; }
+  double GetAltitudeASLFtIC(void) const { return position.GetAltitudeASL(); }
 
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */
-  double GetAltitudeAGLFtIC(void) const { return position.GetRadius() - sea_level_radius - terrain_elevation; }
+  double GetAltitudeAGLFtIC(void) const;
 
   /** Gets the initial terrain elevation.
       @return Initial terrain elevation in feet */
-  double GetTerrainElevationFtIC(void) const { return terrain_elevation; }
+  double GetTerrainElevationFtIC(void) const;
 
   /** Sets the initial ground speed.
       @param vg Initial ground speed in feet/second */
@@ -585,11 +585,11 @@ public:
 
   /** Sets the initial latitude.
       @param lat Initial latitude in radians */
-  void SetLatitudeRadIC(double lat) { position.SetLatitude(lat); }
+  void SetLatitudeRadIC(double lat);
 
   /** Sets the initial longitude.
       @param lon Initial longitude in radians */
-  void SetLongitudeRadIC(double lon) { position.SetLongitude(lon); }
+  void SetLongitudeRadIC(double lon);
 
   /** Sets the target normal load factor.
       @param nlf Normal load factor*/
@@ -665,14 +665,14 @@ private:
   FGLocation position;
   FGQuaternion orientation;
   double vt;
-  double sea_level_radius;
-  double terrain_elevation;
+
   double targetNlfIC;
 
   FGMatrix33 Tw2b, Tb2w;
   double  alpha, beta;
 
   speedset lastSpeedSet;
+  altitudeset lastAltitudeSet;
 
   FGFDMExec *fdmex;
   FGPropertyManager *PropertyManager;

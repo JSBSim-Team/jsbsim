@@ -7,6 +7,7 @@
 
  ------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) ------------------
  -------           (C) 2004  Mathias Froehlich (Mathias.Froehlich@web.de) ----
+ -------           (C) 2011  Ola Røer Thorsen (ola@silentwings.no) -----------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -33,6 +34,8 @@ It has vector properties, so you can add multiply ....
 HISTORY
 ------------------------------------------------------------------------------
 04/04/2004   MF    Created
+11/01/2011   ORT   Encapsulated ground callback code in FGLocation and removed
+                   it from FGFDMExec.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -45,10 +48,14 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.25 2011/10/16 00:19:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.26 2011/11/06 18:14:51 bcoconni Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
+
+// Set up the default ground callback object.
+FGGroundCallback_ptr FGLocation::GroundCallback = NULL;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

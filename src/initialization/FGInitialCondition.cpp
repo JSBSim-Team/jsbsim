@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.75 2011/10/23 15:05:32 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.77 2011/11/06 21:08:04 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -109,7 +109,9 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   vPQR_body = FGColumnVector3(p0, q0, r0);
   alpha = alpha0;  beta = beta0;
 
-  position.SetPosition(lonRad0, latRad0, altAGLFt0 + terrain_elevation + sea_level_radius);
+  position.SetLongitude(lonRad0);
+  position.SetLatitude(latRad0);
+  position.SetAltitudeAGL(altAGLFt0, fdmex->GetSimTime());
 
   orientation = FGQuaternion(phi0, theta0, psi0);
   const FGMatrix33& Tb2l = orientation.GetTInv();
@@ -130,11 +132,12 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
 void FGInitialCondition::InitializeIC(void)
 {
   alpha=beta=0;
-  terrain_elevation = 0;
-  sea_level_radius = fdmex->GetInertial()->GetRefRadius();
+
   position.SetEllipse(fdmex->GetInertial()->GetSemimajor(), fdmex->GetInertial()->GetSemiminor());
-  position.SetPosition(0., 0., sea_level_radius);
+
+  position.SetPositionGeodetic(0.0, 0.0, 0.0);
   position.SetEarthPositionAngle(fdmex->GetPropagate()->GetEarthPositionAngle());
+
   orientation = FGQuaternion(0.0, 0.0, 0.0);
   vUVW_NED.InitMatrix();
   vPQR_body.InitMatrix();
@@ -185,7 +188,7 @@ void FGInitialCondition::WriteStateFile(int num)
 
 void FGInitialCondition::SetVequivalentKtsIC(double ve)
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   SetVtrueFpsIC(ve*ktstofps*sqrt(rhoSL/rho));
@@ -196,7 +199,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
 
 void FGInitialCondition::SetMachIC(double mach)
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double temperature = Atmosphere->GetTemperature(altitudeASL);
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   SetVtrueFpsIC(mach*soundSpeed);
@@ -207,7 +210,7 @@ void FGInitialCondition::SetMachIC(double mach)
 
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double pressureSL = Atmosphere->GetPressureSL();
   double rhoSL = Atmosphere->GetDensitySL();
@@ -672,13 +675,56 @@ void FGInitialCondition::SetWindDirDegIC(double dir)
 }
 
 //******************************************************************************
+
+void FGInitialCondition::SetSeaLevelRadiusFtIC(double slr)
+{
+  fdmex->GetGroundCallback()->SetSeaLevelRadius(slr);
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetTerrainElevationFtIC(double elev)
+{
+  double agl = GetAltitudeAGLFtIC();
+
+  fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(elev + position.GetSeaLevelRadius());
+
+  if (lastAltitudeSet == setagl)
+    SetAltitudeAGLFtIC(agl);
+}
+
+//******************************************************************************
+
+double FGInitialCondition::GetAltitudeAGLFtIC(void) const
+{
+  return position.GetAltitudeAGL(fdmex->GetSimTime());
+}
+
+//******************************************************************************
+
+double FGInitialCondition::GetTerrainElevationFtIC(void) const
+{
+  return position.GetTerrainRadius(fdmex->GetSimTime())
+       - position.GetSeaLevelRadius();
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
+{
+  double terrainElevation = position.GetTerrainRadius(fdmex->GetSimTime()) - position.GetSeaLevelRadius();
+  SetAltitudeASLFtIC(agl + terrainElevation);
+  lastAltitudeSet = setagl;
+}
+
+//******************************************************************************
 // Set the altitude SL. If the airspeed has been previously set with parameters
 // that are atmosphere dependent (Mach, VCAS, VEAS) then the true airspeed is
 // modified to keep the last set speed to its previous value.
 
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double temperature = Atmosphere->GetTemperature(altitudeASL);
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double pressureSL = Atmosphere->GetPressureSL();
@@ -691,7 +737,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double ve0 = vt * sqrt(rho/rhoSL);
 
   altitudeASL=alt;
-  position.SetRadius(alt + sea_level_radius);
+  position.SetAltitudeASL(alt);
 
   temperature = Atmosphere->GetTemperature(altitudeASL);
   soundSpeed = sqrt(SHRatio*Reng*temperature);
@@ -711,6 +757,47 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       break;
     default: // Make the compiler stop complaining about missing enums
       break;
+  }
+
+  lastAltitudeSet = setasl;
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetLatitudeRadIC(double lat)
+{
+  double altitude;
+
+  switch(lastAltitudeSet) {
+  case setagl:
+    altitude = GetAltitudeAGLFtIC();
+    position.SetLatitude(lat);
+    SetAltitudeAGLFtIC(altitude);
+    break;
+  default:
+    altitude = position.GetAltitudeASL();
+    position.SetLatitude(lat);
+    position.SetAltitudeASL(altitude);
+  }
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetLongitudeRadIC(double lon)
+{
+  double altitude;
+
+  switch(lastAltitudeSet) {
+  case setagl:
+    altitude = GetAltitudeAGLFtIC();
+    position.SetLongitude(lon);
+    SetAltitudeAGLFtIC(altitude);
+    break;
+  default:
+    altitude = position.GetAltitudeASL();
+    position.SetLongitude(lon);
+    position.SetAltitudeASL(altitude);
+    break;
   }
 }
 
@@ -764,7 +851,7 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double temperature = Atmosphere->GetTemperature(altitudeASL);
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double pressureSL = Atmosphere->GetPressureSL();
@@ -778,7 +865,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 
 double FGInitialCondition::GetVequivalentKtsIC(void) const
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   return fpstokts * vt * sqrt(rho/rhoSL);
@@ -788,7 +875,7 @@ double FGInitialCondition::GetVequivalentKtsIC(void) const
 
 double FGInitialCondition::GetMachIC(void) const
 {
-  double altitudeASL = position.GetRadius() - sea_level_radius;
+  double altitudeASL = position.GetAltitudeASL();
   double temperature = Atmosphere->GetTemperature(altitudeASL);
   double soundSpeed = sqrt(SHRatio*Reng*temperature);
   return vt / soundSpeed;
@@ -868,18 +955,18 @@ bool FGInitialCondition::Load_v1(void)
   bool result = true;
 
   if (document->FindElement("latitude"))
-    position.SetLatitude(document->FindElementValueAsNumberConvertTo("latitude", "RAD"));
+    SetLatitudeRadIC(document->FindElementValueAsNumberConvertTo("latitude", "RAD"));
   if (document->FindElement("longitude"))
-    position.SetLongitude(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
+    SetLongitudeRadIC(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
   if (document->FindElement("elevation"))
-    terrain_elevation = document->FindElementValueAsNumberConvertTo("elevation", "FT");
+    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
 
   if (document->FindElement("altitude")) // This is feet above ground level
-    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitude", "FT") + terrain_elevation + sea_level_radius);
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   else if (document->FindElement("altitudeAGL")) // This is feet above ground level
-    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT") + terrain_elevation + sea_level_radius);
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
   else if (document->FindElement("altitudeMSL")) // This is feet above sea level
-    position.SetRadius(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT") + sea_level_radius);
+    SetAltitudeASLFtIC(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
 
   FGColumnVector3 vOrient = orientation.GetEuler();
 
@@ -957,9 +1044,6 @@ bool FGInitialCondition::Load_v2(void)
   if (document->FindElement("earth_position_angle"))
     position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD"));
 
-  if (document->FindElement("elevation"))
-    terrain_elevation = document->FindElementValueAsNumberConvertTo("elevation", "FT");
-
   // Initialize vehicle position
   //
   // Allowable frames:
@@ -974,20 +1058,25 @@ bool FGInitialCondition::Load_v2(void)
       position = position.GetTi2ec() * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
+
+        if (position_el->FindElement("longitude"))
+          position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
+
+        if (position_el->FindElement("latitude"))
+          position.SetLatitude(position_el->FindElementValueAsNumberConvertTo("latitude", "RAD"));
+
         if (position_el->FindElement("radius")) {
           position.SetRadius(position_el->FindElementValueAsNumberConvertTo("radius", "FT"));
         } else if (position_el->FindElement("altitudeAGL")) {
-          position.SetRadius(sea_level_radius + terrain_elevation + position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+          position.SetAltitudeAGL(position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"),
+                                  fdmex->GetSimTime());
         } else if (position_el->FindElement("altitudeMSL")) {
-          position.SetRadius(sea_level_radius + position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+          position.SetAltitudeASL(position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
         }
-        if (position_el->FindElement("longitude"))
-          position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
-        if (position_el->FindElement("latitude"))
-          position.SetLatitude(position_el->FindElementValueAsNumberConvertTo("latitude", "RAD"));
+
       } else {
         position = position_el->FindElementTripletConvertTo("FT");
       }
@@ -999,6 +1088,9 @@ bool FGInitialCondition::Load_v2(void)
     cerr << endl << "  Initial position not specified in this initialization file." << endl;
     result = false;
   }
+
+  if (document->FindElement("elevation"))
+    fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(document->FindElementValueAsNumberConvertTo("elevation", "FT")+position.GetSeaLevelRadius());
 
   // End of position initialization
 

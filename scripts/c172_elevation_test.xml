@@ -33,6 +33,10 @@
       <notify>
         <property>simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
+        <property> position/terrain-elevation-asl-ft </property>
+        <property> position/h-agl-ft </property>
+        <property> position/h-sl-ft </property>
+        <property> metrics/terrain-radius </property>
       </notify>
     </event>
 
@@ -99,9 +103,11 @@
     <event name="Reset">
       <description>
         This event is very critical with regard to when the various properties
-        below are set. When the terrain elevation is set (AFTER the reset is
-        performed) the height AGL MUST ALSO be set, otherwise the landing gear
-        is compressed a LOT.
+        below are set. The terrain elevation is set in the initial conditions (IC)
+        BEFORE the reset is performed. Since the altitude is initially set as an
+        altitude above ground level (AGL), it needs not to be repeated here as
+        JSBSim will update the altitude above sea level (ASL) to keep the AGL in
+        the IC at its original value.
       </description>
       <condition>
         simulation/sim-time-sec  ge  300.0
@@ -111,8 +117,7 @@
       <set name="ap/altitude_hold" value="0"/>
       <set name="ap/heading_hold" value="0"/>
       <set name="simulation/run_id" type="FG_DELTA" value="1"/>
-      <set name="simulation/reset" value="1"/>
-      <set name="position/terrain-elevation-asl-ft">
+      <set name="ic/terrain-elevation-ft">
         <function>
           <product>
             <property>simulation/run_id</property>
@@ -120,9 +125,13 @@
           </product>
         </function>
       </set>
-      <set name="position/h-agl-ft" value="4.6"/>
+      <set name="simulation/reset" value="1"/>
       <notify>
         <property> simulation/run_id </property>
+        <property> position/terrain-elevation-asl-ft </property>
+        <property> position/h-agl-ft </property>
+        <property> position/h-sl-ft </property>
+        <property> metrics/terrain-radius </property>
       </notify>
     </event>
 

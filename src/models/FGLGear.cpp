@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.90 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.91 2011/11/06 18:14:51 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -290,7 +290,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     gearLoc = in.Location.LocalToLocation(vLocalGear);
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = fdmex->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, terrainVel, dummy);
+    double height = gearLoc.GetContactPoint(t, contact, normal, terrainVel, dummy);
     vGroundNormal = in.Tec2b * normal;
 
     // The height returned above is the AGL and is expressed in the Z direction

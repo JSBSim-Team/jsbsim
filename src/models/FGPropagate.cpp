@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.99 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.100 2011/11/06 18:14:51 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,10 +113,8 @@ FGPropagate::~FGPropagate(void)
 bool FGPropagate::InitModel(void)
 {
   // For initialization ONLY:
-  VState.vLocation.SetRadius( FDMExec->GetGroundCallback()->
-                              GetTerrainGeoCentRadius(0.0,VState.vLocation) + 4.0 );
-
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
+  VState.vLocation.SetAltitudeAGL(4.0, FDMExec->GetSimTime());
 
   vInertialVelocity.InitMatrix();
 
@@ -137,8 +135,6 @@ bool FGPropagate::InitModel(void)
 
 void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
-  SetTerrainElevation(FGIC->GetTerrainElevationFtIC());
-
   // Initialize the State Vector elements and the transformation matrices
 
   // Set the position lat/lon/radius
@@ -397,22 +393,20 @@ void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
 
 void FGPropagate::RecomputeLocalTerrainVelocity()
 {
-   FGLocation contact;
-   FGColumnVector3 normal;
-   FDMExec->GetGroundCallback()->GetAGLevel(FDMExec->GetSimTime(),
-                                            VState.vLocation,
-                                            contact, normal,
-                                            LocalTerrainVelocity,
-                                            LocalTerrainAngularVelocity);
+  FGLocation contact;
+  FGColumnVector3 normal;
+  VState.vLocation.GetContactPoint(FDMExec->GetSimTime(), contact, normal,
+                                   LocalTerrainVelocity, LocalTerrainAngularVelocity);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  double radius = terrainElev + FDMExec->GetGroundCallback()->GetSeaLevelRadius(VState.vLocation);
+  double radius = terrainElev + VState.vLocation.GetSeaLevelRadius();
   FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(radius);
 }
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -425,49 +419,22 @@ void FGPropagate::SetSeaLevelRadius(double tt)
 
 double FGPropagate::GetLocalTerrainRadius(void) const
 {
-  return FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius(FDMExec->GetSimTime(),
-                                                               VState.vLocation);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropagate::GetTerrainElevation(void) const
-{
-  return GetLocalTerrainRadius()
-       - FDMExec->GetGroundCallback()->GetSeaLevelRadius(VState.vLocation);
+  return VState.vLocation.GetTerrainRadius(FDMExec->GetSimTime());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGL(void) const
 {
-  FGColumnVector3 dummy;
-  FGLocation dummyloc;
-  double t = FDMExec->GetSimTime();
-  return FDMExec->GetGroundCallback()->GetAGLevel(t, VState.vLocation, dummyloc,
-                                                  dummy, dummy, dummy);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropagate::SetAltitudeASL(double altASL)
-{
-  SetRadius(altASL + FDMExec->GetGroundCallback()->GetSeaLevelRadius(VState.vLocation));
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropagate::GetAltitudeASL(void) const
-{
-  return VState.vLocation.GetRadius()
-       - FDMExec->GetGroundCallback()->GetSeaLevelRadius(VState.vLocation);
+  return VState.vLocation.GetAltitudeAGL(FDMExec->GetSimTime());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  SetAltitudeASL(tt + GetTerrainElevation());
+  VState.vLocation.SetAltitudeAGL(tt, FDMExec->GetSimTime());
+  UpdateVehicleState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -508,7 +475,6 @@ void FGPropagate::UpdateVehicleState(void)
 void FGPropagate::SetLocation(const FGLocation& l)
 {
   VState.vLocation = l;
-  VState.vLocation.SetEarthPositionAngle(l.GetEPA());
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
