@@ -39,12 +39,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
+#include "simgear/props/SGReferenced.hxx"
+#include "simgear/props/SGSharedPtr.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.13 2011/11/06 18:14:51 bcoconni Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.14 2011/11/07 20:13:39 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -61,7 +63,7 @@ CLASS DOCUMENTATION
     ball formed earth with an adjustable terrain elevation.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.13 2011/11/06 18:14:51 bcoconni Exp $
+    @version $Id: FGGroundCallback.h,v 1.14 2011/11/07 20:13:39 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
