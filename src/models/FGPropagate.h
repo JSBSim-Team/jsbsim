@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.66 2011/11/06 18:14:51 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.67 2011/11/09 22:07:17 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.66 2011/11/06 18:14:51 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.67 2011/11/09 22:07:17 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,13 +475,13 @@ public:
   const FGQuaternion GetQuaternionECI(void) const { return VState.qAttitudeECI; }
 
   void SetPQR(unsigned int i, double val) {
-      if ((i>=1) && (i<=3) )
-          VState.vPQR(i) = val;
+    VState.vPQR(i) = val;
+    VState.vPQRi = VState.vPQR + Ti2b * in.vOmegaPlanet;
   }
 
   void SetUVW(unsigned int i, double val) {
-      if ((i>=1) && (i<=3) )
-          VState.vUVW(i) = val;
+    VState.vUVW(i) = val;
+    CalculateInertialVelocity();
   }
 
 // SET functions

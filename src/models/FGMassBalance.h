@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.26 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.27 2011/11/09 21:58:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -204,7 +204,7 @@ private:
   FGColumnVector3 vbaseXYZcg;
   FGColumnVector3 vPMxyz;
   FGColumnVector3 PointMassCG;
-  FGMatrix33 CalculatePMInertias(void);
+  const FGMatrix33& CalculatePMInertias(void);
 
 
   /** The PointMass structure encapsulates a point mass object, moments of inertia

@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.77 2011/11/06 21:08:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.78 2011/11/09 21:57:51 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -118,6 +118,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
 
   vUVW_NED = Tb2l * FGColumnVector3(u0, v0, w0);
   vt = vUVW_NED.Magnitude();
+  lastSpeedSet = setuvw;
 
   Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
                            sbeta,         cbeta,      0.0,
@@ -147,6 +148,9 @@ void FGInitialCondition::InitializeIC(void)
 
   Tw2b.InitMatrix(1., 0., 0., 0., 1., 0., 0., 0., 1.);
   Tb2w.InitMatrix(1., 0., 0., 0., 1., 0., 0., 0., 1.);
+
+  lastSpeedSet = setvt;
+  lastAltitudeSet = setasl;
 }
 
 //******************************************************************************
@@ -1193,8 +1197,10 @@ bool FGInitialCondition::Load_v2(void)
     if (frame == "eci") {
       FGColumnVector3 omega_cross_r = vOmegaEarth * (position.GetTec2i() * position);
       vUVW_NED = mTec2l * (vInitVelocity - omega_cross_r);
+      lastSpeedSet = setned;
     } else if (frame == "ecef") {
       vUVW_NED = mTec2l * vInitVelocity;
+      lastSpeedSet = setned;
     } else if (frame == "local") {
       vUVW_NED = vInitVelocity;
       lastSpeedSet = setned;
