@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.38 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.39 2011/11/09 21:58:26 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,7 +315,7 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGMassBalance::CalculatePMInertias(void)
+const FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
   unsigned int size;
 

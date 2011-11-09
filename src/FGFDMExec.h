@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.73 2011/11/06 18:14:51 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.74 2011/11/09 21:58:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.73 $
+    @version $Revision: 1.74 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,7 +398,7 @@ public:
   }
 
   /// Returns the model name.
-  const string& GetModelName(void) { return modelName; }
+  const string& GetModelName(void) const { return modelName; }
 /*
   /// Returns the current time.
   double GetSimTime(void);
@@ -411,9 +411,9 @@ public:
   /// Returns a vector of strings representing the names of all loaded models (future)
   vector <string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
-  int GetFDMCount(void) {return (int)ChildFDMList.size();}
+  int GetFDMCount(void) const {return (int)ChildFDMList.size();}
   /// Gets a particular child FDM.
-  childData* GetChildFDM(int i) {return ChildFDMList[i];}
+  childData* GetChildFDM(int i) const {return ChildFDMList[i];}
   /// Marks this instance of the Exec object as a "child" object.
   void SetChild(bool ch) {IsChild = ch;}
 
@@ -510,7 +510,7 @@ public:
   double GetSimTime(void) const { return sim_time; }
 
   /// Returns the simulation delta T.
-  double GetDeltaT(void) {return dT;}
+  double GetDeltaT(void) const {return dT;}
 
   /// Suspends the simulation and sets the delta T to zero.
   void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
@@ -520,7 +520,7 @@ public:
 
   /** Returns the simulation suspension state.
       @return true if suspended, false if executing  */
-  bool IntegrationSuspended(void) {return dT == 0.0;}
+  bool IntegrationSuspended(void) const {return dT == 0.0;}
 
   /** Sets the current sim time.
       @param cur_time the current time
