@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.15 2011/04/18 08:52:16 andgi Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.16 2011/11/10 12:06:14 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
   }
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
-	throw("Comparison operator: \""+conditional+"\" does not exist.  Please check the conditional.");
+    throw("Comparison operator: \""+conditional+"\" does not exist.  Please check the conditional.");
   }
   if (is_number(property2)) {
     TestValue = atof(property2.c_str());
@@ -269,8 +269,8 @@ void FGCondition::PrintCondition(void )
   } else {
     if (TestParam2 != 0L)
       cout << "    " << TestParam1->GetName() << " "
-    		         << conditional << " "
-    		         << TestParam2->GetName();
+           << conditional << " "
+           << TestParam2->GetName();
     else
       cout << "    " << TestParam1->GetName() << " "
                      << conditional << " " << TestValue;

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.23 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.24 2011/11/10 12:06:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,13 +91,13 @@ CLASS DOCUMENTATION
       Examples:
 </pre>
 @code
-	<output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"/>
+<output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"/>
 @endcode
 @code
-	<output name="B737_datalog.csv" type="CSV" rate="20">
-	   <property> velocities/vc-kts </property>
-	   <velocities> ON </velocities>
-	</output>
+<output name="B737_datalog.csv" type="CSV" rate="20">
+   <property> velocities/vc-kts </property>
+   <velocities> ON </velocities>
+</output>
 @endcode
 <br>
 <pre>
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.23 2011/05/20 03:18:36 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.24 2011/11/10 12:06:14 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.28 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.29 2011/11/10 12:06:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,12 +108,12 @@ CLASS DOCUMENTATION
 @endcode
 <pre>
     NOTES:
-	
-	Not all thruster types can be matched with a given engine type.  See the class
-	documentation for engine and thruster classes.
+
+  Not all thruster types can be matched with a given engine type.  See the class
+  documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.28 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.29 2011/11/10 12:06:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.5 2009/10/03 18:23:01 andgi Exp $
+// $Id: props.cxx,v 1.6 2011/11/10 12:06:15 jberndt Exp $
 
 #include "props.hxx"
 
@@ -125,16 +125,16 @@ parse_name (const string &path, int &i)
     name += path[i];
     i++;
 
-				// The rules inside a name are a little
-				// less restrictive.
+	      // The rules inside a name are a little
+	      // less restrictive.
     while (i < max) {
       if (isalpha(path[i]) || isdigit(path[i]) || path[i] == '_' ||
-	  path[i] == '-' || path[i] == '.') {
-	name += path[i];
+      path[i] == '-' || path[i] == '.') {
+        name += path[i];
       } else if (path[i] == '[' || path[i] == '/') {
-	break;
+        break;
       } else {
-	throw string("name may contain only ._- and alphanumeric characters");
+        throw string("name may contain only ._- and alphanumeric characters");
       }
       i++;
     }
@@ -206,7 +206,7 @@ parse_path (const string &path, vector<PathComponent> &components)
   int pos = 0;
   int max = (int)path.size();
 
-				// Check for initial '/'
+  // Check for initial '/'
   if (path[pos] == '/') {
     PathComponent root;
     root.name = "";
@@ -234,9 +234,9 @@ parse_path (const string &path, vector<PathComponent> &components)
 static char *
 copy_string (const char * s)
 {
-				// FIXME: potential buffer overflow.
-				// For some reason, strnlen and
-				// strncpy cause all kinds of crashes.
+  // FIXME: potential buffer overflow.
+  // For some reason, strnlen and
+  // strncpy cause all kinds of crashes.
   char * copy = new char[strlen(s) + 1];
   strcpy(copy, s);
   return copy;
@@ -269,31 +269,31 @@ find_child (const char * name, int index, vector<SGPropertyNode_ptr> nodes)
  */
 static SGPropertyNode *
 find_node (SGPropertyNode * current,
-	   const vector<PathComponent> &components,
-	   int position,
-	   bool create)
+     const vector<PathComponent> &components,
+     int position,
+     bool create)
 {
-				// Run off the end of the list
+  // Run off the end of the list
   if (current == 0) {
     return 0;
   }
 
-				// Success! This is the one we want.
+  // Success! This is the one we want.
   else if (position >= (int)components.size()) {
     return (current->getAttribute(SGPropertyNode::REMOVED) ? 0 : current);
   }
 
-				// Empty component means root.
+  // Empty component means root.
   else if (components[position].name == "") {
     return find_node(current->getRootNode(), components, position + 1, create);
   }
 
-				// . means current directory
+  // . means current directory
   else if (components[position].name == ".") {
     return find_node(current, components, position + 1, create);
   }
 
-				// .. means parent directory
+  // .. means parent directory
   else if (components[position].name == "..") {
     SGPropertyNode * parent = current->getParent();
     if (parent == 0)
@@ -302,12 +302,12 @@ find_node (SGPropertyNode * current,
       return find_node(parent, components, position + 1, create);
   }
 
-				// Otherwise, a child name
+  // Otherwise, a child name
   else {
     SGPropertyNode * child =
       current->getChild(components[position].name.c_str(),
-			components[position].index,
-			create);
+      components[position].index,
+      create);
     return find_node(child, components, position + 1, create);
   }
 }
@@ -601,7 +601,7 @@ SGPropertyNode::trace_write () const
        << make_string() << '"' << endl;
 #else
   SG_LOG(SG_GENERAL, SG_INFO, "TRACE: Write node " << getPath()
-	 << ", value\"" << make_string() << '"');
+  << ", value\"" << make_string() << '"');
 #endif
 }
 

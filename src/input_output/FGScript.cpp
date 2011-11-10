@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.48 2011/09/07 02:36:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.49 2011/11/10 12:06:14 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -595,7 +595,7 @@ void FGScript::Debug(int from)
             cout << "  Notifications" << ":" << endl << "    {" << endl;
             for (unsigned j=0; j<Events[i].NotifyProperties.size();j++) {
               cout << "      "
-            	   << Events[i].NotifyProperties[j]->GetRelativeName("/fdm/jsbsim/")
+                   << Events[i].NotifyProperties[j]->GetRelativeName("/fdm/jsbsim/")
                    << endl;
             }
             cout << "    }" << endl;

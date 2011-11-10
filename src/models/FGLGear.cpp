@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.91 2011/11/06 18:14:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.92 2011/11/10 12:06:14 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -339,11 +339,10 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       vLocalWhlVel = Transform().Transposed() * vBodyWhlVel;
 
       if (fdmex->GetTrimStatus())
-	compressSpeed = 0.0; // Steady state is sought during trimming
+        compressSpeed = 0.0; // Steady state is sought during trimming
       else {
-	compressSpeed = -vLocalWhlVel(eX);
-	if (eContactType == ctBOGEY)
-	  compressSpeed /= LGearProj;
+        compressSpeed = -vLocalWhlVel(eX);
+        if (eContactType == ctBOGEY) compressSpeed /= LGearProj;
       }
 
       ComputeVerticalStrutForce();

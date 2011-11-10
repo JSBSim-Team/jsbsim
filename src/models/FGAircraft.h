@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.18 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.19 2011/11/10 12:06:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,10 +91,10 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.18 2011/07/10 20:18:14 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.19 2011/11/10 12:06:14 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-	   School, January 1994
+     Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
+     School, January 1994
     @see D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
      JSC 12960, July 1977
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
