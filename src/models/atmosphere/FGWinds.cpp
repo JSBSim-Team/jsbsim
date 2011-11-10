@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.5 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.6 2011/11/10 12:02:34 jberndt Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -435,6 +435,46 @@ void FGWinds::CosineGust()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGWinds::NumberOfUpDownburstCells(int num)
+{
+  for (unsigned int i=0; i<UpDownBurstCells.size();i++) delete UpDownBurstCells[i];
+  UpDownBurstCells.clear();
+  if (num >= 0) {
+    for (unsigned int i=0; i<num; i++) UpDownBurstCells.push_back(new struct UpDownBurst);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Calculates the distance between a specified point (where presumably the
+// Up/Downburst is centered) and the current vehicle location. The distance
+// here is calculated from the Haversine formula.
+
+double FGWinds::DistanceFromRingCenter(double lat, double lon)
+{
+  double deltaLat = in.latitude - lat;
+  double deltaLong = in.longitude - lon;
+  double dLat2 = deltaLat/2.0;
+  double dLong2 = deltaLong/2.0;
+  double a = sin(dLat2)*sin(dLat2)
+             + cos(lat)*cos(in.latitude)*sin(dLong2)*sin(dLong2);
+  double c = 2.0*atan2(sqrt(a), sqrt(1.0 - a));
+  double d = in.planetRadius*c;
+  return d;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGWinds::UpDownBurst()
+{
+
+  for (unsigned int i=0; i<UpDownBurstCells.size(); i++) {
+    double d = DistanceFromRingCenter(UpDownBurstCells[i]->ringLatitude, UpDownBurstCells[i]->ringLongitude);
+
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGWinds::bind(void)
 {
   typedef double (FGWinds::*PMF)(int) const;
@@ -472,6 +512,16 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/cosine-gust/Y-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustYComponent);
   PropertyManager->Tie("atmosphere/cosine-gust/Z-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustZComponent);
   PropertyManager->Tie("atmosphere/cosine-gust/start", this, (PMFt)0L, (PMFi)&FGWinds::StartGust);
+
+  // User-specified Up- Down-burst parameters
+  PropertyManager->Tie("atmosphere/updownburst/number-of-cells", this, (PMFt)0L, &FGWinds::NumberOfUpDownburstCells);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
+//  PropertyManager->Tie("atmosphere/updownburst/", this, (Ptr)0L, &FGWinds::);
 
   // User-specified turbulence (local navigational/geographic frame: N-E-D)
   PropertyManager->Tie("atmosphere/turb-north-fps", this, eNorth, (PMF)&FGWinds::GetTurbNED,
