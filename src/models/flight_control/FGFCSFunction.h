@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $"
+#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.8 2011/11/10 12:06:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,18 +94,18 @@ a function (from an aero specification):
         <table>
             <independentVar>velocities/mach</independentVar>
             <tableData>
-                0.0000	0.0220
-                0.2000	0.0200
-                0.6500	0.0220
-                0.9000	0.0240
-                0.9700	0.0500
+                0.0000  0.0220
+                0.2000  0.0200
+                0.6500  0.0220
+                0.9000  0.0240
+                0.9700  0.0500
             </tableData>
         </table>
     </product>
 </function>
 @endcode
 
-    @version $Id: FGFCSFunction.h,v 1.7 2009/10/02 10:30:09 jberndt Exp $
+    @version $Id: FGFCSFunction.h,v 1.8 2011/11/10 12:06:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

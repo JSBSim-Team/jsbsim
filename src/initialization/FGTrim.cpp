@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.15 2011/02/19 16:29:29 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.16 2011/11/10 12:06:13 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +244,7 @@ bool FGTrim::DoTrim(void) {
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
     if(TrimAxes[current_axis]->GetStateType() == tQdot) {
       if(mode == tGround) {
-    	  TrimAxes[current_axis]->initTheta();
+        TrimAxes[current_axis]->initTheta();
       }
     }
     xlo=TrimAxes[current_axis]->GetControlMin();
