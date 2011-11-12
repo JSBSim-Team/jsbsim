@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.24 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.25 2011/11/12 18:59:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.24 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGAuxiliary.h,v 1.25 2011/11/12 18:59:11 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,12 +195,12 @@ public:
   /** Calculates and returns the wind-to-body axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTw2b(void);
+  const FGMatrix33& GetTw2b(void) { return mTw2b; }
 
   /** Calculates and returns the body-to-wind axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTb2w(void);
+  const FGMatrix33& GetTb2w(void) { return mTb2w; }
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
@@ -328,6 +328,8 @@ private:
   double lon_relative_position;
   double lat_relative_position;
   double relative_position;
+
+  void UpdateWindMatrices(void);
 
   void CalculateRelativePosition(void);
 
