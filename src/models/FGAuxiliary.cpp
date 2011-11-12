@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.54 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.55 2011/11/12 18:59:11 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,6 +180,8 @@ bool FGAuxiliary::Run(bool Holding)
     }
   }
 
+  UpdateWindMatrices();
+
   Re = Vt * in.Wingchord / in.KinematicViscosity;
 
   double densityD2 = 0.5*in.Density;
@@ -278,7 +280,7 @@ bool FGAuxiliary::Run(bool Holding)
 //          sin(B)          cos(B)     0
 //   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
 
-const FGMatrix33& FGAuxiliary::GetTw2b(void)
+void FGAuxiliary::UpdateWindMatrices(void)
 {
   double ca, cb, sa, sb;
 
@@ -297,31 +299,7 @@ const FGMatrix33& FGAuxiliary::GetTw2b(void)
   mTw2b(3,2) = -sa*sb;
   mTw2b(3,3) =  ca;
 
-  return mTw2b;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-const FGMatrix33& FGAuxiliary::GetTb2w(void)
-{
-  double ca, cb, sa, sb;
-
-  ca = cos(alpha);
-  sa = sin(alpha);
-  cb = cos(beta);
-  sb = sin(beta);
-
-  mTb2w(1,1) = ca*cb;
-  mTb2w(1,2) = sb;
-  mTb2w(1,3) = sa*cb;
-  mTb2w(2,1) = -ca*sb;
-  mTb2w(2,2) = cb;
-  mTb2w(2,3) = -sa*sb;
-  mTb2w(3,1) = -sa;
-  mTb2w(3,2) = 0.0;
-  mTb2w(3,3) = ca;
-
-  return mTb2w;
+  mTb2w = mTw2b.Transposed();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
