@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.40 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.41 2011/11/17 21:07:30 jentron Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,6 +223,10 @@ double FGPropeller::Calculate(double EnginePower)
   if (CtMach) ThrustCoeff *= CtMach->GetValue(HelicalTipMach);
 
   if (P_Factor > 0.0001) {
+//    alpha = sin(fdmex->GetAuxiliary()->Getalpha() + FGThruster::GetPitch());
+//    beta  = sin(fdmex->GetAuxiliary()->Getbeta() + FGThruster::GetYaw());
+//    SetActingLocationY( GetLocationY() + P_Factor*alpha*Sense);
+//    SetActingLocationZ( GetLocationZ() + P_Factor*beta*Sense);
     SetActingLocationY( GetLocationY() + P_Factor*in.Alpha*Sense);
     SetActingLocationZ( GetLocationZ() + P_Factor*in.Beta*Sense);
   }
@@ -334,8 +338,8 @@ double FGPropeller::GetPowerRequired(void)
      double CL = (90.0 - Pitch) / 20.0;
      if (CL > 1.5) CL = 1.5;
      double BladeArea = Diameter * Diameter / 32.0 * numBlades;
-     vTorque(eX) = -Sense*BladeArea*Diameter*Vel*Vel*rho*0.19*CL;
-     PowerRequired = fabs(vTorque(eX))*0.2*M_PI;
+     vTorque(eX) = -Sense*BladeArea*Diameter*fabs(Vel)*Vel*rho*0.19*CL;
+     PowerRequired = Sense*(vTorque(eX))*0.2*M_PI;
   }
 
   return PowerRequired;
