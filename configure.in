@@ -97,6 +97,7 @@ src/simgear/props/Makefile \
 src/simgear/xml/Makefile \
 src/simgear/magvar/Makefile \
 src/simgear/misc/Makefile \
+src/simgear/structure/Makefile \
 src/utilities/Makefile \
 src/utilities/aeromatic/Makefile \
 examples/Makefile \
