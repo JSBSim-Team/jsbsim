@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.8 2011/11/10 12:02:44 jberndt Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.9 2011/11/19 14:14:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -333,7 +333,7 @@ private:
   FGColumnVector3 vTurbPQR;
 
   struct OneMinusCosineGust oneMinusCosineGust;
-  vector <struct UpDownBurst*> UpDownBurstCells;
+  std::vector <struct UpDownBurst*> UpDownBurstCells;
 
   // Dryden turbulence model
   double windspeed_at_20ft; ///< in ft/s

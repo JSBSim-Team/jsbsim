@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.6 2009/10/03 18:23:01 andgi Exp $
+ * $Id: props.hxx,v 1.7 2011/11/19 14:14:57 bcoconni Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -30,8 +30,8 @@
   using std::istream;
   using std::ostream;
 
-  #include "SGReferenced.hxx"
-  #include "SGSharedPtr.hxx"
+  #include "simgear/structure/SGReferenced.hxx"
+  #include "simgear/structure/SGSharedPtr.hxx"
 
 #else
 
