@@ -50,7 +50,7 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.15 2011/08/06 13:47:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.16 2011/11/22 20:21:49 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,8 +261,8 @@ FGGasCell::~FGGasCell()
 void FGGasCell::Calculate(double dt)
 {
   const double AirTemperature = in.Temperature;  // [Rankine]
-  const double AirPressure    = in.Pressure;     // [lbs/ft²]
-  const double AirDensity     = in.Density;      // [slug/ft³]
+  const double AirPressure    = in.Pressure;     // [lbs/ft^2]
+  const double AirDensity     = in.Density;      // [slug/ft^3]
   const double g = in.gravity;                   // [lbs/slug]
 
   const double OldTemperature = Temperature;
@@ -689,8 +689,8 @@ FGBallonet::~FGBallonet()
 
 void FGBallonet::Calculate(double dt)
 {
-  const double ParentPressure = Parent->GetPressure(); // [lbs/ft²]
-  const double AirPressure    = Pressure;              // [lbs/ft²]
+  const double ParentPressure = Parent->GetPressure(); // [lbs/ft^2]
+  const double AirPressure    = in.Pressure;           // [lbs/ft^2]
 
   const double OldTemperature = Temperature;
   const double OldPressure    = Pressure;
