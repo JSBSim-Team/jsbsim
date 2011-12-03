@@ -42,14 +42,13 @@ INCLUDES
 
 #include "models/propulsion/FGForce.h"
 #include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
 #include "math/LagrangeMultiplier.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.48 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.49 2011/12/03 15:55:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +177,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.48 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.49 2011/12/03 15:55:48 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -257,15 +256,6 @@ public:
   double  GetCompVel(void) const {return compressSpeed; }
   /// Gets the gear compression force in pounds
   double  GetCompForce(void) const {return StrutForce;   }
-  double  GetBrakeFCoeff(void) const {return BrakeFCoeff;}
-
-  /// Gets the current normalized tire pressure
-  double  GetTirePressure(void) const { return TirePressureNorm; }
-  /// Sets the new normalized tire pressure
-  void    SetTirePressure(double p) { TirePressureNorm = p; }
-
-  /// Sets the brake value in percent (0 - 100)
-  void SetBrake(double bp) {brakePct = bp;}
 
   /// Sets the weight-on-wheels flag.
   void SetWOW(bool wow) {WOW = wow;}
@@ -285,8 +275,9 @@ public:
 
   bool GetSteerable(void) const    { return eSteerType != stFixed; }
   bool GetRetractable(void) const  { return isRetractable;   }
-  bool GetGearUnitUp(void) const   { return GearUp;          }
-  bool GetGearUnitDown(void) const { return GearDown;        }
+  bool GetGearUnitUp(void) const   { return isRetractable ? (GetGearUnitPos() < 0.01) : false; }
+  bool GetGearUnitDown(void) const { return isRetractable ? (GetGearUnitPos() > 0.99) : true; }
+
   double GetWheelRollForce(void) {
     UpdateForces();
     FGColumnVector3 vForce = mTGear.Transposed() * FGForce::GetBodyForces();
@@ -302,7 +293,7 @@ public:
   double GetWheelSlipAngle(void) const { return WheelSlip;       }
   double GetWheelVel(int axis) const   { return vWhlVelVec(axis);}
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
-  double GetGearUnitPos(void);
+  double GetGearUnitPos(void) const;
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
 
   const struct Inputs& in;
@@ -313,11 +304,10 @@ private:
   int GearNumber;
   static const FGMatrix33 Tb2s;
   FGMatrix33 mTGear;
-  FGColumnVector3 vGearOrient;
+  FGColumnVector3 vWhlBodyVec;
   FGColumnVector3 vLocalGear;
-  FGColumnVector3 vWhlVelVec, vLocalWhlVel;     // Velocity of this wheel
-  FGColumnVector3 normal, vGroundNormal;
-  FGLocation contact, gearLoc;
+  FGColumnVector3 vWhlVelVec, vGroundWhlVel;     // Velocity of this wheel
+  FGColumnVector3 vGroundNormal;
   FGTable *ForceY_Table;
   double SteerAngle;
   double kSpring;
@@ -327,7 +317,6 @@ private:
   double compressSpeed;
   double staticFCoeff, dynamicFCoeff, rollingFCoeff;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
-  double brakePct;
   double BrakeFCoeff;
   double maxCompLen;
   double SinkRate;
@@ -339,9 +328,7 @@ private:
   double MaximumStrutTravel;
   double FCoeff;
   double WheelSlip;
-  double TirePressureNorm;
   double GearPos;
-  bool   useFCSGearPos;
   bool WOW;
   bool lastWOW;
   bool FirstContact;
@@ -350,15 +337,9 @@ private:
   bool TakeoffReported;
   bool ReportEnable;
   bool isRetractable;
-  bool GearUp, GearDown;
-  bool Servicable;
   bool Castered;
   bool StaticFriction;
   std::string name;
-  std::string sSteerType;
-  std::string sBrakeGroup;
-  std::string sRetractable;
-  std::string sContactType;
 
   BrakeGroup  eBrakeGrp;
   ContactType eContactType;
@@ -372,7 +353,8 @@ private:
   FGGroundReactions* GroundReactions;
   FGPropertyManager* PropertyManager;
 
-  void ComputeRetractionState(void);
+  mutable bool useFCSGearPos;
+
   void ComputeBrakeForceCoefficient(void);
   void ComputeSteeringAngle(void);
   void ComputeSlipAngle(void);

@@ -29,7 +29,7 @@
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 This class encapsulates the calculation of the derivatives of the state vectors
-UVW and PQR - the translational and rotational rates relative to the planet 
+UVW and PQR - the translational and rotational rates relative to the planet
 fixed frame. The derivatives relative to the inertial frame are also calculated
 as a side effect. Also, the derivative of the attitude quaterion is also calculated.
 
@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.8 2011/08/30 20:49:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.9 2011/12/03 15:32:12 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
   Debug(0);
   Name = "FGAccelerations";
   gravType = gtWGS84;
- 
+
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
   vGravAccel.InitMatrix();
@@ -129,7 +129,7 @@ bool FGAccelerations::Run(bool Holding)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Compute body frame rotational accelerations based on the current body moments
 //
-// vPQRdot is the derivative of the absolute angular velocity of the vehicle 
+// vPQRdot is the derivative of the absolute angular velocity of the vehicle
 // (body rate with respect to the inertial frame), expressed in the body frame,
 // where the derivative is taken in the body frame.
 // J is the inertia matrix
@@ -137,7 +137,7 @@ bool FGAccelerations::Run(bool Holding)
 // vMoments is the moment vector in the body frame
 // in.vPQRi is the total inertial angular velocity of the vehicle
 // expressed in the body frame.
-// Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+// Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
 //            Second edition (2004), eqn 1.5-16e (page 50)
 
 void FGAccelerations::CalculatePQRdot(void)
@@ -154,7 +154,7 @@ void FGAccelerations::CalculatePQRdot(void)
 // Compute the quaternion orientation derivative
 //
 // vQtrndot is the quaternion derivative.
-// Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+// Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
 //            Second edition (2004), eqn 1.5-16b (page 50)
 
 void FGAccelerations::CalculateQuatdot(void)
@@ -177,7 +177,7 @@ void FGAccelerations::CalculateQuatdot(void)
 //   in the body frame.
 // in.vUVW is the vehicle velocity relative to the ECEF frame, expressed
 //   in the body frame.
-// Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+// Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
 //            Second edition (2004), eqns 1.5-13 (pg 48) and 1.5-16d (page 50)
 
 void FGAccelerations::CalculateUVWdot(void)
@@ -207,12 +207,12 @@ void FGAccelerations::CalculateUVWdot(void)
 // Resolves the contact forces just before integrating the EOM.
 // This routine is using Lagrange multipliers and the projected Gauss-Seidel
 // (PGS) method.
-// Reference: See Erin Catto, "Iterative Dynamics with Temporal Coherence", 
+// Reference: See Erin Catto, "Iterative Dynamics with Temporal Coherence",
 //            February 22, 2005
 // In JSBSim there is only one rigid body (the aircraft) and there can be
 // multiple points of contact between the aircraft and the ground. As a
-// consequence our matrix J*M^-1*J^T is not sparse and the algorithm described
-// in Catto's paper has been adapted accordingly.
+// consequence our matrix Jac*M^-1*Jac^T is not sparse and the algorithm
+// described in Catto's paper has been adapted accordingly.
 // The friction forces are resolved in the body frame relative to the origin
 // (Earth center).
 
@@ -230,7 +230,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // If no gears are in contact with the ground then return
   if (!n) return;
 
-  vector<double> a(n*n); // Will contain J*M^-1*J^T
+  vector<double> a(n*n); // Will contain Jac*M^-1*Jac^T
   vector<double> rhs(n);
 
   // Assemble the linear system of equations
@@ -239,7 +239,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
     FGColumnVector3 v2 = Jinv * multipliers[i]->MomentJacobian; // Should be J^-T but J is symmetric and so is J^-1
 
     for (int j=0; j < i; j++)
-      a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of J^T*M^-1*J
+      a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of Jac^T*M^-1*Jac
     for (int j=i; j < n; j++)
       a[i*n+j] = DotProduct(v1, multipliers[j]->ForceJacobian)
                + DotProduct(v2, multipliers[j]->MomentJacobian);
@@ -277,7 +277,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
     for (int i=0; i < n; i++) {
       double lambda0 = multipliers[i]->value;
       double dlambda = rhs[i];
-      
+
       for (int j=0; j < n; j++)
         dlambda -= a[i*n+j]*multipliers[j]->value;
 
@@ -307,6 +307,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   vPQRdot += omegadot;
   vPQRidot += omegadot;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAccelerations::InitializeDerivatives(void)
