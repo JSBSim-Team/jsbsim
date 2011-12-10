@@ -47,7 +47,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.23 2011/10/31 14:54:40 bcoconni Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.24 2011/12/10 15:49:21 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -463,6 +463,8 @@ public:
       Useful for initialization of increments */
   static FGQuaternion zero(void) { return FGQuaternion( 0.0, 0.0, 0.0, 0.0 ); }
 
+  friend FGQuaternion QExp(const FGColumnVector3& omega);
+
 private:
   /** Copying by assigning the vector valued components.  */
   FGQuaternion(double q1, double q2, double q3, double q4) : mCacheValid(false)
@@ -518,6 +520,24 @@ private:
 */
 inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
   return FGQuaternion(scalar*q.data[0], scalar*q.data[1], scalar*q.data[2], scalar*q.data[3]);
+}
+
+/** Quaternion exponential
+    @param omega rotation velocity
+    Calculate the unit quaternion which is the result of the exponentiation of
+    the vector 'omega'.
+*/
+inline FGQuaternion QExp(const FGColumnVector3& omega) {
+  FGQuaternion qexp;
+  double angle = omega.Magnitude();
+  double sina_a = angle > 0.0 ? sin(angle)/angle : 1.0;
+
+  qexp.data[0] = cos(angle);
+  qexp.data[1] = omega(1) * sina_a;
+  qexp.data[2] = omega(2) * sina_a;
+  qexp.data[3] = omega(3) * sina_a;
+
+  return qexp;
 }
 
 /** Write quaternion to a stream.

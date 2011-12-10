@@ -48,7 +48,16 @@ COMMENTS, REFERENCES,  and NOTES
     Wiley & Sons, 1979 ISBN 0-471-03032-5
 [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
     1982 ISBN 0-471-08936-2
-[6] Erin Catto, "Iterative Dynamics with Temporal Coherence", February 22, 2005
+[6] S. Buss, "Accurate and Efficient Simulation of Rigid Body Rotations",
+    Technical Report, Department of Mathematics, University of California,
+    San Diego, 1999
+[7] Barker L.E., Bowles R.L. and Williams L.H., "Development and Application of
+    a Local Linearization Algorithm for the Integration of Quaternion Rate
+    Equations in Real-Time Flight Simulation Problems", NASA TN D-7347,
+    December 1973
+[8] Phillips W.F, Hailey C.E and Gebert G.A, "Review of Attitude Representations
+    Used for Aircraft Kinematics", Journal Of Aircraft Vol. 38, No. 4,
+    July-August 2001
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -68,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.100 2011/11/06 18:14:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.101 2011/12/10 15:49:21 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +90,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
 {
   Debug(0);
   Name = "FGPropagate";
- 
+
   vInertialVelocity.InitMatrix();
 
   /// These define the indices use to select the various integrators.
@@ -200,7 +209,7 @@ This propagation is done using the current state values
 and current derivatives. Based on these values we compute an approximation to the
 state values for (now + dt).
 
-In the code below, variables named beginning with a small "v" refer to a 
+In the code below, variables named beginning with a small "v" refer to a
 a column vector, variables named beginning with a "T" refer to a transformation
 matrix. ECEF refers to Earth Centered Earth Fixed. ECI refers to Earth Centered
 Inertial.
@@ -218,8 +227,8 @@ bool FGPropagate::Run(bool Holding)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
-  Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
   Integrate(VState.qAttitudeECI,      in.vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
+  Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
 
@@ -240,10 +249,7 @@ bool FGPropagate::Run(bool Holding)
   //    vLocation vector.
   UpdateLocationMatrices();
 
-  // 5. Normalize the ECI Attitude quaternion
-  VState.qAttitudeECI.Normalize();
-
-  // 6. Update the "Orientation-based" transformation matrices from the updated 
+  // 5. Update the "Orientation-based" transformation matrices from the updated
   //    orientation quaternion and vLocation vector.
   UpdateBodyMatrices();
 
@@ -271,7 +277,7 @@ bool FGPropagate::Run(bool Holding)
   // Transform the velocity vector of the body relative to the origin (Earth
   // center) to be expressed in the inertial frame, and add the vehicle velocity
   // contribution due to the rotation of the planet.
-  // Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+  // Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
   //            Second edition (2004), eqn 1.5-16c (page 50)
 
 void FGPropagate::CalculateInertialVelocity(void)
@@ -313,6 +319,8 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
     break;
   case eNone: // do nothing, freeze translational rate
     break;
+  default:
+    break;
   }
 }
 
@@ -338,9 +346,84 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
     break;
   case eAdamsBashforth4: Integrand += (1/24.0)*dt*(55.0*ValDot[0] - 59.0*ValDot[1] + 37.0*ValDot[2] - 9.0*ValDot[3]);
     break;
+  case eBuss1:
+    {
+      // This is the first order method as described in Samuel R. Buss paper[6].
+      // The formula from Buss' paper is transposed below to quaternions and is
+      // actually the exact solution of the quaternion differential equation
+      // qdot = 1/2*w*q when w is constant.
+      Integrand = Integrand * QExp(0.5 * dt * VState.vPQRi);
+    }
+    return; // No need to normalize since the quaternion exponential is always normal
+  case eBuss2:
+    {
+      // This is the 'augmented second-order method' from S.R. Buss paper [6].
+      // Unlike Runge-Kutta or Adams-Bashforth, it is a one-pass second-order
+      // method (see reference [6]).
+      FGColumnVector3 wi = VState.vPQRi;
+      FGColumnVector3 wdoti = in.vPQRidot;
+      FGColumnVector3 omega = wi + 0.5*dt*wdoti + dt*dt/12.*wdoti*wi;
+      Integrand = Integrand * QExp(0.5 * dt * omega);
+    }
+    return; // No need to normalize since the quaternion exponential is always normal
+  case eLocalLinearization:
+    {
+      // This is the local linearization algorithm of Barker et al. (see ref. [7])
+      // It is also a one-pass second-order method. The code below is based on the
+      // more compact formulation issued from equation (107) of ref. [8]. The
+      // constants C1, C2, C3 and C4 have the same value than those in ref. [7] pp. 11
+      FGColumnVector3 wi = 0.5 * VState.vPQRi;
+      FGColumnVector3 wdoti = 0.5 * in.vPQRidot;
+      double omegak2 = DotProduct(VState.vPQRi, VState.vPQRi);
+      double omegak = omegak2 > 1E-6 ? sqrt(omegak2) : 1E-6;
+      double rhok = 0.5 * dt * omegak;
+      double C1 = cos(rhok);
+      double C2 = 2.0 * sin(rhok) / omegak;
+      double C3 = 4.0 * (1.0 - C1) / (omegak*omegak);
+      double C4 = 4.0 * (dt - C2) / (omegak*omegak);
+      FGColumnVector3 Omega = C2*wi + C3*wdoti + C4*wi*wdoti;
+      FGQuaternion q;
+
+      q(1) = C1 - C4*DotProduct(wi, wdoti);
+      q(2) = Omega(eP);
+      q(3) = Omega(eQ);
+      q(4) = Omega(eR);
+
+      Integrand = Integrand * q;
+
+      /* Cross check with ref. [7] pp.11-12 formulas and code pp. 20
+      double pk = VState.vPQRi(eP);
+      double qk = VState.vPQRi(eQ);
+      double rk = VState.vPQRi(eR);
+      double pdotk = in.vPQRidot(eP);
+      double qdotk = in.vPQRidot(eQ);
+      double rdotk = in.vPQRidot(eR);
+      double Ap = -0.25 * (pk*pdotk + qk*qdotk + rk*rdotk);
+      double Bp = 0.25 * (pk*qdotk - qk*pdotk);
+      double Cp = 0.25 * (pdotk*rk - pk*rdotk);
+      double Dp = 0.25 * (qk*rdotk - qdotk*rk);
+      double C2p = sin(rhok) / omegak;
+      double C3p = 2.0 * (1.0 - cos(rhok)) / (omegak*omegak);
+      double H = C1 + C4 * Ap;
+      double G = -C2p*rk - C3p*rdotk + C4*Bp;
+      double J = C2p*qk + C3p*qdotk - C4*Cp;
+      double K = C2p*pk + C3p*pdotk - C4*Dp;
+
+      cout << "q:       " << q << endl;
+
+      // Warning! In the paper of Barker et al. the quaternion components are not
+      // ordered the same way as in JSBSim (see equations (2) and (3) of ref. [7]
+      // as well as the comment just below equation (3))
+      cout << "FORTRAN: " << H << " , " << K << " , " << J << " , " << -G << endl;*/
+    }
+    break; // The quaternion q is not normal so the normalization needs to be done.
   case eNone: // do nothing, freeze rotational rate
     break;
+  default:
+    break;
   }
+
+  Integrand.Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -566,7 +649,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
-  
+
   PropertyManager->Tie("simulation/integrator/rate/rotational", (int*)&integrator_rotational_rate);
   PropertyManager->Tie("simulation/integrator/rate/translational", (int*)&integrator_translational_rate);
   PropertyManager->Tie("simulation/integrator/position/rotational", (int*)&integrator_rotational_position);
@@ -608,7 +691,7 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 && from == 2) { // Runtime state variables
-    cout << endl << fgblue << highint << left 
+    cout << endl << fgblue << highint << left
          << "  Propagation Report (English units: ft, degrees) at simulation time " << FDMExec->GetSimTime() << " seconds"
          << reset << endl;
     cout << endl;

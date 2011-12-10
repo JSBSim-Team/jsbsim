@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.67 2011/11/09 22:07:17 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.68 2011/12/10 15:49:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,18 +69,18 @@ CLASS DOCUMENTATION
     state of the vehicle given the forces and moments that act on it. The
     integration accounts for a rotating Earth.
 
-    Integration of rotational and translation position and rate can be 
+    Integration of rotational and translation position and rate can be
     customized as needed or frozen by the selection of no integrator. The
-    selection of which integrator to use is done through the setting of 
+    selection of which integrator to use is done through the setting of
     the associated property. There are four properties which can be set:
-    
+
     @code
     simulation/integrator/rate/rotational
     simulation/integrator/rate/translational
     simulation/integrator/position/rotational
     simulation/integrator/position/translational
     @endcode
-    
+
     Each of the integrators listed above can be set to one of the following values:
 
     @code
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.67 2011/11/09 22:07:17 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.68 2011/12/10 15:49:21 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,12 +156,13 @@ public:
 
   /// Destructor
   ~FGPropagate();
-  
+
   /// These define the indices use to select the various integrators.
-  enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
+  enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2,
+                       eAdamsBashforth3, eAdamsBashforth4, eBuss1, eBuss2, eLocalLinearization};
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
-      The base class FGModel::InitModel is called first, initializing pointers to the 
+      The base class FGModel::InitModel is called first, initializing pointers to the
       other FGModel objects (and others).  */
   bool InitModel(void);
 
@@ -169,7 +170,7 @@ public:
 
   /** Runs the state propagation model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
+      @param Holding if true, the executive has been directed to hold the sim from
                      advancing time. Some models may ignore this flag, such as the Input
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
@@ -188,7 +189,7 @@ public:
               expressed in Local horizontal frame.
   */
   const FGColumnVector3& GetVel(void) const { return vVel; }
-  
+
   /** Retrieves the body frame vehicle velocity vector.
       The vector returned is represented by an FGColumnVector reference. The vector
       for the velocity in Body frame is organized (Vx, Vy, Vz). The vector
@@ -200,7 +201,7 @@ public:
       @return The body frame vehicle velocity vector in ft/sec.
   */
   const FGColumnVector3& GetUVW(void) const { return VState.vUVW; }
-  
+
   /** Retrieves the body angular rates vector, relative to the ECEF frame.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
@@ -214,7 +215,7 @@ public:
       @return The body frame angular rates in rad/sec.
   */
   const FGColumnVector3& GetPQR(void) const {return VState.vPQR;}
-  
+
   /** Retrieves the body angular rates vector, relative to the ECI (inertial) frame.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
@@ -569,7 +570,7 @@ private:
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
-  
+
   double VehicleRadius;
   FGColumnVector3 LocalTerrainVelocity, LocalTerrainAngularVelocity;
 
