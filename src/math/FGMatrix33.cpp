@@ -39,6 +39,7 @@ INCLUDES
 
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
+#include "FGQuaternion.h"
 #include <sstream>
 #include <iomanip>
 
@@ -48,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.11 2010/12/07 12:57:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.12 2011/12/10 15:49:21 bcoconni Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +120,7 @@ FGQuaternion FGMatrix33::GetQuaternion(void)
 
   // Find largest of the above
   idx = 0;
-  for (int i=1; i<4; i++) if (tempQ[i] > tempQ[idx]) idx = i; 
+  for (int i=1; i<4; i++) if (tempQ[i] > tempQ[idx]) idx = i;
 
   switch(idx) {
     case 0:
