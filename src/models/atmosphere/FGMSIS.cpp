@@ -2,7 +2,7 @@
 
  Module:       FGMSIS.cpp
  Author:       David Culp
-               (incorporated into C++ JSBSim class heirarchy, see model authors below)
+               (incorporated into C++ JSBSim class hierarchy, see model authors below)
  Date started: 12/14/03
  Purpose:      Models the MSIS-00 atmosphere
 
@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.18 2011/06/21 13:54:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.19 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,12 +161,10 @@ bool MSIS::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  RunPreFunctions();
-
   double h = FDMExec->GetPropagate()->GetAltitudeASL();
 
   //do temp, pressure, and density first
-//  if (!useExternal) {
+  //if (!useExternal) {
     // get sea-level values
     Calculate(FDMExec->GetAuxiliary()->GetDayOfYear(),
               FDMExec->GetAuxiliary()->GetSecondsInDay(),
@@ -188,14 +186,12 @@ bool MSIS::Run(bool Holding)
               h,
               FDMExec->GetPropagate()->GetLocation().GetLatitudeDeg(),
               FDMExec->GetPropagate()->GetLocation().GetLongitudeDeg());
-//    intTemperature = output.t[1] * 1.8;
-//    intDensity     = output.d[5] * 1.940321;
-//    intPressure    = 1716.488 * intDensity * intTemperature;
+    //intTemperature = output.t[1] * 1.8;
+    //intDensity     = output.d[5] * 1.940321;
+    //intPressure    = 1716.488 * intDensity * intTemperature;
     //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
     //cout << intPressure << " a=" << soundspeed << endl;
-//  }
-
-  RunPostFunctions();
+  //}
 
   Debug(2);
 

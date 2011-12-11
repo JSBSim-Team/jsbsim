@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.25 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.26 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   RadiusReference = 20925650.00;        // Equatorial radius (WGS84)
   C2_0            = -4.84165371736E-04; // WGS84 value for the C2,0 coefficient
   J2              = 1.0826266836E-03;   // WGS84 value for J2
-  a               = 20925646.3255;      // WGS84 semimajor axis length in feet 
+  a               = 20925646.3255;      // WGS84 semimajor axis length in feet
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
 
   // Lunar defaults
@@ -71,7 +71,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   RadiusReference = 5702559.05;           // Equatorial radius
   C2_0            = 0;                    // value for the C2,0 coefficient
   J2              = 2.033542482111609E-4; // value for J2
-  a               = 5702559.05;           // semimajor axis length in feet 
+  a               = 5702559.05;           // semimajor axis length in feet
   b               = 5695439.63;           // semiminor axis length in feet
   */
 
@@ -106,12 +106,8 @@ bool FGInertial::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  RunPreFunctions();
-
   // Gravitation accel
   gAccel = GetGAccel(in.Radius);
-
-  RunPostFunctions();
 
   return false;
 }
