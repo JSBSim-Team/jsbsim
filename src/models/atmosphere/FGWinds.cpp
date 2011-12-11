@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.6 2011/11/10 12:02:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.7 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,8 +130,6 @@ bool FGWinds::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  RunPreFunctions();
-
   if (turbType != ttNone) Turbulence(in.AltitudeASL);
   if (oneMinusCosineGust.gustProfile.Running) CosineGust();
 
@@ -140,8 +138,6 @@ bool FGWinds::Run(bool Holding)
    // psiw (Wind heading) is the direction the wind is blowing towards
   if (vWindNED(eX) != 0.0) psiw = atan2( vWindNED(eY), vWindNED(eX) );
   if (psiw < 0) psiw += 2*M_PI;
-
-  RunPostFunctions();
 
   Debug(2);
   return false;
@@ -178,7 +174,7 @@ void FGWinds::SetWindPsi(double dir)
 {
   double mag = GetWindspeed();
   psiw = dir;
-  SetWindspeed(mag);  
+  SetWindspeed(mag);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,11 +183,11 @@ void FGWinds::Turbulence(double h)
 {
   switch (turbType) {
 
-  case ttCulp: { 
+  case ttCulp: {
 
     vTurbPQR(eP) = wind_from_clockwise;
     if (TurbGain == 0.0) return;
-  
+
     // keep the inputs within allowable limts for this model
     if (TurbGain < 0.0) TurbGain = 0.0;
     if (TurbGain > 1.0) TurbGain = 1.0;
@@ -212,7 +208,7 @@ void FGWinds::Turbulence(double h)
     if (time > target_time) {
       spike = 1.0;
       target_time = 0.0;
-    }    
+    }
 
     // max vertical wind speed in fps, corresponds to TurbGain = 1.0
     double max_vs = 40;
@@ -225,7 +221,7 @@ void FGWinds::Turbulence(double h)
     vTurbulenceNED(3)+= delta;
     if (in.DistanceAGL/in.wingspan < 3.0)
         vTurbulenceNED(3) *= in.DistanceAGL/in.wingspan * 0.3333;
- 
+
     // Yaw component of turbulence.
     vTurbulenceNED(1) = sin( delta * 3.0 );
     vTurbulenceNED(2) = cos( delta * 3.0 );
@@ -501,7 +497,7 @@ void FGWinds::bind(void)
                                                           (PMFd)&FGWinds::SetGustNED);
   PropertyManager->Tie("atmosphere/gust-down-fps",  this, eDown, (PMF)&FGWinds::GetGustNED,
                                                           (PMFd)&FGWinds::SetGustNED);
-  
+
   // User-specified 1 - cosine gust parameters (in specified frame)
   PropertyManager->Tie("atmosphere/cosine-gust/startup-duration-sec", this, (Ptr)0L, &FGWinds::StartupGustDuration);
   PropertyManager->Tie("atmosphere/cosine-gust/steady-duration-sec", this, (Ptr)0L, &FGWinds::SteadyGustDuration);
@@ -592,7 +588,7 @@ void FGWinds::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
   }
-  if (debug_lvl & 128) { // 
+  if (debug_lvl & 128) { //
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

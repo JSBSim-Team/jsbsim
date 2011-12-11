@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.101 2011/12/10 15:49:21 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.102 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,8 +223,6 @@ bool FGPropagate::Run(bool Holding)
 
   double dt = in.DeltaT * rate;  // The 'stepsize'
 
-  RunPreFunctions();
-
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
   Integrate(VState.qAttitudeECI,      in.vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
@@ -266,8 +264,6 @@ bool FGPropagate::Run(bool Holding)
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
   vVel = Tb2l * VState.vUVW;
-
-  RunPostFunctions();
 
   Debug(2);
   return false;

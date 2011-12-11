@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.55 2011/11/12 18:59:11 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.56 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,7 @@ bool FGAuxiliary::InitModel(void)
 
   return true;
 }
-  
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGAuxiliary::~FGAuxiliary()
@@ -141,9 +141,7 @@ bool FGAuxiliary::Run(bool Holding)
   if (FGModel::Run(Holding)) return true; // return true if error returned from base class
   if (Holding) return false;
 
-  RunPreFunctions();
-
-// Rotation
+  // Rotation
 
   vEulerRates(eTht) = in.vPQR(eQ)*in.CosPhi - in.vPQR(eR)*in.SinPhi;
   if (in.CosTht != 0.0) {
@@ -151,7 +149,7 @@ bool FGAuxiliary::Run(bool Holding)
     vEulerRates(ePhi) = in.vPQR(eP) + vEulerRates(ePsi)*in.SinTht;
   }
 
-// Combine the wind speed with aircraft speed to obtain wind relative speed
+  // Combine the wind speed with aircraft speed to obtain wind relative speed
   vAeroPQR = in.vPQR - in.TurbPQR;
   vAeroUVW = in.vUVW - in.Tl2b * in.TotalWindNED;
 
@@ -195,7 +193,7 @@ bool FGAuxiliary::Run(bool Holding)
   vMachUVW(eW) = vAeroUVW(eW) / in.SoundSpeed;
   double MachU2 = MachU * MachU;
 
-// Position
+  // Position
 
   Vground = sqrt( in.vVel(eNorth)*in.vVel(eNorth) + in.vVel(eEast)*in.vVel(eEast) );
 
@@ -258,8 +256,6 @@ bool FGAuxiliary::Run(bool Holding)
 
   // When all models are executed calculate the distance from the initial point.
   CalculateRelativePosition();
-
-  RunPostFunctions();
 
   return false;
 }
@@ -344,7 +340,7 @@ double FGAuxiliary::GetNlf(void) const
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAuxiliary::CalculateRelativePosition(void)  //ToDo: This belongs elsewhere - perhaps in FGPropagate or Exec
-{ 
+{
   const double earth_radius_mt = in.ReferenceRadius*fttom;
   lat_relative_position=(in.Latitude  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
   lon_relative_position=(in.Longitude - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;

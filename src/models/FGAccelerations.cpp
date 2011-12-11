@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.9 2011/12/03 15:32:12 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.10 2011/12/11 17:03:05 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,15 +112,11 @@ bool FGAccelerations::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;  // Fast return if we have nothing to do ...
   if (Holding) return false;
 
-  RunPreFunctions();
-
   CalculatePQRdot();   // Angular rate derivative
   CalculateUVWdot();   // Translational rate derivative
   CalculateQuatdot();  // Angular orientation derivative
 
   ResolveFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
-
-  RunPostFunctions();
 
   Debug(2);
   return false;
