@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<initialize name="reset10">
+  <!--
+    This file sets up the balloon to launch
+  -->
+  <ubody unit="FT/SEC">    0.0 </ubody> 
+  <latitude unit="DEG">   40.0  </latitude>
+  <longitude unit="DEG"> -112.0  </longitude>
+  <psi unit="DEG">         0.0  </psi>
+  <altitude unit="FT">    10.0  </altitude>
+</initialize>
+

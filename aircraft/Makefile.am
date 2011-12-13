@@ -33,5 +33,6 @@ SUBDIRS =		\
 	Submarine_Scout \
         Shuttle         \
 	t6texan2	\
+	weather-balloon \
 	x24b		\
 	ZLT-NT

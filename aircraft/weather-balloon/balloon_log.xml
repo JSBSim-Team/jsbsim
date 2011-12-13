@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<output name="balloon.csv" type="CSV" rate="20">
+  <property> aero/alpha-deg </property>
+  <property> aero/beta-deg </property>
+  <property> aero/qbar-psf</property>
+  <property> position/h-sl-ft</property>
+  <property> velocities/vt-fps</property>
+  <property> velocities/mach</property>
+  <property> attitude/phi-rad</property>
+  <property> attitude/theta-rad</property>
+  <property> attitude/psi-rad</property>
+  <property> attitude/roll-rad</property>
+  <property> attitude/pitch-rad</property>
+  <property> attitude/heading-true-rad</property>
+  <property>buoyant_forces/gas-cell/max_volume-ft3</property>
+  <property>buoyant_forces/gas-cell/temp-R</property>
+  <property>buoyant_forces/gas-cell/pressure-psf</property>
+  <property>buoyant_forces/gas-cell/volume-ft3</property>
+  <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
+  <property>buoyant_forces/gas-cell/contents-mol</property>
+  <property>buoyant_forces/gas-cell/valve_open</property>
+  <property>atmosphere/T-R</property>
+  <property>atmosphere/P-psf</property>
+  <property>aero/Re-cor</property>
+  <property>aero/force/BasicDrag</property>
+  <property>metrics/Sref-sqft</property>
+  <property>metrics/diameter-ft</property>
+  <property>fcs/parachute_reef_pos_norm</property>
+  <property>inertia/weight-lbs</property>
+  <property>forces/fbz-buoyancy-lbs</property>
+  <property>inertia/pointmass-location-Z-inches</property>
+</output>
+
