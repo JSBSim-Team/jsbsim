@@ -149,6 +149,7 @@ aircraft/paraglider/Makefile \
 aircraft/sgs126/Makefile \
 aircraft/t6texan2/Makefile \
 aircraft/x24b/Makefile \
+aircraft/weather-balloon/Makefile \
 data_output/Makefile \
 data_plot/Makefile \
 engine/Makefile \
