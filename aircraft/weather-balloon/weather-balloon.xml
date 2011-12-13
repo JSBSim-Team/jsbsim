@@ -7,7 +7,7 @@
  <fileheader>
   <author> Ron Jensen </author>
   <filecreationdate>2011-12-11</filecreationdate>
-  <version>$Revision: 1.1 $</version>
+  <version>$Revision: 1.2 $</version>
   <description> Models a 6-foot weather balloon. </description>
   <license
      licenseName="GPL (General Public License)"
@@ -199,7 +199,6 @@
   <function name="aero/Re-cor">
    <description>Reynold Number Corrected to balloon Diameter</description>
    <product>
-    <value>0.7</value><!-- Fudge factor -->
     <property>aero/Re</property>
     <quotient>
       <property>metrics/diameter-ft</property>
@@ -218,6 +217,7 @@
    <function name="aero/force/BasicDrag">
      <description>Drag. Table from [1]</description>
       <product>
+        <value name="Tweak"> 1.22 </value>
         <property>aero/qbar-psf</property>
         <property>metrics/Sref-sqft</property>
         <table>
@@ -361,7 +361,7 @@
     <function name="buoyant_forces/gas-cell/dU_conduction">
      <product>
       <property> metrics/surface-sqft </property> <!-- Surface area [ft2] -->
-      <value>     0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
+      <value>     0.02 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
       <difference>
        <property> atmosphere/T-R </property>
        <property> buoyant_forces/gas-cell/temp-R </property>
@@ -372,7 +372,7 @@
      <product>
       <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
                                       [Btu / (h ft^2 R^4)] -->
-      <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
+      <value>       0.05 </value> <!-- Emissivity [0,1] (Guess) -->
       <property> metrics/surface-sqft</property><!-- Surface area [ft2] -->
       <difference>
        <pow>
@@ -387,7 +387,7 @@
      </product>
     </function> 
     </heat>
-    <valve_coefficient unit="FT4*SEC/SLUG"> 2000 </valve_coefficient> <!-- just a big number so the hydrogen leaks out when the balloon bursts -->
+    <valve_coefficient unit="FT4*SEC/SLUG"> 100000 </valve_coefficient> <!-- just a big number so the hydrogen disappears when the balloon bursts -->
 <!--
     [<ballonet>
       <location unit="{M | IN}">
