@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.jsbsim.org/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+           name="Short S.23 cruise test">
+ <description>
+   This run is for testing the Short S.23 Sperry autopilot and
+   cruise performance at 172kt indicated at 5500ft.
+ </description>
+
+ <use aircraft="Short_S23" initialize="reset02"/>
+ <run start="0.0" end="300" dt="0.00833333">
+
+  <!--
+
+      "The maximum speed in level flight at 5 500 ft. was 172 knots."
+      ([Cassidy:2004:FE], page 160)
+      
+      "Maximum engine speed - all out - was 2600 rev. per min. with
+      +2 1/2 lb. sq. in. for 5 minutes in level flight."
+      ([Cassidy:2004:FE], page 167)
+
+  -->
+
+  <property value="0">simulation/notify-time-trigger</property>
+
+  <event name="Initialization 1">
+   <description>Configure for flight at 40500 lbs</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="fcs/fuel-system/mark" value="1.0"/> <!-- Mark I fuel system. -->
+   <set name="inertia/pointmass-weight-lbs[5]" value="1800.0"/>
+   <set name="inertia/pointmass-weight-lbs[6]" value="1945.0"/>
+   <set name="inertia/pointmass-weight-lbs[7]" value="1500.0"/>
+   <set name="inertia/pointmass-weight-lbs[8]" value="0.0"/>
+   <set name="inertia/pointmass-weight-lbs[9]" value="1300.0"/>
+  </event>
+
+  <event name="Initialization 2">
+   <description>Set the fuel and test cocks</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="fcs/fuel-system/left-tank-cock-cmd-norm"   value="1.0"/>
+   <set name="fcs/fuel-system/right-tank-cock-cmd-norm"  value="1.0"/>
+   <set name="fcs/fuel-system/balance-cock-cmd-norm"     value="1.0"/>
+   <set name="fcs/fuel-system/left-test-cock-cmd-norm"   value="1.0"/>
+   <set name="fcs/fuel-system/center-test-cock-cmd-norm" value="1.0"/>
+   <set name="fcs/fuel-system/right-test-cock-cmd-norm"  value="1.0"/>
+  </event>
+
+  <event name="Initialization 3">
+   <description>Set the engine controls</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="fcs/advance-cmd-norm[0]"   value="1.0"/>
+   <set name="fcs/advance-cmd-norm[1]"   value="1.0"/>
+   <set name="fcs/advance-cmd-norm[2]"   value="1.0"/>
+   <set name="fcs/advance-cmd-norm[3]"   value="1.0"/>
+   <set name="fcs/mixture-cmd-norm[0]"   value="0.71"/>
+   <set name="fcs/mixture-cmd-norm[1]"   value="0.71"/>
+   <set name="fcs/mixture-cmd-norm[2]"   value="0.71"/>
+   <set name="fcs/mixture-cmd-norm[3]"   value="0.71"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="1.00"/>
+   <set name="propulsion/magneto_cmd" value="3"/>
+   <set name="propulsion/starter_cmd" value="1"/>
+  </event>
+
+  <event name="Trim">
+   <condition>
+     simulation/sim-time-sec  GE  10.0
+   </condition>
+   <set name="simulation/do_simple_trim" value="1"/>
+   <set name="propulsion/engine[0]/set-running" value="1"/>
+   <set name="propulsion/engine[1]/set-running" value="1"/>
+   <set name="propulsion/engine[2]/set-running" value="1"/>
+   <set name="propulsion/engine[3]/set-running" value="1"/>
+   <set name="propulsion/starter_cmd" value="0"/>
+   <notify>
+    <property>velocities/u-aero-fps</property>
+    <property>velocities/v-aero-fps</property>
+    <property>velocities/w-aero-fps</property>
+    <property>attitude/psi-rad</property>
+    <property>attitude/theta-rad</property>
+    <property>attitude/phi-rad</property>
+    <property>position/h-agl-ft</property>
+    <property>accelerations/pdot-rad_sec2</property>
+    <property>accelerations/qdot-rad_sec2</property>
+    <property>accelerations/rdot-rad_sec2</property>
+    <property>fcs/throttle-cmd-norm[0]</property>
+    <property>propulsion/engine[0]/thrust-lbs</property>
+    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/boost-psi</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>fcs/throttle-cmd-norm[1]</property>
+    <property>propulsion/engine[1]/thrust-lbs</property>
+    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/boost-psi</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>fcs/throttle-cmd-norm[2]</property>
+    <property>propulsion/engine[2]/thrust-lbs</property>
+    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/boost-psi</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>fcs/throttle-cmd-norm[3]</property>
+    <property>propulsion/engine[3]/thrust-lbs</property>
+    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/boost-psi</property>
+    <property>propulsion/engine[3]/power-hp</property>
+    <property>velocities/p-rad_sec</property>
+    <property>velocities/q-rad_sec</property>
+    <property>velocities/r-rad_sec</property>
+    <property>fcs/elevator-cmd-norm</property>
+    <property>fcs/aileron-cmd-norm</property>
+    <property>fcs/rudder-cmd-norm</property>
+    <property>fcs/elevator-pos-norm</property>
+    <property>fcs/right-aileron-pos-norm</property>
+    <property>fcs/rudder-pos-norm</property>
+   </notify>
+  </event>
+
+  <event name="Enable AP">
+   <description>Enable the roll channel of the autopilot.</description>
+   <condition>
+     simulation/sim-time-sec GT 10.0
+   </condition>
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.9365"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.9365"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.9365"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.9365"/>
+   <!-- Close the speed valves of the unneeded channels. -->
+   <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
+   <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>
+   <!-- set name="sperry-autopilot/roll-speed-valve-cmd-norm" value="0.0"/-->
+   <!-- Set the reference values. --> 
+   <set name="sperry-autopilot/roll-reference-deg" value="0.0"/>
+   <!-- Enable the AP. -->
+   <set name="sperry-autopilot/enabled-cmd-norm" value="1.0"/>
+   <notify/>
+  </event>
+
+
+  <event name="Time Notify" type="FG_DELTA" persistent="true">
+   <description>Output message at 5 seconds intervals</description>
+   <condition>
+     simulation/sim-time-sec GE simulation/notify-time-trigger
+   </condition>
+   <notify>
+    <property>position/h-agl-ft</property>
+    <property>velocities/vc-kts</property>
+    <property>velocities/u-aero-fps </property>
+    <property>velocities/v-aero-fps </property>
+    <property>velocities/w-aero-fps </property>
+    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/boost-psi</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/boost-psi</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/boost-psi</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/boost-psi</property>
+    <property>propulsion/engine[3]/power-hp</property>
+    <property>propulsion/engine[3]/egt-degF</property>
+    <property>propulsion/engine[3]/fuel-flow-rate-pps</property>
+    <property>attitude/phi-rad</property>
+    <property>attitude/theta-rad</property>
+    <property>attitude/psi-rad</property>
+    <property>hydro/height-agl-ft</property>
+    <property>hydro/v-kt</property>
+    <property>hydro/pitch-deg</property>
+    <property>hydro/roll-deg</property>
+    <property>hydro/beta-deg</property>
+   </notify>
+   <set name="simulation/notify-time-trigger" value="5" type="FG_DELTA"/>
+  </event>
+
+ </run>
+
+</runscript>

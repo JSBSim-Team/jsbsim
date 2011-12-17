@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
    </clipto>
   </pid>
 
-  <switch name="Aileron Switch">
+  <switch name="take-off-ap/aileron-switch-norm">
    <default value="0.0"/>
    <test value="take-off-ap/aileron-cmd-norm">
      take-off-ap/enabled GT 0.5
@@ -55,7 +55,7 @@
 
  <channel name="Take-off elevator">
 
-  <fcs_function name="take-off-ap/hydro-pitch-error-deg">
+  <fcs_function name="take-off-ap/pitch-error-deg">
    <documentation>
     Deviation from target pitch angles during take-off run.
     Based on the real aircraft.
@@ -65,59 +65,55 @@
      <table>
       <independentVar lookup="row">hydro/v-kt</independentVar>
       <independentVar lookup="column">take-off-ap/landing</independentVar>
-      <!--  Real take-off pitch data, except the last two. -->
+      <!--  Real take-off pitch data, except the last five. -->
       <tableData>
                 0.0    1.0
-        0.0     4.0    4.0
+        0.0     4.2    4.0
         15.0    7.0    6.0
-        25.0   10.0    9.0
-        30.0   13.0   12.0 
-        60.0   12.0   11.0
-        70.0   10.0    7.0
-        80.0    9.0    6.0
-        90.0    9.0    6.0
+        25.0    9.0    9.0
+        30.0   11.0   12.0 
+        60.0   10.0   11.0
+        70.0    9.5    7.0
+        80.0    7.0    6.0
+        90.0    5.0    6.0
+        93.0    4.0    5.5
+        100.0   8.0    5.0
+        110.0  15.0    0.0
       </tableData>
      </table>
-     <property> hydro/pitch-deg </property>
+     <property>hydro/pitch-deg</property>
     </difference>
    </function>
+   <clipto>
+    <min>-1.0</min>
+    <max> 1.0</max>
+   </clipto>
   </fcs_function>
 
-  <fcs_function name="take-off-ap/speed-pitch-error-deg">
-   <documentation>
-    Drive pitch to fly at 100 kts IAS.
-   </documentation>
-   <function>
-    <product>
-     <value>-0.1</value>
-     <difference>
-      <property>velocities/vc-kts</property>
-      <value>100.0</value>
-     </difference>
-    </product>
-   </function>
-  </fcs_function>
-
-  <switch name="take-off-ap/pitch-error-deg">
-   <default value="take-off-ap/speed-pitch-error-deg"/>
-   <test value="take-off-ap/hydro-pitch-error-deg" logic="OR">
-     hydro/coefficients/C_Delta GT 0.0
-     hydro/alt-agl-ft LT 50
+  <switch name="take-off-ap/pid-trigger">
+   <default value="0.0"/>
+   <test value="1.0" logic="AND">
+     take-off-ap/enabled LE 0.5
+   </test>
+   <test value="1.0" logic="AND">
+     take-off-ap/elevator-cmd-norm EQ -1.0
+     take-off-ap/pitch-error-deg GT 0.0
    </test>
   </switch>
 
   <pid name="take-off-ap/elevator-cmd-norm"> 
-   <input> take-off-ap/pitch-error-deg </input>
-   <kp>   -0.100 </kp>
-   <ki>    0.000 </ki>
+   <input>-take-off-ap/pitch-error-deg</input>
+   <kp>    0.400 </kp>
+   <ki>    0.500 </ki>
    <kd>    0.000 </kd>
+   <trigger>take-off-ap/pid-trigger</trigger>
    <clipto>
     <min>-1.0</min>
     <max> 1.0</max>
    </clipto>
   </pid>
 
-  <switch name="take-off-ap/elevator-cmd-source">
+  <switch name="take-off-ap/elevator-switch-norm">
    <default value="0.0"/>
    <test value="-1.0">
      take-off-ap/enabled GT 0.5
@@ -145,13 +141,210 @@
    </clipto>
   </pid>
 
-  <switch name="Rudder Switch">
+  <switch name="take-off-ap/rudder-switch-norm">
    <default value="0.0"/>
    <test value="take-off-ap/rudder-cmd-norm">
      take-off-ap/enabled GT 0.5
      hydro/height-agl-ft LT 20.0
    </test>
    <output>fcs/copilot/rudder-cmd-norm</output>
+  </switch>
+
+ </channel>
+
+ <property value="0.0">auto-boost/enabled-norm</property>
+ <property value="0.0">auto-boost/target-psi</property>
+
+ <!-- Parameters. -->
+ <property value="0.00">auto-boost/pid-kp</property>
+ <property value="0.10">auto-boost/pid-ki</property>
+ <property value="0.00">auto-boost/pid-kd</property>
+ <property value="1.00"> auto-boost/max-error</property>
+
+ <channel name="Boost control">
+
+  <switch name="auto-boost/disabled-norm">
+   <default value="1.0"/>
+   <test value="0.0">
+    auto-boost/enabled-norm GT 0.0
+   </test>
+  </switch>
+
+  <fcs_function name="auto-boost/boost-error[0]">
+   <function>
+    <sum>
+     <product>
+      <property>auto-boost/enabled-norm</property>
+      <difference>
+       <property>auto-boost/target-psi</property> 
+       <property>propulsion/engine[0]/boost-psi</property>
+      </difference>
+     </product>
+     <product>
+      <property>auto-boost/disabled-norm</property>
+      <difference>
+       <property>fcs/throttle-pos-norm[0]</property> 
+       <property>auto-boost/throttle-cmd[0]</property>
+      </difference>
+     </product>
+    </sum>
+   </function>
+   <clipto>
+    <min>-auto-boost/max-error</min>
+    <max> auto-boost/max-error</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="auto-boost/boost-error[1]">
+   <function>
+    <sum>
+     <product>
+      <property>auto-boost/enabled-norm</property>
+      <difference>
+       <property>auto-boost/target-psi</property> 
+       <property>propulsion/engine[1]/boost-psi</property>
+      </difference>
+     </product>
+     <product>
+      <property>auto-boost/disabled-norm</property>
+      <difference>
+       <property>fcs/throttle-pos-norm[1]</property> 
+       <property>auto-boost/throttle-cmd[1]</property>
+      </difference>
+     </product>
+    </sum>
+   </function>
+   <clipto>
+    <min>-auto-boost/max-error</min>
+    <max> auto-boost/max-error</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="auto-boost/boost-error[2]">
+   <function>
+    <sum>
+     <product>
+      <property>auto-boost/enabled-norm</property>
+      <difference>
+       <property>auto-boost/target-psi</property> 
+       <property>propulsion/engine[2]/boost-psi</property>
+      </difference>
+     </product>
+     <product>
+      <property>auto-boost/disabled-norm</property>
+      <difference>
+       <property>fcs/throttle-pos-norm[2]</property> 
+       <property>auto-boost/throttle-cmd[2]</property>
+      </difference>
+     </product>
+    </sum>
+   </function>
+   <clipto>
+    <min>-auto-boost/max-error</min>
+    <max> auto-boost/max-error</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="auto-boost/boost-error[3]">
+   <function>
+    <sum>
+     <product>
+      <property>auto-boost/enabled-norm</property>
+      <difference>
+       <property>auto-boost/target-psi</property> 
+       <property>propulsion/engine[3]/boost-psi</property>
+      </difference>
+     </product>
+     <product>
+      <property>auto-boost/disabled-norm</property>
+      <difference>
+       <property>fcs/throttle-pos-norm[3]</property> 
+       <property>auto-boost/throttle-cmd[3]</property>
+      </difference>
+     </product>
+    </sum>
+   </function>
+   <clipto>
+    <min>-auto-boost/max-error</min>
+    <max> auto-boost/max-error</max>
+   </clipto>
+  </fcs_function>
+
+  <pid name="auto-boost/throttle-cmd[0]">
+   <input>auto-boost/boost-error[0]</input>
+   <kp>auto-boost/pid-kp</kp>
+   <ki>auto-boost/pid-ki</ki>
+   <kd>auto-boost/pid-kd</kd>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+  </pid>
+
+  <pid name="auto-boost/throttle-cmd[1]">
+   <input>auto-boost/boost-error[1]</input>
+   <kp>auto-boost/pid-kp</kp>
+   <ki>auto-boost/pid-ki</ki>
+   <kd>auto-boost/pid-kd</kd>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+  </pid>
+
+  <pid name="auto-boost/throttle-cmd[2]">
+   <input>auto-boost/boost-error[2]</input>
+   <kp>auto-boost/pid-kp</kp>
+   <ki>auto-boost/pid-ki</ki>
+   <kd>auto-boost/pid-kd</kd>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+  </pid>
+
+  <pid name="auto-boost/throttle-cmd[3]">
+   <input>auto-boost/boost-error[3]</input>
+   <kp>auto-boost/pid-kp</kp>
+   <ki>auto-boost/pid-ki</ki>
+   <kd>auto-boost/pid-kd</kd>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+  </pid>
+
+
+  <switch name="auto-boost/throttle-cmd-norm[0]">
+   <default value="fcs/throttle-cmd-norm[0]"/>
+   <test value="auto-boost/throttle-cmd[0]">
+    auto-boost/enabled-norm GT 0.0
+   </test>
+   <output>fcs/throttle-cmd-norm[0]</output>
+  </switch>
+
+  <switch name="auto-boost/throttle-cmd-norm[1]">
+   <default value="fcs/throttle-cmd-norm[1]"/>
+   <test value="auto-boost/throttle-cmd[1]">
+    auto-boost/enabled-norm GT 0.0
+   </test>
+   <output>fcs/throttle-cmd-norm[1]</output>
+  </switch>
+
+  <switch name="auto-boost/throttle-cmd-norm[2]">
+   <default value="fcs/throttle-cmd-norm[2]"/>
+   <test value="auto-boost/throttle-cmd[2]">
+    auto-boost/enabled-norm GT 0.0
+   </test>
+   <output>fcs/throttle-cmd-norm[2]</output>
+  </switch>
+
+  <switch name="auto-boost/throttle-cmd-norm[3]">
+   <default value="fcs/throttle-cmd-norm[3]"/>
+   <test value="auto-boost/throttle-cmd[3]">
+    auto-boost/enabled-norm GT 0.0
+   </test>
+   <output>fcs/throttle-cmd-norm[3]</output>
   </switch>
 
  </channel>

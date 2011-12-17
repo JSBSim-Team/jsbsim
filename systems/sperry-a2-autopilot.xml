@@ -1,0 +1,375 @@
+<?xml version="1.0"?>
+<!--
+
+  Sperry A-2 gyropilot model for JSBSim.
+
+    Copyright (C) 2010 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="Sperry A-2 automatic pilot">
+
+ <documentation>
+  This system models a Sperry A-2 automatic pilot system.
+
+  For each channel a pneumatic mechanism is activated when there is a
+  position error. It drives a pneumatic valve that controls the
+  direction and rate of change for the hydraulic actuator (Possibly
+  just in an on/off fashion). The channel's speed valve controls the
+  maximum rate of change for the actuator.
+
+  See excerpt from [Your Wings, 1936] at
+  http://pantonov.com/thoughts/assen_jordanoff.img/the_sperry_autopilot.htm
+
+  Additional ideas:
+  - The available vacuum suction probably affects the resonsiveness of the
+    pneumatic valve.
+  - The available oil pressure probably affects the maximum rate of change
+    for the actuator.
+  - The JSBSim actuator component in each channel is probably redundant.
+ </documentation>
+
+ <!-- Interface properties -->
+
+ <!-- Control inputs -->
+ <property value="0.0">sperry-autopilot/enabled-cmd-norm</property>
+
+ <property value="0.0">sperry-autopilot/heading-reference-deg</property>
+ <property value="0.0">sperry-autopilot/pitch-reference-deg</property>
+ <property value="0.0">sperry-autopilot/roll-reference-deg</property>
+
+ <property value="0.15">sperry-autopilot/heading-speed-valve-cmd-norm</property>
+ <property value="0.07">sperry-autopilot/pitch-speed-valve-cmd-norm</property>
+ <property value="0.15">sperry-autopilot/roll-speed-valve-cmd-norm</property>
+
+ <!-- Sensor inputs -->
+ <!-- property>sperry-autopilot/sensors/heading-deg</property>
+ <property>sperry-autopilot/sensors/pitch-deg</property>
+ <property>sperry-autopilot/sensors/roll-deg</property -->
+
+ <!-- System inputs -->
+ <!-- property>sperry-autopilot/vacuum/sources/vacuum-suction-inhg[0]</property>
+ <property>sperry-autopilot/vacuum/sources/vacuum-suction-inhg[1]</property>
+
+ <property>sperry-autopilot/oil/sources/pressure-psi[0]</property>
+ <property>sperry-autopilot/oil/sources/pressure-psi[1]</property -->
+
+ <!-- Output properties -->
+ <property>sperry-autopilot/aileron-cmd-norm</property>
+ <property>sperry-autopilot/elevator-cmd-norm</property>
+ <property>sperry-autopilot/rudder-cmd-norm</property>
+
+
+ <!-- Tuning parameters -->
+
+ <!-- Maximum rate of change for the actuators. -->
+ <property value="0.050">sperry-autopilot/heading/actuator-max-rate</property>
+ <property value="0.025">sperry-autopilot/pitch/actuator-max-rate</property>
+ <property value="0.250">sperry-autopilot/roll/actuator-max-rate</property>
+
+ <!-- Sensitivity of the pneumatic control valves. 1/min error for max rate. -->
+ <property value="0.25">sperry-autopilot/heading/sensitivity</property>
+ <property value="0.50">sperry-autopilot/pitch/sensitivity</property>
+ <property value="0.50">sperry-autopilot/roll/sensitivity</property>
+
+ <channel name="sensors">
+  <!-- Use the perfect inputs for now. -->
+
+  <fcs_function name="sperry-autopilot/sensors/heading-deg">
+   <function>
+    <product>
+     <value>57.29578</value>
+     <property>attitude/heading-true-rad</property>
+    </product>
+   </function>
+  </fcs_function>
+  <fcs_function name="sperry-autopilot/sensors/pitch-deg">
+   <function>
+    <product>
+     <value>57.29578</value>
+     <property>attitude/pitch-rad</property>
+    </product>
+   </function>
+  </fcs_function>
+  <fcs_function name="sperry-autopilot/sensors/roll-deg">
+   <function>
+    <product>
+     <value>57.29578</value>
+     <property>attitude/roll-rad</property>
+    </product>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="heading">
+
+  <fcs_function name="sperry-autopilot/heading/error-raw-deg">
+   <function>
+    <difference>
+     <property>sperry-autopilot/heading-reference-deg</property>
+     <property>sperry-autopilot/sensors/heading-deg</property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <switch name="sperry-autopilot/heading/error-correction-deg">
+   <default value="0.0"/>
+   <test logic="AND" value="360.0">
+     sperry-autopilot/heading/error-raw-deg LT -180.0
+   </test>
+   <test logic="AND" value="-360.0">
+     sperry-autopilot/heading/error-raw-deg GT 180.0
+   </test>
+  </switch>
+
+  <summer name="sperry-autopilot/heading/error-deg">
+   <input>sperry-autopilot/heading/error-raw-deg</input>
+   <input>sperry-autopilot/heading/error-correction-deg</input>
+  </summer>
+
+  <fcs_function name="sperry-autopilot/heading/rate-cmd-norm">
+   <function>
+    <product>
+     <value>-1.0</value>
+     <property>sperry-autopilot/heading/sensitivity</property>
+     <property>sperry-autopilot/heading/error-deg</property>
+    </product>
+   </function>
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="sperry-autopilot/heading/max-rate">
+   <function>
+    <product>
+     <property>sperry-autopilot/heading-speed-valve-cmd-norm</property>
+     <property>sperry-autopilot/heading/actuator-max-rate</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <switch name="sperry-autopilot/heading/windup-trigger">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/heading/rate-cmd-norm LT 0.0
+     sperry-autopilot/heading/pid LT -1.0
+   </test>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/heading/rate-cmd-norm GT 0.0
+     sperry-autopilot/heading/pid GT 1.0
+   </test>
+   <test logic="AND" value="-1.0">
+     sperry-autopilot/enabled-cmd-norm EQ 0.0
+   </test>
+  </switch>
+
+  <pid name="sperry-autopilot/heading/pid">
+   <input>sperry-autopilot/heading/rate-cmd-norm</input>
+   <kp>0.0</kp>
+   <ki>sperry-autopilot/heading/max-rate</ki>
+   <trigger>sperry-autopilot/heading/windup-trigger</trigger>
+  </pid>
+
+  <actuator name="sperry-autopilot/heading/actuator-pos">
+   <input>sperry-autopilot/heading/pid</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </actuator>  
+
+  <fcs_function name="sperry-autopilot/heading/cmd-norm">
+   <function>
+    <product>
+     <property>sperry-autopilot/enabled-cmd-norm</property>
+     <property>sperry-autopilot/heading/actuator-pos</property>
+    </product>
+   </function>
+   <output>sperry-autopilot/rudder-cmd-norm</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="pitch">
+
+  <fcs_function name="sperry-autopilot/pitch/error-deg">
+   <function>
+    <difference>
+     <property>sperry-autopilot/pitch-reference-deg</property>
+     <property>sperry-autopilot/sensors/pitch-deg</property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="sperry-autopilot/pitch/rate-cmd-norm">
+   <function>
+    <product>
+     <value>-1.0</value>
+     <property>sperry-autopilot/pitch/sensitivity</property>
+     <property>sperry-autopilot/pitch/error-deg</property>
+    </product>
+   </function>
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="sperry-autopilot/pitch/max-rate">
+   <function>
+    <product>
+     <property>sperry-autopilot/pitch-speed-valve-cmd-norm</property>
+     <property>sperry-autopilot/pitch/actuator-max-rate</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <switch name="sperry-autopilot/pitch/windup-trigger">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/pitch/rate-cmd-norm LT 0.0
+     sperry-autopilot/pitch/pid LT -1.0
+   </test>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/pitch/rate-cmd-norm GT 0.0
+     sperry-autopilot/pitch/pid GT 1.0
+   </test>
+   <test logic="AND" value="-1.0">
+     sperry-autopilot/enabled-cmd-norm EQ 0.0
+   </test>
+  </switch>
+
+  <pid name="sperry-autopilot/pitch/pid">
+   <input>sperry-autopilot/pitch/rate-cmd-norm</input>
+   <kp>0.0</kp>
+   <ki>sperry-autopilot/pitch/max-rate</ki>
+   <trigger>sperry-autopilot/pitch/windup-trigger</trigger>
+  </pid>
+
+  <actuator name="sperry-autopilot/pitch/actuator-pos">
+   <input>sperry-autopilot/pitch/pid</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </actuator>  
+
+  <fcs_function name="sperry-autopilot/pitch/cmd-norm">
+   <function>
+    <product>
+     <property>sperry-autopilot/enabled-cmd-norm</property>
+     <property>sperry-autopilot/pitch/actuator-pos</property>
+    </product>
+   </function>
+   <output>sperry-autopilot/elevator-cmd-norm</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="roll">
+
+  <fcs_function name="sperry-autopilot/roll/error-deg">
+   <function>
+    <difference>
+     <property>sperry-autopilot/roll-reference-deg</property>
+     <property>sperry-autopilot/sensors/roll-deg</property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="sperry-autopilot/roll/rate-cmd-norm">
+   <function>
+    <product>
+     <property>sperry-autopilot/roll/sensitivity</property>
+     <property>sperry-autopilot/roll/error-deg</property>
+    </product>
+   </function>
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="sperry-autopilot/roll/max-rate">
+   <function>
+    <product>
+     <property>sperry-autopilot/roll-speed-valve-cmd-norm</property>
+     <property>sperry-autopilot/roll/actuator-max-rate</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <switch name="sperry-autopilot/roll/windup-trigger">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/roll/rate-cmd-norm LT 0.0
+     sperry-autopilot/roll/pid LT -1.0
+   </test>
+   <test logic="AND" value="1.0">
+     sperry-autopilot/roll/rate-cmd-norm GT 0.0
+     sperry-autopilot/roll/pid GT 1.0
+   </test>
+   <test logic="AND" value="-1.0">
+     sperry-autopilot/enabled-cmd-norm EQ 0.0
+   </test>
+  </switch>
+
+  <pid name="sperry-autopilot/roll/pid">
+   <input>sperry-autopilot/roll/rate-cmd-norm</input>
+   <kp>0.0</kp>
+   <ki>sperry-autopilot/roll/max-rate</ki>
+   <trigger>sperry-autopilot/roll/windup-trigger</trigger>
+  </pid>
+
+  <actuator name="sperry-autopilot/roll/actuator-pos">
+   <input>sperry-autopilot/roll/pid</input>
+   <!-- lag> number </lag -->
+   <!-- rate_limit> number </rate_limit -->
+   <!-- bias> number </bias -->
+   <!-- deadband_width> number </deadband_width -->
+   <!-- hysteresis_width> number </hysteresis_width -->
+   <clipto>
+    <min>-1.0</min>
+    <max>1.0</max>
+   </clipto>
+  </actuator>  
+
+  <fcs_function name="sperry-autopilot/roll/cmd-norm">
+   <function>
+    <product>
+     <property>sperry-autopilot/enabled-cmd-norm</property>
+     <property>sperry-autopilot/roll/actuator-pos</property>
+    </product>
+   </function>
+   <output>sperry-autopilot/aileron-cmd-norm</output>
+  </fcs_function>
+
+ </channel>
+
+</system>
