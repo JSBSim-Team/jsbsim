@@ -3,6 +3,9 @@ EXTRA_DIST = \
   737_cruise.xml \
   737_cruise_steady_turn.xml \
   Short_S23_1.xml \
+  Short_S23_2.xml \
+  Short_S23_3.xml \
+  Short_S23_4.xml \
   T37.xml \
   T38.xml \
   ball_chute.xml \

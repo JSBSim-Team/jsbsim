@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@
   
 -->
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="Short S.23" version="2.0" release="ALPHA"
+<fdm_config name="Short S.23" version="2.0" release="BETA"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
-  <author> Anders Gidenstam / DATCOM+ / Aeromatic v 0.9 </author>
+  <author>Anders Gidenstam / DATCOM+ / Aeromatic v 0.9</author>
   <email>anders at gidenstam dot org</email>
 
-  <filecreationdate> 2008-11-05 </filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.5 2010/08/07 10:25:51 andgi Exp $</version>
+  <filecreationdate>2008-11-05</filecreationdate>
+  <version>$Id: Short_S23.xml,v 1.6 2011/12/17 15:00:50 andgi Exp $</version>
 
-  <description> Models a Short S.23 flying boat. </description>
+  <description>Models a Short S.23 flying boat.</description>
 
   <license>
    <licenseName>GPL</licenseName>
@@ -70,7 +70,7 @@
   <reference refID="Dawson:1934:Clipper"
              author="John R. Dawson"
              title="A complete tank test of the hull of the Sikorsky S-40 flying boat - American Clipper Class;  NACA Thechnical Notes #512"
-             date="1934"/>  
+             date="1934"/>
 
  </fileheader>
 
@@ -133,7 +133,7 @@
    <location name="AERORP" unit="M">
      <x> 8.68 </x>
      <y> 0.00 </y>
-     <z> 1.00 </z>
+     <z> 2.35 </z>
    </location>
    <location name="EYEPOINT" unit="M">
      <x> 2.05 </x>
@@ -153,16 +153,32 @@
    CG location X-coordinate is based on [Short:RN-3-1-37].
    However, the document is not very clear. My assumption is that the
    datum marker plate is located on the bulkhead of frame 15/16.
-   Empty weight (incl. oil) according to [Cassidy:2004:FE] p.121.
+   "C.G. is 4.56ft aft of datum point measured parallel to hull datum."
+   "Datum plate in spar compartment is 19.65 in. aft of datum point measured
+    parallel to hull datum. Permissible CG limits 55.5" to 66.8" aft of
+    datum point measured parallel to hull datum." ([Short:RN-3-1-37])
+
+   Based on the drawings the frame 15/16 bulkhead is 8.25 meters behind the
+   origin of the FDM structural frame.
+
+   Revised datum location based on 1:48 GA drawing: 7.728 meters behind the
+   origin of the FDM structural frame.
+   The resulting permissible range for the CG x coordinate is
+   359.75in to 371.05in in the structural frame.
+
+   Empty weight (incl. oil) according to [Cassidy:2004:FE] p.121: 23451 lbs.
+
+   Tare weight according to [Short:RN-3-1-37]: 27845 lbs
+   (including passenger compartments and some equipment.
   </documentation>
   <ixx unit="SLUG*FT2">    251174 </ixx>
   <iyy unit="SLUG*FT2">    180055 </iyy>
   <izz unit="SLUG*FT2">    426351 </izz>
-  <emptywt unit="LBS" >     23451 </emptywt>
+  <emptywt unit="LBS" >     27528 </emptywt>
   <location name="CG" unit="M">
-   <x> 9.14 </x>
+   <x> 9.12 </x>
    <y> 0.00 </y>
-   <z> 1.00 </z>
+   <z> 1.10 </z>
   </location>
 
   <documentation>
@@ -194,9 +210,12 @@
    </location>
   </pointmass>
   <pointmass name="Flight Clerk">
+   <!-- Originally the Flight Clerk's office was located on the aft end of the
+        flight deck, but it was soon was moved down into the forward cabin.
+   -->
    <weight unit="KG"> 85 </weight>
    <location unit="M">
-    <x>  7.0 </x>
+    <x>  5.4 </x>
     <y>  0.0 </y>
     <z>  0.0 </z>
    </location>
@@ -219,7 +238,7 @@
     <z>  1.5 </z>
    </location>
   </pointmass>
-  <pointmass name="Forward mail compartment">
+  <pointmass name="Forward upper mail compartment">
    <weight unit="KG"> 0.0 </weight>
    <location unit="M">
     <x>  6.2 </x>
@@ -228,16 +247,16 @@
    </location>
   </pointmass>
   <pointmass name="Rear freight compartment">
-   <weight unit="KG"> 200.0 </weight> <!-- To get CG within the range. -->
+   <weight unit="KG"> 345.6 </weight> <!-- To get CG within the range. -->
    <location unit="M">
     <x> 19.1 </x>
     <y>  0.0 </y>
     <z>  1.5 </z>
    </location>
   </pointmass>
-
-  <!-- Passengers. -->
-  <pointmass name="Passengers in the Forward Cabin (max 7)">
+  <pointmass name="Freight in the Forward Cabin">
+   <!-- Originally there were space for 7 passengers here but the cabin was
+        soon converted to contain freight and the Flight Clerk's office. -->
    <weight unit="KG"> 0.0 </weight>
    <location unit="M">
     <x>  4.2 </x>
@@ -245,6 +264,16 @@
     <z> -0.5 </z>
    </location>
   </pointmass>
+  <pointmass name="Bullion locker">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  9.5 </x>
+    <y>  0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+
+  <!-- Passengers. -->
   <pointmass name="Passengers in the Spar Cabin (max 3)">
    <weight unit="KG"> 0.0 </weight>
    <location unit="M">
@@ -272,7 +301,7 @@
 
   <!-- Fixed weights included in tare weight according to [Short:RN-3-1-37]. -->
   <pointmass name="Radio equipment">
-   <weight unit="LBS"> 217.0 </weight>
+   <weight unit="LBS"> 317.0 </weight>
    <location unit="M">
     <x> 3.8 </x>
     <y> 0.0 </y>
@@ -413,7 +442,8 @@
    Propeller location from the plans by [Cassidy:2004:FE].
    Fuel tank location and capacity according to [Cassidy:2004:FE].
 
-   Mainplane incidence to thrust line: 1 deg 52 min. [Short:RN-3-1-37]
+   Mainplane incidence to thrust line:     1 deg 52 min. [Short:RN-3-1-37]
+   Mainplane incidence to hull datum line: 3 deg.        [Short:RN-3-1-37]
   </documentation>
 
   <engine file="eng_PegasusXc">
@@ -427,14 +457,7 @@
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
-   <feed>0</feed>
-   <feed>1</feed>
-   <feed>2</feed>
-   <feed>3</feed>
-   <feed>4</feed>
-   <feed>5</feed>
-   <feed>6</feed>
-   <feed>7</feed>
+   <feed>8</feed>
    <thruster file="prop_deHavilland5000">
     <location unit="M">
      <x>  6.30 </x>
@@ -460,14 +483,7 @@
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
-   <feed>0</feed>
-   <feed>1</feed>
-   <feed>2</feed>
-   <feed>3</feed>
-   <feed>4</feed>
-   <feed>5</feed>
-   <feed>6</feed>
-   <feed>7</feed>
+   <feed>9</feed>
    <thruster file="prop_deHavilland5000">
     <location unit="M">
      <x>  6.00 </x>
@@ -493,14 +509,7 @@
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
-   <feed>0</feed>
-   <feed>1</feed>
-   <feed>2</feed>
-   <feed>3</feed>
-   <feed>4</feed>
-   <feed>5</feed>
-   <feed>6</feed>
-   <feed>7</feed>
+   <feed>10</feed>
    <thruster file="prop_deHavilland5000">
     <location unit="M">
      <x>  6.00 </x>
@@ -526,14 +535,7 @@
     <roll>  0.00 </roll>
     <yaw>   0.00 </yaw>
    </orient>
-   <feed>0</feed>
-   <feed>1</feed>
-   <feed>2</feed>
-   <feed>3</feed>
-   <feed>4</feed>
-   <feed>5</feed>
-   <feed>6</feed>
-   <feed>7</feed>
+   <feed>11</feed>
    <thruster file="prop_deHavilland5000">
     <location unit="M">
      <x>  6.30 </x>
@@ -579,8 +581,9 @@
     <z>  2.50 </z>
    </location>
    <radius unit="IN"> 32.0 </radius>
-   <capacity unit="LBS"> 2352.0 </capacity>
+   <capacity unit="LBS"> 2356.9 </capacity>
    <contents unit="LBS"> 2352.0 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <tank type="FUEL" number="1">
@@ -590,8 +593,9 @@
     <z>  2.50 </z>
    </location>
    <radius unit="IN"> 32.0 </radius>
-   <capacity unit="LBS"> 2352.0 </capacity>
+   <capacity unit="LBS"> 2356.9 </capacity>
    <contents unit="LBS"> 2352.0 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <!-- Outboard tanks. Present in the Mark II and Mark III fuel systems. -->
@@ -602,8 +606,9 @@
     <z>  2.55 </z>
    </location>
    <radius unit="IN"> 24.6 </radius>
-   <capacity unit="LBS"> 1291.4 </capacity>
+   <capacity unit="LBS"> 1294.1 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <tank type="FUEL" number="3">
@@ -613,8 +618,9 @@
     <z>  2.55 </z>
    </location>
    <radius unit="IN"> 24.6 </radius>
-   <capacity unit="LBS"> 1291.4 </capacity>
+   <capacity unit="LBS"> 1294.1 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <!-- Inboard tanks. Present in the Mark III fuel system. -->
@@ -625,8 +631,9 @@
     <z>  2.40 </z>
    </location>
    <radius unit="IN"> 32.75 </radius>
-   <capacity unit="LBS"> 2741.6 </capacity>
+   <capacity unit="LBS"> 2747.3 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <tank type="FUEL" number="5">
@@ -636,8 +643,9 @@
     <z>  2.40 </z>
    </location>
    <radius unit="IN"> 32.75 </radius>
-   <capacity unit="LBS"> 2741.6 </capacity>
+   <capacity unit="LBS"> 2747.3 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <!-- Fuselage tanks. Present in the Mark III fuel system. -->
@@ -648,8 +656,9 @@
     <z>  2.40 </z>
    </location>
    <radius unit="IN"> 34.0 </radius>
-   <capacity unit="LBS"> 2020.1 </capacity>
+   <capacity unit="LBS"> 2024.3 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
   <tank type="FUEL" number="7">
@@ -659,8 +668,51 @@
     <z>  2.40 </z>
    </location>
    <radius unit="IN"> 34.0 </radius>
-   <capacity unit="LBS"> 2020.1 </capacity>
+   <capacity unit="LBS"> 2024.3 </capacity>
    <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
+  </tank>
+
+  <!-- Engine feeder tanks (carburettor float chambers). -->
+  <tank type="FUEL" number="8">
+   <location unit="M">
+    <x>  6.80 </x>
+    <y> -7.50 </y>
+    <z>  2.90 </z>
+   </location>
+   <capacity unit="LBS"> 0.25 </capacity> <!-- Guess -->
+   <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
+  </tank>
+  <tank type="FUEL" number="9">
+   <location unit="M">
+    <x>  6.50 </x>
+    <y> -3.98 </y>
+    <z>  2.69 </z>
+   </location>
+   <capacity unit="LBS"> 0.25 </capacity> <!-- Guess -->
+   <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
+  </tank>
+  <tank type="FUEL" number="10">
+   <location unit="M">
+    <x>  6.50 </x>
+    <y>  3.98 </y>
+    <z>  2.69 </z>
+   </location>
+   <capacity unit="LBS"> 0.25 </capacity> <!-- Guess -->
+   <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
+  </tank>
+  <tank type="FUEL" number="11">
+   <location unit="M">
+    <x>  6.80 </x>
+    <y>  7.50 </y>
+    <z>  2.90 </z>
+   </location>
+   <capacity unit="LBS"> 0.25 </capacity> <!-- Guess -->
+   <contents unit="LBS"> 0.00 </contents>
+   <density unit="LBS/GAL">6.02 </density>
   </tank>
 
  </propulsion>
@@ -676,201 +728,213 @@
      Elevator : +/-18 deg
      Rudder   : +/-22.5 deg
 
-   There is no autopilot yet.
   </documentation>
 
   <!-- FlightGear multiplayer dual control properties. -->
   <!-- Also used by the take-off autopilot. -->
-  <property>fcs/copilot/aileron-cmd-norm</property>
-  <property>fcs/copilot/elevator-cmd-norm</property>
-  <property>fcs/copilot/rudder-cmd-norm</property>
+  <property value="0.0">fcs/copilot/aileron-cmd-norm</property>
+  <property value="0.0">fcs/copilot/elevator-cmd-norm</property>
+  <property value="0.0">fcs/copilot/rudder-cmd-norm</property>
+
+  <!-- The output from the Sperry autopilot actuators. -->
+  <property value="0.0">sperry-autopilot/aileron-cmd-norm</property>
+  <property value="0.0">sperry-autopilot/elevator-cmd-norm</property>
+  <property value="0.0">sperry-autopilot/rudder-cmd-norm</property>
 
   <channel name="Elevator">
 
-   <summer name="Pitch Trim Sum">
-      <input>fcs/elevator-cmd-norm</input>
-      <input>fcs/copilot/elevator-cmd-norm</input>
-      <input>fcs/pitch-trim-cmd-norm</input>
-      <clipto>
-        <min> -1 </min>
-        <max>  1 </max>
-      </clipto>
+   <summer name="fcs/elevator/cmd-sum-norm">
+    <input>fcs/elevator-cmd-norm</input>
+    <input>fcs/copilot/elevator-cmd-norm</input>
+    <input>sperry-autopilot/elevator-cmd-norm</input>
+    <input>fcs/pitch-trim-cmd-norm</input>
+    <clipto>
+     <min> -1 </min>
+     <max>  1 </max>
+    </clipto>
    </summer>
 
-   <aerosurface_scale name="Elevator Control rad">
-      <input>fcs/pitch-trim-sum</input>
-      <range>
-        <min> -0.3142 </min>
-        <max>  0.3142 </max>
-      </range>
-      <output>fcs/elevator-pos-rad</output>
+   <aerosurface_scale name="fcs/elevator/pos-rad">
+    <input>fcs/elevator/cmd-sum-norm</input>
+    <range>
+     <min> -0.3142 </min>
+     <max>  0.3142 </max>
+    </range>
+    <output>fcs/elevator-pos-rad</output>
    </aerosurface_scale>
-   <pure_gain name="Elevator Control Deg">
-      <input>fcs/elevator-pos-rad</input>
-      <gain> 57.29578 </gain>
-      <output>fcs/elevator-pos-deg</output>
+
+   <pure_gain name="fcs/elevator/pos-deg">
+    <input>fcs/elevator/pos-rad</input>
+    <gain> 57.29578 </gain>
+    <output>fcs/elevator-pos-deg</output>
    </pure_gain>
 
-   <aerosurface_scale name="elevator normalization">
-      <input>fcs/elevator-pos-rad</input>
-      <domain>
-        <min> -0.3142 </min>
-        <max>  0.3142 </max>
-      </domain>
-      <range>
-        <min> -1 </min>
-        <max>  1 </max>
-      </range>
-      <output>fcs/elevator-pos-norm</output>
+   <aerosurface_scale name="fcs/elevator/pos-norm">
+    <input>fcs/elevator/pos-rad</input>
+    <domain>
+     <min> -0.3142 </min>
+     <max>  0.3142 </max>
+    </domain>
+    <range>
+     <min> -1 </min>
+     <max>  1 </max>
+    </range>
+    <output>fcs/elevator-pos-norm</output>
    </aerosurface_scale>
 
   </channel>
 
   <channel name="Aileron">
 
-   <summer name="Roll Trim Sum">
-      <input>fcs/aileron-cmd-norm</input>
-      <input>fcs/copilot/aileron-cmd-norm</input>
-      <input>fcs/roll-trim-cmd-norm</input>
-      <clipto>
-        <min> -1 </min>
-        <max>  1 </max>
-      </clipto>
+   <summer name="fcs/aileron/cmd-sum-norm">
+    <input>fcs/aileron-cmd-norm</input>
+    <input>fcs/copilot/aileron-cmd-norm</input>
+    <input>sperry-autopilot/aileron-cmd-norm</input>
+    <input>fcs/roll-trim-cmd-norm</input>
+    <clipto>
+     <min> -1 </min>
+     <max>  1 </max>
+    </clipto>
    </summer>
 
-   <aerosurface_scale name="Left Aileron Control rad">
-      <input>fcs/roll-trim-sum</input>
-      <range>
-        <min> -0.3403 </min>
-        <max>  0.3403 </max>
-      </range>
-      <output>fcs/left-aileron-pos-rad</output>
+   <aerosurface_scale name="fcs/aileron/left-pos-rad">
+    <input>fcs/aileron/cmd-sum-norm</input>
+    <range>
+     <min> -0.3403 </min>
+     <max>  0.3403 </max>
+    </range>
+    <output>fcs/left-aileron-pos-rad</output>
    </aerosurface_scale>
-   <pure_gain name="Left Aileron Control Deg">
-      <input>fcs/left-aileron-pos-rad</input>
-      <gain> 57.29578 </gain>
-      <output>fcs/left-aileron-pos-deg</output>
+
+   <pure_gain name="fcs/aileron/left-pos-deg">
+    <input>fcs/aileron/left-pos-rad</input>
+    <gain> 57.29578 </gain>
+    <output>fcs/left-aileron-pos-deg</output>
    </pure_gain>
 
-   <aerosurface_scale name="Right Aileron Control rad">
-      <input>fcs/roll-trim-sum</input>
-      <range>
-        <min> -0.3403 </min>
-        <max>  0.3403 </max>
-      </range>
-      <output>fcs/right-aileron-pos-rad</output>
+   <aerosurface_scale name="fcs/aileron/left-pos-norm">
+    <input>fcs/aileron/left-pos-rad</input>
+    <domain>
+     <min> -0.3403 </min>
+     <max>  0.3403 </max>
+    </domain>
+    <range>
+     <min> -1 </min>
+     <max>  1 </max>
+    </range>
+    <output>fcs/left-aileron-pos-norm</output>
    </aerosurface_scale>
-   <pure_gain name="Right Aileron Control Deg">
-      <input>fcs/right-aileron-pos-rad</input>
-      <gain> 57.29578 </gain>
-      <output>fcs/right-aileron-pos-deg</output>
+
+
+   <aerosurface_scale name="fcs/aileron/right-pos-rad">
+    <input>fcs/aileron/cmd-sum-norm</input>
+    <range>
+     <min> -0.3403 </min>
+     <max>  0.3403 </max>
+    </range>
+    <output>fcs/right-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+   <pure_gain name="fcs/aileron/right-pos-deg">
+    <input>fcs/aileron/right-pos-rad</input>
+    <gain> 57.29578 </gain>
+    <output>fcs/right-aileron-pos-deg</output>
    </pure_gain>
 
-   <aerosurface_scale name="left aileron normalization">
-      <input>fcs/left-aileron-pos-rad</input>
-      <domain>
-        <min> -0.3403 </min>
-        <max>  0.3403 </max>
-      </domain>
-      <range>
-        <min> -1 </min>
-        <max>  1 </max>
-      </range>
-      <output>fcs/left-aileron-pos-norm</output>
-   </aerosurface_scale>
-
-   <aerosurface_scale name="right aileron normalization">
-      <input>fcs/right-aileron-pos-rad</input>
-      <domain>
-        <min> -0.3403 </min>
-        <max>  0.3403 </max>
-      </domain>
-      <range>
-        <min> -1 </min>
-        <max>  1 </max>
-      </range>
-      <output>fcs/right-aileron-pos-norm</output>
+   <aerosurface_scale name="fcs/aileron/right-pos-norm">
+    <input>fcs/aileron/right-pos-rad</input>
+    <domain>
+     <min> -0.3403 </min>
+     <max>  0.3403 </max>
+    </domain>
+    <range>
+     <min> -1 </min>
+     <max>  1 </max>
+    </range>
+    <output>fcs/right-aileron-pos-norm</output>
    </aerosurface_scale>
 
   </channel>
 
   <channel name="Rudder">
 
-   <summer name="Rudder Command Sum">
-      <input>fcs/rudder-cmd-norm</input>
-      <input>fcs/copilot/rudder-cmd-norm</input>
-      <input>fcs/yaw-trim-cmd-norm</input>
-      <clipto>
-        <min> -0.3927 </min>
-        <max>  0.3927 </max>
-      </clipto>
+   <summer name="fcs/rudder/cmd-sum-norm">
+    <input>fcs/rudder-cmd-norm</input>
+    <input>fcs/copilot/rudder-cmd-norm</input>
+    <input>sperry-autopilot/rudder-cmd-norm</input>
+    <input>fcs/yaw-trim-cmd-norm</input>
+    <clipto>
+     <min> -1.0 </min>
+     <max>  1.0 </max>
+    </clipto>
    </summer>
-
-   <aerosurface_scale name="Rudder Control rad">
-      <input>fcs/rudder-command-sum</input>
-      <range>
-        <min> -0.3927 </min>
-        <max>  0.3927 </max>
-      </range>
-      <output>fcs/rudder-pos-rad</output>
+   
+   <aerosurface_scale name="fcs/rudder/pos-rad">
+    <input>fcs/rudder/cmd-sum-norm</input>
+    <range>
+     <min> -0.3927 </min>
+     <max>  0.3927 </max>
+    </range>
+    <output>fcs/rudder-pos-rad</output>
    </aerosurface_scale>
-   <pure_gain name="Rudder Control Deg">
-      <input>fcs/rudder-pos-rad</input>
-      <gain> 57.29578 </gain>
-      <output>fcs/rudder-pos-deg</output>
+
+   <pure_gain name="fcs/rudder/pos-deg">
+    <input>fcs/rudder/pos-rad</input>
+    <gain> 57.29578 </gain>
+    <output>fcs/rudder-pos-deg</output>
    </pure_gain>
 
-   <aerosurface_scale name="rudder normalization">
-      <input>fcs/rudder-pos-rad</input>
-      <domain>
-        <min> -0.393 </min>
-        <max>  0.393 </max>
-      </domain>
-      <range>
-        <min> -1 </min>
-        <max>  1 </max>
-      </range>
-      <output>fcs/rudder-pos-norm</output>
+   <aerosurface_scale name="fcs/rudder/pos-norm">
+    <input>fcs/rudder/pos-rad</input>
+    <domain>
+     <min> -0.393 </min>
+     <max>  0.393 </max>
+    </domain>
+    <range>
+     <min> -1 </min>
+     <max>  1 </max>
+    </range>
+    <output>fcs/rudder-pos-norm</output>
    </aerosurface_scale>
 
   </channel>
 
   <channel name="Flaps">
 
-   <kinematic name="Flaps Control">
-     <input>fcs/flap-cmd-norm</input>
-     <traverse>
-       <setting>
-          <position>  0 </position>
-          <time>      0 </time>
-       </setting>
-       <setting>
-          <position> 8.33 </position>
-          <time>     20 </time>
-       </setting>
-       <setting>
-          <position> 16.67 </position>
-          <time>     40 </time>
-       </setting>
-       <setting>
-          <position> 25 </position>
-          <time>     60 </time>
-       </setting>
-     </traverse>
-     <output>fcs/flap-pos-deg</output>
+   <kinematic name="fcs/flap/pos-deg">
+    <input>fcs/flap-cmd-norm</input>
+    <traverse>
+     <setting>
+      <position>  0 </position>
+      <time>      0 </time>
+     </setting>
+     <setting>
+      <position> 8.33 </position>
+      <time>     20 </time>
+     </setting>
+     <setting>
+      <position> 16.67 </position>
+      <time>     40 </time>
+     </setting>
+     <setting>
+      <position> 25 </position>
+      <time>     60 </time>
+     </setting>
+    </traverse>
+    <output>fcs/flap-pos-deg</output>
    </kinematic>
 
-   <aerosurface_scale name="flap normalization">
-      <input>fcs/flap-pos-deg</input>
-      <domain>
-        <min>  0 </min>
-        <max> 25 </max>
-      </domain>
-      <range>
-        <min> 0 </min>
-        <max> 1 </max>
-      </range>
-      <output>fcs/flap-pos-norm</output>
+   <aerosurface_scale name="fcs/flap/pos-norm">
+    <input>fcs/flap-pos-deg</input>
+    <domain>
+     <min>  0 </min>
+     <max> 25 </max>
+    </domain>
+    <range>
+     <min> 0 </min>
+     <max> 1 </max>
+    </range>
+    <output>fcs/flap-pos-norm</output>
    </aerosurface_scale>
 
   </channel>
@@ -917,7 +981,7 @@
   </force>
 
   <force name="hydro-pitch[0]" frame="BODY">
-   <location unit="">
+   <location unit="M">
     <x> 8.68 </x>
     <y> 0.00 </y>
     <z>-0.3048 </z>
@@ -942,7 +1006,7 @@
   </force>
 
   <force name="hydro-yaw[0]" frame="BODY">
-   <location unit="">
+   <location unit="M">
     <x> 8.68 </x>
     <y> -0.3048 </y>
     <z> 0.00 </z>
@@ -968,7 +1032,7 @@
 
 
   <force name="hydro-roll[0]" frame="BODY">
-   <location unit="">
+   <location unit="M">
     <x> 8.68 </x>
     <y> 0.00 </y>
     <z>-0.3048 </z>
@@ -1046,6 +1110,9 @@
  </external_reactions>
 
  <system file="hydrodynamics"/>
+
+ <!-- Sperry A-2 autopilot. -->
+ <system file="sperry-a2-autopilot"/>
 
  <!-- Autopilot for JSBSim/standalone. -->
  <system file="take-off-ap"/>

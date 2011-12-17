@@ -7,6 +7,7 @@ Selected informative quotes from
 
 "Flying Empires  Short 'C' class Empire flying boats",
 Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
+[Cassidy:2004:FE]
     
   "The Pegasus engine data plates were fixed on the port side panel
   below the fore and aft level. The information on the plates read:
@@ -43,6 +44,16 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   +2 1/2 lb. sq. in. for 5 minutes in level flight."
   (pp.167)
 
+  "Fuel consumptions varied between individual aircraft. In practice, `normal'
+  four engine fuel consumptions ranged from as little as 107.5 gal. per hr. 
+  (484 litres per hr.), to 119.9 gal. per hr. (540 litre per hr.). A good
+  average consumption was considered to be 115 gal. per hr. (518 litre per hr.).
+  The upper limit of acceptable consumption was set at 141 gal. per hr. (631
+  litre per hr.), and anything over this amount was considered to be excessive.
+  These consumption figures appear to be better than the manufacturer's figure
+  of a maximum of 0,67 pints (0.38 litres) per hhp. per hour."
+  (pp.168)
+
 Flight Magazine November 12, 1936:
   Bore:                   146 mm
   Stroke:                 190.5 mm 
@@ -65,9 +76,13 @@ Flight Magazine November 12, 1936:
  <cylinders>                  9.0  </cylinders>
  <cycles>                     4.0  </cycles>
 
- <maxhp unit="HP">          920.0 </maxhp> <!-- Boosted. -->
- <!-- bsfc unit="LBS/HP/HR"> 0.52 </bsfc -->  <!-- From Wikipedia. Pegasus XVIII. -->
- <!-- volumetric_efficiency> <volumetric_efficiency -->
+ <maxhp unit="HP">          920.0 </maxhp> <!-- At take-off boost. -->
+ <!-- bsfc unit="LBS/HP/HR"> 0.504 </bsfc -->
+ <!--
+     [Cassidy:2004:FE]: 0.504 LBS/HP/HR for Pegasus Xc (manufacturer's figure)
+     Wikipedia:         0.52  LBS/HP/HR for Pegasus XVIII.
+ -->
+ <volumetric-efficiency> 0.65 </volumetric-efficiency> <!-- Default 0.85 -->
  <idlerpm>      400.0 </idlerpm>
  <maxrpm>      2600.0 </maxrpm>
 
@@ -75,7 +90,7 @@ Flight Magazine November 12, 1936:
  <boostoverride>  0 </boostoverride>
 
  <ratedboost1 unit="PSI">      2.50 </ratedboost1>
- <ratedpower1 unit="HP">     900.00 </ratedpower1>
+ <ratedpower1 unit="HP">     815.00 </ratedpower1>
  <ratedrpm1>                2250.00 </ratedrpm1>
  <ratedaltitude1 unit="FT"> 3500.00 </ratedaltitude1>
 
@@ -86,6 +101,6 @@ Flight Magazine November 12, 1936:
  <minmp unit="INHG">          6.00 </minmp> <!-- Deprecated -->
  <maxmp unit="INHG">         38.57 </maxmp>
  <maxthrottle>                1.00 </maxthrottle>
- <minthrottle>                0.10 </minthrottle>
+ <minthrottle>                0.05 </minthrottle>
 
 </piston_engine>

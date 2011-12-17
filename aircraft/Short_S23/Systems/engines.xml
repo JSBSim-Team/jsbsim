@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,6 +58,12 @@
  <property value="0.0">fcs/inner-engines-cutoff-cmd-norm</property>
  <property value="0.0">fcs/outer-engines-cutoff-cmd-norm</property>
 
+ <!-- Fuel pump status -->
+ <property value="1.0">propulsion/engine[0]/fuel-pump-serviceable</property>
+ <property value="1.0">propulsion/engine[1]/fuel-pump-serviceable</property>
+ <property value="1.0">propulsion/engine[2]/fuel-pump-serviceable</property>
+ <property value="1.0">propulsion/engine[3]/fuel-pump-serviceable</property>
+
  <channel name="Throttle">
 
   <documentation>
@@ -71,6 +77,12 @@
     Officer. For each engine in turn, he moved the mixture control
     lever back from NORMAL to RICH -. + 1 lb. sq. in, then through the
     gate to +3 lb. sq. in. and back to NORMAL."
+
+   [Cassidy:2004:FE]: Fuel consumption for "normal" operation varied
+   between 107.5 gal. per hour and 118.8 gal. per hour. A good average
+   was 115 gal. per hour. Over 141 gal. per hour was considered excessive.
+   [Cassidy:2004:FE]: Oil consumption normally varied between
+   8 pints to 3 1/2 gallons per hour for a Pegasus engine.
   </documentation>
 
   <switch name="fcs/boost/throttle-pos-norm[0]">
@@ -241,6 +253,62 @@
    </test>
    <output>propulsion/engine[3]/blade-angle</output>
   </switch>
+
+ </channel>
+
+ <documentation>
+  "The fuel pumps were Bristol vane-type Duplex pumps, driven at engine
+  speed.", [Cassidy:2004:FE].
+ </documentation>
+ <channel name="Fuel pumps">
+
+  <fcs_function name="propulsion/engine[0]/fuel-pump-running-norm">
+   <function>
+    <product>
+     <property>propulsion/engine[0]/fuel-pump-serviceable</property>
+     <quotient>
+      <property>propulsion/engine[0]/engine-rpm</property>
+      <value>2600.0</value>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[1]/fuel-pump-running-norm">
+   <function>
+    <product>
+     <property>propulsion/engine[1]/fuel-pump-serviceable</property>
+     <quotient>
+      <property>propulsion/engine[1]/engine-rpm</property>
+      <value>2600.0</value>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[2]/fuel-pump-running-norm">
+   <function>
+    <product>
+     <property>propulsion/engine[2]/fuel-pump-serviceable</property>
+     <quotient>
+      <property>propulsion/engine[2]/engine-rpm</property>
+      <value>2600.0</value>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[3]/fuel-pump-running-norm">
+   <function>
+    <product>
+     <property>propulsion/engine[3]/fuel-pump-serviceable</property>
+     <quotient>
+      <property>propulsion/engine[3]/engine-rpm</property>
+      <value>2600.0</value>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
 
  </channel>
 

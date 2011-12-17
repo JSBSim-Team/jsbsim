@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2010  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@
  <property value="31.99">hydro/float-arm-y-ft</property>
 
  <!-- Tweak factors. :) -->
- <property value="0.6">hydro/drag-tweak-factor</property>
+ <property value="0.5">hydro/drag-tweak-factor</property>
  <property value="20.0">hydro/lift-tweak-factor</property>
  <property value="1.5">hydro/pitch-tweak-factor</property>
  <property value="4.0">hydro/yaw-tweak-factor</property>
@@ -129,30 +129,6 @@
      <value> 57.29578 </value>
      <property> attitude/pitch-rad </property>
     </product>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/s40-pitch-deg">
-   <documentation>
-    Some of the hydrodynamic coefficients are based on
-    data from the Sikorsky S-40 'boat [Dawson:1934:Clipper].
-    As it's hull has a different datum line and behaviour
-    the pitch trim angle needs to be adjusted.
-    This is rough guess based on the reported trim
-    angles for the S.23 and the best trim angles for
-    the S-40.
-   </documentation>
-   <function>
-    <sum>
-     <value> 3.0 </value> <!-- S-40 trim at rest -->
-     <product>
-      <value> 0.22 </value>
-      <sum> <!-- Deviation from trim at rest -->
-       <property> hydro/pitch-deg </property>
-       <value> -4.25 </value> <!-- S.23 trim at rest -->
-      </sum>
-     </product>
-    </sum>
    </function>
   </fcs_function>
 
@@ -247,13 +223,16 @@
     Will lag one time-step behind the true value.
    </documentation>
    <function>
-    <quotient>
-     <property> external_reactions/hydro-Z/magnitude </property>
-     <product>
-      <value> 63.5 </value>
-      <property>hydro/hull-beam-ft3</property>
-     </product>
-    </quotient>
+    <product>
+     <value>0.60</value> <!-- Tweak. The S-40 seems to have a lower load. -->
+     <quotient>
+      <property> external_reactions/hydro-Z/magnitude </property>
+      <product>
+       <value> 63.5 </value>
+       <property>hydro/hull-beam-ft3</property>
+      </product>
+     </quotient>
+    </product>
    </function>
   </fcs_function> 
 
@@ -262,21 +241,53 @@
     Unitless speed coefficient. [Dawson:1934:Clipper]
    </documentation>
    <function>
-    <product>
-     <value> 0.75 </value> <!-- Tweak -->
-     <quotient>
-      <property> hydro/v-fps </property>
-      <pow>
-       <product>
-        <value> 32.185039 </value>
-        <property>hydro/hull-beam-ft</property>
-       </product>
-       <value> 0.5 </value>
-      </pow>
-     </quotient>
-    </product>
+    <quotient>
+     <property> hydro/v-fps </property>
+     <pow>
+      <product>
+       <value> 32.185039 </value>
+       <property>hydro/hull-beam-ft</property>
+      </product>
+      <value> 0.5 </value>
+     </pow>
+    </quotient>
    </function>
   </fcs_function> 
+
+  <fcs_function name="hydro/s40-pitch-deg">
+   <documentation>
+    Some of the hydrodynamic coefficients are based on
+    data from the Sikorsky S-40 'boat [Dawson:1934:Clipper].
+    As it's hull has a different datum line and behaviour
+    the pitch trim angle needs to be adjusted.
+    This is rough guess based on the reported trim
+    angles for the S.23 and the best trim angles for
+    the S-40.
+    Best trim angles
+             At rest  15kt  25kt  30kt  78kt
+      C_V    0.0      1.41  2.35  2.82  7.34
+      S.23   4.08      7.0  10.0  13.0  12.0
+      S-40   3.00      6.5   7.1   6.2   4.0
+
+    Note: "Arthur Gouge quoted a minimum 9 deg. positive angle from
+    datum as the trim angle of an Empire 'boat as it was about to
+    leave the water rather than the 12 deg. angle of the tank tests" ([Cassidy:2004:FE], page 29)
+   </documentation>
+   <function>
+    <table>
+     <independentVar lookup="row">hydro/coefficients/C_V</independentVar>
+     <independentVar lookup="column">hydro/pitch-deg</independentVar>
+     <tableData>
+              -10.0  4.08  6.50  8.00  10.0  11.0  20.0
+       0.0    -10.0   3.0   6.5   8.0  10.0  11.0  20.0 
+       1.41   -10.0   3.0   6.5   8.0   9.0  11.0  20.0
+       2.35   -10.0   3.0   6.0   7.1   8.0  10.0  20.0
+       2.82   -10.0   2.0   4.0   5.0   6.0   6.2  20.0
+       7.34   -10.0   1.0   2.0   3.0   4.0   5.0  20.0
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
 
   <fcs_function name="hydro/coefficients/C_M">
    <documentation>
@@ -640,7 +651,7 @@
    <function>
     <description>Drag due to left float</description>
     <product>
-     <value> 1.0 </value>
+     <value> 2.0 </value>
      <property>hydro/float-beam-ft3</property>
      <property>hydro/drag-tweak-factor</property>
      <!-- From Boeing314A: Hull_resistance (beta=0) -->
@@ -696,7 +707,7 @@
    <function>
     <description>Drag due to right float</description>
     <product>
-     <value> 1.0 </value>
+     <value> 2.0 </value>
      <property>hydro/float-beam-ft3</property>
      <property>hydro/drag-tweak-factor</property>
      <!-- From Boeing314A: Hull_resistance (beta=0) -->
@@ -980,14 +991,14 @@
      <property>hydro/qbar-psf</property>
      <property>hydro/hull-beam-ft3</property>
      <property>hydro/beta-rad</property>
-     <value>-0.10</value>
+     <value>-0.02</value>
      <table>
       <independentVar lookup="row">hydro/pitch-deg</independentVar>
       <independentVar lookup="column">hydro/height-agl-ft</independentVar>
       <tableData breakpoint="">
                0.0    3.0    4.0    6.0    7.0
         0.0   -0.10   0.10   0.10   0.10   0.0
-        1.0   -0.105  0.075  0.75  -0.05   0.0
+        1.0   -0.105  0.075  0.30  -0.05   0.0
         2.0   -0.11  -0.05   0.05  -0.10   0.0
         3.0   -0.12  -0.10   0.00  -0.12   0.0
         4.0   -0.13  -0.13  -0.10  -0.13   0.0
@@ -1007,6 +1018,7 @@
     <product>
      <property>hydro/yaw-tweak-factor</property>
      <property>velocities/psidot-rad_sec</property>
+     <value>0.15</value>
      <table>
       <independentVar lookup="row">hydro/coefficients/C_Delta</independentVar>
       <tableData>
