@@ -129,4 +129,21 @@
     </tableData>
   </table>
 
+<!-- thrust effects of helical tip Mach -->
+<table name="CT_MACH" type="internal">
+  <tableData>
+    0.85   1.0
+    1.05   0.8
+  </tableData>
+</table>
+
+<!-- power-required effects of helical tip Mach -->
+<table name="CP_MACH" type="internal">
+  <tableData>
+    0.85   1.0
+    1.05   1.8
+    2.00   1.4
+  </tableData>
+</table>
+
 </propeller>
