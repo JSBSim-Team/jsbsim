@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.41 2011/11/17 21:07:30 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.42 2011/12/22 22:13:59 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,52 +194,59 @@ FGPropeller::~FGPropeller()
 
 double FGPropeller::Calculate(double EnginePower)
 {
+  FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
   double omega, PowerAvailable;
 
-  double Vel = in.AeroUVW(eU);
+  double Vel = localAeroVel(eU);
   double rho = in.Density;
   double RPS = RPM/60.0;
 
   // Calculate helical tip Mach
   double Area = 0.25*Diameter*Diameter*M_PI;
   double Vtip = RPS * Diameter * M_PI;
-  HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / in.Soundspeed; 
+  HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / in.Soundspeed;
 
   PowerAvailable = EnginePower - GetPowerRequired();
 
   if (RPS > 0.0) J = Vel / (Diameter * RPS); // Calculate J normally
-  else           J = Vel / Diameter;      
+  else           J = Vel / Diameter;
 
   if (MaxPitch == MinPitch) {    // Fixed pitch prop
-         ThrustCoeff = cThrust->GetValue(J);
+    ThrustCoeff = cThrust->GetValue(J);
   } else {                       // Variable pitch prop
-         ThrustCoeff = cThrust->GetValue(J, Pitch);
+    ThrustCoeff = cThrust->GetValue(J, Pitch);
   }
- 
+
   // Apply optional scaling factor to Ct (default value = 1)
   ThrustCoeff *= CtFactor;
 
   // Apply optional Mach effects from CT_MACH table
   if (CtMach) ThrustCoeff *= CtMach->GetValue(HelicalTipMach);
 
-  if (P_Factor > 0.0001) {
-//    alpha = sin(fdmex->GetAuxiliary()->Getalpha() + FGThruster::GetPitch());
-//    beta  = sin(fdmex->GetAuxiliary()->Getbeta() + FGThruster::GetYaw());
-//    SetActingLocationY( GetLocationY() + P_Factor*alpha*Sense);
-//    SetActingLocationZ( GetLocationZ() + P_Factor*beta*Sense);
-    SetActingLocationY( GetLocationY() + P_Factor*in.Alpha*Sense);
-    SetActingLocationZ( GetLocationZ() + P_Factor*in.Beta*Sense);
-  }
-
   Thrust = ThrustCoeff*RPS*RPS*D4*rho;
 
-  // From B. W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics"
-  // first edition, eqn. 6.15 (propeller analysis chapter).
+  // Induced velocity in the propeller disk area. This formula is obtained
+  // from momentum theory - see B. W. McCormick, "Aerodynamics, Aeronautics,
+  // and Flight Mechanics" 1st edition, eqn. 6.15 (propeller analysis chapter).
   Vinduced = 0.5 * (-Vel + sqrt(Vel*Vel + 2.0*Thrust/(rho*Area)));
+
+  // P-factor is simulated by a shift of the acting location of the thrust.
+  // The shift is a multiple of the angle between the propeller shaft axis
+  // and the relative wind that goes through the propeller disk.
+  if (P_Factor > 0.0001) {
+    double tangentialVel = localAeroVel.Magnitude(eV, eW);
+
+    if (tangentialVel > 0.0001) {
+      double angle = atan2(tangentialVel, localAeroVel(eU));
+      double factor = Sense * P_Factor * angle / tangentialVel;
+      SetActingLocationY( GetLocationY() + factor * localAeroVel(eW));
+      SetActingLocationZ( GetLocationZ() + factor * localAeroVel(eV));
+    }
+  }
 
   omega = RPS*2.0*M_PI;
 
-  vFn(1) = Thrust;
+  vFn(eX) = Thrust;
 
   // The Ixx value and rotation speed given below are for rotation about the
   // natural axis of the engine. The transform takes place in the base class
@@ -273,7 +280,7 @@ double FGPropeller::GetPowerRequired(void)
   double RPS = RPM / 60.0;
 
   if (RPS != 0.0) J = Vel / (Diameter * RPS);
-  else            J = Vel / Diameter; 
+  else            J = Vel / Diameter;
 
   if (MaxPitch == MinPitch) {   // Fixed pitch prop
     cPReq = cPower->GetValue(J);
@@ -320,7 +327,7 @@ double FGPropeller::GetPowerRequired(void)
     } else { // Manual Pitch Mode, pitch is controlled externally
 
     }
-  
+
     cPReq = cPower->GetValue(J, Pitch);
   }
 
