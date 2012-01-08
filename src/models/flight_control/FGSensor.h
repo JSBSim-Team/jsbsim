@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.20 2011/08/18 12:42:17 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.21 2012/01/08 12:39:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,6 +74,7 @@ Syntax:
     <max> number </max>
   </quantization>
   <drift_rate> number </drift_rate>
+  <gain> number </gain>
   <bias> number </bias>
   <delay> number < /delay>
 </sensor>
@@ -123,7 +124,7 @@ The delay element can specify a frame delay. The integer number provided is
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.20 $
+@version $Revision: 1.21 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
