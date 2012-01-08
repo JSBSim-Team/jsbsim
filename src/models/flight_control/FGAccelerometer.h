@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.5 2011/07/17 13:51:23 jberndt Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.6 2012/01/08 12:39:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,17 @@ Syntax:
 
 @code
 <accelerometer name="name">
-  <input> property </input>
+  <location unit="{IN | M}">
+    <x> number </x>
+    <y> number </y>
+    <z> number </z>
+  </location>
+  <orientation unit="{RAD | DEG}">
+    <pitch> {number} </pitch>
+    <roll> {number} </roll>
+    <yaw> {number} </yaw>
+  </orientation>
+  <axis> {X | Y | Z} </axis>
   <lag> number </lag>
   <noise variation="PERCENT|ABSOLUTE"> number </noise>
   <quantization name="name">
@@ -80,6 +90,7 @@ Syntax:
     <max> number </max>
   </quantization>
   <drift_rate> number </drift_rate>
+  <gain> number </gain>
   <bias> number </bias>
 </accelerometer>
 @endcode
@@ -87,11 +98,16 @@ Syntax:
 Example:
 
 @code
-<accelerometer name="aero/accelerometer/qbar">
-  <input> aero/qbar </input>
+<accelerometer name="aero/accelerometer/right_tip_wing">
+  <location unit="IN">
+    <x> 43.2 </x>
+    <y> 214. </y>
+    <z> 59.4 </z>
+  </location>
+  <axis> Z </axis>
   <lag> 0.5 </lag>
   <noise variation="PERCENT"> 2 </noise>
-  <quantization name="aero/accelerometer/quantized/qbar">
+  <quantization name="aero/accelerometer/quantized/right_tip_wing">
     <bits> 12 </bits>
     <min> 0 </min>
     <max> 400 </max>
@@ -111,7 +127,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.5 $
+@version $Revision: 1.6 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
