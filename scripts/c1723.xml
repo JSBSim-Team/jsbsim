@@ -18,6 +18,7 @@
     <property value="1"> fcs/center-brake-cmd-norm </property>
     <property value="3.49"> guidance/specified-heading-rad </property>
     <property value="1"> guidance/heading-selector-switch </property>
+    <property value="2498"> simulation/randomseed </property>
 
     <event name="engine start">
       <description>Start the engine and set roll control to heading hold</description>
@@ -30,6 +31,53 @@
       <notify>
         <property caption="Sim Run ID: ">simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
+        <property>accelerations/a-pilot-x-ft_sec2</property>
+        <property>accelerations/a-pilot-y-ft_sec2</property>
+        <property>accelerations/a-pilot-z-ft_sec2</property>
+        <property>accelerations/n-pilot-x-norm</property>
+        <property>accelerations/n-pilot-y-norm</property>
+        <property>accelerations/n-pilot-z-norm</property>
+        <property>accelerations/Nz</property>
+        <property>accelerations/pdot-rad_sec2</property>
+        <property>accelerations/qdot-rad_sec2</property>
+        <property>accelerations/rdot-rad_sec2</property>
+        <property>accelerations/udot-ft_sec2</property>
+        <property>accelerations/vdot-ft_sec2</property>
+        <property>accelerations/wdot-ft_sec2</property>
+        <property>velocities/h-dot-fps</property>
+        <property>velocities/v-north-fps</property>
+        <property>velocities/v-east-fps</property>
+        <property>velocities/v-down-fps</property>
+        <property>velocities/u-fps</property>
+        <property>velocities/v-fps</property>
+        <property>velocities/w-fps</property>
+        <property>velocities/p-rad_sec</property>
+        <property>velocities/q-rad_sec</property>
+        <property>velocities/r-rad_sec</property>
+        <property>velocities/pi-rad_sec</property>
+        <property>velocities/qi-rad_sec</property>
+        <property>velocities/ri-rad_sec</property>
+        <property>velocities/eci-velocity-mag-fps</property>
+        <property>velocities/vc-fps</property>
+        <property>velocities/vc-kts</property>
+        <property>velocities/ve-fps</property>
+        <property>velocities/ve-kts</property>
+        <property>velocities/vtrue-fps</property>
+        <property>velocities/vtrue-kts</property>
+        <property>velocities/machU</property>
+        <property>velocities/p-aero-rad_sec</property>
+        <property>velocities/q-aero-rad_sec</property>
+        <property>velocities/r-aero-rad_sec</property>
+        <property>velocities/phidot-rad_sec</property>
+        <property>velocities/thetadot-rad_sec</property>
+        <property>velocities/psidot-rad_sec</property>
+        <property>velocities/u-aero-fps</property>
+        <property>velocities/v-aero-fps</property>
+        <property>velocities/w-aero-fps</property>
+        <property>velocities/vt-fps</property>
+        <property>velocities/mach</property>
+        <property>velocities/vg-fps</property>
+      
       </notify>
     </event>
 

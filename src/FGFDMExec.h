@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.74 2011/11/09 21:58:26 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.75 2012/01/10 06:00:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.74 $
+    @version $Revision: 1.75 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -615,6 +615,7 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void ResetToInitialConditions(int mode);
+  void SRand(int sr);
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);
