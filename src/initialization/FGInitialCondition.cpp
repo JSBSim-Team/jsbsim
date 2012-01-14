@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.78 2011/11/09 21:57:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.79 2012/01/14 18:14:41 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -165,10 +165,10 @@ void FGInitialCondition::WriteStateFile(int num)
     filename = "initfile.xml";
   else
     filename.append("/initfile.xml");
-  
+
   ofstream outfile(filename.c_str());
   FGPropagate* Propagate = fdmex->GetPropagate();
-  
+
   if (outfile.is_open()) {
     outfile << "<?xml version=\"1.0\"?>" << endl;
     outfile << "<initialize name=\"reset00\">" << endl;
@@ -1182,7 +1182,7 @@ bool FGInitialCondition::Load_v2(void)
   // - Local
   // - Body
   // The vehicle will be defaulted to (0,0,0) in the Body frame if nothing is provided.
-  
+
   Element* velocity_el = document->FindElement("velocity");
   FGColumnVector3 vInitVelocity = FGColumnVector3(0.0, 0.0, 0.0);
   FGMatrix33 mTec2l = position.GetTec2l();
@@ -1230,7 +1230,7 @@ bool FGInitialCondition::Load_v2(void)
   // - ECI (Earth Centered Inertial)
   // - ECEF (Earth Centered, Earth Fixed)
   // - Body
-  
+
   Element* attrate_el = document->FindElement("attitude_rate");
   const FGMatrix33& Tl2b = orientation.GetT();
 
@@ -1253,19 +1253,19 @@ bool FGInitialCondition::Load_v2(void)
     } else if (frame == "ecef") {
       vPQR_body = Tl2b * position.GetTec2l() * vAttRate;
     } else if (frame == "local") {
-      vPQR_body = vAttRate + vOmegaLocal;
+      vPQR_body = Tl2b * (vAttRate + vOmegaLocal);
     } else if (!frame.empty()) { // misspelling of frame
-      
+
       cerr << endl << fgred << "  Attitude rate frame type: \"" << frame
            << "\" is not supported!" << reset << endl << endl;
       result = false;
 
     } else if (frame.empty()) {
-      vPQR_body = vOmegaLocal;
+      vPQR_body = Tl2b * vOmegaLocal;
     }
 
   } else { // Body frame attitude rate assumed 0 relative to local.
-      vPQR_body = vOmegaLocal;
+      vPQR_body = Tl2b * vOmegaLocal;
   }
 
   return result;
