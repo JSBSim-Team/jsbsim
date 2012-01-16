@@ -11,7 +11,7 @@
     <author> Thomas Kreitler </author>
     <email> t.kreitler at web dot de </email>
     <filecreationdate>2010-10-07</filecreationdate>
-    <version>$Revision: 1.3 $</version>
+    <version>$Revision: 1.4 $</version>
     <description> Models a Bell209/AH1S helicopter. </description>
 
     <reference
@@ -184,7 +184,7 @@
 
   <propulsion>
     <!-- should become avco_lycoming_t53 turboprop_engine -->
-    <engine file='electric_1500hp'> 
+    <engine file="electric_1500hp"> 
       <location unit="IN">
         <x>   220.0 </x>
         <y>     0.0 </y>
@@ -212,7 +212,7 @@
       </thruster>
     </engine>
     <!-- used for linkage -->
-    <engine file='electric_1hp_dummy'>
+    <engine file="electric_1hp_dummy">
       <location unit="IN">
         <x>   220.0 </x>
         <y>     0.0 </y>

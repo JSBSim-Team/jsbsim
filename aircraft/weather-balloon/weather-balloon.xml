@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="null-sled" version="2.0" release="ALPHA"
+<fdm_config name="Weather Balloon" version="2.0" release="ALPHA"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
   <author> Ron Jensen </author>
   <filecreationdate>2011-12-11</filecreationdate>
-  <version>$Revision: 1.2 $</version>
+  <version>$Revision: 1.3 $</version>
   <description> Models a 6-foot weather balloon. </description>
   <license
      licenseName="GPL (General Public License)"
@@ -388,28 +388,6 @@
     </function> 
     </heat>
     <valve_coefficient unit="FT4*SEC/SLUG"> 100000 </valve_coefficient> <!-- just a big number so the hydrogen disappears when the balloon bursts -->
-<!--
-    [<ballonet>
-      <location unit="{M | IN}">
-        <x> {number} </x>
-        <y> {number} </y>
-        <z> {number} </z>
-      </location>
-      <x_{radius|width} unit="{M | IN}"> {number} </x_{radius|width}>
-      <y_{radius|width} unit="{M | IN}"> {number} </y_{radius|width}>
-      <z_{radius|width} unit="{M | IN}"> {number} </z_{radius|width}>
-      <max_overpressure unit="{PA | PSI}"> {number} </max_overpressure>
-      <valve_coefficient unit="{M4*SEC/KG | FT4*SEC/SLUG}"> {number}
-                                                  </valve_coefficient>
-      [<fullness> {number} </fullness>]
-      [<heat>
-       {heat transfer coefficients} [lb ft / (sec R)]
-      </heat>]
-      [<blower_input>
-       {input air flow function} [ft^3 / sec]
-      </blower_input>]
-    </ballonet>]
--->
   </gas_cell>
 </buoyant_forces>
 
