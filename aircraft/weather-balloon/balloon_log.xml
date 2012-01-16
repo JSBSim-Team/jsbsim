@@ -29,5 +29,6 @@
   <property>inertia/weight-lbs</property>
   <property>forces/fbz-buoyancy-lbs</property>
   <property>inertia/pointmass-location-Z-inches</property>
+  <property>buoyant_forces/gas-cell/delta-pressure-psf</property>
 </output>
 
