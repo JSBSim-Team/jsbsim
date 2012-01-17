@@ -83,15 +83,31 @@
    </notify>
   </event>
 
-  <event name="Flaps out">
-   <description>Extend 1/3 flaps</description>
+  <event name="Flaps out 1">
+   <description>Start extending flaps</description>
    <condition>
     simulation/sim-time-sec GE 10.0
    </condition>
    <notify>
     <property>inertia/cg-x-in</property>
+    <property>fcs/flap-pos-norm</property>
+    <property>fcs/flap-pos-deg</property>
    </notify>
-   <set name="fcs/flap-cmd-norm" value="0.33"/>
+   <set name="fcs/flap-motor-cmd-norm" value="1.0"/>
+  </event>
+
+  <event name="Flaps out 2">
+   <description>Stop flaps at 1/3</description>
+   <condition>
+    simulation/sim-time-sec GE 10.0
+    fcs/flap-pos-norm GE 0.33
+   </condition>
+   <notify>
+    <property>inertia/cg-x-in</property>
+    <property>fcs/flap-pos-norm</property>
+    <property>fcs/flap-pos-deg</property>
+   </notify>
+   <set name="fcs/flap-motor-cmd-norm" value="0.0"/>
   </event>
 
   <event name="Setup fuel supply">
@@ -393,6 +409,8 @@
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>fcs/copilot/elevator-cmd-norm</property>
+    <property>fcs/flap-pos-norm</property>
+    <property>fcs/flap-pos-deg</property>
    </notify>
    <set name="simulation/notify-time-trigger" value="5" type="FG_DELTA"/>
   </event>
