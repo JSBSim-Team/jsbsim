@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.75 2012/01/10 06:00:17 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.76 2012/01/21 16:46:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.75 $
+    @version $Revision: 1.76 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,6 +464,10 @@ public:
   void EnableOutput(void);
   /// Pauses execution by preventing time from incrementing.
   void Hold(void) {holding = true;}
+  /// Turn on hold after increment
+  void EnableIncrementThenHold(int Timesteps) {TimeStepsUntilHold = Timesteps; IncrementThenHolding = true;}
+  /// Checks if required to hold afer increment
+  void CheckIncrementalHold(void);
   /// Resumes execution from a "Hold".
   void Resume(void) {holding = false;}
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
@@ -563,6 +567,8 @@ private:
   double saved_dT;
   double sim_time;
   bool holding;
+  bool IncrementThenHolding;
+  int TimeStepsUntilHold;
   bool Constructing;
   bool modelLoaded;
   bool IsChild;

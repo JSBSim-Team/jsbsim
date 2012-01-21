@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.72 2011/11/10 12:06:13 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.73 2012/01/21 16:46:08 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -450,7 +450,11 @@ int real_main(int argc, char* argv[])
   while (result && FDMExec->GetSimTime() <= end_time) {
 
     FDMExec->ProcessMessage(); // Process messages, if any.
-
+    
+    // Check if increment then hold is on and take appropriate actions if it is
+    // Iterate is not supported in realtime - only in batch and playnice modes
+    FDMExec->CheckIncrementalHold();
+    
     // if running realtime, throttle the execution, else just run flat-out fast
     // unless "playing nice", in which case sleep for a while (0.01 seconds) each frame.
     // If suspended, then don't increment cumulative realtime "stopwatch".

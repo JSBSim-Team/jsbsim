@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.21 2011/05/20 03:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.22 2012/01/21 16:46:09 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,6 +174,22 @@ bool FGInput::Run(bool Holding)
 
       } else if (command == "resume") {             // RESUME
 
+        FDMExec->Resume();
+        socket->Reply("");
+	
+      } else if (command == "iterate") {             // ITERATE
+
+        int argumentInt;
+        istringstream (argument) >> argumentInt;
+        if (argument.size() == 0) {
+          socket->Reply("No argument supplied for number of iterations.\n");
+          break;
+        }
+        if ( !(argumentInt > 0) ){
+          socket->Reply("Required argument must be a positive Integer.\n");
+          break;
+        }
+        FDMExec->EnableIncrementThenHold( argumentInt );
         FDMExec->Resume();
         socket->Reply("");
 

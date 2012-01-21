@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.121 2012/01/10 06:00:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.122 2012/01/21 16:46:08 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   Terminate = false;
   StandAlone = false;
   firstPass = true;
+  
+  IncrementThenHolding = false;  // increment then hold is off by default
+  TimeStepsUntilHold = -1;
 
   sim_time = 0.0;
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
@@ -1118,6 +1121,30 @@ void FGFDMExec::EnableOutput(void)
 {
   for (unsigned i=0; i<Outputs.size(); i++) {
     Outputs[i]->Enable();
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::CheckIncrementalHold(void)
+{
+  // Only check if increment then hold is on
+  if( IncrementThenHolding ) {
+
+    if (TimeStepsUntilHold == 0) {
+
+      // Should hold simulation if TimeStepsUntilHold has reached zero
+      holding = true;
+
+      // Still need to decrement TimeStepsUntilHold as value of -1
+      // indicates that incremental then hold is turned off
+      IncrementThenHolding = false;
+      TimeStepsUntilHold--;
+
+    } else if ( TimeStepsUntilHold > 0 ) {
+      // Keep decrementing until 0 is reached	  
+      TimeStepsUntilHold--;
+    }
   }
 }
 
