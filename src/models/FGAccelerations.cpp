@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.10 2011/12/11 17:03:05 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.11 2012/01/22 18:39:58 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +126,7 @@ bool FGAccelerations::Run(bool Holding)
 // Compute body frame rotational accelerations based on the current body moments
 //
 // vPQRdot is the derivative of the absolute angular velocity of the vehicle
-// (body rate with respect to the inertial frame), expressed in the body frame,
+// (body rate with respect to the ECEF frame), expressed in the body frame,
 // where the derivative is taken in the body frame.
 // J is the inertia matrix
 // Jinv is the inverse inertia matrix
@@ -163,7 +163,7 @@ void FGAccelerations::CalculateQuatdot(void)
 // This set of calculations results in the body and inertial frame accelerations
 // being computed.
 // Compute body and inertial frames accelerations based on the current body
-// forces including centripetal and coriolis accelerations for the former.
+// forces including centripetal and Coriolis accelerations for the former.
 // in.vOmegaPlanet is the Earth angular rate - expressed in the inertial frame -
 //   so it has to be transformed to the body frame. More completely,
 //   in.vOmegaPlanet is the rate of the ECEF frame relative to the Inertial
@@ -245,12 +245,12 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // Translation
   vdot = vUVWdot;
-  if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+  if (dt > 0.) // Zeroes out the relative movement between the aircraft and the ground
     vdot += (in.vUVW - in.Tec2b * in.TerrainVelocity) / dt;
 
   // Rotation
   wdot = vPQRdot;
-  if (dt > 0.) // Zeroes out the relative movement between aircraft and ground
+  if (dt > 0.) // Zeroes out the relative movement between the aircraft and the ground
     wdot += (in.vPQR - in.Tec2b * in.TerrainAngularVel) / dt;
 
   // Prepare the linear system for the Gauss-Seidel algorithm :
