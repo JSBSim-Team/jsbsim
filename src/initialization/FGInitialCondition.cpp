@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.79 2012/01/14 18:14:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.80 2012/01/22 16:31:56 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1026,13 +1026,14 @@ bool FGInitialCondition::Load_v1(void)
 
   // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
   // This is the rotation rate of the "Local" frame, expressed in the local frame.
+  const FGMatrix33& Tl2b = orientation.GetT();
   double radInv = 1.0 / position.GetRadius();
   FGColumnVector3 vOmegaLocal = FGColumnVector3(
    radInv*vUVW_NED(eEast),
   -radInv*vUVW_NED(eNorth),
   -radInv*vUVW_NED(eEast)*position.GetTanLatitude() );
 
-  vPQR_body = vOmegaLocal;
+  vPQR_body = Tl2b * vOmegaLocal;
 
   return result;
 }
