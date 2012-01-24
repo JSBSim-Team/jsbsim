@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<!-- JSBSim -aircraft=weather-balloon -initfile=reset10 -logdirectivefile=aircraft/weather-balloon/balloon_log.xml -end-time=600000 -simulation-rate=120 -->
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Launch the weather balloon">
+  <description>This run is for testing the weather balloon model.</description>
+  <use aircraft="weather-balloon" initialize="reset10"/>
+  <run start="0.0" end="600000" dt="0.00833333">
+    <property value="60"> simulation/notify-time-trigger </property>
+    <event name="initialize">
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
+      <notify/>
+    </event>
+
+    <event name="Repeating Notify" persistent="true">
+      <description>Output message at periodic intervals</description>
+      <notify>
+        <property>position/h-agl-ft</property> 
+        <property>velocities/vt-fps</property>
+        <property>metrics/radius-ft</property>
+      </notify>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+    <event name="Terminate">
+      <description> End condition. Balloon is empty and on the ground. </description>
+      <condition>
+           metrics/radius-ft lt 0.1
+           position/h-agl-ft lt 1
+      </condition>
+      <set name="simulation/terminate" value="1.0"/>
+      <notify>
+        <property>simulation/sim-time-sec</property>
+      </notify>
+    </event> 
+  </run>
+</runscript>
