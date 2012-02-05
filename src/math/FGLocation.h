@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.30 2012/02/05 14:50:53 bcoconni Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.31 2012/02/05 14:56:17 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -151,7 +151,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.30 2012/02/05 14:50:53 bcoconni Exp $
+    @version $Id: FGLocation.h,v 1.31 2012/02/05 14:56:17 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,7 +340,7 @@ public:
       @param altitudeAGL altitude above Ground Level in feet.
       @see SetGroundCallback */
   void SetAltitudeAGL(double altitudeAGL, double time)
-  { SetRadius(GroundCallback->GetTerrainRadius(time, *this) + altitudeAGL); }
+  { SetRadius(GroundCallback->GetTerrainGeoCentRadius(time, *this) + altitudeAGL); }
 
   /** Get the local sea level radius
       @return the sea level radius at the location in feet.
@@ -352,7 +352,7 @@ public:
       @return the terrain level radius at the location in feet.
       @see SetGroundCallback */
   double GetTerrainRadius(double time) const
-  { ComputeDerived(); return GroundCallback->GetTerrainRadius(time, *this); }
+  { ComputeDerived(); return GroundCallback->GetTerrainGeoCentRadius(time, *this); }
 
   /** Get the altitude above sea level.
       @return the altitude ASL in feet.
