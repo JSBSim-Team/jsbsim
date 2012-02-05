@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.42 2011/09/07 02:36:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.43 2012/02/05 11:15:54 bcoconni Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,7 +476,7 @@ double FGFunction::GetValue(void) const
   case eIfThen:
     {
       i = Parameters.size();
-      if (i != 3) {
+      if (i == 3) {
         if (GetBinary(temp) == 1) {
           temp = Parameters[1]->GetValue();
         } else {

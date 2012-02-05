@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.26 2011/11/06 18:14:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.27 2012/02/05 14:50:53 bcoconni Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
@@ -61,9 +61,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGLocation::FGLocation(void)
+  : mECLoc(1.0, 0.0, 0.0), mCacheValid(false)
 {
-  mCacheValid = false;
-
   a = b = a2 = b2 = 0.0;
   e = e2 = f = 1.0;
   eps2 = -1.0;
@@ -78,14 +77,13 @@ FGLocation::FGLocation(void)
   mTec2i.InitMatrix();
   mTi2l.InitMatrix();
   mTl2i.InitMatrix();
-  mECLoc.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLocation::FGLocation(double lon, double lat, double radius)
+  : mCacheValid(false)
 {
-
   a = b = a2 = b2 = 0.0;
   e = e2 = f = 1.0;
   eps2 = -1.0;
@@ -112,7 +110,8 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLocation::FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false)
+FGLocation::FGLocation(const FGColumnVector3& lv)
+  : mECLoc(lv), mCacheValid(false)
 {
   a = b = a2 = b2 = 0.0;
   e = e2 = f = 1.0;
@@ -288,7 +287,7 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
 void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 {
   mCacheValid = false;
-  
+
   mGeodLat = lat;
   mLon = lon;
   GeodeticAltitude = height;
@@ -316,30 +315,6 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
   e = sqrt(e2);
   eps2 = a2/b2 - 1.0;
   f = 1.0 - b/a;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Compute the ECEF to ECI transformation matrix using Stevens and Lewis "Aircraft
-// Control and Simulation", second edition, eqn. 1.4-12, pg. 39. In Stevens and Lewis
-// notation, this is C_i/e, a transformation from ECEF to ECI.
-
-const FGMatrix33& FGLocation::GetTec2i(void)
-{
-  ComputeDerived();
-  return mTec2i;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This is given in Stevens and Lewis "Aircraft
-// Control and Simulation", second edition, eqn. 1.4-12, pg. 39
-// The notation in Stevens and Lewis is: C_e/i. This represents a transformation
-// from ECI to ECEF - and the orientation of the ECEF frame relative to the ECI
-// frame.
-
-const FGMatrix33& FGLocation::GetTi2ec(void)
-{
-  ComputeDerived();
-  return mTi2ec;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -387,7 +362,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   // Compute the transform matrices from and to the earth centered frame.
   // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
-  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e - the 
+  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e - the
   // orientation of the navigation (local) frame relative to the ECEF frame,
   // and a transformation from ECEF to nav (local) frame.
 
@@ -395,7 +370,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
                            -sinLon   ,     cosLon    ,    0.0 ,
                        -cosLon*cosLat, -sinLon*cosLat, -sinLat  );
 
-  // In Stevens and Lewis notation, this is C_e/n - the 
+  // In Stevens and Lewis notation, this is C_e/n - the
   // orientation of the ECEF frame relative to the nav (local) frame,
   // and a transformation from nav (local) to ECEF frame.
 
@@ -421,7 +396,7 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   if (a != 0.0 && b != 0.0) {
     double c, p, q, s, t, u, v, w, z, p2, u2, r0;
-    double Ne, P, Q0, Q, signz0, sqrt_q, z_term; 
+    double Ne, P, Q0, Q, signz0, sqrt_q, z_term;
     p  = fabs(mECLoc(eZ))/eps2;
     s  = r02/(e2*eps2);
     p2 = p*p;

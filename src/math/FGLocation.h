@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.29 2011/11/06 18:14:51 bcoconni Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.31 2012/02/05 14:56:17 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** FGLocation holds an arbitrary location in the Earth centered Earth fixed
-    reference frame (ECEF). This coordinate frame has its center in the middle
+    reference frame (ECEF). The coordinate frame ECEF has its center in the middle
     of the earth. The X-axis points from the center of the Earth towards a
     location with zero latitude and longitude on the Earth surface. The Y-axis
     points from the center of the Earth towards a location with zero latitude
@@ -95,10 +95,15 @@ CLASS DOCUMENTATION
     conversion functions for conversion of position vectors given in the one
     frame to positions in the other frame.
 
+    To keep the transformation matrices between the ECI and ECEF frames up to
+    date, the Earth angular position must be updated by calling
+    SetEarthPositionAngle() or IncrementEarthPositionAngle(). This must be done
+    prior to any conversion from and to the ECI frame.
+
     The Earth centered reference frame is NOT an inertial frame since it rotates
     with the Earth.
 
-    The coordinates in the Earth centered frame are the master values. All other
+    The cartesian coordinates (X,Y,Z) in the Earth centered frame are the master values. All other
     values are computed from these master values and are cached as long as the
     location is changed by access through a non-const member function. Values
     are cached to improve performance. It is best practice to work with a
@@ -112,14 +117,14 @@ CLASS DOCUMENTATION
 
     Given,
 
-    -that we model a vehicle near the Earth
-    -that the Earth surface radius is about 2*10^7, ft
-    -that we use double values for the representation of the location
-    
+    - that we model a vehicle near the Earth
+    - that the Earth surface radius is about 2*10^7, ft
+    - that we use double values for the representation of the location
+
     we have an accuracy of about
-    
+
     1e-16*2e7ft/1 = 2e-9 ft
-    
+
     left. This should be sufficient for our needs. Note that this is the same
     relative accuracy we would have when we compute directly with
     lon/lat/radius. For the radius value this is clear. For the lon/lat pair
@@ -146,7 +151,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.29 2011/11/06 18:14:51 bcoconni Exp $
+    @version $Id: FGLocation.h,v 1.31 2012/02/05 14:56:17 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,7 +171,10 @@ public:
       @param radius distance from center of earth to vehicle in feet*/
   FGLocation(double lon, double lat, double radius);
 
-  /** Column constructor. */
+  /** Constructor to initialize the location with the cartesian coordinates
+      (X,Y,Z) contained in the input FGColumnVector3. Distances are in feet,
+      the position is expressed in the ECEF frame.
+      @param lv vector that contain the cartesian coordinates*/
   FGLocation(const FGColumnVector3& lv);
 
   /** Copy constructor. */
@@ -301,6 +309,11 @@ public:
       return -mTec2l(3,3)/cLat;
   }
 
+  /** Return the Earth Position Angle.
+      This is the relative orientation of the ECEF frame with respect to the
+      Inertial frame.
+      @return the Earth fixed frame (ECEF) rotation offset about the axis with
+              respect to the Inertial (ECI) frame in radians. */
   double GetEPA() const {return epa;}
 
   /** Get the distance from the center of the earth.
@@ -310,35 +323,46 @@ public:
   //double GetRadius() const { return mECLoc.Magnitude(); } // may not work with FlightGear
   double GetRadius() const { ComputeDerived(); return mRadius; }
 
-  /// @name Functions that need the ground callback to be set
+  /** @name Functions that rely on the ground callback
+      The following functions allow to set and get the vehicle position above
+      the sea or the ground. The sea and the ground levels are obtained by
+      interrogating an FGGroundCallback instance. A ground callback must
+      therefore be set with SetGroundCallback() before calling any of these
+      functions. */
   ///@{
   /** Set the altitude above sea level.
-      @param altitudeASL altitude above Sea Level in feet. */
+      @param altitudeASL altitude above Sea Level in feet.
+      @see SetGroundCallback */
   void SetAltitudeASL(double altitudeASL)
   { SetRadius(GroundCallback->GetSeaLevelRadius(*this) + altitudeASL); }
 
   /** Set the altitude above ground level.
-      @param altitudeAGL altitude above Ground Level in feet. */
+      @param altitudeAGL altitude above Ground Level in feet.
+      @see SetGroundCallback */
   void SetAltitudeAGL(double altitudeAGL, double time)
   { SetRadius(GroundCallback->GetTerrainGeoCentRadius(time, *this) + altitudeAGL); }
 
   /** Get the local sea level radius
-      @return the sea level radius at the location in feet. */
+      @return the sea level radius at the location in feet.
+      @see SetGroundCallback */
   double GetSeaLevelRadius(void) const
   { ComputeDerived(); return GroundCallback->GetSeaLevelRadius(*this); }
 
   /** Get the local terrain radius
-      @return the terrain level radius at the location in feet. */
+      @return the terrain level radius at the location in feet.
+      @see SetGroundCallback */
   double GetTerrainRadius(double time) const
   { ComputeDerived(); return GroundCallback->GetTerrainGeoCentRadius(time, *this); }
 
   /** Get the altitude above sea level.
-      @return the altitude ASL in feet. */
+      @return the altitude ASL in feet.
+      @see SetGroundCallback */
   double GetAltitudeASL() const
   { ComputeDerived(); return GroundCallback->GetAltitude(*this); }
 
   /** Get the altitude above ground level.
-      @return the altitude AGL in feet. */
+      @return the altitude AGL in feet.
+      @see SetGroundCallback */
   double GetAltitudeAGL(double time) const {
     FGLocation c;
     FGColumnVector3 n,v,w;
@@ -351,55 +375,79 @@ public:
       @param normal  Terrain normal vector in contact point    (ECEF frame)
       @param v       Terrain linear velocity in contact point  (ECEF frame)
       @param w       Terrain angular velocity in contact point (ECEF frame)
-      @return Location altitude above contact point (AGL) in feet. */
+      @return Location altitude above contact point (AGL) in feet.
+      @see SetGroundCallback */
   double GetContactPoint(double time,
                          FGLocation& contact, FGColumnVector3& normal,
                          FGColumnVector3& v, FGColumnVector3& w) const
   { ComputeDerived(); return GroundCallback->GetAGLevel(time, *this, contact, normal, v, w); }
+  ///@}
 
-  /** Sets the ground callback pointer. For optimal memory management, a shared
-      pointer is used internally that maintains a reference counter. The calling
-      application must therefore use FGGroundCallback_ptr 'smart pointers' to
-      manage their copy of the ground callback.
+  /** Sets the ground callback pointer. The FGGroundCallback instance will be
+      interrogated by FGLocation each time some terrain informations are needed.
+      This will mainly occur when altitudes above the sea level or above the
+      ground level are needed. A 'smart pointer' is used internally to prevent
+      the FGGroundCallback instance against accidental deletion. This can only
+      work if the calling application also make use of FGGroundCallback_ptr
+      'smart pointers' to manage their copy of the ground callback.
       @param gc A pointer to a ground callback object
       @see FGGroundCallback
    */
   static void SetGroundCallback(FGGroundCallback* gc) { GroundCallback = gc; }
 
-  /** Get a pointer to the ground callback currently used. It is recommanded
-      to store the returned pointer in a 'smart pointer' FGGroundCallback_ptr.
+  /** Get a pointer to the ground callback currently used. Since the
+      FGGroundcallback instance might have been created outside JSBSim, it is
+      recommanded to store the returned pointer in a 'smart pointer'
+      FGGroundCallback_ptr. This pointer maintains a reference counter and
+      protects the returned pointer against an accidental deletion of the object
+      it is pointing to.
       @return A pointer to the current ground callback object.
       @see FGGroundCallback
    */
   static FGGroundCallback* GetGroundCallback(void) { return GroundCallback; }
-  ///@}
 
   /** Transform matrix from local horizontal to earth centered frame.
-      Returns a const reference to the rotation matrix of the transform from
+      @return a const reference to the rotation matrix of the transform from
       the local horizontal frame to the earth centered frame. */
   const FGMatrix33& GetTl2ec(void) const { ComputeDerived(); return mTl2ec; }
 
   /** Transform matrix from the earth centered to local horizontal frame.
-      Returns a const reference to the rotation matrix of the transform from
+      @return a const reference to the rotation matrix of the transform from
       the earth centered frame to the local horizontal frame. */
   const FGMatrix33& GetTec2l(void) const { ComputeDerived(); return mTec2l; }
 
   /** Transform matrix from inertial to earth centered frame.
-      Returns a const reference to the rotation matrix of the transform from
-      the inertial frame to the earth centered frame (ECI to ECEF). */
-  const FGMatrix33& GetTi2ec(void);
+      @return a const reference to the rotation matrix of the transform from
+      the inertial frame to the earth centered frame (ECI to ECEF).
+      @see SetEarthPositionAngle
+      @see IncrementEarthPositionAngle */
+  const FGMatrix33& GetTi2ec(void) const { ComputeDerived(); return mTi2ec; }
 
   /** Transform matrix from the earth centered to inertial frame.
-      Returns a const reference to the rotation matrix of the transform from
-      the earth centered frame to the inertial frame (ECEF to ECI). */
-  const FGMatrix33& GetTec2i(void);
+      @return a const reference to the rotation matrix of the transform from
+      the earth centered frame to the inertial frame (ECEF to ECI).
+      @see SetEarthPositionAngle
+      @see IncrementEarthPositionAngle */
+  const FGMatrix33& GetTec2i(void) const { ComputeDerived(); return mTec2i; }
 
+  /** Transform matrix from the inertial to local horizontal frame.
+      @return a const reference to the rotation matrix of the transform from
+      the inertial frame to the local horizontal frame.
+      @see SetEarthPositionAngle
+      @see IncrementEarthPositionAngle */
   const FGMatrix33& GetTi2l(void) const {ComputeDerived(); return mTi2l;}
 
+  /** Transform matrix from local horizontal to inertial frame.
+      @return a const reference to the rotation matrix of the transform from
+      the local horizontal frame to the inertial frame.
+      @see SetEarthPositionAngle
+      @see IncrementEarthPositionAngle */
   const FGMatrix33& GetTl2i(void) const {ComputeDerived(); return mTl2i;}
 
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
+      This function calculates the FGLocation of an object which position
+      relative to the vehicle is given as in input.
       @param lvec Vector in the local horizontal coordinate frame
       @return The location in the earth centered and fixed frame */
   FGLocation LocalToLocation(const FGColumnVector3& lvec) const {
@@ -408,6 +456,8 @@ public:
 
   /** Conversion from a location in the earth centered and fixed frame
       to local horizontal frame coordinates.
+      This function calculates the relative position between the vehicle and
+      the input vector and returns the result expressed in the local frame.
       @param ecvec Vector in the earth centered and fixed frame
       @return The vector in the local horizontal coordinate frame */
   FGColumnVector3 LocationToLocal(const FGColumnVector3& ecvec) const {
@@ -456,7 +506,7 @@ public:
       The location can be set by an Earth-centered, Earth-fixed (ECEF) frame
       position vector. The cache is marked as invalid, so any future requests
       for selected important data will cause the parameters to be calculated.
-      @param v the ECEF column vector in feet. 
+      @param v the ECEF column vector in feet.
       @return a reference to the FGLocation object. */
   const FGLocation& operator=(const FGColumnVector3& v)
   {
@@ -464,12 +514,12 @@ public:
     mECLoc(eY) = v(eY);
     mECLoc(eZ) = v(eZ);
     mCacheValid = false;
-    ComputeDerived();
+    //ComputeDerived();
     return *this;
   }
 
   /** Sets this location via the supplied location object.
-      @param v A location object reference. 
+      @param v A location object reference.
       @return a reference to the FGLocation object. */
   const FGLocation& operator=(const FGLocation& l);
 
@@ -484,39 +534,61 @@ public:
   bool operator!=(const FGLocation& l) const { return ! operator==(l); }
 
   /** This operator adds the ECEF position vectors.
-      The supplied vector (right side) is added to the ECEF position vector
-      on the left side of the equality, and a pointer to this object is
-      returned. */
+      The cartesian coordinates of the supplied vector (right side) are added to
+      the ECEF position vector on the left side of the equality, and a reference
+      to this object is returned. */
   const FGLocation& operator+=(const FGLocation &l) {
     mCacheValid = false;
     mECLoc += l.mECLoc;
     return *this;
   }
 
+  /** This operator substracts the ECEF position vectors.
+      The cartesian coordinates of the supplied vector (right side) are
+      substracted from the ECEF position vector on the left side of the
+      equality, and a reference to this object is returned. */
   const FGLocation& operator-=(const FGLocation &l) {
     mCacheValid = false;
     mECLoc -= l.mECLoc;
     return *this;
   }
 
+  /** This operator scales the ECEF position vector.
+      The cartesian coordinates of the ECEF position vector on the left side of
+      the equality are scaled by the supplied value (right side), and a
+      reference to this object is returned. */
   const FGLocation& operator*=(double scalar) {
     mCacheValid = false;
     mECLoc *= scalar;
     return *this;
   }
 
+  /** This operator scales the ECEF position vector.
+      The cartesian coordinates of the ECEF position vector on the left side of
+      the equality are scaled by the inverse of the supplied value (right side),
+      and a reference to this object is returned. */
   const FGLocation& operator/=(double scalar) {
     return operator*=(1.0/scalar);
   }
 
+  /** This operator adds two ECEF position vectors.
+      A new object is returned that defines a position which is the sum of the
+      cartesian coordinates of the two positions provided. */
   FGLocation operator+(const FGLocation& l) const {
     return FGLocation(mECLoc + l.mECLoc);
   }
 
+  /** This operator substracts two ECEF position vectors.
+      A new object is returned that defines a position which is the difference
+      of the cartesian coordinates of the two positions provided. */
   FGLocation operator-(const FGLocation& l) const {
     return FGLocation(mECLoc - l.mECLoc);
   }
 
+  /** This operator scales an ECEF position vector.
+      A new object is returned that defines a position made of the cartesian
+      coordinates of the provided ECEF position scaled by the supplied scalar
+      value. */
   FGLocation operator*(double scalar) const {
     return FGLocation(scalar*mECLoc);
   }
@@ -558,7 +630,7 @@ private:
   mutable double mRadius;
   mutable double mGeodLat;
   mutable double GeodeticAltitude;
-  
+
   double initial_longitude;
 
   /** The cached rotation matrices from and to the associated frames. */
