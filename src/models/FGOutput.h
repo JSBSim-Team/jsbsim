@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.24 2011/11/10 12:06:14 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.25 2012/02/07 23:15:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.24 2011/11/10 12:06:14 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.25 2012/02/07 23:15:37 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,6 +167,9 @@ public:
   bool Toggle(void) {enabled = !enabled; return enabled;}
 
   bool Load(Element* el);
+  bool Load(int subSystems, std::string protocol, std::string type, std::string port, 
+                            std::string name, double outRate,
+                            std::vector<FGPropertyManager *> & outputProperties);
   string GetOutputFileName(void) const {return Filename;}
 
   /// Subsystem types for specifying which will be output in the FDM data logging

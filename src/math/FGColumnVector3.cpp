@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.14 2010/12/07 12:57:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.15 2012/02/07 00:27:51 jentron Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,9 +65,9 @@ FGColumnVector3::FGColumnVector3(void)
 string FGColumnVector3::Dump(const string& delimiter) const
 {
   ostringstream buffer;
-  buffer << std::setw(18) << std::setprecision(16) << data[0] << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << data[1] << delimiter;
-  buffer << std::setw(18) << std::setprecision(16) << data[2];
+  buffer << std::setprecision(16) << data[0] << delimiter;
+  buffer << std::setprecision(16) << data[1] << delimiter;
+  buffer << std::setprecision(16) << data[2];
   return buffer.str();
 }
 
