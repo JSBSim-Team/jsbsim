@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.32 2011/10/22 14:38:30 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.33 2012/02/10 23:05:03 andgi Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,7 +159,7 @@ void FGJSBBase::PutMessage(const string& text, int iVal)
   msg.messageId = messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eInteger;
-  msg.bVal = (iVal != 0);
+  msg.iVal = iVal;
   Messages.push(msg);
 }
 
@@ -172,7 +172,7 @@ void FGJSBBase::PutMessage(const string& text, double dVal)
   msg.messageId = messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eDouble;
-  msg.bVal = (dVal != 0.0);
+  msg.dVal = dVal;
   Messages.push(msg);
 }
 
