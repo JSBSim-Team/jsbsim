@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.11 2012/01/22 18:39:58 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.12 2012/02/18 16:31:08 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,15 +188,18 @@ void FGAccelerations::CalculateUVWdot(void)
   // Include Gravitation accel
   switch (gravType) {
     case gtStandard:
-      vGravAccel = in.Tl2b * FGColumnVector3( 0.0, 0.0, in.GAccel );
+      {
+        double radius = in.vInertialPosition.Magnitude();
+        vGravAccel = -(in.GAccel / radius) * in.vInertialPosition;
+      }
       break;
     case gtWGS84:
-      vGravAccel = in.Tec2b * in.J2Grav;
+      vGravAccel = in.Tec2i * in.J2Grav;
       break;
   }
 
-  vUVWdot += vGravAccel;
-  vUVWidot = in.Tb2i * (vBodyAccel + vGravAccel);
+  vUVWdot += in.Ti2b * vGravAccel;
+  vUVWidot = in.Tb2i * vBodyAccel + vGravAccel;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
