@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.64 2012/02/07 23:15:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.65 2012/02/19 14:03:48 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -1004,7 +1004,6 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string  type, std
 
 bool FGOutput::Load(Element* element)
 {
-  double OutRate = 0.0;
   int subSystems = 0;
   Element *property_element;
   std::vector<FGPropertyManager *> outputProperties;
