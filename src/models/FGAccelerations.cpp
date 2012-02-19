@@ -45,6 +45,8 @@ COMMENTS, REFERENCES,  and NOTES
 [2] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
     NASA-Ames", NASA CR-2497, January 1975
 [3] Erin Catto, "Iterative Dynamics with Temporal Coherence", February 22, 2005
+[4] Mark Harris and Robert Lyle, "Spacecraft Gravitational Torques",
+    NASA SP-8024, May 1969
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -58,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.11 2012/01/22 18:39:58 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.13 2012/02/18 19:11:37 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +73,7 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
   Debug(0);
   Name = "FGAccelerations";
   gravType = gtWGS84;
+  gravTorque = false;
 
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
@@ -138,6 +141,16 @@ bool FGAccelerations::Run(bool Holding)
 
 void FGAccelerations::CalculatePQRdot(void)
 {
+  if (gravTorque) {
+    // Compute the gravitational torque
+    // Reference: See Harris and Lyle "Spacecraft Gravitational Torques",
+    //            NASA SP-8024 (1969) eqn (2) (page 7)
+    FGColumnVector3 R = in.Ti2b * in.vInertialPosition;
+    double invRadius = 1.0 / R.Magnitude();
+    R *= invRadius;
+    in.Moment += (3.0 * in.GAccel * invRadius) * (R * (in.J * R));
+  }
+
   // Compute body frame rotational accelerations based on the current body
   // moments and the total inertial angular velocity expressed in the body
   // frame.
@@ -188,15 +201,18 @@ void FGAccelerations::CalculateUVWdot(void)
   // Include Gravitation accel
   switch (gravType) {
     case gtStandard:
-      vGravAccel = in.Tl2b * FGColumnVector3( 0.0, 0.0, in.GAccel );
+      {
+        double radius = in.vInertialPosition.Magnitude();
+        vGravAccel = -(in.GAccel / radius) * in.vInertialPosition;
+      }
       break;
     case gtWGS84:
-      vGravAccel = in.Tec2b * in.J2Grav;
+      vGravAccel = in.Tec2i * in.J2Grav;
       break;
   }
 
-  vUVWdot += vGravAccel;
-  vUVWidot = in.Tb2i * (vBodyAccel + vGravAccel);
+  vUVWdot += in.Ti2b * vGravAccel;
+  vUVWidot = in.Tb2i * vBodyAccel + vGravAccel;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -330,6 +346,7 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
   PropertyManager->Tie("simulation/gravity-model", &gravType);
+  PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
 
   PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAccelerations::GetForces);
   PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAccelerations::GetForces);

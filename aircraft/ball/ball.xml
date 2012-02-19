@@ -120,7 +120,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="BallOut.csv" type="CSV" rate="120">
+    <output name="BallOut.csv" type="CSV" rate="1">
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>

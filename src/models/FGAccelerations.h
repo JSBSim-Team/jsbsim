@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.9 2012/01/22 18:39:58 bcoconni Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.11 2012/02/18 19:11:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     are evaluated.
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.9 2012/01/22 18:39:58 bcoconni Exp $
+    @version $Id: FGAccelerations.h,v 1.11 2012/02/18 19:11:37 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,8 +309,8 @@ public:
     FGMatrix33 Tb2i;
     /// Transformation matrix from the ECEF to the Body frame
     FGMatrix33 Tec2b;
-    /// Transformation matrix from the local to the Body frame
-    FGMatrix33 Tl2b;
+    /// Transformation matrix from the ECEF to the ECI frame
+    FGMatrix33 Tec2i;
     /// Orientation quaternion of the body with respect to the ECI frame
     FGQuaternion qAttitudeECI;
     /// Total moments applied to the body except friction and gravity (expressed in the body frame)
@@ -358,6 +358,7 @@ private:
   FGColumnVector3 vFrictionMoments;
 
   int gravType;
+  bool gravTorque;
 
   void CalculatePQRdot(void);
   void CalculateQuatdot(void);

@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.122 2012/01/21 16:46:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.123 2012/02/18 16:31:08 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   Terminate = false;
   StandAlone = false;
   firstPass = true;
-  
+
   IncrementThenHolding = false;  // increment then hold is off by default
   TimeStepsUntilHold = -1;
 
@@ -128,7 +128,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   // Store this FDM's ID
   IdFDM = (*FDMctr); // The main (parent) JSBSim instance is always the "zeroth"
-                                                                      
+
   // Prepare FDMctr for the next child FDM id
   (*FDMctr)++;       // instance. "child" instances are loaded last.
 
@@ -167,7 +167,7 @@ FGFDMExec::~FGFDMExec()
   try {
     Unbind();
     DeAllocate();
-    
+
     if (IdFDM == 0) { // Meaning this is no child FDM
       if(Root != 0) {
          if(StandAlone)
@@ -484,7 +484,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.Ti2b     = Propagate->GetTi2b();
     Accelerations->in.Tb2i     = Propagate->GetTb2i();
     Accelerations->in.Tec2b    = Propagate->GetTec2b();
-    Accelerations->in.Tl2b     = Propagate->GetTl2b();
+    Accelerations->in.Tec2i    = Propagate->GetTec2i();
     Accelerations->in.qAttitudeECI = Propagate->GetQuaternionECI();
     Accelerations->in.Moment   = Aircraft->GetMoments();
     Accelerations->in.GroundMoment  = GroundReactions->GetMoments();
@@ -578,10 +578,10 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 {
   if (mode == 1) {
     for (unsigned int i=0; i<Outputs.size(); i++) {
-      Outputs[i]->SetStartNewFile(true); 
+      Outputs[i]->SetStartNewFile(true);
     }
   }
-  
+
   ResetToInitialConditions();
 }
 
@@ -878,7 +878,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
            << "-------------------------------------------------------------------------------"
            << reset << endl;
     }
-    
+
     if (IsChild) debug_lvl = saved_debug_lvl;
 
   } else {
@@ -1077,7 +1077,7 @@ bool FGFDMExec::ReadChild(Element* el)
     cerr << endl << highint << fgred << "  No location was found for this child object!" << reset << endl;
     exit(-1);
   }
-  
+
   Element* orientation = el->FindElement("orient");
   if (orientation) {
     child->Orient = orientation->FindElementTripletConvertTo("RAD");
@@ -1142,7 +1142,7 @@ void FGFDMExec::CheckIncrementalHold(void)
       TimeStepsUntilHold--;
 
     } else if ( TimeStepsUntilHold > 0 ) {
-      // Keep decrementing until 0 is reached	  
+      // Keep decrementing until 0 is reached
       TimeStepsUntilHold--;
     }
   }
@@ -1231,7 +1231,7 @@ void FGFDMExec::Debug(int from)
 
   if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "\n\n     " 
+      cout << "\n\n     "
            << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
       cout << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
       cout << "JSBSim startup beginning ...\n\n";

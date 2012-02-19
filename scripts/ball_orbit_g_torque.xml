@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="cannon ball test">
+  <use aircraft="ball" initialize="reset00_v2"/>
+  <run start="0.0" end="10800" dt="0.005">
+    <description>
+      Integrators
+
+      0: No integrator (Freeze)
+      1: Rectangular Euler
+      2: Trapezoidal
+      3: Adams Bashforth 2
+      4: Adams Bashforth 3
+      5: Adams Bashforth 4
+
+      Quaternion specific integrators.
+      Only applicable to simulation/integrator/position/rotational
+
+      6: Buss 1st Order
+      7: Buss Augmented 2nd Order
+      8: Local Linearization
+
+    </description>
+    <property value="3"> simulation/integrator/rate/rotational </property>
+    <property value="3"> simulation/integrator/rate/translational </property>
+    <property value="7"> simulation/integrator/position/rotational </property>
+    <property value="4"> simulation/integrator/position/translational </property>
+    <property value="1"> simulation/gravity-model </property>
+    <property value="0"> simulation/gravitational-torque </property>
+
+    <property> simulation/notify-time-trigger </property>
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at 10 minute intervals</description>
+      <notify>
+        <property caption="Height AGL (ft):         "> position/h-agl-ft               </property>
+        <property caption="Altitude (Geod, ft):     "> position/geod-alt-ft            </property>
+        <property caption="Latitude (Geod, deg):    "> position/lat-geod-deg           </property>
+        <property caption="Vehicle Radius (ft):     "> position/radius-to-vehicle-ft   </property>
+        <property caption="Inertial Vel Mag (ft/s): "> velocities/eci-velocity-mag-fps </property>
+        <property caption="Body X Velocity (ft/s):  "> velocities/u-fps                </property>
+        <property caption="Simulation Frame:        "> simulation/frame                </property>
+        <property caption="Density:                 "> atmosphere/rho-slugs_ft3        </property>
+      </notify>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>
+    </event>
+
+    <event name="Trigger Gravitational Torque">
+      <description>Triggers gravitational torque on the spacecraft</description>
+      <condition> simulation/sim-time-sec >= 5358.8 </condition>
+      <set name="simulation/gravitational-torque" value="1"/>
+    </event>
+
+  </run>
+</runscript>

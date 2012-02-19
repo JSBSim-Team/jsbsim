@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.68 2011/10/11 15:13:34 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.69 2012/02/16 22:22:42 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -732,11 +732,9 @@ void FGPiston::doEnginePower(void)
   IndicatedHorsePower = 0;
   FMEP = 0;
   if (Running) {
-    // FIXME: this needs to be generalized
-    double ME, percent_RPM, power;  // Convienience term for use in the calculations
+    double ME, power;  // Convienience term for use in the calculations
     ME = Mixture_Efficiency_Correlation->GetValue(m_dot_fuel/m_dot_air);
 
-    percent_RPM = RPM/MaxRPM;
 // Guestimate engine friction losses from Figure 4.4 of "Engines: An Introduction", John Lumley
     FMEP = (-FMEPDynamic * MeanPistonSpeed_fps * fttom - FMEPStatic);
 
