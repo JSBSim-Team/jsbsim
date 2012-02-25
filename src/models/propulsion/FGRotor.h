@@ -28,6 +28,7 @@ HISTORY
 01/01/10  T.Kreitler test implementation
 01/10/11  T.Kreitler changed to single rotor model
 03/06/11  T.Kreitler added brake, clutch, and experimental free-wheeling-unit
+02/05/12  T.Kreitler brake, clutch, and FWU now in FGTransmission class
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -41,12 +42,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGThruster.h"
+#include "FGTransmission.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.12 2011/10/15 21:30:28 jentron Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.13 2012/02/25 14:35:57 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +91,6 @@ CLASS DOCUMENTATION
   <groundeffectexp> {number} </groundeffectexp>
   <groundeffectshift unit="{LENGTH}"> {number} </groundeffectshift>
 
-  <freewheelthresh> {number} </freewheelthresh>
 </rotor>
 
 //  LENGTH means any of the supported units, same for ANGLE and MOMENT.
@@ -135,28 +136,29 @@ CLASS DOCUMENTATION
     Experimental properties
 
     \<groundeffectexp>    - Exponent for ground effect approximation. Values usually range from 0.04
-                            for large rotors to 0.1 for smaller ones. As a rule of thumb the effect 
+                            for large rotors to 0.1 for smaller ones. As a rule of thumb the effect
                             vanishes at a height 2-3 times the rotor diameter.
                               formula used: exp ( - groundeffectexp * (height+groundeffectshift) )
                             Omitting or setting to 0.0 disables the effect calculation.
-    \<groundeffectshift>  - Further adjustment of ground effect, approx. hub height or slightly above. 
+    \<groundeffectshift>  - Further adjustment of ground effect, approx. hub height or slightly above
+                            (This lessens the influence of the ground effect).
 
 </pre>
 
-<h3>Notes:</h3>  
+<h3>Notes:</h3>
 
   <h4>- Controls -</h4>
 
     The behavior of the rotor is controlled/influenced by following inputs.<ul>
       <li> The power provided by the engine. This is handled by the regular engine controls.</li>
-      <li> The collective control input. This is read from the <tt>fdm</tt> property 
+      <li> The collective control input. This is read from the <tt>fdm</tt> property
            <tt>propulsion/engine[x]/collective-ctrl-rad</tt>. See below for tail rotor</li>
       <li> The lateral cyclic input. Read from
            <tt>propulsion/engine[x]/lateral-ctrl-rad</tt>.</li>
       <li> The longitudinal cyclic input. Read from 
            <tt>propulsion/engine[x]/longitudinal-ctrl-rad</tt>.</li>
-      <li> The tail collective (aka antitorque, aka pedal) control input. Read from
-           <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt> or 
+      <li> The tail rotor collective (aka antitorque, aka pedal) control input. Read from
+           <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt> or
            <tt>propulsion/engine[x]/tail-collective-ctrl-rad</tt>.</li>
 
     </ul>
@@ -167,7 +169,7 @@ CLASS DOCUMENTATION
     is linked to to the main (=first, =0) rotor, and specifing
     <tt>\<controlmap\> TAIL \</controlmap\></tt> tells this rotor to read the
     collective input from <tt>propulsion/engine[1]/antitorque-ctrl-rad</tt>
-    (The TAIL-map ignores lateral and longitudinal input). The rotor needs to be 
+    (The TAIL-map ignores lateral and longitudinal input). The rotor needs to be
     attached to a dummy engine, e.g. an 1HP electrical engine.
     A tandem rotor is setup analogous. 
 
@@ -198,6 +200,12 @@ CLASS DOCUMENTATION
 
     </ul>
 
+  <h4>- Scaling the ground effect -</h4>
+
+    The property <tt>propulsion/engine[x]/groundeffect-scale-norm</tt> allows fdm based
+    scaling of the ground effect influence. For instance the effect vanishes at speeds
+    above approx. 50kts, or one likes to land on a 'perforated' helipad.
+
   <h4>- Development hints -</h4>
 
     Setting <tt>\<ExternalRPM> -1 \</ExternalRPM></tt> the rotor's RPM is controlled  by
@@ -205,24 +213,24 @@ CLASS DOCUMENTATION
     when developing a FDM.
   
 
-<h3>References:</h3>  
+<h3>References:</h3>
 
     <dl>    
     <dt>/SH79/</dt><dd>Shaugnessy, J. D., Deaux, Thomas N., and Yenni, Kenneth R.,
-              "Development and Validation of a Piloted Simulation of a 
+              "Development and Validation of a Piloted Simulation of a
               Helicopter and External Sling Load",  NASA TP-1285, 1979.</dd>
     <dt>/BA41/</dt><dd>Bailey,F.J.,Jr., "A Simplified Theoretical Method of Determining
               the Characteristics of a Lifting Rotor in Forward Flight", NACA Rep.716, 1941.</dd>
     <dt>/AM50/</dt><dd>Amer, Kenneth B.,"Theory of Helicopter Damping in Pitch or Roll and a
               Comparison With Flight Measurements", NACA TN-2136, 1950.</dd>
     <dt>/TA77/</dt><dd>Talbot, Peter D., Corliss, Lloyd D., "A Mathematical Force and Moment
-              Model of a UH-1H Helicopter for Flight Dynamics Simulations", NASA TM-73,254, 1977.</dd> 
+              Model of a UH-1H Helicopter for Flight Dynamics Simulations", NASA TM-73,254, 1977.</dd>
     <dt>/GE49/</dt><dd>Gessow, Alfred, Amer, Kenneth B. "An Introduction to the Physical 
-              Aspects of Helicopter Stability", NACA TN-1982, 1949.</dd>  
+              Aspects of Helicopter Stability", NACA TN-1982, 1949.</dd>
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.12 2011/10/15 21:30:28 jentron Exp $
+    @version $Id: FGRotor.h,v 1.13 2012/02/25 14:35:57 jentron Exp $
   */
 
 
@@ -230,57 +238,6 @@ CLASS DOCUMENTATION
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGTransmission :  public FGJSBBase {
-
-public:
-  FGTransmission(FGFDMExec *exec, int num);
-  ~FGTransmission();
-
-  void Calculate(double EnginePower, double ThrusterTorque, double dt);
-
-  void   SetMaxBrakePower(double x) {MaxBrakePower=x;}
-  double GetMaxBrakePower() const {return MaxBrakePower;}
-  void   SetEngineFriction(double x) {EngineFriction=x;}
-  double GetEngineFriction() const {return EngineFriction;}
-  void   SetEngineMoment(double x) {EngineMoment=x;}
-  double GetEngineMoment() const {return EngineMoment;}
-  void   SetThrusterMoment(double x) {ThrusterMoment=x;}
-  double GetThrusterMoment() const {return ThrusterMoment;}
-
-  double GetFreeWheelTransmission() const {return FreeWheelTransmission;}
-  double GetEngineRPM() {return EngineRPM;}
-  double GetThrusterRPM() {return ThrusterRPM;}
-
-  double GetBrakeCtrl() const {return BrakeCtrlNorm;}
-  void   SetBrakeCtrl(double x) {BrakeCtrlNorm=x;}
-  void   SetClutchCtrlNorm(double x) {ClutchCtrlNorm=x;}
-
-private:
-  bool BindModel(int num);
-  // void Debug(int from);
-
-  inline double omega_to_rpm(double w) {return w * 9.54929658551372014613302580235;} // omega/(2.0*PI) * 60.0
-  inline double rpm_to_omega(double r) {return r * .104719755119659774615421446109;} // (rpm/60.0)*2.0*PI
-
-  Filter FreeWheelLag;
-  double FreeWheelTransmission; // state, 0: free, 1:locked
-
-  double ThrusterMoment;
-  double EngineMoment;   // estimated MOI of gear and engine, influences acceleration
-  double EngineFriction; // estimated friction in gear and possibly engine
-
-  double ClutchCtrlNorm; // also in FGThruster.h
-  double BrakeCtrlNorm;
-  double MaxBrakePower;
-
-  double EngineRPM;
-  double ThrusterRPM;
-  FGPropertyManager* PropertyManager;
-
-};
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 class FGRotor :  public FGThruster {
 
@@ -297,10 +254,10 @@ public:
   /// Destructor for FGRotor
   ~FGRotor();
 
-  /** Returns the power required by the rotor. */
+  /// Returns the power required by the rotor.
   double GetPowerRequired(void)const { return PowerRequired; }
 
-  /** Returns the scalar thrust of the rotor, and adjusts the RPM value. */
+  /// Returns the scalar thrust of the rotor, and adjusts the RPM value.
   double Calculate(double EnginePower);
 
 
@@ -336,10 +293,15 @@ public:
   /// Retrieves the torque
   double GetTorque(void) const { return Torque; }
   
-  /// Downwash angle - currently only valid for a rotor that spins horizontally
+  /// Downwash angle - positive values point forward (given a horizontal spinning rotor)
   double GetThetaDW(void) const { return theta_downwash; }
-  /// Downwash angle - currently only valid for a rotor that spins horizontally
+  /// Downwash angle - positive values point leftward (given a horizontal spinning rotor)
   double GetPhiDW(void) const { return phi_downwash; }
+
+  /// Retrieves the ground effect scaling factor.
+  double GetGroundEffectScaleNorm(void) const { return GroundEffectScaleNorm; }
+  /// Sets the ground effect scaling factor.
+  void   SetGroundEffectScaleNorm(double g) { GroundEffectScaleNorm = g; }
 
   /// Retrieves the collective control input in radians.
   double GetCollectiveCtrl(void) const { return CollectiveCtrl; }
@@ -368,7 +330,7 @@ private:
   double ConfigValue( Element* e, const string& ename, double default_val=0.0,
                                   bool tell=false);
 
-  void Configure(Element* rotor_element);
+  double Configure(Element* rotor_element);
 
   void CalcRotorState(void);
 
@@ -378,6 +340,7 @@ private:
   void calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fus_w);
   void calc_drag_and_side_forces(double theta_0);
   void calc_torque(double theta_0);
+  void calc_downwash_angles();
 
   // transformations
   FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
@@ -409,6 +372,7 @@ private:
   FGPropertyManager* ExtRPMsource;
   double SourceGearRatio;
 
+  // 'real' rotor parameters
   double BladeChord;
   double LiftCurveSlope;
   double BladeTwist;
@@ -419,8 +383,10 @@ private:
   double InflowLag;
   double TipLossB;
 
+  // groundeffect
   double GroundEffectExp;
   double GroundEffectShift;
+  double GroundEffectScaleNorm;
 
   // derived parameters
   double LockNumberByRho;
@@ -449,7 +415,7 @@ private:
   double lambda;     // inflow ratio
   double mu;         // tip-speed ratio 
   double nu;         // induced inflow ratio
-  double v_induced;  // induced velocity, always positive [ft/s]
+  double v_induced;  // induced velocity, usually positive [ft/s]
 
   double theta_downwash;
   double phi_downwash;

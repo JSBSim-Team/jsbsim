@@ -36,27 +36,27 @@ HISTORY
 01/10/11  T.Kreitler changed to single rotor model
 03/06/11  T.Kreitler added brake, clutch, and experimental free-wheeling-unit,
                      reasonable estimate for inflowlag
+02/05/12  T.Kreitler brake, clutch, and FWU now in FGTransmission, 
+                     downwash angles relate to shaft orientation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
 #include <sstream>
 
 #include "FGRotor.h"
-#include "input_output/FGXMLElement.h"
 #include "models/FGMassBalance.h"
 #include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
 
 using std::cerr;
+using std::cout;
 using std::endl;
 using std::ostringstream;
-using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.18 2011/10/15 21:30:28 jentron Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.19 2012/02/25 14:35:57 jentron Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,116 +69,6 @@ static inline double sqr(double x) { return x*x; }
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// Note: The FGTransmission class is currently carried 'pick-a-pack' by
-// FGRotor.
-
-FGTransmission::FGTransmission(FGFDMExec *exec, int num) :
-  FreeWheelTransmission(1.0),
-  ThrusterMoment(1.0), EngineMoment(1.0), EngineFriction(0.0),
-  ClutchCtrlNorm(1.0), BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
-  EngineRPM(0.0), ThrusterRPM(0.0)
-{
-  double dt;
-  PropertyManager = exec->GetPropertyManager();
-  dt = exec->GetDeltaT();
-
-  // avoid too abrupt changes in transmission
-  FreeWheelLag = Filter(200.0,dt);
-  BindModel(num);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGTransmission::~FGTransmission(){
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// basically P = Q*w and Q_Engine + (-Q_Rotor) = J * dw/dt, J = Moment
-//
-void FGTransmission::Calculate(double EnginePower, double ThrusterTorque, double dt) {
-
-  double coupling = 1.0, coupling_sq = 1.0;
-  double fw_mult = 1.0;
-
-  double d_omega = 0.0, engine_d_omega = 0.0, thruster_d_omega = 0.0; // relative changes
-
-  double engine_omega = rpm_to_omega(EngineRPM);
-  double safe_engine_omega = engine_omega < 1e-1 ? 1e-1 : engine_omega;
-  double engine_torque = EnginePower / safe_engine_omega;
-
-  double thruster_omega = rpm_to_omega(ThrusterRPM);
-  double safe_thruster_omega = thruster_omega < 1e-1 ? 1e-1 : thruster_omega;
-
-  engine_torque  -= EngineFriction / safe_engine_omega;
-  ThrusterTorque += Constrain(0.0, BrakeCtrlNorm, 1.0) * MaxBrakePower / safe_thruster_omega;
-
-  // would the FWU release ?
-  engine_d_omega = engine_torque/EngineMoment * dt;
-  thruster_d_omega =  - ThrusterTorque/ThrusterMoment * dt;
-
-  if ( thruster_omega+thruster_d_omega > engine_omega+engine_d_omega ) {
-    // don't drive the engine
-    FreeWheelTransmission = 0.0;
-  } else {
-    FreeWheelTransmission = 1.0;
-  }
-
-  fw_mult = FreeWheelLag.execute(FreeWheelTransmission);
-  coupling = fw_mult * Constrain(0.0, ClutchCtrlNorm, 1.0);
-
-  if (coupling < 0.999999) { // are the separate calculations needed ?
-    // assume linear transfer 
-    engine_d_omega   =
-       (engine_torque - ThrusterTorque*coupling)/(ThrusterMoment*coupling + EngineMoment) * dt;
-    thruster_d_omega = 
-       (engine_torque*coupling - ThrusterTorque)/(ThrusterMoment + EngineMoment*coupling) * dt;
-
-    EngineRPM += omega_to_rpm(engine_d_omega);
-    ThrusterRPM += omega_to_rpm(thruster_d_omega);
-
-    // simulate friction in clutch
-    coupling_sq = coupling*coupling;
-    EngineRPM   = (1.0-coupling_sq) * EngineRPM    + coupling_sq * 0.02 * (49.0*EngineRPM + ThrusterRPM);
-    ThrusterRPM = (1.0-coupling_sq) * ThrusterRPM  + coupling_sq * 0.02 * (EngineRPM + 49.0*ThrusterRPM);
-
-    // enforce equal rpm
-    if ( fabs(EngineRPM-ThrusterRPM) < 1e-3 ) {
-      EngineRPM = ThrusterRPM = 0.5 * (EngineRPM+ThrusterRPM);
-    }
-  } else {
-    d_omega = (engine_torque - ThrusterTorque)/(ThrusterMoment + EngineMoment) * dt;
-    EngineRPM = ThrusterRPM += omega_to_rpm(d_omega);
-  }
-
-  // nothing will turn backward
-  if (EngineRPM < 0.0 ) EngineRPM = 0.0;
-  if (ThrusterRPM < 0.0 ) ThrusterRPM = 0.0;
-
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGTransmission::BindModel(int num)
-{
-  string property_name, base_property_name;
-  base_property_name = CreateIndexedPropertyName("propulsion/engine", num);
-
-  property_name = base_property_name + "/brake-ctrl-norm";
-  PropertyManager->Tie( property_name.c_str(), this, &FGTransmission::GetBrakeCtrl, &FGTransmission::SetBrakeCtrl);
-  property_name = base_property_name + "/free-wheel-transmission";
-  PropertyManager->Tie( property_name.c_str(), this, &FGTransmission::GetFreeWheelTransmission);
-
-  return true;
-}
-
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 // Constructor
 
 FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
@@ -190,7 +80,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
     BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
     InflowLag(0.0), TipLossB(0.0),
-    GroundEffectExp(0.0), GroundEffectShift(0.0),
+    GroundEffectExp(0.0), GroundEffectShift(0.0), GroundEffectScaleNorm(1.0),
     LockNumberByRho(0.0), Solidity(0.0),            // derived parameters
     RPM(0.0), Omega(0.0),                           // dynamic values
     beta_orient(0.0),
@@ -206,6 +96,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
   Element *thruster_element;
+  double engine_power_est = 0.0;
 
   // initialise/set remaining variables
   SetTransformType(FGForce::tCustom);
@@ -246,7 +137,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 
   SetLocation(location);
   SetAnglesToBody(orientation);
-  InvTransform = Transform().Transposed();
+  InvTransform = Transform().Transposed(); // body to custom/native
 
   // wire controls
   ControlMap = eMainCtrl;
@@ -283,41 +174,31 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     }
   }
 
-  // configure the rotor parameters
-  Configure(rotor_element);
+  // process rotor parameters
+  engine_power_est = Configure(rotor_element);
 
-  // configure the transmission parameters
+  // setup transmission if needed
   if (!ExternalRPM) {
-    Transmission = new FGTransmission(exec, num);
+
+    Transmission = new FGTransmission(exec, num, dt);
+
+    Transmission->SetThrusterMoment(PolarMoment);
+
+    // The MOI sensed behind the gear ( MOI_engine*sqr(GearRatio) ).
+    GearMoment = ConfigValueConv(rotor_element, "gearmoment", 0.1*PolarMoment, "SLUG*FT2");
+    GearMoment = Constrain(1e-6, GearMoment, 1e9);
+    Transmission->SetEngineMoment(GearMoment);
 
     Transmission->SetMaxBrakePower(MaxBrakePower);
 
-    if (rotor_element->FindElement("gearloss")) {
-      GearLoss = rotor_element->FindElementValueAsNumberConvertTo("gearloss","HP");
-      GearLoss *= hptoftlbssec;
-    }
-
-    if (GearLoss<1e-6) { // TODO, allow 0 ?
-      double ehp = 0.5 * BladeNum*BladeChord*Radius*Radius; // guess engine power
-      //cout << "# guessed engine power: " << ehp << endl;
-      GearLoss = 0.0025 * ehp * hptoftlbssec;
-    }
+    GearLoss = ConfigValueConv(rotor_element, "gearloss", 0.0025 * engine_power_est, "HP");
+    GearLoss = Constrain(0.0, GearLoss, 1e9);
+    GearLoss *= hptoftlbssec;
     Transmission->SetEngineFriction(GearLoss);
 
-    // The MOI sensed behind the gear ( MOI_engine*sqr(GearRatio) ).
-    if (rotor_element->FindElement("gearmoment")) {
-      GearMoment = rotor_element->FindElementValueAsNumberConvertTo("gearmoment","SLUG*FT2");
-    }
-
-    if (GearMoment<1e-2) { // TODO, need better check for lower limit
-      GearMoment = 0.1*PolarMoment;
-    }
-    Transmission->SetEngineMoment(GearMoment);
-
-    Transmission->SetThrusterMoment(PolarMoment);
   }
 
-  // shaft representation - a rather simple transform, 
+  // shaft representation - a rather simple transform,
   // but using a matrix is safer.
   TboToHsr.InitMatrix(   0.0, 0.0, 1.0,
                          0.0, 1.0, 0.0,
@@ -342,12 +223,11 @@ FGRotor::~FGRotor(){
   Debug(1);
 }
 
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// 5in1: value-fetch-convert-default-return function 
+// 5in1: value-fetch-convert-default-return function
 
-double FGRotor::ConfigValueConv( Element* el, const string& ename, double default_val, 
+double FGRotor::ConfigValueConv( Element* el, const string& ename, double default_val,
                                   const string& unit, bool tell)
 {
 
@@ -388,20 +268,21 @@ double FGRotor::ConfigValue(Element* el, const string& ename, double default_val
 
 // 1. read configuration and try to fill holes, ymmv
 // 2. calculate derived parameters
-void FGRotor::Configure(Element* rotor_element)
+double FGRotor::Configure(Element* rotor_element)
 {
 
-  double estimate;
+  double estimate, engine_power_est=0.0;
   const bool yell   = true;
   const bool silent = false;
 
 
-  Radius = 0.5 * ConfigValueConv(rotor_element, "diameter", 42.0, "FT", yell); 
+  Radius = 0.5 * ConfigValueConv(rotor_element, "diameter", 42.0, "FT", yell);
   Radius = Constrain(1e-3, Radius, 1e9);
   
   BladeNum = (int) ConfigValue(rotor_element, "numblades", 3 , yell);
   
   GearRatio = ConfigValue(rotor_element, "gearratio", 1.0, yell);
+  GearRatio = Constrain(1e-9, GearRatio, 1e9);
 
   // make sure that v_tip (omega*r) is below 0.7mach ~ 750ft/s
   estimate = (750.0/Radius)/(2.0*M_PI) * 60.0;  // 7160/Radius
@@ -425,34 +306,27 @@ void FGRotor::Configure(Element* rotor_element)
 
   estimate = sqr(BladeChord) * sqr(Radius - HingeOffset) * 0.57;
   BladeFlappingMoment = ConfigValueConv(rotor_element, "flappingmoment", estimate, "SLUG*FT2");   
-  BladeFlappingMoment = Constrain(1.0e-6, BladeFlappingMoment, 1e9);
+  BladeFlappingMoment = Constrain(1e-9, BladeFlappingMoment, 1e9);
 
   // guess mass from moment of a thin stick, and multiply by the blades cg distance
   estimate = ( 3.0 * BladeFlappingMoment / sqr(Radius) ) * (0.45 * Radius) ;
   BladeMassMoment = ConfigValue(rotor_element, "massmoment", estimate); // unit is slug-ft
-  BladeMassMoment = Constrain(0.001, BladeMassMoment, 1e9);
+  BladeMassMoment = Constrain(1e-9, BladeMassMoment, 1e9);
 
   estimate = 1.1 * BladeFlappingMoment * BladeNum;
   PolarMoment = ConfigValueConv(rotor_element, "polarmoment", estimate, "SLUG*FT2");
-  PolarMoment = Constrain(1e-6, PolarMoment, 1e9);
+  PolarMoment = Constrain(1e-9, PolarMoment, 1e9);
 
   // "inflowlag" is treated further down.
 
   TipLossB = ConfigValue(rotor_element, "tiplossfactor", 1.0, silent);
 
-  estimate = 0.01 * PolarMoment ; // guesses for huey, bo105 20-30hp
+  // estimate engine power (bit of a pity, cause our caller already knows)
+  engine_power_est = 0.5 * BladeNum*BladeChord*Radius*Radius;
+
+  estimate = engine_power_est / 30.0;
   MaxBrakePower  = ConfigValueConv(rotor_element, "maxbrakepower", estimate, "HP");
   MaxBrakePower *= hptoftlbssec;
-
-  // ground effect
-  if (rotor_element->FindElement("cgroundeffect")) {
-    double cge,gee;
-    cge = rotor_element->FindElementValueAsNumber("cgroundeffect");
-    cge = Constrain(1e-9, cge, 1.0);
-    gee = 1.0 / ( 2.0*Radius * cge );
-    cerr << "# *** 'cgroundeffect' is defunct." << endl;
-    cerr << "# *** use 'groundeffectexp' with: " << gee << endl;
-  }
 
   GroundEffectExp = ConfigValue(rotor_element, "groundeffectexp", 0.0);
   GroundEffectShift = ConfigValueConv(rotor_element, "groundeffectshift", 0.0, "FT");
@@ -470,9 +344,9 @@ void FGRotor::Configure(Element* rotor_element)
   estimate = 16.0/(LockNumberByRho*rho * omega_tmp ); // 16/(gamma*Omega)
   // printf("# Est. InflowLag: %f\n", estimate);
   InflowLag = ConfigValue(rotor_element, "inflowlag", estimate, yell);
-  InflowLag = Constrain(1.0e-6, InflowLag, 2.0);
+  InflowLag = Constrain(1e-6, InflowLag, 2.0);
 
-  return;
+  return engine_power_est;
 } // Configure
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,10 +381,10 @@ FGColumnVector3 FGRotor::hub_vel_body2ca( const FGColumnVector3 &uvw,
 
 FGColumnVector3 FGRotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
 {
-  FGColumnVector3 av_s_fus, av_w_fus;    
+  FGColumnVector3 av_s_fus, av_w_fus;
 
   // for comparison:
-  // av_s_fus = BodyToShaft * pqr; /SH79/ 
+  // av_s_fus = BodyToShaft * pqr; /SH79/
   // BodyToShaft = TboToHsr * InvTransform
   av_s_fus = TboToHsr * InvTransform * pqr;
 
@@ -531,7 +405,7 @@ FGColumnVector3 FGRotor::fus_angvel_body2ca( const FGColumnVector3 &pqr)
 // reduction of inflow if the helicopter is close to the ground, yielding to
 // higher thrust, see /TA77/ eqn(10a).
 
-void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww, 
+void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
                                     double flow_scale)
 {
 
@@ -575,8 +449,8 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// The coning angle doesn't apply for teetering rotors, but calculating
-// doesn't hurt. /SH79/ eqn(29)
+// Two blade teetering rotors are often 'preconed' to a fixed angle, but the 
+// calculated value is pretty close to the real one. /SH79/ eqn(29)
 
 void FGRotor::calc_coning_angle(double theta_0)
 {
@@ -657,9 +531,28 @@ void FGRotor::calc_torque(double theta_0)
   // estimate blade drag
   double delta_dr = 0.009 + 0.3*sqr(6.0*C_T/(LiftCurveSlope*Solidity));
 
-  Torque = rho * BladeNum * BladeChord * delta_dr * sqr(Omega*Radius) * R[2] * 
+  Torque = rho * BladeNum * BladeChord * delta_dr * sqr(Omega*Radius) * R[2] *
            (1.0+4.5*sqr(mu))/8.0
                      - (Thrust*lambda + H_drag*mu)*Radius;
+
+  return;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Get the downwash angles with respect to the shaft axis.
+// Given a 'regular'  main rotor, the angles are zero when the downwash points
+// down, positive theta values mean that the downwash turns towards the nose,
+// and positive phi values mean it turns to the left side. (Note: only airspeed
+// is transformed, the rotational speed contribution is ignored.)
+
+void FGRotor::calc_downwash_angles()
+{
+  FGColumnVector3 v_shaft;
+  v_shaft = TboToHsr * InvTransform * in.AeroUVW;
+
+  theta_downwash = atan2( -v_shaft(eU), v_induced - v_shaft(eW)) + a1s;
+  phi_downwash   = atan2(  v_shaft(eV), v_induced - v_shaft(eW)) + b1s;
 
   return;
 }
@@ -674,7 +567,7 @@ FGColumnVector3 FGRotor::body_forces(double a_ic, double b_ic)
   FGColumnVector3 F_s(
         - H_drag*cos(beta_orient) - J_side*sin(beta_orient) + Thrust*b_ic,
         - H_drag*sin(beta_orient) + J_side*cos(beta_orient) + Thrust*a_ic,
-        - Thrust);    
+        - Thrust);
 
   return HsrToTbo * F_s;
 }
@@ -718,6 +611,7 @@ void FGRotor::CalcRotorState(void)
   // fetch needed values from environment
   rho = in.Density; // slugs/ft^3.
   double h_agl_ft = in.H_agl;
+
   // update InvTransform, the rotor orientation could have been altered
   InvTransform = Transform().Transposed();
 
@@ -736,16 +630,18 @@ void FGRotor::CalcRotorState(void)
   B_IC      = LongitudinalCtrl;
   theta_col = CollectiveCtrl;
 
-  // ground effect
+  // optional ground effect, a ge_factor of 1.0 gives no effect
+  // and 0.5 yields to maximal influence.
   if (GroundEffectExp > 1e-5) {
     if (h_agl_ft<0.0) h_agl_ft = 0.0; // clamp
     filtered_hagl = damp_hagl.execute(h_agl_ft) + GroundEffectShift;
     // actual/nominal factor avoids absurd scales at startup
-    ge_factor -= exp(-filtered_hagl*GroundEffectExp) * (RPM / NominalRPM);
-    if (ge_factor<0.5) ge_factor=0.5; // clamp
+    ge_factor -= GroundEffectScaleNorm *
+                 ( exp(-filtered_hagl*GroundEffectExp) * (RPM / NominalRPM) );
+    ge_factor = Constrain(0.5, ge_factor, 1.0);
   }
 
-  // all set, start calculations
+  // all set, start calculations ...
 
   vHub_ca  = hub_vel_body2ca(in.AeroUVW, in.AeroPQR, A_IC, B_IC);
 
@@ -761,12 +657,12 @@ void FGRotor::CalcRotorState(void)
 
   calc_torque(theta_col);
 
-  // Fixme: only valid for a 'decent' rotor
-  theta_downwash = atan2( -in.AeroUVW(eU), v_induced - in.AeroUVW(eW));
-  phi_downwash   = atan2(  in.AeroUVW(eV), v_induced - in.AeroUVW(eW));
+  calc_downwash_angles();
 
+  // ... and assign to inherited vFn and vMn members
+  //     (for processing see FGForce::GetBodyForces).
   vFn = body_forces(A_IC, B_IC);
-  vMn = Transform() * body_moments(A_IC, B_IC); 
+  vMn = Transform() * body_moments(A_IC, B_IC);
 
 }
 
@@ -778,8 +674,6 @@ double FGRotor::Calculate(double EnginePower)
   CalcRotorState();
 
   if (! ExternalRPM) {
-    Transmission->SetClutchCtrlNorm(ClutchCtrlNorm);
-
     // the RPM values are handled inside Transmission
     Transmission->Calculate(EnginePower, Torque, in.TotalDeltaT);
 
@@ -808,9 +702,6 @@ bool FGRotor::BindModel(void)
 
   property_name = base_property_name + "/engine-rpm";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetEngineRPM );
-
-  property_name = base_property_name + "/rotor-thrust-lbs"; // might be redundant - check!
-  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetThrust );
 
   property_name = base_property_name + "/a0-rad";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetA0 );
@@ -844,6 +735,10 @@ bool FGRotor::BindModel(void)
 
   property_name = base_property_name + "/phi-downwash-rad";
   PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetPhiDW );
+
+  property_name = base_property_name + "/groundeffect-scale-norm";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRotor::GetGroundEffectScaleNorm,
+                                                     &FGRotor::SetGroundEffectScaleNorm );
 
   switch (ControlMap) {
     case eTailCtrl:
@@ -1003,5 +898,5 @@ void FGRotor::Debug(int from)
 }
 
 
-} // namespace JSBSim 
+} // namespace JSBSim
 

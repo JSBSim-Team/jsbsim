@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.14 2011/03/10 01:35:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.15 2012/02/25 14:35:57 jentron Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,6 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   GearRatio = 1.0;
   ReverserAngle = 0.0;
-  ClutchCtrlNorm = 1.0;
   EngineNum = num;
   PropertyManager = FDMExec->GetPropertyManager();
 
@@ -97,13 +96,6 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
     property_name = base_property_name + "/reverser-angle-rad";
     PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetReverserAngle,
                                                           &FGThruster::SetReverserAngle);
-  }
-
-  if (el->GetName() == "rotor") // At this time only a rotor can have a clutch.
-  {
-    property_name = base_property_name + "/clutch-ctrl-norm";
-    PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetClutchCtrl,
-                                                          &FGThruster::SetClutchCtrl);
   }
 
   Debug(0);
