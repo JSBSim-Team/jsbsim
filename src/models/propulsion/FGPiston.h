@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.32 2011/10/11 16:16:16 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.33 2012/02/26 05:46:21 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +81,7 @@ CLASS DOCUMENTATION
   <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
   <ram-air-factor> {number} </ram-air-factor>
   <cooling-factor> {number} </cooling-factor>
+  <starter-gain> {number} </starter-gain>
   <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
   <volumetric-efficiency> {number} </volumetric-efficiency>
@@ -112,6 +113,12 @@ Basic parameters:
 - \b maxmp - this value is the nominal maximum manifold pressure at sea-level
       without boost. Along with maxrpm it determines the resistance of the
       aircraft intake system. Overridden by air-intake-impedance-factor
+- \b man-press-lag - Delay in seconds for manifold pressure changes to take effect
+- \b starter-torque - A value specifing the zero RPM force the starter motor
+      provides. Default value is 40% of the horse power value.
+- \b starter-rpm - A value specifing the maximum RPM the unloaded starter motor
+      can achieve. Loads placed on the engine by the propeller and throttle will
+      further limit RPM achieved in practice.
 - \b idlerpm - this value affects the throttle fall off and the engine stops
       running if it is slowed below 80% of this value. The engine starts
       running when it reaches 80% of this value.
@@ -149,6 +156,9 @@ Advanced parameters
 - \b ram-air-factor - this number creates increases manifold pressure with an
       increase in dynamic pressure (aircraft speed).
       Also a property for run-time adjustment.
+- \b starter-gain - default is 1.0. Controls how much torque the starter engine
+      produces. Starter engine power also depends on thruster inertia (Ixx) and
+      engine displacement. Increasing idle rpm flattens the torque curve.
 
 Cooling control:
 - \b cylinders  - number of cylinders scales the cylinder head mass.
@@ -198,7 +208,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.32 2011/10/11 16:16:16 jentron Exp $
+    @version $Id: FGPiston.h,v 1.33 2012/02/26 05:46:21 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,10 +249,12 @@ private:
   int crank_counter;
 
   double IndicatedHorsePower;
+  double IndicatedPower;
   double PMEP;
   double FMEP;
   double FMEPDynamic;
   double FMEPStatic;
+  double T_Intake;
 
   void doEngineStartup(void);
   void doBoostControl(void);
@@ -279,6 +291,7 @@ private:
   double MinManifoldPressure_inHg; // Inches Hg
   double MaxManifoldPressure_inHg; // Inches Hg
   double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
+  double ManifoldPressureLag;      // Manifold Pressure delay in seconds.
   double Displacement;             // cubic inches
   double displacement_SI;          // cubic meters
   double MaxHP;                    // horsepower
@@ -298,7 +311,9 @@ private:
   double RatedMeanPistonSpeed_fps; // ft/sec derived from MaxRPM and stroke.
   double Ram_Air_Factor;           // number
 
-  double StarterHP;                // initial horsepower of starter motor
+  double StarterTorque;// Peak Torque of the starter motor
+  double StarterRPM;   // Peak RPM of the starter motor
+  double StarterGain;  // control the torque of the starter motor.
   int BoostSpeeds;  // Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
   int BoostSpeed;   // The current boost-speed (zero-based).
   bool Boosted;     // Set true for boosted engine.
@@ -348,6 +363,7 @@ private:
   //
   double rho_air;
   double volumetric_efficiency;
+  double volumetric_efficiency_reduced;
   double map_coefficient;
   double m_dot_air;
   double equivalence_ratio;
