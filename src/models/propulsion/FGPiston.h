@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.33 2012/02/26 05:46:21 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.34 2012/03/01 04:54:35 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,9 @@ CLASS DOCUMENTATION
   <air-intake-impedance-factor> {number} </air-intake-impedance-factor>
   <ram-air-factor> {number} </ram-air-factor>
   <cooling-factor> {number} </cooling-factor>
-  <starter-gain> {number} </starter-gain>
+  <man-press-lag> {number} </man-press-lag>
+  <starter-torque> {number} </starter-torque> 
+  <starter-rpm> {number} </starter-rpm> 
   <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
   <volumetric-efficiency> {number} </volumetric-efficiency>
@@ -114,8 +116,8 @@ Basic parameters:
       without boost. Along with maxrpm it determines the resistance of the
       aircraft intake system. Overridden by air-intake-impedance-factor
 - \b man-press-lag - Delay in seconds for manifold pressure changes to take effect
-- \b starter-torque - A value specifing the zero RPM force the starter motor
-      provides. Default value is 40% of the horse power value.
+- \b starter-torque - A value specifing the zero RPM torque in lb*ft the starter motor
+      provides. Current default value is 40% of the horse power value.
 - \b starter-rpm - A value specifing the maximum RPM the unloaded starter motor
       can achieve. Loads placed on the engine by the propeller and throttle will
       further limit RPM achieved in practice.
@@ -156,9 +158,6 @@ Advanced parameters
 - \b ram-air-factor - this number creates increases manifold pressure with an
       increase in dynamic pressure (aircraft speed).
       Also a property for run-time adjustment.
-- \b starter-gain - default is 1.0. Controls how much torque the starter engine
-      produces. Starter engine power also depends on thruster inertia (Ixx) and
-      engine displacement. Increasing idle rpm flattens the torque curve.
 
 Cooling control:
 - \b cylinders  - number of cylinders scales the cylinder head mass.
@@ -208,7 +207,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.33 2012/02/26 05:46:21 jentron Exp $
+    @version $Id: FGPiston.h,v 1.34 2012/03/01 04:54:35 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
