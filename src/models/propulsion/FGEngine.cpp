@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.48 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.49 2012/03/17 20:44:12 jentron Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,6 +123,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
 
   property_name = base_property_name + "/set-running";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetRunning, &FGEngine::SetRunning );
+  property_name = base_property_name + "/starter-cmd";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetStarter, &FGEngine::SetStarter );
   property_name = base_property_name + "/thrust-lbs";
   PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
   property_name = base_property_name + "/fuel-flow-rate-pps";
@@ -248,10 +250,10 @@ bool FGEngine::LoadThruster(Element *thruster_element)
 
   thruster_filename = thruster_element->GetAttributeValue("file");
   if ( !thruster_filename.empty()) {
-    thruster_fullpathname = fullpath + thruster_filename + ".xml";
+    thruster_fullpathname = localpath + thruster_filename + ".xml";
     thruster_file.open(thruster_fullpathname.c_str());
     if ( !thruster_file.is_open()) {
-      thruster_fullpathname = localpath + thruster_filename + ".xml";
+      thruster_fullpathname = fullpath + thruster_filename + ".xml";
       thruster_file.open(thruster_fullpathname.c_str());
       if ( !thruster_file.is_open()) {
         cerr << "Could not open thruster file: " << thruster_filename << ".xml" << endl;
