@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.49 2012/03/17 20:44:12 jentron Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.50 2012/03/17 20:46:29 jentron Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,8 +123,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
 
   property_name = base_property_name + "/set-running";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetRunning, &FGEngine::SetRunning );
-  property_name = base_property_name + "/starter-cmd";
-  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetStarter, &FGEngine::SetStarter );
   property_name = base_property_name + "/thrust-lbs";
   PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
   property_name = base_property_name + "/fuel-flow-rate-pps";
