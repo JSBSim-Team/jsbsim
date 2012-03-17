@@ -11,7 +11,7 @@
   minthrottle:   minimum throttle setting (as before)
 -->
 <piston_engine name="IO360C">
-  <minmp unit="INHG">         6.5  </minmp>	<!-- Deprecated -->
+  <minmp unit="INHG">        10.0 </minmp>
   <maxmp unit="INHG">        28.5 </maxmp>	
   <displacement unit="IN3"> 360.0  </displacement>
   <maxhp>                   180.0  </maxhp>	

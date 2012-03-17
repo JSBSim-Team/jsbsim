@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.52 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.53 2012/03/17 20:43:40 jentron Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -467,18 +467,18 @@ string FGPropulsion::FindEngineFullPathname(const string& engine_filename)
   fullpath = enginePath + separator;
   localpath = aircraftPath + separator + "Engines" + separator;
 
-  engine_file.open(string(fullpath + engine_filename + ".xml").c_str());
+  engine_file.open(string(localpath + engine_filename + ".xml").c_str());
   if ( !engine_file.is_open()) {
-    engine_file.open(string(localpath + engine_filename + ".xml").c_str());
+    engine_file.open(string(fullpath + engine_filename + ".xml").c_str());
       if ( !engine_file.is_open()) {
         cerr << " Could not open engine file: " << engine_filename << " in path "
              << fullpath << " or " << localpath << endl;
         return string("");
       } else {
-        return string(localpath + engine_filename + ".xml");
+        return string(fullpath + engine_filename + ".xml");
       }
   }
-  return string(fullpath + engine_filename + ".xml");
+  return string(localpath + engine_filename + ".xml");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -495,12 +495,12 @@ ifstream* FGPropulsion::FindEngineFile(const string& engine_filename)
   fullpath = enginePath + separator;
   localpath = aircraftPath + separator + "Engines" + separator;
 
-  engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
+  engine_file->open(string(localpath + engine_filename + ".xml").c_str());
   if ( !engine_file->is_open()) {
-    engine_file->open(string(localpath + engine_filename + ".xml").c_str());
+    engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
       if ( !engine_file->is_open()) {
         cerr << " Could not open engine file: " << engine_filename << " in path "
-             << fullpath << " or " << localpath << endl;
+             << localpath << " or " << fullpath << endl;
       }
   }
   return engine_file;

@@ -98,7 +98,7 @@ Flight Magazine November 12, 1936:
 
  <sparkfaildrop>              0.10 </sparkfaildrop>
 
- <minmp unit="INHG">          6.00 </minmp> <!-- Deprecated -->
+ <minmp unit="INHG">         10.00 </minmp>
  <maxmp unit="INHG">         38.57 </maxmp>
  <maxthrottle>                1.00 </maxthrottle>
  <minthrottle>                0.05 </minthrottle>

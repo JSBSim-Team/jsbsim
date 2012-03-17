@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.48 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.50 2012/03/17 20:46:29 jentron Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,10 +248,10 @@ bool FGEngine::LoadThruster(Element *thruster_element)
 
   thruster_filename = thruster_element->GetAttributeValue("file");
   if ( !thruster_filename.empty()) {
-    thruster_fullpathname = fullpath + thruster_filename + ".xml";
+    thruster_fullpathname = localpath + thruster_filename + ".xml";
     thruster_file.open(thruster_fullpathname.c_str());
     if ( !thruster_file.is_open()) {
-      thruster_fullpathname = localpath + thruster_filename + ".xml";
+      thruster_fullpathname = fullpath + thruster_filename + ".xml";
       thruster_file.open(thruster_fullpathname.c_str());
       if ( !thruster_file.is_open()) {
         cerr << "Could not open thruster file: " << thruster_filename << ".xml" << endl;
