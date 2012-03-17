@@ -60,7 +60,7 @@
      -  6 PSI for 35.8 inhg max at 2300 RPM, 6200 ft.
 -->
 
-   <minmp unit="INHG"> 6.0 </minmp>
+   <minmp unit="INHG"> 10.0 </minmp>
    <maxmp unit="INHG"> 43.5 </maxmp>                        <!-- aeromatic 30.0 -->
    <displacement unit="IN3"> 2603.00 </displacement>
    <bore unit="IN">6.125</bore>

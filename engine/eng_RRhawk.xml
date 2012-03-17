@@ -26,7 +26,7 @@
      Air Screw 1350 RPM
      Left Hand Tractor
  -->
- <minmp unit="INHG">          6.0 </minmp> <!-- Ignored -->
+ <minmp unit="INHG">         10.0 </minmp> 
  <maxmp unit="INHG">         27.9 </maxmp> 
  <displacement unit="IN3"> 452.39 </displacement>
  <!--bsfc>          0.37 </bsfc--> 

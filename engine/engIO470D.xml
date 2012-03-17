@@ -12,8 +12,8 @@
 -->
 
 <piston_engine name="IO470D">
-  <minmp unit="INHG">          6.5 </minmp>	<!-- Deprecated -->
-  <maxmp unit="INHG">         28.5 </maxmp>	<!-- Deprecated -->
+  <minmp unit="INHG">         10.0 </minmp>
+  <maxmp unit="INHG">         28.5 </maxmp>
   <displacement unit="IN3">  470.0 </displacement>
   <maxhp>        260.00 </maxhp>
   <cycles>         4.0 </cycles>
