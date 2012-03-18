@@ -56,7 +56,7 @@ using std::ostringstream;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.19 2012/02/25 14:35:57 jentron Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.20 2012/03/18 15:48:36 jentron Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -786,7 +786,7 @@ bool FGRotor::BindModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRotor::GetThrusterLabels(int id, string delimeter)
+string FGRotor::GetThrusterLabels(int id, const string& delimeter)
 {
 
   ostringstream buf;
@@ -799,7 +799,7 @@ string FGRotor::GetThrusterLabels(int id, string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRotor::GetThrusterValues(int id, string delimeter)
+string FGRotor::GetThrusterValues(int id, const string& delimeter)
 {
 
   ostringstream buf;

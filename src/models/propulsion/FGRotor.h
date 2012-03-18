@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.13 2012/02/25 14:35:57 jentron Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.14 2012/03/18 15:48:36 jentron Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -230,7 +230,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.13 2012/02/25 14:35:57 jentron Exp $
+    @version $Id: FGRotor.h,v 1.14 2012/03/18 15:48:36 jentron Exp $
   */
 
 
@@ -318,8 +318,8 @@ public:
   void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
 
   // Stubs. Only main rotor RPM is returned
-  string GetThrusterLabels(int id, string delimeter);
-  string GetThrusterValues(int id, string delimeter);
+  string GetThrusterLabels(int id, const string& delimeter);
+  string GetThrusterValues(int id, const string& delimeter);
 
 private:
 
