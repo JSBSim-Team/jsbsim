@@ -59,6 +59,7 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "models/FGPropagate.h"
+#include "models/propulsion/FGTank.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
@@ -70,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.123 2012/02/18 16:31:08 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.124 2012/03/21 05:15:39 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,6 +414,10 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQR              = Propagate->GetPQR();
+    for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+      Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
+    }
+
     break;
   case eAerodynamics:
     Aerodynamics->in.Alpha     = Auxiliary->Getalpha();

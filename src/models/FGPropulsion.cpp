@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.53 2012/03/17 20:43:40 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.54 2012/03/21 05:15:39 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -442,6 +442,8 @@ bool FGPropulsion::Load(Element* el)
     ResetParser();
   }
 
+  in.vTankBodyVec.resize(numTanks);
+
   CalculateTankInertias();
 
   // Process fuel dump rate
@@ -588,9 +590,7 @@ const FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 {
   vXYZtank_arm.InitMatrix();
   for (unsigned int i=0; i<Tanks.size(); i++) {
-    vXYZtank_arm(eX) += Tanks[i]->GetXYZ(eX) * Tanks[i]->GetContents();
-    vXYZtank_arm(eY) += Tanks[i]->GetXYZ(eY) * Tanks[i]->GetContents();
-    vXYZtank_arm(eZ) += Tanks[i]->GetXYZ(eZ) * Tanks[i]->GetContents();
+    vXYZtank_arm += Tanks[i]->GetXYZ() * Tanks[i]->GetContents();
   }
   return vXYZtank_arm;
 }
@@ -619,7 +619,7 @@ const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 
   for (unsigned int i=0; i<size; i++) {
     tankJ += FDMExec->GetMassBalance()->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
-                                               Tanks[i]->GetXYZ() );
+                                                               in.vTankBodyVec[i] );
     tankJ(1,1) += Tanks[i]->GetIxx();
     tankJ(2,2) += Tanks[i]->GetIyy();
     tankJ(3,3) += Tanks[i]->GetIzz();
