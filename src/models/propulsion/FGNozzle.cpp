@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.14 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.15 2012/03/18 15:48:35 jentron Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,7 @@ double FGNozzle::Calculate(double vacThrust)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGNozzle::GetThrusterLabels(int id, string delimeter)
+string FGNozzle::GetThrusterLabels(int id, const string& delimeter)
 {
   std::ostringstream buf;
 
@@ -101,7 +101,7 @@ string FGNozzle::GetThrusterLabels(int id, string delimeter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGNozzle::GetThrusterValues(int id, string delimeter)
+string FGNozzle::GetThrusterValues(int id, const string& delimeter)
 {
   std::ostringstream buf;
 

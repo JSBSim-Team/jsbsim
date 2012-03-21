@@ -74,6 +74,7 @@ digraph G {
     Tw2b;
     Vtotal;
     RadiusToVehicle;
+    planetRadius;
     Latitude;
     "Delta T";
     Mass;
@@ -229,6 +230,9 @@ digraph G {
   Executive -> "Delta T" -> Winds;
   Auxiliary -> Tw2b -> Winds;
   Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
+  Propagate -> Longitude -> Winds;
+  Propagate -> Latitude -> Winds;
+  Inertial  -> planetRadius -> Winds;
 
   // Auxiliary
   Atmosphere -> Pressure -> Auxiliary;
@@ -291,6 +295,7 @@ digraph G {
   "Control Systems" -> PropFeather -> Propulsion;
   Propagate -> DistanceAGL -> Propulsion;
   Propagate -> PQR -> Propulsion;
+  MassBalance -> TankBodyLocation -> Propulsion
 
   // Aerodynamics
   Auxiliary -> Alpha -> Aerodynamics;

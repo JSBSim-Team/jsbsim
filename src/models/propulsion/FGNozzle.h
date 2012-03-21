@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.9 2011/08/03 03:21:06 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.10 2012/03/18 15:48:36 jentron Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
 
     All parameters MUST be specified.  
     @author Jon S. Berndt
-    @version $Id: FGNozzle.h,v 1.9 2011/08/03 03:21:06 jberndt Exp $
+    @version $Id: FGNozzle.h,v 1.10 2012/03/18 15:48:36 jentron Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,8 +90,8 @@ public:
   ~FGNozzle();
 
   double Calculate(double vacThrust);
-  string GetThrusterLabels(int id, string delimeter);
-  string GetThrusterValues(int id, string delimeter);
+  string GetThrusterLabels(int id, const string& delimeter);
+  string GetThrusterValues(int id, const string& delimeter);
 
 private:
 //  double PE;
