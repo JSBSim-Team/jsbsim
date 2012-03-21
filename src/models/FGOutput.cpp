@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.65 2012/02/19 14:03:48 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.66 2012/03/21 05:14:52 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -1048,7 +1048,7 @@ bool FGOutput::Load(Element* element)
     subSystems += ssMassProps;
   if (document->FindElementValue("position") == string("ON"))
     subSystems += ssPropagate;
-  if (document->FindElementValue("coefficients") == string("ON"))
+  if (document->FindElementValue("coefficients") == string("ON") || document->FindElementValue("aerodynamics") == string("ON"))
     subSystems += ssAeroFunctions;
   if (document->FindElementValue("ground_reactions") == string("ON"))
     subSystems += ssGroundReactions;
