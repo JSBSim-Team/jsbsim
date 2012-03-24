@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.93 2011/12/03 15:55:48 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.94 2012/03/24 18:29:58 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -165,6 +165,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     force_type = force_table->GetAttributeValue("type");
     if (force_type == "CORNERING_COEFF") {
       ForceY_Table = new FGTable(PropertyManager, force_table);
+      break;
     } else {
       cerr << "Undefined force table for " << name << " contact point" << endl;
     }
