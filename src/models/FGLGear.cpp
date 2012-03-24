@@ -60,13 +60,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.96 2012/03/24 19:36:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.97 2012/03/24 19:51:40 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
-
-// Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
-// ft instead of inches)
-const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
-const FGMatrix33 FGLGear::Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

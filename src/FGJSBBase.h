@@ -47,6 +47,7 @@ using std::min;
 using std::max;
 
 #include "input_output/string_utilities.h"
+#include "math/FGMatrix33.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -56,7 +57,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.34 2011/10/22 14:38:30 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.35 2012/03/24 19:51:40 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +73,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.34 2011/10/22 14:38:30 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.35 2012/03/24 19:51:40 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -330,6 +331,8 @@ protected:
 
   static unsigned int messageId;
 
+  static const FGMatrix33 Tb2s;
+  static const FGMatrix33 Ts2b;
   static const double radtodeg;
   static const double degtorad;
   static const double hptoftlbssec;

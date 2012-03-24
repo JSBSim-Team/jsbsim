@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.55 2012/03/24 19:36:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.56 2012/03/24 19:51:40 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -608,7 +608,6 @@ double FGPropulsion::GetTanksWeight(void) const
 
 const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 {
-  const FGMatrix33 Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
   unsigned int size;
 
   size = Tanks.size();
