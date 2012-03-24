@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.124 2012/03/21 05:15:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.125 2012/03/24 18:48:10 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,9 +448,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     GroundReactions->in.TotalDeltaT     = dT * GroundReactions->GetRate();
     GroundReactions->in.WOW             = GroundReactions->GetWOW();
     GroundReactions->in.Location        = Propagate->GetLocation();
-    for (int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
-      GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
-    }
+    GroundReactions->in.StructOrig      = MassBalance->StructuralToBody(FGColumnVector3(0.,0.,0.));
     break;
   case eExternalReactions:
     // There are no external inputs to this model.
@@ -537,9 +535,7 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
-  for (int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
-    GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
-  }
+  GroundReactions->in.StructOrig      = MassBalance->StructuralToBody(FGColumnVector3(0.,0.,0.));
 
   LoadPlanetConstants();
 }
