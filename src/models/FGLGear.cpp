@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.95 2012/03/24 18:48:11 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.96 2012/03/24 19:36:39 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -257,7 +257,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
   if (gearPos > 0.99) { // Gear DOWN
     FGColumnVector3 normal, terrainVel, dummy;
     FGLocation gearLoc, contact;
-    FGColumnVector3 vWhlBodyVec = Ts2b * vXYZn + in.StructOrig;
+    FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
 
     vLocalGear = in.Tb2l * vWhlBodyVec; // Get local frame wheel location
     gearLoc = in.Location.LocalToLocation(vLocalGear);

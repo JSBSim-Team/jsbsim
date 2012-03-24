@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.50 2012/03/24 18:48:11 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.51 2012/03/24 19:36:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +177,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.50 2012/03/24 18:48:11 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.51 2012/03/24 19:36:39 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -207,7 +207,7 @@ public:
     FGMatrix33 Tec2b;
     FGColumnVector3 PQR;
     FGColumnVector3 UVW;
-    FGColumnVector3 StructOrig; // Structural frame origin coordinates expressed in the body frame
+    FGColumnVector3 vXYZcg; // CG coordinates expressed in the structural frame
     FGLocation Location;
     std::vector <double> SteerPosDeg;
     std::vector <double> BrakePos;
@@ -241,10 +241,10 @@ public:
 
   /// Gets the location of the gear in Body axes
   FGColumnVector3 GetBodyLocation(void) const {
-    return Ts2b * vXYZn + in.StructOrig;
+    return Ts2b * (vXYZn - in.vXYZcg);
   }
   double GetBodyLocation(int idx) const {
-    FGColumnVector3 vWhlBodyVec = Ts2b * vXYZn + in.StructOrig;
+    FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
     return vWhlBodyVec(idx);
   }
 

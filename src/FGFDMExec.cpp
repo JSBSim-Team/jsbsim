@@ -59,7 +59,6 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "models/FGPropagate.h"
-#include "models/propulsion/FGTank.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
@@ -71,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.125 2012/03/24 18:48:10 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.126 2012/03/24 19:36:39 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,9 +413,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQR              = Propagate->GetPQR();
-    for (int i=0; i<Propulsion->GetNumTanks(); i++) {
-      Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
-    }
+    Propulsion->in.vXYZcg           = MassBalance->GetXYZcg();
 
     break;
   case eAerodynamics:
@@ -448,7 +445,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     GroundReactions->in.TotalDeltaT     = dT * GroundReactions->GetRate();
     GroundReactions->in.WOW             = GroundReactions->GetWOW();
     GroundReactions->in.Location        = Propagate->GetLocation();
-    GroundReactions->in.StructOrig      = MassBalance->StructuralToBody(FGColumnVector3(0.,0.,0.));
+    GroundReactions->in.vXYZcg          = MassBalance->GetXYZcg();
     break;
   case eExternalReactions:
     // There are no external inputs to this model.
@@ -535,7 +532,7 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
-  GroundReactions->in.StructOrig      = MassBalance->StructuralToBody(FGColumnVector3(0.,0.,0.));
+  GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
 
   LoadPlanetConstants();
 }
