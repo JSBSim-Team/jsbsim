@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.52 2012/03/24 19:51:40 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.53 2012/03/25 11:05:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +177,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.52 2012/03/24 19:51:40 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.53 2012/03/25 11:05:37 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -207,10 +207,10 @@ public:
     FGMatrix33 Tec2b;
     FGColumnVector3 PQR;
     FGColumnVector3 UVW;
-    FGColumnVector3 vXYZcg; // CG coordinates expressed in the structural frame
     FGLocation Location;
     std::vector <double> SteerPosDeg;
     std::vector <double> BrakePos;
+    std::vector <FGColumnVector3> vWhlBodyVec;
     double FCSGearPos;
     double EmptyWeight;
   };
@@ -240,13 +240,8 @@ public:
   const FGColumnVector3& GetBodyForces(void);
 
   /// Gets the location of the gear in Body axes
-  FGColumnVector3 GetBodyLocation(void) const {
-    return Ts2b * (vXYZn - in.vXYZcg);
-  }
-  double GetBodyLocation(int idx) const {
-    FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
-    return vWhlBodyVec(idx);
-  }
+  const FGColumnVector3& GetBodyLocation(void) const { return in.vWhlBodyVec[GearNumber]; }
+  double GetBodyLocation(int idx) const { return in.vWhlBodyVec[GearNumber](idx); }
 
   const FGColumnVector3& GetLocalGear(void) const { return vLocalGear; }
   double GetLocalGear(int idx) const { return vLocalGear(idx); }
@@ -307,7 +302,9 @@ public:
 
 private:
   int GearNumber;
+  static const FGMatrix33 Tb2s;
   FGMatrix33 mTGear;
+  FGColumnVector3 vWhlBodyVec;
   FGColumnVector3 vLocalGear;
   FGColumnVector3 vWhlVelVec, vGroundWhlVel;     // Velocity of this wheel
   FGColumnVector3 vGroundNormal;

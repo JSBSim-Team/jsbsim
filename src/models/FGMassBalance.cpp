@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.40 2012/03/24 19:51:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.41 2012/03/25 11:05:37 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -348,11 +348,11 @@ FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
   //
   //   FGColumnVector3 cgOff = r - vXYZcg;
   //
-  // Next, the transformation matrix Ts2b does a change of units:
+  // Next, we do a change of units:
   //
   //   cgOff *= inchtoft;
   //
-  // and then a 180 degree rotation about the Y axis so that the:
+  // And then a 180 degree rotation is done about the Y axis so that the:
   //
   // - X-axis is directed forward,
   // - Y-axis is directed towards the right,
@@ -360,7 +360,9 @@ FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
   //
   // This is needed because the structural and body frames are 180 degrees apart.
 
-  return Ts2b * (r - vXYZcg);
+  return FGColumnVector3(inchtoft*(vXYZcg(1)-r(1)),
+                         inchtoft*(r(2)-vXYZcg(2)),
+                         inchtoft*(vXYZcg(3)-r(3)));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

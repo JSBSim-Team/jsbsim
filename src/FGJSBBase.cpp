@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.34 2012/03/24 19:51:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.35 2012/03/25 11:05:36 bcoconni Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ const double FGJSBBase::psftoinhg = 0.014138;
 const double FGJSBBase::psftopa = 47.88;
 const double FGJSBBase::fpstokts = 0.592484;
 const double FGJSBBase::ktstofps = 1.68781;
-const double FGJSBBase::inchtoft = 1.0/12;
+const double FGJSBBase::inchtoft = 0.08333333;
 const double FGJSBBase::in3tom3 = 1.638706E-5;
 const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
 const double FGJSBBase::inhgtopa = 3386.38;
@@ -104,11 +104,6 @@ const double FGJSBBase::slugtolb = 32.174049;
 const double FGJSBBase::lbtoslug = 1.0/slugtolb;
 const double FGJSBBase::kgtolb = 2.20462;
 const double FGJSBBase::kgtoslug = 0.06852168;
-
-// Body To Structural transformation matrices (body frame is rotated 180 deg
-// about Y and lengths are given in ft instead of inches)
-const FGMatrix33 FGJSBBase::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
-const FGMatrix33 FGJSBBase::Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
 
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = "1.0 "__DATE__" "__TIME__;

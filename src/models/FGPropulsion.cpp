@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.56 2012/03/24 19:51:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.57 2012/03/25 11:05:37 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -442,6 +442,8 @@ bool FGPropulsion::Load(Element* el)
     ResetParser();
   }
 
+  in.vTankBodyVec.resize(numTanks);
+
   CalculateTankInertias();
 
   // Process fuel dump rate
@@ -616,10 +618,8 @@ const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
   tankJ = FGMatrix33();
 
   for (unsigned int i=0; i<size; i++) {
-    FGColumnVector3 vTankBodyVec = Ts2b * (in.vXYZcg - Tanks[i]->GetXYZ());
-
     tankJ += FDMExec->GetMassBalance()->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
-                                                             vTankBodyVec);
+                                                               in.vTankBodyVec[i] );
     tankJ(1,1) += Tanks[i]->GetIxx();
     tankJ(2,2) += Tanks[i]->GetIyy();
     tankJ(3,3) += Tanks[i]->GetIzz();
