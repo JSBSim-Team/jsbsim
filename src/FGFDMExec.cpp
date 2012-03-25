@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.124 2012/03/21 05:15:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.128 2012/03/25 11:05:36 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -539,6 +539,9 @@ void FGFDMExec::LoadModelConstants(void)
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
   for (int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
     GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
+  }
+  for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+    Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
   }
 
   LoadPlanetConstants();
