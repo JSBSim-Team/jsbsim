@@ -59,6 +59,7 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "models/FGPropagate.h"
+#include "models/propulsion/FGTank.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
@@ -70,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.126 2012/03/24 19:36:39 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.127 2012/03/25 05:37:45 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +414,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQR              = Propagate->GetPQR();
-    Propulsion->in.vXYZcg           = MassBalance->GetXYZcg();
+    for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+      Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
+    }
 
     break;
   case eAerodynamics:
@@ -445,7 +448,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     GroundReactions->in.TotalDeltaT     = dT * GroundReactions->GetRate();
     GroundReactions->in.WOW             = GroundReactions->GetWOW();
     GroundReactions->in.Location        = Propagate->GetLocation();
-    GroundReactions->in.vXYZcg          = MassBalance->GetXYZcg();
+    for (int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
+      GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
+    }
     break;
   case eExternalReactions:
     // There are no external inputs to this model.
@@ -532,7 +537,12 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
-  GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
+  for (int i=0; i<GroundReactions->GetNumGearUnits(); i++) {
+    GroundReactions->in.vWhlBodyVec[i] = MassBalance->StructuralToBody(GroundReactions->GetGearUnit(i)->GetLocation());
+  }
+  for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+    Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
+  }
 
   LoadPlanetConstants();
 }
