@@ -48,7 +48,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.27 2012/02/05 14:50:53 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.28 2012/03/26 04:42:46 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 using std::cerr;
 using std::endl;
@@ -134,6 +134,7 @@ FGLocation::FGLocation(const FGColumnVector3& lv)
 FGLocation::FGLocation(const FGLocation& l)
   : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
 {
+  mCacheValid = false;
 
   a = l.a;
   b = l.b;
