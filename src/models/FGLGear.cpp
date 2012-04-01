@@ -60,12 +60,13 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.99 2012/03/26 21:31:21 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.100 2012/04/01 17:05:51 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
 // ft instead of inches)
 const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
+const FGMatrix33 FGLGear::Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -79,11 +80,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Castered(false),
   StaticFriction(false)
 {
-  Element *force_table=0;
-  Element *dampCoeff=0;
-  Element *dampCoeffRebound=0;
-  string force_type="";
-
   kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
   isRetractable = false;
   eDampType = dtLinear;
@@ -112,7 +108,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   if (el->FindElement("spring_coeff"))
     kSpring = el->FindElementValueAsNumberConvertTo("spring_coeff", "LBS/FT");
   if (el->FindElement("damping_coeff")) {
-    dampCoeff = el->FindElement("damping_coeff");
+    Element* dampCoeff = el->FindElement("damping_coeff");
     if (dampCoeff->GetAttributeValue("type") == "SQUARE") {
       eDampType = dtSquare;
       bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT2/SEC2");
@@ -122,7 +118,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   }
 
   if (el->FindElement("damping_coeff_rebound")) {
-    dampCoeffRebound = el->FindElement("damping_coeff_rebound");
+    Element* dampCoeffRebound = el->FindElement("damping_coeff_rebound");
     if (dampCoeffRebound->GetAttributeValue("type") == "SQUARE") {
       eDampTypeRebound = dtSquare;
       bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT2/SEC2");
@@ -160,9 +156,9 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   PropertyManager = fdmex->GetPropertyManager();
 
   ForceY_Table = 0;
-  force_table = el->FindElement("table");
+  Element* force_table = el->FindElement("table");
   while (force_table) {
-    force_type = force_table->GetAttributeValue("type");
+    string force_type = force_table->GetAttributeValue("type");
     if (force_type == "CORNERING_COEFF") {
       ForceY_Table = new FGTable(PropertyManager, force_table);
       break;
@@ -179,25 +175,9 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
 
   element = el->FindElement("orientation");
   if (element && (eContactType == ctBOGEY)) {
-    FGColumnVector3 vGearOrient = element->FindElementTripletConvertTo("RAD");
+    FGQuaternion quatFromEuler(element->FindElementTripletConvertTo("RAD"));
 
-    double cp,sp,cr,sr,cy,sy;
-
-    cp=cos(vGearOrient(ePitch)); sp=sin(vGearOrient(ePitch));
-    cr=cos(vGearOrient(eRoll));  sr=sin(vGearOrient(eRoll));
-    cy=cos(vGearOrient(eYaw));   sy=sin(vGearOrient(eYaw));
-
-    mTGear(1,1) =  cp*cy;
-    mTGear(2,1) =  cp*sy;
-    mTGear(3,1) = -sp;
-
-    mTGear(1,2) = sr*sp*cy - cr*sy;
-    mTGear(2,2) = sr*sp*sy + cr*cy;
-    mTGear(3,2) = sr*cp;
-
-    mTGear(1,3) = cr*sp*cy + sr*sy;
-    mTGear(2,3) = cr*sp*sy - sr*cy;
-    mTGear(3,3) = cr*cp;
+    mTGear = quatFromEuler.GetT();
   }
   else {
     mTGear(1,1) = 1.;
@@ -277,8 +257,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
   if (gearPos > 0.99) { // Gear DOWN
     FGColumnVector3 normal, terrainVel, dummy;
     FGLocation gearLoc, contact;
+    FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
 
-    vLocalGear = in.Tb2l * in.vWhlBodyVec[GearNumber]; // Get local frame wheel location
+    vLocalGear = in.Tb2l * vWhlBodyVec; // Get local frame wheel location
     gearLoc = in.Location.LocalToLocation(vLocalGear);
 
     // Compute the height of the theoretical location of the wheel (if strut is
@@ -290,7 +271,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       vGroundNormal = in.Tec2b * normal;
 
       // The height returned by GetGroundCallback() is the AGL and is expressed
-      // in the Z direction of the ECEF coordinate frame. We now need to transform
+      // in the Z direction of the local coordinate frame. We now need to transform
       // this height in actual compression of the strut (BOGEY) or in the normal
       // direction to the ground (STRUCTURE)
       double normalZ = (in.Tec2l*normal)(eZ);
@@ -310,7 +291,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
         break;
       }
 
-      FGColumnVector3 vWhlContactVec = in.vWhlBodyVec[GearNumber] + vWhlDisplVec;
+      FGColumnVector3 vWhlContactVec = vWhlBodyVec + vWhlDisplVec;
       vActingXYZn = vXYZn + Tb2s * vWhlDisplVec;
       FGColumnVector3 vBodyWhlVel = in.PQR * vWhlContactVec;
       vBodyWhlVel += in.UVW - in.Tec2b * terrainVel;
@@ -319,14 +300,14 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
       InitializeReporting();
       ComputeSteeringAngle();
-      ComputeGroundCoordSys();
+      ComputeGroundFrame();
 
-      vGroundWhlVel = Transform().Transposed() * vBodyWhlVel;
+      vGroundWhlVel = mT.Transposed() * vBodyWhlVel;
 
       if (fdmex->GetTrimStatus())
         compressSpeed = 0.0; // Steady state is sought during trimming
       else {
-        compressSpeed = -vGroundWhlVel(eX);
+        compressSpeed = -vGroundWhlVel(eZ);
         if (eContactType == ctBOGEY)
           compressSpeed /= LGearProj;
       }
@@ -386,41 +367,28 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Build a local "ground" coordinate system defined by
-//  eX : normal to the ground
-//  eY : projection of the rolling direction on the ground
-//  eZ : projection of the sliping direction on the ground
+//  eX : projection of the rolling direction on the ground
+//  eY : projection of the sliping direction on the ground
+//  eZ : normal to the ground
 
-void FGLGear::ComputeGroundCoordSys(void)
+void FGLGear::ComputeGroundFrame(void)
 {
-  // Euler angles are built up to create a local frame to describe the forces
-  // applied to the gear by the ground. Here pitch, yaw and roll do not have
-  // any physical meaning. It is just a convenient notation.
-  // First, "pitch" and "yaw" are determined in order to align eX with the
-  // ground normal.
-  if (vGroundNormal(eZ) < -1.0)
-    vOrient(ePitch) = 0.5*M_PI;
-  else if (1.0 < vGroundNormal(eZ))
-    vOrient(ePitch) = -0.5*M_PI;
-  else
-    vOrient(ePitch) = asin(-vGroundNormal(eZ));
+  FGColumnVector3 roll = mTGear * FGColumnVector3(cos(SteerAngle), sin(SteerAngle), 0.);
+  FGColumnVector3 side = vGroundNormal * roll;
 
-  if (fabs(vOrient(ePitch)) == 0.5*M_PI)
-    vOrient(eYaw) = 0.;
-  else
-    vOrient(eYaw) = atan2(vGroundNormal(eY), vGroundNormal(eX));
+  roll -= DotProduct(roll, vGroundNormal) * vGroundNormal;
+  roll.Normalize();
+  side.Normalize();
 
-  vOrient(eRoll) = 0.;
-  UpdateCustomTransformMatrix();
-
-  if (eContactType == ctBOGEY) {
-    // In the case of a bogey, the third angle "roll" is used to align the axis eY and eZ
-    // to the rolling and sliping direction respectively.
-    FGColumnVector3 updatedRollingAxis = Transform().Transposed() * mTGear
-                                       * FGColumnVector3(-sin(SteerAngle), cos(SteerAngle), 0.);
-
-    vOrient(eRoll) = atan2(updatedRollingAxis(eY), -updatedRollingAxis(eZ));
-    UpdateCustomTransformMatrix();
-  }
+  mT(eX,eX) = roll(eX);
+  mT(eY,eX) = roll(eY);
+  mT(eZ,eX) = roll(eZ);
+  mT(eX,eY) = side(eX);
+  mT(eY,eY) = side(eY);
+  mT(eZ,eY) = side(eZ);
+  mT(eX,eZ) = vGroundNormal(eX);
+  mT(eY,eZ) = vGroundNormal(eY);
+  mT(eZ,eZ) = vGroundNormal(eZ);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -429,8 +397,8 @@ void FGLGear::ComputeGroundCoordSys(void)
 void FGLGear::ComputeSlipAngle(void)
 {
 // Check that the speed is non-null otherwise use the current angle
-  if (vGroundWhlVel.Magnitude(eY,eZ) > 1E-3)
-    WheelSlip = -atan2(vGroundWhlVel(eZ), fabs(vGroundWhlVel(eY)))*radtodeg;
+  if (vGroundWhlVel.Magnitude(eX,eY) > 1E-3)
+    WheelSlip = -atan2(vGroundWhlVel(eY), fabs(vGroundWhlVel(eX)))*radtodeg;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -622,10 +590,10 @@ void FGLGear::ComputeVerticalStrutForce(void)
   switch (eContactType) {
   case ctBOGEY:
     // Project back the strut force in the local coordinate frame of the ground
-    vFn(eX) = StrutForce / (mTGear.Transposed()*vGroundNormal)(eZ);
+    vFn(eZ) = StrutForce / (mTGear.Transposed()*vGroundNormal)(eZ);
     break;
   case ctSTRUCTURE:
-    vFn(eX) = -StrutForce;
+    vFn(eZ) = -StrutForce;
     break;
   }
 
@@ -655,19 +623,19 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
   // When the point of contact is moving, dynamic friction is used
   // This type of friction is limited to ctSTRUCTURE elements because their
   // friction coefficient is the same in every directions
-  if ((eContactType == ctSTRUCTURE) && (vGroundWhlVel.Magnitude(eY,eZ) > 1E-3)) {
+  if ((eContactType == ctSTRUCTURE) && (vGroundWhlVel.Magnitude(eX,eY) > 1E-3)) {
 
     FGColumnVector3 velocityDirection = vGroundWhlVel;
 
     StaticFriction = false;
 
-    velocityDirection(eX) = 0.;
+    velocityDirection(eZ) = 0.;
     velocityDirection.Normalize();
 
-    LMultiplier[ftDynamic].ForceJacobian = Transform() * velocityDirection;
+    LMultiplier[ftDynamic].ForceJacobian = mT * velocityDirection;
     LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
     LMultiplier[ftDynamic].Max = 0.;
-    LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eX));
+    LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eZ));
 
     // The Lagrange multiplier value obtained from the previous iteration is kept
     // This is supposed to accelerate the convergence of the projected Gauss-Seidel
@@ -684,19 +652,19 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     // This cannot be handled properly by the so-called "dynamic friction".
     StaticFriction = true;
 
-    LMultiplier[ftRoll].ForceJacobian = Transform()*FGColumnVector3(0.,1.,0.);
-    LMultiplier[ftSide].ForceJacobian = Transform()*FGColumnVector3(0.,0.,1.);
+    LMultiplier[ftRoll].ForceJacobian = mT * FGColumnVector3(1.,0.,0.);
+    LMultiplier[ftSide].ForceJacobian = mT * FGColumnVector3(0.,1.,0.);
     LMultiplier[ftRoll].MomentJacobian = vWhlContactVec * LMultiplier[ftRoll].ForceJacobian;
     LMultiplier[ftSide].MomentJacobian = vWhlContactVec * LMultiplier[ftSide].ForceJacobian;
 
     switch(eContactType) {
     case ctBOGEY:
-      LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eX));
-      LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eX));
+      LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eZ));
+      LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eZ));
       break;
     case ctSTRUCTURE:
-      LMultiplier[ftRoll].Max = fabs(staticFCoeff * vFn(eX));
-      LMultiplier[ftSide].Max = fabs(staticFCoeff * vFn(eX));
+      LMultiplier[ftRoll].Max = fabs(staticFCoeff * vFn(eZ));
+      LMultiplier[ftSide].Max = LMultiplier[ftRoll].Max;
       break;
     }
 
@@ -722,13 +690,13 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 void FGLGear::UpdateForces(void)
 {
   if (StaticFriction) {
-    vFn(eY) = LMultiplier[ftRoll].value;
-    vFn(eZ) = LMultiplier[ftSide].value;
+    vFn(eX) = LMultiplier[ftRoll].value;
+    vFn(eY) = LMultiplier[ftSide].value;
   }
   else {
-    FGColumnVector3 forceDir = Transform().Transposed() * LMultiplier[ftDynamic].ForceJacobian;
+    FGColumnVector3 forceDir = mT.Transposed() * LMultiplier[ftDynamic].ForceJacobian;
+    vFn(eX) = LMultiplier[ftDynamic].value * forceDir(eX);
     vFn(eY) = LMultiplier[ftDynamic].value * forceDir(eY);
-    vFn(eZ) = LMultiplier[ftDynamic].value * forceDir(eZ);
   }
 }
 
@@ -901,4 +869,3 @@ void FGLGear::Debug(int from)
 }
 
 } // namespace JSBSim
-

@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.16 2012/03/25 11:05:37 bcoconni Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.17 2012/04/01 17:05:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.16 2012/03/25 11:05:37 bcoconni Exp $
+    @version $Id: FGForce.h,v 1.17 2012/04/01 17:05:51 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,13 +321,12 @@ protected:
   TransformType ttype;
   FGColumnVector3 vXYZn;
   FGColumnVector3 vActingXYZn;
+  FGMatrix33 mT;
 
 private:
   FGColumnVector3 vFb;
   FGColumnVector3 vM;
   FGColumnVector3 vDXYZ;
-
-  FGMatrix33 mT;
 
   void Debug(int from);
 };

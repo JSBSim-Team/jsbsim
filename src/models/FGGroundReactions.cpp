@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.38 2012/03/25 11:05:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.39 2012/04/01 17:05:51 bcoconni Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,8 +139,6 @@ bool FGGroundReactions::Load(Element* el)
   }
 
   FGModel::Load(el); // Perform base class Load
-
-  in.vWhlBodyVec.resize(lGear.size());
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 
