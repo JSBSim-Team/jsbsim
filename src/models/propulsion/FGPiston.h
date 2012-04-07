@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.34 2012/03/01 04:54:35 jentron Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.35 2012/04/07 01:50:54 jentron Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,7 @@ CLASS DOCUMENTATION
   <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>
   <boostmanual> {0 | 1} </boostmanual>
+  <boost-loss-factor> {number} </boost-loss-factor>
   <ratedboost1 unit="{INHG | PA | ATM}"> {number} </ratedboost1>
   <ratedpower1 unit="{HP | WATTS}"> {number} </ratedpower1>
   <ratedrpm1> {number} </ratedrpm1>
@@ -172,7 +173,10 @@ Supercharge parameters:
       supercharger speeds.  Merlin XII had 1 speed, Merlin 61 had 2, a late
       Griffon engine apparently had 3.  No known engine more than 3, although
       some German engines had continuously variable-speed superchargers.
-- \b boostoverride - unused
+- \b boostoverride - whether or not to clip output to the wastegate value
+- \b boost-loss-factor - zero (or not present) for 'free' supercharging. A value entered
+      will be used as a multiplier to the power required to compress the input air. Typical 
+      value should be 1.15 to 1.20.
 - \b boostmanual - whether a multispeed supercharger will manually or
       automatically shift boost speeds. On manual shifting the boost speeds is
       accomplished by controlling the property propulsion/engine/boostspeed.
@@ -207,7 +211,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.34 2012/03/01 04:54:35 jentron Exp $
+    @version $Id: FGPiston.h,v 1.35 2012/04/07 01:50:54 jentron Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,6 +340,7 @@ private:
   double RatedMAP[FG_MAX_BOOST_SPEEDS]; // Rated manifold absolute pressure [Pa] (BCV clamp)
   double TakeoffMAP[FG_MAX_BOOST_SPEEDS];   // Takeoff setting manifold absolute pressure [Pa] (BCV clamp)
   double BoostSwitchHysteresis; // Pa.
+  double BoostLossFactor; // multiplier for HP consumed by the supercharger
 
   double minMAP;  // Pa
   double maxMAP;  // Pa
@@ -365,9 +370,11 @@ private:
   double volumetric_efficiency_reduced;
   double map_coefficient;
   double m_dot_air;
+  double v_dot_air;
   double equivalence_ratio;
   double m_dot_fuel;
   double HP;
+  double BoostLossHP;
   double combustion_efficiency;
   double ExhaustGasTemp_degK;
   double EGT_degC;
