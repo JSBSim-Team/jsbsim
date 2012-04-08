@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.22 2011/07/12 21:40:32 jentron Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.23 2012/04/08 15:04:41 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +66,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
   initialized = 0;
+  saturated = false;
 
   if ( element->FindElement("deadband_width") ) {
     deadband_width = element->FindElementValueAsNumber("deadband_width");
@@ -132,6 +133,13 @@ bool FGActuator::Run(void )
   initialized = 1;
 
   Clip();
+
+  if (clip) {
+    saturated = false;
+    if (Output >= clipmax) saturated = true;
+    else if (Output <= clipmin) saturated = true;
+  }
+
   if (IsOutput) SetOutput();
 
   return true;
@@ -225,10 +233,12 @@ void FGActuator::bind(void)
   const string tmp_zero = tmp + "/malfunction/fail_zero";
   const string tmp_hardover = tmp + "/malfunction/fail_hardover";
   const string tmp_stuck = tmp + "/malfunction/fail_stuck";
+  const string tmp_sat = tmp + "/saturated";
 
   PropertyManager->Tie( tmp_zero, this, &FGActuator::GetFailZero, &FGActuator::SetFailZero);
   PropertyManager->Tie( tmp_hardover, this, &FGActuator::GetFailHardover, &FGActuator::SetFailHardover);
   PropertyManager->Tie( tmp_stuck, this, &FGActuator::GetFailStuck, &FGActuator::SetFailStuck);
+  PropertyManager->Tie( tmp_sat, this, &FGActuator::IsSaturated);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
