@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.70 2012/02/26 05:46:21 jentron Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.71 2012/04/07 01:50:54 jentron Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   bBoostOverride = false;
   bTakeoffBoost = false;
   TakeoffBoost = 0.0;   // Default to no extra takeoff-boost
+  BoostLossFactor = 0.0;   // Default to free boost
+  
   int i;
   for (i=0; i<FG_MAX_BOOST_SPEEDS; i++) {
     RatedBoost[i] = 0.0;
@@ -203,6 +205,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
       BoostManual = (int)el->FindElementValueAsNumber("boostmanual");
     if (el->FindElement("takeoffboost"))
       TakeoffBoost = el->FindElementValueAsNumberConvertTo("takeoffboost", "PSI");
+    if (el->FindElement("boost-loss-factor"))
+      BoostLossFactor = el->FindElementValueAsNumber("boost-loss-factor");
     if (el->FindElement("ratedboost1"))
       RatedBoost[0] = el->FindElementValueAsNumberConvertTo("ratedboost1", "PSI");
     if (el->FindElement("ratedboost2"))
@@ -334,6 +338,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
   property_name = base_property_name + "/power-hp";
   PropertyManager->Tie(property_name, &HP);
+  property_name = base_property_name + "/friction-hp";
+  PropertyManager->Tie(property_name, &StaticFriction_HP);
   property_name = base_property_name + "/bsfc-lbs_hphr";
   PropertyManager->Tie(property_name, &ISFC);
   property_name = base_property_name + "/starter-norm";
@@ -360,6 +366,12 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   PropertyManager->Tie(property_name, this, &FGPiston::getOilPressure_psi);
   property_name = base_property_name + "/egt-degF";
   PropertyManager->Tie(property_name, this, &FGPiston::getExhaustGasTemp_degF);
+  if(BoostLossFactor > 0.0) {
+    property_name = base_property_name + "/boostloss-factor";
+    PropertyManager->Tie(property_name, &BoostLossFactor);
+    property_name = base_property_name + "/boostloss-hp";
+    PropertyManager->Tie(property_name, &BoostLossHP);
+  }
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -437,6 +449,7 @@ void FGPiston::ResetToIC(void)
   Thruster->SetRPM(0.0);
   RPM = 0.0;
   OilPressure_psi = 0.0;
+  BoostLossHP = 0.;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -614,7 +627,7 @@ void FGPiston::doBoostControl(void)
  * Inputs: p_amb, Throttle,
  *         MeanPistonSpeed_fps, dt
  *
- * Outputs: MAP, ManifoldPressure_inHg, TMAP
+ * Outputs: MAP, ManifoldPressure_inHg, TMAP, BoostLossHP
  */
 
 void FGPiston::doMAP(void)
@@ -663,6 +676,15 @@ void FGPiston::doMAP(void)
       MAP = TMAP;
   }
 
+  if( BoostLossFactor > 0.0 )
+  {
+      double gamma = 1.414; // specific heat constants
+      double Nstage = 1; // Nstage is the number of boost stages.
+      BoostLossHP = ((Nstage * TMAP * v_dot_air * gamma) / (gamma - 1)) * (pow((MAP/TMAP),((gamma-1)/(Nstage * gamma))) - 1) * BoostLossFactor / 745.7 ; // 745.7 convert watt to hp
+  } else {
+      BoostLossHP = 0;
+  }
+  
   // And set the value in American units as well
   ManifoldPressure_inHg = MAP / inhgtopa;
 }
@@ -686,12 +708,14 @@ void FGPiston::doAirFlow(void)
   double gamma = 1.3; // specific heat constants
 // loss of volumentric efficiency due to difference between MAP and exhaust pressure
 // Eq 6-10 from The Internal Combustion Engine - Charles Taylor Vol 1
-  double ve =((gamma-1)/gamma) +( CompressionRatio -(p_amb/MAP))/(gamma*( CompressionRatio - 1));
+  double mratio = MAP < 1. ? CompressionRatio : p_amb/MAP;
+  if (mratio > CompressionRatio) mratio = CompressionRatio;
+  double ve =((gamma-1)/gamma) +( CompressionRatio -(mratio))/(gamma*( CompressionRatio - 1));
 
   rho_air = p_amb / (R_air * T_amb);
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   volumetric_efficiency_reduced = volumetric_efficiency *ve;
-  double v_dot_air = swept_volume * volumetric_efficiency_reduced;
+  v_dot_air = swept_volume * volumetric_efficiency_reduced;
 
   double rho_air_manifold = MAP / (R_air * T_amb);
   m_dot_air = v_dot_air * rho_air_manifold;
@@ -771,7 +795,7 @@ void FGPiston::doEnginePower(void)
   // (1/2) convert cycles, 60 minutes to seconds, 745.7 watts to hp.
   double pumping_hp = ((PMEP + FMEP) * displacement_SI * RPM)/(Cycles*22371);
 
-HP = IndicatedHorsePower + pumping_hp;
+HP = IndicatedHorsePower + pumping_hp - BoostLossHP;
 //  cout << "pumping_hp " <<pumping_hp << FMEP << PMEP <<endl;
   PctPower = HP / MaxHP ;
 //  cout << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << endl;

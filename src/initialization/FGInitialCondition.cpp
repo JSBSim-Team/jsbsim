@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.80 2012/01/22 16:31:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.81 2012/04/08 15:22:56 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1255,6 +1255,8 @@ bool FGInitialCondition::Load_v2(void)
       vPQR_body = Tl2b * position.GetTec2l() * vAttRate;
     } else if (frame == "local") {
       vPQR_body = Tl2b * (vAttRate + vOmegaLocal);
+    } else if (frame == "body") {
+      vPQR_body = vAttRate;
     } else if (!frame.empty()) { // misspelling of frame
 
       cerr << endl << fgred << "  Attitude rate frame type: \"" << frame

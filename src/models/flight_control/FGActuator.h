@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.12 2011/07/12 21:40:32 jentron Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.13 2012/04/08 15:04:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.12 $
+@version $Revision: 1.13 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,13 +135,14 @@ public:
   /** This function fails the actuator to zero. The motion to zero
       will flow through the lag, hysteresis, and rate limiting
       functions if those are activated. */
-  inline void SetFailZero(bool set) {fail_zero = set;}
-  inline void SetFailHardover(bool set) {fail_hardover = set;}
-  inline void SetFailStuck(bool set) {fail_stuck = set;}
+  void SetFailZero(bool set) {fail_zero = set;}
+  void SetFailHardover(bool set) {fail_hardover = set;}
+  void SetFailStuck(bool set) {fail_stuck = set;}
 
-  inline bool GetFailZero(void) const {return fail_zero;}
-  inline bool GetFailHardover(void) const {return fail_hardover;}
-  inline bool GetFailStuck(void) const {return fail_stuck;}
+  bool GetFailZero(void) const {return fail_zero;}
+  bool GetFailHardover(void) const {return fail_hardover;}
+  bool GetFailStuck(void) const {return fail_stuck;}
+  bool IsSaturated(void) const {return saturated;}
   
 private:
   double span;
@@ -161,6 +162,7 @@ private:
   bool fail_hardover;
   bool fail_stuck;
   bool initialized;
+  bool saturated;
 
   void Hysteresis(void);
   void Lag(void);

@@ -40,13 +40,14 @@ INCLUDES
 
 #include "FGEngine.h"
 #include "math/FGTable.h"
+#include "math/FGFunction.h"
 #include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.17 2011/08/04 13:45:42 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.18 2012/04/08 15:19:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +119,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.17 2011/08/04 13:45:42 jberndt Exp $
+    $Id: FGRocket.h,v 1.18 2012/04/08 15:19:08 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -168,6 +169,14 @@ public:
 
   double GetOxiFlowRate(void) const {return OxidizerFlowRate;}
 
+  double GetMixtureRatio(void) const {return MxR;}
+
+  double GetIsp(void) const {return Isp;}
+
+  void SetMixtureRatio(double mix) {MxR = mix;}
+
+  void SetIsp(double isp) {Isp = isp;}
+
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
 
@@ -216,11 +225,13 @@ private:
   double OxidizerExpended;
   double TotalPropellantExpended;
   double SLOxiFlowMax;
+  double PropFlowMax;
   double OxidizerFlowRate;
   double PropellantFlowRate;
   bool Flameout;
   double BuildupTime;
   FGTable* ThrustTable;
+  FGFunction* isp_function;
 
   void Debug(int from);
 };

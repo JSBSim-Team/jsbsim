@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.26 2011/08/04 13:45:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.27 2012/04/08 15:19:08 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, el, engine_number, input)
+  : FGEngine(exec, el, engine_number, input), isp_function(0L)
 {
   Type = etRocket;
   Element* thrust_table_element = 0;
@@ -67,7 +67,8 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   TotalPropellantExpended = 0.0;
   FuelFlowRate = FuelExpended = 0.0;
   OxidizerFlowRate = OxidizerExpended = 0.0;
-  SLOxiFlowMax = SLFuelFlowMax = 0.0;
+  SLOxiFlowMax = SLFuelFlowMax = PropFlowMax = 0.0;
+  MxR = 0.0;
   BuildupTime = 0.0;
   It = 0.0;
   ThrustVariation = 0.0;
@@ -78,19 +79,51 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
    MinThrottle = 0.0;
    MaxThrottle = 1.0;
 
-  if (el->FindElement("isp"))
+  string base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+
+  std::stringstream strEngineNumber;
+  strEngineNumber << EngineNumber;
+
+  Element* isp_el = el->FindElement("isp");
+  Element* isp_func_el=0;
+
+  bindmodel(); // Bind model properties first, since they might be needed in functions.
+
+  // Specific impulse may be specified as a constant value or as a function - perhaps as a function of mixture ratio.
+  if (isp_el) {
+    isp_func_el = isp_el->FindElement("function");
+    if (isp_func_el) {
+      isp_function = new FGFunction(exec->GetPropertyManager(),isp_func_el, strEngineNumber.str());
+    } else {
     Isp = el->FindElementValueAsNumber("isp");
+    }
+  } else {
+    throw("Specific Impulse <isp> must be specified for a rocket engine");
+  }
+  
   if (el->FindElement("builduptime"))
     BuildupTime = el->FindElementValueAsNumber("builduptime");
   if (el->FindElement("maxthrottle"))
     MaxThrottle = el->FindElementValueAsNumber("maxthrottle");
   if (el->FindElement("minthrottle"))
     MinThrottle = el->FindElementValueAsNumber("minthrottle");
-  if (el->FindElement("slfuelflowmax"))
-    SLFuelFlowMax = el->FindElementValueAsNumberConvertTo("slfuelflowmax", "LBS/SEC");
-  if (el->FindElement("sloxiflowmax"))
-    SLOxiFlowMax = el->FindElementValueAsNumberConvertTo("sloxiflowmax", "LBS/SEC");
 
+  if (el->FindElement("slfuelflowmax")) {
+    SLFuelFlowMax = el->FindElementValueAsNumberConvertTo("slfuelflowmax", "LBS/SEC");
+    if (el->FindElement("sloxiflowmax")) {
+    SLOxiFlowMax = el->FindElementValueAsNumberConvertTo("sloxiflowmax", "LBS/SEC");
+    }
+    PropFlowMax = SLOxiFlowMax + SLFuelFlowMax;
+    MxR = SLOxiFlowMax/SLFuelFlowMax;
+  } else if (el->FindElement("propflowmax")) {
+    PropFlowMax = el->FindElementValueAsNumberConvertTo("propflowmax", "LBS/SEC");
+    // Mixture ratio may be specified here, but it can also be specified as a function or via property
+    if (el->FindElement("mixtureratio")) {
+      MxR = el->FindElementValueAsNumber("mixtureratio");
+    }
+  }
+
+  if (isp_function) Isp = isp_function->GetValue(); // cause Isp function to be executed if present.
   // If there is a thrust table element, this is a solid propellant engine.
   thrust_table_element = el->FindElement("thrust_table");
   if (thrust_table_element) {
@@ -106,7 +139,6 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
     }
   }
 
-  bindmodel();
 
   Debug(0);
 }
@@ -129,6 +161,9 @@ void FGRocket::Calculate(void)
 
   PropellantFlowRate = (FuelExpended + OxidizerExpended)/in.TotalDeltaT;
   TotalPropellantExpended += FuelExpended + OxidizerExpended;
+  // If Isp has been specified as a function, override the value of Isp to that, otherwise
+  // assume a constant value is given.
+  if (isp_function) Isp = isp_function->GetValue();
 
   // If there is a thrust table, it is a function of propellant burned. The
   // engine is started when the throttle is advanced to 1.0. After that, it
@@ -189,7 +224,8 @@ double FGRocket::CalcFuelNeed(void)
     FuelFlowRate = VacThrust/Isp;   // This calculates wdot (weight flow rate in lbs/sec)
     FuelFlowRate /= (1 + TotalIspVariation);
   } else {
-    FuelFlowRate = SLFuelFlowMax*PctPower;
+    SLFuelFlowMax = PropFlowMax / (1 + MxR);
+    FuelFlowRate = SLFuelFlowMax * PctPower;
   }
 
   FuelExpended = FuelFlowRate * in.TotalDeltaT; // For this time step ...
@@ -200,6 +236,7 @@ double FGRocket::CalcFuelNeed(void)
 
 double FGRocket::CalcOxidizerNeed(void)
 {
+  SLOxiFlowMax = PropFlowMax * MxR / (1 + MxR);
   OxidizerFlowRate = SLOxiFlowMax * PctPower;
   OxidizerExpended = OxidizerFlowRate * in.TotalDeltaT;
   return OxidizerExpended;
@@ -252,6 +289,12 @@ void FGRocket::bindmodel()
   } else { // Liquid rocket motor
     property_name = base_property_name + "/oxi-flow-rate-pps";
     PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOxiFlowRate);
+    property_name = base_property_name + "/mixture-ratio";
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetMixtureRatio,
+                                                       &FGRocket::SetMixtureRatio);
+    property_name = base_property_name + "/isp";
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetIsp,
+                                                       &FGRocket::SetIsp);
   }
 }
 

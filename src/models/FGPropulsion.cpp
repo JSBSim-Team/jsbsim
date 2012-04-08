@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.57 2012/03/25 11:05:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.58 2012/04/08 15:20:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -204,7 +204,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
   unsigned int TanksWithOxidizer=0, CurrentOxidizerTankPriority=1;
   vector <int> FeedListFuel, FeedListOxi;
   bool Starved = true; // Initially set Starved to true. Set to false in code below.
-//  bool hasOxTanks = false;
+  bool hasOxTanks = false;
 
   // For this engine,
   // 1) Count how many fuel tanks with the current priority level have fuel
@@ -237,6 +237,9 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
     if (TanksWithFuel == 0) CurrentFuelTankPriority++; // No tanks at this priority, try next priority
   }
 
+  bool FuelStarved = Starved;
+  Starved = true;
+
   // Process Oxidizer tanks, if any
   if (engine->GetType() == FGEngine::etRocket) {
     while ((TanksWithOxidizer == 0) && (CurrentOxidizerTankPriority <= numTanks)) {
@@ -250,7 +253,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
             // Skip this here (done above)
             break;
           case FGTank::ttOXIDIZER:
-//            hasOxTanks = true;
+            hasOxTanks = true;
             if (Tank->GetContents() > 0.0 && Tank->GetSelected() && TankPriority == CurrentOxidizerTankPriority) {
               TanksWithOxidizer++;
               if (TanksWithFuel > 0) Starved = false;
@@ -264,10 +267,13 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
     }
   }
 
-  engine->SetStarved(Starved); // Tanks can be refilled, so be sure to reset engine Starved flag here.
+  bool OxiStarved = Starved;
+
+  engine->SetStarved(FuelStarved || (hasOxTanks && OxiStarved)); // Tanks can be refilled, so be sure to reset engine Starved flag here.
 
   // No fuel or fuel/oxidizer found at any priority!
-  if (Starved) return;
+//  if (Starved) return;
+  if (FuelStarved || (hasOxTanks && OxiStarved)) return;
 
   double FuelToBurn = engine->CalcFuelNeed();            // How much fuel does this engine need?
   double FuelNeededPerTank = FuelToBurn / TanksWithFuel; // Determine fuel needed per tank.  
@@ -529,6 +535,9 @@ string FGPropulsion::GetPropulsionStrings(const string& delimiter) const
     else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << delimiter << "Oxidizer Tank " << i;
   }
 
+  PropulsionStrings += buf.str();
+  buf.str("");
+
   return PropulsionStrings;
 }
 
@@ -552,6 +561,9 @@ string FGPropulsion::GetPropulsionValues(const string& delimiter) const
     buf << delimiter;
     buf << Tanks[i]->GetContents();
   }
+
+  PropulsionValues += buf.str();
+  buf.str("");
 
   return PropulsionValues;
 }
