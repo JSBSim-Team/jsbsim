@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.29 2011/07/10 20:18:14 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.30 2012/04/13 13:18:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
   @property atmosphere/a-ratio
 
   @author Jon Berndt
-  @version $Id: FGAtmosphere.h,v 1.29 2011/07/10 20:18:14 jberndt Exp $
+  @version $Id: FGAtmosphere.h,v 1.30 2012/04/13 13:18:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,10 +161,10 @@ public:
   virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
 
   /** Sets the sea level pressure for modeling.
-      @param pressure The pressure in the units specified (PSF by default).
+      @param pressure The pressure in the units specified.
       @param unit the unit of measure that the specified pressure is
                   supplied in.*/
-  virtual void SetPressureSL(double pressure, ePressure unit=ePSF);
+  virtual void SetPressureSL(ePressure unit, double pressure);
   //@}
 
   //  *************************************************************************

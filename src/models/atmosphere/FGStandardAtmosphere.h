@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.16 2011/09/18 12:06:21 bcoconni Exp $"
+#define ID_STANDARDATMOSPHERE "$Id: FGStandardAtmosphere.h,v 1.17 2012/04/13 13:18:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ consistently and accurately calculated.
 
   @author Jon Berndt
   @see "U.S. Standard Atmosphere, 1976", NASA TM-X-74335
-  @version $Id: FGStandardAtmosphere.h,v 1.16 2011/09/18 12:06:21 bcoconni Exp $
+  @version $Id: FGStandardAtmosphere.h,v 1.17 2012/04/13 13:18:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,10 +226,10 @@ public:
   /** Sets the sea level pressure for modeling an off-standard pressure
       profile. This could be useful in the case where the pressure at an
       airfield is known or set for a particular simulation run.
-      @param pressure The pressure in the units specified (PSF by default).
+      @param pressure The pressure in the units specified.
       @param unit the unit of measure that the specified pressure is
                        supplied in.*/
-  virtual void SetPressureSL(double pressure, ePressure unit=ePSF);
+  virtual void SetPressureSL(ePressure unit, double pressure);
 
   /** Resets the sea level to the Standard sea level pressure, and recalculates
       dependent parameters so that the pressure calculations are standard. */
