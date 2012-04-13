@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.44 2011/10/23 14:23:13 jentron Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.45 2012/04/13 13:25:52 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,6 +372,17 @@ string FGAerodynamics::GetAeroFunctionStrings(const string& delimeter) const
       AeroFunctionStrings += AeroFunctions[axis][sd]->GetName();
     }
   }
+
+  string FunctionStrings = FGModelFunctions::GetFunctionStrings(delimeter);
+
+  if (FunctionStrings.size() > 0) {
+    if (AeroFunctionStrings.size() > 0) {
+      AeroFunctionStrings += delimeter + FunctionStrings;
+    } else {
+      AeroFunctionStrings = FunctionStrings;
+    }
+  }
+
   return AeroFunctionStrings;
 }
 
@@ -385,6 +396,16 @@ string FGAerodynamics::GetAeroFunctionValues(const string& delimeter) const
     for (unsigned int sd = 0; sd < AeroFunctions[axis].size(); sd++) {
       if (buf.tellp() > 0) buf << delimeter;
       buf << AeroFunctions[axis][sd]->GetValue();
+    }
+  }
+
+  string FunctionValues = FGModelFunctions::GetFunctionValues(delimeter);
+
+  if (FunctionValues.size() > 0) {
+    if (buf.str().size() > 0) {
+      buf << delimeter << FunctionValues;
+    } else {
+      buf << FunctionValues;
     }
   }
 
