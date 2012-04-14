@@ -59,6 +59,7 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "models/FGPropagate.h"
+#include "models/propulsion/FGTank.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
@@ -70,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.131 2012/04/14 12:14:36 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.132 2012/04/14 12:18:58 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +414,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQR              = Propagate->GetPQR();
-    Propulsion->in.vXYZcg           = MassBalance->GetXYZcg();
+    for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+      Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
+    }
 
     break;
   case eAerodynamics:
@@ -533,7 +536,9 @@ void FGFDMExec::LoadModelConstants(void)
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
   GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
-  Propulsion->in.vXYZcg          = MassBalance->GetXYZcg();
+  for (int i=0; i<Propulsion->GetNumTanks(); i++) {
+    Propulsion->in.vTankBodyVec[i] = MassBalance->StructuralToBody(Propulsion->GetTank(i)->GetXYZ());
+  }
 
   LoadPlanetConstants();
 }
