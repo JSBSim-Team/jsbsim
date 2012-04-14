@@ -37,14 +37,16 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGModelFunctions.h"
+#include <iostream>
+#include <sstream>
 #include <string>
+#include "FGModelFunctions.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.4 2010/09/07 00:40:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.5 2012/04/13 13:25:52 jberndt Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,5 +164,55 @@ void FGModelFunctions::RunPostFunctions(void)
   for (it = PostFunctions.begin(); it != PostFunctions.end(); it++)
     (*it)->GetValue();
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGModelFunctions::GetFunctionStrings(const string& delimeter) const
+{
+  string FunctionStrings = "";
+  bool firstime = true;
+  unsigned int sd;
+
+  for (sd = 0; sd < PreFunctions.size(); sd++) {
+    if (firstime) {
+      firstime = false;
+    } else {
+      FunctionStrings += delimeter;
+    }
+    FunctionStrings += PreFunctions[sd]->GetName();
+  }
+
+  for (sd = 0; sd < PostFunctions.size(); sd++) {
+    if (firstime) {
+      firstime = false;
+    } else {
+      FunctionStrings += delimeter;
+    }
+    FunctionStrings += PostFunctions[sd]->GetName();
+  }
+
+  return FunctionStrings;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGModelFunctions::GetFunctionValues(const string& delimeter) const
+{
+  ostringstream buf;
+
+  for (unsigned int sd = 0; sd < PreFunctions.size(); sd++) {
+    if (buf.tellp() > 0) buf << delimeter;
+    buf << PreFunctions[sd]->GetValue();
+  }
+
+  for (unsigned int sd = 0; sd < PostFunctions.size(); sd++) {
+    if (buf.tellp() > 0) buf << delimeter;
+    buf << PostFunctions[sd]->GetValue();
+  }
+
+  return buf.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 }

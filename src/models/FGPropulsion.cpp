@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.58 2012/04/08 15:20:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.60 2012/04/14 12:18:58 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

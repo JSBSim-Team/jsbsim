@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.20 2011/09/18 12:06:21 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.21 2012/04/13 13:18:27 jberndt Exp $";
 static const char *IdHdr = ID_STANDARDATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,7 +170,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGStandardAtmosphere::SetPressureSL(double pressure, ePressure unit)
+void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
   double press = ConvertToPSF(pressure, unit);
 
@@ -421,6 +421,9 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/SL-graded-delta-T", this, eRankine,
                                     (PMFi)&FGStandardAtmosphere::GetTemperatureDeltaGradient,
                                     (PMF)&FGStandardAtmosphere::SetSLTemperatureGradedDelta);
+  PropertyManager->Tie("atmosphere/P-sl-psf", this, ePSF,
+                                   (PMFi)&FGStandardAtmosphere::GetPressureSL,
+                                   (PMF)&FGStandardAtmosphere::SetPressureSL);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
