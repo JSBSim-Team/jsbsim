@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.66 2012/03/21 05:14:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.67 2012/04/27 12:14:56 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -321,7 +321,7 @@ void FGOutput::DelimitedOutput(const string& fname)
     }
     if (SubSystems & ssMoments) {
       outstream << delimeter;
-      outstream << "L_{Aero} (ft-lbs)" + delimeter + "M_{Aero} ( ft-lbs)" + delimeter + "N_{Aero} (ft-lbs)" + delimeter;
+      outstream << "L_{Aero} (ft-lbs)" + delimeter + "M_{Aero} (ft-lbs)" + delimeter + "N_{Aero} (ft-lbs)" + delimeter;
       outstream << "L_{Prop} (ft-lbs)" + delimeter + "M_{Prop} (ft-lbs)" + delimeter + "N_{Prop} (ft-lbs)" + delimeter;
       outstream << "L_{Gear} (ft-lbs)" + delimeter + "M_{Gear} (ft-lbs)" + delimeter + "N_{Gear} (ft-lbs)" + delimeter;
       outstream << "L_{ext} (ft-lbs)" + delimeter + "M_{ext} (ft-lbs)" + delimeter + "N_{ext} (ft-lbs)" + delimeter;
