@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.43 2012/02/11 15:14:27 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.44 2012/04/29 13:10:46 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,7 +228,6 @@ double FGPropeller::Calculate(double EnginePower)
   // Induced velocity in the propeller disk area. This formula is obtained
   // from momentum theory - see B. W. McCormick, "Aerodynamics, Aeronautics,
   // and Flight Mechanics" 1st edition, eqn. 6.15 (propeller analysis chapter).
-  // Vinduced = 0.5 * (-Vel + sqrt(Vel*Vel + 2.0*Thrust/(rho*Area)))
   // Since Thrust and Vel can both be negative we need to adjust this formula
   // To handle sign (direction) separately from magnitude.
   double Vel2sum = Vel*abs(Vel) + 2.0*Thrust/(rho*Area);
@@ -237,6 +236,17 @@ double FGPropeller::Calculate(double EnginePower)
     Vinduced = 0.5 * (-Vel + sqrt(Vel2sum));
   else
     Vinduced = 0.5 * (-Vel - sqrt(-Vel2sum));
+
+  // We need to drop the case where the downstream velocity is opposite in
+  // direction to the aircraft velocity. For example, in such a case, the
+  // direction of the airflow on the tail would be opposite to the airflow on
+  // the wing tips. When such complicated airflows occur, the momentum theory
+  // breaks down and the formulas above are no longer applicable
+  // (see H. Glauert, "The Elements of Airfoil and Airscrew Theory",
+  // 2nd edition, §16.3, pp. 219-221)
+
+  if ((Vel+2.0*Vinduced)*Vel < 0.0)
+    Vinduced = 0.0; // We cannot calculate the induced velocity so let's assume it is zero.
     
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
