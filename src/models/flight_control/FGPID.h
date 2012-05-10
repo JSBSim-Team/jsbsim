@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.12 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.13 2012/05/10 12:10:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,26 +64,59 @@ CLASS DOCUMENTATION
 <h3>Configuration Format:</h3>
 
 @code
-<pid name="{string}">
-  <kp> {number} </kp>
-  <ki> {number} </ki>
-  <kd> {number} </kd>
-  <trigger> {string} </trigger>
+<pid name="{string}" [type="standard"]>
+  <kp> {number|property} </kp>
+  <ki> {number|property} </ki>
+  <kd> {number|property} </kd>
+  <trigger> {property} </trigger>
 </pid>
 @endcode
+
+For the integration constant element, one can also supply the type attribute for
+what kind of integrator to be used, one of:
+
+- rect, for a rectangular integrator
+- trap, for a trapezoidal integrator
+- ab2, for a second order Adams Bashforth integrator
+- ab3, for a third order Adams Bashforth integrator
+
+For example,
+
+@code
+<pid name="fcs/heading-control">
+  <kp> 3 </kp>
+  <ki type="ab3"> 1 </ki>
+  <kd> 1 </kd>
+</pid>
+@endcode
+
+
 
 <h3>Configuration Parameters:</h3>
 <pre>
 
+  The values of kp, ki, and kd have slightly different interpretations depending on
+  whether the PID controller is a standard one, or an ideal/parallel one - with the latter
+  being the default.
+  
   kp      - Proportional constant, default value 0.
   ki      - Integrative constant, default value 0.
   kd      - Derivative constant, default value 0.
-  trigger - Property which is used to sense wind-up, optional.
+  trigger - Property which is used to sense wind-up, optional. Most often, the trigger
+            will be driven by the "saturated" property of a particular actuator. When
+            the relevant actuator has reached it's limits (if there are any, specified
+            by the <clipto> element) the automatically generated saturated property will
+            be greater than zero (true). If this property is used as the trigger for the
+            integrator, the integrator will not continue to integrate while the property
+            is still true (> 1), preventing wind-up.
+  pvdot   - The property to be used as the process variable time derivative. 
+
+
 
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.12 $
+    @version $Revision: 1.13 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,17 +132,26 @@ public:
   bool Run (void);
   void ResetPastStates(void) {Input_prev = Input_prev2 = Output = I_out_total = 0.0;}
 
+    /// These define the indices use to select the various integrators.
+  enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
+
 private:
-  FGPropertyManager *Trigger;
   double Kp, Ki, Kd;
   double I_out_total;
   double Input_prev, Input_prev2;
   double KpPropertySign;
   double KiPropertySign;
   double KdPropertySign;
+
+  bool IsStandard;
+
+  eIntegrateType IntType;
+
+  FGPropertyManager *Trigger;
   FGPropertyManager* KpPropertyNode;
   FGPropertyManager* KiPropertyNode;
   FGPropertyManager* KdPropertyNode;
+  FGPropertyManager* ProcessVariableDot;
 
   void Debug(int from);
 };
