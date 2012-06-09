@@ -83,6 +83,20 @@
    </notify>
   </event>
 
+  <event name="Initialization 3">
+   <description>Set the up the electrical system</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[0]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[1]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[2]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[3]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[4]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[5]"   value="1.0"/>
+  </event>
+
   <event name="Flaps out 1">
    <description>Start extending flaps</description>
    <condition>
@@ -93,6 +107,7 @@
     <property>fcs/flap-pos-norm</property>
     <property>fcs/flap-pos-deg</property>
    </notify>
+   <set name="fcs/flap-power-cmd-norm" value="1.0"/>
    <set name="fcs/flap-motor-cmd-norm" value="1.0"/>
   </event>
 
@@ -107,6 +122,7 @@
     <property>fcs/flap-pos-norm</property>
     <property>fcs/flap-pos-deg</property>
    </notify>
+   <set name="fcs/flap-power-cmd-norm" value="0.0"/>
    <set name="fcs/flap-motor-cmd-norm" value="0.0"/>
   </event>
 
@@ -142,8 +158,12 @@
    <set name="fcs/mixture-cmd-norm[1]" value="1.0"/>
    <set name="fcs/mixture-cmd-norm[2]" value="1.0"/>
    <set name="fcs/mixture-cmd-norm[3]" value="1.0"/>
-   <set name="propulsion/magneto_cmd" value="3"/>
-   <set name="propulsion/starter_cmd" value="1"/>
+   <set name="propulsion/magneto_cmd"  value="3"/>
+   <set name="propulsion/starter_cmd"  value="1"/>
+   <set name="fcs/starter-cmd-norm[0]" value="1"/>
+   <set name="fcs/starter-cmd-norm[1]" value="1"/>
+   <set name="fcs/starter-cmd-norm[2]" value="1"/>
+   <set name="fcs/starter-cmd-norm[3]" value="1"/>
   </event>
   <event name="Engine start 2">
    <description>Start the engines</description>
@@ -167,7 +187,11 @@
     simulation/sim-time-sec GE 70.0
    </condition>
    <notify/>
-   <set name="propulsion/starter_cmd" value="0"/>
+   <set name="propulsion/starter_cmd"  value="0"/>
+   <set name="fcs/starter-cmd-norm[0]" value="0"/>
+   <set name="fcs/starter-cmd-norm[1]" value="0"/>
+   <set name="fcs/starter-cmd-norm[2]" value="0"/>
+   <set name="fcs/starter-cmd-norm[3]" value="0"/>
    <set name="take-off-ap/enabled" value="1.0"/>
   </event>
 
@@ -219,19 +243,19 @@
    </condition>
    <notify>
     <property>velocities/vc-kts</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
     <property>propulsion/engine[0]/thrust-lbs</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
     <property>propulsion/engine[1]/thrust-lbs</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
     <property>propulsion/engine[2]/thrust-lbs</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>propulsion/engine[3]/thrust-lbs</property>
@@ -267,16 +291,16 @@
     <property>hydro/coefficients/C_Delta</property>
     <property>hydro/coefficients/C_V</property>
     <property>hydro/coefficients/C_M</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
    </notify>
@@ -287,7 +311,7 @@
    <description>Set climb power</description>
    <condition>
     position/h-agl-ft GE 25.0
-    propulsion/engine[0]/propeller-rpm GT 1250
+    propulsion/engine[0]/engine-rpm GT 2500
    </condition>
    <notify>
     <property>position/distance-from-start-mag-mt</property>
@@ -296,16 +320,16 @@
     <property>hydro/pitch-deg</property>
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
    </notify>
@@ -324,11 +348,11 @@
    <description>Check engine RPM at 1 seconds intervals</description>
    <condition>
      simulation/sim-time-sec GE simulation/rpm-check-time-trigger
-     propulsion/engine[0]/propeller-rpm GT 1300
+     propulsion/engine[0]/engine-rpm GT 2600
    </condition>
    <notify>
     <property>fcs/throttle-cmd-norm[0]</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
    </notify>
    <set name="fcs/throttle-cmd-norm[0]"  value="-0.01" type="FG_DELTA"/>
    <set name="fcs/throttle-cmd-norm[1]"  value="-0.01" type="FG_DELTA"/>
@@ -349,16 +373,16 @@
     <property>hydro/pitch-deg</property>
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
    </notify>
@@ -396,16 +420,16 @@
     <property>hydro/coefficients/C_V</property>
     <property>hydro/coefficients/C_M</property>
     <property>take-off-ap/enabled</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>fcs/copilot/elevator-cmd-norm</property>

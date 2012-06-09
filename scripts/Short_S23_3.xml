@@ -53,6 +53,20 @@
   </event>
 
   <event name="Initialization 3">
+   <description>Set the up the electrical system</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[0]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[1]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[2]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[3]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[4]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[5]"   value="1.0"/>
+  </event>
+
+  <event name="Initialization 4">
    <description>Set the engine controls</description>
    <condition>
      simulation/sim-time-sec GE 0.0
@@ -72,18 +86,26 @@
    <set name="fcs/throttle-cmd-norm[3]"  value="1.00"/>
    <set name="propulsion/magneto_cmd" value="3"/>
    <set name="propulsion/starter_cmd" value="1"/>
+   <set name="fcs/starter-cmd-norm[0]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[1]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[2]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[3]"   value="1"/>
   </event>
 
   <event name="Trim">
    <condition>
-     simulation/sim-time-sec  GE  10.0
+     simulation/sim-time-sec  GE  20.0
    </condition>
    <set name="simulation/do_simple_trim" value="1"/>
    <set name="propulsion/engine[0]/set-running" value="1"/>
    <set name="propulsion/engine[1]/set-running" value="1"/>
    <set name="propulsion/engine[2]/set-running" value="1"/>
    <set name="propulsion/engine[3]/set-running" value="1"/>
-   <set name="propulsion/starter_cmd" value="0"/>
+   <set name="propulsion/starter_cmd"    value="0"/>
+   <set name="fcs/starter-cmd-norm[0]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[1]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[2]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[3]"   value="0"/>
    <notify>
     <property>velocities/u-aero-fps</property>
     <property>velocities/v-aero-fps</property>
@@ -97,22 +119,22 @@
     <property>accelerations/rdot-rad_sec2</property>
     <property>fcs/throttle-cmd-norm[0]</property>
     <property>propulsion/engine[0]/thrust-lbs</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
     <property>fcs/throttle-cmd-norm[1]</property>
     <property>propulsion/engine[1]/thrust-lbs</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
     <property>fcs/throttle-cmd-norm[2]</property>
     <property>propulsion/engine[2]/thrust-lbs</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
     <property>fcs/throttle-cmd-norm[3]</property>
     <property>propulsion/engine[3]/thrust-lbs</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>velocities/p-rad_sec</property>
@@ -130,12 +152,12 @@
   <event name="Enable AP">
    <description>Enable the roll channel of the autopilot.</description>
    <condition>
-     simulation/sim-time-sec GT 10.0
+     simulation/sim-time-sec GT 20.0
    </condition>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.952"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.952"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.952"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.952"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.91"/>
    <!-- Close the speed valves of the unneeded channels. -->
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>
@@ -159,16 +181,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>propulsion/engine[3]/egt-degF</property>
