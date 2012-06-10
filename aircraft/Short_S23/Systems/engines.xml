@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,11 +58,30 @@
  <property value="0.0">fcs/inner-engines-cutoff-cmd-norm</property>
  <property value="0.0">fcs/outer-engines-cutoff-cmd-norm</property>
 
+ <!-- Starter commands -->
+ <property value="0.0">fcs/starter-cmd-norm[0]</property>
+ <property value="0.0">fcs/starter-cmd-norm[1]</property>
+ <property value="0.0">fcs/starter-cmd-norm[2]</property>
+ <property value="0.0">fcs/starter-cmd-norm[3]</property>
+
+ <!-- Starter status -->
+ <property value="1.0">propulsion/engine[0]/starter-serviceable</property>
+ <property value="1.0">propulsion/engine[1]/starter-serviceable</property>
+ <property value="1.0">propulsion/engine[2]/starter-serviceable</property>
+ <property value="1.0">propulsion/engine[3]/starter-serviceable</property>
+
  <!-- Fuel pump status -->
  <property value="1.0">propulsion/engine[0]/fuel-pump-serviceable</property>
  <property value="1.0">propulsion/engine[1]/fuel-pump-serviceable</property>
  <property value="1.0">propulsion/engine[2]/fuel-pump-serviceable</property>
  <property value="1.0">propulsion/engine[3]/fuel-pump-serviceable</property>
+
+ <!-- Auxiliary equipment status -->
+ <property value="1.0">propulsion/engine[1]/generator-serviceable</property>
+ <property value="1.0">propulsion/engine[1]/servo-oil-pump-serviceable</property>
+ <property value="1.0">propulsion/engine[2]/generator-serviceable</property>
+ <property value="1.0">propulsion/engine[2]/vacuum-pump-serviceable</property>
+ <property value="1.0">propulsion/engine[3]/vacuum-pump-serviceable</property>
 
  <channel name="Throttle">
 
@@ -257,6 +276,40 @@
  </channel>
 
  <documentation>
+  The definition inside the engine file cannot write to the starter-norm
+  property. Hence it has to be done here.
+  See also Engines/eng_PegasusXc.xml and Systems/electrical.xml.
+ </documentation>
+ <channel name="Engine starters">
+
+  <fcs_function name="tmp/sn[0]">
+   <function>
+    <property>propulsion/engine[0]/starter-running-norm</property>
+   </function>
+   <output>propulsion/engine[0]/starter-norm</output>
+  </fcs_function>
+  <fcs_function name="tmp/sn[1]">
+   <function>
+    <property>propulsion/engine[1]/starter-running-norm</property>
+   </function>
+   <output>propulsion/engine[1]/starter-norm</output>
+  </fcs_function>
+  <fcs_function name="tmp/sn[2]">
+   <function>
+    <property>propulsion/engine[2]/starter-running-norm</property>
+   </function>
+   <output>propulsion/engine[2]/starter-norm</output>
+  </fcs_function>
+  <fcs_function name="tmp/sn[3]">
+   <function>
+    <property>propulsion/engine[3]/starter-running-norm</property>
+   </function>
+   <output>propulsion/engine[3]/starter-norm</output>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
   "The fuel pumps were Bristol vane-type Duplex pumps, driven at engine
   speed.", [Cassidy:2004:FE].
  </documentation>
@@ -306,6 +359,77 @@
       <property>propulsion/engine[3]/engine-rpm</property>
       <value>2600.0</value>
      </quotient>
+    </product>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
+  Engine auxiliaries (from [Short:RN-3-1-37] and [Cassidy:2004:FE])
+  - Port Outer
+  - Port Inner
+    - Rotax generator Dynamo N2 BW, 1000W at 24V
+    - Northern oil pump (for the autopilot)
+  - Starboard Inner
+    - Rotax generator Dynamo N2 BW, 1000W at 24V
+    - Romeo vacuum pump
+  - Starboard Outer
+    - Romeo vaccum pump
+ </documentation>
+ <property value="41.67">propulsion/engine[1]/generator-max-current-A</property>
+ <property value="41.67">propulsion/engine[2]/generator-max-current-A</property>
+ <!-- Input from the electrical system. -->
+ <property>propulsion/engine[1]/generator-current-A</property>
+ <property>propulsion/engine[2]/generator-current-A</property>
+ <channel name="Generators">
+
+  <fcs_function name="propulsion/engine[1]/generator-voltage-V">
+   <function>
+    <product>
+     <property>propulsion/engine[1]/generator-serviceable</property>
+     <table>
+      <independentVar lookup="row">propulsion/engine[1]/engine-rpm</independentVar>
+      <tableData> <!-- Guessed. -->
+          0 0.00
+        800 24.0
+       2600 25.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[2]/generator-voltage-V">
+   <function>
+    <product>
+     <property>propulsion/engine[2]/generator-serviceable</property>
+     <table>
+      <independentVar lookup="row">propulsion/engine[2]/engine-rpm</independentVar>
+      <tableData> <!-- Guessed. -->
+          0 0.00
+        800 24.0
+       2600 25.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[1]/generator-power-W">
+   <function>
+    <product>
+     <property>propulsion/engine[1]/generator-voltage-V</property>
+     <property>propulsion/engine[1]/generator-current-A</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="propulsion/engine[2]/generator-power-W">
+   <function>
+    <product>
+     <property>propulsion/engine[2]/generator-voltage-V</property>
+     <property>propulsion/engine[2]/generator-current-A</property>
     </product>
    </function>
   </fcs_function>

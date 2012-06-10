@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-11-05</filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.7 2012/01/17 10:21:30 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.8 2012/06/09 21:53:38 andgi Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
@@ -1081,12 +1081,15 @@
  <!-- Autopilot for JSBSim/standalone. -->
  <system file="take-off-ap"/>
 
- <!-- Control system for the flaps. -->
- <system file="flaps"/>
-
  <!-- Engine controls. -->
  <system file="engines"/>
  <system file="fuel-system"/>
+
+ <!-- Electrical system. -->
+ <system file="electrical"/>
+
+ <!-- Control system for the flaps. -->
+ <system file="flaps"/>
 
  <aerodynamics file="Systems/datcom_aero.xml"/>
 

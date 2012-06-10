@@ -9,7 +9,7 @@
  </description>
 
  <use aircraft="Short_S23" initialize="reset03"/>
- <run start="0.0" end="780" dt="0.00833333">
+ <run start="0.0" end="800" dt="0.00833333">
 
   <!--
 
@@ -31,6 +31,19 @@
       to increase speed during the climb, the 'boat would level off
       until the increased speed was reached, and then resume its
       climb." ([Cassidy:2004:FE], page 160)
+
+      "The service ceiling is quoted as 20 000 ft."
+      ([Cassidy:2004:FE], page 160)
+
+      "The quoted service ceilings were revised when the 'boats were
+      in line service. At the standard all-up weight of 40 500 lb. on
+      four engines, the ceiling was 15 500 ft., at 41 500lbs. the
+      ceiling was 14 300 ft., at 42 500 lb., 13 400 ft. and at 43 500
+      lb., 12 300 ft. With three engines the respective figures were
+      8 000 ft., 7 000 ft., 6 400 ft. and 5 700 ft. If an engine went
+      out of action in flight in hot weather at heights over 5 000
+      ft., it became difficult to maintain height and plenty of
+      control was needed." ([Cassidy:2004:FE], page 160)
 
   -->
 
@@ -66,6 +79,20 @@
   </event>
 
   <event name="Initialization 3">
+   <description>Set the up the electrical system</description>
+   <condition>
+     simulation/sim-time-sec GE 0.0
+   </condition>
+   <notify/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[0]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[1]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[2]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[3]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[4]"   value="1.0"/>
+   <set name="electrical/main-switchbox/switch-cmd-norm[5]"   value="1.0"/>
+  </event>
+
+  <event name="Initialization 4">
    <description>Set the engine controls</description>
    <condition>
      simulation/sim-time-sec GE 0.0
@@ -85,6 +112,10 @@
    <set name="fcs/throttle-cmd-norm[3]"  value="0.80"/>
    <set name="propulsion/magneto_cmd" value="3"/>
    <set name="propulsion/starter_cmd" value="1"/>
+   <set name="fcs/starter-cmd-norm[0]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[1]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[2]"   value="1"/>
+   <set name="fcs/starter-cmd-norm[3]"   value="1"/>
   </event>
 
   <event name="Trim">
@@ -97,6 +128,10 @@
    <set name="propulsion/engine[2]/set-running" value="1"/>
    <set name="propulsion/engine[3]/set-running" value="1"/>
    <set name="propulsion/starter_cmd" value="0"/>
+   <set name="fcs/starter-cmd-norm[0]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[1]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[2]"   value="0"/>
+   <set name="fcs/starter-cmd-norm[3]"   value="0"/>
    <notify>
     <property>velocities/u-aero-fps</property>
     <property>velocities/v-aero-fps</property>
@@ -110,22 +145,22 @@
     <property>accelerations/rdot-rad_sec2</property>
     <property>fcs/throttle-cmd-norm[0]</property>
     <property>propulsion/engine[0]/thrust-lbs</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
     <property>fcs/throttle-cmd-norm[1]</property>
     <property>propulsion/engine[1]/thrust-lbs</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
     <property>fcs/throttle-cmd-norm[2]</property>
     <property>propulsion/engine[2]/thrust-lbs</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
     <property>fcs/throttle-cmd-norm[3]</property>
     <property>propulsion/engine[3]/thrust-lbs</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>velocities/p-rad_sec</property>
@@ -171,16 +206,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -195,10 +230,6 @@
    <!-- Reduce boost to +1.25 PSI. -->
    <set name="auto-boost/target-psi"     value="1.25"/>
    <set name="auto-boost/enabled-norm"   value="1.00"/>
-   <!-- set name="fcs/throttle-cmd-norm[0]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.89"/ -->
   </event>
 
   <event name="Report 2000ft">
@@ -212,16 +243,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -233,10 +264,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.90"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.90"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.90"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.90"/>
   </event>
 
   <event name="Report 3000ft">
@@ -250,16 +277,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -271,10 +298,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.91"/>
   </event>
 
   <event name="Report 4000ft">
@@ -288,16 +311,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -309,10 +332,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.93"/>
   </event>
 
   <event name="Report 5000ft">
@@ -326,16 +345,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -347,10 +366,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.93"/>
   </event>
 
   <event name="Report 6000ft">
@@ -364,16 +379,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -385,10 +400,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.93"/>
   </event>
 
   <event name="Report 7000ft">
@@ -402,16 +413,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -423,10 +434,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.93"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.93"/>
   </event>
 
   <event name="Report 8000ft">
@@ -440,16 +447,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -461,10 +468,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.94"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.94"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.94"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.94"/>
   </event>
 
   <event name="Report 9000ft">
@@ -478,16 +481,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -499,10 +502,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.95"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.95"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.95"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.95"/>
   </event>
 
   <event name="Report 10000ft">
@@ -516,16 +515,16 @@
     <property>velocities/u-aero-fps </property>
     <property>velocities/v-aero-fps </property>
     <property>velocities/w-aero-fps </property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>attitude/phi-rad</property>
@@ -537,10 +536,6 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.89"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.89"/>
   </event>
 
   <event name="Reduce mixture" type="FG_DELTA" persistent="true">
@@ -573,22 +568,22 @@
     <property>velocities/w-aero-fps </property>
     <property>fcs/throttle-cmd-norm[0]</property>
     <property>propulsion/engine[0]/thrust-lbs</property>
-    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
     <property>propulsion/engine[0]/boost-psi</property>
     <property>propulsion/engine[0]/power-hp</property>
     <property>fcs/throttle-cmd-norm[1]</property>
     <property>propulsion/engine[1]/thrust-lbs</property>
-    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
     <property>propulsion/engine[1]/boost-psi</property>
     <property>propulsion/engine[1]/power-hp</property>
     <property>fcs/throttle-cmd-norm[2]</property>
     <property>propulsion/engine[2]/thrust-lbs</property>
-    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
     <property>fcs/throttle-cmd-norm[3]</property>
     <property>propulsion/engine[3]/thrust-lbs</property>
-    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>propulsion/engine[3]/egt-degF</property>

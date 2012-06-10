@@ -25,7 +25,7 @@
  <documentation>
   The flap control system consists of a
   - power switch
-    - TBD
+    - fcs/flap-power-cmd-norm
   - an operating switch (values -1.0/IN, 0.0/STOP, 1.0/OUT)
     - fcs/flap-motor-cmd-norm
 
@@ -45,13 +45,147 @@
   ([Cassidy:2004:FE], pp.170)
  </documentation>
 
+ <!--
+      Flap control and motor system.
+      Inputs:
+        electrical/fuses/flap-motor-voltage-V
+        fcs/flap-power-cmd-norm
+        fcs/flap-motor-cmd-norm
+
+      Outputs:
+        electrical/flap-motor/current-A
+        electrical/flap-motor/power-W
+        electrical/lamps/flaps/pilot-voltage-V
+        electrical/lamps/flaps/pilot-current-A
+        electrical/lamps/flaps/pilot-power-W
+        electrical/lamps/flaps/warning-voltage-V
+        electrical/lamps/flaps/warning-current-A
+        electrical/lamps/flaps/warning-power-W
+        fcs/flap-pos-norm
+        fcs/flap-pos-deg
+ -->
+
+ <!-- The flap motor/power switch. -->
+ <property value="0.0">fcs/flap-power-cmd-norm</property>
+
+ <!-- The flap operating switch. -->
  <property value="0.0">fcs/flap-motor-cmd-norm</property>
+
+ <channel name="Flap indicator lights">
+
+  <switch name="electrical/lamps/flaps/pilot-voltage-V">
+   <default value="0.0"/>
+   <test logic="AND" value="electrical/fuses/flap-motor-voltage-V">
+    fcs/flap-power-cmd-norm GE 0.5
+   </test>
+  </switch>
+
+  <switch name="electrical/lamps/flaps/warning-voltage-V">
+   <default value="0.0"/>
+   <test logic="AND" value="electrical/fuses/flap-motor-voltage-V">
+    fcs/flap-power-cmd-norm GE 0.5
+    fcs/flap-pos-norm       GT 0.334
+   </test>
+  </switch>
+
+  <fcs_function name="electrical/lamps/flaps/pilot-current-A">
+   <function>
+    <quotient>
+     <property>electrical/lamps/flaps/pilot-voltage-V</property>
+     <value>288.0</value> <!-- Resistance of pilot lamp. Assumed to be 2 W. -->
+    </quotient>
+   </function>
+  </fcs_function>
+  <fcs_function name="electrical/lamps/flaps/warning-current-A">
+   <function>
+    <quotient>
+     <property>electrical/lamps/flaps/warning-voltage-V</property>
+     <value>192.0</value> <!-- Resistance of warning lamp. Assumed to be 3 W.-->
+    </quotient>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="electrical/lamps/flaps/pilot-power-W">
+   <function>
+    <product>
+     <property>electrical/lamps/flaps/pilot-voltage-V</property>
+     <property>electrical/lamps/flaps/pilot-current-A</property>
+    </product>
+   </function>
+   <output>/systems/electrical/lamps/flaps/pilot-power-W</output>
+  </fcs_function>
+  <fcs_function name="electrical/lamps/flaps/pilot-power-norm[0]">
+   <function>
+    <quotient>
+     <property>electrical/lamps/flaps/pilot-power-W[0]</property>
+     <value>2.0</value>
+    </quotient>
+   </function>
+   <output>/systems/electrical/lamps/flaps/pilot-power-norm[0]</output>
+  </fcs_function>
+
+  <fcs_function name="electrical/lamps/flaps/warning-power-W">
+   <function>
+    <product>
+     <property>electrical/lamps/flaps/warning-voltage-V</property>
+     <property>electrical/lamps/flaps/warning-current-A</property>
+    </product>
+   </function>
+   <output>/systems/electrical/lamps/flaps/warning-power-W</output>
+  </fcs_function>
+  <fcs_function name="electrical/lamps/flaps/warning-power-norm[0]">
+   <function>
+    <quotient>
+     <property>electrical/lamps/flaps/warning-power-W[0]</property>
+     <value>3.0</value>
+    </quotient>
+   </function>
+   <output>/systems/electrical/lamps/flaps/warning-power-norm[0]</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Flap motor">
+
+  <switch name="electrical/flap-motor/voltage-V">
+   <default value="0.0"/>
+   <test logic="AND" value="electrical/fuses/flap-motor-voltage-V">
+    fcs/flap-power-cmd-norm GE 0.5
+    fcs/flap-motor-cmd-norm GE 0.10
+    fcs/flap-pos-norm LT 1.00
+   </test>
+   <test logic="AND" value="electrical/fuses/flap-motor-voltage-V">
+    fcs/flap-power-cmd-norm GE 0.5
+    fcs/flap-motor-cmd-norm LE -0.10
+    fcs/flap-pos-norm GT 0.0
+   </test>
+  </switch>
+
+  <fcs_function name="electrical/flap-motor/current-A">
+   <function>
+    <quotient>
+     <property>electrical/flap-motor/voltage-V</property>
+     <value>1.545</value> <!-- Resistance of motor, derived from max power. -->
+    </quotient>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="electrical/flap-motor/power-W">
+   <function>
+    <product>
+     <property>electrical/flap-motor/voltage-V</property>
+     <property>electrical/flap-motor/current-A</property>
+    </product>
+   </function>
+  </fcs_function>
+
+ </channel>
 
  <channel name="Flaps">
 
-  <switch name="fcs/flap/motor-speed-norm">
+  <switch name="fcs/flap/motor-load-inv-norm">
    <default value="0.0"/>
-   <test logic="AND" value="1.00">
+   <test logic="AND" value="1.0">
     fcs/flap-motor-cmd-norm GE 0.10
     fcs/flap-pos-norm LT 1.00
    </test>
@@ -60,6 +194,18 @@
     fcs/flap-pos-norm GT 0.0
    </test>
   </switch>
+
+  <fcs_function name="fcs/flap/motor-speed-norm">
+   <function>
+    <product>
+     <property>fcs/flap/motor-load-inv-norm</property>
+     <quotient>     
+      <property>electrical/flap-motor/power-W</property>
+      <value>372.8</value> <!-- Max power of the motor. -->
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
 
   <integrator name="fcs/flap/pos-norm">
    <input>fcs/flap/motor-speed-norm</input>

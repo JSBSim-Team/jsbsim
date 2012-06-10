@@ -30,6 +30,10 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   crankshaft speed, through Farman type reduction gearing."
   (pp.91) 
 
+  "The starters were Rotax-Eclipse E 160R direct-cranking starters, capable
+  of turning the crankshaft over at 25 to 30 rev. per min."
+  (pp.92)
+
   "The engines originally fitted to all the Mark I S.23 'boats, one
   of the S.30s and both the S.33 'boats were poppet valved Bristol
   Pegasus XCs. The engines developed 820/900 bhp. (589/611 kW.) at
@@ -51,7 +55,9 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   The upper limit of acceptable consumption was set at 141 gal. per hr. (631
   litre per hr.), and anything over this amount was considered to be excessive.
   These consumption figures appear to be better than the manufacturer's figure
-  of a maximum of 0,67 pints (0.38 litres) per hhp. per hour."
+  of a maximum of 0,67 pints (0.38 litres) per hhp. per hour. ...
+  [Oil] Consumptions varied from 8 pints to 3 1/2 gal. per hour for a
+  typical Pegasus"
   (pp.168)
 
 Flight Magazine November 12, 1936:
@@ -77,9 +83,11 @@ Flight Magazine November 12, 1936:
  <cycles>                     4.0  </cycles>
 
  <maxhp unit="HP">          920.0 </maxhp> <!-- At take-off boost. -->
- <!-- bsfc unit="LBS/HP/HR"> 0.504 </bsfc -->
+ <!-- bsfc unit="LBS/HP*HR"> 0.40 </bsfc -->
  <!--
-     [Cassidy:2004:FE]: 0.504 LBS/HP/HR for Pegasus Xc (manufacturer's figure)
+     [Cassidy:2004:FE]: For Pegasus Xc:
+                        0.500 LBS/HP/HR (max cruise + acceptable consumption)
+                        0.605 LBS/HP/HR (manufacturer's figure)
      Wikipedia:         0.52  LBS/HP/HR for Pegasus XVIII.
  -->
  <volumetric-efficiency> 0.65 </volumetric-efficiency> <!-- Default 0.85 -->
@@ -88,6 +96,7 @@ Flight Magazine November 12, 1936:
 
  <numboostspeeds> 1.0 </numboostspeeds>
  <boostoverride>  0 </boostoverride>
+ <boost-loss-factor> 1.20 </boost-loss-factor>
 
  <ratedboost1 unit="PSI">      2.50 </ratedboost1>
  <ratedpower1 unit="HP">     815.00 </ratedpower1>
@@ -102,5 +111,77 @@ Flight Magazine November 12, 1936:
  <maxmp unit="INHG">         38.57 </maxmp>
  <maxthrottle>                1.00 </maxthrottle>
  <minthrottle>                0.05 </minthrottle>
+
+ <!--
+      Engine starter system.
+      Inputs:
+        propulsion/engine[#]/starter-serviceable
+        propulsion/engine[#]/starter-voltage-V
+      Outputs:
+        propulsion/engine[#]/starter-current-A
+        propulsion/engine[#]/starter-running-norm
+ -->
+ <starter-torque unit="LB*FT">368</starter-torque>
+ <starter-rpm>800</starter-rpm>            
+ 
+ <function name="propulsion/engine[#]/starter-max-power-W">
+  <product> 
+   <max> <!-- k_torque -->
+    <value>0.0</value>
+    <difference>
+     <value>1.0</value>
+     <quotient>
+      <property>propulsion/engine[#]/engine-rpm</property>
+      <value>400</value>   <!-- Starter max RPM. -->
+     </quotient>
+    </difference>
+   </max>
+   <value>498.941</value> <!-- Starter max torque in Nm. -->
+   <product>              <!-- Engine speed in radians/sec. -->
+    <value>0.10471976</value>
+    <property>propulsion/engine[#]/engine-rpm</property>
+   </product>
+  </product>
+ </function>
+
+ <function name="propulsion/engine[#]/starter-current-A">
+  <!-- Guess: Set the max current to 300A and let it decrease with rpm. -->
+  <product>
+   <value>300.0</value>
+   <quotient>
+    <property>propulsion/engine[#]/starter-voltage-V</property>
+    <value>12.0</value>
+   </quotient>
+   <max>
+    <value>0.0</value>
+    <difference>
+     <value>1.0</value>
+     <quotient>
+      <property>propulsion/engine[#]/engine-rpm</property>
+      <value>600</value>
+     </quotient>
+    </difference>
+   </max>
+  </product>
+ </function>
+
+ <function name="propulsion/engine[#]/starter-running-norm">
+  <min>
+   <value>1.0</value>
+   <product>
+    <property>propulsion/engine[#]/starter-serviceable</property>
+    <quotient>
+     <product> <!-- Power available in W. -->
+      <property>propulsion/engine[#]/starter-voltage-V</property>
+      <property>propulsion/engine[#]/starter-current-A</property>
+     </product>
+     <max>     <!-- Max power in W at the current RPM. -->
+      <value>1.0</value>
+      <property>propulsion/engine[#]/starter-max-power-W</property>
+     </max>
+    </quotient>
+   </product>
+  </min>
+ </function>
 
 </piston_engine>
