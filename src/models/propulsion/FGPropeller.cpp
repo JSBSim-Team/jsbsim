@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.44 2012/04/29 13:10:46 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.45 2012/06/10 13:21:19 bcoconni Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,8 +245,11 @@ double FGPropeller::Calculate(double EnginePower)
   // (see H. Glauert, "The Elements of Airfoil and Airscrew Theory",
   // 2nd edition, §16.3, pp. 219-221)
 
-  if ((Vel+2.0*Vinduced)*Vel < 0.0)
-    Vinduced = 0.0; // We cannot calculate the induced velocity so let's assume it is zero.
+  if ((Vel+2.0*Vinduced)*Vel < 0.0) {
+    // The momentum theory is no longer applicable so let's assume the induced
+    // saturates to -0.5*Vel so that the total velocity Vel+2*Vinduced equals 0.
+    Vinduced = -0.5*Vel;
+  }
     
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
