@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.100 2012/04/01 17:05:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.101 2012/07/24 00:29:56 jentron Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -500,7 +500,10 @@ void FGLGear::ReportTakeoffOrLanding(void)
     if (debug_lvl > 0) Report(erTakeoff);
   }
 
-  if (lastWOW != WOW) PutMessage("GEAR_CONTACT: " + name, WOW);
+  if (lastWOW != WOW)
+  {
+      cout <<"GEAR_CONTACT: " << fdmex->GetSimTime() <<" seconds: " << name <<" " <<WOW << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
