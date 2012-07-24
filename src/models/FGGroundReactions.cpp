@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.39 2012/04/01 17:05:51 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.40 2012/07/24 00:30:48 jentron Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,12 @@ string FGGroundReactions::GetGroundReactionStrings(string delimeter) const
           << name << " wheel rolling velocity (ft/sec)" << delimeter
           << name << " wheel side velocity (ft/sec)" << delimeter
           << name << " wheel slip (deg)" << delimeter;
+    } else {
+      string name = lGear[i]->GetName();
+      buf << name << " WOW" << delimeter
+          << name << " stroke (ft)" << delimeter
+          << name << " stroke velocity (ft/sec)" << delimeter
+          << name << " compress force (lbs)" << delimeter;
     }
   }
 
@@ -204,6 +210,12 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
           << gear->GetWheelRollVel() << delimeter
           << gear->GetWheelSideVel() << delimeter
           << gear->GetWheelSlipAngle() << delimeter;
+    } else {
+      FGLGear *gear = lGear[i];
+      buf << (gear->GetWOW() ? "1" : "0") << delimeter
+          << setprecision(5) << gear->GetCompLen() << delimeter
+          << setprecision(6) << gear->GetCompVel() << delimeter
+          << setprecision(10) << gear->GetCompForce() << delimeter;
     }
   }
 
