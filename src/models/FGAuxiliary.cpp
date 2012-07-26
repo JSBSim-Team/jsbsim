@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.56 2011/12/11 17:03:05 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.57 2012/07/26 04:33:46 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,6 +159,7 @@ bool FGAuxiliary::Run(bool Holding)
   double AeroV2 = vAeroUVW(eV)*vAeroUVW(eV);
   double AeroW2 = vAeroUVW(eW)*vAeroUVW(eW);
   double mUW = AeroU2 + AeroW2;
+  double Vtdot = (vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eV)*in.vUVWdot(eV) + vAeroUVW(eW)*in.vUVWdot(eW))/Vt;
 
   double Vt2 = Vt*Vt;
 
@@ -173,8 +174,9 @@ bool FGAuxiliary::Run(bool Holding)
 
     if ( mUW >= 1.0 ) {
       adot = (vAeroUVW(eU)*in.vUVWdot(eW) - vAeroUVW(eW)*in.vUVWdot(eU))/mUW;
-      bdot = (signU*mUW*in.vUVWdot(eV)
-             - vAeroUVW(eV)*(vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eW)*in.vUVWdot(eW)))/(Vt2*sqrt(mUW));
+      // bdot = (signU*mUW*in.vUVWdot(eV)
+      //        - vAeroUVW(eV)*(vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eW)*in.vUVWdot(eW)))/(Vt2*sqrt(mUW));
+      bdot = (in.vUVWdot(eV)*Vt - vAeroUVW(eV)*Vtdot)/(Vt*sqrt(mUW));
     }
   }
 

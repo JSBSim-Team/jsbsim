@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.17 2012/07/26 04:33:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,7 +136,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.16 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.17 2012/07/26 04:33:46 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,6 +151,11 @@ public:
   Element(const std::string& nm);
   /// Destructor
   ~Element(void);
+
+  /** Determines if an element has the supplied attribute.
+      @param key specifies the attribute key to retrieve the value of.
+      @return true or false. */
+  bool HasAttribute(const std::string& key);
 
   /** Retrieves an attribute.
       @param key specifies the attribute key to retrieve the value of.
@@ -301,6 +306,8 @@ public:
       @return a column vector object built from the LOCATION or ORIENT components. */
   FGColumnVector3 FindElementTripletConvertTo( const std::string& target_units);
 
+  double DisperseValue(Element *e, double val, const std::string supplied_units="", const std::string target_units="");
+
   /** This function sets the value of the parent class attribute to the supplied
       Element pointer.
       @param p pointer to the parent Element. */
@@ -335,6 +342,7 @@ private:
   typedef std::map <std::string, std::map <std::string, double> > tMapConvert;
   static tMapConvert convert;
   static bool converterIsInitialized;
+  double GaussianRandomNumber(void);
 };
 
 } // namespace JSBSim

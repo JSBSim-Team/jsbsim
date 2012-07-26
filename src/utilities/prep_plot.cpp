@@ -145,7 +145,7 @@ int main(int argc, char **argv)
   string filename(argv[1]), new_filename, Title;
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
-    while (file_ctr<10) {
+    while (1) {
       new_filename=filename;
       sprintf(num,"%d",file_ctr);
       new_filename.replace(new_filename.find("#"),1,num);
