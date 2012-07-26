@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.73 2012/01/21 16:46:08 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.74 2012/07/26 04:33:45 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -338,6 +338,17 @@ int real_main(int argc, char* argv[])
     FDMExec->Setdt(1.0/simulation_rate);
 
   if (override_sim_rate) override_sim_rate_value = FDMExec->GetDeltaT();
+
+  // SET PROPERTY VALUES THAT ARE GIVEN ON THE COMMAND LINE and which are for the simulation only.
+
+  for (unsigned int i=0; i<CommandLineProperties.size(); i++) {
+
+    if (CommandLineProperties[i].find("simulation") != std::string::npos) {
+      if (FDMExec->GetPropertyManager()->GetNode(CommandLineProperties[i])) {
+        FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
+      }
+    }
+  }
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {

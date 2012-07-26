@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.45 2012/04/13 13:25:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.46 2012/07/26 04:33:46 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,15 +177,20 @@ bool FGAerodynamics::Run(bool Holding)
   // used in the L/D calculation, and we still may want to look at Lift
   // and Drag.
 
+  // JSB 4/27/12 - After use, convert wind axes to produce normal lift
+  // and drag values - not negative ones!
+
   switch (axisType) {
     case atBodyXYZ:       // Forces already in body axes; no manipulation needed
       vFw = in.Tb2w*vFnative;
+      vFw(eDrag)*=-1; vFw(eLift)*=-1;
       vForces = vFnative;
       break;
     case atLiftDrag:      // Copy forces into wind axes
       vFw = vFnative;
       vFw(eDrag)*=-1; vFw(eLift)*=-1;
       vForces = in.Tw2b*vFw;
+      vFw(eDrag)*=-1; vFw(eLift)*=-1;
       break;
     case atAxialNormal:   // Convert native forces into Axial|Normal|Side system
       vFw = in.Tb2w*vFnative;
@@ -218,13 +223,14 @@ bool FGAerodynamics::Run(bool Holding)
   vDXYZcg(eY) = in.RPBody(eY) + vDeltaRP(eY);
   vDXYZcg(eZ) = in.RPBody(eZ) - vDeltaRP(eZ);
 
-  vMoments = vDXYZcg*vForces; // M = r X F
+  vMomentsMRC.InitMatrix();
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < AeroFunctions[axis_ctr+3].size(); ctr++) {
-      vMoments(axis_ctr+1) += AeroFunctions[axis_ctr+3][ctr]->GetValue();
+      vMomentsMRC(axis_ctr+1) += AeroFunctions[axis_ctr+3][ctr]->GetValue();
     }
   }
+  vMoments = vMomentsMRC + vDXYZcg*vForces; // M = r X F
 
   RunPostFunctions();
 

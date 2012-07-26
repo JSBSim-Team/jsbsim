@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.33 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.34 2012/07/26 04:33:46 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,6 +303,8 @@ void FGTank::CalculateInertias(void)
 
   if (Density > 0.0) {
     Volume = (Contents*lbtoslug)/Density; // in^3
+  } else if (Contents <= 0.0) {
+    Volume = 0;
   } else {
     cerr << endl << "  Solid propellant grain density is zero!" << endl << endl;
     exit(-1);

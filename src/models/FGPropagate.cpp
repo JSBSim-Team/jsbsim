@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.105 2012/03/26 21:26:11 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.106 2012/07/26 04:33:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -522,6 +522,7 @@ void FGPropagate::SetVState(const VehicleState& vstate)
 {
   //ToDo: Shouldn't all of these be set from the vstate vector passed in?
   VState.vLocation = vstate.vLocation;
+  //VState.vLocation.SetEarthPositionAngle(vstate.vLocation.GetEPA());
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();

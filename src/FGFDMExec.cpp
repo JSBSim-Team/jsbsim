@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.133 2012/04/14 18:10:43 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.134 2012/07/26 04:33:45 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -835,23 +835,21 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     while (element) {
       if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
       FGOutput* Output = new FGOutput(this);
+      Output->InitModel();
+      Schedule(Output);
       result = Output->Load(element);
       if (!result) {
         cerr << endl << "Aircraft output element has problems in file " << aircraftCfgFileName << endl;
-        delete Output;
         return result;
       } else {
-        Output->InitModel();
-        Schedule(Output);
         Outputs.push_back(Output);
         string outputProp = CreateIndexedPropertyName("simulation/output",idx);
         instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
+        instance->Tie("simulation/force-output", this, (iOPV)0, &FGFDMExec::ForceOutput, false);
         idx++;
       }
       element = document->FindNextElement("output");
     }
-    if (idx)
-      instance->Tie("simulation/force-output", this, (iOPV)0, &FGFDMExec::ForceOutput, false);
 
     // Lastly, process the child element. This element is OPTIONAL - and NOT YET SUPPORTED.
     element = document->FindElement("child");
@@ -1164,11 +1162,11 @@ bool FGFDMExec::SetOutputDirectives(const string& fname)
 
   FGOutput* Output = new FGOutput(this);
   Output->SetDirectivesFile(RootDir + fname);
+  Output->InitModel();
+  Schedule(Output);
   result = Output->Load(0);
 
   if (result) {
-    Output->InitModel();
-    Schedule(Output);
     Output->Run(holding);
     Outputs.push_back(Output);
     typedef double (FGOutput::*iOPMF)(void) const;
