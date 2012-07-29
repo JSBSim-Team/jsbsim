@@ -1,3 +1,4 @@
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGFDMExec.cpp
@@ -70,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.134 2012/07/26 04:33:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.135 2012/07/29 12:04:08 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +414,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQR              = Propagate->GetPQR();
-    Propulsion->in.vXYZcg           = MassBalance->GetXYZcg();
 
     break;
   case eAerodynamics:
@@ -533,7 +533,6 @@ void FGFDMExec::LoadModelConstants(void)
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
   GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
-  Propulsion->in.vXYZcg          = MassBalance->GetXYZcg();
 
   LoadPlanetConstants();
 }
