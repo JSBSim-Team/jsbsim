@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.35 2012/04/14 18:10:44 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.36 2012/07/29 12:04:09 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,7 +113,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.35 2012/04/14 18:10:44 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.36 2012/07/29 12:04:09 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,6 @@ public:
     vector <double> MixturePos;
     vector <double> PropAdvance;
     vector <bool> PropFeather;
-    FGColumnVector3 vXYZcg; // CG coordinates expressed in the structural frame
     double TotalDeltaT;
   };
 
