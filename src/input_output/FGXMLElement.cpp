@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.34 2012/07/26 04:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.35 2012/08/08 12:43:20 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -501,31 +501,31 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
   if (item) {
     value = item->GetDataAsNumber();
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
+    triplet(1) = DisperseValue(item, value, supplied_units, target_units);
   } else {
-    value = 0.0;
+    triplet(1) = 0.0;
   }
   
-  triplet(1) = DisperseValue(item, value, supplied_units, target_units);
 
   item = FindElement("y");
   if (!item) item = FindElement("pitch");
   if (item) {
     value = item->GetDataAsNumber();
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
+    triplet(2) = DisperseValue(item, value, supplied_units, target_units);
   } else {
-    value = 0.0;
+    triplet(2) = 0.0;
   }
-  triplet(2) = DisperseValue(item, value, supplied_units, target_units);
 
   item = FindElement("z");
   if (!item) item = FindElement("yaw");
   if (item) {
     value = item->GetDataAsNumber();
     if (!supplied_units.empty()) value *= convert[supplied_units][target_units];
+    triplet(3) = DisperseValue(item, value, supplied_units, target_units);
   } else {
-    value = 0.0;
+    triplet(3) = 0.0;
   }
-  triplet(3) = DisperseValue(item, value, supplied_units, target_units);
 
   return triplet;
 }
