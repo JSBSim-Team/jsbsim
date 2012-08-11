@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.43 2012/02/05 11:15:54 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.44 2012/08/11 15:02:19 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,7 +203,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   }
 
   element = el->GetElement();
-  if (!element) {
+  if (!element && Type != eRandom) {
     cerr << fgred << highint << endl;
     cerr << "  No element was specified as an argument to the \"" << operation << "\" operation" << endl;
     cerr << "  This can happen when, for instance, a cos operation is specified and a " << endl;
@@ -334,7 +334,7 @@ double FGFunction::GetValue(void) const
 
   if (cached) return cachedValue;
 
-  temp = Parameters[0]->GetValue();
+  if (Type != eRandom) temp = Parameters[0]->GetValue();
   
   switch (Type) {
   case eTopLevel:

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.76 2012/01/21 16:46:08 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.77 2012/08/11 14:59:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -180,7 +180,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.76 $
+    @version $Revision: 1.77 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,6 +436,9 @@ public:
 
   /** Forces the specified output object to print its items once */
   void ForceOutput(int idx=0);
+
+  /** Sets the logging rate for all output objects (if any). */
+  void SetLoggingRate(double rate);
 
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to

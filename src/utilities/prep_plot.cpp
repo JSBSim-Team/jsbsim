@@ -150,15 +150,17 @@ int main(int argc, char **argv)
       sprintf(num,"%d",file_ctr);
       new_filename.replace(new_filename.find("#"),1,num);
       infile2.open(new_filename.c_str());
-      if (!infile2.is_open()) break;
-      infile2.close();
-      files.push_back(new_filename);
-      file_ctr++;
+      if (!infile2.is_open()) {
+        break;
+      } else {
+        infile2.close();
+        files.push_back(new_filename);
+        file_ctr++;
+      }
     }
   } else {
     files.push_back(filename);
   }
-  
   ifstream infile(files[0].c_str());
   if (!infile.is_open()) {
     cerr << "Could not open file: " << files[0] << endl;

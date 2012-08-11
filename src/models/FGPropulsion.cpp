@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.64 2012/08/08 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.65 2012/08/11 15:01:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -593,8 +593,8 @@ string FGPropulsion::GetPropulsionTankReport()
     outstream << highint << left << setw(4) << i << setw(30) << tankname << normint
       << right << setw(10) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
          << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
-         << setw(12) << "*" << setw(12) << "*"
-         << setw(12) << "*" << endl;
+         << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()
+         << setw(12) << tank->GetIzz() << endl;
   }
   return outstream.str();
 }

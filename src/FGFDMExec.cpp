@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.135 2012/07/29 12:04:08 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.136 2012/08/11 14:59:10 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
+  typedef double (FGFDMExec::*dPMF)(void) const;
 //  typedef unsigned int (FGFDMExec::*uiPMF)(void) const;
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
@@ -157,6 +158,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
   instance->Tie("simulation/frame", (int *)&Frame, false);
+  instance->Tie("simulation/log_rate_hz", this, (dPMF)0, &FGFDMExec::SetLoggingRate, false);
 
   Constructing = false;
 }
@@ -607,6 +609,15 @@ bool FGFDMExec::SetOutputFileName(const string& fname)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFDMExec::SetLoggingRate(double rate)
+{
+  for (unsigned int i=0; i<Outputs.size(); i++) {
+    Outputs[i]->SetRate(rate);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 string FGFDMExec::GetOutputFileName(void)
 {
   if (Outputs.size() > 0) return Outputs[0]->GetOutputFileName();
@@ -869,6 +880,10 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (debug_lvl > 0) {
       LoadInputs(eMassBalance); // Update all input mass properties for the report.
       Models[eMassBalance]->Run(false);  // Update all mass properties for the report.
+      LoadInputs(ePropulsion); // Update propulsion properties for the report.
+      Models[ePropulsion]->Run(false);  // Update propulsion properties for the report.
+      LoadInputs(eMassBalance); // Update all (one more time) input mass properties for the report.
+      Models[eMassBalance]->Run(false);  // Update all (one more time) mass properties for the report.
       ((FGMassBalance*)Models[eMassBalance])->GetMassPropertiesReport();
 
       cout << endl << fgblue << highint
