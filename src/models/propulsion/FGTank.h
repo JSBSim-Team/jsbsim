@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.26 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.27 2012/08/11 14:57:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -317,6 +317,7 @@ private:
   double Ixx;
   double Iyy;
   double Izz;
+  double InertiaFactor;
   double PctFull;
   double Contents, InitialContents;
   double PreviousUsed;
