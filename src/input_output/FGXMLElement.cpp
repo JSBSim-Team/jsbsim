@@ -42,7 +42,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.35 2012/08/08 12:43:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.36 2012/08/11 15:02:19 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -230,6 +230,7 @@ Element::Element(const string& nm)
     convert["KG/L"]["KG/L"] = 1.0;
     convert["LBS/GAL"]["LBS/GAL"] = 1.0;
   }
+  attribute_key.resize(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,7 +257,10 @@ bool Element::HasAttribute(const string& attr)
 {
   bool status=true;
   int select=-1;
-  for (unsigned int i=0; i<attribute_key.size(); i++) {
+
+  unsigned int attr_cnt = attribute_key.size();
+
+  for (unsigned int i=0; i<attr_cnt; i++) {
     if (attribute_key[i] == attr) select = i;
   }
   if (select < 0) status=false;
