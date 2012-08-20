@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.30 2012/04/13 13:18:28 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.31 2012/08/20 12:28:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
   @property atmosphere/a-ratio
 
   @author Jon Berndt
-  @version $Id: FGAtmosphere.h,v 1.30 2012/04/13 13:18:28 jberndt Exp $
+  @version $Id: FGAtmosphere.h,v 1.31 2012/08/20 12:28:50 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,8 +154,8 @@ public:
   /// Returns the pressure at a specified altitude in psf.
   virtual double GetPressure(double altitude) const = 0;
 
-  /// Returns the sea level pressure in psf.
-  virtual double GetPressureSL(void) const { return SLpressure; }
+  // Returns the sea level pressure in target units, default in psf.
+  virtual double GetPressureSL(ePressure to=ePSF) const { return ConvertFromPSF(SLpressure, to);  }
 
   /// Returns the ratio of at-altitude pressure over the sea level value.
   virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
@@ -234,6 +234,9 @@ protected:
   
   // Converts to PSF (pounds per square foot) from one of several unit systems.
   virtual double ConvertToPSF(double t, ePressure unit=ePSF) const;
+
+  // Converts from PSF (pounds per square foot) to one of several unit systems.
+  virtual double ConvertFromPSF(double t, ePressure unit=ePSF) const;
 
   virtual void bind(void);
   void Debug(int from);
