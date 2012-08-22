@@ -15,9 +15,6 @@
     <inflowlag>                          0.09 </inflowlag> 
     <hingeoffset unit="FT">             0.015 </hingeoffset>
 
-    <groundeffectexp>                   0.081 </groundeffectexp>
-    <groundeffectshift unit="FT">        14.0 </groundeffectshift>
-
     <ExternalRPM> 0 </ExternalRPM>
     <controlmap> TAIL </controlmap>
 

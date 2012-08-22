@@ -11,12 +11,16 @@
   <flappingmoment unit="SLUG*FT2">     1382.0 </flappingmoment> <!-- mass approx. 8.57 slug -->
   <twist>                              -0.175 </twist>
   <massmoment>                           85.0 </massmoment> <!-- SLUG*FT, estimated from mass --> 
-  <tiplossfactor>                        0.98 </tiplossfactor>
+  <tiplossfactor>                         1.0 </tiplossfactor>
   <polarmoment unit="SLUG*FT2">        2900.0 </polarmoment>
   <inflowlag>                            0.09 </inflowlag>
-  <hingeoffset unit="FT">                1.25 </hingeoffset>
+  <hingeoffset unit="FT">                3.30 </hingeoffset> <!-- hingeless 15% -->
 
-  <groundeffectexp>                     0.081 </groundeffectexp>
-  <groundeffectshift unit="FT">          14.0 </groundeffectshift>
+  <!--
+        According to the operator's manual, the groundeffect yields to approx. 20% less
+        torque required when hovering near ground, and vanishes around 50ft h-agl.
+      -->
+  <groundeffectexp>                     0.19 </groundeffectexp>
+  <groundeffectshift unit="FT">           10 </groundeffectshift>
 
 </rotor>
