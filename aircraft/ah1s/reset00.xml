@@ -1,15 +1,36 @@
 <?xml version="1.0"?>
 <initialize name="reset00">
+  <!--
+
+    AH1S initialization, in JSBSim-standalone it just plays with the 'elevation'
+    and 'altitudeAGL' features. Additionally it serves as an init file for
+    'native-fdm' visualization with FlightGear. In this case the vehicle is
+    placed at Edwards AFB (KEDW). (Or more precisely on the huge wind rose found
+    at the air base.)
+
+    Notes:
+      For visualization with FlightGear, JSBSim needs a proper 'logfile', and in
+      turn FG needs a matching argument on the command line (port 45577 => 0xb209 :).
+
+      JSBSim logfile:
+        <output name='localhost' type='FLIGHTGEAR' port='45577' protocol='UDP' rate='25'/>
+
+      FlightGear:    
+        add '-\-native-fdm=socket,in,25,127.0.0.1,45577,udp' to your start options.
+
+      -->
 
   <ubody unit="FT/SEC">    0.0 </ubody>
   <vbody unit="FT/SEC">    0.0 </vbody>
   <wbody unit="FT/SEC">    0.0 </wbody>
-  <longitude unit="DEG">  30.0 </longitude>
-  <latitude unit="DEG">   30.0 </latitude>
-  <phi unit="DEG">         0.0 </phi>
+  <phi   unit="DEG">       0.0 </phi>
   <theta unit="DEG">       0.0 </theta>
-  <psi unit="RAD">         1.0 </psi>
-  <altitude unit="FT">    6.22 </altitude>
+  <psi   unit="DEG">     180.0 </psi>
+
+  <!-- KEDW wind rose location -->
+  <longitude   unit="DEG">  -117.87323 </longitude>
+  <latitude    unit="DEG">    34.95416 </latitude>
+  <elevation   unit="FT">   2283.5     </elevation>
+  <altitudeAGL unit="FT">      6.3     </altitudeAGL>
 
 </initialize>
-

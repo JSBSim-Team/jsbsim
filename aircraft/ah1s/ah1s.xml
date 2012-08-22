@@ -1,36 +1,17 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config 
-  name="ah1s"
-  version="2.0"
-  release="ALPHA"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
-
+<fdm_config name="ah1s-jsbsim" release="ALPHA" version="2.0">
+  
   <fileheader>
     <author> Thomas Kreitler </author>
-    <email> t.kreitler at web dot de </email>
+    <email> t.kreitler at web 056 de </email>
     <filecreationdate>2010-10-07</filecreationdate>
-    <version>$Revision: 1.4 $</version>
+    <version>$Revision: 1.5 $</version>
     <description> Models a Bell209/AH1S helicopter. </description>
 
-    <reference
-      refID=  "TA82"
-      author= "Talbot, Peter D., Tinling, Bruce E., Decker, William A., and Chen, Robert T. N."
-      title=  "A Mathematical Model of a Single Main Rotor Helicopter for Piloted Simulation - NASA TM-84281"
-      date=   "1982"/>
-    <reference
-      refID=  "BR59"
-      author= "Bramwell, A. R. S."
-      title=  "Longitudinal stability and control of the single rotor helicopter - Aeronautical Research Council R&amp;M 3104"
-      date=   "1959"/>
-    <reference
-      refID=  "SH79"
-      author= "Shaugnessy, J. D., Deaux, Thomas N., and Yenni, Kenneth R."
-      title=  "Development and Validation of a Piloted Simulation of a Helicopter and External Sling Load - NASA TP-1285"
-      date=   "1979"/>
-
-    <note> Supersedes former model from 2010-01-12 </note>
+    <reference refID="BR59" author="Bramwell, A. R. S." title="Longitudinal stability and control of the single rotor helicopter - Aeronautical Research Council R&amp;M 3104" date="1959"/>
+    <reference refID="SH79" author="Shaugnessy, J. D., Deaux, Thomas N., and Yenni, Kenneth R." title="Development and Validation of a Piloted Simulation of a Helicopter and External Sling Load - NASA TP-1285" date="1979"/>
+    <reference refID="TA77" author="Talbot, Peter D., Corliss, Lloyd D." title="A Mathematical Force and Moment Model of a UH-1H Helicopter for Flight Dynamics Simulations - NASA TM-73254" date="1977"/>
+    <reference refID="TA82" author="Talbot, Peter D., Tinling, Bruce E., Decker, William A., and Chen, Robert T. N." title="A Mathematical Model of a Single Main Rotor Helicopter for Piloted Simulation - NASA TM-84281" date="1982"/>
 
     <note> Aerodynamic helicopter model in wind axes.
            Trigonometric functions are used to cover the full alpha/beta range (See /TA82/). </note>
@@ -38,22 +19,25 @@
     <note> Wing aerodynamics are calculated in the same manner as in fixed wing aircraft.
            The other contributions use helicopter specific quantities. </note>
 
-    <note> The property 'mixture-cmd-norm' is used to provide collective input. </note>
+    <note> Additional setup options are in the 'aerodynamics' section </note>
 
-    <limitation> Due to gear vibrations the model should be run at 200Hz (the cause might be bad design 
-                 of the skids, or numerical flutter in the ground reaction routines). </limitation>
+    <note> The model currently flies with electric engines, so tanks are left empty. </note>
 
-    <limitation> Downwash influence is only applied for alpha values between +/- 20 deg
-                 (and the opposite direction). </limitation>
+    <limitation> The rotor downwash adds an varying 'wind' system, thus some axis transforms
+                 occur in the 'aerodynamics' section.
+                 Currently this is an experimental (read: 'not so funny') feature. The calculations
+                 used are *not* valid for pure sideward flight at high speeds, but should be OK
+                 for common forward/backward flight conditions. </limitation>
+
+    <limitation> Horizontal tail incidence variation ('elevator') is experimental. </limitation>
 
     <limitation> Estimation of fuselage moments is rather fair. </limitation>
-
-    <limitation> Landing the vehicle without AFCS can be a challenging task. </limitation>
 
     <license>
       <licenseName>GPL</licenseName>
       <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
       <!--
+        DISCLAIMER:
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
         restricted data. It has been validated only to the extent that it may seem
@@ -65,22 +49,36 @@
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
         GNU General Public License for more details.
       -->
-    </license>
-  </fileheader>
 
+      <!--
+      
+        And to avoid unneeded 'friction-losses':
+      
+                              -= ALTERNATIVE LICENSE =-
+        In case the model is used in conjunction with additional program code,
+        3D-models, or forms a basis for derived models, and you are publishing
+        your work as 'open source', it is also allowed to use and/or distribute
+        the model under a CC-BY-NC-SA licence (http://creativecommons.org)
+
+      -->
+
+    </license>
+
+  </fileheader>
+  
   <metrics>
-    <wingarea       unit="FT2">   16.60 </wingarea>         <!-- metrics/Sw-sqft  -->
-    <wingspan       unit="FT" >   10.75 </wingspan>         <!-- metrics/bw-ft    -->
+    <wingarea unit="FT2">         16.60 </wingarea>         <!-- metrics/Sw-sqft  -->
+    <wingspan unit="FT">          10.75 </wingspan>         <!-- metrics/bw-ft    -->
     <wing_incidence unit="DEG">    8.50 </wing_incidence>   <!-- metrics/iw-deg   -->
-    <chord          unit="FT" >    1.54 </chord>            <!-- metrics/cbarw-ft -->
-    <htailarea      unit="FT2">   12.00 </htailarea>        <!-- metrics/Sh-sqft  -->
-    <htailarm       unit="FT" >   16.50 </htailarm>         <!-- metrics/lh-ft    -->
-    <vtailarea      unit="FT2">   17.85 </vtailarea>        <!-- metrics/Sv-sqft  -->
-    <vtailarm       unit="FT" >   25.00 </vtailarm>         <!-- metrics/lv-ft    -->
+    <chord unit="FT">              1.54 </chord>            <!-- metrics/cbarw-ft -->
+    <htailarea unit="FT2">        12.00 </htailarea>        <!-- metrics/Sh-sqft  -->
+    <htailarm unit="FT">          16.50 </htailarm>         <!-- metrics/lh-ft    -->
+    <vtailarea unit="FT2">        17.85 </vtailarea>        <!-- metrics/Sv-sqft  -->
+    <vtailarm unit="FT">          25.00 </vtailarm>         <!-- metrics/lv-ft    -->
     <!-- more relevant parameters are given in the aerodynamics section -->
 
     <location name="AERORP" unit="IN">
-       <x> 175.0 </x>
+       <x> 176.0 </x>
        <y>   0.0 </y>
        <z>  55.0 </z>
     </location>
@@ -95,22 +93,23 @@
       <z>   0.0 </z>
     </location>
   </metrics>
-
+  
   <mass_balance>
     <ixx unit="SLUG*FT2">    2593.0 </ixx>
     <iyy unit="SLUG*FT2">   14320.0 </iyy>
     <izz unit="SLUG*FT2">   12330.0 </izz>
     <ixz unit="SLUG*FT2">       0.0 </ixz>
-    <emptywt unit="LBS" >    8500.0 </emptywt>
+    <!-- grossweight: 6000 to 10000 lbs  -->
+    <emptywt unit="LBS">    8500.0 </emptywt>
     <location name="CG" unit="IN">
-      <x>   175.0 </x>
+      <x>   172.0 </x><!-- 'allowed' range ~ 167 - 177 -->
       <y>     0.0 </y>
       <z>    75.0 </z>
     </location>
   </mass_balance>
-
+  
   <ground_reactions>
-    <contact type="BOGEY" name="LEFT_FRONT">
+    <contact type="BOGEY" name="skid_front_left">
       <location unit="IN">
         <x>    115.90 </x>
         <y>   -42.0 </y>
@@ -119,12 +118,12 @@
       <static_friction>    0.85  </static_friction>
       <dynamic_friction>   0.65  </dynamic_friction>
       <rolling_friction>   0.65  </rolling_friction>
-      <spring_coeff unit="LBS/FT">        40000.0 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC">    7000.0 </damping_coeff>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
       <brake_group> NONE </brake_group>
       <max_steer> 0 </max_steer>
     </contact>
-    <contact type="BOGEY" name="RIGHT_FRONT">
+    <contact type="BOGEY" name="skid_front_right">
       <location unit="IN">
         <x>   115.90 </x>
         <y>    42.0 </y>
@@ -133,12 +132,12 @@
       <static_friction>    0.85  </static_friction>
       <dynamic_friction>   0.65  </dynamic_friction>
       <rolling_friction>   0.65  </rolling_friction>
-      <spring_coeff unit="LBS/FT">        40000.0 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC">    7000.0 </damping_coeff>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
       <brake_group> NONE </brake_group>
       <max_steer> 0 </max_steer>
     </contact>
-    <contact type="BOGEY" name="LEFT_REAR">
+    <contact type="BOGEY" name="skid_rear_left">
       <location unit="IN">
         <x>   235.0 </x>
         <y>   -42.0 </y>
@@ -147,12 +146,12 @@
       <static_friction>    0.85  </static_friction>
       <dynamic_friction>   0.65  </dynamic_friction>
       <rolling_friction>   0.65  </rolling_friction>
-      <spring_coeff unit="LBS/FT">        40000.0 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC">    7000.0 </damping_coeff>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
       <brake_group> NONE </brake_group>
       <max_steer> 0 </max_steer>
     </contact>
-    <contact type="BOGEY" name="RIGHT_REAR">
+    <contact type="BOGEY" name="skid_rear_right">
       <location unit="IN">
         <x>   235.0 </x>
         <y>    42.0 </y>
@@ -161,12 +160,12 @@
       <static_friction>    0.85  </static_friction>
       <dynamic_friction>   0.65  </dynamic_friction>
       <rolling_friction>   0.65  </rolling_friction>
-      <spring_coeff unit="LBS/FT">        40000.0 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC">    7000.0 </damping_coeff>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
       <brake_group> NONE </brake_group>
       <max_steer> 0 </max_steer>
     </contact>
-    <contact type="BOGEY" name="REAR_BUMPER">
+    <contact type="STRUCTURE" name="bumper_rear">
       <location unit="IN">
         <x>   490.0 </x>
         <y>     0.0 </y>
@@ -177,13 +176,11 @@
       <rolling_friction>   0.65  </rolling_friction>
       <spring_coeff unit="LBS/FT">         6000.0 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC">    2000.0 </damping_coeff>
-      <brake_group> NONE </brake_group>
-      <max_steer> 0 </max_steer>
     </contact>
   </ground_reactions>
-
+  
   <propulsion>
-    <!-- should become avco_lycoming_t53 turboprop_engine -->
+    <!-- should become avco_lycoming_t53 turbo-shaft engine -->
     <engine file="electric_1500hp"> 
       <location unit="IN">
         <x>   220.0 </x>
@@ -199,7 +196,7 @@
       <feed>1</feed>
       <thruster file="ah1s_rotor">
         <location unit="IN">
-          <x>   179.0 </x>
+          <x>   176.0 </x>
           <y>     0.0 </y>
           <z>   153.0 </z>
         </location>
@@ -211,7 +208,7 @@
         <sense> 1 </sense>
       </thruster>
     </engine>
-    <!-- used for linkage -->
+    <!-- dummy-engine, used for linkage -->
     <engine file="electric_1hp_dummy">
       <location unit="IN">
         <x>   220.0 </x>
@@ -227,8 +224,8 @@
       <feed>1</feed>
       <thruster file="ah1s_tail_rotor">
         <location unit="IN">
-          <x> 500.5 </x>
-          <y> 0.0 </y>
+          <x> 496.67 </x>
+          <y>  16.0 </y>
           <z> 119.0 </z>
         </location>
         <orient unit="DEG">
@@ -239,233 +236,214 @@
         <sense> 1 </sense>
       </thruster>
     </engine>
-    <tank type="FUEL" number="0">
+    <!--
+        two tanks 260 US galons usable (262 total)
+        JP-4: 6.5 lbs/gal JP-5: 6.8 lbs/gal
+    -->
+    <tank number="0" type="FUEL">
       <location unit="IN">
-        <x>   155.0 </x>
+        <x>   146.0 </x>
         <y>     0.0 </y>
-        <z>    33.0 </z>
+        <z>    38.0 </z>
       </location>
-      <capacity unit="LBS">    800.0  </capacity>
-      <contents unit="LBS">    400.0  </contents>
-      <type>JP-4</type>
+      <capacity unit="LBS">    890.0  </capacity>
+      <contents unit="LBS">      0.0  </contents>
+      <type>JP-5</type>
     </tank>
-    <tank type="FUEL" number="1">
+    <tank number="1" type="FUEL">
       <location unit="IN">
-        <x>   195.0 </x>
+        <x>   206.0 </x>
         <y>     0.0 </y>
-        <z>    33.0 </z>
+        <z>    38.0 </z>
       </location>
-      <capacity unit="LBS">    800.0 </capacity>
-      <contents unit="LBS">    400.0 </contents>
-      <type>JP-4</type>
+      <capacity unit="LBS">    890.0 </capacity>
+      <contents unit="LBS">      0.0 </contents>
+      <type>JP-5</type>
     </tank>
   </propulsion>
-
-
-  <system name="governor_decl">
-    <property value="324.0"> fcs/nominal-rpm </property>
-  </system>
-
+  
   <system file="rpm_governor"/>
-
-  <system name="control_decl">
-    <property value="0.0"> fcs/x-col </property>
-    <property value="0.0"> fcs/x-lat </property>
-    <property value="0.0"> fcs/x-lon </property>
-    <property value="0.0"> fcs/x-ped </property>
-  </system>
-
-  <system name="afcs_decl">
-    <property value="0.0"> ap/rudder-cmd </property>
-    <property value="0.0"> ap/aileron-cmd </property>
-    <property value="0.0"> ap/elevator-cmd </property>
-    <property value="0.0"> ap/collective-cmd </property>
-  </system>
-
+  
+  <system file="rotor_control"/>
+  
   <system file="afcs"/>
+  
+  <system file="steady_flight_data"/>
+  
+  <system file="trim_control"/>
+  
+  <system name="misc support">
+    <channel name="climb/approach angle">
 
-
-  <flight_control name="ah1s fcs">
-
-    <channel name="collective">
-      <lag_filter name="fcs/collective-lag">
-        <!-- mixture to collective kludge -->
-        <input> fcs/mixture-cmd-norm </input>
-        <c1>    5.0 </c1>
-      </lag_filter>
-      <pure_gain name="fcs/collective-gain">
-        <input>  fcs/collective-lag </input>
-        <gain>   0.1680 </gain>
-        <output> fcs/x-col </output>
-      </pure_gain>
-      <summer name="fcs/collective-ctrl-rad">
-        <input> fcs/x-col </input>
-        <input> ap/collective-cmd </input>
-        <bias>  0.1900 </bias>
-        <clipto>
-          <min> 0.0 </min>
-          <max> 0.7 </max>
-        </clipto>
-        <output> propulsion/engine/collective-ctrl-rad </output>
-      </summer>
-    </channel>
-
-    <channel name="longitudinal">
-      <summer name="fcs/longitudinal-cmd-trim-sum">
-        <input> fcs/elevator-cmd-norm </input>
-        <input> fcs/pitch-trim-cmd-norm </input>
-        <clipto>
-          <min> -1.0 </min>
-          <max>  1.0 </max>
-        </clipto>
-      </summer>
-      <lag_filter name="fcs/longitudinal-lag">
-        <input> fcs/longitudinal-cmd-trim-sum </input>
-        <c1>   20.0 </c1>
-      </lag_filter>
-      <pure_gain name="fcs/longitudinal-gain">
-        <input>  fcs/longitudinal-lag </input>
-        <gain>   0.1500 </gain>
-        <output> fcs/x-lon </output>
-      </pure_gain>
-      <summer name="fcs/longitudinal-ctrl-rad">
-        <input> fcs/x-lon </input>
-        <input> ap/elevator-cmd </input>
-        <bias>  0.0000 </bias>
-        <clipto>
-          <min> -0.7 </min>
-          <max>  0.7 </max>
-        </clipto>
-        <output> propulsion/engine/longitudinal-ctrl-rad </output>
-      </summer>
-    </channel>
-
-    <channel name="lateral">
-      <summer name="fcs/lateral-cmd-trim-sum">
-        <input> fcs/aileron-cmd-norm </input>
-        <input> fcs/roll-trim-cmd-norm </input>
-        <clipto>
-          <min> -1.0 </min>
-          <max>  1.0 </max>
-        </clipto>
-      </summer>
-      <lag_filter name="fcs/lateral-lag">
-        <input> fcs/lateral-cmd-trim-sum </input>
-        <c1>   20.0 </c1>
-      </lag_filter>
-      <pure_gain name="fcs/lateral-gain">
-        <input>  fcs/lateral-lag </input>
-        <gain>   0.0490 </gain>
-        <output> fcs/x-lat </output>
-      </pure_gain>
-      <pure_gain name="fcs/lateral-col-mix">
-        <input>  fcs/x-col </input>
-        <gain>   -0.228 </gain>
-      </pure_gain>
-      <summer name="fcs/lateral-ctrl-rad">
-        <input> fcs/x-lat </input>
-        <input> fcs/lateral-col-mix </input>
-        <input> ap/aileron-cmd </input>
-        <bias>  -0.0037 </bias>
-        <clipto>
-          <min> -0.7 </min>
-          <max>  0.7 </max>
-        </clipto>
-        <output> propulsion/engine/lateral-ctrl-rad </output>
-      </summer>
-    </channel>
-
-    <channel name="pedal">
-      <summer name="fcs/pedal-cmd-trim-sum">
-        <input> fcs/rudder-cmd-norm </input>
-        <input> fcs/yaw-trim-cmd-norm </input>
-        <clipto>
-          <min> -1.0 </min>
-          <max>  1.0 </max>
-        </clipto>
-      </summer>
-      <lag_filter name="fcs/pedal-lag">
-        <input> fcs/pedal-cmd-trim-sum </input>
-        <c1>    20.0 </c1>
-      </lag_filter>
-      <pure_gain name="fcs/pedal-gain">
-        <input>  fcs/pedal-lag </input>
-        <gain>   0.1600 </gain> <!-- change sign if mr sense is -1  -->
-        <output> fcs/x-ped </output>
-      </pure_gain>
-      <pure_gain name="fcs/pedal-col-mix">
-        <input>  fcs/x-col </input>
-        <gain>   0.63 </gain>
-      </pure_gain>
-      <summer name="fcs/pedal-ctrl-rad">
-        <input> fcs/x-ped </input>
-        <input> fcs/pedal-col-mix </input>
-        <input> ap/rudder-cmd </input>
-        <bias>  0.007 </bias>
-        <clipto>
-          <min> -0.7 </min>
-          <max>  0.7 </max>
-        </clipto>
-        <!-- mind: tail rotor is on engine 1 -->
-        <output> propulsion/engine[1]/antitorque-ctrl-rad </output>
-      </summer>
-    </channel>
-
-    <channel name="tailplane">
-      <fcs_function name="fcs/var-incidence-ht-rad">
+      <fcs_function name="attitude/pitch-deg">
         <function>
-        <description> Variation of horizontal stabilizer incidence with longitudinal 
-                      stick position (none right now). </description>
-          <table>
-            <independentVar>fcs/x-lon</independentVar>
-            <tableData>
-                -0.3  0.13
-                 0.3  0.13
-            </tableData>
-          </table>
+          <product>
+            <value> 57.2957795 </value>
+            <property> attitude/pitch-rad </property>
+          </product>
+        </function>
+      </fcs_function>
+
+      <fcs_function name="attitude/approach-angle-deg">
+        <function>
+          <difference>
+            <property> attitude/pitch-deg </property>
+            <property> aero/alpha-deg </property>
+          </difference>
         </function>
       </fcs_function>
     </channel>
 
+    <channel name="bell instruments">
+      <fcs_function name="propulsion/engine/bell-torque-sensor-psi">
+        <!--
+           Relation between models' torque and the pressure sensor mounted
+           at the gear box. Guessed from models' hover performance at
+           various weights. (I fear that the error is about +/- 20%)
+
+           Summary:
+             - simple proportional relation,  10_000 lbsft matches approx 35psi -> factor 0.0035
+             - linear fit, psi(lbsft) = 0.004158*torque-lbsft - 7.334
+
+           Limits from operator's manual translated back to model torque:
+             continuous operation up to 50 'psi' ~ 13800 lbsft
+             30 minute limit up to 56 'psi'      ~ 15250 lbsft
+
+        -->
+        <function>
+          <sum>
+            <product>
+               <value> 0.00416 </value>
+               <property> propulsion/engine/torque-lbsft </property>
+            </product>
+            <value> -7.33 </value>
+          </sum>
+        </function>
+        <output>/rotors/main/torque-sensor-psi</output> 
+      </fcs_function>
+    </channel>
+  </system>
+  
+  <flight_control name="ah1s fcs">
+
+    <channel name="tailplane">
+      <fcs_function name="fcs/var-incidence-ht-rad">
+        <function>
+          <description>
+            Variation of horizontal stabilizer (aka elevator) incidence with
+            longitudinal stick position/control input. Guessed from UH1 data
+            in /TA77/. Positve values yield to nose-up moment (mind: forward
+            stick gives positive longitudinal-ctrl-rad).
+            Note: this is pretty experimental!
+          </description>
+          <sum>
+            <product>
+              <value> 1.0 </value>
+              <table>
+                <independentVar> propulsion/engine/longitudinal-ctrl-rad </independentVar>
+                <tableData>
+                    -0.04   0.21
+                    -0.01   0.0
+                     0.00   -0.01
+                     0.02   -0.01
+                     0.09   0.06
+                     0.15   0.12
+                </tableData>
+              </table>
+            </product>
+            <value> 0.0 </value>
+          </sum>
+        </function>
+      </fcs_function>
+    </channel>
+
+    <channel name="downwash-delay">
+      <lag_filter name="aero/theta-downwash-delayed-rad">
+        <description>
+          Smooth downwash angle value (forward-backward), and
+          roughly account for delayed impingement on wings.
+        </description>
+        <input> propulsion/engine/theta-downwash-rad </input>
+        <c1>    10.0 </c1>
+      </lag_filter>
+      <lag_filter name="aero/phi-downwash-delayed-rad">
+        <description> Smooth left-right downwash angle. </description>
+        <input> propulsion/engine/phi-downwash-rad </input>
+        <c1>    10.0 </c1>
+      </lag_filter>
+    </channel>
+
+    <channel name="groundeffect-scale">
+      <fcs_function name="aero/groundeffect-scale">
+        <function>
+        <description> gives 1.0 in hover, 0.001 at 40kts (or ~70fps) </description>
+        <exp>
+          <product>
+            <value> -0.056 </value>
+            <property> velocities/vt-fps </property>
+          </product>
+        </exp>
+        </function>
+        <output> propulsion/engine/groundeffect-scale-norm </output>
+      </fcs_function>
+    </channel>
+
   </flight_control>
-
-
+  
   <aerodynamics>
+
+
+    <!-- ============================================================
+           Vehicle setup
+         ============================================================ -->
+
+    <!--
+      Limiting the yaw rate:
+         0.0  :  pure model (mind: the model isn't complete).
+         0.05 :  compatible to the 'tweak'-value used in previous version.
+         1.0  :  yields to easier interactive handling when using mouse input
+                 (And also helps when exploring backward flight).
+     -->
+    <property value="0.05"> aero/setup/Nr_limiter </property>
+
+    <!-- enable/disable downwash effects (debug option) -->
+    <property value="1.0"> aero/setup/downwash-enable </property>
+
 
     <!-- ============================================================
            Rotor properties used below
          ============================================================ -->
 
     <!-- NOTE: blade-area = num_blades * chord * radius -->
-    <property value=  "22.00"> metrics/rotor/R-ft     </property>
+    <property value="22.00">   metrics/rotor/R-ft     </property>
     <property value="1520.53"> metrics/rotor/Area-ft2 </property>
-    <property value="0.06511"> metrics/rotor/solitity </property> <!-- blade-area / disk-area -->
+    <property value="0.06511"> metrics/rotor/solidity </property> <!-- blade-area / disk-area -->
 
 
     <!-- ============================================================
            Reference properties and non dimensional velocities
          ============================================================ -->
 
-    <property value=  "99.00"> aero/ref/area-ft2   </property> <!-- solitity * Area -->
-    <property value="2178.00"> aero/ref/volume-ft3 </property> <!-- solitity * Area * Radius -->
-    <property value= "746.44"> aero/ref/vtip-fps   </property> <!-- rotor tip speed, Omega_mr * Radius -->
+    <property value="99.00">   aero/ref/area-ft2   </property> <!-- solidity * Area -->
+    <property value="2178.00"> aero/ref/volume-ft3 </property> <!-- solidity * Area * Radius, currently unused -->
+    <property value="746.44">  aero/ref/vtip-fps   </property> <!-- rotor tip speed, Omega_mr * Radius -->
 
-    <function name="aero/HIhat-ps">  <!-- rho*solitity*Area * Omega*R * R -->
+    <function name="aero/HIhat-ps">  <!-- rho*solidity*Area * Omega*R * R -->
       <description> Dynamic momentum, see /BR59/. </description>
       <product>
         <property> atmosphere/rho-slugs_ft3 </property>
-        <property> metrics/rotor/solitity   </property>
+        <property> metrics/rotor/solidity   </property>
         <property> metrics/rotor/Area-ft2   </property>
         <property> aero/ref/vtip-fps        </property>
         <property> metrics/rotor/R-ft       </property>
       </product>
     </function>
 
-    <function name="aero/HWhat-psft">  <!-- rho*solitity*Area * Omega*R * R*R -->
+    <function name="aero/HWhat-psft">  <!-- rho*solidity*Area * Omega*R * R*R -->
       <description> Dynamic angular momentum, see /BR59/. </description>
       <product>
         <property> atmosphere/rho-slugs_ft3 </property>
-        <property> metrics/rotor/solitity   </property>
+        <property> metrics/rotor/solidity   </property>
         <property> metrics/rotor/Area-ft2   </property>
         <property> aero/ref/vtip-fps        </property>
         <property> metrics/rotor/R-ft       </property>
@@ -478,131 +456,256 @@
       <property> propulsion/engine/advance-ratio </property>
     </function>
 
-    <function name="velocities/uhat">
-      <description> Non dimensional speed. </description>
-      <quotient>
-        <property> velocities/u-aero-fps </property>
-        <property> aero/ref/vtip-fps     </property>
-      </quotient>
-    </function>
-
-    <function name="velocities/vhat">
-      <description> Non dimensional speed. </description>
-      <quotient>
-        <property> velocities/v-aero-fps </property>
-        <property> aero/ref/vtip-fps     </property>
-      </quotient>
-    </function>
-
-
-
     <!-- ============================================================
            Downwash incidence and angle normalization
          ============================================================ -->
 
-    <function name="aero/downwash-angle-wing-rad">
-      <description> Additional wing incidence angle due to downwash, approximation for low alpha. </description>
-      <product>
-        <table>
-          <independentVar lookup="row"> velocities/vhat </independentVar>
-          <independentVar lookup="column"> velocities/uhat </independentVar>
-          <tableData>
-                   -0.1  -0.07   0.0   0.07  0.1
-            -0.1    0.0   0.0    0.0   0.0   0.0
-            -0.08   0.0  -2.5   -1.5   0.0   0.0
-             0.0    0.0  -2.75  -1.57 -0.4   0.0
-             0.08   0.0  -2.5   -1.5   0.0   0.0
-             0.1    0.0   0.0    0.0   0.0   0.0
-          </tableData>
-        </table>
-        <cos> <property> aero/alpha-rad </property> </cos>
-        <cos> <property> aero/alpha-rad </property> </cos>
-      </product>
-    </function>
+    <!--
 
-    <function name="aero/raw_alpha_incidence_wing-rad">
-      <description> Wing incidence incl. downwash. </description>
+       A more or less 'funny' part - this is a memo for the angles used.
+
+          theta-downwash : positive values turn forward (zero is rotor shaft axis)
+          phi-downwash   : positive values turn left (cw when viewed from pilots' seat)
+
+          alpha          : positive when wind comes from below the nose
+          wing incidence : positive when the chord line points over the nose
+
+    -->
+
+    <function name="aero/raw-alpha-iw-rad">
+      <description> Adjust alpha for wing incidence w/o downwash. </description>
       <sum>
-        <property> aero/downwash-angle-wing-rad </property>
         <property> aero/alpha-rad </property>
         <property> metrics/iw-rad </property>
       </sum>
     </function>
 
-    <function name="aero/alpha_incidence_wing-rad">
+    <function name="aero/alpha-iw-rad">
       <description> Normalize to +/- pi. </description>
       <product>
         <value>2.0</value>
         <atan><tan>
           <product>
             <value>0.5</value>
-            <property> aero/raw_alpha_incidence_wing-rad </property>
+            <property> aero/raw-alpha-iw-rad </property>
           </product>
         </tan></atan>
       </product>
     </function>
 
-    <function name="aero/downwash-angle-ht-rad">
-      <description> Additional tail incidence angle due to downwash, approximation for low alpha. </description>
-      <product>
-        <table>
-          <independentVar lookup="row"> velocities/vhat </independentVar>
-          <independentVar lookup="column"> velocities/uhat </independentVar>
-          <tableData>
-                    -0.1   -0.07   0.02   0.1    0.2    0.35   0.5
-            -0.10    0.0    0.0    0.0    0.0    0.0    0.0    0.0
-            -0.08    0.0   -0.2   -1.0   -0.220 -0.05  -0.014  0.0
-             0.0     0.0   -0.22  -1.050 -0.220 -0.051 -0.018  0.0
-             0.08    0.0   -0.2   -1.0   -0.220 -0.05  -0.014  0.0
-             0.10    0.0    0.0    0.0    0.0    0.0    0.0    0.0
-          </tableData>
-        </table>
-        <cos> <property> aero/alpha-rad </property> </cos>
-        <cos> <property> aero/alpha-rad </property> </cos>
-      </product>
-    </function>
-
-    <function name="aero/raw_alpha_incidence_ht-rad">
-      <description> Horizontal tail incidence incl. downwash. </description>
+    <function name="aero/raw-alpha-iht-rad">
+      <description> Adjust alpha for varying horizontal tail incidence w/o downwash. </description>
       <sum>
-        <property> aero/downwash-angle-ht-rad </property>
         <property> aero/alpha-rad </property>
-        <property> fcs/var-incidence-ht-rad </property>  <!-- 0.13 -->
+        <property> fcs/var-incidence-ht-rad </property>
       </sum>
     </function>
 
-    <function name="aero/alpha_incidence_ht-rad">
+    <function name="aero/alpha-iht-rad">
       <description> Normalize to +/- pi. </description>
       <product>
         <value>2.0</value>
         <atan><tan>
           <product>
-            <value>0.5</value> <property> aero/raw_alpha_incidence_ht-rad </property>
+            <value>0.5</value> <property> aero/raw-alpha-iht-rad </property>
           </product>
         </tan></atan>
       </product>
     </function>
 
+    <function name="aero/downwash-window-wing">
+      <description> 
+         Turns to one if wing is immersed in downwash. (Note, the window is
+         currently a simple square, not a circle)
+      </description>
+      <product>
+        <table>
+          <independentVar> aero/theta-downwash-delayed-rad </independentVar>
+          <tableData>
+              -1.30  0
+              -1.26  1
+               1.26  1
+               1.30  0
+          </tableData>
+        </table>
+        <table>
+          <independentVar> aero/phi-downwash-delayed-rad </independentVar>
+          <tableData>
+              -1.37  0.0
+              -1.2   0.5
+              -1.1   1.0
+               0.0   1
+               1.1   1.0
+               1.2   0.5
+               1.37  0.0
+          </tableData>
+        </table>
+      </product>
+    </function>
+
+    <function name="aero/downwash-window-wing-value">
+      <product>
+        <property> aero/setup/downwash-enable </property> <!-- debug switch -->
+        <property> aero/downwash-window-wing </property>
+      </product>
+    </function>
+
+    <function name="aero/downwash-window-wing-compl">
+      <description>
+         Turns to zero if wing is immersed in downwash.
+         (Or stays at one if downwash is disabled)
+      </description>
+      <difference>
+        <value> 1.0 </value>
+        <property> aero/downwash-window-wing-value </property>
+      </difference>
+    </function>
+
+    <function name="aero/downwash-window-ht">
+      <description> Turns to one if horizontal tail is immersed in downwash. </description>
+      <product>
+        <table>
+          <independentVar> aero/theta-downwash-delayed-rad </independentVar>
+          <tableData>
+              -1.42  0
+              -1.36  1
+               0.63  1
+               0.69  0
+          </tableData>
+        </table>
+        <table>
+          <independentVar> aero/phi-downwash-delayed-rad </independentVar>
+          <tableData>
+              -1.37  0.0
+              -1.2   0.5
+              -1.1   1.0
+               0.0   1
+               1.1   1.0
+               1.2   0.5
+               1.37  0.0
+          </tableData>
+        </table>
+      </product>
+    </function>
+
+    <function name="aero/downwash-window-ht-value">
+      <product>
+        <property> aero/setup/downwash-enable </property> <!-- debug switch -->
+        <property> aero/downwash-window-ht </property>
+      </product>
+    </function>
+
+    <function name="aero/downwash-window-ht-compl">
+      <description>
+         Turns to zero if horizontal tail is immersed in downwash.
+         (Or stays at one if downwash is disabled)
+      </description>
+      <difference>
+        <v> 1.0 </v>
+        <p> aero/downwash-window-ht-value </p>
+      </difference>
+    </function>
+
+    <function name="aero/alpha-downwash-rad">
+      <description>
+         Transform dw-theta to 'alpha' for usage with CL table.
+         alpha_dw = - (theta_dw+90). 
+         Here the helicopter specific shaft angle is 90 deg.
+      </description>
+      <difference>
+        <v> -1.570796 </v>
+        <p> aero/theta-downwash-delayed-rad </p>
+      </difference>
+    </function>
+
+    <function name="aero/alpha-dw-diff-rad">
+      <description>
+         Difference between the two wind directions, used when the downwash
+         contributions are transformed to the 'main' wind cordinate system.
+         (note: this is an approximation for small betas.)
+      </description>
+      <difference>
+        <p> aero/alpha-downwash-rad </p>
+        <p> aero/alpha-rad </p>
+      </difference>
+    </function>
+
+
+    <!-- repeat incidence adjustments for downwash case  -->
+
+    <function name="aero/raw-alpha-dw-iw-rad">
+      <description> Adjust alpha for wing incidence w. downwash. </description>
+      <sum>
+        <property> aero/alpha-downwash-rad </property>
+        <property> metrics/iw-rad </property>
+      </sum>
+    </function>
+
+    <function name="aero/alpha-dw-iw-rad">
+      <description> Normalize to +/- pi. </description>
+      <product>
+        <value>2.0</value>
+        <atan><tan>
+          <product>
+            <value>0.5</value>
+            <property> aero/raw-alpha-dw-iw-rad </property>
+          </product>
+        </tan></atan>
+      </product>
+    </function>
+
+    <function name="aero/raw-alpha-dw-iht-rad">
+      <description> Adjust alpha for varying horizontal tail incidence w. downwash. </description>
+      <sum>
+        <property> aero/alpha-downwash-rad </property>
+        <property> fcs/var-incidence-ht-rad </property>
+      </sum>
+    </function>
+
+    <function name="aero/alpha-dw-iht-rad">
+      <description> Normalize to +/- pi. </description>
+      <product>
+        <value>2.0</value>
+        <atan><tan>
+          <product>
+            <value>0.5</value> <property> aero/raw-alpha-dw-iht-rad </property>
+          </product>
+        </tan></atan>
+      </product>
+    </function>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           Downwash adds some speed to the regular wind, thus the
+           dynamic pressure is a bit larger too.
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+
+    <function name="aero/downwash-qbar-psf">
+      <description> Downwash addition to regular qbar-psf. </description>
+      <product>
+        <value> 0.5 </value>
+        <property> atmosphere/rho-slugs_ft3 </property>
+        <sum>
+          <property> propulsion/engine/vi-fps </property>
+          <property> velocities/vt-fps </property>
+        </sum>
+        <sum>
+          <property> propulsion/engine/vi-fps </property>
+          <property> velocities/vt-fps </property>
+        </sum>
+      </product>
+    </function>
 
     <!-- ============================================================
            Coefficients
          ============================================================ -->
 
-    <property value= "0.1"  > aero/coefficient/CD0_fus   </property>
-    <property value= "0.600"> aero/coefficient/CDa90_fus </property>
-    <property value= "1.826"> aero/coefficient/CDb90_fus </property>
+    <property value="0.105"> aero/coefficient/CD0_fus   </property>
+    <property value="0.600"> aero/coefficient/CDa90_fus </property>
+    <property value="1.826"> aero/coefficient/CDb90_fus </property>
     <!-- 
           NOTES: CDx_fus = (projected-area) / (aero/ref/area-ft2) * (0.5 .. 1.0)
                  CD0_fus = 0.1  yield to approx. 170kts at 5000ft and 0.066 to approx. 185kts.
     -->
-
-    <function name="aero/coefficient/Clr_fus">
-      <description> Fuselage roll coefficient depending on r. </description>
-      <product>
-        <value> 0.0845 </value>
-        <property> aero/mu </property>
-      </product>
-    </function>
 
     <function name="aero/coefficient/CMw_ht">
       <description> Horizontal tail pitch coefficient depending on w (estimated from stability derivative). </description>
@@ -642,7 +745,7 @@
       <table>
         <independentVar> aero/mu </independentVar>
         <tableData>
-            0.0  -0.005 <!-- tweak ! -->
+            0.0   0.0
             0.45 -0.09
         </tableData>
       </table>
@@ -652,7 +755,7 @@
       <description> Wing lift coefficient (a=5.5, CL_max=1.92). </description>
       <product>
         <table>
-          <independentVar lookup="row"> aero/alpha_incidence_wing-rad </independentVar>
+          <independentVar lookup="row"> aero/alpha-iw-rad </independentVar>
           <tableData>
              -3.49  -1.92
              -3.14   0.00
@@ -675,6 +778,8 @@
               3.49   1.92
           </tableData>
         </table>
+        <!-- no lift when immersed in downwash -->
+        <property> aero/downwash-window-wing-compl </property>
         <!-- diminishing lift with beta -->
         <cos> <property> aero/beta-rad </property> </cos>
         <cos> <property> aero/beta-rad </property> </cos>
@@ -685,7 +790,7 @@
       <description> Horizontal tail lift coefficient (a=3.5, CL_max=1.83). </description>
       <product>
         <table>
-          <independentVar lookup="row"> aero/alpha_incidence_ht-rad </independentVar>
+          <independentVar lookup="row"> aero/alpha-iht-rad </independentVar>
           <tableData>
              -3.67  -1.83
              -3.14   0.00
@@ -708,6 +813,8 @@
               3.67   1.83
           </tableData>
         </table>
+        <!-- no lift when immersed in downwash -->
+        <property> aero/downwash-window-ht-compl </property>
         <!-- diminishing lift with beta-->
         <cos> <property> aero/beta-rad </property> </cos>
         <cos> <property> aero/beta-rad </property> </cos>
@@ -732,6 +839,120 @@
       </table>
     </function>
 
+    <function name="aero/coefficient/CD0a_wing">
+      <description> Drag coefficient at zero lift, w/o downwash. </description>
+      <product>
+        <table>
+          <independentVar lookup="row"> aero/alpha-iw-rad </independentVar>
+          <tableData>
+           -3.14    0.03
+           -1.57    1.500
+           -0.26    0.031
+            0.00    0.024
+            0.26    0.031
+            1.57    1.500
+            3.14    0.03
+          </tableData>
+        </table>
+        <property> aero/downwash-window-wing-compl </property>
+      </product>
+    </function>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           Tables for downwash contributions
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+
+    <!--   Note: 'tableData' content is the same as above,
+                 but lookup-parameters and factors aren't!  -->
+
+    <function name="aero/coefficient/CLa_wing_dw">
+      <description> Wing lift coefficient (a=5.5, CL_max=1.92). </description>
+      <product>
+        <table>
+          <independentVar lookup="row"> aero/alpha-dw-iw-rad </independentVar>
+          <tableData>
+             -3.49  -1.92
+             -3.14   0.00
+             -2.79   1.92
+             -2.74   1.92
+             -1.83   0.96
+             -1.57   0.00
+             -1.31  -0.96
+             -0.40  -1.92
+             -0.35  -1.92
+              0.00   0.00
+              0.35   1.92
+              0.40   1.92
+              1.31   0.96
+              1.57   0.00
+              1.83  -0.96
+              2.74  -1.92
+              2.79  -1.92
+              3.14   0.00
+              3.49   1.92
+          </tableData>
+        </table>
+        <property> aero/downwash-window-wing-value </property>
+        <!-- diminishing lift with beta -->
+        <cos> <property> aero/beta-rad </property> </cos>
+        <cos> <property> aero/beta-rad </property> </cos>
+      </product>
+    </function>
+
+    <function name="aero/coefficient/CD0a_wing_dw">
+      <description> Drag coefficient at zero lift, downwash case. </description>
+      <product>
+        <table>
+          <independentVar lookup="row"> aero/alpha-dw-iw-rad </independentVar>
+          <tableData>
+           -3.14    0.03
+           -1.57    1.500
+           -0.26    0.031
+            0.00    0.024
+            0.26    0.031
+            1.57    1.500
+            3.14    0.03
+          </tableData>
+        </table>
+        <property> aero/downwash-window-wing-value </property>
+      </product>
+    </function>
+
+    <function name="aero/coefficient/CLa_ht_dw">
+      <description> Horizontal tail lift coefficient (a=3.5, CL_max=1.83).
+                    Table data is a copy from aero/coefficient/CLa_ht
+      </description>
+      <product>
+        <table>
+          <independentVar lookup="row"> aero/alpha-dw-iht-rad </independentVar>
+          <tableData>
+             -3.67  -1.83
+             -3.14   0.00
+             -2.62   1.83
+             -2.57   1.83
+             -1.83   0.92
+             -1.57   0.00
+             -1.31  -0.92
+             -0.58  -1.83
+             -0.52  -1.83
+              0.00   0.00
+              0.52   1.83
+              0.58   1.83
+              1.31   0.92
+              1.57   0.00
+              1.83  -0.92
+              2.57  -1.83
+              2.62  -1.83
+              3.14   0.00
+              3.67   1.83
+          </tableData>
+        </table>
+        <property> aero/downwash-window-ht-value </property>
+        <!-- diminishing lift with beta-->
+        <cos> <property> aero/beta-rad </property> </cos>
+        <cos> <property> aero/beta-rad </property> </cos>
+      </product>
+    </function>
 
     <!-- ============================================================
            The axes
@@ -739,7 +960,7 @@
 
     <axis name="LIFT">
       <function name="aero/force/La_wing">
-        <description> Wing lift due to alpha. </description>
+        <description> Wing lift due to alpha, regular air stream. </description>
         <product>
           <property> aero/qbar-psf </property>
           <property> metrics/Sw-sqft </property>
@@ -747,7 +968,7 @@
         </product>
       </function>
       <function name="aero/force/L0_fus">
-        <description> Fuselage lift at zero incidence. </description>
+        <description> Fuselage lift at zero incidence, w/o downwash. </description>
         <product>
           <property> aero/qbar-psf </property>
           <property> aero/ref/area-ft2 </property>
@@ -758,7 +979,7 @@
         </product>
       </function>
       <function name="aero/force/La_fus">
-        <description> Fuselage lift due to alpha. </description>
+        <description> Fuselage lift due to alpha, w/o downwash. </description>
         <product>
           <property> aero/qbar-psf </property>
           <property> aero/ref/area-ft2 </property>
@@ -774,6 +995,39 @@
           </sum>
         </product>
       </function>
+
+      <!-- Transform the downwash contributions. -->
+      <function name="aero/force/Lc_La_wing_dw">
+        <description>
+            Wing lift conribution caused by downwash. Projected onto 'regular' lift axis
+        </description>
+        <product>
+          <cos> <property> aero/alpha-dw-diff-rad </property> </cos>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+        </product>
+      </function>
+      <function name="aero/force/Lc_D0_wing">
+        <description> Drag on wing at zero lift. </description>
+        <product>
+          <sin> <property> aero/alpha-dw-diff-rad </property> </sin>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CD0a_wing_dw </property>
+        </product>
+      </function>
+      <function name="aero/force/Lc_Di_wing">
+        <description> Induced drag on wing. </description>
+        <product>
+          <sin> <property> aero/alpha-dw-diff-rad </property> </sin>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+          <value> 0.06 </value>
+        </product>
+      </function>
     </axis>
 
     <axis name="DRAG">
@@ -782,18 +1036,7 @@
         <product>
           <property> aero/qbar-psf </property>
           <property> metrics/Sw-sqft </property>
-          <table>
-            <independentVar lookup="row"> aero/alpha_incidence_wing-rad </independentVar>
-            <tableData>
-             -3.14    0.03
-             -1.57    1.500
-             -0.26    0.031
-              0.00    0.024
-              0.26    0.031
-              1.57    1.500
-              3.14    0.03
-            </tableData>
-          </table>
+          <property> aero/coefficient/CD0a_wing </property>
         </product>
       </function>
       <function name="aero/force/Di_wing">
@@ -840,6 +1083,40 @@
           <sin> <property> aero/beta-rad </property> </sin>
         </product>
       </function>
+
+      <!-- Transform the downwash contributions. -->
+      <function name="aero/force/Dc_La_wing_dw">
+        <description>
+            Wing lift conribution caused by downwash. Projected onto 'regular' drag axis
+        </description>
+        <product>
+          <value> -1.0 </value>
+          <sin> <property> aero/alpha-dw-diff-rad </property> </sin>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+        </product>
+      </function>
+      <function name="aero/force/Dc_D0_wing">
+        <description> Drag on wing at zero lift. </description>
+        <product>
+          <cos> <property> aero/alpha-dw-diff-rad </property> </cos>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CD0a_wing_dw </property>
+        </product>
+      </function>
+      <function name="aero/force/Dc_Di_wing">
+        <description> Induced drag on wing. </description>
+        <product>
+          <cos> <property> aero/alpha-dw-diff-rad </property> </cos>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sw-sqft </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+          <property> aero/coefficient/CLa_wing_dw </property>
+          <value> 0.06 </value>
+        </product>
+      </function>
     </axis>
 
     <axis name="SIDE">
@@ -875,17 +1152,8 @@
         </product>
       </function>
     </axis>
-
-    <axis name="ROLL">
-      <function name="aero/moment/lr_fus">
-        <description> Fuselage roll moment due to yaw rate. </description>
-        <product>
-          <property> aero/HWhat-psft </property>
-          <property> aero/coefficient/Clr_fus </property>
-          <property> velocities/r-aero-rad_sec </property>
-        </product>
-      </function>
-    </axis>
+    
+    <!-- no ROLL contributions calculated -->
 
     <axis name="PITCH">
       <function name="aero/moment/Ma_ht">
@@ -896,6 +1164,16 @@
           <property> metrics/lh-ft </property>
           <value>    -1.0 </value>
           <property> aero/coefficient/CLa_ht </property>
+        </product>
+      </function>
+      <function name="aero/moment/Ma_ht_dw">
+        <description> Pitching moment due to tailplane lift, downwash case. </description>
+        <product>
+          <property> aero/downwash-qbar-psf </property>
+          <property> metrics/Sh-sqft </property>
+          <property> metrics/lh-ft </property>
+          <value>    -1.0 </value>
+          <property> aero/coefficient/CLa_ht_dw </property>
         </product>
       </function>
       <function name="aero/moment/Mw_ht">
@@ -942,13 +1220,25 @@
           <property> velocities/r-aero-rad_sec </property>
         </product>
       </function>
+      <function name="aero/moment/Nr_limiter">
+        <description> Limit yaw rate to get more stability in hover. </description>
+        <product>
+          <value> -0.1 </value>
+          <property> aero/HWhat-psft </property>
+          <property> velocities/r-aero-rad_sec </property>
+          <property> aero/setup/Nr_limiter </property>
+          <table>
+            <independentVar> aero/mu </independentVar>
+            <tableData>
+               0.0   1.0
+               0.08  0.9
+               0.15  0.0
+            </tableData>
+          </table>
+        </product>
+      </function>
     </axis>
 
   </aerodynamics>
-
-  <output name="ah1_log.dat" type="NONE" rate="1">
-    <property> aero/mu </property>
-    <property> position/h-agl-ft </property>
-  </output>
-
+  
 </fdm_config>
