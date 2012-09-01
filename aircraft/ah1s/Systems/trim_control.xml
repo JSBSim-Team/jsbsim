@@ -1,0 +1,98 @@
+<system name="trim control">
+<!-- 
+  Utility system:
+    used to switch between 'piloted' (manual) and table based flight,
+    unneeded for interactive use.
+-->
+
+  <property value="0.0"> fcs/automatic/steady-flight-data-enable </property>
+  <property value="0.0"> fcs/manual/collective-trim-cmd-norm </property>
+  <property value="0.0"> fcs/manual/pitch-trim-cmd-norm </property>
+  <property value="0.0"> fcs/manual/roll-trim-cmd-norm </property>
+  <property value="0.0"> fcs/manual/yaw-trim-cmd-norm </property>
+  <property value="0.0"> ap/afcs/manual/phi-trim-rad </property>
+  <property value="0.0"> ap/afcs/manual/theta-trim-rad </property>
+
+  <channel name='control_wiring'>
+
+    <fcs_function name='fcs/automatic/collective-trim-cmd-norm-func'>
+      <function>
+        <sum>
+          <property> fcs/manual/collective-trim-cmd-norm </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> fcs/automatic/collective-trim-cmd-norm </property>
+          </product>
+        </sum>
+      </function>
+      <output> fcs/collective-trim-cmd-norm </output>
+    </fcs_function>
+
+    <fcs_function name='fcs/automatic/pitch-trim-cmd-norm-func'>
+      <function>
+        <sum>
+          <property> fcs/manual/pitch-trim-cmd-norm </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> fcs/automatic/pitch-trim-cmd-norm </property>
+          </product>
+        </sum>
+      </function>
+      <output> fcs/pitch-trim-cmd-norm </output>
+    </fcs_function>
+
+    <fcs_function name='fcs/automatic/roll-trim-cmd-norm-func'>
+      <function>
+        <sum>
+          <property> fcs/manual/roll-trim-cmd-norm </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> fcs/automatic/roll-trim-cmd-norm </property>
+          </product>
+        </sum>
+      </function>
+      <output> fcs/roll-trim-cmd-norm </output>
+    </fcs_function>
+
+    <fcs_function name='fcs/automatic/yaw-trim-cmd-norm-func'>
+      <function>
+        <sum>
+          <property> fcs/manual/yaw-trim-cmd-norm </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> fcs/automatic/yaw-trim-cmd-norm </property>
+          </product>
+        </sum>
+      </function>
+      <output> fcs/yaw-trim-cmd-norm </output>
+    </fcs_function>
+
+    <fcs_function name='ap/afcs/phi-trim-rad-func'>
+      <function>
+        <sum>
+          <property> ap/afcs/manual/phi-trim-rad </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> ap/afcs/automatic/phi-trim-rad </property>
+          </product>
+        </sum>
+      </function>
+      <output> ap/afcs/phi-trim-rad </output>
+    </fcs_function>
+
+    <fcs_function name='ap/afcs/theta-trim-rad-func'>
+      <function>
+        <sum>
+          <property> ap/afcs/manual/theta-trim-rad </property>
+          <product>
+            <property> fcs/automatic/steady-flight-data-enable </property>
+            <property> ap/afcs/automatic/theta-trim-rad </property>
+          </product>
+        </sum>
+      </function>
+      <output> ap/afcs/theta-trim-rad </output>
+    </fcs_function>
+
+  </channel>
+
+</system>

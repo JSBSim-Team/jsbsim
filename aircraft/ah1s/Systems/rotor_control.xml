@@ -1,0 +1,452 @@
+<system name="rotor control">
+
+  <!-- =========================================================================
+
+  =================
+    Documentation
+  =================
+
+
+  - Rationale -
+
+     Besides the rotor definition which is handled by the C++ code - obviously
+     the most important part of a helicopter model - a good control setup is
+     actually more important than the remaining aerodynamics (assuming the
+     given/guessed coefficients are at least within a 50% window).
+
+     The basic relation is straight forward:
+                rotor-ctrl-x = pilot-input-x * gain + offset.
+
+  - Collective Mixing -
+
+     Unless real-world data is available, it's reasonable to adjust gain and
+     offset for minimal input travel as a first step. This simple approach has
+     a drawback. When one input is changed, the other three need to be
+     readjusted. This is most notably when the collective input is changed, and
+     to compensate for this, some part of the collective input is mixed into
+     the lateral and yaw channels.
+
+     There are two principal goals of collective-mixing:
+
+       a) compensation in level flight - lateral, and anti-torque controls
+          follow accordingly, minimizing input requirements.
+
+       b) compensation for the torque change - lateral, and anti-torque changes
+          should give proper counter moments. 
+
+     Both tasks can't be fullfilled with simple contol mixing, the compromise in
+     this system is biased towards dynamic compensation of the collective input.
+
+  - Input Mapping -
+
+     The system also provides configurable support for simulator inputs.
+     Collective input can be turned more sensitve for the intermediate control
+     range (fcs/adj/collective-profile), and the other inputs use a common
+     'power function' approach for center sensitivity (fcs/adj/center-sensitivity).
+     These features might be also present as part of an advanced joystick
+     configuration, so it's your choice which one to use.
+
+  - Notes -
+
+     All adjustable control parameters can be found under 'JSBSIMNODE/fcs/adj/'.
+     If the model is run with flightgear, it's relatively easy to optimize the
+     parameters via the property tree browser.
+
+     An enabled AFCS/SAS should be able to ease control a lot, and AFAIK all
+     larger and all modern helicopters rely on such systems. There is also a
+     (!really serious!) alternative for a 'fully augmented' helicopter - just
+     use flightgears' UFO fdm and stop bothering about the stuff above ;).
+
+
+                -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+  ===============================
+    System Interface/Properties
+  ===============================
+
+   Inputs by the pilot:
+      fcs/collective-cmd-norm (often called 'pitch' in germany - a brilliant convention...)
+      fcs/elevator-cmd-norm (longitudinal)
+      fcs/aileron-cmd-norm (lateral)
+      fcs/rudder-cmd-norm (anti-torque, tail-collective)
+
+   Trim inputs/settings:
+      fcs/collective-trim-cmd-norm
+      fcs/pitch-trim-cmd-norm
+      fcs/roll-trim-cmd-norm
+      fcs/yaw-trim-cmd-norm
+
+   Inputs from AFCS/SAS system:
+      ap/collective-cmd
+      ap/elevator-cmd
+      ap/aileron-cmd
+      ap/rudder-cmd
+
+   Adjustable properties:
+      fcs/adj/collective-gain
+      fcs/adj/collective-bias
+
+      fcs/adj/longitudinal-gain
+      fcs/adj/longitudinal-bias
+
+      fcs/adj/lateral-gain
+      fcs/adj/lateral-bias
+      fcs/adj/lateral-col-mix-infl
+      fcs/adj/lateral-col-mix-gain
+      fcs/adj/lateral-col-mix-bias
+
+      fcs/adj/pedal-gain
+      fcs/adj/pedal-bias
+      fcs/adj/pedal-col-mix-infl
+      fcs/adj/pedal-col-mix-gain
+      fcs/adj/pedal-col-mix-bias
+
+   Simulator 'mapping' properties:
+      fcs/adj/collective-profile
+      fcs/adj/center-sensitivity
+
+   Outputs for a decent helicopter (ie: big main rotor, smaller tail rotor for
+   anti-torque):
+      propulsion/engine/collective-ctrl-rad
+      propulsion/engine/longitudinal-ctrl-rad
+      propulsion/engine/lateral-ctrl-rad
+      propulsion/engine[1]/antitorque-ctrl-rad
+
+
+       ========================================================================= -->
+
+
+
+  <!-- ==================================
+         Declare and initialise control
+       ================================== -->
+
+  <property value="0.0"> fcs/collective-cmd-norm </property>
+  <property value="0.0"> fcs/collective-trim-cmd-norm </property>
+
+
+  <!-- ==================================
+         Setup for interactive use
+       ================================== -->
+
+  <!-- 
+      Collective input, provide more 'bits' for the intermediate range, 0 for
+      unmodified input, 1 for more sensitivity.
+  -->
+  <property value="1.0"> fcs/adj/collective-profile </property>
+
+  <!--
+      Higher center resolution for the other three controls, set to 1 for
+      unmodified input, treat 2 as an upper limit.
+  -->
+  <property value="1.5"> fcs/adj/center-sensitivity </property>
+
+
+  <!-- - - - - - - - - - - - - - - - - -
+          math helper
+       - - - - - - - - - - - - - - - - - -->
+
+  <channel name="collective control profile">
+    <fcs_function name="fcs/misc/collective-cmd-norm-polymod">
+        <description>
+          A s-shaped profile, described with a 5th order polynomial.
+          f(x) = x**5 + x | [-1:1], mapped to [0:1]x[0:1], resulting in
+          f(x) = 8*x**5 - 20*x**4 + 20*x**3 - 10*x**2 + 3*x.
+          Well, the latter is way too mean to be coded as a function.
+        </description>
+      <function>
+        <table>
+          <independentVar lookup="row"> fcs/collective-cmd-norm </independentVar>
+          <tableData>
+            0.000000 0.000000
+            0.050000 0.127377
+            0.100000 0.218080
+            0.150000 0.282983
+            0.200000 0.330560
+            0.250000 0.367188
+            0.300000 0.397440
+            0.350000 0.424393
+            0.400000 0.449920
+            0.450000 0.474997
+            0.500000 0.500000
+            0.550000 0.525002
+            0.600000 0.550080
+            0.650000 0.575608
+            0.700000 0.602560
+            0.750000 0.632813
+            0.800000 0.669440
+            0.850000 0.717018
+            0.900000 0.781920
+            0.950000 0.872623
+            1.000000 1.000000
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+
+  <!-- ==================================
+         Rotor Control System
+       ================================== -->
+
+  <!-- - - - - - - - - - - - - - - - - -
+          collective
+       - - - - - - - - - - - - - - - - - -->
+  <property value='0.22'> fcs/adj/collective-gain </property>
+  <property value='0.14'> fcs/adj/collective-bias </property>
+
+  <channel name="collective">
+
+    <fcs_function name="fcs/collective-cmd-norm-variant">
+      <function>
+        <sum>
+          <!-- regular collective input if 'collective-profile' is 0 -->
+          <product>
+            <property> fcs/collective-cmd-norm </property>
+            <difference>
+              <value> 1.0 </value>
+              <property> fcs/adj/collective-profile </property>
+            </difference>
+          </product>
+          <!-- mapped input if 'collective-profile' is 1 -->
+          <product>
+            <property> fcs/adj/collective-profile </property>
+            <property> fcs/misc/collective-cmd-norm-polymod </property>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+    <summer name="fcs/collective-cmd-trim-sum">
+      <input> fcs/collective-cmd-norm-variant </input>
+      <input> fcs/collective-trim-cmd-norm </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+    </summer>
+    <pure_gain name="fcs/collective-gain">
+      <input>  fcs/collective-cmd-trim-sum </input>
+      <gain>   fcs/adj/collective-gain </gain>
+    </pure_gain>
+    <summer name="fcs/collective-ctrl-rad">
+      <input> fcs/collective-gain </input>
+      <input> ap/collective-cmd </input>
+      <input> fcs/adj/collective-bias </input>
+      <output> fcs/collective-ctrl-rad </output>
+    </summer>
+    <lag_filter name="fcs/collective-ctrl-rad-lag">
+      <input> fcs/collective-ctrl-rad </input>
+      <!-- c1 ranges: 5.0 - 20.0 -->
+      <c1>   10.0 </c1>
+      <clipto>
+        <min> 0.0 </min>
+        <max> 0.7 </max>
+      </clipto>
+      <output> propulsion/engine/collective-ctrl-rad </output>
+    </lag_filter>
+
+  </channel>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          longitudinal
+       - - - - - - - - - - - - - - - - - -->
+  <property value='0.125'> fcs/adj/longitudinal-gain </property>
+  <property value='0.020'> fcs/adj/longitudinal-bias </property>
+
+  <channel name="longitudinal">
+
+    <fcs_function name="fcs/elevator-cmd-norm-exmod">
+      <description>
+        Provide higher sensitivity when near center.
+        new_input = sgn(input) * abs(input)**sensitivity,
+        with sensitivity ranging between 1..2 .
+      </description>
+      <function>
+        <product>
+          <sign> <property> fcs/elevator-cmd-norm </property> </sign>
+          <pow>
+            <abs> <property> fcs/elevator-cmd-norm </property> </abs>
+            <property> fcs/adj/center-sensitivity </property>
+          </pow>
+        </product>
+      </function>
+    </fcs_function>
+    <summer name="fcs/longitudinal-cmd-trim-sum">
+      <input> fcs/elevator-cmd-norm-exmod </input>
+      <input> fcs/pitch-trim-cmd-norm </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+    </summer>
+    <pure_gain name="fcs/longitudinal-gain">
+      <input>  fcs/longitudinal-cmd-trim-sum </input>
+      <gain>   fcs/adj/longitudinal-gain </gain>
+    </pure_gain>
+    <summer name="fcs/longitudinal-ctrl-rad">
+      <input> fcs/longitudinal-gain </input>
+      <input> fcs/adj/longitudinal-bias </input>
+      <input> ap/elevator-cmd </input>
+      <clipto>
+        <min> -0.7 </min>
+        <max>  0.7 </max>
+      </clipto>
+    </summer>
+    <lag_filter name="fcs/longitudinal-ctrl-rad-lag">
+      <input> fcs/longitudinal-ctrl-rad </input>
+      <!-- c1 ranges: 10.0 - 50.0 -->
+      <c1>   20.0 </c1>
+      <output> propulsion/engine/longitudinal-ctrl-rad </output>
+    </lag_filter>
+
+  </channel>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          lateral
+       - - - - - - - - - - - - - - - - - -->
+  <property value='0.05'> fcs/adj/lateral-gain </property>
+  <property value='0.00'> fcs/adj/lateral-bias </property>
+
+  <property value='1.00'> fcs/adj/lateral-col-mix-infl </property>
+  <property value='-0.1'> fcs/adj/lateral-col-mix-gain </property>
+  <property value='0.01'> fcs/adj/lateral-col-mix-bias </property>
+
+  <channel name="lateral">
+
+    <fcs_function name="fcs/aileron-cmd-norm-exmod">
+      <description> See longitudinal channel. </description>
+      <function>
+        <product>
+          <sign> <property> fcs/aileron-cmd-norm </property> </sign>
+          <pow>
+            <abs> <property> fcs/aileron-cmd-norm </property> </abs>
+            <property> fcs/adj/center-sensitivity </property>
+          </pow>
+        </product>
+      </function>
+    </fcs_function>
+    <summer name="fcs/lateral-cmd-trim-sum">
+      <input> fcs/aileron-cmd-norm-exmod </input>
+      <input> fcs/roll-trim-cmd-norm </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+    </summer>
+    <pure_gain name="fcs/lateral-gain">
+      <input>  fcs/lateral-cmd-trim-sum </input>
+      <gain>   fcs/adj/lateral-gain </gain>
+    </pure_gain>
+    <summer name="fcs/lateral-sum">
+      <input> fcs/lateral-gain </input>
+      <input> ap/aileron-cmd </input>
+      <input> fcs/adj/lateral-bias </input>
+      <clipto>
+        <min> -0.7 </min>
+        <max>  0.7 </max>
+      </clipto>
+    </summer>
+
+    <!-- collective compensation -->
+    <fcs_function name="fcs/lateral-ctrl-rad">
+      <function>
+        <sum>
+          <property> fcs/lateral-sum </property>
+          <product>
+            <property> fcs/adj/lateral-col-mix-infl </property>
+            <sum>
+              <product>
+                <property> fcs/collective-ctrl-rad </property>
+                <property> fcs/adj/lateral-col-mix-gain </property>
+              </product>
+              <property> fcs/adj/lateral-col-mix-bias </property>
+            </sum>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <lag_filter name="fcs/lateral-ctrl-rad-lag">
+      <input> fcs/lateral-ctrl-rad </input>
+      <!-- c1 ranges: 10.0 - 50.0 -->
+      <c1>   20.0 </c1>
+      <output> propulsion/engine/lateral-ctrl-rad </output>
+    </lag_filter>
+
+  </channel>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          pedal/antitorque
+       - - - - - - - - - - - - - - - - - -->
+  <property value='0.18'> fcs/adj/pedal-gain </property>
+  <property value='0.00'> fcs/adj/pedal-bias </property>
+
+  <property value='1.00'> fcs/adj/pedal-col-mix-infl </property>
+  <property value='0.65'> fcs/adj/pedal-col-mix-gain </property>
+  <property value='-0.1'> fcs/adj/pedal-col-mix-bias </property>
+
+  <channel name="pedal">
+
+    <fcs_function name="fcs/rudder-cmd-norm-exmod">
+      <description> See longitudinal channel. </description>
+      <function>
+        <product>
+          <sign> <property> fcs/rudder-cmd-norm </property> </sign>
+          <pow>
+            <abs> <property> fcs/rudder-cmd-norm </property> </abs>
+            <property> fcs/adj/center-sensitivity </property>
+          </pow>
+        </product>
+      </function>
+    </fcs_function>
+    <summer name="fcs/pedal-cmd-trim-sum">
+      <input> fcs/rudder-cmd-norm-exmod </input>
+      <input> fcs/yaw-trim-cmd-norm </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+    </summer>
+    <pure_gain name="fcs/pedal-gain">
+      <input>  fcs/pedal-cmd-trim-sum </input>
+      <gain>   fcs/adj/pedal-gain </gain>
+    </pure_gain>
+    <summer name="fcs/pedal-sum">
+      <input> fcs/pedal-gain </input>
+      <input> fcs/adj/pedal-bias </input>
+      <input> ap/rudder-cmd </input>
+    </summer>
+
+    <!-- collective compensation -->
+    <fcs_function name="fcs/pedal-ctrl-rad">
+      <function>
+        <sum>
+          <property> fcs/pedal-sum </property>
+          <product>
+            <property> fcs/adj/pedal-col-mix-infl </property>
+            <sum>
+              <product>
+                <property> fcs/collective-ctrl-rad </property>
+                <property> fcs/adj/pedal-col-mix-gain </property>
+              </product>
+              <property> fcs/adj/pedal-col-mix-bias </property>
+            </sum>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <lag_filter name="fcs/pedal-ctrl-rad-lag">
+      <input> fcs/pedal-ctrl-rad </input>
+      <!-- c1 ranges: 10.0 - 50.0 -->
+      <c1>   20.0 </c1>
+      <!-- mind: tail rotor is on engine 1 -->
+      <output> propulsion/engine[1]/antitorque-ctrl-rad </output>
+    </lag_filter>
+
+  </channel>
+
+</system>
+
