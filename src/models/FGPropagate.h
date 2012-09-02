@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.70 2012/07/29 17:20:29 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.71 2012/09/02 12:38:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.70 2012/07/29 17:20:29 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.71 2012/09/02 12:38:19 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -542,7 +542,6 @@ public:
     FGQuaternion vQtrndot;
     FGColumnVector3 vUVWidot;
     FGColumnVector3 vOmegaPlanet;
-    double RefRadius;
     double SemiMajor;
     double SemiMinor;
     double DeltaT;
