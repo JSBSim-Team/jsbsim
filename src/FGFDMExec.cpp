@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.136 2012/08/11 14:59:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.137 2012/09/02 12:38:18 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -515,7 +515,6 @@ void FGFDMExec::LoadPlanetConstants(void)
 {
   Propagate->in.vOmegaPlanet     = Inertial->GetOmegaPlanet();
   Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
-  Propagate->in.RefRadius        = Inertial->GetRefRadius();
   Propagate->in.SemiMajor        = Inertial->GetSemimajor();
   Propagate->in.SemiMinor        = Inertial->GetSemiminor();
   Auxiliary->in.SLGravity        = Inertial->SLgravity();
