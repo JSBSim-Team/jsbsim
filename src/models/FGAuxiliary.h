@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.25 2011/11/12 18:59:11 bcoconni Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.26 2012/09/03 21:36:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.25 2011/11/12 18:59:11 bcoconni Exp $
+    @version $Id: FGAuxiliary.h,v 1.26 2012/09/03 21:36:08 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,7 +265,6 @@ public:
     double Mass;
     FGMatrix33 Tl2b;
     FGMatrix33 Tb2l;
-    FGMatrix33 Tb2w;
     FGColumnVector3 vPQR;
     FGColumnVector3 vPQRdot;
     FGColumnVector3 vUVW;
@@ -279,8 +278,6 @@ public:
     FGLocation vLocation;
     double Latitude;
     double Longitude;
-    double InitialLatitude;
-    double InitialLongitude;
     double ReferenceRadius;
     double CosTht;
     double SinTht;
