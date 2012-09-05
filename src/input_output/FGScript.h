@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.21 2011/08/04 12:46:32 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.22 2012/09/05 04:49:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.21 2011/08/04 12:46:32 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.22 2012/09/05 04:49:13 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,8 +180,11 @@ public:
       specified simulation step size.
       @param script the filename (including path name, if any) for the script.
       @param deltaT a simulation step size.
+      @param initfile An optional initialization file name passed in, empty by
+                      default. If a file name is passed in, it will override the
+                      one present in the script.
       @return true if successful */
-  bool LoadScript(string script, double deltaT);
+  bool LoadScript(string script, double deltaT, const string initfile);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.

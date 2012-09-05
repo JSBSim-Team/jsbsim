@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.74 2012/07/26 04:33:45 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.75 2012/09/05 04:49:13 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -353,7 +353,7 @@ int real_main(int argc, char* argv[])
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
 
-    result = FDMExec->LoadScript(ScriptName, override_sim_rate_value);
+    result = FDMExec->LoadScript(ScriptName, override_sim_rate_value, ResetName);
 
     if (!result) {
       cerr << "Script file " << ScriptName << " was not successfully loaded" << endl;
@@ -689,8 +689,8 @@ bool options(int count, char **arg)
     cerr << "You must specify an initialization file with the aircraft name." << endl << endl;
     result = false;
   }
-  if ((ScriptName.size() > 0 && AircraftName.size() > 0) || (ScriptName.size() > 0 && ResetName.size() > 0)) {
-    cerr << "You cannot specify an aircraft or initialization file with a script." << endl;
+  if (ScriptName.size() > 0 && AircraftName.size() > 0) {
+    cerr << "You cannot specify an aircraft file with a script." << endl;
     result = false;
   }
 
