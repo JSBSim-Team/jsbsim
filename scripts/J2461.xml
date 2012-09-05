@@ -93,11 +93,11 @@
       <notify/>
     </event>
 
-    <!--event name="Release">
+    <event name="Release">
       <condition>forces/fbx-prop-lbs gt inertia/weight-lbs</condition>
       <set name="forces/hold-down" value="0"/>
       <notify/>
-    </event-->
+    </event>
     
     <event name="Vehicle state:" persistent="true">
       <description>Output message at 10 second intervals</description>
@@ -123,7 +123,7 @@
       <set name="simulation/notify-time-trigger" value="10" type="delta"/>
     </event>
 
-    <!--event name="Jettison SRBs">
+    <event name="Jettison SRBs">
       <condition logic="OR">
         guidance/executive/left-srb-sep-flag eq 1
         guidance/executive/right-srb-sep-flag eq 1
@@ -165,7 +165,7 @@
       <set name="fcs/throttle-cmd-norm[10]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[11]" value="1.0"/>
       <notify/>
-    </event-->
+    </event>
 
   </run>
 </runscript>
