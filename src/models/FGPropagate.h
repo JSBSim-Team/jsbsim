@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.72 2012/09/05 05:25:53 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.73 2012/09/05 20:48:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.72 2012/09/05 05:25:53 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.73 2012/09/05 20:48:47 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -560,7 +560,6 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vLocation;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;

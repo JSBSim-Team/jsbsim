@@ -27,6 +27,7 @@ HISTORY
 --------------------------------------------------------------------------------
 12/02/98   JSB   Created
 11/09/07   HDW   Added FlightGear Socket Interface
+09/10/11   BC    Broke Down the Code in Several Classes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -40,26 +41,20 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-
-#include <fstream>
-
+#include "input_output/FGOutputType.h"
 #include "input_output/FGXMLFileRead.h"
-#include "input_output/net_fdm.hxx"
-#include "input_output/FGfdmSocket.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.25 2012/02/07 23:15:37 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.26 2012/09/05 21:49:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
-
-class FGfdmSocket;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -124,7 +119,10 @@ CLASS DOCUMENTATION
     propulsion       ON|OFF
 </pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.25 2012/02/07 23:15:37 bcoconni Exp $
+
+    The class FGOutput is the manager of the outputs requested by the user. It
+    manages a list of instances derived from the abstract class FGOutputType.
+    @version $Id: FGOutput.h,v 1.26 2012/09/05 21:49:19 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,72 +135,96 @@ public:
   FGOutput(FGFDMExec*);
   ~FGOutput();
 
+  /** Initializes the instance. This method is called by FGFDMExec::RunIC().
+      This is were the initialization of all classes derived from FGOutputType
+      takes place. It is important that this method is not called prior
+      to FGFDMExec::RunIC() so that the initialization process can be executed
+      properly.
+      @result true if the execution succeeded. */
   bool InitModel(void);
-  /** Runs the Output model; called by the Executive
-      Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
-                     advancing time. Some models may ignore this flag, such as the Input
-                     model, which may need to be active to listen on a socket for the
-                     "Resume" command to be given.
+  /** Runs the Output model; called by the Executive.
+      Can pass in a value indicating if the executive is directing the
+      simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time. Some models may ignore this flag, such
+                     as the Input model, which may need to be active to listen
+                     on a socket for the "Resume" command to be given.
       @return false if no error */
   bool Run(bool Holding);
-
+  /** Makes all the output instances to generate their ouput. This method does
+      not check that the time step at which the output is requested is
+      consistent with the output rate RATE_IN_HZ. Although Print is not a
+      relevant name for outputs like SOCKET or FLIGHGEAR, it has been kept for
+      backward compatibility. */
   void Print(void);
-  void DelimitedOutput(const std::string&);
-  void SocketOutput(void);
-  void FlightGearSocketOutput(void);
-  void SocketStatusOutput(const std::string&);
-  void SocketDataFill(FGNetFDM* net);
-
-  void SetType(const std::string& type);
-  void SetProtocol(const std::string& protocol);
-  void SetPort(const std::string& port);
-  void SetStartNewFile(bool tt) {StartNewFile = tt;}
-  void SetSubsystems(int tt) {SubSystems = tt;}
-  void SetOutputFileName(const std::string& fname) {Filename = fname;}
-  void SetDirectivesFile(const std::string& fname) {DirectivesFile = fname;}
-  void SetRate(double rt);
-  void Enable(void) { enabled = true; }
-  void Disable(void) { enabled = false; }
-  bool Toggle(void) {enabled = !enabled; return enabled;}
-
+  /** Force an output instance to generate its output. The code executed is
+      basically the same than the code of the method Print() except that the
+      ouput is limited to the instance identified by the parameter of the
+      method.
+      @param idx ID of the instance that will generate its ouput */
+  void ForceOutput(int idx);
+  /** Reset the output prior to a restart of the simulation. This method should
+      be called when the simulation is restarted with, for example, new initial
+      conditions. When this method is executed the output instances can take
+      special actions such as closing the current output file and open a new
+      one with a different name. */
+  void SetStartNewOutput(void);
+  /** Overwrites the name identifier under which the output will be logged.
+      This method is taken into account if it is called between Load() and
+      FGFDMExec::RunIC() otherwise it is ignored until the next call to
+      SetStartNewOutput().
+      @param idx ID of the instance which name identifier will be changed
+      @param name new name
+      @result false if the instance does not exists. */
+  bool SetOutputName(unsigned int idx, const std::string& name);
+  /** Adds a new output instance to the Output Manager. The definition of the
+      new output instance is read from a file.
+      @param fname the name of the file from which the ouput directives should
+                   be read.
+      @return true if the execution succeeded. */
+  bool SetDirectivesFile(const std::string& fname);
+  /// Enables the output generation for all output instances.
+  void Enable(void);
+  /// Disables the output generation for all output instances.
+  void Disable(void);
+  /** Toggles the output generation for an ouput instances.
+      @param idx ID of the output instance which output generation will be
+                 toggled.
+      @result false if the instance does not exist otherwise returns the status
+              of the output generation (i.e. true if the output has been
+              enabled, false if the output has been disabled) */
+  bool Toggle(int idx);
+  /** Modifies the output rate for all output instances.
+      @param rate new output rate in Hz */
+  void SetRate(double rate);
+  /** Load the output directives and adds a new output instance to the Output
+      Manager list.
+      @param el XMLElement that is pointing to the output directives
+      @result true if the execution succeeded. */
   bool Load(Element* el);
-  bool Load(int subSystems, std::string protocol, std::string type, std::string port, 
-                            std::string name, double outRate,
-                            std::vector<FGPropertyManager *> & outputProperties);
-  string GetOutputFileName(void) const {return Filename;}
-
-  /// Subsystem types for specifying which will be output in the FDM data logging
-  enum  eSubSystems {
-    /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
-    /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
-    /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
-    /** Subsystem: Velocities (= 8)          */ ssVelocities      = 8,
-    /** Subsystem: Forces (= 16)             */ ssForces          = 16,
-    /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
-    /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
-    /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
-    /** Subsystem: Coefficients (= 256)      */ ssAeroFunctions    = 256,
-    /** Subsystem: Propagate (= 512)         */ ssPropagate       = 512,
-    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
-    /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
-    /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
-  } subsystems;
-
-  FGNetFDM fgSockBuf;
+  /** Load the output directives and adds a new output instance to the Output
+      Manager list. Unlike the Load() method, the new output instance is not
+      generated from output directives read in a XML file but from a list of
+      parameters.
+      @param subSystems bitfield that describes the activated subsystems
+      @param protocol network protocol for outputs directed to sockets
+      @param type type of output
+      @param port port to which the socket will be directed
+      @param name file name to which the output will be directed
+      @param outRate output rate in Hz
+      @param outputProperties list of properties that should be output
+      @result true if the execution succeeded. */
+  bool Load(int subSystems, std::string protocol, std::string type,
+            std::string port, std::string name, double outRate,
+            std::vector<FGPropertyManager *> & outputProperties);
+  /** Get the name identifier to which the output will be directed.
+      @param idx ID of the output instance from which the name identifier must
+                 be obtained
+      @result the name identifier.*/
+  string GetOutputName(unsigned int idx) const;
 
 private:
-  enum {otNone, otCSV, otTab, otSocket, otTerminal, otFlightGear, otUnknown} Type;
-  FGfdmSocket::ProtocolType Protocol;
-  bool sFirstPass, dFirstPass, enabled;
-  int SubSystems;
-  int runID_postfix;
-  bool StartNewFile;
-  std::string output_file_name, delimeter, BaseFilename, Filename, DirectivesFile;
-  std::string Port;
-  std::ofstream datafile;
-  FGfdmSocket* socket;
-  std::vector <FGPropertyManager*> OutputProperties;
+  vector<FGOutputType*> OutputTypes;
 
   void Debug(int from);
 };

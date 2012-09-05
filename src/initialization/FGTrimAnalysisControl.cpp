@@ -54,7 +54,7 @@ SENTRY
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.4 2009/10/02 10:30:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.5 2012/09/05 21:49:19 bcoconni Exp $";
 static const char *IdHdr = ID_TRIMANALYSISCONTROL;
 
 /*****************************************************************************/
@@ -368,7 +368,10 @@ bool FGTrimAnalysisControl::initTheta(void) {
   while(!level && (i < 100)) {
     theta+=radtodeg*atan(zDiff/xDiff);
     fgic->SetThetaDegIC(theta);
-    fdmex->RunIC();
+    fdmex->SuspendIntegration();
+    fdmex->Initialize(fgic);
+    fdmex->Run();
+    fdmex->ResumeIntegration();
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
@@ -439,7 +442,10 @@ void FGTrimAnalysisControl::setThrottlesPct(void) {
       //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
       //cout << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << endl;
-      fdmex->RunIC(); //apply throttle change
+      fdmex->SuspendIntegration();
+      fdmex->Initialize(fgic);
+      fdmex->Run();
+      fdmex->ResumeIntegration();
       fdmex->GetPropulsion()->GetSteadyState();
   }
 }
