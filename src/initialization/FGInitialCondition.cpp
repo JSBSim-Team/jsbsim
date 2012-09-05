@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.81 2012/04/08 15:22:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.82 2012/09/05 21:49:19 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -151,6 +151,7 @@ void FGInitialCondition::InitializeIC(void)
 
   lastSpeedSet = setvt;
   lastAltitudeSet = setasl;
+  enginesRunning.clear();
 }
 
 //******************************************************************************
@@ -933,19 +934,10 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     result = Load_v1();
   }
 
-  fdmex->RunIC();
-
   // Check to see if any engines are specified to be initialized in a running state
-  FGPropulsion* propulsion = fdmex->GetPropulsion();
   Element* running_elements = document->FindElement("running");
   while (running_elements) {
-    int n = int(running_elements->GetDataAsNumber());
-    try {
-      propulsion->InitRunning(n);
-    } catch (string str) {
-      cerr << str << endl;
-      result = false;
-    }
+    enginesRunning.push_back(int(running_elements->GetDataAsNumber()));
     running_elements = document->FindNextElement("running");
   }
 

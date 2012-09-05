@@ -50,12 +50,13 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "models/FGPropagate.h"
 #include "math/FGColumnVector3.h"
+#include "models/FGOutput.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.78 2012/09/05 04:49:13 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.79 2012/09/05 21:49:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,8 +78,6 @@ class FGGroundReactions;
 class FGFCS;
 class FGInertial;
 class FGInput;
-class FGOutput;
-class FGPropagate;
 class FGPropulsion;
 class FGMassBalance;
 
@@ -180,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.78 $
+    @version $Revision: 1.79 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,6 +239,7 @@ public:
                  eMassBalance,
                  eAircraft,
                  eAccelerations,
+                 eOutput,
                  eNumStandardModels };
 
   /** Unbind all tied JSBSim properties. */
@@ -436,23 +436,24 @@ public:
       be logged.
       @param fname the filename of an output directives file.
     */
-  bool SetOutputDirectives(const string& fname);
+  bool SetOutputDirectives(const string& fname)
+  {return Output->SetDirectivesFile(RootDir + fname);}
 
   /** Forces the specified output object to print its items once */
-  void ForceOutput(int idx=0);
+  void ForceOutput(int idx=0) { Output->ForceOutput(idx); }
 
   /** Sets the logging rate for all output objects (if any). */
-  void SetLoggingRate(double rate);
+  void SetLoggingRate(double rate) { Output->SetRate(rate); }
 
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
-  bool SetOutputFileName(const string& fname);
+  bool SetOutputFileName(const string& fname) { return Output->SetOutputName(0, fname); }
 
   /** Retrieves the current output filename.
       @return the name of the output file for the first output specified by the flight model.
               If none is specified, the empty string is returned. */
-  string GetOutputFileName(void);
+  string GetOutputFileName(void) const { return Output->GetOutputName(0); }
 
   /** Executes trimming in the selected mode.
   *   @param mode Specifies how to trim:
@@ -466,9 +467,9 @@ public:
   void DoTrim(int mode);
 
   /// Disables data logging to all outputs.
-  void DisableOutput(void);
+  void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
-  void EnableOutput(void);
+  void EnableOutput(void) { Output->Enable(); }
   /// Pauses execution by preventing time from incrementing.
   void Hold(void) {holding = true;}
   /// Turn on hold after increment
@@ -565,6 +566,10 @@ public:
   /** Retrieves the current debug level setting. */
   int GetDebugLevel(void) const {return debug_lvl;};
 
+  /** Initializes the simulation with initial conditions
+      @param FGIC The initial conditions that will be passed to the simulation. */
+  void Initialize(FGInitialCondition *FGIC);
+
 private:
   int Error;
   unsigned int Frame;
@@ -579,7 +584,6 @@ private:
   bool Constructing;
   bool modelLoaded;
   bool IsChild;
-  bool firstPass;
   string modelName;
   string AircraftPath;
   string FullAircraftPath;
@@ -604,6 +608,7 @@ private:
   FGMassBalance* MassBalance;
   FGAircraft* Aircraft;
   FGAccelerations* Accelerations;
+  FGOutput* Output;
 
   bool trim_status;
   int ta_mode;
@@ -620,7 +625,6 @@ private:
   unsigned int*      FDMctr;
 
   vector <string> PropertyCatalog;
-  vector <FGOutput*> Outputs;
   vector <childData*> ChildFDMList;
   vector <FGModel*> Models;
 
@@ -634,7 +638,6 @@ private:
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);
-  void Initialize(FGInitialCondition *FGIC);
 
   void Debug(int from);
 };

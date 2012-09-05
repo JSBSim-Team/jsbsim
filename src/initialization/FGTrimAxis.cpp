@@ -56,7 +56,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.13 2011/07/28 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.14 2012/09/05 21:49:19 bcoconni Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -337,7 +337,8 @@ bool FGTrimAxis::initTheta(void) {
   while(!level && (i < 100)) {
     theta+=radtodeg*atan(zDiff/xDiff);
     fgic->SetThetaDegIC(theta);
-    fdmex->RunIC();
+    fdmex->Initialize(fgic);
+    fdmex->Run();
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
@@ -404,7 +405,8 @@ void FGTrimAxis::Run(void) {
   while(!stable) {
     i++;
     last_state_value=state_value;
-    fdmex->RunIC();
+    fdmex->Initialize(fgic);
+    fdmex->Run();
     getState();
     if(i > 1) {
       if((fabs(last_state_value - state_value) < tolerance) || (i >= 100) )
@@ -430,7 +432,8 @@ void FGTrimAxis::setThrottlesPct(void) {
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
       fdmex->GetPropulsion()->in.ThrottlePos[i] = tMin +control_value*(tMax - tMin);
 
-      fdmex->RunIC(); //apply throttle change
+      fdmex->Initialize(fgic);
+      fdmex->Run(); //apply throttle change
       fdmex->GetPropulsion()->GetSteadyState();
   }
 }

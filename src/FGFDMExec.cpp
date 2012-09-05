@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.138 2012/09/05 04:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.139 2012/09/05 21:49:18 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   holding = false;
   Terminate = false;
   StandAlone = false;
-  firstPass = true;
 
   IncrementThenHolding = false;  // increment then hold is off by default
   TimeStepsUntilHold = -1;
@@ -216,15 +215,13 @@ bool FGFDMExec::Allocate(void)
   Models[eSystems]           = new FGFCS(this);
   Models[ePropulsion]        = new FGPropulsion(this);
   Models[eAerodynamics]      = new FGAerodynamics (this);
-
-  GetGroundCallback()->SetSeaLevelRadius(((FGInertial*)Models[eInertial])->GetRefRadius());
-
   Models[eGroundReactions]   = new FGGroundReactions(this);
   Models[eExternalReactions] = new FGExternalReactions(this);
   Models[eBuoyantForces]     = new FGBuoyantForces(this);
   Models[eMassBalance]       = new FGMassBalance(this);
   Models[eAircraft]          = new FGAircraft(this);
   Models[eAccelerations]     = new FGAccelerations(this);
+  Models[eOutput]            = new FGOutput(this);
 
   // Assign the Model shortcuts for internal executive use only.
   Propagate = (FGPropagate*)Models[ePropagate];
@@ -241,12 +238,17 @@ bool FGFDMExec::Allocate(void)
   MassBalance = (FGMassBalance*)Models[eMassBalance];
   Aircraft = (FGAircraft*)Models[eAircraft];
   Accelerations = (FGAccelerations*)Models[eAccelerations];
+  Output = (FGOutput*)Models[eOutput];
 
   // Initialize planet (environment) constants
   LoadPlanetConstants();
+  GetGroundCallback()->SetSeaLevelRadius(Inertial->GetRefRadius());
 
   // Initialize models
   for (unsigned int i = 0; i < Models.size(); i++) {
+    // The Output model must not be initialized prior to IC loading
+    if (i == eOutput) continue;
+
     LoadInputs(i);
     Models[i]->InitModel();
   }
@@ -265,9 +267,6 @@ bool FGFDMExec::DeAllocate(void)
 
   for (unsigned int i=0; i<eNumStandardModels; i++) delete Models[i];
   Models.clear();
-
-  for (unsigned i=0; i<Outputs.size(); i++) delete Outputs[i];
-  Outputs.clear();
 
   delete Script;
   delete IC;
@@ -298,14 +297,6 @@ bool FGFDMExec::Run(void)
   for (unsigned int i=1; i<ChildFDMList.size(); i++) {
     ChildFDMList[i]->AssignState( (FGPropagate*)Models[ePropagate] ); // Transfer state to the child FDM
     ChildFDMList[i]->Run();
-  }
-
-  if (firstPass && !IntegrationSuspended()) {
-    // Outputs the initial conditions
-    for (unsigned int i = 0; i < Outputs.size(); i++)
-      Outputs[i]->Run(holding);
-
-    firstPass = false;
   }
 
   IncrTime();
@@ -543,10 +534,17 @@ void FGFDMExec::LoadModelConstants(void)
 
 bool FGFDMExec::RunIC(void)
 {
+  FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
+
+  Models[eOutput]->InitModel();
+
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
   Initialize(IC);
   Run();
   ResumeIntegration(); // Restores the integration rate to what it was.
+
+  for (unsigned int i=0; i<IC->GetNumEnginesRunning(); i++)
+    propulsion->InitRunning(IC->GetEngineRunning(i));
 
   return true;
 }
@@ -575,11 +573,7 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
 
 void FGFDMExec::ResetToInitialConditions(int mode)
 {
-  if (mode == 1) {
-    for (unsigned int i=0; i<Outputs.size(); i++) {
-      Outputs[i]->SetStartNewFile(true);
-    }
-  }
+  if (mode == 1) Output->SetStartNewOutput();
 
   ResetToInitialConditions();
 }
@@ -590,37 +584,17 @@ void FGFDMExec::ResetToInitialConditions(void)
 {
   if (Constructing) return;
 
-  vector <FGModel*>::iterator it;
-  for (it = Models.begin(); it != Models.end(); ++it) (*it)->InitModel();
+  for (unsigned int i = 0; i < Models.size(); i++) {
+    // The Output model will be initialized during the RunIC() execution
+    if (i == eOutput) continue;
+
+    LoadInputs(i);
+    Models[i]->InitModel();
+  }
 
   RunIC();
+
   if (Script) Script->ResetEvents();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGFDMExec::SetOutputFileName(const string& fname)
-{
-  if (Outputs.size() > 0) Outputs[0]->SetOutputFileName(fname);
-  else return false;
-  return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::SetLoggingRate(double rate)
-{
-  for (unsigned int i=0; i<Outputs.size(); i++) {
-    Outputs[i]->SetRate(rate);
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGFDMExec::GetOutputFileName(void)
-{
-  if (Outputs.size() > 0) return Outputs[0]->GetOutputFileName();
-  else return string("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -837,25 +811,20 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     }
 
     // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
-    unsigned int idx=0;
-    typedef double (FGOutput::*iOPMF)(void) const;
-    typedef int (FGFDMExec::*iOPV)(void) const;
     element = document->FindElement("output");
     while (element) {
-      if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
-      FGOutput* Output = new FGOutput(this);
-      Output->InitModel();
-      Schedule(Output);
-      result = Output->Load(element);
+      string output_file_name = aircraftCfgFileName;
+      Element* document = element;
+
+      if (!element->GetAttributeValue("file").empty()) {
+        output_file_name = RootDir + element->GetAttributeValue("file");
+        document = LoadXMLDocument(output_file_name);
+      }
+
+      result = ((FGOutput*)Models[eOutput])->Load(document);
       if (!result) {
-        cerr << endl << "Aircraft output element has problems in file " << aircraftCfgFileName << endl;
+        cerr << endl << "Aircraft output element has problems in file " << output_file_name << endl;
         return result;
-      } else {
-        Outputs.push_back(Output);
-        string outputProp = CreateIndexedPropertyName("simulation/output",idx);
-        instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
-        instance->Tie("simulation/force-output", this, (iOPV)0, &FGFDMExec::ForceOutput, false);
-        idx++;
       }
       element = document->FindNextElement("output");
     }
@@ -1120,24 +1089,6 @@ FGTrim* FGFDMExec::GetTrim(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::DisableOutput(void)
-{
-  for (unsigned i=0; i<Outputs.size(); i++) {
-    Outputs[i]->Disable();
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::EnableOutput(void)
-{
-  for (unsigned i=0; i<Outputs.size(); i++) {
-    Outputs[i]->Enable();
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGFDMExec::CheckIncrementalHold(void)
 {
   // Only check if increment then hold is on
@@ -1158,38 +1109,6 @@ void FGFDMExec::CheckIncrementalHold(void)
       TimeStepsUntilHold--;
     }
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::ForceOutput(int idx)
-{
-  if (idx >= (int)0 && idx < (int)Outputs.size()) Outputs[idx]->Print();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGFDMExec::SetOutputDirectives(const string& fname)
-{
-  bool result;
-
-  FGOutput* Output = new FGOutput(this);
-  Output->SetDirectivesFile(RootDir + fname);
-  Output->InitModel();
-  Schedule(Output);
-  result = Output->Load(0);
-
-  if (result) {
-    Output->Run(holding);
-    Outputs.push_back(Output);
-    typedef double (FGOutput::*iOPMF)(void) const;
-    string outputProp = CreateIndexedPropertyName("simulation/output",Outputs.size()-1);
-    instance->Tie(outputProp+"/log_rate_hz", Output, (iOPMF)0, &FGOutput::SetRate, false);
-  }
-  else
-    delete Output;
-
-  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
