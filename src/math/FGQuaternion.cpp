@@ -40,6 +40,7 @@ SENTRY
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <cmath>
 using std::cerr;
@@ -57,7 +58,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.20 2011/10/31 14:54:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.21 2012/09/05 05:00:57 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,6 +255,18 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mEulerCosines(ePhi) = cos(mEulerAngles(ePhi));
   mEulerCosines(eTht) = cos(mEulerAngles(eTht));
   mEulerCosines(ePsi) = cos(mEulerAngles(ePsi));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::string FGQuaternion::Dump(const std::string& delimiter) const
+{
+  std::ostringstream buffer;
+  buffer << std::setprecision(16) << data[0] << delimiter;
+  buffer << std::setprecision(16) << data[1] << delimiter;
+  buffer << std::setprecision(16) << data[2] << delimiter;
+  buffer << std::setprecision(16) << data[3];
+  return buffer.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
