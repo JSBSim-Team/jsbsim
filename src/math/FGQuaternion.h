@@ -40,6 +40,7 @@ SENTRY
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <string>
 #include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 
@@ -47,7 +48,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.24 2011/12/10 15:49:21 bcoconni Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.25 2012/09/05 05:00:57 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -462,6 +463,8 @@ public:
   /** Zero quaternion vector. Does not represent any orientation.
       Useful for initialization of increments */
   static FGQuaternion zero(void) { return FGQuaternion( 0.0, 0.0, 0.0, 0.0 ); }
+
+  std::string Dump(const std::string& delimiter) const;
 
   friend FGQuaternion QExp(const FGColumnVector3& omega);
 

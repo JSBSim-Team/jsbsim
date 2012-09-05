@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.137 2012/09/02 12:38:18 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.138 2012/09/05 04:49:13 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -641,12 +641,12 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadScript(const string& script, double deltaT)
+bool FGFDMExec::LoadScript(const string& script, double deltaT, const string initfile)
 {
   bool result;
 
   Script = new FGScript(this);
-  result = Script->LoadScript(RootDir + script, deltaT);
+  result = Script->LoadScript(RootDir + script, deltaT, initfile);
 
   return result;
 }
@@ -933,7 +933,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
     }
     if (pcs->node->getChild(i)->nChildren() == 0) {
       if (pcsNew->base_string.substr(0,11) == string("/fdm/jsbsim")) {
-        pcsNew->base_string = pcsNew->base_string.erase(0,12);
+        pcsNew->base_string = pcsNew->base_string.erase(0,11);
       }
       PropertyCatalog.push_back(pcsNew->base_string);
     } else {

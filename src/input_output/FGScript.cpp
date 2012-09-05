@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.49 2011/11/10 12:06:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.50 2012/09/05 04:49:13 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,7 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript(string script, double deltaT)
+bool FGScript::LoadScript(string script, double deltaT, const string initfile)
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
   string notifyPropertyName="";
@@ -174,9 +174,15 @@ bool FGScript::LoadScript(string script, double deltaT)
     }
 
     initialize = element->GetAttributeValue("initialize");
+    if (initfile.empty()) {
     if (initialize.empty()) {
       cerr << "Initialization file must be specified in use element." << endl;
       return false;
+      }
+    } else {
+      cout << endl << "The initialization file specified in the script file (" << initialize
+                   << ") has been overridden with a specified file (" << initfile << ")." << endl;
+      initialize = initfile;
     }
 
   } else {

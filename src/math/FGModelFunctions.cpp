@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.5 2012/04/13 13:25:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.6 2012/09/05 05:00:57 jberndt Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,9 +147,10 @@ void FGModelFunctions::PostLoad(Element* el, FGPropertyManager* PM, string prefi
 
 void FGModelFunctions::RunPreFunctions(void)
 {
-  vector <FGFunction*>::iterator it;
-  for (it = PreFunctions.begin(); it != PreFunctions.end(); it++)
-    (*it)->cacheValue(true);
+  unsigned int sz = PreFunctions.size();
+  for (unsigned int i=0; i<sz; i++) {
+    PreFunctions[i]->cacheValue(true);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,9 +161,10 @@ void FGModelFunctions::RunPreFunctions(void)
 
 void FGModelFunctions::RunPostFunctions(void)
 {
-  vector <FGFunction*>::iterator it;
-  for (it = PostFunctions.begin(); it != PostFunctions.end(); it++)
-    (*it)->GetValue();
+  unsigned int sz = PostFunctions.size();
+  for (unsigned int i=0; i<sz; i++) {
+    PostFunctions[i]->cacheValue(true);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

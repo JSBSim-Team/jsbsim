@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.24 2011/08/06 13:10:00 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.25 2012/09/05 04:54:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,6 +99,7 @@ A function definition consists of an operation, a value, a table, or a property
 - switch (takes 2 or more args)
 - random (Gaussian random number)
 - integer
+- interpolate 1-dimensional (takes a minimum of five arguments, odd number)
 
 An operation is defined in the configuration file as in the following example:
 
@@ -258,14 +259,17 @@ private:
   static const std::string not_string;
   static const std::string ifthen_string;
   static const std::string switch_string;
+  static const std::string interpolate1d_string;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn,
                      eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
-                     eIfThen, eSwitch, eRotation_alpha_local, eRotation_beta_local,
+                     eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local, eRotation_beta_local,
                      eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf} Type;
   std::string Name;
+  std::string sCopyTo;        // Property name to copy function value to
+  FGPropertyManager* pCopyTo; // Property node for CopyTo property string
 
   unsigned int GetBinary(double) const;
   void bind(void);

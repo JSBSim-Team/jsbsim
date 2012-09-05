@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.68 2012/07/26 04:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.69 2012/09/05 05:06:26 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -360,6 +360,9 @@ void FGOutput::DelimitedOutput(const string& fname)
       outstream << "Altitude ASL (ft)" + delimeter;
       outstream << "Altitude AGL (ft)" + delimeter;
       outstream << "Phi (deg)" + delimeter + "Theta (deg)" + delimeter + "Psi (deg)" + delimeter;
+      outstream << "Q(1)_{LOCAL}" + delimeter + "Q(2)_{LOCAL}" + delimeter + "Q(3)_{LOCAL}" + delimeter + "Q(4)_{LOCAL}" +  delimeter;
+      outstream << "Q(1)_{ECEF}" + delimeter + "Q(2)_{ECEF}" + delimeter + "Q(3)_{ECEF}" + delimeter + "Q(4)_{ECEF}" +  delimeter;
+      outstream << "Q(1)_{ECI}" + delimeter + "Q(2)_{ECI}" + delimeter + "Q(3)_{ECI}" + delimeter + "Q(4)_{ECI}" +  delimeter;
       outstream << "Alpha (deg)" + delimeter;
       outstream << "Beta (deg)" + delimeter;
       outstream << "Latitude (deg)" + delimeter;
@@ -475,6 +478,10 @@ void FGOutput::DelimitedOutput(const string& fname)
     outstream << Propagate->GetAltitudeASL() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << (radtodeg*Propagate->GetEuler()).Dump(delimeter) << delimeter;
+    outstream << Propagate->GetQuaternion().Dump(delimeter) << delimeter;
+    FGQuaternion Qec = Propagate->GetQuaternionECEF();
+    outstream << Qec.Dump(delimeter) << delimeter;
+    outstream << Propagate->GetQuaternionECI().Dump(delimeter) << delimeter;
     outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
