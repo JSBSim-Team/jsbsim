@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.108 2012/07/29 17:20:29 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.109 2012/09/05 05:25:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,6 +90,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
 {
   Debug(0);
   Name = "FGPropagate";
+
+  vInertialVelocity.InitMatrix();
 
   /// These define the indices use to select the various integrators.
   // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
@@ -122,6 +124,8 @@ bool FGPropagate::InitModel(void)
   // For initialization ONLY:
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
   VState.vLocation.SetAltitudeAGL(4.0, FDMExec->GetSimTime());
+
+  vInertialVelocity.InitMatrix();
 
   VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
@@ -438,11 +442,14 @@ void FGPropagate::UpdateBodyMatrices(void)
   Tb2l  = Tl2b.Transposed();          // body to local frame transform
   Tec2b = Ti2b * Tec2i;               // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
+
+  Qec2b = Tec2b.GetQuaternion();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi) {
+void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi)
+{
   VState.qAttitudeECI = Qi;
   VState.qAttitudeECI.Normalize();
   UpdateBodyMatrices();
