@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.140 2012/09/15 11:17:20 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.141 2012/09/15 17:00:56 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -466,8 +466,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Aircraft->in.GroundMoment  = GroundReactions->GetMoments();
     Aircraft->in.ExternalMoment = ExternalReactions->GetMoments();
     Aircraft->in.BuoyantMoment = BuoyantForces->GetMoments();
-    Aircraft->in.Weight        = MassBalance->GetWeight();
-    Aircraft->in.Tl2b          = Propagate->GetTl2b();
     break;
   case eAccelerations:
     Accelerations->in.J        = MassBalance->GetJ();

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.19 2011/11/10 12:06:14 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.20 2012/09/15 17:00:56 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.19 2011/11/10 12:06:14 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.20 2012/09/15 17:00:56 bcoconni Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
      Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
      School, January 1994
@@ -167,8 +167,6 @@ public:
   double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
   double GetXYZep(int idx) const { return vXYZep(idx); }
   void SetAircraftName(const std::string& name) {AircraftName = name;}
-  void SetHoldDown(int hd) {HoldDown = hd;}
-  int GetHoldDown(void) const {return HoldDown;}
 
   void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
 
@@ -188,8 +186,6 @@ public:
     FGColumnVector3 GroundMoment;
     FGColumnVector3 ExternalMoment;
     FGColumnVector3 BuoyantMoment;
-    FGMatrix33 Tl2b;
-    double Weight;
   } in;
 
 private:
@@ -203,7 +199,6 @@ private:
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;
   double lbarh,lbarv,vbarh,vbarv;
-  int HoldDown;
   std::string AircraftName;
 
   void Debug(int from);
