@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.58 2012/09/03 21:36:08 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.59 2012/09/15 11:17:21 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -344,8 +344,8 @@ double FGAuxiliary::GetNlf(void) const
 void FGAuxiliary::CalculateRelativePosition(void)  //ToDo: This belongs elsewhere - perhaps in FGPropagate or Exec
 {
   const double earth_radius_mt = in.ReferenceRadius*fttom;
-  lat_relative_position=(in.Latitude  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
-  lon_relative_position=(in.Longitude - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
+  lat_relative_position=(in.vLocation.GetLatitude()  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
+  lon_relative_position=(in.vLocation.GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
   relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
 };
 
