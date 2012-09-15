@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Jupiter 246">
+  <description>
+    This run is for testing the feature forces/hold-down.
+    The J246 Launch Vehicle is used and is supposed to sit on its launchpad.
+  </description>
+  <use aircraft="J246" initialize="LC39"/>
+  <run start="0.0" end="420" dt="0.0083333333333333333">
+
+    <property value="2">simulation/integrator/rate/rotational</property>
+    <property value="3">simulation/integrator/rate/translational</property>
+    <property value="3">simulation/integrator/position/rotational</property>
+    <property value="3">simulation/integrator/position/translational</property>
+
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> forces/hold-down </property>
+
+    <event name="Vehicle state:" persistent="true">
+      <description>Output message at 10 second intervals</description>
+      <notify>
+        <description>Vehicle state:</description>
+        <property caption="Mission Elapsed Time:    "> guidance/executive/MET </property>
+        <property caption="ECI Velocity (fps):      "> velocities/eci-velocity-mag-fps </property>
+        <property caption="Orbital apogee (miles):  "> guidance/executive/apoapsis </property>
+        <property caption="Orbital perigee (miles): "> guidance/executive/periapsis </property>
+        <property caption="Orbital eccentricity:    "> guidance/executive/eccentricity </property>
+        <property caption="Altitude AGL (ft):       "> position/h-agl-ft </property>
+        <property caption="Alpha (deg):             "> aero/alpha-deg </property>
+        <property caption="Pitch rate cmd:          "> guidance/executive/gravity-turn-pitch-rate-command </property>
+        <property caption="Thetadot (rad/sec):      "> velocities/thetadot-rad_sec </property>
+        <property caption="Roll angle (rad):        "> attitude/phi-rad </property>
+        <property caption="Pitch angle (rad):       "> attitude/theta-rad </property>
+        <property caption="Heading (rad):           "> attitude/psi-rad </property>
+        <property caption="Hold-down discrete:      "> forces/hold-down </property>
+        <property caption="Throttle (norm):         "> fcs/throttle-cmd-norm[0] </property>
+        <property caption="GNC Mode:                "> guidance/executive/current-mode </property>
+      </notify>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="10" type="delta"/>
+    </event>
+
+  </run>
+</runscript>

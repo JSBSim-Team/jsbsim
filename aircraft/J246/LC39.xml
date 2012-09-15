@@ -10,7 +10,12 @@
   <latitude unit="DEG">   28.6272  </latitude>
   <longitude unit="DEG"> -80.6208  </longitude>
   <phi unit="DEG">           90 </phi>
-  <theta unit="DEG">         90 </theta>
+  <!--
+    Set theta to a value slightly lower than 90deg to check the fidelity
+    of the forces/hold-down feature (theta and psi might be polluted by the
+    Euler angles gimble error otherwise).
+    -->
+  <theta unit="DEG">         89.99 </theta>
   <psi unit="DEG">            0.0  </psi>
   <altitude unit="IN">     1720.5  </altitude>
 </initialize>
