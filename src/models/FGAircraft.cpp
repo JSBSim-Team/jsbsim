@@ -59,7 +59,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.33 2011/08/21 15:06:38 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.34 2012/09/15 17:00:56 bcoconni Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,6 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
   lbarh = lbarv = 0.0;
   vbarh = vbarv = 0.0;
   WingIncidence = 0.0;
-  HoldDown = 0;
 
   bind();
 
@@ -107,25 +106,17 @@ bool FGAircraft::Run(bool Holding)
 
   RunPreFunctions();
 
-  vForces.InitMatrix();
-  if (!HoldDown) {
-    vForces += in.AeroForce;
-    vForces += in.PropForce;
-    vForces += in.GroundForce;
-    vForces += in.ExternalForce;
-    vForces += in.BuoyantForce;
-  } else {
-    vForces = in.Tl2b * FGColumnVector3(0,0,-in.Weight);
-  }
+  vForces = in.AeroForce;
+  vForces += in.PropForce;
+  vForces += in.GroundForce;
+  vForces += in.ExternalForce;
+  vForces += in.BuoyantForce;
 
-  vMoments.InitMatrix();
-  if (!HoldDown) {
-    vMoments += in.AeroMoment;
-    vMoments += in.PropMoment;
-    vMoments += in.GroundMoment;
-    vMoments += in.ExternalMoment;
-    vMoments += in.BuoyantMoment;
-  }
+  vMoments = in.AeroMoment;
+  vMoments += in.PropMoment;
+  vMoments += in.GroundMoment;
+  vMoments += in.ExternalMoment;
+  vMoments += in.BuoyantMoment;
 
   RunPostFunctions();
 
@@ -216,7 +207,6 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZvrp);
-  PropertyManager->Tie("forces/hold-down", this, &FGAircraft::GetHoldDown, &FGAircraft::SetHoldDown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

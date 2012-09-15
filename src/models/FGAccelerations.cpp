@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.13 2012/02/18 19:11:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.14 2012/09/15 17:00:56 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,7 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
   Name = "FGAccelerations";
   gravType = gtWGS84;
   gravTorque = false;
+  HoldDown = 0;
 
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
@@ -154,9 +155,16 @@ void FGAccelerations::CalculatePQRdot(void)
   // Compute body frame rotational accelerations based on the current body
   // moments and the total inertial angular velocity expressed in the body
   // frame.
-
-  vPQRidot = in.Jinv * (in.Moment - in.vPQRi * (in.J * in.vPQRi));
-  vPQRdot = vPQRidot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
+  if (HoldDown) {
+    // The rotational acceleration in ECI is calculated so that the rotational
+    // acceleration is zero in the body frame.
+    vPQRdot.InitMatrix();
+    vPQRidot = in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
+  }
+  else {
+    vPQRidot = in.Jinv * (in.Moment - in.vPQRi * (in.J * in.vPQRi));
+    vPQRdot = vPQRidot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +199,10 @@ void FGAccelerations::CalculateQuatdot(void)
 
 void FGAccelerations::CalculateUVWdot(void)
 {
-  vBodyAccel = in.Force / in.Mass;
+  if (HoldDown)
+    vBodyAccel.InitMatrix();
+  else
+    vBodyAccel = in.Force / in.Mass;
 
   vUVWdot = vBodyAccel - (in.vPQR + 2.0 * (in.Ti2b * in.vOmegaPlanet)) * in.vUVW;
 
@@ -211,8 +222,16 @@ void FGAccelerations::CalculateUVWdot(void)
       break;
   }
 
-  vUVWdot += in.Ti2b * vGravAccel;
-  vUVWidot = in.Tb2i * vBodyAccel + vGravAccel;
+  if (HoldDown) {
+    // The acceleration in ECI is calculated so that the acceleration is zero
+    // in the body frame.
+    vUVWidot = -1.0 * (in.Tb2i * vUVWdot);
+    vUVWdot.InitMatrix();
+  }
+  else {
+    vUVWdot += in.Ti2b * vGravAccel;
+    vUVWidot = in.Tb2i * vBodyAccel + vGravAccel;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,6 +380,8 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("forces/fbx-gear-lbs", this, eX, (PMF)&FGAccelerations::GetGroundForces);
   PropertyManager->Tie("forces/fby-gear-lbs", this, eY, (PMF)&FGAccelerations::GetGroundForces);
   PropertyManager->Tie("forces/fbz-gear-lbs", this, eZ, (PMF)&FGAccelerations::GetGroundForces);
+
+  PropertyManager->Tie("forces/hold-down", this, &FGAccelerations::GetHoldDown, &FGAccelerations::SetHoldDown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
