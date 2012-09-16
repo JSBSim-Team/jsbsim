@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 1998-07-01 </filecreationdate>
-        <version> $Revision: 1.57 $ </version>
+        <version> $Revision: 1.58 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
@@ -131,7 +131,7 @@
                 </orient>
             </thruster>
         </engine>
-        <tank type="OXIDIZER">    <!-- Tank number 0 -->
+        <tank type="OXIDIZER">    <!-- Tank number 0 for Main engine -->
             <location unit="IN">
                 <x> 282.3 </x>
                 <y> 0 </y>
@@ -140,7 +140,7 @@
             <capacity unit="LBS"> 9470 </capacity>
             <contents unit="LBS"> 0 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 1 -->
+        <tank type="FUEL">    <!-- Tank number 1 for Main engine -->
             <location unit="IN">
                 <x> 408.3 </x>
                 <y> 0 </y>
@@ -149,13 +149,25 @@
             <capacity unit="LBS"> 8236 </capacity>
             <contents unit="LBS"> 6 </contents>
         </tank>
+        <tank type="OXIDIZER">    <!-- Tank number 2 for RCS -->
+            <location unit="IN">
+                <x> 140 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <capacity unit="LBS"> 12 </capacity>
+            <contents unit="LBS"> 0 </contents>
+        </tank>
     </propulsion>
     
+    <autopilot file="X15ap"/>
+
     <flight_control name="X-15">
 
         <channel name="Pitch">
             
             <summer name="Pitch Trim Sum">
+                <input>ap/elevator-cmd</input>
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <clipto>
@@ -233,8 +245,13 @@
 
         <channel name="Roll">
 
-            <aerosurface_scale name="Roll Command Scale">
+            <summer name="Roll Trim Sum">
+                <input>ap/aileron-cmd</input>
                 <input>fcs/aileron-cmd-norm</input>
+            </summer>
+
+            <aerosurface_scale name="Roll Command Scale">
+                <input>fcs/roll-trim-sum</input>
                 <range>
                     <min>-20</min>
                     <max>20</max>

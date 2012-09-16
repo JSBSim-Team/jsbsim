@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="X-15-01A">
+  <description>Testing the X-15</description>
+  <use aircraft="X15" initialize="reset01"/>
+  <run start="0.0" end="300.0" dt="0.01">
+
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> simulation/gravitational-torque </property>
+    <property value="0"> ap/pitch-hold </property>
+    <property value="0"> ap/altitude-hold </property>
+    <property value="0"> ap/roll-hold </property>
+    <property value="9400"> propulsion/tank[0]/contents-lbs </property>
+    <property value="8236"> propulsion/tank[1]/contents-lbs </property>
+    <property value="12"> propulsion/tank[2]/contents-lbs </property>
+
+    <event name="Aircraft Drop">
+      <condition>simulation/sim-time-sec  ge  1.0</condition>
+      <set name="ap/pitch-hold" value="1"/>
+      <set name="ap/pitch-target-deg" value="-5.0"/>
+      <set name="ap/roll-hold" value="1"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/thrust-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Engine Start">
+      <condition>simulation/sim-time-sec  ge  3.0</condition>
+      <set name="fcs/throttle-cmd-norm" value="0.5"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>attitude/pitch-rad</property>
+        <property>propulsion/engine/thrust-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Steady altitude">
+      <condition>simulation/sim-time-sec  ge  5.0</condition>
+      <set name="ap/pitch-hold" value="0"/>
+      <set name="ap/altitude-hold" value="1"/>
+      <set name="fcs/throttle-cmd-norm" value="0.7" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/thrust-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Climb">
+      <condition>simulation/sim-time-sec  ge  20.0</condition>
+      <set name="ap/altitude-hold" value="0"/>
+      <set name="ap/pitch-target-deg" value="45"/>
+      <set name="ap/pitch-hold" value="1"/>
+      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/thrust-lbs</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/tank[2]/contents-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Engine Flame Out">
+      <condition logic="AND">
+        propulsion/engine/thrust-lbs lt 1000.0
+        simulation/sim-time-sec  ge  25.0
+      </condition>
+      <set name="ap/altitude-hold" value="0"/>
+      <set name="ap/pitch-hold" value="0"/>
+      <set name="fcs/throttle-cmd-norm" value="0.0" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/thrust-lbs</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/tank[2]/contents-lbs</property>
+      </notify>
+    </event>
+
+    <event name="Apogee">
+      <condition logic="AND">
+        velocities/h-dot-fps lt 0.0
+        simulation/sim-time-sec  ge  25.0
+      </condition>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/thrust-lbs</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/tank[2]/contents-lbs</property>
+      </notify>
+    </event>
+
+    <!--event name="Time Notify" persistent="true">
+      <description>Output message at 10 seconds intervals</description>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="10" type="FG_DELTA"/>
+      <notify>
+        <property>velocities/mach</property>
+        <property>velocities/h-dot-fps</property>
+        <property>position/h-agl-ft</property>
+        <property>attitude/pitch-rad</property>
+        <property>fcs/throttle-pos-norm</property>
+        <property>propulsion/engine/set-running</property>
+        <property>propulsion/engine/thrust-lbs</property>
+      </notify>
+    </event-->
+  </run>
+</runscript>
