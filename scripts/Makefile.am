@@ -20,6 +20,7 @@ EXTRA_DIST = \
   c3101.xml \
   c3104.xml \
   cannonball.xml \
+  J2460.xml \
   J2461.xml \
   plotfile.xml \
   kml_output.xml \
@@ -28,6 +29,7 @@ EXTRA_DIST = \
   sim_primer.xml \
   x151.xml \
   x152.xml \
+  x153.xml \
   f16_runway_test.xml \
   c172_elevation_test.xml \
   c172_runway_at_rest_cg_shift.xml
