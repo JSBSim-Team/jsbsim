@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+
+  Author:   Bertrand Coconnier
+  Date:     15 January 2012
+  Function: X15 autopilot test file
+
+-->
+
+<autopilot name="John Smith">
+
+  <property> ap/pitch-hold </property>
+  <property> ap/altitude-hold </property>
+  <property> ap/roll-hold </property>
+  <property> ap/pitch-target-deg </property>
+
+  <channel name="Pitch holder">
+    <pure_gain name="fcs/pitch-target-rad">
+      <input> ap/pitch-target-deg </input>
+      <gain> 0.01745329252 </gain> <!-- 180/pi -->
+    </pure_gain>
+
+    <summer name="fcs/pitch-error-rad">
+      <input> attitude/pitch-rad </input>
+      <input> -fcs/pitch-target-rad </input>
+    </summer>
+
+    <pid name="fcs/pitch-controller">
+      <input> fcs/pitch-error-rad </input>
+      <kp> 100.0 </kp>
+      <kd> 5.0 </kd>
+      <ki> 1.0 </ki>
+    </pid>
+
+    <switch name="fcs/pitch-cmd">
+      <default value="0.0"/>
+      <test value="fcs/pitch-controller">
+        ap/pitch-hold == 1
+      </test>
+    </switch>
+  </channel>
+
+  <channel name="Altitude holder">
+    <switch name="fcs/altitude-hold-ft">
+      <default value="position/h-sl-ft"/>
+      <test value="fcs/altitude-hold-ft">
+        ap/altitude-hold == 1
+      </test>
+    </switch>
+
+    <summer name="fcs/altitude-error-ft">
+      <input> position/h-sl-ft </input>
+      <input> -fcs/altitude-hold-ft </input>
+    </summer>
+
+    <pid name="fcs/altitude-controller">
+      <input> fcs/altitude-error-ft </input>
+      <kp> 0.001 </kp>
+      <kd> 0.0005 </kd>
+      <ki> 0.0 </ki>
+    </pid>
+
+    <switch name="fcs/altitude-cmd">
+      <default value="0.0"/>
+      <test value="fcs/altitude-controller">
+        ap/altitude-hold == 1
+      </test>
+    </switch>
+  </channel>
+
+  <channel name="Elevator Summer">
+    <summer name="ap/elevator-cmd">
+      <input> fcs/pitch-cmd </input>
+      <input> fcs/altitude-cmd </input>
+    </summer>
+  </channel>
+
+  <channel name="Wing Level holder">
+    <pid name="fcs/roll-controller">
+      <input> -attitude/roll-rad </input>
+      <kp> 5.0 </kp>
+      <kd> 2.0 </kd>
+      <ki> 0.5 </ki>
+    </pid>
+
+    <switch name="ap/aileron-cmd">
+      <default value="0.0"/>
+      <test value="fcs/roll-controller">
+        ap/roll-hold == 1
+      </test>
+    </switch>
+  </channel>
+</autopilot>
+
