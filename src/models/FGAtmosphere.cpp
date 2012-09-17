@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.53 2012/09/05 05:05:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.54 2012/09/17 12:38:07 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,8 +116,16 @@ void FGAtmosphere::Calculate(double altitude)
   else 
     Temperature = PropertyManager->getDoubleValue("atmosphere/override/temperature");
 
+  if (!PropertyManager->HasNode("atmosphere/override/pressure"))
   Pressure    = GetPressure(altitude);
+  else 
+    Pressure = PropertyManager->getDoubleValue("atmosphere/override/pressure");
+
+  if (!PropertyManager->HasNode("atmosphere/override/density"))
   Density     = Pressure/(Reng*Temperature);
+  else 
+    Density = PropertyManager->getDoubleValue("atmosphere/override/density");
+
   Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
   PressureAltitude = altitude;
   DensityAltitude = altitude;
