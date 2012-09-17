@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.16 2012/03/18 15:48:36 jentron Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.17 2012/09/17 12:33:07 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 {
   Element* thruster_element = el->GetParent();
   Element* element;
-  FGColumnVector3 location, orientation;
+  FGColumnVector3 location, orientation, pointing;
 
   Type = ttDirect;
   SetTransformType(FGForce::tCustom);
@@ -76,15 +76,28 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   if (element)  location = element->FindElementTripletConvertTo("IN");
   else          cerr << fgred << "      No thruster location found." << reset << endl;
 
-  element = thruster_element->FindElement("orient");
-  if (element)  orientation = element->FindElementTripletConvertTo("RAD");
-  else          cerr << "      No thruster orientation found." << endl;
-
   SetLocation(location);
-  SetAnglesToBody(orientation);
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
+
+  element = thruster_element->FindElement("pointing");
+  if (element)  {
+
+    // This defines a fixed nozzle that has no public interface property to gimbal or reverse it.
+    pointing = element->FindElementTripletConvertTo("RAD"); // The specification of RAD here is superfluous,
+                                                            // and simply precludes a conversion.
+    mT.InitMatrix();
+    mT(1,1) = pointing(1);
+    mT(2,1) = pointing(2);
+    mT(3,1) = pointing(3);
+
+  } else {
+
+  element = thruster_element->FindElement("orient");
+  if (element)  orientation = element->FindElementTripletConvertTo("RAD");
+
+  SetAnglesToBody(orientation);
   property_name = base_property_name + "/pitch-angle-rad";
   PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
   property_name = base_property_name + "/yaw-angle-rad";
@@ -97,6 +110,9 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
     PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetReverserAngle,
                                                           &FGThruster::SetReverserAngle);
   }
+
+  }
+
 
   Debug(0);
 }
