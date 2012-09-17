@@ -58,7 +58,7 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.21 2012/09/05 05:00:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.22 2012/09/17 12:27:44 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,28 +224,8 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   mTInv.T();
   
   // Compute the Euler-angles
-  // Also see Jack Kuipers, "Quaternions and Rotation Sequences", section 7.8..
 
-  if (mT(3,3) == 0.0)
-    mEulerAngles(ePhi) = 0.5*M_PI;
-  else
-    mEulerAngles(ePhi) = atan2(mT(2,3), mT(3,3));
-  
-  if (mT(1,3) < -1.0)
-    mEulerAngles(eTht) = 0.5*M_PI;
-  else if (1.0 < mT(1,3))
-    mEulerAngles(eTht) = -0.5*M_PI;
-  else
-    mEulerAngles(eTht) = asin(-mT(1,3));
-  
-  if (mT(1,1) == 0.0)
-    mEulerAngles(ePsi) = 0.5*M_PI;
-  else {
-    double psi = atan2(mT(1,2), mT(1,1));
-    if (psi < 0.0)
-      psi += 2*M_PI;
-    mEulerAngles(ePsi) = psi;
-  }
+  mEulerAngles = mT.GetEuler();
   
   // FIXME: may be one can compute those values easier ???
   mEulerSines(ePhi) = sin(mEulerAngles(ePhi));

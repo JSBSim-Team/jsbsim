@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.12 2011/12/10 15:49:21 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.13 2012/09/17 12:27:44 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,6 +153,38 @@ FGQuaternion FGMatrix33::GetQuaternion(void)
   }
 
   return (Q);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Compute the Euler-angles
+// Also see Jack Kuipers, "Quaternions and Rotation Sequences", section 7.8..
+
+FGColumnVector3 FGMatrix33::GetEuler(void)
+{
+  FGColumnVector3 mEulerAngles;
+
+  if (data[8] == 0.0)
+    mEulerAngles(1) = 0.5*M_PI;
+  else
+    mEulerAngles(1) = atan2(data[7], data[8]);
+  
+  if (data[6] < -1.0)
+    mEulerAngles(2) = 0.5*M_PI;
+  else if (1.0 < data[6])
+    mEulerAngles(2) = -0.5*M_PI;
+  else
+    mEulerAngles(2) = asin(-data[6]);
+  
+  if (data[0] == 0.0)
+    mEulerAngles(3) = 0.5*M_PI;
+  else {
+    double psi = atan2(data[3], data[0]);
+    if (psi < 0.0)
+      psi += 2*M_PI;
+    mEulerAngles(3) = psi;
+  }
+
+  return mEulerAngles;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -378,6 +378,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\input_output\fgoutputfg.h" />
+    <ClInclude Include="src\input_output\fgoutputfile.h" />
+    <ClInclude Include="src\input_output\fgoutputsocket.h" />
+    <ClInclude Include="src\input_output\fgoutputtextfile.h" />
+    <ClInclude Include="src\input_output\fgoutputtype.h" />
     <ClInclude Include="src\math\LagrangeMultiplier.h" />
     <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
     <ClInclude Include="src\models\atmosphere\FGWinds.h" />
@@ -480,6 +485,11 @@
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\input_output\FGOutputFG.cpp" />
+    <ClCompile Include="src\input_output\FGOutputFile.cpp" />
+    <ClCompile Include="src\input_output\FGOutputSocket.cpp" />
+    <ClCompile Include="src\input_output\FGOutputTextFile.cpp" />
+    <ClCompile Include="src\input_output\FGOutputType.cpp" />
     <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
     <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
     <ClCompile Include="src\models\FGAccelerations.cpp" />
@@ -621,4 +631,3 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
-
