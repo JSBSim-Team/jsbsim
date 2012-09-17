@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.18 2012/04/08 15:19:08 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.19 2012/09/17 12:29:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +119,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.18 2012/04/08 15:19:08 jberndt Exp $
+    $Id: FGRocket.h,v 1.19 2012/09/17 12:29:13 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -158,8 +158,12 @@ public:
   double CalcOxidizerNeed(void);
 
   /** Gets the total impulse of the rocket.
-      @return The cumulative total impulse of the rocket up to this time.*/
+      @return The cumulative actual total impulse of the rocket up to this time.*/
   double GetTotalImpulse(void) const {return It;}
+
+  /** Gets the total impulse of the rocket.
+      @return The cumulative vacuum total impulse of the rocket up to this time.*/
+  double GetVacTotalImpulse(void) const {return ItVac;}
 
   /** Gets the flame-out status.
       The engine will "flame out" if the throttle is set below the minimum
@@ -214,7 +218,8 @@ private:
   void bindmodel(void);
 
   double Isp; // Vacuum Isp
-  double It;
+  double It;    // Total actual Isp
+  double ItVac; // Total Vacuum Isp
   double MxR; // Mixture Ratio
   double BurnTime;
   double ThrustVariation;
