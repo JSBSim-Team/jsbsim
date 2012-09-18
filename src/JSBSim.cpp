@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.77 2012/09/18 12:24:50 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.78 2012/09/18 12:42:29 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -93,6 +93,7 @@ bool nohighlight;
 double end_time = 1e99;
 double simulation_rate = 1./120.;
 bool override_sim_rate = false;
+double sleep_period=0.01;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -452,7 +453,7 @@ int real_main(int argc, char* argv[])
 
   frame_duration = FDMExec->GetDeltaT();
   if (realtime) sleep_nseconds = (long)(frame_duration*1e9);
-  else          sleep_nseconds = (10000000);           // 0.01 seconds
+  else          sleep_nseconds = (sleep_period )*1e9;           // 0.01 seconds
 
   tzset(); 
   current_seconds = initial_seconds = getcurrentseconds();
@@ -563,6 +564,16 @@ bool options(int count, char **arg)
       realtime = true;
     } else if (keyword == "--nice") {
       play_nice = true;
+      if (n != string::npos) {
+        try {
+          sleep_period = atof( value.c_str() );
+        } catch (...) {
+          cerr << endl << "  Invalid sleep period given!" << endl << endl;
+          result = false;
+        }
+      } else {
+        sleep_period = 0.01;
+      }
     } else if (keyword == "--suspend") {
       suspend = true;
     } else if (keyword == "--nohighlight") {
