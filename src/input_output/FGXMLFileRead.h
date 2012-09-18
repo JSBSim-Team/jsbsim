@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.5 2009/11/28 20:12:47 andgi Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.6 2012/09/18 12:24:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ public:
 
 protected:
   Element* document;
-  Element* LoadXMLDocument(std::string XML_filename)
+  Element* LoadXMLDocument(std::string XML_filename, bool verbose=true)
   {
     std::ifstream infile;
 
@@ -66,7 +66,7 @@ protected:
       if (XML_filename.find(".xml") == std::string::npos) XML_filename += ".xml";
       infile.open(XML_filename.c_str());
       if ( !infile.is_open()) {
-        std::cerr << "Could not open file: " << XML_filename << std::endl;
+        if (verbose) std::cerr << "Could not open file: " << XML_filename << std::endl;
         return 0L;
       }
     } else {

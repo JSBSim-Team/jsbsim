@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.76 2012/09/17 12:35:08 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.77 2012/09/18 12:24:50 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -142,28 +142,28 @@ class XMLFile : public FGXMLFileRead {
 public:
   bool IsScriptFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename);
+    document = LoadXMLDocument(filename, false);
     if (document) if (document->GetName() == "runscript") result = true;
     ResetParser();
     return result;
   }
   bool IsLogDirectiveFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename);
+    document = LoadXMLDocument(filename, false);
     if (document) if (document->GetName() == "output") result = true;
     ResetParser();
     return result;
   }
   bool IsAircraftFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename);
+    document = LoadXMLDocument(filename, false);
     if (document) if (document->GetName() == "fdm_config") result = true;
     ResetParser();
     return result;
   }
   bool IsInitFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename);
+    document = LoadXMLDocument(filename, false);
     if (document) if (document->GetName() == "initialize") result = true;
     ResetParser();
     return result;
@@ -662,8 +662,9 @@ bool options(int count, char **arg)
       
       if (xmlFile.IsScriptFile(keyword)) ScriptName = keyword;
       else if (xmlFile.IsLogDirectiveFile(keyword))  LogDirectiveName.push_back(keyword);
-      //else if (xmlFile.IsAircraftFile(keyword)) AircraftName = keyword;
+      else if (xmlFile.IsAircraftFile("aircraft/" + keyword + "/" + keyword)) AircraftName = keyword;
       else if (xmlFile.IsInitFile(keyword)) ResetName = keyword;
+      else if (xmlFile.IsInitFile("aircraft/" + AircraftName + "/" + keyword)) ResetName = keyword;
       else {
         cerr << "The argument \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
         exit(1);
