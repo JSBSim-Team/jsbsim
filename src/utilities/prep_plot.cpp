@@ -98,40 +98,43 @@ INCLUDES
 #include "input_output/string_utilities.h"
 #include "plotXMLVisitor.h"
 
-#define DEFAULT_FONT "Arial,10"
-#define TITLE_FONT "Arial,12"
-#define LABEL_FONT "Arial,10"
-#define AXIS_FONT "Arial,10"
-#define TIMESTAMP_FONT "Arial,8"
-#define TICS_FONT "Arial,8"
+#define DEFAULT_FONT "sans,10"
+#define TITLE_FONT "sans,12"
+#define LABEL_FONT "sans,10"
+#define AXIS_FONT "sans,10"
+#define TIMESTAMP_FONT "sans,8"
+#define TICS_FONT "sans,8"
 
 using namespace std;
 
 string plot_range;
 
-string HaveTerm(vector <string>&, string); 
-int GetTermIndex(vector <string>&, string);
-void EmitComparisonPlot(vector <string>&, int, string);
-void EmitSinglePlot(string, int, string);
+string HaveTerm(const vector <string>&, const string); 
+int GetTermIndex(const vector <string>&, const string);
+void EmitComparisonPlot(const vector <string>&, const int, const string);
+void EmitSinglePlot(const string, const int, const string);
 bool MakeArbitraryPlot(
-  vector <string>& files,
-  vector <string>& names,
-  struct Plots& myPlot,
+  const vector <string>& files,
+  const vector <string>& names,
+  const struct Plots& myPlot,
   string Title,
   stringstream& plot);
+void PrintNames(const vector <string>&);
 
 int main(int argc, char **argv)
 {
   string in_string, var_name, input_arg, supplied_title="";
   vector <string> plotspecfiles;
-  vector <string> names;
+  //vector <string> names;
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
   vector <string> files;
   ifstream infile2;
-  char num[4];
+  char num[8];
   bool comprehensive=false;
   bool pdf=false;
   bool png=false;
+  bool nokey=false;
+  bool plotspecs=false;
 
   string start_time="", end_time="";
 
@@ -145,6 +148,7 @@ int main(int argc, char **argv)
   string filename(argv[1]), new_filename, Title;
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
+    nokey = true;
     while (1) {
       new_filename=filename;
       sprintf(num,"%d",file_ctr);
@@ -159,6 +163,7 @@ int main(int argc, char **argv)
       }
     }
   } else {
+    nokey = false;
     files.push_back(filename);
   }
   ifstream infile(files[0].c_str());
@@ -167,7 +172,7 @@ int main(int argc, char **argv)
     exit(-1);
   }
   getline(infile, in_string, '\n');
-  names = split(in_string, ',');
+  vector <string> names = split(in_string, ',');
   unsigned int num_names=names.size();
   
   // Read command line args
@@ -175,6 +180,7 @@ int main(int argc, char **argv)
   for (int i=2; i<argc; i++) {
     input_arg = string(argv[i]);
     if (input_arg.substr(0,6) == "--plot") {
+      plotspecs=true;
       plotspecfiles.push_back(input_arg.erase(0,7));
     } else if (input_arg.substr(0,6) == "--pdf") {
       pdf=true;
@@ -194,6 +200,12 @@ int main(int argc, char **argv)
     }
   }
 
+  if (!plotspecs && ! comprehensive) { // Just print out names to be plotted and exit.
+    cout << "Known variable names in data file:" << endl;
+    PrintNames(names);
+    exit(0);
+  }
+
   plot_range="";
   if (start_time.size() > 0 || end_time.size() > 0)
     plot_range = "["+start_time+":"+end_time+"]";
@@ -205,6 +217,7 @@ int main(int argc, char **argv)
     cout << "set rmargin  4" << endl;
     cout << "set tmargin  4" << endl;
     cout << "set bmargin  4" << endl;
+    if (nokey) cout << "set nokey" << endl;
   } else if (png) {
     cout << "set terminal png enhanced truecolor size 1280,1024 rounded font \""DEFAULT_FONT"\"" << endl;
     cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".png'" << endl;
@@ -214,9 +227,11 @@ int main(int argc, char **argv)
     cout << "set rmargin  4" << endl;
     cout << "set tmargin  4" << endl;
     cout << "set bmargin  4" << endl;
+    if (nokey) cout << "set nokey" << endl;
   } else {
     cout << "set terminal postscript enhanced color font \""DEFAULT_FONT"\"" << endl;
     cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".ps'" << endl;
+    if (nokey) cout << "set nokey" << endl;
   }
 
   if (!supplied_title.empty()) {
@@ -420,7 +435,7 @@ int main(int argc, char **argv)
 
 // ############################################################################
 
-string HaveTerm(vector <string>& names, string parameter)
+string HaveTerm(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
     if (names[i] == parameter.substr(0,names[i].size())) return names[i];
@@ -431,7 +446,7 @@ string HaveTerm(vector <string>& names, string parameter)
 
 // ############################################################################
 
-int GetTermIndex(vector <string>& names, string parameter)
+int GetTermIndex(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
     if (names[i] == parameter) return i+1;
@@ -442,9 +457,9 @@ int GetTermIndex(vector <string>& names, string parameter)
 // ############################################################################
 
 bool MakeArbitraryPlot(
-  vector <string>& files,
-  vector <string>& names,
-  struct Plots& myPlot,
+  const vector <string>& files,
+  const vector <string>& names,
+  const struct Plots& myPlot,
   string Title,
   stringstream& newPlot)
 {
@@ -583,18 +598,28 @@ bool MakeArbitraryPlot(
 
 // ############################################################################
 
-void EmitSinglePlot(string filename, int index, string linetitle )
+void EmitSinglePlot(const string filename, const int index, const string linetitle )
 {
   cout << "plot " << plot_range << " \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
 }
 
 // ############################################################################
 
-void EmitComparisonPlot(vector <string>& filenames, int index, string linetitle)
+void EmitComparisonPlot(const vector <string>& filenames, const int index, const string linetitle)
 {
+  cout << "##" << endl << "##" << endl;
+  cout << "print \"Processing parameter plot: " << linetitle << "\"" << endl;
+  cout << "##" << endl << "##" << endl;
   cout << "plot " << plot_range <<  " \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
   for (unsigned int f=1;f<filenames.size()-1;f++){
     cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\", \\" << endl;
   }
   cout << "\"" << filenames[filenames.size()-1] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << filenames.size() << "\"" << endl;
+}
+
+// ############################################################################
+
+void PrintNames(const vector <string>& names)
+{
+  for (int i=0; i<names.size(); i++) cout << "  " << names[i] << endl;
 }
