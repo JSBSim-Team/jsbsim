@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.45 2012/09/05 04:54:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.46 2012/09/25 12:43:13 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,8 @@ const std::string FGFunction::avg_string = "avg";
 const std::string FGFunction::fraction_string = "fraction";
 const std::string FGFunction::mod_string = "mod";
 const std::string FGFunction::random_string = "random";
+const std::string FGFunction::urandom_string = "urandom";
+const std::string FGFunction::pi_string = "pi";
 const std::string FGFunction::integer_string = "integer";
 const std::string FGFunction::rotation_alpha_local_string = "rotation_alpha_local";
 const std::string FGFunction::rotation_beta_local_string = "rotation_beta_local";
@@ -174,6 +176,10 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eMod;
   } else if (operation == random_string) {
     Type = eRandom;
+  } else if (operation == urandom_string) {
+    Type = eUrandom;
+  } else if (operation == pi_string) {
+    Type = ePi;
   } else if (operation == rotation_alpha_local_string) {
     Type = eRotation_alpha_local;
   } else if (operation == rotation_beta_local_string) {
@@ -213,7 +219,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   }
 
   element = el->GetElement();
-  if (!element && Type != eRandom) {
+  if (!element && Type != eRandom && Type != eUrandom && Type != ePi) {
     cerr << fgred << highint << endl;
     cerr << "  No element was specified as an argument to the \"" << operation << "\" operation" << endl;
     cerr << "  This can happen when, for instance, a cos operation is specified and a " << endl;
@@ -273,6 +279,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == integer_string ||
                operation == mod_string ||
                operation == random_string ||
+               operation == urandom_string ||
+               operation == pi_string ||
                operation == avg_string ||
                operation == rotation_alpha_local_string||
                operation == rotation_beta_local_string||
@@ -345,7 +353,9 @@ double FGFunction::GetValue(void) const
 
   if (cached) return cachedValue;
 
-  if (Type != eRandom) temp = Parameters[0]->GetValue();
+  if (   Type != eRandom
+      && Type != eUrandom
+      && Type != ePi      ) temp = Parameters[0]->GetValue();
   
   switch (Type) {
   case eTopLevel:
@@ -445,6 +455,12 @@ double FGFunction::GetValue(void) const
     break;
   case eRandom:
     temp = GaussianRandomNumber();
+    break;
+  case eUrandom:
+    temp = -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
+    break;
+  case ePi:
+    temp = M_PI;
     break;
   case eLT:
     temp = (temp < Parameters[1]->GetValue())?1:0;

@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.25 2012/09/05 04:54:49 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.26 2012/09/25 12:43:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,7 +97,9 @@ A function definition consists of an operation, a value, a table, or a property
 - not (takes 1 args)
 - if-then (takes 2-3 args)
 - switch (takes 2 or more args)
-- random (Gaussian random number)
+- random (Gaussian distribution random number)
+- urandom (Uniform random number between -1 and +1)
+- pi
 - integer
 - interpolate 1-dimensional (takes a minimum of five arguments, odd number)
 
@@ -236,12 +238,14 @@ private:
   static const std::string acos_string;
   static const std::string atan_string;
   static const std::string atan2_string;
+  static const std::string pi_string;
   static const std::string min_string;
   static const std::string max_string;
   static const std::string avg_string;
   static const std::string fraction_string;
   static const std::string mod_string;
   static const std::string random_string;
+  static const std::string urandom_string;
   static const std::string integer_string;
   static const std::string rotation_alpha_local_string;
   static const std::string rotation_beta_local_string;
@@ -263,10 +267,11 @@ private:
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eLog2, eLn,
-                     eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
-                     eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local, eRotation_beta_local,
-                     eRotation_gamma_local, eRotation_bf_to_wf, eRotation_wf_to_bf} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eUrandom, ePi,
+                     eLog2, eLn, eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
+                     eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local,
+                     eRotation_beta_local, eRotation_gamma_local, eRotation_bf_to_wf,
+                     eRotation_wf_to_bf} Type;
   std::string Name;
   std::string sCopyTo;        // Property name to copy function value to
   FGPropertyManager* pCopyTo; // Property node for CopyTo property string
