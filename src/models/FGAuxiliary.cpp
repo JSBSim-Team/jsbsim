@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.59 2012/09/15 11:17:21 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.60 2012/09/30 16:49:17 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,21 +226,10 @@ bool FGAuxiliary::Run(bool Holding)
 
   vPilotAccel.InitMatrix();
   vNcg = in.vBodyAccel/in.SLGravity;
-  if ( Vt > 1.0 ) {
-    // Nz is Acceleration in "g's", along normal axis (-Z body axis)
-    Nz = -vNcg(eZ);
-    vPilotAccel = in.vBodyAccel + in.vPQRdot * in.ToEyePt;
-    vPilotAccel += in.vPQR * (in.vPQR * in.ToEyePt);
-  } else {
-    // The line below handles low velocity (and on-ground) cases, basically
-    // representing the opposite of the force that the landing gear would
-    // exert on the ground (which is just the total weight). This eliminates
-    // any jitter that could be introduced by the landing gear. Theoretically,
-    // this branch could be eliminated, with a penalty of having a short
-    // transient at startup (lasting only a fraction of a second).
-    vPilotAccel = in.Tl2b * FGColumnVector3( 0.0, 0.0, -in.SLGravity );
-    Nz = -vPilotAccel(eZ) / in.SLGravity;
-  }
+  // Nz is Acceleration in "g's", along normal axis (-Z body axis)
+  Nz = -vNcg(eZ);
+  vPilotAccel = in.vBodyAccel + in.vPQRdot * in.ToEyePt;
+  vPilotAccel += in.vPQR * (in.vPQR * in.ToEyePt);
 
   vNwcg = mTb2w * vNcg;
   vNwcg(eZ) = 1.0 - vNwcg(eZ);
