@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.23 2012/04/08 15:04:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.24 2012/10/05 02:16:24 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,8 +136,8 @@ bool FGActuator::Run(void )
 
   if (clip) {
     saturated = false;
-    if (Output >= clipmax) saturated = true;
-    else if (Output <= clipmin) saturated = true;
+    if (Output >= clipmax && clipmax != 0) saturated = true;
+    else if (Output <= clipmin && clipmin != 0) saturated = true;
   }
 
   if (IsOutput) SetOutput();
