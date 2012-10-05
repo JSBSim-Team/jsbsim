@@ -553,7 +553,7 @@ bool MakeArbitraryPlot(
 
       for (int f=0;f<files.size();f++) {
       
-        if (f==0) cout << "plot " << time_range << " ";
+        if (f==0) newPlot << "plot " << time_range << " ";
         else      {
           newPlot << ", \\" << endl;
           newPlot << "     ";
