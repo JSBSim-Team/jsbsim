@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.2 2012/10/05 02:30:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.3 2012/10/05 12:57:49 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTFG;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -183,7 +183,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->slip_deg    = (float)(Auxiliary->Getbeta(inDegrees));  // slip ball deflection, deg
 
   // Engine status
-  if (Propulsion->GetNumEngines() > FGNetFDM::FG_MAX_ENGINES)
+  if (Propulsion->GetNumEngines() > FGNetFDM::FG_MAX_ENGINES && FDMExec->GetSimTime() == 0.0)
     cerr << "This vehicle has " << Propulsion->GetNumEngines() << " engines, but the current " << endl
          << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_ENGINES << " engines." << endl
          << "Only the first " << FGNetFDM::FG_MAX_ENGINES << " engines will be used." << endl;
@@ -224,7 +224,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   }
 
   // Consumables
-  if (Propulsion->GetNumTanks() > FGNetFDM::FG_MAX_TANKS)
+  if (Propulsion->GetNumTanks() > FGNetFDM::FG_MAX_TANKS && FDMExec->GetSimTime() == 0.0)
     cerr << "This vehicle has " << Propulsion->GetNumTanks() << " tanks, but the current " << endl
          << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_TANKS << " tanks." << endl
          << "Only the first " << FGNetFDM::FG_MAX_TANKS << " tanks will be used." << endl;
@@ -236,7 +236,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   }
 
   // Gear status
-  if (GroundReactions->GetNumGearUnits() > FGNetFDM::FG_MAX_WHEELS)
+  if (GroundReactions->GetNumGearUnits() > FGNetFDM::FG_MAX_WHEELS && FDMExec->GetSimTime() == 0.0)
     cerr << "This vehicle has " << GroundReactions->GetNumGearUnits() << " bogeys, but the current " << endl
          << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_WHEELS << " bogeys." << endl
          << "Only the first " << FGNetFDM::FG_MAX_WHEELS << " bogeys will be used." << endl;
