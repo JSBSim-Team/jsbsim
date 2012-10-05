@@ -6,4 +6,5 @@ EXTRA_DIST = \
 	ground_reactions.xml \
 	position.xml \
 	rates.xml \
-	velocities.xml
+	velocities.xml \
+  flightgear.xml
