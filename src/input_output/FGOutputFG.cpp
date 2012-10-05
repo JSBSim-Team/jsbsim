@@ -60,6 +60,10 @@ INCLUDES
 #  include <netinet/in.h>       // htonl() ntohl()
 #endif
 
+#if !defined (min)
+#  define min(X,Y) X<Y?X:Y
+#endif
+
 static const int endianTest = 1;
 #define isLittleEndian (*((char *) &endianTest ) != 0)
 
@@ -67,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.1 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.2 2012/10/05 02:30:50 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTFG;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -179,7 +183,12 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->slip_deg    = (float)(Auxiliary->Getbeta(inDegrees));  // slip ball deflection, deg
 
   // Engine status
-  net->num_engines = Propulsion->GetNumEngines(); // Number of valid engines
+  if (Propulsion->GetNumEngines() > FGNetFDM::FG_MAX_ENGINES)
+    cerr << "This vehicle has " << Propulsion->GetNumEngines() << " engines, but the current " << endl
+         << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_ENGINES << " engines." << endl
+         << "Only the first " << FGNetFDM::FG_MAX_ENGINES << " engines will be used." << endl;
+
+  net->num_engines = min(FGNetFDM::FG_MAX_ENGINES,Propulsion->GetNumEngines()); // Number of valid engines
 
   for (i=0; i<net->num_engines; i++) {
     if (Propulsion->GetEngine(i)->GetRunning())
@@ -215,14 +224,24 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   }
 
   // Consumables
-  net->num_tanks = Propulsion->GetNumTanks();   // Max number of fuel tanks
+  if (Propulsion->GetNumTanks() > FGNetFDM::FG_MAX_TANKS)
+    cerr << "This vehicle has " << Propulsion->GetNumTanks() << " tanks, but the current " << endl
+         << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_TANKS << " tanks." << endl
+         << "Only the first " << FGNetFDM::FG_MAX_TANKS << " tanks will be used." << endl;
+
+  net->num_tanks = min(FGNetFDM::FG_MAX_TANKS, Propulsion->GetNumTanks());   // Max number of fuel tanks
 
   for (i=0; i<net->num_tanks; i++) {
     net->fuel_quantity[i] = (float)(((FGTank *)Propulsion->GetTank(i))->GetContents());
   }
 
   // Gear status
-  net->num_wheels  = GroundReactions->GetNumGearUnits();
+  if (GroundReactions->GetNumGearUnits() > FGNetFDM::FG_MAX_WHEELS)
+    cerr << "This vehicle has " << GroundReactions->GetNumGearUnits() << " bogeys, but the current " << endl
+         << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_WHEELS << " bogeys." << endl
+         << "Only the first " << FGNetFDM::FG_MAX_WHEELS << " bogeys will be used." << endl;
+
+  net->num_wheels  = min(FGNetFDM::FG_MAX_WHEELS, GroundReactions->GetNumGearUnits());
 
   for (i=0; i<net->num_wheels; i++) {
     net->wow[i]              = GroundReactions->GetGearUnit(i)->GetWOW();
