@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   
 -->
-<system name="hydrodynamics">
+<system name="Short S.23 hydrodynamics">
 
  <documentation>
   This system computes forces and moments due to the hull's interaction
@@ -36,32 +36,15 @@
   - Side - 90 degrees right from the relative water flow in the surface plane.
   - Lift - up (the same as -Z in the local frame).
   The moments are split into the channels:
-  (NOTE: they are in the body frame for now!):
   - Pitch
   - Yaw
   - Roll
-
-  The properties determining the location and orientation of the hull
-  w.r.t the the water surface and stream are:
-  - hydro/height-agl-ft - Height of the hydrodynamic reference point
-                          over the water surface.
-  - hydro/beta-deg      - angle between the hull's velocity vector throught
-                          the water and its longitudal axis.
-                          Analogous to aerodynamics/beta-deg.
-  - hydro/pitch-deg     - angle between the hull longitudal axis and the
-                          water surface (ground plane).
-  - hydro/roll-deg      - angle between the hull traverse axis and the
-                          water surface (ground plane).
-  - hydro/v-fps         - The hull's speed relative the water.
  </documentation>
 
- <!-- Inputs -->
- <property value="0.0">hydro/water-level-ft</property>
-
  <!-- HRP location -->
- <property value="341.73">hydro/hrp-x-in</property>
- <property value="0.0">hydro/hrp-y-in</property>
- <property value="0.0">hydro/hrp-z-in</property>
+ <property value="341.73">metrics/hydro-rp-x-in</property>
+ <property value="0.0">metrics/hydro-rp-y-in</property>
+ <property value="0.0">metrics/hydro-rp-z-in</property>
 
  <!-- Model parameters -->
  <documentation>
@@ -85,135 +68,6 @@
  <property value="1.5">hydro/pitch-tweak-factor</property>
  <property value="4.0">hydro/yaw-tweak-factor</property>
 
-
- <channel name ="Hull position, orientation and velocity">
-
-  <fcs_function name="hydro/height-agl-ft">
-   <documentation>
-    Distance between the hydrodynamic reference point and the water surface.
-    Not completely correctly computed yet.
-   </documentation>
-   <function>
-    <difference>
-     <sum>
-      <property> position/h-sl-ft </property>
-      <product>
-       <value> -0.083333333 </value>
-       <difference>
-        <property> hydro/hrp-x-in </property>
-        <property> inertia/cg-x-in </property>
-       </difference>
-       <sin>
-        <property> attitude/pitch-rad </property>
-       </sin>
-      </product>
-      <product>
-       <value> 0.083333333 </value>
-       <difference>
-        <property> hydro/hrp-z-in </property>
-        <property> inertia/cg-z-in </property>
-       </difference>
-       <cos>
-        <property> attitude/pitch-rad </property>
-       </cos>
-      </product>
-     </sum>
-     <property> hydro/water-level-ft </property>
-    </difference>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/pitch-deg">
-   <function>
-    <product>
-     <value> 57.29578 </value>
-     <property> attitude/pitch-rad </property>
-    </product>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/roll-deg">
-   <function>
-    <product>
-     <value> 57.29578 </value>
-     <property> attitude/roll-rad </property>
-    </product>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/beta-rad">
-   <function>
-    <!-- mod -->
-     <difference>
-      <property> flight-path/psi-gt-rad </property>
-      <property> attitude/psi-rad </property>
-     </difference>
-     <!-- value> 3.1415927 </value>
-    </mod -->
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/beta-deg">
-   <function>
-    <product>
-     <value> 57.29578 </value>
-     <property> hydro/beta-rad </property>
-    </product>
-   </function>
-  </fcs_function>
-  
-  <fcs_function name="hydro/true-course-deg">
-   <!-- (Currently) the course made good by the hull. -->
-   <function>
-    <product>
-     <value> 57.29578 </value>
-     <property> flight-path/psi-gt-rad </property>
-    </product>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/v-fps">
-   <function>
-    <pow>
-     <sum>
-      <pow>
-       <property> velocities/v-north-fps </property>
-       <value> 2.0 </value>
-      </pow>
-      <pow>
-       <property> velocities/v-east-fps </property>
-       <value> 2.0 </value>
-      </pow>
-     </sum>
-     <value> 0.5 </value>
-    </pow>
-   </function>
-  </fcs_function>
-  <fcs_function name="hydro/v-kt">
-   <function>
-    <product>
-     <value> 0.5924838 </value>
-     <property> hydro/v-fps </property>
-    </product>
-   </function>
-  </fcs_function>
-
-  <fcs_function name="hydro/qbar-psf">
-   <function>
-    <product>
-     <value> 0.50 </value>
-     <product>
-      <value> 63.5 </value>
-      <pow>
-       <property> hydro/v-fps </property>
-       <value> 2.0 </value>
-      </pow>
-     </product>
-    </product>
-   </function>
-  </fcs_function>
-
- </channel>
 
  <channel name ="Hydrodynamic coefficients">
 
@@ -400,6 +254,11 @@
   </switch>
 
  </channel>
+
+ <!-- Unused inputs to the hydrodynamics system. -->
+ <property value="0.0">hydro/fbx-lbs</property>
+ <property value="0.0">hydro/fby-lbs</property>
+ <property value="0.0">hydro/fside-lbs</property>
 
  <channel name="Force Z (up)">
 
@@ -609,11 +468,10 @@
    </function>
   </fcs_function>
 
-  <summer name="hydro/Z-force-lbs">
+  <summer name="hydro/fbz-lbs">
    <input> hydro/buoyancy-lbs </input>
    <input> hydro/hull-lift-lbs </input>
    <input> hydro/damping-lift-lbs </input>
-   <output> external_reactions/hydro-Z/magnitude </output>
   </summer>
 
  </channel>
@@ -759,7 +617,7 @@
    </function>
   </fcs_function>
 
-  <summer name="hydro/drag-lbs">
+  <summer name="hydro/fdrag-lbs">
    <input> hydro/hull-drag-lbs </input>
    <input> hydro/left-float-drag-lbs </input>
    <input> hydro/right-float-drag-lbs </input>
@@ -1202,32 +1060,9 @@
 
  </channel>
 
- <!-- Implementation of forces and moments below. -->
+ <!-- Implementation of float forces . -->
 
  <channel name="Implementation Force X (north)">
-
-  <fcs_function name="hydro/X/force-lbs">
-   <function>
-    <product>
-     <value> -1.0 </value>
-     <sum>
-      <product>
-       <cos>
-        <property> flight-path/psi-gt-rad </property>
-       </cos>
-       <property> hydro/drag-lbs </property>
-      </product>
-      <product>
-       <sin>
-        <property> flight-path/psi-gt-rad </property>
-       </sin>
-       <property> hydro/side-lbs </property>
-      </product>     
-     </sum>
-    </product>
-   </function>
-   <output> external_reactions/hydro-X/magnitude </output>
-  </fcs_function>
 
   <fcs_function name="hydro/X/left-float-lbs">
    <function>
@@ -1267,29 +1102,6 @@
 
  <channel name="Implementation Force Y (east)">
 
-  <fcs_function name="hydro/Y/force-lbs">
-   <function>
-    <sum>
-     <product>
-      <value> -1.0 </value>
-      <product>
-       <sin>
-        <property> flight-path/psi-gt-rad </property>
-       </sin>
-       <property> hydro/drag-lbs </property>
-      </product>
-     </product>
-     <product>
-      <cos>
-       <property> flight-path/psi-gt-rad </property>
-      </cos>
-      <property> hydro/side-lbs </property>
-     </product>     
-    </sum>
-   </function>
-   <output> external_reactions/hydro-Y/magnitude </output>
-  </fcs_function>
-
   <fcs_function name="hydro/Y/left-float-lbs">
    <function>
     <sum>
@@ -1323,51 +1135,6 @@
    </function>
    <output> external_reactions/right-float-Y/magnitude </output>
   </fcs_function>
-
- </channel>
-
- <channel name="Implementation Pitch Moment">
-
-  <pure_gain name="hydro/pitch-moment/force-lbs[0]">
-   <input> hydro/pitch-moment-lbsft </input>
-   <gain> 0.5</gain>
-   <output> external_reactions/hydro-pitch[0]/magnitude </output>
-  </pure_gain>
-  <pure_gain name="hydro/pitch-moment/force-lbs[1]">
-   <input> hydro/pitch-moment-lbsft </input>
-   <gain>-0.5</gain>
-   <output> external_reactions/hydro-pitch[1]/magnitude </output>
-  </pure_gain>
-
- </channel>
-
- <channel name="Implementation Yaw Moment">
-
-  <pure_gain name="hydro/yaw-moment/force-lbs[0]">
-   <input> hydro/yaw-moment-lbsft </input>
-   <gain> 0.5</gain>
-   <output> external_reactions/hydro-yaw[0]/magnitude </output>
-  </pure_gain>
-  <pure_gain name="hydro/yaw-moment/force-lbs[1]">
-   <input> hydro/yaw-moment-lbsft </input>
-   <gain>-0.5</gain>
-   <output> external_reactions/hydro-yaw[1]/magnitude </output>
-  </pure_gain>
-
- </channel>
-
- <channel name="Implementation Roll Moment">
-
-  <pure_gain name="hydro/roll-moment/force-lbs[0]">
-   <input> hydro/roll-moment-lbsft </input>
-   <gain> 0.5</gain>
-   <output> external_reactions/hydro-roll[0]/magnitude </output>
-  </pure_gain>
-  <pure_gain name="hydro/roll-moment/force-lbs[1]">
-   <input> hydro/roll-moment-lbsft </input>
-   <gain>-0.5</gain>
-   <output> external_reactions/hydro-roll[1]/magnitude </output>
-  </pure_gain>
 
  </channel>
 

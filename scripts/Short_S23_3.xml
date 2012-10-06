@@ -85,27 +85,15 @@
    <set name="fcs/throttle-cmd-norm[2]"  value="1.00"/>
    <set name="fcs/throttle-cmd-norm[3]"  value="1.00"/>
    <set name="propulsion/magneto_cmd" value="3"/>
-   <set name="propulsion/starter_cmd" value="1"/>
-   <set name="fcs/starter-cmd-norm[0]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[1]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[2]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[3]"   value="1"/>
+   <set name="propulsion/set-running" value="-1"/>
   </event>
 
   <event name="Trim">
    <condition>
-     simulation/sim-time-sec  GE  20.0
+     simulation/sim-time-sec  GE  1.0
    </condition>
    <set name="simulation/do_simple_trim" value="1"/>
-   <set name="propulsion/engine[0]/set-running" value="1"/>
-   <set name="propulsion/engine[1]/set-running" value="1"/>
-   <set name="propulsion/engine[2]/set-running" value="1"/>
-   <set name="propulsion/engine[3]/set-running" value="1"/>
-   <set name="propulsion/starter_cmd"    value="0"/>
-   <set name="fcs/starter-cmd-norm[0]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[1]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[2]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[3]"   value="0"/>
+   <set name="propulsion/set-running" value="-1"/>
    <notify>
     <property>velocities/u-aero-fps</property>
     <property>velocities/v-aero-fps</property>
@@ -152,12 +140,12 @@
   <event name="Enable AP">
    <description>Enable the roll channel of the autopilot.</description>
    <condition>
-     simulation/sim-time-sec GT 20.0
+     simulation/sim-time-sec GT 1.0
    </condition>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.91"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.923"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.923"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.923"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.923"/>
    <!-- Close the speed valves of the unneeded channels. -->
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>

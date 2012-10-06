@@ -368,7 +368,7 @@
                <property>aero/function/ground-effect-factor-drag</property>
                <property>aero/qbar-psf</property>
                <property>metrics/Sw-sqft</property>
-               <value>1.26</value> <!-- Adjusted for climb time. -->
+               <value>1.30</value> <!-- Adjusted for climb time. -->
                <table>
                   <independentVar lookup="row">aero/alpha-rad</independentVar>
                   <tableData>
@@ -531,7 +531,7 @@
             <product>
                <property>aero/qbar-psf</property>
                <property>metrics/Sw-sqft</property>
-               <property>aero/beta-rad</property>
+               <sin><property>aero/beta-rad</property></sin>
                <table>
                   <independentVar lookup="row">aero/alpha-rad</independentVar>
                   <tableData>
@@ -675,7 +675,7 @@
                <property>aero/qbar-psf</property>
                <property>metrics/Sw-sqft</property>
                <property>metrics/bw-ft</property>
-               <property>aero/beta-rad</property>
+               <sin><property>aero/beta-rad</property></sin>
                <table>
                   <independentVar lookup="row">aero/alpha-rad</independentVar>
                   <tableData>
@@ -1060,7 +1060,7 @@
                <property>aero/qbar-psf</property>
                <property>metrics/Sw-sqft</property>
                <property>metrics/bw-ft</property>
-               <property>aero/beta-rad</property>
+               <sin><property>aero/beta-rad</property></sin>
                <table>
                   <independentVar lookup="row">aero/alpha-rad</independentVar>
                   <tableData>

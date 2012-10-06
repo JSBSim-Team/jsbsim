@@ -111,27 +111,15 @@
    <set name="fcs/throttle-cmd-norm[2]"  value="0.80"/>
    <set name="fcs/throttle-cmd-norm[3]"  value="0.80"/>
    <set name="propulsion/magneto_cmd" value="3"/>
-   <set name="propulsion/starter_cmd" value="1"/>
-   <set name="fcs/starter-cmd-norm[0]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[1]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[2]"   value="1"/>
-   <set name="fcs/starter-cmd-norm[3]"   value="1"/>
+   <set name="propulsion/set-running" value="-1"/>
   </event>
 
   <event name="Trim">
    <condition>
-     simulation/sim-time-sec  GE  10.0
+     simulation/sim-time-sec  GE  1.0
    </condition>
    <set name="simulation/do_simple_trim" value="1"/>
-   <set name="propulsion/engine[0]/set-running" value="1"/>
-   <set name="propulsion/engine[1]/set-running" value="1"/>
-   <set name="propulsion/engine[2]/set-running" value="1"/>
-   <set name="propulsion/engine[3]/set-running" value="1"/>
-   <set name="propulsion/starter_cmd" value="0"/>
-   <set name="fcs/starter-cmd-norm[0]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[1]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[2]"   value="0"/>
-   <set name="fcs/starter-cmd-norm[3]"   value="0"/>
+   <set name="propulsion/set-running" value="-1"/>
    <notify>
     <property>velocities/u-aero-fps</property>
     <property>velocities/v-aero-fps</property>
@@ -178,7 +166,7 @@
   <event name="Enable AP">
    <description>Enable the roll channel of the autopilot.</description>
    <condition>
-     simulation/sim-time-sec GT 10.0
+     simulation/sim-time-sec GT 1.0
    </condition>
    <set name="fcs/throttle-cmd-norm[0]"  value="1.0"/>
    <set name="fcs/throttle-cmd-norm[1]"  value="1.0"/>
@@ -193,6 +181,40 @@
    <!-- Enable the AP. -->
    <set name="sperry-autopilot/enabled-cmd-norm" value="1.0"/>
    <notify/>
+  </event>
+
+  <event name="Report 400ft">
+   <description>Report when reaching 400ft.</description>
+   <condition>
+     position/h-agl-ft GT 400.0
+   </condition>
+   <notify>
+    <property>position/h-agl-ft</property>
+    <property>velocities/vc-kts</property>
+    <property>velocities/u-aero-fps </property>
+    <property>velocities/v-aero-fps </property>
+    <property>velocities/w-aero-fps </property>
+    <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[0]/boost-psi</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
+    <property>propulsion/engine[1]/boost-psi</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
+    <property>propulsion/engine[2]/boost-psi</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
+    <property>propulsion/engine[3]/boost-psi</property>
+    <property>propulsion/engine[3]/power-hp</property>
+    <property>attitude/phi-rad</property>
+    <property>attitude/theta-rad</property>
+    <property>attitude/psi-rad</property>
+    <property>hydro/height-agl-ft</property>
+    <property>hydro/v-kt</property>
+    <property>hydro/pitch-deg</property>
+    <property>hydro/roll-deg</property>
+    <property>hydro/beta-deg</property>
+   </notify>
   </event>
 
   <event name="Report 1000ft">

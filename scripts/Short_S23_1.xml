@@ -69,6 +69,8 @@
    <set name="inertia/pointmass-weight-lbs[7]" value="1500.0"/>
    <set name="inertia/pointmass-weight-lbs[8]" value="0.0"/>
    <set name="inertia/pointmass-weight-lbs[9]" value="1300.0"/>
+   <!-- Sea level at SP01 in FlightGear. -->
+   <set name="hydro/water-level-ft"            value="-4.04"/>
   </event>
 
   <event name="Initialize 2">
@@ -86,7 +88,7 @@
   <event name="Initialization 3">
    <description>Set the up the electrical system</description>
    <condition>
-     simulation/sim-time-sec GE 0.0
+     simulation/sim-time-sec GE 1.0
    </condition>
    <notify/>
    <set name="electrical/main-switchbox/switch-cmd-norm[0]"   value="1.0"/>
@@ -143,7 +145,7 @@
   <event name="Engine start 1">
    <description>Start the engines</description>
    <condition>
-    simulation/sim-time-sec GE 60.0
+    simulation/sim-time-sec GE 10.0
    </condition>
    <notify/>
    <set name="fcs/advance-cmd-norm[0]" value="0.0"/>
@@ -166,19 +168,44 @@
    <set name="fcs/starter-cmd-norm[3]" value="1"/>
   </event>
   <event name="Engine start 2">
-   <description>Start the engines</description>
+   <description>The engines have started</description>
    <condition>
-    simulation/sim-time-sec GE 70.0
+    simulation/sim-time-sec GE 10.017
    </condition>
-   <notify/>
-   <set name="fcs/throttle-cmd-norm[0]"
-        value="0.10" action="FG_RAMP" tc ="5.0"/>
-   <set name="fcs/throttle-cmd-norm[1]"
-        value="0.10" action="FG_RAMP" tc ="5.0"/>
-   <set name="fcs/throttle-cmd-norm[2]"
-        value="0.10" action="FG_RAMP" tc ="5.0"/>
-   <set name="fcs/throttle-cmd-norm[3]"
-        value="0.15" action="FG_RAMP" tc ="5.0"/>
+   <!-- condition>
+    propulsion/engine[0]/engine-rpm GE 350
+    propulsion/engine[1]/engine-rpm GE 350
+    propulsion/engine[2]/engine-rpm GE 350
+    propulsion/engine[3]/engine-rpm GE 350
+   </condition -->
+   <notify>
+    <property>hydro/v-kt</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[0]/boost-psi</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>propulsion/engine[0]/starter-norm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
+    <property>propulsion/engine[1]/boost-psi</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>propulsion/engine[1]/starter-norm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
+    <property>propulsion/engine[2]/boost-psi</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>propulsion/engine[2]/starter-norm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
+    <property>propulsion/engine[3]/boost-psi</property>
+    <property>propulsion/engine[3]/power-hp</property>
+    <property>propulsion/engine[3]/starter-norm</property>
+   </notify>
+   <set name="propulsion/starter_cmd"  value="0"/>
+   <set name="fcs/starter-cmd-norm[0]" value="0"/>
+   <set name="fcs/starter-cmd-norm[1]" value="0"/>
+   <set name="fcs/starter-cmd-norm[2]" value="0"/>
+   <set name="fcs/starter-cmd-norm[3]" value="0"/>
+   <set name="fcs/throttle-cmd-norm[0]" value="0.00"/>
+   <set name="fcs/throttle-cmd-norm[1]" value="0.00"/>
+   <set name="fcs/throttle-cmd-norm[2]" value="0.00"/>
+   <set name="fcs/throttle-cmd-norm[3]" value="0.05"/>
   </event>
 
   <event name="Take-off AP">
