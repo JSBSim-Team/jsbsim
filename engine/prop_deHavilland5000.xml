@@ -2,7 +2,7 @@
 <!--
   Short Empire flying boat flight model for JSBSim.
 
-  Copyright (C) 2009 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+  Copyright (C) 2009 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
   This file is licensed under the GPL license version 2 or later.
 -->
 <propeller name="deHavilland5000">
@@ -19,7 +19,7 @@
    JavaProp:
      Designed for 172 knots (maximum speed in level flight)
      at 920 HP and 2600 (engine) RPM at coarse pitch (1.0).
-     Fine pitch (0.0) is design pitch -8 deg (a guess) and tweaked for
+     Fine pitch (0.0) is design pitch (=28) -8 deg (a guess) and tweaked for
      higher thrust at 20 knots (ct*1.25 and cp*1.1).
 
      #blades 3
@@ -60,7 +60,7 @@
 
  <table name="C_THRUST" type="internal">
   <tableData>
-             0.0       1.0
+             20.0      28.0
    0.00000   0.13633   0.12411
    0.05000   0.14529   0.12036
    0.10000   0.14006   0.13547
@@ -97,7 +97,7 @@
 
  <table name="C_POWER" type="internal">
   <tableData>
-             0.0       1.0
+             20.0      28.0
    0.00000   0.09631   0.14090
    0.05000   0.09388   0.12998
    0.10000   0.10367   0.14556
