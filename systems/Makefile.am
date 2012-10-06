@@ -19,4 +19,5 @@ EXTRA_DIST = \
 	afcs.xml \
 	fg_glue.xml \
 	jsb_glue.xml \
-	rpm_governor.xml
+	rpm_governor.xml \
+	hydrodynamics.xml

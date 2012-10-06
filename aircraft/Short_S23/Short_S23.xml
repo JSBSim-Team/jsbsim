@@ -30,7 +30,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-11-05</filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.8 2012/06/09 21:53:38 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.9 2012/10/06 19:55:37 andgi Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
@@ -944,28 +944,28 @@
    </direction>
   </force>
 
-  <force name="hydro-pitch[0]" frame="BODY">
+  <force name="hydro-pitch[0]" frame="LOCAL">
    <location unit="M">
-    <x> 8.68 </x>
+    <x> 8.3752 </x>
     <y> 0.00 </y>
-    <z>-0.3048 </z>
+    <z> 0.00 </z>
    </location>
    <direction>
-    <x> 1.0 </x>
+    <x> 0.0 </x>
     <y> 0.0 </y>
-    <z> 0.0 </z>
+    <z>-1.0 </z>
    </direction>
   </force>
-  <force name="hydro-pitch[1]" frame="BODY">
+  <force name="hydro-pitch[1]" frame="LOCAL">
    <location unit="M">
-    <x> 8.68 </x>
+    <x> 8.9848 </x>
     <y> 0.00 </y>
-    <z> 0.3048 </z>
+    <z> 0.00 </z>
    </location>
    <direction>
-    <x> 1.0 </x>
+    <x> 0.0 </x>
     <y> 0.0 </y>
-    <z> 0.0 </z>
+    <z>-1.0 </z>
    </direction>
   </force>
 
@@ -995,28 +995,28 @@
   </force>
 
 
-  <force name="hydro-roll[0]" frame="BODY">
+  <force name="hydro-roll[0]" frame="LOCAL">
    <location unit="M">
     <x> 8.68 </x>
-    <y> 0.00 </y>
-    <z>-0.3048 </z>
+    <y>-0.3048 </y>
+    <z> 0.00 </z>
    </location>
    <direction>
     <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
+    <y> 0.0 </y>
+    <z>-1.0 </z>
    </direction>
   </force>
-  <force name="hydro-roll[1]" frame="BODY">
+  <force name="hydro-roll[1]" frame="LOCAL">
    <location unit="M">
     <x> 8.68 </x>
-    <y> 0.00 </y>
-    <z> 0.3048 </z>
+    <y> 0.3048 </y>
+    <z> 0.00 </z>
    </location>
    <direction>
     <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
+    <y> 0.0 </y>
+    <z>-1.0 </z>
    </direction>
   </force>
 
@@ -1074,6 +1074,7 @@
  </external_reactions>
 
  <system file="hydrodynamics"/>
+ <system file="Short_S23-hydrodynamics"/>
 
  <!-- Sperry A-2 autopilot. -->
  <system file="sperry-a2-autopilot"/>
