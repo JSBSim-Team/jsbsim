@@ -60,11 +60,13 @@ INCLUDES
 #include "models/flight_control/FGMagnetometer.h"
 #include "models/flight_control/FGGyro.h"
 
+#include "FGFCSChannel.h"
+
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.77 2011/09/25 14:05:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.78 2012/10/15 05:02:29 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,13 +109,8 @@ FGFCS::~FGFCS()
 
   unsigned int i;
 
-  for (i=0;i<APComponents.size();i++) delete APComponents[i];
-  APComponents.clear();
-  for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
-  FCSComponents.clear();
-  for (i=0;i<Systems.size();i++) delete Systems[i];
-  Systems.clear();
-
+  for (i=0;i<SystemChannels.size();i++) delete SystemChannels[i];
+  SystemChannels.clear();
 
   Debug(1);
 }
@@ -140,44 +137,8 @@ bool FGFCS::InitModel(void)
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
   }
 
-  for (unsigned int i=0; i<Systems.size(); i++) {
-    if (Systems[i]->GetType() == "LAG" ||
-        Systems[i]->GetType() == "LEAD_LAG" ||
-        Systems[i]->GetType() == "WASHOUT" ||
-        Systems[i]->GetType() == "SECOND_ORDER_FILTER" ||
-        Systems[i]->GetType() == "INTEGRATOR")
-    {
-      ((FGFilter*)Systems[i])->ResetPastStates();
-    } else if (Systems[i]->GetType() == "PID" ) {
-      ((FGPID*)Systems[i])->ResetPastStates();
-    }
-  }
-
-  for (unsigned int i=0; i<FCSComponents.size(); i++) {
-    if (FCSComponents[i]->GetType() == "LAG" ||
-        FCSComponents[i]->GetType() == "LEAD_LAG" ||
-        FCSComponents[i]->GetType() == "WASHOUT" ||
-        FCSComponents[i]->GetType() == "SECOND_ORDER_FILTER" ||
-        FCSComponents[i]->GetType() == "INTEGRATOR")
-    {
-      ((FGFilter*)FCSComponents[i])->ResetPastStates();
-    } else if (FCSComponents[i]->GetType() == "PID" ) {
-      ((FGPID*)FCSComponents[i])->ResetPastStates();
-    }
-  }
-
-  for (unsigned int i=0; i<APComponents.size(); i++) {
-    if (APComponents[i]->GetType() == "LAG" ||
-        APComponents[i]->GetType() == "LEAD_LAG" ||
-        APComponents[i]->GetType() == "WASHOUT" ||
-        APComponents[i]->GetType() == "SECOND_ORDER_FILTER" ||
-        APComponents[i]->GetType() == "INTEGRATOR")
-    {
-      ((FGFilter*)APComponents[i])->ResetPastStates();
-    } else if (APComponents[i]->GetType() == "PID" ) {
-      ((FGPID*)APComponents[i])->ResetPastStates();
-    }
-  }
+  // Reset the channels components.
+  for (unsigned int i=0; i<SystemChannels.size(); i++) SystemChannels[i]->Reset();
 
   return true;
 }
@@ -210,14 +171,8 @@ bool FGFCS::Run(bool Holding)
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
 
-  // Execute Systems in order
-  for (i=0; i<Systems.size(); i++) Systems[i]->Run();
-
-  // Execute Autopilot
-  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run();
-
-  // Execute Flight Control System
-  for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run();
+  // Execute system channels in order
+  for (i=0; i<SystemChannels.size(); i++) SystemChannels[i]->Execute();
 
   RunPostFunctions();
 
@@ -526,12 +481,9 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 bool FGFCS::Load(Element* el, SystemType systype)
 {
   string name, file, fname="", interface_property_string, parent_name;
-  vector <FGFCSComponent*> *Components;
   Element *component_element;
   Element *channel_element;
-
-  Components=0;
-
+  
 // ToDo: The handling of name and file attributes could be improved, here,
 //       considering that a name can be in the external file, as well.
 
@@ -560,13 +512,10 @@ bool FGFCS::Load(Element* el, SystemType systype)
   }
 
   if (document->GetName() == "autopilot") {
-    Components = &APComponents;
     Name = "Autopilot: " + document->GetAttributeValue("name");
   } else if (document->GetName() == "flight_control") {
-    Components = &FCSComponents;
     Name = "FCS: " + document->GetAttributeValue("name");
   } else if (document->GetName() == "system") {
-    Components = &Systems;
     Name = "System: " + document->GetAttributeValue("name");
   }
   Debug(2);
@@ -609,8 +558,30 @@ bool FGFCS::Load(Element* el, SystemType systype)
   }
 
   channel_element = document->FindElement("channel");
+  
   while (channel_element) {
   
+    FGFCSChannel* newChannel = 0;
+
+    string sOnOffProperty = channel_element->GetAttributeValue("execute");
+    FGPropertyManager* OnOffPropertyNode = 0;
+    if (sOnOffProperty.length() > 0) {
+      OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
+      if (OnOffPropertyNode == 0) {
+        cerr << highint << fgred
+             << "The On/Off property, " << sOnOffProperty << " specified for channel "
+             << channel_element->GetAttributeValue("name") << " is undefined or not "
+             << "understood. The simulation will abort" << reset << endl;
+        throw("Bad system definition");
+      } else {
+        newChannel = new FGFCSChannel(OnOffPropertyNode);
+      }
+    } else {
+      newChannel = new FGFCSChannel();
+    }
+
+    SystemChannels.push_back(newChannel);
+
     if (debug_lvl > 0)
       cout << endl << highint << fgblue << "    Channel " 
          << normint << channel_element->GetAttributeValue("name") << reset << endl;
@@ -624,34 +595,34 @@ bool FGFCS::Load(Element* el, SystemType systype)
             (component_element->GetName() == string("second_order_filter")) ||
             (component_element->GetName() == string("integrator")) )
         {
-          Components->push_back(new FGFilter(this, component_element));
+          newChannel->Add(new FGFilter(this, component_element));
         } else if ((component_element->GetName() == string("pure_gain")) ||
                    (component_element->GetName() == string("scheduled_gain")) ||
                    (component_element->GetName() == string("aerosurface_scale")))
         {
-          Components->push_back(new FGGain(this, component_element));
+          newChannel->Add(new FGGain(this, component_element));
         } else if (component_element->GetName() == string("summer")) {
-          Components->push_back(new FGSummer(this, component_element));
+          newChannel->Add(new FGSummer(this, component_element));
         } else if (component_element->GetName() == string("deadband")) {
-          Components->push_back(new FGDeadBand(this, component_element));
+          newChannel->Add(new FGDeadBand(this, component_element));
         } else if (component_element->GetName() == string("switch")) {
-          Components->push_back(new FGSwitch(this, component_element));
+          newChannel->Add(new FGSwitch(this, component_element));
         } else if (component_element->GetName() == string("kinematic")) {
-          Components->push_back(new FGKinemat(this, component_element));
+          newChannel->Add(new FGKinemat(this, component_element));
         } else if (component_element->GetName() == string("fcs_function")) {
-          Components->push_back(new FGFCSFunction(this, component_element));
+          newChannel->Add(new FGFCSFunction(this, component_element));
         } else if (component_element->GetName() == string("pid")) {
-          Components->push_back(new FGPID(this, component_element));
+          newChannel->Add(new FGPID(this, component_element));
         } else if (component_element->GetName() == string("actuator")) {
-          Components->push_back(new FGActuator(this, component_element));
+          newChannel->Add(new FGActuator(this, component_element));
         } else if (component_element->GetName() == string("sensor")) {
-          Components->push_back(new FGSensor(this, component_element));
+          newChannel->Add(new FGSensor(this, component_element));
         } else if (component_element->GetName() == string("accelerometer")) {
-          Components->push_back(new FGAccelerometer(this, component_element));
+          newChannel->Add(new FGAccelerometer(this, component_element));
         } else if (component_element->GetName() == string("magnetometer")) {
-          Components->push_back(new FGMagnetometer(this, component_element));
+          newChannel->Add(new FGMagnetometer(this, component_element));
         } else if (component_element->GetName() == string("gyro")) {
-          Components->push_back(new FGGyro(this, component_element));
+          newChannel->Add(new FGGyro(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
@@ -742,34 +713,20 @@ ifstream* FGFCS::FindSystemFile(const string& sysfilename)
 
 string FGFCS::GetComponentStrings(const string& delimiter) const
 {
-  unsigned int comp;
   string CompStrings = "";
   bool firstime = true;
   int total_count=0;
 
-  for (unsigned int i=0; i<Systems.size(); i++) {
-    if (firstime) firstime = false;
-    else          CompStrings += delimiter;
-
-    CompStrings += Systems[i]->GetName();
-    total_count++;
-  }
-
-  for (comp = 0; comp < APComponents.size(); comp++)
+  for (unsigned int i=0; i<SystemChannels.size(); i++)
   {
-    if (firstime) firstime = false;
-    else          CompStrings += delimiter;
+    for (unsigned int c=0; c<SystemChannels[i]->GetNumComponents(); c++)
+    {
+      if (firstime) firstime = false;
+      else          CompStrings += delimiter;
 
-    CompStrings += APComponents[comp]->GetName();
-    total_count++;
-  }
-
-  for (comp = 0; comp < FCSComponents.size(); comp++) {
-    if (firstime) firstime = false;
-    else          CompStrings += delimiter;
-
-    CompStrings += FCSComponents[comp]->GetName();
-    total_count++;
+      CompStrings += SystemChannels[i]->GetComponent(c)->GetName();
+      total_count++;
+    }
   }
 
   return CompStrings;
@@ -781,32 +738,19 @@ string FGFCS::GetComponentValues(const string& delimiter) const
 {
   std::ostringstream buf;
 
-  unsigned int comp;
   bool firstime = true;
   int total_count=0;
 
-  for (unsigned int i=0; i<Systems.size(); i++) {
-    if (firstime) firstime = false;
-    else          buf << delimiter;
+  for (unsigned int i=0; i<SystemChannels.size(); i++)
+  {
+    for (unsigned int c=0; c<SystemChannels[i]->GetNumComponents(); c++)
+    {
+      if (firstime) firstime = false;
+      else          buf << delimiter;
 
-    buf << setprecision(9) << Systems[i]->GetOutput();
-    total_count++;
-  }
-
-  for (comp = 0; comp < APComponents.size(); comp++) {
-    if (firstime) firstime = false;
-    else          buf << delimiter;
-
-    buf << setprecision(9) << APComponents[comp]->GetOutput();
-    total_count++;
-  }
-
-  for (comp = 0; comp < FCSComponents.size(); comp++) {
-    if (firstime) firstime = false;
-    else          buf << delimiter;
-
-    buf << setprecision(9) << FCSComponents[comp]->GetOutput();
-    total_count++;
+      buf << setprecision(9) << SystemChannels[i]->GetComponent(c)->GetOutput();
+      total_count++;
+    }
   }
 
   return buf.str();

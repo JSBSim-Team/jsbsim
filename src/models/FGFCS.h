@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.40 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.41 2012/10/15 05:02:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class FGFCSChannel;
 typedef enum { ofRad=0, ofDeg, ofNorm, ofMag , NForms} OutputForm;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,7 +169,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.40 $
+    @version $Revision: 1.41 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -586,10 +587,8 @@ private:
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
 
-  typedef std::vector <FGFCSComponent*> FCSCompVec;
-  FCSCompVec Systems;
-  FCSCompVec FCSComponents;
-  FCSCompVec APComponents;
+  typedef std::vector <FGFCSChannel*> Channels;
+  Channels SystemChannels;
   void bind(void);
   void bindModel(void);
   void bindThrottle(unsigned int);
