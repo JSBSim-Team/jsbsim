@@ -387,6 +387,7 @@
     <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
     <ClInclude Include="src\models\atmosphere\FGWinds.h" />
     <ClInclude Include="src\models\FGAccelerations.h" />
+    <ClInclude Include="src\models\FGFCSChannel.h" />
     <ClInclude Include="src\models\propulsion\FGTransmission.h" />
     <ClInclude Include="src\simgear\xml\ascii.h" />
     <ClInclude Include="src\simgear\xml\asciitab.h" />
