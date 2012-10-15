@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.1 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.2 2012/10/15 04:58:08 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -119,7 +119,7 @@ FGOutputType::FGOutputType(FGFDMExec* fdmex, Element* element, int idx) :
   PostLoad(element, PropertyManager);
   Initialize(idx, OutRate);
 
-  Debug(0);
+  Debug(2);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

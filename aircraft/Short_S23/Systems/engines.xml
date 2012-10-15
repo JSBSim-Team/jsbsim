@@ -241,33 +241,33 @@
  </documentation>
  <channel name="Propeller pitch">
 
-  <switch name="fcs/propeller/blade-angle-norm[0]">
-   <default value="0.0"/>
-   <test value="1.0">
+  <switch name="fcs/propeller/blade-angle-deg[0]">
+   <default value="20.0"/>
+   <test value="28.0">
      fcs/advance-cmd-norm[0] GT 0.5
    </test>
    <output>propulsion/engine[0]/blade-angle</output>
   </switch>
 
-  <switch name="fcs/propeller/blade-angle-norm[1]">
-   <default value="0.0"/>
-   <test value="1.0">
+  <switch name="fcs/propeller/blade-angle-deg[1]">
+   <default value="20.0"/>
+   <test value="28.0">
      fcs/advance-cmd-norm[1] GT 0.5
    </test>
    <output>propulsion/engine[1]/blade-angle</output>
   </switch>
 
-  <switch name="fcs/propeller/blade-angle-norm[2]">
-   <default value="0.0"/>
-   <test value="1.0">
+  <switch name="fcs/propeller/blade-angle-deg[2]">
+   <default value="20.0"/>
+   <test value="28.0">
      fcs/advance-cmd-norm[2] GT 0.5
    </test>
    <output>propulsion/engine[2]/blade-angle</output>
   </switch>
 
-  <switch name="fcs/propeller/blade-angle-norm[3]">
-   <default value="0.0"/>
-   <test value="1.0">
+  <switch name="fcs/propeller/blade-angle-deg[3]">
+   <default value="20.0"/>
+   <test value="28.0">
      fcs/advance-cmd-norm[3] GT 0.5
    </test>
    <output>propulsion/engine[3]/blade-angle</output>

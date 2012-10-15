@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.3 2012/10/05 12:57:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.4 2012/10/15 04:59:19 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTFG;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -163,7 +163,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->phidot     = (float)(Auxiliary->GetEulerRates(ePhi)); // roll rate (radians/sec)
   net->thetadot   = (float)(Auxiliary->GetEulerRates(eTht)); // pitch rate (radians/sec)
   net->psidot     = (float)(Auxiliary->GetEulerRates(ePsi)); // yaw rate (radians/sec)
-  net->vcas       = (float)(Auxiliary->GetVcalibratedFPS()); // VCAS, ft/sec
+  net->vcas       = (float)(Auxiliary->GetVcalibratedKTS()); // VCAS, knots
   net->climb_rate = (float)(Propagate->Gethdot());           // altitude rate, ft/sec
   net->v_north    = (float)(Propagate->GetVel(eNorth));      // north vel in NED frame, fps
   net->v_east     = (float)(Propagate->GetVel(eEast));       // east vel in NED frame, fps

@@ -13,7 +13,7 @@ LIBRARY_INCLUDES = FGAerodynamics.h FGAircraft.h FGAtmosphere.h FGAuxiliary.h \
                  FGFCS.h FGGroundReactions.h FGInertial.h FGLGear.h FGMassBalance.h \
                  FGModel.h FGOutput.h FGPropagate.h FGPropulsion.h FGInput.h \
                  FGExternalReactions.h FGExternalForce.h \
-                 FGBuoyantForces.h FGGasCell.h FGAccelerations.h
+                 FGBuoyantForces.h FGGasCell.h FGAccelerations.h FGFCSChannel.h
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libModels.la
