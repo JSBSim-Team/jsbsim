@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.79 2012/09/05 21:49:18 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.80 2012/10/25 04:56:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -179,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.79 $
+    @version $Revision: 1.80 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -465,6 +465,7 @@ public:
   * - tTurn
   * - tNone  */
   void DoTrim(int mode);
+  void DoSimplexTrim(int mode);
 
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }

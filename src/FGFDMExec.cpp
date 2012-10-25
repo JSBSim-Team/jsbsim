@@ -64,6 +64,7 @@ INCLUDES
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
 #include "initialization/FGInitialCondition.h"
+#include "initialization/FGSimplexTrim.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
 
@@ -71,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.141 2012/09/15 17:00:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.142 2012/10/25 04:56:57 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,13 +152,59 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 //  typedef unsigned int (FGFDMExec::*uiPMF)(void) const;
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
+  instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
   instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
   instance->Tie("simulation/frame", (int *)&Frame, false);
-  instance->Tie("simulation/log_rate_hz", this, (dPMF)0, &FGFDMExec::SetLoggingRate, false);
+
+  // simplex trim properties
+  instance->SetDouble("trim/solver/rtol",0.001);
+  instance->SetDouble("trim/solver/speed",2);
+  instance->SetDouble("trim/solver/abstol",0.01);
+  instance->SetDouble("trim/solver/iterMax",2000);
+  instance->SetInt("trim/solver/debugLevel",0);
+  instance->SetDouble("trim/solver/random",0);
+  instance->SetBool("trim/solver/showSimplex",false);
+  instance->SetBool("trim/solver/showConvergence",true);
+  instance->SetBool("trim/solver/pause",false);
+
+  instance->SetDouble("trim/guess/throttleGuess",50);
+  instance->SetDouble("trim/guess/throttleMin",0);
+  instance->SetDouble("trim/guess/throttleMax",100);
+  instance->SetDouble("trim/guess/throttleInitialStepSize",5);
+
+  instance->SetDouble("trim/guess/aileronGuess",0);
+  instance->SetDouble("trim/guess/aileronMin",-100);
+  instance->SetDouble("trim/guess/aileronMax",100);
+  instance->SetDouble("trim/guess/aileronInitialStepSize",5);
+
+  instance->SetDouble("trim/guess/rudderGuess",0);
+  instance->SetDouble("trim/guess/rudderMin",-100);
+  instance->SetDouble("trim/guess/rudderMax",100);
+  instance->SetDouble("trim/guess/rudderInitialStepSize",5);
+
+  instance->SetDouble("trim/guess/elevatorGuess",0);
+  instance->SetDouble("trim/guess/elevatorMin",-100);
+  instance->SetDouble("trim/guess/elevatorMax",100);
+  instance->SetDouble("trim/guess/elevatorInitialStepSize",5);
+
+  instance->SetDouble("trim/guess/alphaGuess",10);
+  instance->SetDouble("trim/guess/alphaMin",0);
+  instance->SetDouble("trim/guess/alphaMax",20);
+  instance->SetDouble("trim/guess/alphaInitialStepSize",5);
+
+  instance->SetDouble("trim/guess/betaGuess",0);
+  instance->SetDouble("trim/guess/betaMin",-5);
+  instance->SetDouble("trim/guess/betaMax",5);
+  instance->SetDouble("trim/guess/betaInitialStepSize",1);
+
+  instance->SetBool("trim/guess/showConvergeStatus",true);
+  instance->SetBool("trim/guess/pause",true);
+  instance->SetBool("trim/guess/variablePropPitch",false);
+  instance->SetBool("trim/guess/debugLevel",0);
 
   Constructing = false;
 }
@@ -1125,6 +1172,23 @@ void FGFDMExec::DoTrim(int mode)
   trim.Report();
   sim_time = saved_time;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoSimplexTrim(int mode)
+{
+  double saved_time;
+  if (Constructing) return;
+  if (mode < 0 || mode > JSBSim::tNone) {
+      cerr << endl << "Illegal trimming mode!" << endl << endl;
+      return;
+  }
+  saved_time = sim_time;
+  FGSimplexTrim trim(this, (JSBSim::TrimMode)mode);
+  sim_time = saved_time;
+  Setsim_time(saved_time);
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
