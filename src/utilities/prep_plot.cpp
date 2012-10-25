@@ -95,19 +95,17 @@ INCLUDES
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
 #include "input_output/string_utilities.h"
 #include "plotXMLVisitor.h"
-
-#define DEFAULT_FONT "sans,10"
-#define TITLE_FONT "sans,12"
-#define LABEL_FONT "sans,10"
-#define AXIS_FONT "sans,10"
-#define TIMESTAMP_FONT "sans,8"
-#define TICS_FONT "sans,8"
 
 using namespace std;
 
 string plot_range;
+
+string DEFAULT_FONT, TITLE_FONT, LABEL_FONT, AXIS_FONT, TIMESTAMP_FONT, TICS_FONT;
 
 string HaveTerm(const vector <string>&, const string); 
 int GetTermIndex(const vector <string>&, const string);
@@ -120,6 +118,12 @@ bool MakeArbitraryPlot(
   string Title,
   stringstream& plot);
 void PrintNames(const vector <string>&);
+string itostr(int number)
+{
+  stringstream ss;  // create a stringstream
+  ss << number;     // add number to the stream
+  return ss.str();  // return a string with the contents of the stream
+}
 
 int main(int argc, char **argv)
 {
@@ -135,13 +139,28 @@ int main(int argc, char **argv)
   bool png=false;
   bool nokey=false;
   bool plotspecs=false;
+  string set_thickness="";
+  int font_sz_delta=0;
 
+  string font = "Helvetica,";
+
+  unsigned int DEFAULT_FONT_SZ = 12;
+  unsigned int TITLE_FONT_SZ = 14;
+  unsigned int LABEL_FONT_SZ = 12;
+  unsigned int AXIS_FONT_SZ = 12;
+  unsigned int TIMESTAMP_FONT_SZ = 10;
+  unsigned int TICS_FONT_SZ = 10;
+  
   string start_time="", end_time="";
 
   if (argc == 1 || string(argv[1]) == "--help") {
     cout << endl << "Usage: " << endl << endl;
-    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml>] [--comp[rehensive]] [--start=<time>] [--end=<time.] [--title=<title>] [--pdf|--png]"
+    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml>] [--comp[rehensive]]"
+         << " [--start=<time>] [--end=<time>] [--title=<title>] [--pdf | --png]"
+         << " [--thick | --thicker | --thickest] [--smallest | --small | --large | --largest]"
          << endl << endl;
+    cout << "If only the input data file name is given, all of the parameters available in that plot file" << endl;
+    cout << "are given." << endl << endl;
     exit(-1);
   }
 
@@ -166,6 +185,7 @@ int main(int argc, char **argv)
     nokey = false;
     files.push_back(filename);
   }
+
   ifstream infile(files[0].c_str());
   if (!infile.is_open()) {
     cerr << "Could not open file: " << files[0] << endl;
@@ -182,9 +202,9 @@ int main(int argc, char **argv)
     if (input_arg.substr(0,6) == "--plot") {
       plotspecs=true;
       plotspecfiles.push_back(input_arg.erase(0,7));
-    } else if (input_arg.substr(0,6) == "--pdf") {
+    } else if (input_arg.substr(0,5) == "--pdf") {
       pdf=true;
-    } else if (input_arg.substr(0,6) == "--png") {
+    } else if (input_arg.substr(0,5) == "--png") {
       png=true;
     } else if (input_arg.substr(0,6) == "--comp") {
       comprehensive=true;
@@ -194,11 +214,51 @@ int main(int argc, char **argv)
       start_time=input_arg.erase(0,8);
     } else if (input_arg.substr(0,5) == "--end") {
       end_time=input_arg.erase(0,6);
+    } else if (input_arg.substr(0,10) == "--thickest") {
+      set_thickness = "set termoption lw 5";
+    } else if (input_arg.substr(0,9) == "--thicker") {
+      set_thickness = "set termoption lw 3";
+    } else if (input_arg.substr(0,7) == "--thick") {
+      set_thickness = "set termoption lw 2";
+    } else if (input_arg.substr(0,10) == "--smallest") {
+      DEFAULT_FONT_SZ = 8;
+      TITLE_FONT_SZ = 8;
+      LABEL_FONT_SZ = 8;
+      AXIS_FONT_SZ = 8;
+      TIMESTAMP_FONT_SZ = 8;
+      TICS_FONT_SZ = 8;
+      font_sz_delta = 0;
+    } else if (input_arg.substr(0,7) == "--small") {
+      font_sz_delta = -2;
+    } else if (input_arg.substr(0,9) == "--largest") {
+      DEFAULT_FONT_SZ = 14;
+      TITLE_FONT_SZ = 14;
+      LABEL_FONT_SZ = 14;
+      AXIS_FONT_SZ = 14;
+      TIMESTAMP_FONT_SZ = 14;
+      TICS_FONT_SZ = 14;
+      font_sz_delta = 0;
+    } else if (input_arg.substr(0,7) == "--large") {
+      font_sz_delta = 2;
     } else {
       cerr << endl << "Unknown argument " << input_arg << endl;
       exit(-1);
     }
   }
+
+  DEFAULT_FONT_SZ += font_sz_delta;
+  TITLE_FONT_SZ += font_sz_delta;
+  LABEL_FONT_SZ += font_sz_delta;
+  AXIS_FONT_SZ += font_sz_delta;
+  TIMESTAMP_FONT_SZ += font_sz_delta;
+  TICS_FONT_SZ += font_sz_delta;
+
+  DEFAULT_FONT = font + itostr(DEFAULT_FONT_SZ);
+  TITLE_FONT = font + itostr(TITLE_FONT_SZ);
+  LABEL_FONT = font + itostr(LABEL_FONT_SZ);
+  AXIS_FONT = font + itostr(AXIS_FONT_SZ);
+  TIMESTAMP_FONT = font + itostr(TIMESTAMP_FONT_SZ);
+  TICS_FONT = font + itostr(TICS_FONT_SZ);
 
   if (!plotspecs && ! comprehensive) { // Just print out names to be plotted and exit.
     cout << "Known variable names in data file:" << endl;
@@ -211,7 +271,7 @@ int main(int argc, char **argv)
     plot_range = "["+start_time+":"+end_time+"]";
 
   if (pdf) {
-    cout << "set terminal pdf enhanced color rounded size 12,9 font \""DEFAULT_FONT"\"" << endl;
+    cout << "set terminal pdf enhanced color rounded size 12,9 font \"" << DEFAULT_FONT << "\"" << endl;
     cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".pdf'" << endl;
     cout << "set lmargin  13" << endl;
     cout << "set rmargin  4" << endl;
@@ -219,7 +279,7 @@ int main(int argc, char **argv)
     cout << "set bmargin  4" << endl;
     if (nokey) cout << "set nokey" << endl;
   } else if (png) {
-    cout << "set terminal png enhanced truecolor size 1280,1024 rounded font \""DEFAULT_FONT"\"" << endl;
+    cout << "set terminal png enhanced truecolor size 1280,1024 rounded font \"" << DEFAULT_FONT << "\"" << endl;
     cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".png'" << endl;
     cout << "set size 1.0,1.0" << endl;
     cout << "set origin 0.0,0.0" << endl;
@@ -229,20 +289,23 @@ int main(int argc, char **argv)
     cout << "set bmargin  4" << endl;
     if (nokey) cout << "set nokey" << endl;
   } else {
-    cout << "set terminal postscript enhanced color font \""DEFAULT_FONT"\"" << endl;
+    cout << "set terminal postscript enhanced color font \"" << DEFAULT_FONT << "\"" << endl;
     cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".ps'" << endl;
     if (nokey) cout << "set nokey" << endl;
   }
 
   if (!supplied_title.empty()) {
-    cout << "set title \"" << supplied_title << "\" font \""TITLE_FONT"\"" << endl;
+    cout << "set title \"" << supplied_title << "\" font \"" << TITLE_FONT << "\"" << endl;
   }
   
   cout << "set datafile separator \",\"" << endl;
   cout << "set grid xtics ytics" << endl;
-  cout << "set xtics font \""TICS_FONT"\"" << endl;
-  cout << "set ytics font \""TICS_FONT"\"" << endl;
-  cout << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
+  cout << "set xtics font \"" << TICS_FONT << "\"" << endl;
+  cout << "set ytics font \"" << TICS_FONT << "\"" << endl;
+  cout << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \"" << TIMESTAMP_FONT << "\"" << endl;
+
+  if (set_thickness.length() > 0)
+    cout << set_thickness << endl;
 
   if (comprehensive) {
   
@@ -281,7 +344,7 @@ int main(int argc, char **argv)
         cout << "set bmargin  0" << endl;
         cout << "set title \"\"" << endl;
         cout << "set xlabel \"\"" << endl;
-        cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set ylabel \"" << names[i+2] << "\" font \"" << LABEL_FONT << "\"" << endl;
         if (files.size()==1) EmitSinglePlot(files[0], i+3, names[i+2]);
         else EmitComparisonPlot(files, i+3, names[i+2]);
 
@@ -290,18 +353,18 @@ int main(int argc, char **argv)
         cout << "set bmargin  2" << endl;
         cout << "set title \"\"" << endl;
         cout << "set xlabel \"\"" << endl;
-        cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set ylabel \"" << names[i+1] << "\" font \"" << LABEL_FONT << "\"" << endl;
         if (files.size()==1) EmitSinglePlot(files[0], i+2, names[i+1]);
         else EmitComparisonPlot(files, i+2, names[i+1]);
 
         // Plot 3 at bottom
-        cout << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
+        cout << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \"" << TIMESTAMP_FONT << "\"" << endl;
         cout << "set tmargin  0" << endl;
         cout << "set bmargin  4" << endl;
         cout << "set title \"\"" << endl;
         cout << "set format x \"%.1f\"" << endl;
-        cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
-        cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set xlabel \"Time (sec)\" font \"" << LABEL_FONT << "\"" << endl;
+        cout << "set ylabel \"" << names[i] << "\" font \"" << LABEL_FONT << "\"" << endl;
         if (files.size()==1) EmitSinglePlot(files[0], i+1, names[i]);
         else EmitComparisonPlot(files, i+1, names[i]);
 
@@ -318,12 +381,12 @@ int main(int argc, char **argv)
 
         if (!supplied_title.empty()) { // title added
           cout << "set title \"" << supplied_title 
-               << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
+               << "\\n" << names[i] << " vs. Time\" font \"" << TITLE_FONT << "\"" << endl;
         } else {
-          cout << "set title \"" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
+          cout << "set title \"" << names[i] << " vs. Time\" font \"" << TITLE_FONT << "\"" << endl;
         }
-        cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
-        cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set xlabel \"Time (sec)\" font \"" << LABEL_FONT << "\"" << endl;
+        cout << "set ylabel \"" << names[i] << "\" font \"" << LABEL_FONT << "\"" << endl;
 
         if (files.size()==1) { // Single file
           EmitSinglePlot(files[0], i+1, names[i]);
@@ -346,6 +409,8 @@ int main(int argc, char **argv)
   // Execute this for each plot spec file e.g. --plot=data_plot/position.xml --plot=data_plot/velocities.xml ... */
   for (int fl=0; fl<plotspecfiles.size(); fl++) {
 
+    newPlot.str("");
+
     ifstream plotDirectivesFile(plotspecfiles[fl].c_str());
     if (!plotDirectivesFile) {
       cerr << "Could not open autoplot file " << plotspecfiles[fl] << endl << endl;
@@ -361,12 +426,12 @@ int main(int argc, char **argv)
       struct Plots& myPlot = myVisitor.vPlots[i];
       Title = "";
       if (!supplied_title.empty()) Title = supplied_title + string("\\n");
-      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
+      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \"" << TIMESTAMP_FONT << "\"" << endl;
       result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
       if (result) cout << newPlot.str();
     }
 
-    // special multiple plots
+    // special multiple plots (using <page> element)
 
     for (int page=0; page<myVisitor.vPages.size(); page++) {
       int numPlots = myVisitor.vPages[page].vPlots.size();
@@ -405,18 +470,23 @@ int main(int argc, char **argv)
 */
 //        newPlot << "set size 1.0,1.0" << endl;
 //        newPlot << "set origin 0.0,0.0" << endl;
-      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \""TIMESTAMP_FONT"\"" << endl;
-      newPlot << "set multiplot" << endl;
+      newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \"" << TIMESTAMP_FONT << "\"" << endl;
+      newPlot << "set multiplot title \"" + supplied_title + "\"" << endl;
 
       for (int plot=0; plot<numPlots; plot++)
       {
         struct Plots& myPlot = myVisitor.vPages[page].vPlots[plot];
         float position = (float)plot*(size + 2.*margin);
+
         newPlot << "set size 1.0," << size << endl;
         newPlot << "set origin 0.0," << position << endl;
 
         Title = "";
-        if (!supplied_title.empty()) Title = supplied_title + string("\\n");
+        // Add Title logic here, if any needed?
+
+        newPlot << "##" << endl << "##" << endl;
+        newPlot << "print \"Processing parameter plot: " << Title << "\"" << endl;
+        cout << "##" << endl << "##" << endl;
 
         result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
         if (!result) break;
@@ -434,11 +504,19 @@ int main(int argc, char **argv)
 }
 
 // ############################################################################
+//
+// Determines if the supplied name "parameter" is to be found in any of the long
+// long names in the names[] array. Parameter may be a shorthand version of the
+// fully qualified name in the names[] array.
 
 string HaveTerm(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
-    if (names[i] == parameter.substr(0,names[i].size())) return names[i];
+//    if (names[i] == parameter.substr(0,names[i].size())) return names[i];
+    if (names[i].find(parameter) != string::npos) {
+      int start = names[i].find(parameter);
+      if (start + parameter.length() == names[i].size()) return names[i];
+    }
   }
   cerr << "Could not find parameter: _" << parameter << "_" << endl;
   return string("");
@@ -449,7 +527,11 @@ string HaveTerm(const vector <string>& names, const string parameter)
 int GetTermIndex(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
-    if (names[i] == parameter) return i+1;
+//    if (names[i] == parameter) return i+1;
+    if (names[i].find(parameter) != string::npos) {
+      int start = names[i].find(parameter);
+      if (start + parameter.length() == names[i].size()) return i+1;
+    }
   }
   return -1;
 }
@@ -483,25 +565,25 @@ bool MakeArbitraryPlot(
     // Title
     Title += myPlot.Title;
     if (!Title.empty())
-      newPlot << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
+      newPlot << "set title \"" << Title << "\" font \"" << LABEL_FONT << "\"" << endl;
     else
       newPlot << "unset title" << endl;
     
     // X axis caption
     if (!myPlot.Axis_Caption[eX].empty())
-      newPlot << "set xlabel \"" << myPlot.Axis_Caption[eX] << "\" font \""LABEL_FONT"\"" << endl;
+      newPlot << "set xlabel \"" << myPlot.Axis_Caption[eX] << "\" font \"" << LABEL_FONT << "\"" << endl;
     else
       newPlot << "unset xlabel" << endl;
 
     // Left Y axis caption
     if (!myPlot.Axis_Caption[eY].empty())
-      newPlot << "set ylabel \"" << myPlot.Axis_Caption[eY] << "\" font \""LABEL_FONT"\"" << endl;
+      newPlot << "set ylabel \"" << myPlot.Axis_Caption[eY] << "\" font \"" << LABEL_FONT << "\"" << endl;
     else
       newPlot << "unset ylabel" << endl;
 
     // Right Y axis caption
     if (!myPlot.Axis_Caption[eY2].empty())
-      newPlot << "set y2label \"" << myPlot.Axis_Caption[eY2] << "\" font \""LABEL_FONT"\"" << endl;
+      newPlot << "set y2label \"" << myPlot.Axis_Caption[eY2] << "\" font \"" << LABEL_FONT << "\"" << endl;
     else
       newPlot << "unset y2label" << endl;
 
@@ -509,7 +591,7 @@ bool MakeArbitraryPlot(
     
       if (numRightYAxisNames > 0) {
         newPlot << "set rmargin 9" << endl;
-        newPlot << "set y2tics font \""TICS_FONT"\"" << endl;
+        newPlot << "set y2tics font \"" << TICS_FONT << "\"" << endl;
       }
 
       newPlot << "plot " << time_range << " \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
@@ -548,11 +630,11 @@ bool MakeArbitraryPlot(
 
       if (numRightYAxisNames > 0) {
         newPlot << "set rmargin 9" << endl;
-        newPlot << "set y2tics font \""TICS_FONT"\"" << endl;
+        newPlot << "set y2tics font \"" << TICS_FONT << "\"" << endl;
       }
 
       for (int f=0;f<files.size();f++) {
-      
+
         if (f==0) newPlot << "plot " << time_range << " ";
         else      {
           newPlot << ", \\" << endl;
@@ -621,5 +703,7 @@ void EmitComparisonPlot(const vector <string>& filenames, const int index, const
 
 void PrintNames(const vector <string>& names)
 {
-  for (int i=0; i<names.size(); i++) cout << "  " << names[i] << endl;
+  for (int i=0; i<names.size(); i++) {
+    cout << "  " << i+1 << ":  " << names[i] << endl;
+  }
 }
