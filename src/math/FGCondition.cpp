@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.16 2011/11/10 12:06:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.17 2012/10/27 20:29:01 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,13 +81,16 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
   }
 
   condition_element = element->GetElement();
-  while (condition_element) {
-    conditions.push_back(new FGCondition(condition_element, PropertyManager));
-    condition_element = element->GetNextElement();
-  }
-  for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
-    string data = element->GetDataLine(i);
-    conditions.push_back(new FGCondition(data, PropertyManager));
+  if (condition_element != 0) {
+    while (condition_element) {
+      conditions.push_back(new FGCondition(condition_element, PropertyManager));
+      condition_element = element->GetNextElement();
+    }
+  } else {
+    for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
+      string data = element->GetDataLine(i);
+      conditions.push_back(new FGCondition(data, PropertyManager));
+    }
   }
 
   Debug(0);
@@ -242,37 +245,43 @@ bool FGCondition::Evaluate(void )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCondition::PrintCondition(void )
+void FGCondition::PrintCondition(string indent)
 {
   string scratch;
 
   if (isGroup) {
+
     switch(Logic) {
     case (elUndef):
       scratch = " UNSET";
       cerr << "unset logic for test condition" << endl;
       break;
     case (eAND):
-      scratch = " if all of the following are true:";
+      scratch = indent + "if all of the following are true: {";
       break;
     case (eOR):
-      scratch = " if any of the following are true:";
+      scratch = indent + "if any of the following are true: {";
       break;
     default:
       scratch = " UNKNOWN";
       cerr << "Unknown logic for test condition" << endl;
     }
-
     cout << scratch << endl;
-    for (unsigned int i=0; i<conditions.size(); i++) conditions[i]->PrintCondition();
+
+    for (unsigned int i=0; i<conditions.size(); i++) {
+      conditions[i]->PrintCondition(indent + "  ");
+      cout << endl;
+    }
+
+    cout << indent << "}";
 
   } else {
     if (TestParam2 != 0L)
-      cout << "    " << TestParam1->GetName() << " "
+      cout << indent << TestParam1->GetName() << " "
            << conditional << " "
            << TestParam2->GetName();
     else
-      cout << "    " << TestParam1->GetName() << " "
+      cout << indent << TestParam1->GetName() << " "
                      << conditional << " " << TestValue;
   }
 }

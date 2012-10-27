@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.6 2011/04/05 20:20:21 andgi Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.7 2012/10/27 20:29:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ public:
   ~FGCondition(void);
 
   bool Evaluate(void);
-  void PrintCondition(void);
+  void PrintCondition(std::string indent="  ");
 
 private:
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
