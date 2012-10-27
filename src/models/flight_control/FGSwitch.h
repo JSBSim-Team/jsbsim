@@ -37,6 +37,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <cstdlib>
 #include "FGFCSComponent.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGCondition.h"
@@ -46,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.14 2011/04/05 20:20:21 andgi Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.15 2012/10/27 20:29:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -125,7 +127,7 @@ ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.14 2011/04/05 20:20:21 andgi Exp $
+@version $Id: FGSwitch.h,v 1.15 2012/10/27 20:29:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,14 +150,11 @@ public:
       @return true - always*/
   bool Run(void);
 
-  enum eLogic {elUndef=0, eAND, eOR, eDefault};
-  enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
-
 private:
 
   struct test {
-    vector <FGCondition*> conditions;
-    eLogic Logic;
+    FGCondition* condition;
+    bool Default;
     double OutputVal;
     FGPropertyValue *OutputProp;
     float sign;
@@ -166,10 +165,34 @@ private:
     }
 
     test(void) { // constructor for the test structure
-      Logic      = elUndef;
+      Default    = false;
       OutputVal  = 0.0;
       OutputProp = 0L;
       sign       = 1.0;
+    }
+
+    void setTestValue(string value, string Name, FGPropertyManager* propMan) {
+      if (value.empty()) {
+        std::cerr << "No VALUE supplied for switch component: " << Name << std::endl;
+      } else {
+        if (is_number(value)) {
+          OutputVal = atof(value.c_str());
+        } else {
+          // "value" must be a property if execution passes to here.
+          if (value[0] == '-') {
+            sign = -1.0;
+            value.erase(0,1);
+          } else {
+            sign = 1.0;
+          }
+          FGPropertyManager *node = propMan->GetNode(value, false);
+          if (node) {
+            OutputProp = new FGPropertyValue(node);
+          } else {
+            OutputProp = new FGPropertyValue(value, propMan);
+          }
+        }
+      }
     }
 
   };

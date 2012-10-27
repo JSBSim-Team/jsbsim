@@ -63,13 +63,12 @@ INCLUDES
 
 #include "FGSwitch.h"
 #include <iostream>
-#include <cstdlib>
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.22 2011/06/17 12:12:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.23 2012/10/27 20:29:01 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,77 +77,34 @@ CLASS IMPLEMENTATION
 
 FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  string value, logic;
+  string value;
   struct test *current_test;
-  Element *test_element, *condition_element;
+  Element *test_element;
 
   FGFCSComponent::bind(); // Bind() this component here in case it is used
                           // in its own definition for a sample-and-hold
 
-  test_element = element->GetElement();
+  int num = element->GetNumElements("test");
+  if (element->FindElement("default")) num++;
+  tests.reserve(num);
+
+  test_element = element->FindElement("default");
+  if (test_element) {
+    current_test = new struct test;
+    value = test_element->GetAttributeValue("value");
+    current_test->setTestValue(value, Name, PropertyManager);
+    current_test->Default = true;
+    tests.push_back(current_test);
+  }
+
+  test_element = element->FindElement("test");
   while (test_element) {
-    if (test_element->GetName() == "default") {
-      current_test = new struct test;
-      current_test->Logic = eDefault;
-      tests.push_back(current_test);
-    } else if (test_element->GetName() == "test") { // here's a test
-      current_test = new struct test;
-      logic = test_element->GetAttributeValue("logic");
-      if (logic == "OR") current_test->Logic = eOR;
-      else if (logic == "AND") current_test->Logic = eAND;
-      else if (logic.size() == 0) current_test->Logic = eAND; // default
-      else { // error
-        cerr << "Unrecognized LOGIC token " << logic << " in switch component: " << Name << endl;
-      }
-      for (unsigned int i=0; i<test_element->GetNumDataLines(); i++) {
-        string input_data = test_element->GetDataLine(i);
-        if (input_data.size() <= 1) {
-          // Make sure there are no bad data lines that consist solely of whitespace
-          cerr << fgred << "  Bad data line in switch component: " << Name << reset << endl;
-          continue;
-        }
-        current_test->conditions.push_back(new FGCondition(input_data, PropertyManager));
-      }
-
-      condition_element = test_element->GetElement(); // retrieve condition groups
-      while (condition_element) {
-        current_test->conditions.push_back(new FGCondition(condition_element, PropertyManager));
-        condition_element = test_element->GetNextElement();
-      }
-
-      tests.push_back(current_test);
-    }
-
-    string el_name = test_element->GetName();
-    if (   el_name != "output"
-        && el_name != "description"
-        && el_name != "delay" )
-    {
-      value = test_element->GetAttributeValue("value");
-      if (value.empty()) {
-        cerr << "No VALUE supplied for switch component: " << Name << endl;
-      } else {
-        if (is_number(value)) {
-          current_test->OutputVal = atof(value.c_str());
-        } else {
-          // "value" must be a property if execution passes to here.
-          if (value[0] == '-') {
-            current_test->sign = -1.0;
-            value.erase(0,1);
-          } else {
-            current_test->sign = 1.0;
-          }
-          FGPropertyManager *node = PropertyManager->GetNode(value, false);
-          if (node) {
-            current_test->OutputProp = new FGPropertyValue(node);
-          } else {
-            current_test->OutputProp = new FGPropertyValue(value,
-                                                           PropertyManager);
-          }
-        }
-      }
-    }
-    test_element = element->GetNextElement();
+    current_test = new struct test;
+    current_test->condition = new FGCondition(test_element, PropertyManager);
+    value = test_element->GetAttributeValue("value");
+    current_test->setTestValue(value, Name, PropertyManager);
+    tests.push_back(current_test);
+    test_element = element->FindNextElement("test");
   }
 
   Debug(0);
@@ -159,7 +115,6 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 FGSwitch::~FGSwitch()
 {
   for (unsigned int i=0; i<tests.size(); i++) {
-    for (unsigned int j=0; j<tests[i]->conditions.size(); j++) delete tests[i]->conditions[j];
     delete tests[i]->OutputProp;
     delete tests[i];
   }
@@ -175,20 +130,10 @@ bool FGSwitch::Run(void )
   double default_output=0.0;
 
   for (unsigned int i=0; i<tests.size(); i++) {
-    if (tests[i]->Logic == eDefault) {
+    if (tests[i]->Default) {
       default_output = tests[i]->GetValue();
-    } else if (tests[i]->Logic == eAND) {
-      pass = true;
-      for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
-        if (!tests[i]->conditions[j]->Evaluate()) pass = false;
-      }
-    } else if (tests[i]->Logic == eOR) {
-      pass = false;
-      for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
-        if (tests[i]->conditions[j]->Evaluate()) pass = true;
-      }
     } else {
-      cerr << "Invalid logic test" << endl;
+      pass = tests[i]->condition->Evaluate();
     }
 
     if (pass) {
@@ -236,43 +181,19 @@ void FGSwitch::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       for (unsigned int i=0; i<tests.size(); i++) {
-
-        scratch = " if ";
-
-        switch(tests[i]->Logic) {
-        case (elUndef):
-          comp = " UNSET ";
-          cerr << "Unset logic for test condition" << endl;
-          break;
-        case (eAND):
-          comp = " AND ";
-          break;
-        case (eOR):
-          comp=" OR ";
-          break;
-        case (eDefault):
-          scratch = " by default.";
-          break;
-        default:
-          comp = " UNKNOWN ";
-          cerr << "Unknown logic for test condition" << endl;
-        }
-
-        if (tests[i]->OutputProp != 0L)
-          if (tests[i]->sign < 0)
-            cout << indent << "Switch VALUE is - " << tests[i]->OutputProp->GetName() << scratch << endl;
-          else
-            cout << indent << "Switch VALUE is " << tests[i]->OutputProp->GetName() << scratch << endl;
-        else
-          cout << indent << "Switch VALUE is " << tests[i]->OutputVal << scratch << endl;
-
-        first = true;
-        for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
-          if (!first) cout << indent << comp << " ";
-          else cout << indent << " ";
-          first = false;
-          tests[i]->conditions[j]->PrintCondition();
-          cout << endl;
+        if (tests[i]->Default) {
+          if (tests[i]->OutputProp == 0) {
+            cout << "      Switch default value is: " << tests[i]->OutputVal;
+          } else {
+            cout << "      Switch default value is: " << tests[i]->OutputProp->GetName();
+          }
+        } else {
+          if (tests[i]->OutputProp == 0) {
+            cout << "      Switch takes test " << i << " value (" << tests[i]->OutputVal << ")" << endl;
+          } else {
+            cout << "      Switch takes test " << i << " value (" << tests[i]->OutputProp->GetName() << ")" << endl;
+          }
+          tests[i]->condition->PrintCondition("      ");
         }
         cout << endl;
       }
