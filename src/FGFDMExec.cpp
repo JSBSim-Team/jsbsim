@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.142 2012/10/25 04:56:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.143 2012/10/28 07:01:40 jentron Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -944,8 +944,8 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
       pcsNew->base_string = CreateIndexedPropertyName(pcsNew->base_string, node_idx);
     }
     if (pcs->node->getChild(i)->nChildren() == 0) {
-      if (pcsNew->base_string.substr(0,11) == string("/fdm/jsbsim")) {
-        pcsNew->base_string = pcsNew->base_string.erase(0,11);
+      if (pcsNew->base_string.substr(0,12) == string("/fdm/jsbsim/")) {
+        pcsNew->base_string = pcsNew->base_string.erase(0,12);
       }
       PropertyCatalog.push_back(pcsNew->base_string);
     } else {
