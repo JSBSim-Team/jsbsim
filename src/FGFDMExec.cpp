@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.143 2012/10/28 07:01:40 jentron Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.144 2012/10/28 23:26:53 jentron Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,50 +161,56 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->Tie("simulation/frame", (int *)&Frame, false);
 
   // simplex trim properties
-  instance->SetDouble("trim/solver/rtol",0.001);
+  instance->SetDouble("trim/solver/rtol",0.0001);
   instance->SetDouble("trim/solver/speed",2);
-  instance->SetDouble("trim/solver/abstol",0.01);
+  instance->SetDouble("trim/solver/abstol",0.001);
   instance->SetDouble("trim/solver/iterMax",2000);
   instance->SetInt("trim/solver/debugLevel",0);
   instance->SetDouble("trim/solver/random",0);
   instance->SetBool("trim/solver/showSimplex",false);
-  instance->SetBool("trim/solver/showConvergence",true);
+//  instance->SetBool("trim/solver/showConvergence",true);
   instance->SetBool("trim/solver/pause",false);
 
-  instance->SetDouble("trim/guess/throttleGuess",50);
-  instance->SetDouble("trim/guess/throttleMin",0);
-  instance->SetDouble("trim/guess/throttleMax",100);
-  instance->SetDouble("trim/guess/throttleInitialStepSize",5);
+  instance->SetDouble("trim/solver/throttleGuess",0.50);
+  instance->SetDouble("trim/solver/throttleMin",0.0);
+  instance->SetDouble("trim/solver/throttleMax",1.0);
+//  instance->SetDouble("trim/solver/throttleInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/throttleStep",0.1);
 
-  instance->SetDouble("trim/guess/aileronGuess",0);
-  instance->SetDouble("trim/guess/aileronMin",-100);
-  instance->SetDouble("trim/guess/aileronMax",100);
-  instance->SetDouble("trim/guess/aileronInitialStepSize",5);
+  instance->SetDouble("trim/solver/aileronGuess",0);
+  instance->SetDouble("trim/solver/aileronMin",-1.00);
+  instance->SetDouble("trim/solver/aileronMax",1.00);
+//  instance->SetDouble("trim/solver/aileronInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/aileronStep",0.1);
 
-  instance->SetDouble("trim/guess/rudderGuess",0);
-  instance->SetDouble("trim/guess/rudderMin",-100);
-  instance->SetDouble("trim/guess/rudderMax",100);
-  instance->SetDouble("trim/guess/rudderInitialStepSize",5);
+  instance->SetDouble("trim/solver/rudderGuess",0);
+  instance->SetDouble("trim/solver/rudderMin",-1.00);
+  instance->SetDouble("trim/solver/rudderMax",1.00);
+//  instance->SetDouble("trim/solver/rudderInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/rudderStep",0.1);
 
-  instance->SetDouble("trim/guess/elevatorGuess",0);
-  instance->SetDouble("trim/guess/elevatorMin",-100);
-  instance->SetDouble("trim/guess/elevatorMax",100);
-  instance->SetDouble("trim/guess/elevatorInitialStepSize",5);
+  instance->SetDouble("trim/solver/elevatorGuess",-0.1);
+  instance->SetDouble("trim/solver/elevatorMin",-1.0);
+  instance->SetDouble("trim/solver/elevatorMax",1.0);
+//  instance->SetDouble("trim/solver/elevatorInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/elevatorStep",0.1);
 
-  instance->SetDouble("trim/guess/alphaGuess",10);
-  instance->SetDouble("trim/guess/alphaMin",0);
-  instance->SetDouble("trim/guess/alphaMax",20);
-  instance->SetDouble("trim/guess/alphaInitialStepSize",5);
+  instance->SetDouble("trim/solver/alphaGuess",0.05);
+  instance->SetDouble("trim/solver/alphaMin",-0.1);
+  instance->SetDouble("trim/solver/alphaMax",.18);
+//  instance->SetDouble("trim/solver/alphaInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/alphaStep",0.05);
 
-  instance->SetDouble("trim/guess/betaGuess",0);
-  instance->SetDouble("trim/guess/betaMin",-5);
-  instance->SetDouble("trim/guess/betaMax",5);
-  instance->SetDouble("trim/guess/betaInitialStepSize",1);
+  instance->SetDouble("trim/solver/betaGuess",0);
+  instance->SetDouble("trim/solver/betaMin",-0.05);
+  instance->SetDouble("trim/solver/betaMax",0.05);
+//  instance->SetDouble("trim/solver/betaInitialStepSize",0.1);
+  instance->SetDouble("trim/solver/betaStep",0.05);
 
-  instance->SetBool("trim/guess/showConvergeStatus",true);
-  instance->SetBool("trim/guess/pause",true);
-  instance->SetBool("trim/guess/variablePropPitch",false);
-  instance->SetBool("trim/guess/debugLevel",0);
+  instance->SetBool("trim/solver/showConvergeStatus",true);
+//  instance->SetBool("trim/solver/pause",true);
+  instance->SetBool("trim/solver/variablePropPitch",false);
+//  instance->SetBool("trim/solver/debugLevel",0);
 
   Constructing = false;
 }
