@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.88 $</version>
+        <version>$Revision: 1.89 $</version>
         <description>Models a 1982 Cessna 172P.</description>
       <reference
         refID=  "1"
@@ -155,9 +155,34 @@
             <static_friction>0.8</static_friction>
             <dynamic_friction>0.5</dynamic_friction>
             <rolling_friction>0.022</rolling_friction>
-            <spring_coeff unit="LBS/FT">5400</spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC">160</damping_coeff>
-            <damping_coeff_rebound unit="LBS/FT/SEC">320</damping_coeff_rebound>
+            <!-- This definition of the bogey strut compression force is exactly
+                 equivalent to the definition of the left main gear. This
+                 alternate definition is intented to serve as an example as well
+                 as to help testing this feature -->
+            <strut_force>
+                <function>
+                    <sum>
+                        <product>
+                            <value> -5400. </value>
+                            <property> gear/unit[2]/compression-ft </property>
+                        </product>
+                        <ifthen>
+                            <ge>
+                                <property> gear/unit[2]/compression-velocity-fps </property>
+                                <value> 0.0 </value>
+                            </ge>
+                            <product>
+                                <value> -160. </value>
+                                <property> gear/unit[2]/compression-velocity-fps </property>
+                            </product>
+                            <product>
+                                <value> -320. </value>
+                                <property> gear/unit[2]/compression-velocity-fps </property>
+                            </product>
+                        </ifthen>
+                    </sum>
+                </function>
+            </strut_force>
             <max_steer unit="DEG">0</max_steer>
             <brake_group>RIGHT</brake_group>
             <retractable>0</retractable>
