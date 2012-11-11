@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.144 2012/10/28 23:26:53 jentron Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.145 2012/11/11 18:43:07 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -863,14 +863,14 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     element = document->FindElement("output");
     while (element) {
       string output_file_name = aircraftCfgFileName;
-      Element* document = element;
 
       if (!element->GetAttributeValue("file").empty()) {
         output_file_name = RootDir + element->GetAttributeValue("file");
-        document = LoadXMLDocument(output_file_name);
+        result = ((FGOutput*)Models[eOutput])->SetDirectivesFile(output_file_name);
       }
+      else
+        result = ((FGOutput*)Models[eOutput])->Load(element);
 
-      result = ((FGOutput*)Models[eOutput])->Load(document);
       if (!result) {
         cerr << endl << "Aircraft output element has problems in file " << output_file_name << endl;
         return result;

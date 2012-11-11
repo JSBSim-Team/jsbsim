@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.1 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.2 2012/11/11 12:53:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ public:
       @param outRate output rate in Hz
       @param outputProperties list of properties that should be output
    */
-  FGOutputTextFile(FGFDMExec* fdmex, const string& _delim, int idx,
+  FGOutputTextFile(FGFDMExec* fdmex, const std::string& _delim, int idx,
                    int subSystems, std::string name, double outRate,
                    std::vector<FGPropertyManager *> & outputProperties);
   /// Generates the output to the text file.

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+Include this file on your JSBSim standalone application command line in order to send 
+data to a socket.
+
+Start up your JSBSim script like this:
+ 
+src/jsbsim -realtime data_output/socket.xml scripts/c1723.xml
+ 
+-->
+
+<output name="localhost" type="SOCKET" port="1138" rate="20">
+  <simulation> ON </simulation>
+  <atmosphere> ON </atmosphere>
+  <massprops> OFF</massprops>
+  <rates> ON </rates>
+  <velocities> OFF </velocities>
+  <forces> ON </forces>
+  <moments> ON </moments>
+  <position> OFF </position>
+  <propulsion> OFF </propulsion>
+  <aerosurfaces> OFF </aerosurfaces>
+  <fcs> OFF </fcs>
+  <ground_reactions> OFF </ground_reactions>
+  <coefficients> OFF </coefficients>
+</output>
