@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.23 2012/10/27 20:29:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.24 2012/11/11 14:28:24 bcoconni Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,6 +91,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   test_element = element->FindElement("default");
   if (test_element) {
     current_test = new struct test;
+    current_test->condition = 0;
     value = test_element->GetAttributeValue("value");
     current_test->setTestValue(value, Name, PropertyManager);
     current_test->Default = true;
@@ -115,6 +116,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 FGSwitch::~FGSwitch()
 {
   for (unsigned int i=0; i<tests.size(); i++) {
+    delete tests[i]->condition;
     delete tests[i]->OutputProp;
     delete tests[i];
   }
