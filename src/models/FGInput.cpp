@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.22 2012/01/21 16:46:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.23 2012/11/17 19:42:53 bcoconni Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,10 +63,8 @@ CLASS IMPLEMENTATION
 FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGInput";
-  sFirstPass = dFirstPass = true;
   socket = 0;
   port = 0;
-  enabled = true;
 
   Debug(0);
 }
@@ -217,6 +215,7 @@ bool FGInput::Run(bool Holding)
         "   set {property name} {value}\n"
         "   hold\n"
         "   resume\n"
+        "   iterate {value}\n"
         "   help\n"
         "   quit\n"
         "   info\n\n");
