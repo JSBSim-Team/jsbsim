@@ -13,9 +13,6 @@ $version = 0.82;
 // Updated: 16 Oct 2003, DPC, new SimTurbine support
 // Updated: 20 Dec 2004, DPC, new XML version 2.0
 
-header("Content-type: text/plain");
-
-
 //***** GET DATA FROM USER ***************************
 
 $ac_enginename      = $_POST['ac_enginename'];
@@ -24,6 +21,9 @@ $ac_enginepower     = $_POST['ac_enginepower'];
 $ac_engineunits     = $_POST['ac_engineunits'];
 $ac_augmented       = $_POST['ac_augmented'];
 $ac_injected        = $_POST['ac_injected'];
+
+header("Content-type: text/plain");
+header("Content-Disposition: inline; filename=\"eng_$ac_enginename.xml\"");
 
 //***** CONVERT TO ENGLISH UNITS *********************
 
