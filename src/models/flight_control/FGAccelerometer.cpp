@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.10 2012/09/25 12:43:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.11 2012/11/17 18:03:19 jberndt Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,6 +102,8 @@ bool FGAccelerometer::Run(void )
   Input = vAccel(axis);
 
   ProcessSensorSignal();
+
+  if (IsOutput) SetOutput();
 
   return true;
 }

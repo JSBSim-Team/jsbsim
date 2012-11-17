@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.23 2011/08/18 12:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.24 2012/11/17 18:03:19 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,6 +142,8 @@ bool FGSensor::Run(void)
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
   ProcessSensorSignal();
+
+  if (IsOutput) SetOutput();
 
   return true;
 }

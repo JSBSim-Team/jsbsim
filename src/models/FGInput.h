@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.9 2011/05/20 03:18:36 jberndt Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.10 2012/11/17 19:42:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,13 +85,9 @@ public:
       @return false if no error */
   bool Run(bool Holding);
 
-  inline void Enable(void) { enabled = true; }
-  inline void Disable(void) { enabled = false; }
-  inline bool Toggle(void) {enabled = !enabled; return enabled;}
   bool Load(Element* el);
 
 private:
-  bool sFirstPass, dFirstPass, enabled;
   unsigned int port;
   FGfdmSocket* socket;
   std::string data;

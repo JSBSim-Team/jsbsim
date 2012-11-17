@@ -23,15 +23,13 @@ namespace JSBSim {
 
 FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 {
-	using namespace JSBSim;
-
 	std::clock_t time_start=clock(), time_trimDone, time_linDone;
 
 	// variables
 	fdm->Setdt(1./120);
 	FGTrimmer::Constraints constraints;
 
-	std::cout << "\n-----Performaing Simplex Based Trim --------------\n" << std::endl;
+	std::cout << "\n-----Performing Simplex Based Trim --------------\n" << std::endl;
 
 	// defaults
 	constraints.velocity = fdm->GetAuxiliary()->GetVt();
