@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.36 2011/09/25 23:56:11 jentron Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.37 2012/11/17 19:38:43 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,13 +139,12 @@ void FGTurbine::Calculate(void)
       N1 = IdleN1 + ThrottlePos * N1_factor;
       OilTemp_degK = 366.0;
       Cutoff = false;
-      }
-    else {
+    } else {
       phase = tpOff;
       Cutoff = true;
       EGT_degC = TAT;
-      }
     }
+  }
 
   if (!Running && Cutoff && Starter) {
      if (phase == tpOff) phase = tpSpinUp;
