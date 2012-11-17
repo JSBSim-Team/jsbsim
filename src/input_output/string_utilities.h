@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.14 2010/08/21 17:13:47 jberndt Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.15 2012/11/17 19:31:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -125,7 +125,10 @@ CLASS DECLARATION
 
   bool is_number(const string& str)
   {
-    return (str.find_first_not_of("+-.0123456789Ee") == string::npos);
+    if (str.size())
+      return (str.find_first_not_of("+-.0123456789Ee") == string::npos);
+    else
+      return false;
   }
 
   vector <string> split(string str, char d)
