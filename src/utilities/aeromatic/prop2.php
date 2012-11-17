@@ -15,9 +15,6 @@ $version = 1.1;
 //    NACA report RM-E6J31, by Sarri & Wallner       *
 //****************************************************
 
-header("Content-type: text/plain");
-
-
 //***** GET DATA FROM USER ***************************
 
 $ac_enginepower     = $_POST['ac_enginepower'];
@@ -26,6 +23,11 @@ $ac_maxengrpm       = $_POST['ac_maxengrpm'];
 $ac_pitch           = $_POST['ac_prop_pitch'];
 $ac_diameter        = $_POST['ac_diameter'];
 $ac_diaunits        = $_POST['ac_diaunits'];
+
+
+header("Content-type: text/plain");
+header("Content-Disposition: inline; filename=\"prop_aeromatic.xml\"");
+
 
 //***** CONVERT TO ENGLISH UNITS *********************
 
