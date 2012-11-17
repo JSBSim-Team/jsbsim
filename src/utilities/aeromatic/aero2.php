@@ -21,9 +21,7 @@ $version = 0.95;
 // Updated: 21 Oct 2008, DPC - fixed drag due to elevator with <abs>
 // Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
 // Updated: 21 Jul 2011, DPC - fix rudder travel limit bug
-
-
-header("Content-type: text/plain");
+// Updated:  2 Nov 2011, RKJ - better fuel estimates, payload pointmass
 
 
 //***** GET DATA FROM USER ***************************
@@ -51,6 +49,10 @@ $ac_htailarm        = $_POST['ac_htailarm'];
 $ac_vtailarea       = $_POST['ac_vtailares'];
 $ac_vtailarm        = $_POST['ac_vtailarm'];
 $ac_emptyweight     = $_POST['ac_emptyweight'];
+
+header("Content-type: text/plain");
+header("Content-Disposition: inline; filename=\"$ac_name.xml\"");
+
 
 //***** CONVERT TO ENGLISH UNITS *********************
 
@@ -460,20 +462,36 @@ $ac_tanklocx = $ac_cglocx;
 $ac_tanklocy = $ac_cglocy;
 $ac_tanklocz = $ac_cglocz;
 $ac_tankradius = 1;
-switch($ac_type) {  // capacity in pounds
-  case 0: $ac_tankcapacity =    0; break;
-  case 1: $ac_tankcapacity =  100; break;
-  case 2: $ac_tankcapacity =  300; break;
-  case 3: $ac_tankcapacity = 1000; break;
-  case 4: $ac_tankcapacity = 3000; break;
-  case 5: $ac_tankcapacity = 4500; break;
-  case 6: $ac_tankcapacity = $ac_weight/23.0/($ac_numengines + 1); break;
-  case 7: $ac_tankcapacity = $ac_weight/16.0/($ac_numengines + 1); break;
-  case 8: $ac_tankcapacity = $ac_weight/16.0/($ac_numengines + 1); break;
-  case 9: $ac_tankcapacity = $ac_weight/18.0/($ac_numengines + 1); break;
-  }
+if($ac_numengines > 0)
+{
+ switch($ac_type) {
+   case 0: $ac_fuelweight = $ac_weight * 0.079; break;
+   case 1: $ac_fuelweight = $ac_weight * 0.148; break;
+   case 2: $ac_fuelweight = $ac_weight * 0.183; break;
+   case 3: $ac_fuelweight = $ac_weight * 0.122; break;
+   case 4: $ac_fuelweight = $ac_weight * 0.162; break;
+   case 5: $ac_fuelweight = $ac_weight * 0.207; break;
+   case 6: $ac_fuelweight = $ac_weight * 0.277; break;
+   case 7: $ac_fuelweight = $ac_weight * 0.338; break;
+   case 8: $ac_fuelweight = $ac_weight * 0.419; break;
+   case 9: $ac_fuelweight = $ac_weight * 0.254; break;
+ }
+ $ac_tankcapacity = $ac_fuelweight / ($ac_numengines + 1);
+} else {
+ $ac_tankcapacity = 0;
+ $ac_fuelweight = 0;
+}
 $ac_tankcontents = $ac_tankcapacity/2;
 
+//***** PAYLOAD *************************************
+
+// A point mass will be placed at the CG weighing
+// 1/2 of the usable aircraft load.
+$ac_payloadlocx = $ac_cglocx;
+$ac_payloadlocy = $ac_cglocy;
+$ac_payloadlocz = $ac_cglocz;
+$ac_payload = $ac_weight - $ac_emptyweight - $ac_fuelweight;
+ 
 //***** LIFT ****************************************
 
 // estimate slope of lift curve based on airplane type
@@ -773,7 +791,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.13 $</version>\n");
+print("  <version>\$Revision: 1.14 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -828,11 +846,12 @@ else
   print("    yaw damper?    no\n\n");
 print("  Outputs:\n");
 printf("    wing loading:  %2.2f lb/sq-ft\n", $ac_wingloading);
-print("    CL-alpha:      $ac_CLalpha per radian\n");
-print("    CL-0:          $ac_CL0\n");
-print("    CL-max:        $ac_CLmax\n");
-print("    CD-0:          $ac_CD0\n");
-print("    K:             $ac_K"); 
+printf("    payload:       %3.1f lbs\n", $ac_payload);
+print( "    CL-alpha:      $ac_CLalpha per radian\n");
+print( "    CL-0:          $ac_CL0\n");
+print( "    CL-max:        $ac_CLmax\n");
+print( "    CD-0:          $ac_CD0\n");
+print( "    K:             $ac_K\n"); 
 print("\n-->\n\n"); 
 
 //***** METRICS **********************************
@@ -871,11 +890,20 @@ printf("   <izz unit=\"SLUG*FT2\">  %8.0f </izz>\n", $ac_izz);
 //printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
 //printf("   <iyz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
 printf("   <emptywt unit=\"LBS\" >  %8.0f </emptywt>\n", $ac_emptyweight);
-print("   <location name=\"CG\" unit=\"IN\">\n");
+print( "   <location name=\"CG\" unit=\"IN\">\n");
 printf("     <x> %6.2f </x>\n", $ac_cglocx);
 printf("     <y> %6.2f </y>\n", $ac_cglocy);
 printf("     <z> %6.2f </z>\n", $ac_cglocz);
-print("   </location>\n");
+print( "   </location>\n");
+print( "   <pointmass name=\"Payload\">\n");
+printf("    <description> %2.0f LBS + full (%2.0f LBS) fuel should bring model up to entered max weight</description>\n", $ac_payload, $ac_fuelweight);
+printf("    <weight unit=\"LBS\"> %8.1f </weight>\n", $ac_payload * .5);
+print( "    <location name=\"POINTMASS\" unit=\"IN\">\n");
+printf("      <x> %6.2f </x>\n", $ac_payloadlocx);
+printf("      <y> %6.2f </y>\n", $ac_payloadlocy);
+printf("      <z> %6.2f </z>\n", $ac_payloadlocz);
+print( "    </location>\n");
+print( "  </pointmass> \n");
 print(" </mass_balance>\n\n");
 
 
@@ -1063,47 +1091,45 @@ $ac_engine_name = $ac_name . '_engine';
 $ac_prop_name = $ac_name . '_prop';
 
 print(" <propulsion>\n\n");
-if($ac_type == 0) { // if glider, do nothing here
+for($i=0; $i<$ac_numengines; $i++) {
+
+ print("   <engine file=\"$ac_engine_name\">\n");
+ print("    <location unit=\"IN\">\n");
+ printf("      <x> %6.2f </x>\n", $ac_englocx[$i]);
+ printf("      <y> %6.2f </y>\n", $ac_englocy[$i]);
+ printf("      <z> %6.2f </z>\n", $ac_englocz[$i]);
+ print("    </location>\n");
+ print("    <orient unit=\"DEG\">\n");
+ printf("      <pitch> %2.2f </pitch>\n", $ac_engpitch[$i]);
+ print("      <roll>  0.00 </roll>\n");
+ printf("      <yaw>   %2.2f </yaw>\n", $ac_engyaw[$i]);
+ print("    </orient>\n");
+ print("    <feed>$ac_engfeed[$i]</feed>\n");
+
+ if($ac_enginetype == 0) {
+   print("    <thruster file=\"$ac_prop_name\">\n");
+   print("     <sense> 1 </sense>\n");
  }
  else {
- for($i=0; $i<$ac_numengines; $i++) {
+   print("    <thruster file=\"direct\">\n");
+ }
+ print("     <location unit=\"IN\">\n");
+ printf("       <x> %6.2f </x>\n", $ac_thrusterlocx[$i]);
+ printf("       <y> %6.2f </y>\n", $ac_thrusterlocy[$i]);
+ printf("       <z> %6.2f </z>\n", $ac_thrusterlocz[$i]);
+ print("     </location>\n");
+ print("     <orient unit=\"DEG\">\n");
+ printf("       <pitch> %2.2f </pitch>\n", $ac_thrusterpitch[$i]);
+ print("       <roll>  0.00 </roll>\n");
+ printf("       <yaw>   %2.2f </yaw>\n", $ac_thrusteryaw[$i]);
+ print("     </orient>\n");
 
-  print("   <engine file=\"$ac_engine_name\">\n");
-  print("    <location unit=\"IN\">\n");
-  printf("      <x> %6.2f </x>\n", $ac_englocx[$i]);
-  printf("      <y> %6.2f </y>\n", $ac_englocy[$i]);
-  printf("      <z> %6.2f </z>\n", $ac_englocz[$i]);
-  print("    </location>\n");
-  print("    <orient unit=\"DEG\">\n");
-  printf("      <pitch> %2.2f </pitch>\n", $ac_engpitch[$i]);
-  print("      <roll>  0.00 </roll>\n");
-  printf("      <yaw>   %2.2f </yaw>\n", $ac_engyaw[$i]);
-  print("    </orient>\n");
-  print("    <feed>$ac_engfeed[$i]</feed>\n");
-
-  if($ac_enginetype == 0) {
-    print("    <thruster file=\"$ac_prop_name\">\n");
-    }
-    else {
-    print("    <thruster file=\"direct\">\n");
-    }
-  print("     <location unit=\"IN\">\n");
-  printf("       <x> %6.2f </x>\n", $ac_thrusterlocx[$i]);
-  printf("       <y> %6.2f </y>\n", $ac_thrusterlocy[$i]);
-  printf("       <z> %6.2f </z>\n", $ac_thrusterlocz[$i]);
-  print("     </location>\n");
-  print("     <orient unit=\"DEG\">\n");
-  printf("       <pitch> %2.2f </pitch>\n", $ac_thrusterpitch[$i]);
-  print("       <roll>  0.00 </roll>\n");
-  printf("       <yaw>   %2.2f </yaw>\n", $ac_thrusteryaw[$i]);
-  print("     </orient>\n");
-
-  print("    </thruster>\n");
-  print("  </engine>\n\n");
-  }
+ print("    </thruster>\n");
+ print("  </engine>\n\n");
+}
 
  //***** FUEL TANKS **************************************
-
+if($ac_numengines > 0) { // Don't create fuel if there is no engine
  for($i=0; $i<($ac_numengines + 1); $i++) {
   print("  <tank type=\"FUEL\" number=\"$i\">\n");
   print("     <location unit=\"IN\">\n");
