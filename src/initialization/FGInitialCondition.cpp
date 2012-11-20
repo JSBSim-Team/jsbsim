@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.82 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.83 2012/11/20 05:43:20 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1059,9 +1059,6 @@ bool FGInitialCondition::Load_v2(void)
         if (position_el->FindElement("longitude"))
           position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
 
-        if (position_el->FindElement("latitude"))
-          position.SetLatitude(position_el->FindElementValueAsNumberConvertTo("latitude", "RAD"));
-
         if (position_el->FindElement("radius")) {
           position.SetRadius(position_el->FindElementValueAsNumberConvertTo("radius", "FT"));
         } else if (position_el->FindElement("altitudeAGL")) {
@@ -1072,6 +1069,22 @@ bool FGInitialCondition::Load_v2(void)
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
+        }
+
+        Element* latitude_el = position_el->FindElement("latitude");
+        if (latitude_el) {
+          double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
+          if (latitude_el->HasAttribute("type")) {
+            string lat_type = latitude_el->GetAttributeValue("type");
+            if (lat_type == "geod" || lat_type == "geodetic") {
+              double e = fdmex->GetInertial()->GetEccentricity();
+              double Rn = fdmex->GetInertial()->GetSemimajor()/sqrt(1-e*e*pow(sin(latitude),2));
+              double h = position.GetAltitudeASL();
+              double gclat = atan((1-e*e*(Rn/(Rn+h)))*tan(latitude));
+              latitude = gclat;
+            }
+          }
+          position.SetLatitude(latitude);
         }
 
       } else {
