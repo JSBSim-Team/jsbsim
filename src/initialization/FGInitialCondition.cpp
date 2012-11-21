@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.83 2012/11/20 05:43:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.84 2012/11/21 13:04:09 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1073,20 +1073,16 @@ bool FGInitialCondition::Load_v2(void)
 
         Element* latitude_el = position_el->FindElement("latitude");
         if (latitude_el) {
+          string lat_type = latitude_el->GetAttributeValue("type");
           double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
-          if (latitude_el->HasAttribute("type")) {
-            string lat_type = latitude_el->GetAttributeValue("type");
-            if (lat_type == "geod" || lat_type == "geodetic") {
-              double e = fdmex->GetInertial()->GetEccentricity();
-              double Rn = fdmex->GetInertial()->GetSemimajor()/sqrt(1-e*e*pow(sin(latitude),2));
-              double h = position.GetAltitudeASL();
-              double gclat = atan((1-e*e*(Rn/(Rn+h)))*tan(latitude));
-              latitude = gclat;
-            }
+          if (lat_type == "geod" || lat_type == "geodetic") {
+              double longitude = position.GetLongitude();
+              double altitude = position.GetAltitudeASL();                 // SetPositionGeodetic() assumes altitude 
+              position.SetPositionGeodetic(longitude, latitude, altitude); // is geodetic, but it's close enough for now.
+          } else {
+            position.SetLatitude(latitude);
           }
-          position.SetLatitude(latitude);
         }
-
       } else {
         position = position_el->FindElementTripletConvertTo("FT");
       }
