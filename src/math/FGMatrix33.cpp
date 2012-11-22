@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.13 2012/09/17 12:27:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.14 2012/11/22 22:04:06 bcoconni Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ string FGMatrix33::Dump(const string& delimiter, const string& prefix) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGQuaternion FGMatrix33::GetQuaternion(void)
+FGQuaternion FGMatrix33::GetQuaternion(void) const
 {
   FGQuaternion Q;
 
@@ -159,7 +159,7 @@ FGQuaternion FGMatrix33::GetQuaternion(void)
 // Compute the Euler-angles
 // Also see Jack Kuipers, "Quaternions and Rotation Sequences", section 7.8..
 
-FGColumnVector3 FGMatrix33::GetEuler(void)
+FGColumnVector3 FGMatrix33::GetEuler(void) const
 {
   FGColumnVector3 mEulerAngles;
 
