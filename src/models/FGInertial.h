@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.21 2012/11/23 21:42:29 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -104,7 +104,6 @@ private:
   double gAccelReference;
   double RadiusReference;
   double RotationRate;
-  double earthPosAngle;
   double GM;
   double C2_0; // WGS84 value for the C2,0 coefficient
   double J2;   // WGS84 value for J2
