@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.23 2012/11/17 19:42:53 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.24 2012/11/23 16:30:36 bcoconni Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,10 +131,24 @@ bool FGInput::Run(bool Holding)
 
       if (command == "set") {                   // SET PROPERTY
 
-        node = PropertyManager->GetNode(argument);
-        if (node == 0)
+        if (argument.size() == 0) {
+          socket->Reply("No property argument supplied.\n");
+          break;
+        }
+        try {
+          node = PropertyManager->GetNode(argument);
+        } catch(...) {
+          socket->Reply("Badly formed property query\n");
+          break;
+        }
+
+        if (node == 0) {
           socket->Reply("Unknown property\n");
-        else {
+          break;
+        } else if (!node->hasValue()) {
+          socket->Reply("Not a leaf property\n");
+          break;
+        } else {
           value = atof(str_value.c_str());
           node->setDoubleValue(value);
         }
@@ -152,7 +166,11 @@ bool FGInput::Run(bool Holding)
           socket->Reply("Badly formed property query\n");
           break;
         }
+
         if (node == 0) {
+          socket->Reply("Unknown property\n");
+          break;
+        } else if (!node->hasValue()) {
           if (Holding) { // if holding can query property list
             string query = FDMExec->QueryPropertyCatalog(argument);
             socket->Reply(query);

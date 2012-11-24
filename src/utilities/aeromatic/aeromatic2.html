@@ -179,16 +179,50 @@ You are now ready to have Aeromatic generate your file.  Aeromatic will create a
 <input name="ac_weight" value=10000.0 >
 
 <br><hr align=left width="'%"50"'">
-<b>Wing span</b><br>&nbsp;
-<input name="ac_wingspan" value=40.0 >
+<b>Empty Weight</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_emptyweight" value=0 >
 
 <br><hr align=left width="'%"50"'">
 <b>Length</b><br>&nbsp;
 <input name="ac_length" value=40.0 >
 
 <br><hr align=left width="'%"50"'">
+<b>Wing span</b><br>&nbsp;
+<input name="ac_wingspan" value=40.0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Wing chord</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_wingchord" value=0 >
+
+<br><hr align=left width="'%"50"'">
 <b>Wing area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
 <input name="ac_wingarea" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Wing incidence</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_wingincidence" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Htail area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_htailarea" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Htail arm</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_htailarm" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Vtail area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_vtailarea" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Vtail arm</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_vtailarm" value=0 >
+
+<br><hr align=left width="'%"50"'">
+<b>Inertia (xx, yy, zz)</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_ixx" value=0 >&nbsp;
+<input name="ac_iyy" value=0 >&nbsp;
+<input name="ac_izz" value=0 >
 
 <br><hr align=left width="'%"50"'">
 <b>Landing Gear Layout</b><br>&nbsp;
@@ -218,6 +252,7 @@ You are now ready to have Aeromatic generate your file.  Aeromatic will create a
 <input type="radio" name="ac_enginetype" value="1">turbine&nbsp;
 <input type="radio" name="ac_enginetype" value="2">turboprop&nbsp;
 <input type="radio" name="ac_enginetype" value="3">rocket&nbsp;
+<input type="radio" name="ac_enginetype" value="4">electric&nbsp;
 
 
 <br><hr align=left width="'%"50"'">

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.16 2012/09/17 12:27:44 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.17 2012/11/22 22:04:06 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -276,11 +276,11 @@ public:
 
   /** Returns the quaternion associated with this direction cosine (rotation) matrix.
   */
-  FGQuaternion GetQuaternion(void);
+  FGQuaternion GetQuaternion(void) const;
 
   /** Returns the Euler angle column vector associated with this matrix.
   */
-  FGColumnVector3 GetEuler();
+  FGColumnVector3 GetEuler() const;
 
   /** Determinant of the matrix.
       @return the determinant of the matrix.
