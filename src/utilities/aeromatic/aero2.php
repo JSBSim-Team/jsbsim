@@ -31,6 +31,7 @@ $ac_name            = $_POST['ac_name'];
 $ac_type            = $_POST['ac_type'];
 $ac_weight          = $_POST['ac_weight'];
 $ac_wingspan        = $_POST['ac_wingspan'];
+$ac_wingincidence   = $_POST['ac_wingincidence'];
 $ac_length          = $_POST['ac_length'];
 $ac_wingarea        = $_POST['ac_wingarea'];
 $ac_geartype        = $_POST['ac_geartype'];
@@ -46,9 +47,12 @@ $ac_yawdamper       = $_POST['ac_yawdamper'];
 $ac_wingchord       = $_POST['ac_wingchord'];
 $ac_htailarea       = $_POST['ac_htailarea'];
 $ac_htailarm        = $_POST['ac_htailarm'];
-$ac_vtailarea       = $_POST['ac_vtailares'];
+$ac_vtailarea       = $_POST['ac_vtailarea'];
 $ac_vtailarm        = $_POST['ac_vtailarm'];
 $ac_emptyweight     = $_POST['ac_emptyweight'];
+$ac_ixx             = $_POST['ac_ixx'];
+$ac_iyy             = $_POST['ac_iyy'];
+$ac_izz             = $_POST['ac_izz'];
 
 header("Content-type: text/plain");
 header("Content-Disposition: inline; filename=\"$ac_name.xml\"");
@@ -56,17 +60,22 @@ header("Content-Disposition: inline; filename=\"$ac_name.xml\"");
 
 //***** CONVERT TO ENGLISH UNITS *********************
 
+$ft_to_in = 12;
+
+$m_to_ft = 3.281;
+$kg_to_lbs = 2.205;
+
 if ($ac_units == 1) { 
-  $ac_weight *= 2.205;
-  $ac_wingspan *= 3.281;
-  $ac_length *= 3.281;
-  $ac_wingarea *= 10.765;
-  $ac_wingchord *= 3.281;
-  $ac_htailarea *= 10.765;
-  $ac_htailarm *= 3.281;
-  $ac_vtailarea *= 10.765;
-  $ac_vtailarm *= 3.281;
-  $ac_emptyweight *= 2.205;
+  $ac_weight      *= $kg_to_lbs;
+  $ac_wingspan    *= $m_to_ft;
+  $ac_length      *= $m_to_ft;
+  $ac_wingarea    *= $m_to_ft * $m_to_ft;
+  $ac_wingchord   *= $m_to_ft;
+  $ac_htailarea   *= $m_to_ft * $m_to_ft;
+  $ac_htailarm    *= $m_to_ft;
+  $ac_vtailarea   *= $m_to_ft * $m_to_ft;
+  $ac_vtailarm    *= $m_to_ft;
+  $ac_emptyweight *= $kg_to_lbs;
   }
 
 //***** METRICS ***************************************
@@ -105,7 +114,9 @@ $ac_aspectratio = $ac_wingspan / $ac_wingchord;
 $ac_halfspan = $ac_wingspan / 2;
 
 // for now let's use a standard 2 degrees wing incidence
-$ac_wingincidence = 2.0;
+if($ac_wingincidence == 0) {
+  $ac_wingincidence = 2.0;
+  }
 
 // estimate horizontal tail area
 if ($ac_htailarea == 0) {
@@ -192,30 +203,32 @@ if ($ac_emptyweight == 0) {
   
 //***** MOMENTS OF INERTIA ******************************
 
-// use Roskam's formulae to estimate moments of inertia
-switch($ac_type) {  // moment-of-inertia factors 
-  case 0: $Rx = 0.34;$Ry = 0.33;$Rz = 0.47; break;
-  case 1: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
-  case 2: $Rx = 0.27;$Ry = 0.35;$Rz = 0.45; break;
-  case 3: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
-  case 4: $Rx = 0.27;$Ry = 0.35;$Rz = 0.40; break;
-  case 5: $Rx = 0.29;$Ry = 0.34;$Rz = 0.41; break;
-  case 6: $Rx = 0.25;$Ry = 0.38;$Rz = 0.46; break;
-  case 7: $Rx = 0.25;$Ry = 0.36;$Rz = 0.47; break;
-  case 8: $Rx = 0.32;$Ry = 0.34;$Rz = 0.47; break;
-  case 9: $Rx = 0.32;$Ry = 0.35;$Rz = 0.47; break;
+if(($ac_ixx == 0) && ($ac_iyy == 0) && ($ac_izz == 0)) {
+  // use Roskam's formulae to estimate moments of inertia
+  switch($ac_type) {  // moment-of-inertia factors
+    case 0: $Rx = 0.34;$Ry = 0.33;$Rz = 0.47; break;
+    case 1: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
+    case 2: $Rx = 0.27;$Ry = 0.35;$Rz = 0.45; break;
+    case 3: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
+    case 4: $Rx = 0.27;$Ry = 0.35;$Rz = 0.40; break;
+    case 5: $Rx = 0.29;$Ry = 0.34;$Rz = 0.41; break;
+    case 6: $Rx = 0.25;$Ry = 0.38;$Rz = 0.46; break;
+    case 7: $Rx = 0.25;$Ry = 0.36;$Rz = 0.47; break;
+    case 8: $Rx = 0.32;$Ry = 0.34;$Rz = 0.47; break;
+    case 9: $Rx = 0.32;$Ry = 0.35;$Rz = 0.47; break;
+    }
+
+  // These are for an empty airplane
+  $ac_rawixx = ($ac_emptyweight / 32.2)* pow(($Rx * $ac_wingspan / 2), 2);
+  $ac_rawiyy = ($ac_emptyweight / 32.2)* pow(($Ry * $ac_length / 2), 2);
+  $ac_rawizz = ($ac_emptyweight / 32.2)* pow(($Rz * (($ac_wingspan + $ac_length)/2) / 2), 2);
+  // assume 4 degree angle between longitudinal and inertial axes
+  // $ac_rawixz = abs($ac_rawizz - $ac_rawixx) * 0.06975647;
+
+  $ac_ixx = $ac_rawixx;
+  $ac_iyy = $ac_rawiyy;
+  $ac_izz = $ac_rawizz;
   }
-
-// These are for an empty airplane  
-$ac_rawixx = ($ac_emptyweight / 32.2)* pow(($Rx * $ac_wingspan / 2), 2);
-$ac_rawiyy = ($ac_emptyweight / 32.2)* pow(($Ry * $ac_length / 2), 2);
-$ac_rawizz = ($ac_emptyweight / 32.2)* pow(($Rz * (($ac_wingspan + $ac_length)/2) / 2), 2);
-// assume 4 degree angle between longitudinal and inertial axes
-// $ac_rawixz = abs($ac_rawizz - $ac_rawixx) * 0.06975647;
-
-$ac_ixx = $ac_rawixx;
-$ac_iyy = $ac_rawiyy;
-$ac_izz = $ac_rawizz;
 $ac_ixz = 0;
 $ac_iyz = 0;
 $ac_ixy = 0;
@@ -223,9 +236,9 @@ $ac_ixy = 0;
 
 //***** CG LOCATION ***********************************
 
-$ac_cglocx = ($ac_length - $ac_htailarm) * 12;
+$ac_cglocx = ($ac_length - $ac_htailarm) * $ft_to_in;
 $ac_cglocy = 0;
-$ac_cglocz = -($ac_length / 40.0) * 12;
+$ac_cglocz = -($ac_length / 40.0) * $ft_to_in;
 
 //***** AERO REFERENCE POINT **************************
 
@@ -237,16 +250,16 @@ $ac_aerorpz = 0;
 
 // place pilot's eyepoint based on airplane type
 switch($ac_type) {
-  case 0: $ac_eyeptlocx = ($ac_length * 0.19) * 12; break;
-  case 1: $ac_eyeptlocx = ($ac_length * 0.13) * 12; break;
-  case 2: $ac_eyeptlocx = ($ac_length * 0.17) * 12; break;
-  case 3: $ac_eyeptlocx = ($ac_length * 0.28) * 12; break;
-  case 4: $ac_eyeptlocx = ($ac_length * 0.20) * 12; break;
-  case 5: $ac_eyeptlocx = ($ac_length * 0.20) * 12; break;
-  case 6: $ac_eyeptlocx = ($ac_length * 0.07) * 12; break;
-  case 7: $ac_eyeptlocx = ($ac_length * 0.07) * 12; break;
-  case 8: $ac_eyeptlocx = ($ac_length * 0.07) * 12; break;
-  case 9: $ac_eyeptlocx = ($ac_length * 0.08) * 12; break;
+  case 0: $ac_eyeptlocx = ($ac_length * 0.19) * $ft_to_in; break;
+  case 1: $ac_eyeptlocx = ($ac_length * 0.13) * $ft_to_in; break;
+  case 2: $ac_eyeptlocx = ($ac_length * 0.17) * $ft_to_in; break;
+  case 3: $ac_eyeptlocx = ($ac_length * 0.28) * $ft_to_in; break;
+  case 4: $ac_eyeptlocx = ($ac_length * 0.20) * $ft_to_in; break;
+  case 5: $ac_eyeptlocx = ($ac_length * 0.20) * $ft_to_in; break;
+  case 6: $ac_eyeptlocx = ($ac_length * 0.07) * $ft_to_in; break;
+  case 7: $ac_eyeptlocx = ($ac_length * 0.07) * $ft_to_in; break;
+  case 8: $ac_eyeptlocx = ($ac_length * 0.07) * $ft_to_in; break;
+  case 9: $ac_eyeptlocx = ($ac_length * 0.08) * $ft_to_in; break;
   }
 
 switch($ac_type) {
@@ -285,31 +298,31 @@ switch($ac_geartype) {
 
 // set main gear lateral location
 switch($ac_type) {
-  case 0: $ac_gearlocy_main = $ac_wingspan * 0.005 * 12; break;
-  case 1: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 2: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 3: $ac_gearlocy_main = $ac_wingspan * 0.15 * 12;  break;
-  case 4: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 5: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 6: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 7: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 8: $ac_gearlocy_main = $ac_wingspan * 0.09 * 12;  break;
-  case 9: $ac_gearlocy_main = $ac_wingspan * 0.11 * 12;  break;
+  case 0: $ac_gearlocy_main = $ac_wingspan * 0.005 * $ft_to_in; break;
+  case 1: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 2: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 3: $ac_gearlocy_main = $ac_wingspan * 0.15 * $ft_to_in;  break;
+  case 4: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 5: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 6: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 7: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 8: $ac_gearlocy_main = $ac_wingspan * 0.09 * $ft_to_in;  break;
+  case 9: $ac_gearlocy_main = $ac_wingspan * 0.11 * $ft_to_in;  break;
   }
 
 // set main gear length (from aircraft centerline, extended)
 switch($ac_geartype) {
-  case 0: $ac_gearlocz_main = -($ac_length * 0.12 * 12); break;
-  case 1: $ac_gearlocz_main = -($ac_length * 0.20 * 12); break;
+  case 0: $ac_gearlocz_main = -($ac_length * 0.12 * $ft_to_in); break;
+  case 1: $ac_gearlocz_main = -($ac_length * 0.20 * $ft_to_in); break;
   }
-if($ac_type == 0) $ac_gearlocz_main = -($ac_length / 10 * 12);  // glider
+if($ac_type == 0) $ac_gearlocz_main = -($ac_length / 10 * $ft_to_in);  // glider
 
-$ac_gearlocx_nose = $ac_length * 0.13 * 12;
+$ac_gearlocx_nose = $ac_length * 0.13 * $ft_to_in;
 $ac_gearlocy_nose = 0;
 $ac_gearlocz_nose = $ac_gearlocz_main;
 if($ac_type == 0) $ac_gearlocz_nose = $ac_gearlocz_main * 0.6;  // glider
 
-$ac_gearlocx_tail = $ac_length * 0.91 * 12;
+$ac_gearlocx_tail = $ac_length * 0.91 * $ft_to_in;
 $ac_gearlocy_tail = 0;
 $ac_gearlocz_tail = $ac_gearlocz_main * 0.30;
 
@@ -365,7 +378,7 @@ if ($ac_enginelayout == 1) {
 if ($ac_enginelayout == 2) {
   $leftmost = ($ac_numengines * -20) + 20;
   for($i=0; $i<$ac_numengines; $i++) {   
-      $ac_englocx[$i] = ($ac_length * 12) - 60.0;
+      $ac_englocx[$i] = ($ac_length * $ft_to_in) - 60.0;
       $ac_englocy[$i] = $leftmost + ($i * 40);
       $ac_englocz[$i] = 0; 
      }
@@ -452,6 +465,7 @@ switch($ac_enginetype) {
   case 1: $ac_thrustertype = 'direct'; break;
   case 2: $ac_thrustertype = 'direct'; break;
   case 3: $ac_thrustertype = 'direct'; break;
+  case 4: $ac_thrustertype = 'prop';   break;
   }
 
 //***** FUEL TANKS **********************************
@@ -791,7 +805,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.14 $</version>\n");
+print("  <version>\$Revision: 1.15 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -831,6 +845,7 @@ switch($ac_enginetype) {
   case 1: print("    engine type:   turbine\n"); break; 
   case 2: print("    engine type:   turboprop\n"); break; 
   case 3: print("    engine type:   rocket\n"); break; 
+  case 4: print("    engine type:   electric\n"); break;
 }
 switch($ac_enginelayout) {
   case 0: print("    engine layout: forward fuselage\n"); break; 
