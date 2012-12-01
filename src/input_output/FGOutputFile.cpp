@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.1 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.2 2012/12/01 14:58:26 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,10 +76,8 @@ FGOutputFile::FGOutputFile(FGFDMExec* fdmex, int idx, int subSystems,
 
 bool FGOutputFile::InitModel(void)
 {
-  if (FGOutputType::InitModel()) {
-    OpenFile();
-    return true;
-  }
+  if (FGOutputType::InitModel())
+    return OpenFile();
 
   return false;
 }

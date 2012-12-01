@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.2 2012/11/11 12:53:57 bcoconni Exp $"
+#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.3 2012/12/01 14:58:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,7 +103,7 @@ protected:
   std::string delimeter;
   std::ofstream datafile;
 
-  virtual void OpenFile(void);
+  virtual bool OpenFile(void);
   virtual void CloseFile(void) { if (datafile.is_open()) datafile.close(); }
 };
 }

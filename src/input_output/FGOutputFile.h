@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTFILE "$Id: FGOutputFile.h,v 1.1 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_OUTPUTFILE "$Id: FGOutputFile.h,v 1.2 2012/12/01 14:58:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -130,7 +130,7 @@ protected:
   std::string Filename;
 
   /// Opens the file
-  virtual void OpenFile(void) = 0;
+  virtual bool OpenFile(void) = 0;
   /// Closes the file
   virtual void CloseFile(void) {}
 
