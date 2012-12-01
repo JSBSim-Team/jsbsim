@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.1 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.2 2012/12/01 14:58:26 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,9 +89,18 @@ FGOutputTextFile::FGOutputTextFile(FGFDMExec* fdmex, const string& _delim,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutputTextFile::OpenFile(void)
+bool FGOutputTextFile::OpenFile(void)
 {
+  datafile.clear();
   datafile.open(Filename.c_str());
+  if (!datafile) {
+    cerr << endl << fgred << highint << "ERROR: unable to open the file "
+         << reset << Filename.c_str() << endl
+         << fgred << highint << "       => Output to this file is disabled."
+         << reset << endl << endl;
+    Disable();
+    return false;
+  }
 
   string scratch = "";
   streambuf* buffer = datafile.rdbuf();
@@ -222,6 +231,8 @@ void FGOutputTextFile::OpenFile(void)
 
   outstream << endl;
   outstream.flush();
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
