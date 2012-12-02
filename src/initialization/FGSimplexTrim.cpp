@@ -44,7 +44,7 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 	bool pause = fdm->GetPropertyManager()->GetBool("trim/solver/pause");
 	bool showSimplex = fdm->GetPropertyManager()->GetBool("trim/solver/showSimplex");
 	bool variablePropPitch = fdm->GetPropertyManager()->GetBool("trim/solver/variablePropPitch");
-	int debugLevel = fdm->GetPropertyManager()->GetInt("trim/solver/debugLevel");
+	//int debugLevel = fdm->GetPropertyManager()->GetInt("trim/solver/debugLevel");
 
 	std::string fileName = aircraft;
 
@@ -86,9 +86,9 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 	//prompt("\tvelocity, ft/s\t\t",constraints.velocity);
 	//prompt("\tgamma, deg\t\t",constraints.gamma); constraints.gamma = constraints.gamma*M_PI/180;
 	
-	double phi = fdm->GetPropagate()->GetEuler(1);
+	//double phi = fdm->GetPropagate()->GetEuler(1);
 	double theta = fdm->GetPropagate()->GetEuler(2);
-	double psi = fdm->GetPropagate()->GetEuler(3);
+	//double psi = fdm->GetPropagate()->GetEuler(3);
 
 	// TODO check that this works properly
 	constraints.gamma = theta;

@@ -68,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.24 2012/11/11 14:28:24 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.25 2012/12/02 12:59:19 bcoconni Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,7 +176,7 @@ void FGSwitch::Debug(int from)
 {
   string comp, scratch;
   string indent = "        ";
-  bool first = false;
+  //bool first = false;
 
   if (debug_lvl <= 0) return;
 
