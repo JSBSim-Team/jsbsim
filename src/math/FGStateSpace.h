@@ -502,7 +502,7 @@ public:
         }
         void set(double val)
         {
-            for (int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
+            for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
                 m_fdm->GetFCS()->SetThrottleCmd(i,val);
             m_fdm->GetFCS()->Run(true);
         }
@@ -518,7 +518,7 @@ public:
         }
         void set(double val)
         {
-            for (int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
+            for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
                 m_fdm->GetFCS()->SetThrottlePos(i,val);
         }
     };
@@ -677,7 +677,7 @@ public:
         }
         void set(double val)
         {
-            for (int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
+            for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++)
                 m_fdm->GetPropulsion()->GetEngine(i)->GetThruster()->SetPitch(val);
         }
     };

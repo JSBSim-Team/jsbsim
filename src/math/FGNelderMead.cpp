@@ -35,17 +35,17 @@ FGNelderMead::FGNelderMead(Function * f, const std::vector<double> & initialGues
                            double rtol, double abstol, double speed, double randomization,
 						   bool showConvergeStatus,
                            bool showSimplex, bool pause, Callback * callback) :
-        m_f(f), m_lowerBound(lowerBound), m_upperBound(upperBound),
-		m_randomization(randomization),
+        m_f(f), m_callback(callback), m_randomization(randomization),
+        m_lowerBound(lowerBound), m_upperBound(upperBound),
         m_nDim(initialGuess.size()), m_nVert(m_nDim+1),
         m_iMax(1), m_iNextMax(1), m_iMin(1),
         m_simplex(m_nVert), m_cost(m_nVert), m_elemSum(m_nDim),
-        m_callback(callback), m_status(1),
+        m_status(1),
 		initialGuess(initialGuess), initialStepSize(initialStepSize),
-		iterMax(iterMax), rtol(rtol), abstol(abstol),
+		iterMax(iterMax), iter(), rtol(rtol), abstol(abstol),
 		speed(speed), showConvergeStatus(showConvergeStatus), showSimplex(showSimplex),
 		pause(pause), rtolI(), minCostPrevResize(1), minCost(), minCostPrev(), maxCost(),
-		nextMaxCost(), iter()
+		nextMaxCost()
 {
 	srand ( time(NULL) ); // seed random number generator
 }

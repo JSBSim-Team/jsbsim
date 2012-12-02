@@ -138,9 +138,9 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & v)
     m_fdm->GetFCS()->SetDrPos(ofNorm,rudder);
     m_fdm->GetFCS()->SetDrCmd(rudder);
 
-    for (int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++)
+    for (unsigned int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++)
     {
-        FGEngine * engine = m_fdm->GetPropulsion()->GetEngine(i);
+        //FGEngine * engine = m_fdm->GetPropulsion()->GetEngine(i);
         m_fdm->GetPropulsion()->GetEngine(i)->InitRunning();
         m_fdm->GetFCS()->SetThrottleCmd(i,throttle);
         m_fdm->GetFCS()->SetThrottlePos(i,throttle);
@@ -275,13 +275,13 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
               << "\n\npropulsion system state"
               << std::scientific << std::setw(10);
 
-              for (int i=0;i<m_fdm->GetPropulsion()->GetNumTanks();i++) {
+              for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumTanks();i++) {
                   stream 
                     << "\n\ttank " << i << ": fuel (lbm)\t\t\t:\t" 
                     << m_fdm->GetPropulsion()->GetTank(i)->GetContents();
               }
 
-              for (int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++) {
+              for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++) {
                   m_fdm->GetPropulsion()->GetEngine(i)->CalcFuelNeed();
                   stream
                     << "\n\tengine " << i

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.7 2011/12/11 17:03:05 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.8 2012/12/02 12:59:19 bcoconni Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,7 +436,7 @@ void FGWinds::NumberOfUpDownburstCells(int num)
   for (unsigned int i=0; i<UpDownBurstCells.size();i++) delete UpDownBurstCells[i];
   UpDownBurstCells.clear();
   if (num >= 0) {
-    for (unsigned int i=0; i<num; i++) UpDownBurstCells.push_back(new struct UpDownBurst);
+    for (int i=0; i<num; i++) UpDownBurstCells.push_back(new struct UpDownBurst);
   }
 }
 
@@ -464,7 +464,7 @@ void FGWinds::UpDownBurst()
 {
 
   for (unsigned int i=0; i<UpDownBurstCells.size(); i++) {
-    double d = DistanceFromRingCenter(UpDownBurstCells[i]->ringLatitude, UpDownBurstCells[i]->ringLongitude);
+    /*double d =*/ DistanceFromRingCenter(UpDownBurstCells[i]->ringLatitude, UpDownBurstCells[i]->ringLongitude);
 
   }
 }
