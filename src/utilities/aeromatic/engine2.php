@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.82;
+$version = 0.83;
 
 //****************************************************
 //                                                   *
@@ -83,27 +83,33 @@ function MakePiston() {
 
   global $ac_enginename, $ac_enginepower;
   $displacement = $ac_enginepower * 1.9;
+  $stroke = 4.375; // FIXME: we can use maxrpm to find a stroke length
+  $bore   = 5.125;
+  $bore_s = pow($bore/2, 2.0) * 3.14159; // Guess the area of one piston (5.125/2)^2 * PI
+  $n_cylinders = $displacement /  ($stroke * $bore_s);
+  $n_cylinders = (($n_cylinders < 1) ? 1 : floor($n_cylinders+0.5));
 
-  print("<piston_engine name=\"$ac_enginename\">\n");
-  print("  <minmp unit=\"INHG\">          6.0 </minmp>\n");
-  print("  <maxmp unit=\"INHG\">         28.5 </maxmp>\n");
+  print ("<piston_engine name=\"$ac_enginename\">\n");
+  print ("  <minmp unit=\"INHG\">         10.0 </minmp>\n");
+  print ("  <maxmp unit=\"INHG\">         28.5 </maxmp>\n");
   printf("  <displacement unit=\"IN3\"> %3.2f </displacement>\n", $displacement);
   printf("  <maxhp>        %3.2f </maxhp>\n", $ac_enginepower);
-  print("  <cycles>         4.0 </cycles>\n");
-  print("  <idlerpm>      700.0 </idlerpm>\n");
-  print("  <maxrpm>      2800.0 </maxrpm>\n");
-  print("  <maxthrottle>    1.0 </maxthrottle><!-- Deprecated -->\n");
-  print("  <minthrottle>    0.1 </minthrottle><!-- Deprecated -->\n");
-  print("  <sparkfaildrop>  0.1 </sparkfaildrop>\n");
-  print("  <volumetric-efficiency> 0.85 </volumetric-efficiency>\n");
-  print("<!-- Optional items that affect engine performance -->\n");
-  print(" <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->\n");
-  print(" <!--<bsfc>           0.45 </bsfc>-->\n");
-  print(" <!--<stroke unit=\"IN\">  4.375  </stroke>-->\n");
-  print(" <!--<bore unit=\"IN\">    5.125 </bore>-->\n");
-  print(" <!--<cylinders>         4.0  </cylinders>-->\n");
-  print(" <!--<compression-ratio> 8.0 </compression-ratio>-->\n");
-  print("</piston_engine>\n");
+  print ("  <cycles>         4.0 </cycles>\n");
+  print ("  <idlerpm>      700.0 </idlerpm>\n");
+  print ("  <maxrpm>      2800.0 </maxrpm>\n");
+  print ("  <sparkfaildrop>  0.1 </sparkfaildrop>\n");
+  print ("  <volumetric-efficiency> 0.85 </volumetric-efficiency>\n");
+  print ("  <man-press-lag> 0.1 </man-press-lag>\n");
+  printf("  <static-friction  unit=\"HP\"> %3.2f </static-friction>\n", $ac_enginepower * 0.005);
+  printf("  <starter-torque> %3.2f </starter-torque>\n", $ac_enginepower * 0.8);
+  print ("  <starter-rpm> 1400 </starter-rpm>\n");
+  print (" <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->\n");
+  print (" <!--<bsfc>           0.45 </bsfc>-->\n");
+  printf("  <stroke unit=\"IN\">  %5.3f </stroke>\n", $stroke);
+  printf("  <bore unit=\"IN\">    %5.3f </bore>\n", $bore);
+  printf("  <cylinders>         %3.1f  </cylinders>\n", $n_cylinders);
+  print ("  <compression-ratio>  8.0 </compression-ratio>\n");
+  print ("</piston_engine>\n");
   }
 
 
