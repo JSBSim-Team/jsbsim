@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.41 2012/03/25 11:05:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.42 2012/12/12 06:19:57 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,48 +98,58 @@ bool FGMassBalance::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGMassBalance::Load(Element* el)
+bool FGMassBalance::Load(Element* elem)
 {
-  Element *element;
   string element_name = "";
   double bixx, biyy, bizz, bixy, bixz, biyz;
+  string fname="", file="";
+  string separator = "/";
 
-  FGModel::Load(el); // Perform base class Load.
+  fname = elem->GetAttributeValue("file");
+  if (!fname.empty()) {
+    file = FDMExec->GetFullAircraftPath() + separator + fname;
+    document = LoadXMLDocument(file);
+    if (document == 0L) return false;
+  } else {
+    document = elem;
+  }
+
+  FGModel::Load(document); // Perform base class Load.
 
   bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
-  if (el->FindElement("ixx"))
-    bixx = el->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
-  if (el->FindElement("iyy"))
-    biyy = el->FindElementValueAsNumberConvertTo("iyy", "SLUG*FT2");
-  if (el->FindElement("izz"))
-    bizz = el->FindElementValueAsNumberConvertTo("izz", "SLUG*FT2");
-  if (el->FindElement("ixy"))
-    bixy = el->FindElementValueAsNumberConvertTo("ixy", "SLUG*FT2");
-  if (el->FindElement("ixz"))
-    bixz = el->FindElementValueAsNumberConvertTo("ixz", "SLUG*FT2");
-  if (el->FindElement("iyz"))
-    biyz = el->FindElementValueAsNumberConvertTo("iyz", "SLUG*FT2");
+  if (document->FindElement("ixx"))
+    bixx = document->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
+  if (document->FindElement("iyy"))
+    biyy = document->FindElementValueAsNumberConvertTo("iyy", "SLUG*FT2");
+  if (document->FindElement("izz"))
+    bizz = document->FindElementValueAsNumberConvertTo("izz", "SLUG*FT2");
+  if (document->FindElement("ixy"))
+    bixy = document->FindElementValueAsNumberConvertTo("ixy", "SLUG*FT2");
+  if (document->FindElement("ixz"))
+    bixz = document->FindElementValueAsNumberConvertTo("ixz", "SLUG*FT2");
+  if (document->FindElement("iyz"))
+    biyz = document->FindElementValueAsNumberConvertTo("iyz", "SLUG*FT2");
   SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  bixz,
                                       -bixy,  biyy,  -biyz,
                                        bixz,  -biyz,  bizz ));
-  if (el->FindElement("emptywt")) {
-    EmptyWeight = el->FindElementValueAsNumberConvertTo("emptywt", "LBS");
+  if (document->FindElement("emptywt")) {
+    EmptyWeight = document->FindElementValueAsNumberConvertTo("emptywt", "LBS");
   }
 
-  element = el->FindElement("location");
+  Element *element = document->FindElement("location");
   while (element) {
     element_name = element->GetAttributeValue("name");
     if (element_name == "CG") vbaseXYZcg = element->FindElementTripletConvertTo("IN");
-    element = el->FindNextElement("location");
+    element = document->FindNextElement("location");
   }
 
 // Find all POINTMASS elements that descend from this METRICS branch of the
 // config file.
 
-  element = el->FindElement("pointmass");
+  element = document->FindElement("pointmass");
   while (element) {
     AddPointMass(element);
-    element = el->FindNextElement("pointmass");
+    element = document->FindNextElement("pointmass");
   }
 
   double ChildFDMWeight = 0.0;
@@ -152,7 +162,7 @@ bool FGMassBalance::Load(Element* el)
 
   Mass = lbtoslug*Weight;
 
-  PostLoad(el, PropertyManager);
+  PostLoad(document, PropertyManager);
 
   Debug(2);
   return true;

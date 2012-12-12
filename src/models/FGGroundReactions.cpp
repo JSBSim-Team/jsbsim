@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.40 2012/07/24 00:30:48 jentron Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.41 2012/12/12 06:19:57 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,25 +124,36 @@ bool FGGroundReactions::GetWOW(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGroundReactions::Load(Element* el)
+bool FGGroundReactions::Load(Element* elem)
 {
   int num=0;
+  string fname="", file="";
+  string separator = "/";
+
+  fname = elem->GetAttributeValue("file");
+  if (!fname.empty()) {
+    file = FDMExec->GetFullAircraftPath() + separator + fname;
+    document = LoadXMLDocument(file);
+    if (document == 0L) return false;
+  } else {
+    document = elem;
+  }
 
   Debug(2);
 
-  unsigned int numContacts = el->GetNumElements("contact");
+  unsigned int numContacts = document->GetNumElements("contact");
   lGear.resize(numContacts);
-  Element* contact_element = el->FindElement("contact");
+  Element* contact_element = document->FindElement("contact");
   for (unsigned int idx=0; idx<numContacts; idx++) {
     lGear[idx] = new FGLGear(contact_element, FDMExec, num++, in);
-    contact_element = el->FindNextElement("contact");
+    contact_element = document->FindNextElement("contact");
   }
 
-  FGModel::Load(el); // Perform base class Load
+  FGModel::Load(document); // Perform base class Load
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 
-  PostLoad(el, PropertyManager);
+  PostLoad(document, PropertyManager);
 
   return true;
 }

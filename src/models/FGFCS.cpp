@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.78 2012/10/15 05:02:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.79 2012/12/12 06:19:57 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -657,19 +657,21 @@ string FGFCS::FindSystemFullPathname(const string& sysfilename)
   string fullpath, localpath;
   string system_filename = sysfilename;
   string systemPath = FDMExec->GetSystemsPath();
-  string aircraftPath = FDMExec->GetFullAircraftPath();
+  string aircraftPath = FDMExec->GetFullAircraftPath() + "/";
   ifstream system_file;
 
   fullpath = systemPath + "/";
-  localpath = aircraftPath + "/Systems/";
+  localpath = aircraftPath + "Systems/";
 
   if (system_filename.length() <=4 || system_filename.substr(system_filename.length()-4, 4) != ".xml") {
     system_filename.append(".xml");
   }
 
-  system_file.open(string(localpath + system_filename).c_str());
+  system_file.open(string(aircraftPath + system_filename).c_str());
   if ( !system_file.is_open()) {
-    system_file.open(string(fullpath + system_filename).c_str());
+    system_file.open(string(localpath + system_filename).c_str());
+    if ( !system_file.is_open()) {
+      system_file.open(string(fullpath + system_filename).c_str());
       if ( !system_file.is_open()) {
         cerr << " Could not open system file: " << system_filename << " in path "
              << fullpath << " or " << localpath << endl;
@@ -677,8 +679,13 @@ string FGFCS::FindSystemFullPathname(const string& sysfilename)
       } else {
         return string(fullpath + system_filename);
       }
+    } else {
+      return string(localpath + system_filename);
+    }
+  } else {
+    return string(aircraftPath + system_filename);
   }
-  return string(localpath + system_filename);
+  return string("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
