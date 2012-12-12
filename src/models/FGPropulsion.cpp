@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.68 2012/12/02 12:59:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.69 2012/12/12 06:19:57 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -371,11 +371,24 @@ void FGPropulsion::InitRunning(int n)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::Load(Element* el)
+bool FGPropulsion::Load(Element* elem)
 {
   string type, engine_filename;
+  string separator = "/";
+  Element *el=0;
+  FGXMLParse main_file_parser;
 
   Debug(2);
+
+  string fname="", file="";
+  fname = elem->GetAttributeValue("file");
+  if (!fname.empty()) {
+    file = FDMExec->GetFullAircraftPath() + separator + fname;
+    el = LoadXMLDocument(file, main_file_parser);
+    if (el == 0L) return false;
+  } else {
+    el = elem;
+  }
 
   FGModel::Load(el); // Perform base class Load.
 

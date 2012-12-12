@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.6 2012/09/18 12:24:51 jberndt Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.7 2012/12/12 06:19:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,6 +60,11 @@ protected:
   Element* document;
   Element* LoadXMLDocument(std::string XML_filename, bool verbose=true)
   {
+    return LoadXMLDocument(XML_filename, file_parser, true);
+  }
+  
+  Element* LoadXMLDocument(std::string XML_filename, FGXMLParse& fparse, bool verbose=true)
+  {
     std::ifstream infile;
 
     if ( !XML_filename.empty() ) {
@@ -74,8 +79,8 @@ protected:
       return 0L;
     }
 
-    readXML(infile, file_parser, XML_filename);
-    document = file_parser.GetDocument();
+    readXML(infile, fparse, XML_filename);
+    document = fparse.GetDocument();
     infile.close();
     
     return document;
