@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.84 2012/11/21 13:04:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.85 2012/12/13 04:41:06 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1079,6 +1079,7 @@ bool FGInitialCondition::Load_v2(void)
               double longitude = position.GetLongitude();
               double altitude = position.GetAltitudeASL();                 // SetPositionGeodetic() assumes altitude 
               position.SetPositionGeodetic(longitude, latitude, altitude); // is geodetic, but it's close enough for now.
+              position.SetAltitudeAGL(altitude, fdmex->GetSimTime());
           } else {
             position.SetLatitude(latitude);
           }

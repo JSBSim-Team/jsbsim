@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.2 2012/12/01 14:58:26 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.3 2012/12/13 04:41:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,9 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "V_{Total} (ft/s)" + delimeter;
     outstream << "V_{Inertial} (ft/s)" + delimeter;
     outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
+    outstream << "UdotBody" + delimeter + "VdotBody" + delimeter + "WdotBody" + delimeter;
+    outstream << "UdotBody_i" + delimeter + "VdotBody_i" + delimeter + "WdotBody_i" + delimeter;
+    outstream << "BodyAccel_X" + delimeter + "BodyAccel_Y" + delimeter + "BodyAccel_Z" + delimeter;
     outstream << "Aero V_{X Body} (ft/s)" + delimeter + "Aero V_{Y Body} (ft/s)" + delimeter + "Aero V_{Z Body} (ft/s)" + delimeter;
     outstream << "V_{X_{inertial}} (ft/s)" + delimeter + "V_{Y_{inertial}} (ft/s)" + delimeter + "V_{Z_{inertial}} (ft/s)" + delimeter;
     outstream << "V_{X_{ecef}} (ft/s)" + delimeter + "V_{Y_{ecef}} (ft/s)" + delimeter + "V_{Z_{ecef}} (ft/s)" + delimeter;
@@ -200,6 +203,7 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "Alpha (deg)" + delimeter;
     outstream << "Beta (deg)" + delimeter;
     outstream << "Latitude (deg)" + delimeter;
+    outstream << "Latitude Geodetic (deg)" + delimeter;
     outstream << "Longitude (deg)" + delimeter;
     outstream << "X_{ECI} (ft)" + delimeter + "Y_{ECI} (ft)" + delimeter + "Z_{ECI} (ft)" + delimeter;
     outstream << "X_{ECEF} (ft)" + delimeter + "Y_{ECEF} (ft)" + delimeter + "Z_{ECEF} (ft)" + delimeter;
@@ -280,6 +284,9 @@ void FGOutputTextFile::Print(void)
     outstream << setprecision(12) << Auxiliary->GetVt() << delimeter;
     outstream << Propagate->GetInertialVelocityMagnitude() << delimeter;
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
+    outstream << setprecision(12) << Accelerations->GetUVWdot().Dump(delimeter) << delimeter;
+    outstream << setprecision(12) << Accelerations->GetUVWidot().Dump(delimeter) << delimeter;
+    outstream << setprecision(12) << Accelerations->GetBodyAccel().Dump(delimeter) << delimeter;
     outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
     outstream << Propagate->GetInertialVelocity().Dump(delimeter) << delimeter;
     outstream << Propagate->GetECEFVelocity().Dump(delimeter) << delimeter;
@@ -338,6 +345,7 @@ void FGOutputTextFile::Print(void)
     outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
+    outstream << Propagate->GetLocation().GetGeodLatitudeDeg() << delimeter;
     outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
     outstream.precision(18);
     outstream << ((FGColumnVector3)Propagate->GetInertialPosition()).Dump(delimeter) << delimeter;

@@ -43,7 +43,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.37 2012/12/12 06:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.38 2012/12/13 04:41:06 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -277,7 +277,7 @@ double Element::GetAttributeValueAsNumber(const string& attr)
   if (attribute.empty()) return HUGE_VAL;
   else {
     double number=0;
-    if (is_number(attribute))
+    if (is_number(trim(attribute)))
       number = atof(attribute.c_str());
     else
       throw("Expecting numeric attribute value, but got: " + attribute);
@@ -327,7 +327,7 @@ double Element::GetDataAsNumber(void)
 {
   if (data_lines.size() == 1) {
     double number=0;
-    if (is_number(data_lines[0]))
+    if (is_number(trim(data_lines[0])))
       number = atof(data_lines[0].c_str());
     else
       throw("Expected numeric value, but got: " + data_lines[0]);
