@@ -40,13 +40,14 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 #include "FGLGear.h"
+#include "FGAccelerations.h"
 #include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.41 2012/12/12 06:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.42 2012/12/15 15:16:15 bcoconni Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,12 +231,14 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
     }
   }
 
-  buf << vForces(eX) << delimeter
-      << vForces(eY) << delimeter
-      << vForces(eZ) << delimeter
-      << vMoments(eX) << delimeter
-      << vMoments(eY) << delimeter
-      << vMoments(eZ);
+  FGAccelerations* Accelerations = FDMExec->GetAccelerations();
+
+  buf << Accelerations->GetGroundForces(eX) << delimeter
+      << Accelerations->GetGroundForces(eY) << delimeter
+      << Accelerations->GetGroundForces(eZ) << delimeter
+      << Accelerations->GetGroundMoments(eX) << delimeter
+      << Accelerations->GetGroundMoments(eY) << delimeter
+      << Accelerations->GetGroundMoments(eZ);
 
   return buf.str();
 }
