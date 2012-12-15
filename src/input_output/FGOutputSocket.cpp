@@ -59,42 +59,17 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.1 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.2 2012/12/15 16:13:57 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex, Element* element, int idx) :
-  FGOutputType(fdmex, element, idx),
+FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex) :
+  FGOutputType(fdmex),
   socket(0)
 {
-  Name = element->GetAttributeValue("name");
-  string Port = element->GetAttributeValue("port");
-
-  if (!Port.empty()) {
-    port = atoi(Port.c_str());
-    SetProtocol(element->GetAttributeValue("protocol"));
-    socket = new FGfdmSocket(Name, port, Protocol);
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex, int idx, int subSystems,
-                               std::string protocol, std::string Port,
-                               std::string name, double outRate,
-                               std::vector<FGPropertyManager *> & outputProperties) :
-  FGOutputType(fdmex, idx, subSystems, outRate, outputProperties),
-  Name(name),
-  socket(0)
-{
-  if (!Port.empty()) {
-    port = atoi(Port.c_str());
-    SetProtocol(protocol);
-    socket = new FGfdmSocket(Name, port, Protocol);
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,10 +81,59 @@ FGOutputSocket::~FGOutputSocket()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGOutputSocket::SetOutputName(const string& fname)
+{
+  // tokenize the output name
+  size_t dot_pos = fname.find(':', 0);
+  size_t slash_pos = fname.find('/', 0);
+  
+  string name = fname.substr(0, dot_pos);
+  
+  string proto = "TCP";
+  if(dot_pos + 1 < slash_pos)
+    proto = fname.substr(dot_pos + 1, slash_pos - 1);
+  
+  string port = "1138";
+  if(slash_pos < string::npos)
+    port = fname.substr(slash_pos + 1, string::npos);
+  
+  // set the model name
+  Name = name + ":" + port + "/" + proto;
+  
+  // set the socket params
+  SockName = name;
+  
+  SockPort = atoi(port.c_str());
+  
+  if (proto == "UDP")
+    SockProtocol = FGfdmSocket::ptUDP;
+  else // Default to TCP
+    SockProtocol = FGfdmSocket::ptTCP;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputSocket::Load(Element* el)
+{
+  if (!FGOutputType::Load(el))
+    return false;
+
+  SetOutputName(el->GetAttributeValue("name") + ":" +
+                el->GetAttributeValue("protocol") + "/" +
+                el->GetAttributeValue("port"));
+
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGOutputSocket::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
     string scratch;
+
+    delete socket;
+    socket = new FGfdmSocket(SockName, SockPort, SockProtocol);
 
     if (socket == 0) return false;
     if (!socket->GetConnectStatus()) return false;
@@ -235,31 +259,6 @@ bool FGOutputSocket::InitModel(void)
   }
 
   return false;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGOutputSocket::SetProtocol(const string& protocol)
-{
-  if (protocol == "UDP") Protocol = FGfdmSocket::ptUDP;
-  else if (protocol == "TCP") Protocol = FGfdmSocket::ptTCP;
-  else Protocol = FGfdmSocket::ptTCP; // Default to TCP
-
-  if (socket != 0) {
-    delete socket;
-    socket = new FGfdmSocket(Name, port, Protocol);
-    InitModel();
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGOutputSocket::SetPort(const std::string& Port)
-{
-  delete socket;
-  port = atoi(Port.c_str());
-  socket = new FGfdmSocket(Name, port, Protocol);
-  InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

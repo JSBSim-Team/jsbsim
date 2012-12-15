@@ -63,28 +63,29 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.3 2012/12/13 04:41:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.4 2012/12/15 16:13:57 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputTextFile::FGOutputTextFile(FGFDMExec* fdmex, Element* element,
-                                   const string& _delim, int idx) :
-  FGOutputFile(fdmex, element, idx),
-  delimeter(_delim)
+bool FGOutputTextFile::Load(Element* el)
 {
-}
+  if(!FGOutputFile::Load(el))
+    return false;
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  string type = el->GetAttributeValue("type");
+  string delim;
+  if (type == "TABULAR") {
+    delim = "\t";
+  } else {
+    delim = ",";
+  }
 
-FGOutputTextFile::FGOutputTextFile(FGFDMExec* fdmex, const string& _delim,
-                                   int idx, int subSystems, std::string name,
-                                   double outRate, std::vector<FGPropertyManager *> & outputProperties) :
-  FGOutputFile(fdmex, idx, subSystems, name, outRate, outputProperties),
-  delimeter(_delim)
-{
+  SetDelimiter(delim);
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

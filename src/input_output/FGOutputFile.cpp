@@ -41,35 +41,22 @@ INCLUDES
 #include <sstream>
 
 #include "FGOutputFile.h"
-#include "FGFDMExec.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.2 2012/12/01 14:58:26 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.3 2012/12/15 16:13:57 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputFile::FGOutputFile(FGFDMExec* fdmex, Element* element, int idx) :
-  FGOutputType(fdmex, element, idx),
+FGOutputFile::FGOutputFile(FGFDMExec* fdmex) :
+  FGOutputType(fdmex),
   runID_postfix(0)
 {
-  BaseFilename = Filename = FDMExec->GetRootDir() + element->GetAttributeValue("name");
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGOutputFile::FGOutputFile(FGFDMExec* fdmex, int idx, int subSystems,
-                           std::string name, double outRate,
-                           std::vector<FGPropertyManager *> & outputProperties) :
-  FGOutputType(fdmex, idx, subSystems, outRate, outputProperties),
-  runID_postfix(0)
-{
-  BaseFilename = Filename = FDMExec->GetRootDir() + name;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,14 +75,27 @@ void FGOutputFile::SetStartNewOutput(void)
 {
   if (Filename.size() > 0) {
     ostringstream buf;
-    string::size_type dot = BaseFilename.find_last_of('.');
+    string::size_type dot = Name.find_last_of('.');
     if (dot != string::npos) {
-      buf << BaseFilename.substr(0, dot) << '_' << runID_postfix++ << BaseFilename.substr(dot);
+      buf << Name.substr(0, dot) << '_' << runID_postfix++ << Name.substr(dot);
     } else {
-      buf << BaseFilename << '_' << runID_postfix++;
+      buf << Name << '_' << runID_postfix++;
     }
     Filename = buf.str();
     CloseFile();
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputFile::Load(Element* el)
+{
+  if (!FGOutputType::Load(el))
+    return false;
+  
+  SetOutputName(el->GetAttributeValue("name"));
+  
+  return true;
+}
+
 }

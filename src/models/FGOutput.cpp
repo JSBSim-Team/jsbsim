@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.70 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.71 2012/12/15 16:13:58 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,11 +97,9 @@ bool FGOutput::Run(bool Holding)
 {
   if (FGModel::Run(Holding)) return true;
 
-  if (!Holding) {
-    vector<FGOutputType*>::iterator it;
-    for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-      (*it)->Run();
-  }
+  vector<FGOutputType*>::iterator it;
+  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
+    (*it)->Run(Holding);
 
   return false;
 }
@@ -216,20 +214,20 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
 
-  type = to_upper(type);
-
   if (type == "CSV") {
-    Output = new FGOutputTextFile(FDMExec, ",", idx, subSystems, name, outRate,
-                                  outputProperties);
+    FGOutputTextFile* OutputTextFile = new FGOutputTextFile(FDMExec);
+    OutputTextFile->SetDelimiter(",");
+    Output = OutputTextFile;
   } else if (type == "TABULAR") {
-    Output = new FGOutputTextFile(FDMExec, "\t", idx, subSystems, name, outRate,
-                                  outputProperties);
+    FGOutputTextFile* OutputTextFile = new FGOutputTextFile(FDMExec);
+    OutputTextFile->SetDelimiter("\t");
+    Output = OutputTextFile;
   } else if (type == "SOCKET") {
-    Output = new FGOutputSocket(FDMExec, idx, subSystems, protocol, port, name,
-                                outRate, outputProperties);
+    Output = new FGOutputSocket(FDMExec);
+    name += ":" + port + "/" + protocol;
   } else if (type == "FLIGHTGEAR") {
-    Output = new FGOutputFG(FDMExec, idx, subSystems, protocol, port, name,
-                            outRate, outputProperties);
+    Output = new FGOutputFG(FDMExec);
+    name += ":" + port + "/" + protocol;
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
@@ -237,6 +235,12 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   }
 
   if (!Output) return false;
+
+  Output->SetIdx(idx);
+  Output->SetOutputName(name);
+  Output->SetRate(outRate);
+  Output->SetSubSystems(subSystems);
+  Output->SetOutputProperties(outputProperties);
 
   OutputTypes.push_back(Output);
 
@@ -256,16 +260,14 @@ bool FGOutput::Load(Element* document)
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
 
-  type = to_upper(type);
-
   if (type == "CSV") {
-    Output = new FGOutputTextFile(FDMExec, document, ",", idx);
+    Output = new FGOutputTextFile(FDMExec);
   } else if (type == "TABULAR") {
-    Output = new FGOutputTextFile(FDMExec, document, "\t", idx);
+    Output = new FGOutputTextFile(FDMExec);
   } else if (type == "SOCKET") {
-    Output = new FGOutputSocket(FDMExec, document, idx);
+    Output = new FGOutputSocket(FDMExec);
   } else if (type == "FLIGHTGEAR") {
-    Output = new FGOutputFG(FDMExec, document, idx);
+    Output = new FGOutputFG(FDMExec);
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
@@ -273,6 +275,9 @@ bool FGOutput::Load(Element* document)
   }
 
   if (!Output) return false;
+
+  Output->SetIdx(idx);
+  Output->Load(document);
 
   OutputTypes.push_back(Output);
 
