@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.2 2012/10/15 04:58:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.3 2012/12/15 16:13:58 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -55,99 +55,11 @@ using namespace std;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputType::FGOutputType(FGFDMExec* fdmex, Element* element, int idx) :
+FGOutputType::FGOutputType(FGFDMExec* fdmex) :
+  FGModel(fdmex),
   SubSystems(0),
-  FDMExec(fdmex),
-  enabled(true),
-  exe_ctr(0),
-  rate(1)
+  enabled(true)
 {
-  typedef double (FGOutputType::*iOPMF)(void) const;
-  double OutRate = 0.0;
-  Element *property_element;
-  FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
-
-  if (!element->GetAttributeValue("rate").empty()) {
-    OutRate = element->GetAttributeValueAsNumber("rate");
-  } else {
-    OutRate = 1;
-  }
-
-  PreLoad(element, PropertyManager);
-
-  if (element->FindElementValue("simulation") == string("ON"))
-    SubSystems += ssSimulation;
-  if (element->FindElementValue("aerosurfaces") == string("ON"))
-    SubSystems += ssAerosurfaces;
-  if (element->FindElementValue("rates") == string("ON"))
-    SubSystems += ssRates;
-  if (element->FindElementValue("velocities") == string("ON"))
-    SubSystems += ssVelocities;
-  if (element->FindElementValue("forces") == string("ON"))
-    SubSystems += ssForces;
-  if (element->FindElementValue("moments") == string("ON"))
-    SubSystems += ssMoments;
-  if (element->FindElementValue("atmosphere") == string("ON"))
-    SubSystems += ssAtmosphere;
-  if (element->FindElementValue("massprops") == string("ON"))
-    SubSystems += ssMassProps;
-  if (element->FindElementValue("position") == string("ON"))
-    SubSystems += ssPropagate;
-  if (element->FindElementValue("coefficients") == string("ON") || element->FindElementValue("aerodynamics") == string("ON"))
-    SubSystems += ssAeroFunctions;
-  if (element->FindElementValue("ground_reactions") == string("ON"))
-    SubSystems += ssGroundReactions;
-  if (element->FindElementValue("fcs") == string("ON"))
-    SubSystems += ssFCS;
-  if (element->FindElementValue("propulsion") == string("ON"))
-    SubSystems += ssPropulsion;
-  property_element = element->FindElement("property");
-  while (property_element) {
-    string property_str = property_element->GetDataLine();
-    FGPropertyManager* node = PropertyManager->GetNode(property_str);
-    if (!node) {
-      cerr << fgred << highint << endl << "  No property by the name "
-           << property_str << " has been defined. This property will " << endl
-           << "  not be logged. You should check your configuration file."
-           << reset << endl;
-    } else {
-      OutputProperties.push_back(node);
-    }
-    property_element = element->FindNextElement("property");
-  }
-
-  PostLoad(element, PropertyManager);
-  Initialize(idx, OutRate);
-
-  Debug(2);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGOutputType::FGOutputType(FGFDMExec* fdmex, int idx, int subSystems,
-                           double outRate, std::vector<FGPropertyManager *> & outputProperties) :
-  SubSystems(subSystems),
-  OutputProperties(outputProperties),
-  FDMExec(fdmex),
-  enabled(true),
-  exe_ctr(0)
-{
-  Initialize(idx, outRate);
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGOutputType::Initialize(int idx, double outRate)
-{
-  typedef double (FGOutputType::*iOPMF)(void) const;
-  FGPropertyManager* PropertyManager = FDMExec->GetPropertyManager();
-
-  string outputProp = CreateIndexedPropertyName("simulation/output", idx);
-  PropertyManager->Tie(outputProp+"/log_rate_hz", this, (iOPMF)0, &FGOutputType::SetRate, false);
-
-  SetRate(outRate);
-
   Aerodynamics = FDMExec->GetAerodynamics();
   Auxiliary = FDMExec->GetAuxiliary();
   Aircraft = FDMExec->GetAircraft();
@@ -175,18 +87,104 @@ FGOutputType::~FGOutputType()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutputType::Run(void)
+void FGOutputType::SetIdx(int idx)
 {
-  if (exe_ctr >= rate) exe_ctr = 0;
+  typedef double (FGOutputType::*iOPMF)(void) const;
+  string outputProp = CreateIndexedPropertyName("simulation/output", idx) + "/log_rate_hz";
 
-  if ((++exe_ctr == 1) && enabled) {
-    RunPreFunctions();
-    Print();
-    RunPostFunctions();
+  PropertyManager->Tie(outputProp, this, (iOPMF)0, &FGOutputType::SetRate, false);
+  OutputIdx = idx;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputType::Load(Element* element)
+{
+  // Perform base class Load.
+  if(!FGModel::Load(element))
     return false;
+
+  if (element->FindElementValue("simulation") == string("ON"))
+    SubSystems += ssSimulation;
+  if (element->FindElementValue("aerosurfaces") == string("ON"))
+    SubSystems += ssAerosurfaces;
+  if (element->FindElementValue("rates") == string("ON"))
+    SubSystems += ssRates;
+  if (element->FindElementValue("velocities") == string("ON"))
+    SubSystems += ssVelocities;
+  if (element->FindElementValue("forces") == string("ON"))
+    SubSystems += ssForces;
+  if (element->FindElementValue("moments") == string("ON"))
+    SubSystems += ssMoments;
+  if (element->FindElementValue("atmosphere") == string("ON"))
+    SubSystems += ssAtmosphere;
+  if (element->FindElementValue("massprops") == string("ON"))
+    SubSystems += ssMassProps;
+  if (element->FindElementValue("position") == string("ON"))
+    SubSystems += ssPropagate;
+  if (element->FindElementValue("coefficients") == string("ON") || element->FindElementValue("aerodynamics") == string("ON"))
+    SubSystems += ssAeroFunctions;
+  if (element->FindElementValue("ground_reactions") == string("ON"))
+    SubSystems += ssGroundReactions;
+  if (element->FindElementValue("fcs") == string("ON"))
+    SubSystems += ssFCS;
+  if (element->FindElementValue("propulsion") == string("ON"))
+    SubSystems += ssPropulsion;
+
+  Element *property_element = element->FindElement("property");
+
+  while (property_element) {
+    string property_str = property_element->GetDataLine();
+    FGPropertyManager* node = PropertyManager->GetNode(property_str);
+    if (!node) {
+      cerr << fgred << highint << endl << "  No property by the name "
+           << property_str << " has been defined. This property will " << endl
+           << "  not be logged. You should check your configuration file."
+           << reset << endl;
+    } else {
+      OutputProperties.push_back(node);
+    }
+    property_element = element->FindNextElement("property");
   }
 
+  double outRate = 1.0;
+  if (!element->GetAttributeValue("rate").empty()) {
+    outRate = element->GetAttributeValueAsNumber("rate");
+  }
+  SetRate(outRate);
+
+  // FIXME : PostLoad should be called in the most derived class ?
+  PostLoad(element, PropertyManager);
+
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputType::InitModel(void)
+{
+  bool ret = FGModel::InitModel();
+  exe_ctr = 1; // Otherwise initial conditions are not output
+
+  Debug(2);
+  return ret;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputType::Run(bool Holding)
+{
+  if (!enabled) return true;
+  if (FGModel::Run(Holding)) return true;
+  if (Holding) return false;
+
+  RunPreFunctions();
+  Print();
+  RunPostFunctions();
+
+  Debug(4);
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,10 +193,10 @@ void FGOutputType::SetRate(double rtHz)
 {
   rtHz = rtHz>1000?1000:(rtHz<0?0:rtHz);
   if (rtHz > 0) {
-    rate = (int)(0.5 + 1.0/(FDMExec->GetDeltaT()*rtHz));
+    FGModel::SetRate(0.5 + 1.0/(FDMExec->GetDeltaT()*rtHz));
     Enable();
   } else {
-    rate = 1;
+    FGModel::SetRate(1);
     Disable();
   }
 }

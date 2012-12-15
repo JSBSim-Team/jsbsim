@@ -38,13 +38,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "math/FGModelFunctions.h"
+#include "models/FGModel.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.1 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.2 2012/12/15 16:13:58 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,57 +93,81 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGOutputType : public FGModelFunctions
+class FGOutputType : public FGModel
 {
 public:
-  /** Constructor that read the output directives from an XML file.
+  /** Constructor (implement the FGModel interface).
       @param fdmex a pointer to the parent executive object
-      @param element XML Element that is pointing to the output directives
-      @param idx ID of the output instance that is constructed
    */
-  FGOutputType(FGFDMExec* fdmex, Element* element, int idx);
-  /** Constructor to which all the needed data are passed by parameters.
-      @param fdmex a pointer to the parent executive object
-      @param idx ID of the output instance that is constructed
-      @param subSystems bitfield that describes the activated subsystems
-      @param outRate output rate in Hz
-      @param outputProperties list of properties that should be output
-   */
-  FGOutputType(FGFDMExec* fdmex, int idx, int subSystems, double outRate,
-               std::vector<FGPropertyManager *> & outputProperties);
+  FGOutputType(FGFDMExec* fdmex);
+
+  /// Destructor
   virtual ~FGOutputType();
 
-  /** Executes the output directives. This method checks that the current time
-      step matches the output rate and calls the registered "pre" functions,
-      the output generation and finally the "post" functions.
-      @result false if no error.
+  /** Set the idx for this output instance
+      @param idx ID of the output instance that is constructed
    */
-  virtual bool Run(void);
-  /** Initializes the instance. The classes derived from FGOutputType must
-      call this method if they reimplement it.
-      @result true if the execution succeeded.
-   */
-  virtual bool InitModel(void) { exe_ctr = 0; return true; }
-  /** Generate the output. This is a pure method so it must be implemented by
-      the classes that inherits from FGOutputType. The Print name may not be
-      relevant to all outputs but it has been kept for backward compatibility.
-   */
-  virtual void Print(void) = 0;
-  /** Reset the output prior to a restart of the simulation. This method should
-      be called when the simulation is restarted with, for example, new initial
-      conditions. When this method is executed the output instance can take
-      special actions such as closing the current output file and open a new
-      one with a different name. */
-  virtual void SetStartNewOutput(void) {}
+  void SetIdx(int idx);
+
+  /** Set the output rate for this output instances.
+      @param rtHz new output rate in Hz */
+  void SetRate(double rtHz);
+
+  /** Set the activated subsystems for this output instance.
+      @param subSystems bitfield that describes the activated subsystems
+      @param outputProperties list of properties that should be output
+  */
+  void SetSubSystems(int subSystems) { SubSystems = subSystems; }
+
+  /** Set the list of properties that should be output for this output instance.
+      @param outputProperties list of properties that should be output
+  */
+  void SetOutputProperties(std::vector<FGPropertyManager *> & outputProperties)
+  {
+    OutputProperties = outputProperties;
+  }
+
   /** Overwrites the name identifier under which the output will be logged.
       This method is taken into account if it is called before
       FGFDMExec::RunIC() otherwise it is ignored until the next call to
       SetStartNewOutput().
       @param name new name */
-  virtual void SetOutputName(const std::string& name) {}
-  /** Modifies the output rate for all output instances.
-      @param rate new output rate in Hz */
-  void SetRate(double rt);
+  virtual void SetOutputName(const std::string& name) { Name = name; }
+
+  /** Get the name identifier to which the output will be directed.
+      @result the name identifier.*/
+  virtual const std::string& GetOutputName(void) const { return Name; }
+
+  /** Init the output directives from an XML file (implement the FGModel interface).
+      @param element XML Element that is pointing to the output directives
+  */
+  virtual bool Load(Element* el);
+
+  /// Init the output model according to its configitation.
+  virtual bool InitModel(void);
+
+  /** Executes the output directives (implement the FGModel interface).
+      This method checks that the current time step matches the output
+      rate and calls the registered "pre" functions, the output
+      generation and finally the "post" functions.
+      @result false if no error.
+   */
+  bool Run(bool Holding);
+
+  /** Generate the output. This is a pure method so it must be implemented by
+      the classes that inherits from FGOutputType. The Print name may not be
+      relevant to all outputs but it has been kept for backward compatibility.
+   */
+  virtual void Print(void) = 0;
+
+  /** Reset the output prior to a restart of the simulation. This method should
+      be called when the simulation is restarted with, for example, new initial
+      conditions. When this method is executed the output instance can take
+      special actions such as closing the current output file and open a new
+      one with a different name. */
+
+  virtual void SetStartNewOutput(void) {}
+
   /// Enables the output generation.
   void Enable(void) { enabled = true; }
   /// Disables the output generation.
@@ -152,10 +176,6 @@ public:
       @result the output generation status i.e. true if the output has been
               enabled, false if the output has been disabled. */
   bool Toggle(void) {enabled = !enabled; return enabled;}
-
-  /** Get the name identifier to which the output will be directed.
-      @result the name identifier.*/
-  virtual const std::string& GetOutputName(void) const = 0;
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  eSubSystems {
@@ -175,9 +195,9 @@ public:
   } subsystems;
 
 protected:
+  int OutputIdx;
   int SubSystems;
   std::vector <FGPropertyManager*> OutputProperties;
-  FGFDMExec* FDMExec;
   bool enabled;
 
   FGAerodynamics* Aerodynamics;
@@ -195,11 +215,6 @@ protected:
   FGBuoyantForces* BuoyantForces;
 
   void Debug(int from);
-
-private:
-  int exe_ctr, rate;
-
-  void Initialize(int idx, double outRate);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.4 2012/10/15 04:59:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.5 2012/12/15 16:13:57 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTFG;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -121,18 +121,8 @@ static void htonf (float &x)
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputFG::FGOutputFG(FGFDMExec* fdmex, Element* element, int idx) :
-  FGOutputSocket(fdmex, element, idx)
-{
-  memset(&fgSockBuf, 0x0, sizeof(fgSockBuf));
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGOutputFG::FGOutputFG(FGFDMExec* fdmex, int idx, int subSystems,
-                       std::string protocol, std::string Port, std::string name,
-                       double outRate, std::vector<FGPropertyManager *> & outputProperties) :
-  FGOutputSocket(fdmex, idx, subSystems, protocol, Port, name, outRate, outputProperties)
+FGOutputFG::FGOutputFG(FGFDMExec* fdmex) :
+  FGOutputSocket(fdmex)
 {
   memset(&fgSockBuf, 0x0, sizeof(fgSockBuf));
 }
