@@ -52,6 +52,9 @@ ROLL CHANNEL
 
 <!-- Wing leveler -->
 
+  <property value="0"> simulation/input1 </property>
+  <property value="0"> simulation/input2 </property>
+
 <channel name="Roll wing leveler">
 
   <sensor name="fcs/attitude/sensor/phi-rad">
@@ -67,6 +70,38 @@ ROLL CHANNEL
     <bias> 0.001 </bias>
   </sensor>
 
+  <switch name="simulation/test">
+    <default value="-1"/>
+    <test value="0">
+      simulation/input1 eq 1
+      simulation/input2 gt 2
+    </test>
+    <test value="1" logic="OR">
+      simulation/input1 eq 3
+      simulation/input2 gt 4
+    </test>
+    <test value="2">
+      <test logic="AND">
+        simulation/input1 eq 4
+        simulation/input2 gt 5
+      </test>
+      <test logic="OR">
+        simulation/input1 eq 6
+        simulation/input2 gt 7
+      </test>
+    </test>
+    <test value="3">
+      <test logic="AND">
+        simulation/input1 eq 8
+        simulation/input2 gt 9
+      </test>
+      <test logic="OR">
+        simulation/input1 eq 10
+        simulation/input2 gt 11
+      </test>
+    </test>
+  </switch>
+    
   <switch name="fcs/wing-leveler-ap-on-off">
     <default value="-1"/>
     <test value="0">

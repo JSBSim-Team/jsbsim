@@ -4,12 +4,24 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
- <fileheader>
+<fileheader>
   <author> Aeromatic v 0.91 </author>
   <filecreationdate> 2009-07-24 </filecreationdate>
-  <version>$Revision: 1.1 $</version>
+  <version>$Revision: 1.2 $</version>
   <description> Models a Pogo. </description>
- </fileheader>
+  <note>
+  This model was created using publicly available data, publicly available
+  technical reports, textbooks, and guesses. It contains no proprietary or
+  restricted data. If this model has been validated at all, it would be
+  only to the extent that it seems to "fly right", and that it possibly
+  complies with published, publicly known, performance data (maximum speed,
+  endurance, etc.). Thus, this model is meant for educational and entertainment
+  purposes only.
+
+  This simulation model is not endorsed by the manufacturer. This model is not
+  to be sold.
+  </note>
+</fileheader>
 
 <!--
   File:     Pogo.xml

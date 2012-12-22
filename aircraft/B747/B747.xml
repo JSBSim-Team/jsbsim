@@ -7,7 +7,7 @@
     <fileheader>
       <author> Unknown </author>
       <filecreationdate> 2002-01-01 </filecreationdate>
-      <version> $Id: B747.xml,v 1.24 2010/09/29 12:08:52 jberndt Exp $ </version>
+      <version> $Id: B747.xml,v 1.25 2012/12/22 15:22:17 jberndt Exp $ </version>
       <description> Boeing 747 </description>
       <license>
         <licenseName>GPL (General Public License)</licenseName>
@@ -16,13 +16,14 @@
       <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
-        restricted data. It has been validated only to the extent that it seems
-        to "fly right", and possibly to comply to published, publicly known,
-        performance data (maximum speed, endurance, etc.). Thus, this model
-        is meant for educational and entertainment purposes only.
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
 
-        This simulation model is not endorsed by the manufacturer. This model
-        is not to be sold.
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
       </note>
     </fileheader>
 

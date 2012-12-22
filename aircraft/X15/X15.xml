@@ -7,10 +7,22 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 1998-07-01 </filecreationdate>
-        <version> $Revision: 1.58 $ </version>
+        <version> $Revision: 1.59 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
+      <note>
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
+
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
     </fileheader>
 
     <metrics>

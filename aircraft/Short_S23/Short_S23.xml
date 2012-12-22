@@ -30,7 +30,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-11-05</filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.9 2012/10/06 19:55:37 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.10 2012/12/22 15:22:19 jberndt Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
@@ -39,16 +39,21 @@
    <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
   </license>
   <note>
-   This model was created using publicly available data, publicly available
-   technical reports, textbooks, and guesses. It contains no proprietary or
-   restricted data. It has been validated only to the extent that it may seem
-   to "fly right", and possibly to comply to published, publicly known, 
-   performance data (maximum speed, endurance, etc.).
+    This model was created using publicly available data, publicly available
+    technical reports, textbooks, and guesses. It contains no proprietary or
+    restricted data. If this model has been validated at all, it would be
+    only to the extent that it seems to "fly right", and that it possibly
+    complies with published, publicly known, performance data (maximum speed,
+    endurance, etc.). Thus, this model is meant for educational and entertainment
+    purposes only.
 
-   This model is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+    This simulation model is not endorsed by the manufacturer. This model is not
+    to be sold.
+
+    This model is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
   </note>
 
   <reference refID="Sims:2000:AE"
