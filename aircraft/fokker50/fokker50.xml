@@ -7,12 +7,24 @@
     <fileheader>
         <author> External model, animations and FDM by Erik Hofman.  Cockpit model in progress, work by the FlightGear community. </author>
         <filecreationdate> In progress January 2008 </filecreationdate>
-        <version> External model $Revision: 1.20 $   Cockpit model in development.</version>
+        <version> External model $Revision: 1.21 $   Cockpit model in development.</version>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.20 $ </version>
+        <version> $Revision: 1.21 $ </version>
         <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+      <note>
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
+
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
     </fileheader>
 
     <metrics>

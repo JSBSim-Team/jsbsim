@@ -7,8 +7,20 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2006-01-04</filecreationdate>
-     <version>$Revision: 1.5 $</version>
+     <version>$Revision: 1.6 $</version>
      <description>Models a Lockheed F-80C</description>
+      <note>
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
+
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
  </fileheader>
 
 <!--

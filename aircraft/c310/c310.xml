@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.62 $ </version>
+        <version> $Revision: 1.63 $ </version>
         <description>
             Models a C310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -22,17 +22,18 @@
         <license
           licenseName="GPL (General Public License)"
           licenseURL="http://www.gnu.org/licenses/gpl.html"/>
-        <note>
-          This model was created using publicly available data, publicly available
-          technical reports, textbooks, and guesses. It contains no proprietary or
-          restricted data. It has been validated only to the extent that it seems
-          to "fly right", and possibly to comply to published, publicly known,
-          performance data (maximum speed, endurance, etc.). Thus, this model
-          is meant for educational and entertainment purposes only.
+      <note>
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
 
-          This simulation model is not endorsed by the manufacturer. This model
-          is not to be sold.
-        </note>
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
         <reference title="Full-Scale Wind Tunnel Investigation of Static Longitudinal and Lateral Characteristics of a Light Twin-Engine Airplane"
             author="Marvin P. Fink, Delma C. Freeman, Jr."
             date="1969-01-01" refID="NASA TN D-4983"/>

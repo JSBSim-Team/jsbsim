@@ -5,10 +5,22 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Jon Berndt </author>
-        <filecreationdate> 2004-06-01 </filecreationdate>
-        <version> Version 1.0 </version>
-        <description> Test file </description>
+      <author> Jon Berndt </author>
+      <filecreationdate> 2004-06-01 </filecreationdate>
+      <version> Version 1.0 </version>
+      <description> Test file </description>
+      <note>
+        This model of a ball was created using publicly available data, publicly available
+        technical reports, textbooks, testing, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be only to the
+        extent that it seems to fly, bounce, roll, or be retrieved by a dog, in a plausible
+        way, and that it possibly complies with published, publicly known, performance data
+        (maximum bounce, endurance, etc.). Thus, this model is meant for educational and
+        entertainment purposes only.
+
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
     </fileheader>
 
     <metrics>
@@ -43,12 +55,28 @@
         <ixy unit="SLUG*FT2"> -0 </ixy>
         <ixz unit="SLUG*FT2"> -0 </ixz>
         <iyz unit="SLUG*FT2"> -0 </iyz>
-        <emptywt unit="LBS"> 50 </emptywt>
+        <emptywt unit="LBS"> 40 </emptywt>
         <location name="CG" unit="IN">
             <x> 0 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
+        <pointmass name="M0">
+            <weight unit="LBS"> 10 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="M1">
+            <weight unit="LBS"> 0 </weight>
+            <location name="POINTMASS" unit="FT">
+                <x> 0 </x>
+                <y> -5 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
@@ -126,5 +154,10 @@
         <forces> ON </forces>
         <moments> ON </moments>
         <position> ON </position>
+        <massprops> ON </massprops>
+        <property> position/vrp-gc-latitude_deg </property>
+        <property> position/vrp-longitude_deg </property>
+        <property> position/vrp-radius-ft </property>
+
     </output>
 </fdm_config>

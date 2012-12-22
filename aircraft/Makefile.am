@@ -31,7 +31,7 @@ SUBDIRS =		\
 	paraglider	\
 	sgs126		\
 	Submarine_Scout \
-        Shuttle         \
+  Shuttle         \
 	t6texan2	\
 	weather-balloon \
 	x24b		\

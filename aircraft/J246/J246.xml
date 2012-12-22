@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon S. Berndt </author>
         <filecreationdate> 2010-01-14 </filecreationdate>
-        <version> $Revision: 1.4 $ </version>
+        <version> $Revision: 1.5 $ </version>
         <description>
           Rough model of the DIRECT Jupiter-246 
           Lunar Crew Launch Vehicle Configuration.
@@ -15,6 +15,18 @@
           This model is not sanctioned by nor is it a work of the DIRECT Launcher
           team.
         </description>
+      <note>
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. If this model has been validated at all, it would be
+        only to the extent that it seems to "fly right", and that it possibly
+        complies with published, publicly known, performance data (maximum speed,
+        endurance, etc.). Thus, this model is meant for educational and entertainment
+        purposes only.
+
+        This simulation model is not endorsed by the manufacturer. This model is not
+        to be sold.
+      </note>
         <reference
           refID="http://www.launchcomplexmodels.com/Direct/documents/Baseball_Cards/J246-41.4003.10050_CLV_090606.pdf"
           author="DIRECT Team"
@@ -772,7 +784,7 @@
 
     </aerodynamics>
 
-    <output name="J246.csv" type="CSV" rate="10">
+    <!--output name="J246.csv" type="CSV" rate="10">
       <simulation> OFF </simulation>
       <atmosphere> ON </atmosphere>
       <massprops> ON </massprops>
@@ -798,6 +810,6 @@
       <property>propulsion/tank[2]/priority</property>
       <property>propulsion/tank[3]/contents-lbs</property>
       <property>propulsion/tank[3]/priority</property>
-    </output>
+    </output-->
 
 </fdm_config>
