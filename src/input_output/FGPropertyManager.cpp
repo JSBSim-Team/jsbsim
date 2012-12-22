@@ -305,8 +305,24 @@ void FGPropertyManager::SetWritable (const string &name, bool state )
 
 void FGPropertyManager::Untie (const string &name)
 {
-  if (!untie(name.c_str()))
-    cerr << "Failed to untie property " << name << endl;
+  SGPropertyNode* property = getNode(name.c_str());
+  if (!property) {
+    cerr << "Attempt to untie a non-existant property." << name << endl;
+    return;
+  }
+
+  vector <SGPropertyNode_ptr>::iterator it;
+  for (it = tied_properties.begin(); it != tied_properties.end(); ++it) {
+    if (*it == property) {
+      property->untie();
+      tied_properties.erase(it);
+      if (debug_lvl & 0x20) cout << "Untied " << name << endl;
+      return;
+    }
+  }
+
+  cerr << "Failed to untie property " << name << endl
+       << "JSBSim is not the owner of this property." << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
