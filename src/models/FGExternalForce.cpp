@@ -60,12 +60,13 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.11 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.12 2012/12/23 14:56:58 bcoconni Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FGForce(FDMExec)
+FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index)
+  : FGForce(FDMExec)
 {
   Element* location_element=0;
   Element* direction_element=0;
@@ -77,7 +78,7 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FG
   magnitude = 0.0;
   azimuth = 0.0;
 
-  PropertyManager = fdmex->GetPropertyManager();
+  FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
   Name = el->GetAttributeValue("name");
   BasePropertyName = "external_reactions/" + Name;
 
@@ -91,7 +92,6 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FG
     Magnitude_Function = new FGFunction(PropertyManager, function_element);
   } else {
     PropertyManager->Tie( BasePropertyName + "/magnitude",(FGExternalForce*)this, &FGExternalForce::GetMagnitude, &FGExternalForce::SetMagnitude);
-    Magnitude_Node = PropertyManager->GetNode(BasePropertyName + "/magnitude");
   }
 
 
@@ -145,15 +145,12 @@ FGExternalForce::FGExternalForce(const FGExternalForce& extForce) : FGForce(extF
   Frame = extForce.Frame;
   vDirection = extForce.vDirection;
   Name = extForce.Name;
-  BasePropertyName = extForce.BasePropertyName;
-  PropertyManager = extForce.PropertyManager;
 }
   
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGExternalForce::~FGExternalForce()
 {
-  unbind( PropertyManager->GetNode("external_reactions"));
   delete Magnitude_Function;
   Debug(1);
 }
@@ -176,20 +173,6 @@ const FGColumnVector3& FGExternalForce::GetBodyForces(void)
   }
   
   return FGForce::GetBodyForces();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGExternalForce::unbind(FGPropertyManager *node)
-{
-  int N = node->nChildren();
-  for (int i=0; i<N; i++) {
-    if (node->getChild(i)->nChildren() ) {
-      unbind( (FGPropertyManager*)node->getChild(i) );
-    } else if ( node->getChild(i)->isTied() ) {
-      node->getChild(i)->untie();
-    }
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
