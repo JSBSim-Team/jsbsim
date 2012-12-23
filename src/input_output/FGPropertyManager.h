@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.20 2011/02/13 00:42:45 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.21 2012/12/23 18:45:32 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,11 +76,10 @@ CLASS DECLARATION
 class FGPropertyManager : public SGPropertyNode, public FGJSBBase
 {
   private:
-    static bool suppress_warning;
     static std::vector<SGPropertyNode_ptr> tied_properties;
   public:
     /// Constructor
-    FGPropertyManager(void) {suppress_warning = false;}
+    FGPropertyManager(void) {}
     /// Destructor
     virtual ~FGPropertyManager(void) {}
 

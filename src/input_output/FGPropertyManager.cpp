@@ -48,7 +48,6 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 
 namespace JSBSim {
 
-bool FGPropertyManager::suppress_warning = true;
 std::vector<SGPropertyNode_ptr> FGPropertyManager::tied_properties;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,8 +84,8 @@ string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
 FGPropertyManager*
 FGPropertyManager::GetNode (const string &path, bool create)
 {
-  SGPropertyNode* node=this->getNode(path.c_str(), create);
-  if (node == 0 && !suppress_warning) {
+  SGPropertyNode* node = getNode(path.c_str(), create);
+  if (node == 0) {
     cerr << "FGPropertyManager::GetNode() No node found for " << path << endl;
   }
   return (FGPropertyManager*)node;
@@ -97,18 +96,20 @@ FGPropertyManager::GetNode (const string &path, bool create)
 FGPropertyManager*
 FGPropertyManager::GetNode (const string &relpath, int index, bool create)
 {
-    return (FGPropertyManager*)getNode(relpath.c_str(),index,create);
+  SGPropertyNode* node = getNode(relpath.c_str(), index, create);
+  if (node == 0) {
+    cerr << "FGPropertyManager::GetNode() No node found for " << relpath
+         << "[" << index << "]" << endl;
+  }
+  return (FGPropertyManager*)node;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGPropertyManager::HasNode (const string &path)
 {
-  // Checking if a node exists shouldn't write a warning if it doesn't exist
-  suppress_warning = true;
-  bool has_node = (GetNode(path, false) != 0);
-  suppress_warning = false;
-  return has_node;
+  SGPropertyNode* node = getNode(path.c_str(), false);
+  return (node != 0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
