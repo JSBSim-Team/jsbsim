@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.21 2012/12/23 18:45:32 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.22 2012/12/23 19:13:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,23 +111,23 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param path The path of the node, relative to root.
      * @return true if the node exists, false otherwise.
      */
-    bool HasNode (const std::string &path);
+    bool HasNode (const std::string &path) const;
 
     /**
      * Get the name of a node
      */
-    std::string GetName( void );
+    std::string GetName( void ) const;
 
     /**
      * Get the name of a node without underscores, etc.
      */
-    std::string GetPrintableName( void );
+    std::string GetPrintableName( void ) const;
 
     /**
      * Get the fully qualified name of a node
      * This function is very slow, so is probably useful for debugging only.
      */
-    std::string GetFullyQualifiedName(void);
+    std::string GetFullyQualifiedName(void) const;
 
     /**
      * Get the qualified name of a node relative to given base path,
@@ -136,7 +136,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *
      * @param path The path to strip off, if found.
      */
-    std::string GetRelativeName( const std::string &path = "/fdm/jsbsim/" );
+    std::string GetRelativeName( const std::string &path = "/fdm/jsbsim/" ) const;
 
     /**
      * Get a bool value for a property.
@@ -152,7 +152,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a bool, or the default value provided.
      */
-    bool GetBool (const std::string &name, bool defaultValue = false);
+    bool GetBool (const std::string &name, bool defaultValue = false) const;
 
 
     /**
@@ -169,7 +169,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as an int, or the default value provided.
      */
-    int GetInt (const std::string &name, int defaultValue = 0);
+    int GetInt (const std::string &name, int defaultValue = 0) const;
 
 
     /**
@@ -186,7 +186,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a long, or the default value provided.
      */
-    int GetLong (const std::string &name, long defaultValue = 0L);
+    int GetLong (const std::string &name, long defaultValue = 0L) const;
 
 
     /**
@@ -203,7 +203,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a float, or the default value provided.
      */
-    float GetFloat (const std::string &name, float defaultValue = 0.0);
+    float GetFloat (const std::string &name, float defaultValue = 0.0) const;
 
 
     /**
@@ -220,7 +220,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a double, or the default value provided.
      */
-    double GetDouble (const std::string &name, double defaultValue = 0.0);
+    double GetDouble (const std::string &name, double defaultValue = 0.0) const;
 
 
     /**
@@ -237,7 +237,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      *        does not exist.
      * @return The property's value as a string, or the default value provided.
      */
-    std::string GetString (const std::string &name, std::string defaultValue = "");
+    std::string GetString (const std::string &name, std::string defaultValue = "") const;
 
 
     /**

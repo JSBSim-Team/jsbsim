@@ -106,22 +106,22 @@ FGPropertyManager::GetNode (const string &relpath, int index, bool create)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropertyManager::HasNode (const string &path)
+bool FGPropertyManager::HasNode (const string &path) const
 {
-  SGPropertyNode* node = getNode(path.c_str(), false);
+  const SGPropertyNode* node = getNode(path.c_str(), false);
   return (node != 0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetName( void )
+string FGPropertyManager::GetName( void ) const
 {
   return string( getName() );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetPrintableName( void )
+string FGPropertyManager::GetPrintableName( void ) const
 {
   string temp_string(getName());
   size_t initial_location=0;
@@ -142,10 +142,11 @@ string FGPropertyManager::GetPrintableName( void )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetFullyQualifiedName(void) {
+string FGPropertyManager::GetFullyQualifiedName(void) const
+{
     vector<string> stack;
     stack.push_back( getDisplayName(true) );
-    SGPropertyNode* tmpn=getParent();
+    const SGPropertyNode* tmpn=getParent();
     bool atroot=false;
     while( !atroot ) {
      stack.push_back( tmpn->getDisplayName(true) );
@@ -167,7 +168,7 @@ string FGPropertyManager::GetFullyQualifiedName(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetRelativeName( const string &path )
+string FGPropertyManager::GetRelativeName( const string &path ) const
 {
   string temp_string = GetFullyQualifiedName();
   size_t len = path.length();
@@ -181,42 +182,42 @@ string FGPropertyManager::GetRelativeName( const string &path )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropertyManager::GetBool (const string &name, bool defaultValue)
+bool FGPropertyManager::GetBool (const string &name, bool defaultValue) const
 {
   return getBoolValue(name.c_str(), defaultValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGPropertyManager::GetInt (const string &name, int defaultValue )
+int FGPropertyManager::GetInt (const string &name, int defaultValue ) const
 {
   return getIntValue(name.c_str(), defaultValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGPropertyManager::GetLong (const string &name, long defaultValue )
+int FGPropertyManager::GetLong (const string &name, long defaultValue ) const
 {
   return getLongValue(name.c_str(), defaultValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGPropertyManager::GetFloat (const string &name, float defaultValue )
+float FGPropertyManager::GetFloat (const string &name, float defaultValue ) const
 {
   return getFloatValue(name.c_str(), defaultValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropertyManager::GetDouble (const string &name, double defaultValue )
+double FGPropertyManager::GetDouble (const string &name, double defaultValue ) const
 {
   return getDoubleValue(name.c_str(), defaultValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetString (const string &name, string defaultValue )
+string FGPropertyManager::GetString (const string &name, string defaultValue ) const
 {
   return string(getStringValue(name.c_str(), defaultValue.c_str()));
 }
