@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C310-01A takeoff run">
+    
+  <description>For testing autopilot capability</description>
+  <use aircraft="c310" initialize="ellington"/>
+  
+  <run start="0.0" end="3600" dt="0.008333333">
+    <property value="0"> simulation/notify-trigger </property>
+
+    <event name="Standard Notify" persistent="true">
+      <description>Output message at periodic intervals</description>
+      <condition> simulation/notify-trigger ge 0.5 </condition>
+      <set name="simulation/notify-trigger" value="0"/>
+      <notify>
+        <property>position/h-agl-ft</property> 
+        <property>velocities/vt-fps</property>
+        <property>propulsion/engine[0]/propeller-rpm</property>
+        <property>propulsion/engine[1]/propeller-rpm</property>
+        <property>propulsion/engine[0]/power-hp</property>
+        <property>propulsion/engine[1]/power-hp</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[0]/blade-angle</property>
+        <property>propulsion/engine[1]/blade-angle</property>
+        <property>fcs/rudder-pos-rad</property>
+        <property>fcs/mixture-pos-norm[1]</property>
+        <property>fcs/yaw-trim-sum</property>
+       </notify>
+    </event>
+ 
+    <event name="Start engine">
+      <description>
+        Start engine and set initial heading and waypoints, turn on heading-hold mode.
+      </description>
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1"/>
+      <set name="fcs/advance-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[1]" value="1.0"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <set name="ap/attitude_hold" value="0"/>
+      <set name="guidance/target_wp_latitude_rad" value="0.517238"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.662727"/>
+      <set name="ap/heading_setpoint" value="0"/>
+      <set name="ap/heading-setpoint-select" value="0"/>
+      <set name="ap/heading_hold" value="1"/>
+      <set name="ap/yaw_damper" value="1"/>
+      <set name="ap/active-waypoint" value="0"/>
+      <notify/>
+    </event>
+    
+    <event name="Engine FAILURE!">
+      <description>
+        Set one engine to idle.
+      </description>
+      <condition>simulation/sim-time-sec  ge  250</condition>
+      <set name="fcs/mixture-cmd-norm[1]"  value="0"/>
+      <set name="fcs/advance-cmd-norm[1]"  value="0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0"/>
+      <set name="fcs/feather-cmd-norm[1]"  value="1"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property> ap/rudder_cmd </property>
+      </notify>
+    </event>
+
+    <event name="Pre crash NOTIFY!">
+      <description>
+        Put some data out before we hit the ground
+      </description>
+      <condition>
+        <and>
+          simulation/sim-time-sec  ge  100
+          position/h-agl-ft le 50 
+        </and>
+      </condition>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Crash!">
+      <description>
+        We hit the ground
+      </description>
+      <condition>
+        <and>
+          simulation/sim-time-sec  ge  100
+          position/h-agl-ft le 10 
+        </and>
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+      <notify/>
+    </event>
+
+     <event name="Set altitude for 1,000 ft.">
+      <condition>velocities/vc-fps ge 145.0</condition>
+      <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify/>
+    </event>
+    
+    <event name="Raise landing gear">
+      <condition>position/h-agl-ft  ge  40</condition>
+      <set name="gear/gear-cmd-norm" value="0"/>
+      <set name="fcs/advance-cmd-norm[0]" action="FG_EXP" value="0.85" tc="1.0"/>
+      <set name="fcs/advance-cmd-norm[1]" action="FG_EXP" value="0.85" tc="1.0"/>
+      <notify/>
+    </event>
+    
+    <event name="Cruise Throttle">
+      <condition>velocities/vc-fps ge 300.0</condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.85"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.85"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="Head to first waypoint">
+      <description>
+        Set heading hold to selected waypoint (setpoint) instead of
+        previously specified heading when altitude surpasses 800 feet.
+      </description>
+      <condition>position/h-agl-ft  ge  800</condition>
+      <set name="ap/heading-setpoint-select" value="1"/>
+      <set name="ap/active-waypoint" value="1"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+    
+    <event name="Terminate">
+      <description>
+        When the aircraft arrives back at Ellington Field (fifth waypoint)
+        then terminate the simulation.
+      </description>
+      <condition>
+        guidance/wp-distance lt 100
+        ap/active-waypoint eq 5
+      </condition>
+      <set name="simulation/terminate" value="1"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+
+    <event name="Set last waypoint">
+      <description>
+        When the distance to the fourth waypoint (northeast end of Galveston
+        Island) is less than 100 feet, then set the last waypoint
+        (back to Ellington Field).
+      </description>
+      <condition>
+        guidance/wp-distance lt 100
+        ap/active-waypoint eq 4
+      </condition>
+      <set name="guidance/target_wp_latitude_rad" value="0.516512"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.660922"/>
+      <set name="ap/active-waypoint" value="5"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+
+    <event name="Set fourth waypoint">
+      <description>
+        When the distance to the third waypoint (southwest end of Galveston
+        Island) is less than 800 feet, then set the fourth waypoint
+        (northeast end of Galveston Island).
+      </description>
+      <condition>
+        guidance/wp-distance lt 800
+        ap/active-waypoint eq 3
+      </condition>
+      <set name="guidance/target_wp_latitude_rad" value="0.511661"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.653510"/>
+      <set name="ap/active-waypoint" value="4"/>
+      <set name="fcs/throttle-cmd-norm" value="0.87"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+
+    <event name="Set third waypoint">
+      <description>
+        When the distance to the second waypoint (Hobby Airport) is less than
+        500 feet, then set the third waypoint.
+      </description>
+      <condition>
+        guidance/wp-distance lt 500
+        ap/active-waypoint eq 2
+      </condition>
+      <set name="guidance/target_wp_latitude_rad" value="0.507481"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.660062"/>
+      <set name="ap/active-waypoint" value="3"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+    
+    <event name="Set second waypoint">
+      <description>
+        When the distance to the first waypoint (Hobby Airport threshold) is less than
+        700 feet, then set the second waypoint.
+      </description>
+      <condition>
+        guidance/wp-distance lt 700
+        ap/active-waypoint eq 1
+      </condition>
+      <set name="guidance/target_wp_latitude_rad" value="0.517533"/>
+      <set name="guidance/target_wp_longitude_rad" value="-1.663076"/>
+      <set name="ap/active-waypoint" value="2"/>
+      <set name="simulation/notify-trigger" value="1"/>
+      <notify>
+        <property>guidance/wp-distance</property>
+       </notify>
+    </event>
+    
+  </run>
+</runscript>
