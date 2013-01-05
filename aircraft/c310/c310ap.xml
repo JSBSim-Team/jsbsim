@@ -13,6 +13,7 @@
 
           ap/elevator_cmd,
           ap/aileron_cmd,
+          ap/rudder_cmd,
           ap/attitude_hold,
           ap/altitude_hold,
           ap/heading_hold,
@@ -27,12 +28,14 @@
   <property>ap/attitude_hold</property>
   <property>ap/altitude_hold</property>
   <property>ap/heading_hold</property>
+  <property>ap/yaw_damper</property>
   <property>ap/active-waypoint</property>
   <property>ap/altitude_setpoint</property>
   <property>ap/heading_setpoint</property>
   <property>ap/heading-setpoint-select</property>
   <property>ap/aileron_cmd</property>
   <property>ap/elevator_cmd</property>
+  <property>ap/rudder_cmd</property>
   <property>ap/airspeed_setpoint</property>
   <property>ap/airspeed_hold</property>
   <property>ap/throttle-cmd-norm</property>
@@ -340,6 +343,35 @@ PITCH CHANNEL
     <gain> -1.0 </gain>
     <output> ap/elevator_cmd </output>
   </pure_gain>
+
+</channel>
+
+<!--
+=====================================================
+YAW CHANNEL
+=====================================================
+-->
+
+<!-- Yaw Damper -->
+
+<channel name="Yaw Damper">
+
+   <scheduled_gain name="ap/rudder_control">
+      <input> aero/beta-rad </input>
+      <table>
+        <independentVar lookup="row">velocities/ve-kts</independentVar>
+         <tableData>
+            30      0.00
+            60    -40.00
+         </tableData>
+      </table>
+      <gain>ap/yaw_damper</gain>
+      <clipto>
+        <min>-1.0</min>
+        <max> 1.0</max>
+      </clipto>
+      <output> ap/rudder_cmd </output>
+   </scheduled_gain>
 
 </channel>
 

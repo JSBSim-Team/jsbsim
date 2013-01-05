@@ -318,7 +318,7 @@ void FGPropertyManager::Untie (const string &name)
     if (*it == property) {
       property->untie();
       tied_properties.erase(it);
-      if (debug_lvl & 0x20) cout << "Untied " << name << endl;
+      if (FGJSBBase::debug_lvl & 0x20) cout << "Untied " << name << endl;
       return;
     }
   }
@@ -341,7 +341,7 @@ void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
     tied_properties.push_back(property);
-    if (debug_lvl & 0x20) cout << name << endl;
+    if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -360,7 +360,7 @@ void FGPropertyManager::Tie (const string &name, int *pointer,
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
     tied_properties.push_back(property);
-    if (debug_lvl & 0x20) cout << name << endl;
+    if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -379,7 +379,7 @@ void FGPropertyManager::Tie (const string &name, long *pointer,
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
     tied_properties.push_back(property);
-    if (debug_lvl & 0x20) cout << name << endl;
+    if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -398,7 +398,7 @@ void FGPropertyManager::Tie (const string &name, float *pointer,
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
     tied_properties.push_back(property);
-    if (debug_lvl & 0x20) cout << name << endl;
+    if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
   }
 }
 
@@ -416,7 +416,7 @@ void FGPropertyManager::Tie (const string &name, double *pointer, bool useDefaul
     cerr << "Failed to tie property " << name << " to a pointer" << endl;
   else {
     tied_properties.push_back(property);
-    if (debug_lvl & 0x20) cout << name << endl;
+    if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
   }
 }
 

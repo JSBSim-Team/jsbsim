@@ -3,6 +3,8 @@
   File:     IO470D.xml
   Author:   Aero-Matic v 0.8
 
+  Ref: http://www.tcmlink.com/EngSpecSheetDocs/IO470D.pdf
+
   Inputs:
     name:           IO470D
     type:           piston
@@ -14,12 +16,17 @@
 <piston_engine name="IO470D">
   <minmp unit="INHG">         10.0 </minmp>
   <maxmp unit="INHG">         28.5 </maxmp>
-  <displacement unit="IN3">  470.0 </displacement>
+  <displacement unit="IN3">  471.0 </displacement>
   <maxhp>        260.00 </maxhp>
   <cycles>         4.0 </cycles>
-  <idlerpm>      900.0 </idlerpm>
-  <maxrpm>      2700.0 </maxrpm>
-  <maxthrottle>    1.0 </maxthrottle>
-  <minthrottle>    0.1 </minthrottle>
-  <sparkfaildrop>  0.0 </sparkfaildrop>
+  <idlerpm>      600.0 </idlerpm>
+  <maxrpm>      2625.0 </maxrpm>
+  <sparkfaildrop>  0.1 </sparkfaildrop>
+  <bore unit="IN"> 5.0 </bore> <!-- Unused -->
+  <stroke unit="IN"> 4.0 </stroke>
+  <cylinders> 6.0 </cylinders><!-- Unused -->
+  <compression-ratio> 8.6 </compression-ratio>
+  <ram-air-factor> 1.0 </ram-air-factor>
+<!-- Added in FlightGear 2.8 -->
+  <man-press-lag> 0.25 </man-press-lag>
 </piston_engine>
