@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.22 2012/12/23 19:13:22 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.23 2013/01/05 12:24:00 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGPropertyManager : public SGPropertyNode, public FGJSBBase
+class FGPropertyManager : public SGPropertyNode
 {
   private:
     static std::vector<SGPropertyNode_ptr> tied_properties;
@@ -541,7 +541,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
         std::cerr << "Failed to tie property " << name << " to functions" << std::endl;
       else {
         tied_properties.push_back(property);
-        if (debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -577,7 +577,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
         std::cerr << "Failed to tie property " << name << " to indexed functions" << std::endl;
       else {
         tied_properties.push_back(property);
-        if (debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -615,7 +615,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
         std::cerr << "Failed to tie property " << name << " to object methods" << std::endl;
       else {
         tied_properties.push_back(property);
-        if (debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -652,7 +652,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
         std::cerr << "Failed to tie property " << name << " to indexed object methods" << std::endl;
       else {
         tied_properties.push_back(property);
-        if (debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
 };
