@@ -106,7 +106,7 @@ FGPropertyManager::GetNode (const string &relpath, int index, bool create)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropertyManager::HasNode (const string &path) const
+bool FGPropertyManager::HasNode (const string &path)
 {
   const SGPropertyNode* node = getNode(path.c_str(), false);
   return (node != 0);
