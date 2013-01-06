@@ -52,8 +52,8 @@
  <diameter unit="IN">153.0 </diameter>
  <numblades> 3 </numblades>
  <gearratio>2.0 </gearratio>
- <minpitch> 0.0 </minpitch>
- <maxpitch> 1.0 </maxpitch>
+ <minpitch> 20.0 </minpitch>
+ <maxpitch> 28.0 </maxpitch>
 
  <ct_factor> 1.0 </ct_factor>
  <cp_factor> 1.0 </cp_factor>
