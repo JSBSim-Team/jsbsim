@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.45 2012/06/10 13:21:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.46 2013/01/06 22:11:42 jentron Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -358,17 +358,10 @@ double FGPropeller::GetPowerRequired(void)
   // Apply optional Mach effects from CP_MACH table
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
 
-  if (RPS > 0.1) {
-    PowerRequired = cPReq*RPS*RPS*RPS*D5*rho;
-    vTorque(eX) = -Sense*PowerRequired / (RPS*2.0*M_PI);
-  } else {
-     // For a stationary prop we have to estimate torque first.
-     double CL = (90.0 - Pitch) / 20.0;
-     if (CL > 1.5) CL = 1.5;
-     double BladeArea = Diameter * Diameter / 32.0 * numBlades;
-     vTorque(eX) = -Sense*BladeArea*Diameter*fabs(Vel)*Vel*rho*0.19*CL;
-     PowerRequired = Sense*(vTorque(eX))*0.2*M_PI;
-  }
+  double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
+
+  PowerRequired = cPReq*local_RPS*RPS*local_RPS*D5*rho;
+  vTorque(eX) = -Sense*PowerRequired / (local_RPS*2.0*M_PI);
 
   return PowerRequired;
 }
