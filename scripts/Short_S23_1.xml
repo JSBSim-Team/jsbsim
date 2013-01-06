@@ -69,8 +69,12 @@
    <set name="inertia/pointmass-weight-lbs[7]" value="1500.0"/>
    <set name="inertia/pointmass-weight-lbs[8]" value="0.0"/>
    <set name="inertia/pointmass-weight-lbs[9]" value="1300.0"/>
-   <!-- Sea level at SP01 in FlightGear. -->
-   <set name="hydro/water-level-ft"            value="-4.04"/>
+   <!-- Set sea level to the terrain elevation. -->
+   <set name="hydro/water-level-ft">
+    <function>
+     <property>ic/terrain-elevation-ft</property>
+    </function>
+   </set>
   </event>
 
   <event name="Initialize 2">
@@ -82,13 +86,18 @@
     <property>inertia/cg-x-in</property>
     <property>inertia/weight-lbs</property>
     <property>inertia/empty-weight-lbs</property>
+    <property>position/h-sl-ft</property>
+    <property>atmosphere/density-altitude</property>
+    <property>atmosphere/pressure-altitude</property>
+    <property>atmosphere/T-R</property>
+    <property>atmosphere/T-sl-R</property>
    </notify>
   </event>
 
   <event name="Initialization 3">
    <description>Set the up the electrical system</description>
    <condition>
-     simulation/sim-time-sec GE 1.0
+    simulation/sim-time-sec GE 1.0
    </condition>
    <notify/>
    <set name="electrical/main-switchbox/switch-cmd-norm[0]"   value="1.0"/>
@@ -152,10 +161,10 @@
    <set name="fcs/advance-cmd-norm[1]" value="0.0"/>
    <set name="fcs/advance-cmd-norm[2]" value="0.0"/>
    <set name="fcs/advance-cmd-norm[3]" value="0.0"/>
-   <set name="fcs/throttle-cmd-norm[0]" value="0.30"/>
-   <set name="fcs/throttle-cmd-norm[1]" value="0.30"/>
-   <set name="fcs/throttle-cmd-norm[2]" value="0.30"/>
-   <set name="fcs/throttle-cmd-norm[3]" value="0.30"/>
+   <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+   <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+   <set name="fcs/throttle-cmd-norm[2]" value="1.0"/>
+   <set name="fcs/throttle-cmd-norm[3]" value="1.0"/>
    <set name="fcs/mixture-cmd-norm[0]" value="1.0"/>
    <set name="fcs/mixture-cmd-norm[1]" value="1.0"/>
    <set name="fcs/mixture-cmd-norm[2]" value="1.0"/>
@@ -169,15 +178,15 @@
   </event>
   <event name="Engine start 2">
    <description>The engines have started</description>
-   <condition>
-    simulation/sim-time-sec GE 10.017
-   </condition>
    <!-- condition>
-    propulsion/engine[0]/engine-rpm GE 350
-    propulsion/engine[1]/engine-rpm GE 350
-    propulsion/engine[2]/engine-rpm GE 350
-    propulsion/engine[3]/engine-rpm GE 350
+    simulation/sim-time-sec GE 10.017
    </condition -->
+   <condition>
+    propulsion/engine[0]/engine-rpm GE 370
+    propulsion/engine[1]/engine-rpm GE 370
+    propulsion/engine[2]/engine-rpm GE 370
+    propulsion/engine[3]/engine-rpm GE 370
+   </condition>
    <notify>
     <property>hydro/v-kt</property>
     <property>propulsion/engine[0]/engine-rpm</property>
@@ -338,7 +347,7 @@
    <description>Set climb power</description>
    <condition>
     position/h-agl-ft GE 25.0
-    propulsion/engine[0]/engine-rpm GT 2500
+    propulsion/engine[1]/engine-rpm GT 2500
    </condition>
    <notify>
     <property>position/distance-from-start-mag-mt</property>
@@ -368,18 +377,21 @@
         value="0.95" action="FG_RAMP" tc ="1.0"/>
    <set name="fcs/throttle-cmd-norm[3]"
         value="0.95" action="FG_RAMP" tc ="1.0"/>
-   <set name="simulation/rpm-check-time-trigger" value="simulation/sim-time-sec"/>
+   <set name="simulation/rpm-check-time-trigger" value="135"/>
   </event>
 
   <event name="Reduce throttle" type="FG_DELTA" persistent="true">
    <description>Check engine RPM at 1 seconds intervals</description>
    <condition>
-     simulation/sim-time-sec GE simulation/rpm-check-time-trigger
-     propulsion/engine[0]/engine-rpm GT 2600
+    simulation/sim-time-sec GE simulation/rpm-check-time-trigger
+    propulsion/engine[1]/engine-rpm GT 2600
    </condition>
    <notify>
     <property>fcs/throttle-cmd-norm[0]</property>
     <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
    </notify>
    <set name="fcs/throttle-cmd-norm[0]"  value="-0.01" type="FG_DELTA"/>
    <set name="fcs/throttle-cmd-norm[1]"  value="-0.01" type="FG_DELTA"/>

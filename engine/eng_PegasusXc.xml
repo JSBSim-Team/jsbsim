@@ -72,6 +72,10 @@ Flight Magazine November 12, 1936:
   Dry weight:                         1,015 lbs
   Remark: Moderately supercharged. Max. power at 5,256ft
 
+http://theflyingboatforum.forumlaunch.net/viewtopic.php?f=19&t=897
+  "... British and Australian CofAs for these aircraft give the Pegasus Xc
+  as 740 hp at 2,250 rpm at rated height of 4,500 ft and 815 hp at 2,475 rpm."
+
 -->
 <piston_engine name="PegasusXc">
 
@@ -91,7 +95,7 @@ Flight Magazine November 12, 1936:
      Wikipedia:         0.52  LBS/HP/HR for Pegasus XVIII.
  -->
  <volumetric-efficiency> 0.65 </volumetric-efficiency> <!-- Default 0.85 -->
- <idlerpm>      400.0 </idlerpm>
+ <idlerpm>      300.0 </idlerpm>
  <maxrpm>      2600.0 </maxrpm>
 
  <numboostspeeds> 1.0 </numboostspeeds>
