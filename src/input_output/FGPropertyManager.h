@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.23 2013/01/05 12:24:00 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.24 2013/01/06 14:50:31 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ class FGPropertyManager : public SGPropertyNode
      * @param path The path of the node, relative to root.
      * @return true if the node exists, false otherwise.
      */
-    bool HasNode (const std::string &path) const;
+    bool HasNode (const std::string &path);
 
     /**
      * Get the name of a node

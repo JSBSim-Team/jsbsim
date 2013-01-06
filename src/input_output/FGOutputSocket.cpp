@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.2 2012/12/15 16:13:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.3 2013/01/06 15:56:40 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,7 @@ void FGOutputSocket::SetOutputName(const string& fname)
   
   string proto = "TCP";
   if(dot_pos + 1 < slash_pos)
-    proto = fname.substr(dot_pos + 1, slash_pos - 1);
+    proto = fname.substr(dot_pos + 1, slash_pos - dot_pos - 1);
   
   string port = "1138";
   if(slash_pos < string::npos)
