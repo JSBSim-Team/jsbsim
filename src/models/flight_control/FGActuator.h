@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.13 2012/04/08 15:04:41 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.14 2013/01/12 19:24:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,13 +75,22 @@ CLASS DOCUMENTATION
     There are also several malfunctions that can be applied to the actuator
     by setting a property to true or false (or 1 or 0).
 
+    Rate limits can be specified either as a single number or property. If a
+    single <rate_limit> is supplied (with no "sense" attribute) then the actuator
+    is rate limited at +/- the specified rate limit. If the <rate_limit> element
+    is supplied with a "sense" attribute of either "incr[easing]" or 
+    "decr[easing]" then the actuator is limited to the provided numeric or property
+    value) exactly as provided.
+
 Syntax:
 
 @code
 <actuator name="name">
   <input> {[-]property} </input>
   <lag> number </lag>
-  <rate_limit> number </rate_limit>
+  [<rate_limit> {property name | value} </rate_limit>]
+  [<rate_limit sense="incr"> {property name | value} </rate_limit>
+   <rate_limit sense="decr"> {property name | value} </rate_limit>]
   <bias> number </bias>
   <deadband_width> number </deadband_width>
   <hysteresis_width> number </hysteresis_width>
@@ -111,7 +120,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.13 $
+@version $Revision: 1.14 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +156,12 @@ public:
 private:
   double span;
   double bias;
+  bool rate_limited;
   double rate_limit;
+  double rate_limit_incr;
+  double rate_limit_decr;
+  FGPropertyManager* rate_limit_incr_prop;
+  FGPropertyManager* rate_limit_decr_prop;
   double hysteresis_width;
   double deadband_width;
   double lag;
