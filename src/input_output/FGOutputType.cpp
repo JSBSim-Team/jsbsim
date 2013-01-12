@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.3 2012/12/15 16:13:58 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.4 2013/01/12 19:26:33 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -134,6 +134,7 @@ bool FGOutputType::Load(Element* element)
   Element *property_element = element->FindElement("property");
 
   while (property_element) {
+    string caption="";
     string property_str = property_element->GetDataLine();
     FGPropertyManager* node = PropertyManager->GetNode(property_str);
     if (!node) {
@@ -143,6 +144,11 @@ bool FGOutputType::Load(Element* element)
            << reset << endl;
     } else {
       OutputProperties.push_back(node);
+      if (property_element->HasAttribute("caption")) {
+        OutputCaptions.push_back(property_element->GetAttributeValue("caption"));
+      } else {
+        OutputCaptions.push_back("");
+      }
     }
     property_element = element->FindNextElement("property");
   }

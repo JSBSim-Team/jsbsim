@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.4 2012/12/15 16:13:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.5 2013/01/12 19:26:59 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,7 +230,11 @@ bool FGOutputTextFile::OpenFile(void)
   }
   if (OutputProperties.size() > 0) {
     for (unsigned int i=0;i<OutputProperties.size();i++) {
-      outstream << delimeter << OutputProperties[i]->GetPrintableName();
+      if (OutputCaptions[i].size() > 0) {
+        outstream << delimeter << OutputCaptions[i];
+      } else {
+        outstream << delimeter << OutputProperties[i]->GetFullyQualifiedName();
+      }
     }
   }
 
