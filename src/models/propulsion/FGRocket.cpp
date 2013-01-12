@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.28 2012/09/17 12:29:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.29 2013/01/12 21:11:59 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +73,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   It = ItVac = 0.0;
   ThrustVariation = 0.0;
   TotalIspVariation = 0.0;
+  VacThrust = 0.0;
   Flameout = false;
 
   // Defaults

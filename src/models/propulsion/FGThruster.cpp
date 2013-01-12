@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.17 2012/09/17 12:33:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.18 2013/01/12 21:11:59 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +66,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   GearRatio = 1.0;
   ReverserAngle = 0.0;
+  Thrust = 0.0;
   EngineNum = num;
   PropertyManager = FDMExec->GetPropertyManager();
 
