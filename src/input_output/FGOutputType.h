@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.3 2013/01/12 19:26:33 jberndt Exp $"
+#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.4 2013/01/12 20:56:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -199,7 +199,6 @@ protected:
   int SubSystems;
   std::vector <FGPropertyManager*> OutputProperties;
   std::vector <std::string> OutputCaptions;
-  FGFDMExec* FDMExec;
   bool enabled;
 
   FGAerodynamics* Aerodynamics;
