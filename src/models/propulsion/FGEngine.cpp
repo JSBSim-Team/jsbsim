@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.51 2012/09/03 17:16:07 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.52 2013/01/12 19:24:45 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
 
   local_element = engine_element->GetParent()->FindElement("location");
   if (local_element)  location = local_element->FindElementTripletConvertTo("IN");
-  else      cerr << "No engine location found for this engine." << endl;
+//  else      cerr << "No engine location found for this engine." << endl;
+// Jon: The engine location is not important - the nozzle location is.
 
   local_element = engine_element->GetParent()->FindElement("orient");
   if (local_element)  orientation = local_element->FindElementTripletConvertTo("RAD");
