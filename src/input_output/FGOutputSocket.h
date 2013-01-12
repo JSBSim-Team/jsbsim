@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTSOCKET "$Id: FGOutputSocket.h,v 1.2 2012/12/15 16:13:57 bcoconni Exp $"
+#define ID_OUTPUTSOCKET "$Id: FGOutputSocket.h,v 1.3 2013/01/12 18:08:40 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,6 +108,8 @@ public:
   void SocketStatusOutput(const std::string& out_str);
 
 protected:
+  virtual void PrintHeaders(void);
+
   std::string SockName;
   unsigned int SockPort;
   FGfdmSocket::ProtocolType SockProtocol;

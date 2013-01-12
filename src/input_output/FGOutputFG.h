@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTFG "$Id: FGOutputFG.h,v 1.2 2012/12/15 16:13:57 bcoconni Exp $"
+#define ID_OUTPUTFG "$Id: FGOutputFG.h,v 1.3 2013/01/12 18:08:40 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,6 +73,9 @@ public:
   FGOutputFG(FGFDMExec* fdmex);
 
   virtual void Print(void);
+
+protected:
+  virtual void PrintHeaders(void) {};
 
 private:
   FGNetFDM fgSockBuf;
