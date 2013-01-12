@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.4 2013/01/12 18:08:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.5 2013/01/12 21:14:46 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,7 +263,11 @@ void FGOutputSocket::PrintHeaders(void)
 
   if (OutputProperties.size() > 0) {
     for (unsigned int i=0;i<OutputProperties.size();i++)
-      socket->Append(OutputProperties[i]->GetPrintableName());
+      if (OutputCaptions[i].size() > 0) {
+        socket->Append(OutputCaptions[i]);
+      } else {
+        socket->Append(OutputProperties[i]->GetPrintableName());
+      }
   }
 
   socket->Send();
