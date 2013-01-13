@@ -42,6 +42,7 @@ INCLUDES
 
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 
 #include "FGLGear.h"
 #include "input_output/FGPropertyManager.h"
@@ -60,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.102 2012/11/09 19:32:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.103 2013/01/13 12:44:52 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -512,7 +513,9 @@ void FGLGear::ReportTakeoffOrLanding(void)
 
   if (lastWOW != WOW)
   {
-      cout <<"GEAR_CONTACT: " << fdmex->GetSimTime() <<" seconds: " << name <<" " <<WOW << endl;
+    ostringstream buf;
+    buf << "GEAR_CONTACT: " << fdmex->GetSimTime() << " seconds: " << name;
+    PutMessage(buf.str(), WOW);
   }
 }
 

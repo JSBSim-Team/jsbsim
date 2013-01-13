@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.35 2012/08/11 14:57:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.36 2013/01/12 19:25:30 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +164,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   property_name = base_property_name + "/contents-lbs";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
                                        &FGTank::SetContents );
+  property_name = base_property_name + "/pct-full";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
+
   property_name = base_property_name + "/priority";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
                                        &FGTank::SetPriority );

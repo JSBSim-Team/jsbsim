@@ -24,4 +24,5 @@ src/jsbsim -realtime data_output/socket.xml scripts/c1723.xml
   <fcs> OFF </fcs>
   <ground_reactions> OFF </ground_reactions>
   <coefficients> OFF </coefficients>
+  <property caption="Aileron Command (0-1)"> fcs/aileron-cmd-norm </property>
 </output>

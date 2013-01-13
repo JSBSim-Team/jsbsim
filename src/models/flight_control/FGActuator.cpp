@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.24 2012/10/05 02:16:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.25 2013/01/12 19:24:05 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,9 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   PreviousRateLimOutput = 0.0;
   PreviousLagInput = PreviousLagOutput = 0.0;
   bias = lag = hysteresis_width = deadband_width = 0.0;
-  rate_limit = 0.0; // no limit
+  rate_limited = false;
+  rate_limit = rate_limit_incr = rate_limit_decr = 0.0; // no limit
+  rate_limit_incr_prop = rate_limit_decr_prop = 0;
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
   initialized = 0;
@@ -74,9 +76,42 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   if ( element->FindElement("hysteresis_width") ) {
     hysteresis_width = element->FindElementValueAsNumber("hysteresis_width");
   }
-  if ( element->FindElement("rate_limit") ) {
+
+  // There can be a single rate limit specified, or increasing and 
+  // decreasing rate limits specified, and rate limits can be numeric, or
+  // a property.
+  Element* ratelim_el = element->FindElement("rate_limit");
+  while ( ratelim_el ) {
+    rate_limited = true;
+    FGPropertyManager* rate_limit_prop=0;
+
+    string rate_limit_str = ratelim_el->GetDataLine();
+    trim(rate_limit_str);
+    if (is_number(rate_limit_str)) {
     rate_limit = fabs(element->FindElementValueAsNumber("rate_limit"));
+    } else {
+      if (rate_limit_str[0] == '-') rate_limit_str.erase(0,1);
+      rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);
+      if (rate_limit_prop == 0)
+        std::cerr << "No such property, " << rate_limit_str << " for rate limiting" << std::endl;
+    }
+
+    if (ratelim_el->HasAttribute("sense")) {
+      string sense = ratelim_el->GetAttributeValue("sense");
+      if (sense.substr(0,4) == "incr") {
+        if (rate_limit_prop != 0) rate_limit_incr_prop = rate_limit_prop;
+        else                      rate_limit_incr = rate_limit;
+      } else if (sense.substr(0,4) == "decr") {
+        if (rate_limit_prop != 0) rate_limit_decr_prop = rate_limit_prop;
+        else                      rate_limit_decr = -rate_limit;
   }
+    } else {
+      rate_limit_incr =  rate_limit;
+      rate_limit_decr = -rate_limit;
+    }
+    ratelim_el = element->FindNextElement("rate_limit");
+  }
+
   if ( element->FindElement("bias") ) {
     bias = element->FindElementValueAsNumber("bias");
   }
@@ -196,9 +231,12 @@ void FGActuator::RateLimit(void)
   double input = Output;
   if ( initialized ) {
     double delta = input - PreviousRateLimOutput;
-    if (fabs(delta) > dt * rate_limit) {
-      double signed_rate_limit = delta > 0.0 ? rate_limit : -rate_limit;
-      Output = PreviousRateLimOutput + signed_rate_limit * dt;
+    if (rate_limit_incr_prop != 0) rate_limit_incr = rate_limit_incr_prop->getDoubleValue();
+    if (rate_limit_decr_prop != 0) rate_limit_decr = rate_limit_decr_prop->getDoubleValue();
+    if (delta > dt * rate_limit_incr) {
+      Output = PreviousRateLimOutput + rate_limit_incr * dt;
+    } else if (delta < dt * rate_limit_decr) {
+      Output = PreviousRateLimOutput + rate_limit_decr * dt;
     }
   }
   PreviousRateLimOutput = Output;
@@ -276,7 +314,18 @@ void FGActuator::Debug(int from)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
       if (bias != 0.0) cout << "      Bias: " << bias << endl;
-      if (rate_limit != 0) cout << "      Rate limit: " << rate_limit << endl;
+      if (rate_limited) {
+        if (rate_limit_incr_prop != 0) {
+          cout << "      Increasing rate limit: " << rate_limit_incr_prop->GetName() << endl;
+        } else {
+          cout << "      Increasing rate limit: " << rate_limit_incr << endl;
+        }
+        if (rate_limit_decr_prop != 0) {
+          cout << "      Decreasing rate limit: " << rate_limit_decr_prop->GetName() << endl;
+        } else {
+          cout << "      Decreasing rate limit: " << rate_limit_decr << endl;
+        }
+      }
       if (lag != 0) cout << "      Actuator lag: " << lag << endl;
       if (hysteresis_width != 0) cout << "      Hysteresis width: " << hysteresis_width << endl;
       if (deadband_width != 0) cout << "      Deadband width: " << deadband_width << endl;

@@ -59,7 +59,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.3 2013/01/06 15:56:40 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputSocket.cpp,v 1.5 2013/01/12 21:14:46 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,135 +130,147 @@ bool FGOutputSocket::Load(Element* el)
 bool FGOutputSocket::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
-    string scratch;
-
     delete socket;
     socket = new FGfdmSocket(SockName, SockPort, SockProtocol);
 
     if (socket == 0) return false;
     if (!socket->GetConnectStatus()) return false;
 
-    socket->Clear();
-    socket->Clear("<LABELS>");
-    socket->Append("Time");
+    PrintHeaders();
 
-    if (SubSystems & ssAerosurfaces) {
-      socket->Append("Aileron Command");
-      socket->Append("Elevator Command");
-      socket->Append("Rudder Command");
-      socket->Append("Flap Command");
-      socket->Append("Left Aileron Position");
-      socket->Append("Right Aileron Position");
-      socket->Append("Elevator Position");
-      socket->Append("Rudder Position");
-      socket->Append("Flap Position");
-    }
-
-    if (SubSystems & ssRates) {
-      socket->Append("P");
-      socket->Append("Q");
-      socket->Append("R");
-      socket->Append("PDot");
-      socket->Append("QDot");
-      socket->Append("RDot");
-    }
-
-    if (SubSystems & ssVelocities) {
-      socket->Append("QBar");
-      socket->Append("Vtotal");
-      socket->Append("UBody");
-      socket->Append("VBody");
-      socket->Append("WBody");
-      socket->Append("UAero");
-      socket->Append("VAero");
-      socket->Append("WAero");
-      socket->Append("Vn");
-      socket->Append("Ve");
-      socket->Append("Vd");
-    }
-
-    if (SubSystems & ssForces) {
-      socket->Append("F_Drag");
-      socket->Append("F_Side");
-      socket->Append("F_Lift");
-      socket->Append("LoD");
-      socket->Append("Fx");
-      socket->Append("Fy");
-      socket->Append("Fz");
-    }
-
-    if (SubSystems & ssMoments) {
-      socket->Append("L");
-      socket->Append("M");
-      socket->Append("N");
-    }
-
-    if (SubSystems & ssAtmosphere) {
-      socket->Append("Rho");
-      socket->Append("SL pressure");
-      socket->Append("Ambient pressure");
-      socket->Append("Turbulence Magnitude");
-      socket->Append("Turbulence Direction X");
-      socket->Append("Turbulence Direction Y");
-      socket->Append("Turbulence Direction Z");
-      socket->Append("NWind");
-      socket->Append("EWind");
-      socket->Append("DWind");
-    }
-
-    if (SubSystems & ssMassProps) {
-      socket->Append("Ixx");
-      socket->Append("Ixy");
-      socket->Append("Ixz");
-      socket->Append("Iyx");
-      socket->Append("Iyy");
-      socket->Append("Iyz");
-      socket->Append("Izx");
-      socket->Append("Izy");
-      socket->Append("Izz");
-      socket->Append("Mass");
-      socket->Append("Xcg");
-      socket->Append("Ycg");
-      socket->Append("Zcg");
-    }
-
-    if (SubSystems & ssPropagate) {
-      socket->Append("Altitude");
-      socket->Append("Phi (deg)");
-      socket->Append("Tht (deg)");
-      socket->Append("Psi (deg)");
-      socket->Append("Alpha (deg)");
-      socket->Append("Beta (deg)");
-      socket->Append("Latitude (deg)");
-      socket->Append("Longitude (deg)");
-    }
-
-    if (SubSystems & ssAeroFunctions) {
-      scratch = Aerodynamics->GetAeroFunctionStrings(",");
-      if (scratch.length() != 0) socket->Append(scratch);
-    }
-
-    if (SubSystems & ssFCS) {
-      scratch = FCS->GetComponentStrings(",");
-      if (scratch.length() != 0) socket->Append(scratch);
-    }
-
-    if (SubSystems & ssGroundReactions)
-      socket->Append(GroundReactions->GetGroundReactionStrings(","));
-
-    if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0)
-      socket->Append(Propulsion->GetPropulsionStrings(","));
-
-    if (OutputProperties.size() > 0) {
-      for (unsigned int i=0;i<OutputProperties.size();i++)
-        socket->Append(OutputProperties[i]->GetPrintableName());
-    }
-
-    socket->Send();
     return true;
   }
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutputSocket::PrintHeaders(void)
+{
+  string scratch;
+
+  socket->Clear();
+  socket->Clear("<LABELS>");
+  socket->Append("Time");
+
+  if (SubSystems & ssAerosurfaces) {
+    socket->Append("Aileron Command");
+    socket->Append("Elevator Command");
+    socket->Append("Rudder Command");
+    socket->Append("Flap Command");
+    socket->Append("Left Aileron Position");
+    socket->Append("Right Aileron Position");
+    socket->Append("Elevator Position");
+    socket->Append("Rudder Position");
+    socket->Append("Flap Position");
+  }
+
+  if (SubSystems & ssRates) {
+    socket->Append("P");
+    socket->Append("Q");
+    socket->Append("R");
+    socket->Append("PDot");
+    socket->Append("QDot");
+    socket->Append("RDot");
+  }
+
+  if (SubSystems & ssVelocities) {
+    socket->Append("QBar");
+    socket->Append("Vtotal");
+    socket->Append("UBody");
+    socket->Append("VBody");
+    socket->Append("WBody");
+    socket->Append("UAero");
+    socket->Append("VAero");
+    socket->Append("WAero");
+    socket->Append("Vn");
+    socket->Append("Ve");
+    socket->Append("Vd");
+  }
+
+  if (SubSystems & ssForces) {
+    socket->Append("F_Drag");
+    socket->Append("F_Side");
+    socket->Append("F_Lift");
+    socket->Append("LoD");
+    socket->Append("Fx");
+    socket->Append("Fy");
+    socket->Append("Fz");
+  }
+
+  if (SubSystems & ssMoments) {
+    socket->Append("L");
+    socket->Append("M");
+    socket->Append("N");
+  }
+
+  if (SubSystems & ssAtmosphere) {
+    socket->Append("Rho");
+    socket->Append("SL pressure");
+    socket->Append("Ambient pressure");
+    socket->Append("Turbulence Magnitude");
+    socket->Append("Turbulence Direction X");
+    socket->Append("Turbulence Direction Y");
+    socket->Append("Turbulence Direction Z");
+    socket->Append("NWind");
+    socket->Append("EWind");
+    socket->Append("DWind");
+  }
+
+  if (SubSystems & ssMassProps) {
+    socket->Append("Ixx");
+    socket->Append("Ixy");
+    socket->Append("Ixz");
+    socket->Append("Iyx");
+    socket->Append("Iyy");
+    socket->Append("Iyz");
+    socket->Append("Izx");
+    socket->Append("Izy");
+    socket->Append("Izz");
+    socket->Append("Mass");
+    socket->Append("Xcg");
+    socket->Append("Ycg");
+    socket->Append("Zcg");
+  }
+
+  if (SubSystems & ssPropagate) {
+    socket->Append("Altitude");
+    socket->Append("Phi (deg)");
+    socket->Append("Tht (deg)");
+    socket->Append("Psi (deg)");
+    socket->Append("Alpha (deg)");
+    socket->Append("Beta (deg)");
+    socket->Append("Latitude (deg)");
+    socket->Append("Longitude (deg)");
+  }
+
+  if (SubSystems & ssAeroFunctions) {
+    scratch = Aerodynamics->GetAeroFunctionStrings(",");
+    if (scratch.length() != 0) socket->Append(scratch);
+  }
+
+  if (SubSystems & ssFCS) {
+    scratch = FCS->GetComponentStrings(",");
+    if (scratch.length() != 0) socket->Append(scratch);
+  }
+
+  if (SubSystems & ssGroundReactions)
+    socket->Append(GroundReactions->GetGroundReactionStrings(","));
+
+  if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0)
+    socket->Append(Propulsion->GetPropulsionStrings(","));
+
+  if (OutputProperties.size() > 0) {
+    for (unsigned int i=0;i<OutputProperties.size();i++)
+      if (OutputCaptions[i].size() > 0) {
+        socket->Append(OutputCaptions[i]);
+      } else {
+        socket->Append(OutputProperties[i]->GetPrintableName());
+      }
+  }
+
+  socket->Send();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
