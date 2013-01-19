@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.86 2013/01/19 13:49:37 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.87 2013/01/19 14:19:43 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -75,9 +75,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   if(FDMExec != NULL ) {
     PropertyManager=fdmex->GetPropertyManager();
     Atmosphere=fdmex->GetAtmosphere();
-    Constructing = true;
     bind();
-    Constructing = false;
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
@@ -865,9 +863,9 @@ double FGInitialCondition::GetBodyVelFpsIC(int idx) const
 
 bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
-  string sep = "/";
+  string init_file_name;
   if( useStoredPath ) {
-    init_file_name = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
+    init_file_name = fdmex->GetFullAircraftPath() + "/" + rstfile + ".xml";
   } else {
     init_file_name = rstfile;
   }
