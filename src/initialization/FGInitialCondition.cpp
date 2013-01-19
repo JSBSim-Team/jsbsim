@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.85 2012/12/13 04:41:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.87 2013/01/19 14:19:43 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -75,9 +75,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   if(FDMExec != NULL ) {
     PropertyManager=fdmex->GetPropertyManager();
     Atmosphere=fdmex->GetAtmosphere();
-    Constructing = true;
     bind();
-    Constructing = false;
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
@@ -152,41 +150,6 @@ void FGInitialCondition::InitializeIC(void)
   lastSpeedSet = setvt;
   lastAltitudeSet = setasl;
   enginesRunning.clear();
-}
-
-//******************************************************************************
-
-void FGInitialCondition::WriteStateFile(int num)
-{
-  if (Constructing) return;
-
-  string filename = fdmex->GetFullAircraftPath();
-
-  if (filename.empty())
-    filename = "initfile.xml";
-  else
-    filename.append("/initfile.xml");
-
-  ofstream outfile(filename.c_str());
-  FGPropagate* Propagate = fdmex->GetPropagate();
-
-  if (outfile.is_open()) {
-    outfile << "<?xml version=\"1.0\"?>" << endl;
-    outfile << "<initialize name=\"reset00\">" << endl;
-    outfile << "  <ubody unit=\"FT/SEC\"> " << Propagate->GetUVW(eU) << " </ubody> " << endl;
-    outfile << "  <vbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eV) << " </vbody> " << endl;
-    outfile << "  <wbody unit=\"FT/SEC\"> " << Propagate->GetUVW(eW) << " </wbody> " << endl;
-    outfile << "  <phi unit=\"DEG\"> " << Propagate->GetEuler(ePhi)*radtodeg << " </phi>" << endl;
-    outfile << "  <theta unit=\"DEG\"> " << Propagate->GetEuler(eTht)*radtodeg << " </theta>" << endl;
-    outfile << "  <psi unit=\"DEG\"> " << Propagate->GetEuler(ePsi)*radtodeg << " </psi>" << endl;
-    outfile << "  <longitude unit=\"DEG\"> " << Propagate->GetLongitudeDeg() << " </longitude>" << endl;
-    outfile << "  <latitude unit=\"DEG\"> " << Propagate->GetLatitudeDeg() << " </latitude>" << endl;
-    outfile << "  <altitude unit=\"FT\"> " << Propagate->GetDistanceAGL() << " </altitude>" << endl;
-    outfile << "</initialize>" << endl;
-    outfile.close();
-  } else {
-    cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
-  }
 }
 
 //******************************************************************************
@@ -900,9 +863,9 @@ double FGInitialCondition::GetBodyVelFpsIC(int idx) const
 
 bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
-  string sep = "/";
+  string init_file_name;
   if( useStoredPath ) {
-    init_file_name = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
+    init_file_name = fdmex->GetFullAircraftPath() + "/" + rstfile + ".xml";
   } else {
     init_file_name = rstfile;
   }
@@ -1447,13 +1410,6 @@ void FGInitialCondition::bind(void)
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
-
-  typedef int (FGInitialCondition::*iPMF)(void) const;
-  PropertyManager->Tie("simulation/write-state-file",
-                       this,
-                       (iPMF)0,
-                       &FGInitialCondition::WriteStateFile);
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

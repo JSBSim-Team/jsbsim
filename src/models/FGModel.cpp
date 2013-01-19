@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.20 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.21 2013/01/14 22:44:52 bcoconni Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ FGModel::FGModel(FGFDMExec* fdmex)
   //must be brought up now.
   PropertyManager = FDMExec->GetPropertyManager();
 
-  exe_ctr     = 0;
+  exe_ctr     = 1;
   rate        = 1;
 
   if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
@@ -83,7 +83,7 @@ FGModel::~FGModel()
 
 bool FGModel::InitModel(void)
 {
-  exe_ctr = 0;
+  exe_ctr = 1;
   return true;
 }
 

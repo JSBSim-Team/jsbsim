@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.4 2013/01/12 19:26:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.5 2013/01/14 22:44:51 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -170,7 +170,6 @@ bool FGOutputType::Load(Element* element)
 bool FGOutputType::InitModel(void)
 {
   bool ret = FGModel::InitModel();
-  exe_ctr = 1; // Otherwise initial conditions are not output
 
   Debug(2);
   return ret;

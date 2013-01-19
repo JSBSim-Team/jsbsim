@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.34 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.36 2013/01/19 14:19:43 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,7 +216,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.34 2012/09/05 21:49:19 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.36 2013/01/19 14:19:43 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -652,14 +652,6 @@ public:
       @return true if successful */
   bool Load(string rstname, bool useStoredPath = true );
 
-  /** Get init-file name
-  */
-  string GetInitFile(void) const {return init_file_name;}
-  /** Set init-file name
-  */
-  void SetInitFile(string f) { init_file_name = f;}
-  void WriteStateFile(int num);
-
   /** Get the number of engines running
    */
   unsigned int GetNumEnginesRunning(void) const
@@ -693,8 +685,6 @@ private:
   bool Load_v1(void);
   bool Load_v2(void);
 
-  bool Constructing;
-
   void InitializeIC(void);
   void SetEulerAngleRadIC(int idx, double angle);
   void SetBodyVelFpsIC(int idx, double vel);
@@ -706,8 +696,6 @@ private:
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
   void bind(void);
   void Debug(int from);
-
-  string init_file_name;
 };
 }
 #endif
