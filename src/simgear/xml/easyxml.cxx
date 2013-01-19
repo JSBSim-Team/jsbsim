@@ -19,7 +19,7 @@ INCLUDES
 #include <string.h>
 
 #include "easyxml.hxx"
-#include "expat.h"
+#include <expat.h>
 
 #include STL_FSTREAM
 #include STL_IOSTREAM
