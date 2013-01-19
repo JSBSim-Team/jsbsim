@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.73 2012/09/05 20:48:47 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.74 2013/01/19 13:49:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.73 2012/09/05 20:48:47 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.74 2013/01/19 13:49:37 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -603,6 +603,7 @@ private:
   void UpdateBodyMatrices(void);
   void UpdateVehicleState(void);
 
+  void WriteStateFile(int num);
   void bind(void);
   void Debug(int from);
 };

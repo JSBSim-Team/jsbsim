@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.110 2012/09/05 20:48:47 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.111 2013/01/19 13:49:37 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -592,11 +592,44 @@ void FGPropagate::DumpState(void)
   cout << "    ECEF:  " << (VState.vPQR*radtodeg).Dump(", ") << " (p,q,r in deg/s)" << endl;
 }
 
+//******************************************************************************
+
+void FGPropagate::WriteStateFile(int num)
+{
+  string filename = FDMExec->GetFullAircraftPath();
+
+  if (filename.empty())
+    filename = "initfile.xml";
+  else
+    filename.append("/initfile.xml");
+
+  ofstream outfile(filename.c_str());
+
+  if (outfile.is_open()) {
+    outfile << "<?xml version=\"1.0\"?>" << endl;
+    outfile << "<initialize name=\"reset00\">" << endl;
+    outfile << "  <ubody unit=\"FT/SEC\"> " << VState.vUVW(eU) << " </ubody> " << endl;
+    outfile << "  <vbody unit=\"FT/SEC\"> " << VState.vUVW(eV) << " </vbody> " << endl;
+    outfile << "  <wbody unit=\"FT/SEC\"> " << VState.vUVW(eW) << " </wbody> " << endl;
+    outfile << "  <phi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePhi)*radtodeg << " </phi>" << endl;
+    outfile << "  <theta unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(eTht)*radtodeg << " </theta>" << endl;
+    outfile << "  <psi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePsi)*radtodeg << " </psi>" << endl;
+    outfile << "  <longitude unit=\"DEG\"> " << VState.vLocation.GetLongitudeDeg() << " </longitude>" << endl;
+    outfile << "  <latitude unit=\"DEG\"> " << VState.vLocation.GetLatitudeDeg() << " </latitude>" << endl;
+    outfile << "  <altitude unit=\"FT\"> " << GetDistanceAGL() << " </altitude>" << endl;
+    outfile << "</initialize>" << endl;
+    outfile.close();
+  } else {
+    cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
+  }
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::bind(void)
 {
   typedef double (FGPropagate::*PMF)(int) const;
+  typedef int (FGPropagate::*iPMF)(void) const;
 
   PropertyManager->Tie("velocities/h-dot-fps", this, &FGPropagate::Gethdot);
 
@@ -648,6 +681,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("simulation/integrator/rate/translational", (int*)&integrator_translational_rate);
   PropertyManager->Tie("simulation/integrator/position/rotational", (int*)&integrator_rotational_position);
   PropertyManager->Tie("simulation/integrator/position/translational", (int*)&integrator_translational_position);
+
+  PropertyManager->Tie("simulation/write-state-file", this, (iPMF)0, &FGPropagate::WriteStateFile);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

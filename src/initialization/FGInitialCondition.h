@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.34 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.35 2013/01/19 13:49:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,7 +216,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.34 2012/09/05 21:49:19 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.35 2013/01/19 13:49:37 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -658,7 +658,6 @@ public:
   /** Set init-file name
   */
   void SetInitFile(string f) { init_file_name = f;}
-  void WriteStateFile(int num);
 
   /** Get the number of engines running
    */
