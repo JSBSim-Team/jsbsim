@@ -86,6 +86,7 @@ private:
     void boundVertex(std::vector<double> & vertex,
                      const std::vector<double> & upperBound,
                      const std::vector<double> & lowerBound);
+	double eval(const std::vector<double> & vertex, bool check = false);
 };
 
 } // JSBSim

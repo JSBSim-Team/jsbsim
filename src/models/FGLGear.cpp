@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.103 2013/01/13 12:44:52 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.104 2013/01/25 14:02:13 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -357,8 +357,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
       ResetReporting();
     }
-  }
-  else if (gearPos < 0.01) { // Gear UP
+
+  } else if (gearPos < 0.01) { // Gear UP
+
     WOW = false;
     vWhlVelVec.InitMatrix();
   }

@@ -65,6 +65,7 @@ INCLUDES
 #include "models/FGOutput.h"
 #include "initialization/FGInitialCondition.h"
 #include "initialization/FGSimplexTrim.h"
+#include "initialization/FGLinearization.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
 
@@ -72,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.145 2012/11/11 18:43:07 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.146 2013/01/25 14:02:12 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,6 +154,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
   instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
+  instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
   instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
@@ -202,10 +204,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->SetDouble("trim/solver/alphaStep",0.05);
 
   instance->SetDouble("trim/solver/betaGuess",0);
-  instance->SetDouble("trim/solver/betaMin",-0.05);
-  instance->SetDouble("trim/solver/betaMax",0.05);
+  instance->SetDouble("trim/solver/betaMin",0.0);
+  instance->SetDouble("trim/solver/betaMax",0.0);
 //  instance->SetDouble("trim/solver/betaInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/betaStep",0.05);
+  instance->SetDouble("trim/solver/betaStep",0.0);
 
   instance->SetBool("trim/solver/showConvergeStatus",true);
 //  instance->SetBool("trim/solver/pause",true);
@@ -1193,8 +1195,20 @@ void FGFDMExec::DoSimplexTrim(int mode)
   FGSimplexTrim trim(this, (JSBSim::TrimMode)mode);
   sim_time = saved_time;
   Setsim_time(saved_time);
+  std::cout << "dT: " << dT << std::endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoLinearization(int mode)
+{
+  double saved_time;
+  if (Constructing) return;
+  saved_time = sim_time;
+  FGLinearization lin(this,mode);
+  sim_time = saved_time;
+  Setsim_time(saved_time);
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
