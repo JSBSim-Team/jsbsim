@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.80 2012/10/25 04:56:57 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.81 2013/01/25 14:02:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -179,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.80 $
+    @version $Revision: 1.81 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -467,6 +467,11 @@ public:
   void DoTrim(int mode);
   void DoSimplexTrim(int mode);
 
+  /** Executes linearization with state-space output
+   * You must trim first to get an accurate state-space model
+   */
+  void DoLinearization(int mode);
+
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
@@ -526,10 +531,17 @@ public:
   double GetDeltaT(void) const {return dT;}
 
   /// Suspends the simulation and sets the delta T to zero.
-  void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
+  void SuspendIntegration(void) {
+	  if (dT != 0.0) { // check if already suspended
+		  saved_dT = dT;
+		  dT = 0.0;
+	  }
+  }
 
   /// Resumes the simulation by resetting delta T to the correct value.
-  void ResumeIntegration(void)  {dT = saved_dT;}
+  void ResumeIntegration(void)  {
+	  dT = saved_dT;
+  }
 
   /** Returns the simulation suspension state.
       @return true if suspended, false if executing  */

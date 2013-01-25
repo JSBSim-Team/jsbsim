@@ -642,7 +642,7 @@ public:
 	class Rpm2 : public Component
     {
     public:
-        Rpm2() : Component("Rpmr2","rev/min") {};
+        Rpm2() : Component("Rpm2","rev/min") {};
         double get() const
         {
             return m_fdm->GetPropulsion()->GetEngine(2)->GetThruster()->GetRPM();

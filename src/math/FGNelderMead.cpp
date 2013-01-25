@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <ctime>
 
@@ -65,9 +66,10 @@ void FGNelderMead::update()
 		}
 		else
 		{
-			if (std::abs(minCost-minCostPrevResize) < abstol)
+            if (std::abs(minCost-minCostPrevResize) < std::numeric_limits<float>::epsilon())
 			{
-				std::cout << "\nunable to escape local minimum" << std::endl;
+                //std::cout << "\nunable to escape local minimum" << std::endl;
+                throw std::runtime_error("unable to escape local minimum!");
 				m_status = -1;
 				return;
 			}
@@ -83,7 +85,7 @@ void FGNelderMead::update()
 	{
 		try
 		{
-			m_cost[vertex] = m_f->eval(m_simplex[vertex]);
+            m_cost[vertex] = eval(m_simplex[vertex]);   
 		}
 		catch (const std::exception & e)
 		{
@@ -285,23 +287,7 @@ double FGNelderMead::tryStretch(double factor)
     }
 
     // find trial cost
-	double costTry0 = 0, costTry = 0;
-	try
-	{
-    	costTry0 = m_f->eval(tryVertex);
-    	costTry = m_f->eval(tryVertex);
-	}
-	catch(const std::exception & e)
-	{
-		throw;
-		return 0;
-	}
-
-    if (std::abs(costTry0-costTry) > std::numeric_limits<float>::epsilon())
-    {
-		//std::cout << "\twarning: dynamics not stable!" << std::endl;
-        //return 1000000*m_cost[m_iMax];
-    }
+    double costTry = eval(tryVertex);
 
     // if trial cost lower than max
     if (costTry < m_cost[m_iMax])
@@ -367,6 +353,30 @@ void FGNelderMead::boundVertex(std::vector<double> & vertex,
     {
         if (vertex[dim] > upperBound[dim]) vertex[dim] = upperBound[dim];
         else if (vertex[dim] < lowerBound[dim]) vertex[dim] = lowerBound[dim];
+    }
+}
+
+double FGNelderMead::eval(const std::vector<double> & vertex, bool check)
+{
+    if (check) {
+        double cost0 = m_f->eval(vertex);
+        double cost1 = m_f->eval(vertex);
+        if ((cost0 - cost1) > std::numeric_limits<float>::epsilon()) {
+            std::stringstream msg;
+            msg.precision(10);
+            msg << std::scientific
+                << "dynamics not stable!"
+                << "\tdiff: " << cost1 - cost0
+                << "\tcost0: " << cost0
+                << "\tcost1: " << cost1
+                << std::endl;
+            std::cout << msg.str();
+            //throw std::runtime_error(msg.str());
+        } else {
+            return cost1;
+        }
+    } else {
+        return m_f->eval(vertex);
     }
 }
 

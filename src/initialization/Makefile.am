@@ -1,8 +1,8 @@
 includedir = @includedir@/JSBSim/initialization
 
-LIBRARY_SOURCES = FGInitialCondition.cpp FGTrim.cpp FGTrimAxis.cpp FGSimplexTrim.cpp FGTrimmer.cpp
+LIBRARY_SOURCES = FGInitialCondition.cpp FGTrim.cpp FGTrimAxis.cpp FGSimplexTrim.cpp FGTrimmer.cpp FGLinearization.cpp
 
-LIBRARY_INCLUDES = FGInitialCondition.h FGTrim.h FGTrimAxis.h FGSimplexTrim.h FGTrimmer.h
+LIBRARY_INCLUDES = FGInitialCondition.h FGTrim.h FGTrimAxis.h FGSimplexTrim.h FGTrimmer.h FGLinearization.h
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libInit.la
