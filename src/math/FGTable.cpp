@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.28 2011/06/13 12:07:10 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   string call_type;
   string parent_type;
   string brkpt_string;
-  FGPropertyManager* node;
+  FGPropertyNode* node;
   Element *tableData=0;
   Element *parent_element=0;
   Element *axisElement=0;

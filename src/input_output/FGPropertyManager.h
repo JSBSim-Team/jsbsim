@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.24 2013/01/06 14:50:31 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,24 +73,11 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGPropertyManager : public SGPropertyNode
+class FGPropertyNode : public SGPropertyNode
 {
-  private:
-    static std::vector<SGPropertyNode_ptr> tied_properties;
   public:
-    /// Constructor
-    FGPropertyManager(void) {}
     /// Destructor
-    virtual ~FGPropertyManager(void) {}
-
-    /** Property-ify a name
-     *  replaces spaces with '-' and, optionally, makes name all lower case
-     *  @param name string to change
-     *  @param lowercase true to change all upper case chars to lower
-     *  NOTE: this function changes its argument and thus relies
-     *  on pass by value
-     */
-    std::string mkPropertyName(std::string name, bool lowercase);
+    virtual ~FGPropertyNode(void) {}
 
     /**
      * Get a property node.
@@ -99,10 +86,10 @@ class FGPropertyManager : public SGPropertyNode
      * @param create true to create the node if it doesn't exist.
      * @return The node, or 0 if none exists and none was created.
      */
-    FGPropertyManager*
+    FGPropertyNode*
     GetNode (const std::string &path, bool create = false);
 
-    FGPropertyManager*
+    FGPropertyNode*
     GetNode (const std::string &relpath, int index, bool create = false);
 
     /**
@@ -384,7 +371,38 @@ class FGPropertyManager : public SGPropertyNode
      * @param state The state of the write attribute (defaults to true).
      */
     void SetWritable (const std::string &name, bool state = true);
+};
 
+typedef SGSharedPtr<FGPropertyNode> FGPropertyNode_ptr;
+typedef SGSharedPtr<const FGPropertyNode> FGConstPropertyNode_ptr;
+
+class FGPropertyManager
+{
+  public:
+    /// Default constructor
+    FGPropertyManager(void) { root = new FGPropertyNode; }
+
+    /// Constructor
+    FGPropertyManager(FGPropertyNode* _root) : root(_root) {};
+
+    /// Destructor
+    virtual ~FGPropertyManager(void) { Unbind(); }
+
+    FGPropertyNode* GetNode(void) const { return root; }
+    FGPropertyNode* GetNode(const std::string &path, bool create = false)
+    { return root->GetNode(path, create); }
+    FGPropertyNode* GetNode(const std::string &relpath, int index, bool create = false)
+    { return root->GetNode(relpath, index, create); }
+    bool HasNode(const std::string& path) const { return root->HasNode(path); }
+
+    /** Property-ify a name
+     *  replaces spaces with '-' and, optionally, makes name all lower case
+     *  @param name string to change
+     *  @param lowercase true to change all upper case chars to lower
+     *  NOTE: this function changes its argument and thus relies
+     *  on pass by value
+     */
+    std::string mkPropertyName(std::string name, bool lowercase);
 
     ////////////////////////////////////////////////////////////////////////
     // Convenience functions for tying properties, with logging.
@@ -531,7 +549,7 @@ class FGPropertyManager : public SGPropertyNode
     template <class V> inline void
     Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
     {
-      SGPropertyNode* property = getNode(name.c_str(), true);
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
         std::cerr << "Could not get or create property " << name << std::endl;
         return;
@@ -567,7 +585,7 @@ class FGPropertyManager : public SGPropertyNode
     template <class V> inline void Tie (const std::string &name, int index, V (*getter)(int),
                                 void (*setter)(int, V) = 0, bool useDefault = true)
     {
-      SGPropertyNode* property = getNode(name.c_str(), true);
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
         std::cerr << "Could not get or create property " << name << std::endl;
         return;
@@ -605,7 +623,7 @@ class FGPropertyManager : public SGPropertyNode
     Tie (const std::string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
-      SGPropertyNode* property = getNode(name.c_str(), true);
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
         std::cerr << "Could not get or create property " << name << std::endl;
         return;
@@ -642,7 +660,7 @@ class FGPropertyManager : public SGPropertyNode
     Tie (const std::string &name, T * obj, int index, V (T::*getter)(int) const,
                          void (T::*setter)(int, V) = 0, bool useDefault = true)
     {
-      SGPropertyNode* property = getNode(name.c_str(), true);
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
         std::cerr << "Could not get or create property " << name << std::endl;
         return;
@@ -655,6 +673,10 @@ class FGPropertyManager : public SGPropertyNode
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
+
+  private:
+    std::vector<SGPropertyNode_ptr> tied_properties;
+    FGPropertyNode_ptr root;
 };
 }
 #endif // FGPROPERTYMANAGER_H

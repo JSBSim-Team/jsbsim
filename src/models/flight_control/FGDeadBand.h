@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.9 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_DEADBAND "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -53,7 +53,6 @@ namespace JSBSim {
 
 class FGFCS;
 class Element;
-class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -80,7 +79,7 @@ CLASS DOCUMENTATION
     produce no output. For example, say that the width value is 2.0. If the
     input is between -1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @version $Id: FGDeadBand.h,v 1.9 2009/10/24 22:59:30 jberndt Exp $
+    @version $Id$
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,7 +97,7 @@ public:
 private:
   double width;
   double gain;
-  FGPropertyManager* WidthPropertyNode;
+  FGPropertyNode_ptr WidthPropertyNode;
   double WidthPropertySign;
 
   void Debug(int from);

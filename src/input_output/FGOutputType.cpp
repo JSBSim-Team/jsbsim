@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.5 2013/01/14 22:44:51 bcoconni Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -136,7 +136,7 @@ bool FGOutputType::Load(Element* element)
   while (property_element) {
     string caption="";
     string property_str = property_element->GetDataLine();
-    FGPropertyManager* node = PropertyManager->GetNode(property_str);
+    FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
       cerr << fgred << highint << endl << "  No property by the name "
            << property_str << " has been defined. This property will " << endl

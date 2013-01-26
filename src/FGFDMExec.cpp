@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.146 2013/01/25 14:02:12 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +134,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   // Prepare FDMctr for the next child FDM id
   (*FDMctr)++;       // instance. "child" instances are loaded last.
 
-  instance = Root->GetNode("/fdm/jsbsim",IdFDM,true);
+  FGPropertyNode* instanceRoot = Root->GetNode("/fdm/jsbsim",IdFDM,true);
+  instance = new FGPropertyManager(instanceRoot);
   Debug(0);
   // this is to catch errors in binding member functions to the property tree.
   try {
@@ -163,56 +164,56 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->Tie("simulation/frame", (int *)&Frame, false);
 
   // simplex trim properties
-  instance->SetDouble("trim/solver/rtol",0.0001);
-  instance->SetDouble("trim/solver/speed",2);
-  instance->SetDouble("trim/solver/abstol",0.001);
-  instance->SetDouble("trim/solver/iterMax",2000);
-  instance->SetInt("trim/solver/debugLevel",0);
-  instance->SetDouble("trim/solver/random",0);
-  instance->SetBool("trim/solver/showSimplex",false);
-//  instance->SetBool("trim/solver/showConvergence",true);
-  instance->SetBool("trim/solver/pause",false);
+  instanceRoot->SetDouble("trim/solver/rtol",0.0001);
+  instanceRoot->SetDouble("trim/solver/speed",2);
+  instanceRoot->SetDouble("trim/solver/abstol",0.001);
+  instanceRoot->SetDouble("trim/solver/iterMax",2000);
+  instanceRoot->SetInt("trim/solver/debugLevel",0);
+  instanceRoot->SetDouble("trim/solver/random",0);
+  instanceRoot->SetBool("trim/solver/showSimplex",false);
+//  instanceRoot->SetBool("trim/solver/showConvergence",true);
+  instanceRoot->SetBool("trim/solver/pause",false);
 
-  instance->SetDouble("trim/solver/throttleGuess",0.50);
-  instance->SetDouble("trim/solver/throttleMin",0.0);
-  instance->SetDouble("trim/solver/throttleMax",1.0);
-//  instance->SetDouble("trim/solver/throttleInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/throttleStep",0.1);
+  instanceRoot->SetDouble("trim/solver/throttleGuess",0.50);
+  instanceRoot->SetDouble("trim/solver/throttleMin",0.0);
+  instanceRoot->SetDouble("trim/solver/throttleMax",1.0);
+//  instanceRoot->SetDouble("trim/solver/throttleInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/throttleStep",0.1);
 
-  instance->SetDouble("trim/solver/aileronGuess",0);
-  instance->SetDouble("trim/solver/aileronMin",-1.00);
-  instance->SetDouble("trim/solver/aileronMax",1.00);
-//  instance->SetDouble("trim/solver/aileronInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/aileronStep",0.1);
+  instanceRoot->SetDouble("trim/solver/aileronGuess",0);
+  instanceRoot->SetDouble("trim/solver/aileronMin",-1.00);
+  instanceRoot->SetDouble("trim/solver/aileronMax",1.00);
+//  instanceRoot->SetDouble("trim/solver/aileronInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/aileronStep",0.1);
 
-  instance->SetDouble("trim/solver/rudderGuess",0);
-  instance->SetDouble("trim/solver/rudderMin",-1.00);
-  instance->SetDouble("trim/solver/rudderMax",1.00);
-//  instance->SetDouble("trim/solver/rudderInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/rudderStep",0.1);
+  instanceRoot->SetDouble("trim/solver/rudderGuess",0);
+  instanceRoot->SetDouble("trim/solver/rudderMin",-1.00);
+  instanceRoot->SetDouble("trim/solver/rudderMax",1.00);
+//  instanceRoot->SetDouble("trim/solver/rudderInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/rudderStep",0.1);
 
-  instance->SetDouble("trim/solver/elevatorGuess",-0.1);
-  instance->SetDouble("trim/solver/elevatorMin",-1.0);
-  instance->SetDouble("trim/solver/elevatorMax",1.0);
-//  instance->SetDouble("trim/solver/elevatorInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/elevatorStep",0.1);
+  instanceRoot->SetDouble("trim/solver/elevatorGuess",-0.1);
+  instanceRoot->SetDouble("trim/solver/elevatorMin",-1.0);
+  instanceRoot->SetDouble("trim/solver/elevatorMax",1.0);
+//  instanceRoot->SetDouble("trim/solver/elevatorInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/elevatorStep",0.1);
 
-  instance->SetDouble("trim/solver/alphaGuess",0.05);
-  instance->SetDouble("trim/solver/alphaMin",-0.1);
-  instance->SetDouble("trim/solver/alphaMax",.18);
-//  instance->SetDouble("trim/solver/alphaInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/alphaStep",0.05);
+  instanceRoot->SetDouble("trim/solver/alphaGuess",0.05);
+  instanceRoot->SetDouble("trim/solver/alphaMin",-0.1);
+  instanceRoot->SetDouble("trim/solver/alphaMax",.18);
+//  instanceRoot->SetDouble("trim/solver/alphaInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/alphaStep",0.05);
 
-  instance->SetDouble("trim/solver/betaGuess",0);
-  instance->SetDouble("trim/solver/betaMin",0.0);
-  instance->SetDouble("trim/solver/betaMax",0.0);
-//  instance->SetDouble("trim/solver/betaInitialStepSize",0.1);
-  instance->SetDouble("trim/solver/betaStep",0.0);
+  instanceRoot->SetDouble("trim/solver/betaGuess",0);
+  instanceRoot->SetDouble("trim/solver/betaMin",0.0);
+  instanceRoot->SetDouble("trim/solver/betaMax",0.0);
+//  instanceRoot->SetDouble("trim/solver/betaInitialStepSize",0.1);
+  instanceRoot->SetDouble("trim/solver/betaStep",0.0);
 
-  instance->SetBool("trim/solver/showConvergeStatus",true);
-//  instance->SetBool("trim/solver/pause",true);
-  instance->SetBool("trim/solver/variablePropPitch",false);
-//  instance->SetBool("trim/solver/debugLevel",0);
+  instanceRoot->SetBool("trim/solver/showConvergeStatus",true);
+//  instanceRoot->SetBool("trim/solver/pause",true);
+  instanceRoot->SetBool("trim/solver/variablePropPitch",false);
+//  instanceRoot->SetBool("trim/solver/debugLevel",0);
 
   Constructing = false;
 }
@@ -224,6 +225,8 @@ FGFDMExec::~FGFDMExec()
   try {
     Unbind();
     DeAllocate();
+
+    delete instance;
 
     if (IdFDM == 0) { // Meaning this is no child FDM
       if(Root != 0) {
@@ -924,7 +927,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   if (result) {
     struct PropertyCatalogStructure masterPCS;
     masterPCS.base_string = "";
-    masterPCS.node = (FGPropertyManager*)Root;
+    masterPCS.node = Root->GetNode();
     BuildPropertyCatalog(&masterPCS);
   }
 
@@ -957,7 +960,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
       }
       PropertyCatalog.push_back(pcsNew->base_string);
     } else {
-      pcsNew->node = (FGPropertyManager*)pcs->node->getChild(i);
+      pcsNew->node = (FGPropertyNode*)pcs->node->getChild(i);
       BuildPropertyCatalog(pcsNew);
     }
   }

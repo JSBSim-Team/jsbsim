@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.1 2012/10/15 05:02:29 jberndt Exp $"
+#define ID_FCSCHANNEL "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ typedef std::vector <FGFCSComponent*> FCSCompVec;
 class FGFCSChannel {
 public:
   /// Constructor
-  FGFCSChannel(FGPropertyManager* node=0) :
+  FGFCSChannel(FGPropertyNode* node=0) :
   OnOffNode(node)
   {
   }
@@ -120,7 +120,7 @@ public:
 
   private:
     FCSCompVec FCSComponents;
-    const FGPropertyManager* OnOffNode;
+    FGConstPropertyNode_ptr OnOffNode;
 };
 
 }

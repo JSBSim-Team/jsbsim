@@ -30,17 +30,18 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropertyValue.h"
+#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.7 2011/04/05 20:20:21 andgi Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_PROPERTYVALUE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropertyValue::FGPropertyValue(FGPropertyManager* propNode)
+FGPropertyValue::FGPropertyValue(FGPropertyNode* propNode)
   : PropertyManager(0L), PropertyNode(propNode)
 {
 }
@@ -56,7 +57,7 @@ FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* proper
 
 double FGPropertyValue::GetValue(void) const
 {
-  FGPropertyManager* node = PropertyNode;
+  FGPropertyNode* node = PropertyNode;
 
   if (!PropertyNode) {
     // The node cannot be cached since this is a const method.

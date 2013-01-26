@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYVALUE "$Id: FGPropertyValue.h,v 1.9 2011/04/05 20:20:21 andgi Exp $"
+#define ID_PROPERTYVALUE "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,18 +66,18 @@ class FGPropertyValue : public FGParameter
 {
 public:
 
-  FGPropertyValue(FGPropertyManager* propNode);
+  FGPropertyValue(FGPropertyNode* propNode);
   FGPropertyValue(std::string propName, FGPropertyManager* propertyManager);
   ~FGPropertyValue() {};
 
   double GetValue(void) const;
-  void SetNode(FGPropertyManager* node) {PropertyNode = node;} 
+  void SetNode(FGPropertyNode* node) {PropertyNode = node;}
 
   std::string GetName(void) const;
 
 private:
   FGPropertyManager* PropertyManager; // Property root used to do late binding.
-  FGPropertyManager* PropertyNode;
+  FGPropertyNode_ptr PropertyNode;
   std::string PropertyName;
 };
 

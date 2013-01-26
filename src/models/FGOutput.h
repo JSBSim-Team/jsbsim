@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.26 2012/09/05 21:49:19 bcoconni Exp $"
+#define ID_OUTPUT "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.26 2012/09/05 21:49:19 bcoconni Exp $
+    @version $Id$
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,7 +216,7 @@ public:
       @result true if the execution succeeded. */
   bool Load(int subSystems, std::string protocol, std::string type,
             std::string port, std::string name, double outRate,
-            std::vector<FGPropertyManager *> & outputProperties);
+            std::vector<FGPropertyNode_ptr> & outputProperties);
   /** Get the name identifier to which the output will be directed.
       @param idx ID of the output instance from which the name identifier must
                  be obtained

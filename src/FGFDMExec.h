@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.81 2013/01/25 14:02:12 jberndt Exp $"
+#define ID_FDMEXEC "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -179,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.81 $
+    @version $Revision$
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,13 +392,14 @@ public:
   /** Retrieves the value of a property.
       @param property the name of the property
       @result the value of the specified property */
-  inline double GetPropertyValue(const string& property) {return instance->GetDouble(property);}
+  inline double GetPropertyValue(const string& property)
+  { return instance->GetNode()->GetDouble(property); }
 
   /** Sets a property value.
       @param property the property to be set
       @param value the value to set the property to */
   inline void SetPropertyValue(const string& property, double value) {
-    instance->SetDouble(property, value);
+    instance->GetNode()->SetDouble(property, value);
   }
 
   /// Returns the model name.
@@ -495,7 +496,7 @@ public:
     /// Name of the property.
     string base_string;
     /// The node for the property.
-    FGPropertyManager *node;
+    FGPropertyNode_ptr node;
   };
 
   /** Builds a catalog of properties.

@@ -37,12 +37,13 @@ INCLUDES
 #include <vector>
 #include <string>
 #include "FGParameter.h"
+#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.26 2012/09/25 12:43:13 jberndt Exp $"
+#define ID_FUNCTION "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -50,7 +51,6 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGPropertyManager;
 class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,7 +274,7 @@ private:
                      eRotation_wf_to_bf} Type;
   std::string Name;
   std::string sCopyTo;        // Property name to copy function value to
-  FGPropertyManager* pCopyTo; // Property node for CopyTo property string
+  FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 
   unsigned int GetBinary(double) const;
   void bind(void);
