@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.46 2012/09/25 12:43:13 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,7 +240,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
           property_name = replace(property_name,"#",Prefix);
         }
       }
-      FGPropertyManager* newNode = 0L;
+      FGPropertyNode* newNode = 0L;
       if (PropertyManager->HasNode(property_name)) {
         newNode = PropertyManager->GetNode(property_name);
         Parameters.push_back(new FGPropertyValue( newNode ));

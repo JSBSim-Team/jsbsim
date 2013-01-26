@@ -38,16 +38,17 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGParameter.h"
 #include <iosfwd>
 #include <vector>
 #include <string>
+#include "FGParameter.h"
+#include "input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.14 2011/06/13 11:46:08 jberndt Exp $"
+#define ID_TABLE "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -55,7 +56,6 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGPropertyManager;
 class Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id: FGTable.h,v 1.14 2011/06/13 11:46:08 jberndt Exp $
+@version $Id$
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,8 +290,8 @@ public:
   double operator()(unsigned int r, unsigned int c) const {return GetElement(r, c);}
 //  double operator()(unsigned int r, unsigned int c, unsigned int t) {GetElement(r, c, t);}
 
-  void SetRowIndexProperty(FGPropertyManager *node) {lookupProperty[eRow] = node;}
-  void SetColumnIndexProperty(FGPropertyManager *node) {lookupProperty[eColumn] = node;}
+  void SetRowIndexProperty(FGPropertyNode *node) {lookupProperty[eRow] = node;}
+  void SetColumnIndexProperty(FGPropertyNode *node) {lookupProperty[eColumn] = node;}
 
   unsigned int GetNumRows() const {return nRows;}
 
@@ -303,7 +303,7 @@ private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
   bool internal;
-  FGPropertyManager *lookupProperty[3];
+  FGPropertyNode_ptr lookupProperty[3];
   double** Data;
   std::vector <FGTable*> Tables;
   unsigned int nRows, nCols, nTables, dimension;

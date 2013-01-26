@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.24 2012/11/23 16:30:36 bcoconni Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,7 @@ bool FGInput::Run(bool Holding)
   string line, token;
   size_t start=0, string_start=0, string_end=0;
   double value=0;
-  FGPropertyManager* node=0;
+  FGPropertyNode* node=0;
 
   if (FGModel::Run(Holding)) return true; // fast exit if nothing to do
   if (port == 0) return false;      // Do nothing here if port not defined

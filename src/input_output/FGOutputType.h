@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.4 2013/01/12 20:56:19 bcoconni Exp $"
+#define ID_OUTPUTTYPE "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -53,7 +53,6 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGPropertyManager;
 class Element;
 class FGAerodynamics;
 class FGAuxiliary;
@@ -122,7 +121,7 @@ public:
   /** Set the list of properties that should be output for this output instance.
       @param outputProperties list of properties that should be output
   */
-  void SetOutputProperties(std::vector<FGPropertyManager *> & outputProperties)
+  void SetOutputProperties(std::vector<FGPropertyNode_ptr> & outputProperties)
   {
     OutputProperties = outputProperties;
   }
@@ -197,7 +196,7 @@ public:
 protected:
   int OutputIdx;
   int SubSystems;
-  std::vector <FGPropertyManager*> OutputProperties;
+  std::vector <FGPropertyNode_ptr> OutputProperties;
   std::vector <std::string> OutputCaptions;
   bool enabled;
 

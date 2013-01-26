@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.79 2012/12/12 06:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -541,7 +541,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
 
       interface_property_string = property_element->GetDataLine();
       if (PropertyManager->HasNode(interface_property_string)) {
-        FGPropertyManager* node = PropertyManager->GetNode(interface_property_string);
+        FGPropertyNode* node = PropertyManager->GetNode(interface_property_string);
         if (debug_lvl > 0)
           cout << "      " << "Overriding value for property " << interface_property_string
                << " (old value: " << node->getDoubleValue() << "  new value: " << value << ")" << endl;
@@ -564,7 +564,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
     FGFCSChannel* newChannel = 0;
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
-    FGPropertyManager* OnOffPropertyNode = 0;
+    FGPropertyNode* OnOffPropertyNode = 0;
     if (sOnOffProperty.length() > 0) {
       OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {

@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.25 2013/01/12 19:24:05 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   Element* ratelim_el = element->FindElement("rate_limit");
   while ( ratelim_el ) {
     rate_limited = true;
-    FGPropertyManager* rate_limit_prop=0;
+    FGPropertyNode* rate_limit_prop=0;
 
     string rate_limit_str = ratelim_el->GetDataLine();
     trim(rate_limit_str);

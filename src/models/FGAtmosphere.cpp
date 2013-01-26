@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.54 2012/09/17 12:38:07 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,20 +111,21 @@ bool FGAtmosphere::Run(bool Holding)
 
 void FGAtmosphere::Calculate(double altitude)
 {
+  FGPropertyNode* node = PropertyManager->GetNode();
   if (!PropertyManager->HasNode("atmosphere/override/temperature"))
-  Temperature = GetTemperature(altitude);
-  else 
-    Temperature = PropertyManager->getDoubleValue("atmosphere/override/temperature");
+    Temperature = GetTemperature(altitude);
+  else
+    Temperature = node->GetDouble("atmosphere/override/temperature");
 
   if (!PropertyManager->HasNode("atmosphere/override/pressure"))
-  Pressure    = GetPressure(altitude);
-  else 
-    Pressure = PropertyManager->getDoubleValue("atmosphere/override/pressure");
+    Pressure = GetPressure(altitude);
+  else
+    Pressure = node->GetDouble("atmosphere/override/pressure");
 
   if (!PropertyManager->HasNode("atmosphere/override/density"))
-  Density     = Pressure/(Reng*Temperature);
-  else 
-    Density = PropertyManager->getDoubleValue("atmosphere/override/density");
+    Density = Pressure/(Reng*Temperature);
+  else
+    Density = node->GetDouble("atmosphere/override/density");
 
   Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
   PressureAltitude = altitude;

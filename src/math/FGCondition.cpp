@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.17 2012/10/27 20:29:01 jberndt Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +126,7 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager)
     exit(-1);
   }
 
-  FGPropertyManager *node = PropertyManager->GetNode(property1, false);
+  FGPropertyNode *node = PropertyManager->GetNode(property1, false);
   if (node) {
     TestParam1 = new FGPropertyValue(node);
   } else {

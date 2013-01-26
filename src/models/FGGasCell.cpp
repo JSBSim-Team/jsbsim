@@ -50,7 +50,7 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.16 2011/11/22 20:21:49 andgi Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +202,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs&
 
   property_name = base_property_name + "/max_volume-ft3";
   PropertyManager->Tie( property_name.c_str(), &MaxVolume, false );
-  PropertyManager->SetWritable( property_name, false );
+  PropertyManager->GetNode()->SetWritable( property_name, false );
   property_name = base_property_name + "/temp-R";
   PropertyManager->Tie( property_name.c_str(), &Temperature, false );
   property_name = base_property_name + "/pressure-psf";
@@ -634,7 +634,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent,
 
   property_name = base_property_name + "/max_volume-ft3";
   PropertyManager->Tie( property_name, &MaxVolume, false );
-  PropertyManager->SetWritable( property_name, false );
+  PropertyManager->GetNode()->SetWritable( property_name, false );
 
   property_name = base_property_name + "/temp-R";
   PropertyManager->Tie( property_name, &Temperature, false );

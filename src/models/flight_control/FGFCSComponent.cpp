@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.34 2011/09/11 11:36:04 bcoconni Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +121,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InputSigns.push_back( 1.0);
     }
-    FGPropertyManager* node = 0L;
+    FGPropertyNode* node = 0L;
     if (PropertyManager->HasNode(input)) {
       node = PropertyManager->GetNode(input);
       InputNodes.push_back(new FGPropertyValue( node ));
@@ -138,7 +138,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   while (out_elem) {
     IsOutput = true;
     string output_node_name = out_elem->GetDataLine();
-    FGPropertyManager* OutputNode = PropertyManager->GetNode( output_node_name, true );
+    FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
     OutputNodes.push_back(OutputNode);
     if (!OutputNode) {
       cerr << endl << "  Unable to process property: " << output_node_name << endl;

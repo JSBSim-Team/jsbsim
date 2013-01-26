@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.71 2012/12/15 16:13:58 bcoconni Exp $";
+static const char *IdSrc = "$Id$";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +207,7 @@ bool FGOutput::SetDirectivesFile(const std::string& fname)
 
 bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
                     std::string port, std::string name, double outRate,
-                    std::vector<FGPropertyManager *> & outputProperties)
+                    std::vector<FGPropertyNode_ptr> & outputProperties)
 {
   unsigned int idx = OutputTypes.size();
   FGOutputType* Output = 0;

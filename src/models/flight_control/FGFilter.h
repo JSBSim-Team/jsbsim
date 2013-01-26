@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.12 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FILTER "$Id$"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -228,7 +228,7 @@ is so that the last component in a "string" can copy its value to the appropriat
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Revision: 1.12 $
+@version $Revision$
 
 */
 
@@ -263,8 +263,8 @@ private:
   double PreviousInput2;
   double PreviousOutput1;
   double PreviousOutput2;
-  FGPropertyManager* Trigger;
-  FGPropertyManager* PropertyNode[7];
+  FGPropertyNode_ptr Trigger;
+  FGPropertyNode_ptr PropertyNode[7];
   void CalculateDynamicFilters(void);
   void ReadFilterCoefficients(Element* el, int index);
   bool DynamicFilter;
