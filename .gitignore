@@ -23,6 +23,7 @@ install-sh
 libtool
 ltmain.sh
 missing
+build
 src/JSBSim*
 src/.libs/
 ./dotest
