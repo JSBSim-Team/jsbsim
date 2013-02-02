@@ -28,7 +28,7 @@ else()
   include_directories(${EXPAT_INCLUDE_DIRS})
 endif()
 
-add_library(Expat STATIC ${JSBSIM_SIMGEAR_XML_HDR} ${JSBSIM_SIMGEAR_XML_SRC})
+add_library(Expat ${JSBSIM_SIMGEAR_XML_HDR} ${JSBSIM_SIMGEAR_XML_SRC})
 
 if(EXPAT_FOUND)
   target_link_libraries(Expat ${EXPAT_LIBRARIES})
