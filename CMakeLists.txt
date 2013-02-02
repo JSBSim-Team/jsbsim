@@ -1,12 +1,41 @@
 cmake_minimum_required (VERSION 2.8.0)
 
+################################################################################
+# Project description                                                          #
+################################################################################
 project(JSBSim)
+
+set(PROJECT_VERSION_MAJOR "1")
+set(PROJECT_VERSION_MINOR "0")
+set(PROJECT_VERSION_PATCH "0")
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(PROJECT_CONTACT_EMAIL jon@jsbsim.org)
+set(PROJECT_CONTACT_VENDOR JSBSim)
+set(LIBRARY_VERSION ${PROJECT_VERSION})
+set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
+
+################################################################################
+# Build JSBSim libs and exec                                                   #
+################################################################################
 
 add_subdirectory(src)
 
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+################################################################################
+# Packaging                                                                    #
+################################################################################
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING")
+set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CPACK_RESOURCE_FILE_README}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "JSBSim, an open source, platform-independent, flight dynamics & control software library in C++.")
+set(CPACK_PACKAGE_VENDOR ${PROJECT_CONTACT_VENDOR})
+set(CPACK_PACKAGE_CONTACT "${PROJECT_CONTACT_EMAIL}")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON) # Extract automatically the package dependencies
+set(CPACK_SET_DESTDIR TRUE)
 set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
                                "/admin/"
                                "/autom4te.cache"
