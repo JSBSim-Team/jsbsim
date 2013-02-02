@@ -29,11 +29,21 @@ else()
 endif()
 
 add_library(Expat ${JSBSIM_SIMGEAR_XML_HDR} ${JSBSIM_SIMGEAR_XML_SRC})
+set_target_properties (Expat PROPERTIES
+                             VERSION ${LIBRARY_VERSION})
+if(BUILD_SHARED_LIBS)
+  set_target_properties (Expat PROPERTIES
+                               SOVERSION ${LIBRARY_SOVERSION}
+                               FRAMEWORK ON)
+endif()
 
 if(EXPAT_FOUND)
   target_link_libraries(Expat ${EXPAT_LIBRARIES})
 endif()
 
 install(TARGETS Expat LIBRARY DESTINATION lib
-                      ARCHIVE DESTINATION lib)
+                      ARCHIVE DESTINATION lib
+                      RUNTIME DESTINATION lib
+                      # For Mac
+                      FRAMEWORK DESTINATION "/Library/Frameworks")
 

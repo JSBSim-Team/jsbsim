@@ -26,6 +26,11 @@ endif()
 # Build and install libraries                                                  #
 ################################################################################
 
+set(STATIC_LIBNAME_SUFFIX)
+if(MSVC AND BUILD_SHARED_LIBS)
+    set(STATIC_LIBNAME_SUFFIX "static")
+endif()
+
 add_subdirectory(initialization)
 add_subdirectory(input_output)
 add_subdirectory(math)
@@ -44,9 +49,19 @@ set(SOURCES FGFDMExec.cpp
 add_library(libJSBSim ${HEADERS} ${SOURCES})
 target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
 set_target_properties (libJSBSim PROPERTIES
-                                 OUTPUT_NAME JSBSim)
+                                 OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
+                                 VERSION ${LIBRARY_VERSION})
+if(BUILD_SHARED_LIBS)
+  set_target_properties (libJSBSim PROPERTIES
+                                   SOVERSION ${LIBRARY_SOVERSION}
+                                   FRAMEWORK ON)
+endif()
+
 install(TARGETS libJSBSim LIBRARY DESTINATION lib
-                          ARCHIVE DESTINATION lib)
+                          ARCHIVE DESTINATION lib
+                          RUNTIME DESTINATION lib
+                          # For Mac
+                          FRAMEWORK DESTINATION "/Library/Frameworks")
 
 ################################################################################
 # Build and install command line executable                                    #

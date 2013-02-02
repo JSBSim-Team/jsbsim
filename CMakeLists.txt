@@ -1,12 +1,32 @@
 cmake_minimum_required (VERSION 2.8.0)
 
+################################################################################
+# Project description                                                          #
+################################################################################
 project(JSBSim)
+
+set(PROJECT_VERSION_MAJOR "1")
+set(PROJECT_VERSION_MINOR "0")
+set(PROJECT_VERSION_PATCH "0")
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(PROJECT_CONTACT_EMAIL jon@jsbsim.org)
+set(PROJECT_CONTACT_VENDOR JSBSim)
+set(LIBRARY_VERSION ${PROJECT_VERSION})
+set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
+
+################################################################################
+# Build JSBSim libs and exec                                                   #
+################################################################################
 
 add_subdirectory(src)
 
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+################################################################################
+# Packaging                                                                    #
+################################################################################
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
                                "/admin/"
                                "/autom4te.cache"
