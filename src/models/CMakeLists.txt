@@ -43,7 +43,7 @@ set(JSBSIM_MODELS_HDR FGAerodynamics.h
                       FGAccelerations.h
                       FGFCSChannel.h)
 
-add_library(Models ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_SRC})
+add_library(Models ${JSBSIM_MODELS_HDR} ${JSBSIM_MODELS_SRC})
 
 install(TARGETS Models LIBRARY DESTINATION lib
                        ARCHIVE DESTINATION lib)

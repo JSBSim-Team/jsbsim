@@ -26,7 +26,8 @@ set(JSBSIM_MODELS_PROPULSION_HDR FGElectric.h
                                  FGTransmission.h
                                  FGRotor.h)
 
-add_library(Propulsion ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_PROPULSION_SRC})
+add_library(Propulsion ${JSBSIM_MODELS_PROPULSION_HDR}
+                       ${JSBSIM_MODELS_PROPULSION_SRC})
 
 install(TARGETS Propulsion LIBRARY DESTINATION lib
                            ARCHIVE DESTINATION lib)
