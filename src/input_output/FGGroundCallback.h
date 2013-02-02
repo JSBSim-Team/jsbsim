@@ -38,7 +38,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
 #include "simgear/structure/SGReferenced.hxx"
 #include "simgear/structure/SGSharedPtr.hxx"
 
@@ -46,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.15 2011/11/19 14:14:57 bcoconni Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.16 2013/02/02 13:23:40 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -63,14 +62,14 @@ CLASS DOCUMENTATION
     ball formed earth with an adjustable terrain elevation.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.15 2011/11/19 14:14:57 bcoconni Exp $
+    @version $Id: FGGroundCallback.h,v 1.16 2013/02/02 13:23:40 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundCallback : public FGJSBBase, public SGReferenced
+class FGGroundCallback : public SGReferenced
 {
 public:
 
