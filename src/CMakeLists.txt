@@ -1,4 +1,4 @@
-include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(initialization)
 add_subdirectory(input_output)
@@ -17,4 +17,5 @@ target_link_libraries(JSBSim
                       Math InputOutput Properties Expat coremag)
 
 install(TARGETS JSBSim RUNTIME DESTINATION bin)
+install(FILES ${HEADERS} DESTINATION include/JSBSim)
 

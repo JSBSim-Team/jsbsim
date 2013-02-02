@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.20 2012/05/10 12:10:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.21 2013/02/02 06:05:26 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,14 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
 
   FGFCSComponent::bind();
+  string tmp;
+  if (Name.find("/") == string::npos) {
+    tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  } else {
+    tmp = Name;
+  }
+  typedef double (FGPID::*PMF)(void) const;
+  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)0, &FGPID::SetInitialOutput);
 
   Debug(0);
 }

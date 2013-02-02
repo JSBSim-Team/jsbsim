@@ -12,8 +12,9 @@ set(JSBSIM_INITIALISATION_HDR FGInitialCondition.h
                               FGTrimmer.h
                               FGLinearization.h)
 
-add_library(Init ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_INITIALISATION_SRC})
+add_library(Init ${JSBSIM_INITIALISATION_HDR} ${JSBSIM_INITIALISATION_SRC})
 
 install(TARGETS Init LIBRARY DESTINATION lib
                      ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_INITIALISATION_HDR} DESTINATION include/JSBSim/initialization)
 

@@ -25,8 +25,9 @@ set(JSBSIM_INPUT_OUTPUT_HDR FGGroundCallback.h
                             FGOutputFile.h
                             FGOutputTextFile.h)
 
-add_library(InputOutput ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_INPUT_OUTPUT_SRC})
+add_library(InputOutput ${JSBSIM_INPUT_OUTPUT_HDR} ${JSBSIM_INPUT_OUTPUT_SRC})
 
 install(TARGETS InputOutput LIBRARY DESTINATION lib
                             ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_INPUT_OUTPUT_HDR} DESTINATION include/JSBSim/input_output)
 

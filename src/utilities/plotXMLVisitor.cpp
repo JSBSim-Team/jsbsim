@@ -28,17 +28,32 @@ void plotXMLVisitor::endXML(void)
 void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
 {
   current_element = name;
+  
+  // defaults
+  plotType = lines;
+
   for (int i=0; i<atts.size();i++) {
-    if (string(atts.getName(i)) == string("axis")) {
-      if (string(atts.getValue(i)) == string("x")) axis = eX;
-      else if (string(atts.getValue(i)) == string("y2")) axis = eY2;
+    string thisAttribute = atts.getName(i);
+    string thisValue = atts.getValue(i);
+    if (thisAttribute == string("axis")) {
+      if (thisValue == string("x")) axis = eX;
+      else if (thisValue == string("y2")) axis = eY2;
       else axis = eY;
+    } else if (thisAttribute == string("type")) {
+      if (thisValue == string("lines")) {
+        plotType = lines;
+      } else if (thisValue == string("points")) {
+        plotType = points;
     } else {
-      cerr << "Unknown attribute " << atts.getName(i) << " encountered." << endl;
+        cerr << endl << "Plot type " << thisValue << " is not valid. Using lines type for default." << endl;
+        plotType = lines;
+      }
+    } else {
+      cerr << "Unknown attribute " << thisAttribute << " encountered." << endl;
       exit (-1);
     }
     if (i == 1) {
-      cerr << "Too many attributes. Offending attribute (item:" << i << ") is " << atts.getName(i) << endl;
+      cerr << "Too many attributes. Offending attribute (item:" << i << ") is " << thisAttribute << endl;
       exit (-1);
     }
   }
@@ -58,20 +73,24 @@ void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
   } else if (current_element == "plot") {
     if (!inPage) {
       vPlots.push_back(Plots());
+      vPlots.back().plotType = plotType;
     } else {
       vPages.back().vPlots.push_back(Plots());
+      vPages.back().vPlots.back().plotType = plotType;
     }
   }
 }
 
 void plotXMLVisitor::endElement (const char * name)
 {
-  if (string(name) == string("title")) {
+  if (string(name) == string("title")) {                                               // Reading title
     if (!inPage)
       vPlots.back().Title = trim(data_string);
     else
       vPages.back().vPlots.back().Title = trim(data_string);
-  } else if (string(name) == string("label")) {
+
+  } else if (string(name) == string("label")) {                                        // Axis captions
+
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
@@ -80,41 +99,51 @@ void plotXMLVisitor::endElement (const char * name)
       vPlots.back().Axis_Caption[axis] = trim(data_string);
     else
       vPages.back().vPlots.back().Axis_Caption[axis] = trim(data_string);
-  } else if (string(name) == string("scale")) {
+
+  } else if (string(name) == string("scale")) {                                        // Scaling
+
     if (!inPage)
       if (trim(data_string) == "auto") vPlots.back().Autoscale = true;
     else
       if (trim(data_string) == "auto") vPages.back().vPlots.back().Autoscale = true;    
-  } else if (string(name) == string("min")) {
+
+  } else if (string(name) == string("min")) {                                          // Minimum
+
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
-    if (!inPage)
-      vPlots.back().Min[axis] = atof(data_string.c_str());
-    else
-      vPages.back().vPlots.back().Min[axis] = atof(data_string.c_str());
-  } else if (string(name) == string("max")) {
+    if (!inPage) {
+      vPlots.back().Min[axis] = data_string.c_str();
+    } else {
+      vPages.back().vPlots.back().Min[axis] = data_string.c_str();
+    }
+
+  } else if (string(name) == string("max")) {                                          // Maximum
+
     if (axis < 0) {
       cerr << "Axis not chosen." << endl;
       exit(-1);
     }
-    if (!inPage)
-      vPlots.back().Max[axis] = atof(data_string.c_str());
-    else
-      vPages.back().vPlots.back().Max[axis] = atof(data_string.c_str());
-  } else if (string(name) == string("parameter")) {
-    if (axis == eX) {
+    if (!inPage) {
+      vPlots.back().Max[axis] = data_string.c_str();
+    } else {
+      vPages.back().vPlots.back().Max[axis] = data_string.c_str();
+    }
+
+  } else if (string(name) == string("parameter")) {                                    // Parameter
+
+    if (axis == eX) {                                                                      //-> X axis
       if (!inPage)
         vPlots.back().X_Variable = trim(data_string);
       else
         vPages.back().vPlots.back().X_Variable = trim(data_string);
-    } else if (axis == eY) {
+    } else if (axis == eY) {                                                               // -> Y axis
       if (!inPage)
         vPlots.back().Y_Variables.push_back(trim(data_string));
       else
         vPages.back().vPlots.back().Y_Variables.push_back(trim(data_string));
-    } else if (axis == eY2) {
+    } else if (axis == eY2) {                                                              // -> Y2 axis
       if (!inPage)
         vPlots.back().Y2_Variables.push_back(trim(data_string));
       else

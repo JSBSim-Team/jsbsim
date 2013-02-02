@@ -397,7 +397,7 @@ int main(int argc, char **argv)
     }
   } // end if comprehensive
 
-  // special single plots
+  // special single plots from plot spec files
 
   vector <string> LeftYAxisNames;
   vector <string> RightYAxisNames;
@@ -485,7 +485,7 @@ int main(int argc, char **argv)
         // Add Title logic here, if any needed?
 
         newPlot << "##" << endl << "##" << endl;
-        newPlot << "print \"Processing parameter plot: " << Title << "\"" << endl;
+        newPlot << "print \"Processing parameter plot: " << myPlot.Title << "\"" << endl;
         cout << "##" << endl << "##" << endl;
 
         result = MakeArbitraryPlot(files, names, myPlot, Title, newPlot);
@@ -553,6 +553,9 @@ bool MakeArbitraryPlot(
   int numLeftYAxisNames = LeftYAxisNames.size();
   int numRightYAxisNames = RightYAxisNames.size();
   string time_range="";
+  string plotType = "lines";
+
+  if (myPlot.plotType == points) plotType = "points";
 
   // This line assumes time is in column 1
   if (GetTermIndex(names, XAxisName) == 1) time_range = plot_range;
@@ -569,23 +572,34 @@ bool MakeArbitraryPlot(
     else
       newPlot << "unset title" << endl;
     
-    // X axis caption
-    if (!myPlot.Axis_Caption[eX].empty())
+    // X axis caption and ranges
+    if (!myPlot.Axis_Caption[eX].empty()) {
       newPlot << "set xlabel \"" << myPlot.Axis_Caption[eX] << "\" font \"" << LABEL_FONT << "\"" << endl;
-    else
+    } else {
       newPlot << "unset xlabel" << endl;
+    }
 
-    // Left Y axis caption
-    if (!myPlot.Axis_Caption[eY].empty())
+    // Left Y axis caption and ranges
+    if (!myPlot.Axis_Caption[eY].empty()) {
       newPlot << "set ylabel \"" << myPlot.Axis_Caption[eY] << "\" font \"" << LABEL_FONT << "\"" << endl;
-    else
+    } else {
       newPlot << "unset ylabel" << endl;
+    }
 
-    // Right Y axis caption
-    if (!myPlot.Axis_Caption[eY2].empty())
+    // Right Y axis caption and ranges
+    if (!myPlot.Axis_Caption[eY2].empty()) {
       newPlot << "set y2label \"" << myPlot.Axis_Caption[eY2] << "\" font \"" << LABEL_FONT << "\"" << endl;
-    else
+    } else {
       newPlot << "unset y2label" << endl;
+    }
+
+    newPlot << "set xrange [" << myPlot.Min[0] << ":" << myPlot.Max[0] << "]" << endl;
+    newPlot << "set yrange [" << myPlot.Min[1] << ":" << myPlot.Max[1] << "]" << endl;
+    if (myPlot.Y2_Variables.size() > 0) {
+      newPlot << "set y2range [" << myPlot.Min[2] << ":" << myPlot.Max[2] << "]" << endl;
+    }
+
+    if (myPlot.plotType == points) newPlot << "set pointsize 0.25" << endl;
 
     if (files.size() == 1) { // Single file
     
@@ -595,28 +609,28 @@ bool MakeArbitraryPlot(
       }
 
       newPlot << "plot " << time_range << " \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
-           << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
+           << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with " << plotType << " title \""
            << LeftYAxisNames[0] << "\"";
       if (numLeftYAxisNames > 1) {
         newPlot << ", \\" << endl;
         for (i=1; i<numLeftYAxisNames-1; i++) {
           newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
-               << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
+               << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with " << plotType << " title \"" 
                << LeftYAxisNames[i] << "\", \\" << endl;
         }
         newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
-             << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
+             << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
              << LeftYAxisNames[numLeftYAxisNames-1] << "\"";
       }
       if (numRightYAxisNames > 0) {
         newPlot << ", \\" << endl;
         for (i=0; i<numRightYAxisNames-1; i++) {
           newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
-               << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
+               << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with " << plotType << " axes x1y2 title \""
                << RightYAxisNames[i] << "\", \\" << endl;
         }
         newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
-             << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
+             << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with " << plotType << " axes x1y2 title \""
              << RightYAxisNames[numRightYAxisNames-1] << "\"";
       }
       newPlot << endl;
@@ -642,28 +656,28 @@ bool MakeArbitraryPlot(
         }
 
         newPlot << "\"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-             << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
+             << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with " << plotType << " title \""
              << LeftYAxisNames[0] << ": " << f << "\"";
         if (numLeftYAxisNames > 1) {
           newPlot << ", \\" << endl;
           for (i=1; i<numLeftYAxisNames-1; i++) {
             newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-                 << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
+                 << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with " << plotType << " title \"" 
                  << LeftYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
           newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
-               << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
+               << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
                << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {
           newPlot << ", \\" << endl;
           for (i=0; i<numRightYAxisNames-2; i++) {
             newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-                 << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
+                 << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with " << plotType << " axes x1y2 title \""
                  << RightYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
           newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-               << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
+               << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with " << plotType << " axes x1y2 title \""
                << RightYAxisNames[numRightYAxisNames-1] << ": " << f << "\"";
         }
       }

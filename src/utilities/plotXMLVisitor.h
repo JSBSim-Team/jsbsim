@@ -4,21 +4,25 @@
 #include <cstdio>
 #include <cstdlib>
 
+enum ePlotType {lines=0, points};
+
 struct Plots {
   string Title;
   string Axis_Caption[3];
-  double Min[3], Max[3];
+  string Min[3], Max[3];
   bool Autoscale;
   vector <string> Y_Variables;
   vector <string> Y2_Variables;
   string X_Variable;
+  ePlotType plotType; // should eventually be on a per-parameter basis?
 
   Plots(void) {
     Autoscale = true;
-    Min[0] = Min[1] = Min[2] = 0.0;
-    Max[0] = Max[1] = Max[2] = 0.0;
+    Min[0] = Min[1] = Min[2] = "*";
+    Max[0] = Max[1] = Max[2] = "*";
     Title="";
     Axis_Caption[0] = Axis_Caption[1] = Axis_Caption[2] = "";
+    plotType = lines;
   }
 };
 
@@ -54,4 +58,5 @@ private:
 //  const char* data_string;
   string data_string;
   Axis axis;
+  ePlotType plotType;
 };

@@ -29,8 +29,10 @@ set(JSBSIM_MODELS_FLIGHT_CONTROL_HDR FGDeadBand.h
                                      FGMagnetometer.h
                                      FGSensorOrientation.h)
 
-add_library(FlightControl ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_FLIGHT_CONTROL_SRC})
+add_library(FlightControl ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR}
+                          ${JSBSIM_MODELS_FLIGHT_CONTROL_SRC})
 
 install(TARGETS FlightControl LIBRARY DESTINATION lib
                               ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR} DESTINATION include/JSBSim/models/flight_control)
 
