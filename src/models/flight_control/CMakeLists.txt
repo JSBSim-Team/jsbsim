@@ -33,4 +33,5 @@ add_library(FlightControl ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_FLIGHT_CONT
 
 install(TARGETS FlightControl LIBRARY DESTINATION lib
                               ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR} DESTINATION include/JSBSim/models/flight_control)
 

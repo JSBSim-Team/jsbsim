@@ -30,4 +30,5 @@ add_library(Propulsion ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_PROPULSION_SRC
 
 install(TARGETS Propulsion LIBRARY DESTINATION lib
                            ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_MODELS_PROPULSION_HDR} DESTINATION include/JSBSim/models/propulsion)
 

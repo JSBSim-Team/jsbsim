@@ -32,4 +32,5 @@ add_library(Math ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MATH_SRC})
 
 install(TARGETS Math LIBRARY DESTINATION lib
                      ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_MATH_HDR} DESTINATION include/JSBSim/math)
 

@@ -29,4 +29,5 @@ add_library(InputOutput ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_INPUT_OUTPUT_SRC})
 
 install(TARGETS InputOutput LIBRARY DESTINATION lib
                             ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_INPUT_OUTPUT_HDR} DESTINATION include/JSBSim/input_output)
 

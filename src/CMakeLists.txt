@@ -17,4 +17,5 @@ target_link_libraries(JSBSim
                       Math InputOutput Properties Expat coremag)
 
 install(TARGETS JSBSim RUNTIME DESTINATION bin)
+install(FILES ${HEADERS} DESTINATION include/JSBSim)
 

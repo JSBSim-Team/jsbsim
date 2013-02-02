@@ -16,4 +16,5 @@ add_library(Init ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_INITIALISATION_SRC})
 
 install(TARGETS Init LIBRARY DESTINATION lib
                      ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_INITIALISATION_HDR} DESTINATION include/JSBSim/initialization)
 

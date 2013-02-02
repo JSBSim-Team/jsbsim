@@ -47,4 +47,5 @@ add_library(Models ${JSBSIM_STATIC_LIBS_TYPE} ${JSBSIM_MODELS_SRC})
 
 install(TARGETS Models LIBRARY DESTINATION lib
                        ARCHIVE DESTINATION lib)
+install(FILES ${JSBSIM_MODELS_HDR} DESTINATION include/JSBSim/models)
 
