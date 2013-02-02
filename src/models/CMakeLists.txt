@@ -32,7 +32,6 @@ set(JSBSIM_MODELS_HDR FGAerodynamics.h
                       FGLGear.h
                       FGMassBalance.h
                       FGModel.h
-                      FGModelFactory.h
                       FGOutput.h
                       FGPropagate.h
                       FGPropulsion.h
