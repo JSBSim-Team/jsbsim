@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.48 2013/02/06 05:19:58 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +64,9 @@ const std::string FGFunction::difference_string = "difference";
 const std::string FGFunction::product_string = "product";
 const std::string FGFunction::quotient_string = "quotient";
 const std::string FGFunction::pow_string = "pow";
+const std::string FGFunction::sqrt_string = "sqrt";
+const std::string FGFunction::toradians_string = "toradians";
+const std::string FGFunction::todegrees_string = "todegrees";
 const std::string FGFunction::exp_string = "exp";
 const std::string FGFunction::log2_string = "log2";
 const std::string FGFunction::ln_string = "ln";
@@ -136,6 +139,12 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     Type = eQuotient;
   } else if (operation == pow_string) {
     Type = ePow;
+  } else if (operation == sqrt_string) {
+    Type = eSqrt;
+  } else if (operation == toradians_string) {
+    Type = eToRadians;
+  } else if (operation == todegrees_string) {
+    Type = eToDegrees;
   } else if (operation == log2_string) {
     Type = eLog2;
   } else if (operation == ln_string) {
@@ -260,6 +269,9 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == sum_string ||
                operation == quotient_string ||
                operation == pow_string ||
+               operation == sqrt_string ||
+               operation == toradians_string ||
+               operation == todegrees_string ||
                operation == exp_string ||
                operation == log2_string ||
                operation == ln_string ||
@@ -366,11 +378,6 @@ double FGFunction::GetValue(void) const
       temp *= Parameters[i]->GetValue();
     }
     break;
-  case eDifference:
-    for (i=1;i<Parameters.size();i++) {
-      temp -= Parameters[i]->GetValue();
-    }
-    break;
   case eSum:
     for (i=1;i<Parameters.size();i++) {
       temp += Parameters[i]->GetValue();
@@ -382,8 +389,22 @@ double FGFunction::GetValue(void) const
     else
       temp = HUGE_VAL;
     break;
+  case eDifference:
+    for (i=1;i<Parameters.size();i++) {
+      temp -= Parameters[i]->GetValue();
+    }
+    break;
   case ePow:
     temp = pow(temp,Parameters[1]->GetValue());
+    break;
+  case eSqrt:
+    temp = sqrt(temp);
+    break;
+  case eToRadians:
+    temp *= M_PI/180.0;
+    break;
+  case eToDegrees:
+    temp *= 180.0/M_PI;
     break;
   case eExp:
     temp = exp(temp);
