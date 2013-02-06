@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id$"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.28 2013/02/06 05:19:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,6 +69,9 @@ A function definition consists of an operation, a value, a table, or a property
 - product (takes n args)
 - quotient (takes 2 args)
 - pow (takes 2 args)
+- sqrt (takes one argument)
+- toradians (takes one argument)
+- todegrees (takes one argument)
 - exp (takes 2 args)
 - log2 (takes 1 arg)
 - ln (takes 1 arg)
@@ -225,6 +228,9 @@ private:
   static const std::string product_string;
   static const std::string quotient_string;
   static const std::string pow_string;
+  static const std::string sqrt_string;
+  static const std::string toradians_string;
+  static const std::string todegrees_string;
   static const std::string exp_string;
   static const std::string log2_string;
   static const std::string ln_string;
@@ -265,8 +271,8 @@ private:
   static const std::string switch_string;
   static const std::string interpolate1d_string;
   double cachedValue;
-  enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
-                     eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
+  enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow, eSqrt, eToRadians,
+                     eToDegrees, eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eUrandom, ePi,
                      eLog2, eLn, eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
                      eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local,
