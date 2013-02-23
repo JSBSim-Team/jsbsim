@@ -95,6 +95,9 @@ The following usages of cmake consist in :
    the QT GUI (cmake-gui).
  - call the selected build toolchain.
 
+Optionally, shared libraries can be built by invoking the parameter
+BUILD_SHARED_LIBS
+
 The ".." means parent directory, it shouldn't be omitted.
 
 3.1) Linux
@@ -104,9 +107,8 @@ Run the following commands :
 
 $ mkdir build_linux
 $ cd build_linux
-$ cmake ..
+$ cmake .. [-DBUILD_SHARED_LIBS]
 $ make
-$ make check-local
 $ make install [DESTDIR=_install]
 
 To uninstall you can call :
@@ -121,9 +123,8 @@ Tested with MinGW of CodeBlocks 12.11.
 $ mkdir build_mingw
 $ cd build_mingw
 $ "c:\Program Files\CodeBlocks\MinGW\mingwvars.bat"
-$ cmake -G "MinGW Makefiles" ..
+$ cmake -G "MinGW Makefiles" ..  [-DBUILD_SHARED_LIBS]
 $ mingw32-make
-$ mingw32-make check-local
 $ mingw32-make install [DESTDIR=_install]
 
 
@@ -135,7 +136,7 @@ Tested with MSVC 2010 express SP1.
 $ mkdir build_msvc_10
 $ cd build_msvc_10
 $ "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-$ cmake -G "Visual Studio 10" ..
+$ cmake -G "Visual Studio 10" ..  [-DBUILD_SHARED_LIBS]
 $ msbuild jsbsim.sln
 
 You can also open jsbsim.sln with visual studio IDE.
@@ -149,7 +150,7 @@ Tested with MSVC 2012 express.
 $ mkdir build_msvc_11
 $ cd build_msvc_11
 $ "c:\Program Files\Microsoft Visual Studio 11.0\VC\bin\vcvars32.bat"
-$ cmake -G "Visual Studio 11" ..
+$ cmake -G "Visual Studio 11" ..  [-DBUILD_SHARED_LIBS]
 $ msbuild jsbsim.sln
 
 You can also open jsbsim.sln with visual studio IDE.
