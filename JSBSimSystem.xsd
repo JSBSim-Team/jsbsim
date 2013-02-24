@@ -400,7 +400,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" minOccurs="1" type="xs:string"/>
         <xs:element name="lag" type="xs:float" minOccurs="0"/>
@@ -439,7 +439,7 @@
         <xs:element name="hysteresis_width" type="xs:float" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-      </xs:sequence>
+      </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
