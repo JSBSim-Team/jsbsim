@@ -404,7 +404,36 @@
         <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" minOccurs="1" type="xs:string"/>
         <xs:element name="lag" type="xs:float" minOccurs="0"/>
-        <xs:element name="rate_limit" type="xs:float" minOccurs="0"/>
+        <xs:element name="rate_limit" minOccurs="0" maxOccurs="2">
+          <xs:annotation><xs:documentation>
+            The rate limit can be specified as a numeric value or as a property.
+            Further, an "incr" or "decr" sense attribute to specify which
+            direction the rate limit should apply to.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="sense">
+                  <xs:annotation><xs:documentation>
+                    The sense attribute determines which direction the rate
+                    limit applies to. If no sense is given, the rate limit
+                    applies to both directions equally. If "incr" is specified
+                    then the rate limit applies only to the rate of increase. 
+                    If "decr" is specified, then the rate limit applies only to
+                    a decreasing rate. The decreasing rate limit - if given - is
+                    assumed to be negative - no negative sign is required.
+                  </xs:documentation></xs:annotation>
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="incr"><xs:annotation><xs:documentation>Specify this type when the rate limit applies to an increasing rate.</xs:documentation></xs:annotation></xs:enumeration>
+                      <xs:enumeration value="decr"><xs:annotation><xs:documentation>Specify this type when the rate limit applies to a decreasing rate.</xs:documentation></xs:annotation></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="bias" type="xs:float" minOccurs="0"/>
         <xs:element name="deadband_width" type="xs:float" minOccurs="0"/>
         <xs:element name="hysteresis_width" type="xs:float" minOccurs="0"/>
