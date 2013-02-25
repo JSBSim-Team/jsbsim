@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.28 2013/02/06 05:19:58 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.29 2013/02/25 13:42:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ members of the function element. Almost always, the first operation within the
 function element will be a product or sum. For example:
 
 @code
-<function name="aero/coefficient/Clr">
+<function name="aero/moment/Clr">
     <description>Roll moment due to yaw rate</description>
     <product>
         <property>aero/qbar-area</property>
@@ -158,6 +158,535 @@ an operation (such as sum) which can contain other items. The point to keep in
 mind is that it evaluates to a single value - which is just what the trigonometric
 functions require (except atan2, which takes two arguments).
 
+<h2>Specific Function Definitions</h2>
+
+Note: In the definitions below, a "property" refers to a single property specified
+within either the <property></property> tag or the shortcut tag, \<p>\</p>. The
+keyword "value" refers to a single numeric value specified either within the \<value>\</value>
+tag or the shortcut <v></v> tag. The keyword "table" refers to a single table specified
+either within the \<table>\</table> tag or the shortcut <t></t> tag. The plural form of any
+of the three words refers to one or more instances of a property, value, or table.
+
+- @b sum, sums the values of all immediate child elements:
+    @code
+    <sum>
+      {properties, values, tables, or other function elements}
+    </sum>
+
+    Example: Mach + 0.01
+
+    <sum>
+      <p> velocities/mach </p>
+      <v> 0.01 </v>
+    </sum>
+    @endcode
+- @b difference, subtracts the values of all immediate child elements from the value of the first child element:
+    @code
+    <difference>
+      {properties, values, tables, or other function elements}
+    </difference>
+
+    Example: Mach - 0.01
+
+    <difference>
+      <p> velocities/mach </p>
+      <v> 0.01 </v>
+    </difference>
+    @endcode
+- @b product multiplies together the values of all immediate child elements:
+    @code
+    <product>
+      {properties, values, tables, or other function elements}
+    </product>
+
+    Example: qbar*S*beta*CY_beta
+
+    <product>
+      <property> aero/qbar-psf            </property>
+      <property> metrics/Sw-sqft          </property>
+      <property> aero/beta-rad            </property>
+      <property> aero/coefficient/CY_beta </property>
+    </product>
+    @endcode
+- @b quotient, divides the value of the first immediate child element by the second immediate child element:
+    @code
+    <quotient>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </quotient>
+
+    Example: (2*GM)/R
+
+    <quotient>
+      <product>
+        <v> 2.0 </v>
+        <p> guidance/executive/gm </p>
+      </product>
+      <p> position/radius-to-vehicle-ft </p>
+    </quotient>
+    @endcode
+- @b pow, raises the value of the first immediate child element to the power of the value
+          of the second immediate child element:
+    @code
+    <pow>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </pow>
+
+    Example: Mach^2
+
+    <pow>
+      <p> velocities/mach </p>
+      <v> 2.0 </v>
+    </pow>
+    @endcode
+- @b sqrt, takes the square root of the value of the immediate child element:
+    @code
+    <sqrt>
+      {property, value, table, or other function element}
+    </sqrt>
+
+    Example: square root of 25
+
+    <sqrt> <v> 25.0 </v> </sqrt>
+    @endcode
+- @b toradians, converts a presumed argument in degrees to radians by multiplying
+                the value of the immediate child element by pi/180:
+    @code
+    <toradians>
+      {property, value, table, or other function element}
+    </toradians>
+
+    Example: convert 45 degrees to radians
+
+    <toradians> <v> 45 </v> </toradians>
+    @endcode
+- @b todegrees, converts a presumed argument in radians to degrees by multiplying
+     the value of the immediate child element by 180/pi:
+    @code
+    <todegrees>
+      {property, value, table, or other function element}
+    </todegrees>
+
+    Example: convert 0.5*pi radians to degrees
+
+    <todegrees>
+      <product> <v> 0.5 </v> <pi/> </product>
+    </todegrees>
+    @endcode
+- @b exp, raises "e" to the power of the immediate child element:
+    @code
+    <exp>
+      {property, value, table, or other function element}
+    </exp>
+
+    Example: raise "e" to the 1.5 power, e^1.5
+
+    <exp> <v> 1.5 </v> </exp>
+    @endcode
+- @b log2, calculates the log base 2 value of the immediate child element:
+    @code
+    <log2>
+      {property, value, table, or other function element} 
+    </log2>
+
+    Example:
+    <log2> <v> 128 </v> </log2>
+    @endcode
+- @b ln, calculates the natural logarithm of the value of the immediate child element:
+    @code
+    <ln>
+      {property, value, table, or other function element}
+    </ln>
+    
+    Example: ln(128)
+
+    <ln> <v> 200 </v> </ln>
+    @endcode
+- @b log10 calculates the base 10 logarithm of the value of the immediate child element
+    @code
+    <log10>
+      {property, value, table, or other function element}
+    </log10>
+
+    Example log(Mach)
+
+    <log10> <p> velocities/mach </p> </log10>
+    @endcode
+- @b abs calculates the absolute value of the immediate child element
+    @code
+    <abs>
+      {property, value, table, or other function element}
+    </abs>
+
+    Example:
+
+    <abs> <p> flight-path/gamma-rad </p> </abs>
+    @endcode
+- @b sin calculates the sine of the value of the immediate child element (the argument is expected to be in radians)
+    @code
+    <sin>
+      {property, value, table, or other function element}
+    </sin>
+
+    Example:
+
+    <sin> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </sin>
+    @endcode
+- @b cos calculates the cosine of the value of the immediate child element (the argument is expected to be in radians)
+    @code
+    <cos>
+      {property, value, table, or other function element}
+    </cos>
+
+    Example:
+
+    <cos> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </cos>
+    @endcode
+- @b tan calculates the tangent of the value of the immediate child element (the argument is expected to be in radians)
+    @code
+    <tan>
+      {property, value, table, or other function element}
+    </tan>
+
+    Example:
+
+    <tan> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </tan>
+    @endcode
+- @b asin calculates the arcsine (inverse sine) of the value of the immediate child element. The
+          value provided should be in the range from -1 to +1. The value returned
+          will be expressed in radians, and will be in the range from -pi/2 to
+          +pi/2.
+    @code
+    <asin>
+      {property, value, table, or other function element}
+    </asin>
+
+    Example:
+
+    <asin> <v> 0.5 </v> </asin>
+    @endcode
+- @b acos calculates the arccosine (inverse cosine) of the value of the immediate child element. The
+          value provided should be in the range from -1 to +1. The value returned
+          will be expressed in radians, and will be in the range from 0 to pi.
+    @code
+    <acos>
+      {property, value, table, or other function element}
+    </acos>
+
+    Example:
+
+    <acos> <v> 0.5 </v> </acos>
+    @endcode
+- @b atan calculates the inverse tangent of the value of the immediate child element.
+          The value returned will be expressed in radians, and will be in the
+          range from -pi/2 to +pi/2.
+    @code
+    <atan>
+      {property, value, table, or other function element}
+    </atan>
+
+    Example:
+
+    <atan> <v> 0.5 </v> </atan>
+    @endcode
+- @b atan2 calculates the inverse tangent of the value of the immediate child
+           elements, Y/X (in that order). It even works for X values near zero.
+           The value returned will be expressed in radians, and in the range
+           -pi to +pi.
+    @code
+    <atan2>
+      {property, value, table, or other function element} {property, value, table, or other function element}
+    </atan2>
+
+    Example: inverse tangent of 0.5/0.25, evaluates to: 1.107 radians
+
+    <atan2> <v> 0.5 </<v> <v> 0.25 </v> </atan2>
+    @endcode
+- @b min returns the smallest value from all the immediate child elements
+    @code
+    <min>
+      {properties, values, tables, or other function elements}
+    </min>
+    
+    Example: returns the lesser of velocity and 2500
+
+    <min>
+      <p> velocities/eci-velocity-mag-fps </p>
+      <v> 2500.0 </v>
+    </min>
+    @endcode
+- @b max returns the largest value from all the immediate child elements
+    @code
+    <max>
+      {properties, values, tables, or other function elements}
+    </max>
+    
+    Example: returns the greater of velocity and 15000
+
+    <max>
+      <p> velocities/eci-velocity-mag-fps </p>
+      <v> 15000.0 </v>
+    </max>
+    @endcode
+- @b avg returns the average value of all the immediate child elements
+    @code
+    <avg>
+      {properties, values, tables, or other function elements} 
+    </avg>
+
+    Example: returns the average of the four numbers below, evaluates to 0.50.
+
+    <avg>
+      <v> 0.25 </v>
+      <v> 0.50 </v>
+      <v> 0.75 </v>
+      <v> 0.50 </v>
+    </avg>
+    @endcode
+- @b fraction returns the fractional part of the value of the immediate child element 
+    @code
+    <fraction>
+      {property, value, table, or other function element}
+    </fraction>
+
+    Example: returns the fractional part of pi - or, roughly, 0.1415926...
+
+    <fraction> <pi/> </fraction>
+    @endcode
+- @b integer returns the integer portion of the value of the immediate child element
+    @code
+    <integer>
+      {property, value, table, or other function element}
+    </integer>
+    @endcode
+- @b mod returns the remainder from the integer division of the value of the
+         first immediate child element by the second immediate child element,
+         X/Y (X modulo Y). The value returned is the value X-I*Y, for the
+         largest  integer I such  that if Y is nonzero, the result has the
+         same sign as X and magnitude less than the magnitude of Y. For
+         instance, the expression "5 mod 2" would evaluate to 1 because 5
+         divided by 2 leaves a quotient of 2 and a remainder of 1, while
+         "9 mod 3" would evaluate to 0 because the division of 9 by 3 has a
+         quotient of 3 and leaves a remainder of 0.
+    @code
+    <mod>
+      {property, value, table, or other function element} {property, value, table, or other function element}
+    </mod>
+
+    Example: 5 mod 2, evaluates to 1
+
+    <mod> <v> 5 </v> <v> 2 </v> </mod>
+    @endcode
+- @b lt returns a 1 if the value of the first immediate child element is less
+        than the value of the second immediate child element, returns 0
+        otherwise
+    @code
+    <lt>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </lt>
+
+    Example: returns 1 if thrust is less than 10,000, returns 0 otherwise
+
+    <lt>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 10000.0 </v>
+    </lt>
+    @endcode
+- @b le returns a 1 if the value of the first immediate child element is less
+        than or equal to the value of the second immediate child element, returns 0
+        otherwise
+    @code
+    <le>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </le>
+
+    Example: returns 1 if thrust is less than or equal to 10,000, returns 0 otherwise
+
+    <le>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 10000.0 </v>
+    </le>
+    @endcode
+- @b gt returns a 1 if the value of the first immediate child element is greater
+        than the value of the second immediate child element, returns 0
+        otherwise
+    @code
+    <gt>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </gt>
+
+    Example: returns 1 if thrust is greater than 10,000, returns 0 otherwise
+
+    <gt>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 10000.0 </v>
+    </gt>
+    @endcode
+- @b ge returns a 1 if the value of the first immediate child element is greater
+        than or equal to the value of the second immediate child element, returns 0
+        otherwise
+    @code
+    <ge>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </ge>
+
+    Example: returns 1 if thrust is greater than or equal to 10,000, returns 0 otherwise
+
+    <ge>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 10000.0 </v>
+    </ge>
+    @endcode
+- @b eq returns a 1 if the value of the first immediate child element is 
+        equal to the second immediate child element, returns 0
+        otherwise
+    @code
+    <eq>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </eq>
+
+    Example: returns 1 if thrust is equal to 10,000, returns 0 otherwise
+
+    <eq>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 10000.0 </v>
+    </eq>
+    @endcode
+- @b nq returns a 1 if the value of the first immediate child element is not
+        equal to the value of the second immediate child element, returns 0
+        otherwise
+    @code
+    <nq>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </nq>
+
+    Example: returns 1 if thrust is not 0, returns 0 otherwise
+
+    <nq>
+      <p> propulsion/engine[2]/thrust-lbs </p>
+      <v> 0.0 </v>
+    </nq>
+    @endcode
+- @b and returns a 1 if the values of the immediate child elements are all 1,
+         returns 0 otherwise. Values provided are expected to be either 1 or 0
+         within machine precision.
+    @code
+    <and>
+      {properties, values, tables, or other function elements}
+    </and>
+
+    Example: returns 1 if the specified flags are all 1
+
+    <and>
+      <p> guidance/first-stage-flight-flag </p>
+      <p> control/engines-running-flag </p>
+    </and>
+    @endcode
+- @b or returns a 1 if the values of any of the immediate child elements 1,
+         returns 0 otherwise. Values provided are expected to be either 1 or 0
+         within machine precision.
+    @code
+    <or>
+      {properties, values, tables, or other function elements}
+    </or>
+
+    Example: returns 1 if any of the specified flags are 1
+
+    <or>
+      <p> guidance/first-stage-flight-flag </p>
+      <p> control/engines-running-flag </p>
+    </or>
+    @endcode
+- @b not returns the inverse of the value of the supplied immediate child element
+         (e.g., returns 1 if supplied a 0)
+    @code
+    <not>
+      {property, value, table, or other function element} 
+    </not>
+
+    Example: returns 0 if the value of the supplied flag is 1
+
+    <not> <p> guidance/first-stage-flight-flag </p> </not>
+    @endcode
+- @b ifthen if the value of the first immediate child element is 1, then the
+             value of the second immediate child element is returned, otherwise
+             the value of the third child element is returned
+     @code
+     <ifthen>
+       {property, value, table, or other function element}
+       {property, value, table, or other function element}
+       {property, value, table, or other function element}
+     </ifthen>
+
+     Example: if flight-mode is greater than 2, then a value of 0.00 is returned, 
+              otherwise the value of the property control/pitch-lag is returned.
+
+     <ifthen>
+       <gt> <p> executive/flight-mode </p> <v> 2 </v> </gt>
+       <v> 0.00 </v>
+       <p> control/pitch-lag </p>
+     </ifthen>
+     @endcode
+- @b switch uses the integer value of the first immediate child element as an
+            index to select one of the subsequent immediate child elements to
+            return the value of
+     @code
+     <switch>
+       {property, value, table, or other function element}
+       {property, value, table, or other function element}
+       {property, value, table, or other function element}
+       ...
+     </switch>
+
+     Example: if flight-mode is 2, the switch function returns 0.50
+
+     <switch>
+       <p> executive/flight-mode </p>
+       <v> 0.25 </v>
+       <v> 0.50 </v>
+       <v> 0.75 </v>
+       <v> 1.00 </v>
+     </switch>
+     @endcode
+- @b random Takes no arguments and returns a Gaussian distributed random number
+    @code <random/> @endcode
+- @b urandom Takes no arguments and returns a uniformly distributed random number
+             between -1 and +1
+    @code<urandom/>@endcode
+- @b pi Takes no argument and returns the value of Pi
+    @code<pi/>@endcode
+- @b interpolate1d returns the result from a 1-dimensional interpolation of the
+                   supplied values, with the value of the first immediate child
+                   element representing the lookup value into the table, and the
+                   following pairs of values representing the independent and
+                   dependent values. The first provided child element is expected
+                   to be a property. The interpolation does not extrapolate, but
+                   holds the highest value if the provided lookup value goes
+                   outside of the provided range.
+     @code
+     <interpolate1d>
+       {property, value, table, or other function element}
+       {property, value, table, or other function element} {property, value, table, or other function element}
+       ...
+     </interpolate1d>
+
+     Example: If mach is 0.4, the interpolation will return 0.375. If mach is 1.5, the interpolation
+              will return 0.60.
+
+     <interpolate1d>
+       <p> velocities/mach </p>
+       <v> 0.00 </v>  <v> 0.25 </v>
+       <v> 0.80 </v>  <v> 0.50 </v>
+       <v> 0.90 </v>  <v> 0.60 </v>
+       </interpolate1d>
+     @endcode
 @author Jon Berndt
 */
 
