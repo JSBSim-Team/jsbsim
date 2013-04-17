@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ----- Copyright (C) 2006 - 2011  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2013  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.12 2011/08/06 13:47:59 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.13 2013/04/17 20:24:27 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -238,7 +238,7 @@ private:
   std::string type;
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft^2]
+  double MaxVolume;                 // [ft^3]
   double MaxOverpressure;           // [lbs/ft^2]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
@@ -251,8 +251,8 @@ private:
   // Variables
   double Pressure;          // [lbs/ft^2]
   double Contents;          // [mol]
-  double Volume;            // [ft^2]
-  double dVolumeIdeal;      // [ft^2]
+  double Volume;            // [ft^3]
+  double dVolumeIdeal;      // [ft^3]
   double Temperature;       // [Rankine]
   double Buoyancy;          // [lbs] Note: Gross lift.
                             // Does not include the weight of the gas itself.
@@ -344,7 +344,7 @@ public:
 private:
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft^2]
+  double MaxVolume;                 // [ft^3]
   double MaxOverpressure;           // [lbs/ft^2]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
@@ -357,8 +357,8 @@ private:
   // Variables
   double Pressure;         // [lbs/ft^2]
   double Contents;         // [mol]
-  double Volume;           // [ft^2]
-  double dVolumeIdeal;     // [ft^2]
+  double Volume;           // [ft^3]
+  double dVolumeIdeal;     // [ft^3]
   double dU;               // [lbs ft / sec]
   double Temperature;      // [Rankine]
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
