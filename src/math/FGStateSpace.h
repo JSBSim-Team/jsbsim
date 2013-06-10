@@ -3,16 +3,16 @@
  * Copyright (C) James Goppert 2010 <james.goppert@gmail.com>
  *
  * FGStateSpace.h is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
+ * under the terms of the GNU Lesser General Public License as published by the
  * Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
  * FGStateSpace.h is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
+ * You should have received a copy of the GNU Lesser General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -30,6 +30,7 @@
 #include "models/FGFCS.h"
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 namespace JSBSim
 {
@@ -57,9 +58,9 @@ public:
             std::vector<double> x0 = m_stateSpace->x.get();
             double f0 = get();
             double dt0 = m_fdm->GetDeltaT();
-			double time0 = m_fdm->GetSimTime();
+            double time0 = m_fdm->GetSimTime();
             m_fdm->Setdt(1./120.);
-			m_fdm->DisableOutput();
+            m_fdm->DisableOutput();
             m_fdm->Run();
             double f1 = get();
             m_stateSpace->x.set(x0);
@@ -75,8 +76,8 @@ public:
             }
             double deriv = (f1-f0)/m_fdm->GetDeltaT();
             m_fdm->Setdt(dt0); // restore original value
-			m_fdm->Setsim_time(time0);
-			m_fdm->EnableOutput();
+            m_fdm->Setsim_time(time0);
+            m_fdm->EnableOutput();
             return deriv;
         }
         void setStateSpace(FGStateSpace * stateSpace)
@@ -141,7 +142,7 @@ public:
         void set(int i, double val)
         {
             m_components[i]->set(val);
-            m_fdm->RunIC();
+            m_stateSpace->run();
         };
         double get(int i)
         {
@@ -174,12 +175,12 @@ public:
         void set(vector<double> vals)
         {
             for (int i=0;i<getSize();i++) m_components[i]->set(vals[i]);
-            m_fdm->RunIC();
+            m_stateSpace->run();
         }
         void set(double * array)
         {
             for (int i=0;i<getSize();i++) m_components[i]->set(array[i]);
-            m_fdm->RunIC();
+            m_stateSpace->run();
         }
         std::string getName(int i) const
         {
@@ -217,6 +218,51 @@ public:
     FGStateSpace(FGFDMExec * fdm) : x(fdm,this), u(fdm,this), y(fdm,this), m_fdm(fdm) {};
 
     void setFdm(FGFDMExec * fdm) { m_fdm = fdm; }
+
+    void run() {
+        // initialize
+        m_fdm->Initialize(m_fdm->GetIC());
+        for (unsigned int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++) {
+            m_fdm->GetPropulsion()->GetEngine(i)->InitRunning();
+        }
+
+        // wait for stable state
+        double cost = stateSum();
+        for(int i=0;i<1000;i++) {
+            m_fdm->GetPropulsion()->GetSteadyState();
+            m_fdm->SetTrimStatus(true);
+            m_fdm->DisableOutput();
+            m_fdm->SuspendIntegration();
+            m_fdm->Run();
+            m_fdm->SetTrimStatus(false);
+            m_fdm->EnableOutput();
+            m_fdm->ResumeIntegration();
+
+            double costNew = stateSum();
+            double dcost = fabs(costNew - cost);
+            if (dcost < std::numeric_limits<double>::epsilon()) {
+                if(m_fdm->GetDebugLevel() > 1) {
+                    std::cout << "cost convergd, i: " << i << std::endl;
+                }
+                break;
+            }
+            if (i > 1000) {
+                if(m_fdm->GetDebugLevel() > 1) {
+                    std::cout << "cost failed to converge, dcost: " 
+                        << std::scientific
+                        << dcost << std::endl;
+                }
+                break;
+            }
+            cost = costNew;
+        }
+    }
+
+    double stateSum() {
+        double sum = 0;
+        for (int i=0;i<x.getSize();i++) sum += x.get(i);
+        return sum;
+    }
 
     void clear() {
         x.clear();
@@ -272,7 +318,7 @@ public:
 
     };
 
-  	class VGround : public Component
+    class VGround : public Component
     {
     public:
         VGround() : Component("VGround","ft/s") {};
@@ -282,11 +328,11 @@ public:
         }
         void set(double val)
         {
-			m_fdm->GetIC()->SetVgroundFpsIC(val);
+            m_fdm->GetIC()->SetVgroundFpsIC(val);
         }
     };
 
-	class AccelX : public Component
+    class AccelX : public Component
     {
     public:
         AccelX() : Component("AccelX","ft/s^2") {};
@@ -296,11 +342,11 @@ public:
         }
         void set(double val)
         {
-			// XXX: not possible to implement currently
+            // XXX: not possible to implement currently
         }
     };
 
-	class AccelY : public Component
+    class AccelY : public Component
     {
     public:
         AccelY() : Component("AccelY","ft/s^2") {};
@@ -310,11 +356,11 @@ public:
         }
         void set(double val)
         {
-			// XXX: not possible to implement currently
+            // XXX: not possible to implement currently
         }
     };
 
-	class AccelZ : public Component
+    class AccelZ : public Component
     {
     public:
         AccelZ() : Component("AccelZ","ft/s^2") {};
@@ -324,7 +370,7 @@ public:
         }
         void set(double val)
         {
-			// XXX: not possible to implement currently
+            // XXX: not possible to implement currently
         }
     };
 
@@ -338,8 +384,13 @@ public:
         }
         void set(double val)
         {
-            m_fdm->GetIC()->SetFlightPathAngleRadIC(m_fdm->GetIC()->GetThetaRadIC()-val);
+            double beta = m_fdm->GetIC()->GetBetaDegIC();
+            double psi = m_fdm->GetIC()->GetPsiRadIC();
+            double theta = m_fdm->GetIC()->GetThetaRadIC();
             m_fdm->GetIC()->SetAlphaRadIC(val);
+            m_fdm->GetIC()->SetBetaRadIC(beta);
+            m_fdm->GetIC()->SetPsiRadIC(psi);
+            m_fdm->GetIC()->SetThetaRadIC(theta);
         }
         double getDeriv() const
         {
@@ -357,8 +408,8 @@ public:
         }
         void set(double val)
         {
-            m_fdm->GetIC()->SetFlightPathAngleRadIC(val-m_fdm->GetIC()->GetAlphaRadIC());
-            m_fdm->GetIC()->SetThetaRadIC(val);
+			m_fdm->GetIC()->SetFlightPathAngleRadIC(val-m_fdm->GetIC()->GetAlphaRadIC());
+            //m_fdm->GetIC()->SetThetaRadIC(val);
         }
         double getDeriv() const
         {
@@ -412,7 +463,9 @@ public:
         }
         void set(double val)
         {
+            double psi = m_fdm->GetIC()->GetPsiRadIC();
             m_fdm->GetIC()->SetBetaRadIC(val);
+            m_fdm->GetIC()->SetPsiRadIC(psi);
         }
         double getDeriv() const
         {
@@ -621,11 +674,11 @@ public:
         }
         void set(double val)
         {
-        	m_fdm->GetPropulsion()->GetEngine(0)->GetThruster()->SetRPM(val);
+            m_fdm->GetPropulsion()->GetEngine(0)->GetThruster()->SetRPM(val);
         }
     };
 
-	class Rpm1 : public Component
+    class Rpm1 : public Component
     {
     public:
         Rpm1() : Component("Rpm1","rev/min") {};
@@ -635,11 +688,11 @@ public:
         }
         void set(double val)
         {
-        	m_fdm->GetPropulsion()->GetEngine(1)->GetThruster()->SetRPM(val);
+            m_fdm->GetPropulsion()->GetEngine(1)->GetThruster()->SetRPM(val);
         }
     };
 
-	class Rpm2 : public Component
+    class Rpm2 : public Component
     {
     public:
         Rpm2() : Component("Rpm2","rev/min") {};
@@ -649,11 +702,11 @@ public:
         }
         void set(double val)
         {
-        	m_fdm->GetPropulsion()->GetEngine(2)->GetThruster()->SetRPM(val);
+            m_fdm->GetPropulsion()->GetEngine(2)->GetThruster()->SetRPM(val);
         }
     };
 
-	class Rpm3 : public Component
+    class Rpm3 : public Component
     {
     public:
         Rpm3() : Component("Rpm3","rev/min") {};
@@ -663,7 +716,7 @@ public:
         }
         void set(double val)
         {
-        	m_fdm->GetPropulsion()->GetEngine(3)->GetThruster()->SetRPM(val);
+            m_fdm->GetPropulsion()->GetEngine(3)->GetThruster()->SetRPM(val);
         }
     };
 
@@ -718,7 +771,7 @@ public:
         }
     };
 
-	class Pi : public Component
+    class Pi : public Component
     {
     public:
         Pi() : Component("P inertial","rad/s") {};
@@ -728,10 +781,10 @@ public:
         }
         void set(double val)
         {
-			//Set PQR from PQRi
-			//VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
+            //Set PQR from PQRi
+            //VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
             m_fdm->GetIC()->SetQRadpsIC(val + \
-					(m_fdm->GetPropagate()->GetPQR(1) - m_fdm->GetPropagate()->GetPQRi(1)));
+                    (m_fdm->GetPropagate()->GetPQR(1) - m_fdm->GetPropagate()->GetPQRi(1)));
         }
         double getDeriv() const
         {
@@ -739,7 +792,7 @@ public:
         }
     };
 
-	class Qi : public Component
+    class Qi : public Component
     {
     public:
         Qi() : Component("Q inertial","rad/s") {};
@@ -749,10 +802,10 @@ public:
         }
         void set(double val)
         {
-			//Set PQR from PQRi
-			//VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
+            //Set PQR from PQRi
+            //VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
             m_fdm->GetIC()->SetQRadpsIC(val + \
-					(m_fdm->GetPropagate()->GetPQR(2) - m_fdm->GetPropagate()->GetPQRi(2)));
+                    (m_fdm->GetPropagate()->GetPQR(2) - m_fdm->GetPropagate()->GetPQRi(2)));
         }
         double getDeriv() const
         {
@@ -760,7 +813,7 @@ public:
         }
     };
 
-	class Ri : public Component
+    class Ri : public Component
     {
     public:
         Ri() : Component("R inertial","rad/s") {};
@@ -770,10 +823,10 @@ public:
         }
         void set(double val)
         {
-			//Set PQR from PQRi
-			//VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
+            //Set PQR from PQRi
+            //VState.vPQR = VState.vPQRi - Ti2b * vOmegaEarth;
             m_fdm->GetIC()->SetQRadpsIC(val + \
-					(m_fdm->GetPropagate()->GetPQR(3) - m_fdm->GetPropagate()->GetPQRi(3)));
+                    (m_fdm->GetPropagate()->GetPQR(3) - m_fdm->GetPropagate()->GetPQRi(3)));
         }
         double getDeriv() const
         {
@@ -781,7 +834,7 @@ public:
         }
     };
 
-	class Vn : public Component
+    class Vn : public Component
     {
     public:
         Vn() : Component("Vel north","feet/s") {};
@@ -795,12 +848,12 @@ public:
         }
         double getDeriv() const
         {
-			//get NED accel from body accel
+            //get NED accel from body accel
             return (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(1);
         }
     };
 
-	class Ve : public Component
+    class Ve : public Component
     {
     public:
         Ve() : Component("Vel east","feet/s") {};
@@ -814,12 +867,12 @@ public:
         }
         double getDeriv() const
         {
-			//get NED accel from body accel
+            //get NED accel from body accel
             return (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(2);
-		}
+        }
     };
 
-	class Vd : public Component
+    class Vd : public Component
     {
     public:
         Vd() : Component("Vel down","feet/s") {};
@@ -833,35 +886,35 @@ public:
         }
         double getDeriv() const
         {
-			//get NED accel from body accel
+            //get NED accel from body accel
             return (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(3);
         }
     };
 
-	class COG : public Component
+    class COG : public Component
     {
     public:
         COG() : Component("Course Over Ground","rad") {};
         double get() const
         {
-			//cog = atan2(Ve,Vn)
+            //cog = atan2(Ve,Vn)
             return atan2(m_fdm->GetPropagate()->GetVel(2),m_fdm->GetPropagate()->GetVel(1));
         }
         void set(double val)
         {
-			//set Vn and Ve according to vGround and COG
-			m_fdm->GetIC()->SetVNorthFpsIC(m_fdm->GetAuxiliary()->GetVground()*cos(val));
-			m_fdm->GetIC()->SetVEastFpsIC(m_fdm->GetAuxiliary()->GetVground()*sin(val));
+            //set Vn and Ve according to vGround and COG
+            m_fdm->GetIC()->SetVNorthFpsIC(m_fdm->GetAuxiliary()->GetVground()*cos(val));
+            m_fdm->GetIC()->SetVEastFpsIC(m_fdm->GetAuxiliary()->GetVground()*sin(val));
         }
         double getDeriv() const
         {
-			double Vn = m_fdm->GetPropagate()->GetVel(1);
-			double Vndot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(1);
-			double Ve = m_fdm->GetPropagate()->GetVel(2);
-			double Vedot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(2); 
+            double Vn = m_fdm->GetPropagate()->GetVel(1);
+            double Vndot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(1);
+            double Ve = m_fdm->GetPropagate()->GetVel(2);
+            double Vedot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(2); 
 
-			//dCOG/dt = dCOG/dVe*dVe/dt + dCOG/dVn*dVn/dt
-			return Vn/(Vn*Vn+Ve*Ve)*Vedot - Ve/(Vn*Vn+Ve*Ve)*Vndot;
+            //dCOG/dt = dCOG/dVe*dVe/dt + dCOG/dVn*dVn/dt
+            return Vn/(Vn*Vn+Ve*Ve)*Vedot - Ve/(Vn*Vn+Ve*Ve)*Vndot;
         }
     };
 

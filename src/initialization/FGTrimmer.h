@@ -3,16 +3,16 @@
  * Copyright (C) James Goppert 2010 <james.goppert@gmail.com>
  *
  * FGTrimmer.h is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
+ * under the terms of the GNU Lesser General Public License as published by the
  * Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
  * FGTrimmer.h is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
+ * You should have received a copy of the GNU Lesser General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -43,7 +43,7 @@ public:
     };
     FGTrimmer(FGFDMExec * fdm, Constraints * constraints);
     ~FGTrimmer();
-	std::vector<double> constrain(const vector<double> & v);
+    std::vector<double> constrain(const vector<double> & v);
     void printSolution(std::ostream & stream, const vector<double> & v);
     void printState(std::ostream & stream);
     double compute_cost();

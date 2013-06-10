@@ -3,22 +3,23 @@
  * Copyright (C) James Goppert 2010 <james.goppert@gmail.com>
  *
  * FGStateSpace.cpp is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
+ * under the terms of the GNU Lesser General Public License as published by the
  * Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
  * FGStateSpace.cpp is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
+ * You should have received a copy of the GNU Lesser General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "FGStateSpace.h"
 #include <limits>
 #include <iomanip>
+#include <string>
 
 namespace JSBSim
 {
@@ -77,7 +78,23 @@ void FGStateSpace::numericalJacobian(std::vector< std::vector<double> >  & J, Co
             if (computeYDerivative) fn2 = y.getDeriv(iY);
             else fn2 = y.get(iY);
 
-            J[iY][iX] = (8*(f1-fn1)-(f2-fn2))/(12*h); // 3rd order taylor approx from lewis, pg 203
+			double diff1 = f1-fn1;
+			double diff2 = f2-fn2;
+
+			// correct for angle wrap
+			if (x.getComp(iX)->getUnit().compare("rad") == 0) {
+				while(diff1 > M_PI) diff1 -= 2*M_PI;
+				if(diff1 < -M_PI) diff1 += 2*M_PI;
+				if(diff2 > M_PI) diff2 -= 2*M_PI;
+				if(diff2 < -M_PI) diff2 += 2*M_PI;
+			} else if (x.getComp(iX)->getUnit().compare("deg") == 0) {
+				if(diff1 > 180) diff1 -= 360;
+				if(diff1 < -180) diff1 += 360;
+				if(diff2 > 180) diff2 -= 360;
+				if(diff2 < -180) diff2 += 360;
+			}
+            J[iY][iX] = (8*diff1-diff2)/(12*h); // 3rd order taylor approx from lewis, pg 203
+
             x.set(x0);
 
             if (m_fdm->GetDebugLevel() > 1)
