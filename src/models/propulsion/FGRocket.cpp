@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.29 2013/01/12 21:11:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.30 2013/06/10 02:00:11 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,8 +250,8 @@ string FGRocket::GetEngineLabels(const string& delimiter)
 {
   std::ostringstream buf;
 
-  buf << Name << " Total Impulse (engine " << EngineNumber << " in psf)" << delimiter
-      << Name << " Total Vacuum Impulse (engine " << EngineNumber << " in psf)" << delimiter
+  buf << Name << " Total Impulse (engine " << EngineNumber << " in lbf)" << delimiter
+      << Name << " Total Vacuum Impulse (engine " << EngineNumber << " in lbf)" << delimiter
       << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
