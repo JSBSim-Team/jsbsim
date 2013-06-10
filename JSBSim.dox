@@ -1,4 +1,4 @@
-# Doxyfile 1.7.3
+# Doxyfile 1.8.2
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -31,13 +31,13 @@ PROJECT_NAME           = "JSBSim Flight Dynamics Model"
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = "1.0 (13 May 2012)"
+PROJECT_NUMBER         = "1.0 (23 February 2013)"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
 # a quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = 
+PROJECT_BRIEF          = "An Open Source Flight Dynamics and Control Software Library in C++" 
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is 
 # included in the documentation. The maximum height of the logo should not 
@@ -516,12 +516,6 @@ MAX_INITIALIZER_LINES  = 30
 
 SHOW_USED_FILES        = YES
 
-# If the sources in your project are distributed over multiple directories 
-# then setting the SHOW_DIRECTORIES tag to YES will show the directory hierarchy 
-# in the documentation. The default is NO.
-
-SHOW_DIRECTORIES       = YES
-
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page. 
 # This will remove the Files entry from the Quick Index and from the 
 # Folder Tree View (if specified). The default is YES.
@@ -826,7 +820,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = 
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 
@@ -885,12 +879,6 @@ HTML_COLORSTYLE_GAMMA  = 140
 # this to NO can help when comparing the output of multiple runs.
 
 HTML_TIMESTAMP         = YES
-
-# If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
-# files or namespaces will be aligned in HTML using tables. If set to 
-# NO a bullet list will be used.
-
-HTML_ALIGN_MEMBERS     = YES
 
 # If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML 
 # documentation will contain sections that can be hidden and shown after the 
@@ -1074,11 +1062,6 @@ ENUM_VALUES_PER_LINE   = 4
 
 GENERATE_TREEVIEW      = YES
 
-# By enabling USE_INLINE_TREES, doxygen will generate the Groups, Directories, 
-# and Class Hierarchy pages using a tree view instead of an ordered list.
-
-USE_INLINE_TREES       = NO
-
 # If the treeview is enabled (see GENERATE_TREEVIEW) then this tag can be 
 # used to set the initial width (in pixels) of the frame in which the tree 
 # is shown.
@@ -1246,7 +1229,7 @@ GENERATE_RTF           = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `rtf' will be used as the default path.
 
-RTF_OUTPUT             = rtf
+RTF_OUTPUT             = 
 
 # If the COMPACT_RTF tag is set to YES Doxygen generates more compact 
 # RTF documents. This may be useful for small projects and may help to 
@@ -1316,7 +1299,7 @@ GENERATE_XML           = NO
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `xml' will be used as the default path.
 
-XML_OUTPUT             = xml
+XML_OUTPUT             = 
 
 # The XML_SCHEMA tag can be used to specify an XML schema, 
 # which can be used by a validating XML parser to check the 
@@ -1533,32 +1516,30 @@ HAVE_DOT               = YES
 
 DOT_NUM_THREADS        = 0
 
-# By default doxygen will write a font called Helvetica to the output 
-# directory and reference it in all dot files that doxygen generates. 
-# When you want a differently looking font you can specify the font name 
-# using DOT_FONTNAME. You need to make sure dot is able to find the font, 
-# which can be done by putting it in a standard location or by setting the 
-# DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory 
-# containing the font.
+# By default doxygen will use the Helvetica font for all dot files that
+# doxygen generates. When you want a differently looking font you can specify
+# the font name using DOT_FONTNAME. You need to make sure dot is able to find
+# the font, which can be done by putting it in a standard location or by setting
+# the DOTFONTPATH environment variable or by setting DOT_FONTPATH to the
+# directory containing the font.
 
-DOT_FONTNAME           = FreeSans.ttf
+DOT_FONTNAME           = Helvetica
 
 # The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs. 
 # The default size is 10pt.
 
 DOT_FONTSIZE           = 10
 
-# By default doxygen will tell dot to use the output directory to look for the 
-# FreeSans.ttf font (which doxygen will put there itself). If you specify a 
-# different font using DOT_FONTNAME you can set the path where dot 
-# can find it using this tag.
+# By default doxygen will tell dot to use the Helvetica font.
+# If you specify a different font using DOT_FONTNAME you can use DOT_FONTPATH to
+# set the path where dot can find it.
 
 DOT_FONTPATH           = 
 
 # If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
 # indirect inheritance relations. Setting this tag to YES will force the 
-# the CLASS_DIAGRAMS tag to NO.
+# CLASS_DIAGRAMS tag to NO.
 
 CLASS_GRAPH            = YES
 
@@ -1579,6 +1560,15 @@ GROUP_GRAPHS           = YES
 # Language.
 
 UML_LOOK               = NO
+
+# If the UML_LOOK tag is enabled, the fields and methods are shown inside
+# the class node. If there are many fields or methods and many nodes the
+# graph may become too big to be useful. The UML_LIMIT_NUM_FIELDS
+# threshold limits the number of items for each type to make the size more
+# managable. Set this to 0 for no limit. Note that the threshold may be
+# exceeded by 50% before the limit is enforced.
+
+UML_LIMIT_NUM_FIELDS   = 10
 
 # If set to YES, the inheritance and collaboration graphs will show the 
 # relations between templates and their instances.
@@ -1620,7 +1610,7 @@ CALLER_GRAPH           = YES
 
 GRAPHICAL_HIERARCHY    = YES
 
-# If the DIRECTORY_GRAPH, SHOW_DIRECTORIES and HAVE_DOT tags are set to YES 
+# If the DIRECTORY_GRAPH and HAVE_DOT tags are set to YES
 # then doxygen will show the dependencies a directory has on other directories 
 # in a graphical way. The dependency relations are determined by the #include 
 # relations between the files in the directories.
@@ -1628,10 +1618,21 @@ GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 
 # The DOT_IMAGE_FORMAT tag can be used to set the image format of the images 
-# generated by dot. Possible values are png, svg, gif or svg. 
-# If left blank png will be used.
+# generated by dot. Possible values are svg, png, jpg, or gif.
+# If left blank png will be used. If you choose svg you need to set
+# HTML_FILE_EXTENSION to xhtml in order to make the SVG files
+# visible in IE 9+ (other browsers do not have this requirement).
 
 DOT_IMAGE_FORMAT       = png
+
+# If DOT_IMAGE_FORMAT is set to svg, then this option can be set to YES to
+# enable generation of interactive SVG images that allow zooming and panning.
+# Note that this requires a modern browser other than Internet Explorer.
+# Tested and working are Firefox, Chrome, Safari, and Opera. For IE 9+ you
+# need to set HTML_FILE_EXTENSION to xhtml in order to make the SVG files
+# visible. Older versions of IE do not have SVG support.
+
+INTERACTIVE_SVG        = NO
 
 # The tag DOT_PATH can be used to specify the path where the dot tool can be 
 # found. If left blank, it is assumed the dot tool can be found in the path.
@@ -1658,7 +1659,7 @@ MSCFILE_DIRS           =
 # DOT_GRAPH_MAX_NODES then the graph will not be shown at all. Also note 
 # that the size of a graph can be further restricted by MAX_DOT_GRAPH_DEPTH.
 
-DOT_GRAPH_MAX_NODES    = 46
+DOT_GRAPH_MAX_NODES    = 50
 
 # The MAX_DOT_GRAPH_DEPTH tag can be used to set the maximum depth of the 
 # graphs generated by dot. A depth value of 3 means that only nodes reachable 
@@ -1683,7 +1684,7 @@ DOT_TRANSPARENT        = NO
 # makes dot run faster, but since only newer versions of dot (>1.8.10) 
 # support this, this feature is disabled by default.
 
-DOT_MULTI_TARGETS      = YES
+DOT_MULTI_TARGETS      = NO
 
 # If the GENERATE_LEGEND tag is set to YES (the default) Doxygen will 
 # generate a legend page explaining the meaning of the various boxes and 
