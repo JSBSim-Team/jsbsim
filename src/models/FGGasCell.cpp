@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ----- Copyright (C) 2006 - 2011  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2013  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -50,14 +50,14 @@ using std::max;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.18 2013/04/17 20:24:27 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /* Constants. */
-const double FGGasCell::R = 3.4071;              // [lbs ft/(mol Rankine)]
+const double FGGasCell::R = 3.4071;              // [lbf ft/(mol Rankine)]
 const double FGGasCell::M_air = 0.0019186;       // [slug/mol]
 const double FGGasCell::M_hydrogen = 0.00013841; // [slug/mol]
 const double FGGasCell::M_helium = 0.00027409;   // [slug/mol]
@@ -325,7 +325,7 @@ void FGGasCell::Calculate(double dt)
     // FixMe: CellHeight should depend on current volume.
     const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
     const double GasMass    = Contents * M_gas();                     // [slug]
-    const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft³]
+    const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft^3]
     const double GasDensity = GasMass / GasVolume;
     const double DeltaPressure =
       Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
@@ -468,7 +468,7 @@ void FGGasCell::Debug(int from)
       cout << "      Initial pressure: " << Pressure << " lbs/ft2" << endl;
       cout << "      Initial volume: " << Volume << " ft3" << endl;
       cout << "      Initial mass: " << GetMass() << " slug mass" << endl;
-      cout << "      Initial weight: " << GetMass()*lbtoslug << " lbs force" <<
+      cout << "      Initial weight: " << GetMass()*slugtolb << " lbs force" <<
         endl;
       cout << "      Heat transfer: " << endl;
     }
@@ -485,7 +485,7 @@ void FGGasCell::Debug(int from)
       cout << "      Pressure: " << Pressure << " lbs/ft2" << endl;
       cout << "      Volume: " << Volume << " ft3" << endl;
       cout << "      Mass: " << GetMass() << " slug mass" << endl;
-      cout << "      Weight: " << GetMass()*lbtoslug << " lbs force" << endl;
+      cout << "      Weight: " << GetMass()*slugtolb << " lbs force" << endl;
   }
   if (debug_lvl & 16) { // Sanity checking
   }
@@ -820,7 +820,7 @@ void FGBallonet::Debug(int from)
       cout << "        Initial pressure: " << Pressure << " lbs/ft2" << endl;
       cout << "        Initial volume: " << Volume << " ft3" << endl;
       cout << "        Initial mass: " << GetMass() << " slug mass" << endl;
-      cout << "        Initial weight: " << GetMass()*lbtoslug <<
+      cout << "        Initial weight: " << GetMass()*slugtolb <<
         " lbs force" << endl;
       cout << "        Heat transfer: " << endl;
     }
@@ -838,7 +838,7 @@ void FGBallonet::Debug(int from)
       cout << "        Pressure: " << Pressure << " lbs/ft2" << endl;
       cout << "        Volume: " << Volume << " ft3" << endl;
       cout << "        Mass: " << GetMass() << " slug mass" << endl;
-      cout << "        Weight: " << GetMass()*lbtoslug << " lbs force" << endl;
+      cout << "        Weight: " << GetMass()*slugtolb << " lbs force" << endl;
   }
   if (debug_lvl & 16) { // Sanity checking
   }

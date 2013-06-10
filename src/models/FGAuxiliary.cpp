@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.60 2012/09/30 16:49:17 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.61 2013/06/10 01:56:14 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
-  Nz = 0.0;
+  Nz = Ny = 0.0;
   lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
@@ -111,7 +111,7 @@ bool FGAuxiliary::InitModel(void)
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
-  Nz = 0.0;
+  Nz = Ny = 0.0;
   lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
@@ -228,6 +228,7 @@ bool FGAuxiliary::Run(bool Holding)
   vNcg = in.vBodyAccel/in.SLGravity;
   // Nz is Acceleration in "g's", along normal axis (-Z body axis)
   Nz = -vNcg(eZ);
+  Ny =  vNcg(eY);
   vPilotAccel = in.vBodyAccel + in.vPQRdot * in.ToEyePt;
   vPilotAccel += in.vPQR * (in.vPQR * in.ToEyePt);
 
@@ -373,6 +374,7 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
+  PropertyManager->Tie("accelerations/Ny", this, &FGAuxiliary::GetNy);
   PropertyManager->Tie("forces/load-factor", this, &FGAuxiliary::GetNlf);
   /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
   PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id$"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.26 2013/06/10 01:49:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -558,6 +558,8 @@ class FGPropertyManager
       if (!property->tie(SGRawValueFunctions<V>(getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to functions" << std::endl;
       else {
+        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
@@ -594,6 +596,8 @@ class FGPropertyManager
       if (!property->tie(SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to indexed functions" << std::endl;
       else {
+        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
@@ -632,6 +636,8 @@ class FGPropertyManager
       if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to object methods" << std::endl;
       else {
+        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
@@ -669,6 +675,8 @@ class FGPropertyManager
       if (!property->tie(SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
         std::cerr << "Failed to tie property " << name << " to indexed object methods" << std::endl;
       else {
+        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }

@@ -69,7 +69,7 @@ using JSBSim::FGXMLFileRead;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.78 2012/09/18 12:42:29 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.79 2013/06/10 01:47:49 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -79,7 +79,7 @@ string RootDir = "";
 string ScriptName;
 string AircraftName;
 string ResetName;
-string LogOutputName;
+vector <string> LogOutputName;
 vector <string> LogDirectiveName;
 vector <string> CommandLineProperties;
 vector <double> CommandLinePropertyValues;
@@ -292,7 +292,7 @@ int real_main(int argc, char* argv[])
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
-  LogOutputName = "";
+  LogOutputName.clear();
   LogDirectiveName.clear();
   bool result = false, success;
   bool was_paused = false;
@@ -409,14 +409,14 @@ int real_main(int argc, char* argv[])
   // OVERRIDE OUTPUT FILE NAME. THIS IS USEFUL FOR CASES WHERE MULTIPLE
   // RUNS ARE BEING MADE (SUCH AS IN A MONTE CARLO STUDY) AND THE OUTPUT FILE
   // NAME MUST BE SET EACH TIME TO AVOID THE PREVIOUS RUN DATA FROM BEING OVER-
-  // WRITTEN. THIS OVERRIDES ONLY THE FILENAME FOR THE FIRST FILE.
-  if (!LogOutputName.empty()) {
-    string old_filename = FDMExec->GetOutputFileName();
-    if (!FDMExec->SetOutputFileName(LogOutputName)) {
+  // WRITTEN.
+  for (unsigned int i=0; i<LogOutputName.size(); i++) {
+    string old_filename = FDMExec->GetOutputFileName(i);
+    if (!FDMExec->SetOutputFileName(i, LogOutputName[i])) {
       cout << "Output filename could not be set" << endl;
     } else {
       cout << "Output filename change from " << old_filename << " from aircraft"
-              " configuration file to " << LogOutputName << " specified on"
+              " configuration file to " << LogOutputName[i] << " specified on"
               " command line" << endl;
     }
   }
@@ -580,10 +580,7 @@ bool options(int count, char **arg)
         nohighlight = true;
     } else if (keyword == "--outputlogfile") {
       if (n != string::npos) {
-        LogOutputName = value;
-      } else {
-        LogOutputName = "JSBout.csv";
-        cerr << "  Output log file name must be specified with an = sign. Using JSBout.csv as default";
+        LogOutputName.push_back(value);
       }
     } else if (keyword == "--logdirectivefile") {
       if (n != string::npos) {
@@ -636,7 +633,7 @@ bool options(int count, char **arg)
         exit(1);
       }
 
-    } else if (keyword == "--end-time") {
+    } else if (keyword.substr(0,5) == "--end") {
       if (n != string::npos) {
         try {
         end_time = atof( value.c_str() );
@@ -719,7 +716,7 @@ void PrintHelp(void)
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;
-    cout << "    --outputlogfile=<filename>  sets (overrides) the name of the first data output file" << endl;
+    cout << "    --outputlogfile=<filename>  sets (overrides) the name of a data output file" << endl;
     cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
     cout << "                                   (can appear multiple times)" << endl;
     cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
@@ -736,7 +733,7 @@ void PrintHelp(void)
     cout << "    --simulation-rate=<rate (double)> specifies the sim dT time or frequency" << endl;
     cout << "                      If rate specified is less than 1, it is interpreted as" << endl;
     cout << "                      a time step size, otherwise it is assumed to be a rate in Hertz." << endl;
-    cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
+    cout << "    --end=<time (double)> specifies the sim end time" << endl << endl;
 
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
     cout << "        an option is followed by a filename" << endl << endl;

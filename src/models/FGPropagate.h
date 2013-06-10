@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.74 2013/01/19 13:49:37 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.75 2013/06/10 01:58:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.74 2013/01/19 13:49:37 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.75 2013/06/10 01:58:01 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +247,23 @@ public:
   */
   const FGColumnVector3& GetEuler(void) const { return VState.qAttitudeLocal.GetEuler(); }
 
+  /** Retrieves the Euler angles (in degrees) that define the vehicle orientation.
+      Extracts the Euler angles from the quaternion that stores the orientation
+      in the Local frame. The order of rotation used is Yaw-Pitch-Roll. The
+      vector returned is represented by an FGColumnVector reference. The vector
+      for the Euler angles is organized (Phi, Theta, Psi). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, the returned vector item with subscript (1) is Phi.
+      Various convenience enumerators are defined in FGJSBBase. The relevant
+      enumerators for the vector returned by this call are, ePhi=1, eTht=2, ePsi=3.
+      units degrees
+      @return The Euler angle vector, where the first item in the
+              vector is the angle about the X axis, the second is the
+              angle about the Y axis, and the third item is the angle
+              about the Z axis (Phi, Theta, Psi).
+  */
+  const FGColumnVector3& GetEulerDeg(void) const { return VState.qAttitudeLocal.GetEuler() * radtodeg; }
+
   /** Retrieves a body frame velocity component.
       Retrieves a body frame velocity component. The velocity returned is
       extracted from the vUVW vector (an FGColumnVector). The vector for the
@@ -340,6 +357,18 @@ public:
       @return An Euler angle.
   */
   double GetEuler(int axis) const { return VState.qAttitudeLocal.GetEuler(axis); }
+
+  /** Retrieves a vehicle Euler angle component in degrees.
+      Retrieves an Euler angle (Phi, Theta, or Psi) from the quaternion that
+      stores the vehicle orientation relative to the Local frame. The order of
+      rotations used is Yaw-Pitch-Roll. The Euler angle with subscript (1) is
+      Phi. Various convenience enumerators are defined in FGJSBBase. The
+      relevant enumerators for the Euler angle returned by this call are,
+      ePhi=1, eTht=2, ePsi=3 (e.g. GetEuler(eTht) returns Theta).
+      units degrees
+      @return An Euler angle in degrees.
+  */
+  double GetEulerDeg(int axis) const { return VState.qAttitudeLocal.GetEuler(axis) * radtodeg; }
 
   /** Retrieves the cosine of a vehicle Euler angle component.
       Retrieves the cosine of an Euler angle (Phi, Theta, or Psi) from the

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id$"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.24 2013/06/10 01:50:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id$"
+    @version "$Id: FGScript.h,v 1.24 2013/06/10 01:50:43 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,6 +221,7 @@ private:
     string           Name;
     string           Description;
     vector <FGPropertyNode_ptr>  SetParam;
+    vector <std::string>  SetParamName;
     vector <FGPropertyNode_ptr>  NotifyProperties;
     vector <string>              DisplayString;
     vector <eAction> Action;
