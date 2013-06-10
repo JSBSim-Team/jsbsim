@@ -79,7 +79,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.27 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.28 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -195,7 +195,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.27 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.28 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1362,6 +1362,33 @@
       <xs:element ref="integer" />
       <xs:element ref="mod"/>
       <xs:element name="random"/>
+      <xs:element name="urandom"/>
+      <xs:element name="pi"/>
+      <!--xs:element ref="rotation_alpha_local" /-->
+      <!--xs:element ref="rotation_beta_local" /-->
+      <!--xs:element ref="rotation_gamma_local" /-->
+      <!--xs:element ref="rotation_bf_to_wf" /-->
+      <!--xs:element ref="rotation_wf_to_bf" /-->
+      <xs:element ref="lt" />
+      <xs:element ref="le" />
+      <xs:element ref="gt" />
+      <xs:element ref="ge" />
+      <xs:element ref="eq" />
+      <xs:element ref="nq" />
+      <xs:element ref="and" />
+      <xs:element ref="or" />
+      <xs:element ref="not" />
+      <xs:element ref="ifthen" />
+      <xs:element name="switch">
+        <xs:complexType>
+          <xs:choice minOccurs="2" maxOccurs="unbounded">
+            <xs:group ref="func_group" />
+            <xs:element ref="value" />
+            <xs:element ref="property" />
+          </xs:choice>
+        </xs:complexType>
+     </xs:element>
+      <xs:element ref="interpolate1d" />
     </xs:choice>
   </xs:group>
   <xs:element name="function">
@@ -1546,7 +1573,105 @@
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
+  <xs:element name="lt">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="le">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="gt">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ge">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eq">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="nq">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="and">
+    <xs:complexType>
+      <xs:choice minOccurs="2" maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="or">
+    <xs:complexType>
+      <xs:choice minOccurs="2" maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="not">
+    <xs:complexType>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ifthen">
+    <xs:complexType>
+      <xs:choice minOccurs="3" maxOccurs="3">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="interpolate1d">
+    <xs:complexType>
+      <xs:choice minOccurs="3" maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="orient">
     <xs:complexType>
       <xs:all>

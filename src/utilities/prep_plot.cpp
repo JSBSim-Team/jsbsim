@@ -128,6 +128,7 @@ string itostr(int number)
 int main(int argc, char **argv)
 {
   string in_string, var_name, input_arg, supplied_title="";
+  string outfile="";
   vector <string> plotspecfiles;
   //vector <string> names;
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
@@ -156,6 +157,7 @@ int main(int argc, char **argv)
   if (argc == 1 || string(argv[1]) == "--help") {
     cout << endl << "Usage: " << endl << endl;
     cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.xml>] [--comp[rehensive]]"
+         << " [--out=<output file name>]"
          << " [--start=<time>] [--end=<time>] [--title=<title>] [--pdf | --png]"
          << " [--thick | --thicker | --thickest] [--smallest | --small | --large | --largest]"
          << endl << endl;
@@ -202,6 +204,8 @@ int main(int argc, char **argv)
     if (input_arg.substr(0,6) == "--plot") {
       plotspecs=true;
       plotspecfiles.push_back(input_arg.erase(0,7));
+    } else if (input_arg.substr(0,5) == "--out") {
+      outfile = input_arg.erase(0,6);
     } else if (input_arg.substr(0,5) == "--pdf") {
       pdf=true;
     } else if (input_arg.substr(0,5) == "--png") {
@@ -266,13 +270,25 @@ int main(int argc, char **argv)
     exit(0);
   }
 
+  if (outfile.size() == 0) {
+    outfile = files[0].substr(0,files[0].size()-4);
+  } else {
+    if (outfile.find(".pdf") != string::npos) {
+      outfile = outfile.substr(0,outfile.size()-4);
+    } else if (outfile.find(".png") != string::npos) {
+      outfile = outfile.substr(0,outfile.size()-4);
+    } else if (outfile.find(".ps") != string::npos) {
+      outfile = outfile.substr(0,outfile.size()-3);
+    }
+  }
+
   plot_range="";
   if (start_time.size() > 0 || end_time.size() > 0)
     plot_range = "["+start_time+":"+end_time+"]";
 
   if (pdf) {
     cout << "set terminal pdf enhanced color rounded size 12,9 font \"" << DEFAULT_FONT << "\"" << endl;
-    cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".pdf'" << endl;
+    cout << "set output '" << outfile << ".pdf'" << endl;
     cout << "set lmargin  13" << endl;
     cout << "set rmargin  4" << endl;
     cout << "set tmargin  4" << endl;
@@ -280,7 +296,7 @@ int main(int argc, char **argv)
     if (nokey) cout << "set nokey" << endl;
   } else if (png) {
     cout << "set terminal png enhanced truecolor size 1280,1024 rounded font \"" << DEFAULT_FONT << "\"" << endl;
-    cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".png'" << endl;
+    cout << "set output '" << outfile << ".png'" << endl;
     cout << "set size 1.0,1.0" << endl;
     cout << "set origin 0.0,0.0" << endl;
     cout << "set lmargin  6" << endl;
@@ -290,7 +306,7 @@ int main(int argc, char **argv)
     if (nokey) cout << "set nokey" << endl;
   } else {
     cout << "set terminal postscript enhanced color font \"" << DEFAULT_FONT << "\"" << endl;
-    cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".ps'" << endl;
+    cout << "set output '" << outfile << ".ps'" << endl;
     if (nokey) cout << "set nokey" << endl;
   }
 

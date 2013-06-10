@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.49 2013/02/23 20:28:33 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.50 2013/06/10 02:05:12 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,11 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
   if (operation == function_string) {
     sCopyTo = el->GetAttributeValue("copyto");
     if (!sCopyTo.empty()) {
+
+      if (sCopyTo.find("#") != string::npos) {
+        if (is_number(Prefix)) sCopyTo = replace(sCopyTo,"#",Prefix);
+      }
+
       pCopyTo = PropertyManager->GetNode(sCopyTo);
       if (pCopyTo == 0L) cerr << "Property \"" << sCopyTo << "\" must be previously defined in function "
                               << Name << endl;
@@ -254,8 +259,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
         newNode = PropertyManager->GetNode(property_name);
         Parameters.push_back(new FGPropertyValue( newNode ));
       } else {
-        cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
-             << reset << endl;
+        // cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
+        //      << reset << endl;
         Parameters.push_back(new FGPropertyValue( property_name,
                                                   PropertyManager ));
       }
@@ -378,6 +383,11 @@ double FGFunction::GetValue(void) const
       temp *= Parameters[i]->GetValue();
     }
     break;
+  case eDifference:
+    for (i=1;i<Parameters.size();i++) {
+      temp -= Parameters[i]->GetValue();
+    }
+    break;
   case eSum:
     for (i=1;i<Parameters.size();i++) {
       temp += Parameters[i]->GetValue();
@@ -388,11 +398,6 @@ double FGFunction::GetValue(void) const
       temp /= Parameters[1]->GetValue();
     else
       temp = HUGE_VAL;
-    break;
-  case eDifference:
-    for (i=1;i<Parameters.size();i++) {
-      temp -= Parameters[i]->GetValue();
-    }
     break;
   case ePow:
     temp = pow(temp,Parameters[1]->GetValue());
