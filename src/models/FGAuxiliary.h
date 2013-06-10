@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.27 2012/09/15 11:17:21 bcoconni Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.28 2013/06/10 01:56:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.27 2012/09/15 11:17:21 bcoconni Exp $
+    @version $Id: FGAuxiliary.h,v 1.28 2013/06/10 01:56:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,6 +225,9 @@ public:
   /** The vertical acceleration in g's of the aircraft center of gravity. */
   double GetNz            (void) const { return Nz;         }
 
+  /** The lateral acceleration in g's of the aircraft center of gravity. */
+  double GetNy            (void) const { return Ny;         }
+
   const FGColumnVector3& GetNwcg(void) const { return vNwcg; }
 
   double GetHOverBCG(void) const { return hoverbcg; }
@@ -312,7 +315,7 @@ private:
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;
-  double Nz;
+  double Nz, Ny;
   double seconds_in_day;  // seconds since current GMT day began
   int    day_of_year;     // GMT day, 1 .. 366
 
