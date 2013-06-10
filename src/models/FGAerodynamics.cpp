@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.46 2012/07/26 04:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.47 2013/06/10 01:59:16 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,6 +179,12 @@ bool FGAerodynamics::Run(bool Holding)
 
   // JSB 4/27/12 - After use, convert wind axes to produce normal lift
   // and drag values - not negative ones!
+
+  // As a clarification, JSBSim assumes that drag and lift values are defined 
+  // in wind axes - BUT with a 180 rotation about the Y axis. That is, lift and
+  // drag will be positive up and aft, respectively, so that they are reported
+  // as positive numbers. However, the wind axes themselves assume that the X
+  // and Z forces are positive forward and down.
 
   switch (axisType) {
     case atBodyXYZ:       // Forces already in body axes; no manipulation needed
