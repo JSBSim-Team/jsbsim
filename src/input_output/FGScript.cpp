@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.50 2012/09/05 04:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.51 2013/06/10 01:50:43 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,7 +309,14 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
     set_element = event_element->FindElement("set");
     while (set_element) {
       prop_name = set_element->GetAttributeValue("name");
+      if (PropertyManager->HasNode(prop_name)) {
       newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
+      } else {
+        newEvent->SetParam.push_back( 0L );
+        cerr << "Property " << prop_name << " will be late-bound." << endl;
+      }
+      newEvent->SetParamName.push_back( prop_name );
+
       //Todo - should probably do some safety checking here to make sure one or the other
       //of value or function is specified.
       if (!set_element->GetAttributeValue("value").empty()) {
@@ -374,104 +381,114 @@ bool FGScript::RunScript(void)
 
   // Iterate over all events.
   for (unsigned int ev_ctr=0; ev_ctr < Events.size(); ev_ctr++) {
+
+    struct event &thisEvent = Events[ev_ctr];
+
     // Determine whether the set of conditional tests for this condition equate
     // to true and should cause the event to execute. If the conditions evaluate 
     // to true, then the event is triggered. If the event is not persistent,
     // then this trigger will remain set true. If the event is persistent,
     // the trigger will reset to false when the condition evaluates to false.
-    if (Events[ev_ctr].Condition->Evaluate()) {
-      if (!Events[ev_ctr].Triggered) {
+    if (thisEvent.Condition->Evaluate()) {
+      if (!thisEvent.Triggered) {
 
         // The conditions are true, do the setting of the desired Event parameters
-        for (i=0; i<Events[ev_ctr].SetValue.size(); i++) {
-          Events[ev_ctr].OriginalValue[i] = Events[ev_ctr].SetParam[i]->getDoubleValue();
-          if (Events[ev_ctr].Functions[i] != 0) { // Parameter should be set to a function value
+        for (i=0; i<thisEvent.SetValue.size(); i++) {
+          if (thisEvent.SetParam[i] == 0L) { // Late bind property if necessary
+            if (PropertyManager->HasNode(thisEvent.SetParamName[i])) {
+              thisEvent.SetParam[i] = PropertyManager->GetNode(thisEvent.SetParamName[i]);
+            } else {
+              throw("No property, \""+thisEvent.SetParamName[i]+"\" is defined.");
+            }
+          }
+          thisEvent.OriginalValue[i] = thisEvent.SetParam[i]->getDoubleValue();
+          if (thisEvent.Functions[i] != 0) { // Parameter should be set to a function value
             try {
-              Events[ev_ctr].SetValue[i] = Events[ev_ctr].Functions[i]->GetValue();
+              thisEvent.SetValue[i] = thisEvent.Functions[i]->GetValue();
             } catch (string msg) {
               std::cerr << std::endl << "A problem occurred in the execution of the script. " << msg << endl;
               throw;
             }
           }
-          switch (Events[ev_ctr].Type[i]) {
+          switch (thisEvent.Type[i]) {
           case FG_VALUE:
           case FG_BOOL:
-            Events[ev_ctr].newValue[i] = Events[ev_ctr].SetValue[i];
+            thisEvent.newValue[i] = thisEvent.SetValue[i];
             break;
           case FG_DELTA:
-            Events[ev_ctr].newValue[i] = Events[ev_ctr].OriginalValue[i] + Events[ev_ctr].SetValue[i];
+            thisEvent.newValue[i] = thisEvent.OriginalValue[i] + thisEvent.SetValue[i];
             break;
           default:
             cerr << "Invalid Type specified" << endl;
             break;
           }
-          Events[ev_ctr].StartTime = currentTime + Events[ev_ctr].Delay;
-          Events[ev_ctr].ValueSpan[i] = Events[ev_ctr].newValue[i] - Events[ev_ctr].OriginalValue[i];
-          Events[ev_ctr].Transiting[i] = true;
+          thisEvent.StartTime = currentTime + thisEvent.Delay;
+          thisEvent.ValueSpan[i] = thisEvent.newValue[i] - thisEvent.OriginalValue[i];
+          thisEvent.Transiting[i] = true;
         }
       }
-      Events[ev_ctr].Triggered = true;
+      thisEvent.Triggered = true;
 
-    } else if (Events[ev_ctr].Persistent) { // If the event is persistent, reset the trigger.
-      Events[ev_ctr].Triggered = false; // Reset the trigger for persistent events
-      Events[ev_ctr].Notified = false;  // Also reset the notification flag
-    } else if (Events[ev_ctr].Continuous) { // If the event is continuous, reset the trigger.
-      Events[ev_ctr].Triggered = false; // Reset the trigger for persistent events
-      Events[ev_ctr].Notified = false;  // Also reset the notification flag
+    } else if (thisEvent.Persistent) { // If the event is persistent, reset the trigger.
+      thisEvent.Triggered = false; // Reset the trigger for persistent events
+      thisEvent.Notified = false;  // Also reset the notification flag
+    } else if (thisEvent.Continuous) { // If the event is continuous, reset the trigger.
+      thisEvent.Triggered = false; // Reset the trigger for persistent events
+      thisEvent.Notified = false;  // Also reset the notification flag
     }
 
-    if ((currentTime >= Events[ev_ctr].StartTime) && Events[ev_ctr].Triggered) {
+    if ((currentTime >= thisEvent.StartTime) && thisEvent.Triggered) {
 
-      for (i=0; i<Events[ev_ctr].SetValue.size(); i++) {
-        if (Events[ev_ctr].Transiting[i]) {
-          Events[ev_ctr].TimeSpan = currentTime - Events[ev_ctr].StartTime;
-          switch (Events[ev_ctr].Action[i]) {
+      for (i=0; i<thisEvent.SetValue.size(); i++) {
+        if (thisEvent.Transiting[i]) {
+          thisEvent.TimeSpan = currentTime - thisEvent.StartTime;
+          switch (thisEvent.Action[i]) {
           case FG_RAMP:
-            if (Events[ev_ctr].TimeSpan <= Events[ev_ctr].TC[i]) {
-              newSetValue = Events[ev_ctr].TimeSpan/Events[ev_ctr].TC[i] * Events[ev_ctr].ValueSpan[i] + Events[ev_ctr].OriginalValue[i];
+            if (thisEvent.TimeSpan <= thisEvent.TC[i]) {
+              newSetValue = thisEvent.TimeSpan/thisEvent.TC[i] * thisEvent.ValueSpan[i] + thisEvent.OriginalValue[i];
             } else {
-              newSetValue = Events[ev_ctr].newValue[i];
-              if (Events[ev_ctr].Continuous != true) Events[ev_ctr].Transiting[i] = false;
+              newSetValue = thisEvent.newValue[i];
+              if (thisEvent.Continuous != true) thisEvent.Transiting[i] = false;
             }
             break;
           case FG_STEP:
-            newSetValue = Events[ev_ctr].newValue[i];
+            newSetValue = thisEvent.newValue[i];
 
             // If this is not a continuous event, reset the transiting flag.
             // Otherwise, it is known that the event is a continuous event.
             // Furthermore, if the event is to be determined by a function,
             // then the function will be continuously calculated.
-            if (Events[ev_ctr].Continuous != true)
-              Events[ev_ctr].Transiting[i] = false;
-            else if (Events[ev_ctr].Functions[i] != 0)
-              newSetValue = Events[ev_ctr].Functions[i]->GetValue();
+            if (thisEvent.Continuous != true)
+              thisEvent.Transiting[i] = false;
+            else if (thisEvent.Functions[i] != 0)
+              newSetValue = thisEvent.Functions[i]->GetValue();
 
             break;
           case FG_EXP:
-            newSetValue = (1 - exp( -Events[ev_ctr].TimeSpan/Events[ev_ctr].TC[i] )) * Events[ev_ctr].ValueSpan[i] + Events[ev_ctr].OriginalValue[i];
+            newSetValue = (1 - exp( -thisEvent.TimeSpan/thisEvent.TC[i] )) * thisEvent.ValueSpan[i] + thisEvent.OriginalValue[i];
             break;
           default:
             cerr << "Invalid Action specified" << endl;
             break;
           }
-          Events[ev_ctr].SetParam[i]->setDoubleValue(newSetValue);
+          thisEvent.SetParam[i]->setDoubleValue(newSetValue);
         }
       }
 
       // Print notification values after setting them
-      if (Events[ev_ctr].Notify && !Events[ev_ctr].Notified) {
-        cout << endl << "  Event " << event_ctr << " (" << Events[ev_ctr].Name << ")"
+      if (thisEvent.Notify && !thisEvent.Notified) {
+        cout << endl << "  Event " << event_ctr << " (" << thisEvent.Name << ")"
              << " executed at time: " << currentTime << endl;
-        if (!Events[ev_ctr].Description.empty()) {
-          cout << "    " << Events[ev_ctr].Description << endl;
+        if (!thisEvent.Description.empty()) {
+          cout << "    " << thisEvent.Description << endl;
         }
-        for (j=0; j<Events[ev_ctr].NotifyProperties.size();j++) {
-//          cout << "    " << Events[ev_ctr].NotifyProperties[j]->GetRelativeName()
-          cout << "    " << Events[ev_ctr].DisplayString[j]
-               << " = " << Events[ev_ctr].NotifyProperties[j]->getDoubleValue() << endl;
+        for (j=0; j<thisEvent.NotifyProperties.size();j++) {
+//          cout << "    " << thisEvent.NotifyProperties[j]->GetRelativeName()
+          cout << "    " << thisEvent.DisplayString[j]
+               << " = " << thisEvent.NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
-        Events[ev_ctr].Notified = true;
+        thisEvent.Notified = true;
       }
 
     }
