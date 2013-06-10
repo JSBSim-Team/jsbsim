@@ -257,8 +257,6 @@ digraph G {
   MassBalance -> RPBody -> Auxiliary;
   Aerodynamics -> Force_w -> Auxiliary [color=orange, style=bold];
   Propagate -> Location -> Auxiliary;
-  Propagate -> Latitude -> Auxiliary;
-  Propagate -> Longitude -> Auxiliary;
   Propagate -> CosTheta -> Auxiliary;
   Propagate -> SinTheta -> Auxiliary;
   Propagate -> CosPhi -> Auxiliary;
