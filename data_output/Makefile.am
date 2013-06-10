@@ -7,4 +7,5 @@ EXTRA_DIST = \
 	position.xml \
 	rates.xml \
 	velocities.xml \
-	flightgear.xml
+	flightgear.xml \
+	kml_output.xml
