@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.36 2013/01/12 19:25:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.37 2013/06/10 02:04:12 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,6 +118,13 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Capacity = 0.00001;
     Contents = 0.0;
   }
+  if (Contents > Capacity) {
+    cerr << "Tank content (" << Contents << " lbs) is greater than tank capacity ("
+         << Capacity << " lbs) for tank " << tank_number
+         << "! Did you accidentally swap contents and capacity?" << endl;
+    throw("tank definition error");
+  }
+
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
 
   // Check whether this is a solid propellant "tank". Initialize it if true.
