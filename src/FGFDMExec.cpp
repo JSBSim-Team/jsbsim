@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.148 2013/06/10 01:46:27 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,49 +171,39 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instanceRoot->SetInt("trim/solver/debugLevel",0);
   instanceRoot->SetDouble("trim/solver/random",0);
   instanceRoot->SetBool("trim/solver/showSimplex",false);
-//  instanceRoot->SetBool("trim/solver/showConvergence",true);
+  instanceRoot->SetBool("trim/solver/showConvergence",false);
   instanceRoot->SetBool("trim/solver/pause",false);
+  instanceRoot->SetBool("trim/solver/variablePropPitch",false);
 
   instanceRoot->SetDouble("trim/solver/throttleGuess",0.50);
   instanceRoot->SetDouble("trim/solver/throttleMin",0.0);
   instanceRoot->SetDouble("trim/solver/throttleMax",1.0);
-//  instanceRoot->SetDouble("trim/solver/throttleInitialStepSize",0.1);
   instanceRoot->SetDouble("trim/solver/throttleStep",0.1);
 
   instanceRoot->SetDouble("trim/solver/aileronGuess",0);
   instanceRoot->SetDouble("trim/solver/aileronMin",-1.00);
   instanceRoot->SetDouble("trim/solver/aileronMax",1.00);
-//  instanceRoot->SetDouble("trim/solver/aileronInitialStepSize",0.1);
   instanceRoot->SetDouble("trim/solver/aileronStep",0.1);
 
   instanceRoot->SetDouble("trim/solver/rudderGuess",0);
   instanceRoot->SetDouble("trim/solver/rudderMin",-1.00);
   instanceRoot->SetDouble("trim/solver/rudderMax",1.00);
-//  instanceRoot->SetDouble("trim/solver/rudderInitialStepSize",0.1);
   instanceRoot->SetDouble("trim/solver/rudderStep",0.1);
 
   instanceRoot->SetDouble("trim/solver/elevatorGuess",-0.1);
   instanceRoot->SetDouble("trim/solver/elevatorMin",-1.0);
   instanceRoot->SetDouble("trim/solver/elevatorMax",1.0);
-//  instanceRoot->SetDouble("trim/solver/elevatorInitialStepSize",0.1);
   instanceRoot->SetDouble("trim/solver/elevatorStep",0.1);
 
   instanceRoot->SetDouble("trim/solver/alphaGuess",0.05);
   instanceRoot->SetDouble("trim/solver/alphaMin",-0.1);
   instanceRoot->SetDouble("trim/solver/alphaMax",.18);
-//  instanceRoot->SetDouble("trim/solver/alphaInitialStepSize",0.1);
   instanceRoot->SetDouble("trim/solver/alphaStep",0.05);
 
   instanceRoot->SetDouble("trim/solver/betaGuess",0);
-  instanceRoot->SetDouble("trim/solver/betaMin",0.0);
-  instanceRoot->SetDouble("trim/solver/betaMax",0.0);
-//  instanceRoot->SetDouble("trim/solver/betaInitialStepSize",0.1);
-  instanceRoot->SetDouble("trim/solver/betaStep",0.0);
-
-  instanceRoot->SetBool("trim/solver/showConvergeStatus",true);
-//  instanceRoot->SetBool("trim/solver/pause",true);
-  instanceRoot->SetBool("trim/solver/variablePropPitch",false);
-//  instanceRoot->SetBool("trim/solver/debugLevel",0);
+  instanceRoot->SetDouble("trim/solver/betaMin",-0.1);
+  instanceRoot->SetDouble("trim/solver/betaMax",0.1);
+  instanceRoot->SetDouble("trim/solver/betaStep",0.0001);
 
   Constructing = false;
 }
@@ -949,6 +939,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
   int node_idx = 0;
 
   for (int i=0; i<pcs->node->nChildren(); i++) {
+    string access="";
     pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
     node_idx = pcs->node->getChild(i)->getIndex();
     if (node_idx != 0) {
@@ -958,7 +949,9 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
       if (pcsNew->base_string.substr(0,12) == string("/fdm/jsbsim/")) {
         pcsNew->base_string = pcsNew->base_string.erase(0,12);
       }
-      PropertyCatalog.push_back(pcsNew->base_string);
+      if (pcs->node->getChild(i)->getAttribute(SGPropertyNode::READ)) access="R";
+      if (pcs->node->getChild(i)->getAttribute(SGPropertyNode::WRITE)) access+="W";
+      PropertyCatalog.push_back(pcsNew->base_string+" ("+access+")");
     } else {
       pcsNew->node = (FGPropertyNode*)pcs->node->getChild(i);
       BuildPropertyCatalog(pcsNew);

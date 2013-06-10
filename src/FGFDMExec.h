@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id$"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.83 2013/06/10 01:46:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -179,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision$
+    @version $Revision: 1.83 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,12 +449,13 @@ public:
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
-  bool SetOutputFileName(const string& fname) { return Output->SetOutputName(0, fname); }
+  bool SetOutputFileName(const int n, const string& fname) { return Output->SetOutputName(n, fname); }
 
   /** Retrieves the current output filename.
-      @return the name of the output file for the first output specified by the flight model.
+      @param n index of file
+      @return the name of the output file for the output specified by the flight model.
               If none is specified, the empty string is returned. */
-  string GetOutputFileName(void) const { return Output->GetOutputName(0); }
+  string GetOutputFileName(int n) const { return Output->GetOutputName(n); }
 
   /** Executes trimming in the selected mode.
   *   @param mode Specifies how to trim:
@@ -532,17 +533,10 @@ public:
   double GetDeltaT(void) const {return dT;}
 
   /// Suspends the simulation and sets the delta T to zero.
-  void SuspendIntegration(void) {
-	  if (dT != 0.0) { // check if already suspended
-		  saved_dT = dT;
-		  dT = 0.0;
-	  }
-  }
+  void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
 
   /// Resumes the simulation by resetting delta T to the correct value.
-  void ResumeIntegration(void)  {
-	  dT = saved_dT;
-  }
+  void ResumeIntegration(void)  {dT = saved_dT;}
 
   /** Returns the simulation suspension state.
       @return true if suspended, false if executing  */
