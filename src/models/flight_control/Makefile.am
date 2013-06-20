@@ -4,12 +4,12 @@ LIBRARY_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
                             FGFilter.cpp FGGain.cpp FGKinemat.cpp \
                             FGSummer.cpp FGSwitch.cpp FGFCSFunction.cpp FGSensor.cpp \
                             FGPID.cpp FGActuator.cpp FGAccelerometer.cpp FGGyro.cpp \
-                            FGMagnetometer.cpp
+                            FGMagnetometer.cpp FGWaypoint.cpp FGAngles.cpp
 
 LIBRARY_INCLUDES = FGDeadBand.h FGFCSComponent.h FGFilter.h \
                  FGGain.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h FGAccelerometer.h FGGyro.h \
-                 FGMagnetometer.h FGSensorOrientation.h
+                 FGMagnetometer.h FGSensorOrientation.h FGWaypoint.h FGAngles.h
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libFlightControl.la

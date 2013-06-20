@@ -43,7 +43,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.38 2012/12/13 04:41:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.39 2013/06/20 04:37:27 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -428,22 +428,27 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   Element* element = FindElement(el);
 
   if (!element) {
-    cerr << "Attempting to get non-existent element " << el << endl;
-    exit(0);
+    throw("Attempting to get the value of a non-existent element "+el);
+//    cerr << "Attempting to get non-existent element " << el << endl;
+//    exit(0);
   }
 
   string supplied_units = element->GetAttributeValue("unit");
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
-           << " conversion in FGXMLElement.cpp." << endl;
-      exit(-1);
+      throw("Supplied unit: \"" + supplied_units + "\" does not exist (typo?). Add new unit"
+           + " conversion in FGXMLElement.cpp.");
+//      cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
+//           << " conversion in FGXMLElement.cpp." << endl;
+//      exit(-1);
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      cerr << endl << "Supplied unit: \"" << supplied_units << "\" cannot be converted to "
-                   << target_units << ". Add new unit conversion in FGXMLElement.cpp or fix typo" << endl;
-      exit(-1);
+      throw("Supplied unit: \"" + supplied_units + "\" cannot be converted to "
+                   + target_units + ". Add new unit conversion in FGXMLElement.cpp or fix typo");
+//      cerr << endl << "Supplied unit: \"" << supplied_units << "\" cannot be converted to "
+//                   << target_units << ". Add new unit conversion in FGXMLElement.cpp or fix typo" << endl;
+//      exit(-1);
     }
   }
 

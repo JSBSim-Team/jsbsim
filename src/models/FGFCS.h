@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.41 2012/10/15 05:02:29 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.42 2013/06/20 04:37:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.41 $
+    @version $Revision: 1.42 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -180,6 +180,8 @@ CLASS DOCUMENTATION
     @see FGSensor
     @see FGSummer
     @see FGSwitch
+    @see FGWaypoint
+    @see FGAngles
     @see FGFCSComponent
     @see Element
 */

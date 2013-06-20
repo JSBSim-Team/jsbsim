@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.36 2013/06/20 04:37:28 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,6 +106,12 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     Type = "GYRO";
   } else if (element->GetName() == string("actuator")) {
     Type = "ACTUATOR";
+  } else if (element->GetName() == string("waypoint_heading")) {
+    Type = "WAYPOINT_HEADING";
+  } else if (element->GetName() == string("waypoint_distance")) {
+    Type = "WAYPOINT_DISTANCE";
+  } else if (element->GetName() == string("angle")) {
+    Type = "ANGLE";
   } else { // illegal component in this channel
     Type = "UNKNOWN";
   }

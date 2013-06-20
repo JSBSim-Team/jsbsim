@@ -59,6 +59,8 @@ INCLUDES
 #include "models/flight_control/FGAccelerometer.h"
 #include "models/flight_control/FGMagnetometer.h"
 #include "models/flight_control/FGGyro.h"
+#include "models/flight_control/FGWaypoint.h"
+#include "models/flight_control/FGAngles.h"
 
 #include "FGFCSChannel.h"
 
@@ -66,7 +68,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.81 2013/06/20 04:37:27 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -623,6 +625,12 @@ bool FGFCS::Load(Element* el, SystemType systype)
           newChannel->Add(new FGMagnetometer(this, component_element));
         } else if (component_element->GetName() == string("gyro")) {
           newChannel->Add(new FGGyro(this, component_element));
+        } else if ((component_element->GetName() == string("waypoint_heading")) ||
+                   (component_element->GetName() == string("waypoint_distance")))
+        {
+          newChannel->Add(new FGWaypoint(this, component_element));
+        } else if (component_element->GetName() == string("angle")) {
+          newChannel->Add(new FGAngles(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
