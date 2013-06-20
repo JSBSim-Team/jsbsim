@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.30 2013/06/10 02:25:18 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.31 2013/06/20 04:37:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -685,7 +685,7 @@ of the three words refers to one or more instances of a property, value, or tabl
        <v> 0.00 </v>  <v> 0.25 </v>
        <v> 0.80 </v>  <v> 0.50 </v>
        <v> 0.90 </v>  <v> 0.60 </v>
-       </interpolate1d>
+     </interpolate1d>
      @endcode
 @author Jon Berndt
 */

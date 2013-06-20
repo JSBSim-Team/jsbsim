@@ -56,7 +56,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.36 2012/03/25 11:05:36 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.38 2013/06/20 13:01:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +72,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.36 2012/03/25 11:05:36 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.38 2013/06/20 13:01:48 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,6 +254,13 @@ public:
   *   @return The temperature in Celsius. */
   static double KelvinToCelsius (double kelvin) {
     return kelvin - 273.15;
+  }
+
+  /** Converts from feet to meters
+  *   @param measure The length in feet.
+  *   @return The length in meters. */
+  static double FeetToMeters (double measure) {
+    return measure*0.3048;
   }
 
   /** Calculate the calibrated airspeed from the Mach number. It uses the

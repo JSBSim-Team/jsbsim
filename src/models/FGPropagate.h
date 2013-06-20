@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.75 2013/06/10 01:58:01 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.76 2013/06/16 10:02:46 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.75 2013/06/10 01:58:01 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.76 2013/06/16 10:02:46 andgi Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,7 +262,7 @@ public:
               angle about the Y axis, and the third item is the angle
               about the Z axis (Phi, Theta, Psi).
   */
-  const FGColumnVector3& GetEulerDeg(void) const { return VState.qAttitudeLocal.GetEuler() * radtodeg; }
+  FGColumnVector3 GetEulerDeg(void) const;
 
   /** Retrieves a body frame velocity component.
       Retrieves a body frame velocity component. The velocity returned is

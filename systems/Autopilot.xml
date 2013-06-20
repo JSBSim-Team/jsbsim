@@ -81,12 +81,11 @@
         the current heading, as calculated by the Angle to Heading channel
         in the GNC Utilities system file. The output of this component (stored)
         in the component property "ap/limited-roll-angle-rad" is the roll
-        angle command, which is just the correct-sense heading error, but 
-        nominally limited at 30 degrees (0.524 radians), though this can be
+        angle command, limited at 30 degrees (0.524 radians), though this can be
         overridden.
       </description>
       <input> guidance/angle-to-heading-rad </input>
-      <gain> guidance/angle-to-heading-sense </gain>
+      <gain> 1.0 </gain>
       <clipto>
         <min> -guidance/roll-angle-limit </min>
         <max>  guidance/roll-angle-limit </max>
