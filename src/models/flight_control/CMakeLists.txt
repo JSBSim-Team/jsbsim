@@ -11,7 +11,9 @@ set(JSBSIM_MODELS_FLIGHT_CONTROL_SRC FGDeadBand.cpp
                                      FGActuator.cpp
                                      FGAccelerometer.cpp
                                      FGGyro.cpp
-                                     FGMagnetometer.cpp)
+                                     FGMagnetometer.cpp
+                                     FGAngles.cpp
+                                     FGWaypoint.cpp)
 
 set(JSBSIM_MODELS_FLIGHT_CONTROL_HDR FGDeadBand.h
                                      FGFCSComponent.h
@@ -27,7 +29,9 @@ set(JSBSIM_MODELS_FLIGHT_CONTROL_HDR FGDeadBand.h
                                      FGAccelerometer.h
                                      FGGyro.h
                                      FGMagnetometer.h
-                                     FGSensorOrientation.h)
+                                     FGSensorOrientation.h
+                                     FGAngles.h
+                                     FGWaypoint.h)
 
 add_library(FlightControl ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR}
                           ${JSBSIM_MODELS_FLIGHT_CONTROL_SRC})
