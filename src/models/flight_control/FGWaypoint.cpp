@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWaypoint.cpp,v 1.1 2013/06/20 04:37:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWaypoint.cpp,v 1.2 2013/08/30 04:44:59 jberndt Exp $";
 static const char *IdHdr = ID_WAYPOINT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +201,7 @@ bool FGWaypoint::Run(void )
 
     double wp_distance = 2.0 * radius * atan2(pow(distance_a, 0.5), pow((1.0 - distance_a), 0.5));
 
-    if (eUnit = eMeters) {
+    if (eUnit == eMeters) {
       Output = FeetToMeters(wp_distance);
     } else {
       Output = wp_distance;
