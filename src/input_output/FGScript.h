@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.24 2013/06/10 01:50:43 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.25 2013/09/11 12:46:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.24 2013/06/10 01:50:43 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.25 2013/09/11 12:46:35 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,6 +214,7 @@ private:
     bool             Continuous;
     bool             Triggered;
     bool             Notify;
+    bool             NotifyKML;
     bool             Notified;
     double           Delay;
     double           StartTime;
@@ -223,6 +224,7 @@ private:
     vector <FGPropertyNode_ptr>  SetParam;
     vector <std::string>  SetParamName;
     vector <FGPropertyNode_ptr>  NotifyProperties;
+    vector <string>              NotifyPropertyNames;
     vector <string>              DisplayString;
     vector <eAction> Action;
     vector <eType>   Type;
@@ -239,7 +241,7 @@ private:
       Persistent = false;
       Continuous = false;
       Delay = 0.0;
-      Notify = Notified = false;
+      Notify = Notified = NotifyKML = false;
       Name = "";
       StartTime = 0.0;
       TimeSpan = 0.0;
