@@ -63,7 +63,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.5 2013/01/12 19:26:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.6 2013/09/11 12:51:13 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,8 @@ bool FGOutputTextFile::Load(Element* el)
 {
   if(!FGOutputFile::Load(el))
     return false;
+
+  PreLoad(el, PropertyManager);
 
   string type = el->GetAttributeValue("type");
   string delim;
@@ -238,6 +240,12 @@ bool FGOutputTextFile::OpenFile(void)
     }
   }
 
+  if (PreFunctions.size() > 0) {
+    for (unsigned int i=0;i<PreFunctions.size();i++) {
+      outstream << delimeter << PreFunctions[i]->GetName();
+    }
+  }
+
   outstream << endl;
   outstream.flush();
 
@@ -381,6 +389,9 @@ void FGOutputTextFile::Print(void)
   outstream.precision(18);
   for (unsigned int i=0;i<OutputProperties.size();i++) {
     outstream << delimeter << OutputProperties[i]->getDoubleValue();
+  }
+  for (unsigned int i=0;i<PreFunctions.size();i++) {
+    outstream << delimeter << PreFunctions[i]->getDoubleValue();
   }
   outstream.precision(10);
 
