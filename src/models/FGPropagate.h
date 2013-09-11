@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.76 2013/06/16 10:02:46 andgi Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.77 2013/09/11 12:39:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.76 2013/06/16 10:02:46 andgi Exp $
+    @version $Id: FGPropagate.h,v 1.77 2013/09/11 12:39:36 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,7 +262,7 @@ public:
               angle about the Y axis, and the third item is the angle
               about the Z axis (Phi, Theta, Psi).
   */
-  FGColumnVector3 GetEulerDeg(void) const;
+  const FGColumnVector3& GetEulerDeg(void) const { return VState.qAttitudeLocal.GetEuler() * radtodeg; }
 
   /** Retrieves a body frame velocity component.
       Retrieves a body frame velocity component. The velocity returned is
@@ -293,6 +293,10 @@ public:
   /** Retrieves the total inertial velocity in ft/sec.
   */
   double GetInertialVelocityMagnitude(void) const { return VState.vInertialVelocity.Magnitude(); }
+
+  /** Retrieves the total local NED velocity in ft/sec.
+  */
+  double GetNEDVelocityMagnitude(void) const { return VState.vUVW.Magnitude(); }
 
   /** Retrieves the inertial velocity vector in ft/sec.
   */
@@ -419,6 +423,7 @@ public:
 
   double GetTerrainElevation(void) const { return GetLocalTerrainRadius() - VState.vLocation.GetSeaLevelRadius(); }
   double GetDistanceAGL(void)  const;
+  double GetDistanceAGLKm(void)  const;
   double GetRadius(void) const {
       if (VState.vLocation.GetRadius() == 0) return 1.0;
       else return VState.vLocation.GetRadius();
@@ -430,6 +435,7 @@ public:
   double GetGeodLatitudeDeg(void) const { return VState.vLocation.GetGeodLatitudeDeg(); }
 
   double GetGeodeticAltitude(void) const { return VState.vLocation.GetGeodAltitude(); }
+  double GetGeodeticAltitudeKm(void) const { return VState.vLocation.GetGeodAltitude()*0.0003048; }
 
   double GetLongitudeDeg(void) const { return VState.vLocation.GetLongitudeDeg(); }
   double GetLatitudeDeg(void) const { return VState.vLocation.GetLatitudeDeg(); }
@@ -551,6 +557,7 @@ public:
   void SetSeaLevelRadius(double tt);
   void SetTerrainElevation(double tt);
   void SetDistanceAGL(double tt);
+  void SetDistanceAGLKm(double tt);
 
   void SetInitialState(const FGInitialCondition *);
   void SetLocation(const FGLocation& l);

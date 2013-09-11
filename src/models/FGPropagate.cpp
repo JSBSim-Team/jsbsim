@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.113 2013/06/16 10:02:46 andgi Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.114 2013/09/11 12:39:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -509,9 +509,24 @@ double FGPropagate::GetDistanceAGL(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGPropagate::GetDistanceAGLKm(void) const
+{
+  return VState.vLocation.GetAltitudeAGL(FDMExec->GetSimTime())*0.0003048;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::SetDistanceAGL(double tt)
 {
   VState.vLocation.SetAltitudeAGL(tt, FDMExec->GetSimTime());
+  UpdateVehicleState();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetDistanceAGLKm(double tt)
+{
+  VState.vLocation.SetAltitudeAGL(tt*3280.8399, FDMExec->GetSimTime());
   UpdateVehicleState();
 }
 
@@ -559,13 +574,6 @@ void FGPropagate::SetLocation(const FGLocation& l)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGPropagate::GetEulerDeg(void) const
-{
-  return VState.qAttitudeLocal.GetEuler() * radtodeg;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGPropagate::DumpState(void)
 {
   cout << endl;
@@ -577,9 +585,9 @@ void FGPropagate::DumpState(void)
        <<   "Position" << underoff << endl;
   cout << "    ECI:   " << VState.vInertialPosition.Dump(", ") << " (x,y,z, in ft)" << endl;
   cout << "    ECEF:  " << VState.vLocation << " (x,y,z, in ft)"  << endl;
-  cout << "    Local: " << VState.vLocation.GetLatitudeDeg()
+  cout << "    Local: " << VState.vLocation.GetGeodLatitudeDeg()
                         << ", " << VState.vLocation.GetLongitudeDeg()
-                        << ", " << GetAltitudeASL() << " (lat, lon, alt in deg and ft)" << endl;
+                        << ", " << GetAltitudeASL() << " (geodetic lat, lon, alt ASL in deg and ft)" << endl;
 
   cout << endl << "  " << underon
        <<   "Orientation" << underoff << endl;
@@ -613,6 +621,8 @@ void FGPropagate::WriteStateFile(int num)
   ofstream outfile(filename.c_str());
 
   if (outfile.is_open()) {
+    switch(num) {
+    case 1:
     outfile << "<?xml version=\"1.0\"?>" << endl;
     outfile << "<initialize name=\"reset00\">" << endl;
     outfile << "  <ubody unit=\"FT/SEC\"> " << VState.vUVW(eU) << " </ubody> " << endl;
@@ -626,6 +636,41 @@ void FGPropagate::WriteStateFile(int num)
     outfile << "  <altitude unit=\"FT\"> " << GetDistanceAGL() << " </altitude>" << endl;
     outfile << "</initialize>" << endl;
     outfile.close();
+    break;
+    case 2:
+      outfile << "<?xml version=\"1.0\"?>" << endl;
+      outfile << "<initialize name=\"IC File\" version=\"2.0\">" << endl;
+      outfile << "" << endl;
+      outfile << "  <position frame=\"ECEF\">" << endl;
+      outfile << "    <latitude unit=\"DEG\" type=\"geodetic\"> " << VState.vLocation.GetGeodLatitudeDeg() << " </latitude>" << endl;
+      outfile << "    <longitude unit=\"DEG\"> " << VState.vLocation.GetLongitudeDeg() << " </longitude>" << endl;
+      outfile << "    <altitudeMSL unit=\"FT\"> " << GetAltitudeASL() << " </altitudeMSL>" << endl;
+      outfile << "  </position>" << endl;
+      outfile << "" << endl;
+      outfile << "  <orientation unit=\"DEG\" frame=\"LOCAL\">" << endl;
+      outfile << "    <yaw> " << VState.qAttitudeLocal.GetEulerDeg(eYaw) << " </yaw>" << endl;
+      outfile << "    <pitch> " << VState.qAttitudeLocal.GetEulerDeg(ePitch) << " </pitch>" << endl;
+      outfile << "    <roll> " << VState.qAttitudeLocal.GetEulerDeg(eRoll) << " </roll>" << endl;
+      outfile << "  </orientation>" << endl;
+      outfile << "" << endl;
+      outfile << "  <velocity unit=\"FT/SEC\" frame=\"LOCAL\">" << endl;
+      outfile << "    <x> " << GetVel(eNorth) << " </x>" << endl;
+      outfile << "    <y> " << GetVel(eEast) << " </y>" << endl;
+      outfile << "    <z> " << GetVel(eDown) << " </z>" << endl;
+      outfile << "  </velocity>" << endl;
+      outfile << "" << endl;
+      outfile << "  <attitude_rate unit=\"DEG/SEC\" frame=\"BODY\">" << endl;
+      outfile << "    <roll> " << (VState.vPQR*radtodeg)(eRoll) << " </roll>" << endl;
+      outfile << "    <pitch> " << (VState.vPQR*radtodeg)(ePitch) << " </pitch>" << endl;
+      outfile << "    <yaw> " << (VState.vPQR*radtodeg)(eYaw) << " </yaw>" << endl;
+      outfile << "  </attitude_rate>" << endl;
+      outfile << "" << endl;
+      outfile << "</initialize>" << endl;
+      outfile.close();
+    break;
+    default:
+      throw("When writing a state file, the supplied value must be 1 or 2 for the version number of teh resulting IC file");
+    }
   } else {
     cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
   }
@@ -657,6 +702,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/ri-rad_sec", this, eR, (PMF)&FGPropagate::GetPQRi);
 
   PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
+  PropertyManager->Tie("velocities/ned-velocity-mag-fps", this, &FGPropagate::GetNEDVelocityMagnitude);
 
   PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL, true);
   PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters, true);
@@ -668,6 +714,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/lat-geod-deg", this, &FGPropagate::GetGeodLatitudeDeg);
   PropertyManager->Tie("position/geod-alt-ft", this, &FGPropagate::GetGeodeticAltitude);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
+  PropertyManager->Tie("position/geod-alt-km", this, &FGPropagate::GetGeodeticAltitudeKm);
+  PropertyManager->Tie("position/h-agl-km", this,  &FGPropagate::GetDistanceAGLKm, &FGPropagate::SetDistanceAGLKm);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
                           &FGPropagate::GetTerrainElevation,
