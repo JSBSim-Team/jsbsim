@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.61 2013/06/10 01:56:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.62 2013/09/11 12:43:20 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,7 +216,7 @@ bool FGAuxiliary::Run(bool Holding)
   }
 
   A = pow(((pt-in.Pressure)/in.PressureSL + 1),0.28571);
-  if (MachU > 0.0) {
+  if (abs(MachU) > 0.0) {
     vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
     veas = sqrt(2 * qbar / in.DensitySL);
     vtrue = 1116.43559 * MachU * sqrt(in.Temperature / 518.67);
