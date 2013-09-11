@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.69 2012/12/12 06:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.70 2013/09/11 23:24:49 jentron Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -693,18 +693,32 @@ void FGPropulsion::SetStarter(int setting)
 
 void FGPropulsion::SetCutoff(int setting)
 {
+  bool bsetting = setting == 0 ? false : true;
+
   if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
-      if (setting == 0)
-        ((FGTurbine*)Engines[i])->SetCutoff(false);
-      else
-        ((FGTurbine*)Engines[i])->SetCutoff(true);
+      switch (Engines[i]->GetType()) { 
+        case FGEngine::etTurbine:
+          ((FGTurbine*)Engines[i])->SetCutoff(bsetting);
+          break;
+        case FGEngine::etTurboprop:
+          ((FGTurboProp*)Engines[i])->SetCutoff(bsetting);
+          break;
+        default:
+          break;
+      }
     }
   } else {
-    if (setting == 0)
-      ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(false);
-    else
-      ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(true);
+    switch (Engines[ActiveEngine]->GetType()) { 
+      case FGEngine::etTurbine:
+        ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(bsetting);
+        break;
+      case FGEngine::etTurboprop:
+        ((FGTurboProp*)Engines[ActiveEngine])->SetCutoff(bsetting);
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -799,7 +813,7 @@ void FGPropulsion::bind(void)
 
   IsBound = true;
   PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning, false);
-  if (HaveTurbineEngine) {
+  if (HaveTurbineEngine || HaveTurboPropEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  false);
     PropertyManager->Tie("propulsion/cutoff_cmd", this,  (iPMF)0, &FGPropulsion::SetCutoff,   false);
   }

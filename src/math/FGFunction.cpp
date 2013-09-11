@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.50 2013/06/10 02:05:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.51 2013/09/11 12:49:36 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -807,14 +807,11 @@ void FGFunction::bind(void)
     }
 
     if (PropertyManager->HasNode(tmp)) {
-      FGPropertyNode* property = PropertyManager->GetNode(tmp);
-      if (property->isTied()) {
         cout << "Property " << tmp << " has already been successfully bound (late)." << endl;
-        return;
-      }
-    }
-
+    } else {
     PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
+      }
+
   }
 }
 

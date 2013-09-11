@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.51 2013/06/10 01:50:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.52 2013/09/11 12:46:35 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,6 +275,9 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
 
     // Notify about when this event is triggered?
     if ((notify_element = event_element->FindElement("notify")) != 0) {
+      if (notify_element->HasAttribute("format")) {
+        if (notify_element->GetAttributeValue("format") == "kml") newEvent->NotifyKML = true;
+      }
       newEvent->Notify = true;
       // Check here for new <description> tag that gets echoed
       string notify_description = notify_element->FindElementValue("description");
@@ -284,23 +287,16 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
       notify_property_element = notify_element->FindElement("property");
       while (notify_property_element) {
         notifyPropertyName = notify_property_element->GetDataLine();
-        if (PropertyManager->GetNode(notifyPropertyName)) {
-          newEvent->NotifyProperties.push_back( PropertyManager->GetNode(notifyPropertyName) );
+
+        newEvent->NotifyPropertyNames.push_back(notifyPropertyName);
+        newEvent->NotifyProperties.push_back(0);
           string caption_attribute = notify_property_element->GetAttributeValue("caption");
           if (caption_attribute.empty()) {
             newEvent->DisplayString.push_back(notifyPropertyName);
           } else {
             newEvent->DisplayString.push_back(caption_attribute);
           }
-        } else {
-          cout << endl << fgred << "  Could not find the property named "
-               << notifyPropertyName << " in script" << endl << "  \""
-               << ScriptName << "\". Execution is aborted. Please recheck "
-               << "your input files and scripts." << reset << endl;
-          delete newEvent->Condition;
-          delete newEvent;
-          return false;
-        }
+
         notify_property_element = notify_element->FindNextElement("property");
       }
     }
@@ -313,7 +309,6 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
       newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
       } else {
         newEvent->SetParam.push_back( 0L );
-        cerr << "Property " << prop_name << " will be late-bound." << endl;
       }
       newEvent->SetParamName.push_back( prop_name );
 
@@ -477,15 +472,44 @@ bool FGScript::RunScript(void)
 
       // Print notification values after setting them
       if (thisEvent.Notify && !thisEvent.Notified) {
-        cout << endl << "  Event " << event_ctr << " (" << thisEvent.Name << ")"
-             << " executed at time: " << currentTime << endl;
+        if (thisEvent.NotifyKML) {
+          cout << endl << "<Placemark>" << endl;
+          cout << "  <name> " << currentTime << " seconds" << " </name>" << endl;
+          cout << "  <description>" << endl;
+          cout << "  <![CDATA[" << endl;
+          cout << "  <b>" << thisEvent.Name << " (Event " << event_ctr << ")" << " executed at time: " << currentTime << "</b><br/>" << endl;
+        } else  {
+          cout << endl << underon
+               << highint << thisEvent.Name << normint << underoff
+               << " (Event " << event_ctr << ")" 
+               << " executed at time: " << highint << currentTime << normint << endl;
+        }
         if (!thisEvent.Description.empty()) {
           cout << "    " << thisEvent.Description << endl;
         }
         for (j=0; j<thisEvent.NotifyProperties.size();j++) {
-//          cout << "    " << thisEvent.NotifyProperties[j]->GetRelativeName()
-          cout << "    " << thisEvent.DisplayString[j]
-               << " = " << thisEvent.NotifyProperties[j]->getDoubleValue() << endl;
+          if (thisEvent.NotifyProperties[j] == 0) {
+            if (PropertyManager->HasNode(thisEvent.NotifyPropertyNames[j])) {
+              thisEvent.NotifyProperties[j] = PropertyManager->GetNode(thisEvent.NotifyPropertyNames[j]);
+            } else {
+              throw("Could not find property named "+thisEvent.NotifyPropertyNames[j]+" in script.");
+            }
+          }
+          cout << "    " << thisEvent.DisplayString[j] << " = " << thisEvent.NotifyProperties[j]->getDoubleValue();
+          if (thisEvent.NotifyKML) cout << " <br/>";
+          cout << endl;
+        }
+        if (thisEvent.NotifyKML) {
+          cout << "  ]]>" << endl;
+          cout << "  </description>" << endl;
+          cout << "  <Point>" << endl;
+          cout << "    <altitudeMode> absolute </altitudeMode>" << endl;
+          cout << "    <extrude> 1 </extrude>" << endl;
+          cout << "    <coordinates>" << FDMExec->GetPropagate()->GetLongitudeDeg()
+            << "," << FDMExec->GetPropagate()->GetGeodLatitudeDeg()
+            << "," << FDMExec->GetPropagate()->GetAltitudeASLmeters() << "</coordinates>" << endl;
+          cout << "  </Point>" << endl;
+          cout << "</Placemark>" << endl;
         }
         cout << endl;
         thisEvent.Notified = true;
@@ -561,24 +585,36 @@ void FGScript::Debug(int from)
         for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
           if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
             if (Events[i].SetParam[j] == 0) {
+              if (Events[i].SetParamName[j].size() == 0) {
               cerr << fgred << highint << endl
                    << "  An attempt has been made to access a non-existent property" << endl
                    << "  in this event. Please check the property names used, spelling, etc."
                    << reset << endl;
               exit(-1);
+              } else {
+                cout << endl << "      set " << Events[i].SetParamName[j]
+                     << " to function value (Late Bound)";
             }
+            } else {
             cout << endl << "      set " << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
                  << " to function value";
+            }
           } else {
             if (Events[i].SetParam[j] == 0) {
+              if (Events[i].SetParamName[j].size() == 0) {
               cerr << fgred << highint << endl
                    << "  An attempt has been made to access a non-existent property" << endl
                    << "  in this event. Please check the property names used, spelling, etc."
                    << reset << endl;
               exit(-1);
+              } else {
+                cout << endl << "      set " << Events[i].SetParamName[j]
+                     << " to function value (Late Bound)";
             }
+            } else {
             cout << endl << "      set " << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
                  << " to " << Events[i].SetValue[j];
+          }
           }
 
           switch (Events[i].Type[j]) {
@@ -615,10 +651,14 @@ void FGScript::Debug(int from)
         // Print notifications
         if (Events[i].Notify) {
           if (Events[i].NotifyProperties.size() > 0) {
-            cout << "  Notifications" << ":" << endl << "    {" << endl;
-            for (unsigned j=0; j<Events[i].NotifyProperties.size();j++) {
+            if (Events[i].NotifyKML) {
+              cout << "  Notifications (KML Format):" << endl << "    {" << endl;
+            } else {
+              cout << "  Notifications:" << endl << "    {" << endl;
+            }
+            for (unsigned j=0; j<Events[i].NotifyPropertyNames.size();j++) {
               cout << "      "
-                   << Events[i].NotifyProperties[j]->GetRelativeName("/fdm/jsbsim/")
+                   << Events[i].NotifyPropertyNames[j]
                    << endl;
             }
             cout << "    }" << endl;

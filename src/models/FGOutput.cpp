@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.73 2013/09/11 12:44:02 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,7 +212,9 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   unsigned int idx = OutputTypes.size();
   FGOutputType* Output = 0;
 
-  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
+  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << endl;
+
+  type = to_upper(type);
 
   if (type == "CSV") {
     FGOutputTextFile* OutputTextFile = new FGOutputTextFile(FDMExec);
@@ -258,7 +260,9 @@ bool FGOutput::Load(Element* document)
   string type = document->GetAttributeValue("type");
   FGOutputType* Output = 0;
 
-  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  ";
+  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
+
+  type = to_upper(type);
 
   if (type == "CSV") {
     Output = new FGOutputTextFile(FDMExec);
