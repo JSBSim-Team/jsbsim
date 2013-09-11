@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.47 2013/06/10 01:59:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.48 2013/09/11 12:42:14 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   axisType = atNone;
 
   AeroFunctions = new AeroFunctionArray[6];
+  AeroFunctionsAtCG = new AeroFunctionArray[6];
 
   impending_stall = stall_hyst = 0.0;
   alphaclmin = alphaclmax = 0.0;
@@ -101,8 +102,12 @@ FGAerodynamics::~FGAerodynamics()
   for (i=0; i<6; i++)
     for (j=0; j<AeroFunctions[i].size(); j++)
       delete AeroFunctions[i][j];
+  for (i=0; i<6; i++)
+    for (j=0; j<AeroFunctionsAtCG[i].size(); j++)
+      delete AeroFunctionsAtCG[i][j];
 
   delete[] AeroFunctions;
+  delete[] AeroFunctionsAtCG;
 
   delete AeroRPShift;
 
@@ -165,11 +170,19 @@ bool FGAerodynamics::Run(bool Holding)
   }
 
   vFw.InitMatrix();
+  vFwAtCG.InitMatrix();
   vFnative.InitMatrix();
+  vFnativeAtCG.InitMatrix();
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < AeroFunctions[axis_ctr].size(); ctr++) {
       vFnative(axis_ctr+1) += AeroFunctions[axis_ctr][ctr]->GetValue();
+    }
+  }
+
+  for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
+    for (ctr=0; ctr < AeroFunctionsAtCG[axis_ctr].size(); ctr++) {
+      vFnativeAtCG(axis_ctr+1) += AeroFunctionsAtCG[axis_ctr][ctr]->GetValue();
     }
   }
 
@@ -189,19 +202,32 @@ bool FGAerodynamics::Run(bool Holding)
   switch (axisType) {
     case atBodyXYZ:       // Forces already in body axes; no manipulation needed
       vFw = in.Tb2w*vFnative;
-      vFw(eDrag)*=-1; vFw(eLift)*=-1;
       vForces = vFnative;
+      vFw(eDrag)*=-1; vFw(eLift)*=-1;
+
+      vFwAtCG = in.Tb2w*vFnativeAtCG;
+      vForcesAtCG = vFnativeAtCG;
+      vFwAtCG(eDrag)*=-1; vFwAtCG(eLift)*=-1;
       break;
     case atLiftDrag:      // Copy forces into wind axes
       vFw = vFnative;
       vFw(eDrag)*=-1; vFw(eLift)*=-1;
       vForces = in.Tw2b*vFw;
       vFw(eDrag)*=-1; vFw(eLift)*=-1;
+
+      vFwAtCG = vFnativeAtCG;
+      vFwAtCG(eDrag)*=-1; vFwAtCG(eLift)*=-1;
+      vForcesAtCG = in.Tw2b*vFwAtCG;
+      vFwAtCG(eDrag)*=-1; vFwAtCG(eLift)*=-1;
       break;
     case atAxialNormal:   // Convert native forces into Axial|Normal|Side system
       vFw = in.Tb2w*vFnative;
       vFnative(eX)*=-1; vFnative(eZ)*=-1;
       vForces = vFnative;
+
+      vFwAtCG = in.Tb2w*vFnativeAtCG;
+      vFnativeAtCG(eX)*=-1; vFnativeAtCG(eZ)*=-1;
+      vForcesAtCG = vFnativeAtCG;
       break;
     default:
       cerr << endl << "  A proper axis type has NOT been selected. Check "
@@ -211,12 +237,13 @@ bool FGAerodynamics::Run(bool Holding)
 
   // Calculate lift coefficient squared
   if ( in.Qbar > 0) {
-    clsq = vFw(eLift) / (in.Wingarea*in.Qbar);
+    clsq = (vFw(eLift) + vFwAtCG(eLift))/ (in.Wingarea*in.Qbar);
     clsq *= clsq;
   }
 
   // Calculate lift Lift over Drag
-  if ( fabs(vFw(eDrag)) > 0.0) lod = fabs( vFw(eLift) / vFw(eDrag) );
+  if ( fabs(vFw(eDrag) + vFwAtCG(eDrag)) > 0.0)
+    lod = fabs( (vFw(eLift) + vFwAtCG(eLift))/ (vFw(eDrag) + vFwAtCG(eDrag)));
 
   // Calculate aerodynamic reference point shift, if any. The shift
   // takes place in the structual axis. That is, if the shift is positive,
@@ -237,6 +264,10 @@ bool FGAerodynamics::Run(bool Holding)
     }
   }
   vMoments = vMomentsMRC + vDXYZcg*vForces; // M = r X F
+  // Now add the "at CG" values to base forces - after the moments have been transferred
+  vForces += vForcesAtCG;
+  vFnative += vFnativeAtCG;
+  vFw += vFwAtCG;
 
   RunPostFunctions();
 
@@ -291,10 +322,16 @@ bool FGAerodynamics::Load(Element *element)
   axis_element = document->FindElement("axis");
   while (axis_element) {
     AeroFunctionArray ca;
+    AeroFunctionArray ca_atCG;
     axis = axis_element->GetAttributeValue("name");
     function_element = axis_element->FindElement("function");
     while (function_element) {
       string current_func_name = function_element->GetAttributeValue("name");
+      bool apply_at_cg = false;
+      if (function_element->HasAttribute("apply_at_cg")) {
+        if (function_element->GetAttributeValue("apply_at_cg") == "true") apply_at_cg = true;
+      }
+      if (!apply_at_cg) {
       try {
         ca.push_back( new FGFunction(PropertyManager, function_element) );
       } catch (string const str) {
@@ -302,9 +339,19 @@ bool FGAerodynamics::Load(Element *element)
              << current_func_name << ":" << str << " Aborting." << reset << endl;
         return false;
       }
+      } else {
+        try {
+          ca_atCG.push_back( new FGFunction(PropertyManager, function_element) );
+        } catch (string const str) {
+          cerr << endl << fgred << "Error loading aerodynamic function in " 
+               << current_func_name << ":" << str << " Aborting." << reset << endl;
+          return false;
+        }
+      }
       function_element = axis_element->FindNextElement("function");
     }
     AeroFunctions[AxisIdx[axis]] = ca;
+    AeroFunctionsAtCG[AxisIdx[axis]] = ca_atCG;
     axis_element = document->FindNextElement("axis");
   }
 
