@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.114 2013/09/11 12:39:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.115 2013/09/14 11:26:02 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -570,6 +570,13 @@ void FGPropagate::SetLocation(const FGLocation& l)
   Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
   Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGPropagate::GetEulerDeg(void) const
+{
+  return VState.qAttitudeLocal.GetEuler() * radtodeg;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
