@@ -440,6 +440,37 @@
    <set name="fcs/flap-cmd-norm" value="0.00"/>
   </event>
 
+  <event name="Override out">
+   <description>Disengage the boost override.</description>
+   <condition>
+    position/h-agl-ft GE 500.0
+   </condition>
+   <notify>
+    <property>position/distance-from-start-mag-mt</property>
+    <property>velocities/vc-kts</property>
+    <property>attitude/heading-true-rad</property>
+    <property>hydro/pitch-deg</property>
+    <property>hydro/roll-deg</property>
+    <property>hydro/beta-deg</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[0]/boost-psi</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>propulsion/engine[1]/engine-rpm</property>
+    <property>propulsion/engine[1]/boost-psi</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>propulsion/engine[2]/engine-rpm</property>
+    <property>propulsion/engine[2]/boost-psi</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>propulsion/engine[3]/engine-rpm</property>
+    <property>propulsion/engine[3]/boost-psi</property>
+    <property>propulsion/engine[3]/power-hp</property>
+   </notify>
+   <set name="fcs/mixture-cmd-norm[0]" value="0.5"/>
+   <set name="fcs/mixture-cmd-norm[1]" value="0.5"/>
+   <set name="fcs/mixture-cmd-norm[2]" value="0.5"/>
+   <set name="fcs/mixture-cmd-norm[3]" value="0.5"/>
+  </event>
+
   <event name="Time Notify" type="FG_DELTA" persistent="true">
    <description>Output message at 5 seconds intervals</description>
    <condition>
@@ -471,6 +502,9 @@
     <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
+    <property>propulsion/engine[3]/egt-degF</property>
+    <property>fcs/mixture-pos-norm[3]</property>
+    <property>propulsion/engine[3]/fuel-flow-rate-pps</property>
     <property>fcs/copilot/elevator-cmd-norm</property>
     <property>fcs/flap-pos-norm</property>
     <property>fcs/flap-pos-deg</property>
