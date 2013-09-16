@@ -76,10 +76,10 @@
    <set name="fcs/advance-cmd-norm[1]"   value="1.0"/>
    <set name="fcs/advance-cmd-norm[2]"   value="1.0"/>
    <set name="fcs/advance-cmd-norm[3]"   value="1.0"/>
-   <set name="fcs/mixture-cmd-norm[0]"   value="0.71"/>
-   <set name="fcs/mixture-cmd-norm[1]"   value="0.71"/>
-   <set name="fcs/mixture-cmd-norm[2]"   value="0.71"/>
-   <set name="fcs/mixture-cmd-norm[3]"   value="0.71"/>
+   <set name="fcs/mixture-cmd-norm[0]"   value="0.235"/>
+   <set name="fcs/mixture-cmd-norm[1]"   value="0.235"/>
+   <set name="fcs/mixture-cmd-norm[2]"   value="0.235"/>
+   <set name="fcs/mixture-cmd-norm[3]"   value="0.235"/>
    <set name="fcs/throttle-cmd-norm[0]"  value="1.00"/>
    <set name="fcs/throttle-cmd-norm[1]"  value="1.00"/>
    <set name="fcs/throttle-cmd-norm[2]"  value="1.00"/>
@@ -142,10 +142,10 @@
    <condition>
      simulation/sim-time-sec GT 1.0
    </condition>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.933"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.933"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.933"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.933"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.945"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.945"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.945"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.945"/>
    <!-- Close the speed valves of the unneeded channels. -->
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>

@@ -6,6 +6,8 @@
  <description>
    This run is for testing the Short S.23 Sperry autopilot and
    climb performance from 400ft to 10000 ft at 104kt indicated.
+
+   10000 ft should be reached about 775 seconds into the run.
  </description>
 
  <use aircraft="Short_S23" initialize="reset03"/>
@@ -102,14 +104,14 @@
    <set name="fcs/advance-cmd-norm[1]"   value="1.0"/>
    <set name="fcs/advance-cmd-norm[2]"   value="1.0"/>
    <set name="fcs/advance-cmd-norm[3]"   value="1.0"/>
-   <set name="fcs/mixture-cmd-norm[0]"   value="0.98"/>
-   <set name="fcs/mixture-cmd-norm[1]"   value="0.98"/>
-   <set name="fcs/mixture-cmd-norm[2]"   value="0.98"/>
-   <set name="fcs/mixture-cmd-norm[3]"   value="0.98"/>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.80"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.80"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.80"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.80"/>
+   <set name="fcs/mixture-cmd-norm[0]"   value="0.75"/>
+   <set name="fcs/mixture-cmd-norm[1]"   value="0.75"/>
+   <set name="fcs/mixture-cmd-norm[2]"   value="0.75"/>
+   <set name="fcs/mixture-cmd-norm[3]"   value="0.75"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="1.00"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="1.00"/>
    <set name="propulsion/magneto_cmd" value="3"/>
    <set name="propulsion/set-running" value="-1"/>
   </event>
@@ -249,9 +251,13 @@
     <property>hydro/roll-deg</property>
     <property>hydro/beta-deg</property>
    </notify>
-   <!-- Reduce boost to +1.25 PSI. -->
-   <set name="auto-boost/target-psi"     value="1.25"/>
-   <set name="auto-boost/enabled-norm"   value="1.00"/>
+   <!-- Reduce boost to +1.25 PSI. throttle-cmd-norm = (1.25+11)/13.5 -->
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.91"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.91"/>
+   <!-- set name="auto-boost/target-psi"     value="1.25"/>
+   <set name="auto-boost/enabled-norm"   value="1.00"/ -->
   </event>
 
   <event name="Report 2000ft">
@@ -560,7 +566,7 @@
    </notify>
   </event>
 
-  <event name="Reduce mixture" type="FG_DELTA" persistent="true">
+  <!-- event name="Reduce mixture" type="FG_DELTA" persistent="true">
    <description>Check mixture at 1 seconds intervals</description>
    <condition>
      simulation/sim-time-sec GE simulation/mixture-check-time-trigger
@@ -575,7 +581,7 @@
    <set name="fcs/mixture-cmd-norm[2]"  value="-0.01" type="FG_DELTA"/>
    <set name="fcs/mixture-cmd-norm[3]"  value="-0.01" type="FG_DELTA"/>
    <set name="simulation/mixture-check-time-trigger" value="1" type="FG_DELTA"/>
-  </event>
+  </event -->
 
   <event name="Time Notify" type="FG_DELTA" persistent="true">
    <description>Output message at 5 seconds intervals</description>
@@ -604,11 +610,13 @@
     <property>propulsion/engine[2]/boost-psi</property>
     <property>propulsion/engine[2]/power-hp</property>
     <property>fcs/throttle-cmd-norm[3]</property>
+    <property>fcs/throttle-pos-norm[3]</property>
     <property>propulsion/engine[3]/thrust-lbs</property>
     <property>propulsion/engine[3]/engine-rpm</property>
     <property>propulsion/engine[3]/boost-psi</property>
     <property>propulsion/engine[3]/power-hp</property>
     <property>propulsion/engine[3]/egt-degF</property>
+    <property>fcs/mixture-pos-norm[3]</property>
     <property>propulsion/engine[3]/fuel-flow-rate-pps</property>
     <property>attitude/phi-rad</property>
     <property>attitude/theta-rad</property>

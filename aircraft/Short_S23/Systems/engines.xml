@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2013  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,10 +25,13 @@
  <documentation>
   Engine controls (from pictures of the engine control box and other sources)
   - Throttle levers
+    - Sets auto boost datum.
     - fcs/throttle-cmd-norm[0|1|2|3]
   - Mixture levers
-    - Might have the positions NORMAL - RICH - +1 PSI - +3 PSI
-      Currently mostly behaves as normal for JSBSim.
+    - Sets auto mixture datum: WEAK - NORMAL - RICH - ...
+      Might have the positions NORMAL - RICH - +1 PSI - +3 PSI
+      The latter two settings are some sort of boost override positions.
+      Here full rich mixture bumps the maximum boost from 2.5 to 4.25 PSI.
     - fcs/mixture-cmd-norm[0|1|2|3]
   - Airscrew pitch control levers
     - Has the positions COARSE and FINE. No feathering was available.
@@ -83,11 +86,9 @@
  <property value="1.0">propulsion/engine[2]/vacuum-pump-serviceable</property>
  <property value="1.0">propulsion/engine[3]/vacuum-pump-serviceable</property>
 
- <channel name="Throttle">
-
-  <documentation>
+ <documentation>
    According to [Cassidy:2004:FE] the Pegasus engines had automatic
-   boost and mixture controls. I think take-off boost was only
+   boost and mixture controls. I think take-off boost (boost override) was only
    available with the mixture levers moved through a gate past the
    RICH position.
 
@@ -102,92 +103,162 @@
    was 115 gal. per hour. Over 141 gal. per hour was considered excessive.
    [Cassidy:2004:FE]: Oil consumption normally varied between
    8 pints to 3 1/2 gallons per hour for a Pegasus engine.
-  </documentation>
+ </documentation>
 
-  <switch name="fcs/boost/throttle-pos-norm[0]">
-   <default value="fcs/throttle-cmd-norm[0]"/>
-   <test logic="AND" value="0.98">
-     fcs/mixture-cmd-norm[0]  LT 0.99
-     fcs/throttle-cmd-norm[0] GE 0.99
-   </test>
-   <output>fcs/throttle-pos-norm[0]</output>
-  </switch>
-  <switch name="fcs/boost/throttle-pos-norm[1]">
-   <default value="fcs/throttle-cmd-norm[1]"/>
-   <test logic="AND" value="0.98">
-     fcs/mixture-cmd-norm[1]  LT 0.99
-     fcs/throttle-cmd-norm[1] GE 0.99
-   </test>
-   <output>fcs/throttle-pos-norm[1]</output>
-  </switch>
-  <switch name="fcs/boost/throttle-pos-norm[2]">
-   <default value="fcs/throttle-cmd-norm[2]"/>
-   <test logic="AND" value="0.98">
-     fcs/mixture-cmd-norm[2]  LT 0.99
-     fcs/throttle-cmd-norm[2] GE 0.99
-   </test>
-   <output>fcs/throttle-pos-norm[2]</output>
-  </switch>
-  <switch name="fcs/boost/throttle-pos-norm[3]">
-   <default value="fcs/throttle-cmd-norm[3]"/>
-   <test logic="AND" value="0.98">
-     fcs/mixture-cmd-norm[3]  LT 0.99
-     fcs/throttle-cmd-norm[3] GE 0.99
-   </test>
-   <output>fcs/throttle-pos-norm[3]</output>
-  </switch>
+ <documentation>
+  "The two engine cut-out control levers were mounted either side of
+  the throttle box. The two inner engines were controlled by the
+  port side lever, while the starboard lever controlled the two
+  outer engines.", [Cassidy:2004:FE]
+ </documentation>
 
- </channel>
+ <documentation>
+  Engine automatic mixture system.
+  The Pegasus X.C. used a Claudel-Hobson A.V.T. 85E type carburetter with
+  variable datum boost control and automatic mixture control.
 
+  See [CAB:1943].
+
+  "The corresponding fuel:air ratios over the range are: Take-off, 1:10;
+  Rated, 1:11; Normal Cruising, 1:12; and Economical Cruising, 1:16."
+  [CAB:1943]
+ </documentation>
+ <property value="0.50">fcs/mixture/manual-control-factor</property>
  <channel name="Mixture">
-  <documentation>
-   "The two engine cut-out control levers were mounted either side of
-   the throttle box. The two inner engines were controlled by the
-   port side lever, while the starboard lever controlled the two
-   outer engines.", [Cassidy:2004:FE]
-  </documentation>
 
-  <switch name="fcs/mixture/mixture-pos-norm[0]">
-   <default value="fcs/mixture-cmd-norm[0]"/>
-   <test logic="AND" value="0.0">
-     fcs/outer-engines-cutoff-cmd-norm GE 1.0
-   </test>
+  <fcs_function name="fcs/mixture/altitude-standard-pos">
+   <function>
+    <description>Standard mixture position from airpressure.</description>
+    <!-- Needs to be tuned. -->
+    <product>
+     <table>
+      <independentVar lookup="row">atmosphere/P-psf</independentVar>
+      <tableData>
+          50  0.075
+         990  0.45
+        1300  0.6
+        2100  1.0
+      </tableData>
+     </table>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="fcs/mixture/pos-norm[0]">
+   <function>
+    <product>
+     <le>
+      <property>fcs/outer-engines-cutoff-cmd-norm</property>
+      <value>0.0</value>
+     </le>
+     <property>fcs/mixture/altitude-standard-pos</property>
+     <sum>
+      <value>1.0</value>
+      <product>
+       <property>fcs/mixture/manual-control-factor</property>
+       <difference>
+        <property>fcs/mixture-cmd-norm[0]</property>
+        <value>0.5</value>
+       </difference>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
    <output>fcs/mixture-pos-norm[0]</output>
-  </switch>
+  </fcs_function>
 
-  <switch name="fcs/mixture/mixture-pos-norm[1]">
-   <default value="fcs/mixture-cmd-norm[1]"/>
-   <test logic="AND" value="0.0">
-     fcs/inner-engines-cutoff-cmd-norm GE 1.0
-   </test>
+  <fcs_function name="fcs/mixture/pos-norm[1]">
+   <function>
+    <product>
+     <le>
+      <property>fcs/inner-engines-cutoff-cmd-norm</property>
+      <value>0.0</value>
+     </le>
+     <property>fcs/mixture/altitude-standard-pos</property>
+     <sum>
+      <value>1.0</value>
+      <product>
+       <property>fcs/mixture/manual-control-factor</property>
+       <difference>
+        <property>fcs/mixture-cmd-norm[1]</property>
+        <value>0.5</value>
+       </difference>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
    <output>fcs/mixture-pos-norm[1]</output>
-  </switch>
+  </fcs_function>
 
-  <switch name="fcs/mixture/mixture-pos-norm[2]">
-   <default value="fcs/mixture-cmd-norm[2]"/>
-   <test logic="AND" value="0.0">
-     fcs/inner-engines-cutoff-cmd-norm GE 1.0
-   </test>
+  <fcs_function name="fcs/mixture/pos-norm[2]">
+   <function>
+    <product>
+     <le>
+      <property>fcs/inner-engines-cutoff-cmd-norm</property>
+      <value>0.0</value>
+     </le>
+     <property>fcs/mixture/altitude-standard-pos</property>
+     <sum>
+      <value>1.0</value>
+      <product>
+       <property>fcs/mixture/manual-control-factor</property>
+       <difference>
+        <property>fcs/mixture-cmd-norm[2]</property>
+        <value>0.5</value>
+       </difference>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
    <output>fcs/mixture-pos-norm[2]</output>
-  </switch>
+  </fcs_function>
 
-  <switch name="fcs/mixture/mixture-pos-norm[3]">
-   <default value="fcs/mixture-cmd-norm[3]"/>
-   <test logic="AND" value="0.0">
-     fcs/outer-engines-cutoff-cmd-norm GE 1.0
-   </test>
+  <fcs_function name="fcs/mixture/pos-norm[3]">
+   <function>
+    <product>
+     <le>
+      <property>fcs/outer-engines-cutoff-cmd-norm</property>
+      <value>0.0</value>
+     </le>
+     <property>fcs/mixture/altitude-standard-pos</property>
+     <sum>
+      <value>1.0</value>
+      <product>
+       <property>fcs/mixture/manual-control-factor</property>
+       <difference>
+        <property>fcs/mixture-cmd-norm[3]</property>
+        <value>0.5</value>
+       </difference>
+      </product>
+     </sum>
+    </product>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
    <output>fcs/mixture-pos-norm[3]</output>
-  </switch>
+  </fcs_function>
 
  </channel>
 
-
+ <documentation>
+  Compute MAP boost in PSI for the boost gauges.
+  Boost is measured in PSI with normal sealevel pressure as 0.
+ </documentation>
  <channel name="Boost">
-
-  <documentation>
-   Compute MAP boost in PSI for the boost gauges.
-   Boost is measured in PSI with normal sealevel pressure as 0.
-  </documentation>
 
   <fcs_function name="propulsion/engine[0]/boost-psi">
    <function>
@@ -237,6 +308,457 @@
  </channel>
 
  <documentation>
+  Engine autmatic boost control system.
+  The Pegasus X.C. used a Claudel-Hobson A.V.T. 85E type carburetter with
+  variable datum boost control.
+
+  See [CAB:1943].
+ </documentation>
+ <property value="0.050">fcs/boost/control-rate-factor</property>
+ <property value="0.500">fcs/boost/control-range-norm</property>
+ <channel name="Variable datum boost control">
+
+  <switch name="fcs/boost/override-norm[0]">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     fcs/mixture-cmd-norm[0] GE 0.99
+   </test>
+  </switch>
+  <switch name="fcs/boost/override-norm[1]">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     fcs/mixture-cmd-norm[1] GE 0.99
+   </test>
+  </switch>
+  <switch name="fcs/boost/override-norm[2]">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     fcs/mixture-cmd-norm[2] GE 0.99
+   </test>
+  </switch>
+  <switch name="fcs/boost/override-norm[3]">
+   <default value="0.0"/>
+   <test logic="AND" value="1.0">
+     fcs/mixture-cmd-norm[3] GE 0.99
+   </test>
+  </switch>
+
+  <fcs_function name="fcs/boost/datum-psi[0]">
+   <function>
+    <description>
+     Converts throttle lever position to datum/target boost.
+     The target boost at closed throttle is guessed to be about minmp.
+    </description>
+    <table>
+     <independentVar lookup="row">fcs/throttle-cmd-norm[0]</independentVar>
+     <independentVar lookup="column">fcs/boost/override-norm[0]</independentVar>
+     <tableData>
+             0.0      1.0 
+        0.0  -11.00   -11.00
+        1.0    2.50     4.25
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/datum-psi[1]">
+   <function>
+    <description>
+     Converts throttle lever position to datum/target boost.
+     The target boost at closed throttle is guessed to be about minmp.
+    </description>
+    <table>
+     <independentVar lookup="row">fcs/throttle-cmd-norm[1]</independentVar>
+     <independentVar lookup="column">fcs/boost/override-norm[1]</independentVar>
+     <tableData>
+             0.0      1.0 
+        0.0  -11.00   -11.00
+        1.0    2.50     4.25
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/datum-psi[2]">
+   <function>
+    <description>
+     Converts throttle lever position to datum/target boost.
+     The target boost at closed throttle is guessed to be about minmp.
+    </description>
+    <table>
+     <independentVar lookup="row">fcs/throttle-cmd-norm[2]</independentVar>
+     <independentVar lookup="column">fcs/boost/override-norm[2]</independentVar>
+     <tableData>
+             0.0      1.0 
+        0.0  -11.00   -11.00
+        1.0    2.50     4.25
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/datum-psi[3]">
+   <function>
+    <description>
+     Converts throttle lever position to datum/target boost.
+     The target boost at closed throttle is guessed to be about minmp.
+    </description>
+    <table>
+     <independentVar lookup="row">fcs/throttle-cmd-norm[3]</independentVar>
+     <independentVar lookup="column">fcs/boost/override-norm[3]</independentVar>
+     <tableData>
+             0.0      1.0 
+        0.0  -11.00   -11.00
+        1.0    2.50     4.25
+     </tableData>
+    </table>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="fcs/boost/error-psi[0]">
+   <function>
+    <description>
+     Boost error.
+    </description>
+    <difference>
+     <property>propulsion/engine[0]/boost-psi</property>
+     <property>fcs/boost/datum-psi[0]</property>
+    </difference>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/error-psi[1]">
+   <function>
+    <description>
+     Boost error.
+    </description>
+    <difference>
+     <property>propulsion/engine[1]/boost-psi</property>
+     <property>fcs/boost/datum-psi[1]</property>
+    </difference>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/error-psi[2]">
+   <function>
+    <description>
+     Boost error.
+    </description>
+    <difference>
+     <property>propulsion/engine[2]/boost-psi</property>
+     <property>fcs/boost/datum-psi[2]</property>
+    </difference>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/error-psi[3]">
+   <function>
+    <description>
+     Boost error.
+    </description>
+    <difference>
+     <property>propulsion/engine[3]/boost-psi</property>
+     <property>fcs/boost/datum-psi[3]</property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="fcs/boost/control-rate-norm[0]">
+   <function>
+    <description>
+     Boost control piston movement rate.
+    </description>
+    <product>
+     <value>-1.0</value>
+     <property>fcs/boost/control-rate-factor</property>
+     <gt>
+      <property>propulsion/engine[0]/propeller-rpm</property>
+      <value>200.0</value>
+     </gt>
+     <property>fcs/boost/error-psi[0]</property>
+     <sum>
+      <product>
+       <lt>
+        <property>fcs/boost/error-psi[0]</property>
+        <value>0.0</value>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-adjustment-norm[0]</property>
+        <property>fcs/boost/control-range-norm</property>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-pos-norm[0]</property>
+        <value>1.0</value>
+       </lt>
+      </product>
+      <product>
+       <gt>
+        <property>fcs/boost/error-psi[0]</property>
+        <value>0.0</value>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-adjustment-norm[0]</property>
+        <product>
+         <value>-1.0</value>
+         <property>fcs/boost/control-range-norm</property>
+        </product>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-pos-norm[0]</property>
+        <value>0.0</value>
+       </gt>
+      </product>
+     </sum>
+    </product>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/control-rate-norm[1]">
+   <function>
+    <description>
+     Boost control piston movement rate.
+    </description>
+    <product>
+     <value>-1.0</value>
+     <property>fcs/boost/control-rate-factor</property>
+     <gt>
+      <property>propulsion/engine[1]/propeller-rpm</property>
+      <value>200.0</value>
+     </gt>
+     <property>fcs/boost/error-psi[1]</property>
+     <sum>
+      <product>
+       <lt>
+        <property>fcs/boost/error-psi[1]</property>
+        <value>0.0</value>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-adjustment-norm[1]</property>
+        <property>fcs/boost/control-range-norm</property>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-pos-norm[1]</property>
+        <value>1.0</value>
+       </lt>
+      </product>
+      <product>
+       <gt>
+        <property>fcs/boost/error-psi[1]</property>
+        <value>0.0</value>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-adjustment-norm[1]</property>
+        <product>
+         <value>-1.0</value>
+         <property>fcs/boost/control-range-norm</property>
+        </product>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-pos-norm[1]</property>
+        <value>0.0</value>
+       </gt>
+      </product>
+     </sum>
+    </product>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/control-rate-norm[2]">
+   <function>
+    <description>
+     Boost control piston movement rate.
+    </description>
+    <product>
+     <value>-1.0</value>
+     <property>fcs/boost/control-rate-factor</property>
+     <gt>
+      <property>propulsion/engine[2]/propeller-rpm</property>
+      <value>200.0</value>
+     </gt>
+     <property>fcs/boost/error-psi[2]</property>
+     <sum>
+      <product>
+       <lt>
+        <property>fcs/boost/error-psi[2]</property>
+        <value>0.0</value>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-adjustment-norm[2]</property>
+        <property>fcs/boost/control-range-norm</property>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-pos-norm[2]</property>
+        <value>1.0</value>
+       </lt>
+      </product>
+      <product>
+       <gt>
+        <property>fcs/boost/error-psi[2]</property>
+        <value>0.0</value>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-adjustment-norm[2]</property>
+        <product>
+         <value>-1.0</value>
+         <property>fcs/boost/control-range-norm</property>
+        </product>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-pos-norm[2]</property>
+        <value>0.0</value>
+       </gt>
+      </product>
+     </sum>
+    </product>
+   </function>
+  </fcs_function>
+  <fcs_function name="fcs/boost/control-rate-norm[3]">
+   <function>
+    <description>
+     Boost control piston movement rate.
+    </description>
+    <product>
+     <value>-1.0</value>
+     <property>fcs/boost/control-rate-factor</property>
+     <gt>
+      <property>propulsion/engine[3]/propeller-rpm</property>
+      <value>200.0</value>
+     </gt>
+     <property>fcs/boost/error-psi[3]</property>
+     <sum>
+      <product>
+       <lt>
+        <property>fcs/boost/error-psi[3]</property>
+        <value>0.0</value>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-adjustment-norm[3]</property>
+        <property>fcs/boost/control-range-norm</property>
+       </lt>
+       <lt>
+        <property>fcs/boost/throttle-pos-norm[3]</property>
+        <value>1.0</value>
+       </lt>
+      </product>
+      <product>
+       <gt>
+        <property>fcs/boost/error-psi[3]</property>
+        <value>0.0</value>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-adjustment-norm[3]</property>
+        <product>
+         <value>-1.0</value>
+         <property>fcs/boost/control-range-norm</property>
+        </product>
+       </gt>
+       <gt>
+        <property>fcs/boost/throttle-pos-norm[3]</property>
+        <value>0.0</value>
+       </gt>
+      </product>
+     </sum>
+    </product>
+   </function>
+  </fcs_function>
+
+  <integrator name="fcs/boost/throttle-adjustment-norm[0]">
+   <description>
+    Boost control piston position.
+   </description>
+   <input>fcs/boost/control-rate-norm[0]</input>
+   <c1>1.0</c1>
+   <clipto>
+    <min>-fcs/boost/control-range-norm</min>
+    <max>fcs/boost/control-range-norm</max>
+   </clipto>
+  </integrator>
+  <integrator name="fcs/boost/throttle-adjustment-norm[1]">
+   <description>
+    Boost control piston position.
+   </description>
+   <input>fcs/boost/control-rate-norm[1]</input>
+   <c1>1.0</c1>
+   <clipto>
+    <min>-fcs/boost/control-range-norm</min>
+    <max>fcs/boost/control-range-norm</max>
+   </clipto>
+  </integrator>
+  <integrator name="fcs/boost/throttle-adjustment-norm[2]">
+   <description>
+    Boost control piston position.
+   </description>
+   <input>fcs/boost/control-rate-norm[2]</input>
+   <c1>1.0</c1>
+   <clipto>
+    <min>-fcs/boost/control-range-norm</min>
+    <max>fcs/boost/control-range-norm</max>
+   </clipto>
+  </integrator>
+  <integrator name="fcs/boost/throttle-adjustment-norm[3]">
+   <description>
+    Boost control piston position.
+   </description>
+   <input>fcs/boost/control-rate-norm[3]</input>
+   <c1>1.0</c1>
+   <clipto>
+    <min>-fcs/boost/control-range-norm</min>
+    <max>fcs/boost/control-range-norm</max>
+   </clipto>
+  </integrator>
+
+  <fcs_function name="fcs/boost/throttle-pos-norm[0]">
+   <function>
+    <description>Final throttle position.</description>
+    <sum>
+     <property>fcs/throttle-cmd-norm[0]</property>
+     <property>fcs/boost/throttle-adjustment-norm[0]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[0]</output>
+  </fcs_function>
+  <fcs_function name="fcs/boost/throttle-pos-norm[1]">
+   <function>
+    <description>Final throttle position.</description>
+    <sum>
+     <property>fcs/throttle-cmd-norm[1]</property>
+     <property>fcs/boost/throttle-adjustment-norm[1]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[1]</output>
+  </fcs_function>
+  <fcs_function name="fcs/boost/throttle-pos-norm[2]">
+   <function>
+    <description>Final throttle position.</description>
+    <sum>
+     <property>fcs/throttle-cmd-norm[2]</property>
+     <property>fcs/boost/throttle-adjustment-norm[2]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[2]</output>
+  </fcs_function>
+  <fcs_function name="fcs/boost/throttle-pos-norm[3]">
+   <function>
+    <description>Final throttle position.</description>
+    <sum>
+     <property>fcs/throttle-cmd-norm[3]</property>
+     <property>fcs/boost/throttle-adjustment-norm[3]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0.0</min>
+    <max>1.0</max>
+   </clipto>
+   <output>fcs/throttle-pos-norm[3]</output>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
    The propeller pitch control only had the settings FINE and COARSE.
  </documentation>
  <channel name="Propeller pitch">
@@ -277,7 +799,7 @@
 
  <documentation>
   The definition inside the engine file cannot write to the starter-norm
-  property. Hence it has to be done here.
+  property. Hence, it has to be done here.
   See also Engines/eng_PegasusXc.xml and Systems/electrical.xml.
  </documentation>
  <channel name="Engine starters">

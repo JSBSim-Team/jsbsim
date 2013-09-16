@@ -1,5 +1,27 @@
 <?xml version="1.0"?>
 <!--
+
+  Bristol Pegasus XC engine model for JSBSim.
+
+    Copyright (C) 2008 - 2013  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008         Ron Jensen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<!--
   File:     eng_PegasusXc.xml
   Authors:  Ron Jensen, Anders Gidenstam
 
@@ -60,6 +82,21 @@ Brian Cassidy, Queens Parade Press, 1996-2004. ISBN 0-9529298-2-1
   typical Pegasus"
   (pp.168)
 
+Flight Magazine November 5, 1936:
+  Pegasus Xc
+    Gear ratio:                        0.5:1
+    Rated height:                      5500 ft
+    Maximum take off RPM:              2475
+    International rated power:         740 BHP at 3500 ft
+    Max power all out level flight:    830 BHP at 5500 ft
+    Max speed for 5 min. level flight: 2600 RPM
+    Max take-off power:                920 BHP
+    (Dry?) Weight:                     1015 lbs
+
+  "The Claudel-Hobson carburetter, of the A.V.T. 85E type, works in
+  conjunction with a variable datum boost control, which protects the
+  engine against excessive pressure in the induction pipe."
+
 Flight Magazine November 12, 1936:
   Bore:                   146 mm
   Stroke:                 190.5 mm 
@@ -102,12 +139,23 @@ http://theflyingboatforum.forumlaunch.net/viewtopic.php?f=19&t=897
  <boostoverride>  0 </boostoverride>
  <boost-loss-factor> 1.20 </boost-loss-factor>
 
- <ratedboost1 unit="PSI">      2.50 </ratedboost1>
+ <!-- For use with a separate variable datum boost control system. -->
+ <ratedboost1 unit="PSI">      4.25 </ratedboost1>
+ <ratedpower1 unit="HP">     920.00 </ratedpower1>
+ <ratedrpm1>                2475.00 </ratedrpm1>
+ <ratedaltitude1 unit="FT">    0.00 </ratedaltitude1>
+
+ <!-- Boost control is handled by the variable datum boost control system. -->
+ <boostoverride>1</boostoverride>
+
+
+ <!-- For use without a separate variable datum boost control system. -->
+ <!-- ratedboost1 unit="PSI">      2.50 </ratedboost1>
  <ratedpower1 unit="HP">     815.00 </ratedpower1>
  <ratedrpm1>                2250.00 </ratedrpm1>
  <ratedaltitude1 unit="FT"> 3500.00 </ratedaltitude1>
 
- <takeoffboost unit="PSI">     4.25 </takeoffboost>
+ <takeoffboost unit="PSI">     4.25 </takeoffboost -->
 
  <sparkfaildrop>              0.10 </sparkfaildrop>
 

@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2013  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-11-05</filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.12 2013/01/06 19:57:08 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.13 2013/09/16 20:39:32 andgi Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
@@ -74,6 +74,10 @@
              author="John R. Dawson"
              title="A complete tank test of the hull of the Sikorsky S-40 flying boat - American Clipper Class;  NACA Thechnical Notes #512"
              date="1934"/>
+  <reference refID="CAB:1943"
+             author="http://www.enginehistory.org/Accessories/Carburetion/Carburetion.shtml"
+             title="Carburetion as Applied to Bristol Aero Engines"
+             date="1943"/>
 
  </fileheader>
 
