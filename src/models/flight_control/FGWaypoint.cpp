@@ -1,4 +1,4 @@
-﻿/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGWaypoint.cpp
  Author:       Jon S. Berndt
@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWaypoint.cpp,v 1.2 2013/08/30 04:44:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGWaypoint.cpp,v 1.3 2013/09/27 19:36:28 jberndt Exp $";
 static const char *IdHdr = ID_WAYPOINT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
