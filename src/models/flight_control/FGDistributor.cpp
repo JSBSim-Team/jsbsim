@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 9/2013
 
- ------------- Copyright (C) 2000 -------------
+ ------------- Copyright (C) 2013 -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDistributor.cpp,v 1.1 2013/09/27 19:37:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDistributor.cpp,v 1.2 2013/09/27 20:07:01 jberndt Exp $";
 static const char *IdHdr = ID_DISTRIBUTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

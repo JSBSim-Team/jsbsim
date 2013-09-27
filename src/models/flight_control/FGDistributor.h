@@ -2,9 +2,9 @@
 
  Header:       FGDistributor.h
  Author:       Jon S. Berndt
- Date started: 12/23/2002
+ Date started: 09/27/2013
 
- ------------- Copyright (C) 2002 jon@jsbsim.org  -------------
+ ------------- Copyright (C) 2013 jon@jsbsim.org  -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.1 2013/09/27 19:37:48 jberndt Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.2 2013/09/27 20:07:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.1 2013/09/27 19:37:48 jberndt Exp $
+@version $Id: FGDistributor.h,v 1.2 2013/09/27 20:07:10 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
