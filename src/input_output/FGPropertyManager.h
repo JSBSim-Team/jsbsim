@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.26 2013/06/10 01:49:06 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.27 2013/09/27 19:44:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -393,7 +393,12 @@ class FGPropertyManager
     { return root->GetNode(path, create); }
     FGPropertyNode* GetNode(const std::string &relpath, int index, bool create = false)
     { return root->GetNode(relpath, index, create); }
-    bool HasNode(const std::string& path) const { return root->HasNode(path); }
+    bool HasNode(const std::string& path) const
+    {
+      string newPath = path;
+      if (newPath[0] == '-') newPath.erase(0,1);
+      return root->HasNode(newPath);
+    }
 
     /** Property-ify a name
      *  replaces spaces with '-' and, optionally, makes name all lower case
