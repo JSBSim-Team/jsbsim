@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.36 2013/06/20 04:37:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.37 2013/09/27 19:38:36 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,14 +57,14 @@ CLASS IMPLEMENTATION
 
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
-  Element *input_element, *clip_el;
+  Element *input_element,*init_element, *clip_el;
   Input = Output = clipmin = clipmax = delay_time = 0.0;
   treenode = 0;
   delay = index = 0;
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
-  string input, clip_string;
+  string input,init, clip_string;
   dt = fcs->GetDt();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -112,12 +112,36 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     Type = "WAYPOINT_DISTANCE";
   } else if (element->GetName() == string("angle")) {
     Type = "ANGLE";
+  } else if (element->GetName() == string("distributor")) {
+    Type = "DISTRIBUTOR";
   } else { // illegal component in this channel
     Type = "UNKNOWN";
   }
 
   Name = element->GetAttributeValue("name");
 
+  init_element = element->FindElement("init");
+  while (init_element) {
+    init = init_element->GetDataLine();
+    if (init[0] == '-') {
+      InitSigns.push_back(-1.0);
+      init.erase(0,1);
+    } else {
+      InitSigns.push_back( 1.0);
+    }
+    FGPropertyNode* node = 0L;
+    if (PropertyManager->HasNode(init)) {
+      node = PropertyManager->GetNode(init);
+      InitNodes.push_back(new FGPropertyValue( node ));
+    } else {
+      InitNodes.push_back(new FGPropertyValue( init,
+                                                PropertyManager ));
+    }
+    InitNames.push_back( init );
+
+    init_element = element->FindNextElement("init");
+  }
+  
   input_element = element->FindElement("input");
   while (input_element) {
     input = input_element->GetDataLine();

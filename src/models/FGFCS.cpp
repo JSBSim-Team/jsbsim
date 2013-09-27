@@ -61,6 +61,7 @@ INCLUDES
 #include "models/flight_control/FGGyro.h"
 #include "models/flight_control/FGWaypoint.h"
 #include "models/flight_control/FGAngles.h"
+#include "models/flight_control/FGDistributor.h"
 
 #include "FGFCSChannel.h"
 
@@ -68,7 +69,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.81 2013/06/20 04:37:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.82 2013/09/27 19:40:58 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,7 +175,10 @@ bool FGFCS::Run(bool Holding)
   }
 
   // Execute system channels in order
-  for (i=0; i<SystemChannels.size(); i++) SystemChannels[i]->Execute();
+  for (i=0; i<SystemChannels.size(); i++) {
+    if (debug_lvl & 4) cout << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
+    SystemChannels[i]->Execute();
+  }
 
   RunPostFunctions();
 
@@ -566,6 +570,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
     FGFCSChannel* newChannel = 0;
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
+    string sChannelName = channel_element->GetAttributeValue("name");
     FGPropertyNode* OnOffPropertyNode = 0;
     if (sOnOffProperty.length() > 0) {
       OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
@@ -576,10 +581,10 @@ bool FGFCS::Load(Element* el, SystemType systype)
              << "understood. The simulation will abort" << reset << endl;
         throw("Bad system definition");
       } else {
-        newChannel = new FGFCSChannel(OnOffPropertyNode);
+        newChannel = new FGFCSChannel(sChannelName, OnOffPropertyNode);
       }
     } else {
-      newChannel = new FGFCSChannel();
+      newChannel = new FGFCSChannel(sChannelName);
     }
 
     SystemChannels.push_back(newChannel);
@@ -631,6 +636,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
           newChannel->Add(new FGWaypoint(this, component_element));
         } else if (component_element->GetName() == string("angle")) {
           newChannel->Add(new FGAngles(this, component_element));
+        } else if (component_element->GetName() == string("distributor")) {
+          newChannel->Add(new FGDistributor(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
