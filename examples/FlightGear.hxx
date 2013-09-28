@@ -19,7 +19,7 @@
 
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
- Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -71,6 +71,7 @@ class FGOutput;
 class FGInitialCondition;
 class FGLocation;
 class FGAccelerations;
+class FGPropertyManager;
 }
 
 // Adding it here will cause a namespace clash in FlightGear -EMH-
@@ -87,7 +88,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.9 2011/10/30 12:37:13 ehofman Exp $
+    @version $Id: FlightGear.hxx,v 1.10 2013/09/28 16:00:40 bcoconni Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -235,6 +236,7 @@ private:
     JSBSim::FGGroundReactions* GroundReactions;
     JSBSim::FGInertial*        Inertial;
     JSBSim::FGAccelerations*   Accelerations;
+    JSBSim::FGPropertyManager* PropertyManager;
 
     int runcount;
     double trim_elev;
@@ -271,6 +273,7 @@ private:
     SGPropertyNode_ptr wing_fold_pos_pct;
     SGPropertyNode_ptr tailhook_pos_pct;
 
+    SGConstPropertyNode_ptr altitude;
     SGPropertyNode_ptr temperature;
     SGPropertyNode_ptr pressure;
     SGPropertyNode_ptr pressureSL;

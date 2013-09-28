@@ -16,9 +16,9 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.8 2011/10/30 12:37:13 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.9 2013/09/28 16:00:40 bcoconni Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -90,9 +90,9 @@ public:
 
   /** Get the altitude above sea level dependent on the location. */
   virtual double GetAltitude(const FGLocation& l) const {
-    double pt[3] = { SG_FEET_TO_METER*l(eX),
-                     SG_FEET_TO_METER*l(eY),
-                     SG_FEET_TO_METER*l(eZ) };
+    double pt[3] = { SG_FEET_TO_METER*l(FGJSBBase::eX),
+                     SG_FEET_TO_METER*l(FGJSBBase::eY),
+                     SG_FEET_TO_METER*l(FGJSBBase::eZ) };
     double lat, lon, alt;
     sgCartToGeod( pt, &lat, &lon, &alt);
     return alt * SG_METER_TO_FEET;
@@ -102,7 +102,7 @@ public:
   virtual double GetAGLevel(double t, const FGLocation& l,
                             FGLocation& cont, FGColumnVector3& n,
                             FGColumnVector3& v, FGColumnVector3& w) const {
-    double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+    double loc_cart[3] = { l(FGJSBBase::eX), l(FGJSBBase::eY), l(FGJSBBase::eZ) };
     double contact[3], normal[3], vel[3], angularVel[3], agl = 0;
     mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
                            vel, angularVel, &agl);
@@ -114,7 +114,7 @@ public:
   }
 
   virtual double GetTerrainGeoCentRadius(double t, const FGLocation& l) const {
-    double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+    double loc_cart[3] = { l(FGJSBBase::eX), l(FGJSBBase::eY), l(FGJSBBase::eZ) };
     double contact[3], normal[3], vel[3], angularVel[3], agl = 0;
     mInterface->get_agl_ft(t, loc_cart, SG_METER_TO_FEET*2, contact, normal,
                            vel, angularVel, &agl);
@@ -167,16 +167,16 @@ FGJSBsim::FGJSBsim( double dt )
         TURBULENCE_TYPE_NAMES["ttTustin"]   = FGWinds::ttTustin;
     }
 
-                                // Set up the debugging level
-                                // FIXME: this will not respond to
-                                // runtime changes
+    // Set up the debugging level
+    // FIXME: this will not respond to
+    // runtime changes
 
                                 // if flight is excluded, don't bother
-    if ((logbuf::get_log_classes() & SG_FLIGHT) != 0) {
+    if ((sglog().get_log_classes() & SG_FLIGHT) != 0) {
 
                                 // do a rough-and-ready mapping to
                                 // the levels documented in FGFDMExec.h
-        switch (logbuf::get_log_priority()) {
+        switch (sglog().get_log_priority()) {
         case SG_BULK:
             FGJSBBase::debug_lvl = 0x1f;
             break;
@@ -192,7 +192,8 @@ FGJSBsim::FGJSBsim( double dt )
         }
     }
 
-    fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
+    PropertyManager = new FGPropertyManager( (FGPropertyNode*)globals->get_props() );
+    fdmex = new FGFDMExec( PropertyManager );
 
     // Register ground callback.
     fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
@@ -328,6 +329,7 @@ FGJSBsim::FGJSBsim( double dt )
     ab_brake_left_pct = fgGetNode("/autopilot/autobrake/brake-left-output", true);
     ab_brake_right_pct = fgGetNode("/autopilot/autobrake/brake-right-output", true);
     
+    altitude = fgGetNode("/position/altitude-ft");
     temperature = fgGetNode("/environment/temperature-degc",true);
     pressure = fgGetNode("/environment/pressure-inhg",true);
     pressureSL = fgGetNode("/environment/pressure-sea-level-inhg",true);
@@ -362,6 +364,7 @@ FGJSBsim::FGJSBsim( double dt )
 FGJSBsim::~FGJSBsim(void)
 {
   delete fdmex;
+  delete PropertyManager;
 }
 
 /******************************************************************************/
@@ -378,7 +381,7 @@ void FGJSBsim::init()
 
     if (fgGetBool("/environment/params/control-fdm-atmosphere")) {
       Atmosphere->SetTemperature(temperature->getDoubleValue(), get_Altitude(), FGAtmosphere::eCelsius);
-      Atmosphere->SetPressureSL(pressureSL->getDoubleValue(), FGAtmosphere::eInchesHg);
+      Atmosphere->SetPressureSL(FGAtmosphere::eInchesHg, pressureSL->getDoubleValue());
       // initialize to no turbulence, these values get set in the update loop
       Winds->SetTurbType(FGWinds::ttNone);
       Winds->SetTurbGain(0.0);
@@ -394,18 +397,6 @@ void FGJSBsim::init()
     SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << Atmosphere->GetTemperature()
      << ", " << Atmosphere->GetPressure()
      << ", " << Atmosphere->GetDensity() );
-
-// deprecate egt_degf for egt-degf to have consistent naming
-// TODO: remove this for 2.6.0
-    for (unsigned int i=0; i < Propulsion->GetNumEngines(); i++) {
-      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
-      SGPropertyNode * egtn = node->getNode( "egt_degf" );
-      if( egtn != NULL ) {
-        SG_LOG(SG_FLIGHT,SG_ALERT,
-               "*** Aircraft uses deprecated and now unsupported node egt_degf. Please upgrade to egt-degf");
-      }
-    }
-// end of egt_degf deprecation patch
 
     FCS->SetDfPos( ofNorm, globals->get_controls()->get_flaps() );
 
@@ -678,7 +669,7 @@ bool FGJSBsim::copy_to_JSBsim()
     }
 
     Atmosphere->SetTemperature(temperature->getDoubleValue(), get_Altitude(), FGAtmosphere::eCelsius);
-    Atmosphere->SetPressureSL(pressureSL->getDoubleValue(), FGAtmosphere::eInchesHg);
+    Atmosphere->SetPressureSL(FGAtmosphere::eInchesHg, pressureSL->getDoubleValue());
 
     Winds->SetTurbType((FGWinds::tType)TURBULENCE_TYPE_NAMES[turbulence_model->getStringValue()]);
     switch( Winds->GetTurbType() ) {
@@ -1018,7 +1009,6 @@ bool FGJSBsim::ToggleDataLogging(bool state)
 //Positions
 void FGJSBsim::set_Latitude(double lat)
 {
-  static SGConstPropertyNode_ptr altitude = fgGetNode("/position/altitude-ft");
   double alt = altitude->getDoubleValue();
   double sea_level_radius_meters, lat_geoc;
 
@@ -1183,7 +1173,7 @@ void FGJSBsim::set_Climb_Rate( double roc)
   //since both climb rate and flight path angle are set in the FG
   //startup sequence, something is needed to keep one from cancelling
   //out the other.
-  if( !(fabs(roc) > 1 && fabs(fgic->GetFlightPathAngleRadIC()) < 0.01) ) {
+  if( fabs(roc) > 1 && fabs(fgic->GetFlightPathAngleRadIC()) < 0.01 ) {
     if (needTrim)
       fgic->SetClimbRateFpsIC(roc);
     else {
@@ -1227,14 +1217,14 @@ void FGJSBsim::init_gear(void )
     for (int i=0;i<Ngear;i++) {
       FGLGear *gear = gr->GetGearUnit(i);
       SGPropertyNode * node = fgGetNode("gear/gear", i, true);
-      node->setDoubleValue("xoffset-in", gear->GetBodyLocation()(1));
-      node->setDoubleValue("yoffset-in", gear->GetBodyLocation()(2));
-      node->setDoubleValue("zoffset-in", gear->GetBodyLocation()(3));
+      node->setDoubleValue("xoffset-in", gear->GetBodyLocation()(1) * 12);
+      node->setDoubleValue("yoffset-in", gear->GetBodyLocation()(2) * 12);
+      node->setDoubleValue("zoffset-in", gear->GetBodyLocation()(3) * 12);
       node->setBoolValue("wow", gear->GetWOW());
       node->setDoubleValue("rollspeed-ms", gear->GetWheelRollVel()*0.3043);
       node->setBoolValue("has-brake", gear->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", gear->GetGearUnitPos());
-      node->setDoubleValue("tire-pressure-norm", gear->GetTirePressure());
+//    node->setDoubleValue("tire-pressure-norm", gear->GetTirePressure());
       node->setDoubleValue("compression-norm", gear->GetCompLen());
       node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
@@ -1252,7 +1242,7 @@ void FGJSBsim::update_gear(void)
       node->getChild("wow", 0, true)->setBoolValue( gear->GetWOW());
       node->getChild("rollspeed-ms", 0, true)->setDoubleValue(gear->GetWheelRollVel()*0.3043);
       node->getChild("position-norm", 0, true)->setDoubleValue(gear->GetGearUnitPos());
-      gear->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
+//    gear->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
       node->setDoubleValue("compression-norm", gear->GetCompLen());
       node->setDoubleValue("compression-ft", gear->GetCompLen());
       if ( gear->GetSteerable() )
@@ -1342,7 +1332,7 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
                      double contact[3], double normal[3], double vel[3],
                      double angularVel[3], double *agl)
 {
-   const SGMaterial* material;
+   const simgear::BVHMaterial* material;
    simgear::BVHNode::Id id;
    if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
                                 angularVel, material, id))
