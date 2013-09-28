@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.22 2013/06/20 04:37:28 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.23 2013/09/27 19:38:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     - FGAngle
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.22 2013/06/20 04:37:28 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.23 2013/09/27 19:38:44 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -112,6 +112,9 @@ protected:
   std::vector <FGPropertyNode_ptr> OutputNodes;
   FGPropertyNode_ptr ClipMinPropertyNode;
   FGPropertyNode_ptr ClipMaxPropertyNode;
+  std::vector <FGPropertyValue*> InitNodes;
+  std::vector <std::string> InitNames;
+  std::vector <float> InitSigns;
   std::vector <FGPropertyValue*> InputNodes;
   std::vector <std::string> InputNames;
   std::vector <float> InputSigns;

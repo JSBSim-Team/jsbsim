@@ -34,7 +34,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.9 2013/09/27 19:42:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPERTYVALUE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -44,13 +44,20 @@ CLASS IMPLEMENTATION
 FGPropertyValue::FGPropertyValue(FGPropertyNode* propNode)
   : PropertyManager(0L), PropertyNode(propNode)
 {
+  Sign = 1;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* propertyManager)
-  : PropertyManager(propertyManager), PropertyNode(0L), PropertyName(propName)
+  : PropertyManager(propertyManager), PropertyNode(0L)
 {
+  Sign = 1;
+  if (propName[0] == '-') {
+    propName.erase(0,1);
+    Sign = -1;
+  }
+  PropertyName = propName;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +76,7 @@ double FGPropertyValue::GetValue(void) const
     }
   }
 
-  return node->getDoubleValue();
+  return node->getDoubleValue()*Sign;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

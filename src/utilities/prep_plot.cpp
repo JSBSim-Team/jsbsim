@@ -107,6 +107,11 @@ string plot_range;
 
 string DEFAULT_FONT, TITLE_FONT, LABEL_FONT, AXIS_FONT, TIMESTAMP_FONT, TICS_FONT;
 
+typedef vector <string> string_array;
+typedef vector <string_array> multi_string_array;
+multi_string_array NamesArray;
+bool multiplot=false;
+
 string HaveTerm(const vector <string>&, const string); 
 int GetTermIndex(const vector <string>&, const string);
 void EmitComparisonPlot(const vector <string>&, const int, const string);
@@ -129,10 +134,9 @@ int main(int argc, char **argv)
 {
   string in_string, var_name, input_arg, supplied_title="";
   string outfile="";
-  vector <string> plotspecfiles;
-  //vector <string> names;
+  string_array plotspecfiles;
+  string_array files;
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
-  vector <string> files;
   ifstream infile2;
   char num[8];
   bool comprehensive=false;
@@ -169,6 +173,7 @@ int main(int argc, char **argv)
   string filename(argv[1]), new_filename, Title;
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
+    multiplot = true;
     nokey = true;
     while (1) {
       new_filename=filename;
@@ -178,6 +183,8 @@ int main(int argc, char **argv)
       if (!infile2.is_open()) {
         break;
       } else {
+        getline(infile2, in_string, '\n');
+        NamesArray.push_back(split(in_string, ','));
         infile2.close();
         files.push_back(new_filename);
         file_ctr++;
@@ -194,7 +201,7 @@ int main(int argc, char **argv)
     exit(-1);
   }
   getline(infile, in_string, '\n');
-  vector <string> names = split(in_string, ',');
+  string_array names = split(in_string, ',');
   unsigned int num_names=names.size();
   
   // Read command line args
@@ -361,7 +368,7 @@ int main(int argc, char **argv)
         cout << "set title \"\"" << endl;
         cout << "set xlabel \"\"" << endl;
         cout << "set ylabel \"" << names[i+2] << "\" font \"" << LABEL_FONT << "\"" << endl;
-        if (files.size()==1) EmitSinglePlot(files[0], i+3, names[i+2]);
+        if (!multiplot) EmitSinglePlot(files[0], i+3, names[i+2]);
         else EmitComparisonPlot(files, i+3, names[i+2]);
 
         // Plot 2 in middle
@@ -370,7 +377,7 @@ int main(int argc, char **argv)
         cout << "set title \"\"" << endl;
         cout << "set xlabel \"\"" << endl;
         cout << "set ylabel \"" << names[i+1] << "\" font \"" << LABEL_FONT << "\"" << endl;
-        if (files.size()==1) EmitSinglePlot(files[0], i+2, names[i+1]);
+        if (!multiplot) EmitSinglePlot(files[0], i+2, names[i+1]);
         else EmitComparisonPlot(files, i+2, names[i+1]);
 
         // Plot 3 at bottom
@@ -381,7 +388,7 @@ int main(int argc, char **argv)
         cout << "set format x \"%.1f\"" << endl;
         cout << "set xlabel \"Time (sec)\" font \"" << LABEL_FONT << "\"" << endl;
         cout << "set ylabel \"" << names[i] << "\" font \"" << LABEL_FONT << "\"" << endl;
-        if (files.size()==1) EmitSinglePlot(files[0], i+1, names[i]);
+        if (!multiplot) EmitSinglePlot(files[0], i+1, names[i]);
         else EmitComparisonPlot(files, i+1, names[i]);
 
         i += 2;
@@ -404,7 +411,7 @@ int main(int argc, char **argv)
         cout << "set xlabel \"Time (sec)\" font \"" << LABEL_FONT << "\"" << endl;
         cout << "set ylabel \"" << names[i] << "\" font \"" << LABEL_FONT << "\"" << endl;
 
-        if (files.size()==1) { // Single file
+        if (!multiplot) {                             // Single file
           EmitSinglePlot(files[0], i+1, names[i]);
         } else { // Multiple files
           EmitComparisonPlot(files, i+1, names[i]);
@@ -475,17 +482,7 @@ int main(int argc, char **argv)
       float margin = (3. + marginTitle + marginXLabel)/540.;
       float plot_margin = (2.*(numPlots-1.))*margin;
       float size = (1.0 - plot_margin)/(float)numPlots;
-/*
-      if (!pdf && !png) {
-        cout << "set size 1.0,1.0" << endl;
-        cout << "set origin 0.0,0.0" << endl;
-      } else {
-//          cout << "set size 0.9,0.9" << endl;
-//          cout << "set origin 0.05,0.05" << endl;
-      }
-*/
-//        newPlot << "set size 1.0,1.0" << endl;
-//        newPlot << "set origin 0.0,0.0" << endl;
+
       newPlot << "set timestamp \"%d/%m/%y %H:%M\" offset 0,1 font \"" << TIMESTAMP_FONT << "\"" << endl;
       newPlot << "set multiplot title \"" + supplied_title + "\"" << endl;
 
@@ -528,13 +525,13 @@ int main(int argc, char **argv)
 string HaveTerm(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
-//    if (names[i] == parameter.substr(0,names[i].size())) return names[i];
     if (names[i].find(parameter) != string::npos) {
       int start = names[i].find(parameter);
       if (start + parameter.length() == names[i].size()) return names[i];
     }
   }
-  cerr << "Could not find parameter: _" << parameter << "_" << endl;
+  //cerr << "Could not find parameter: _" << parameter << "_" << endl;
+
   return string("");
 }
 
@@ -543,7 +540,6 @@ string HaveTerm(const vector <string>& names, const string parameter)
 int GetTermIndex(const vector <string>& names, const string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
-//    if (names[i] == parameter) return i+1;
     if (names[i].find(parameter) != string::npos) {
       int start = names[i].find(parameter);
       if (start + parameter.length() == names[i].size()) return i+1;
@@ -617,8 +613,9 @@ bool MakeArbitraryPlot(
 
     if (myPlot.plotType == points) newPlot << "set pointsize 0.25" << endl;
 
-    if (files.size() == 1) { // Single file
-    
+                                          // ##########################
+    if ( !multiplot ) {                   // ## Single file plotting ##
+                                          // ##########################
       if (numRightYAxisNames > 0) {
         newPlot << "set rmargin 9" << endl;
         newPlot << "set y2tics font \"" << TICS_FONT << "\"" << endl;
@@ -655,9 +652,9 @@ bool MakeArbitraryPlot(
         newPlot << "unset y2tics" << endl;
         newPlot << "set y2label" << endl;
       }
-
-    } else { // Multiple file comparison plot
-
+                                     // #######################################
+    } else {                         // ## Multiple file comparison plotting ##
+                                     // #######################################
       if (numRightYAxisNames > 0) {
         newPlot << "set rmargin 9" << endl;
         newPlot << "set y2tics font \"" << TICS_FONT << "\"" << endl;
@@ -665,35 +662,46 @@ bool MakeArbitraryPlot(
 
       for (int f=0;f<files.size();f++) {
 
+        bool HasAllTerms = true;
+
+        if (HaveTerm(NamesArray[f], XAxisName).empty()) HasAllTerms = false;
+        for (unsigned int c=0; c<numLeftYAxisNames; c++) if (HaveTerm(NamesArray[f], LeftYAxisNames[c]).empty()) HasAllTerms = false;
+        for (unsigned int c=0; c<numRightYAxisNames; c++) if (HaveTerm(NamesArray[f], RightYAxisNames[c]).empty()) HasAllTerms = false;
+
+        if (!HasAllTerms) {
+          newPlot.clear();
+          return HasAllTerms;
+        }
+
         if (f==0) newPlot << "plot " << time_range << " ";
         else      {
           newPlot << ", \\" << endl;
           newPlot << "     ";
         }
 
-        newPlot << "\"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-             << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with " << plotType << " title \""
+        newPlot << "\"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)
+             << ":" << GetTermIndex(NamesArray[f], LeftYAxisNames[0]) << " with " << plotType << " title \""
              << LeftYAxisNames[0] << ": " << f << "\"";
         if (numLeftYAxisNames > 1) {
           newPlot << ", \\" << endl;
           for (i=1; i<numLeftYAxisNames-1; i++) {
-            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-                 << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with " << plotType << " title \"" 
+            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)
+                 << ":" << GetTermIndex(NamesArray[f], LeftYAxisNames[i]) << " with " << plotType << " title \"" 
                  << LeftYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
-          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
-               << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
+          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)<< ":" 
+               << GetTermIndex(NamesArray[f], LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
                << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {
           newPlot << ", \\" << endl;
           for (i=0; i<numRightYAxisNames-2; i++) {
-            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-                 << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with " << plotType << " axes x1y2 title \""
+            newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)
+                 << ":" << GetTermIndex(NamesArray[f], RightYAxisNames[i]) << " with " << plotType << " axes x1y2 title \""
                  << RightYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
-          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
-               << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with " << plotType << " axes x1y2 title \""
+          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)
+               << ":" << GetTermIndex(NamesArray[f], RightYAxisNames[numRightYAxisNames-1]) << " with " << plotType << " axes x1y2 title \""
                << RightYAxisNames[numRightYAxisNames-1] << ": " << f << "\"";
         }
       }
@@ -719,14 +727,27 @@ void EmitSinglePlot(const string filename, const int index, const string linetit
 
 void EmitComparisonPlot(const vector <string>& filenames, const int index, const string linetitle)
 {
+  string varname = NamesArray[0][index-1];
+  bool fail = false;
+
+  for (unsigned int f=1;f<filenames.size();f++) {
+    if (HaveTerm(NamesArray[f],varname).size() == 0) {
+      cerr << "## Variable: " << varname << " does not exist in all files being plotted." << endl;
+      fail = true;
+    }
+  }
+
+  if (!fail) {
   cout << "##" << endl << "##" << endl;
   cout << "print \"Processing parameter plot: " << linetitle << "\"" << endl;
   cout << "##" << endl << "##" << endl;
-  cout << "plot " << plot_range <<  " \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
+    cout << "plot " << plot_range <<  " \"" << filenames[0] << "\" using 1:" << GetTermIndex(NamesArray[0],varname) << " with lines title \"" << linetitle << ": 1" << "\", \\" << endl;
   for (unsigned int f=1;f<filenames.size()-1;f++){
-    cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\", \\" << endl;
+      cout << "\"" << filenames[f] << "\" using 1:" << GetTermIndex(NamesArray[f],varname) << " with lines title \"" << linetitle << ": " << f+1 << "\", \\" << endl;
   }
-  cout << "\"" << filenames[filenames.size()-1] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << filenames.size() << "\"" << endl;
+    cout << "\"" << filenames[filenames.size()-1] << "\" using 1:" << GetTermIndex(NamesArray[filenames.size()-1],varname) << " with lines title \"" << linetitle << ": " << filenames.size() << "\"" << endl;
+  }
+
 }
 
 // ############################################################################

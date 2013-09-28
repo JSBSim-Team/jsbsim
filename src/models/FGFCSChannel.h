@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id$"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.3 2013/09/27 19:44:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,8 +70,8 @@ typedef std::vector <FGFCSComponent*> FCSCompVec;
 class FGFCSChannel {
 public:
   /// Constructor
-  FGFCSChannel(FGPropertyNode* node=0) :
-  OnOffNode(node)
+  FGFCSChannel(string name, FGPropertyNode* node=0) :
+  OnOffNode(node), Name(name)
   {
   }
   /// Destructor
@@ -79,6 +79,9 @@ public:
     for (unsigned int i=0; i<FCSComponents.size(); i++) delete FCSComponents[i];
     FCSComponents.clear();
   }
+  /// Retrieves the name of the channel
+  string GetName() {return Name;}
+
   /// Adds a component to a channel
   void Add(FGFCSComponent* comp) {FCSComponents.push_back(comp);}
   /// Returns the number of components in the channel.
@@ -121,6 +124,7 @@ public:
   private:
     FCSCompVec FCSComponents;
     FGConstPropertyNode_ptr OnOffNode;
+    string Name;
 };
 
 }
