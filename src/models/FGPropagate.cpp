@@ -77,7 +77,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.115 2013/09/14 11:26:02 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.118 2013/09/29 17:21:24 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -618,33 +618,43 @@ void FGPropagate::DumpState(void)
 
 void FGPropagate::WriteStateFile(int num)
 {
+  ofstream outfile;
+
+  if (num == 0) return;
+
   string filename = FDMExec->GetFullAircraftPath();
 
-  if (filename.empty())
-    filename = "initfile.xml";
-  else
-    filename.append("/initfile.xml");
+  string sim_time = to_string((double)FDMExec->GetSimTime());
+  if (filename.empty()) filename = "initfile.";
+  else                  filename.append("/initfile.");
 
-  ofstream outfile(filename.c_str());
+  // Append sim time to the filename since there may be more than one created during a simulation run
+  filename += to_string((double)FDMExec->GetSimTime())+".xml";
 
-  if (outfile.is_open()) {
-    switch(num) {
-    case 1:
-    outfile << "<?xml version=\"1.0\"?>" << endl;
-    outfile << "<initialize name=\"reset00\">" << endl;
-    outfile << "  <ubody unit=\"FT/SEC\"> " << VState.vUVW(eU) << " </ubody> " << endl;
-    outfile << "  <vbody unit=\"FT/SEC\"> " << VState.vUVW(eV) << " </vbody> " << endl;
-    outfile << "  <wbody unit=\"FT/SEC\"> " << VState.vUVW(eW) << " </wbody> " << endl;
-    outfile << "  <phi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePhi)*radtodeg << " </phi>" << endl;
-    outfile << "  <theta unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(eTht)*radtodeg << " </theta>" << endl;
-    outfile << "  <psi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePsi)*radtodeg << " </psi>" << endl;
-    outfile << "  <longitude unit=\"DEG\"> " << VState.vLocation.GetLongitudeDeg() << " </longitude>" << endl;
-    outfile << "  <latitude unit=\"DEG\"> " << VState.vLocation.GetLatitudeDeg() << " </latitude>" << endl;
-    outfile << "  <altitude unit=\"FT\"> " << GetDistanceAGL() << " </altitude>" << endl;
-    outfile << "</initialize>" << endl;
-    outfile.close();
+  switch(num) {
+  case 1:
+    outfile.open(filename.c_str());
+    if (outfile.is_open()) {
+      outfile << "<?xml version=\"1.0\"?>" << endl;
+      outfile << "<initialize name=\"reset00\">" << endl;
+      outfile << "  <ubody unit=\"FT/SEC\"> " << VState.vUVW(eU) << " </ubody> " << endl;
+      outfile << "  <vbody unit=\"FT/SEC\"> " << VState.vUVW(eV) << " </vbody> " << endl;
+      outfile << "  <wbody unit=\"FT/SEC\"> " << VState.vUVW(eW) << " </wbody> " << endl;
+      outfile << "  <phi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePhi)*radtodeg << " </phi>" << endl;
+      outfile << "  <theta unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(eTht)*radtodeg << " </theta>" << endl;
+      outfile << "  <psi unit=\"DEG\"> " << VState.qAttitudeLocal.GetEuler(ePsi)*radtodeg << " </psi>" << endl;
+      outfile << "  <longitude unit=\"DEG\"> " << VState.vLocation.GetLongitudeDeg() << " </longitude>" << endl;
+      outfile << "  <latitude unit=\"DEG\"> " << VState.vLocation.GetLatitudeDeg() << " </latitude>" << endl;
+      outfile << "  <altitude unit=\"FT\"> " << GetDistanceAGL() << " </altitude>" << endl;
+      outfile << "</initialize>" << endl;
+      outfile.close();
+    } else {
+      cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
+    }
     break;
-    case 2:
+  case 2:
+    outfile.open(filename.c_str());
+    if (outfile.is_open()) {
       outfile << "<?xml version=\"1.0\"?>" << endl;
       outfile << "<initialize name=\"IC File\" version=\"2.0\">" << endl;
       outfile << "" << endl;
@@ -674,12 +684,12 @@ void FGPropagate::WriteStateFile(int num)
       outfile << "" << endl;
       outfile << "</initialize>" << endl;
       outfile.close();
-    break;
-    default:
-      throw("When writing a state file, the supplied value must be 1 or 2 for the version number of teh resulting IC file");
+    } else {
+      cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
     }
-  } else {
-    cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
+    break;
+  default:
+    cerr << "When writing a state file, the supplied value must be 1 or 2 for the version number of the resulting IC file" << endl;
   }
 }
 

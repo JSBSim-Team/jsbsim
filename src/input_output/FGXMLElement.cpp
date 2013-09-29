@@ -43,7 +43,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.39 2013/06/20 04:37:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.40 2013/09/29 16:22:54 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -565,9 +565,19 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
     if (attType == "gaussian") {
-      value = val + disp*GaussianRandomNumber();
+      double grn = GaussianRandomNumber();
+      value = val + disp*grn;
+/*      std::cout << "DISPERSION GAUSSIAN: Initial: " << val
+                << "  Dispersion: " << disp
+                << "  Gaussian Rand Num: " << grn
+                << "  Total Dispersed Value: " << value << endl; */
     } else if (attType == "uniform") {
-      value = val + disp * ((((double)rand()/RAND_MAX)-0.5)*2.0);
+      double urn = ((((double)rand()/RAND_MAX)-0.5)*2.0);
+      value = val + disp * urn;
+/*      std::cout << "DISPERSION UNIFORM: Initial: " << val
+                << "  Dispersion: " << disp
+                << "  Uniform Rand Num: " << urn
+                << "  Total Dispersed Value: " << value << endl; */
     } else {
       std::cerr << "Unknown dispersion type" << endl;
       throw("Unknown dispersion type");

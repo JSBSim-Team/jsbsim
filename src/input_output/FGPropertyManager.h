@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.27 2013/09/27 19:44:07 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.28 2013/09/28 14:43:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -395,7 +395,7 @@ class FGPropertyManager
     { return root->GetNode(relpath, index, create); }
     bool HasNode(const std::string& path) const
     {
-      string newPath = path;
+      std::string newPath = path;
       if (newPath[0] == '-') newPath.erase(0,1);
       return root->HasNode(newPath);
     }

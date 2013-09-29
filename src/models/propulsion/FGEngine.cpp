@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.52 2013/01/12 19:24:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.53 2013/09/29 16:22:55 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
 
   Name = engine_element->GetAttributeValue("name");
 
-  Load(engine_element, PropertyManager, ::to_string(EngineNumber)); // Call ModelFunctions loader
+  Load(engine_element, PropertyManager, to_string((int)EngineNumber)); // Call ModelFunctions loader
 
 // Find and set engine location
 
@@ -133,7 +133,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   property_name = base_property_name + "/fuel-used-lbs";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
 
-  PostLoad(engine_element, PropertyManager, ::to_string(EngineNumber));
+  PostLoad(engine_element, PropertyManager, to_string((int)EngineNumber));
 
   Debug(0);
 }
