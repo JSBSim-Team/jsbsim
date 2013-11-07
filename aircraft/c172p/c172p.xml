@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.28 2012/12/22 15:22:20 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.29 2013/10/25 15:32:49 jentron Exp $ </version>
         <description> Cessna C-172 </description>
       <note>
         This model was created using publicly available data, publicly available
@@ -149,7 +149,19 @@
             <brake_group> RIGHT </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="TAIL_SKID">
+        <contact type="STRUCTURE" name="NOSE_SKID">
+            <location unit="IN">
+                <x> -37.7 </x>
+                <y> 0 </y>
+                <z> 26.6 </z>
+            </location>
+            <static_friction> 0.2 </static_friction>
+            <dynamic_friction> 0.2 </dynamic_friction>
+            <rolling_friction> 0.2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 20000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
+        </contact>
+        <contact type="STRUCTURE" name="TAIL_SKID">
             <location unit="IN">
                 <x> 188 </x>
                 <y> 0 </y>
@@ -159,12 +171,9 @@
             <dynamic_friction> 0.2 </dynamic_friction>
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 20000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
+            <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
         </contact>
-        <contact type="BOGEY" name="LEFT_TIP">
+        <contact type="STRUCTURE" name="LEFT_TIP">
             <location unit="IN">
                 <x> 43.2 </x>
                 <y> -214.8 </y>
@@ -173,13 +182,10 @@
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
             <rolling_friction> 0.2 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <spring_coeff unit="LBS/FT"> 20000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_TIP">
+        <contact type="STRUCTURE" name="RIGHT_TIP">
             <location unit="IN">
                 <x> 43.2 </x>
                 <y> 214.8 </y>
@@ -188,11 +194,8 @@
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
             <rolling_friction> 0.2 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <spring_coeff unit="LBS/FT"> 20000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
     </ground_reactions>
     <propulsion>
