@@ -6,7 +6,7 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: net_fdm.hxx,v 1.5 2011/11/10 12:06:14 jberndt Exp $
+// $Id: net_fdm.hxx,v 1.6 2013/11/09 14:06:36 bcoconni Exp $
 
 
 #ifndef _NET_FDM_HXX
@@ -61,12 +61,9 @@ public:
     float v_north;              // north velocity in local/body frame, fps
     float v_east;               // east velocity in local/body frame, fps
     float v_down;               // down/vertical velocity in local/body frame, fps
-    float v_wind_body_north;    // north velocity in local/body frame
-                                // relative to local airmass, fps
-    float v_wind_body_east;     // east velocity in local/body frame
-                                // relative to local airmass, fps
-    float v_wind_body_down;     // down/vertical velocity in local/body
-                                // frame relative to local airmass, fps
+    float v_body_u;             // ECEF velocity in body axis
+    float v_body_v;             // ECEF velocity in body axis
+    float v_body_w;             // ECEF velocity in body axis 
 
     // Accelerations
     float A_X_pilot;    // X accel in body frame ft/sec^2
