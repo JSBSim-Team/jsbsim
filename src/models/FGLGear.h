@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.56 2012/12/15 15:16:16 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.57 2013/11/10 14:44:38 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +177,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.56 2012/12/15 15:16:16 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.57 2013/11/10 14:44:38 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -380,6 +380,7 @@ private:
   void ComputeGroundFrame(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
   void UpdateForces(void);
+  void SetstaticFCoeff(double coeff);
   void CrashDetect(void);
   void InitializeReporting(void);
   void ResetReporting(void);
