@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
 Include this file on your JSBSim standalone application command line in order to send 
@@ -15,5 +15,5 @@ src/jsbsim -realtime data_output/flightgear.xml scripts/c1723.xml
  
 -->
 
-<output name="localhost" type="FLIGHTGEAR" protocol="UDP" port="5500" rate="60">
+<output name="localhost" type="FLIGHTGEAR" protocol="UDP" port="5550" rate="60">
 </output>

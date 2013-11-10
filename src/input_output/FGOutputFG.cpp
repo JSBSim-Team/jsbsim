@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.5 2012/12/15 16:13:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.6 2013/11/09 14:06:36 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTFG;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -159,9 +159,9 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->v_east     = (float)(Propagate->GetVel(eEast));       // east vel in NED frame, fps
   net->v_down     = (float)(Propagate->GetVel(eDown));       // down vel in NED frame, fps
 //---ADD METHOD TO CALCULATE THESE TERMS---
-  net->v_wind_body_north = (float)(Propagate->GetVel(eNorth)); // north vel in NED relative to airmass, fps
-  net->v_wind_body_east = (float)(Propagate->GetVel(eEast)); // east vel in NED relative to airmass, fps
-  net->v_wind_body_down = (float)(Propagate->GetVel(eDown)); // down vel in NED relative to airmass, fps
+  net->v_body_u = (float)(Propagate->GetUVW(1)); // ECEF speed in body axis
+  net->v_body_v = (float)(Propagate->GetUVW(2)); // ECEF speed in body axis
+  net->v_body_w = (float)(Propagate->GetUVW(3)); // ECEF speed in body axis
 
   // Accelerations
   net->A_X_pilot   = (float)(Auxiliary->GetPilotAccel(1));    // X body accel, ft/s/s
@@ -282,9 +282,9 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
     htonf(net->v_north);
     htonf(net->v_east);
     htonf(net->v_down);
-    htonf(net->v_wind_body_north);
-    htonf(net->v_wind_body_east);
-    htonf(net->v_wind_body_down);
+    htonf(net->v_body_u);
+    htonf(net->v_body_v);
+    htonf(net->v_body_w);
 
     htonf(net->A_X_pilot);
     htonf(net->A_Y_pilot);
