@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.20 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGPropeller.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -256,8 +256,8 @@ public:
       @return the thrust in pounds */
   double Calculate(double EnginePower);
   FGColumnVector3 GetPFactor(void) const;
-  string GetThrusterLabels(int id, const string& delimeter);
-  string GetThrusterValues(int id, const string& delimeter);
+  std::string GetThrusterLabels(int id, const std::string& delimeter);
+  std::string GetThrusterValues(int id, const std::string& delimeter);
 
   void   SetReverseCoef (double c) { Reverse_coef = c; }
   double GetReverseCoef (void) const { return Reverse_coef; }

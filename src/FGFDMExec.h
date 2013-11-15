@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.83 2013/06/10 01:46:27 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.84 2013/11/15 22:42:59 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -179,7 +179,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.83 $
+    @version $Revision: 1.84 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,7 +190,7 @@ class FGFDMExec : public FGJSBBase, public FGXMLFileRead
 {
   struct childData {
     FGFDMExec* exec;
-    string info;
+    std::string info;
     FGColumnVector3 Loc;
     FGColumnVector3 Orient;
     bool mated;
@@ -291,8 +291,9 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful */
-  bool LoadModel(const string& AircraftPath, const string& EnginePath, const string& SystemsPath,
-                 const string& model, bool addModelToPath = true);
+  bool LoadModel(const std::string& AircraftPath, const std::string& EnginePath,
+                 const std::string& SystemsPath, const std::string& model,
+                 bool addModelToPath = true);
 
   /** Loads an aircraft model.  The paths to the aircraft and engine
       config file directories must be set prior to calling this.  See
@@ -304,7 +305,7 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful*/
-  bool LoadModel(const string& model, bool addModelToPath = true);
+  bool LoadModel(const std::string& model, bool addModelToPath = true);
 
   /** Loads a script
       @param Script The full path name and file name for the script to be loaded.
@@ -316,23 +317,24 @@ public:
                       the file specified in the script will be used. If an initialization file 
                       is not given in either place, an error will result.
       @return true if successfully loads; false otherwise. */
-  bool LoadScript(const string& Script, double deltaT=0.0, const string initfile="");
+  bool LoadScript(const std::string& Script, double deltaT=0.0,
+                  const std::string initfile="");
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
       files are kept, for instance "engine"  */
-  bool SetEnginePath(const string& path)   { EnginePath = RootDir + path; return true; }
+  bool SetEnginePath(const std::string& path)   { EnginePath = RootDir + path; return true; }
 
   /** Sets the path to the aircraft config file directories.
       @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
-  bool SetAircraftPath(const string& path) { AircraftPath = RootDir + path; return true; }
+  bool SetAircraftPath(const std::string& path) { AircraftPath = RootDir + path; return true; }
   
   /** Sets the path to the systems config file directories.
       @param path path to the directory under which systems config
       files are kept, for instance "systems"  */
-  bool SetSystemsPath(const string& path)   { SystemsPath = RootDir + path; return true; }
+  bool SetSystemsPath(const std::string& path)   { SystemsPath = RootDir + path; return true; }
   
   /// @name Top-level executive State and Model retrieval mechanism
   ///@{
@@ -381,29 +383,29 @@ public:
   ///@}
 
   /// Retrieves the engine path.
-  const string& GetEnginePath(void)    {return EnginePath;}
+  const std::string& GetEnginePath(void)    {return EnginePath;}
   /// Retrieves the aircraft path.
-  const string& GetAircraftPath(void)  {return AircraftPath;}
+  const std::string& GetAircraftPath(void)  {return AircraftPath;}
   /// Retrieves the systems path.
-  const string& GetSystemsPath(void)   {return SystemsPath;}
+  const std::string& GetSystemsPath(void)   {return SystemsPath;}
   /// Retrieves the full aircraft path name.
-  const string& GetFullAircraftPath(void) {return FullAircraftPath;}
+  const std::string& GetFullAircraftPath(void) {return FullAircraftPath;}
 
   /** Retrieves the value of a property.
       @param property the name of the property
       @result the value of the specified property */
-  inline double GetPropertyValue(const string& property)
+  inline double GetPropertyValue(const std::string& property)
   { return instance->GetNode()->GetDouble(property); }
 
   /** Sets a property value.
       @param property the property to be set
       @param value the value to set the property to */
-  inline void SetPropertyValue(const string& property, double value) {
+  inline void SetPropertyValue(const std::string& property, double value) {
     instance->GetNode()->SetDouble(property, value);
   }
 
   /// Returns the model name.
-  const string& GetModelName(void) const { return modelName; }
+  const std::string& GetModelName(void) const { return modelName; }
 /*
   /// Returns the current time.
   double GetSimTime(void);
@@ -414,7 +416,7 @@ public:
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
   /// Returns a vector of strings representing the names of all loaded models (future)
-  vector <string> EnumerateFDMs(void);
+  std::vector <std::string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
   int GetFDMCount(void) const {return (int)ChildFDMList.size();}
   /// Gets a particular child FDM.
@@ -437,7 +439,7 @@ public:
       be logged.
       @param fname the filename of an output directives file.
     */
-  bool SetOutputDirectives(const string& fname)
+  bool SetOutputDirectives(const std::string& fname)
   {return Output->SetDirectivesFile(RootDir + fname);}
 
   /** Forces the specified output object to print its items once */
@@ -449,13 +451,13 @@ public:
   /** Sets (or overrides) the output filename
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
-  bool SetOutputFileName(const int n, const string& fname) { return Output->SetOutputName(n, fname); }
+  bool SetOutputFileName(const int n, const std::string& fname) { return Output->SetOutputName(n, fname); }
 
   /** Retrieves the current output filename.
       @param n index of file
       @return the name of the output file for the output specified by the flight model.
               If none is specified, the empty string is returned. */
-  string GetOutputFileName(int n) const { return Output->GetOutputName(n); }
+  std::string GetOutputFileName(int n) const { return Output->GetOutputName(n); }
 
   /** Executes trimming in the selected mode.
   *   @param mode Specifies how to trim:
@@ -495,7 +497,7 @@ public:
 
   struct PropertyCatalogStructure {
     /// Name of the property.
-    string base_string;
+    std::string base_string;
     /// The node for the property.
     FGPropertyNode_ptr node;
   };
@@ -512,19 +514,19 @@ public:
   *   @param check The string to search for in the property catalog.
   *   @return the carriage-return-delimited string containing all matching strings
   *               in the catalog.  */
-  string QueryPropertyCatalog(const string& check);
+  std::string QueryPropertyCatalog(const std::string& check);
 
   // Print the contents of the property catalog for the loaded aircraft.
   void PrintPropertyCatalog(void);
 
-  vector<string>& GetPropertyCatalog(void) {return PropertyCatalog;}
+  std::vector<std::string>& GetPropertyCatalog(void) {return PropertyCatalog;}
 
   void SetTrimStatus(bool status){ trim_status = status; }
   bool GetTrimStatus(void) const { return trim_status; }
   void SetTrimMode(int mode){ ta_mode = mode; }
   int GetTrimMode(void) const { return ta_mode; }
 
-  string GetPropulsionTankReport();
+  std::string GetPropulsionTankReport();
 
   /// Returns the cumulative simulation time in seconds.
   double GetSimTime(void) const { return sim_time; }
@@ -556,11 +558,11 @@ public:
 
   /** Sets the root directory where JSBSim starts looking for its system directories.
       @param rootDir the string containing the root directory. */
-  void SetRootDir(const string& rootDir) {RootDir = rootDir;}
+  void SetRootDir(const std::string& rootDir) {RootDir = rootDir;}
 
   /** Retrieves the Root Directory.
       @return the string representing the root (base) JSBSim directory. */
-  const string& GetRootDir(void) const {return RootDir;}
+  const std::string& GetRootDir(void) const {return RootDir;}
 
   /** Increments the simulation time if not in Holding mode. The Frame counter
       is also incremented.
@@ -592,14 +594,14 @@ private:
   bool Constructing;
   bool modelLoaded;
   bool IsChild;
-  string modelName;
-  string AircraftPath;
-  string FullAircraftPath;
-  string EnginePath;
-  string SystemsPath;
-  string CFGVersion;
-  string Release;
-  string RootDir;
+  std::string modelName;
+  std::string AircraftPath;
+  std::string FullAircraftPath;
+  std::string EnginePath;
+  std::string SystemsPath;
+  std::string CFGVersion;
+  std::string Release;
+  std::string RootDir;
 
   // Standard Model pointers - shortcuts for internal executive use only.
   FGPropagate* Propagate;
@@ -632,9 +634,9 @@ private:
   // The FDM counter is used to give each child FDM an unique ID. The root FDM has the ID 0
   unsigned int*      FDMctr;
 
-  vector <string> PropertyCatalog;
-  vector <childData*> ChildFDMList;
-  vector <FGModel*> Models;
+  std::vector <std::string> PropertyCatalog;
+  std::vector <childData*> ChildFDMList;
+  std::vector <FGModel*> Models;
 
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);

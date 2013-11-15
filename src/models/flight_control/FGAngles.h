@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ANGLES "$Id: FGAngles.h,v 1.1 2013/06/20 04:37:28 jberndt Exp $"
+#define ID_ANGLES "$Id: FGAngles.h,v 1.2 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAngles.h,v 1.1 2013/06/20 04:37:28 jberndt Exp $
+    @version $Id: FGAngles.h,v 1.2 2013/11/15 22:43:01 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,7 +98,7 @@ private:
   double target_angle_unit;
   double source_angle_unit;
   double output_unit;
-  string unit;
+  std::string unit;
 
   void Debug(int from);
 };

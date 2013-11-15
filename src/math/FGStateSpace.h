@@ -172,7 +172,7 @@ public:
         {
             for (int i=0;i<getSize();i++) array[i] = m_components[i]->getDeriv();
         }
-        void set(vector<double> vals)
+        void set(std::vector<double> vals)
         {
             for (int i=0;i<getSize();i++) m_components[i]->set(vals[i]);
             m_stateSpace->run();

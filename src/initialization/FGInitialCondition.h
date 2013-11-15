@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.37 2013/10/19 17:59:51 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.38 2013/11/15 22:42:59 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -217,7 +217,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.37 2013/10/19 17:59:51 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.38 2013/11/15 22:42:59 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -651,7 +651,7 @@ public:
       @param rstname The name of an initial conditions file
       @param useStoredPath true if the stored path to the IC file should be used
       @return true if successful */
-  bool Load(string rstname, bool useStoredPath = true );
+  bool Load(std::string rstname, bool useStoredPath = true );
 
   /** Get the number of engines running
    */
@@ -677,7 +677,7 @@ private:
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
-  vector<int> enginesRunning;
+  std::vector<int> enginesRunning;
 
   FGFDMExec *fdmex;
   FGPropertyManager *PropertyManager;

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.13 2013/04/17 20:24:27 andgi Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.14 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -244,9 +244,9 @@ private:
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
   double ValveCoefficient;          // [ft^4 sec / slug]
-  typedef vector <FGFunction*> CoeffArray;
+  typedef std::vector <FGFunction*> CoeffArray;
   CoeffArray HeatTransferCoeff;
-  typedef vector <FGBallonet*> BallonetArray;
+  typedef std::vector <FGBallonet*> BallonetArray;
   BallonetArray Ballonet;
   // Variables
   double Pressure;          // [lbs/ft^2]
@@ -350,7 +350,7 @@ private:
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
   double ValveCoefficient;          // [ft^4 sec / slug]
-  typedef vector <FGFunction*> CoeffArray;
+  typedef std::vector <FGFunction*> CoeffArray;
   CoeffArray HeatTransferCoeff;     // [lbs ft / sec]
   FGFunction* BlowerInput;          // [ft^3 / sec]
   FGGasCell* Parent;

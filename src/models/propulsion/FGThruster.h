@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.20 2012/03/18 15:48:36 jentron Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.20 2012/03/18 15:48:36 jentron Exp $
+    @version $Id: FGThruster.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,21 +96,21 @@ public:
        vFn(1) = Thrust;
        return Thrust;
   }
-  void SetName(string name) {Name = name;}
+  void SetName(std::string name) {Name = name;}
   virtual void SetRPM(double rpm) {};
   virtual void SetEngineRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(double dt) {deltaT = dt;}
   double GetThrust(void) const {return Thrust;}
   eType GetType(void) {return Type;}
-  string GetName(void) {return Name;}
+  std::string GetName(void) {return Name;}
   void SetReverserAngle(double angle) {ReverserAngle = angle;}
   double GetReverserAngle(void) const {return ReverserAngle;}
   virtual double GetRPM(void) const { return 0.0; };
   virtual double GetEngineRPM(void) const { return 0.0; };
   double GetGearRatio(void) {return GearRatio; }
-  virtual string GetThrusterLabels(int id, const string& delimeter);
-  virtual string GetThrusterValues(int id, const string& delimeter);
+  virtual std::string GetThrusterLabels(int id, const std::string& delimeter);
+  virtual std::string GetThrusterValues(int id, const std::string& delimeter);
 
   struct Inputs {
     double TotalDeltaT;
@@ -128,7 +128,7 @@ public:
 
 protected:
   eType Type;
-  string Name;
+  std::string Name;
   double Thrust;
   double PowerRequired;
   double deltaT;

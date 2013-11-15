@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.3 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.4 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @author Jon S. Berndt
-@version $Revision: 1.3 $
+@version $Revision: 1.4 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ public:
 
     Element* axis_element = element->FindElement("axis");
     if (axis_element) {
-      string sAxis = element->FindElementValue("axis");
+      std::string sAxis = element->FindElementValue("axis");
       if (sAxis == "X" || sAxis == "x") {
         axis = 1;
       } else if (sAxis == "Y" || sAxis == "y") {

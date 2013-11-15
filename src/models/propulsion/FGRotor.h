@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id$"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.16 2013/11/15 22:43:03 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -230,7 +230,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id$
+    @version $Id: FGRotor.h,v 1.16 2013/11/15 22:43:03 bcoconni Exp $
   */
 
 
@@ -318,16 +318,16 @@ public:
   void SetLongitudinalCtrl(double c) { LongitudinalCtrl = c; }
 
   // Stubs. Only main rotor RPM is returned
-  string GetThrusterLabels(int id, const string& delimeter);
-  string GetThrusterValues(int id, const string& delimeter);
+  std::string GetThrusterLabels(int id, const std::string& delimeter);
+  std::string GetThrusterValues(int id, const std::string& delimeter);
 
 private:
 
   // assist in parameter retrieval
-  double ConfigValueConv( Element* e, const string& ename, double default_val=0.0, 
-                                      const string& unit = "", bool tell=false);
+  double ConfigValueConv( Element* e, const std::string& ename, double default_val=0.0, 
+                                      const std::string& unit = "", bool tell=false);
 
-  double ConfigValue( Element* e, const string& ename, double default_val=0.0,
+  double ConfigValue( Element* e, const std::string& ename, double default_val=0.0,
                                   bool tell=false);
 
   double Configure(Element* rotor_element);

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.57 2013/11/10 14:44:38 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.58 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +177,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.57 2013/11/10 14:44:38 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.58 2013/11/15 22:43:01 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -252,7 +252,7 @@ public:
   double GetLocalGear(int idx) const { return vLocalGear(idx); }
 
   /// Gets the name of the gear
-  const string& GetName(void) const {return name; }
+  const std::string& GetName(void) const {return name; }
   /// Gets the Weight On Wheels flag value
   bool    GetWOW(void) const {return WOW; }
   /// Gets the current compressed length of the gear in feet

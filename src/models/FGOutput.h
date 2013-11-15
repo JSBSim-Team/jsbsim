@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id$"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.28 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id$
+    @version $Id: FGOutput.h,v 1.28 2013/11/15 22:43:01 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,10 +221,10 @@ public:
       @param idx ID of the output instance from which the name identifier must
                  be obtained
       @result the name identifier.*/
-  string GetOutputName(unsigned int idx) const;
+  std::string GetOutputName(unsigned int idx) const;
 
 private:
-  vector<FGOutputType*> OutputTypes;
+  std::vector<FGOutputType*> OutputTypes;
 
   void Debug(int from);
 };
