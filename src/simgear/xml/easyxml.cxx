@@ -21,12 +21,14 @@ INCLUDES
 #include "easyxml.hxx"
 #include <expat.h>
 
-#include STL_FSTREAM
-#include STL_IOSTREAM
+#include <fstream>
+#include <iostream>
 
-SG_USING_STD(ifstream);
-SG_USING_STD(cerr);
-SG_USING_STD(endl);
+using std::istream;
+using std::string;
+using std::cerr;
+using std::endl;
+using std::ifstream;
 
 ////////////////////////////////////////////////////////////////////////
 // Implementation of XMLAttributes.
@@ -151,6 +153,16 @@ void XMLAttributesDefault::setValue (const char * name, const char * value)
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void XMLVisitor::savePosition(void)
+{
+  if (parser) {
+    column = XML_GetCurrentColumnNumber(parser);
+    line = XML_GetCurrentLineNumber(parser);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////
 // Attribute list wrapper for Expat.
 ////////////////////////////////////////////////////////////////////////
@@ -200,6 +212,7 @@ const char *ExpatAtts::getValue (int i) const
 
 static void start_element (void * userData, const char * name, const char ** atts)
 {
+  VISITOR.savePosition();
   VISITOR.startElement(name, ExpatAtts(atts));
 }
 
@@ -207,6 +220,7 @@ static void start_element (void * userData, const char * name, const char ** att
 
 static void end_element (void * userData, const char * name)
 {
+  VISITOR.savePosition();
   VISITOR.endElement(name);
 }
 
@@ -214,6 +228,7 @@ static void end_element (void * userData, const char * name)
 
 static void character_data (void * userData, const char * s, int len)
 {
+  VISITOR.savePosition();
   VISITOR.data(s, len);
 }
 
@@ -223,6 +238,7 @@ static void processing_instruction (void * userData,
       const char * target,
       const char * data)
 {
+  VISITOR.savePosition();
   VISITOR.pi(target, data);
 }
 
@@ -240,12 +256,15 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
   XML_SetCharacterDataHandler(parser, character_data);
   XML_SetProcessingInstructionHandler(parser, processing_instruction);
 
+  visitor.setParser(parser);
+  visitor.setPath(path);
   visitor.startXML();
 
   char buf[16384];
   while (!input.eof()) {
 
     if (!input.good()) {
+      visitor.setParser(0);
       XML_ParserFree(parser);
       cerr << "Problem reading input file" << endl;
       abort();
@@ -253,6 +272,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
+      visitor.setParser(0);
       XML_ParserFree(parser);
       cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
       abort();
@@ -262,12 +282,15 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
 
 // Verify end of document.
   if (!XML_Parse(parser, buf, 0, true)) {
+    visitor.setParser(0);
     XML_ParserFree(parser);
     cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
     abort();
   }
 
+  visitor.setParser(0);
   XML_ParserFree(parser);
+  visitor.endXML();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
