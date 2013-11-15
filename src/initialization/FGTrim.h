@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.8 2011/01/24 13:01:55 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.9 2013/11/15 22:42:59 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,7 +120,7 @@ CLASS DOCUMENTATION
     @endcode
     
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.8 2011/01/24 13:01:55 jberndt Exp $"
+    @version "$Id: FGTrim.h,v 1.9 2013/11/15 22:42:59 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ class FGTrim : public FGJSBBase
 {
 private:
 
-  vector<FGTrimAxis*> TrimAxes;
+  std::vector<FGTrimAxis*> TrimAxes;
   unsigned int current_axis;
   int N, Nsub;
   TrimMode mode;

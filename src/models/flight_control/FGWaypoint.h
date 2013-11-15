@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.1 2013/06/20 04:37:28 jberndt Exp $"
+#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.2 2013/11/15 22:43:02 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGWaypoint.h,v 1.1 2013/06/20 04:37:28 jberndt Exp $
+    @version $Id: FGWaypoint.h,v 1.2 2013/11/15 22:43:02 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +121,7 @@ private:
   double source_latitude_unit;
   double source_longitude_unit;
   double radius;
-  string unit;
+  std::string unit;
   enum {eNone=0, eDeg, eRad, eFeet, eMeters} eUnit;
   enum {eNoType=0, eHeading, eDistance} WaypointType;
 

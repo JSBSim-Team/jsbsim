@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.11 2012/12/23 14:56:58 bcoconni Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.12 2013/11/15 22:43:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,8 +166,8 @@ public:
   
 private:
 
-  string Frame;
-  string Name;
+  std::string Frame;
+  std::string Name;
   FGFunction* Magnitude_Function;
   FGColumnVector3 vDirection;
   double magnitude;

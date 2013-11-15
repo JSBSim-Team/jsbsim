@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.27 2013/09/11 12:42:14 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.28 2013/11/15 22:43:00 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.27 $
+    @version $Revision: 1.28 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,7 +232,7 @@ private:
   typedef std::map<std::string,int> AxisIndex;
   AxisIndex AxisIdx;
   FGFunction* AeroRPShift;
-  typedef vector <FGFunction*> AeroFunctionArray;
+  typedef std::vector <FGFunction*> AeroFunctionArray;
   AeroFunctionArray* AeroFunctions;
   FGColumnVector3 vFnative;
   FGColumnVector3 vFw;

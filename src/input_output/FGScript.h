@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.25 2013/09/11 12:46:35 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.26 2013/11/15 22:43:00 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.25 2013/09/11 12:46:35 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.26 2013/11/15 22:43:00 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ public:
                       default. If a file name is passed in, it will override the
                       one present in the script.
       @return true if successful */
-  bool LoadScript(string script, double deltaT, const string initfile);
+  bool LoadScript(std::string script, double deltaT, const std::string initfile);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.
@@ -219,22 +219,22 @@ private:
     double           Delay;
     double           StartTime;
     double           TimeSpan;
-    string           Name;
-    string           Description;
-    vector <FGPropertyNode_ptr>  SetParam;
-    vector <std::string>  SetParamName;
-    vector <FGPropertyNode_ptr>  NotifyProperties;
-    vector <string>              NotifyPropertyNames;
-    vector <string>              DisplayString;
-    vector <eAction> Action;
-    vector <eType>   Type;
-    vector <double>  SetValue;
-    vector <double>  TC;
-    vector <double>  newValue;
-    vector <double>  OriginalValue;
-    vector <double>  ValueSpan;
-    vector <bool>    Transiting;
-    vector <FGFunction*> Functions;
+    std::string           Name;
+    std::string           Description;
+    std::vector <FGPropertyNode_ptr>  SetParam;
+    std::vector <std::string>  SetParamName;
+    std::vector <FGPropertyNode_ptr>  NotifyProperties;
+    std::vector <std::string>              NotifyPropertyNames;
+    std::vector <std::string>              DisplayString;
+    std::vector <eAction> Action;
+    std::vector <eType>   Type;
+    std::vector <double>  SetValue;
+    std::vector <double>  TC;
+    std::vector <double>  newValue;
+    std::vector <double>  OriginalValue;
+    std::vector <double>  ValueSpan;
+    std::vector <bool>    Transiting;
+    std::vector <FGFunction*> Functions;
 
     event() {
       Triggered = false;
@@ -256,18 +256,18 @@ private:
 
   struct LocalProps {
     double *value;
-    string title;
+    std::string title;
     LocalProps(double initial_value=0) {
       value = new double(initial_value);
       title = "";
     }
   };
 
-  string  ScriptName;
+  std::string  ScriptName;
   double  StartTime;
   double  EndTime;
-  vector <struct event> Events;
-  vector <LocalProps*> local_properties;
+  std::vector <struct event> Events;
+  std::vector <LocalProps*> local_properties;
 
   FGFDMExec* FDMExec;
   FGPropertyManager* PropertyManager;
