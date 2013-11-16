@@ -266,26 +266,30 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
     if (!input.good()) {
       visitor.setParser(0);
       XML_ParserFree(parser);
-      cerr << "Problem reading input file" << endl;
-      abort();
+      cerr << "Problem reading input file " << path << endl;
+      exit(-1);
     }
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
+      cerr << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
+           << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser))
+           << endl;
       visitor.setParser(0);
       XML_ParserFree(parser);
-      cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
-      abort();
+      exit(-1);
     }
 
   }
 
 // Verify end of document.
   if (!XML_Parse(parser, buf, 0, true)) {
+    cerr << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
+         << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser))
+         << endl;
     visitor.setParser(0);
     XML_ParserFree(parser);
-    cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
-    abort();
+    exit(-1);
   }
 
   visitor.setParser(0);
@@ -303,11 +307,11 @@ void readXML (const string &path, XMLVisitor &visitor)
       readXML(input, visitor, path);
     } catch (...) {
       input.close();
-      cerr << "Failed to open file" << endl;
+      cerr << "Failed to open file " << path << endl;
       abort();
     }
   } else {
-    cerr << "Failed to open file" << endl;
+    cerr << "Failed to open file " << path << endl;
     abort();
   }
   input.close();

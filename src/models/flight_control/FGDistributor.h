@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.2 2013/09/27 20:07:10 jberndt Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.3 2013/11/16 12:06:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.2 2013/09/27 20:07:10 jberndt Exp $
+@version $Id: FGDistributor.h,v 1.3 2013/11/16 12:06:37 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ private:
 
   class PropValPair {
   public:
-    PropValPair(string prop, string val, FGPropertyManager* propMan) {
+    PropValPair(std::string prop, std::string val, FGPropertyManager* propMan) {
       PropMan = propMan;
       Val = 0;
       ValString = val;
@@ -174,11 +174,11 @@ private:
     }
 
   private:
-    string PropName;
+    std::string PropName;
     FGPropertyNode* PropNode;
     FGPropertyManager* PropMan;
     FGParameter* Val;
-    string ValString;
+    std::string ValString;
     int sign;
   };
 
@@ -203,10 +203,10 @@ private:
 
   private:
     FGCondition* Test;
-    vector <PropValPair*> PropValPairs;
+    std::vector <PropValPair*> PropValPairs;
   };
 
-  vector <Case*> Cases;
+  std::vector <Case*> Cases;
 
   void Debug(int from);
 };
