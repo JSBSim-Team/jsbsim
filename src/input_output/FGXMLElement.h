@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.17 2012/07/26 04:33:46 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.18 2013/11/16 14:51:20 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,7 +136,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.17 2012/07/26 04:33:46 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.18 2013/11/16 14:51:20 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,6 +217,16 @@ public:
   /** Returns a pointer to the parent of an element.
       @return a pointer to the parent Element, or 0 if this is the top level Element. */
   Element* GetParent(void) {return parent;}
+
+  /** Returns the line number at which the element has been defined.
+      @return the line number
+   */
+  int GetLineNumber(void) const { return line_number; }
+
+  /** Returns the name of the file in which the element has been read.
+      @return the file name
+  */
+  const std::string& GetFileName(void) const { return file_name; }
 
   /** Searches for a specified element.
       Finds the first element that matches the supplied string, or simply the first
@@ -331,6 +341,23 @@ public:
   *   @param d The tab level. A level corresponds to a single space. */
   void Print(unsigned int level=0);
 
+  /** Set the line number at which the element has been read.
+   *  @param line line number.
+   */
+  void SetLineNumber(int line) { line_number = line; }
+
+  /** Set the name of the file in which the element has been read.
+   *  @param name file name
+   */
+  void SetFileName(const std::string& name) { file_name = name; }
+
+  /** Return a string that contains a description of the location where the
+   *  current XML element was read from.
+   *  @return a string describing the file name and line number where the
+   *          element was read.
+   */
+  std::string ReadFrom(void) const;
+
 private:
   std::string name;
   std::map <std::string, std::string> attributes;
@@ -339,6 +366,8 @@ private:
   std::vector <std::string> attribute_key;
   Element *parent;
   unsigned int element_index;
+  std::string file_name;
+  int line_number;
   typedef std::map <std::string, std::map <std::string, double> > tMapConvert;
   static tMapConvert convert;
   static bool converterIsInitialized;

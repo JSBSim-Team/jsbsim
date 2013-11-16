@@ -40,7 +40,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.11 2010/09/28 02:54:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.12 2013/11/16 14:51:20 bcoconni Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,9 +107,13 @@ void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
   }
 
   if (current_element == 0L) {
-    cerr << "No current element read (no top-level element in XML file?)" << endl;
+    cerr << "In file " << getPath() << ": line " << getLine() << endl
+         << "No current element read (running out of memory?)" << endl;
     exit (-1);
   }
+
+  current_element->SetLineNumber(getLine());
+  current_element->SetFileName(getPath());
 
   for (int i=0; i<atts.size();i++) {
     current_element->AddAttribute(atts.getName(i), atts.getValue(i));
