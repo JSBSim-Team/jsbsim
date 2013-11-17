@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.4 2013/11/15 22:43:01 bcoconni Exp $"
+#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.5 2013/11/17 05:12:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @author Jon S. Berndt
-@version $Revision: 1.4 $
+@version $Revision: 1.5 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,7 @@ public:
   {
     Element* orient_element = element->FindElement("orientation");
     if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
-    else { std::cerr << "No orientation given for this sensor. " << std::endl;}
+
 
     Element* axis_element = element->FindElement("axis");
     if (axis_element) {
