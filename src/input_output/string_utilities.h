@@ -39,6 +39,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#include <sstream>
+#include <iostream>
 #include <vector>
 #include <stdio.h>
 
@@ -46,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.15 2012/11/17 19:31:26 bcoconni Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.16 2013/11/17 05:14:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +72,10 @@ CLASS DECLARATION
   extern std::string& to_lower(std::string& str);
   extern bool is_number(const std::string& str);
   std::vector <std::string> split(std::string str, char d);
+/* Comment out to_string functions when they are defined already - C++ 11 defines these */
   extern std::string to_string(int);
+  extern std::string to_string(double);
+  extern std::string to_string(float);
   extern std::string replace(std::string str, const std::string& old, const std::string& newstr);
 #else
   #include <cctype>
@@ -153,12 +158,26 @@ CLASS DECLARATION
 
     return str_array;
   }
-
+/* Comment out to_string functions when they are defined already - C++ 11 defines these */
   string to_string(int i)
   {
     char buffer[32];
     sprintf(buffer, "%d", i);
     return string(buffer);
+  }
+
+  string to_string(float x)
+  {
+    std::ostringstream o;
+    if (!(o << x)) cerr << "Bad float to string conversion" << endl;
+    return o.str();
+  }
+
+  string to_string(double x)
+  {
+    std::ostringstream o;
+    if (!(o << x)) cerr << "Bad double to string conversion" << endl;
+    return o.str();
   }
 
   string replace(string str, const string& oldstr, const string& newstr)
