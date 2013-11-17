@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.3 2013/11/16 12:06:37 bcoconni Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.4 2013/11/17 05:09:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.3 2013/11/16 12:06:37 bcoconni Exp $
+@version $Id: FGDistributor.h,v 1.4 2013/11/17 05:09:56 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,6 +130,7 @@ private:
   public:
     PropValPair(std::string prop, std::string val, FGPropertyManager* propMan) {
       PropMan = propMan;
+      sign = 1;
       Val = 0;
       ValString = val;
       FGPropertyNode *node = propMan->GetNode(prop, false);
@@ -143,8 +144,6 @@ private:
         if (ValString[0] == '-') {
           sign = -1;
           ValString.erase(0,1);
-        } else {
-          sign = 1;
         }
         node = propMan->GetNode(ValString, false);
         if (node) Val = new FGPropertyValue(node);
@@ -168,6 +167,8 @@ private:
         if (PropMan->HasNode(ValString)) {
           FGPropertyNode* node = PropMan->GetNode(ValString, false);
           if (node) Val = new FGPropertyValue(node);
+        } else {
+          throw(ValString+" in distributor component is not known. Check spelling.");
         }
       }
       PropNode->setDoubleValue(Val->GetValue()*sign);
