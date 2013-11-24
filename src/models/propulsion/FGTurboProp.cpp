@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.25 2013/11/24 11:40:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.26 2013/11/24 14:22:22 bcoconni Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,7 +63,7 @@ CLASS IMPLEMENTATION
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
   : FGEngine(exec, el, engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL)
+    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), CombustionEfficiency_N1(NULL)
 {
   SetDefaults();
   thrusterType = Thruster->GetType();
@@ -80,6 +80,7 @@ FGTurboProp::~FGTurboProp()
   delete ITT_N1;
   delete EnginePowerRPM_N1;
   delete EnginePowerVC;
+  delete CombustionEfficiency_N1;
   Debug(1);
 }
 
@@ -87,7 +88,6 @@ FGTurboProp::~FGTurboProp()
 
 bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 {
-  IdleFF=-1;
   MaxStartingTime = 999999; //very big timeout -> infinite
   Ielu_max_torque=-1;
 
@@ -111,8 +111,10 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 
   if (el->FindElement("maxpower"))
     MaxPower = el->FindElementValueAsNumber("maxpower");
-  if (el->FindElement("idlefuelflow"))
-    IdleFF = el->FindElementValueAsNumber("idlefuelflow");
+  if (el->FindElement("idlefuelflow")) {
+    cerr << el->ReadFrom() << "Note: 'idlefuelflow' is obsolete, "
+         << "use the 'CombustionEfficiency_N1' table instead." << endl;
+  }
   if (el->FindElement("psfc"))
     PSFC = el->FindElementValueAsNumber("psfc");
   if (el->FindElement("n1idle_max_delay"))
@@ -140,9 +142,11 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
       EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
       ITT_N1 = new FGTable(PropertyManager, table_element);
+    } else if (name == "CombustionEfficiency_N1") {
+      CombustionEfficiency_N1 = new FGTable(PropertyManager, table_element);
     } else {
-      cerr << "Unknown table type: " << name << " in turbine definition." <<
-      endl;
+      cerr << el->ReadFrom() << "Unknown table type: " << name
+           << " in turboprop definition." << endl;
     }
   }
 
@@ -152,9 +156,19 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = in.TAT_c + 273.0;
-  if (IdleFF==-1) IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
-  // cout << "ENG POWER:" << EnginePowerRPM_N1->GetValue(1200,90) << endl;
+  // default table based on '9.333 - (N1)/12.0' approximation
+  // gives 430%Fuel at 60%N1
+  if (! CombustionEfficiency_N1) {
+    CombustionEfficiency_N1 = new FGTable(6);
+    *CombustionEfficiency_N1 <<  60.0 << 12.0/52.0;
+    *CombustionEfficiency_N1 <<  82.0 << 12.0/30.0;
+    *CombustionEfficiency_N1 <<  96.0 << 12.0/16.0;
+    *CombustionEfficiency_N1 << 100.0 << 1.0;
+    *CombustionEfficiency_N1 << 104.0 << 1.5;
+    *CombustionEfficiency_N1 << 110.0 << 6.0;
+  }
+  
 
   return true;
 }
@@ -295,7 +309,9 @@ double FGTurboProp::Off(void)
 
 double FGTurboProp::Run(void)
 {
-  double thrust = 0.0, EngPower_HP, eff_coef;
+  double thrust = 0.0;
+  double EngPower_HP;
+
   Running = true; Starter = false; EngStarting = false;
 
 //---
@@ -306,8 +322,8 @@ double FGTurboProp::Run(void)
   EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
-  eff_coef = 9.333 - (N1)/12; // 430%Fuel at 60%N1
-  FuelFlow_pph = PSFC * EngPower_HP * eff_coef;
+  CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);
+  FuelFlow_pph = PSFC / CombustionEfficiency * EngPower_HP;
 
   Eng_Temperature = ExpSeek(&Eng_Temperature,Eng_ITT_degC,300,400);
   double ITT_goal = ITT_N1->GetValue((N1-old_N1)*300+N1,1);
@@ -369,7 +385,6 @@ double FGTurboProp::SpinUp(void)
 double FGTurboProp::Start(void)
 {
   double EngPower_HP = 0.0;
-  double eff_coef;
 
   EngStarting = false;
   if ((N1 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
@@ -380,8 +395,8 @@ double FGTurboProp::Start(void)
       EngPower_HP *= EnginePowerVC->GetValue();
       if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
       N1 = ExpSeek(&N1, IdleN1*1.1, Idle_Max_Delay*4, Idle_Max_Delay * 2.4);
-      eff_coef = 9.333 - (N1)/12; // 430%Fuel at 60%N1
-      FuelFlow_pph = PSFC * EngPower_HP * eff_coef;
+      CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);
+      FuelFlow_pph = PSFC / CombustionEfficiency * EngPower_HP;
       Eng_Temperature = ExpSeek(&Eng_Temperature,Eng_ITT_degC,300,400);
       double ITT_goal = ITT_N1->GetValue((N1-old_N1)*300+N1,1);
       Eng_ITT_degC  = ExpSeek(&Eng_ITT_degC,ITT_goal,ITT_Delay,ITT_Delay*1.2);
@@ -478,6 +493,7 @@ void FGTurboProp::SetDefaults(void)
   ITT_Delay = 0.05;
   ReverseMaxPower = 0.0;
   BetaRangeThrottleEnd = 0.0;
+  CombustionEfficiency = 1.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -542,6 +558,8 @@ void FGTurboProp::bindmodel()
   PropertyManager->Tie( property_name.c_str(), &Eng_Temperature);
   property_name = base_property_name + "/ielu_intervent";
   PropertyManager->Tie( property_name.c_str(), &Ielu_intervent);
+  property_name = base_property_name + "/combustion_efficiency";
+  PropertyManager->Tie( property_name.c_str(), &CombustionEfficiency);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
