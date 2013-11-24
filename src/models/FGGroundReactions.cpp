@@ -42,12 +42,14 @@ INCLUDES
 #include "FGLGear.h"
 #include "FGAccelerations.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.42 2012/12/15 15:16:15 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.43 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,11 +132,13 @@ bool FGGroundReactions::Load(Element* elem)
   int num=0;
   string fname="", file="";
   string separator = "/";
+  FGXMLFileRead XMLFileRead;
+  Element* document;
 
   fname = elem->GetAttributeValue("file");
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = LoadXMLDocument(file);
+    document = XMLFileRead.LoadXMLDocument(file);
     if (document == 0L) return false;
   } else {
     document = elem;

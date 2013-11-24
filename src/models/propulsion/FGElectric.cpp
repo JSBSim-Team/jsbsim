@@ -44,12 +44,13 @@ INCLUDES
 
 #include "FGElectric.h"
 #include "FGPropeller.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.13 2011/08/03 03:21:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.14 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

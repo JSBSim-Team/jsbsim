@@ -43,10 +43,8 @@ INCLUDES
 #include "FGModel.h"
 #include "FGLGear.h"
 #include "math/FGColumnVector3.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGXMLFileRead.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.26 2013/11/15 22:43:01 bcoconni Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.27 2013/11/24 11:40:56 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +77,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundReactions : public FGModel, public FGXMLFileRead
+class FGGroundReactions : public FGModel
 {
 public:
   FGGroundReactions(FGFDMExec*);

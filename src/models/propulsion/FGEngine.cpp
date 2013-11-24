@@ -46,14 +46,15 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGRotor.h"
-#include "input_output/FGXMLParse.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.53 2013/09/29 16:22:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.54 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +269,8 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     return false;
   }
 
-  document = LoadXMLDocument(thruster_fullpathname);
+  FGXMLFileRead XMLFileRead;
+  Element *document = XMLFileRead.LoadXMLDocument(thruster_fullpathname);
   document->SetParent(thruster_element);
 
   thrType = document->GetName();

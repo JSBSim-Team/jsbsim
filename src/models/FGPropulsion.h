@@ -44,13 +44,12 @@ INCLUDES
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
-#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.31 2011/10/31 14:54:41 bcoconni Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.32 2013/11/24 11:40:56 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.31 2011/10/31 14:54:41 bcoconni Exp $
+    @version $Id: FGPropulsion.h,v 1.32 2013/11/24 11:40:56 bcoconni Exp $
     @see
     FGEngine
     FGTank
@@ -102,7 +101,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGPropulsion : public FGModel, public FGXMLFileRead
+class FGPropulsion : public FGModel
 {
 public:
   /// Constructor

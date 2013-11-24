@@ -47,7 +47,7 @@ INCLUDES
 
 #include "FGScript.h"
 #include "input_output/FGXMLElement.h"
-#include "input_output/FGXMLParse.h"
+#include "input_output/FGXMLFileRead.h"
 #include "initialization/FGTrim.h"
 #include "models/FGInput.h"
 
@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.52 2013/09/11 12:46:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.53 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,7 +114,8 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   struct event *newEvent;
   FGCondition *newCondition;
 
-  document = LoadXMLDocument(script);
+  FGXMLFileRead XMLFileRead;
+  Element* document = XMLFileRead.LoadXMLDocument(script);
 
   if (!document) {
     cerr << "File: " << script << " could not be loaded." << endl;

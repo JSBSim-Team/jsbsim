@@ -37,15 +37,17 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFCSFunction.h"
 #include <cstdlib>
 #include <iostream>
+
+#include "FGFCSFunction.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.12 2012/11/17 18:03:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.13 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_FCSFUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

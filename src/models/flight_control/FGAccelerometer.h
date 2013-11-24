@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 #include "FGSensorOrientation.h"
@@ -47,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.6 2012/01/08 12:39:14 bcoconni Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.7 2013/11/24 11:40:56 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +126,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.6 $
+@version $Revision: 1.7 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

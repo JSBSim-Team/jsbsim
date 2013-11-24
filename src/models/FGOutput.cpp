@@ -44,12 +44,14 @@ INCLUDES
 #include "input_output/FGOutputSocket.h"
 #include "input_output/FGOutputTextFile.h"
 #include "input_output/FGOutputFG.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.73 2013/09/11 12:44:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.74 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,10 +194,9 @@ string FGOutput::GetOutputName(unsigned int idx) const
 
 bool FGOutput::SetDirectivesFile(const std::string& fname)
 {
-  Element* document = LoadXMLDocument(fname);
+  FGXMLFileRead XMLFile;
+  Element* document = XMLFile.LoadXMLDocument(fname);
   bool result = Load(document);
-
-  ResetParser();
 
   if (!result)
     cerr << endl << "Aircraft output element has problems in file " << fname << endl;

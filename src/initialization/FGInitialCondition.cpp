@@ -58,12 +58,14 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/string_utilities.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.88 2013/11/17 13:04:53 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.89 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -870,7 +872,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     init_file_name = rstfile;
   }
 
-  document = LoadXMLDocument(init_file_name);
+  FGXMLFileRead XMLFileRead;
+  Element* document = XMLFileRead.LoadXMLDocument(init_file_name);
 
   // Make sure that the document is valid
   if (!document) {
@@ -887,14 +890,14 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   bool result = false;
 
   if (version == HUGE_VAL) {
-    result = Load_v1(); // Default to the old version
+    result = Load_v1(document); // Default to the old version
   } else if (version >= 3.0) {
     cerr << "Only initialization file formats 1 and 2 are currently supported" << endl;
     exit (-1);
   } else if (version >= 2.0) {
-    result = Load_v2();
+    result = Load_v2(document);
   } else if (version >= 1.0) {
-    result = Load_v1();
+    result = Load_v1(document);
   }
 
   // Check to see if any engines are specified to be initialized in a running state
@@ -909,7 +912,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 
 //******************************************************************************
 
-bool FGInitialCondition::Load_v1(void)
+bool FGInitialCondition::Load_v1(Element* document)
 {
   bool result = true;
 
@@ -995,7 +998,7 @@ bool FGInitialCondition::Load_v1(void)
 
 //******************************************************************************
 
-bool FGInitialCondition::Load_v2(void)
+bool FGInitialCondition::Load_v2(Element* document)
 {
   FGColumnVector3 vOrient;
   bool result = true;

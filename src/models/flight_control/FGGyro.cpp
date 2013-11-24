@@ -37,16 +37,17 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGGyro.h"
 #include <iostream>
 
+#include "FGGyro.h"
 #include "models/FGAccelerations.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGyro.cpp,v 1.7 2012/11/17 18:03:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGyro.cpp,v 1.8 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_GYRO;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

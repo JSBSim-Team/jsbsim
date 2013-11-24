@@ -42,7 +42,6 @@ INCLUDES
 #include <vector>
 
 #include "FGModel.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 
@@ -50,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.20 2012/09/15 17:00:56 bcoconni Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.21 2013/11/24 11:40:55 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +90,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.20 2012/09/15 17:00:56 bcoconni Exp $
+    @version $Id: FGAircraft.h,v 1.21 2013/11/24 11:40:55 bcoconni Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
      Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
      School, January 1994

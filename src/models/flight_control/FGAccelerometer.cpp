@@ -37,20 +37,21 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGAccelerometer.h"
 #include <iostream>
 #include <cstdlib>
 
+#include "FGAccelerometer.h"
 #include "models/FGPropagate.h"
 #include "models/FGAccelerations.h"
 #include "models/FGMassBalance.h"
 #include "models/FGInertial.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.11 2012/11/17 18:03:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerometer.cpp,v 1.12 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELEROMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

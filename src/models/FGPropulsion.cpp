@@ -59,14 +59,15 @@ INCLUDES
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLParse.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.70 2013/09/11 23:24:49 jentron Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.71 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -376,6 +377,7 @@ bool FGPropulsion::Load(Element* elem)
   string type, engine_filename;
   string separator = "/";
   Element *el=0;
+  FGXMLFileRead XMLFileRead;
   FGXMLParse main_file_parser;
 
   Debug(2);
@@ -384,7 +386,7 @@ bool FGPropulsion::Load(Element* elem)
   fname = elem->GetAttributeValue("file");
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
-    el = LoadXMLDocument(file, main_file_parser);
+    el = XMLFileRead.LoadXMLDocument(file, main_file_parser);
     if (el == 0L) return false;
   } else {
     el = elem;
@@ -421,7 +423,7 @@ bool FGPropulsion::Load(Element* elem)
       return false;
     }
 
-    document = LoadXMLDocument(engine_filename);
+    Element* document = XMLFileRead.LoadXMLDocument(engine_filename);
     document->SetParent(engine_element);
 
     type = document->GetName();
@@ -458,7 +460,7 @@ bool FGPropulsion::Load(Element* elem)
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
-    ResetParser();
+    XMLFileRead.ResetParser();
   }
 
   CalculateTankInertias();

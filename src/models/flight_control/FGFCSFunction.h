@@ -38,14 +38,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGFunction.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.8 2011/11/10 12:06:14 jberndt Exp $"
+#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.9 2013/11/24 11:40:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -105,7 +104,7 @@ a function (from an aero specification):
 </function>
 @endcode
 
-    @version $Id: FGFCSFunction.h,v 1.8 2011/11/10 12:06:14 jberndt Exp $
+    @version $Id: FGFCSFunction.h,v 1.9 2013/11/24 11:40:57 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

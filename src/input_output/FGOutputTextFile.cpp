@@ -58,12 +58,13 @@ INCLUDES
 #include "models/FGBuoyantForces.h"
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.6 2013/09/11 12:51:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputTextFile.cpp,v 1.7 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTEXTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

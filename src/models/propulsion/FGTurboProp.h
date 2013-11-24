@@ -44,10 +44,9 @@ INCLUDES
 
 #include <vector>
 #include "FGEngine.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.16 2011/08/04 13:45:42 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.17 2013/11/24 11:40:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

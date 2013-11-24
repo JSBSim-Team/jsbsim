@@ -48,12 +48,13 @@ INCLUDES
 #include "FGTurboProp.h"
 #include "FGPropeller.h"
 #include "FGRotor.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.24 2011/09/25 23:56:11 jentron Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.25 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

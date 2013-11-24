@@ -68,12 +68,14 @@ INCLUDES
 #include "initialization/FGLinearization.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.149 2013/11/17 05:15:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.150 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -709,8 +711,9 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   }
 
   int saved_debug_lvl = debug_lvl;
+  FGXMLFileRead XMLFileRead;
+  Element *document = XMLFileRead.LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
 
-  document = LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
   if (document) {
     if (IsChild) debug_lvl = 0;
 

@@ -41,6 +41,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -64,12 +65,13 @@ INCLUDES
 
 using namespace std;
 using JSBSim::FGXMLFileRead;
+using JSBSim::Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.79 2013/06/10 01:47:49 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.80 2013/11/24 11:40:55 bcoconni Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -143,29 +145,29 @@ class XMLFile : public FGXMLFileRead {
 public:
   bool IsScriptFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename, false);
-    if (document) if (document->GetName() == "runscript") result = true;
+    Element *document = LoadXMLDocument(filename, false);
+    if (document && document->GetName() == "runscript") result = true;
     ResetParser();
     return result;
   }
   bool IsLogDirectiveFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename, false);
-    if (document) if (document->GetName() == "output") result = true;
+    Element *document = LoadXMLDocument(filename, false);
+    if (document && document->GetName() == "output") result = true;
     ResetParser();
     return result;
   }
   bool IsAircraftFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename, false);
-    if (document) if (document->GetName() == "fdm_config") result = true;
+    Element* document = LoadXMLDocument(filename, false);
+    if (document && document->GetName() == "fdm_config") result = true;
     ResetParser();
     return result;
   }
   bool IsInitFile(std::string filename) {
     bool result=false;
-    document = LoadXMLDocument(filename, false);
-    if (document) if (document->GetName() == "initialize") result = true;
+    Element *document = LoadXMLDocument(filename, false);
+    if (document && document->GetName() == "initialize") result = true;
     ResetParser();
     return result;
   }
