@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.6 2013/11/15 22:42:59 bcoconni Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.7 2013/11/24 16:53:15 bcoconni Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -140,13 +140,8 @@ public:
   inline int GetRunCount(void) { return total_stability_iterations; }
   double GetAvgStability( void );
   
-  void SetThetaOnGround(double ff);
-  void SetPhiOnGround(double ff);
-  
   inline void SetStateTarget(double target) { state_target=target; }
   inline double GetStateTarget(void) { return state_target; }
-  
-  bool initTheta(void);
   
   void AxisReport(void);
   
