@@ -41,12 +41,13 @@ INCLUDES
 #include <sstream>
 #include <string>
 #include "FGModelFunctions.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.6 2012/09/05 05:00:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.7 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

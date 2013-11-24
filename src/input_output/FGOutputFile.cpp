@@ -41,12 +41,13 @@ INCLUDES
 #include <sstream>
 
 #include "FGOutputFile.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.3 2012/12/15 16:13:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutputFile.cpp,v 1.4 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

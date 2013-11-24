@@ -48,6 +48,7 @@ INCLUDES
 #include "input_output/FGPropertyManager.h"
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
@@ -61,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.105 2013/11/10 14:44:38 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.106 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in

@@ -38,15 +38,17 @@ Also, see the header file (FGDistributor.h) for further details.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <iostream>
  
 #include "FGDistributor.h"
-#include <iostream>
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDistributor.cpp,v 1.2 2013/09/27 20:07:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDistributor.cpp,v 1.3 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_DISTRIBUTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

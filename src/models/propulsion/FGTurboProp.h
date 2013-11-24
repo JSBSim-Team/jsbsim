@@ -44,10 +44,9 @@ INCLUDES
 
 #include <vector>
 #include "FGEngine.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.16 2011/08/04 13:45:42 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.18 2013/11/24 14:22:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -160,7 +159,6 @@ private:
   double N2;               ///< N2
   double MaxN1;            ///< N1 at 100% throttle
   double MaxN2;            ///< N2 at 100% throttle
-  double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
   double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
@@ -195,6 +193,7 @@ private:
   double Velocity;
   double rho;
   double PSFC;                 // Power specific fuel comsumption [lb/(HP*hr)] at best efficiency
+  double CombustionEfficiency;
 
   double HP;                   // engine power output
 
@@ -222,6 +221,7 @@ private:
   FGTable* ITT_N1;             // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
   FGTable* EnginePowerVC;
+  FGTable* CombustionEfficiency_N1;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

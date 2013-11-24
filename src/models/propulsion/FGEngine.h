@@ -47,15 +47,13 @@ INCLUDES
 #include <string>
 
 #include "math/FGModelFunctions.h"
-#include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.37 2013/11/15 22:43:02 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.38 2013/11/24 11:40:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,14 +111,14 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.37 2013/11/15 22:43:02 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.38 2013/11/24 11:40:57 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGEngine : public FGModelFunctions, public FGXMLFileRead
+class FGEngine : public FGModelFunctions
 {
 public:
   struct Inputs {

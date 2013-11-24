@@ -46,6 +46,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
@@ -59,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.34 2012/09/15 17:00:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.35 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

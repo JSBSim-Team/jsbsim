@@ -45,6 +45,8 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 #include "models/flight_control/FGFilter.h"
 #include "models/flight_control/FGDeadBand.h"
@@ -69,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.82 2013/09/27 19:40:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.83 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -489,6 +491,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
   string name, file, fname="", interface_property_string, parent_name;
   Element *component_element;
   Element *channel_element;
+  FGXMLFileRead XMLFileRead;
+  Element* document;
   
 // ToDo: The handling of name and file attributes could be improved, here,
 //       considering that a name can be in the external file, as well.
@@ -506,7 +510,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
       cerr << "FCS, Autopilot, or system does not appear to be defined inline nor in a file" << endl;
       return false;
     } else {
-      document = LoadXMLDocument(file);
+      document = XMLFileRead.LoadXMLDocument(file);
       if (!document) {
         cerr << "Error loading file " << file << endl;
         return false;
@@ -652,8 +656,6 @@ bool FGFCS::Load(Element* el, SystemType systype)
   }
 
   PostLoad(document, PropertyManager);
-
-  ResetParser();
 
   return true;
 }

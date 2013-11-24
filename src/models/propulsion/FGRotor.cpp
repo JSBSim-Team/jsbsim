@@ -48,6 +48,7 @@ INCLUDES
 #include "FGRotor.h"
 #include "models/FGMassBalance.h"
 #include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
+#include "input_output/FGXMLElement.h"
 
 using std::cerr;
 using std::cout;
@@ -56,7 +57,7 @@ using std::ostringstream;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.20 2012/03/18 15:48:36 jentron Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.21 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

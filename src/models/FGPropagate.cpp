@@ -67,6 +67,7 @@ INCLUDES
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 #include "FGPropagate.h"
 #include "FGGroundReactions.h"
@@ -77,7 +78,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.118 2013/09/29 17:21:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.119 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

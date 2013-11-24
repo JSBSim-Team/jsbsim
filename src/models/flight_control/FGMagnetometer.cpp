@@ -37,17 +37,19 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGMagnetometer.h"
-#include "simgear/magvar/coremag.hxx"
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+
+#include "FGMagnetometer.h"
+#include "simgear/magvar/coremag.hxx"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.6 2012/11/17 18:03:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMagnetometer.cpp,v 1.7 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_MAGNETOMETER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

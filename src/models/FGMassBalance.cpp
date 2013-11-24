@@ -44,12 +44,14 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.42 2012/12/12 06:19:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.43 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,11 +106,13 @@ bool FGMassBalance::Load(Element* elem)
   double bixx, biyy, bizz, bixy, bixz, biyz;
   string fname="", file="";
   string separator = "/";
+  FGXMLFileRead XMLFileRead;
+  Element* document;
 
   fname = elem->GetAttributeValue("file");
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = LoadXMLDocument(file);
+    document = XMLFileRead.LoadXMLDocument(file);
     if (document == 0L) return false;
   } else {
     document = elem;

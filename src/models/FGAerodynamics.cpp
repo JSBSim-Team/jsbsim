@@ -43,12 +43,14 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGAerodynamics.h"
 #include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.48 2013/09/11 12:42:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.49 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,11 +286,13 @@ bool FGAerodynamics::Load(Element *element)
   Element *temp_element, *axis_element, *function_element;
 
   string separator = "/";
+  FGXMLFileRead XMLFileRead;
+  Element* document;
 
   fname = element->GetAttributeValue("file");
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = LoadXMLDocument(file);
+    document = XMLFileRead.LoadXMLDocument(file);
     if (document == 0L) return false;
   } else {
     document = element;
@@ -296,7 +300,7 @@ bool FGAerodynamics::Load(Element *element)
 
   FGModel::Load(document); // Perform base class Pre-Load
 
-  DetermineAxisSystem(); // Detemine if Lift/Side/Drag, etc. is used.
+  DetermineAxisSystem(document); // Detemine if Lift/Side/Drag, etc. is used.
 
   Debug(2);
 
@@ -370,7 +374,7 @@ bool FGAerodynamics::Load(Element *element)
 // This is OK, and the warning is due to the SIDE specifier used for both
 // the Lift/Drag and Axial/Normal axis systems.
 
-void FGAerodynamics::DetermineAxisSystem()
+void FGAerodynamics::DetermineAxisSystem(Element* document)
 {
   Element* axis_element = document->FindElement("axis");
   string axis;

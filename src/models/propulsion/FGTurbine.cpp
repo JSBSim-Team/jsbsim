@@ -44,12 +44,13 @@ INCLUDES
 
 #include "FGTurbine.h"
 #include "FGThruster.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.37 2012/11/17 19:38:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.38 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

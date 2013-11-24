@@ -45,6 +45,9 @@ INCLUDES
 #include "FGTrim.h"
 #include "models/FGGroundReactions.h"
 #include "models/FGInertial.h"
+#include "models/FGAccelerations.h"
+#include "models/FGMassBalance.h"
+#include "models/FGFCS.h"
 
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
@@ -54,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.17 2012/09/05 21:49:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.18 2013/11/24 16:53:15 bcoconni Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,6 +228,13 @@ bool FGTrim::DoTrim(void) {
 
   trim_failed=false;
   int i;
+  FGFCS *FCS = fdmex->GetFCS();
+  vector<double> throttle0 = FCS->GetThrottleCmd();
+  double elevator0 = FCS->GetDeCmd();
+  double aileron0 = FCS->GetDaCmd();
+  double rudder0 = FCS->GetDrCmd();
+  double PitchTrim0 = FCS->GetPitchTrimCmd();
+  FGInitialCondition fgic0 = *fgic;
 
   for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
@@ -239,15 +249,21 @@ bool FGTrim::DoTrim(void) {
   fgic->SetQRadpsIC(0.0);
   fgic->SetRRadpsIC(0.0);
 
+  if (mode == tGround) {
+    trimOnGround();
+    double theta = fgic->GetThetaRadIC();
+    double phi = fgic->GetPhiRadIC();
+    // Take opportunity of the first approx. found by trimOnGround() to
+    // refine the control limits.
+    TrimAxes[0]->SetControlLimits(0., fgic->GetAltitudeAGLFtIC());
+    TrimAxes[1]->SetControlLimits(theta - 5.0 * degtorad, theta + 5.0 * degtorad);
+    TrimAxes[2]->SetControlLimits(phi - 30.0 * degtorad, phi + 30.0 * degtorad);
+  }
+
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<TrimAxes.size();current_axis++) {
     //cout << current_axis << "  " << TrimAxes[current_axis]->GetStateName()
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
-    if(TrimAxes[current_axis]->GetStateType() == tQdot) {
-      if(mode == tGround) {
-        TrimAxes[current_axis]->initTheta();
-      }
-    }
     xlo=TrimAxes[current_axis]->GetControlMin();
     xhi=TrimAxes[current_axis]->GetControlMax();
     TrimAxes[current_axis]->SetControl((xlo+xhi)/2);
@@ -257,7 +273,6 @@ bool FGTrim::DoTrim(void) {
     successful[current_axis]=0;
     solution[current_axis]=false;
   }
-
 
   if(mode == tPullup ) {
     cout << "Setting pitch rate and nlf... " << endl;
@@ -296,7 +311,6 @@ bool FGTrim::DoTrim(void) {
         successful[current_axis]++;
       }
     }
-
 
     if((axis_count == TrimAxes.size()-1) && (TrimAxes.size() > 1)) {
       //cout << TrimAxes.size()-1 << " out of " << TrimAxes.size() << "!" << endl;
@@ -338,22 +352,216 @@ bool FGTrim::DoTrim(void) {
     if(N > max_iterations)
       trim_failed=true;
   } while((axis_count < TrimAxes.size()) && (!trim_failed));
+
   if((!trim_failed) && (axis_count >= TrimAxes.size())) {
     total_its=N;
     if (debug_lvl > 0)
         cout << endl << "  Trim successful" << endl;
-  } else {
+  } else { // The trim has failed
     total_its=N;
+
+    // Restore the aircraft parameters to their initial values
+    *fgic = fgic0;
+    FCS->SetDeCmd(elevator0);
+    FCS->SetDaCmd(aileron0);
+    FCS->SetDrCmd(rudder0);
+    FCS->SetPitchTrimCmd(PitchTrim0);
+    for (unsigned int i=0; i < throttle0.size(); i++)
+      FCS->SetThrottleCmd(i, throttle0[i]);
+
+    // If WOW is true we must make sure there are no gears into the ground.
+    if (fdmex->GetGroundReactions()->GetWOW()) {
+      fdmex->Initialize(fgic);
+      fdmex->Run();
+      trimOnGround();
+    }
+
     if (debug_lvl > 0)
         cout << endl << "  Trim failed" << endl;
   }
+
   for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
+
   fdmex->SetTrimStatus(false);
   fdmex->ResumeIntegration();
   fdmex->EnableOutput();
   return !trim_failed;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Trim the aircraft on the ground. The algorithm is looking for a stable
+// position of the aicraft. Assuming the aircaft is a rigid body and the ground
+// a plane: we need to find the translations and rotations of the aircraft that
+// will move 3 non-colinear points in contact with the ground.
+// The algorithm proceeds in three stages (one for each point):
+// 1. Look for the contact point closer to or deeper into the ground. Move the
+//    aircraft along the vertical direction so that only this contact point
+//    remains in contact with the ground.
+// 2. The forces applied on the aircraft (most likely the gravity) will generate
+//    a moment on the aircraft around the point in contact. The rotation axis is
+//    therefore the moment axis. The 2nd stage thus consists in determining the
+//    minimum rotation angle around the first point in contact that will place a
+//    second contact point on the ground.
+// 3. At this stage, 2 points are in contact with the ground: the rotation axis
+//    is therefore the vector generated by the 2 points. Like stage #2, the
+//    rotation direction will be driven by the moment around the axis formed by
+//    the 2 points in contact. The rotation angle is obtained similarly to stage
+//    #2: it is the minimum angle that will place a third contact point on the
+//    ground.
+// The calculations below do not account for the compression of the landing
+// gears meaning that the position found is close to the real position but not
+// strictly equal to it.
+
+void FGTrim::trimOnGround(void)
+{
+  FGGroundReactions* GroundReactions = fdmex->GetGroundReactions();
+  FGPropagate* Propagate = fdmex->GetPropagate();
+  FGMassBalance* MassBalance = fdmex->GetMassBalance();
+  FGAccelerations* Accelerations = fdmex->GetAccelerations();
+  vector<ContactPoints> contacts;
+  FGLocation CGLocation = Propagate->GetLocation();
+  FGMatrix33 Tec2b = Propagate->GetTec2b();
+  FGMatrix33 Tl2b = Propagate->GetTl2b();
+  double hmin = 1E+10;
+  int contactRef = -1;
+
+  // Build the list of the aircraft contact points and take opportunity of the
+  // loop to find which one is closer to (or deeper into) the ground.
+  for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++) {
+    ContactPoints c;
+    FGLGear* gear = GroundReactions->GetGearUnit(i);
+    c.location = gear->GetLocalGear();
+    FGLocation gearLoc = CGLocation.LocalToLocation(c.location);
+    c.location = Tl2b * c.location;
+
+    FGColumnVector3 normal, vDummy;
+    FGLocation lDummy;
+    double height = gearLoc.GetContactPoint(fdmex->GetSimTime(), lDummy,
+                                            normal, vDummy, vDummy);
+    c.normal = Tec2b * normal;
+
+    contacts.push_back(c);
+
+    if (height < hmin) {
+      hmin = height;
+      contactRef = i;
+    }
+  }
+
+  // Remove the contact point that is closest to the ground from the list:
+  // the rotation axis will be going thru this point so we need to remove it
+  // to avoid divisions by zero that could result from the computation of
+  // the rotations.
+  FGColumnVector3 contact0 = contacts[contactRef].location;
+  contacts.erase(contacts.begin() + contactRef);
+
+  // Update the initial conditions: this should remove the forces generated
+  // by overcompressed landing gears
+  fgic->SetAltitudeASLFtIC(fgic->GetAltitudeASLFtIC() - hmin);
+  fdmex->Initialize(fgic);
+  fdmex->Run();
+
+  // Compute the rotation axis: it is obtained from the direction of the
+  // moment measured at the contact point 'contact0'
+  FGColumnVector3 force = MassBalance->GetMass() * Accelerations->GetUVWdot();
+  FGColumnVector3 moment = MassBalance->GetJ() * Accelerations->GetPQRdot()
+    + force * contact0;
+  FGColumnVector3 rotationAxis = moment.Normalize();
+
+  // Compute the rotation parameters: angle and the first point to come into
+  // contact with the ground when the rotation is applied.
+  RotationParameters rParam = calcRotation(contacts, rotationAxis, contact0);
+  FGQuaternion q0(rParam.angleMin, rotationAxis);
+
+  // Apply the computed rotation to all the contact points
+  FGMatrix33 rot = q0.GetTInv();
+  vector<ContactPoints>::iterator iter;
+  for (iter = contacts.begin(); iter != contacts.end(); iter++)
+    iter->location = contact0 + rot * (iter->location - contact0);
+
+  // Remove the second point to come in contact with the ground from the list.
+  // The reason is the same than above: avoid divisions by zero when the next
+  // rotation will be computed.
+  FGColumnVector3 contact1 = rParam.contactRef->location;
+  contacts.erase(rParam.contactRef);
+
+  // Compute the rotation axis: now there are 2 points in contact with the
+  // ground so the only option for the aircraft is to rotate around the axis
+  // generated by these 2 points.
+  rotationAxis = contact1 - contact0;
+  // Make sure that the rotation orientation is consistent with the moment.
+  if (DotProduct(rotationAxis, moment) < 0.0)
+    rotationAxis = contact0 - contact1;
+
+  rotationAxis.Normalize();
+
+  // Compute the rotation parameters
+  rParam = calcRotation(contacts, rotationAxis, contact0);
+  FGQuaternion q1(rParam.angleMin, rotationAxis);
+
+  // Update the aircraft orientation
+  FGColumnVector3 euler = (q0 * q1 * fgic->GetOrientation()).GetEuler();
+
+  fgic->SetPhiRadIC(euler(1));
+  fgic->SetThetaRadIC(euler(2));
+  fgic->SetPsiRadIC(euler(3));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Given a set of points and a rotation axis, this routine computes for each
+// point the rotation angle that would drive the point in contact with the
+// plane. It returns the minimum angle as well as the point with which this
+// angle has been obtained.
+// The rotation axis is defined by a vector 'u' and a point 'M0' on the axis.
+// Since we are in the body frame, the position if 'M0' is measured from the CG
+// hence the name 'GM0'.
+
+FGTrim::RotationParameters FGTrim::calcRotation(vector<ContactPoints>& contacts,
+                                                const FGColumnVector3& u,
+                                                const FGColumnVector3& GM0)
+{
+  RotationParameters rParam;
+  vector<ContactPoints>::iterator iter;
+
+  rParam.angleMin = 3.0 * M_PI;
+
+  for (iter = contacts.begin(); iter != contacts.end(); iter++) {
+    // Below the processed contact point is named 'M'
+    // Construct an orthonormal basis (u, v, t). The ground normal is obtained
+    // from iter->normal.
+    FGColumnVector3 t = u * iter->normal;
+    double length = t.Magnitude();
+    t /= length; // Normalize the tangent
+    FGColumnVector3 v = t * u;
+    FGColumnVector3 MM0 = GM0 - iter->location;
+    // d0 is the distance from the circle center 'C' to the reference point 'M0'
+    double d0 = DotProduct(MM0, u);
+    // Compute the square of the circle radius i.e. the square of the distance
+    // between 'C' and 'M'.
+    double sqrRadius = DotProduct(MM0, MM0) - d0 * d0;
+    // Compute the distance from the circle center 'C' to the line made by the
+    // intersection between the ground and the plane that contains the circle.
+    double DistPlane = d0 * DotProduct(u, iter->normal) / length;
+    // The coordinate of the point of intersection 'P' between the circle and
+    // the ground is (0, DistPlane, alpha) in the basis (u, v, t)
+    double alpha = sqrt(sqrRadius - DistPlane * DistPlane);
+    FGColumnVector3 CP = alpha * t + DistPlane * v;
+    // The transformation is now constructed: we can extract the angle using the
+    // classical formulas (cosine is obtained from the dot product and sine from
+    // the cross product).
+    double cosine = -DotProduct(MM0, CP) / sqrRadius;
+    double sine = DotProduct(MM0 * u, CP) / sqrRadius;
+    double angle = atan2(sine, cosine);
+    if (angle < 0.0) angle += 2.0 * M_PI;
+    if (angle < rParam.angleMin) {
+      rParam.angleMin = angle;
+      rParam.contactRef = iter;
+    }
+  }
+
+  return rParam;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -645,7 +853,7 @@ void FGTrim::SetMode(TrimMode tt) {
           cout << "  Ground Trim" << endl;
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta ));
-        //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi ));
         break;
       case tPullup:
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));

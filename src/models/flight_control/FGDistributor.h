@@ -39,8 +39,8 @@ INCLUDES
 
 #include <iostream>
 #include <cstdlib>
+
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGCondition.h"
 #include "math/FGPropertyValue.h"
 #include "math/FGRealValue.h"
@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.4 2013/11/17 05:09:56 jberndt Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.5 2013/11/24 11:40:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.4 2013/11/17 05:09:56 jberndt Exp $
+@version $Id: FGDistributor.h,v 1.5 2013/11/24 11:40:57 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

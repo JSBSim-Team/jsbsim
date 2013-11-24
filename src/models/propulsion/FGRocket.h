@@ -41,13 +41,12 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 #include "math/FGFunction.h"
-#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.19 2012/09/17 12:29:13 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.20 2013/11/24 11:40:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.19 2012/09/17 12:29:13 jberndt Exp $
+    $Id: FGRocket.h,v 1.20 2013/11/24 11:40:57 bcoconni Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,

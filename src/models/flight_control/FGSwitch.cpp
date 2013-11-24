@@ -61,14 +61,16 @@ Also, see the header file (FGSwitch.h) for further details.
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSwitch.h"
 #include <iostream>
+
+#include "FGSwitch.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.26 2013/11/17 05:11:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.27 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +98,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     current_test->setTestValue(value, Name, PropertyManager);
     current_test->Default = true;
     if (delay > 0 && is_number(value)) {        // If there is a delay, initialize the
-      for (int i=0; i<delay-1; i++) {           // delay buffer to the default value
+      for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
         output_array[i] = atof(value.c_str());  // for the switch if that value is a number.
       }
     }

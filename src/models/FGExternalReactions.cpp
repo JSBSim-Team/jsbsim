@@ -36,10 +36,12 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGExternalReactions.h"
-#include "input_output/FGXMLElement.h"
 #include <iostream>
 #include <string>
+
+#include "FGExternalReactions.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
@@ -53,7 +55,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.12 2011/07/20 12:16:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.13 2013/11/24 11:40:56 bcoconni Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,9 +75,11 @@ bool FGExternalReactions::Load(Element* el)
 {
   // check if a file attribute was specified
   string fname = el->GetAttributeValue("file");
+  FGXMLFileRead XMLFileRead;
+
   if (!fname.empty()) {
     string file = FDMExec->GetFullAircraftPath() + "/" + fname;
-    el = LoadXMLDocument(file);
+    el = XMLFileRead.LoadXMLDocument(file);
     if (el == 0L) return false;
   }
 

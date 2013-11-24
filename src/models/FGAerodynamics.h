@@ -46,13 +46,12 @@ INCLUDES
 #include "math/FGFunction.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
-#include "input_output/FGXMLFileRead.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.28 2013/11/15 22:43:00 bcoconni Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.29 2013/11/24 11:40:55 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,14 +108,14 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.28 $
+    @version $Revision: 1.29 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGAerodynamics : public FGModel, public FGXMLFileRead
+class FGAerodynamics : public FGModel
 {
 
 public:
@@ -252,7 +251,7 @@ private:
   double clsq, lod, qbar_area;
 
   typedef double (FGAerodynamics::*PMF)(int) const;
-  void DetermineAxisSystem(void);
+  void DetermineAxisSystem(Element* document);
   void bind(void);
 
   void Debug(int from);

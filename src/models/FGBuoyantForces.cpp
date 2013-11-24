@@ -36,16 +36,19 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+
 #include "FGBuoyantForces.h"
 #include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
-#include <iostream>
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.21 2011/10/31 14:54:41 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.22 2013/11/24 11:40:55 bcoconni Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,11 +120,13 @@ bool FGBuoyantForces::Load(Element *element)
   Debug(2);
 
   string separator = "/";
+  FGXMLFileRead XMLFileRead;
+  Element* document;
 
   fname = element->GetAttributeValue("file");
   if (!fname.empty()) {
     file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = LoadXMLDocument(file);
+    document = XMLFileRead.LoadXMLDocument(file);
   } else {
     document = element;
   }

@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.9 2013/11/15 22:42:59 bcoconni Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.10 2013/11/24 16:53:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,7 +120,7 @@ CLASS DOCUMENTATION
     @endcode
     
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.9 2013/11/15 22:42:59 bcoconni Exp $"
+    @version "$Id: FGTrim.h,v 1.10 2013/11/24 16:53:15 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,6 +177,21 @@ private:
 
   void updateRates(void);
   void setDebug(void);
+
+  struct ContactPoints {
+    FGColumnVector3 location;
+    FGColumnVector3 normal;
+  };
+
+  struct RotationParameters {
+    double angleMin;
+    std::vector<ContactPoints>::iterator contactRef;
+  };
+
+  void trimOnGround(void);
+  RotationParameters calcRotation(std::vector<ContactPoints>& contacts,
+                                  const FGColumnVector3& rotationAxis,
+                                  const FGColumnVector3& contact0);
 
 public:
   /** Initializes the trimming class

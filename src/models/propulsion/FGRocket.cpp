@@ -40,14 +40,16 @@ INCLUDES
 
 #include <iostream>
 #include <sstream>
+
 #include "FGRocket.h"
 #include "FGThruster.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.30 2013/06/10 02:00:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.31 2013/11/24 11:40:57 bcoconni Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

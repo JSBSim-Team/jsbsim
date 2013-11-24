@@ -48,7 +48,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.25 2012/09/05 05:00:57 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.26 2013/11/24 16:53:15 bcoconni Exp $"
 
 namespace JSBSim {
 
@@ -147,6 +147,27 @@ public:
       data[3] = Sangle2;
 
     }
+  }
+
+  /** Initializer by a rotation axis and an angle.
+      Initialize the quaternion to represent the rotation around a given
+      angle and an arbitrary axis.
+      @param angle The angle in radians
+      @param axis  The rotation axis
+   */
+  FGQuaternion(double angle, const FGColumnVector3& axis)
+    : mCacheValid(false) {
+
+    double angle2 = 0.5 * angle;
+
+    double length = axis.Magnitude();
+    double Sangle2 = sin(angle2) / length;
+    double Cangle2 = cos(angle2);
+
+    data[0] = Cangle2;
+    data[1] = Sangle2 * axis(1);
+    data[2] = Sangle2 * axis(2);
+    data[3] = Sangle2 * axis(3);
   }
 
   /** Initializer by matrix.
