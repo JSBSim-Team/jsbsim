@@ -395,6 +395,7 @@
     <ClInclude Include="src\models\FGAccelerations.h" />
     <ClInclude Include="src\models\FGFCSChannel.h" />
     <ClInclude Include="src\models\flight_control\FGAngles.h" />
+    <ClInclude Include="src\models\flight_control\FGDistributor.h" />
     <ClInclude Include="src\models\flight_control\FGWaypoint.h" />
     <ClInclude Include="src\models\propulsion\FGTransmission.h" />
     <ClInclude Include="src\simgear\xml\ascii.h" />
@@ -508,6 +509,7 @@
     <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
     <ClCompile Include="src\models\FGAccelerations.cpp" />
     <ClCompile Include="src\models\flight_control\FGAngles.cpp" />
+    <ClCompile Include="src\models\flight_control\FGDistributor.cpp" />
     <ClCompile Include="src\models\flight_control\FGWaypoint.cpp" />
     <ClCompile Include="src\models\propulsion\FGTransmission.cpp" />
     <ClCompile Include="src\simgear\magvar\coremag.cxx" />
