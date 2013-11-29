@@ -6,6 +6,9 @@
 
 enum ePlotType {lines=0, points};
 
+using std::string;
+using std::vector;
+
 struct Plots {
   string Title;
   string Axis_Caption[3];
