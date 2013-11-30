@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.89 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.90 2013/11/30 11:59:19 bcoconni Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -886,8 +886,11 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     exit(-1);
   }
 
-  double version = document->GetAttributeValueAsNumber("version");
+  double version = HUGE_VAL;
   bool result = false;
+
+  if (document->HasAttribute("version"))
+    version = document->GetAttributeValueAsNumber("version");
 
   if (version == HUGE_VAL) {
     result = Load_v1(document); // Default to the old version

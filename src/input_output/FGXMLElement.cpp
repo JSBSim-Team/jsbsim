@@ -44,7 +44,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.42 2013/11/30 11:10:12 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.43 2013/11/30 11:59:19 bcoconni Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -267,7 +267,11 @@ double Element::GetAttributeValueAsNumber(const string& attr)
 {
   string attribute = GetAttributeValue(attr);
 
-  if (attribute.empty()) return HUGE_VAL;
+  if (attribute.empty()) {
+    cerr << ReadFrom() << "Expecting numeric attribute value, but got no data"
+         << endl;
+    exit(-1);
+  }
   else {
     double number=0;
     if (is_number(trim(attribute)))
@@ -333,11 +337,15 @@ double Element::GetDataAsNumber(void)
 
     return number;
   } else if (data_lines.size() == 0) {
-    return HUGE_VAL;
+    cerr << ReadFrom() << "Expected numeric value, but got no data" << endl;
+    exit(-1);
   } else {
-    cerr << ReadFrom() << "Attempting to get single data value from multiple lines in element "
-         << name << endl;
-    return HUGE_VAL;
+    cerr << ReadFrom() << "Attempting to get single data value in element "
+         << "<" << name << ">" << endl
+         << " from multiple lines:" << endl;
+    for(unsigned int i=0; i<data_lines.size(); ++i)
+      cerr << data_lines[i] << endl;
+    exit(-1);
   }
 }
 
