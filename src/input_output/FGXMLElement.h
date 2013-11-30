@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.18 2013/11/16 14:51:20 bcoconni Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.19 2013/11/30 11:10:12 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,7 +136,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.18 2013/11/16 14:51:20 bcoconni Exp $
+    @version $Id: FGXMLElement.h,v 1.19 2013/11/30 11:10:12 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,7 +363,6 @@ private:
   std::map <std::string, std::string> attributes;
   std::vector <std::string> data_lines;
   std::vector <Element*> children;
-  std::vector <std::string> attribute_key;
   Element *parent;
   unsigned int element_index;
   std::string file_name;

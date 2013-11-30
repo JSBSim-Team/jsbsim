@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.14 2012/09/15 17:00:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.16 2013/11/29 22:17:54 jberndt Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -364,6 +364,7 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
+  PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
   PropertyManager->Tie("simulation/gravity-model", &gravType);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
 

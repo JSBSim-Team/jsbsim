@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.17 2011/12/10 15:49:21 bcoconni Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.18 2013/11/30 10:25:33 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 element column vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.17 2011/12/10 15:49:21 bcoconni Exp $
+    @version $Id: FGColumnVector3.h,v 1.18 2013/11/30 10:25:33 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,16 +240,16 @@ public:
       is equal to zero it is left untouched.   */
   FGColumnVector3& Normalize(void);
 
-  /** Dot product of two vectors
-      Compute and return the euclidean dot (or scalar) product of two vectors
-      v1 and v2 */
-  friend double DotProduct(const FGColumnVector3& v1, const FGColumnVector3& v2) {
-    return v1.data[0]*v2.data[0] + v1.data[1]*v2.data[1] + v1.data[2]*v2.data[2];
-  }
-
 private:
   double data[3];
 };
+
+/** Dot product of two vectors
+    Compute and return the euclidean dot (or scalar) product of two vectors
+    v1 and v2 */
+inline double DotProduct(const FGColumnVector3& v1, const FGColumnVector3& v2) {
+  return v1(1)*v2(1) + v1(2)*v2(2) + v1(3)*v2(3);
+}
 
 /** Scalar multiplication.
     @param scalar scalar value to multiply with.

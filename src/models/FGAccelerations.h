@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.14 2012/09/25 12:44:36 jberndt Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.15 2013/11/29 18:56:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
          NASA SP-8024, May 1969
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.14 2012/09/25 12:44:36 jberndt Exp $
+    @version $Id: FGAccelerations.h,v 1.15 2013/11/29 18:56:30 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,6 +234,8 @@ public:
   const FGColumnVector3& GetBodyAccel(void) const { return vBodyAccel; }
 
   const FGColumnVector3& GetGravAccel(void) const {return vGravAccel; }
+
+  double GetGravAccelMagnitude(void) const { return vGravAccel.Magnitude(); }
 
   /** Retrieves a component of the acceleration resulting from the applied forces.
       Retrieves a component of the ratio between the sum of all forces applied
