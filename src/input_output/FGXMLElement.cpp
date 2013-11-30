@@ -44,7 +44,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.41 2013/11/16 14:51:20 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.42 2013/11/30 11:10:12 bcoconni Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 bool Element::converterIsInitialized = false;
@@ -233,7 +233,6 @@ Element::Element(const string& nm)
     convert["KG/L"]["KG/L"] = 1.0;
     convert["LBS/GAL"]["LBS/GAL"] = 1.0;
   }
-  attribute_key.resize(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +242,6 @@ Element::~Element(void)
   for (unsigned int i=0; i<children.size(); i++) delete children[i];
   data_lines.clear();
   attributes.clear();
-  attribute_key.clear();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,16 +256,9 @@ string Element::GetAttributeValue(const string& attr)
 
 bool Element::HasAttribute(const string& attr)
 {
-  bool status=true;
-  int select=-1;
+  map<string, string>::iterator found = attributes.find(attr);
 
-  unsigned int attr_cnt = attribute_key.size();
-
-  for (unsigned int i=0; i<attr_cnt; i++) {
-    if (attribute_key[i] == attr) select = i;
-  }
-  if (select < 0) status=false;
-  return status;
+  return found != attributes.end();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,9 +625,11 @@ void Element::Print(unsigned int level)
   level+=2;
   for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
   cout << "Element Name: " << name;
-  for (i=0; i<attributes.size(); i++) {
-    cout << "  " << attribute_key[i] << " = " << attributes[attribute_key[i]];
-  }
+
+  map<string, string>::iterator it;
+  for (it = attributes.begin(); it != attributes.end(); ++it)
+    cout << "  " << it->first << " = " << it->second;
+
   cout << endl;
   for (i=0; i<data_lines.size(); i++) {
     for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
@@ -651,7 +644,6 @@ void Element::Print(unsigned int level)
 
 void Element::AddAttribute(const string& name, const string& value)
 {
-  attribute_key.push_back(name);
   attributes[name] = value;
 }
 
