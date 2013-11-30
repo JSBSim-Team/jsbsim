@@ -55,6 +55,7 @@ INCLUDES
 #include "models/FGAtmosphere.h"
 #include "models/FGPropagate.h"
 #include "models/FGPropulsion.h"
+#include "models/FGAccelerations.h"
 #include "models/FGFCS.h"
 #include "input_output/FGPropertyManager.h"
 #include "input_output/string_utilities.h"
@@ -65,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.90 2013/11/30 11:59:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.91 2013/11/30 21:22:34 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1005,10 +1006,19 @@ bool FGInitialCondition::Load_v2(Element* document)
 {
   FGColumnVector3 vOrient;
   bool result = true;
-  FGColumnVector3 vOmegaEarth = fdmex->GetInertial()->GetOmegaPlanet();
 
+  // support both earth_position_angle and planet_position_angle, for now.
   if (document->FindElement("earth_position_angle"))
     position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD"));
+  if (document->FindElement("planet_position_angle"))
+    position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("planet_position_angle", "RAD"));
+
+  if (document->FindElement("planet_rotation_rate")) {
+    fdmex->GetInertial()->SetOmegaPlanet(document->FindElementValueAsNumberConvertTo("planet_rotation_rate", "RAD"));
+    fdmex->GetPropagate()->in.vOmegaPlanet     = fdmex->GetInertial()->GetOmegaPlanet();
+    fdmex->GetAccelerations()->in.vOmegaPlanet = fdmex->GetInertial()->GetOmegaPlanet();
+  }
+  FGColumnVector3 vOmegaEarth = fdmex->GetInertial()->GetOmegaPlanet();
 
   // Initialize vehicle position
   //
