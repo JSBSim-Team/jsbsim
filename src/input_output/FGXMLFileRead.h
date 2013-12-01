@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.8 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.9 2013/12/01 14:33:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ public:
 
   Element* LoadXMLDocument(std::string XML_filename, bool verbose=true)
   {
-    return LoadXMLDocument(XML_filename, file_parser, true);
+    return LoadXMLDocument(XML_filename, file_parser, verbose);
   }
 
   Element* LoadXMLDocument(std::string XML_filename, FGXMLParse& fparse, bool verbose=true)
