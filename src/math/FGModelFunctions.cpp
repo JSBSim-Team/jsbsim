@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.7 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.8 2013/12/07 15:23:14 bcoconni Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,23 +67,41 @@ FGModelFunctions::~FGModelFunctions()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModelFunctions::Load(Element* el, FGPropertyManager* PM, string prefix)
+void FGModelFunctions::LoadProperties(Element* el, FGPropertyManager* PM,
+                                      bool override)
 {
   // Interface properties are all stored in the interface properties array.
   string interface_property_string = "";
 
   Element *property_element = el->FindElement("property");
-  if (property_element && debug_lvl > 0) cout << endl << "    Declared properties" 
-                                              << endl << endl;
+  if (property_element && debug_lvl > 0) {
+    cout << endl << "    ";
+    if (override)
+      cout << "Overriding";
+    else
+      cout << "Declared";
+    cout << " properties" << endl << endl;
+  }
   while (property_element) {
+    double value=0.0;
+    if ( ! property_element->GetAttributeValue("value").empty())
+      value = property_element->GetAttributeValueAsNumber("value");
+
     interface_property_string = property_element->GetDataLine();
     if (PM->HasNode(interface_property_string)) {
-      cerr << "      Property " << interface_property_string 
-           << " is already defined." << endl;
+      if (override) {
+        FGPropertyNode* node = PM->GetNode(interface_property_string);
+        if (debug_lvl > 0)
+          cout << "      " << "Overriding value for property " << interface_property_string << endl
+               << "       (old value: " << node->getDoubleValue() << "  new value: " << value << ")"
+               << endl << endl;
+        node->setDoubleValue(value);
+      }
+      else
+        cerr << property_element->ReadFrom()
+             << "      Property " << interface_property_string 
+             << " is already defined." << endl;
     } else {
-      double value=0.0;
-      if ( ! property_element->GetAttributeValue("value").empty())
-        value = property_element->GetAttributeValueAsNumber("value");
       interface_properties.push_back(new double(value));
       PM->Tie(interface_property_string, interface_properties.back());
       if (debug_lvl > 0)
@@ -94,7 +112,13 @@ bool FGModelFunctions::Load(Element* el, FGPropertyManager* PM, string prefix)
   }
   
   // End of interface property loading logic
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGModelFunctions::Load(Element* el, FGPropertyManager* PM, string prefix)
+{
+  LoadProperties(el, PM, false);
   PreLoad(el, PM, prefix);
 
   return true; // TODO: Need to make this value mean something.

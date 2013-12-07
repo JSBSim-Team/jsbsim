@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.6 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.7 2013/12/07 15:23:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,6 +81,7 @@ public:
   bool Load(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
   void PreLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
   void PostLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
+  void LoadProperties(Element* el, FGPropertyManager* PM, bool override);
 
   /** Gets the strings for the current set of functions.
       @param delimeter either a tab or comma string depending on output type

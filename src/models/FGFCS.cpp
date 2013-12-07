@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.83 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.84 2013/12/07 15:23:14 bcoconni Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -539,33 +539,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
   // systems to be defined in a file, with overrides or initial loaded constants
   // supplied in the relevant element of the aircraft configuration file.
 
-  Element* property_element = 0;
-
-  if (!fname.empty()) {
-    property_element = el->FindElement("property");
-    if (property_element && debug_lvl > 0) cout << endl << "    Overriding properties" << endl << endl;
-    while (property_element) {
-      double value=0.0;
-      if ( ! property_element->GetAttributeValue("value").empty())
-        value = property_element->GetAttributeValueAsNumber("value");
-
-      interface_property_string = property_element->GetDataLine();
-      if (PropertyManager->HasNode(interface_property_string)) {
-        FGPropertyNode* node = PropertyManager->GetNode(interface_property_string);
-        if (debug_lvl > 0)
-          cout << "      " << "Overriding value for property " << interface_property_string
-               << " (old value: " << node->getDoubleValue() << "  new value: " << value << ")" << endl;
-        node->setDoubleValue(value);
-      } else {
-        interface_properties.push_back(new double(value));
-        PropertyManager->Tie(interface_property_string, interface_properties.back());
-        if (debug_lvl > 0)
-          cout << "      " << interface_property_string << " (initial value: " << value << ")" << endl;
-      }
-      
-      property_element = el->FindNextElement("property");
-    }
-  }
+  if (!fname.empty())
+    LoadProperties(el, PropertyManager, true);
 
   channel_element = document->FindElement("channel");
   
