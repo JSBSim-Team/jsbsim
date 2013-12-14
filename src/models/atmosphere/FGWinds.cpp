@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGWinds.cpp,v 1.8 2012/12/02 12:59:19 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGWinds.cpp,v 1.9 2013/12/14 14:22:01 bcoconni Exp $";
 static const char *IdHdr = ID_WINDS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,7 +120,7 @@ FGWinds::~FGWinds()
 
 bool FGWinds::InitModel(void)
 {
-  return true;
+  return FGModel::InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

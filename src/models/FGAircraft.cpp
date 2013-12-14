@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.35 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.36 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ FGAircraft::~FGAircraft()
 
 bool FGAircraft::InitModel(void)
 {
-  return true;
+  return FGModel::InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ bool FGAircraft::Load(Element* el)
   string element_name;
   Element* element;
 
-  FGModel::Load(el);
+  if (!FGModel::Load(el)) return false;
 
   if (el->FindElement("wingarea"))
     WingArea = el->FindElementValueAsNumberConvertTo("wingarea", "FT2");

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.43 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.44 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,8 @@ FGMassBalance::~FGMassBalance()
 
 bool FGMassBalance::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   vLastXYZcg.InitMatrix(0.0);
   vDeltaXYZcg.InitMatrix(0.0);
 

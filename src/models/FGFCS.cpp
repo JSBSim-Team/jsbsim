@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.84 2013/12/07 15:23:14 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.85 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,8 @@ FGFCS::~FGFCS()
 
 bool FGFCS::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   unsigned int i;
 
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = 0.0;

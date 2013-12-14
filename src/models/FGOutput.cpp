@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.74 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.75 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,6 +85,8 @@ FGOutput::~FGOutput()
 bool FGOutput::InitModel(void)
 {
   bool ret = false;
+
+  if (!FGModel::InitModel()) return false;
 
   vector<FGOutputType*>::iterator it;
   for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
