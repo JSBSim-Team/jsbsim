@@ -41,13 +41,14 @@ INCLUDES
 #include <sstream>
 #include <string>
 #include "FGModelFunctions.h"
+#include "FGFunction.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.8 2013/12/07 15:23:14 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.9 2013/12/14 18:53:29 bcoconni Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,6 +64,17 @@ FGModelFunctions::~FGModelFunctions()
   for (unsigned int i=0; i<PostFunctions.size(); i++) delete PostFunctions[i];
 
   if (debug_lvl & 2) cout << "Destroyed:    FGModelFunctions" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGModelFunctions::InitModel(void)
+{
+  map<FGPropertyNode_ptr, double>::iterator it = interface_prop_initial_value.begin();
+  for (;it != interface_prop_initial_value.end(); ++it)
+    it->first->setDoubleValue(it->second);
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,11 +103,21 @@ void FGModelFunctions::LoadProperties(Element* el, FGPropertyManager* PM,
     if (PM->HasNode(interface_property_string)) {
       if (override) {
         FGPropertyNode* node = PM->GetNode(interface_property_string);
-        if (debug_lvl > 0)
+
+        if (debug_lvl > 0) {
+          if (interface_prop_initial_value.find(node) == interface_prop_initial_value.end()) {
+            cout << property_element->ReadFrom()
+                 << "  The followig property will be overridden but it has not been" << endl
+                 << "  defined in the current model '" << el->GetName() << "'" << endl;
+          }
+
           cout << "      " << "Overriding value for property " << interface_property_string << endl
                << "       (old value: " << node->getDoubleValue() << "  new value: " << value << ")"
                << endl << endl;
+        }
+
         node->setDoubleValue(value);
+        interface_prop_initial_value[node] = value;
       }
       else
         cerr << property_element->ReadFrom()
@@ -107,6 +129,8 @@ void FGModelFunctions::LoadProperties(Element* el, FGPropertyManager* PM,
       if (debug_lvl > 0)
         cout << "      " << interface_property_string << " (initial value: " 
              << value << ")" << endl << endl;
+      FGPropertyNode_ptr node = PM->GetNode(interface_property_string);
+      interface_prop_initial_value[node] = value;
     }
     property_element = el->FindNextElement("property");
   }
