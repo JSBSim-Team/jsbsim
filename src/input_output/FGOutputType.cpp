@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.7 2013/09/27 19:45:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutputType.cpp,v 1.8 2013/12/14 14:19:46 bcoconni Exp $";
 static const char *IdHdr = ID_OUTPUTTYPE;
 
 using namespace std;
@@ -101,7 +101,7 @@ void FGOutputType::SetIdx(int idx)
 bool FGOutputType::Load(Element* element)
 {
   // Perform base class Load.
-//  if(!FGModel::Load(element)) return false;
+  PreLoad(element, PropertyManager);
 
   if (element->FindElementValue("simulation") == string("ON"))
     SubSystems += ssSimulation;
