@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.22 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.23 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ FGBuoyantForces::~FGBuoyantForces()
 
 bool FGBuoyantForces::InitModel(void)
 {
-  return true;
+  return FGModel::InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

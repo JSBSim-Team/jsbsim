@@ -78,7 +78,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.120 2013/11/29 18:56:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.121 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +120,8 @@ FGPropagate::~FGPropagate(void)
 
 bool FGPropagate::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   // For initialization ONLY:
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
   VState.vLocation.SetAltitudeAGL(4.0, FDMExec->GetSimTime());

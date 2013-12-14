@@ -39,14 +39,13 @@ INCLUDES
 
 #include "FGSensor.h"
 #include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
 #include "FGSensorOrientation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.7 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.8 2013/12/07 12:21:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,7 +56,6 @@ namespace JSBSim {
 class FGFCS;
 class FGPropagate;
 class FGAccelerations;
-class FGInertial;
 class FGMassBalance;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,14 +117,14 @@ The only required element in the accelerometer definition is the input element. 
 case, no degradation would be modeled, and the output would simply be the input.
 
 For noise, if the type is PERCENT, then the value supplied is understood to be a
-percentage variance. That is, if the number given is 0.05, the the variance is
+percentage variance. That is, if the number given is 0.05, the variance is
 understood to be +/-0.05 percent maximum variance. So, the actual value for the accelerometer
 will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
 even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.7 $
+@version $Revision: 1.8 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +143,6 @@ private:
   FGPropagate* Propagate;
   FGAccelerations* Accelerations;
   FGMassBalance* MassBalance;
-  FGInertial* Inertial;
   FGColumnVector3 vLocation;
   FGColumnVector3 vRadius;
   FGColumnVector3 vAccel;

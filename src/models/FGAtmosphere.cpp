@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id$";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.56 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,8 @@ FGAtmosphere::~FGAtmosphere()
 
 bool FGAtmosphere::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   Calculate(0.0);
   SLtemperature = Temperature = 518.67;
   SLpressure = Pressure = 2116.22;

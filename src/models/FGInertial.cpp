@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.26 2011/12/11 17:03:05 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.27 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ FGInertial::~FGInertial(void)
 
 bool FGInertial::InitModel(void)
 {
-  return true;
+  return FGModel::InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

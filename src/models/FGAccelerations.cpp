@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.16 2013/11/29 22:17:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAccelerations.cpp,v 1.17 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_ACCELERATIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,8 @@ FGAccelerations::~FGAccelerations(void)
 
 bool FGAccelerations::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
   vGravAccel.InitMatrix();

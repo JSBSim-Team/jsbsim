@@ -55,7 +55,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.13 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.14 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ FGExternalReactions::~FGExternalReactions()
 
 bool FGExternalReactions::InitModel(void)
 {
-  return true;
+  return FGModel::InitModel();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.62 2013/09/11 12:43:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.63 2013/12/14 14:22:00 bcoconni Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGAuxiliary::InitModel(void)
 {
+  if (!FGModel::InitModel()) return false;
+
   pt = in.Pressure;
   tat = in.Temperature;
   tatc = RankineToCelsius(tat);
