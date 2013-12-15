@@ -23,7 +23,7 @@ namespace JSBSim {
 
 FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 {
-    std::clock_t time_start=clock(), time_trimDone, time_linDone;
+    std::clock_t time_start=clock(), time_trimDone;
 
     // variables
     FGTrimmer::Constraints constraints;
@@ -43,12 +43,10 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
     bool showConvergence = node->GetBool("trim/solver/showConvergence");
     bool pause = node->GetBool("trim/solver/pause");
     bool showSimplex = node->GetBool("trim/solver/showSimplex");
-    bool variablePropPitch = node->GetBool("trim/solver/variablePropPitch");
 
     // flight conditions
     double phi = fdm->GetIC()->GetPhiRadIC();
     double theta = fdm->GetIC()->GetThetaRadIC();
-    double psi = fdm->GetIC()->GetPsiRadIC();
     double gd = fdm->GetInertial()->gravity();
 
     constraints.velocity = fdm->GetIC()->GetVtrueFpsIC();
@@ -110,8 +108,8 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
         std::cout << "\ntrim computation time: " << (time_trimDone - time_start)/double(CLOCKS_PER_SEC) << "s \n" << std::endl;
     }
 
-    if (solver) delete solver;
-    if (trimmer) delete trimmer;
+    delete solver;
+    delete trimmer;
 }
 
 } // JSBSim
