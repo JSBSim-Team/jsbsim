@@ -189,7 +189,6 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
     eval(v);
 
     //double dt = m_fdm->GetDeltaT();
-    double thrust = m_fdm->GetPropulsion()->GetEngine(0)->GetThruster()->GetThrust();
     double elevator = m_fdm->GetFCS()->GetDePos(ofNorm);
     double aileron = m_fdm->GetFCS()->GetDaLPos(ofNorm);
     double rudder = m_fdm->GetFCS()->GetDrPos(ofNorm);
