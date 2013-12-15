@@ -68,9 +68,8 @@ void FGNelderMead::update()
         {
             if (std::abs(minCost-minCostPrevResize) < std::numeric_limits<float>::epsilon())
             {
-                throw std::runtime_error("unable to escape local minimum!");
                 m_status = -1;
-                return;
+                throw std::runtime_error("unable to escape local minimum!");
             }
             //std::cout << "reinitializing step size" << std::endl;
             guess = m_simplex[m_iMin];
@@ -90,7 +89,6 @@ void FGNelderMead::update()
         {
             m_status = -1;
             throw;
-            return;
         }
     }
 
@@ -120,7 +118,6 @@ void FGNelderMead::update()
     {
         m_status = -1;
         throw std::runtime_error("max iterations exceeded!");
-        return;
     }
     // check for convergence break condition
     else if ( m_cost[m_iMin] < abstol )
@@ -243,9 +240,8 @@ void FGNelderMead::update()
 
     catch (const std::exception & e)
     {
-        throw;
         m_status = -1;
-        return;
+        throw;
     }
 
     // iteration
@@ -374,9 +370,8 @@ double FGNelderMead::eval(const std::vector<double> & vertex, bool check)
         } else {
             return cost1;
         }
-    } else {
-        return m_f->eval(vertex);
     }
+    return m_f->eval(vertex);
 }
 
 } // JSBSim
