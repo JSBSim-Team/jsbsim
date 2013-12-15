@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.19 2011/12/11 17:03:05 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.20 2013/12/15 11:27:50 bcoconni Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,7 +464,7 @@ void MSIS::spline (double *x, double *y, int n, double yp1, double ypn, double *
   for (k=n-2;k>=0;k--)
     y2[k] = y2[k] * y2[k+1] + u[k];
 
-  delete u;
+  delete[] u;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
