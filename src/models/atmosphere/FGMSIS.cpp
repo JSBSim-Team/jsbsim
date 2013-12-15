@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.21 2013/12/15 11:33:04 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.22 2013/12/15 11:43:27 bcoconni Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1585,6 +1585,7 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
 
   /* temperature */
   z = sqrt(input->alt*input->alt);
+  densu(z,1.0, tinf, tlb, 0.0, 0.0, &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
   if (flags->sw[0]) {
     for(i=0;i<9;i++)
       output->d[i]=output->d[i]*1.0E6;
