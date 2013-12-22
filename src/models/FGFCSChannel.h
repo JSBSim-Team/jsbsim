@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.3 2013/09/27 19:44:45 jberndt Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.4 2013/12/22 15:21:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,18 +97,8 @@ public:
   }
   /// Reset the components that can be reset
   void Reset() {
-    for (unsigned int i=0; i<FCSComponents.size(); i++) {
-      if (FCSComponents[i]->GetType() == "LAG" ||
-          FCSComponents[i]->GetType() == "LEAD_LAG" ||
-          FCSComponents[i]->GetType() == "WASHOUT" ||
-          FCSComponents[i]->GetType() == "SECOND_ORDER_FILTER" ||
-          FCSComponents[i]->GetType() == "INTEGRATOR")
-      {
-        ((FGFilter*)FCSComponents[i])->ResetPastStates();
-      } else if (FCSComponents[i]->GetType() == "PID" ) {
-        ((FGPID*)FCSComponents[i])->ResetPastStates();
-      }
-    }
+    for (unsigned int i=0; i<FCSComponents.size(); i++)
+      FCSComponents[i]->ResetPastStates();
   }
   /// Executes all the components in a channel.
   void Execute() {
