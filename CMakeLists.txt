@@ -14,6 +14,8 @@ set(PROJECT_CONTACT_VENDOR JSBSim)
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
+option(SYSTEM_EXPAT     "Set to ON to build SimGear using the system libExpat" OFF)
+
 ################################################################################
 # Build JSBSim libs and exec                                                   #
 ################################################################################

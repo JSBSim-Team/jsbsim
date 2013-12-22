@@ -1,7 +1,9 @@
 set(JSBSIM_SIMGEAR_XML_SRC easyxml.cxx)
 set(JSBSIM_SIMGEAR_XML_HDR easyxml.hxx)
 
-find_package(EXPAT)
+if (SYSTEM_EXPAT)
+  find_package(EXPAT)
+endif()
 
 if(NOT EXPAT_FOUND)
   add_definitions("-DHAVE_EXPAT_CONFIG_H")

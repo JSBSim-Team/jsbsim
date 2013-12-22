@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.150 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.151 2013/12/22 12:40:17 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -583,7 +583,8 @@ bool FGFDMExec::RunIC(void)
 {
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
-  Models[eOutput]->InitModel();
+  if (!trim_status)
+    Models[eOutput]->InitModel();
 
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
   Initialize(IC);

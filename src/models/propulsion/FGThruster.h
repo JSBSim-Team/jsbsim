@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.22 2013/12/22 17:14:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.21 2013/11/15 22:43:03 bcoconni Exp $
+    @version $Id: FGThruster.h,v 1.22 2013/12/22 17:14:37 bcoconni Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,8 @@ public:
   double GetGearRatio(void) {return GearRatio; }
   virtual std::string GetThrusterLabels(int id, const std::string& delimeter);
   virtual std::string GetThrusterValues(int id, const std::string& delimeter);
+
+  virtual void ResetToIC(void);
 
   struct Inputs {
     double TotalDeltaT;

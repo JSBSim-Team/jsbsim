@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.78 2013/09/14 11:26:04 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.80 2013/12/22 17:08:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.78 2013/09/14 11:26:04 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.80 2013/12/22 17:08:59 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,10 +301,12 @@ public:
   /** Retrieves the inertial velocity vector in ft/sec.
   */
   const FGColumnVector3& GetInertialVelocity(void) const { return VState.vInertialVelocity; }
+  double GetInertialVelocity(int i) const { return VState.vInertialVelocity(i); }
 
   /** Retrieves the inertial position vector.
   */
   const FGColumnVector3& GetInertialPosition(void) const { return VState.vInertialPosition; }
+  double GetInertialPosition(int i) const { return VState.vInertialPosition(i); }
 
   /** Calculates and retrieves the velocity vector relative to the earth centered earth fixed (ECEF) frame.
   */
@@ -440,6 +442,7 @@ public:
   double GetLongitudeDeg(void) const { return VState.vLocation.GetLongitudeDeg(); }
   double GetLatitudeDeg(void) const { return VState.vLocation.GetLatitudeDeg(); }
   const FGLocation& GetLocation(void) const { return VState.vLocation; }
+  double GetLocation(int i) const { return VState.vLocation(i); }
 
   /** Retrieves the local-to-body transformation matrix.
       The quaternion class, being the means by which the orientation of the
@@ -596,7 +599,6 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vLocation;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;
   FGMatrix33 Tl2b;   // local to body frame matrix copy for immediate local use
