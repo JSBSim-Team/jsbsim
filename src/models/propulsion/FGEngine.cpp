@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.54 2013/11/24 11:40:57 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.55 2013/12/22 17:14:37 bcoconni Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,8 +75,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   FuelExpended = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
-
-  ResetToIC(); // initialize dynamic terms
 
   FDMExec = exec;
 
@@ -111,6 +109,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   } else {
     cerr << "No thruster definition supplied with engine definition." << endl;
   }
+
+  ResetToIC(); // initialize dynamic terms
 
   // Load feed tank[s] references
   local_element = engine_element->GetParent()->FindElement("feed");
@@ -160,6 +160,7 @@ void FGEngine::ResetToIC(void)
   FuelFlowRate = 0.0;
   FuelFreeze = false;
   FuelUsedLbs = 0.0;
+  Thruster->ResetToIC();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

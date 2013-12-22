@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.18 2013/01/12 21:11:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.19 2013/12/22 17:14:37 bcoconni Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,8 +65,6 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   Name = el->GetAttributeValue("name");
 
   GearRatio = 1.0;
-  ReverserAngle = 0.0;
-  Thrust = 0.0;
   EngineNum = num;
   PropertyManager = FDMExec->GetPropertyManager();
 
@@ -95,25 +93,26 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   } else {
 
-  element = thruster_element->FindElement("orient");
-  if (element)  orientation = element->FindElementTripletConvertTo("RAD");
+    element = thruster_element->FindElement("orient");
+    if (element)  orientation = element->FindElementTripletConvertTo("RAD");
 
-  SetAnglesToBody(orientation);
-  property_name = base_property_name + "/pitch-angle-rad";
-  PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
-  property_name = base_property_name + "/yaw-angle-rad";
-  PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
+    SetAnglesToBody(orientation);
+    property_name = base_property_name + "/pitch-angle-rad";
+    PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
+    property_name = base_property_name + "/yaw-angle-rad";
+    PropertyManager->Tie( property_name.c_str(), (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
 
-  if (el->GetName() == "direct") // this is a direct thruster. At this time
-                                 // only a direct thruster can be reversed.
-  {
-    property_name = base_property_name + "/reverser-angle-rad";
-    PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetReverserAngle,
-                                                          &FGThruster::SetReverserAngle);
+    if (el->GetName() == "direct") // this is a direct thruster. At this time
+                                   // only a direct thruster can be reversed.
+      {
+        property_name = base_property_name + "/reverser-angle-rad";
+        PropertyManager->Tie( property_name.c_str(), (FGThruster *)this, &FGThruster::GetReverserAngle,
+                              &FGThruster::SetReverserAngle);
+      }
+
   }
 
-  }
-
+  ResetToIC();
 
   Debug(0);
 }
@@ -123,6 +122,15 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 FGThruster::~FGThruster()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGThruster::ResetToIC(void)
+{
+  ReverserAngle = 0.0;
+  Thrust = 0.0;
+  SetActingLocation(vXYZn);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

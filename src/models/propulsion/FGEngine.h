@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.38 2013/11/24 11:40:57 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.39 2013/12/22 17:14:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.38 2013/11/24 11:40:57 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.39 2013/12/22 17:14:37 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ public:
   virtual int InitRunning(void){ return 1; }
 
   /** Resets the Engine parameters to the initial conditions */
-  void ResetToIC(void);
+  virtual void ResetToIC(void);
 
   /** Calculates the thrust of the engine, and other engine functions. */
   virtual void Calculate(void) = 0;
