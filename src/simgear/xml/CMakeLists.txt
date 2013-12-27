@@ -7,6 +7,7 @@ endif()
 
 if(NOT EXPAT_FOUND)
   add_definitions("-DHAVE_EXPAT_CONFIG_H")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
   list(APPEND JSBSIM_SIMGEAR_XML_SRC xmlparse.c
                                      xmltok.c
