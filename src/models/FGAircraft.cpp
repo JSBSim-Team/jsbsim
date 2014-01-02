@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.36 2013/12/14 14:22:00 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.37 2014/01/02 21:58:41 bcoconni Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,12 @@ FGAircraft::~FGAircraft()
 
 bool FGAircraft::InitModel(void)
 {
-  return FGModel::InitModel();
+  if (!FGModel::InitModel()) return false;
+
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -8,7 +8,8 @@ set(JSBSIM_INPUT_OUTPUT_SRC FGGroundCallback.cpp
                             FGOutputFG.cpp
                             FGOutputSocket.cpp
                             FGOutputFile.cpp
-                            FGOutputTextFile.cpp)
+                            FGOutputTextFile.cpp
+                            FGPropertyReader.cpp)
 
 set(JSBSIM_INPUT_OUTPUT_HDR FGGroundCallback.h
                             FGPropertyManager.h
@@ -23,7 +24,8 @@ set(JSBSIM_INPUT_OUTPUT_HDR FGGroundCallback.h
                             FGOutputFG.h
                             FGOutputSocket.h
                             FGOutputFile.h
-                            FGOutputTextFile.h)
+                            FGOutputTextFile.h
+                            FGPropertyReader.h)
 
 add_library(InputOutput ${JSBSIM_INPUT_OUTPUT_HDR} ${JSBSIM_INPUT_OUTPUT_SRC})
 set_target_properties (InputOutput PROPERTIES

@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.151 2013/12/22 12:40:17 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.152 2014/01/02 21:37:14 bcoconni Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,6 +101,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   holding = false;
   Terminate = false;
   StandAlone = false;
+  ResetMode = 0;
 
   IncrementThenHolding = false;  // increment then hold is off by default
   TimeStepsUntilHold = -1;
@@ -152,13 +153,13 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-  typedef double (FGFDMExec::*dPMF)(void) const;
+//  typedef double (FGFDMExec::*dPMF)(void) const;
 //  typedef unsigned int (FGFDMExec::*uiPMF)(void) const;
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
   instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
   instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
-  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
+  instance->Tie("simulation/reset", (int*)&ResetMode);
   instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
@@ -360,9 +361,16 @@ bool FGFDMExec::Run(void)
     Models[i]->Run(holding);
   }
 
+  if (ResetMode) {
+    if (ResetMode == 1) Output->SetStartNewOutput();
+
+    ResetMode = 0;
+    ResetToInitialConditions();
+  }
+
   if (Terminate) success = false;
 
-  return (success);
+  return success;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -604,26 +612,15 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
   Setsim_time(0.0);
 
   Propagate->SetInitialState( FGIC );
+  LoadInputs(eInertial);
+  Inertial->Run(false);
   LoadInputs(eAccelerations);
   Accelerations->Run(false);
   LoadInputs(ePropagate);
   Propagate->InitializeDerivatives();
-  LoadInputs(eAtmosphere);
-  Atmosphere->Run(false);
   Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
-  Auxiliary->Run(false);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// A private, internal function call for Tie-ing to a property, so it needs an
-// argument.
-
-void FGFDMExec::ResetToInitialConditions(int mode)
-{
-  if (mode == 1) Output->SetStartNewOutput();
-
-  ResetToInitialConditions();
+  LoadInputs(eMassBalance);
+  MassBalance->Run(false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -640,9 +637,9 @@ void FGFDMExec::ResetToInitialConditions(void)
     Models[i]->InitModel();
   }
 
-  RunIC();
-
   if (Script) Script->ResetEvents();
+
+  RunIC();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

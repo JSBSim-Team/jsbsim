@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.9 2013/12/14 18:53:29 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGModelFunctions.cpp,v 1.10 2014/01/02 22:37:48 bcoconni Exp $";
 static const char *IdHdr = ID_MODELFUNCTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,9 +57,6 @@ CLASS IMPLEMENTATION
 
 FGModelFunctions::~FGModelFunctions()
 {
-  for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
-  interface_properties.clear();
-
   for (unsigned int i=0; i<PreFunctions.size(); i++) delete PreFunctions[i];
   for (unsigned int i=0; i<PostFunctions.size(); i++) delete PostFunctions[i];
 
@@ -70,72 +67,9 @@ FGModelFunctions::~FGModelFunctions()
 
 bool FGModelFunctions::InitModel(void)
 {
-  map<FGPropertyNode_ptr, double>::iterator it = interface_prop_initial_value.begin();
-  for (;it != interface_prop_initial_value.end(); ++it)
-    it->first->setDoubleValue(it->second);
+  ResetToIC();
 
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGModelFunctions::LoadProperties(Element* el, FGPropertyManager* PM,
-                                      bool override)
-{
-  // Interface properties are all stored in the interface properties array.
-  string interface_property_string = "";
-
-  Element *property_element = el->FindElement("property");
-  if (property_element && debug_lvl > 0) {
-    cout << endl << "    ";
-    if (override)
-      cout << "Overriding";
-    else
-      cout << "Declared";
-    cout << " properties" << endl << endl;
-  }
-  while (property_element) {
-    double value=0.0;
-    if ( ! property_element->GetAttributeValue("value").empty())
-      value = property_element->GetAttributeValueAsNumber("value");
-
-    interface_property_string = property_element->GetDataLine();
-    if (PM->HasNode(interface_property_string)) {
-      if (override) {
-        FGPropertyNode* node = PM->GetNode(interface_property_string);
-
-        if (debug_lvl > 0) {
-          if (interface_prop_initial_value.find(node) == interface_prop_initial_value.end()) {
-            cout << property_element->ReadFrom()
-                 << "  The followig property will be overridden but it has not been" << endl
-                 << "  defined in the current model '" << el->GetName() << "'" << endl;
-          }
-
-          cout << "      " << "Overriding value for property " << interface_property_string << endl
-               << "       (old value: " << node->getDoubleValue() << "  new value: " << value << ")"
-               << endl << endl;
-        }
-
-        node->setDoubleValue(value);
-        interface_prop_initial_value[node] = value;
-      }
-      else
-        cerr << property_element->ReadFrom()
-             << "      Property " << interface_property_string 
-             << " is already defined." << endl;
-    } else {
-      interface_properties.push_back(new double(value));
-      PM->Tie(interface_property_string, interface_properties.back());
-      if (debug_lvl > 0)
-        cout << "      " << interface_property_string << " (initial value: " 
-             << value << ")" << endl << endl;
-      FGPropertyNode_ptr node = PM->GetNode(interface_property_string);
-      interface_prop_initial_value[node] = value;
-    }
-    property_element = el->FindNextElement("property");
-  }
-  
-  // End of interface property loading logic
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

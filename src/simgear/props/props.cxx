@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.6 2011/11/10 12:06:15 jberndt Exp $
+// $Id: props.cxx,v 1.7 2014/01/02 22:37:48 bcoconni Exp $
 
 #include "props.hxx"
 
@@ -612,7 +612,7 @@ void
 SGPropertyNode::trace_read () const
 {
 #if PROPS_STANDALONE
-  cerr << "TRACE: Write node " << getPath () << ", value \""
+  cerr << "TRACE: Read node " << getPath () << ", value \""
        << make_string() << '"' << endl;
 #else
   SG_LOG(SG_GENERAL, SG_INFO, "TRACE: Read node " << getPath()
@@ -629,7 +629,7 @@ SGPropertyNode::trace_read () const
  * Last used attribute
  * Update as needed when enum Attribute is changed
  */
-const int SGPropertyNode::LAST_USED_ATTRIBUTE = TRACE_WRITE;
+const int SGPropertyNode::LAST_USED_ATTRIBUTE = PRESERVE;
 
 /**
  * Default constructor: always creates a root node.

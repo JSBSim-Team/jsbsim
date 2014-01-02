@@ -38,17 +38,19 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <vector>
+#include <map>
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
 #include "math/FGFunction.h"
 #include "math/FGCondition.h"
+#include "FGPropertyReader.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.27 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.28 2014/01/02 22:37:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,14 +159,14 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.27 2013/11/24 11:40:55 bcoconni Exp $"
+    @version "$Id: FGScript.h,v 1.28 2014/01/02 22:37:47 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGScript : public FGJSBBase
+class FGScript : public FGPropertyReader, public FGJSBBase
 {
 public:
   /// Default constructor
@@ -190,9 +192,7 @@ public:
       @return false if script should exit (i.e. if time limits are violated */
   bool RunScript(void);
 
-  void ResetEvents(void) {
-    for (unsigned int i=0; i<Events.size(); i++) Events[i].reset();
-  }
+  void ResetEvents(void);
 
 private:
   enum eAction {
@@ -253,20 +253,10 @@ private:
     }
   };
 
-  struct LocalProps {
-    double *value;
-    std::string title;
-    LocalProps(double initial_value=0) {
-      value = new double(initial_value);
-      title = "";
-    }
-  };
-
   std::string  ScriptName;
   double  StartTime;
   double  EndTime;
   std::vector <struct event> Events;
-  std::vector <LocalProps*> local_properties;
 
   FGFDMExec* FDMExec;
   FGPropertyManager* PropertyManager;

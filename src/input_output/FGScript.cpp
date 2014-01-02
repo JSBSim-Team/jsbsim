@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.53 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.54 2014/01/02 22:37:47 bcoconni Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,12 +81,6 @@ FGScript::~FGScript()
 {
   unsigned int i, j;
 
-  for (i=0; i<local_properties.size(); i++) {
-    delete local_properties[i]->value;
-    delete local_properties[i];
-  }
-  local_properties.clear();
-
   for (i=0; i<Events.size(); i++) {
     delete Events[i].Condition;
     for (j=0; j<Events[i].Functions.size(); j++)
@@ -106,7 +100,6 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   Element *element=0, *run_element=0, *event_element=0;
   Element *condition_element=0, *set_element=0, *delay_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
-  Element *property_element = 0L;
   Element *output_element = 0L;
   Element *input_element = 0L;
   bool result = false;
@@ -207,26 +200,10 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   }
 
   // Read local property/value declarations
-  property_element = run_element->FindElement("property");
-  while (property_element) {
-
-    double value=0.0;
-    string title="";
-
-    title = property_element->GetDataLine();
-    if ( ! property_element->GetAttributeValue("value").empty())
-      value = property_element->GetAttributeValueAsNumber("value");
-
-    LocalProps *localProp = new LocalProps(value);
-    localProp->title = title;
-    local_properties.push_back(localProp);
-    if (PropertyManager->HasNode(title)) {
-      PropertyManager->GetNode(title)->setDoubleValue(value);
-    } else {
-      PropertyManager->Tie(localProp->title, localProp->value);
-    }
-    property_element = run_element->FindNextElement("property");
-  }
+  int saved_debug_lvl = debug_lvl;
+  debug_lvl = 0; // Disable messages
+  LoadProperties(run_element, PropertyManager, true);
+  debug_lvl = saved_debug_lvl;
 
   // Read "events" from script
 
@@ -361,6 +338,16 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   }
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGScript::ResetEvents(void)
+{
+  //ResetToIC();
+
+  for (unsigned int i=0; i<Events.size(); i++)
+    Events[i].reset();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -557,13 +544,15 @@ void FGScript::Debug(int from)
         ceil(1.0/FDMExec->GetDeltaT()) << " Hz)" << endl;
       cout << endl;
 
-      for (unsigned int i=0; i<local_properties.size(); i++) {
-        cout << "Local property: " << local_properties[i]->title 
-             << " = " << PropertyManager->GetNode(local_properties[i]->title)->getDoubleValue()
+      map<FGPropertyNode_ptr, double>::iterator it = interface_prop_initial_value.begin();
+      for (; it != interface_prop_initial_value.end(); ++it) {
+        FGPropertyNode* node = it->first;
+        cout << "Local property: " << node->GetName()
+             << " = " << node->getDoubleValue()
              << endl;
       }
       
-      if (local_properties.size() > 0) cout << endl;
+      if (!interface_prop_initial_value.empty()) cout << endl;
 
       for (unsigned i=0; i<Events.size(); i++) {
         cout << "Event " << i;

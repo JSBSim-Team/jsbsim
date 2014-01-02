@@ -40,6 +40,7 @@ INCLUDES
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
+
 #include "FGFDMExec.h"
 #include "FGAerodynamics.h"
 #include "input_output/FGPropertyManager.h"
@@ -50,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.49 2013/11/24 11:40:55 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.50 2014/01/02 21:58:41 bcoconni Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +131,8 @@ bool FGAerodynamics::InitModel(void)
   bi2vel = ci2vel = 0.0;
   AeroRPShift = 0;
   vDeltaRP.InitMatrix();
-
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
   return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

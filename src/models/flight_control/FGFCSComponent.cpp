@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.37 2013/09/27 19:38:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.38 2014/01/02 21:58:42 bcoconni Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,6 +232,15 @@ FGFCSComponent::~FGFCSComponent()
   for (unsigned int i=0; i<InputNodes.size(); i++) {
     delete InputNodes[i];
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCSComponent::ResetPastStates(void)
+{
+  index = 0;
+  for (unsigned int i = 0; i < output_array.size(); ++i)
+    output_array[i] = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
