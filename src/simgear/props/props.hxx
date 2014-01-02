@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.7 2011/11/19 14:14:57 bcoconni Exp $
+ * $Id: props.hxx,v 1.8 2014/01/02 22:37:48 bcoconni Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -524,13 +524,15 @@ public:
    * whether the property should normally be saved and restored.</p>
    */
   enum Attribute {
+    NO_ATTR = 0,
     READ = 1,
     WRITE = 2,
     ARCHIVE = 4,
     REMOVED = 8,
     TRACE_READ = 16,
     TRACE_WRITE = 32,
-    USERARCHIVE = 64
+    USERARCHIVE = 64,
+    PRESERVE = 128
   };
 
 

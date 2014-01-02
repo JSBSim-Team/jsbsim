@@ -36,15 +36,16 @@ INCLUDES
 
 #include <vector>
 #include <map>
+#include <list>
 
 #include "FGJSBBase.h"
-#include "input_output/FGPropertyManager.h"
+#include "input_output/FGPropertyReader.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.8 2013/12/14 18:53:29 bcoconni Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.9 2014/01/02 22:37:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -54,6 +55,7 @@ namespace JSBSim {
 
 class FGFunction;
 class Element;
+class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -76,7 +78,7 @@ CLASS DOCUMENTATION
 DECLARATION: FGModelFunctions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGModelFunctions : public FGJSBBase
+class FGModelFunctions : public FGPropertyReader, public FGJSBBase
 {
 public:
   virtual ~FGModelFunctions();
@@ -85,7 +87,6 @@ public:
   bool Load(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
   void PreLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
   void PostLoad(Element* el, FGPropertyManager* PropertyManager, std::string prefix="");
-  void LoadProperties(Element* el, FGPropertyManager* PropertyManager, bool override);
 
   /** Gets the strings for the current set of functions.
       @param delimeter either a tab or comma string depending on output type
@@ -101,12 +102,8 @@ public:
 protected:
   std::vector <FGFunction*> PreFunctions;
   std::vector <FGFunction*> PostFunctions;
-  std::vector <double*> interface_properties;
 
   virtual bool InitModel(void);
-
-private:
-  std::map<FGPropertyNode_ptr, double> interface_prop_initial_value;
 };
 
 } // namespace JSBSim
