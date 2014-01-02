@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.17 2013/12/22 15:21:51 bcoconni Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.18 2014/01/02 21:58:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +119,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.17 $
+@version $Revision: 1.18 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +138,7 @@ public:
       It calls private functions if needed to perform the hysteresis, lag,
       limiting, etc. functions. */
   bool Run (void);
-  void ResetPastStates(void) { PreviousOutput = PreviousHystOutput = PreviousRateLimOutput = PreviousLagInput = PreviousLagOutput = Output = 0.0; }
+  void ResetPastStates(void);
 
   // these may need to have the bool argument replaced with a double
   /** This function fails the actuator to zero. The motion to zero

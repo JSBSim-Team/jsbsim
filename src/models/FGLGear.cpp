@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.106 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.107 2014/01/02 21:58:41 bcoconni Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -210,17 +210,43 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
          << sBrakeGroup << " is undefined." << endl;
   }
 
-  GearPos  = 1.0;
-  useFCSGearPos = false;
-
 // Add some AI here to determine if gear is located properly according to its
 // brake group type ??
 
-  WOW = lastWOW = false;
+  useFCSGearPos = false;
   ReportEnable = true;
+  TakeoffReported = LandingReported = false;
+
+  // Set Pacejka terms
+
+  Stiffness = 0.06;
+  Shape = 2.8;
+  Peak = staticFCoeff;
+  Curvature = 1.03;
+
+  ResetToIC();
+
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGLGear::~FGLGear()
+{
+  delete ForceY_Table;
+  delete fStrutForce;
+  Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::ResetToIC(void)
+{
+  GearPos  = 1.0;
+
+  WOW = lastWOW = false;
   FirstContact = false;
   StartedGroundRun = false;
-  TakeoffReported = LandingReported = false;
   LandingDistanceTraveled = TakeoffDistanceTraveled = TakeoffDistanceTraveled50ft = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
   SinkRate = GroundSpeed = 0.0;
@@ -233,26 +259,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
 
   WheelSlip = 0.0;
 
-  // Set Pacejka terms
-
-  Stiffness = 0.06;
-  Shape = 2.8;
-  Peak = staticFCoeff;
-  Curvature = 1.03;
-
   // Initialize Lagrange multipliers
   memset(LMultiplier, 0, sizeof(LMultiplier));
-
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGLGear::~FGLGear()
-{
-  delete ForceY_Table;
-  delete fStrutForce;
-  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

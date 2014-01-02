@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.23 2013/12/22 15:21:51 bcoconni Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.24 2014/01/02 21:58:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,7 +124,7 @@ The delay element can specify a frame delay. The integer number provided is
 the number of frames to delay the output signal.
 
 @author Jon S. Berndt
-@version $Revision: 1.23 $
+@version $Revision: 1.24 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,7 @@ public:
   int    GetQuantized(void) const {return quantized;}
 
   virtual bool Run (void);
-  void ResetPastStates(void) { PreviousOutput = PreviousInput = Output = 0.0; }
+  void ResetPastStates(void);
 
 protected:
   enum eNoiseType {ePercent=0, eAbsolute} NoiseType;

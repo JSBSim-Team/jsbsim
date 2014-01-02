@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.29 2013/11/24 11:40:56 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.30 2014/01/02 21:58:41 bcoconni Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,6 +134,16 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 FGActuator::~FGActuator()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::ResetPastStates(void)
+{
+  FGFCSComponent::ResetPastStates();
+
+  PreviousOutput = PreviousHystOutput = PreviousRateLimOutput
+    = PreviousLagInput = PreviousLagOutput = Output = 0.0; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

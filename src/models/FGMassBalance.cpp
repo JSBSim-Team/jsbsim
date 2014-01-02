@@ -41,6 +41,7 @@ INCLUDES
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
@@ -51,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.44 2013/12/14 14:22:00 bcoconni Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.45 2014/01/02 21:58:41 bcoconni Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

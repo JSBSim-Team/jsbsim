@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.15 2013/02/02 06:05:26 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.16 2014/01/02 21:58:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,7 +116,7 @@ For example,
 </pre>
 
     @author Jon S. Berndt
-    @version $Revision: 1.15 $
+    @version $Revision: 1.16 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +130,7 @@ public:
   ~FGPID();
 
   bool Run (void);
-  void ResetPastStates(void) {Input_prev = Input_prev2 = Output = I_out_total = 0.0;}
+  void ResetPastStates(void);
 
     /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};

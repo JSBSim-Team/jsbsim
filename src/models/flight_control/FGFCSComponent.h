@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.24 2013/12/22 15:21:51 bcoconni Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.25 2014/01/02 21:58:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     - FGAngle
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.24 2013/12/22 15:21:51 bcoconni Exp $
+    @version $Id: FGFCSComponent.h,v 1.25 2014/01/02 21:58:42 bcoconni Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -104,7 +104,7 @@ public:
   std::string GetName(void) const {return Name;}
   std::string GetType(void) const { return Type; }
   virtual double GetOutputPct(void) const { return 0; }
-  virtual void ResetPastStates(void) {}
+  virtual void ResetPastStates(void);
 
 protected:
   FGFCS* fcs;
