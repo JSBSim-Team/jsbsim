@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.85 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.86 2014/01/02 21:37:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.85 $
+    @version $Revision: 1.86 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -621,6 +621,7 @@ private:
 
   bool trim_status;
   int ta_mode;
+  unsigned int ResetMode;
 
   FGScript*           Script;
   FGInitialCondition* IC;
@@ -640,7 +641,6 @@ private:
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
-  void ResetToInitialConditions(int mode);
   void SRand(int sr);
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
