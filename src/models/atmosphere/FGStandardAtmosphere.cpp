@@ -50,8 +50,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGStandardAtmosphere.cpp,v 1.21 2012/04/13 13:18:27 jberndt Exp $";
-static const char *IdHdr = ID_STANDARDATMOSPHERE;
+#define IdSrc "$Id: FGStandardAtmosphere.cpp,v 1.22 2014/01/12 14:22:55 ehofman Exp $"
+#define IdHdr ID_STANDARDATMOSPHERE
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

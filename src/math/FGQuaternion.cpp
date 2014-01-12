@@ -58,8 +58,8 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.22 2012/09/17 12:27:44 jberndt Exp $";
-static const char *IdHdr = ID_QUATERNION;
+#define IdSrc "$Id: FGQuaternion.cpp,v 1.23 2014/01/12 14:22:52 ehofman Exp $"
+#define IdHdr ID_QUATERNION
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

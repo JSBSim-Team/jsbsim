@@ -55,8 +55,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.54 2014/01/02 22:37:47 bcoconni Exp $";
-static const char *IdHdr = ID_FGSCRIPT;
+#define IdSrc "$Id: FGScript.cpp,v 1.55 2014/01/12 14:22:51 ehofman Exp $"
+#define IdHdr ID_FGSCRIPT
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DECLARATIONS

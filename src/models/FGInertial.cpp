@@ -43,8 +43,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.27 2013/12/14 14:22:00 bcoconni Exp $";
-static const char *IdHdr = ID_INERTIAL;
+#define IdSrc "$Id: FGInertial.cpp,v 1.28 2014/01/12 14:22:53 ehofman Exp $"
+#define IdHdr ID_INERTIAL
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

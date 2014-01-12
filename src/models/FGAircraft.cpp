@@ -60,8 +60,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.37 2014/01/02 21:58:41 bcoconni Exp $";
-static const char *IdHdr = ID_AIRCRAFT;
+#define IdSrc "$Id: FGAircraft.cpp,v 1.38 2014/01/12 14:22:53 ehofman Exp $"
+#define IdHdr ID_AIRCRAFT
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

@@ -48,8 +48,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.24 2014/01/02 21:58:41 bcoconni Exp $";
-static const char *IdHdr = ID_BUOYANTFORCES;
+#define IdSrc "$Id: FGBuoyantForces.cpp,v 1.25 2014/01/12 14:22:53 ehofman Exp $"
+#define IdHdr ID_BUOYANTFORCES
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

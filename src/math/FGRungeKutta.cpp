@@ -44,8 +44,8 @@ using std::endl;
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGRungeKutta.cpp,v 1.1 2010/06/02 04:05:13 jberndt Exp $";
-static const char *IdHdr = ID_RUNGEKUTTA;
+#define IdSrc "$Id: FGRungeKutta.cpp,v 1.2 2014/01/12 14:22:52 ehofman Exp $"
+#define IdHdr ID_RUNGEKUTTA
 
 const double FGRungeKutta::RealLimit = 1e30;
 

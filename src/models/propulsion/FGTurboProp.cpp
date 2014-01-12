@@ -54,8 +54,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.26 2013/11/24 14:22:22 bcoconni Exp $";
-static const char *IdHdr = ID_TURBOPROP;
+#define IdSrc "$Id: FGTurboProp.cpp,v 1.27 2014/01/12 14:22:56 ehofman Exp $"
+#define IdHdr ID_TURBOPROP
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

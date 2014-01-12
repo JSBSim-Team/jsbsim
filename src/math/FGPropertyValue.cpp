@@ -34,8 +34,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropertyValue.cpp,v 1.9 2013/09/27 19:42:53 jberndt Exp $";
-static const char *IdHdr = ID_PROPERTYVALUE;
+#define IdSrc "$Id: FGPropertyValue.cpp,v 1.10 2014/01/12 14:22:52 ehofman Exp $"
+#define IdHdr ID_PROPERTYVALUE
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

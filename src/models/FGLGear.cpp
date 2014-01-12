@@ -62,8 +62,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.107 2014/01/02 21:58:41 bcoconni Exp $";
-static const char *IdHdr = ID_LGEAR;
+#define IdSrc "$Id: FGLGear.cpp,v 1.108 2014/01/12 14:22:53 ehofman Exp $"
+#define IdHdr ID_LGEAR
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
 // ft instead of inches)

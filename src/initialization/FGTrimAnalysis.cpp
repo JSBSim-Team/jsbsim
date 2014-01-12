@@ -86,8 +86,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.14 2011/03/23 11:58:29 jberndt Exp $";
-static const char *IdHdr = ID_FGTRIMANALYSIS;
+#define IdSrc "$Id: FGTrimAnalysis.cpp,v 1.15 2014/01/12 14:22:50 ehofman Exp $"
+#define IdHdr ID_FGTRIMANALYSIS
 
 
     /** Wrapping function for the effective Full Trim cost function, to be called by optimization method
