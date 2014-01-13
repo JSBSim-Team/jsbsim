@@ -44,8 +44,8 @@ INCLUDES
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGJSBBase.cpp,v 1.37 2014/01/12 14:22:50 ehofman Exp $"
-#define IdHdr ID_JSBBASE
+IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.38 2014/01/13 10:45:59 ehofman Exp $");
+IDENT(IdHdr,ID_JSBBASE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

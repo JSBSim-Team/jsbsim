@@ -60,8 +60,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define IdSrc "$Id: FGAircraft.cpp,v 1.38 2014/01/12 14:22:53 ehofman Exp $"
-#define IdHdr ID_AIRCRAFT
+IDENT(IdSrc,"$Id: FGAircraft.cpp,v 1.39 2014/01/13 10:46:04 ehofman Exp $");
+IDENT(IdHdr,ID_AIRCRAFT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

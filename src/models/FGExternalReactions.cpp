@@ -55,8 +55,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define IdSrc "$Id: FGExternalReactions.cpp,v 1.16 2014/01/12 14:22:53 ehofman Exp $"
-#define IdHdr ID_EXTERNALREACTIONS
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.17 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

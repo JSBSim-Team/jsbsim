@@ -55,8 +55,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGScript.cpp,v 1.55 2014/01/12 14:22:51 ehofman Exp $"
-#define IdHdr ID_FGSCRIPT
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.56 2014/01/13 10:46:01 ehofman Exp $");
+IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DECLARATIONS

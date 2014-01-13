@@ -46,8 +46,8 @@ INCLUDES
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGOutputType.cpp,v 1.9 2014/01/12 14:22:51 ehofman Exp $"
-#define IdHdr ID_OUTPUTTYPE
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.10 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
 

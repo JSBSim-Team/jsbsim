@@ -33,6 +33,7 @@
 #include <iostream>
 #include <cmath>
 
+#include "FGJSBBase.h"
 #include "FGRungeKutta.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -44,8 +45,8 @@ using std::endl;
 
 namespace JSBSim {
   
-#define IdSrc "$Id: FGRungeKutta.cpp,v 1.2 2014/01/12 14:22:52 ehofman Exp $"
-#define IdHdr ID_RUNGEKUTTA
+IDENT(IdSrc,"$Id: FGRungeKutta.cpp,v 1.3 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdHdr,ID_RUNGEKUTTA);
 
 const double FGRungeKutta::RealLimit = 1e30;
 

@@ -50,8 +50,8 @@ INCLUDES
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGStandardAtmosphere.cpp,v 1.22 2014/01/12 14:22:55 ehofman Exp $"
-#define IdHdr ID_STANDARDATMOSPHERE
+IDENT(IdSrc,"$Id: FGStandardAtmosphere.cpp,v 1.23 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdHdr,ID_STANDARDATMOSPHERE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

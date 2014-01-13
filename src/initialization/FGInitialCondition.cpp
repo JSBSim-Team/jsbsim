@@ -66,8 +66,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGInitialCondition.cpp,v 1.92 2014/01/12 14:22:50 ehofman Exp $"
-#define IdHdr ID_INITIALCONDITION
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.93 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
 

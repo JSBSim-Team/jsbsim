@@ -49,8 +49,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGMagnetometer.cpp,v 1.8 2014/01/12 14:22:55 ehofman Exp $"
-#define IdHdr ID_MAGNETOMETER
+IDENT(IdSrc,"$Id: FGMagnetometer.cpp,v 1.9 2014/01/13 10:46:09 ehofman Exp $");
+IDENT(IdHdr,ID_MAGNETOMETER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

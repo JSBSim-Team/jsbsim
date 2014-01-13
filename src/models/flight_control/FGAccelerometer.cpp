@@ -51,8 +51,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGAccelerometer.cpp,v 1.14 2014/01/12 14:22:55 ehofman Exp $"
-#define IdHdr ID_ACCELEROMETER
+IDENT(IdSrc,"$Id: FGAccelerometer.cpp,v 1.15 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdHdr,ID_ACCELEROMETER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

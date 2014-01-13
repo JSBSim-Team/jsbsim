@@ -49,8 +49,8 @@ INCLUDES
 #include <iomanip>
 //namespace JSBSim {
 
-//#define IdSrc "$Id: Aeromatic.cpp,v 1.1.1.1 
-//#define IdHdr ID_AEROMATIC
+//IDENT(IdSrc,"$Id: Aeromatic.cpp,v 1.1.1.1");
+//IDENT(IdHdr,ID_AEROMATIC");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

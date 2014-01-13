@@ -54,8 +54,8 @@ SENTRY
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGTrimAnalysisControl.cpp,v 1.6 2014/01/12 14:22:51 ehofman Exp $"
-#define IdHdr ID_TRIMANALYSISCONTROL
+IDENT(IdSrc,"$Id: FGTrimAnalysisControl.cpp,v 1.7 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_TRIMANALYSISCONTROL);
 
 /*****************************************************************************/
 

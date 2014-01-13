@@ -34,8 +34,8 @@ INCLUDES
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGPropertyValue.cpp,v 1.10 2014/01/12 14:22:52 ehofman Exp $"
-#define IdHdr ID_PROPERTYVALUE
+IDENT(IdSrc,"$Id: FGPropertyValue.cpp,v 1.11 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdHdr,ID_PROPERTYVALUE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

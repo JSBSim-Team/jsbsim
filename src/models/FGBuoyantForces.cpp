@@ -48,8 +48,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGBuoyantForces.cpp,v 1.25 2014/01/12 14:22:53 ehofman Exp $"
-#define IdHdr ID_BUOYANTFORCES
+IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.26 2014/01/13 10:46:06 ehofman Exp $");
+IDENT(IdHdr,ID_BUOYANTFORCES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

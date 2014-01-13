@@ -86,8 +86,8 @@ INCLUDES
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGTrimAnalysis.cpp,v 1.15 2014/01/12 14:22:50 ehofman Exp $"
-#define IdHdr ID_FGTRIMANALYSIS
+IDENT(IdSrc,"$Id: FGTrimAnalysis.cpp,v 1.16 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_FGTRIMANALYSIS);
 
 
     /** Wrapping function for the effective Full Trim cost function, to be called by optimization method

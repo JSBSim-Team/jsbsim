@@ -70,8 +70,8 @@ using namespace std;
 
 namespace JSBSim {
 
-#define IdSrc "$Id: FGSwitch.cpp,v 1.28 2014/01/12 14:22:55 ehofman Exp $"
-#define IdHdr ID_SWITCH
+IDENT(IdSrc,"$Id: FGSwitch.cpp,v 1.29 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdHdr,ID_SWITCH);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
