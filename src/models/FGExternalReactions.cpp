@@ -55,8 +55,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.15 2014/01/02 21:58:41 bcoconni Exp $";
-static const char *IdHdr = ID_EXTERNALREACTIONS;
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.17 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

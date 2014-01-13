@@ -71,8 +71,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutputFG.cpp,v 1.6 2013/11/09 14:06:36 bcoconni Exp $";
-static const char *IdHdr = ID_OUTPUTFG;
+IDENT(IdSrc,"$Id: FGOutputFG.cpp,v 1.8 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_OUTPUTFG);
 
 // (stolen from FGFS native_fdm.cxx)
 // The function htond is defined this way due to the way some

@@ -52,8 +52,8 @@ using std::string;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.27 2010/05/13 03:07:59 jberndt Exp $";
-static const char *IdHdr = ID_FDMSOCKET;
+IDENT(IdSrc,"$Id: FGfdmSocket.cpp,v 1.29 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdHdr,ID_FDMSOCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

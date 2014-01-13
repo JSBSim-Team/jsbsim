@@ -54,8 +54,8 @@ SENTRY
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.5 2012/09/05 21:49:19 bcoconni Exp $";
-static const char *IdHdr = ID_TRIMANALYSISCONTROL;
+IDENT(IdSrc,"$Id: FGTrimAnalysisControl.cpp,v 1.7 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_TRIMANALYSISCONTROL);
 
 /*****************************************************************************/
 

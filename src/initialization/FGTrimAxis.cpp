@@ -56,8 +56,8 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.15 2013/11/24 16:53:15 bcoconni Exp $";
-static const char *IdHdr = ID_TRIMAXIS;
+IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.17 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdHdr,ID_TRIMAXIS);
 
 /*****************************************************************************/
 

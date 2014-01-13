@@ -71,7 +71,7 @@ using JSBSim::Element;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.80 2013/11/24 11:40:55 bcoconni Exp $";
+IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.82 2014/01/13 10:45:59 ehofman Exp $");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA

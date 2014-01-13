@@ -51,12 +51,13 @@ using std::max;
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
+#define IDENT(a,b)	 static const char* const (a)[] = {b,(a)[0]}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.38 2013/06/20 13:01:48 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.39 2014/01/13 10:45:59 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +73,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.38 2013/06/20 13:01:48 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.39 2014/01/13 10:45:59 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

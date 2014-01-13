@@ -47,8 +47,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.30 2013/10/19 17:59:51 bcoconni Exp $";
-static const char *IdHdr = ID_LOCATION;
+IDENT(IdSrc,"$Id: FGLocation.cpp,v 1.32 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdHdr,ID_LOCATION);
 using std::cerr;
 using std::endl;
 

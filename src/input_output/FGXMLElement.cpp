@@ -44,8 +44,8 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.43 2013/11/30 11:59:19 bcoconni Exp $";
-static const char *IdHdr = ID_XMLELEMENT;
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.45 2014/01/13 10:46:02 ehofman Exp $");
+IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
 map <string, map <string, double> > Element::convert;

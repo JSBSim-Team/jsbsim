@@ -57,8 +57,8 @@ using std::ostringstream;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.21 2013/11/24 11:40:57 bcoconni Exp $";
-static const char *IdHdr = ID_ROTOR;
+IDENT(IdSrc,"$Id: FGRotor.cpp,v 1.23 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdHdr,ID_ROTOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MISC
