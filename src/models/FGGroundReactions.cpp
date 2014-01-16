@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.47 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.48 2014/01/16 12:31:49 ehofman Exp $");
 IDENT(IdHdr,ID_GROUNDREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,7 @@ bool FGGroundReactions::Run(bool Holding)
   // Perhaps there is some commonality for things which only need to be
   // calculated once.
   for (unsigned int i=0; i<lGear.size(); i++) {
-    vForces  += lGear[i]->GetBodyForces();
+    vForces  += lGear[i]->GetBodyForces(this);
     vMoments += lGear[i]->GetMoments();
   }
 

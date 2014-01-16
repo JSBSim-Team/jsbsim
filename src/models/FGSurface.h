@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SURFACE "$Id: FGSurface.h,v 1.1 2014/01/16 09:03:04 ehofman Exp $"
+#define ID_SURFACE "$Id: FGSurface.h,v 1.2 2014/01/16 12:31:50 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,6 +94,11 @@ public:
   /// Sets the surface is a solid flag value
   void SetSolid(bool solid) { isSolid = solid; }
 
+  /// Set the currect position for bumpiness calulcation
+  void SetPosition(const double pt[3]) {
+      pos[0] = pt[0]; pos[1] = pt[1]; pos[2] = pt[2];
+  }
+
 
   /// Gets the friction factor of the surface area
   double GetFrictionFactor(void) const { return frictionFactor; }
@@ -113,13 +118,22 @@ public:
   /// Gets the surface is a solid flag value
   bool   GetSolid(void) const { return isSolid; }
 
-private:
+  /// Returns the height of the bump at the provided offset
+  float  GetBumpHeight();
+
+  std::string GetSurfaceStrings(std::string delimeter) const;
+  std::string GetSurfaceValues(std::string delimeter) const;
+
+protected:
   double frictionFactor;
   double rollingFriction;
   double loadCapacity;
   double loadResistance;
   double bumpiness;
   bool isSolid;
+
+private:
+  double pos[3];
 };
 
 }

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGLGear.h"
 #include "math/FGColumnVector3.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.28 2014/01/16 09:03:04 ehofman Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.29 2014/01/16 12:31:49 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,15 +119,6 @@ private:
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   std::vector <LagrangeMultiplier*> multipliers;
-
-  struct FGGRoundProperties {
-    double frictionFactor;
-    double rollingFriction;
-    double loadCapacity;
-    double loadResistance;
-    double bumpiness;
-    bool isSolid;
-  } _ground;
 
   void bind(void);
   void Debug(int from);

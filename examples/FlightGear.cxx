@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.10 2014/01/16 09:03:03 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.11 2014/01/16 12:31:49 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1348,6 +1348,7 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
       GroundReactions->SetLoadResistance((*material).get_load_resistance());
       GroundReactions->SetBumpiness((*material).get_bumpiness());
       GroundReactions->SetSolid((*material).get_solid());
+      GroundReactions->SetPosition(pt);
    }
 
    return true;

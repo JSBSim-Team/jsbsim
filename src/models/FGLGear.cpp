@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.109 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.110 2014/01/16 12:31:49 ehofman Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -265,7 +265,7 @@ void FGLGear::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGColumnVector3& FGLGear::GetBodyForces(void)
+const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 {
   double gearPos = 1.0;
   double t = fdmex->GetSimTime();
@@ -285,6 +285,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
     double height = gearLoc.GetContactPoint(t, contact, normal, terrainVel, dummy);
+    if (surface) {
+      height += (*surface).GetBumpHeight();
+    }
 
     if (height < 0.0) {
       WOW = true;
