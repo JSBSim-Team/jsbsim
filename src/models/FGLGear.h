@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.60 2014/01/16 12:31:50 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.60 2014/01/16 12:31:50 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -334,7 +334,7 @@ private:
   double bDampRebound;
   double compressLength;
   double compressSpeed;
-  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
+  double staticFCoeff, dynamicFCoeff, rollingFCoeff, frictionFact;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
