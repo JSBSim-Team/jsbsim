@@ -40,11 +40,12 @@ INCLUDES
 
 #include <vector>
 
+#include "FGSurface.h"
 #include "FGModel.h"
 #include "FGLGear.h"
 #include "math/FGColumnVector3.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.27 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.29 2014/01/16 12:31:49 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +78,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundReactions : public FGModel
+class FGGroundReactions : public FGModel, public FGSurface
 {
 public:
   FGGroundReactions(FGFDMExec*);

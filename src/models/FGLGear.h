@@ -43,12 +43,13 @@ INCLUDES
 #include "models/propulsion/FGForce.h"
 #include "math/FGColumnVector3.h"
 #include "math/LagrangeMultiplier.h"
+#include "FGSurface.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.59 2014/01/02 21:58:41 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.59 2014/01/02 21:58:41 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -237,7 +238,7 @@ public:
   ~FGLGear();
 
   /// The Force vector for this gear
-  const FGColumnVector3& GetBodyForces(void);
+  const FGColumnVector3& GetBodyForces(FGSurface *surface = NULL);
 
   /// Gets the location of the gear in Body axes
   FGColumnVector3 GetBodyLocation(void) const {
@@ -333,7 +334,7 @@ private:
   double bDampRebound;
   double compressLength;
   double compressSpeed;
-  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
+  double staticFCoeff, dynamicFCoeff, rollingFCoeff, frictionFact;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;

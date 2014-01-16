@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.109 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.111 2014/01/16 14:00:30 ehofman Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -83,6 +83,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   StaticFriction(false)
 {
   kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
+  frictionFact = 1.0;
   isRetractable = false;
   eDampType = dtLinear;
   eDampTypeRebound = dtLinear;
@@ -105,6 +106,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     bDampRebound = kSpring * 10;
     staticFCoeff = 1.0;
     dynamicFCoeff = 1.0;
+    frictionFact = 1.0;
   }
 
   PropertyManager = fdmex->GetPropertyManager();
@@ -265,7 +267,7 @@ void FGLGear::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGColumnVector3& FGLGear::GetBodyForces(void)
+const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 {
   double gearPos = 1.0;
   double t = fdmex->GetSimTime();
@@ -285,6 +287,11 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
     double height = gearLoc.GetContactPoint(t, contact, normal, terrainVel, dummy);
+    if (surface) {
+      height += (*surface).GetBumpHeight();
+      frictionFact = (*surface).GetFrictionFactor();
+      rollingFCoeff = (*surface).GetRollingFriction();
+    }
 
     if (height < 0.0) {
       WOW = true;
@@ -554,10 +561,10 @@ void FGLGear::CrashDetect(void)
 
 void FGLGear::ComputeBrakeForceCoefficient(void)
 {
-  BrakeFCoeff = rollingFCoeff;
+  BrakeFCoeff = frictionFact * rollingFCoeff;
 
   if (eBrakeGrp != bgNone)
-    BrakeFCoeff += in.BrakePos[eBrakeGrp] * (staticFCoeff - rollingFCoeff);
+    BrakeFCoeff += in.BrakePos[eBrakeGrp] * frictionFact * (staticFCoeff - rollingFCoeff);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -578,6 +585,7 @@ void FGLGear::ComputeSideForceCoefficient(void)
     double StiffSlip = Stiffness*WheelSlip;
     FCoeff = Peak * sin(Shape*atan(StiffSlip - Curvature*(StiffSlip - atan(StiffSlip))));
   }
+  FCoeff *= frictionFact;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -665,7 +673,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftDynamic].ForceJacobian = mT * velocityDirection;
     LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
     LMultiplier[ftDynamic].Max = 0.;
-    LMultiplier[ftDynamic].Min = -fabs(dynamicFCoeff * vFn(eZ));
+    LMultiplier[ftDynamic].Min = -fabs(frictionFact * dynamicFCoeff * vFn(eZ));
 
     // The Lagrange multiplier value obtained from the previous iteration is kept
     // This is supposed to accelerate the convergence of the projected Gauss-Seidel
