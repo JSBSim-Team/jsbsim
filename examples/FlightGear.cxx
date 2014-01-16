@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.9 2013/09/28 16:00:40 bcoconni Exp $
+// $Id: FlightGear.cxx,v 1.10 2014/01/16 09:03:03 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -36,6 +36,7 @@
 #include <simgear/math/sg_geodesy.hxx>
 #include <simgear/misc/sg_path.hxx>
 #include <simgear/structure/commands.hxx>
+#include <simgear/bvh/BVHMaterial.hxx>
 
 #include <FDM/flight.hxx>
 
@@ -181,10 +182,8 @@ FGJSBsim::FGJSBsim( double dt )
             FGJSBBase::debug_lvl = 0x1f;
             break;
         case SG_DEBUG:
-            FGJSBBase::debug_lvl = 0x0f;
+            FGJSBBase::debug_lvl = 0x1f;
         case SG_INFO:
-            FGJSBBase::debug_lvl = 0x01;
-            break;
         case SG_WARN:
         case SG_ALERT:
             FGJSBBase::debug_lvl = 0x00;
@@ -760,9 +759,9 @@ bool FGJSBsim::copy_from_JSBsim()
                            Propagate->GetVel(FGJSBBase::eEast),
                            Propagate->GetVel(FGJSBBase::eDown) );
 
-    _set_Velocities_Wind_Body( Propagate->GetUVW(1),
-                               Propagate->GetUVW(2),
-                               Propagate->GetUVW(3) );
+    _set_Velocities_Body( Propagate->GetUVW(1),
+                          Propagate->GetUVW(2),
+                          Propagate->GetUVW(3) );
 
     // Make the HUD work ...
     _set_Velocities_Ground( Propagate->GetVel(FGJSBBase::eNorth),
@@ -1124,9 +1123,9 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down )
   FGInterface::set_Velocities_Local(north, east, down);
 }
 
-void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
+void FGJSBsim::set_Velocities_Body( double u, double v, double w)
 {
-  SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Wind_Body: "
+  SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Body: "
      << u << ", " <<  v << ", " <<  w );
 
   if (needTrim) {
@@ -1140,7 +1139,7 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
     Propagate->SetUVW(3, w);
   }
 
-  FGInterface::set_Velocities_Wind_Body(u, v, w);
+  FGInterface::set_Velocities_Body(u, v, w);
 }
 
 //Euler angles
@@ -1337,9 +1336,20 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
    if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
                                 angularVel, material, id))
        return false;
+
    SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
    SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
    *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
+
+   if (material) {
+      GroundReactions->SetFrictionFactor((*material).get_friction_factor());
+      GroundReactions->SetRollingFriction((*material).get_rolling_friction());
+      GroundReactions->SetLoadCapacity((*material).get_load_resistance());
+      GroundReactions->SetLoadResistance((*material).get_load_resistance());
+      GroundReactions->SetBumpiness((*material).get_bumpiness());
+      GroundReactions->SetSolid((*material).get_solid());
+   }
+
    return true;
 }
 

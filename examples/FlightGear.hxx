@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.10 2013/09/28 16:00:40 bcoconni Exp $
+    @version $Id: FlightGear.hxx,v 1.11 2014/01/16 09:03:03 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -166,7 +166,7 @@ public:
         @param u X velocity in ft/sec
         @param v Y velocity  in ft/sec
         @param w Z velocity in ft/sec */
-    void set_Velocities_Wind_Body( double u, double v, double w);
+    void set_Velocities_Body( double u, double v, double w);
     //@}
 
     /** Euler Angle Parameter Set

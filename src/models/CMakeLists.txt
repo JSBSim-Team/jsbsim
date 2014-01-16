@@ -7,6 +7,7 @@ set(JSBSIM_MODELS_SRC FGAerodynamics.cpp
                       FGAtmosphere.cpp
                       FGAuxiliary.cpp
                       FGFCS.cpp
+                      FGSurface.cpp
                       FGGroundReactions.cpp
                       FGInertial.cpp
                       FGLGear.cpp
@@ -27,6 +28,7 @@ set(JSBSIM_MODELS_HDR FGAerodynamics.h
                       FGAtmosphere.h
                       FGAuxiliary.h
                       FGFCS.h
+                      FGSurface.h
                       FGGroundReactions.h
                       FGInertial.h
                       FGLGear.h
