@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.12 2014/01/17 12:17:24 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.13 2014/01/17 14:02:34 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1345,11 +1345,16 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
    if (!terrain_nas && material) {
       double frictionFactor = (*material).get_friction_factor();
       double rollingFriction = (*material).get_rolling_friction();
-      if ((frictionFactor == 1.0) && (rollingFriction > 0.0001)) {
-        frictionFactor = 0.02/rollingFriction;
+      
+      if ((rollingFriction != 1.0) && (rollingFriction > 0.001)) {
+        frictionFactor = rollingFriction/0.02;
       }
       GroundReactions->SetFrictionFactor(frictionFactor);
-      GroundReactions->SetMaximumForce((*material).get_load_resistance());
+
+      // 1 Pascal = 0.00014503773800721815 lbs/in^2
+      double pressure = (*material).get_load_resistance(); // N/m^2 (or Pascal)
+      GroundReactions->SetMaximumForce(pressure*0.00014503773800721815);
+
       GroundReactions->SetBumpiness((*material).get_bumpiness());
       GroundReactions->SetSolid((*material).get_solid());
       GroundReactions->SetPosition(pt);
