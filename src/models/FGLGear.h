@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.62 2014/01/17 12:19:09 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.61 2014/01/16 14:00:42 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.62 2014/01/17 12:19:09 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -191,7 +191,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGLGear : public FGForce
+class FGLGear : public FGForce, protected FGSurface
 {
 public:
   struct Inputs {
@@ -334,7 +334,6 @@ private:
   double bDampRebound;
   double compressLength;
   double compressSpeed;
-  double staticFCoeff, dynamicFCoeff, rollingFCoeff, frictionFact;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
@@ -378,7 +377,7 @@ private:
   void ComputeSteeringAngle(void);
   void ComputeSlipAngle(void);
   void ComputeSideForceCoefficient(void);
-  void ComputeVerticalStrutForce(void);
+  void ComputeVerticalStrutForce(double maxForce = DBL_MAX);
   void ComputeGroundFrame(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
   void UpdateForces(void);

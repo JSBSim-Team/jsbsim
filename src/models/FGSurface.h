@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SURFACE "$Id: FGSurface.h,v 1.2 2014/01/16 12:31:50 ehofman Exp $"
+#define ID_SURFACE "$Id: FGSurface.h,v 1.3 2014/01/17 12:19:09 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,14 +79,8 @@ public:
   /// Sets the friction factor of the surface area
   void SetFrictionFactor(double friction) { frictionFactor = friction; }
 
-  /// Sets the rolling friction of the surface area
-  void SetRollingFriction(double friction) { rollingFriction = friction; }
-
   /// Sets the load capacity of the surface area
-  void SetLoadCapacity(double capacity ) { loadCapacity = capacity; }
-
-  /// Sets the load resistance of the surface area
-  void SetLoadResistance(double resistance) { loadResistance = resistance; }
+  void SetMaximumForce(double force ) { MaximumForce = force; }
 
   /// Sets the bumpiness factor associated with the surface
   void SetBumpiness(double bump) { bumpiness = bump; }
@@ -104,13 +98,16 @@ public:
   double GetFrictionFactor(void) const { return frictionFactor; }
 
   /// Gets the rolling friction of the surface area
-  double GetRollingFriction(void) const { return rollingFriction; }
+  double GetRollingFriction(void) const { return rollingFCoeff; }
 
-  /// Gets the load capacity of the surface area
-  double GetLoadCapacity(void) const { return loadCapacity; }
+  /// Gets the static friction of the surface area
+  double GetStaticFriction(void) const { return staticFCoeff; }
 
-  /// Gets the load resistance of the surface area
-  double GetLoadResistance(void) const { return loadResistance; }
+  /// Gets the dynamic friction of the surface area
+  double GetDynamicFriction(void) const { return dynamicFCoeff; }
+
+  /// Gets the maximum force for this surface point
+  double GetMaximumForce(void) const { return MaximumForce; }
 
   /// Gets the bumpiness factor associated with the surface
   double GetBumpiness(void) const { return bumpiness; }
@@ -125,10 +122,9 @@ public:
   std::string GetSurfaceValues(std::string delimeter) const;
 
 protected:
+  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
   double frictionFactor;
-  double rollingFriction;
-  double loadCapacity;
-  double loadResistance;
+  double MaximumForce;
   double bumpiness;
   bool isSolid;
 

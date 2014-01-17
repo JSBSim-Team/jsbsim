@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.2 2014/01/16 12:31:50 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.3 2014/01/17 12:19:09 ehofman Exp $");
 IDENT(IdHdr,ID_SURFACE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,9 +58,8 @@ CLASS IMPLEMENTATION
 FGSurface::FGSurface()
 {
   frictionFactor = 1.0;
-  rollingFriction = 0.02;
-  loadCapacity = DBL_MAX;
-  loadResistance = DBL_MAX;
+  rollingFCoeff = 0.02;
+  MaximumForce = DBL_MAX;
   bumpiness = 0.0;
   isSolid = true;
 }
@@ -68,9 +67,8 @@ FGSurface::FGSurface()
 FGSurface::FGSurface(FGFDMExec* fdmex = NULL)
 {
   frictionFactor = 1.0;
-  rollingFriction = 0.02;
-  loadCapacity = DBL_MAX;
-  loadResistance = DBL_MAX;
+  rollingFCoeff = 0.02;
+  MaximumForce = DBL_MAX;
   bumpiness = 0.0;
   isSolid = true;
 }
@@ -113,8 +111,7 @@ string FGSurface::GetSurfaceStrings(string delimeter) const
 
   buf << "FrictionFactor" << delimeter
       << "RollingFriction" << delimeter
-      << "LoadCapacity" << delimeter
-      << "LoadResistance" << delimeter
+      << "MaximumForce" << delimeter
       << "Bumpiness" << delimeter
       << "IsSolid";
   
@@ -129,8 +126,7 @@ string FGSurface::GetSurfaceValues(string delimeter) const
  
   buf << GetFrictionFactor() << delimeter
       << GetRollingFriction() << delimeter
-      << GetLoadCapacity() << delimeter
-      << GetLoadResistance() << delimeter
+      << GetMaximumForce() << delimeter
       << GetBumpiness() << delimeter
       << (GetSolid() ? "1" : "0");
 
