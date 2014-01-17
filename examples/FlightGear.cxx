@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.11 2014/01/16 12:31:49 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.12 2014/01/17 12:17:24 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1341,11 +1341,15 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
    SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
    *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
 
-   if (material) {
-      GroundReactions->SetFrictionFactor((*material).get_friction_factor());
-      GroundReactions->SetRollingFriction((*material).get_rolling_friction());
-      GroundReactions->SetLoadCapacity((*material).get_load_resistance());
-      GroundReactions->SetLoadResistance((*material).get_load_resistance());
+   static SGPropertyNode_ptr terrain_nas = fgGetNode("/fdm/jsbsim/environment/terrain-hight", false);
+   if (!terrain_nas && material) {
+      double frictionFactor = (*material).get_friction_factor();
+      double rollingFriction = (*material).get_rolling_friction();
+      if ((frictionFactor == 1.0) && (rollingFriction > 0.0001)) {
+        frictionFactor = 0.02/rollingFriction;
+      }
+      GroundReactions->SetFrictionFactor(frictionFactor);
+      GroundReactions->SetMaximumForce((*material).get_load_resistance());
       GroundReactions->SetBumpiness((*material).get_bumpiness());
       GroundReactions->SetSolid((*material).get_solid());
       GroundReactions->SetPosition(pt);
