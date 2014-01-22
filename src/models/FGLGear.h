@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.62 2014/01/17 12:19:09 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.63 2014/01/22 11:51:14 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.62 2014/01/17 12:19:09 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.63 2014/01/22 11:51:14 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -237,7 +237,9 @@ public:
   /// Destructor
   ~FGLGear();
 
-  /// The Force vector for this gear
+  /** The Force vector for this gear
+      @param surface another surface to interact with, set to NULL for none.
+   */
   const FGColumnVector3& GetBodyForces(FGSurface *surface = NULL);
 
   /// Gets the location of the gear in Body axes
@@ -334,6 +336,7 @@ private:
   double bDampRebound;
   double compressLength;
   double compressSpeed;
+  double dynamicFCoeff, rollingFCoeff;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
@@ -377,7 +380,7 @@ private:
   void ComputeSteeringAngle(void);
   void ComputeSlipAngle(void);
   void ComputeSideForceCoefficient(void);
-  void ComputeVerticalStrutForce(double maxForce = DBL_MAX);
+  void ComputeVerticalStrutForce(void);
   void ComputeGroundFrame(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
   void UpdateForces(void);

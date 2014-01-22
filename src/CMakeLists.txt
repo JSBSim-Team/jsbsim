@@ -37,17 +37,24 @@ add_subdirectory(math)
 add_subdirectory(models)
 add_subdirectory(simgear)
 
-list(APPEND JSBSIM_LINK_LIBRARIES Init Atmosphere Models FlightControl
-                                  Propulsion Math InputOutput Properties Expat
-                                  coremag)
-
 set(HEADERS FGFDMExec.h
             FGJSBBase.h)
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
-add_library(libJSBSim ${HEADERS} ${SOURCES})
-target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
+add_library(libJSBSim ${HEADERS} ${SOURCES}
+  $<TARGET_OBJECTS:Init>
+  $<TARGET_OBJECTS:Atmosphere>
+  $<TARGET_OBJECTS:Models>
+  $<TARGET_OBJECTS:FlightControl>
+  $<TARGET_OBJECTS:Propulsion>
+  $<TARGET_OBJECTS:Math>
+  $<TARGET_OBJECTS:InputOutput>
+  $<TARGET_OBJECTS:Properties>
+  $<TARGET_OBJECTS:Expat>
+  $<TARGET_OBJECTS:coremag>
+  )
+
 set_target_properties (libJSBSim PROPERTIES
                                  OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
                                  VERSION ${LIBRARY_VERSION})
