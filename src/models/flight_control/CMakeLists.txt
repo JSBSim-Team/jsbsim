@@ -35,20 +35,8 @@ set(JSBSIM_MODELS_FLIGHT_CONTROL_HDR FGDeadBand.h
                                      FGWaypoint.h
                                      FGDistributor.h)
 
-add_library(FlightControl ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR}
+add_library(FlightControl OBJECT ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR}
                           ${JSBSIM_MODELS_FLIGHT_CONTROL_SRC})
-set_target_properties (FlightControl PROPERTIES
-                                     VERSION ${LIBRARY_VERSION})
-if(BUILD_SHARED_LIBS)
-  set_target_properties (FlightControl PROPERTIES
-                                       SOVERSION ${LIBRARY_SOVERSION}
-                                       FRAMEWORK ON)
-endif()
 
-install(TARGETS FlightControl LIBRARY DESTINATION lib
-                              ARCHIVE DESTINATION lib
-                              RUNTIME DESTINATION lib
-                              # For Mac
-                              FRAMEWORK DESTINATION "/Library/Frameworks")
 install(FILES ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR} DESTINATION include/JSBSim/models/flight_control)
 
