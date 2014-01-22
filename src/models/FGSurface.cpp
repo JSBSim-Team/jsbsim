@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.3 2014/01/17 12:19:09 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.4 2014/01/22 11:51:14 ehofman Exp $");
 IDENT(IdHdr,ID_SURFACE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,18 +57,18 @@ CLASS IMPLEMENTATION
 
 FGSurface::FGSurface()
 {
-  frictionFactor = 1.0;
-  rollingFCoeff = 0.02;
-  MaximumForce = DBL_MAX;
+  staticFFactor = 1.0;
+  rollingFFactor = 1.0;
+  maximumForce = DBL_MAX;
   bumpiness = 0.0;
   isSolid = true;
 }
 
 FGSurface::FGSurface(FGFDMExec* fdmex = NULL)
 {
-  frictionFactor = 1.0;
-  rollingFCoeff = 0.02;
-  MaximumForce = DBL_MAX;
+  staticFFactor = 1.0;
+  rollingFFactor = 1.0;
+  maximumForce = DBL_MAX;
   bumpiness = 0.0;
   isSolid = true;
 }
@@ -105,15 +105,47 @@ float FGSurface::GetBumpHeight()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGSurface::bind(void)
+{
+#if 0
+  string property_name;
+  string base_property_name;
+
+  switch(eContactType) {
+  case ctBOGEY:
+    base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
+    break;
+  case ctSTRUCTURE:
+    base_property_name = CreateIndexedPropertyName("contact/unit", GearNumber);
+    break;
+  default:
+    return;
+  }
+
+  property_name = base_property_name + "solid";
+  PropertyManager->Tie( property_name.c_str(), &isSolid);
+  property_name = base_property_name + "bumpiness";
+  PropertyManager->Tie( property_name.c_str(), &bumpiness);
+  property_name = base_property_name + "maximum-force-lbs";
+  PropertyManager->Tie( property_name.c_str(), &maximumForce);
+  property_name = base_property_name + "rolling_friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &rollingFactor);
+  property_name = base_property_name + "static-friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &staticFFactor);
+#endif
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 string FGSurface::GetSurfaceStrings(string delimeter) const
 {
   std::ostringstream buf;
 
-  buf << "FrictionFactor" << delimeter
-      << "RollingFriction" << delimeter
-      << "MaximumForce" << delimeter
-      << "Bumpiness" << delimeter
-      << "IsSolid";
+  buf << "staticFFactor" << delimeter
+      << "rollingFFactor" << delimeter
+      << "maximumForce" << delimeter
+      << "bumpiness" << delimeter
+      << "isSolid";
   
   return buf.str();
 }
@@ -124,14 +156,15 @@ string FGSurface::GetSurfaceValues(string delimeter) const
 {
   std::ostringstream buf;
  
-  buf << GetFrictionFactor() << delimeter
-      << GetRollingFriction() << delimeter
-      << GetMaximumForce() << delimeter
-      << GetBumpiness() << delimeter
-      << (GetSolid() ? "1" : "0");
+  buf << staticFFactor << delimeter
+      << rollingFFactor << delimeter
+      << maximumForce << delimeter
+      << bumpiness << delimeter
+      << (isSolid ? "1" : "0");
 
   return buf.str();
 }
 
-}
+} // namespace JSBSim
+
 

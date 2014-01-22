@@ -7,13 +7,13 @@ LIBRARY_SOURCES = FGAerodynamics.cpp FGAircraft.cpp FGAtmosphere.cpp \
                       FGLGear.cpp FGMassBalance.cpp FGModel.cpp FGOutput.cpp \
                       FGPropagate.cpp FGPropulsion.cpp FGInput.cpp \
                       FGExternalReactions.cpp FGExternalForce.cpp \
-                      FGBuoyantForces.cpp FGGasCell.cpp FGAccelerations.cpp
+                      FGBuoyantForces.cpp FGGasCell.cpp FGAccelerations.cpp FGSurface.cpp
 
 LIBRARY_INCLUDES = FGAerodynamics.h FGAircraft.h FGAtmosphere.h FGAuxiliary.h \
                  FGFCS.h FGGroundReactions.h FGInertial.h FGLGear.h FGMassBalance.h \
                  FGModel.h FGOutput.h FGPropagate.h FGPropulsion.h FGInput.h \
                  FGExternalReactions.h FGExternalForce.h \
-                 FGBuoyantForces.h FGGasCell.h FGAccelerations.h FGFCSChannel.h
+                 FGBuoyantForces.h FGGasCell.h FGAccelerations.h FGFCSChannel.h FGSurface.h
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libModels.la

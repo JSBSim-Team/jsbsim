@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SURFACE "$Id: FGSurface.h,v 1.3 2014/01/17 12:19:09 ehofman Exp $"
+#define ID_SURFACE "$Id: FGSurface.h,v 1.4 2014/01/22 11:51:15 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,19 +70,24 @@ public:
 
   /// Constructor
   FGSurface();
-
   /// Constructor
   FGSurface(FGFDMExec* fdmex);
+
   /// Destructor
   ~FGSurface();
 
-  /// Sets the friction factor of the surface area
-  void SetFrictionFactor(double friction) { frictionFactor = friction; }
+  void bind(void);
 
-  /// Sets the load capacity of the surface area
-  void SetMaximumForce(double force ) { MaximumForce = force; }
+  /// Sets the static friction factor of the surface area
+  void SetStaticFFactor(double friction) { staticFFactor = friction; }
 
-  /// Sets the bumpiness factor associated with the surface
+  /// Sets the rolling friction factor of the surface area
+  void SetRollingFFactor(double friction) { rollingFFactor = friction; }
+
+  /// Sets the maximum force for the surface area
+  void SetMaximumForce(double force) { maximumForce = force; }
+
+  /// Sets the normalized bumpiness factor associated with the surface
   void SetBumpiness(double bump) { bumpiness = bump; }
 
   /// Sets the surface is a solid flag value
@@ -94,26 +99,20 @@ public:
   }
 
 
-  /// Gets the friction factor of the surface area
-  double GetFrictionFactor(void) const { return frictionFactor; }
+  /// Gets the static friction factor of the surface area
+  double GetStaticFFactor(void) { return staticFFactor; }
 
-  /// Gets the rolling friction of the surface area
-  double GetRollingFriction(void) const { return rollingFCoeff; }
+  /// Gets the rolling friction factor of the surface area
+  double GetRollingFFactor(void) { return rollingFFactor; }
 
-  /// Gets the static friction of the surface area
-  double GetStaticFriction(void) const { return staticFCoeff; }
+  /// Gets the maximum force of the surface area
+  double GetMaximumForce(void) { return maximumForce; }
 
-  /// Gets the dynamic friction of the surface area
-  double GetDynamicFriction(void) const { return dynamicFCoeff; }
-
-  /// Gets the maximum force for this surface point
-  double GetMaximumForce(void) const { return MaximumForce; }
-
-  /// Gets the bumpiness factor associated with the surface
-  double GetBumpiness(void) const { return bumpiness; }
+  /// Gets the normalized bumpiness factor associated with the surface
+  double GetBumpiness(void) { return bumpiness; }
 
   /// Gets the surface is a solid flag value
-  bool   GetSolid(void) const { return isSolid; }
+  bool GetSolid(void) { return isSolid; }
 
   /// Returns the height of the bump at the provided offset
   float  GetBumpHeight();
@@ -122,11 +121,12 @@ public:
   std::string GetSurfaceValues(std::string delimeter) const;
 
 protected:
-  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
-  double frictionFactor;
-  double MaximumForce;
+  double staticFFactor, rollingFFactor;
+  double maximumForce;
   double bumpiness;
   bool isSolid;
+
+  double staticFCoeff;
 
 private:
   double pos[3];
