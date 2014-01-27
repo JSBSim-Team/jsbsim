@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate>2010-08-08</filecreationdate>
-  <version>$Revision: 1.30 $</version>
+  <version>$Revision: 1.31 $</version>
   <description> Fokker-100 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
@@ -269,7 +269,7 @@
        <z>   0.0  </z>
      </location>
      <capacity unit="LBS"> 13360.01 </capacity>
-     <contents unit="LBS"> 688.50 </contents>
+     <contents unit="LBS">  8688.50 </contents>
   </tank>
 
   <tank type="FUEL" number="1">
@@ -279,7 +279,7 @@
        <z>   0.0  </z>
      </location>
      <capacity unit="LBS"> 13360.01 </capacity>
-     <contents unit="LBS"> 688.50 </contents>
+     <contents unit="LBS">  8688.50 </contents>
   </tank>
 <!--
   <tank type="FUEL" number="2">
@@ -620,6 +620,31 @@
             </product>
         </function>
 
+        <function name="aero/function/kCmge">
+            <description>Change_in_pitch_due_to_ground_effect</description>
+            <product>
+                <table>
+                    <independentVar>aero/h_b-mac-ft</independentVar>
+                    <tableData>
+                          0.0000	1.2030
+                          0.1000	1.1270
+                          0.1500	1.0900
+                          0.2000	1.0730
+                          0.3000	1.0460
+                          0.4000	1.0550
+                          0.5000	1.0190
+                          0.6000	1.0130
+                          0.7000	1.0080
+                          0.8000	1.0060
+                          0.9000	1.0030
+                          1.0000	1.0020
+                          1.1000	1.0000
+                    </tableData>
+                </table>
+            </product>
+        </function>
+
+
         <axis name="DRAG">
             <function name="aero/coefficient/CD0">
                 <description>Drag_at_zero_lift</description>
@@ -644,19 +669,39 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared</property>
                     <property>aero/function/kCDge</property>
-                    <value>0.00717</value>
+                    <table>
+                          <independentVar>velocities/mach</independentVar>
+                          <tableData>
+                              0.458     0.04432
+                              0.546	0.02207
+                              0.600	0.01469
+                              0.720	0.00867
+                              0.800	0.00478
+                              0.860	0.00358
+                          </tableData>
+                      </table>
                 </product>
             </function>
-            <function name="aero/coefficient/CDflap">
-                <description>Drag_due_to_flaps</description>
+            <function name="aero/coefficient/CDDflap">
+                <description>Drag_due_to_flap_deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCDge</property>
-                    <value>0.0830</value>
+                    <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
+                          <tableData>
+                                     0.000  0.476  1.000
+                              -0.07  0.0000 0.0047 0.0156
+                               0.00  0.0000 0.0070 0.0200
+                               0.03  0.0001 0.0077 0.0225
+                               0.07  0.0005 0.0089 0.0257
+                               0.10  0.0008 0.0129 0.0276
+                               0.14  0.0025 0.0156 0.0313
+                          </tableData>
+                      </table>
                 </product>
             </function>
             <function name="aero/coefficient/CDmach">
@@ -667,12 +712,15 @@
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
-                              0.0000	0.0000
-                              0.6500	0.0000
-                              0.7700	0.0015
-                              0.8600	0.0200
-                              1.1000	0.0390
-                              1.8000	0.0260
+                              0.000	0.00000
+                              0.600	0.00000
+                              0.650	0.00026
+                              0.720	0.00115
+                              0.770	0.00251
+                              0.800	0.00373
+                              0.848	0.01067
+                              0.860	0.01858
+                              1.000	0.02737
                           </tableData>
                       </table>
                 </product>
@@ -755,35 +803,23 @@
         </axis>
 
         <axis name="LIFT">
-            <function name="aero/coefficient/CLalpha">
-                <description>Lift_due_to_alpha</description>
+            <function name="aero/coefficient/CLflaps">
+                <description>Lift_due_to_flap_deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCLge</property>
                       <table>
-                          <independentVar>aero/alpha-rad</independentVar>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
                           <tableData>
-                              -0.20 -0.680
-                               0.00  0.217
-                               0.23  1.300
-                               0.60  0.600
-                          </tableData>
-                      </table>
-                </product>
-            </function>
-            <function name="aero/coefficient/dCLflap">
-                <description>Delta_Lift_due_to_flaps</description>
-                <product>
-                    <property>aero/qbar-psf</property>
-                    <property>metrics/Sw-sqft</property>
-                    <property>aero/function/kCLge</property>
-                      <table>
-                          <independentVar>fcs/flap-pos-norm</independentVar>
-                          <tableData>
-                              0.0000	0.0000
-                              0.3570	0.4900
-                              1.0000	1.1800
+                                     0.000  0.476  1.000
+                               0.00  0.217  0.837  1.269
+                               0.17  1.109  1.701  2.173
+                               0.21  1.270  1.827  2.308
+                               0.24  1.400  1.722  1.908
+                               0.28  1.336  0.707  0.000
+                               0.60  0.600  0.000  0.000
                           </tableData>
                       </table>
                 </product>
@@ -849,11 +885,33 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
-                      <table>
+                    <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
-                              0.0000	0.1000
-                              2.0000	0.0330
+                              0.0000    0.1000
+                              2.0000    0.0330
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clflaps">
+                <description>Roll_moment_due_to_aileron</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+                    <table>
+                          <independentVar lookup="row">velocities/mach</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
+                          <tableData>
+                                     0.000  0.476  1.000
+                               0.00  0.000  0.022  0.043
+                               0.60  0.000 -0.022 -0.043
+                               0.65  0.000 -0.022 -0.037
+                               0.70  0.000 -0.023 -0.027
+                               0.75  0.000 -0.019 -0.027
+                               0.80  0.000 -0.019 -0.026
                           </tableData>
                       </table>
                 </product>
@@ -871,30 +929,6 @@
         </axis>
 
         <axis name="PITCH">
-            <function name="aero/function/kCmge">
-                <description>Change_in_lift_due_to_ground_effect</description>
-                <product>
-                      <table>
-                          <independentVar>aero/h_b-mac-ft</independentVar>
-                          <tableData>
-                              0.0000	1.2030
-                              0.1000	1.1270
-                              0.1500	1.0900
-                              0.2000	1.0730
-                              0.3000	1.0460
-                              0.4000	1.0550
-                              0.5000	1.0190
-                              0.6000	1.0130
-                              0.7000	1.0080
-                              0.8000	1.0060
-                              0.9000	1.0030
-                              1.0000	1.0020
-                              1.1000	1.0000
-                          </tableData>
-                      </table>
-                </product>
-            </function>
-
             <function name="aero/coefficient/Cmo">
                 <description>Pitching_moment_at_zero_alpha</description>
                 <product>
