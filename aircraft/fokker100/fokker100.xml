@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate>2010-08-08</filecreationdate>
-  <version>$Revision: 1.31 $</version>
+  <version>$Revision: 1.32 $</version>
   <description> Fokker-100 commercial airliner </description>
   <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
         http://www.elsevierdirect.com/companions/9780340741528/appendices/data-a/table-8/table.htm"/>
@@ -691,9 +691,9 @@
                     <property>aero/function/kCDge</property>
                     <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
                           <tableData>
-                                     0.000  0.476  1.000
+                                     0.000  25.0   42.0
                               -0.07  0.0000 0.0047 0.0156
                                0.00  0.0000 0.0070 0.0200
                                0.03  0.0001 0.0077 0.0225
@@ -811,9 +811,9 @@
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
                           <tableData>
-                                     0.000  0.476  1.000
+                                     0.000  25.0   42.0 
                                0.00  0.217  0.837  1.269
                                0.17  1.109  1.701  2.173
                                0.21  1.270  1.827  2.308
@@ -884,34 +884,17 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
-                    <table>
-                          <independentVar>velocities/mach</independentVar>
-                          <tableData>
-                              0.0000    0.1000
-                              2.0000    0.0330
-                          </tableData>
-                      </table>
-                </product>
-            </function>
-            <function name="aero/coefficient/Clflaps">
-                <description>Roll_moment_due_to_aileron</description>
-                <product>
-                    <property>aero/qbar-psf</property>
-                    <property>metrics/Sw-sqft</property>
-                    <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
                     <table>
                           <independentVar lookup="row">velocities/mach</independentVar>
-                          <independentVar lookup="column">fcs/flap-pos-norm</independentVar>
+                          <independentVar lookup="column">fcs/left-aileron-pos-rad</independentVar>
                           <tableData>
-                                     0.000  0.476  1.000
-                               0.00  0.000  0.022  0.043
-                               0.60  0.000 -0.022 -0.043
-                               0.65  0.000 -0.022 -0.037
-                               0.70  0.000 -0.023 -0.027
-                               0.75  0.000 -0.019 -0.027
-                               0.80  0.000 -0.019 -0.026
+                                    -0.349 -0.1745 0.000  0.1745 0.349
+                               0.00 -0.043 -0.022  0.000  0.022  0.043
+                               0.60 -0.043 -0.022  0.000  0.022  0.043
+                               0.65 -0.037 -0.022  0.000  0.022  0.037
+                               0.70 -0.027 -0.022  0.000  0.023  0.027
+                               0.75 -0.027 -0.019  0.000  0.019  0.027
+                               0.88 -0.026 -0.019  0.000  0.019  0.026
                           </tableData>
                       </table>
                 </product>

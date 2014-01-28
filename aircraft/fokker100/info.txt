@@ -6,6 +6,7 @@ Fokker 100	Fokker 12.3%	Fokker 9.6%
  Fokker 70	Fokker 12.3%	Fokker 9.6%
 
 -------------------------------------------------------------------------------
+http://rahauav.com/Library/Aerodynamic/Aerodynamic_design_of_transport_aircraft_www.rahaUAV.com.pdf
 Aerodynamic Design of Transport Aircraft
 
 Figure 27.14 Tail-Off lift curves for the Fokker 100
@@ -20,7 +21,7 @@ alpha		flaps (deg)
 16.0	1.34	0.71	0.00
 
 Figure 27.23 Drag due to flap deflection at three angles of attack, Fokker 100
-             (Source Fokker Rep. A-166 and A-173)
+             (Source: Fokker Rep. A-166 and A-173)
 
 alpha		flaps (deg)
 (deg)	0	20	42
@@ -33,7 +34,7 @@ alpha		flaps (deg)
 
 Figure 33.9 Comparison of aileron effectiveness from wind tunnel and
             flight tests - Fokker F-28 Mk 1000
-            (Source Fokker report V-28-75)
+            (Source: Fokker report V-28-75)
 
 Clda	flaps (deg)
 Mach	10	20
