@@ -79,7 +79,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.28 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.29 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -195,7 +195,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.28 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.29 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1219,16 +1219,24 @@
   <!-- PROPULSION SECTION -->
   <xs:element name="propulsion">
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="engine" />
-        <xs:element ref="tank" />
-      </xs:choice>
+      <xs:sequence>
+        <xs:element name="property" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType mixed="true">
+            <xs:attribute name="value" use="optional" type="xs:double"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element ref="engine"/>
+          <xs:element ref="tank"/>
+        </xs:choice>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="engine">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="location" />
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element ref="location" minOccurs="0"/>
         <xs:element ref="orient" minOccurs="0" />
         <xs:element maxOccurs="unbounded" ref="feed" />
         <xs:element ref="thruster" />
@@ -1239,12 +1247,15 @@
   <xs:element name="feed" type="xs:integer" />
   <xs:element name="thruster">
     <xs:complexType>
-      <xs:all>
-        <xs:element ref="location" />
-        <xs:element ref="orient" minOccurs="0" />
+      <xs:sequence>
+        <xs:element ref="location" />        
+        <xs:choice>
+          <xs:element ref="orient"/>
+          <xs:element ref="pointing"/>
+        </xs:choice>
         <xs:element ref="sense" minOccurs="0" />
         <xs:element ref="p_factor" minOccurs="0" />
-      </xs:all>
+      </xs:sequence>
       <xs:attribute name="file" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
@@ -1253,11 +1264,14 @@
   <xs:element name="tank">
     <xs:complexType>
       <xs:all>
+        <xs:element minOccurs="0" name="priority" type="xs:double"/>
         <xs:element name="temperature" type="xs:double" minOccurs="0" />
         <xs:element ref="location" minOccurs="1" />
         <xs:element ref="radius" minOccurs="0" />
+        <xs:element name="inertia_factor" type="xs:double" minOccurs="0"/>
         <xs:element ref="capacity" minOccurs="0" />
         <xs:element ref="contents" minOccurs="0" />
+        <xs:element ref="drain_location" minOccurs="0" />
       </xs:all>
       <xs:attribute name="type" use="required" type="xs:string" />
       <xs:attribute name="number" use="optional" type="xs:integer" />
@@ -1288,6 +1302,16 @@
           <xs:attribute name="unit" use="required" type="xs:string" />
         </xs:extension>
       </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="drain_location">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="x"/>
+        <xs:element ref="y"/>
+        <xs:element ref="z"/>
+      </xs:sequence>
+      <xs:attribute name="unit" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>
   <!-- INPUT SECTION -->
@@ -1680,6 +1704,20 @@
         <xs:element ref="yaw" minOccurs="0" />
       </xs:all>
       <xs:attribute name="unit" use="required" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="pointing">
+    <xs:annotation><xs:documentation>
+      The pointing element is an alternative to the use of the orient element. With the pointing
+      element, a unit vector is supplied that represents the direction that the thruster force vector acts
+      in. The pointing vector is defined in the structural frame.
+    </xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="x"/>
+        <xs:element ref="y"/>
+        <xs:element ref="z"/>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="roll" type="xs:double" />
