@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.14 2014/01/22 11:51:14 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.15 2014/01/28 09:42:20 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1331,19 +1331,26 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
                      double contact[3], double normal[3], double vel[3],
                      double angularVel[3], double *agl)
 {
-   const simgear::BVHMaterial* material;
-   simgear::BVHNode::Id id;
-   if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
-                                angularVel, material, id))
-       return false;
+  const simgear::BVHMaterial* material;
+  simgear::BVHNode::Id id;
+  if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
+                               angularVel, material, id))
+    return false;
 
-   SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
-   SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
-   *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
+  SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
+  SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
+  *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
+
+  static SGPropertyNode_ptr terrain = fgGetNode("/sim/fdm/surface", true);
 
 #ifdef JSBSIM_USE_GROUNDREACTIONS
-   static SGPropertyNode_ptr terrain_nas = fgGetNode("/fdm/jsbsim/systems/fg-terrain", false);
-   if (material && !terrain_nas) {
+  bool terrain_active = (terrain->getIntValue("override-level", -1) > 0) ? false : true;
+  terrain->setBoolValue("active", terrain_active);
+  terrain->setBoolValue("valid", (material && terrain_active) ? true : false);
+  if (terrain_active)
+  {
+    static bool material_valid = false;
+    if (material) {
       GroundReactions->SetStaticFFactor((*material).get_friction_factor());
       GroundReactions->SetRollingFFactor((*material).get_rolling_friction()/0.02);
       // 1 Pascal = 0.00014503773800721815 lbs/in^2
@@ -1353,10 +1360,18 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
       GroundReactions->SetBumpiness((*material).get_bumpiness());
       GroundReactions->SetSolid((*material).get_solid());
       GroundReactions->SetPosition(pt);
-   }
+      material_valid = true;
+    } else {
+       if (material_valid) {
+         GroundReactions->resetValues();
+         material_valid = false;
+      }
+    }
+  }
+#else
+  terrain->setBoolValue("valid", false);
 #endif
-
-   return true;
+  return true;
 }
 
 inline static double sqr(double x)

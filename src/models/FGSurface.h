@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SURFACE "$Id: FGSurface.h,v 1.4 2014/01/22 11:51:15 ehofman Exp $"
+#define ID_SURFACE "$Id: FGSurface.h,v 1.5 2014/01/28 09:42:21 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,15 +68,18 @@ class FGSurface
 {
 public:
 
+  enum ContactType {ctBOGEY, ctSTRUCTURE, ctGROUND};
+
   /// Constructor
-  FGSurface();
-  /// Constructor
-  FGSurface(FGFDMExec* fdmex);
+  FGSurface(FGFDMExec* fdmex, int number = -1);
 
   /// Destructor
   ~FGSurface();
 
   void bind(void);
+
+  /// Reset all surface values to a default
+  void resetValues(void);
 
   /// Sets the static friction factor of the surface area
   void SetStaticFFactor(double friction) { staticFFactor = friction; }
@@ -121,15 +124,21 @@ public:
   std::string GetSurfaceValues(std::string delimeter) const;
 
 protected:
+  ContactType eSurfaceType;
   double staticFFactor, rollingFFactor;
   double maximumForce;
   double bumpiness;
   bool isSolid;
 
-  double staticFCoeff;
+  double staticFCoeff, dynamicFCoeff;
 
 private:
+  int contactNumber;
   double pos[3];
+
+  FGPropertyManager* _PropertyManager;
+
+  static std::string _CreateIndexedPropertyName(const std::string& Property, int index);
 };
 
 }
