@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="plotset">
+    <xs:complexType>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="plot"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="page"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="page">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="plot"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="plot">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="title"/>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element ref="label"/>
+          <xs:element ref="scale"/>
+        </xs:choice>
+        <xs:element maxOccurs="unbounded" ref="parameter"/>
+      </xs:sequence>
+      <xs:attribute name="type" type="PlotType"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="title" type="xs:string"/>
+  <xs:element name="label">
+    <xs:complexType mixed="true">
+      <xs:attribute name="axis" use="required" type="AxisType"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="scale">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="max"/>
+        <xs:element ref="min"/>
+      </xs:choice>
+      <xs:attribute name="axis" type="AxisType"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="max">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NMTOKEN">
+          <xs:attribute name="axis" type="AxisType"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="min">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NMTOKEN">
+          <xs:attribute name="axis" type="AxisType"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="parameter">
+    <xs:complexType mixed="true">
+      <xs:attribute name="axis" type="AxisType"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="PlotType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="points" />
+      <xs:enumeration value="lines"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AxisType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="x" />
+      <xs:enumeration value="y"/>
+      <xs:enumeration value="y2"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

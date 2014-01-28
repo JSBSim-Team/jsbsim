@@ -38,13 +38,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSurface.h"
+#include "input_output/FGPropertyManager.h"
+#include "models/FGSurface.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.4 2014/01/22 11:51:14 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.5 2014/01/28 09:42:21 ehofman Exp $");
 IDENT(IdHdr,ID_SURFACE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,16 +56,23 @@ GLOBAL DECLARATIONS
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGSurface::FGSurface()
+FGSurface::FGSurface(FGFDMExec* fdmex, int number) :
+   contactNumber(number)
 {
-  staticFFactor = 1.0;
-  rollingFFactor = 1.0;
-  maximumForce = DBL_MAX;
-  bumpiness = 0.0;
-  isSolid = true;
+  eSurfaceType = ctBOGEY;
+  _PropertyManager = fdmex->GetPropertyManager();
+  resetValues();
 }
 
-FGSurface::FGSurface(FGFDMExec* fdmex = NULL)
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGSurface::~FGSurface()
+{
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSurface::resetValues(void)
 {
   staticFFactor = 1.0;
   rollingFFactor = 1.0;
@@ -75,8 +83,37 @@ FGSurface::FGSurface(FGFDMExec* fdmex = NULL)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGSurface::~FGSurface()
+void FGSurface::bind(void)
 {
+  if (!_PropertyManager) return;
+
+  string base_property_name;
+  string property_name;
+
+  switch(eSurfaceType) {
+  case ctBOGEY:
+    base_property_name = _CreateIndexedPropertyName("gear/unit", contactNumber);
+    break;
+  case ctSTRUCTURE:
+    base_property_name = _CreateIndexedPropertyName("contact/unit", contactNumber);
+    break;
+  case ctGROUND:
+    base_property_name = "ground";
+    break;
+  default:
+    return;
+  }
+ 
+  property_name = base_property_name + "/solid";
+  _PropertyManager->Tie( property_name.c_str(), &isSolid);
+  property_name = base_property_name + "/bumpiness";
+  _PropertyManager->Tie( property_name.c_str(), &bumpiness);
+  property_name = base_property_name + "/maximum-force-lbs";
+  _PropertyManager->Tie( property_name.c_str(), &maximumForce);
+  property_name = base_property_name + "/rolling_friction-factor";
+  _PropertyManager->Tie( property_name.c_str(), &rollingFFactor);
+  property_name = base_property_name + "/static-friction-factor";
+  _PropertyManager->Tie( property_name.c_str(), &staticFFactor);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,34 +142,11 @@ float FGSurface::GetBumpHeight()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSurface::bind(void)
+string FGSurface::_CreateIndexedPropertyName(const string& Property, int index)
 {
-#if 0
-  string property_name;
-  string base_property_name;
-
-  switch(eContactType) {
-  case ctBOGEY:
-    base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
-    break;
-  case ctSTRUCTURE:
-    base_property_name = CreateIndexedPropertyName("contact/unit", GearNumber);
-    break;
-  default:
-    return;
-  }
-
-  property_name = base_property_name + "solid";
-  PropertyManager->Tie( property_name.c_str(), &isSolid);
-  property_name = base_property_name + "bumpiness";
-  PropertyManager->Tie( property_name.c_str(), &bumpiness);
-  property_name = base_property_name + "maximum-force-lbs";
-  PropertyManager->Tie( property_name.c_str(), &maximumForce);
-  property_name = base_property_name + "rolling_friction-factor";
-  PropertyManager->Tie( property_name.c_str(), &rollingFactor);
-  property_name = base_property_name + "static-friction-factor";
-  PropertyManager->Tie( property_name.c_str(), &staticFFactor);
-#endif
+  std::ostringstream buf;
+  buf << Property << '[' << index << ']';
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

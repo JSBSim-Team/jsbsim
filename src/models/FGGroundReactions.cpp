@@ -49,14 +49,16 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.48 2014/01/16 12:31:49 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.49 2014/01/28 09:42:21 ehofman Exp $");
 IDENT(IdHdr,ID_GROUNDREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
+FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) :
+   FGModel(fgex),
+   FGSurface(fgex)
 {
   Name = "FGGroundReactions";
 
@@ -261,6 +263,9 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
 
 void FGGroundReactions::bind(void)
 {
+  eSurfaceType = ctGROUND;
+  FGSurface::bind();
+
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
   PropertyManager->Tie("gear/wow", this, &FGGroundReactions::GetWOW);
 }

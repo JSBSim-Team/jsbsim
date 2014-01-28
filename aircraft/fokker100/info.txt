@@ -1,20 +1,65 @@
+		Root		Tip
+		------------	-----------
+Fokker 100	Fokker 12.3%	Fokker 9.6%
+ Fokker 50	NACA 64-421	NACA 64-415
+ Fokker 60	NACA 64-421	NACA 64-415
+ Fokker 70	Fokker 12.3%	Fokker 9.6%
+
+-------------------------------------------------------------------------------
+http://rahauav.com/Library/Aerodynamic/Aerodynamic_design_of_transport_aircraft_www.rahaUAV.com.pdf
+Aerodynamic Design of Transport Aircraft
+
+Figure 27.14 Tail-Off lift curves for the Fokker 100
+             (Source: Fokker Rep. A-166 and A-173
+
+alpha		flaps (deg)
+(deg)	0	20	42
+0.0	0.22	0.84	1.27
+10.0	1.11	1.70	2.17
+12.0	1.27	1.83	2.31
+14.0	1.40	1.72	1.90
+16.0	1.34	0.71	0.00
+
+Figure 27.23 Drag due to flap deflection at three angles of attack, Fokker 100
+             (Source: Fokker Rep. A-166 and A-173)
+
+alpha		flaps (deg)
+(deg)	0	20	42
+-4.0	0.0000	0.0047	0.0156
+0.0	0.0000	0.0070	0.0200
+2.0	0.0001	0.0077	0.0225
+4.0	0.0005	0.0089	0.0257
+6.0	0.0008	0.0129	0.0276
+8.0	0.0025	0.0156	0.0313
+
+Figure 33.9 Comparison of aileron effectiveness from wind tunnel and
+            flight tests - Fokker F-28 Mk 1000
+            (Source: Fokker report V-28-75)
+
+Clda	flaps (deg)
+Mach	10	20
+0.60	-0.022	-0.043
+0.65	-0.022	-0.037
+0.70	-0.023	-0.027
+0.75	-0.019	-0.027
+0.80	-0.015	-0.026
+
+-------------------------------------------------------------------------------
 Advanced Topics in Aerodynamics, Aerodynamic Database (AD)
 http://aerodyn.org/HighLift/tables.html
 ---
 CLmax			3.45	(in ground effect)
 
-
-
-Butterworth-Heinemann
-http://www.bh.com/companions/034074152X/appendices/data-a/table-8/table.htm
+-------------------------------------------------------------------------------
+Butterworth-Heinemann - Civil Jet Aircraft Design
+http://booksite.elsevier.com/9780340741528/appendices/data-a/default.htm
+http://booksite.elsevier.com/9780340741528/appendices/data-a/table-8/table.htm
 ---
 CLmax (t/o)		2.17	(Df = 15 degrees)
 CLmax (l/d@MLM)		2.59	(Df = 42 degrees)
 
-
-
-
-Lissys
+-------------------------------------------------------------------------------
+Lissys - Piano-X output:
 http://www.lissys.demon.co.uk/f7tx2.html
 (Note: Simulated Fokker 70 data)
 ---
@@ -24,28 +69,75 @@ L/D (2nd sgement)	12.54	(incl. windmill. & asymm).
 CLmax (l/d)		2.43	(Df = 42 degrees)
 L/D (approach)		4.91	(gear down)
 
+AERODYNAMIC DRAG REPORT		(Altitude: 0ft) 
+-------------------------------------------------------
+MACH      CD0     CDi   CDmach  CDtrim  CDtotal| CL  | SFC
+-----   ------- ------- ------- ------- -------|-----|------
+0.212	0.02035	0.05398	0.00190	-.00011	0.07613|1.099|0.7209
+0.230	0.02013	0.04096	0.00000	0.00013	0.06122|0.957|0.7520
+0.272	0.01957	0.01975	0.00000	0.00042	0.03975|0.665|0.8105
+0.302	0.01925	0.01296	0.00000	0.00047	0.03268|0.539|0.8341
+0.378	0.01857	0.00531	0.00000	0.00045	0.02432|0.345|0.8575
+0.454	0.01801	0.00256	0.00000	0.00039	0.02096|0.239|0.8627
+0.600	0.01712	0.00083	0.00000	0.00030	0.01826|0.137|0.8574
+0.800	0.01614	0.00027	0.00373	0.00023	0.02036|0.077|0.8552
+0.840	0.01596	0.00022	0.01067	0.00022	0.02707|0.070|0.8909
+0.860	0.01587	0.00020	0.01858	0.00021	0.03487|0.067|0.8985
 
-CD0	0.01922
-CDi	0.00867
-CDM	0.00115
-CDtrim	0.00013
+AERODYNAMIC DRAG REPORT		(Altitude: 1000ft)
+-------------------------------------------------------
+MACH	  CD0 	  CDi	CDmach	CDtrim	CDtotal| CL  | SFC
+-----	-------	-------	-------	-------	-------|-----|------
+0.653	0.01691	0.00064	0.00026	0.00028	0.01809|0.120|0.8476
+0.771	0.01633	0.00033	0.00201	0.00024	0.01891|0.086|0.8524
+0.800	0.01620	0.00028	0.00373	0.00023	0.02045|0.080|0.8516
 
-L/D	15.08
-TSFC	0.6908
+AERODYNAMIC DRAG REPORT         (Altitude: 35000ft)
+-------------------------------------------------------
+MACH      CD0     CDi   CDmach  CDtrim  CDtotal| CL  | SFC
+-----   ------- ------- ------- ------- -------|-----|------
+0.458	0.02102	0.04432	0.00222	0.00007	0.06763|0.996|0.5924
+0.546	0.02034	0.02207	0.00017	0.00040	0.04299|0.703|0.6251
+0.603	0.01995	0.01482	0.00036	0.00046	0.03560|0.576|0.6474
+0.720	0.01922	0.00867	0.00115	0.00013	0.02917|0.440|0.6908
+0.741	0.01910	0.00648	0.00152	0.00046	0.02756|0.381|0.6976
+0.768	0.01894	0.00562	0.00251	0.00045	0.02752|0.355|0.7112
+0.800	0.01876	0.00478	0.00541	0.00044	0.02939|0.327|0.7392
+0.848	0.01855	0.00393	0.01616	0.00042	0.03906|0.296|0.7526
+0.860	0.01844	0.00358	0.02737	0.00042	0.04981|0.283|0.7575
 
+-------------------------------------------------------------------------------
+Buffet envelope prediction of transport
+aircraft during the conceptual design phase
+- Predict transonic, shock induced buffet onset
+J.N.A. van Eijndhoven BSc
 
+Figure 4.2: Fokker 100 buffet onset flight test
 
-http://www.aoe.vt.edu/~mason/Mason_f/CAtxtChap5.pdf
-(Data for the DC-9)
-(Note that the design limmit of the Fokker 100 is set at M0.88)
----
-CDm
+M	CL
+0.5	1.00
+0.55	0.93
+0.60	0.88
+0.70	0.86
+0.75	0.65
+0.80	0.52
+0.85	0.25
 
-MACH	CDmach
-0	0
-0.6	0
-0.78	0.018
-0.79	0.020
-0.81	0.039
+Table 1: dCL for literature and Matrix-V results,
+         Fokker 100 wing, Λ0.5c at Re ≈ 1.5 · 107
+
+M∞	CLLit [−]	CLM atV [−]	dCL [−]
+0.65	0.86		0.83		0.03
+0.68	0.86		0.84		0.02
+0.70	0.87		0.85		0.02
+0.73	0.72		0.81		-0.09
+0.75	0.68		0.71		-0.03
+
+Figure 3.2: Fuselage effect on wing lift distribution
+	Body Ise		Tip
+  	0	0.5	0.75	1.0
+
+CL	0.73	0.7	0.68	0.3
+	
 
 
