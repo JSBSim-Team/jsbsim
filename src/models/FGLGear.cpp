@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.114 2014/01/28 09:42:21 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.115 2014/01/29 13:30:11 ehofman Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -720,7 +720,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
       LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eZ));
       break;
     case ctSTRUCTURE:
-      LMultiplier[ftRoll].Max = fabs(staticFCoeff * vFn(eZ));
+      LMultiplier[ftRoll].Max = fabs(staticFFactor * staticFCoeff * vFn(eZ));
       LMultiplier[ftSide].Max = LMultiplier[ftRoll].Max;
       break;
     }
