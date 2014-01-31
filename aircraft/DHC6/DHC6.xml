@@ -7,8 +7,10 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.16 2012/12/22 15:22:18 jberndt Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.17 2014/01/31 18:53:45 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
+      <reference title="Simulation Model Development for Icing Effects Flight Training
+        http://www.bihrle.aero/pdfs/aiaa2002-01-1527.pdf"/>
       <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
