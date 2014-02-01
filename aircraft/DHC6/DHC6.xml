@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.19 2014/02/01 14:04:51 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.20 2014/02/01 14:25:42 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
@@ -25,8 +25,7 @@
         endurance, etc.). Thus, this model is meant for educational and entertainment
         purposes only.
 
-        This simulation model is not endorsed by the manufacturer. This model is not
-        to be sold.
+        This simulation model is not endorsed by the manufacturer.
       </note>
     </fileheader>
 
@@ -404,8 +403,6 @@
                       <table>
                           <independentVar>aero/mag-beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300
-                              -0.2600	0.0500
                               0.0000	0.0000
                               0.2600	0.0500
                               1.5700	1.2300
@@ -574,7 +571,7 @@
                 </product>
             </function>
             <function name="aero/coefficient/Clp">
-                <description>ChangeRoll_moment_due_to_roll_rate_(roll_damping)</description>
+                <description>Roll_moment_due_to_roll_rate_(roll_damping)</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -752,7 +749,7 @@
                 </product>
             </function>
             <function name="aero/coefficient/CmT">
-                <description>Pitch_moment_due_to_propulsions</description>
+                <description>Pitch_moment_due_to_propulsion</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
