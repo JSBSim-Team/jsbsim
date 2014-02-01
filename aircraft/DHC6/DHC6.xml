@@ -7,16 +7,15 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.18 2014/02/01 14:01:12 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.19 2014/02/01 14:04:51 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
-      <reference title="Current Methods for Modeling and Simulating Icing Effects on Aircraft Performance, Stability and Control
-           http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20090005992_2009004916.pdf"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
            https://gitorious.org/fg/fgdata/source/73c7e296676c55a4d1db43b49c3fcb938e991177:Aircraft-uiuc/TwinOtter"/>
+      <reference title="Current Methods for Modeling and Simulating Icing Effects on Aircraft Performance, Stability and Control
+           http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20090005992_2009004916.pdf"/>
       <reference title="Simulation Model Development for Icing Effects Flight Training
         http://www.bihrle.aero/pdfs/aiaa2002-01-1527.pdf"/>
-        http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20000121220_2000175836.pdf"/>
       <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
