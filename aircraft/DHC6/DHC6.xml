@@ -7,8 +7,15 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.16 2012/12/22 15:22:18 jberndt Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.20 2014/02/01 14:25:42 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
+      <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
+      <reference title="Smart Icing Systems Aerodynamics group UIUC
+           https://gitorious.org/fg/fgdata/source/73c7e296676c55a4d1db43b49c3fcb938e991177:Aircraft-uiuc/TwinOtter"/>
+      <reference title="Current Methods for Modeling and Simulating Icing Effects on Aircraft Performance, Stability and Control
+           http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20090005992_2009004916.pdf"/>
+      <reference title="Simulation Model Development for Icing Effects Flight Training
+        http://www.bihrle.aero/pdfs/aiaa2002-01-1527.pdf"/>
       <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
@@ -18,8 +25,7 @@
         endurance, etc.). Thus, this model is meant for educational and entertainment
         purposes only.
 
-        This simulation model is not endorsed by the manufacturer. This model is not
-        to be sold.
+        This simulation model is not endorsed by the manufacturer.
       </note>
     </fileheader>
 
@@ -283,7 +289,7 @@
               <input>fcs/flap-pos-deg</input>
               <domain>
                 <min>0</min>  <!-- Flaps actual minimum position -->
-                <max>40</max>  <!-- Flaps actual maximum position -->
+                <max>40</max> <!-- Flaps actual maximum position -->
               </domain>
               <range>
                 <min>0</min>  <!-- Flaps normalized minimum position -->
@@ -309,7 +315,23 @@
                 <output>fcs/speedbrake-pos-norm</output>
             </kinematic>
         </channel>
+        <channel name="Thrust">
+            <summer name="fcs/engine-thrust-lbs">
+                <input>propulsion/engine[0]/thrust-lbs</input>
+                <input>propulsion/engine[1]/thrust-lbs</input>
+            </summer>
+            <aerosurface_scale name="fcs/engine-thrust-control">
+                <input>fcs/engine-thrust-lbs</input>
+                <range>
+                    <min>0.0</min>
+                    <max>0.0001004</max>
+                    <!-- 0.26/(1295+1295): CTmax = 0.26, 1295 lbs per engine -->
+                </range>
+                <output>fcs/engine-thrust-coefficient</output>
+            </aerosurface_scale>
+        </channel>
     </flight_control>
+ 
     <aerodynamics>
 
         <axis name="DRAG">
@@ -379,10 +401,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>aero/beta-rad</independentVar>
+                          <independentVar>aero/mag-beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300
-                              -0.2600	0.0500
                               0.0000	0.0000
                               0.2600	0.0500
                               1.5700	1.2300
@@ -535,22 +555,23 @@
                           <independentVar lookup="row">aero/beta-rad</independentVar>
                           <independentVar lookup="column">aero/alpha-rad</independentVar>
                           <tableData>
-                                0.0698	0.1745	0.2443	0.3491
-                              -0.3491	0.1250	0.0450	0.0240	-0.0270
-                              -0.2618	0.0900	0.0220	0.0030	-0.0150
-                              -0.1745	0.0770	0.0200	-0.0100	0.0000
-                              -0.0873	0.0360	0.0270	-0.0220	-0.0080
-                              0.0000	0.0000	-0.0100	0.0200	-0.0060
-                              0.0873	-0.0360	-0.0170	0.0200	-0.0100
-                              0.1745	-0.0770	-0.0100	0.0050	-0.0100
-                              0.2618	-0.0900	-0.0250	-0.0180	0.0000
-                              0.3491	-0.1250	-0.0450	-0.0350	0.0200
+                                      0.0698  0.1745  0.2443  0.3491
+                              -0.3491 0.1250  0.0450  0.0240 -0.0270
+                              -0.2618 0.0900  0.0220  0.0030 -0.0150
+                              -0.1745 0.0770  0.0200 -0.0100  0.0000
+                              -0.0873 0.0360  0.0270 -0.0220 -0.0080
+                              0.0000  0.0000 -0.0100  0.0200 -0.0060
+                              0.0873  0.0360 -0.0170  0.0200 -0.0100
+                              0.1745  0.0770 -0.0100  0.0050 -0.0100
+                              0.2618  0.0900 -0.0250 -0.0180  0.0000
+                              0.3491  0.1250 -0.0450 -0.0350  0.0200
+
                           </tableData>
                       </table>
                 </product>
             </function>
             <function name="aero/coefficient/Clp">
-                <description>Roll_moment_due_to_roll_rate</description>
+                <description>Roll_moment_due_to_roll_rate_(roll_damping)</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -558,6 +579,19 @@
                     <property>aero/bi2vel</property>
                     <property>velocities/p-aero-rad_sec</property>
                     <value>-0.5000</value>
+<!--
+                    <table>
+                        <independentVar lookup="row">aero/alpha-rad</independentVar>
+                        <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+                        <tableData>
+                                       0.0     20.0     40.0
+                              0.0000  -0.4078  0.2897   0.4123
+                              0.1745  -0.1537  0.1054   0.0251
+                              0.2618  -0.0055  0.0029   0.0057
+                              0.3491   0.0657 -0.0476  -0.0669
+                        </tableData>
+                      </table>
+-->
                 </product>
             </function>
             <function name="aero/coefficient/Clr">
@@ -600,8 +634,34 @@
         </axis>
 
         <axis name="PITCH">
-            <function name="aero/coefficient/Cmalpha">
-                <description>Pitch_moment_due_to_alpha_and_elevator_and_flaps</description>
+            <function name="aero/coefficient/Cma">
+                <description>Pitch_moment_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <tableData>
+                             -0.3491   0.391
+                             -0.2618   0.423
+                             -0.1745   0.288
+                             -0.0873   0.189
+                              0.0000   0.093
+                              0.0873  -0.048
+                              0.1745  -0.200
+                              0.2618  -0.318
+                              0.3491  -0.384
+                              0.4363  -0.397
+                              0.5236  -0.403
+                              0.6109  -0.469
+                              0.6981  -0.532
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CmDe">
+                <description>Pitch_moment_due_to_elevator_and_flaps</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -688,6 +748,35 @@
                       </table>
                 </product>
             </function>
+            <function name="aero/coefficient/CmT">
+                <description>Pitch_moment_due_to_propulsion</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>fcs/engine-thrust-coefficient</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+                          <tableData>
+                                       0.00      40.00
+                             -0.3491   0.0000    0.0000
+                             -0.2618   0.0013    0.0489
+                             -0.1745   0.0097    0.0792
+                             -0.0873   0.0384    0.0467
+                              0.0000   0.0411    0.0879
+                              0.0873   0.0598    0.2875
+                              0.1745   0.1179    0.3201
+                              0.2618   0.1803    0.0000
+                              0.3491   0.1452    0.0000
+                              0.4363   0.0000    0.0000
+                              0.5236   0.0000    0.0000
+                              0.6109   0.0000    0.0000
+                              0.6981   0.0000    0.0000
+                          </tableData>
+                      </table>
+                </product>
+            </function>
             <function name="aero/coefficient/Cmq">
                 <description>Pitch_moment_due_to_pitch_rate</description>
                 <product>
@@ -713,14 +802,33 @@
         </axis>
 
         <axis name="YAW">
-            <function name="aero/coefficient/Cnb">
+            <function name="aero/coefficient/Cnb"> 
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
-                    <value>0.1000</value>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+                          <tableData>
+                                       0.0      20.0     40.0
+                             -0.3491  -0.6000  -0.6000  -0.6000
+                             -0.2618  -0.5150  -0.5150  -0.5150
+                             -0.1745  -0.4750   0.0000   0.5923
+                             -0.0873   0.0010   0.5897   1.4987
+                              0.0000   0.5000   1.2032   2.4329
+                              0.0873   0.8670   1.0046   2.8111
+                              0.1745   1.1575   2.2389   3.1892
+                              0.2618   1.1768   2.4895   2.8321
+                              0.3491   1.0080   2.1187   2.5586
+                              0.4363   1.1973   1.9986   2.1203
+                              0.5236   1.1249   1.7488   1.9943
+                              0.6109   1.2786   1.7401   1.8735
+                              0.6981   1.4377   1.7387   1.7387
+                          </tableData>
+                      </table>
                 </product>
             </function>
             <function name="aero/coefficient/Cnr">
