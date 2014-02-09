@@ -8,5 +8,4 @@
 //
 // Currently known package names are: FlightGear
 
-// Don't install in the FlightGear base package.
-//FlightGear:
+FlightGear: dhc6/dhc6-jsbsim.xml
