@@ -1,0 +1,73 @@
+From: http://www.pprune.org/archive/index.php/t-372165.html
+
+The Twin Otter has been certified to many different standards - first to CAR 3,
+then later to SFAR 23, then to the BCARs (British standards in the 1970s, prior
+to JAR OPS-1), then to Australian DCA regulations (prior to publication of AFM
+amendment 19 in 2002). Exaviator indicated that he flew in PNG in the distant
+past, it is possible that he has quoted speeds, configurations, and power
+settings that were applicable to the Series 320 (Australian) variant aircraft
+prior to the publication of AFM amendment 19 in 2002.
+
+FWIW, I've just finished writing an AFM supplement entitled "Performance to FAR
+25 Standards" that will be published later this summer for operators who wish
+to conform to JAA 'Performance A' standards, and for Canadian and American
+operators who will be obliged to comply with the '2010 Rule' when it comes into
+effect next year. That will add yet another variable to what is out there...
+
+Here are the current numbers for SFAR 23 certification standards. These are
+applicable to the Series 300 and variant standard landplane aircraft at the
+maximum weights permitted (12,500 lbs MTOW, 12,300 lbs MLW).
+
+Takeoff
+  - Flaps 10°, V1 73 KIAS, V2 80 KIAS, maintain V2 to 400 feet AGL minimum.
+
+Initial Climb
+  - following flap retraction, Vy is 100 KIAS, a higher speed may be used at
+    the discretion of the pilot.
+
+Initial Approach
+  - no less than 94 KIAS if flaps are up, or no less than 85 KIAS with flaps
+    extended to 10°.
+
+Landing
+  - Flaps 20°, Vref 80 KIAS or
+    Flaps 37.5° Vref 74 KIAS
+
+Cruise power is at the discretion of the pilot. At temperatures up to ISA +6°
+at sea level, 50 PSI torque can be used for cruise. This is not a common
+practice, because setting maximum cruise power results in a significant
+increase in fuel burn but an insignificant increase in speed. Many operators
+use about 480 SHP per engine for cruise, this can be achieved with a torque
+setting of 45 PSI and a propeller speed of 75% Np. At this power setting, fuel
+burn is approximately 300 pounds per hour (per engine), and a reasonable
+compromise between fuel burn and cruise speed is achieved.
+
+Some other useful speeds, again, at maximum weight for the phase of flight,
+all in KIAS:
+ - Best Rate of Climb 100 KIAS with flaps up
+ - Best Angle of Climb 87 KIAS with flaps up
+ - Best Single Engine Rate of Climb 80 KIAS with flaps 10°
+ - Engine Failure after Take-off 80 KIAS, Flaps 10°
+ - Enroute Descent Flaps up, speed limited by Vmo
+ - Minimum Control Speed, One Engine Inoperative 64 KIAS.
+   Vmc is always given in the take-off configuration, thus,
+   flaps 10° is assumed.
+ - Stall speed, landing configuration (Flaps 37.5°) - 56 KIAS
+ - Stall speed, take-off configuration (Flaps 10°) - 66 KIAS
+ - Stall speed, flaps up 73 KIAS
+ - Manoeuvring Speed 132 KIAS from sea level to 18,000 feet.
+   Limited by Maximum Operating Speed above 18,000 feet.
+ - Glide Speed (both propellers feathered) for best range - 100 KIAS
+ - Glide Speed (both propellers feathered) for best endurance - 77 KIAS
+
+Maximum Operating Speed 166 KIAS for aircraft SN 271 and higher in landplane
+configuration, or earlier aircraft that are post Mod 6/1291 in landplane
+configuration. 156 KIAS for all other aircraft. Vmo begins to decrement above
+6,700 feet pressure altitude, but this normally does not present an operational
+restriction.
+
+Flaps Extended Speed Maximum 103 KIAS for flap extension up to and including
+10°, maximum 93 KIAS for flap extension beyond 10°, both speeds quoted are for
+post Mod 6/1395 aircraft. Mod 6/1395 cut in at SN 290 and can be retrofitted
+to earlier production aircraft.
+

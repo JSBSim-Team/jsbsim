@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.20 2014/02/01 14:25:42 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.21 2014/02/09 10:36:32 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
@@ -16,6 +16,8 @@
            http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20090005992_2009004916.pdf"/>
       <reference title="Simulation Model Development for Icing Effects Flight Training
         http://www.bihrle.aero/pdfs/aiaa2002-01-1527.pdf"/>
+      <reference title="performance data of the DHC-6-300
+        http://www.caamsllc.com/Performance%20Data/DHC-6-300.pdf"/>
       <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
@@ -87,7 +89,7 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 2982.6 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 994.2 </damping_coeff>
-            <max_steer unit="DEG"> 5 </max_steer>
+            <max_steer unit="DEG"> 15 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
@@ -270,16 +272,20 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
+                        <position>10</position>
                         <time>4</time>
                     </setting>
                     <setting>
-                        <position>25</position>
+                        <position>20</position>
+                        <time>2</time>
+                    </setting>
+                    <setting>
+                        <position>30</position>
                         <time>2</time>
                     </setting>
                     <setting>
                         <position>40</position>
-                        <time>3</time>
+                        <time>2</time>
                     </setting>
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
