@@ -1,8 +1,9 @@
-set(JSBSIM_SIMGEAR_MAGVAR_SRC coremag.cxx)
+set(SOURCES coremag.cxx)
 
-set(JSBSIM_SIMGEAR_MAGVAR_HDR coremag.hxx)
+set(HEADERS coremag.hxx)
 
-add_library(coremag OBJECT ${JSBSIM_SIMGEAR_MAGVAR_HDR} ${JSBSIM_SIMGEAR_MAGVAR_SRC})
+add_full_path_name(MAGVAR_SRC "${SOURCES}")
+add_full_path_name(MAGVAR_HDR "${HEADERS}")
 
-install(FILES ${JSBSIM_SIMGEAR_MAGVAR_HDR} DESTINATION include/JSBSim/simgear/magvar)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/magvar)
 

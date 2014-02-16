@@ -1,18 +1,19 @@
-set(JSBSIM_INITIALISATION_SRC FGInitialCondition.cpp
-                              FGTrim.cpp
-                              FGTrimAxis.cpp
-                              FGSimplexTrim.cpp
-                              FGTrimmer.cpp
-                              FGLinearization.cpp)
+set(SOURCES FGInitialCondition.cpp
+            FGTrim.cpp
+            FGTrimAxis.cpp
+            FGSimplexTrim.cpp
+            FGTrimmer.cpp
+            FGLinearization.cpp)
 
-set(JSBSIM_INITIALISATION_HDR FGInitialCondition.h
-                              FGTrim.h
-                              FGTrimAxis.h
-                              FGSimplexTrim.h
-                              FGTrimmer.h
-                              FGLinearization.h)
+set(HEADERS FGInitialCondition.h
+            FGTrim.h
+            FGTrimAxis.h
+            FGSimplexTrim.h
+            FGTrimmer.h
+            FGLinearization.h)
 
-add_library(Init OBJECT ${JSBSIM_INITIALISATION_HDR} ${JSBSIM_INITIALISATION_SRC})
+add_full_path_name(INITIALISATION_SRC "${SOURCES}")
+add_full_path_name(INITIALISATION_HDR "${HEADERS}")
 
-install(FILES ${JSBSIM_INITIALISATION_HDR} DESTINATION include/JSBSim/initialization)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization)
 

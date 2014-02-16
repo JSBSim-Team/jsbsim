@@ -9,6 +9,22 @@ if(MSVC)
 endif()
 
 ################################################################################
+# Macros definition.                                                           #
+################################################################################
+
+macro(add_full_path_name name file_list)
+  foreach(file_name ${file_list})
+    list(APPEND files_with_path "${CMAKE_CURRENT_SOURCE_DIR}/${file_name}")
+  endforeach()
+  set(JSBSIM_${name} ${files_with_path} PARENT_SCOPE)
+endmacro()
+
+macro(propagate_source_files name subelement)
+  set(JSBSIM_${name}_${subelement}_SRC ${JSBSIM_${subelement}_SRC} PARENT_SCOPE)
+  set(JSBSIM_${name}_${subelement}_HDR ${JSBSIM_${subelement}_HDR} PARENT_SCOPE)
+endmacro()
+
+################################################################################
 # Init the list of libraries that JSBSim links with                            #
 ################################################################################
 
@@ -37,27 +53,37 @@ add_subdirectory(math)
 add_subdirectory(models)
 add_subdirectory(simgear)
 
+if(NOT EXPAT_FOUND)
+  add_definitions("-DHAVE_EXPAT_CONFIG_H")
+else()
+  include_directories(${EXPAT_INCLUDE_DIRS})
+endif()
+
 set(HEADERS FGFDMExec.h
             FGJSBBase.h)
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
 add_library(libJSBSim ${HEADERS} ${SOURCES}
-  $<TARGET_OBJECTS:Init>
-  $<TARGET_OBJECTS:Atmosphere>
-  $<TARGET_OBJECTS:Models>
-  $<TARGET_OBJECTS:FlightControl>
-  $<TARGET_OBJECTS:Propulsion>
-  $<TARGET_OBJECTS:Math>
-  $<TARGET_OBJECTS:InputOutput>
-  $<TARGET_OBJECTS:Properties>
-  $<TARGET_OBJECTS:Expat>
-  $<TARGET_OBJECTS:coremag>
+  ${JSBSIM_INITIALISATION_HDR} ${JSBSIM_INITIALISATION_SRC}
+  ${JSBSIM_MODELS_ATMOSPHERE_HDR} ${JSBSIM_MODELS_ATMOSPHERE_SRC}
+  ${JSBSIM_MODELS_FLIGHT_CONTROL_HDR} ${JSBSIM_MODELS_FLIGHT_CONTROL_SRC}
+  ${JSBSIM_MODELS_PROPULSION_HDR} ${JSBSIM_MODELS_PROPULSION_SRC}
+  ${JSBSIM_MODELS_HDR} ${JSBSIM_MODELS_SRC}
+  ${JSBSIM_MATH_HDR} ${JSBSIM_MATH_SRC}
+  ${JSBSIM_INPUT_OUTPUT_HDR} ${JSBSIM_INPUT_OUTPUT_SRC}
+  ${JSBSIM_SIMGEAR_PROPS_HDR} ${JSBSIM_SIMGEAR_PROPS_SRC}
+  ${JSBSIM_SIMGEAR_XML_HDR} ${JSBSIM_SIMGEAR_XML_SRC}
+  ${JSBSIM_SIMGEAR_MAGVAR_HDR} ${JSBSIM_SIMGEAR_MAGVAR_SRC}
   )
 
 set_target_properties (libJSBSim PROPERTIES
                                  OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
                                  VERSION ${LIBRARY_VERSION})
+if(EXPAT_FOUND)
+  target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
+endif()
+
 if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
                                    SOVERSION ${LIBRARY_SOVERSION}
