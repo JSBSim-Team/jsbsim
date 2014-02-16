@@ -55,6 +55,7 @@ add_subdirectory(simgear)
 
 if(NOT EXPAT_FOUND)
   add_definitions("-DHAVE_EXPAT_CONFIG_H")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/simgear/xml)
 else()
   include_directories(${EXPAT_INCLUDE_DIRS})
 endif()
