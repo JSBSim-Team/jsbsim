@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputSocket.cpp,v 1.8 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutputSocket.cpp,v 1.9 2014/02/17 05:01:22 jberndt Exp $");
 IDENT(IdHdr,ID_OUTPUTSOCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,9 +211,7 @@ void FGOutputSocket::PrintHeaders(void)
     socket->Append("SL pressure");
     socket->Append("Ambient pressure");
     socket->Append("Turbulence Magnitude");
-    socket->Append("Turbulence Direction X");
-    socket->Append("Turbulence Direction Y");
-    socket->Append("Turbulence Direction Z");
+    socket->Append("Turbulence Direction");
     socket->Append("NWind");
     socket->Append("EWind");
     socket->Append("DWind");
@@ -337,7 +335,7 @@ void FGOutputSocket::Print(void)
     socket->Append(Atmosphere->GetPressureSL());
     socket->Append(Atmosphere->GetPressure());
     socket->Append(Winds->GetTurbMagnitude());
-    socket->Append(Winds->GetTurbDirection().Dump(","));
+    socket->Append(Winds->GetTurbDirection());
     socket->Append(Winds->GetTotalWindNED().Dump(","));
   }
   if (SubSystems & ssMassProps) {

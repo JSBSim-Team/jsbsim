@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputFG.cpp,v 1.8 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutputFG.cpp,v 1.9 2014/02/17 05:01:55 jberndt Exp $");
 IDENT(IdHdr,ID_OUTPUTFG);
 
 // (stolen from FGFS native_fdm.cxx)
@@ -137,8 +137,8 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->version = FG_NET_FDM_VERSION;
 
   // Positions
-  net->longitude = Propagate->GetLocation().GetLongitude(); // geodetic (radians)
-  net->latitude  = Propagate->GetLocation().GetLatitude(); // geodetic (radians)
+  net->longitude = Propagate->GetLocation().GetLongitude(); // 
+  net->latitude  = Propagate->GetLocation().GetGeodLatitudeRad(); // geodetic (radians)
   net->altitude  = Propagate->GetAltitudeASL()*0.3048; // altitude, above sea level (meters)
   net->agl       = (float)(Propagate->GetDistanceAGL()*0.3048); // altitude, above ground level (meters)
 
