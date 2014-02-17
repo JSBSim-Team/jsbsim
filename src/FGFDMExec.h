@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.86 2014/01/02 21:37:14 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.87 2014/02/17 04:59:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.86 $
+    @version $Revision: 1.87 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -583,6 +583,7 @@ private:
   int Error;
   unsigned int Frame;
   unsigned int IdFDM;
+  int disperse;
   unsigned short Terminate;
   double dT;
   double saved_dT;
@@ -647,6 +648,7 @@ private:
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);
+  int GetDisperse(void) const {return disperse;}
 
   void Debug(int from);
 };

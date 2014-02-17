@@ -1,16 +1,16 @@
-set(JSBSIM_MODELS_ATMOSPHERE_SRC FGMSIS.cpp
-                                 FGMSISData.cpp
-                                 FGMars.cpp
-                                 FGStandardAtmosphere.cpp
-                                 FGWinds.cpp)
+set(SOURCES FGMSIS.cpp
+            FGMSISData.cpp
+            FGMars.cpp
+            FGStandardAtmosphere.cpp
+            FGWinds.cpp)
 
-set(JSBSIM_MODELS_ATMOSPHERE_HDR FGMSIS.h
-                                 FGMars.h
-                                 FGStandardAtmosphere.h
-                                 FGWinds.h)
+set(HEADERS FGMSIS.h
+            FGMars.h
+            FGStandardAtmosphere.h
+            FGWinds.h)
 
-add_library(Atmosphere OBJECT ${JSBSIM_MODELS_ATMOSPHERE_HDR}
-                       ${JSBSIM_MODELS_ATMOSPHERE_SRC})
+add_full_path_name(ATMOSPHERE_SRC "${SOURCES}")
+add_full_path_name(ATMOSPHERE_HDR "${HEADERS}")
 
-install(FILES ${JSBSIM_MODELS_ATMOSPHERE_HDR} DESTINATION include/JSBSim/models/atmosphere)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models/atmosphere)
 

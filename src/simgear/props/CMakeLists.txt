@@ -1,7 +1,8 @@
-set(JSBSIM_SIMGEAR_PROPS_SRC props.cxx)
+set(SOURCES props.cxx)
 
-set(JSBSIM_SIMGEAR_PROPS_HDR props.hxx)
+set(HEADERS props.hxx)
 
-add_library(Properties OBJECT ${JSBSIM_SIMGEAR_PROPS_HDR} ${JSBSIM_SIMGEAR_PROPS_SRC})
+add_full_path_name(PROPS_SRC "${SOURCES}")
+add_full_path_name(PROPS_HDR "${HEADERS}")
 
-install(FILES ${JSBSIM_SIMGEAR_PROPS_HDR} DESTINATION include/JSBSim/simgear/props)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/props)

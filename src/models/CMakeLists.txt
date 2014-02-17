@@ -2,50 +2,55 @@ add_subdirectory(atmosphere)
 add_subdirectory(propulsion)
 add_subdirectory(flight_control)
 
-set(JSBSIM_MODELS_SRC FGAerodynamics.cpp
-                      FGAircraft.cpp
-                      FGAtmosphere.cpp
-                      FGAuxiliary.cpp
-                      FGFCS.cpp
-                      FGSurface.cpp
-                      FGGroundReactions.cpp
-                      FGInertial.cpp
-                      FGLGear.cpp
-                      FGMassBalance.cpp
-                      FGModel.cpp
-                      FGOutput.cpp
-                      FGPropagate.cpp
-                      FGPropulsion.cpp
-                      FGInput.cpp
-                      FGExternalReactions.cpp
-                      FGExternalForce.cpp
-                      FGBuoyantForces.cpp
-                      FGGasCell.cpp
-                      FGAccelerations.cpp)
+set(SOURCES FGAerodynamics.cpp
+            FGAircraft.cpp
+            FGAtmosphere.cpp
+            FGAuxiliary.cpp
+            FGFCS.cpp
+            FGSurface.cpp
+            FGGroundReactions.cpp
+            FGInertial.cpp
+            FGLGear.cpp
+            FGMassBalance.cpp
+            FGModel.cpp
+            FGOutput.cpp
+            FGPropagate.cpp
+            FGPropulsion.cpp
+            FGInput.cpp
+            FGExternalReactions.cpp
+            FGExternalForce.cpp
+            FGBuoyantForces.cpp
+            FGGasCell.cpp
+            FGAccelerations.cpp)
 
-set(JSBSIM_MODELS_HDR FGAerodynamics.h
-                      FGAircraft.h
-                      FGAtmosphere.h
-                      FGAuxiliary.h
-                      FGFCS.h
-                      FGSurface.h
-                      FGGroundReactions.h
-                      FGInertial.h
-                      FGLGear.h
-                      FGMassBalance.h
-                      FGModel.h
-                      FGOutput.h
-                      FGPropagate.h
-                      FGPropulsion.h
-                      FGInput.h
-                      FGExternalReactions.h
-                      FGExternalForce.h
-                      FGBuoyantForces.h
-                      FGGasCell.h
-                      FGAccelerations.h
-                      FGFCSChannel.h)
+set(HEADERS FGAerodynamics.h
+            FGAircraft.h
+            FGAtmosphere.h
+            FGAuxiliary.h
+            FGFCS.h
+            FGSurface.h
+            FGGroundReactions.h
+            FGInertial.h
+            FGLGear.h
+            FGMassBalance.h
+            FGModel.h
+            FGOutput.h
+            FGPropagate.h
+            FGPropulsion.h
+            FGInput.h
+            FGExternalReactions.h
+            FGExternalForce.h
+            FGBuoyantForces.h
+            FGGasCell.h
+            FGAccelerations.h
+            FGFCSChannel.h)
 
-add_library(Models OBJECT ${JSBSIM_MODELS_HDR} ${JSBSIM_MODELS_SRC})
+add_full_path_name(MODELS_SRC "${SOURCES}")
+add_full_path_name(MODELS_HDR "${HEADERS}")
 
-install(FILES ${JSBSIM_MODELS_HDR} DESTINATION include/JSBSim/models)
+propagate_source_files(MODELS ATMOSPHERE)
+propagate_source_files(MODELS FLIGHT_CONTROL)
+propagate_source_files(MODELS PROPULSION)
+
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models)
 

@@ -44,7 +44,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.45 2014/01/13 10:46:02 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.46 2014/02/17 04:59:52 jberndt Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -568,7 +568,19 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
 {
   double value=val;
   double disp=0.0;
-  if (e->HasAttribute("dispersion")) {
+
+  bool disperse = false;
+  try {
+    char* num = getenv("JSBSIM_DISPERSE");
+    if (num) {
+      disperse = (atoi(num) == 1);  // set dispersions
+    }
+  } catch (...) {                   // if error set to false
+    disperse = false;
+    std::cerr << "Could not process JSBSIM_DISPERSE environment variable: Assumed NO dispersions." << endl;
+  }
+
+  if (e->HasAttribute("dispersion") && disperse) {
     disp = e->GetAttributeValueAsNumber("dispersion");
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");

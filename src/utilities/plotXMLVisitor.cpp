@@ -49,7 +49,8 @@ void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
         plotType = lines;
       }
     } else {
-      cerr << "Unknown attribute " << thisAttribute << " encountered." << endl;
+      if (string(name) == "plotset") break;
+      cerr << "Unknown attribute " << thisAttribute << " encountered in element, " << name << endl;
       exit (-1);
     }
     if (i == 1) {

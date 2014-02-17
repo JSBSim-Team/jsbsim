@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.47 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.48 2014/02/17 05:12:06 jberndt Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,6 +399,8 @@ void FGMassBalance::bind(void)
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
+  typedef int (FGMassBalance::*iOPV)() const;
+  PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0, &FGMassBalance::GetMassPropertiesReport);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -423,7 +425,7 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager, int num)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMassBalance::GetMassPropertiesReport(void) const
+void FGMassBalance::GetMassPropertiesReport(int i)
 {
   cout << endl << fgblue << highint 
        << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"

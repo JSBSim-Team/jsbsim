@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGWinds.cpp,v 1.11 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGWinds.cpp,v 1.12 2014/02/17 05:02:38 jberndt Exp $");
 IDENT(IdHdr,ID_WINDS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,7 @@ FGWinds::FGWinds(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGWinds";
 
-  MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
+  MagnitudedAccelDt = MagnitudeAccel = Magnitude = TurbDirection = 0.0;
   SetTurbType( ttMilspec );
   TurbGain = 1.0;
   TurbRate = 10.0;
@@ -213,18 +213,18 @@ void FGWinds::Turbulence(double h)
     // max vertical wind speed in fps, corresponds to TurbGain = 1.0
     double max_vs = 40;
 
-    vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
+    vTurbulenceNED.InitMatrix();
     double delta = strength * max_vs * TurbGain * (1-Rhythmicity) * spike;
 
     // Vertical component of turbulence.
-    vTurbulenceNED(3) = sinewave * max_vs * TurbGain * Rhythmicity;
-    vTurbulenceNED(3)+= delta;
+    vTurbulenceNED(eDown) = sinewave * max_vs * TurbGain * Rhythmicity;
+    vTurbulenceNED(eDown)+= delta;
     if (in.DistanceAGL/in.wingspan < 3.0)
-        vTurbulenceNED(3) *= in.DistanceAGL/in.wingspan * 0.3333;
+        vTurbulenceNED(eDown) *= in.DistanceAGL/in.wingspan * 0.3333;
 
     // Yaw component of turbulence.
-    vTurbulenceNED(1) = sin( delta * 3.0 );
-    vTurbulenceNED(2) = cos( delta * 3.0 );
+    vTurbulenceNED(eNorth) = sin( delta * 3.0 );
+    vTurbulenceNED(eEast) = cos( delta * 3.0 );
 
     // Roll component of turbulence. Clockwise vortex causes left roll.
     vTurbPQR(eP) += delta * 0.04;
@@ -238,8 +238,8 @@ void FGWinds::Turbulence(double h)
     // an index of zero means turbulence is disabled
     // airspeed occurs as divisor in the code below
     if (probability_of_exceedence_index == 0 || in.V == 0) {
-      vTurbulenceNED(1) = vTurbulenceNED(2) = vTurbulenceNED(3) = 0.0;
-      vTurbPQR(1) = vTurbPQR(2) = vTurbPQR(3) = 0.0;
+      vTurbulenceNED(eNorth) = vTurbulenceNED(eEast) = vTurbulenceNED(eDown) = 0.0;
+      vTurbPQR(eP) = vTurbPQR(eQ) = vTurbPQR(eR) = 0.0;
       return;
     }
 
@@ -344,13 +344,13 @@ void FGWinds::Turbulence(double h)
 
     // rotate by wind azimuth and assign the velocities
     double cospsi = cos(psiw), sinpsi = sin(psiw);
-    vTurbulenceNED(1) =  cospsi*xi_u + sinpsi*xi_v;
-    vTurbulenceNED(2) = -sinpsi*xi_u + cospsi*xi_v;
-    vTurbulenceNED(3) = xi_w;
+    vTurbulenceNED(eNorth) =  cospsi*xi_u + sinpsi*xi_v;
+    vTurbulenceNED(eEast) = -sinpsi*xi_u + cospsi*xi_v;
+    vTurbulenceNED(eDown) = xi_w;
 
-    vTurbPQR(1) =  cospsi*xi_p + sinpsi*xi_q;
-    vTurbPQR(2) = -sinpsi*xi_p + cospsi*xi_q;
-    vTurbPQR(3) = xi_r;
+    vTurbPQR(eP) =  cospsi*xi_p + sinpsi*xi_q;
+    vTurbPQR(eQ) = -sinpsi*xi_p + cospsi*xi_q;
+    vTurbPQR(eR) = xi_r;
 
     // vTurbPQR is in the body fixed frame, not NED
     vTurbPQR = in.Tl2b*vTurbPQR;
@@ -367,6 +367,9 @@ void FGWinds::Turbulence(double h)
   default:
     break;
   }
+
+  TurbDirection = atan2( vTurbulenceNED(eEast), vTurbulenceNED(eNorth))*radtodeg;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

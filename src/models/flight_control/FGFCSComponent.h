@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.25 2014/01/02 21:58:42 bcoconni Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.26 2014/02/17 05:33:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,11 +78,11 @@ CLASS DOCUMENTATION
     - FGAccelerometer
     - FGGyro
     - FGActuator
-    - FGWaypoint
+    - FGWwaypoint
     - FGAngle
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.25 2014/01/02 21:58:42 bcoconni Exp $
+    @version $Id: FGFCSComponent.h,v 1.26 2014/02/17 05:33:25 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 

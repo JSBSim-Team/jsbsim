@@ -64,7 +64,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputTextFile.cpp,v 1.10 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutputTextFile.cpp,v 1.11 2014/02/17 05:02:38 jberndt Exp $");
 IDENT(IdHdr,ID_OUTPUTTEXTFILE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,8 +179,9 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "P_{SL} (psf)" + delimeter;
     outstream << "P_{Ambient} (psf)" + delimeter;
     outstream << "Turbulence Magnitude (ft/sec)" + delimeter;
-    outstream << "Turbulence X Direction (rad)" + delimeter + "Turbulence Y Direction (rad)" + delimeter + "Turbulence Z Direction (rad)" + delimeter;
-    outstream << "Wind V_{North} (ft/s)" + delimeter + "Wind V_{East} (ft/s)" + delimeter + "Wind V_{Down} (ft/s)";
+    outstream << "Turbulence X Direction (deg)" + delimeter;
+    outstream << "Wind V_{North} (ft/s)" + delimeter + "Wind V_{East} (ft/s)" + delimeter + "Wind V_{Down} (ft/s)" + delimeter;
+    outstream << "Roll Turbulence (deg/sec)" + delimeter + "Pitch Turbulence (deg/sec)" + delimeter + "Yaw Turbulence (deg/sec)";
   }
   if (SubSystems & ssMassProps) {
     outstream << delimeter;
@@ -194,6 +195,7 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "I_{zy}" + delimeter;
     outstream << "I_{zz}" + delimeter;
     outstream << "Mass" + delimeter;
+    outstream << "Weight" + delimeter;
     outstream << "X_{cg}" + delimeter + "Y_{cg}" + delimeter + "Z_{cg}";
   }
   if (SubSystems & ssPropagate) {
@@ -337,13 +339,15 @@ void FGOutputTextFile::Print(void)
     outstream << Atmosphere->GetPressureSL() << delimeter;
     outstream << Atmosphere->GetPressure() << delimeter;
     outstream << Winds->GetTurbMagnitude() << delimeter;
-    outstream << Winds->GetTurbDirection().Dump(delimeter) << delimeter;
-    outstream << Winds->GetTotalWindNED().Dump(delimeter);
+    outstream << Winds->GetTurbDirection() << delimeter;
+    outstream << Winds->GetTotalWindNED().Dump(delimeter) << delimeter;
+    outstream << (Winds->GetTurbPQR()*radtodeg).Dump(delimeter);
   }
   if (SubSystems & ssMassProps) {
     outstream << delimeter;
     outstream << MassBalance->GetJ().Dump(delimeter) << delimeter;
     outstream << MassBalance->GetMass() << delimeter;
+    outstream << MassBalance->GetWeight() << delimeter;
     outstream << MassBalance->GetXYZcg().Dump(delimeter);
   }
   if (SubSystems & ssPropagate) {

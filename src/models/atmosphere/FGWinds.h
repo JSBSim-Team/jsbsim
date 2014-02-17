@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WINDS "$Id: FGWinds.h,v 1.9 2011/11/19 14:14:57 bcoconni Exp $"
+#define ID_WINDS "$Id: FGWinds.h,v 1.10 2014/02/17 05:02:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -210,8 +210,8 @@ public:
   virtual double GetRhythmicity() const {return Rhythmicity;}
 
   virtual double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
-  virtual double GetTurbMagnitude(void) const {return Magnitude;}
-  virtual const FGColumnVector3& GetTurbDirection(void) const {return vDirection;}
+  virtual double GetTurbMagnitude(void) const {return vTurbulenceNED.Magnitude();}
+  virtual double GetTurbDirection(void) const {return TurbDirection;}
   virtual const FGColumnVector3& GetTurbPQR(void) const {return vTurbPQR;}
 
   virtual void   SetWindspeed20ft(double ws) { windspeed_at_20ft = ws;}
@@ -318,16 +318,13 @@ public:
 
 private:
 
-  double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
+  double MagnitudedAccelDt, MagnitudeAccel, Magnitude, TurbDirection;
   double h;
   double TurbGain;
   double TurbRate;
   double Rhythmicity;
   double wind_from_clockwise;
   double spike, target_time, strength;
-  FGColumnVector3 vDirectiondAccelDt;
-  FGColumnVector3 vDirectionAccel;
-  FGColumnVector3 vDirection;
   FGColumnVector3 vTurbulenceGrad;
   FGColumnVector3 vBodyTurbGrad;
   FGColumnVector3 vTurbPQR;
