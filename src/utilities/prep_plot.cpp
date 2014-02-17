@@ -720,6 +720,7 @@ bool MakeArbitraryPlot(
 
 void EmitSinglePlot(const string filename, const int index, const string linetitle )
 {
+  cout << "print \"Processing parameter plot: " << linetitle << "\"" << endl;
   cout << "plot " << plot_range << " \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
 }
 
