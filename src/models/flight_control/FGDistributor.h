@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.5 2013/11/24 11:40:57 bcoconni Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.6 2014/02/17 05:33:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.5 2013/11/24 11:40:57 bcoconni Exp $
+@version $Id: FGDistributor.h,v 1.6 2014/02/17 05:33:25 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,14 +129,18 @@ private:
   class PropValPair {
   public:
     PropValPair(std::string prop, std::string val, FGPropertyManager* propMan) {
+      // Process property to be set
       PropMan = propMan;
       sign = 1;
-      Val = 0;
-      ValString = val;
       FGPropertyNode *node = propMan->GetNode(prop, false);
       if (node) PropNode = node;
       else PropNode = 0;
       PropName = prop;
+
+      // Process set value
+      LateBoundValue = false;
+      Val = 0;
+      ValString = val;
       if (is_number(ValString)) {
         Val = new FGRealValue(atof(ValString.c_str()));
       } else {
@@ -145,8 +149,12 @@ private:
           sign = -1;
           ValString.erase(0,1);
         }
-        node = propMan->GetNode(ValString, false);
+        node = propMan->GetNode(ValString, false); // Reuse the node variable
         if (node) Val = new FGPropertyValue(node);
+        else {
+          Val = new FGPropertyValue(ValString, propMan);
+          LateBoundValue = true;
+        }
       }
     }
 
@@ -163,23 +171,20 @@ private:
           throw(PropName+" in distributor component is not known");
         }
       }
-      if (Val == 0) {
-        if (PropMan->HasNode(ValString)) {
-          FGPropertyNode* node = PropMan->GetNode(ValString, false);
-          if (node) Val = new FGPropertyValue(node);
-        } else {
-          throw(ValString+" in distributor component is not known. Check spelling.");
-        }
-      }
       PropNode->setDoubleValue(Val->GetValue()*sign);
     }
 
+    std::string GetPropName() {return PropName;}
+    std::string GetValString() {return ValString;}
+    FGPropertyNode* GetPropNode() {return PropNode;}
+    bool GetLateBoundValue() {return LateBoundValue;}
   private:
     std::string PropName;
     FGPropertyNode* PropNode;
     FGPropertyManager* PropMan;
     FGParameter* Val;
     std::string ValString;
+    bool LateBoundValue;
     int sign;
   };
 
@@ -195,10 +200,13 @@ private:
     }
 
     void SetTest(FGCondition* test) {Test = test;}
+    FGCondition* GetTest(void) {return Test;}
     void AddPropValPair(PropValPair* pvPair) {PropValPairs.push_back(pvPair);}
     void SetPropValPairs() {
       for (unsigned int i=0; i<PropValPairs.size(); i++) PropValPairs[i]->SetPropToValue();
     }
+    PropValPair* GetPropValPair(unsigned int idx) { return PropValPairs[idx]; }
+    unsigned int GetNumPropValPairs(void) {return PropValPairs.size();}
     bool HasTest() {return (Test != 0);}
     bool GetTestResult() { return Test->Evaluate(); }
 

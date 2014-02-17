@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGDistributor.cpp,v 1.5 2014/01/13 10:46:08 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGDistributor.cpp,v 1.6 2014/02/17 05:33:25 jberndt Exp $");
 IDENT(IdHdr,ID_DISTRIBUTOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +152,22 @@ void FGDistributor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-
+      for (unsigned int ctr=0; ctr < Cases.size(); ctr++) {
+        std::cout << "      Case: " << ctr << endl;
+        if (Cases[ctr]->GetTest() != 0) {
+          Cases[ctr]->GetTest()->PrintCondition("        ");
+        } else {
+          std::cout << "        Set these properties by default: " << std::endl;
+        }
+        std::cout << std::endl;
+        for (unsigned int propCtr=0; propCtr < Cases[ctr]->GetNumPropValPairs(); propCtr++) {
+          std::cout << "        Set property " << Cases[ctr]->GetPropValPair(propCtr)->GetPropName();
+          if (Cases[ctr]->GetPropValPair(propCtr)->GetPropNode() == 0) std::cout << " (late bound)";
+          std::cout << " to " << Cases[ctr]->GetPropValPair(propCtr)->GetValString();
+          if (Cases[ctr]->GetPropValPair(propCtr)->GetLateBoundValue()) std::cout << " (late bound)";
+          std::cout << std::endl;
+        }
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
