@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.33 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.34 2014/02/17 05:31:56 jberndt Exp $");
 IDENT(IdHdr,ID_ROCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,6 +283,8 @@ void FGRocket::bindmodel()
 
   property_name = base_property_name + "/total-impulse";
   PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetTotalImpulse);
+  property_name = base_property_name + "/total-vac-impulse";
+  PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetVacTotalImpulse);
   property_name = base_property_name + "/vacuum-thrust_lbs";
   PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetVacThrust);
 
