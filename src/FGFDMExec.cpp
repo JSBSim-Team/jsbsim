@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.154 2014/01/13 10:45:59 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.155 2014/02/17 04:59:52 jberndt Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,6 +93,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   IC              = 0;
   Trim            = 0;
   Script          = 0;
+  disperse        = 0;
 
   RootDir = "";
 
@@ -139,6 +140,17 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   FGPropertyNode* instanceRoot = Root->GetNode("/fdm/jsbsim",IdFDM,true);
   instance = new FGPropertyManager(instanceRoot);
+
+  try {
+    char* num = getenv("JSBSIM_DISPERSE");
+    if (num) {
+      if (atoi(num) != 0) disperse = 1;  // set dispersions on
+    }
+  } catch (...) {                        // if error set to false
+    disperse = 0;
+    std::cerr << "Could not process JSBSIM_DISPERSIONS environment variable: Assumed NO dispersions." << endl;
+  }
+
   Debug(0);
   // this is to catch errors in binding member functions to the property tree.
   try {
@@ -153,13 +165,14 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-//  typedef double (FGFDMExec::*dPMF)(void) const;
+  typedef double (FGFDMExec::*dPMF)(void) const;
 //  typedef unsigned int (FGFDMExec::*uiPMF)(void) const;
 //  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
   instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
   instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
   instance->Tie("simulation/reset", (int*)&ResetMode);
+  instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
   instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
@@ -1244,6 +1257,7 @@ void FGFDMExec::Debug(int from)
            << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
       cout << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
       cout << "JSBSim startup beginning ...\n\n";
+      if (disperse == 1) cout << "Dispersions are ON." << endl << endl;
     } else if (from == 3) {
       cout << "\n\nJSBSim startup complete\n\n";
     }
