@@ -67,7 +67,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.76 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.77 2014/04/13 11:19:15 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -81,7 +81,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
   Name = "FGPropulsion";
 
-  InitializedEngines = 0;
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines = 0;
   numOxiTanks = numFuelTanks = 0;
@@ -97,7 +96,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   HaveRocketEngine =
   HaveTurboPropEngine =
   HaveElectricEngine = false;
-  HasInitializedEngines = false;
 
   Debug(0);
 }
@@ -126,30 +124,8 @@ bool FGPropulsion::InitModel(void)
 
   for (unsigned int i=0; i<numTanks; i++) Tanks[i]->ResetToIC();
 
-  for (unsigned int i=0; i<numEngines; i++) {
-    switch (Engines[i]->GetType()) {
-      case FGEngine::etPiston:
-        Engines[i]->ResetToIC();
-        try {
-          if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
-        } catch (string str) {
-          cerr << str << endl;
-          result = false;
-        }
-        break;
-      case FGEngine::etTurbine:
-        Engines[i]->ResetToIC();
-        try {
-          if (HasInitializedEngines && (InitializedEngines & i)) InitRunning(i);
-        } catch (string str) {
-          cerr << str << endl;
-          result = false;
-        }
-        break;
-      default:
-        break;
-    }
-  }
+  for (unsigned int i=0; i<numEngines; i++)
+    Engines[i]->ResetToIC();
 
   return result;
 }
@@ -358,9 +334,6 @@ void FGPropulsion::InitRunning(int n)
     GetEngine(n)->InitRunning();
     GetSteadyState();
 
-    InitializedEngines = 1 << n;
-    HasInitializedEngines = true;
-
   } else if (n < 0) { // -1 refers to "All Engines"
 
     for (unsigned int i=0; i<GetNumEngines(); i++) {
@@ -370,8 +343,6 @@ void FGPropulsion::InitRunning(int n)
     }
 
     GetSteadyState();
-    InitializedEngines = -1;
-    HasInitializedEngines = true;
   }
 }
 

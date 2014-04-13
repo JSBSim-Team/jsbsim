@@ -44,7 +44,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.46 2014/02/17 04:59:52 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.47 2014/03/10 14:09:28 jberndt Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -584,16 +584,26 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
     disp = e->GetAttributeValueAsNumber("dispersion");
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
-    if (attType == "gaussian") {
+    if (attType == "gaussian" || attType == "gaussiansigned") {
       double grn = GaussianRandomNumber();
+    if (attType == "gaussian") {
       value = val + disp*grn;
+      } else { // Assume gaussiansigned
+        value = (val + disp*grn)*(fabs(grn)/grn);
+      }
+
 /*      std::cout << "DISPERSION GAUSSIAN: Initial: " << val
                 << "  Dispersion: " << disp
                 << "  Gaussian Rand Num: " << grn
                 << "  Total Dispersed Value: " << value << endl; */
-    } else if (attType == "uniform") {
+    } else if (attType == "uniform" || attType == "uniformsigned") {
       double urn = ((((double)rand()/RAND_MAX)-0.5)*2.0);
+      if (attType == "uniform") {
       value = val + disp * urn;
+      } else { // Assume uniformsigned
+        value = (val + disp * urn)*(fabs(urn)/urn);
+      }
+
 /*      std::cout << "DISPERSION UNIFORM: Initial: " << val
                 << "  Dispersion: " << disp
                 << "  Uniform Rand Num: " << urn

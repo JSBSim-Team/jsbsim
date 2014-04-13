@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.32 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.33 2014/04/13 11:19:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.32 2013/11/24 11:40:56 bcoconni Exp $
+    @version $Id: FGPropulsion.h,v 1.33 2014/04/13 11:19:15 bcoconni Exp $
     @see
     FGEngine
     FGTank
@@ -224,9 +224,6 @@ private:
   bool HaveRocketEngine;
   bool HaveElectricEngine;
   void ConsumeFuel(FGEngine* engine);
-
-  int InitializedEngines;
-  bool HasInitializedEngines;
 
   void bind();
   void Debug(int from);
