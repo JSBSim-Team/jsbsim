@@ -75,7 +75,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.156 2014/02/17 05:12:06 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.157 2014/04/13 11:19:14 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -612,8 +612,16 @@ bool FGFDMExec::RunIC(void)
   Run();
   ResumeIntegration(); // Restores the integration rate to what it was.
 
-  for (unsigned int i=0; i<IC->GetNumEnginesRunning(); i++)
-    propulsion->InitRunning(IC->GetEngineRunning(i));
+  for (unsigned int n=0; n < propulsion->GetNumEngines(); ++n) {
+    if (IC->IsEngineRunning(n)) {
+      try {
+        propulsion->InitRunning(n);
+      } catch (string str) {
+        cerr << str << endl;
+        return false;
+      }
+    }
+  }
 
   return true;
 }

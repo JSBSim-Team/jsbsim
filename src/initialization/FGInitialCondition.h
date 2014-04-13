@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.39 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.40 2014/04/13 11:19:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -217,7 +217,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.39 2013/11/24 11:40:55 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.40 2014/04/13 11:19:15 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -653,15 +653,10 @@ public:
       @return true if successful */
   bool Load(std::string rstname, bool useStoredPath = true );
 
-  /** Get the number of engines running
-   */
-  unsigned int GetNumEnginesRunning(void) const
-  { return (unsigned int)enginesRunning.size(); }
-
-  /** Gets the running engine identification
-      @param engine index of running engine instance
-      @return the identification of running engine instance requested */
-  int GetEngineRunning(unsigned int engine) const { return enginesRunning[engine]; }
+  /** Is an engine running ?
+      @param index of the engine to be checked
+      @return true if the engine is running. */
+  bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)); }
 
 private:
   FGColumnVector3 vUVW_NED;
@@ -677,7 +672,7 @@ private:
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
-  std::vector<int> enginesRunning;
+  unsigned int enginesRunning;
 
   FGFDMExec *fdmex;
   FGPropertyManager *PropertyManager;
