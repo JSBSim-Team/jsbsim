@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.94 2014/04/13 11:19:15 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.95 2014/05/01 18:32:54 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -76,9 +76,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   InitializeIC();
 
   if(FDMExec != NULL ) {
-    PropertyManager=fdmex->GetPropertyManager();
     Atmosphere=fdmex->GetAtmosphere();
-    bind();
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
@@ -1257,7 +1255,7 @@ bool FGInitialCondition::Load_v2(Element* document)
 
 //******************************************************************************
 
-void FGInitialCondition::bind(void)
+void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
 {
   PropertyManager->Tie("ic/vc-kts", this,
                        &FGInitialCondition::GetVcalibratedKtsIC,

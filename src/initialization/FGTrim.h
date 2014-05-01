@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.10 2013/11/24 16:53:15 bcoconni Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.11 2014/05/01 18:32:54 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,7 +120,7 @@ CLASS DOCUMENTATION
     @endcode
     
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.10 2013/11/24 16:53:15 bcoconni Exp $"
+    @version "$Id: FGTrim.h,v 1.11 2014/05/01 18:32:54 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,35 +131,28 @@ class FGTrim : public FGJSBBase
 {
 private:
 
-  std::vector<FGTrimAxis*> TrimAxes;
-  unsigned int current_axis;
-  int N, Nsub;
+  std::vector<FGTrimAxis> TrimAxes;
+  unsigned int Nsub;
   TrimMode mode;
   int DebugLevel, Debug;
   double Tolerance, A_Tolerance;
-  double wdot,udot,qdot;
-  double dth;
-  double *sub_iterations;
-  double *successful;
-  bool *solution;
-  int max_sub_iterations;
-  int max_iterations;
-  int total_its;
-  bool trimudot;
+  std::vector<double> sub_iterations, successful;
+  std::vector<bool> solution;
+  unsigned int max_sub_iterations;
+  unsigned int max_iterations;
+  unsigned int total_its;
   bool gamma_fallback;
-  bool trim_failed;
-  unsigned int axis_count;
   int solutionDomain;
   double xlo,xhi,alo,ahi;
   double targetNlf;
   int debug_axis;
 
-  double psidot,thetadot;
+  double psidot;
 
   FGFDMExec* fdmex;
-  FGInitialCondition* fgic;
+  FGInitialCondition fgic;
 
-  bool solve(void);
+  bool solve(FGTrimAxis& axis);
 
   /** @return false if there is no change in the current axis accel
       between accel(control_min) and accel(control_max). If there is a
@@ -168,15 +161,15 @@ private:
      -1 if sign change between accel(control_min) and accel(0)
       1 if sign between accel(0) and accel(control_max)
   */
-  bool findInterval(void);
+  bool findInterval(FGTrimAxis& axis);
 
-  bool checkLimits(void);
+  bool checkLimits(FGTrimAxis& axis);
 
   void setupPullup(void);
   void setupTurn(void);
 
   void updateRates(void);
-  void setDebug(void);
+  void setDebug(FGTrimAxis& axis);
 
   struct ContactPoints {
     FGColumnVector3 location;

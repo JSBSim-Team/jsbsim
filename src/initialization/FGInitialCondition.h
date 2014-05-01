@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.40 2014/04/13 11:19:15 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.41 2014/05/01 18:32:54 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -217,7 +217,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.40 2014/04/13 11:19:15 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.41 2014/05/01 18:32:54 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -658,6 +658,8 @@ public:
       @return true if the engine is running. */
   bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)); }
 
+  void bind(FGPropertyManager* pm);
+
 private:
   FGColumnVector3 vUVW_NED;
   FGColumnVector3 vPQR_body;
@@ -675,7 +677,6 @@ private:
   unsigned int enginesRunning;
 
   FGFDMExec *fdmex;
-  FGPropertyManager *PropertyManager;
   FGAtmosphere* Atmosphere;
 
   bool Load_v1(Element* document);
@@ -690,7 +691,6 @@ private:
   double GetBodyVelFpsIC(int idx) const;
   void calcAeroAngles(const FGColumnVector3& _vt_BODY);
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
-  void bind(void);
   void Debug(int from);
 };
 }
