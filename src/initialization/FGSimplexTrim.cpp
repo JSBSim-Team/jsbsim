@@ -16,6 +16,7 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "FGTrim.h"
 #include "FGSimplexTrim.h"
 #include <ctime>
 

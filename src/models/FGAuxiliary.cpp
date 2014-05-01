@@ -43,6 +43,7 @@ INCLUDES
 #include <iostream>
 
 #include "FGAuxiliary.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -50,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.65 2014/01/13 10:46:06 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.66 2014/05/01 12:25:07 bcoconni Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

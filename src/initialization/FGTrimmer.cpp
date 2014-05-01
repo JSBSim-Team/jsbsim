@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "simgear/misc/stdint.hxx"
+#include "FGInitialCondition.h"
 
 namespace JSBSim
 {

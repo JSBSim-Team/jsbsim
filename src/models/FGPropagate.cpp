@@ -69,6 +69,7 @@ INCLUDES
 #include <iomanip>
 #include <fstream>
 
+#include "initialization/FGInitialCondition.h"
 #include "FGPropagate.h"
 #include "FGGroundReactions.h"
 #include "FGFDMExec.h"
@@ -78,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.123 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.124 2014/05/01 12:25:07 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
