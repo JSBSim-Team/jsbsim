@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.158 2014/05/01 12:25:06 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.159 2014/05/01 18:32:54 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,6 +320,7 @@ bool FGFDMExec::Allocate(void)
   }
 
   IC = new FGInitialCondition(this);
+  IC->bind(instance);
 
   modelLoaded = false;
 
@@ -376,10 +377,10 @@ bool FGFDMExec::Run(void)
   }
 
   if (ResetMode) {
-    if (ResetMode == 1) Output->SetStartNewOutput();
+    unsigned int mode = ResetMode;
 
     ResetMode = 0;
-    ResetToInitialConditions();
+    ResetToInitialConditions(mode);
   }
 
   if (Terminate) success = false;
@@ -605,8 +606,7 @@ bool FGFDMExec::RunIC(void)
 {
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
-  if (!trim_status)
-    Models[eOutput]->InitModel();
+  Models[eOutput]->InitModel();
 
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
   Initialize(IC);
@@ -647,9 +647,11 @@ void FGFDMExec::Initialize(FGInitialCondition *FGIC)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::ResetToInitialConditions(void)
+void FGFDMExec::ResetToInitialConditions(int mode)
 {
   if (Constructing) return;
+
+  if (mode == 1) Output->SetStartNewOutput();
 
   for (unsigned int i = 0; i < Models.size(); i++) {
     // The Output model will be initialized during the RunIC() execution
