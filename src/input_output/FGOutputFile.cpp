@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.6 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.7 2014/05/04 13:39:16 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTFILE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,11 @@ void FGOutputFile::SetStartNewOutput(void)
       buf << Name << '_' << runID_postfix++;
     }
     Filename = buf.str();
-    CloseFile();
   }
+  else
+    Filename = Name;
+
+  CloseFile();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
