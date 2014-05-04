@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTFILE "$Id: FGOutputFile.h,v 1.4 2014/05/04 13:39:16 bcoconni Exp $"
+#define ID_OUTPUTFILE "$Id: FGOutputFile.h,v 1.5 2014/05/04 14:28:45 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,9 +106,12 @@ public:
       the next call to SetStartNewOutput().
       @param name new name */
   void SetOutputName(const std::string& fname) {
-    Name = Filename = FDMExec->GetRootDir() + fname;
+    Name = FDMExec->GetRootDir() + fname;
     runID_postfix = 0;
-    Filename = std::string();
+    if (reset)
+      Filename = string();
+    else
+      Filename = Name;
   }
   /** Generate the output. This is a pure method so it must be implemented by
       the classes that inherits from FGOutputFile.
@@ -117,6 +120,7 @@ public:
 
 protected:
   std::string Filename;
+  bool reset;
 
   /// Opens the file
   virtual bool OpenFile(void) = 0;

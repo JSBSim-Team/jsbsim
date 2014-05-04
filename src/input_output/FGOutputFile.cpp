@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.7 2014/05/04 13:39:16 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.8 2014/05/04 14:28:45 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTFILE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,6 +56,7 @@ CLASS IMPLEMENTATION
 
 FGOutputFile::FGOutputFile(FGFDMExec* fdmex) :
   FGOutputType(fdmex),
+  reset(false),
   runID_postfix(0)
 {
 }
@@ -74,6 +75,8 @@ bool FGOutputFile::InitModel(void)
 
 void FGOutputFile::SetStartNewOutput(void)
 {
+  reset = true;
+
   if (Filename.size() > 0) {
     ostringstream buf;
     string::size_type dot = Name.find_last_of('.');
