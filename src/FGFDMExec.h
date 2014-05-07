@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.89 2014/05/01 18:32:54 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.90 2014/05/07 19:49:49 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.89 $
+    @version $Revision: 1.90 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +448,7 @@ public:
   void SetLoggingRate(double rate) { Output->SetRate(rate); }
 
   /** Sets (or overrides) the output filename
+      @param n index of file
       @param fname the name of the file to output data to
       @return true if successful, false if there is no output specified for the flight model */
   bool SetOutputFileName(const int n, const std::string& fname) { return Output->SetOutputName(n, fname); }
@@ -489,7 +490,11 @@ public:
   void Resume(void) {holding = false;}
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
-  /// Resets the initial conditions object and prepares the simulation to run again.
+  /** Resets the initial conditions object and prepares the simulation to run
+      again. If mode is set to 1 the output instances will take special actions
+      such as closing the current output file and open a new one with a
+      different name.
+      @param mode Sets the reset mode.*/
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
   void SetDebugLevel(int level) {debug_lvl = level;}

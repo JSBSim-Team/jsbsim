@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAtmosphere.cpp,v 1.58 2014/01/13 10:46:04 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAtmosphere.cpp,v 1.59 2014/05/07 19:51:43 bcoconni Exp $");
 IDENT(IdHdr,ID_ATMOSPHERE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,8 +244,8 @@ double FGAtmosphere::ConvertFromPSF(double p, ePressure unit) const
 
 void FGAtmosphere::bind(void)
 {
-  typedef double (FGAtmosphere::*PMFi)(int) const;
-  typedef void (FGAtmosphere::*PMF)(int, double);
+//  typedef double (FGAtmosphere::*PMFi)(int) const;
+//  typedef void (FGAtmosphere::*PMF)(int, double);
   PropertyManager->Tie("atmosphere/T-R", this, &FGAtmosphere::GetTemperature);
   PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, &FGAtmosphere::GetDensity);
   PropertyManager->Tie("atmosphere/P-psf", this, &FGAtmosphere::GetPressure);
