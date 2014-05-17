@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.48 2014/02/17 05:12:06 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.49 2014/05/17 15:17:13 jberndt Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +120,8 @@ bool FGMassBalance::Load(Element* elem)
   } else {
     document = elem;
   }
+
+  Name = "Mass Properties Model: " + document->GetAttributeValue("name");
 
   FGModel::Load(document); // Perform base class Load.
 
