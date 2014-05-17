@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGStandardAtmosphere.cpp,v 1.23 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGStandardAtmosphere.cpp,v 1.24 2014/05/17 15:07:48 jberndt Exp $");
 IDENT(IdHdr,ID_STANDARDATMOSPHERE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,15 +72,28 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGAtmosphere(fdme
   //                        GeoMet Alt    Temp      GeoPot Alt  GeoMet Alt
   //                           (ft)      (deg R)      (km)        (km)
   //                         --------   --------    ----------  ----------
-  *StdAtmosTemperatureTable <<      0.0 << 518.67 //    0.000       0.000
-                            <<  36151.6 << 390.0  //   11.000      11.019
-                            <<  65823.5 << 390.0  //   20.000      20.063
-                            << 105518.4 << 411.6  //   32.000      32.162
-                            << 155347.8 << 487.2  //   47.000      47.350
-                            << 168677.8 << 487.2  //   51.000      51.413
-                            << 235570.9 << 386.4  //   71.000      71.802
-                            << 282152.2 << 336.5  //   84.852      86.000
-                            << 298556.4 << 336.5; //               91.000 - First layer in high altitude regime 
+  //*StdAtmosTemperatureTable <<      0.00 << 518.67  //    0.000       0.000
+  //                          <<  36151.80 << 389.97  //   11.000      11.019
+  //                          <<  65823.90 << 389.97  //   20.000      20.063
+  //                          << 105518.06 << 411.60  //   32.000      32.162
+  //                          << 155348.07 << 487.20  //   47.000      47.350
+  //                          << 168676.12 << 487.20  //   51.000      51.413
+  //                          << 235570.77 << 386.40  //   71.000      71.802
+  //                          << 282152.08 << 336.50  //   84.852      86.000
+  //                          << 298556.40 << 336.50; //               91.000 - First layer in high altitude regime 
+
+  //                            GeoPot Alt    Temp       GeoPot Alt  GeoMet Alt
+  //                               (ft)      (deg R)        (km)        (km)
+  //                           -----------   --------     ----------  ----------
+  *StdAtmosTemperatureTable <<      0.0000 << 518.67  //    0.000       0.000
+                            <<  36089.2388 << 389.97  //   11.000      11.019
+                            <<  65616.7979 << 389.97  //   20.000      20.063
+                            << 104986.8766 << 411.57  //   32.000      32.162
+                            << 154199.4751 << 487.17  //   47.000      47.350
+                            << 167322.8346 << 487.17  //   51.000      51.413
+                            << 232939.6325 << 386.37  //   71.000      71.802
+                            << 278385.8268 << 336.50 //   84.852      86.000
+                            << 298556.40   << 336.50; //               91.000 - First layer in high altitude regime 
 
   LapseRateVector.resize(StdAtmosTemperatureTable->GetNumRows()-1);
   PressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
@@ -143,10 +156,11 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   // Iterate through the altitudes to find the current Base Altitude
   // in the table. That is, if the current altitude (the argument passed in)
   // is 20000 ft, then the base altitude from the table is 0.0. If the
-  // passed-in altitude is 40000 ft, the base altitude is 36151.6 ft (and
+  // passed-in altitude is 40000 ft, the base altitude is 36089.2388 ft (and
   // the index "b" is 2 - the second entry in the table).
   double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
-  while ((altitude >= testAlt) && (b <= numRows-2)) {
+  double GeoPotAlt = (altitude*20855531.5)/(20855531.5+altitude);
+  while ((GeoPotAlt >= testAlt) && (b <= numRows-2)) {
     b++;
     testAlt = (*StdAtmosTemperatureTable)(b+1,0);
   }
@@ -154,7 +168,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
   double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
   Tmb = GetTemperature(BaseAlt);
-  deltaH = altitude - BaseAlt;
+  deltaH = GeoPotAlt - BaseAlt;
 
   if (LapseRateVector[b] != 0.00) {
     Lmb = LapseRateVector[b];
@@ -184,7 +198,9 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 
 double FGStandardAtmosphere::GetTemperature(double altitude) const
 {
-  double T = StdAtmosTemperatureTable->GetValue(altitude) + TemperatureBias;
+  double GeoPotAlt = (altitude*20855531.5)/(20855531.5+altitude);
+
+  double T = StdAtmosTemperatureTable->GetValue(GeoPotAlt) + TemperatureBias;
   if (altitude <= GradientFadeoutAltitude)
     T += TemperatureDeltaGradient * (GradientFadeoutAltitude - altitude);
 
@@ -202,7 +218,8 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 
   if (altitude < 298556.4) {                // 91 km - station 8
 
-    temp = StdAtmosTemperatureTable->GetValue(altitude);
+    double GeoPotAlt = (altitude*20855531.5)/(20855531.5+altitude);
+    temp = StdAtmosTemperatureTable->GetValue(GeoPotAlt);
 
   } else if (altitude < 360892.4) {        // 110 km - station 9
 

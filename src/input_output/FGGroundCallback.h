@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.16 2013/02/02 13:23:40 bcoconni Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.17 2014/05/17 15:35:54 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
     ball formed earth with an adjustable terrain elevation.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.16 2013/02/02 13:23:40 bcoconni Exp $
+    @version $Id: FGGroundCallback.h,v 1.17 2014/05/17 15:35:54 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,7 +132,8 @@ class FGDefaultGroundCallback : public FGGroundCallback
 {
 public:
 
-   FGDefaultGroundCallback(double referenceRadius = 20925650.0);
+   // This should not be hardcoded, but retrieved from FGInertial
+   FGDefaultGroundCallback(double referenceRadius);
 
    double GetAltitude(const FGLocation& l) const;
 

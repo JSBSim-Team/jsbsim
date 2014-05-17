@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.80 2013/12/22 17:08:59 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.81 2014/05/17 15:15:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.80 2013/12/22 17:08:59 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.81 2014/05/17 15:15:53 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,7 +159,7 @@ public:
 
   /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2,
-                       eAdamsBashforth3, eAdamsBashforth4, eBuss1, eBuss2, eLocalLinearization};
+                       eAdamsBashforth3, eAdamsBashforth4, eBuss1, eBuss2, eLocalLinearization, eAdamsBashforth5};
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
       The base class FGModel::InitModel is called first, initializing pointers to the
@@ -311,6 +311,11 @@ public:
   /** Calculates and retrieves the velocity vector relative to the earth centered earth fixed (ECEF) frame.
   */
   FGColumnVector3 GetECEFVelocity(void) const {return Tb2ec * VState.vUVW; }
+
+  /** Calculates and retrieves the velocity vector relative to the earth centered earth fixed (ECEF) frame
+      for a particular axis.
+  */
+  double GetECEFVelocity(int idx) const {return (Tb2ec * VState.vUVW)(idx); }
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.

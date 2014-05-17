@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.52 2014/01/13 10:46:04 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.53 2014/05/17 15:30:35 jberndt Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,6 +300,8 @@ bool FGAerodynamics::Load(Element *element)
     document = element;
   }
 
+  Name = "Aerodynamics Model: " + document->GetAttributeValue("name");
+
   FGModel::Load(document); // Perform base class Pre-Load
 
   DetermineAxisSystem(document); // Detemine if Lift/Side/Drag, etc. is used.
@@ -483,47 +485,25 @@ void FGAerodynamics::bind(void)
 {
   typedef double (FGAerodynamics::*PMF)(int) const;
 
-  PropertyManager->Tie("forces/fbx-aero-lbs", this,1,
-                       (PMF)&FGAerodynamics::GetForces);
-  PropertyManager->Tie("forces/fby-aero-lbs", this,2,
-                       (PMF)&FGAerodynamics::GetForces);
-  PropertyManager->Tie("forces/fbz-aero-lbs", this,3,
-                       (PMF)&FGAerodynamics::GetForces);
-  PropertyManager->Tie("moments/l-aero-lbsft", this,1,
-                       (PMF)&FGAerodynamics::GetMoments);
-  PropertyManager->Tie("moments/m-aero-lbsft", this,2,
-                       (PMF)&FGAerodynamics::GetMoments);
-  PropertyManager->Tie("moments/n-aero-lbsft", this,3,
-                       (PMF)&FGAerodynamics::GetMoments);
-  PropertyManager->Tie("forces/fwx-aero-lbs", this,1,
-                       (PMF)&FGAerodynamics::GetvFw);
-  PropertyManager->Tie("forces/fwy-aero-lbs", this,2,
-                       (PMF)&FGAerodynamics::GetvFw);
-  PropertyManager->Tie("forces/fwz-aero-lbs", this,3,
-                       (PMF)&FGAerodynamics::GetvFw);
-  PropertyManager->Tie("forces/lod-norm", this,
-                       &FGAerodynamics::GetLoD);
-  PropertyManager->Tie("aero/cl-squared", this,
-                       &FGAerodynamics::GetClSquared);
+  PropertyManager->Tie("forces/fbx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetForces);
+  PropertyManager->Tie("forces/fby-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetForces);
+  PropertyManager->Tie("forces/fbz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetForces);
+  PropertyManager->Tie("moments/l-aero-lbsft", this, 1, (PMF)&FGAerodynamics::GetMoments);
+  PropertyManager->Tie("moments/m-aero-lbsft", this, 2, (PMF)&FGAerodynamics::GetMoments);
+  PropertyManager->Tie("moments/n-aero-lbsft", this, 3, (PMF)&FGAerodynamics::GetMoments);
+  PropertyManager->Tie("forces/fwx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetvFw);
+  PropertyManager->Tie("forces/fwy-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetvFw);
+  PropertyManager->Tie("forces/fwz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetvFw);
+  PropertyManager->Tie("forces/lod-norm",      this, &FGAerodynamics::GetLoD);
+  PropertyManager->Tie("aero/cl-squared",      this, &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/qbar-area", &qbar_area);
-  PropertyManager->Tie("aero/alpha-max-rad", this,
-                       &FGAerodynamics::GetAlphaCLMax,
-                       &FGAerodynamics::SetAlphaCLMax,
-                       true);
-  PropertyManager->Tie("aero/alpha-min-rad", this,
-                       &FGAerodynamics::GetAlphaCLMin,
-                       &FGAerodynamics::SetAlphaCLMin,
-                       true);
-  PropertyManager->Tie("aero/bi2vel", this,
-                       &FGAerodynamics::GetBI2Vel);
-  PropertyManager->Tie("aero/ci2vel", this,
-                       &FGAerodynamics::GetCI2Vel);
-  PropertyManager->Tie("aero/alpha-wing-rad", this,
-                       &FGAerodynamics::GetAlphaW);
-  PropertyManager->Tie("systems/stall-warn-norm", this,
-                        &FGAerodynamics::GetStallWarn);
-  PropertyManager->Tie("aero/stall-hyst-norm", this,
-                        &FGAerodynamics::GetHysteresisParm);
+  PropertyManager->Tie("aero/alpha-max-rad",   this, &FGAerodynamics::GetAlphaCLMax, &FGAerodynamics::SetAlphaCLMax, true);
+  PropertyManager->Tie("aero/alpha-min-rad",   this, &FGAerodynamics::GetAlphaCLMin, &FGAerodynamics::SetAlphaCLMin, true);
+  PropertyManager->Tie("aero/bi2vel",          this, &FGAerodynamics::GetBI2Vel);
+  PropertyManager->Tie("aero/ci2vel",          this, &FGAerodynamics::GetCI2Vel);
+  PropertyManager->Tie("aero/alpha-wing-rad",  this, &FGAerodynamics::GetAlphaW);
+  PropertyManager->Tie("systems/stall-warn-norm", this, &FGAerodynamics::GetStallWarn);
+  PropertyManager->Tie("aero/stall-hyst-norm", this, &FGAerodynamics::GetHysteresisParm);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

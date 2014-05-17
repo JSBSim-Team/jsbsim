@@ -44,7 +44,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.32 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.33 2014/05/17 15:05:27 jberndt Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,6 +173,7 @@ bool FGActuator::Run(void )
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
     if (bias != 0.0)             Bias();       // models a finite bias
+    if (delay != 0)              Delay();      // Model transport latency
   }
 
   PreviousOutput = Output; // previous value needed for "stuck" malfunction

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.66 2014/05/01 12:25:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.67 2014/05/17 15:28:51 jberndt Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,7 +166,7 @@ bool FGAuxiliary::Run(bool Holding)
 
   double Vt2 = Vt*Vt;
 
-  if ( Vt > 1.0 ) {
+  if ( Vt > 0.001 ) {
     if (vAeroUVW(eW) != 0.0)
       alpha = AeroU2 > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
     if (vAeroUVW(eV) != 0.0)
@@ -175,7 +175,7 @@ bool FGAuxiliary::Run(bool Holding)
     //double signU=1;
     //if (vAeroUVW(eU) < 0.0) signU=-1;
 
-    if ( mUW >= 1.0 ) {
+    if ( mUW >= 0.001 ) {
       adot = (vAeroUVW(eU)*in.vUVWdot(eW) - vAeroUVW(eW)*in.vUVWdot(eU))/mUW;
       // bdot = (signU*mUW*in.vUVWdot(eV)
       //        - vAeroUVW(eV)*(vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eW)*in.vUVWdot(eW)))/(Vt2*sqrt(mUW));
@@ -222,7 +222,7 @@ bool FGAuxiliary::Run(bool Holding)
   if (abs(MachU) > 0.0) {
     vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
     veas = sqrt(2 * qbar / in.DensitySL);
-    vtrue = 1116.43559 * MachU * sqrt(in.Temperature / 518.67);
+    vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
   } else {
     vcas = veas = vtrue = 0.0;
   }

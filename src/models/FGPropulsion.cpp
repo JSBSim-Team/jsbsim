@@ -67,7 +67,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.77 2014/04/13 11:19:15 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.78 2014/05/17 15:13:56 jberndt Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -265,7 +265,8 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 
   if (engine->GetType() == FGEngine::etRocket) {
     double OxidizerToBurn = engine->CalcOxidizerNeed();                // How much fuel does this engine need?
-    double OxidizerNeededPerTank = OxidizerToBurn / TanksWithOxidizer; // Determine fuel needed per tank.  
+    double OxidizerNeededPerTank = 0;
+    if (TanksWithOxidizer > 0) OxidizerNeededPerTank = OxidizerToBurn / TanksWithOxidizer; // Determine fuel needed per tank.  
     for (unsigned int i=0; i<FeedListOxi.size(); i++) {
       Tanks[FeedListOxi[i]]->Drain(OxidizerNeededPerTank); 
     }
@@ -367,6 +368,8 @@ bool FGPropulsion::Load(Element* elem)
   } else {
     el = elem;
   }
+
+  Name = "Propulsion Model: " + el->GetAttributeValue("name");
 
   FGModel::Load(el); // Perform base class Load.
 
@@ -808,19 +811,12 @@ void FGPropulsion::bind(void)
                         &FGPropulsion::SetRefuel, true);
   PropertyManager->Tie("propulsion/fuel_dump", this, &FGPropulsion::GetFuelDump,
                         &FGPropulsion::SetFuelDump, true);
-  PropertyManager->Tie("forces/fbx-prop-lbs", this,1,
-                       (PMF)&FGPropulsion::GetForces);
-  PropertyManager->Tie("forces/fby-prop-lbs", this,2,
-                       (PMF)&FGPropulsion::GetForces);
-  PropertyManager->Tie("forces/fbz-prop-lbs", this,3,
-                       (PMF)&FGPropulsion::GetForces);
-  PropertyManager->Tie("moments/l-prop-lbsft", this,1,
-                       (PMF)&FGPropulsion::GetMoments);
-  PropertyManager->Tie("moments/m-prop-lbsft", this,2,
-                       (PMF)&FGPropulsion::GetMoments);
-  PropertyManager->Tie("moments/n-prop-lbsft", this,3,
-                       (PMF)&FGPropulsion::GetMoments);
-
+  PropertyManager->Tie("forces/fbx-prop-lbs", this, eX, (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fby-prop-lbs", this, eY, (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fbz-prop-lbs", this, eZ, (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("moments/l-prop-lbsft", this, eX, (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/m-prop-lbsft", this, eY, (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/n-prop-lbsft", this, eZ, (PMF)&FGPropulsion::GetMoments);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

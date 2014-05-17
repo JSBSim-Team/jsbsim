@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.160 2014/05/07 19:51:43 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.161 2014/05/17 15:35:53 jberndt Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 {
   Frame           = 0;
   Error           = 0;
-  SetGroundCallback(new FGDefaultGroundCallback());
+  //SetGroundCallback(new FGDefaultGroundCallback());
   IC              = 0;
   Trim            = 0;
   Script          = 0;
@@ -170,7 +170,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
   instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
   instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
-  instance->Tie("simulation/reset", (int*)&ResetMode);
+  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
   instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
   instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
@@ -306,7 +306,8 @@ bool FGFDMExec::Allocate(void)
 
   // Initialize planet (environment) constants
   LoadPlanetConstants();
-  GetGroundCallback()->SetSeaLevelRadius(Inertial->GetRefRadius());
+  //GetGroundCallback()->SetSeaLevelRadius(Inertial->GetRefRadius());
+  SetGroundCallback(new FGDefaultGroundCallback(Inertial->GetRefRadius()));
 
   // Initialize models
   for (unsigned int i = 0; i < Models.size(); i++) {
@@ -1006,6 +1007,17 @@ void FGFDMExec::PrintPropertyCatalog(void)
   for (unsigned i=0; i<PropertyCatalog.size(); i++) {
     cout << "    " << PropertyCatalog[i] << endl;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::PrintSimulationConfiguration(void) const
+{
+  cout << endl << "Simulation Configuration" << endl << "------------------------" << endl;
+  cout << MassBalance->Name << endl;
+  cout << GroundReactions->Name << endl;
+  cout << Aerodynamics->Name << endl;
+  cout << Propulsion->Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

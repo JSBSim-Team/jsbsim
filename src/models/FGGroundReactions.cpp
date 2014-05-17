@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.49 2014/01/28 09:42:21 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.50 2014/05/17 15:25:20 jberndt Exp $");
 IDENT(IdHdr,ID_GROUNDREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,6 +155,8 @@ bool FGGroundReactions::Load(Element* elem)
   } else {
     document = elem;
   }
+
+  Name = "Ground Reactions Model: " + document->GetAttributeValue("name");
 
   Debug(2);
 

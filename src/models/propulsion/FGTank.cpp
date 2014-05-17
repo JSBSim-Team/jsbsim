@@ -36,18 +36,19 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <cstdlib>
+#include <iostream>
 #include "FGTank.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-#include <iostream>
-#include <cstdlib>
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.39 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.40 2014/05/17 15:09:42 jberndt Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +75,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   PropertyManager = Exec->GetPropertyManager();
   vXYZ.InitMatrix();
   vXYZ_drain.InitMatrix();
+  ixx_unit = iyy_unit = izz_unit = 1.0;
 
   type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
@@ -127,6 +129,27 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
 
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/tank", TankNumber);
+  property_name = base_property_name + "/contents-lbs";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
+                                       &FGTank::SetContents );
+  property_name = base_property_name + "/pct-full";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
+
+  property_name = base_property_name + "/priority";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
+                                       &FGTank::SetPriority );
+  property_name = base_property_name + "/external-flow-rate-pps";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetExternalFlow,
+                                       &FGTank::SetExternalFlow );
+  property_name = base_property_name + "/local-ixx-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIxx);
+  property_name = base_property_name + "/local-iyy-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIyy);
+  property_name = base_property_name + "/local-izz-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIzz);
+
   // Check whether this is a solid propellant "tank". Initialize it if true.
 
   grainType = gtUNKNOWN; // This is the default
@@ -137,6 +160,38 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     strGType = element_Grain->GetAttributeValue("type");
     if (strGType == "CYLINDRICAL")     grainType = gtCYLINDRICAL;
     else if (strGType == "ENDBURNING") grainType = gtENDBURNING;
+    else if (strGType == "FUNCTION")   {
+      grainType = gtFUNCTION;
+      if (element_Grain->FindElement("ixx") != 0) {
+        Element* element_ixx = element_Grain->FindElement("ixx");
+        if (element_ixx->GetAttributeValue("unit") == "KG*M2") ixx_unit = 1.0/1.35594;
+        if (element_ixx->FindElement("function") != 0) {
+          function_ixx = new FGFunction(PropertyManager, element_ixx->FindElement("function"));
+        }
+      } else {
+        throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an ixx must be specified when the FUNCTION grain type is specified.");
+      }
+
+      if (element_Grain->FindElement("iyy")) {
+        Element* element_iyy = element_Grain->FindElement("iyy");
+        if (element_iyy->GetAttributeValue("unit") == "KG*M2") iyy_unit = 1.0/1.35594;
+        if (element_iyy->FindElement("function") != 0) {
+          function_iyy = new FGFunction(PropertyManager, element_iyy->FindElement("function"));
+        }
+      } else {
+        throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an iyy must be specified when the FUNCTION grain type is specified.");
+      }
+
+      if (element_Grain->FindElement("izz")) {
+        Element* element_izz = element_Grain->FindElement("izz");
+        if (element_izz->GetAttributeValue("unit") == "KG*M2") izz_unit = 1.0/1.35594;
+        if (element_izz->FindElement("function") != 0) {
+          function_izz = new FGFunction(PropertyManager, element_izz->FindElement("function"));
+        }
+      } else {
+        throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an izz must be specified when the FUNCTION grain type is specified.");
+      }
+    }
     else                               cerr << "Unknown propellant grain type specified" << endl;
 
     if (element_Grain->FindElement("length"))
@@ -157,6 +212,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
       case gtENDBURNING:
         Volume = M_PI * Length * Radius * Radius; // cubic inches
         break;
+      case gtFUNCTION:
+        Volume = 1;  // Volume is irrelevant for the FUNCTION type, but it can't be zero!
+        break;
       case gtUNKNOWN:
         cerr << "Unknown grain type found in this rocket engine definition." << endl;
         exit(-1);
@@ -165,21 +223,6 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   }
 
     CalculateInertias();
-
-  string property_name, base_property_name;
-  base_property_name = CreateIndexedPropertyName("propulsion/tank", TankNumber);
-  property_name = base_property_name + "/contents-lbs";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
-                                       &FGTank::SetContents );
-  property_name = base_property_name + "/pct-full";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
-
-  property_name = base_property_name + "/priority";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
-                                       &FGTank::SetPriority );
-  property_name = base_property_name + "/external-flow-rate-pps";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetExternalFlow,
-                                       &FGTank::SetExternalFlow );
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
@@ -344,20 +387,26 @@ void FGTank::CalculateInertias(void)
       RadSumSqr = (Rad2 + InnerRadius*InnerRadius)/144.0;
       Ixx = 0.5*Mass*RadSumSqr;
       Iyy = Mass*(3.0*RadSumSqr + Length*Length/144.0)/12.0;
+        Izz  = Iyy;
       break;
     case gtENDBURNING:
       Length = Volume/(M_PI*Rad2);
       Ixx = 0.5*Mass*Rad2/144.0;
       Iyy = Mass*(3.0*Rad2 + Length*Length)/(144.0*12.0);
+        Izz  = Iyy;
       break;
+      case gtFUNCTION:
+        Ixx = function_ixx->GetValue()*ixx_unit;
+        Iyy = function_iyy->GetValue()*iyy_unit;
+        Izz = function_izz->GetValue()*izz_unit;
+        break;
     case gtUNKNOWN:
       cerr << "Unknown grain type found." << endl;
       exit(-1);
       break;
   }
-  Izz  = Iyy;
 
-  } else { // assume liquid propellant
+  } else { // assume liquid propellant: shrinking snowball
 
     if (Radius > 0.0) Ixx = Iyy = Izz = Mass * InertiaFactor * 0.4 * Radius * Radius / 144.0;
 

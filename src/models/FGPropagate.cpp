@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.124 2014/05/01 12:25:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.125 2014/05/17 15:15:53 jberndt Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,10 +101,10 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
 
-  VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqQtrndot.resize(4, FGQuaternion(0.0,0.0,0.0));
+  VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqQtrndot.resize(5, FGQuaternion(0.0,0.0,0.0));
 
   bind();
   Debug(0);
@@ -127,10 +127,10 @@ bool FGPropagate::InitModel(void)
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
   VState.vLocation.SetAltitudeAGL(4.0, FDMExec->GetSimTime());
 
-  VState.dqPQRidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqUVWidot.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqInertialVelocity.resize(4, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqQtrndot.resize(4, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqQtrndot.resize(5, FGColumnVector3(0.0,0.0,0.0));
 
   integrator_rotational_rate = eRectEuler;
   integrator_translational_rate = eAdamsBashforth2;
@@ -188,7 +188,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
 void FGPropagate::InitializeDerivatives()
 {
-  for (int i=0; i<4; i++) {
+  for (int i=0; i<5; i++) {
     VState.dqPQRidot[i] = in.vPQRidot;
     VState.dqUVWidot[i] = in.vUVWidot;
     VState.dqInertialVelocity[i] = VState.vInertialVelocity;
@@ -313,8 +313,14 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
     break;
   case eAdamsBashforth4: Integrand += (1/24.0)*dt*(55.0*ValDot[0] - 59.0*ValDot[1] + 37.0*ValDot[2] - 9.0*ValDot[3]);
     break;
+  case eAdamsBashforth5: Integrand += dt*((1901./720.)*ValDot[0] - (1387./360.)*ValDot[1] + (109./30.)*ValDot[2] - (637./360.)*ValDot[3] + (251./720.)*ValDot[4]);
+    break;
   case eNone: // do nothing, freeze translational rate
     break;
+  case eBuss1:
+  case eBuss2:
+  case eLocalLinearization:
+    throw("Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!");
   default:
     break;
   }
@@ -341,6 +347,8 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
   case eAdamsBashforth3: Integrand += (1/12.0)*dt*(23.0*ValDot[0] - 16.0*ValDot[1] + 5.0*ValDot[2]);
     break;
   case eAdamsBashforth4: Integrand += (1/24.0)*dt*(55.0*ValDot[0] - 59.0*ValDot[1] + 37.0*ValDot[2] - 9.0*ValDot[3]);
+    break;
+  case eAdamsBashforth5: Integrand += dt*((1901./720.)*ValDot[0] - (1387./360.)*ValDot[1] + (109./30.)*ValDot[2] - (637./360.)*ValDot[3] + (251./720.)*ValDot[4]);
     break;
   case eBuss1:
     {

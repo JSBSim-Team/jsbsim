@@ -62,7 +62,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.115 2014/01/29 13:30:11 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.116 2014/05/17 15:26:39 jberndt Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -562,7 +562,7 @@ void FGLGear::CrashDetect(void)
       SinkRate > 1.4666*30 ) && !fdmex->IntegrationSuspended())
   {
     PutMessage("Crash Detected: Simulation FREEZE.");
-    fdmex->SuspendIntegration();
+    // fdmex->SuspendIntegration();
   }
 }
 
