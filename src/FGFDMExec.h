@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.90 2014/05/07 19:49:49 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.91 2014/05/17 15:35:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.90 $
+    @version $Revision: 1.91 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -405,13 +405,7 @@ public:
 
   /// Returns the model name.
   const std::string& GetModelName(void) const { return modelName; }
-/*
-  /// Returns the current time.
-  double GetSimTime(void);
 
-  /// Returns the current frame time (delta T).
-  double GetDeltaT(void);
-*/  
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
   /// Returns a vector of strings representing the names of all loaded models (future)
@@ -522,6 +516,9 @@ public:
 
   // Print the contents of the property catalog for the loaded aircraft.
   void PrintPropertyCatalog(void);
+
+  // Print the simulation configuration
+  void PrintSimulationConfiguration(void) const;
 
   std::vector<std::string>& GetPropertyCatalog(void) {return PropertyCatalog;}
 
