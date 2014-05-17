@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.56 2014/01/13 10:46:01 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.57 2014/05/17 15:33:08 jberndt Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,9 +138,15 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
 
   // Set sim timing
 
-  StartTime = run_element->GetAttributeValueAsNumber("start");
+  if (run_element->HasAttribute("start")) StartTime = run_element->GetAttributeValueAsNumber("start");
   FDMExec->Setsim_time(StartTime);
-  EndTime   = run_element->GetAttributeValueAsNumber("end");
+  if (run_element->HasAttribute("end")) {
+    EndTime   = run_element->GetAttributeValueAsNumber("end");
+  } else {
+    cerr << "An end time (duration) for the script must be specified in the script <run> element." << endl;
+    return false;
+  }
+
   // Make sure that the desired time is reached and executed.
   EndTime += 0.99*FDMExec->GetDeltaT();
 
