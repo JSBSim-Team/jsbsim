@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.34 2014/02/17 05:31:56 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.35 2014/05/17 15:04:14 jberndt Exp $");
 IDENT(IdHdr,ID_ROCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,6 +254,12 @@ string FGRocket::GetEngineLabels(const string& delimiter)
 
   buf << Name << " Total Impulse (engine " << EngineNumber << " in lbf)" << delimiter
       << Name << " Total Vacuum Impulse (engine " << EngineNumber << " in lbf)" << delimiter
+      << Name << " Roll Moment (engine " << EngineNumber << " in ft-lbf)" << delimiter
+      << Name << " Pitch Moment (engine " << EngineNumber << " in ft-lbf)" << delimiter
+      << Name << " Yaw Moment (engine " << EngineNumber << " in ft-lbf)" << delimiter
+      << Name << " X Force (engine " << EngineNumber << " in lbf)" << delimiter
+      << Name << " Y Force (engine " << EngineNumber << " in lbf)" << delimiter
+      << Name << " Z Force (engine " << EngineNumber << " in lbf)" << delimiter
       << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
   return buf.str();
@@ -267,6 +273,8 @@ string FGRocket::GetEngineValues(const string& delimiter)
 
   buf << It << delimiter 
       << ItVac << delimiter 
+      << GetMoments().Dump(delimiter) << delimiter
+      << Thruster->GetBodyForces().Dump(delimiter) << delimiter
       << Thruster->GetThrusterValues(EngineNumber, delimiter);
 
   return buf.str();
