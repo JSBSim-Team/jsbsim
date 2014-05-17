@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInertial.cpp,v 1.30 2014/03/10 14:09:56 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGInertial.cpp,v 1.31 2014/05/17 15:24:37 jberndt Exp $");
 IDENT(IdHdr,ID_INERTIAL);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,12 +57,14 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 
   // Earth defaults
   RotationRate    = 0.00007292115;
-  GM              = 14.07644180E15;     // WGS84 value
-  RadiusReference = 20925646.3255;      // Equatorial radius (WGS84)
+//  RotationRate    = 0.000072921151467;
+  GM              = 14.0764417572E15;   // WGS84 value
   C2_0            = -4.84165371736E-04; // WGS84 value for the C2,0 coefficient
-  J2              = 1.0826266836E-03;   // WGS84 value for J2
-  a               = 20925646.3255;      // WGS84 semimajor axis length in feet
+  J2              = 1.08262982E-03;     // WGS84 value for J2
+  a               = 20925646.32546;     // WGS84 semimajor axis length in feet
+//  a               = 20902254.5305;      // Effective Earth radius for a sphere
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
+  RadiusReference = a;
 
   // Lunar defaults
   /*
