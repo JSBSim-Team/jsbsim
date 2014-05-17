@@ -60,7 +60,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGAircraft.cpp,v 1.39 2014/01/13 10:46:04 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAircraft.cpp,v 1.40 2014/05/17 15:29:30 jberndt Exp $");
 IDENT(IdHdr,ID_AIRCRAFT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,9 +204,9 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/lv-norm", this, &FGAircraft::Getlbarv);
   PropertyManager->Tie("metrics/vbarh-norm", this, &FGAircraft::Getvbarh);
   PropertyManager->Tie("metrics/vbarv-norm", this, &FGAircraft::Getvbarv);
-  PropertyManager->Tie("metrics/aero-rp-x-in", this, eX, (PMF)&FGAircraft::GetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-y-in", this, eY, (PMF)&FGAircraft::GetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-z-in", this, eZ, (PMF)&FGAircraft::GetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-x-in", this, eX, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-y-in", this, eY, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-z-in", this, eZ, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
   PropertyManager->Tie("metrics/eyepoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/eyepoint-y-in", this, eY,(PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/eyepoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZep);
