@@ -72,7 +72,7 @@ using JSBSim::Element;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.83 2014/05/01 12:25:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.84 2014/05/17 15:36:45 jberndt Exp $");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -437,6 +437,11 @@ int real_main(int argc, char* argv[])
   }
 
   FDMExec->RunIC();
+
+  // PRINT SIMULATION CONFIGURATION
+  FDMExec->PrintSimulationConfiguration();
+
+  // Dump the simulation state (position, orientation, etc.)
   FDMExec->GetPropagate()->DumpState();
 
   cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
@@ -515,6 +520,7 @@ int real_main(int argc, char* argv[])
 
   }
 
+  
 quit:
 
   // PRINT ENDING CLOCK TIME
