@@ -46,13 +46,14 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "math/FGColumnVector3.h"
+#include "math/FGFunction.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.27 2012/08/11 14:57:38 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.28 2014/05/17 15:09:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -115,8 +116,12 @@ CLASS DOCUMENTATION
 
 @code
 <tank type="{FUEL | OXIDIZER}">
-  <grain_config type="{CYLINDRICAL | ENDBURNING}">
-    <length unit="{IN | FT | M}"> {number} </radius>
+  <grain_config type="{CYLINDRICAL | ENDBURNING | FUNCTION}">
+    <length unit="{IN | FT | M}"> {number} </length>
+    <bore_diameter unit="{IN | FT | M}"> {number} </bore_diameter>
+    [<ixx unit="{IN | FT | M}"> {function} </ixx>
+    <iyy unit="{IN | FT | M}"> {function} </iyy>
+    <izz unit="{IN | FT | M}"> {function} </izz>]
   </grain_config>
   <location unit="{FT | M | IN}">
     <x> {number} </x>
@@ -205,7 +210,7 @@ public:
   ~FGTank();
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
-  enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING};
+  enum GrainType {gtUNKNOWN, gtCYLINDRICAL, gtENDBURNING, gtFUNCTION};
 
   /** Removes fuel from the tank.
       This function removes fuel from a tank. If the tank empties, it is
@@ -306,8 +311,14 @@ private:
   int TankNumber;
   std::string type;
   std::string strGType;
+  double ixx_unit;
+  double iyy_unit;
+  double izz_unit;
   FGColumnVector3 vXYZ;
   FGColumnVector3 vXYZ_drain;
+  FGFunction* function_ixx;
+  FGFunction* function_iyy;
+  FGFunction* function_izz;
   double Capacity;
   double Radius;
   double InnerRadius;
