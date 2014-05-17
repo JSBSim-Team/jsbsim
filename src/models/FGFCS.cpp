@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.87 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.88 2014/05/17 15:27:16 jberndt Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -522,6 +522,8 @@ bool FGFCS::Load(Element* el, SystemType systype)
   } else {
     document = el;
   }
+
+  Name = "Flight Control Systems Model: " + document->GetAttributeValue("name");
 
   if (document->GetName() == "autopilot") {
     Name = "Autopilot: " + document->GetAttributeValue("name");
