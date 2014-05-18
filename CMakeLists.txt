@@ -14,7 +14,7 @@ set(PROJECT_CONTACT_VENDOR JSBSim)
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
-option(SYSTEM_EXPAT     "Set to ON to build JSBSim using the system libExpat" OFF)
+option(SYSTEM_EXPAT "Set to ON to build JSBSim using the system libExpat" OFF)
 if (SYSTEM_EXPAT)
   find_package(EXPAT)
 endif()
@@ -24,6 +24,37 @@ endif()
 ################################################################################
 
 add_subdirectory(src)
+
+################################################################################
+# Build the automated test infrastructure (needs Python and Cython)            #
+################################################################################
+
+option(INSTALL_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/tests/CMakeModules)
+find_package(Cython)
+
+if (CYTHON_FOUND)
+  find_package(PythonLibs)
+  if (PYTHONLIBS_FOUND)
+    # If JSBSim is built as a static library on an x86_64 *nix platform, the code
+    # must be compiled with the -fPIC flag otherwise the compiler will complain:
+    # relocation R_X86_64_32S against `a local symbol' can not be used when making
+    # a shared object; recompile with -fPIC
+    # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+    if (NOT BUILD_SHARED_LIBS)
+      if (UNIX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+	set_target_properties(libJSBSim PROPERTIES COMPILE_FLAGS "-fPIC")
+      endif()
+    endif()
+    include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
+    enable_testing()
+    add_subdirectory(tests)
+  endif(PYTHONLIBS_FOUND)
+endif(CYTHON_FOUND)
+
+if (NOT (CYTHON_FOUND AND PYTHONLIBS_FOUND))
+    message(WARNING "JSBSim Python module and test suite will not be built")
+endif()
 
 ################################################################################
 # Packaging                                                                    #

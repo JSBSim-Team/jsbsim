@@ -1,0 +1,45 @@
+import os.path
+
+from distutils.core import setup
+from distutils.extension import Extension
+from distutils.command.build_ext import build_ext
+from distutils.command.install_lib import install_lib
+
+# Dummy class to skip the standard build process of Python distutils. This is
+# done separately by CMake.
+#
+class NoBuild(build_ext):
+    def build_extension(self, ext):
+        pass # Don't build
+
+# The standard install_lib class installs every single file it finds in the
+# directory contained in self.build_dir. Here, we just want to install the
+# JSBSim module so that it can be accessed everywhere on the platform.
+# This class is therefore specializing the standard install_lib to do just that.
+#
+class InstallJSBSimModule(install_lib):
+    def __init__(self, dist):
+        install_lib.__init__(self, dist)
+        # Append whichever platform specific extension to the jsbsim module name
+        self.module_name = build_ext(dist).get_ext_filename('jsbsim')
+        # To stay on the safe side, we are explicitly asking (again) to skip the
+        # build process. Note that, according to my tests, this does not prevent
+        # the Python distutils from calling 'build_ext', hence the class
+        # 'NoBuild' above.
+        self.skip_build = True
+    def install(self):
+        self.copy_file(os.path.join('tests',self.module_name),
+                       self.install_dir+self.module_name)
+
+setup(
+    name="${PROJECT_NAME}",
+    version="${PROJECT_VERSION}",
+    cmdclass = {'build_ext' : NoBuild, 'install_lib' : InstallJSBSimModule },
+    ext_modules = [Extension('jsbsim',['jsbsim.cxx'],
+                             libraries=['JSBSim'],
+                             include_dirs=[os.path.join('${CMAKE_SOURCE_DIR}',
+                                                        'src')],
+                             library_dirs=[os.path.join('${CMAKE_BINARY_DIR}',
+                                                        'src')],
+                             language='c++')]
+)
