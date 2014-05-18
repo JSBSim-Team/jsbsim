@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.15 2014/01/28 09:42:20 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.16 2014/05/18 11:55:23 bcoconni Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -28,7 +28,7 @@
 #include <simgear/compiler.h>
 #include <simgear/sg_inlines.h>
 
-#include <stdio.h>    //    size_t
+#include <cstdlib>    //    size_t
 #include <string>
 
 #include <simgear/constants.h>
@@ -215,11 +215,11 @@ FGJSBsim::FGJSBsim( double dt )
 
     SGPath aircraft_path( fgGetString("/sim/aircraft-dir") );
 
-    SGPath engine_path( fgGetString("/sim/aircraft-dir") );
-    engine_path.append( "Engine" );
+    SGPath engine_path( fgGetString("/sim/fg-root") );
+    engine_path.append( "Aircraft/Generic/JSBSim/Engines" );
 
-    SGPath systems_path( fgGetString("/sim/aircraft-dir") );
-    systems_path.append( "Systems" );
+    SGPath systems_path( fgGetString("/sim/fg-root") );
+    systems_path.append( "Aircraft/Generic/JSBSim/Systems" );
 
 // deprecate sim-time-sec for simulation/sim-time-sec
 // remove alias with increased configuration file version number (2.1 or later)
@@ -389,9 +389,7 @@ void FGJSBsim::init()
       Winds->SetProbabilityOfExceedence(0.0);
     }
 
-    fgic->SetWindNEDFpsIC( -wind_from_north->getDoubleValue(),
-                           -wind_from_east->getDoubleValue(),
-                           -wind_from_down->getDoubleValue() );
+    fgic->SetWindNEDFpsIC(0.0, 0.0, 0.0);
 
     SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << Atmosphere->GetTemperature()
      << ", " << Atmosphere->GetPressure()
@@ -1333,9 +1331,11 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
 {
   const simgear::BVHMaterial* material;
   simgear::BVHNode::Id id;
-  if (!FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
-                               angularVel, material, id))
-    return false;
+
+  // don't check the return value and continue above scenery discontinuity
+  // see http://osdir.com/ml/flightgear-sim/2014-04/msg00145.html
+  FGInterface::get_agl_ft(t, pt, alt_off, contact, normal, vel,
+                               angularVel, material, id);
 
   SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
   SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
