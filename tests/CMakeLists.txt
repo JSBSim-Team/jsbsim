@@ -18,6 +18,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${CMAKE_BINARY_DIR}
 # Declare the tests to CTest so that they can be executed with 'make test'
 add_test(ResetOutputFiles ${PYTHON_EXECUTABLE} ResetOutputFiles.py
                                                ${CMAKE_SOURCE_DIR})
+add_test(RunCheckCases ${PYTHON_EXECUTABLE} RunCheckCases.py ${CMAKE_SOURCE_DIR})
 
 # Install the JSBSim Python module
 if (INSTALL_PYTHON_MODULE)

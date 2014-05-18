@@ -93,7 +93,7 @@ cdef class FGFDMExec:
 
     def __cinit__(self, **kwargs):
         # this hides startup message
-        os.environ["JSBSIM_DEBUG"]=str(0)
+        # os.environ["JSBSIM_DEBUG"]=str(0)
         self.thisptr = new c_FGFDMExec(0,0)
         if self.thisptr is NULL:
             raise MemoryError()
