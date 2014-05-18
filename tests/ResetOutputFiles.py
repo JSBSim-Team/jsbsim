@@ -44,10 +44,10 @@ path_to_jsbsim_files = os.path.relpath(sys.argv[1], os.getcwd())
 delete_csv_files()
 
 def InitFDM():
-    _fdm = jsbsim.FGFDMExec(root_dir="./")
-    _fdm.set_aircraft_path(path_to_jsbsim_files+"/aircraft")
-    _fdm.set_engine_path(path_to_jsbsim_files+"/engine")
-    _fdm.set_systems_path(path_to_jsbsim_files+"/systems")
+    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join('.', ''))
+    _fdm.set_aircraft_path(os.path.join(path_to_jsbsim_files, 'aircraft'))
+    _fdm.set_engine_path(os.path.join(path_to_jsbsim_files, 'engine'))
+    _fdm.set_systems_path(os.path.join(path_to_jsbsim_files, 'systems'))
     return _fdm
 
 def ExecuteUntil(_fdm, end_time):
@@ -61,7 +61,7 @@ def ExecuteUntil(_fdm, end_time):
 # execution, the simulation is interrupted after 1.0sec of simulated time.
 #
 fdm = InitFDM()
-fdm.load_script(path_to_jsbsim_files+"/scripts/c1722.xml")
+fdm.load_script(os.path.join(path_to_jsbsim_files, 'scripts', 'c1722.xml'))
 
 fdm.run_ic()
 ExecuteUntil(fdm, 1.0)
@@ -128,7 +128,7 @@ if (os.path.exists('thisone.csv') or not os.path.exists('thatone.csv')):
 #
 delete_csv_files()
 fdm = InitFDM()
-fdm.load_script(path_to_jsbsim_files+"/scripts/c1722.xml")
+fdm.load_script(os.path.join(path_to_jsbsim_files,'scripts', 'c1722.xml'))
 
 fdm.run_ic()
 fdm.set_output_filename(0,'oops.csv') # Oops!! Changed my mind
