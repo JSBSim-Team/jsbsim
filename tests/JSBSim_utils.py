@@ -22,11 +22,11 @@ import jsbsim
 
 path_to_jsbsim_files = os.path.relpath(sys.argv[1], os.getcwd())
 
-def InitFDM():
+def InitFDM(path=path_to_jsbsim_files):
     _fdm = jsbsim.FGFDMExec(root_dir=os.path.join('.',''))
-    _fdm.set_aircraft_path(os.path.join(path_to_jsbsim_files, 'aircraft'))
-    _fdm.set_engine_path(os.path.join(path_to_jsbsim_files, 'engine'))
-    _fdm.set_systems_path(os.path.join(path_to_jsbsim_files, 'systems'))
+    _fdm.set_aircraft_path(os.path.join(path, 'aircraft'))
+    _fdm.set_engine_path(os.path.join(path, 'engine'))
+    _fdm.set_systems_path(os.path.join(path, 'systems'))
     return _fdm
 
 def delete_csv_files():
@@ -95,31 +95,32 @@ class Table:
         if len(self._lines) != len(other._lines):
             raise MismatchError
 
-        for row in xrange(1, len(self._lines)):
-            if abs(self._lines[row][0] - other._lines[row][0]) > 1E-10:
+        for row, line in enumerate(self._lines[1:]):
+            if abs(line[0] - other._lines[row+1][0]) > 1E-10:
                 raise MismatchError
 
         for col, key in enumerate(self._lines[0][1:]):
-            if not key in other._lines[0]:
+            for col0, key0 in enumerate(other._lines[0]):
+                if key == key0:
+                    break
+            else:
                 result._missing += [key]
+                continue
 
             comparison = [key, 0.0]
             for row, line in enumerate(self._lines[1:]):
-                delta = abs(line[col] - other._lines[row+1][col])
+                delta = abs(line[col+1] - other._lines[row+1][col0])
                 if delta > comparison[1]:
-                    comparison = [key, delta, line[0], line[col],
-                                  other._lines[row+1][col]]
+                    comparison = [key, delta, line[0], line[col+1],
+                                  other._lines[row+1][col0]]
 
             if comparison[1] > precision:
                 result.add_line(comparison)
 
-            if len(result._lines) == 1:
-                return Table()
-
         return result
 
     def empty(self):
-        return len(self._lines) == 0
+        return len(self._lines) <= 1
 
     def __repr__(self):
         col_width = [max(len(str(item)) for item in col) for col in zip(*self._lines)]
