@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.88 2014/05/17 15:27:16 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.89 2014/05/29 18:46:44 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -544,7 +544,7 @@ bool FGFCS::Load(Element* el, SystemType systype)
   // supplied in the relevant element of the aircraft configuration file.
 
   if (!fname.empty())
-    LoadProperties(el, PropertyManager, true);
+    LocalProperties.Load(el, PropertyManager, true);
 
   channel_element = document->FindElement("channel");
   

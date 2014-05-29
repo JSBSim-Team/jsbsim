@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.9 2014/01/02 22:37:48 bcoconni Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.10 2014/05/29 18:46:44 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 DECLARATION: FGModelFunctions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGModelFunctions : public FGPropertyReader, public FGJSBBase
+class FGModelFunctions : public FGJSBBase
 {
 public:
   virtual ~FGModelFunctions();
@@ -102,6 +102,7 @@ public:
 protected:
   std::vector <FGFunction*> PreFunctions;
   std::vector <FGFunction*> PostFunctions;
+  FGPropertyReader LocalProperties;
 
   virtual bool InitModel(void);
 };

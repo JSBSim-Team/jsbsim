@@ -40,6 +40,7 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include <string>
+
 #include "FGModelFunctions.h"
 #include "FGFunction.h"
 #include "input_output/FGXMLElement.h"
@@ -48,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.12 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.13 2014/05/29 18:46:44 bcoconni Exp $");
 IDENT(IdHdr,ID_MODELFUNCTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +68,7 @@ FGModelFunctions::~FGModelFunctions()
 
 bool FGModelFunctions::InitModel(void)
 {
-  ResetToIC();
+  LocalProperties.ResetToIC();
 
   return true;
 }
@@ -76,7 +77,7 @@ bool FGModelFunctions::InitModel(void)
 
 bool FGModelFunctions::Load(Element* el, FGPropertyManager* PM, string prefix)
 {
-  LoadProperties(el, PM, false);
+  LocalProperties.Load(el, PM, false);
   PreLoad(el, PM, prefix);
 
   return true; // TODO: Need to make this value mean something.
