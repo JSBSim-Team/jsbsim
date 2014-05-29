@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.57 2014/05/17 15:33:08 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.58 2014/05/29 11:05:40 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,11 +173,11 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
       return false;
     }
 
-    initialize = element->GetAttributeValue("initialize");
     if (initfile.empty()) {
-    if (initialize.empty()) {
-      cerr << "Initialization file must be specified in use element." << endl;
-      return false;
+      initialize = element->GetAttributeValue("initialize");
+      if (initialize.empty()) {
+        cerr << "Initialization file must be specified in use element." << endl;
+        return false;
       }
     } else {
       cout << endl << "The initialization file specified in the script file (" << initialize
@@ -188,6 +188,12 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   } else {
     cerr << "No \"use\" directives in the script file." << endl;
     return false;
+  }
+
+  FGInitialCondition *IC=FDMExec->GetIC();
+  if ( ! IC->Load( initialize )) {
+    cerr << "Initialization unsuccessful" << endl;
+    exit(-1);
   }
 
   // Now, read input spec if given.
@@ -336,12 +342,6 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   }
 
   Debug(4);
-
-  FGInitialCondition *IC=FDMExec->GetIC();
-  if ( ! IC->Load( initialize )) {
-    cerr << "Initialization unsuccessful" << endl;
-    exit(-1);
-  }
 
   return true;
 }
