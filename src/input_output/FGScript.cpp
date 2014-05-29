@@ -46,16 +46,18 @@ INCLUDES
 #include <iomanip>
 
 #include "FGScript.h"
+#include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGXMLFileRead.h"
-#include "initialization/FGTrim.h"
+#include "initialization/FGInitialCondition.h"
 #include "models/FGInput.h"
+#include "math/FGCondition.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.57 2014/05/17 15:33:08 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.59 2014/05/29 18:46:44 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,11 +175,11 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
       return false;
     }
 
-    initialize = element->GetAttributeValue("initialize");
     if (initfile.empty()) {
-    if (initialize.empty()) {
-      cerr << "Initialization file must be specified in use element." << endl;
-      return false;
+      initialize = element->GetAttributeValue("initialize");
+      if (initialize.empty()) {
+        cerr << "Initialization file must be specified in use element." << endl;
+        return false;
       }
     } else {
       cout << endl << "The initialization file specified in the script file (" << initialize
@@ -188,6 +190,12 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   } else {
     cerr << "No \"use\" directives in the script file." << endl;
     return false;
+  }
+
+  FGInitialCondition *IC=FDMExec->GetIC();
+  if ( ! IC->Load( initialize )) {
+    cerr << "Initialization unsuccessful" << endl;
+    exit(-1);
   }
 
   // Now, read input spec if given.
@@ -208,7 +216,7 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   // Read local property/value declarations
   int saved_debug_lvl = debug_lvl;
   debug_lvl = 0; // Disable messages
-  LoadProperties(run_element, PropertyManager, true);
+  LocalProperties.Load(run_element, PropertyManager, true);
   debug_lvl = saved_debug_lvl;
 
   // Read "events" from script
@@ -337,12 +345,6 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
 
   Debug(4);
 
-  FGInitialCondition *IC=FDMExec->GetIC();
-  if ( ! IC->Load( initialize )) {
-    cerr << "Initialization unsuccessful" << endl;
-    exit(-1);
-  }
-
   return true;
 }
 
@@ -350,7 +352,7 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
 
 void FGScript::ResetEvents(void)
 {
-  //ResetToIC();
+  //LocalProperties.ResetToIC();
 
   for (unsigned int i=0; i<Events.size(); i++)
     Events[i].reset();
@@ -550,15 +552,15 @@ void FGScript::Debug(int from)
         ceil(1.0/FDMExec->GetDeltaT()) << " Hz)" << endl;
       cout << endl;
 
-      map<FGPropertyNode_ptr, double>::iterator it = interface_prop_initial_value.begin();
-      for (; it != interface_prop_initial_value.end(); ++it) {
-        FGPropertyNode* node = it->first;
+      FGPropertyReader::const_iterator it;
+      for (it = LocalProperties.begin(); it != LocalProperties.end(); ++it) {
+        FGPropertyNode* node = *it;
         cout << "Local property: " << node->GetName()
              << " = " << node->getDoubleValue()
              << endl;
       }
       
-      if (!interface_prop_initial_value.empty()) cout << endl;
+      if (LocalProperties.empty()) cout << endl;
 
       for (unsigned i=0; i<Events.size(); i++) {
         cout << "Event " << i;

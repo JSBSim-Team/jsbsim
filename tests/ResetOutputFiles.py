@@ -31,29 +31,10 @@
 #     is ignored until the next call to FGMFDMExec::InitModel().
 
 import os, sys
+from JSBSim_utils import path_to_jsbsim_files, InitFDM, delete_csv_files, ExecuteUntil
 import jsbsim
 
-def delete_csv_files():
-    files = os.listdir(".")
-    for f in files:
-        if f[-4:] == '.csv':
-            os.remove(f)
-
-path_to_jsbsim_files = os.path.relpath(sys.argv[1], os.getcwd())
-
 delete_csv_files()
-
-def InitFDM():
-    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join('.', ''))
-    _fdm.set_aircraft_path(os.path.join(path_to_jsbsim_files, 'aircraft'))
-    _fdm.set_engine_path(os.path.join(path_to_jsbsim_files, 'engine'))
-    _fdm.set_systems_path(os.path.join(path_to_jsbsim_files, 'systems'))
-    return _fdm
-
-def ExecuteUntil(_fdm, end_time):
-    while _fdm.run():
-        if _fdm.get_sim_time() > end_time:
-            return
 
 #
 # Regular run that checks the correct CSV file is created
