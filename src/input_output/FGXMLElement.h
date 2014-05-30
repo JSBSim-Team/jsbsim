@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.20 2014/01/13 10:46:02 ehofman Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.21 2014/05/30 17:26:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +137,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.20 2014/01/13 10:46:02 ehofman Exp $
+    @version $Id: FGXMLElement.h,v 1.21 2014/05/30 17:26:42 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,13 +156,21 @@ public:
   /** Determines if an element has the supplied attribute.
       @param key specifies the attribute key to retrieve the value of.
       @return true or false. */
-  bool HasAttribute(const std::string& key);
+  bool HasAttribute(const std::string& key) {return attributes.find(key) != attributes.end();}
 
   /** Retrieves an attribute.
       @param key specifies the attribute key to retrieve the value of.
       @return the key value (as a string), or the empty string if no such
               attribute exists. */
   std::string GetAttributeValue(const std::string& key);
+
+  /** Modifies an attribute.
+      @param key specifies the attribute key to modify the value of.
+      @param value new key value (as a string).
+      @return false if it did not find any attribute with the requested key,
+              true otherwise.
+   */
+  bool SetAttributeValue(const std::string& key, const std::string& value);
 
   /** Retrieves an attribute value as a double precision real number.
       @param key specifies the attribute key to retrieve the value of.

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.74 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.75 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   Cp_fuel(1700),
   standard_pressure(101320.73)
 {
+  Load(exec, el);
+
   Element *table_element;
   string token;
   string name="";
