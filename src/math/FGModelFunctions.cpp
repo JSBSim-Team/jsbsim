@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.13 2014/05/29 18:46:44 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.14 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_MODELFUNCTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,18 +92,10 @@ void FGModelFunctions::PreLoad(Element* el, FGPropertyManager* PM, string prefix
   Element *function = el->FindElement("function");
 
   while (function) {
-    if (function->GetAttributeValue("type") == "pre") {
+    string fType = function->GetAttributeValue("type");
+    if (fType.empty() || fType == "pre")
       PreFunctions.push_back(new FGFunction(PM, function, prefix));
-    } else if (function->GetAttributeValue("type").empty()) { // Assume pre-function
-      string funcname = function->GetAttributeValue("name");
-      if (funcname.find("IdleThrust") == string::npos && // Do not process functions that are
-          funcname.find("MilThrust") == string::npos  && // already pre-defined turbine engine
-          funcname.find("AugThrust") == string::npos  && // functions. These are loaded within
-          funcname.find("Injection") == string::npos )   // the Turbine::Load() method.
-      {
-        PreFunctions.push_back(new FGFunction(PM, function, prefix));
-      }
-    }
+
     function = el->FindNextElement("function");
   }
 }
@@ -149,6 +141,22 @@ void FGModelFunctions::RunPostFunctions(void)
   for (unsigned int i=0; i<sz; i++) {
     PostFunctions[i]->cacheValue(true);
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGFunction* FGModelFunctions::GetPreFunction(const std::string& name)
+{
+  FGFunction* result;
+  vector<FGFunction*>::iterator it = PreFunctions.begin();
+
+  for (; it != PreFunctions.end(); ++it) {
+    result = *it;
+    if (result->GetName() == name)
+      return result;
+  }
+
+  return 0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

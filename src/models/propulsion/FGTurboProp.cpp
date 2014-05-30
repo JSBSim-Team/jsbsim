@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.28 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.29 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,7 @@ FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct
   : FGEngine(exec, el, engine_number, input),
     ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), CombustionEfficiency_N1(NULL)
 {
+  FGEngine::Load(exec, el);
   SetDefaults();
   thrusterType = Thruster->GetType();
 

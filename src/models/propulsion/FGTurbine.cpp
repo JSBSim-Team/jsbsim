@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.40 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.41 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,8 +75,6 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   N1_spinup = 1.0; N2_spinup = 3.0; 
   EPR = 1.0;
 
-  ResetToIC();
-
   Load(exec, el);
   Debug(0);
 }
@@ -85,10 +83,6 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
 
 FGTurbine::~FGTurbine()
 {
-  delete IdleThrustLookup;
-  delete MilThrustLookup;
-  delete MaxThrustLookup;
-  delete InjectionLookup;
   Debug(1);
 }
 
@@ -416,8 +410,19 @@ double FGTurbine::Seek(double *var, double target, double accel, double decel) {
 
 bool FGTurbine::Load(FGFDMExec* exec, Element *el)
 {
-  string property_name, property_prefix;
-  property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  Element* function_element = el->FindElement("function");
+
+  while(function_element) {
+    string name = function_element->GetAttributeValue("name");
+    if (name == "IdleThrust" || name == "MilThrust" || name == "AugThrust" || name == "Injection")
+      function_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
+
+    function_element = el->FindNextElement("function");
+  }
+
+  FGEngine::Load(exec, el);
+
+  ResetToIC();
 
   if (el->FindElement("milthrust"))
     MilThrust = el->FindElementValueAsNumberConvertTo("milthrust","LBS");
@@ -452,24 +457,12 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("injection-time"))
     InjectionTime = el->FindElementValueAsNumber("injection-time");
 
-  Element *function_element;
-  string name;
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
 
-  while (true) {
-    function_element = el->FindNextElement("function");
-    if (!function_element) break;
-    name = function_element->GetAttributeValue("name");
-    if (name == "IdleThrust") {
-      IdleThrustLookup = new FGFunction(PropertyManager, function_element, property_prefix);
-    } else if (name == "MilThrust") {
-      MilThrustLookup = new FGFunction(PropertyManager, function_element, property_prefix);
-    } else if (name == "AugThrust") {
-      MaxThrustLookup = new FGFunction(PropertyManager, function_element, property_prefix);
-    } else if (name == "Injection") {
-      InjectionLookup = new FGFunction(PropertyManager, function_element, property_prefix);
-    }
-  }
+  IdleThrustLookup = GetPreFunction(property_prefix+"/IdleThrust");
+  MilThrustLookup = GetPreFunction(property_prefix+"/MilThrust");
+  MaxThrustLookup = GetPreFunction(property_prefix+"/AugThrust");
+  InjectionLookup = GetPreFunction(property_prefix+"/Injection");
 
   // Pre-calculations and initializations
 

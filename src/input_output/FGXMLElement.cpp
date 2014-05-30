@@ -44,7 +44,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.48 2014/05/17 15:31:17 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.49 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -257,11 +257,13 @@ string Element::GetAttributeValue(const string& attr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool Element::HasAttribute(const string& attr)
+bool Element::SetAttributeValue(const std::string& key, const std::string& value)
 {
-  map<string, string>::iterator found = attributes.find(attr);
+  bool ret = HasAttribute(key);
+  if (ret)
+    attributes[key] = value;
 
-  return found != attributes.end();
+  return ret;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

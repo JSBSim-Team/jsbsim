@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.10 2014/05/29 18:46:44 bcoconni Exp $"
+#define ID_MODELFUNCTIONS "$Id: FGModelFunctions.h,v 1.11 2014/05/30 17:26:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,6 +98,12 @@ public:
       @return a string containing the numeric values for the current set of
       functions */
   std::string GetFunctionValues(const std::string& delimeter) const;
+
+  /** Get one of the "pre" function
+      @param name the name of the requested function.
+      @return a pointer to the function (NULL if not found)
+   */
+  FGFunction* GetPreFunction(const std::string& name);
 
 protected:
   std::vector <FGFunction*> PreFunctions;

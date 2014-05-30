@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.39 2013/12/22 17:14:37 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.40 2014/05/30 17:26:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.39 2013/12/22 17:14:37 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.40 2014/05/30 17:26:42 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,6 +256,7 @@ protected:
 
   std::vector <int> SourceTanks;
 
+  virtual bool Load(FGFDMExec *exec, Element *el);
   void Debug(int from);
 };
 }

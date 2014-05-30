@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.57 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.58 2014/05/30 17:26:42 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,9 +64,6 @@ CLASS IMPLEMENTATION
 FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, struct Inputs& input)
                       : in(input), EngineNumber(engine_number)
 {
-  Element* local_element;
-  FGColumnVector3 location, orientation;
-
   Name = "";
   Type = etUnknown;
   X = Y = Z = 0.0;
@@ -75,66 +72,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, 
   FuelExpended = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
-
-  FDMExec = exec;
-
-  PropertyManager = FDMExec->GetPropertyManager();
-
-  Name = engine_element->GetAttributeValue("name");
-
-  Load(engine_element, PropertyManager, to_string((int)EngineNumber)); // Call ModelFunctions loader
-
-// Find and set engine location
-
-  local_element = engine_element->GetParent()->FindElement("location");
-  if (local_element)  location = local_element->FindElementTripletConvertTo("IN");
-//  else      cerr << "No engine location found for this engine." << endl;
-// Jon: The engine location is not important - the nozzle location is.
-
-  local_element = engine_element->GetParent()->FindElement("orient");
-  if (local_element)  orientation = local_element->FindElementTripletConvertTo("RAD");
-//  else          cerr << "No engine orientation found for this engine." << endl;
-// Jon: The engine orientation has a default and is not normally used.
-
-  SetPlacement(location, orientation);
-
-  // Load thruster
-  local_element = engine_element->GetParent()->FindElement("thruster");
-  if (local_element) {
-    try {
-      if (!LoadThruster(local_element)) exit(-1);
-    } catch (std::string str) {
-      throw("Error loading engine " + Name + ". " + str);
-    }
-  } else {
-    cerr << "No thruster definition supplied with engine definition." << endl;
-  }
-
-  ResetToIC(); // initialize dynamic terms
-
-  // Load feed tank[s] references
-  local_element = engine_element->GetParent()->FindElement("feed");
-  while (local_element) {
-    int tankID = (int)local_element->GetDataAsNumber();
-    SourceTanks.push_back(tankID);
-    local_element = engine_element->GetParent()->FindNextElement("feed");
-  }
-
-  string property_name, base_property_name;
-  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
-
-  property_name = base_property_name + "/set-running";
-  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetRunning, &FGEngine::SetRunning );
-  property_name = base_property_name + "/thrust-lbs";
-  PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
-  property_name = base_property_name + "/fuel-flow-rate-pps";
-  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRate);
-  property_name = base_property_name + "/fuel-flow-rate-gph";
-  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRateGPH);
-  property_name = base_property_name + "/fuel-used-lbs";
-  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
-
-  PostLoad(engine_element, PropertyManager, to_string((int)EngineNumber));
 
   Debug(0);
 }
@@ -289,6 +226,78 @@ bool FGEngine::LoadThruster(Element *thruster_element)
   Thruster->SetdeltaT(in.TotalDeltaT);
 
   Debug(2);
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
+{
+  Element* local_element;
+  FGColumnVector3 location, orientation;
+
+  FDMExec = exec;
+
+  PropertyManager = FDMExec->GetPropertyManager();
+
+  Name = engine_element->GetAttributeValue("name");
+
+  FGModelFunctions::Load(engine_element, PropertyManager, to_string((int)EngineNumber)); // Call ModelFunctions loader
+
+// Find and set engine location
+
+  local_element = engine_element->GetParent()->FindElement("location");
+  if (local_element)  location = local_element->FindElementTripletConvertTo("IN");
+//  else      cerr << "No engine location found for this engine." << endl;
+// Jon: The engine location is not important - the nozzle location is.
+
+  local_element = engine_element->GetParent()->FindElement("orient");
+  if (local_element)  orientation = local_element->FindElementTripletConvertTo("RAD");
+//  else          cerr << "No engine orientation found for this engine." << endl;
+// Jon: The engine orientation has a default and is not normally used.
+
+  SetPlacement(location, orientation);
+
+  // Load thruster
+  local_element = engine_element->GetParent()->FindElement("thruster");
+  if (local_element) {
+    try {
+      if (!LoadThruster(local_element)) exit(-1);
+    } catch (std::string str) {
+      throw("Error loading engine " + Name + ". " + str);
+    }
+  } else {
+    cerr << "No thruster definition supplied with engine definition." << endl;
+  }
+
+  ResetToIC(); // initialize dynamic terms
+
+  // Load feed tank[s] references
+  local_element = engine_element->GetParent()->FindElement("feed");
+  while (local_element) {
+    int tankID = (int)local_element->GetDataAsNumber();
+    SourceTanks.push_back(tankID);
+    local_element = engine_element->GetParent()->FindNextElement("feed");
+  }
+
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+
+  property_name = base_property_name + "/set-running";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetRunning, &FGEngine::SetRunning );
+  property_name = base_property_name + "/thrust-lbs";
+  PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
+  property_name = base_property_name + "/fuel-flow-rate-pps";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRate);
+  property_name = base_property_name + "/fuel-flow-rate-gph";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRateGPH);
+  property_name = base_property_name + "/fuel-used-lbs";
+  PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
+
+  PostLoad(engine_element, PropertyManager, to_string((int)EngineNumber));
+
+  Debug(0);
+
   return true;
 }
 
