@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.40 2014/05/30 17:26:42 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.41 2014/06/08 12:00:35 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.40 2014/05/30 17:26:42 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.41 2014/06/08 12:00:35 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ public:
     double TotalDeltaT;
   };
 
-  FGEngine(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input);
+  FGEngine(FGFDMExec* exec, int engine_number, struct Inputs& input);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};

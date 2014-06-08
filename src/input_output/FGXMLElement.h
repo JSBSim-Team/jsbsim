@@ -38,14 +38,13 @@ INCLUDES
 #include <map>
 #include <vector>
 
-#include "FGJSBBase.h"
 #include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.21 2014/05/30 17:26:42 bcoconni Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.22 2014/06/08 12:50:05 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +136,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.21 2014/05/30 17:26:42 bcoconni Exp $
+    @version $Id: FGXMLElement.h,v 1.22 2014/06/08 12:50:05 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -35,6 +35,7 @@ INCLUDES
 
 #include "FGXMLElement.h"
 #include "string_utilities.h"
+#include "FGJSBBase.h"
 
 using namespace std;
 
@@ -44,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.49 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.50 2014/06/08 12:50:05 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;

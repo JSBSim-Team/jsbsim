@@ -54,14 +54,14 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.58 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.59 2014/06/08 12:00:35 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number, struct Inputs& input)
+FGEngine::FGEngine(FGFDMExec* exec, int engine_number, struct Inputs& input)
                       : in(input), EngineNumber(engine_number)
 {
   Name = "";

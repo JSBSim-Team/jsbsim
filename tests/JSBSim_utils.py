@@ -17,23 +17,48 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 
-import os, sys, csv, string
+import os, sys, csv, string, tempfile, shutil
 import jsbsim
 
-path_to_jsbsim_files = os.path.relpath(sys.argv[1], os.getcwd())
+class SandBox:
+    def __init__(self, *args):
+        self._tmpdir = tempfile.mkdtemp(dir = os.getcwd())
+        path_to_jsbsim = os.path.join(sys.argv[1], *args)
+        self._relpath_to_jsbsim = os.path.relpath(path_to_jsbsim, self._tmpdir)
 
-def InitFDM(path=path_to_jsbsim_files):
-    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join('.',''))
+    def __call__(self, *args):
+        return os.path.relpath(os.path.join(self._tmpdir, *args), os.getcwd())
+
+    def delete_csv_files(self):
+        files = os.listdir(self._tmpdir)
+        for f in files:
+            if f[-4:] == '.csv':
+                os.remove(os.path.join(self._tmpdir, f))
+
+    def path_to_jsbsim_file(self, *args):
+        return os.path.join(self._relpath_to_jsbsim, *args)
+
+    def exists(self, filename):
+        return os.path.exists(self(filename))
+
+    def erase(self):
+        shutil.rmtree(self._tmpdir)
+
+    def elude(self, path):
+        head, tail = os.path.split(path)
+        newpath = []
+        while head:
+            newpath = [tail] + newpath
+            head, tail = os.path.split(head)
+        return os.path.join(*newpath)
+
+def CreateFDM(sandbox):
+    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join(sandbox(),''))
+    path = sandbox.path_to_jsbsim_file()
     _fdm.set_aircraft_path(os.path.join(path, 'aircraft'))
     _fdm.set_engine_path(os.path.join(path, 'engine'))
     _fdm.set_systems_path(os.path.join(path, 'systems'))
     return _fdm
-
-def delete_csv_files():
-    files = os.listdir(".")
-    for f in files:
-        if f[-4:] == '.csv':
-            os.remove(f)
 
 def ExecuteUntil(_fdm, end_time):
     while _fdm.run():
