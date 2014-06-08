@@ -30,24 +30,24 @@
 #     has been initialized (i.e. after FGModel::InitModel() is called) then it
 #     is ignored until the next call to FGMFDMExec::InitModel().
 
-import os, sys
-from JSBSim_utils import path_to_jsbsim_files, InitFDM, delete_csv_files, ExecuteUntil
-import jsbsim
+import sys
+from JSBSim_utils import CreateFDM, ExecuteUntil, SandBox
 
-delete_csv_files()
+sandbox = SandBox()
 
 #
 # Regular run that checks the correct CSV file is created
 # We are just checking its existence, not its content. To accelerate the test
 # execution, the simulation is interrupted after 1.0sec of simulated time.
 #
-fdm = InitFDM()
-fdm.load_script(os.path.join(path_to_jsbsim_files, 'scripts', 'c1722.xml'))
+fdm = CreateFDM(sandbox)
+fdm.load_script(sandbox.path_to_jsbsim_file('scripts', 'c1722.xml'))
 
 fdm.run_ic()
 ExecuteUntil(fdm, 1.0)
 
-if (not os.path.exists('JSBout172B.csv')):
+if not sandbox.exists('JSBout172B.csv'):
+  print "Standard run: the file 'JSBout172B.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
@@ -57,18 +57,20 @@ if (not os.path.exists('JSBout172B.csv')):
 fdm.reset_to_initial_conditions(1)
 ExecuteUntil(fdm, 1.0)
 
-if (not os.path.exists('JSBout172B_0.csv')):
+if not sandbox.exists('JSBout172B_0.csv'):
+  print "Reset: the file 'JSBout172B_0.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
 # Change the output filename and check that the naming logic is reset (e.g. that
 # no iteration number is appended to the filename
 #
-fdm.set_output_filename(0,'dummy.csv')
+fdm.set_output_filename(0, 'dummy.csv')
 fdm.reset_to_initial_conditions(1)
 ExecuteUntil(fdm, 1.0)
 
-if (not os.path.exists('dummy.csv')):
+if not sandbox.exists('dummy.csv'):
+  print "Output name renaming: the file 'dummy.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
@@ -78,10 +80,14 @@ if (not os.path.exists('dummy.csv')):
 # documentation of FGOutput::SetOutputName().
 #
 fdm.reset_to_initial_conditions(1)
-fdm.set_output_filename(0,'dummyx.csv')
+fdm.set_output_filename(0, 'dummyx.csv')
 ExecuteUntil(fdm, 1.0)
 
-if (os.path.exists('dummyx.csv') or not os.path.exists('dummy_0.csv')):
+if sandbox.exists('dummyx.csv') or not sandbox.exists('dummy_0.csv'):
+  if sandbox.exists('dummyx.csv'):
+    print "Late renaming: 'dummyx.csv' should not exist."
+  if not sandbox.exists('dummy_0.csv'):
+    print "Late renaming: 'dummy_0.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
@@ -90,32 +96,41 @@ if (os.path.exists('dummyx.csv') or not os.path.exists('dummy_0.csv')):
 fdm.reset_to_initial_conditions(1)
 ExecuteUntil(fdm, 1.0)
 
-if (not os.path.exists('dummyx.csv')):
+if not sandbox.exists('dummyx.csv'):
+  print "Reset after late renaming: 'dummyx.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
 # Check against multiple calls to FGFDMExec::SetOutputFileName()
 #
-fdm.set_output_filename(0,'thisone.csv')
-fdm.set_output_filename(0,'thatone.csv')
+fdm.set_output_filename(0, 'this_one.csv')
+fdm.set_output_filename(0, 'that_one.csv')
 fdm.reset_to_initial_conditions(1)
 ExecuteUntil(fdm, 1.0)
 
-if (os.path.exists('thisone.csv') or not os.path.exists('thatone.csv')):
+if sandbox.exists('this_one.csv') or not sandbox.exists('that_one.csv'):
+  if sandbox.exists('this_one.csv'):
+    print "Output name overwritten: 'this_one.csv' should not exist."
+  if not sandbox.exists('that_one.csv'):
+    print "Output name overwritten: 'that_one.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
 # Check again on a brand new FDM
 #
-delete_csv_files()
-fdm = InitFDM()
-fdm.load_script(os.path.join(path_to_jsbsim_files,'scripts', 'c1722.xml'))
+sandbox.delete_csv_files()
+fdm = CreateFDM(sandbox)
+fdm.load_script(sandbox.path_to_jsbsim_file('scripts', 'c1722.xml'))
 
 fdm.run_ic()
 fdm.set_output_filename(0,'oops.csv') # Oops!! Changed my mind
 ExecuteUntil(fdm, 1.0)
 
-if (os.path.exists('oops.csv') or not os.path.exists('JSBout172B.csv')):
+if sandbox.exists('oops.csv') or not sandbox.exists('JSBout172B.csv'):
+  if sandbox.exists('oops.csv'):
+    print "New FDM: 'oops.csv' should not exist."
+  if not sandbox.exists('JSBout172B.csv'):
+    print "New FDM: 'JSBout172B.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
 #
@@ -125,7 +140,8 @@ if (os.path.exists('oops.csv') or not os.path.exists('JSBout172B.csv')):
 fdm.reset_to_initial_conditions(1)
 ExecuteUntil(fdm, 1.0)
 
-if not os.path.exists('oops.csv'):
+if not sandbox.exists('oops.csv'):
+  print "Reset new FDM: 'oops.csv' should exist."
   sys.exit(-1) # 'make test' will report the test failed.
 
-sys.exit(0) # Needed for 'make test' to report the test passed.
+sandbox.erase()
