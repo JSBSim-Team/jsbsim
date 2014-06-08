@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.36 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.37 2014/06/08 12:00:35 bcoconni Exp $");
 IDENT(IdHdr,ID_ROCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, el, engine_number, input), isp_function(0L)
+  : FGEngine(exec, engine_number, input), isp_function(0L)
 {
   Load(exec, el);
 

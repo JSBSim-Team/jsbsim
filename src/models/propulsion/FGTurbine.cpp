@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.41 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.42 2014/06/08 12:00:35 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 
 
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, el, engine_number, input)
+  : FGEngine(exec, engine_number, input)
 {
   Type = etTurbine;
 
