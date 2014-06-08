@@ -52,12 +52,13 @@ INCLUDES
 #include "initialization/FGInitialCondition.h"
 #include "models/FGInput.h"
 #include "math/FGCondition.h"
+#include "math/FGFunction.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.59 2014/05/29 18:46:44 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.60 2014/06/08 12:50:05 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

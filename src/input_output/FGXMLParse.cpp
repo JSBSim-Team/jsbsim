@@ -29,25 +29,25 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGXMLParse.h"
-#include "FGXMLElement.h"
 #include <string>
 #include <iostream>
 #include <cstdlib>
+
+#include "FGJSBBase.h"
+#include "FGXMLParse.h"
+#include "FGXMLElement.h"
 #include "input_output/string_utilities.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLParse.cpp,v 1.14 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGXMLParse.cpp,v 1.15 2014/06/08 12:50:05 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLPARSE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#include "FGXMLParse.h"
 
 using namespace std;
 
