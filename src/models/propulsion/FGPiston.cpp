@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.75 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.76 2014/06/08 11:45:53 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +247,10 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
         cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
       }
     } catch (std::string str) {
+      // Make sure allocated resources are freed before rethrowing.
+      // (C++ standard guarantees that a null pointer deletion is no-op).
+      delete Lookup_Combustion_Efficiency;
+      delete Mixture_Efficiency_Correlation;
       throw("Error loading piston engine table:" + name + ". " + str);
     }
   }
