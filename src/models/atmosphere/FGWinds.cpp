@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGWinds.cpp,v 1.12 2014/02/17 05:02:38 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGWinds.cpp,v 1.13 2014/06/08 11:39:33 bcoconni Exp $");
 IDENT(IdHdr,ID_WINDS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,7 +120,10 @@ FGWinds::~FGWinds()
 
 bool FGWinds::InitModel(void)
 {
-  return FGModel::InitModel();
+  if (!FGModel::InitModel()) return false;
+
+  psiw = 0.0;
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
