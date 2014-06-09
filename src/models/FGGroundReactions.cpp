@@ -42,14 +42,13 @@ INCLUDES
 #include "FGLGear.h"
 #include "FGAccelerations.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.50 2014/05/17 15:25:20 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.51 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_GROUNDREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,26 +138,17 @@ bool FGGroundReactions::GetWOW(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGroundReactions::Load(Element* elem)
+bool FGGroundReactions::Load(Element* document)
 {
   int num=0;
-  string fname="", file="";
-  string separator = "/";
-  FGXMLFileRead XMLFileRead;
-  Element* document;
-
-  fname = elem->GetAttributeValue("file");
-  if (!fname.empty()) {
-    file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = XMLFileRead.LoadXMLDocument(file);
-    if (document == 0L) return false;
-  } else {
-    document = elem;
-  }
 
   Name = "Ground Reactions Model: " + document->GetAttributeValue("name");
 
   Debug(2);
+
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document))
+    return false;
 
   unsigned int numContacts = document->GetNumElements("contact");
   lGear.resize(numContacts);
@@ -167,8 +157,6 @@ bool FGGroundReactions::Load(Element* elem)
     lGear[idx] = new FGLGear(contact_element, FDMExec, num++, in);
     contact_element = document->FindNextElement("contact");
   }
-
-  FGModel::Load(document); // Perform base class Load
 
   for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 

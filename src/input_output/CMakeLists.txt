@@ -9,7 +9,8 @@ set(SOURCES FGGroundCallback.cpp
             FGOutputSocket.cpp
             FGOutputFile.cpp
             FGOutputTextFile.cpp
-            FGPropertyReader.cpp)
+            FGPropertyReader.cpp
+            FGModelLoader.cpp)
 
 set(HEADERS FGGroundCallback.h
             FGPropertyManager.h
@@ -25,7 +26,8 @@ set(HEADERS FGGroundCallback.h
             FGOutputSocket.h
             FGOutputFile.h
             FGOutputTextFile.h
-            FGPropertyReader.h)
+            FGPropertyReader.h
+            FGModelLoader.h)
 
 add_full_path_name(INPUT_OUTPUT_SRC "${SOURCES}")
 add_full_path_name(INPUT_OUTPUT_HDR "${HEADERS}")

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.33 2014/04/13 11:19:15 bcoconni Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.34 2014/06/09 11:52:07 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.33 2014/04/13 11:19:15 bcoconni Exp $
+    @version $Id: FGPropulsion.h,v 1.34 2014/06/09 11:52:07 bcoconni Exp $
     @see
     FGEngine
     FGTank
@@ -182,8 +182,7 @@ public:
   const FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void) const;
 
-  std::ifstream* FindEngineFile(const std::string& filename);
-  std::string FindEngineFullPathname(const std::string& engine_filename);
+  std::string FindFullPathName(const std::string& filename) const;
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) const {return FuelFreeze;}
   double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
@@ -224,6 +223,8 @@ private:
   bool HaveRocketEngine;
   bool HaveElectricEngine;
   void ConsumeFuel(FGEngine* engine);
+
+  bool ReadingEngine;
 
   void bind();
   void Debug(int from);

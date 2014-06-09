@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.45 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.46 2014/06/09 11:52:07 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.45 $
+    @version $Revision: 1.46 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -555,8 +555,7 @@ public:
       @return true if succesful */
   bool Load(Element* el, SystemType systype);
 
-  std::ifstream* FindSystemFile(const std::string& system_filename);
-  std::string FindSystemFullPathname(const std::string& system_filename);
+  std::string FindFullPathName(const std::string& system_filename) const;
 
   void AddThrottle(void);
   void AddGear(unsigned int NumGear);
@@ -588,6 +587,7 @@ private:
   std::vector <double> BrakePos; // left, center, right - defined by FGLGear:: enum
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
+  SystemType systype;
 
   typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;

@@ -45,14 +45,13 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.49 2014/05/17 15:17:13 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.50 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,27 +102,16 @@ bool FGMassBalance::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGMassBalance::Load(Element* elem)
+bool FGMassBalance::Load(Element* document)
 {
   string element_name = "";
   double bixx, biyy, bizz, bixy, bixz, biyz;
-  string fname="", file="";
-  string separator = "/";
-  FGXMLFileRead XMLFileRead;
-  Element* document;
-
-  fname = elem->GetAttributeValue("file");
-  if (!fname.empty()) {
-    file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = XMLFileRead.LoadXMLDocument(file);
-    if (document == 0L) return false;
-  } else {
-    document = elem;
-  }
 
   Name = "Mass Properties Model: " + document->GetAttributeValue("name");
 
-  FGModel::Load(document); // Perform base class Load.
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document))
+    return false;
 
   bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
   if (document->FindElement("ixx"))

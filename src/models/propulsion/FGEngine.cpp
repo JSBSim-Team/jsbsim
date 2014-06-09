@@ -46,7 +46,6 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGRotor.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 
@@ -54,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.59 2014/06/08 12:00:35 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.60 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,66 +172,35 @@ void FGEngine::LoadThrusterInputs()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGEngine::LoadThruster(Element *thruster_element)
+void FGEngine::LoadThruster(Element *thruster_element)
 {
-  string token, fullpath, localpath;
-  string thruster_filename, thruster_fullpathname, thrType;
-  string enginePath = FDMExec->GetEnginePath();
-  string aircraftPath = FDMExec->GetFullAircraftPath();
-  ifstream thruster_file;
-  FGColumnVector3 location, orientation;
-  string separator = "/";
-
-  fullpath = enginePath + separator;
-  localpath = aircraftPath + separator + "Engines" + separator;
-
-  thruster_filename = thruster_element->GetAttributeValue("file");
-  if ( !thruster_filename.empty()) {
-    thruster_fullpathname = localpath + thruster_filename + ".xml";
-    thruster_file.open(thruster_fullpathname.c_str());
-    if ( !thruster_file.is_open()) {
-      thruster_fullpathname = fullpath + thruster_filename + ".xml";
-      thruster_file.open(thruster_fullpathname.c_str());
-      if ( !thruster_file.is_open()) {
-        cerr << "Could not open thruster file: " << thruster_filename << ".xml" << endl;
-        return false;
-      } else {
-        thruster_file.close();
-      }
-    } else {
-      thruster_file.close();
-    }
-  } else {
-    cerr << "No thruster filename given." << endl;
-    return false;
-  }
-
-  FGXMLFileRead XMLFileRead;
-  Element *document = XMLFileRead.LoadXMLDocument(thruster_fullpathname);
-  document->SetParent(thruster_element);
-
-  thrType = document->GetName();
-
-  if (thrType == "propeller") {
+  if (thruster_element->FindElement("propeller")) {
+    Element *document = thruster_element->FindElement("propeller");
     Thruster = new FGPropeller(FDMExec, document, EngineNumber);
-  } else if (thrType == "nozzle") {
+  } else if (thruster_element->FindElement("nozzle")) {
+    Element *document = thruster_element->FindElement("nozzle");
     Thruster = new FGNozzle(FDMExec, document, EngineNumber);
-  } else if (thrType == "rotor") {
+  } else if (thruster_element->FindElement("rotor")) {
+    Element *document = thruster_element->FindElement("rotor");
     Thruster = new FGRotor(FDMExec, document, EngineNumber);
-  } else if (thrType == "direct") {
+  } else if (thruster_element->FindElement("direct")) {
+    Element *document = thruster_element->FindElement("direct");
     Thruster = new FGThruster( FDMExec, document, EngineNumber);
+  } else {
+    cerr << thruster_element->ReadFrom() << " Unknown thruster type" << endl;
+    throw("Failed to load the thruster");
   }
 
   Thruster->SetdeltaT(in.TotalDeltaT);
 
   Debug(2);
-  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 {
+  Element* parent_element = engine_element->GetParent();
   Element* local_element;
   FGColumnVector3 location, orientation;
 
@@ -246,12 +214,12 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 
 // Find and set engine location
 
-  local_element = engine_element->GetParent()->FindElement("location");
+  local_element = parent_element->FindElement("location");
   if (local_element)  location = local_element->FindElementTripletConvertTo("IN");
 //  else      cerr << "No engine location found for this engine." << endl;
 // Jon: The engine location is not important - the nozzle location is.
 
-  local_element = engine_element->GetParent()->FindElement("orient");
+  local_element = parent_element->FindElement("orient");
   if (local_element)  orientation = local_element->FindElementTripletConvertTo("RAD");
 //  else          cerr << "No engine orientation found for this engine." << endl;
 // Jon: The engine orientation has a default and is not normally used.
@@ -259,10 +227,10 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   SetPlacement(location, orientation);
 
   // Load thruster
-  local_element = engine_element->GetParent()->FindElement("thruster");
+  local_element = parent_element->FindElement("thruster");
   if (local_element) {
     try {
-      if (!LoadThruster(local_element)) exit(-1);
+      LoadThruster(local_element);
     } catch (std::string str) {
       throw("Error loading engine " + Name + ". " + str);
     }
@@ -273,11 +241,11 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   ResetToIC(); // initialize dynamic terms
 
   // Load feed tank[s] references
-  local_element = engine_element->GetParent()->FindElement("feed");
+  local_element = parent_element->FindElement("feed");
   while (local_element) {
     int tankID = (int)local_element->GetDataAsNumber();
     SourceTanks.push_back(tankID);
-    local_element = engine_element->GetParent()->FindNextElement("feed");
+    local_element = parent_element->FindNextElement("feed");
   }
 
   string property_name, base_property_name;

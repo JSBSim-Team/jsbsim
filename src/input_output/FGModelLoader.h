@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGXMLParse.h
- Author:       Jon S. Berndt
- Date started: 8/20/04
+ Header:       FGModelLoader.h
+ Author:       Bertrand Coconnier
+ Date started: 12/14/13
 
- ------------- Copyright (C) 2004  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------------- Copyright (C) 2013 Bertrand Coconnier -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -23,26 +23,30 @@
  Further information about the GNU Lesser General Public License can also be found on
  the world wide web at http://www.gnu.org.
 
+HISTORY
+--------------------------------------------------------------------------------
+12/14/13   BC    Created
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGXMLPARSE_H
-#define FGXMLPARSE_H
+#ifndef FGMODELLOADER_H
+#define FGMODELLOADER_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "simgear/xml/easyxml.hxx"
-#include "input_output/FGXMLElement.h"
+#include <string>
+
+#include "FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.9 2014/06/09 11:52:06 bcoconni Exp $"
-#define VALID_CHARS """`!@#$%^&*()_+`1234567890-={}[];':,.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define ID_MODELLOADER "$Id: FGModelLoader.h,v 1.1 2014/06/09 11:52:06 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -50,46 +54,28 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class Element;
+class FGModel;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
-    @author Jon S. Berndt
-    @version $Id: FGXMLParse.h,v 1.9 2014/06/09 11:52:06 bcoconni Exp $
-*/
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGXMLParse : public XMLVisitor
+class FGModelLoader
 {
 public:
-  FGXMLParse(void);
-
-  Element* GetDocument(void) {return document;}
-
-  void startXML();
-  void endXML();
-  void startElement (const char * name, const XMLAttributes &atts);
-  void endElement (const char * name);
-  void data (const char * s, int length);
-  void pi (const char * target, const char * data);
-  void warning (const char * message, int line, int column);
-  void reset(void);
+  FGModelLoader(const FGModel* _model) : model(_model) {}
+  Element_ptr Open(Element *el);
 
 private:
-  bool first_element_read;
-  mutable std::string working_string;
-  Element_ptr document;
-  Element *current_element;
+  const FGModel* model;
+  std::map<std::string, Element_ptr> CachedFiles;
 };
 
-} // namespace JSBSim
-
+ std::string CheckFullPathName(const std::string& path, const std::string& fname);
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 #endif

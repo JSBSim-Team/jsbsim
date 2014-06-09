@@ -45,8 +45,8 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGModelLoader.h"
 
 #include "models/flight_control/FGFilter.h"
 #include "models/flight_control/FGDeadBand.h"
@@ -71,7 +71,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.89 2014/05/29 18:46:44 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.90 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -488,40 +488,19 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::Load(Element* el, SystemType systype)
+bool FGFCS::Load(Element* document, SystemType type)
 {
-  string name, file, fname="", interface_property_string, parent_name;
+  string name, parent_name;
   Element *component_element;
   Element *channel_element;
-  FGXMLFileRead XMLFileRead;
-  Element* document;
   
-// ToDo: The handling of name and file attributes could be improved, here,
-//       considering that a name can be in the external file, as well.
+  systype = type;
 
-  name = el->GetAttributeValue("name");
+  // Load interface properties from document
+  if (!FGModel::Load(document))
+    return false;
 
-  if (name.empty() || !el->GetAttributeValue("file").empty()) {
-    fname = el->GetAttributeValue("file");
-    if (systype == stSystem) {
-      file = FindSystemFullPathname(fname);
-    } else { 
-      file = FDMExec->GetFullAircraftPath() + "/" + fname + ".xml";
-    }
-    if (fname.empty()) {
-      cerr << "FCS, Autopilot, or system does not appear to be defined inline nor in a file" << endl;
-      return false;
-    } else {
-      document = XMLFileRead.LoadXMLDocument(file);
-      if (!document) {
-        cerr << "Error loading file " << file << endl;
-        return false;
-      }
-      name = document->GetAttributeValue("name");
-    }
-  } else {
-    document = el;
-  }
+  name = document->GetAttributeValue("name");
 
   Name = "Flight Control Systems Model: " + document->GetAttributeValue("name");
 
@@ -535,16 +514,6 @@ bool FGFCS::Load(Element* el, SystemType systype)
   Debug(2);
 
   if (document->GetName() == "flight_control") bindModel();
-
-  FGModel::Load(document); // Load interface properties from document
-
-  // After reading interface properties in a file, read properties in the local
-  // flight_control, autopilot, or system element. This allows general-purpose
-  // systems to be defined in a file, with overrides or initial loaded constants
-  // supplied in the relevant element of the aircraft configuration file.
-
-  if (!fname.empty())
-    LocalProperties.Load(el, PropertyManager, true);
 
   channel_element = document->FindElement("channel");
   
@@ -648,68 +617,16 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::FindSystemFullPathname(const string& sysfilename)
+string FGFCS::FindFullPathName(const string& sysfilename) const
 {
-  string fullpath, localpath;
-  string system_filename = sysfilename;
-  string systemPath = FDMExec->GetSystemsPath();
-  string aircraftPath = FDMExec->GetFullAircraftPath() + "/";
-  ifstream system_file;
+  string name = FGModel::FindFullPathName(sysfilename);
 
-  fullpath = systemPath + "/";
-  localpath = aircraftPath + "Systems/";
+  if (systype != stSystem || !name.empty()) return name;
 
-  if (system_filename.length() <=4 || system_filename.substr(system_filename.length()-4, 4) != ".xml") {
-    system_filename.append(".xml");
-  }
+  name = CheckFullPathName(FDMExec->GetFullAircraftPath() + "/Systems", sysfilename);
+  if (!name.empty()) return name;
 
-  system_file.open(string(aircraftPath + system_filename).c_str());
-  if ( !system_file.is_open()) {
-    system_file.open(string(localpath + system_filename).c_str());
-    if ( !system_file.is_open()) {
-      system_file.open(string(fullpath + system_filename).c_str());
-      if ( !system_file.is_open()) {
-        cerr << " Could not open system file: " << system_filename << " in path "
-             << fullpath << " or " << localpath << endl;
-        return string("");
-      } else {
-        return string(fullpath + system_filename);
-      }
-    } else {
-      return string(localpath + system_filename);
-    }
-  } else {
-    return string(aircraftPath + system_filename);
-  }
-  return string("");
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-ifstream* FGFCS::FindSystemFile(const string& sysfilename)
-{
-  string fullpath, localpath;
-  string system_filename = sysfilename;
-  string systemPath = FDMExec->GetSystemsPath();
-  string aircraftPath = FDMExec->GetFullAircraftPath();
-  ifstream* system_file = new ifstream();
-
-  fullpath = systemPath + "/";
-  localpath = aircraftPath + "/Systems/";
-
-  if (system_filename.substr(system_filename.length()-4, 4) != ".xml") {
-    system_filename.append(".xml");
-  }
-
-  system_file->open(string(localpath + system_filename).c_str());
-  if ( !system_file->is_open()) {
-    system_file->open(string(fullpath + system_filename).c_str());
-      if ( !system_file->is_open()) {
-        cerr << " Could not open system file: " << system_filename << " in path "
-             << fullpath << " or " << localpath << endl;
-      }
-  }
-  return system_file;
+  return CheckFullPathName(FDMExec->GetSystemsPath(), sysfilename);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

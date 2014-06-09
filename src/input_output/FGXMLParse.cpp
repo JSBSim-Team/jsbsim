@@ -42,7 +42,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLParse.cpp,v 1.15 2014/06/08 12:50:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLParse.cpp,v 1.16 2014/06/09 11:52:06 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLPARSE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,13 +59,6 @@ FGXMLParse::FGXMLParse(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGXMLParse::~FGXMLParse(void)
-{
-  delete document;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGXMLParse::startXML(void)
 {
 }
@@ -74,7 +67,6 @@ void FGXMLParse::startXML(void)
 
 void FGXMLParse::reset(void)
 {
-  delete document;
   first_element_read = false;
   current_element = document = 0L;
 }

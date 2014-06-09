@@ -38,15 +38,15 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
 #include "FGModel.h"
 #include "FGFDMExec.h"
+#include "input_output/FGModelLoader.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGModel.cpp,v 1.24 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGModel.cpp,v 1.25 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_MODEL);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,6 +99,54 @@ bool FGModel::Run(bool Holding)
 
   if (exe_ctr++ == 1) return false;
   else              return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGModel::FindFullPathName(const string& fname) const
+{
+  return CheckFullPathName(FDMExec->GetFullAircraftPath(), fname);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGModel::Load(Element* el)
+{
+  FGModelLoader ModelLoader(this);
+  Element* document = ModelLoader.Open(el);
+
+  if (!document) return false;
+
+  if (document->GetName() != el->GetName()) {
+    cerr << el->ReadFrom()
+         << " Read model '" << document->GetName()
+         << "' while expecting model '" << el->GetName() << "'" << endl;
+    return false;
+  }
+
+  bool result = FGModelFunctions::Load(document, PropertyManager);
+
+  if (document != el) {
+    el->MergeAttributes(document);
+
+    // After reading interface properties in a file, read properties in the
+    // local model element. This allows general-purpose models to be defined in
+    // a file, with overrides or initial loaded constants supplied in the
+    // relevant element of the aircraft configuration file.
+
+    LocalProperties.Load(el, PropertyManager, true);
+
+    Element* element = document->FindElement();
+    while (element) {
+      el->AddChildElement(element);
+      element->SetParent(el);
+      element = document->FindNextElement();
+    }
+
+    document = el;
+  }
+
+  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

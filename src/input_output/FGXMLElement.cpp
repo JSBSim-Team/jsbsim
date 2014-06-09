@@ -45,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.50 2014/06/08 12:50:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.51 2014/06/09 11:52:06 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -243,9 +243,8 @@ Element::Element(const string& nm)
 
 Element::~Element(void)
 {
-  for (unsigned int i=0; i<children.size(); i++) delete children[i];
-  data_lines.clear();
-  attributes.clear();
+  for (unsigned int i = 0; i < children.size(); ++i)
+    children[i]->SetParent(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -695,6 +694,25 @@ string Element::ReadFrom(void) const
           << endl;
 
   return message.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void Element::MergeAttributes(Element* el)
+{
+  map<string, string>::iterator it;
+
+  for (it=el->attributes.begin(); it != el->attributes.end(); ++it) {
+    if (attributes.find(it->first) == attributes.end())
+      attributes[it->first] = it->second;
+    else {
+      if (FGJSBBase::debug_lvl > 0)
+        cout << el->ReadFrom() << " Attribute '" << it->first << "' is overridden in file "
+             << GetFileName() << ": line " << GetLineNumber() << endl
+             << " The value '" << attributes[it->first] << "' will be used instead of '"
+             << it->second << "'." << endl;
+    }
+  }
 }
 
 } // end namespace JSBSim

@@ -59,15 +59,14 @@ INCLUDES
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
+#include "input_output/FGModelLoader.h"
 #include "math/FGColumnVector3.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.78 2014/05/17 15:13:56 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.79 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -349,29 +348,18 @@ void FGPropulsion::InitRunning(int n)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::Load(Element* elem)
+bool FGPropulsion::Load(Element* el)
 {
-  string type, engine_filename;
-  string separator = "/";
-  Element *el=0;
-  FGXMLFileRead XMLFileRead;
-  FGXMLParse main_file_parser;
+  FGModelLoader ModelLoader(this);
 
   Debug(2);
-
-  string fname="", file="";
-  fname = elem->GetAttributeValue("file");
-  if (!fname.empty()) {
-    file = FDMExec->GetFullAircraftPath() + separator + fname;
-    el = XMLFileRead.LoadXMLDocument(file, main_file_parser);
-    if (el == 0L) return false;
-  } else {
-    el = elem;
-  }
+  ReadingEngine = false;
 
   Name = "Propulsion Model: " + el->GetAttributeValue("name");
 
-  FGModel::Load(el); // Perform base class Load.
+  // Perform base class Pre-Load
+  if (!FGModel::Load(el))
+    return false;
 
   // Process tank definitions first to establish the number of fuel tanks
 
@@ -387,51 +375,47 @@ bool FGPropulsion::Load(Element* elem)
   numSelectedFuelTanks = numFuelTanks;
   numSelectedOxiTanks  = numOxiTanks;
 
+  ReadingEngine = true;
   Element* engine_element = el->FindElement("engine");
   while (engine_element) {
-    engine_filename = engine_element->GetAttributeValue("file");
+    if (!ModelLoader.Open(engine_element)) return false;
 
-    if (engine_filename.empty()) {
-      cerr << "Engine definition did not supply an engine file." << endl;
-      return false;
-    }
-
-    engine_filename = FindEngineFullPathname(engine_filename);
-    if (engine_filename.empty()) {
-      // error message already printed by FindEngineFullPathname()
-      return false;
-    }
-
-    Element* document = XMLFileRead.LoadXMLDocument(engine_filename);
-    document->SetParent(engine_element);
-
-    type = document->GetName();
     try {
-      if (type == "piston_engine") {
+      // Locate the thruster definition
+      Element* thruster_element = engine_element->FindElement("thruster");
+      if (!thruster_element || !ModelLoader.Open(thruster_element))
+        throw("No thruster definition supplied with engine definition.");
+
+      if (engine_element->FindElement("piston_engine")) {
         HavePistonEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGPiston(FDMExec, document, numEngines, in));
-      } else if (type == "turbine_engine") {
+        Element *element = engine_element->FindElement("piston_engine");
+        Engines.push_back(new FGPiston(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("turbine_engine")) {
         HaveTurbineEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGTurbine(FDMExec, document, numEngines, in));
-      } else if (type == "turboprop_engine") {
+        Element *element = engine_element->FindElement("turbine_engine");
+        Engines.push_back(new FGTurbine(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("turboprop_engine")) {
         HaveTurboPropEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGTurboProp(FDMExec, document, numEngines, in));
-      } else if (type == "rocket_engine") {
+        Element *element = engine_element->FindElement("turboprop_engine");
+        Engines.push_back(new FGTurboProp(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("rocket_engine")) {
         HaveRocketEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGRocket(FDMExec, document, numEngines, in));
-      } else if (type == "electric_engine") {
+        Element *element = engine_element->FindElement("rocket_engine");
+        Engines.push_back(new FGRocket(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("electric_engine")) {
         HaveElectricEngine = true;
         if (!IsBound) bind();
-        Engines.push_back(new FGElectric(FDMExec, document, numEngines, in));
+        Element *element = engine_element->FindElement("electric_engine");
+        Engines.push_back(new FGElectric(FDMExec, element, numEngines, in));
       } else {
-        cerr << "Unknown engine type: " << type << endl;
-        exit(-5);
+        cerr << engine_element->ReadFrom() << " Unknown engine type" << endl;
+        return false;
       }
-    } catch (std::string str) {
+    } catch (std::string& str) {
       cerr << endl << fgred << str << reset << endl;
       return false;
     }
@@ -439,7 +423,6 @@ bool FGPropulsion::Load(Element* elem)
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
-    XMLFileRead.ResetParser();
   }
 
   CalculateTankInertias();
@@ -455,55 +438,14 @@ bool FGPropulsion::Load(Element* elem)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::FindEngineFullPathname(const string& engine_filename)
+string FGPropulsion::FindFullPathName(const string& filename) const
 {
-  string fullpath, localpath;
-  string enginePath = FDMExec->GetEnginePath();
-  string aircraftPath = FDMExec->GetFullAircraftPath();
-  ifstream engine_file;
+  if (!ReadingEngine) return FGModel::FindFullPathName(filename);
 
-  string separator = "/";
+  string name = CheckFullPathName(FDMExec->GetFullAircraftPath() + "/Engines", filename);
+  if (!name.empty()) return name;
 
-  fullpath = enginePath + separator;
-  localpath = aircraftPath + separator + "Engines" + separator;
-
-  engine_file.open(string(localpath + engine_filename + ".xml").c_str());
-  if ( !engine_file.is_open()) {
-    engine_file.open(string(fullpath + engine_filename + ".xml").c_str());
-      if ( !engine_file.is_open()) {
-        cerr << " Could not open engine file: " << engine_filename << " in path "
-             << fullpath << " or " << localpath << endl;
-        return string("");
-      } else {
-        return string(fullpath + engine_filename + ".xml");
-      }
-  }
-  return string(localpath + engine_filename + ".xml");
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-ifstream* FGPropulsion::FindEngineFile(const string& engine_filename)
-{
-  string fullpath, localpath;
-  string enginePath = FDMExec->GetEnginePath();
-  string aircraftPath = FDMExec->GetFullAircraftPath();
-  ifstream* engine_file = new ifstream();
-
-  string separator = "/";
-
-  fullpath = enginePath + separator;
-  localpath = aircraftPath + separator + "Engines" + separator;
-
-  engine_file->open(string(localpath + engine_filename + ".xml").c_str());
-  if ( !engine_file->is_open()) {
-    engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
-      if ( !engine_file->is_open()) {
-        cerr << " Could not open engine file: " << engine_filename << " in path "
-             << localpath << " or " << fullpath << endl;
-      }
-  }
-  return engine_file;
+  return CheckFullPathName(FDMExec->GetEnginePath(), filename);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
