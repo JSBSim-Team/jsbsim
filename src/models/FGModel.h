@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.21 2014/06/08 12:50:05 bcoconni Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.22 2014/06/09 11:52:07 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,6 +98,7 @@ public:
   FGFDMExec* GetExec(void)     {return FDMExec;}
 
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
+  virtual std::string FindFullPathName(const std::string& filename) const;
 
 protected:
   int exe_ctr;
@@ -106,7 +107,7 @@ protected:
   /** Loads this model.
       @param el a pointer to the element
       @return true if model is successfully loaded*/
-  virtual bool Load(Element* el) {return FGModelFunctions::Load(el, PropertyManager);}
+  virtual bool Load(Element* el);
 
   virtual void Debug(int from);
 

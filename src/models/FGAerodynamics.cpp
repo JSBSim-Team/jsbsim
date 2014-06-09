@@ -44,14 +44,13 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGAerodynamics.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.53 2014/05/17 15:30:35 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.54 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,31 +279,19 @@ bool FGAerodynamics::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAerodynamics::Load(Element *element)
+bool FGAerodynamics::Load(Element *document)
 {
   string parameter, axis, scratch;
   string scratch_unit="";
-  string fname="", file="";
   Element *temp_element, *axis_element, *function_element;
-
-  string separator = "/";
-  FGXMLFileRead XMLFileRead;
-  Element* document;
-
-  fname = element->GetAttributeValue("file");
-  if (!fname.empty()) {
-    file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = XMLFileRead.LoadXMLDocument(file);
-    if (document == 0L) return false;
-  } else {
-    document = element;
-  }
 
   Name = "Aerodynamics Model: " + document->GetAttributeValue("name");
 
-  FGModel::Load(document); // Perform base class Pre-Load
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document))
+    return false;
 
-  DetermineAxisSystem(document); // Detemine if Lift/Side/Drag, etc. is used.
+  DetermineAxisSystem(document); // Determine if Lift/Side/Drag, etc. is used.
 
   Debug(2);
 

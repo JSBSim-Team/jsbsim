@@ -38,13 +38,14 @@ INCLUDES
 #include <map>
 #include <vector>
 
+#include "simgear/structure/SGSharedPtr.hxx"
 #include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.22 2014/06/08 12:50:05 bcoconni Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.23 2014/06/09 11:52:06 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,14 +137,17 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.22 2014/06/08 12:50:05 bcoconni Exp $
+    @version $Id: FGXMLElement.h,v 1.23 2014/06/09 11:52:06 bcoconni Exp $
 */
+
+class Element;
+typedef SGSharedPtr<Element> Element_ptr;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class Element {
+class Element : public SGReferenced {
 public:
   /** Constructor
       @param nm the name of this element (if given)
@@ -366,11 +370,20 @@ public:
    */
   std::string ReadFrom(void) const;
 
+  /** Merges the attributes of the current element with another element. The
+   *  attributes from the current element override the element that is passed
+   *  as a parameter. In other words if the two elements have an attribute with
+   *  the same name, the attribute from the current element is kept and the
+   *  corresponding attribute of the other element is ignored.
+   *  @param el element with which the current element will merge its attributes.
+   */
+  void MergeAttributes(Element* el);
+
 private:
   std::string name;
   std::map <std::string, std::string> attributes;
   std::vector <std::string> data_lines;
-  std::vector <Element*> children;
+  std::vector <Element_ptr> children;
   Element *parent;
   unsigned int element_index;
   std::string file_name;

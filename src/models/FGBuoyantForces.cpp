@@ -41,14 +41,13 @@ INCLUDES
 #include "FGBuoyantForces.h"
 #include "FGMassBalance.h"
 #include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.26 2014/01/13 10:46:06 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.27 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_BUOYANTFORCES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,26 +116,15 @@ bool FGBuoyantForces::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGBuoyantForces::Load(Element *element)
+bool FGBuoyantForces::Load(Element *document)
 {
-  string fname="", file="";
   Element *gas_cell_element;
 
   Debug(2);
 
-  string separator = "/";
-  FGXMLFileRead XMLFileRead;
-  Element* document;
-
-  fname = element->GetAttributeValue("file");
-  if (!fname.empty()) {
-    file = FDMExec->GetFullAircraftPath() + separator + fname;
-    document = XMLFileRead.LoadXMLDocument(file);
-  } else {
-    document = element;
-  }
-
-  FGModel::Load(element); // Perform base class Load
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document))
+    return false;
 
   gas_cell_element = document->FindElement("gas_cell");
   while (gas_cell_element) {

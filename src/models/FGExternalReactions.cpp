@@ -40,7 +40,6 @@ INCLUDES
 #include <string>
 
 #include "FGExternalReactions.h"
-#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -55,7 +54,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.17 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.18 2014/06/09 11:52:07 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,17 +72,9 @@ FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGExternalReactions::Load(Element* el)
 {
-  // check if a file attribute was specified
-  string fname = el->GetAttributeValue("file");
-  FGXMLFileRead XMLFileRead;
-
-  if (!fname.empty()) {
-    string file = FDMExec->GetFullAircraftPath() + "/" + fname;
-    el = XMLFileRead.LoadXMLDocument(file);
-    if (el == 0L) return false;
-  }
-
-  FGModel::Load(el); // Call the base class Load() function to load interface properties.
+  // Call the base class Load() function to load interface properties.
+  if (!FGModel::Load(el))
+    return false;
 
   Debug(2);
 
