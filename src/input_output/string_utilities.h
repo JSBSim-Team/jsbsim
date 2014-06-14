@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.19 2014/01/29 13:30:11 ehofman Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.20 2014/06/13 22:10:33 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,9 @@ CLASS DECLARATION
   std::vector <std::string> split(std::string str, char d);
 
   // libc++ has these as built-ins for all C++ language versions
-#if !defined(_LIBCPP_VERSION)
+  // as well as Visual Studio for versions greater than 2010
+  // (1700 -> MSVC++ 11.0 and VS 2012)
+#if !defined(_LIBCPP_VERSION) && _MSC_VER < 1700
   extern std::string to_string(int);
   extern std::string to_string(double);
   extern std::string to_string(float);
