@@ -45,27 +45,12 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropertyReader.cpp,v 1.4 2014/05/29 18:46:44 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropertyReader.cpp,v 1.5 2014/06/14 11:58:31 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPERTYREADER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-FGPropertyReader::~FGPropertyReader()
-{
-  list<pair<SGPropertyNode_ptr, double> >::iterator it = tied_interface_properties.begin();
-  for (; it != tied_interface_properties.end(); ++it) {
-    // Since the value the node is tied to is about to be deleted, we have to
-    // untie the node prior to the destruction of tied_interface_properties
-    // to avoid dangling pointers.
-
-    SGPropertyNode* node = it->first;
-    node->untie();
-    if (FGJSBBase::debug_lvl & 0x20)
-      cout << "Untied " << node->getName() << endl;
-  }
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -99,7 +84,7 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
   }
 
   while (property_element) {
-    FGPropertyNode* node = 0;
+    SGPropertyNode* node = 0;
     double value=0.0;
     if ( ! property_element->GetAttributeValue("value").empty())
       value = property_element->GetAttributeValueAsNumber("value");
@@ -133,17 +118,8 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
     } else {
       node = PM->GetNode(interface_property_string, true);
       if (node) {
-        pair<SGPropertyNode_ptr, double> property(node, value);
-        tied_interface_properties.push_back(property);
+        node->setDoubleValue(value);
 
-        if (!node->tie(SGRawValuePointer<double>(&tied_interface_properties.back().second),
-                       true)) {
-          cerr << "Failed to tie property " << interface_property_string
-               << " to a pointer" << endl;
-          tied_interface_properties.pop_back();
-          property_element = el->FindNextElement("property");
-          continue;
-        }
         if (FGJSBBase::debug_lvl > 0)
           cout << "      " << interface_property_string << " (initial value: " 
                << value << ")" << endl << endl;
