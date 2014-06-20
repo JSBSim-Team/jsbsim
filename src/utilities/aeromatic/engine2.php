@@ -216,7 +216,7 @@ function MakeTurbine() {
  }
 
  if ($ac_injected) {
-  print("  <function name=\"WaterFactor\">\n");
+  print("  <function name=\"Injection\">\n");
   print("   <table>\n");
   print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
