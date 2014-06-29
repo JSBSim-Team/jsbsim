@@ -45,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.51 2014/06/09 11:52:06 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.52 2014/06/29 10:13:18 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -590,7 +590,7 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
     if (attType == "gaussian" || attType == "gaussiansigned") {
-      double grn = GaussianRandomNumber();
+      double grn = FGJSBBase::GaussianRandomNumber();
     if (attType == "gaussian") {
       value = val + disp*grn;
       } else { // Assume gaussiansigned
@@ -610,35 +610,6 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
 
   }
   return value;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double Element::GaussianRandomNumber(void)
-{
-  static double V1, V2, S;
-  static int phase = 0;
-  double X;
-
-  if (phase == 0) {
-    V1 = V2 = S = X = 0.0;
-
-    do {
-      double U1 = (double)rand() / RAND_MAX;
-      double U2 = (double)rand() / RAND_MAX;
-
-      V1 = 2 * U1 - 1;
-      V2 = 2 * U2 - 1;
-      S = V1 * V1 + V2 * V2;
-    } while(S >= 1 || S == 0);
-
-    X = V1 * sqrt(-2 * log(S) / S);
-  } else
-    X = V2 * sqrt(-2 * log(S) / S);
-
-  phase = 1 - phase;
-
-  return X;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

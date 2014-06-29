@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.23 2014/06/09 11:52:06 bcoconni Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.24 2014/06/29 10:13:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +137,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.23 2014/06/09 11:52:06 bcoconni Exp $
+    @version $Id: FGXMLElement.h,v 1.24 2014/06/29 10:13:18 bcoconni Exp $
 */
 
 class Element;
@@ -391,7 +391,6 @@ private:
   typedef std::map <std::string, std::map <std::string, double> > tMapConvert;
   static tMapConvert convert;
   static bool converterIsInitialized;
-  double GaussianRandomNumber(void);
 };
 
 } // namespace JSBSim

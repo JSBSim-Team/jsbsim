@@ -58,7 +58,6 @@ INCLUDES
 #include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
-#include "input_output/FGPropertyManager.h"
 #include "input_output/FGModelLoader.h"
 #include "math/FGColumnVector3.h"
 
@@ -66,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.79 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.80 2014/06/29 10:18:16 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;

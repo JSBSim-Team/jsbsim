@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.77 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.78 2014/06/29 10:18:16 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 
   Name = "FGOutput";
 
-  fdmex->GetPropertyManager()->Tie("simulation/force-output", this, (iOPV)0, &FGOutput::ForceOutput, false);
+  PropertyManager->Tie("simulation/force-output", this, (iOPV)0, &FGOutput::ForceOutput, false);
 
   Debug(0);
 }

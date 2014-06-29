@@ -50,7 +50,7 @@ using std::max;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGasCell.cpp,v 1.20 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGGasCell.cpp,v 1.21 2014/06/29 10:18:16 bcoconni Exp $");
 IDENT(IdHdr,ID_GASCELL);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs&
   string token;
   Element* element;
 
-  PropertyManager = exec->GetPropertyManager();
+  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   gasCellJ = FGMatrix33();
@@ -510,7 +510,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent,
   string token;
   Element* element;
 
-  PropertyManager = exec->GetPropertyManager();
+  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   ballonetJ = FGMatrix33();
