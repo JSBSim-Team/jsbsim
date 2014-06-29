@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.14 2013/11/15 22:43:01 bcoconni Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.15 2014/06/29 10:18:16 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -261,7 +261,6 @@ private:
   FGMatrix33 gasCellJ;      // [slug foot^2]
   FGColumnVector3 gasCellM; // [lbs in]
 
-  FGPropertyManager* PropertyManager;
   FGMassBalance* MassBalance;
   void Debug(int from);
 
@@ -364,7 +363,6 @@ private:
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
   FGMatrix33 ballonetJ;     // [slug foot^2]
 
-  FGPropertyManager* PropertyManager;
   FGMassBalance* MassBalance;
   void Debug(int from);
 
