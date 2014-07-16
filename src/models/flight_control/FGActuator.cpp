@@ -37,6 +37,8 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <stdlib.h>
+
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
 
@@ -44,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.33 2014/05/17 15:05:27 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.34 2014/07/16 23:08:32 bcoconni Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +91,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
     string rate_limit_str = ratelim_el->GetDataLine();
     trim(rate_limit_str);
     if (is_number(rate_limit_str)) {
-      rate_limit = fabs(element->FindElementValueAsNumber("rate_limit"));
+      rate_limit = fabs(atof(rate_limit_str.c_str()));
     } else {
       if (rate_limit_str[0] == '-') rate_limit_str.erase(0,1);
       rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);

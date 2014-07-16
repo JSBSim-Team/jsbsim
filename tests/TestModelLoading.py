@@ -21,12 +21,7 @@
 
 import os, sys, shutil
 import xml.etree.ElementTree as et
-from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox
-
-def append_xml(name):
-    if len(name) < 4 or name[-4:] != '.xml':
-        return name+'.xml'
-    return name
+from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox, append_xml
 
 def BuildReference(sandbox, script_name):
     aircraft = {}
