@@ -65,6 +65,11 @@ def ExecuteUntil(_fdm, end_time):
         if _fdm.get_sim_time() > end_time:
             return
 
+def append_xml(name):
+    if len(name) < 4 or name[-4:] != '.xml':
+        return name+'.xml'
+    return name
+
 class MismatchError(Exception):
     pass
 
