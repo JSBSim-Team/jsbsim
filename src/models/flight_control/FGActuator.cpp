@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.34 2014/07/16 23:08:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.35 2014/07/18 22:12:40 bcoconni Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,11 +106,11 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         else                      rate_limit_incr = rate_limit;
       } else if (sense.substr(0,4) == "decr") {
         if (rate_limit_prop != 0) rate_limit_decr_prop = rate_limit_prop;
-        else                      rate_limit_decr = -rate_limit;
+        else                      rate_limit_decr = rate_limit;
       }
     } else {
-      rate_limit_incr =  rate_limit;
-      rate_limit_decr = -rate_limit;
+      rate_limit_incr = rate_limit;
+      rate_limit_decr = rate_limit;
     }
     ratelim_el = element->FindNextElement("rate_limit");
   }
@@ -250,8 +250,8 @@ void FGActuator::RateLimit(void)
     if (rate_limit_decr_prop != 0) rate_limit_decr = rate_limit_decr_prop->getDoubleValue();
     if (delta > dt * rate_limit_incr) {
       Output = PreviousRateLimOutput + rate_limit_incr * dt;
-    } else if (delta < dt * rate_limit_decr) {
-      Output = PreviousRateLimOutput + rate_limit_decr * dt;
+    } else if (delta < -dt * rate_limit_decr) {
+      Output = PreviousRateLimOutput - rate_limit_decr * dt;
     }
   }
   PreviousRateLimOutput = Output;
