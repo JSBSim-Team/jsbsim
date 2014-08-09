@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.35 2014/07/18 22:12:40 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.36 2014/08/09 17:40:51 bcoconni Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,8 +109,14 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         else                      rate_limit_decr = rate_limit;
       }
     } else {
-      rate_limit_incr = rate_limit;
-      rate_limit_decr = rate_limit;
+      if (rate_limit_prop != 0) {
+        rate_limit_incr_prop = rate_limit_prop;
+        rate_limit_decr_prop = rate_limit_prop;
+      }
+      else {
+        rate_limit_incr = rate_limit;
+        rate_limit_decr = rate_limit;
+      }
     }
     ratelim_el = element->FindNextElement("rate_limit");
   }
