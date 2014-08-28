@@ -22,6 +22,7 @@ add_test(TestICOverride ${PYTHON_EXECUTABLE} TestICOverride.py ${CMAKE_SOURCE_DI
 add_test(RunCheckCases ${PYTHON_EXECUTABLE} RunCheckCases.py ${CMAKE_SOURCE_DIR})
 add_test(TestModelLoading ${PYTHON_EXECUTABLE} TestModelLoading.py ${CMAKE_SOURCE_DIR})
 add_test(CheckFGBug1503 ${PYTHON_EXECUTABLE} CheckFGBug1503.py ${CMAKE_SOURCE_DIR})
+add_test(TestGustReset ${PYTHON_EXECUTABLE} TestGustReset.py ${CMAKE_SOURCE_DIR})
 
 # Install the JSBSim Python module
 if (INSTALL_PYTHON_MODULE)
