@@ -47,10 +47,8 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGLocation.cpp,v 1.32 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLocation.cpp,v 1.33 2014/08/28 11:46:11 bcoconni Exp $");
 IDENT(IdHdr,ID_LOCATION);
-using std::cerr;
-using std::endl;
 
 // Set up the default ground callback object.
 FGGroundCallback_ptr FGLocation::GroundCallback = NULL;
@@ -62,13 +60,12 @@ CLASS IMPLEMENTATION
 FGLocation::FGLocation(void)
   : mECLoc(1.0, 0.0, 0.0), mCacheValid(false)
 {
-  a = b = a2 = b2 = 0.0;
-  e = e2 = f = 1.0;
-  eps2 = -1.0;
+  e2 = c = 0.0;
+  a = ec = ec2 = 1.0;
   epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
-  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
+  mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
@@ -83,13 +80,12 @@ FGLocation::FGLocation(void)
 FGLocation::FGLocation(double lon, double lat, double radius)
   : mCacheValid(false)
 {
-  a = b = a2 = b2 = 0.0;
-  e = e2 = f = 1.0;
-  eps2 = -1.0;
+  e2 = c = 0.0;
+  a = ec = ec2 = 1.0;
   epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
-  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
+  mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
@@ -112,13 +108,12 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 FGLocation::FGLocation(const FGColumnVector3& lv)
   : mECLoc(lv), mCacheValid(false)
 {
-  a = b = a2 = b2 = 0.0;
-  e = e2 = f = 1.0;
-  eps2 = -1.0;
+  e2 = c = 0.0;
+  a = ec = ec2 = 1.0;
   epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
-  mGeodLat = GeodeticAltitude = initial_longitude = 0.0;
+  mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
@@ -134,13 +129,10 @@ FGLocation::FGLocation(const FGLocation& l)
   : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
 {
   a = l.a;
-  b = l.b;
-  a2 = l.a2;
-  b2 = l.b2;
   e2 = l.e2;
-  e = l.e;
-  eps2 = l.eps2;
-  f = l.f;
+  c = l.c;
+  ec = l.ec;
+  ec2 = l.ec2;
   epa = l.epa;
 
   /*ag
@@ -162,7 +154,6 @@ FGLocation::FGLocation(const FGLocation& l)
   mTi2l = l.mTi2l;
   mTl2i = l.mTl2i;
 
-  initial_longitude = l.initial_longitude;
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
 }
@@ -175,13 +166,10 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
   mCacheValid = l.mCacheValid;
 
   a = l.a;
-  b = l.b;
-  a2 = l.a2;
-  b2 = l.b2;
   e2 = l.e2;
-  e = l.e;
-  eps2 = l.eps2;
-  f = l.f;
+  c = l.c;
+  ec = l.ec;
+  ec2 = l.ec2;
   epa = l.epa;
 
   //ag See comment in constructor above
@@ -198,7 +186,6 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
   mTi2l = l.mTi2l;
   mTl2i = l.mTl2i;
 
-  initial_longitude = l.initial_longitude;
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
 
@@ -220,8 +207,6 @@ void FGLocation::SetLongitude(double longitude)
     return;
 
   mCacheValid = false;
-
-  // Need to figure out how to set the initial_longitude here
 
   mECLoc(eX) = rtmp*cos(longitude);
   mECLoc(eY) = rtmp*sin(longitude);
@@ -274,7 +259,7 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-//  initial_longitude = lon;
+
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
@@ -286,17 +271,13 @@ void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 {
   mCacheValid = false;
 
-  mGeodLat = lat;
-  mLon = lon;
-  GeodeticAltitude = height;
+  double slat = sin(lat);
+  double clat = cos(lat);
+  double RN = a / sqrt(1.0 - e2*slat*slat);
 
-//  initial_longitude = mLon;
-
-  double RN = a / sqrt(1.0 - e2*sin(mGeodLat)*sin(mGeodLat));
-
-  mECLoc(eX) = (RN + GeodeticAltitude)*cos(mGeodLat)*cos(mLon);
-  mECLoc(eY) = (RN + GeodeticAltitude)*cos(mGeodLat)*sin(mLon);
-  mECLoc(eZ) = ((1 - e2)*RN + GeodeticAltitude)*sin(mGeodLat);
+  mECLoc(eX) = (RN + height)*clat*cos(lon);
+  mECLoc(eY) = (RN + height)*clat*sin(lon);
+  mECLoc(eZ) = ((1 - e2)*RN + height)*slat;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,13 +287,10 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
   mCacheValid = false;
 
   a = semimajor;
-  b = semiminor;
-  a2 = a*a;
-  b2 = b*b;
-  e2 = 1.0 - b2/a2;
-  e = sqrt(e2);
-  eps2 = a2/b2 - 1.0;
-  f = 1.0 - b/a;
+  ec = semiminor/a;
+  ec2 = ec * ec;
+  e2 = 1.0 - ec2;
+  c = a * e2;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -387,43 +365,33 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   mTl2i = mTec2i * mTl2ec;
   mTi2l = mTl2i.Transposed();
 
-  // Calculate the geodetic latitude base on AIAA Journal of Guidance and Control paper,
-  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude", and
-  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude, Revisited",
-  // author: I. Sofair
+  // Calculate the geodetic latitude based on "Transformation from Cartesian
+  // to geodetic coordinates accelerated by Halley's method", Fukushima T. (2006)
+  // Journal of Geodesy, Vol. 79, pp. 689-693
+  // Unlike I. Sofair's method which uses a closed form solution, Fukushima's
+  // method is an iterative method whose convergence is so fast that only one
+  // iteration suffices. In addition, Fukushima's method has a much better
+  // numerical stability over Sofair's method at the North and South poles and
+  // it also gives the correct result for a spherical Earth.
 
-  if (a != 0.0 && b != 0.0) {
-    double c, p, q, s, t, u, v, w, z, p2, u2, r0;
-    double Ne, P, Q0, Q, signz0, sqrt_q, z_term;
-    p  = fabs(mECLoc(eZ))/eps2;
-    s  = r02/(e2*eps2);
-    p2 = p*p;
-    q  = p2 - b2 + s;
-    if (q>0)
-    {
-      sqrt_q = sqrt(q);
-      u  = p/sqrt_q;
-      u2 = p2/q;
-      v  = b2*u2/q;
-      P  = 27.0*v*s/q;
-      Q0 = sqrt(P+1) + sqrt(P);
-      Q  = pow(Q0, 0.66666666667);
-      t  = (1.0 + Q + 1.0/Q)/6.0;
-      c  = sqrt(u2 - 1 + 2.0*t);
-      w  = (c - u)/2.0;
-      signz0 = mECLoc(eZ)>=0?1.0:-1.0;
-      z_term = sqrt(t*t+v)-u*w-0.5*t-0.25;
-      if (z_term < 0.0) {
-        z = 0.0;
-      } else {
-        z  = signz0*sqrt_q*(w+sqrt(z_term));
-      }
-      Ne = a*sqrt(1+eps2*z*z/b2);
-      mGeodLat = asin((eps2+1.0)*(z/Ne));
-      r0 = rxy;
-      GeodeticAltitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
-    }
-  }
+  double s0 = fabs(mECLoc(eZ));
+  double zc = ec * s0;
+  double c0 = ec * rxy;
+  double c02 = c0 * c0;
+  double s02 = s0 * s0;
+  double a02 = c02 + s02;
+  double a0 = sqrt(a02);
+  double a03 = a02 * a0;
+  double s1 = zc*a03 + c*s02*s0;
+  double c1 = rxy*a03 - c*c02*c0;
+  double cs0c0 = c*c0*s0;
+  double b0 = 1.5*cs0c0*((rxy*s0-zc*c0)*a0-cs0c0);
+  s1 = s1*a03-b0*s0;
+  double cc = ec*(c1*a03-b0*c0);
+  mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
+  double s12 = s1 * s1;
+  double cc2 = cc * cc;
+  GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / sqrt(s12 + cc2);
 
   // Mark the cached values as valid
   mCacheValid = true;

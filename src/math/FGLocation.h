@@ -42,8 +42,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-
 #include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
@@ -53,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.32 2013/10/19 17:59:51 bcoconni Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.33 2014/08/28 11:46:12 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -152,7 +150,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.32 2013/10/19 17:59:51 bcoconni Exp $
+    @version $Id: FGLocation.h,v 1.33 2014/08/28 11:46:12 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -632,8 +630,6 @@ private:
   mutable double mGeodLat;
   mutable double GeodeticAltitude;
 
-  double initial_longitude;
-
   /** The cached rotation matrices from and to the associated frames. */
   mutable FGMatrix33 mTl2ec;
   mutable FGMatrix33 mTec2l;
@@ -645,14 +641,11 @@ private:
   double epa;
 
   /* Terms for geodetic latitude calculation. Values are from WGS84 model */
-  double a;    // Earth semimajor axis in feet (6,378,137.0 meters)
-  double b;    // Earth semiminor axis in feet (6,356,752.3142 meters)
-  double a2;
-  double b2;
-  double e;    // Earth eccentricity
+  double a;    // Earth semimajor axis in feet
   double e2;   // Earth eccentricity squared
-  double eps2; //
-  double f;    // Flattening
+  double c;
+  double ec;
+  double ec2;
 
   /** A data validity flag.
       This class implements caching of the derived values like the
