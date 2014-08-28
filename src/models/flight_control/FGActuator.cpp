@@ -41,12 +41,13 @@ INCLUDES
 
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGRealValue.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.36 2014/08/09 17:40:51 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.37 2014/08/28 13:44:28 bcoconni Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,9 +66,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   PreviousRateLimOutput = 0.0;
   PreviousLagInput = PreviousLagOutput = 0.0;
   bias = lag = hysteresis_width = deadband_width = 0.0;
-  rate_limited = false;
-  rate_limit = rate_limit_incr = rate_limit_decr = 0.0; // no limit
-  rate_limit_incr_prop = rate_limit_decr_prop = 0;
+  rate_limit_incr = rate_limit_decr = 0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
   initialized = 0;
@@ -85,38 +84,32 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   // a property.
   Element* ratelim_el = element->FindElement("rate_limit");
   while ( ratelim_el ) {
-    rate_limited = true;
-    FGPropertyNode* rate_limit_prop=0;
-
+    FGParameter* rate_limit = 0;
     string rate_limit_str = ratelim_el->GetDataLine();
+
     trim(rate_limit_str);
-    if (is_number(rate_limit_str)) {
-      rate_limit = fabs(atof(rate_limit_str.c_str()));
-    } else {
+    if (is_number(rate_limit_str))
+      rate_limit = new FGRealValue(fabs(atof(rate_limit_str.c_str())));
+    else {
       if (rate_limit_str[0] == '-') rate_limit_str.erase(0,1);
-      rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);
-      if (rate_limit_prop == 0)
+      FGPropertyNode* rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);
+      if (!rate_limit_prop) {
         std::cerr << "No such property, " << rate_limit_str << " for rate limiting" << std::endl;
+        ratelim_el = element->FindNextElement("rate_limit");
+        continue;
+      }
+      rate_limit = new FGPropertyValue(rate_limit_prop);
     }
 
     if (ratelim_el->HasAttribute("sense")) {
       string sense = ratelim_el->GetAttributeValue("sense");
-      if (sense.substr(0,4) == "incr") {
-        if (rate_limit_prop != 0) rate_limit_incr_prop = rate_limit_prop;
-        else                      rate_limit_incr = rate_limit;
-      } else if (sense.substr(0,4) == "decr") {
-        if (rate_limit_prop != 0) rate_limit_decr_prop = rate_limit_prop;
-        else                      rate_limit_decr = rate_limit;
-      }
-    } else {
-      if (rate_limit_prop != 0) {
-        rate_limit_incr_prop = rate_limit_prop;
-        rate_limit_decr_prop = rate_limit_prop;
-      }
-      else {
+      if (sense.substr(0,4) == "incr")
         rate_limit_incr = rate_limit;
+      else if (sense.substr(0,4) == "decr")
         rate_limit_decr = rate_limit;
-      }
+    } else {
+      rate_limit_incr = rate_limit;
+      rate_limit_decr = rate_limit;
     }
     ratelim_el = element->FindNextElement("rate_limit");
   }
@@ -141,6 +134,10 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 
 FGActuator::~FGActuator()
 {
+  delete rate_limit_incr;
+  if (rate_limit_decr != rate_limit_incr)
+    delete rate_limit_decr;
+
   Debug(1);
 }
 
@@ -176,8 +173,7 @@ bool FGActuator::Run(void )
     Output = PreviousOutput;
   } else {
     if (lag != 0.0)              Lag();        // models actuator lag
-    if (rate_limit != 0 || (rate_limit_incr_prop != 0
-        || rate_limit_decr_prop != 0)) RateLimit();  // limit the actuator rate
+    if (rate_limit_incr != 0 || rate_limit_decr != 0) RateLimit();  // limit the actuator rate
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
     if (bias != 0.0)             Bias();       // models a finite bias
@@ -252,12 +248,15 @@ void FGActuator::RateLimit(void)
   double input = Output;
   if ( initialized ) {
     double delta = input - PreviousRateLimOutput;
-    if (rate_limit_incr_prop != 0) rate_limit_incr = rate_limit_incr_prop->getDoubleValue();
-    if (rate_limit_decr_prop != 0) rate_limit_decr = rate_limit_decr_prop->getDoubleValue();
-    if (delta > dt * rate_limit_incr) {
-      Output = PreviousRateLimOutput + rate_limit_incr * dt;
-    } else if (delta < -dt * rate_limit_decr) {
-      Output = PreviousRateLimOutput - rate_limit_decr * dt;
+    if (rate_limit_incr) {
+      double rate_limit = rate_limit_incr->GetValue();
+      if (delta > dt * rate_limit)
+        Output = PreviousRateLimOutput + rate_limit * dt;
+    }
+    if (rate_limit_decr) {
+      double rate_limit = -rate_limit_decr->GetValue();
+      if (delta < dt * rate_limit)
+        Output = PreviousRateLimOutput + rate_limit * dt;
     }
   }
   PreviousRateLimOutput = Output;
@@ -335,17 +334,11 @@ void FGActuator::Debug(int from)
           cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
       }
       if (bias != 0.0) cout << "      Bias: " << bias << endl;
-      if (rate_limited) {
-        if (rate_limit_incr_prop != 0) {
-          cout << "      Increasing rate limit: " << rate_limit_incr_prop->GetName() << endl;
-        } else {
-          cout << "      Increasing rate limit: " << rate_limit_incr << endl;
-        }
-        if (rate_limit_decr_prop != 0) {
-          cout << "      Decreasing rate limit: " << rate_limit_decr_prop->GetName() << endl;
-        } else {
-          cout << "      Decreasing rate limit: " << rate_limit_decr << endl;
-        }
+      if (rate_limit_incr != 0) {
+        cout << "      Increasing rate limit: " << rate_limit_incr->GetName() << endl;
+      }
+      if (rate_limit_decr != 0) {
+        cout << "      Decreasing rate limit: " << rate_limit_decr->GetName() << endl;
       }
       if (lag != 0) cout << "      Actuator lag: " << lag << endl;
       if (hysteresis_width != 0) cout << "      Hysteresis width: " << hysteresis_width << endl;
