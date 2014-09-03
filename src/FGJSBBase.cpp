@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.38 2014/01/13 10:45:59 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.39 2014/09/03 17:35:04 bcoconni Exp $");
 IDENT(IdHdr,ID_JSBBASE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,8 @@ const string FGJSBBase::JSBSim_version = "1.0 " __DATE__ " " __TIME__ ;
 std::queue <FGJSBBase::Message> FGJSBBase::Messages;
 FGJSBBase::Message FGJSBBase::localMsg;
 unsigned int FGJSBBase::messageId = 0;
+
+int FGJSBBase::gaussian_random_number_phase = 0;
 
 short FGJSBBase::debug_lvl  = 1;
 
@@ -257,10 +259,9 @@ string FGJSBBase::CreateIndexedPropertyName(const string& Property, int index)
 double FGJSBBase::GaussianRandomNumber(void)
 {
   static double V1, V2, S;
-  static int phase = 0;
   double X;
 
-  if (phase == 0) {
+  if (gaussian_random_number_phase == 0) {
     V1 = V2 = S = X = 0.0;
 
     do {
@@ -276,7 +277,7 @@ double FGJSBBase::GaussianRandomNumber(void)
   } else
     X = V2 * sqrt(-2 * log(S) / S);
 
-  phase = 1 - phase;
+  gaussian_random_number_phase = 1 - gaussian_random_number_phase;
 
   return X;
 }

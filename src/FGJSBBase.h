@@ -57,7 +57,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.40 2014/06/29 10:13:18 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.41 2014/09/03 17:35:04 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.40 2014/06/29 10:13:18 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.41 2014/09/03 17:35:04 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -364,6 +364,8 @@ protected:
   static const std::string JSBSim_version;
 
   static std::string CreateIndexedPropertyName(const std::string& Property, int index);
+
+  static int gaussian_random_number_phase;
 
 public:
 /// Moments L, M, N
