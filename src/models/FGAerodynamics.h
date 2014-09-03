@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.29 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.30 2014/09/03 17:26:28 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,7 +108,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.29 $
+    @version $Revision: 1.30 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,6 +245,7 @@ private:
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vDeltaRP;
   double alphaclmax, alphaclmin;
+  double alphaclmax0, alphaclmin0;
   double alphahystmax, alphahystmin;
   double impending_stall, stall_hyst;
   double bi2vel, ci2vel,alphaw;

@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.161 2014/05/17 15:35:53 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.162 2014/09/03 17:35:03 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1246,6 +1246,7 @@ void FGFDMExec::DoLinearization(int mode)
 
 void FGFDMExec::SRand(int sr)
 {
+  gaussian_random_number_phase = 0;
   srand(sr);
 }
 

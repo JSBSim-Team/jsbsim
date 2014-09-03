@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.54 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.55 2014/09/03 17:26:28 bcoconni Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 
   impending_stall = stall_hyst = 0.0;
   alphaclmin = alphaclmax = 0.0;
+  alphaclmin0 = alphaclmax0 = 0.0;
   alphahystmin = alphahystmax = 0.0;
   clsq = lod = 0.0;
   alphaw = 0.0;
@@ -123,7 +124,8 @@ bool FGAerodynamics::InitModel(void)
   if (!FGModel::InitModel()) return false;
 
   impending_stall = stall_hyst = 0.0;
-  alphaclmin = alphaclmax = 0.0;
+  alphaclmin = alphaclmin0;
+  alphaclmax = alphaclmax0;
   alphahystmin = alphahystmax = 0.0;
   clsq = lod = 0.0;
   alphaw = 0.0;
@@ -298,8 +300,10 @@ bool FGAerodynamics::Load(Element *document)
   if ((temp_element = document->FindElement("alphalimits"))) {
     scratch_unit = temp_element->GetAttributeValue("unit");
     if (scratch_unit.empty()) scratch_unit = "RAD";
-    alphaclmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "RAD");
-    alphaclmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "RAD");
+    alphaclmin0 = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "RAD");
+    alphaclmax0 = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "RAD");
+    alphaclmin = alphaclmin0;
+    alphaclmax = alphaclmax0;
   }
 
   if ((temp_element = document->FindElement("hysteresis_limits"))) {
