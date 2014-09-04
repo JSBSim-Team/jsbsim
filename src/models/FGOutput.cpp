@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.78 2014/06/29 10:18:16 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.79 2014/09/04 10:17:20 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,7 +257,8 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
 bool FGOutput::Load(Element* document)
 {
-  if (!document) return false;
+  if (!FGModel::Load(document))
+    return false;
 
   unsigned int idx = OutputTypes.size();
   string type = document->GetAttributeValue("type");
