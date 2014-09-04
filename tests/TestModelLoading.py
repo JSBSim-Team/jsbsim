@@ -19,172 +19,195 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys, shutil
+import os, sys, shutil, unittest
 import xml.etree.ElementTree as et
 from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox, append_xml
 
-def BuildReference(sandbox, script_name):
-    aircraft = {}
+class TestModelLoading(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = SandBox()
 
-    # Run the script
-    script_full_path = sandbox.path_to_jsbsim_file(os.path.join('scripts', script_name))
-    aircraft['script'] = script_full_path
+    def tearDown(self):
+        self.sandbox.erase()
 
-    sandbox.delete_csv_files()
-    fdm = CreateFDM(sandbox)
-    fdm.set_output_directive(sandbox.path_to_jsbsim_file('tests', 'output.xml'))
-    fdm.load_script(script_full_path)
+    def BuildReference(self, script_name):
+        # Run the script
+        self.script = self.sandbox.path_to_jsbsim_file(os.path.join('scripts',
+                                                               script_name))
+        self.sandbox.delete_csv_files()
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests',
+                                                                  'output.xml'))
+        fdm.load_script(self.script)
+        fdm.set_property_value('simulation/randomseed', 0.0)
 
-    fdm.run_ic()
-    ExecuteUntil(fdm, 50.0)
+        fdm.run_ic()
+        ExecuteUntil(fdm, 50.0)
 
-    ref = Table()
-    ref.ReadCSV(sandbox("output.csv"))
-    aircraft['CSV'] = ref
+        self.ref = Table()
+        self.ref.ReadCSV(self.sandbox("output.csv"))
 
-    # Since the script will work with modified versions of the aircraft XML
-    # definition file, we need to make a copy of the directory that contains all
-    # the input data of that aircraft
+        # Since the script will work with modified versions of the aircraft XML
+        # definition file, we need to make a copy of the directory that contains
+        # all the input data of that aircraft
 
-    # First, extract the aircraft name from the script
-    tree = et.parse(sandbox.elude(script_full_path))
-    use_element = tree.getroot().find('use')
-    aircraft_name = use_element.attrib['aircraft']
+        # First, extract the aircraft name from the script
+        tree = et.parse(self.sandbox.elude(self.script))
+        use_element = tree.getroot().find('use')
+        self.aircraft_name = use_element.attrib['aircraft']
 
-    # Then, create a directory aircraft/aircraft_name in the build directory
-    aircraft_path = os.path.join('aircraft', aircraft_name)
-    path_to_jsbsim_aircrafts = sandbox.elude(sandbox.path_to_jsbsim_file(aircraft_path))
-    aircraft_path = sandbox(aircraft_path)
-    if not os.path.exists(aircraft_path):
-        os.makedirs(aircraft_path)
+        # Then, create a directory aircraft/aircraft_name in the build directory
+        aircraft_path = os.path.join('aircraft', self.aircraft_name)
+        self.path_to_jsbsim_aircrafts = self.sandbox.elude(self.sandbox.path_to_jsbsim_file(aircraft_path))
+        self.aircraft_path = self.sandbox(aircraft_path)
+        if not os.path.exists(self.aircraft_path):
+            os.makedirs(self.aircraft_path)
 
-    aircraft['JSBSim path'] = path_to_jsbsim_aircrafts
-    aircraft['name'] = aircraft_name
-    aircraft['path'] = aircraft_path
+        # Make a copy of the initialization file in build/.../aircraft/aircraft_name
+        IC_file = append_xml(use_element.attrib['initialize'])
+        shutil.copy(os.path.join(self.path_to_jsbsim_aircrafts, IC_file),
+                    self.aircraft_path)
 
-    # Make a copy of the initialization file in build/.../aircraft/aircraft_name
-    IC_file = append_xml(use_element.attrib['initialize'])
-    shutil.copy(os.path.join(path_to_jsbsim_aircrafts, IC_file), aircraft_path)
+        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
+                                     self.aircraft_name+'.xml'))
 
-    tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, aircraft_name+'.xml'))
+        # The aircraft definition file may already load some data from external
+        # files. If so, we need to copy these files in our directory
+        # build/.../aircraft/aircraft_name
+        # Only the external files that are in the original directory
+        # aircraft/aircraft_name will be copied. The files located in 'engine'
+        # and 'systems' do not need to be copied.
+        for element in list(tree.getroot()):
+            if 'file' in element.keys():
+                name = append_xml(element.attrib['file'])
+                name_with_path = os.path.join(self.path_to_jsbsim_aircrafts,
+                                              name)
+                if os.path.exists(name_with_path):
+                    shutil.copy(name_with_path, self.aircraft_path)
 
-    # The aircraft definition file may already load some data from external files.
-    # If so, we need to copy these files in our directory build/.../aircraft/aircraft_name
-    # Only the external files that are in the original directory aircraft/aircraft_name
-    # will be copied. The files located in 'engine' and 'systems' do not need to be
-    # copied.
-    for element in list(tree.getroot()):
-        if 'file' in element.keys():
-            name = append_xml(element.attrib['file'])
-            name_with_path = os.path.join(path_to_jsbsim_aircrafts, name)
-            if os.path.exists(name_with_path):
-                shutil.copy(name_with_path, aircraft_path)
+    def ProcessAndCompare(self, section):
+        # Here we determine if the original aircraft definition <section> is
+        # inline or read from an external file.
+        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
+                                     self.aircraft_name + '.xml'))
+        root = tree.getroot()
 
-    return aircraft
+        # Iterate over all the tags named <section>
+        for section_element in root.findall(section):
+            if 'file' in section_element.keys():
+                self.InsertAndCompare(section_element, tree)
+            else:
+                self.DetachAndCompare(section_element, tree)
 
-def ProcessAndCompare(sandbox, aircraft, section):
-    # Here we determine if the original aircraft definition <section> is inline
-    # or read from an external file.
-    tree = et.parse(os.path.join(aircraft['JSBSim path'],
-                                 aircraft['name']+'.xml'))
-    root = tree.getroot()
-
-    # Iterate over all the tags named <section>
-    for section_element in root.findall(section):
-        if 'file' in section_element.keys():
-            InsertAndCompare(sandbox, aircraft, section_element, tree)
+    def DetachAndCompare(self, section_element, tree):
+        # Extract <section> from the original aircraft definition file and copy
+        # it in a separate XML file 'section.xml'
+        section_tree = et.ElementTree(element=section_element)
+        if 'name' in section_element.keys():
+            section = section_element.attrib['name']
         else:
-            DetachAndCompare(sandbox, aircraft, section_element, tree)
+            section = section_element.tag
 
-def DetachAndCompare(sandbox, aircraft, section_element, tree):
-    aircraft_path = aircraft['path']
+        section_tree.write(os.path.join(self.aircraft_path, section+'.xml'),
+                           xml_declaration=True)
 
-    # Extract <section> from the original aircraft definition file and copy it
-    # in a separate XML file 'section.xml'
-    section_tree = et.ElementTree(element=section_element)
-    if 'name' in section_element.keys():
-        section = section_element.attrib['name']
-    else:
-        section = section_element.tag
+        # Now, we need to clean up the aircraft definition file from all
+        # references to <section>. We just need a single <section> tag that
+        # points to the file 'section.xml'
+        for element in list(section_element):
+            section_element.remove(element)
 
-    section_tree.write(os.path.join(aircraft_path, section+'.xml'),
-                       xml_declaration=True)
+        section_element.attrib = {'file': section+'.xml'}
+        tree.write(os.path.join(self.aircraft_path, self.aircraft_name+'.xml'),
+                   xml_declaration=True)
 
-    # Now, we need to clean up the aircraft definition file from all references
-    # to <section>. We just need a single <section> tag that points to the file
-    # 'section.xml'
-    for element in list(section_element):
-        section_element.remove(element)
+        self.Compare(section)
 
-    section_element.attrib = {'file': section+'.xml'}
-    tree.write(os.path.join(aircraft_path, aircraft['name']+'.xml'),
-               xml_declaration=True)
+    def InsertAndCompare(self, section_element, tree):
+        file_name = append_xml(section_element.attrib['file'])
+        section_file = os.path.join(self.path_to_jsbsim_aircrafts, file_name)
 
-    Compare(sandbox, aircraft)
+        # If <section> is actually <system>, we need to iterate over all the
+        # directories in which the file is allowed to be stored until the file
+        # is located.
+        if not os.path.exists(section_file) and section_element.tag == 'system':
+            section_file = os.path.join(self.path_to_jsbsim_aircrafts, "systems", file_name)
+            if not os.path.exists(section_file):
+                section_file = self.sandbox.elude(self.sandbox.path_to_jsbsim_file("systems", file_name))
 
-def InsertAndCompare(sandbox, aircraft, section_element, tree):
-    path_to_jsbsim_aircrafts = aircraft['JSBSim path']
-    file_name = append_xml(section_element.attrib['file'])
-    section_file = os.path.join(path_to_jsbsim_aircrafts, file_name)
+        # The original <section> tag is dropped and replaced by the content of
+        # the file.
+        section_root = et.parse(section_file).getroot()
 
-    # If <section> is actually <system>, we need to iterate over all the
-    # directories in which the file is allowed to be stored until the file is
-    # located.
-    if not os.path.exists(section_file) and section_element.tag == 'system':
-        section_file = os.path.join(path_to_jsbsim_aircrafts, "Systems", file_name)
-        if not os.path.exists(section_file):
-            section_file = sandbox.elude(sandbox.path_to_jsbsim_file("systems", file_name))
+        del section_element.attrib['file']
+        section_element.attrib.update(section_root.attrib)
+        section_element.extend(section_root)
 
-    # The original <section> tag is dropped and replaced by the content of the
-    # file.
-    section_root = et.parse(section_file).getroot()
-    root = tree.getroot()
-    root.remove(section_element)
-    root.append(section_root)
-    tree.write(os.path.join(aircraft['path'], aircraft['name']+'.xml'))
+        tree.write(os.path.join(self.aircraft_path, self.aircraft_name+'.xml'))
 
-    Compare(sandbox, aircraft)
+        self.Compare(section_element.tag+" file:"+section_file)
 
-def Compare(sandbox, aircraft):
-    # Rerun the script with the modified aircraft definition
-    sandbox.delete_csv_files()
-    fdm = CreateFDM(sandbox)
-    # We need to tell JSBSim that the aircraft definition is located in the
-    # directory build/.../aircraft
-    fdm.set_aircraft_path('aircraft')
-    fdm.set_output_directive(sandbox.path_to_jsbsim_file('tests', 'output.xml'))
-    fdm.load_script(aircraft['script'])
+    def Compare(self, section):
+        # Rerun the script with the modified aircraft definition
+        self.sandbox.delete_csv_files()
+        fdm = CreateFDM(self.sandbox)
+        # We need to tell JSBSim that the aircraft definition is located in the
+        # directory build/.../aircraft
+        fdm.set_aircraft_path('aircraft')
+        fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
+        fdm.load_script(self.script)
+        fdm.set_property_value('simulation/randomseed', 0.0)
 
-    fdm.run_ic()
-    ExecuteUntil(fdm, 50.0)
+        fdm.run_ic()
+        ExecuteUntil(fdm, 50.0)
 
-    mod = Table()
-    mod.ReadCSV(sandbox('output.csv'))
+        mod = Table()
+        mod.ReadCSV(self.sandbox('output.csv'))
 
-    # Whether the data is read from the aircraft definition file or from an
-    # external file, the results shall be exactly identical. Hence the precision
-    # set to 0.0.
-    diff = aircraft['CSV'].compare(mod, 0.0)
-    if not diff.empty:
-        print diff
-        sys.exit(-1)
+        # Whether the data is read from the aircraft definition file or from an
+        # external file, the results shall be exactly identical. Hence the
+        # precision set to 0.0.
+        diff = self.ref.compare(mod, 0.0)
+        self.assertTrue(diff.empty(),
+                        msg='\nTesting section "'+section+'"\n'+repr(diff))
 
-sandbox = SandBox()
+    def test_model_loading(self):
+        self.longMessage = True
 
-aircraft = BuildReference(sandbox, 'c1724.xml')
-ProcessAndCompare(sandbox, aircraft, 'aerodynamics')
-ProcessAndCompare(sandbox, aircraft, 'autopilot')
-ProcessAndCompare(sandbox, aircraft, 'flight_control')
-ProcessAndCompare(sandbox, aircraft, 'ground_reactions')
-ProcessAndCompare(sandbox, aircraft, 'mass_balance')
-ProcessAndCompare(sandbox, aircraft, 'metrics')
-ProcessAndCompare(sandbox, aircraft, 'propulsion')
-ProcessAndCompare(sandbox, aircraft, 'system')
+        self.BuildReference('c1724.xml')
+        output_ref = Table()
+        output_ref.ReadCSV(self.sandbox('JSBout172B.csv'))
 
-aircraft = BuildReference(sandbox, 'weather-balloon.xml')
-ProcessAndCompare(sandbox, aircraft, 'buoyant_forces')
+        self.ProcessAndCompare('aerodynamics')
+        self.ProcessAndCompare('autopilot')
+        self.ProcessAndCompare('flight_control')
+        self.ProcessAndCompare('ground_reactions')
+        self.ProcessAndCompare('mass_balance')
+        self.ProcessAndCompare('metrics')
+        self.ProcessAndCompare('propulsion')
+        self.ProcessAndCompare('system')
 
-aircraft = BuildReference(sandbox, 'Concorde_runway_test.xml')
-ProcessAndCompare(sandbox, aircraft, 'external_reactions')
+        # The <output> section needs special handling. In addition to the check
+        # conducted by ProcessAndCompare with a directive file, we need to
+        # verify that the <output> tag has been correctly executed by JSBSim.
+        # In the case of the script c1724.xml, this means that the data output
+        # in JSBout172B.csv is the same between the reference 'output_ref' and
+        # the result 'mod' below where the <output> tag was moved in a separate
+        # file.
+        self.ProcessAndCompare('output')
+        mod = Table()
+        mod.ReadCSV(self.sandbox('JSBout172B.csv'))
+        diff = output_ref.compare(mod, 0.0)
+        self.assertTrue(diff.empty(),
+                        msg='\nTesting section "output"\n'+repr(diff))
 
-sandbox.erase()
+        self.BuildReference('weather-balloon.xml')
+        self.ProcessAndCompare('buoyant_forces')
+
+        self.BuildReference('Concorde_runway_test.xml')
+        self.ProcessAndCompare('external_reactions')
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestModelLoading)
+test_result = unittest.TextTestRunner(verbosity=2).run(suite)
+if test_result.failures or test_result.errors:
+    sys.exit(-1) # 'make test' will report the test failed.

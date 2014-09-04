@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.162 2014/09/03 17:35:03 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.163 2014/09/04 10:17:20 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -879,22 +879,13 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       }
     }
 
-    // Process the output element[s]. This element is OPTIONAL, and there may be more than one.
+    // Process the output element[s]. This element is OPTIONAL, and there may be
+    // more than one.
     element = document->FindElement("output");
     while (element) {
-      string output_file_name = aircraftCfgFileName;
+      if (!static_cast<FGOutput*>(Models[eOutput])->Load(element))
+        return false;
 
-      if (!element->GetAttributeValue("file").empty()) {
-        output_file_name = RootDir + element->GetAttributeValue("file");
-        result = ((FGOutput*)Models[eOutput])->SetDirectivesFile(output_file_name);
-      }
-      else
-        result = ((FGOutput*)Models[eOutput])->Load(element);
-
-      if (!result) {
-        cerr << endl << "Aircraft output element has problems in file " << output_file_name << endl;
-        return result;
-      }
       element = document->FindNextElement("output");
     }
 
