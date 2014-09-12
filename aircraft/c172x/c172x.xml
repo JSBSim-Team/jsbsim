@@ -20,7 +20,7 @@
           is not to be sold.
         </note>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.90 $</version>
+        <version>$Revision: 1.91 $</version>
         <description>Models a 1982 Cessna 172P.</description>
       <reference
         refID=  "1"
@@ -1220,6 +1220,9 @@
         <property> position/vrp-gc-latitude_deg </property>
         <property> position/vrp-longitude_deg   </property>
         <property> position/vrp-radius-ft       </property>
+        <function name="velocities/pi-deg_sec">
+          <todegrees> <p> velocities/pi-rad_sec </p> </todegrees>
+        </function>
     </output>
 
 <!---
