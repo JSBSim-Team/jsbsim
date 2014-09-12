@@ -46,12 +46,13 @@ INCLUDES
 #include "input_output/FGOutputFG.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGModelLoader.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.79 2014/09/04 10:17:20 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.80 2014/09/12 20:10:05 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,13 +256,22 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::Load(Element* document)
+bool FGOutput::Load(Element* el)
 {
-  if (!FGModel::Load(document))
-    return false;
+  // Unlike the other FGModel classes, properties listed in the <output> section
+  // are not intended to create new properties. For that reason, FGOutput
+  // cannot load its XML directives with FGModel::Load().
+  // Instead FGModelLoader::Open() and FGModel::PreLoad() must be explicitely
+  // called.
+  FGModelLoader ModelLoader(this);
+  Element* element = ModelLoader.Open(el);
+
+  if (!element) return false;
+
+  FGModel::PreLoad(element, PropertyManager);
 
   unsigned int idx = OutputTypes.size();
-  string type = document->GetAttributeValue("type");
+  string type = element->GetAttributeValue("type");
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
@@ -285,7 +295,8 @@ bool FGOutput::Load(Element* document)
   if (!Output) return false;
 
   Output->SetIdx(idx);
-  Output->Load(document);
+  Output->Load(element);
+  PostLoad(element, PropertyManager);
 
   OutputTypes.push_back(Output);
 

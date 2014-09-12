@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.10 2014/01/13 10:46:00 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.11 2014/09/12 20:10:04 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
@@ -100,9 +100,6 @@ void FGOutputType::SetIdx(int idx)
 
 bool FGOutputType::Load(Element* element)
 {
-  // Perform base class Load.
-  PreLoad(element, PropertyManager);
-
   if (element->FindElementValue("simulation") == string("ON"))
     SubSystems += ssSimulation;
   if (element->FindElementValue("aerosurfaces") == string("ON"))
@@ -157,9 +154,6 @@ bool FGOutputType::Load(Element* element)
     outRate = element->GetAttributeValueAsNumber("rate");
   }
   SetRate(outRate);
-
-  // FIXME : PostLoad should be called in the most derived class ?
-  PostLoad(element, PropertyManager);
 
   return true;
 }
