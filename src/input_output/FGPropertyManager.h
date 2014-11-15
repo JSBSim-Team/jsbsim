@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.28 2013/09/28 14:43:15 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.29 2014/11/15 11:32:54 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -233,7 +233,7 @@ class FGPropertyNode : public SGPropertyNode
      * Assign a bool value to a property.  If the property does not
      * yet exist, it will be created and its type will be set to
      * BOOL; if it has a type of UNKNOWN, the type will also be set to
-     * BOOL; otherwise, the bool value will be converted to the property's
+     * BOOL; otherwise, the value type will be converted to the property's
      * type.
      *
      * @param name The property name.
@@ -249,7 +249,7 @@ class FGPropertyNode : public SGPropertyNode
      * Assign an int value to a property.  If the property does not
      * yet exist, it will be created and its type will be set to
      * INT; if it has a type of UNKNOWN, the type will also be set to
-     * INT; otherwise, the bool value will be converted to the property's
+     * INT; otherwise, the value type will be converted to the property's
      * type.
      *
      * @param name The property name.
@@ -265,7 +265,7 @@ class FGPropertyNode : public SGPropertyNode
      * Assign a long value to a property.  If the property does not
      * yet exist, it will be created and its type will be set to
      * LONG; if it has a type of UNKNOWN, the type will also be set to
-     * LONG; otherwise, the bool value will be converted to the property's
+     * LONG; otherwise, the value type will be converted to the property's
      * type.
      *
      * @param name The property name.
@@ -281,7 +281,7 @@ class FGPropertyNode : public SGPropertyNode
      * Assign a float value to a property.  If the property does not
      * yet exist, it will be created and its type will be set to
      * FLOAT; if it has a type of UNKNOWN, the type will also be set to
-     * FLOAT; otherwise, the bool value will be converted to the property's
+     * FLOAT; otherwise, the value type will be converted to the property's
      * type.
      *
      * @param name The property name.
