@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.95 2014/05/01 18:32:54 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.96 2014/11/15 11:19:34 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -918,8 +918,19 @@ bool FGInitialCondition::Load_v1(Element* document)
 {
   bool result = true;
 
-  if (document->FindElement("latitude"))
-    SetLatitudeRadIC(document->FindElementValueAsNumberConvertTo("latitude", "RAD"));
+  if (document->FindElement("latitude")) {
+    double latitude = document->FindElementValueAsNumberConvertTo("latitude", "RAD");
+    string lat_type = document->FindElement("latitude")->GetAttributeValue("type");
+    if (lat_type == "geod" || lat_type == "geodetic") {
+      double longitude = position.GetLongitude();
+      double altitude = position.GetAltitudeASL();                 // SetPositionGeodetic() assumes altitude 
+      position.SetPositionGeodetic(longitude, latitude, altitude); // is geodetic, but it's close enough for now.
+      position.SetAltitudeAGL(altitude, 0.0);
+    } else {
+      position.SetLatitude(latitude);
+	}
+  }
+
   if (document->FindElement("longitude"))
     SetLongitudeRadIC(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
   if (document->FindElement("elevation"))
@@ -1032,6 +1043,16 @@ bool FGInitialCondition::Load_v2(Element* document)
       position = position.GetTi2ec() * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
+        Element* latitude_el = position_el->FindElement("latitude");
+        if (latitude_el) {
+          string lat_type = latitude_el->GetAttributeValue("type");
+          double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
+          if (lat_type == "geod" || lat_type == "geodetic") {
+              position.SetPositionGeodetic(0.0, latitude, 0.0); // Longitude and altitude will be set later on
+          } else {
+            position.SetLatitude(latitude);
+          }
+        }
 
         if (position_el->FindElement("longitude"))
           position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
@@ -1048,19 +1069,6 @@ bool FGInitialCondition::Load_v2(Element* document)
           result = false;
         }
 
-        Element* latitude_el = position_el->FindElement("latitude");
-        if (latitude_el) {
-          string lat_type = latitude_el->GetAttributeValue("type");
-          double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
-          if (lat_type == "geod" || lat_type == "geodetic") {
-              double longitude = position.GetLongitude();
-              double altitude = position.GetAltitudeASL();                 // SetPositionGeodetic() assumes altitude 
-              position.SetPositionGeodetic(longitude, latitude, altitude); // is geodetic, but it's close enough for now.
-              position.SetAltitudeAGL(altitude, 0.0);
-          } else {
-            position.SetLatitude(latitude);
-          }
-        }
       } else {
         position = position_el->FindElementTripletConvertTo("FT");
       }
