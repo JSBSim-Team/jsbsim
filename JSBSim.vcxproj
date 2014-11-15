@@ -381,6 +381,7 @@
     <ClInclude Include="src\initialization\fglinearization.h" />
     <ClInclude Include="src\initialization\FGSimplexTrim.h" />
     <ClInclude Include="src\initialization\FGTrimmer.h" />
+    <ClInclude Include="src\input_output\fgmodelloader.h" />
     <ClInclude Include="src\input_output\fgoutputfg.h" />
     <ClInclude Include="src\input_output\fgoutputfile.h" />
     <ClInclude Include="src\input_output\fgoutputsocket.h" />
@@ -500,6 +501,7 @@
     <ClCompile Include="src\initialization\FGLinearization.cpp" />
     <ClCompile Include="src\initialization\FGSimplexTrim.cpp" />
     <ClCompile Include="src\initialization\FGTrimmer.cpp" />
+    <ClCompile Include="src\input_output\FGModelLoader.cpp" />
     <ClCompile Include="src\input_output\FGOutputFG.cpp" />
     <ClCompile Include="src\input_output\FGOutputFile.cpp" />
     <ClCompile Include="src\input_output\FGOutputSocket.cpp" />

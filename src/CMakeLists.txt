@@ -89,6 +89,15 @@ if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
                                    SOVERSION ${LIBRARY_SOVERSION}
                                    FRAMEWORK ON)
+else()
+  # If JSBSim is built as a static library on an x86_64 *nix platform, the code
+  # must be compiled with the -fPIC flag otherwise the compiler will complain:
+  # relocation R_X86_64_32S against `a local symbol' can not be used when making
+  # a shared object; recompile with -fPIC
+  # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+  if (UNIX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set_target_properties(libJSBSim PROPERTIES COMPILE_FLAGS "-fPIC")
+  endif()
 endif()
 
 install(TARGETS libJSBSim LIBRARY DESTINATION lib
