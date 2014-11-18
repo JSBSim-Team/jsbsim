@@ -30,9 +30,13 @@ INCLUDES
 
 #include "FGRealValue.h"
 
+#include "input_output/string_utilities.h"
+
+using namespace std;
+
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRealValue.cpp,v 1.6 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGRealValue.cpp,v 1.7 2014/11/18 18:38:27 bcoconni Exp $");
 IDENT(IdHdr,ID_REALVALUE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,4 +54,9 @@ double FGRealValue::GetValue(void) const
   return Value;
 }
 
+std::string FGRealValue::GetName(void) const
+{
+  return std::string("constant value ") + to_string(Value);
+}
+  
 }

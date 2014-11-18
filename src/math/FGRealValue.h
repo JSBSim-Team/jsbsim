@@ -35,13 +35,12 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGParameter.h"
-#include "input_output/string_utilities.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_REALVALUE "$Id: FGRealValue.h,v 1.6 2014/08/28 13:44:27 bcoconni Exp $"
+#define ID_REALVALUE "$Id: FGRealValue.h,v 1.7 2014/11/18 18:38:25 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,8 +68,7 @@ public:
   ~FGRealValue() {};
 
   double GetValue(void) const;
-  std::string GetName(void) const
-  { return std::string("constant value ") + to_string(Value); }
+  std::string GetName(void) const;
 
 private:
   double Value;
