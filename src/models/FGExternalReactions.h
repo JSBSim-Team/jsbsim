@@ -4,7 +4,7 @@
  Author:       David P. Culp
  Date started: 17/11/06
 
- ------------- Copyright (C) 2006  David P. Culp (davidculp2@comcast.net) -------------
+ ------------- Copyright (C) 2006  David P. Culp (daveculp@cox.net) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.15 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.16 2014/11/25 01:42:27 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
