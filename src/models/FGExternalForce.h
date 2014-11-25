@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.12 2013/11/15 22:43:01 bcoconni Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.13 2014/11/25 01:44:17 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,6 +121,15 @@ CLASS DOCUMENTATION
     The force direction is not actually required to be specified as a unit
     vector, but prior to the force vector being calculated, the direction
     vector is normalized.
+
+    The location of the force vector, in structural coordinates, can be set at
+    runtime through the following properties:
+
+    @code
+    external_reactions/{force name}/locx
+    external_reactions/{force name}/locy
+    external_reactions/{force name}/locz
+    @endcode
     
 */
 
@@ -163,6 +172,12 @@ public:
   void SetX(double x) {vDirection(eX) = x;}
   void SetY(double y) {vDirection(eY) = y;}
   void SetZ(double z) {vDirection(eZ) = z;}
+  double GetLocX(void) const {return vActingXYZn(eX);}
+  double GetLocY(void) const {return vActingXYZn(eY);}
+  double GetLocZ(void) const {return vActingXYZn(eZ);}
+  void SetLocX(double x) {vXYZn(eX) = x; vActingXYZn(eX) = x;}
+  void SetLocY(double y) {vXYZn(eY) = y; vActingXYZn(eY) = y;}
+  void SetLocZ(double z) {vXYZn(eZ) = z; vActingXYZn(eZ) = z;}  
   
 private:
 
