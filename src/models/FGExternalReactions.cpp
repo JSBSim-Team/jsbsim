@@ -6,7 +6,7 @@
  Purpose:      Manages the External Forces
  Called by:    FGAircraft
 
- ------------- Copyright (C) 2006  David P. Culp (davidculp2@comcast.net) -------------
+ ------------- Copyright (C) 2006  David P. Culp (daveculp@cox.net) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -54,7 +54,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.18 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.19 2014/11/25 01:42:27 dpculp Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

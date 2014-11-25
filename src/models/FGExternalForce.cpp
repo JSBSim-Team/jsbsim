@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.14 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.15 2014/11/25 01:44:17 dpculp Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,9 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index)
     location = location_element->FindElementTripletConvertTo("IN");
     SetLocation(location);
   }
+  PropertyManager->Tie( BasePropertyName + "/locx", (FGExternalForce*)this, &FGExternalForce::GetLocX, &FGExternalForce::SetLocX);
+  PropertyManager->Tie( BasePropertyName + "/locy", (FGExternalForce*)this, &FGExternalForce::GetLocY, &FGExternalForce::SetLocY);
+  PropertyManager->Tie( BasePropertyName + "/locz", (FGExternalForce*)this, &FGExternalForce::GetLocZ, &FGExternalForce::SetLocZ);
 
   direction_element = el->FindElement("direction");
   if (!direction_element) {
