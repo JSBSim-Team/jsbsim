@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.31 2014/05/17 15:17:13 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.32 2014/11/29 13:47:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -267,6 +267,7 @@ private:
     void SetRadius(double r) {Radius = r;}
     void SetLength(double l) {Length = l;}
     void SetName(string name) {Name = name;}
+    void SetPointMassMoI(const FGMatrix33& MoI) { mPMInertia = MoI; }
     double GetPointMassMoI(int r, int c) {return mPMInertia(r,c);}
 
     void bind(FGPropertyManager* PropertyManager, int num);
