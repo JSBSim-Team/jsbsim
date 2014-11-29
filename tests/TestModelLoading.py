@@ -19,9 +19,9 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys, shutil, unittest
+import os, sys, unittest
 import xml.etree.ElementTree as et
-from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox, append_xml
+from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox, append_xml, CopyAircraftDef
 
 class TestModelLoading(unittest.TestCase):
     def setUp(self):
@@ -51,39 +51,8 @@ class TestModelLoading(unittest.TestCase):
         # definition file, we need to make a copy of the directory that contains
         # all the input data of that aircraft
 
-        # First, extract the aircraft name from the script
-        tree = et.parse(self.sandbox.elude(self.script))
-        use_element = tree.getroot().find('use')
-        self.aircraft_name = use_element.attrib['aircraft']
-
-        # Then, create a directory aircraft/aircraft_name in the build directory
-        aircraft_path = os.path.join('aircraft', self.aircraft_name)
-        self.path_to_jsbsim_aircrafts = self.sandbox.elude(self.sandbox.path_to_jsbsim_file(aircraft_path))
-        self.aircraft_path = self.sandbox(aircraft_path)
-        if not os.path.exists(self.aircraft_path):
-            os.makedirs(self.aircraft_path)
-
-        # Make a copy of the initialization file in build/.../aircraft/aircraft_name
-        IC_file = append_xml(use_element.attrib['initialize'])
-        shutil.copy(os.path.join(self.path_to_jsbsim_aircrafts, IC_file),
-                    self.aircraft_path)
-
-        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
-                                     self.aircraft_name+'.xml'))
-
-        # The aircraft definition file may already load some data from external
-        # files. If so, we need to copy these files in our directory
-        # build/.../aircraft/aircraft_name
-        # Only the external files that are in the original directory
-        # aircraft/aircraft_name will be copied. The files located in 'engine'
-        # and 'systems' do not need to be copied.
-        for element in list(tree.getroot()):
-            if 'file' in element.keys():
-                name = append_xml(element.attrib['file'])
-                name_with_path = os.path.join(self.path_to_jsbsim_aircrafts,
-                                              name)
-                if os.path.exists(name_with_path):
-                    shutil.copy(name_with_path, self.aircraft_path)
+        tree, self.aircraft_name, self.path_to_jsbsim_aircrafts = CopyAircraftDef(self.script, self.sandbox)
+        self.aircraft_path = self.sandbox('aircraft', self.aircraft_name)
 
     def ProcessAndCompare(self, section):
         # Here we determine if the original aircraft definition <section> is
