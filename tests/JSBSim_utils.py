@@ -18,6 +18,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 
 import os, sys, csv, string, tempfile, shutil
+import xml.etree.ElementTree as et
 import jsbsim
 
 class SandBox:
@@ -158,3 +159,44 @@ class Table:
         for line in self._lines:
             output += "|" + "|".join("{:{}}".format(str(item), col_width[i]) for i, item in enumerate(line)) + "|\n"
         return output
+
+def CopyAircraftDef(script_path, sandbox):
+    # Get the aircraft name
+    tree = et.parse(sandbox.elude(script_path))
+    use_element = tree.getroot().find('use')
+    aircraft_name = use_element.attrib['aircraft']
+
+    # Then, create a directory aircraft/aircraft_name in the build directory
+    aircraft_path = os.path.join('aircraft', aircraft_name)
+    path_to_jsbsim_aircrafts = sandbox.elude(sandbox.path_to_jsbsim_file(aircraft_path))
+    aircraft_path = sandbox(aircraft_path)
+    if not os.path.exists(aircraft_path):
+        os.makedirs(aircraft_path)
+
+    # Make a copy of the initialization file in build/.../aircraft/aircraft_name
+    IC_file = append_xml(use_element.attrib['initialize'])
+    shutil.copy(os.path.join(path_to_jsbsim_aircrafts, IC_file), aircraft_path)
+
+    tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, aircraft_name+'.xml'))
+
+    # The aircraft definition file may also load some data from external files.
+    # If so, we need to copy these files in our directory build/.../aircraft/aircraft_name
+    # Only the external files that are in the original directory aircraft/aircraft_name
+    # will be copied. The files located in 'engine' and 'systems' do not need to be
+    # copied.
+    for element in list(tree.getroot()):
+        if 'file' in element.keys():
+            name = append_xml(element.attrib['file'])
+            name_with_path = os.path.join(path_to_jsbsim_aircrafts, name)
+            if os.path.exists(name_with_path):
+                shutil.copy(name_with_path, aircraft_path)
+            else:
+                name_with_system_path = os.path.join(path_to_jsbsim_aircrafts, 'Systems', name)
+                print name_with_system_path
+                if os.path.exists(name_with_system_path):
+                    system_path = sandbox(sandbox.elude(aircraft_path), 'Systems')
+                    if not os.path.exists(system_path):
+                        os.makedirs(system_path)
+                    shutil.copy(name_with_system_path, system_path)
+
+    return tree, aircraft_name, path_to_jsbsim_aircrafts

@@ -26,11 +26,11 @@
 #    execution of the script c1724.xml when <rate_limit> is used with a property.
 # 3. That the actuator output value is correctly driven by rate_limit.
 
-import os, shutil, time, sys, string
+import os, time, sys, string
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
-from JSBSim_utils import SandBox, CreateFDM, append_xml
+from JSBSim_utils import SandBox, CreateFDM, append_xml, CopyAircraftDef
 
 def ScriptExecution(fdm, script_path, time_limit = 1E+9):
     fdm.load_script(script_path)
@@ -53,40 +53,11 @@ exec_time = time.time() - start_time
 # Since we will alter the aircraft definition file, we need make a copy of it
 # and all the files it is refering to.
 
-# Get the aircraft name
-tree = et.parse(sandbox.elude(script_path))
-use_element = tree.getroot().find('use')
-aircraft_name = use_element.attrib['aircraft']
-
-# Then, create a directory aircraft/aircraft_name in the build directory
-aircraft_path = os.path.join('aircraft', aircraft_name)
-path_to_jsbsim_aircrafts = sandbox.elude(sandbox.path_to_jsbsim_file(aircraft_path))
-aircraft_path = sandbox(aircraft_path)
-if not os.path.exists(aircraft_path):
-    os.makedirs(aircraft_path)
-
-# Make a copy of the initialization file in build/.../aircraft/aircraft_name
-IC_file = append_xml(use_element.attrib['initialize'])
-shutil.copy(os.path.join(path_to_jsbsim_aircrafts, IC_file), aircraft_path)
-
-tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, aircraft_name+'.xml'))
-root = tree.getroot()
-
-# The aircraft definition file may also load some data from external files.
-# If so, we need to copy these files in our directory build/.../aircraft/aircraft_name
-# Only the external files that are in the original directory aircraft/aircraft_name
-# will be copied. The files located in 'engine' and 'systems' do not need to be
-# copied.
-for element in list(root):
-    if 'file' in element.keys():
-        name = append_xml(element.attrib['file'])
-        name_with_path = os.path.join(path_to_jsbsim_aircrafts, name)
-        if os.path.exists(name_with_path):
-            shutil.copy(name_with_path, aircraft_path)
+tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, sandbox)
 
 # Now the copy of the aircraft definition file will be altered: the <rate_limit>
 # element is split in two: one with sense 'decr', the other with sense 'incr'.
-actuator_element = root.find('flight_control/channel/actuator//rate_limit/..')
+actuator_element = tree.getroot().find('flight_control/channel/actuator//rate_limit/..')
 rate_element = actuator_element.find('rate_limit')
 rate_element.attrib['sense'] = 'decr'
 new_rate_element = et.SubElement(actuator_element, 'rate_limit')
