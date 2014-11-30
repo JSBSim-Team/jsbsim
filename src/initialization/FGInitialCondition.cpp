@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.97 2014/11/15 11:57:37 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.98 2014/11/30 12:35:32 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -110,7 +110,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
 
   position.SetLongitude(lonRad0);
   position.SetLatitude(latRad0);
-  position.SetAltitudeAGL(altAGLFt0, 0.0);
+  position.SetAltitudeAGL(altAGLFt0);
 
   orientation = FGQuaternion(phi0, theta0, psi0);
   const FGMatrix33& Tb2l = orientation.GetTInv();
@@ -666,21 +666,21 @@ void FGInitialCondition::SetTerrainElevationFtIC(double elev)
 
 double FGInitialCondition::GetAltitudeAGLFtIC(void) const
 {
-  return position.GetAltitudeAGL(0.0);
+  return position.GetAltitudeAGL();
 }
 
 //******************************************************************************
 
 double FGInitialCondition::GetTerrainElevationFtIC(void) const
 {
-  return position.GetTerrainRadius(0.0) - position.GetSeaLevelRadius();
+  return position.GetTerrainRadius() - position.GetSeaLevelRadius();
 }
 
 //******************************************************************************
 
 void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 {
-  double terrainElevation = position.GetTerrainRadius(0.0)
+  double terrainElevation = position.GetTerrainRadius()
     - position.GetSeaLevelRadius();
   SetAltitudeASLFtIC(agl + terrainElevation);
   lastAltitudeSet = setagl;
@@ -1055,8 +1055,7 @@ bool FGInitialCondition::Load_v2(Element* document)
         if (position_el->FindElement("radius")) {
           position.SetRadius(position_el->FindElementValueAsNumberConvertTo("radius", "FT"));
         } else if (position_el->FindElement("altitudeAGL")) {
-          position.SetAltitudeAGL(position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"),
-                                  0.0);
+          position.SetAltitudeAGL(position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
         } else if (position_el->FindElement("altitudeMSL")) {
           position.SetAltitudeASL(position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {

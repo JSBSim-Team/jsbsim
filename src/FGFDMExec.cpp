@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.163 2014/09/04 10:17:20 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.164 2014/11/30 12:35:32 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1201,7 +1201,7 @@ void FGFDMExec::DoTrim(int mode)
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
-  sim_time = saved_time;
+  Setsim_time(saved_time);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1216,7 +1216,6 @@ void FGFDMExec::DoSimplexTrim(int mode)
   }
   saved_time = sim_time;
   FGSimplexTrim trim(this, (JSBSim::TrimMode)mode);
-  sim_time = saved_time;
   Setsim_time(saved_time);
   std::cout << "dT: " << dT << std::endl;
 }
@@ -1229,7 +1228,6 @@ void FGFDMExec::DoLinearization(int mode)
   if (Constructing) return;
   saved_time = sim_time;
   FGLinearization lin(this,mode);
-  sim_time = saved_time;
   Setsim_time(saved_time);
 }
 

@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.23 2014/05/01 18:32:54 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.24 2014/11/30 12:35:32 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,8 +399,7 @@ void FGTrim::trimOnGround(void)
 
     FGColumnVector3 normal, vDummy;
     FGLocation lDummy;
-    double height = gearLoc.GetContactPoint(fdmex->GetSimTime(), lDummy,
-                                            normal, vDummy, vDummy);
+    double height = gearLoc.GetContactPoint(lDummy, normal, vDummy, vDummy);
     c.normal = Tec2b * normal;
 
     contacts.push_back(c);
