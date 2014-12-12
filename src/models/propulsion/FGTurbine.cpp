@@ -5,7 +5,7 @@
  Date started: 03/11/2003
  Purpose:      This module models a turbine engine.
 
- ------------- Copyright (C) 2003  David Culp (davidculp2@comcast.net) ---------
+ ------------- Copyright (C) 2003  David Culp (daveculp@cox.net) ---------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.43 2014/06/08 12:50:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.44 2014/12/12 01:21:17 dpculp Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,9 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
-  N1_spinup = 1.0; N2_spinup = 3.0; 
+  N1_spinup = 1.0; N2_spinup = 3.0;
+  InjectionTime = 30.0;
+  InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
 
   Load(exec, el);
@@ -94,10 +96,10 @@ void FGTurbine::ResetToIC(void)
     
   FGEngine::ResetToIC();
     
-  N1 = N2 = 0.0;
+  N1 = N2 = InjN1increment = InjN2increment = 0.0;
   N2norm = 0.0;
   correctedTSFC = TSFC;
-  AugmentCmd = 0.0;
+  AugmentCmd = InjWaterNorm = 0.0;
   InletPosition = NozzlePosition = 1.0;
   Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
   Cutoff = true;
@@ -131,6 +133,8 @@ void FGTurbine::Calculate(void)
   if ((phase == tpTrim) && (in.TotalDeltaT > 0)) {
     if (Running && !Starved) {
       phase = tpRun;
+      N1_factor = MaxN1 - IdleN1;
+      N2_factor = MaxN2 - IdleN2;      
       N2 = IdleN2 + ThrottlePos * N2_factor;
       N1 = IdleN1 + ThrottlePos * N1_factor;
       OilTemp_degK = 366.0;
@@ -209,7 +213,12 @@ double FGTurbine::Run()
   double n = N2norm + 0.1;
   if (n > 1) n = 1; 
   spoolup = delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma));
-  
+  N1_factor = MaxN1 - IdleN1;
+  N2_factor = MaxN2 - IdleN2;
+  if ((Injected == 1) && Injection && (InjWaterNorm > 0)) {
+    N1_factor += InjN1increment;
+    N2_factor += InjN2increment;
+  }  
   N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, spoolup, spoolup * 3.0);
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, spoolup, spoolup * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
@@ -250,12 +259,14 @@ double FGTurbine::Run()
     }
   }
 
-  if ((Injected == 1) && Injection) {
+  if ((Injected == 1) && Injection && (InjWaterNorm > 0.0)) {
     InjectionTimer += in.TotalDeltaT;
     if (InjectionTimer < InjectionTime) {
        thrust = thrust * InjectionLookup->GetValue();
+       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime);	
     } else {
        Injection = false;
+       InjWaterNorm = 0.0;
     }
   }
 
@@ -455,8 +466,14 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     AugMethod = (int)el->FindElementValueAsNumber("augmethod");
   if (el->FindElement("injected"))
     Injected = (int)el->FindElementValueAsNumber("injected");
-  if (el->FindElement("injection-time"))
+  if (el->FindElement("injection-time")){
     InjectionTime = el->FindElementValueAsNumber("injection-time");
+    InjWaterNorm =1.0;
+  }
+  if (el->FindElement("injection-N1-inc"))
+    InjN1increment = el->FindElementValueAsNumber("injection-N1-inc");
+  if (el->FindElement("injection-N2-inc"))
+    InjN2increment = el->FindElementValueAsNumber("injection-N2-inc");
 
   string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
 
@@ -522,6 +539,24 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name.c_str(), &Stalled);
   property_name = base_property_name + "/bleed-factor";
   PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
+  property_name = base_property_name + "/MaxN1";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetMaxN1, &FGTurbine::SetMaxN1);
+  property_name = base_property_name + "/MaxN2";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetMaxN2, &FGTurbine::SetMaxN2);
+  property_name = base_property_name + "/InjectionTimer";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetInjectionTimer, &FGTurbine::SetInjectionTimer);
+  property_name = base_property_name + "/InjWaterNorm";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetInjWaterNorm, &FGTurbine::SetInjWaterNorm);
+  property_name = base_property_name + "/InjN1increment";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetInjN1increment, &FGTurbine::SetInjN1increment);
+  property_name = base_property_name + "/InjN2increment";
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+                        &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -531,7 +566,10 @@ int FGTurbine::InitRunning(void)
   FDMExec->SuspendIntegration();
   Cutoff=false;
   Running=true;  
-  N2=IdleN2;
+  N1_factor = MaxN1 - IdleN1;
+  N2_factor = MaxN2 - IdleN2;      
+  N2 = IdleN2 + ThrottlePos * N2_factor;
+  N1 = IdleN1 + ThrottlePos * N1_factor;
   Calculate();
   FDMExec->ResumeIntegration();
   return phase==tpRun;
