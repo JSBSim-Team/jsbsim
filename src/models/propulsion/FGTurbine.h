@@ -4,7 +4,7 @@
  Author:       David Culp
  Date started: 03/11/2003
 
- ------------- Copyright (C) 2003  David Culp (davidculp2@comcast.net)----------
+ ------------- Copyright (C) 2003  David Culp (daveculp@cox.net)----------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.22 2011/08/04 13:45:42 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -130,6 +130,8 @@ CLASS DOCUMENTATION
               0 = Water injection not installed
               1 = Water injection installed
   injection-time - Time, in seconds, of water injection duration 
+  InjN1increment - % increase in N1 when injection is taking place
+  InjN2increment - % increase in N2 when injection is taking place
 </pre>
 
 <h3>NOTES:</h3>  
@@ -150,7 +152,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.22 2011/08/04 13:45:42 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,8 +201,14 @@ public:
   double GetEPR(void) const {return EPR;}
   double GetEGT(void) const {return EGT_degC;}
 
+  double GetMaxN1(void) const {return MaxN1;}
+  double GetMaxN2(void) const {return MaxN2;}
   double getOilPressure_psi () const {return OilPressure_psi;}
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
+  double GetInjectionTimer(void) const {return InjectionTimer;}
+  double GetInjWaterNorm(void) const {return InjWaterNorm;}
+  double GetInjN1increment(void) const {return InjN1increment;}
+  double GetInjN2increment(void) const {return InjN2increment;}
 
   void SetInjection(bool injection) {Injection = injection;}
   void SetIgnition(int ignition) {Ignition = ignition;}
@@ -210,6 +218,13 @@ public:
   void SetBleedDemand(double bleedDemand) {BleedDemand = bleedDemand;}
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
+  void SetMaxN1(double maxn1) {MaxN1 = maxn1;}
+  void SetMaxN2(double maxn2) {MaxN2 = maxn2;}
+  void SetInjectionTimer(double injtimer) {InjectionTimer = injtimer;}
+  void SetInjWaterNorm(double injwater) {InjWaterNorm = injwater;}
+  void SetInjN1increment(double injN1inc) {InjN1increment = injN1inc;}
+  void SetInjN2increment(double injN2inc) {InjN2increment = injN2inc;}
+  
   int InitRunning(void);
   void ResetToIC(void);
 
@@ -264,6 +279,9 @@ private:
   double correctedTSFC;
   double InjectionTimer;
   double InjectionTime;
+  double InjWaterNorm;
+  double InjN1increment;
+  double InjN2increment;
 
   double Off(void);
   double Run();
