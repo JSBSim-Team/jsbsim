@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.48 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.49 2014/12/27 14:37:37 dpculp Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,7 +360,7 @@ double FGPropeller::GetPowerRequired(void)
 
   double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
 
-  PowerRequired = cPReq*local_RPS*RPS*local_RPS*D5*rho;
+  PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*rho;
   vTorque(eX) = -Sense*PowerRequired / (local_RPS*2.0*M_PI);
 
   return PowerRequired;
