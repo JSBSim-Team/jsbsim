@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.28 2013/06/10 01:56:27 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.29 2014/12/27 05:41:11 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.28 2013/06/10 01:56:27 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.29 2014/12/27 05:41:11 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,6 +289,7 @@ public:
     FGColumnVector3 TurbPQR;
     double WindPsi;
     double Vwind;
+    double PitotAngle;
   } in;
 
 private:
@@ -297,6 +298,7 @@ private:
 
   FGMatrix33 mTw2b;
   FGMatrix33 mTb2w;
+  FGMatrix33 mTw2p;
 
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vPilotAccelN;
@@ -307,9 +309,12 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
+  FGColumnVector3 vWindUVW;
+  FGColumnVector3 vPitotUVW;
   FGLocation vLocationVRP;
 
-  double Vt, Vground, Mach, MachU;
+  double Vt, Vground, Vpitot;
+  double Mach, MachU, MachPitot;
   double qbar, qbarUW, qbarUV;
   double Re; // Reynolds Number = V*c/mu
   double alpha, beta;

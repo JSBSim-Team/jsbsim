@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.67 2014/05/17 15:28:51 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.68 2014/12/27 05:41:11 dpculp Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,10 +68,10 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
-  Mach = MachU = 0.0;
+  Mach = MachU = MachPitot = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
-  gamma = Vt = Vground = 0.0;
+  gamma = Vt = Vground = Vpitot = 0.0;
   psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
@@ -85,6 +85,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
+  vWindUVW.InitMatrix();
+  vPitotUVW.InitMatrix();
   vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
@@ -105,10 +107,10 @@ bool FGAuxiliary::InitModel(void)
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
-  Mach = MachU = 0.0;
+  Mach = MachU = MachPitot = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
-  gamma = Vt = Vground = 0.0;
+  gamma = Vt = Vground = Vpitot = 0.0;
   psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
@@ -196,7 +198,6 @@ bool FGAuxiliary::Run(bool Holding)
   MachU = vMachUVW(eU) = vAeroUVW(eU) / in.SoundSpeed;
   vMachUVW(eV) = vAeroUVW(eV) / in.SoundSpeed;
   vMachUVW(eW) = vAeroUVW(eW) / in.SoundSpeed;
-  double MachU2 = MachU * MachU;
 
   // Position
 
@@ -209,17 +210,26 @@ bool FGAuxiliary::Run(bool Holding)
   tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
   tatc = RankineToCelsius(tat);
 
-  if (MachU < 1) {   // Calculate total pressure assuming isentropic flow
-    pt = in.Pressure*pow((1 + 0.2*MachU2),3.5);
+  // Pitot
+
+  vWindUVW(eU) = Vt;
+  vPitotUVW = mTw2p * vWindUVW;
+  Vpitot = vPitotUVW(eU);
+  if (Vpitot < 0.0) Vpitot = 0.0;
+  MachPitot = Vpitot / in.SoundSpeed;
+  double MachP2 = MachPitot * MachPitot;
+
+  if (MachPitot < 1) {   // Calculate total pressure assuming isentropic flow
+    pt = in.Pressure*pow((1 + 0.2*MachP2),3.5);
   } else {
     // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
-    B = 5.76 * MachU2 / (5.6*MachU2 - 0.8);
-    D = (2.8 * MachU2 - 0.4) * 0.4167;
+    B = 5.76 * MachP2 / (5.6*MachP2 - 0.8);
+    D = (2.8 * MachP2 - 0.4) * 0.4167;
     pt = in.Pressure*pow(B,3.5)*D;
   }
 
   A = pow(((pt-in.Pressure)/in.PressureSL + 1),0.28571);
-  if (abs(MachU) > 0.0) {
+  if (abs(MachPitot) > 0.0) {
     vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
     veas = sqrt(2 * qbar / in.DensitySL);
     vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
@@ -291,6 +301,23 @@ void FGAuxiliary::UpdateWindMatrices(void)
   mTw2b(3,3) =  ca;
 
   mTb2w = mTw2b.Transposed();
+
+  // The pitot frame is the same as the body frame except rotated about the
+  // Y axis by the pitot attachment angle.
+
+  ca = cos(alpha + in.PitotAngle);
+  sa = sin(alpha + in.PitotAngle);
+
+  mTw2p(1,1) =  ca*cb;
+  mTw2p(1,2) = -ca*sb;
+  mTw2p(1,3) = -sa;
+  mTw2p(2,1) =  sb;
+  mTw2p(2,2) =  cb;
+  mTw2p(2,3) =  0.0;
+  mTw2p(3,1) =  sa*cb;
+  mTw2p(3,2) = -sa*sb;
+  mTw2p(3,3) =  ca;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.164 2014/11/30 12:35:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.165 2014/12/27 05:41:11 dpculp Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -447,6 +447,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
     Auxiliary->in.WindPsi      = Winds->GetWindPsi();
     Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
+    Auxiliary->in.PitotAngle   = Aircraft->GetPitotAngle();
     break;
   case eSystems:
     // Dynamic inputs come into the components that FCS manages through properties
