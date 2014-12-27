@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.21 2013/11/24 11:40:55 bcoconni Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.22 2014/12/27 05:41:11 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,6 +80,7 @@ CLASS DOCUMENTATION
         <vtailarea unit="{FT2 | M}"> {number} </vtailarea>
         <vtailarm unit="{FT | M}"> {number} </vtailarm>
         <wing_incidence unit="{RAD | DEG}"> {number} </wing_incidence>
+        <pitot_angle unit="{RAD | DEG}"> {number} </pitot_angle>
         <location name="{AERORP | EYEPOINT | VRP}" unit="{IN | M}">
             <x> {number} </x>
             <y> {number} </y>
@@ -90,7 +91,7 @@ CLASS DOCUMENTATION
 @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.21 2013/11/24 11:40:55 bcoconni Exp $
+    @version $Id: FGAircraft.h,v 1.22 2014/12/27 05:41:11 dpculp Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
      Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
      School, January 1994
@@ -145,6 +146,7 @@ public:
   double GetWingSpan(void) const { return WingSpan; }
   /// Gets the average wing chord
   double Getcbar(void) const { return cbar; }
+  double GetPitotAngle(void) const { return PitotAngle; }
   double GetWingIncidence(void) const { return WingIncidence; }
   double GetWingIncidenceDeg(void) const { return WingIncidence*radtodeg; }
   double GetHTailArea(void) const { return HTailArea; }
@@ -197,7 +199,7 @@ private:
 
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;
-  double lbarh,lbarv,vbarh,vbarv;
+  double lbarh,lbarv,vbarh,vbarv,PitotAngle;
   std::string AircraftName;
 
   void Debug(int from);
