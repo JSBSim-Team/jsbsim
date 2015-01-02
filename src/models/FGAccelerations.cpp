@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.19 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.20 2015/01/02 22:43:13 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,6 +262,10 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // If no gears are in contact with the ground then return
   if (!n) return;
+
+  // Account for the last CG update from FGMassBalance
+  for (int i=0; i < n; i++)
+    multipliers[i]->MomentJacobian += in.DeltaXYZcg * multipliers[i]->ForceJacobian;
 
   vector<double> a(n*n); // Will contain Jac*M^-1*Jac^T
   vector<double> rhs(n);
