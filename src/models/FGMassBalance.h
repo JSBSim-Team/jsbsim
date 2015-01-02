@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.32 2014/11/29 13:47:19 bcoconni Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.33 2015/01/02 22:43:14 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -129,7 +129,7 @@ public:
   double GetEmptyWeight(void) const {return EmptyWeight;}
   const FGColumnVector3& GetXYZcg(void) const {return vXYZcg;}
   double GetXYZcg(int axis) const  {return vXYZcg(axis);}
-  const FGColumnVector3& GetDeltaXYZcg(void) const {return vDeltaXYZcg;}
+  const FGColumnVector3& GetDeltaXYZcgBody(void) const {return vDeltaXYZcgBody;}
   double GetDeltaXYZcg(int axis) const  {return vDeltaXYZcg(axis);}
 
   /** Computes the inertia contribution of a pointmass.

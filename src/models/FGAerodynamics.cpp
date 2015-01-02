@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.55 2014/09/03 17:26:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.56 2015/01/02 22:43:14 bcoconni Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -479,9 +479,6 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("forces/fbx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetForces);
   PropertyManager->Tie("forces/fby-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetForces);
   PropertyManager->Tie("forces/fbz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetForces);
-  PropertyManager->Tie("moments/l-aero-lbsft", this, 1, (PMF)&FGAerodynamics::GetMoments);
-  PropertyManager->Tie("moments/m-aero-lbsft", this, 2, (PMF)&FGAerodynamics::GetMoments);
-  PropertyManager->Tie("moments/n-aero-lbsft", this, 3, (PMF)&FGAerodynamics::GetMoments);
   PropertyManager->Tie("forces/fwx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwy-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetvFw);
