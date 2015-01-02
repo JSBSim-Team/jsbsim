@@ -10,20 +10,24 @@ target_link_libraries(jsbsim libJSBSim)
 
 # Replicate the Python files in the build dir.
 # With CMake, the build tree can be separated from the source tree. For tests
-# written in Python to be executed with 'make test', the sources must be
+# written in Python to be executed by 'make test', the sources must be
 # collocated with the JSBSim Python module in the build tree.
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${CMAKE_BINARY_DIR}
                                       FILES_MATCHING PATTERN "*.py")
 
-# Declare the tests to CTest so that they can be executed with 'make test'
-add_test(ResetOutputFiles ${PYTHON_EXECUTABLE} ResetOutputFiles.py
-                                               ${CMAKE_SOURCE_DIR})
-add_test(TestICOverride ${PYTHON_EXECUTABLE} TestICOverride.py ${CMAKE_SOURCE_DIR})
-add_test(RunCheckCases ${PYTHON_EXECUTABLE} RunCheckCases.py ${CMAKE_SOURCE_DIR})
-add_test(TestModelLoading ${PYTHON_EXECUTABLE} TestModelLoading.py ${CMAKE_SOURCE_DIR})
-add_test(CheckFGBug1503 ${PYTHON_EXECUTABLE} CheckFGBug1503.py ${CMAKE_SOURCE_DIR})
-add_test(TestGustReset ${PYTHON_EXECUTABLE} TestGustReset.py ${CMAKE_SOURCE_DIR})
-add_test(TestPointMassInertia ${PYTHON_EXECUTABLE} TestPointMassInertia.py ${CMAKE_SOURCE_DIR})
+# Declare the tests to CTest so that they can be executed by 'make test'
+set(PYTHON_TESTS ResetOutputFiles
+                 TestICOverride
+                 RunCheckCases
+                 TestModelLoading
+                 CheckFGBug1503
+                 TestGustReset
+                 TestPointMassInertia
+                 CheckMomentsUpdate)
+
+foreach(test ${PYTHON_TESTS})
+  add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
+endforeach()
 
 # Install the JSBSim Python module
 if (INSTALL_PYTHON_MODULE)
