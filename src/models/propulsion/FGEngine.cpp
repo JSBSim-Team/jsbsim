@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.60 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.61 2015/01/07 23:22:59 dpculp Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGEngine::FGEngine(FGFDMExec* exec, int engine_number, struct Inputs& input)
   FuelExpended = 0.0;
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
-
+  FuelDensity = 6.02;
   Debug(0);
 }
 
