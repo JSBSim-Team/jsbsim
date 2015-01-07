@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.34 2014/06/09 11:52:07 bcoconni Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.35 2015/01/07 23:22:59 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,11 +87,12 @@ CLASS DOCUMENTATION
         </tank>
         ... more tanks ...
         <dump-rate unit="{LBS/MIN | KG/MIN}"> {number} </dump-rate>
+        <refuel-rate unit="{LBS/MIN | KG/MIN}"> {number} </refuel-rate>
     </propulsion>
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.34 2014/06/09 11:52:07 bcoconni Exp $
+    @version $Id: FGPropulsion.h,v 1.35 2015/01/07 23:22:59 dpculp Exp $
     @see
     FGEngine
     FGTank
@@ -216,6 +217,7 @@ private:
   bool FuelFreeze;
   double TotalFuelQuantity;
   double DumpRate;
+  double RefuelRate;
   bool IsBound;
   bool HavePistonEngine;
   bool HaveTurbineEngine;

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.42 2014/06/09 11:52:07 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.43 2015/01/07 23:22:59 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.42 2014/06/09 11:52:07 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.43 2015/01/07 23:22:59 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +155,7 @@ public:
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
 
-  EngineType             GetType(void) const { return Type; }
+  EngineType GetType(void) const { return Type; }
   virtual const std::string&  GetName(void) const { return Name; }
 
   // Engine controls
@@ -166,7 +166,7 @@ public:
   virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
   virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
   virtual double GetFuelFlowRate(void) const {return FuelFlowRate;}
-  virtual double GetFuelFlowRateGPH(void) const {return FuelFlowRate*3600/6.02;}
+  virtual double GetFuelFlowRateGPH(void) const {return FuelFlowRate*3600/FuelDensity;}
   virtual double GetFuelUsedLbs(void) const {return FuelUsedLbs;}
   virtual bool   GetStarved(void) const { return Starved; }
   virtual bool   GetRunning(void) const { return Running; }
@@ -178,6 +178,7 @@ public:
   virtual void SetRunning(bool bb) { Running=bb; }
   virtual void SetName(const std::string& name) { Name = name; }
   virtual void SetFuelFreeze(bool f) { FuelFreeze = f; }
+  virtual void SetFuelDensity(double d) { FuelDensity = d; }
 
   virtual void SetStarter(bool s) { Starter = s; }
 
@@ -250,6 +251,7 @@ protected:
   double FuelFlow_gph;
   double FuelFlow_pph;
   double FuelUsedLbs;
+  double FuelDensity;
 
   FGFDMExec*      FDMExec;
   FGThruster*     Thruster;

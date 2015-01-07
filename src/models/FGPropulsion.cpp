@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.81 2015/01/02 22:43:14 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.82 2015/01/07 23:22:59 dpculp Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -85,7 +85,8 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
   refuel = dump = false;
-  DumpRate = 0.0;
+  DumpRate = 0.0; 
+  RefuelRate = 6000.0;
   FuelFreeze = false;
   TotalFuelQuantity = 0.0;
   IsBound =
@@ -353,6 +354,7 @@ bool FGPropulsion::Load(Element* el)
 
   Debug(2);
   ReadingEngine = false;
+  double FuelDensity = 6.0;
 
   Name = "Propulsion Model: " + el->GetAttributeValue("name");
 
@@ -365,7 +367,10 @@ bool FGPropulsion::Load(Element* el)
   Element* tank_element = el->FindElement("tank");
   while (tank_element) {
     Tanks.push_back(new FGTank(FDMExec, tank_element, numTanks));
-    if (Tanks.back()->GetType() == FGTank::ttFUEL) numFuelTanks++;
+    if (Tanks.back()->GetType() == FGTank::ttFUEL) { 
+      FuelDensity = Tanks[numFuelTanks]->GetDensity();
+      numFuelTanks++;
+      }
     else if (Tanks.back()->GetType() == FGTank::ttOXIDIZER) numOxiTanks++;
     else {cerr << "Unknown tank type specified." << endl; return false;}
     numTanks++;
@@ -426,9 +431,16 @@ bool FGPropulsion::Load(Element* el)
 
   CalculateTankInertias();
 
-  // Process fuel dump rate
   if (el->FindElement("dump-rate"))
     DumpRate = el->FindElementValueAsNumberConvertTo("dump-rate", "LBS/MIN");
+  if (el->FindElement("refuel-rate"))
+    RefuelRate = el->FindElementValueAsNumberConvertTo("refuel-rate", "LBS/MIN");
+
+  unsigned int i;
+  for (i=0; i<Engines.size(); i++) {
+    Engines[i]->SetFuelDensity(FuelDensity);
+  }
+
 
   PostLoad(el, PropertyManager);
 
@@ -585,7 +597,8 @@ void FGPropulsion::SetMagnetos(int setting)
       // ToDo: first need to make sure the engine Type is really appropriate:
       //   do a check to see if it is of type Piston. This should be done for
       //   all of this kind of possibly across-the-board settings.
-      ((FGPiston*)Engines[i])->SetMagnetos(setting);
+      if (Engines[i]->GetType() == FGEngine::etPiston)
+        ((FGPiston*)Engines[i])->SetMagnetos(setting);
     }
   } else {
     ((FGPiston*)Engines[ActiveEngine])->SetMagnetos(setting);
@@ -679,13 +692,14 @@ void FGPropulsion::DoRefuel(double time_slice)
 {
   unsigned int i;
 
-  double fillrate = 100 * time_slice;   // 100 lbs/sec = 6000 lbs/min
+  double fillrate = RefuelRate / 60.0 * time_slice;   
   int TanksNotFull = 0;
 
   for (i=0; i<numTanks; i++) {
     if (Tanks[i]->GetPctFull() < 99.99) ++TanksNotFull;
   }
 
+  // adds fuel equally to all tanks that are not full
   if (TanksNotFull) {
     for (i=0; i<numTanks; i++) {
       if (Tanks[i]->GetPctFull() < 99.99)

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.77 2014/06/08 12:00:35 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.78 2015/01/07 23:22:59 dpculp Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -752,8 +752,8 @@ void FGPiston::doFuelFlow(void)
     FuelFlowRate = 0.0;
     m_dot_fuel = 0.0;
   }
-  FuelFlow_pph = FuelFlowRate  * 3600;  // seconds to hours
-  FuelFlow_gph = FuelFlow_pph / 6.0;    // Assumes 6 lbs / gallon
+  FuelFlow_pph = FuelFlowRate  * 3600;
+  FuelFlow_gph = FuelFlow_pph / FuelDensity;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
