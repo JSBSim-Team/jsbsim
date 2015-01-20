@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.166 2015/01/02 22:43:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.167 2015/01/20 22:09:26 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 {
   Frame           = 0;
   Error           = 0;
-  //SetGroundCallback(new FGDefaultGroundCallback());
   IC              = 0;
   Trim            = 0;
   Script          = 0;
@@ -253,6 +252,8 @@ FGFDMExec::~FGFDMExec()
   ChildFDMList.clear();
 
   PropertyCatalog.clear();
+  
+  SetGroundCallback(0);
 
   if (FDMctr > 0) (*FDMctr)--;
 
@@ -267,12 +268,18 @@ bool FGFDMExec::Allocate(void)
 
   Models.resize(eNumStandardModels);
 
-  // See the eModels enum specification in the header file. The order of the enums
-  // specifies the order of execution. The Models[] vector is the primary
+  // First build the inertial model since some other models are relying on
+  // the inertial model and the ground callback to build themselves.
+  // Note that this does not affect the order in which the models will be
+  // executed later.
+  Models[eInertial]          = new FGInertial(this);
+  SetGroundCallback(new FGDefaultGroundCallback(static_cast<FGInertial*>(Models[eInertial])->GetRefRadius()));
+
+  // See the eModels enum specification in the header file. The order of the
+  // enums specifies the order of execution. The Models[] vector is the primary
   // storage array for the list of models.
   Models[ePropagate]         = new FGPropagate(this);
   Models[eInput]             = new FGInput(this);
-  Models[eInertial]          = new FGInertial(this);
   Models[eAtmosphere]        = new FGStandardAtmosphere(this);
   Models[eWinds]             = new FGWinds(this);
   Models[eAuxiliary]         = new FGAuxiliary(this);
@@ -306,8 +313,6 @@ bool FGFDMExec::Allocate(void)
 
   // Initialize planet (environment) constants
   LoadPlanetConstants();
-  //GetGroundCallback()->SetSeaLevelRadius(Inertial->GetRefRadius());
-  SetGroundCallback(new FGDefaultGroundCallback(Inertial->GetRefRadius()));
 
   // Initialize models
   for (unsigned int i = 0; i < Models.size(); i++) {
