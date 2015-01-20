@@ -75,6 +75,11 @@ class TestPointMassInertia(unittest.TestCase):
 
         tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
 
+        # Because JSBSim internals use static pointers, we cannot rely on Python
+        # garbage collector to decide when the FDM is destroyed otherwise we can
+        # get dangling pointers.
+        del fdm
+
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path('aircraft')
         fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests',
