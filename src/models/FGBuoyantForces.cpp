@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.28 2015/01/02 22:43:14 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.29 2015/01/31 14:56:21 bcoconni Exp $");
 IDENT(IdHdr,ID_BUOYANTFORCES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,12 +248,19 @@ string FGBuoyantForces::GetBuoyancyValues(const string& delimeter)
 void FGBuoyantForces::bind(void)
 {
   typedef double (FGBuoyantForces::*PGF)(int) const;
+  typedef void   (FGBuoyantForces::*PSF)(int, double);
+  PropertyManager->Tie("moments/l-buoyancy-lbsft", this, eL,
+                       (PGF)&FGBuoyantForces::GetMoments, (PSF)0, false);
+  PropertyManager->Tie("moments/m-buoyancy-lbsft", this, eM,
+                       (PGF)&FGBuoyantForces::GetMoments, (PSF)0, false);
+  PropertyManager->Tie("moments/n-buoyancy-lbsft", this, eN,
+                       (PGF)&FGBuoyantForces::GetMoments, (PSF)0, false);
   PropertyManager->Tie("forces/fbx-buoyancy-lbs", this, eX,
-                       (PGF)&FGBuoyantForces::GetForces);
+                       (PGF)&FGBuoyantForces::GetForces, (PSF)0, false);
   PropertyManager->Tie("forces/fby-buoyancy-lbs", this, eY,
-                       (PGF)&FGBuoyantForces::GetForces);
+                       (PGF)&FGBuoyantForces::GetForces, (PSF)0, false);
   PropertyManager->Tie("forces/fbz-buoyancy-lbs", this, eZ,
-                       (PGF)&FGBuoyantForces::GetForces);
+                       (PGF)&FGBuoyantForces::GetForces, (PSF)0, false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

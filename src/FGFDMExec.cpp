@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.167 2015/01/20 22:09:26 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.168 2015/01/31 14:56:21 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -545,7 +545,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Aircraft->in.GroundMoment  = GroundReactions->GetMoments();
     Aircraft->in.ExternalMoment = ExternalReactions->GetMoments();
     Aircraft->in.BuoyantMoment = BuoyantForces->GetMoments();
-    Aircraft->in.DeltaXYZcg    = MassBalance->GetDeltaXYZcgBody();
     break;
   case eAccelerations:
     Accelerations->in.J        = MassBalance->GetJ();
@@ -556,7 +555,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.Tec2i    = Propagate->GetTec2i();
     Accelerations->in.qAttitudeECI = Propagate->GetQuaternionECI();
     Accelerations->in.Moment   = Aircraft->GetMoments();
-    Accelerations->in.GroundMoment  = Aircraft->GetGroundMoments();
+    Accelerations->in.GroundMoment  = GroundReactions->GetMoments();
     Accelerations->in.Force    = Aircraft->GetForces();
     Accelerations->in.GroundForce   = GroundReactions->GetForces();
     Accelerations->in.GAccel   = Inertial->GetGAccel(Propagate->GetRadius());
@@ -570,7 +569,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.MultipliersList = GroundReactions->GetMultipliersList();
     Accelerations->in.TerrainVelocity = Propagate->GetTerrainVelocity();
     Accelerations->in.TerrainAngularVel = Propagate->GetTerrainAngularVelocity();
-    Accelerations->in.DeltaXYZcg = MassBalance->GetDeltaXYZcgBody();
     break;
   default:
     break;

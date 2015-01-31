@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.82 2015/01/07 23:22:59 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.83 2015/01/31 14:56:21 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -769,6 +769,9 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("forces/fbx-prop-lbs", this, eX, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fby-prop-lbs", this, eY, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fbz-prop-lbs", this, eZ, (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("moments/l-prop-lbsft", this, eX, (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/m-prop-lbsft", this, eY, (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/n-prop-lbsft", this, eZ, (PMF)&FGPropulsion::GetMoments);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
