@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.40 2014/05/17 15:09:42 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.41 2015/01/31 19:18:40 bcoconni Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,6 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Ixx = Iyy = Izz = 0.0;
   InertiaFactor = 1.0;
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
-  PreviousUsed = 0.0;
   ExternalFlow = 0.0;
   InitialStandpipe = 0.0;
   Capacity = 0.00001;
@@ -222,7 +221,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Density = (Contents*lbtoslug)/Volume; // slugs/in^3
   }
 
-    CalculateInertias();
+  CalculateInertias();
 
   if (Temperature != -9999.0)  InitialTemperature = Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
@@ -249,7 +248,7 @@ void FGTank::ResetToIC(void)
   SetContents ( InitialContents );
   PctFull = 100.0*Contents/Capacity;
   SetPriority( InitialPriority );
-  PreviousUsed = 0.0;
+  CalculateInertias();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,7 +269,6 @@ double FGTank::GetXYZ(int idx) const
 
 double FGTank::Drain(double used)
 {
-//  double AmountToDrain = 2.0*used - PreviousUsed;
   double remaining = Contents - used;
 
   if (remaining >= 0) { // Reduce contents by amount used.
@@ -283,8 +281,8 @@ double FGTank::Drain(double used)
     Contents = 0.0;
     PctFull = 0.0;
   }
-//  PreviousUsed = AmountToDrain;
-  if (grainType != gtUNKNOWN) CalculateInertias();
+
+  CalculateInertias();
 
   return remaining;
 }
@@ -372,39 +370,39 @@ void FGTank::CalculateInertias(void)
 
   if (grainType != gtUNKNOWN) { // assume solid propellant
 
-  if (Density > 0.0) {
-    Volume = (Contents*lbtoslug)/Density; // in^3
-  } else if (Contents <= 0.0) {
-    Volume = 0;
-  } else {
-    cerr << endl << "  Solid propellant grain density is zero!" << endl << endl;
-    exit(-1);
-  }
+    if (Density > 0.0) {
+      Volume = (Contents*lbtoslug)/Density; // in^3
+    } else if (Contents <= 0.0) {
+      Volume = 0;
+    } else {
+      cerr << endl << "  Solid propellant grain density is zero!" << endl << endl;
+      exit(-1);
+    }
 
-  switch (grainType) {
+    switch (grainType) {
     case gtCYLINDRICAL:
       InnerRadius = sqrt(Rad2 - Volume/(M_PI * Length));
       RadSumSqr = (Rad2 + InnerRadius*InnerRadius)/144.0;
       Ixx = 0.5*Mass*RadSumSqr;
       Iyy = Mass*(3.0*RadSumSqr + Length*Length/144.0)/12.0;
-        Izz  = Iyy;
+      Izz  = Iyy;
       break;
     case gtENDBURNING:
       Length = Volume/(M_PI*Rad2);
       Ixx = 0.5*Mass*Rad2/144.0;
       Iyy = Mass*(3.0*Rad2 + Length*Length)/(144.0*12.0);
-        Izz  = Iyy;
+      Izz  = Iyy;
       break;
-      case gtFUNCTION:
-        Ixx = function_ixx->GetValue()*ixx_unit;
-        Iyy = function_iyy->GetValue()*iyy_unit;
-        Izz = function_izz->GetValue()*izz_unit;
-        break;
-    case gtUNKNOWN:
+    case gtFUNCTION:
+      Ixx = function_ixx->GetValue()*ixx_unit;
+      Iyy = function_iyy->GetValue()*iyy_unit;
+      Izz = function_izz->GetValue()*izz_unit;
+      break;
+    default:
       cerr << "Unknown grain type found." << endl;
       exit(-1);
       break;
-  }
+    }
 
   } else { // assume liquid propellant: shrinking snowball
 
