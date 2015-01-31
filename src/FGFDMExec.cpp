@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.168 2015/01/31 14:56:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.169 2015/01/31 15:08:59 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,6 +282,7 @@ bool FGFDMExec::Allocate(void)
   Models[eInput]             = new FGInput(this);
   Models[eAtmosphere]        = new FGStandardAtmosphere(this);
   Models[eWinds]             = new FGWinds(this);
+  Models[eMassBalance]       = new FGMassBalance(this);
   Models[eAuxiliary]         = new FGAuxiliary(this);
   Models[eSystems]           = new FGFCS(this);
   Models[ePropulsion]        = new FGPropulsion(this);
@@ -289,7 +290,6 @@ bool FGFDMExec::Allocate(void)
   Models[eGroundReactions]   = new FGGroundReactions(this);
   Models[eExternalReactions] = new FGExternalReactions(this);
   Models[eBuoyantForces]     = new FGBuoyantForces(this);
-  Models[eMassBalance]       = new FGMassBalance(this);
   Models[eAircraft]          = new FGAircraft(this);
   Models[eAccelerations]     = new FGAccelerations(this);
   Models[eOutput]            = new FGOutput(this);
@@ -299,6 +299,7 @@ bool FGFDMExec::Allocate(void)
   Inertial = (FGInertial*)Models[eInertial];
   Atmosphere = (FGAtmosphere*)Models[eAtmosphere];
   Winds = (FGWinds*)Models[eWinds];
+  MassBalance = (FGMassBalance*)Models[eMassBalance];
   Auxiliary = (FGAuxiliary*)Models[eAuxiliary];
   FCS = (FGFCS*)Models[eSystems];
   Propulsion = (FGPropulsion*)Models[ePropulsion];
@@ -306,7 +307,6 @@ bool FGFDMExec::Allocate(void)
   GroundReactions = (FGGroundReactions*)Models[eGroundReactions];
   ExternalReactions = (FGExternalReactions*)Models[eExternalReactions];
   BuoyantForces = (FGBuoyantForces*)Models[eBuoyantForces];
-  MassBalance = (FGMassBalance*)Models[eMassBalance];
   Aircraft = (FGAircraft*)Models[eAircraft];
   Accelerations = (FGAccelerations*)Models[eAccelerations];
   Output = (FGOutput*)Models[eOutput];
@@ -347,14 +347,6 @@ bool FGFDMExec::DeAllocate(void)
 
   modelLoaded = false;
   return modelLoaded;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::Schedule(FGModel* model, int rate)
-{
-  model->SetRate(rate);
-  Models.push_back(model);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
