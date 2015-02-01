@@ -50,6 +50,25 @@ class TestFuelTanksInertia(unittest.TestCase):
         iyy0 = fdm.get_property_value('propulsion/tank/local-iyy-slug_ft2')
         izz0 = fdm.get_property_value('propulsion/tank/local-izz-slug_ft2')
 
+        # Remove half of the tank contents and check that the inertias are
+        # updated accordingly
+        fdm.set_property_value('propulsion/tank/contents-lbs', 0.5*contents0)
+        contents = fdm.get_property_value('propulsion/tank/contents-lbs')
+        ixx = fdm.get_property_value('propulsion/tank/local-ixx-slug_ft2')
+        iyy = fdm.get_property_value('propulsion/tank/local-iyy-slug_ft2')
+        izz = fdm.get_property_value('propulsion/tank/local-izz-slug_ft2')
+
+        self.assertTrue(abs(contents-0.5*contents0) < 1E-7,
+                        msg="The tank content (%f lbs) should be %f lbs" % (contents, 0.5*contents0))
+        self.assertTrue(abs(ixx-0.5*ixx0) < 1E-7,
+                        msg="The tank inertia Ixx (%f slug*ft^2) should be %f slug*ft^2" % (ixx, 0.5*ixx0))
+        self.assertTrue(abs(iyy-0.5*iyy0) < 1E-7,
+                        msg="The tank inertia Iyy (%f slug*ft^2) should be %f slug*ft^2" % (iyy, 0.5*iyy0))
+        self.assertTrue(abs(izz-0.5*izz0) < 1E-7,
+                        msg="The tank inertia Izz (%f slug*ft^2) should be %f slug*ft^2" % (izz, 0.5*izz0))
+
+        # Execute the script and check that the fuel inertias have been updated
+        # along with the consumption.
         ExecuteUntil(fdm, 200.0)
 
         contents = fdm.get_property_value('propulsion/tank/contents-lbs')
