@@ -30,7 +30,7 @@ endmacro()
 
 if(WIN32 AND (MSVC OR MINGW))
   # not applicable to cygwin
-  set(JSBSIM_LINK_LIBRARIES "ws2_32")
+  set(JSBSIM_LINK_LIBRARIES "-lwsock32 -lws2_32")
 elseif(UNIX)
   # not applicable to cygwin
   set(JSBSIM_LINK_LIBRARIES "m")
@@ -58,6 +58,7 @@ if(NOT EXPAT_FOUND)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/simgear/xml)
 else()
   include_directories(${EXPAT_INCLUDE_DIRS})
+  set(JSBSIM_LINK_LIBRARIES ${EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
 endif()
 
 set(HEADERS FGFDMExec.h
@@ -81,9 +82,8 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
 set_target_properties (libJSBSim PROPERTIES
                                  OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
                                  VERSION ${LIBRARY_VERSION})
-if(EXPAT_FOUND)
-  target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
-endif()
+
+target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
 
 if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
