@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.41 2015/01/31 19:18:40 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.42 2015/02/01 11:16:56 bcoconni Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,6 +302,9 @@ double FGTank::Fill(double amount)
   } else {
     PctFull = Contents/Capacity*100.0;
   }
+
+  CalculateInertias();
+
   return overage;
 }
 
@@ -316,6 +319,8 @@ void FGTank::SetContents(double amount)
   } else {
     PctFull = Contents/Capacity*100.0;
   }
+
+  CalculateInertias();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
