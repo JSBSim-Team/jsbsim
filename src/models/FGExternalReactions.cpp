@@ -54,7 +54,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.20 2015/01/02 22:43:14 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.21 2015/01/31 14:56:21 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +146,9 @@ bool FGExternalReactions::Run(bool Holding)
 void FGExternalReactions::bind(void)
 {
   typedef double (FGExternalReactions::*PMF)(int) const;
+  PropertyManager->Tie("moments/l-external-lbsft", this, eL, (PMF)&FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/m-external-lbsft", this, eM, (PMF)&FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/n-external-lbsft", this, eN, (PMF)&FGExternalReactions::GetMoments);
   PropertyManager->Tie("forces/fbx-external-lbs", this, eX, (PMF)&FGExternalReactions::GetForces);
   PropertyManager->Tie("forces/fby-external-lbs", this, eY, (PMF)&FGExternalReactions::GetForces);
   PropertyManager->Tie("forces/fbz-external-lbs", this, eZ, (PMF)&FGExternalReactions::GetForces);

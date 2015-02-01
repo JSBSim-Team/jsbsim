@@ -23,7 +23,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  CheckFGBug1503
                  TestGustReset
                  TestPointMassInertia
-                 CheckMomentsUpdate)
+                 CheckMomentsUpdate
+                 TestFuelTanksInertia)
 
 foreach(test ${PYTHON_TESTS})
   add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.16 2015/01/02 22:43:13 bcoconni Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.17 2015/01/31 14:56:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
          NASA SP-8024, May 1969
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.16 2015/01/02 22:43:13 bcoconni Exp $
+    @version $Id: FGAccelerations.h,v 1.17 2015/01/31 14:56:21 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -373,8 +373,6 @@ public:
     FGColumnVector3 TerrainVelocity;
     /// Terrain angular velocities with respect to the local frame (expressed in the ECEF frame).
     FGColumnVector3 TerrainAngularVel;
-    /// CG shift due to mass geometry updates (fuel burn, point masses displacement, etc.)
-    FGColumnVector3 DeltaXYZcg;
     /// Time step
     double DeltaT;
     /// Body mass

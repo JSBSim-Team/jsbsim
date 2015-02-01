@@ -20,7 +20,7 @@
 #
 
 import unittest, sys
-from JSBSim_utils import SandBox, CreateFDM
+from JSBSim_utils import SandBox, CreateFDM, Table, ExecuteUntil
 
 class CheckMomentsUpdate(unittest.TestCase):
     def setUp(self):
@@ -34,18 +34,35 @@ class CheckMomentsUpdate(unittest.TestCase):
         fdm = CreateFDM(self.sandbox)
 
         fdm.load_script(script_path)
+        fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
         fdm.run_ic()
+
+        ExecuteUntil(fdm, 1.0-2.0/120.)
 
         # Moves the radio sonde to modify the CG location
         fdm.set_property_value('inertia/pointmass-location-X-inches', 5.0)
 
         # Check that the moment is immediately updated accordingly
         fdm.run()
+        Fbx = fdm.get_property_value('forces/fbx-buoyancy-lbs')
         Fbz = fdm.get_property_value('forces/fbz-buoyancy-lbs')
         CGx = fdm.get_property_value('inertia/cg-x-in') / 12.0 # Converts from in to ft
+        CGz = fdm.get_property_value('inertia/cg-z-in') / 12.0
         Mby = fdm.get_property_value('moments/m-buoyancy-lbsft')
-        self.assertTrue(abs(Fbz * CGx + Mby) < 1E-7,
-                        msg="Fbz*CGx = %f and Mby = %f do not match" % (-Fbz*CGx, Mby))
+
+        self.assertTrue(abs(Fbz * CGx - Fbx * CGz + Mby) < 1E-7,
+                        msg="Fbz*CGx-Fbx*CGz = %f and Mby = %f do not match" % (Fbx*CGz-Fbz*CGx, Mby))
+
+        # One further step to log the same results in the output file
+        fdm.run()
+        csv = Table()
+        csv.ReadCSV(self.sandbox('output.csv'))
+        Mby = csv.get_column('M_{Buoyant} (ft-lbs)')[-1]
+        Fbx = csv.get_column('F_{Buoyant x} (lbs)')[-1]
+        Fbz = csv.get_column('F_{Buoyant z} (lbs)')[-1]
+
+        self.assertTrue(abs(Fbz * CGx - Fbx * CGz + Mby) < 1E-7,
+                        msg="Fbz*CGx-Fbx*CGz = %f and Mby = %f do not match" % (Fbx*CGz-Fbz*CGx, Mby))
 
 suite = unittest.TestLoader().loadTestsFromTestCase(CheckMomentsUpdate)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
