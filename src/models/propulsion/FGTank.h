@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.29 2015/01/31 19:18:40 bcoconni Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.30 2015/02/02 20:49:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -337,10 +337,9 @@ private:
   double ExternalFlow;
   bool  Selected;
   int Priority, InitialPriority;
-  FGFDMExec* Exec;
-  FGPropertyManager* PropertyManager;
 
   void CalculateInertias(void);
+  void bind(FGPropertyManager* PropertyManager);
   void Debug(int from);
 };
 }
