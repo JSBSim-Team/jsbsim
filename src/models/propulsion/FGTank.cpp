@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.42 2015/02/01 11:16:56 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.43 2015/02/02 20:49:11 bcoconni Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,11 +56,12 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
-                  : TankNumber(tank_number), Exec(exec)
+                  : TankNumber(tank_number)
 {
   string token, strFuelName;
   Element* element;
   Element* element_Grain;
+  FGPropertyManager *PropertyManager = exec->GetPropertyManager();
   Area = 1.0;
   Density = 6.6;
   InitialTemperature = Temperature = -9999.0;
@@ -71,10 +72,10 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   InitialStandpipe = 0.0;
   Capacity = 0.00001;
   Priority = InitialPriority = 1;
-  PropertyManager = Exec->GetPropertyManager();
   vXYZ.InitMatrix();
   vXYZ_drain.InitMatrix();
   ixx_unit = iyy_unit = izz_unit = 1.0;
+  grainType = gtUNKNOWN; // This is the default
 
   type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
@@ -128,31 +129,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
 
-  string property_name, base_property_name;
-  base_property_name = CreateIndexedPropertyName("propulsion/tank", TankNumber);
-  property_name = base_property_name + "/contents-lbs";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
-                                       &FGTank::SetContents );
-  property_name = base_property_name + "/pct-full";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
-
-  property_name = base_property_name + "/priority";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
-                                       &FGTank::SetPriority );
-  property_name = base_property_name + "/external-flow-rate-pps";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetExternalFlow,
-                                       &FGTank::SetExternalFlow );
-  property_name = base_property_name + "/local-ixx-slug_ft2";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIxx);
-  property_name = base_property_name + "/local-iyy-slug_ft2";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIyy);
-  property_name = base_property_name + "/local-izz-slug_ft2";
-  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIzz);
-
   // Check whether this is a solid propellant "tank". Initialize it if true.
 
-  grainType = gtUNKNOWN; // This is the default
-  
   element_Grain = el->FindElement("grain_config");
   if (element_Grain) {
 
@@ -228,6 +206,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   // A named fuel type will override a previous density value
   if (!strFuelName.empty()) Density = ProcessFuelName(strFuelName); 
+
+  bind(PropertyManager);
 
   Debug(0);
 }
@@ -452,6 +432,31 @@ double FGTank::ProcessFuelName(const std::string& name)
    return 6.6;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTank::bind(FGPropertyManager* PropertyManager)
+{
+  string property_name, base_property_name;
+  base_property_name = CreateIndexedPropertyName("propulsion/tank", TankNumber);
+  property_name = base_property_name + "/contents-lbs";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
+                                       &FGTank::SetContents );
+  property_name = base_property_name + "/pct-full";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
+
+  property_name = base_property_name + "/priority";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
+                                       &FGTank::SetPriority );
+  property_name = base_property_name + "/external-flow-rate-pps";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetExternalFlow,
+                                       &FGTank::SetExternalFlow );
+  property_name = base_property_name + "/local-ixx-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIxx);
+  property_name = base_property_name + "/local-iyy-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIyy);
+  property_name = base_property_name + "/local-izz-slug_ft2";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIzz);
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
