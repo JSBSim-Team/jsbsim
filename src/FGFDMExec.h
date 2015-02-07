@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.94 2015/01/31 15:08:59 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.95 2015/02/07 17:52:36 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.94 $
+    @version $Revision: 1.95 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,16 +221,23 @@ public:
   /// Default destructor
   ~FGFDMExec();
 
-  // This list of enums is very important! The order in which models are listed here
-  // determines the order of execution of the models.
+  // This list of enums is very important! The order in which models are listed
+  // here determines the order of execution of the models.
+  //
+  // There are some conditions that need to be met :
+  // 1. FCS can request mass geometry changes via the inertia/pointmass-*
+  //    properties so it must be executed before MassBalance
+  // 2. MassBalance must be executed before Propulsion, Aerodynamics,
+  //    GroundReactions, ExternalReactions and BuoyantForces to ensure that
+  //    their moments are computed with the updated CG position.
   enum eModels { ePropagate=0,
                  eInput,
                  eInertial,
                  eAtmosphere,
                  eWinds,
+                 eSystems,
                  eMassBalance,
                  eAuxiliary,
-                 eSystems,
                  ePropulsion,
                  eAerodynamics,
                  eGroundReactions,

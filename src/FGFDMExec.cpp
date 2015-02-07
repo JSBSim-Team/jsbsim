@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.169 2015/01/31 15:08:59 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.170 2015/02/07 17:52:36 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,9 +282,9 @@ bool FGFDMExec::Allocate(void)
   Models[eInput]             = new FGInput(this);
   Models[eAtmosphere]        = new FGStandardAtmosphere(this);
   Models[eWinds]             = new FGWinds(this);
+  Models[eSystems]           = new FGFCS(this);
   Models[eMassBalance]       = new FGMassBalance(this);
   Models[eAuxiliary]         = new FGAuxiliary(this);
-  Models[eSystems]           = new FGFCS(this);
   Models[ePropulsion]        = new FGPropulsion(this);
   Models[eAerodynamics]      = new FGAerodynamics (this);
   Models[eGroundReactions]   = new FGGroundReactions(this);
@@ -299,9 +299,9 @@ bool FGFDMExec::Allocate(void)
   Inertial = (FGInertial*)Models[eInertial];
   Atmosphere = (FGAtmosphere*)Models[eAtmosphere];
   Winds = (FGWinds*)Models[eWinds];
+  FCS = (FGFCS*)Models[eSystems];
   MassBalance = (FGMassBalance*)Models[eMassBalance];
   Auxiliary = (FGAuxiliary*)Models[eAuxiliary];
-  FCS = (FGFCS*)Models[eSystems];
   Propulsion = (FGPropulsion*)Models[ePropulsion];
   Aerodynamics = (FGAerodynamics*)Models[eAerodynamics];
   GroundReactions = (FGGroundReactions*)Models[eGroundReactions];
