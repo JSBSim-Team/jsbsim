@@ -3,7 +3,7 @@
  Module:       FGInput.cpp
  Author:       Jon Berndt
  Date started: 12/02/98
- Purpose:      Manage output of sim parameters to file or stdout
+ Purpose:      Manage input of sim parameters from socket
  Called by:    FGSimExec
 
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
@@ -39,21 +39,17 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInput.h"
-#include "FGAircraft.h"
 #include "FGFDMExec.h"
-
-#include "input_output/FGfdmSocket.h"
+#include "input_output/FGInputSocket.h"
+#include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
-
-#include <sstream>
-#include <iomanip>
-#include <cstdlib>
-
+#include "input_output/FGModelLoader.h"
+ 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInput.cpp,v 1.28 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGInput.cpp,v 1.29 2015/02/15 12:03:21 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,8 +59,6 @@ CLASS IMPLEMENTATION
 FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGInput";
-  socket = 0;
-  port = 0;
 
   Debug(0);
 }
@@ -73,209 +67,146 @@ FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGInput::~FGInput()
 {
-  delete socket;
+  vector<FGInputType*>::iterator it;
+  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
+    delete (*it);
+
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInput::Load(Element* el)
+{
+  // Unlike the other FGModel classes, properties listed in the <input> section
+  // are not intended to create new properties. For that reason, FGInput
+  // cannot load its XML directives with FGModel::Load().
+  // Instead FGModelLoader::Open() and FGModel::PreLoad() must be explicitely
+  // called.
+  FGModelLoader ModelLoader(this);
+  Element* element = ModelLoader.Open(el);
+
+  if (!element) return false;
+  
+  FGModel::PreLoad(element, PropertyManager);
+
+  unsigned int idx = InputTypes.size();
+  string type = element->GetAttributeValue("type");
+  FGInputType* Input = 0;
+
+  if (debug_lvl > 0) cout << endl << "  Input data set: " << idx << "  " << endl;
+
+  type = to_upper(type);
+
+  if (type.empty() || type == "SOCKET") {
+    Input = new FGInputSocket(FDMExec);
+  } else if (type != string("NONE")) {
+    cerr << "Unknown type of input specified in config file" << endl;
+  }
+
+  if (!Input) return false;
+
+  Input->SetIdx(idx);
+  Input->Load(element);
+  PostLoad(element, PropertyManager);
+
+  InputTypes.push_back(Input);
+
+  Debug(2);
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGInput::InitModel(void)
 {
-  return FGModel::InitModel();
+  bool ret = false;
+
+  if (!FGModel::InitModel()) return false;
+
+  vector<FGInputType*>::iterator it;
+  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
+    ret &= (*it)->InitModel();
+
+  return ret;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// This function handles accepting input commands from the socket interface.
-//
 
 bool FGInput::Run(bool Holding)
 {
-  string line, token;
-  size_t start=0, string_start=0, string_end=0;
-  double value=0;
-  FGPropertyNode* node=0;
+  if (FGModel::Run(Holding)) return true;
 
-  if (FGModel::Run(Holding)) return true; // fast exit if nothing to do
-  if (port == 0) return false;      // Do nothing here if port not defined
-                                    // return false if no error
-  // This model DOES execute if "Exec->Holding"
-
-  RunPreFunctions();
-
-  data = socket->Receive(); // get socket transmission if present
-
-  if (data.size() > 0) {
-    // parse lines
-    while (1) {
-      string_start = data.find_first_not_of("\r\n", start);
-      if (string_start == string::npos) break;
-      string_end = data.find_first_of("\r\n", string_start);
-      if (string_end == string::npos) break;
-      line = data.substr(string_start, string_end-string_start);
-      if (line.size() == 0) break;
-
-      // now parse individual line
-      vector <string> tokens = split(line,' ');
-  
-      string command="", argument="", str_value="";
-      if (tokens.size() > 0) {
-        command = to_lower(tokens[0]);
-        if (tokens.size() > 1) {
-          argument = trim(tokens[1]);
-          if (tokens.size() > 2) {
-            str_value = trim(tokens[2]);
-          }
-        }
-      }
-
-      if (command == "set") {                   // SET PROPERTY
-
-        if (argument.size() == 0) {
-          socket->Reply("No property argument supplied.\n");
-          break;
-        }
-        try {
-          node = PropertyManager->GetNode(argument);
-        } catch(...) {
-          socket->Reply("Badly formed property query\n");
-          break;
-        }
-
-        if (node == 0) {
-          socket->Reply("Unknown property\n");
-          break;
-        } else if (!node->hasValue()) {
-          socket->Reply("Not a leaf property\n");
-          break;
-        } else {
-          value = atof(str_value.c_str());
-          node->setDoubleValue(value);
-        }
-        socket->Reply("");
-
-      } else if (command == "get") {             // GET PROPERTY
-
-        if (argument.size() == 0) {
-          socket->Reply("No property argument supplied.\n");
-          break;
-        }
-        try {
-          node = PropertyManager->GetNode(argument);
-        } catch(...) {
-          socket->Reply("Badly formed property query\n");
-          break;
-        }
-
-        if (node == 0) {
-          socket->Reply("Unknown property\n");
-          break;
-        } else if (!node->hasValue()) {
-          if (Holding) { // if holding can query property list
-            string query = FDMExec->QueryPropertyCatalog(argument);
-            socket->Reply(query);
-          } else {
-            socket->Reply("Must be in HOLD to search properties\n");
-          }
-        } else if (node > 0) {
-          ostringstream buf;
-          buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << endl;
-          socket->Reply(buf.str());
-        }
-
-      } else if (command == "hold") {                  // PAUSE
-
-        FDMExec->Hold();
-        socket->Reply("");
-
-      } else if (command == "resume") {             // RESUME
-
-        FDMExec->Resume();
-        socket->Reply("");
-	
-      } else if (command == "iterate") {             // ITERATE
-
-        int argumentInt;
-        istringstream (argument) >> argumentInt;
-        if (argument.size() == 0) {
-          socket->Reply("No argument supplied for number of iterations.\n");
-          break;
-        }
-        if ( !(argumentInt > 0) ){
-          socket->Reply("Required argument must be a positive Integer.\n");
-          break;
-        }
-        FDMExec->EnableIncrementThenHold( argumentInt );
-        FDMExec->Resume();
-        socket->Reply("");
-
-      } else if (command == "quit") {                   // QUIT
-
-        // close the socket connection
-        socket->Reply("");
-        socket->Close();
-
-      } else if (command == "info") {                   // INFO
-
-        // get info about the sim run and/or aircraft, etc.
-        ostringstream info;
-        info << "JSBSim version: " << JSBSim_version << endl;
-        info << "Config File version: " << needed_cfg_version << endl;
-        info << "Aircraft simulated: " << FDMExec->GetAircraft()->GetAircraftName() << endl;
-        info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << endl;
-        socket->Reply(info.str());
-
-      } else if (command == "help") {                   // HELP
-
-        socket->Reply(
-        " JSBSim Server commands:\n\n"
-        "   get {property name}\n"
-        "   set {property name} {value}\n"
-        "   hold\n"
-        "   resume\n"
-        "   iterate {value}\n"
-        "   help\n"
-        "   quit\n"
-        "   info\n\n");
-
-      } else {
-        socket->Reply(string("Unknown command: ") +  token + string("\n"));
-      }
-
-      start = string_end;
-    }
-  }
-
-  RunPostFunctions();
+  vector<FGInputType*>::iterator it;
+  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
+    (*it)->Run(Holding);
 
   return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGInput::Load(Element* element)
+bool FGInput::SetDirectivesFile(const std::string& fname)
 {
-  string type="", parameter="";
-  string name="", fname="";
-  string property;
+  FGXMLFileRead XMLFile;
+  Element* document = XMLFile.LoadXMLDocument(fname);
+  bool result = Load(document);
 
-  // if the input has already been set up, print a warning message and return
-  if (port > 0) {
-    cerr << "An input port has already been assigned for this run" << endl;
-    return false;
-  }
+  if (!result)
+    cerr << endl << "Aircraft input element has problems in file " << fname << endl;
 
-  port = int(element->GetAttributeValueAsNumber("port"));
-  if (port == 0) {
-    cerr << endl << "No port assigned in input element" << endl;
-  } else {
-    socket = new FGfdmSocket(port);
-  }
+  return result;
+}
 
-  Debug(2);
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGInput::Enable(void)
+{
+  vector<FGInputType*>::iterator it;
+  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
+    (*it)->Enable();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInput::Disable(void)
+{
+  vector<FGInputType*>::iterator it;
+  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
+    (*it)->Disable();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInput::Toggle(int idx)
+{
+  if (idx >= (int)0 && idx < (int)InputTypes.size())
+    return InputTypes[idx]->Toggle();
+
+  return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInput::SetInputName(unsigned int idx, const std::string& name)
+{
+  if (idx >= InputTypes.size()) return false;
+
+  InputTypes[idx]->SetInputName(name);
   return true;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGInput::GetInputName(unsigned int idx) const
+{
+  string name;
+
+  if (idx < InputTypes.size())
+    name = InputTypes[idx]->GetInputName();
+  return name;
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

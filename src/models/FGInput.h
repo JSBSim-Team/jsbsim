@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 12/02/98   JSB   Created
+19/01/15   PCH   Split the code in several classes (see input_output dir)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -39,14 +40,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-
-#include <string>
+#include "input_output/FGInputType.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.10 2012/11/17 19:42:53 bcoconni Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.11 2015/02/15 12:03:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -54,15 +54,34 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGFDMExec;
-class Element;
-class FGfdmSocket;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Handles simulation socket input.
+/** Handles simulation input.
+    INPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+<pre>
+    NAME is the filename you want the input to come from
+
+    TYPE can be:
+      SOCKET      Will eventually send data to a socket input, where NAME
+                  would then be the IP address of the machine the data should
+                  be sent to. DON'T USE THIS YET!
+      NONE        Specifies to do nothing. This setting makes it easy to turn on and
+                  off the data input without having to mess with anything else.
+
+      Examples:
+</pre>
+@code
+<input type="SOCKET" port="4321"/>
+@endcode
+<br>
+
+    The class FGInput is the manager of the inputs requested by the user. It
+    manages a list of instances derived from the abstract class FGInputType.
+    @version $Id: FGInput.h,v 1.11 2015/02/15 12:03:21 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,25 +94,67 @@ public:
   FGInput(FGFDMExec*);
   ~FGInput();
 
+  /** Load the input directives and adds a new input instance to the Input
+      Manager list.
+      @param el XMLElement that is pointing to the input directives
+      @result true if the execution succeeded. */
+  bool Load(Element* el);
+
+  /** Initializes the instance. This method is called by FGFDMExec::RunIC().
+      This is were the initialization of all classes derived from FGInputType
+      takes place. It is important that this method is not called prior
+      to FGFDMExec::RunIC() so that the initialization process can be executed
+      properly.
+      @result true if the execution succeeded. */
   bool InitModel(void);
+
   /** Runs the Input model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
+      @param Holding if true, the executive has been directed to hold the sim from
                      advancing time. Some models may ignore this flag, such as the Input
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
   bool Run(bool Holding);
 
-  bool Load(Element* el);
+  /** Adds a new input instance to the Input Manager. The definition of the
+      new input instance is read from a file.
+      @param fname the name of the file from which the ouput directives should
+                   be read.
+      @return true if the execution succeeded. */
+  bool SetDirectivesFile(const std::string& fname);
+
+  /// Enables the input generation for all input instances.
+  void Enable(void);
+  /// Disables the input generation for all input instances.
+  void Disable(void);
+  /** Toggles the input generation for an ouput instances.
+      @param idx ID of the input instance which input generation will be
+                 toggled.
+      @result false if the instance does not exist otherwise returns the status
+              of the input generation (i.e. true if the input has been
+              enabled, false if the input has been disabled) */
+  bool Toggle(int idx);
+
+  /** Overwrites the name identifier under which the input will be logged.
+      This method is taken into account if it is called between Load() and
+      FGFDMExec::RunIC() otherwise it is ignored until the next call to
+      SetStartNewInput().
+      @param idx ID of the instance which name identifier will be changed
+      @param name new name
+      @result false if the instance does not exists. */
+  bool SetInputName(unsigned int idx, const std::string& name);
+  /** Get the name identifier to which the input will be directed.
+      @param idx ID of the input instance from which the name identifier must
+                 be obtained
+      @result the name identifier.*/
+  string GetInputName(unsigned int idx) const;
 
 private:
-  unsigned int port;
-  FGfdmSocket* socket;
-  std::string data;
+  vector<FGInputType*> InputTypes;
+
   void Debug(int from);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-
