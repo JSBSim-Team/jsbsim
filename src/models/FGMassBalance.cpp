@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.51 2014/11/29 13:47:19 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.52 2015/02/15 10:14:46 bcoconni Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,7 +403,8 @@ void FGMassBalance::bind(void)
   PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
   typedef int (FGMassBalance::*iOPV)() const;
-  PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0, &FGMassBalance::GetMassPropertiesReport);
+  PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0,
+                       &FGMassBalance::GetMassPropertiesReport, false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

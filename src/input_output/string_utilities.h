@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.20 2014/06/13 22:10:33 bcoconni Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.21 2015/02/14 14:03:00 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,10 +74,11 @@ CLASS DECLARATION
   extern bool is_number(const std::string& str);
   std::vector <std::string> split(std::string str, char d);
 
-  // libc++ has these as built-ins for all C++ language versions
-  // as well as Visual Studio for versions greater than 2010
-  // (1700 -> MSVC++ 11.0 and VS 2012)
-#if !defined(_LIBCPP_VERSION) && _MSC_VER < 1700
+  // These functions are built-ins for:
+  // * C++11
+  // * libc++ for all C++ language versions
+  // * Visual Studio for versions greater than 2010 (1700 -> MSVC++ 11.0 and VS 2012)
+#if !defined(_LIBCPP_VERSION) && _MSC_VER < 1700 && __cplusplus < 201103L
   extern std::string to_string(int);
   extern std::string to_string(double);
   extern std::string to_string(float);
@@ -165,7 +166,12 @@ CLASS DECLARATION
 
     return str_array;
   }
-/* Comment out to_string functions when they are defined already - C++ 11 defines these */
+
+  // These functions are built-ins for:
+  // * C++11
+  // * libc++ for all C++ language versions
+  // * Visual Studio for versions greater than 2010 (1700 -> MSVC++ 11.0 and VS 2012)
+#if !defined(_LIBCPP_VERSION) && _MSC_VER < 1700 && __cplusplus < 201103L
   string to_string(int i)
   {
     char buffer[32];
@@ -186,6 +192,7 @@ CLASS DECLARATION
     if (!(o << x)) cerr << "Bad double to string conversion" << endl;
     return o.str();
   }
+#endif
 
   string replace(string str, const string& oldstr, const string& newstr)
   {

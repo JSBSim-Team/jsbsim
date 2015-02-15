@@ -76,7 +76,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.170 2015/02/07 17:52:36 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.171 2015/02/15 12:03:21 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,8 +316,8 @@ bool FGFDMExec::Allocate(void)
 
   // Initialize models
   for (unsigned int i = 0; i < Models.size(); i++) {
-    // The Output model must not be initialized prior to IC loading
-    if (i == eOutput) continue;
+    // The Input/Output models must not be initialized prior to IC loading
+    if (i == eInput || i == eOutput) continue;
 
     LoadInputs(i);
     Models[i]->InitModel();
@@ -603,6 +603,7 @@ bool FGFDMExec::RunIC(void)
 {
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
+  Models[eInput]->InitModel();
   Models[eOutput]->InitModel();
 
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
@@ -651,8 +652,8 @@ void FGFDMExec::ResetToInitialConditions(int mode)
   if (mode == 1) Output->SetStartNewOutput();
 
   for (unsigned int i = 0; i < Models.size(); i++) {
-    // The Output model will be initialized during the RunIC() execution
-    if (i == eOutput) continue;
+    // The Input/Output models will be initialized during the RunIC() execution
+    if (i == eInput || i == eOutput) continue;
 
     LoadInputs(i);
     Models[i]->InitModel();
@@ -867,14 +868,13 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       cerr << endl << "No expected aerodynamics element was found in the aircraft config file." << endl;
     }
 
-    // Process the input element. This element is OPTIONAL.
+    // Process the input element. This element is OPTIONAL, and there may be more than one.
     element = document->FindElement("input");
-    if (element) {
-      result = ((FGInput*)Models[eInput])->Load(element);
-      if (!result) {
-        cerr << endl << "Aircraft input element has problems in file " << aircraftCfgFileName << endl;
-        return result;
-      }
+    while (element) {
+      if (!static_cast<FGInput*>(Models[eInput])->Load(element))
+        return false;
+
+      element = document->FindNextElement("input");
     }
 
     // Process the output element[s]. This element is OPTIONAL, and there may be
