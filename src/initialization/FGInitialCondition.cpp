@@ -66,7 +66,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.98 2014/11/30 12:35:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.99 2015/02/19 05:18:45 dpculp Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -151,6 +151,7 @@ void FGInitialCondition::InitializeIC(void)
   lastSpeedSet = setvt;
   lastAltitudeSet = setasl;
   enginesRunning = 0;
+  needTrim = 0;
 }
 
 //******************************************************************************
@@ -990,6 +991,8 @@ bool FGInitialCondition::Load_v1(Element* document)
   {
     SetTargetNlfIC(document->FindElementValueAsNumber("targetNlf"));
   }
+  if (document->FindElement("trim"))
+    needTrim = document->FindElementValueAsNumber("trim");
 
   // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
   // This is the rotation rate of the "Local" frame, expressed in the local frame.
