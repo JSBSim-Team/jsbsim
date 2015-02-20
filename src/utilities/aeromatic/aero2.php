@@ -331,8 +331,8 @@ $ac_gearspring_nose = $ac_weight * 0.3;
 $ac_gearspring_tail = $ac_weight * 1.0;
 
 $ac_geardamp_main = $ac_weight * 0.5;
-$ac_geardamp_nose = $ac_weight * 0.5;
-$ac_geardamp_tail = $ac_weight * 0.8;
+$ac_geardamp_nose = $ac_weight * 0.15;
+$ac_geardamp_tail = $ac_weight * 0.5;
 
 $ac_geardynamic = 0.5;
 $ac_gearstatic  = 0.8;
@@ -805,7 +805,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.15 $</version>\n");
+print("  <version>\$Revision: 1.16 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -979,7 +979,7 @@ if($ac_type == 0) {  // if this is a glider
   print("  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">\n");
   print("    <location unit=\"IN\">\n");
   printf("     <x> %6.2f </x>\n", $ac_cglocx);
-  printf("     <y> %6.2f </y>\n", -$ac_halfspan);
+  printf("     <y> %6.2f </y>\n", -$ac_halfspan * $ft_to_in);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
   printf("   <static_friction>  %2.2f </static_friction>\n", 1.0);
@@ -991,7 +991,7 @@ if($ac_type == 0) {  // if this is a glider
   print("  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">\n");
   print("    <location unit=\"IN\">\n");
   printf("     <x> %6.2f </x>\n", $ac_cglocx);
-  printf("     <y> %6.2f </y>\n", $ac_halfspan);
+  printf("     <y> %6.2f </y>\n", $ac_halfspan * $ft_to_in);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
   printf("   <static_friction>  %2.2f </static_friction>\n", 1.0);
