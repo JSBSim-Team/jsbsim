@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.41 2014/05/01 18:32:54 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.42 2015/02/19 05:18:45 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,6 +167,7 @@ CLASS DOCUMENTATION
    - mach (mach)
    - vground (ground speed, ft/sec)
    - running (-1 for all engines, 0 for no engines, 1 ... n for specific engines)
+   - trim (0 for no trim, 1 for ground trim)
 
    <h3>Properties</h3>
    @property ic/vc-kts (read/write) Calibrated airspeed initial condition in knots
@@ -217,7 +218,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.41 2014/05/01 18:32:54 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.42 2015/02/19 05:18:45 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -657,6 +658,10 @@ public:
       @param index of the engine to be checked
       @return true if the engine is running. */
   bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)); }
+  
+  /** Does initialization file call for trim ?
+      @return true if initialization file (version 1) called for trim. */
+  bool NeedTrim(void) const { return needTrim == 0 ? false : true; }
 
   void bind(FGPropertyManager* pm);
 
@@ -675,6 +680,7 @@ private:
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
   unsigned int enginesRunning;
+  int needTrim;
 
   FGFDMExec *fdmex;
   FGAtmosphere* Atmosphere;

@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "initialization/FGInitialCondition.h"
+#include "initialization/FGTrim.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
@@ -72,7 +73,7 @@ using JSBSim::Element;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.84 2014/05/17 15:36:45 jberndt Exp $");
+IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.85 2015/02/19 05:18:45 dpculp Exp $");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -87,6 +88,8 @@ vector <string> LogDirectiveName;
 vector <string> CommandLineProperties;
 vector <double> CommandLinePropertyValues;
 JSBSim::FGFDMExec* FDMExec;
+JSBSim::FGTrim* trimmer;
+
 bool realtime;
 bool play_nice;
 bool suspend;
@@ -443,7 +446,13 @@ int real_main(int argc, char* argv[])
 
   // Dump the simulation state (position, orientation, etc.)
   FDMExec->GetPropagate()->DumpState();
-
+  
+  if (FDMExec->GetIC()->NeedTrim()) {
+    trimmer = new JSBSim::FGTrim( FDMExec );
+    trimmer->DoTrim();
+    delete trimmer;
+  }
+  
   cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
        << "---- JSBSim Execution beginning ... --------------------------------------------"
        << JSBSim::FGFDMExec::reset << endl << endl;
