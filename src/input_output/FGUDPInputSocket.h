@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGfdmSocket.h
- Author:       Jon S. Berndt
- Date started: 11/08/99
+ Header:       FGUDPInputSocket.h
+ Author:       Dave Culp
+ Date started: 02/19/15
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
+ ------------- Copyright (C) 2015 David Culp -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -25,47 +25,27 @@
 
 HISTORY
 --------------------------------------------------------------------------------
-11/08/99   JSB   Created
-11/08/07   HDW   Added Generic Socket Send
+02/19/15   DC    Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGfdmSocket_H
-#define FGfdmSocket_H
+#ifndef FGUDPINPUTSOCKET_H
+#define FGUDPINPUTSOCKET_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
-#include <sstream>
-#include <sys/types.h>
-#include "FGJSBBase.h"
-
-#if defined(_MSC_VER) || defined(__MINGW32__)
-  #include <winsock.h>
-  #include <io.h>
-#else
-  #include <unistd.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-  #include <netdb.h>
-  #include <errno.h>
-  #include <sys/ioctl.h>
-#endif
-
-#ifdef _MSC_VER
-#  pragma comment (lib,"WSock32.lib")
-#endif
+#include "FGInputType.h"
+#include "input_output/FGfdmSocket.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.21 2015/02/27 04:06:15 dpculp Exp $"
+#define ID_UDPINPUTSOCKET ""
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,51 +57,45 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates an object that enables JSBSim to communicate via socket (input
-    and/or output).
-    
-  */
+/** Implements a UDP input socket. 
+ */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGfdmSocket : public FGJSBBase
+class FGUDPInputSocket : public FGInputType
 {
 public:
-  FGfdmSocket(const std::string&, int);
-  FGfdmSocket(const std::string&, int, int);
-  FGfdmSocket(int, int, int);  
-  FGfdmSocket(int);
-  ~FGfdmSocket();
-  void Send(void);
-  void Send(const char *data, int length);
+  /** Constructor. */
+  FGUDPInputSocket(FGFDMExec* fdmex);
 
-  std::string Receive(void);
-  int Reply(const std::string& text);
-  void Append(const std::string& s) {Append(s.c_str());}
-  void Append(const char*);
-  void Append(double);
-  void Append(long);
-  void Clear(void);
-  void Clear(const std::string& s);
-  void Close(void);
-  bool GetConnectStatus(void) {return connected;}
+  /** Destructor. */
+  ~FGUDPInputSocket();
 
-  enum ProtocolType {ptUDP, ptTCP};
-  enum DirectionType {dIN, dOUT};
- 
-private:
-  int sckt;
-  int sckt_in;
-  int udpsckt;
-  DirectionType Direction;
-  ProtocolType Protocol;
-  struct sockaddr_in scktName;
-  struct hostent *host;
-  std::ostringstream buffer;
-  bool connected;
-  void Debug(int from);
+  /** Reads the property names from an XML file.
+      @param element The root XML Element of the input file.
+  */
+  bool Load(Element* el);
+
+  /** Initializes the instance. This method basically opens the socket to which
+      inputs will be directed.
+      @result true if the execution succeeded.
+   */
+  bool InitModel(void);
+
+  /// Reads the socket and updates properties accordingly.
+  void Read(bool Holding);
+
+protected:
+
+  int rate;
+  double oldTimeStamp;
+  std::vector<FGPropertyNode_ptr> InputProperties;
+  unsigned int SockPort;
+  FGfdmSocket* socket;
+  std::string data;
 };
 }
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

@@ -41,6 +41,7 @@ INCLUDES
 #include "FGInput.h"
 #include "FGFDMExec.h"
 #include "input_output/FGInputSocket.h"
+#include "input_output/FGUDPInputSocket.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
@@ -49,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInput.cpp,v 1.29 2015/02/15 12:03:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInput.cpp,v 1.30 2015/02/27 04:07:09 dpculp Exp $");
 IDENT(IdHdr,ID_INPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +101,8 @@ bool FGInput::Load(Element* el)
 
   if (type.empty() || type == "SOCKET") {
     Input = new FGInputSocket(FDMExec);
+  } else if (type == "UDPSOCKET") {
+    Input = new FGUDPInputSocket(FDMExec);
   } else if (type != string("NONE")) {
     cerr << "Unknown type of input specified in config file" << endl;
   }
