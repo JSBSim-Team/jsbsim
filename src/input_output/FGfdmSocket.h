@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.20 2010/10/15 11:30:28 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.21 2015/02/27 04:06:15 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,6 +91,7 @@ class FGfdmSocket : public FGJSBBase
 public:
   FGfdmSocket(const std::string&, int);
   FGfdmSocket(const std::string&, int, int);
+  FGfdmSocket(int, int, int);  
   FGfdmSocket(int);
   ~FGfdmSocket();
   void Send(void);
@@ -107,11 +108,15 @@ public:
   void Close(void);
   bool GetConnectStatus(void) {return connected;}
 
-  enum ProtocolType {ptUDP, ptTCP} ;
-
+  enum ProtocolType {ptUDP, ptTCP};
+  enum DirectionType {dIN, dOUT};
+ 
 private:
   int sckt;
   int sckt_in;
+  int udpsckt;
+  DirectionType Direction;
+  ProtocolType Protocol;
   struct sockaddr_in scktName;
   struct hostent *host;
   std::ostringstream buffer;

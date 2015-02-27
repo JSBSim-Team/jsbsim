@@ -42,6 +42,7 @@ INCLUDES
 #include <iomanip>
 #include <cstring>
 #include <cstdio>
+#include <fcntl.h>
 #include "FGfdmSocket.h"
 #include "string_utilities.h"
 
@@ -52,7 +53,7 @@ using std::string;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGfdmSocket.cpp,v 1.29 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGfdmSocket.cpp,v 1.30 2015/02/27 04:06:15 dpculp Exp $");
 IDENT(IdHdr,ID_FDMSOCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +63,7 @@ CLASS IMPLEMENTATION
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
 {
   sckt = sckt_in = 0;
+  Protocol = (ProtocolType)protocol;
   connected = false;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -109,16 +111,54 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
     } else {          // unsuccessful
       cout << "Could not create socket for FDM output, error = " << errno << endl;
     }
+
   }
   Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// assumes UDP socket on localhost, for inbound datagrams
+FGfdmSocket::FGfdmSocket(int port, int protocol, int direction) // assumes UDP
+{
+  sckt = -1;
+  connected = false;
+  Protocol = (ProtocolType)protocol;
+  Direction = (DirectionType) direction;
+ 
 
-FGfdmSocket::FGfdmSocket(const string& address, int port)
+    if (Protocol == ptUDP) {  //use udp protocol
+       sckt = socket(AF_INET, SOCK_DGRAM, 0);
+       fcntl(sckt, F_SETFL, O_NONBLOCK);
+       cout << "Creating UDP input socket on port " << port << endl;
+    }
+  
+    if (sckt != -1) { 
+      memset(&scktName, 0, sizeof(struct sockaddr_in));
+      scktName.sin_family = AF_INET;
+      scktName.sin_port = htons(port);
+      scktName.sin_addr.s_addr = htonl(INADDR_ANY);
+      int len = sizeof(struct sockaddr_in);
+      if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) { 
+        cout << "Successfully bound to UDP input socket on port " << port << endl <<endl;
+        connected = true;
+      } else {                // unsuccessful
+        cout << "Could not bind to UDP input socket, error = " << errno << endl;
+      }
+    } else {          // unsuccessful
+      cout << "Could not create socket for UDP input, error = " << errno << endl;
+    }
+    
+  
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGfdmSocket::FGfdmSocket(const string& address, int port) // assumes TCP
 {
   sckt = sckt_in = 0;
   connected = false;
+  Protocol = ptTCP;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
@@ -167,10 +207,11 @@ FGfdmSocket::FGfdmSocket(const string& address, int port)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGfdmSocket::FGfdmSocket(int port)
+FGfdmSocket::FGfdmSocket(int port) // assumes TCP
 {
   connected = false;
   unsigned long NoBlock = true;
+  Protocol = ptTCP;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
@@ -231,7 +272,7 @@ string FGfdmSocket::Receive(void)
   string data;      // todo: should allocate this with a standard size as a
                     // class attribute and pass as a reference?
 
-  if (sckt_in <= 0) {
+  if (sckt_in <= 0 && Protocol == ptTCP) {
     #if defined(_MSC_VER) || defined(__MINGW32__)
       sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
     #else
@@ -265,7 +306,15 @@ string FGfdmSocket::Receive(void)
     }
 #endif
   }
-
+  
+  // this is for FGUDPInputSocket
+  if (sckt >= 0 && Protocol == ptUDP) {
+    struct sockaddr addr;
+    socklen_t fromlen = sizeof addr;
+    num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
+    if (num_chars != -1) data.append(buf, num_chars); 
+  }
+  
   return data;
 }
 
