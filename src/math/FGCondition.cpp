@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGCondition.cpp,v 1.20 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGCondition.cpp,v 1.21 2015/02/27 20:36:47 bcoconni Exp $");
 IDENT(IdHdr,ID_CONDITION);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@ string FGCondition::indent = "        ";
 
 // This constructor is called when tests are inside an element
 FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
-  PropertyManager(PropertyManager), isGroup(true)
+  isGroup(true)
 {
   string property1, property2, logic;
   Element* condition_element;
@@ -101,7 +101,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
 // condition
 
 FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager) :
-  PropertyManager(PropertyManager), isGroup(false)
+  isGroup(false)
 {
   string property1, property2, compare_string;
   vector <string> test_strings;

@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.55 2014/01/13 10:46:03 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.56 2015/02/27 20:42:55 bcoconni Exp $");
 IDENT(IdHdr,ID_FUNCTION);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -545,7 +545,7 @@ double FGFunction::GetValue(void) const
     {
       unsigned int n = Parameters.size()-1;
       i = int(temp+0.5);
-      if (i >= 0u && i < n) {
+      if (i < n) {
         temp = Parameters[i+1]->GetValue();
       } else {
         throw(string("The switch function index selected a value above the range of supplied values"

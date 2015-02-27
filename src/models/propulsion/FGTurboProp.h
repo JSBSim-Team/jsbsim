@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.18 2013/11/24 14:22:22 bcoconni Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.19 2015/02/27 20:36:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,8 +190,8 @@ private:
   double StarterN1;            // rotates of generator maked by starter [%]
   double MaxStartingTime;      // maximal time for start [s] (-1 means not used)
   double RPM;                  // shaft RPM
-  double Velocity;
-  double rho;
+  //double Velocity;
+  //double rho;
   double PSFC;                 // Power specific fuel comsumption [lb/(HP*hr)] at best efficiency
   double CombustionEfficiency;
 
