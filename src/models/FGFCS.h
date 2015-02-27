@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.46 2014/06/09 11:52:07 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.47 2015/02/27 20:36:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.46 $
+    @version $Revision: 1.47 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -583,7 +583,7 @@ private:
   std::vector <bool> PropFeatherCmd;
   std::vector <bool> PropFeather;
   std::vector <double> SteerPosDeg;
-  double LeftBrake, RightBrake, CenterBrake; // Brake settings
+  //double LeftBrake, RightBrake, CenterBrake; // Brake settings
   std::vector <double> BrakePos; // left, center, right - defined by FGLGear:: enum
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;

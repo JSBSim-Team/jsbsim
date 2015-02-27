@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.78 2015/01/07 23:22:59 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.79 2015/02/27 20:36:47 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,6 @@ CLASS IMPLEMENTATION
 FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input)
   : FGEngine(exec, engine_number, input),
   R_air(287.3),                  // Gas constant for air J/Kg/K
-  rho_fuel(800),                 // estimate
   calorific_value_fuel(47.3e6),  // J/Kg
   Cp_air(1005),                  // Specific heat (constant pressure) J/Kg/K
   Cp_fuel(1700),

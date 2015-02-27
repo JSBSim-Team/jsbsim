@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.19 2014/08/28 13:44:28 bcoconni Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.20 2015/02/27 20:36:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +119,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.19 $
+@version $Revision: 1.20 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +154,7 @@ public:
   bool IsSaturated(void) const {return saturated;}
   
 private:
-  double span;
+  //double span;
   double bias;
   FGParameter* rate_limit_incr;
   FGParameter* rate_limit_decr;

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.7 2012/10/27 20:29:01 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.8 2015/02/27 20:36:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ private:
   std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
-  FGPropertyManager *PropertyManager;
+  //FGPropertyManager *PropertyManager;
   FGPropertyValue *TestParam1, *TestParam2;
   double TestValue;
   eComparison Comparison;

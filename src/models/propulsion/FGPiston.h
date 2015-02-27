@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.36 2014/01/12 14:22:56 ehofman Exp $"
+#define ID_PISTON "$Id: FGPiston.h,v 1.37 2015/02/27 20:36:47 bcoconni Exp $"
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.36 2014/01/12 14:22:56 ehofman Exp $
+    @version $Id: FGPiston.h,v 1.37 2015/02/27 20:36:47 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,12 +252,12 @@ private:
   int crank_counter;
 
   double IndicatedHorsePower;
-  double IndicatedPower;
+  //double IndicatedPower;
   double PMEP;
   double FMEP;
   double FMEPDynamic;
   double FMEPStatic;
-  double T_Intake;
+  //double T_Intake;
 
   void doEngineStartup(void);
   void doBoostControl(void);
@@ -278,7 +278,7 @@ private:
   //
 
   const double R_air;
-  const double rho_fuel;    // kg/m^3
+  //const double rho_fuel;    // kg/m^3
   const double calorific_value_fuel;  // J/Kg (approximate)
   const double Cp_air;      // J/KgK
   const double Cp_fuel;     // J/KgK
@@ -293,7 +293,7 @@ private:
   //
   double MinManifoldPressure_inHg; // Inches Hg
   double MaxManifoldPressure_inHg; // Inches Hg
-  double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
+  //double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
   double ManifoldPressureLag;      // Manifold Pressure delay in seconds.
   double Displacement;             // cubic inches
   double displacement_SI;          // cubic meters
@@ -368,7 +368,7 @@ private:
   double rho_air;
   double volumetric_efficiency;
   double volumetric_efficiency_reduced;
-  double map_coefficient;
+  //double map_coefficient;
   double m_dot_air;
   double v_dot_air;
   double equivalence_ratio;
