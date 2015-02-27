@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.61 2015/01/07 23:22:59 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.62 2015/02/27 20:42:55 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ double FGEngine::CalcFuelNeed(void)
 
 unsigned int FGEngine::GetSourceTank(unsigned int i) const
 {
-  if (i >= 0 && i < SourceTanks.size()) {
+  if (i < SourceTanks.size()) {
     return SourceTanks[i];
   } else {
     throw("No such source tank is available for this engine");
