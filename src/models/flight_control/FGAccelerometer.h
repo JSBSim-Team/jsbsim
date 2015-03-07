@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.8 2013/12/07 12:21:14 bcoconni Exp $"
+#define ID_ACCELEROMETER "$Id: FGAccelerometer.h,v 1.9 2015/03/07 18:48:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,6 +89,7 @@ Syntax:
   <drift_rate> number </drift_rate>
   <gain> number </gain>
   <bias> number </bias>
+  <output> { output_property } </output>
 </accelerometer>
 @endcode
 
@@ -110,6 +111,7 @@ Example:
     <max> 400 </max>
   </quantization>
   <bias> 0.5 </bias>
+  <output> aero/accelerometer/right_tip_wing </output>
 </accelerometer>
 @endcode
 
@@ -124,7 +126,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.8 $
+@version $Revision: 1.9 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
