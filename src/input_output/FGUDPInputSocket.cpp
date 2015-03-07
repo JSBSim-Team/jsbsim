@@ -141,7 +141,7 @@ void FGUDPInputSocket::Read(bool Holding)
     
     vector<double> values;
   
-    for (int i=0; i<tokens.size(); i++) {
+    for (unsigned int i=0; i<tokens.size(); i++) {
       values.push_back( atof(tokens[i].c_str()) );
      }
      
@@ -157,7 +157,7 @@ void FGUDPInputSocket::Read(bool Holding)
       return;
     }
     
-    for (int i=1; i<values.size(); i++) {
+    for (unsigned int i=1; i<values.size(); i++) {
       InputProperties[i-1]->setDoubleValue(values[i]);
     }
     
