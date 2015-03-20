@@ -29,6 +29,7 @@ from JSBSim_utils import CreateFDM, SandBox, CopyAircraftDef
 # trying to read a result before the JSBSim thread had a chance to process the
 # request.
 
+
 class JSBSimThread(threading.Thread):
     def __init__(self, fdm, cond, end_time, t0=0.0):
         threading.Thread.__init__(self)
@@ -38,9 +39,17 @@ class JSBSimThread(threading.Thread):
         self._cond = cond
         self._end_time = end_time
         self._t0 = t0
+
     def run(self):
+        self._cond.acquire()
+        current_sim_time = self._fdm.get_sim_time()
+        self._cond.release()
+
         while not self.quit:
-            if not self.realTime or current_sim_time < (time.time() - self._t0):
+            if current_sim_time > self._end_time:
+                return
+
+            if not self.realTime or current_sim_time < (time.time()-self._t0):
                 self._cond.acquire()
                 if not self._fdm.run():
                     self._cond.release()
@@ -49,8 +58,7 @@ class JSBSimThread(threading.Thread):
                 current_sim_time = self._fdm.get_sim_time()
                 self._cond.notify()
                 self._cond.release()
-                if current_sim_time > self._end_time:
-                    return
+
 
 class TestInputSocket(unittest.TestCase):
     def setUp(self):
@@ -62,8 +70,8 @@ class TestInputSocket(unittest.TestCase):
         tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
         self.root = tree.getroot()
         input_tag = et.SubElement(self.root, 'input')
-        input_tag.attrib['port']='1137'
-        tree.write(self.sandbox('aircraft', aircraft_name,  aircraft_name+'.xml'))
+        input_tag.attrib['port'] = '1137'
+        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
 
         self.fdm = CreateFDM(self.sandbox)
         self.fdm.set_aircraft_path('aircraft')
@@ -113,7 +121,7 @@ class TestInputSocket(unittest.TestCase):
         return dt
 
     def getPropertyValue(self, property):
-        msg = string.split(self.sendCommand("get "+property),'\n')
+        msg = string.split(self.sendCommand("get "+property), '\n')
         return float(string.split(msg[0], '=')[1])
 
     def test_input_socket(self):
@@ -127,7 +135,7 @@ class TestInputSocket(unittest.TestCase):
 
         # Check that "help" returns the minimum set of commands that will be
         # tested
-        self.assertEqual(sorted(map(lambda x : string.strip(string.split(x, '{')[0]),
+        self.assertEqual(sorted(map(lambda x: string.strip(string.split(x, '{')[0]),
                                     string.split(self.sendCommand("help"), '\n')[2:-2])),
                          ['get', 'help', 'hold', 'info', 'iterate', 'quit', 'resume', 'set'])
 
@@ -158,7 +166,7 @@ class TestInputSocket(unittest.TestCase):
 
         # Modify the tank[0] contents via the "send" command
         half_contents = 0.5 * self.getPropertyValue("propulsion/tank/contents-lbs")
-        self.sendCommand("set propulsion/tank/contents-lbs "+ str(half_contents))
+        self.sendCommand("set propulsion/tank/contents-lbs " + str(half_contents))
         self.cond.acquire()
         self.cond.wait()
         self.assertEqual(self.fdm.get_property_value("propulsion/tank/contents-lbs"),
@@ -188,4 +196,4 @@ class TestInputSocket(unittest.TestCase):
 suite = unittest.TestLoader().loadTestsFromTestCase(TestInputSocket)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
 if test_result.failures or test_result.errors:
-    sys.exit(-1) # 'make test' will report the test failed.
+    sys.exit(-1)  # 'make test' will report the test failed.
