@@ -20,17 +20,18 @@
 #
 
 # This test checks that:
-# 1. The JSBSim does not hang when the parameter 'sense' of actuator
-#    <rate_limit> is used.
+# 1. JSBSim does not hang when the parameter 'sense' of actuator <rate_limit>
+#    is used.
 # 2. The property 'fcs/left-aileron-pos-rad' remains equal to 0.0 during the
-#    execution of the script c1724.xml when <rate_limit> is used with a property.
-# 3. That the actuator output value is correctly driven by rate_limit.
+#    execution of the script c1724.xml when <rate_limit> is read from a property.
+# 3. The actuator output value is correctly driven by rate_limit.
 
 import unittest, os, time, sys, string
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
-from JSBSim_utils import SandBox, CreateFDM, append_xml, CopyAircraftDef
+from JSBSim_utils import SandBox, CreateFDM, CopyAircraftDef
+
 
 class CheckFGBug1503(unittest.TestCase):
     def setUp(self):
@@ -38,13 +39,13 @@ class CheckFGBug1503(unittest.TestCase):
         self.script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1724.xml')
 
         # Since we will alter the aircraft definition file, we need make a copy
-        # of it and all the files it is refering to.
+        # of it and of all the files it is refering to.
         self.tree, self.aircraft_name, self.path_to_jsbsim_aircrafts = CopyAircraftDef(self.script_path, self.sandbox)
 
     def tearDown(self):
         self.sandbox.erase()
 
-    def ScriptExecution(self, fdm, time_limit = 1E+9):
+    def ScriptExecution(self, fdm, time_limit=1E+9):
         fdm.load_script(self.script_path)
         fdm.run_ic()
 
@@ -66,7 +67,7 @@ class CheckFGBug1503(unittest.TestCase):
         # coefficient r_value is also checked to verify that the output is
         # evolving linearly.
         slope, intercept, r_value, p_value, std_err = stats.linregress(aileron_course)
-        self.assertTrue(abs(slope - rate_value) < 1E-9 and abs(r_value) - 1.0 < 1E-9,
+        self.assertTrue(abs(slope - rate_value) < 1E-9 and abs(1.0 - abs(r_value)) < 1E-9,
                         msg="The actuator rate is not linear")
 
     def CheckRateLimit(self, input_prop, output_prop, incr_limit, decr_limit):
@@ -119,11 +120,11 @@ class CheckFGBug1503(unittest.TestCase):
         # test is failed.
         p = Process(target=self.ScriptExecution, args=(fdm,))
         p.start()
-        p.join(exec_time * 10.0) # Wait 10 times the reference time
+        p.join(exec_time * 10.0)  # Wait 10 times the reference time
         alive = p.is_alive()
         if alive:
             p.terminate()
-        self.assertTrue(not alive, msg="The script has hanged")
+        self.assertFalse(alive, msg="The script has hanged")
 
     def test_actuator_rate_from_property(self):
         # Second part of the test.
@@ -269,4 +270,4 @@ class CheckFGBug1503(unittest.TestCase):
 suite = unittest.TestLoader().loadTestsFromTestCase(CheckFGBug1503)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
 if test_result.failures or test_result.errors:
-    sys.exit(-1) # 'make test' will report the test failed.
+    sys.exit(-1)  # 'make test' will report the test failed.

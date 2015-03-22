@@ -25,6 +25,7 @@ from JSBSim_utils import Table, CreateFDM, ExecuteUntil, SandBox
 
 fpstokts = 0.592484
 
+
 class TestICOverride(unittest.TestCase):
     def setUp(self):
         self.sandbox = SandBox()
@@ -42,23 +43,22 @@ class TestICOverride(unittest.TestCase):
         vt0 = fdm.get_property_value('ic/vt-kts')
 
         fdm.run_ic()
+        self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), 0.0)
+        self.assertAlmostEqual(fdm.get_property_value('velocities/vt-fps'),
+                               vt0 / fpstokts, delta=1E-7)
+
         ExecuteUntil(fdm, 1.0)
 
-        # Check that the total velocity exported in the output file matches the IC
-        # defined in the initialization file
+        # Check that the total velocity exported in the output file matches the
+        # IC defined in the initialization file
         ref = Table()
         ref.ReadCSV(self.sandbox('JSBout172B.csv'))
+        self.assertEqual(ref.get_column('Time')[1], 0.0)
+        self.assertAlmostEqual(ref.get_column('V_{Total} (ft/s)')[1],
+                               vt0 / fpstokts, delta=1E-7)
 
-        for col, title in enumerate(ref._lines[0]):
-            if title == 'V_{Total} (ft/s)':
-                self.assertTrue(abs(ref._lines[1][col] - (vt0 / fpstokts)) < 1E-5,
-                                msg="Original script %s\nThe total velocity is %f. The value %f was expected" % (script_path, ref._lines[1][col], vt0 / fpstokts))
-                break
-        else:
-            self.fail("The total velocity is not exported in %s" % (script_path,))
-
-        # Now, we will re-run the same test but the IC will be overridden in the scripts
-        # The initial total velocity is increased by 1 ft/s
+        # Now, we will re-run the same test but the IC will be overridden in the
+        # script. The initial total velocity is increased by 1 ft/s
         vt0 += 1.0
 
         # The script c1724.xml is loaded and the following line is added in it:
@@ -71,8 +71,8 @@ class TestICOverride(unittest.TestCase):
         property.attrib['value'] = str(vt0)
         tree.write(self.sandbox('c1724_0.xml'))
 
-        # Re-run the same check than above. This time we are making sure than the total
-        # initial velocity is increased by 1 ft/s
+        # Re-run the same check than above. This time we are making sure than
+        # the total initial velocity is increased by 1 ft/s
         self.sandbox.delete_csv_files()
 
         # Because JSBSim internals use static pointers, we cannot rely on Python
@@ -83,25 +83,22 @@ class TestICOverride(unittest.TestCase):
         fdm = CreateFDM(self.sandbox)
         fdm.load_script('c1724_0.xml')
 
-        self.assertTrue(abs(fdm.get_property_value('ic/vt-kts') - vt0) < 1E-5,
-                        msg="Modified script %s\nThe total velocity in the IC (%f) is different from %f" % (self.sandbox('JSBout172B.csv'), fdm.get_property_value('ic/vt-kts'), vt0))
+        self.assertAlmostEqual(fdm.get_property_value('ic/vt-kts'), vt0,
+                               delta=1E-6)
 
         fdm.run_ic()
+        self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), 0.0)
+        self.assertAlmostEqual(fdm.get_property_value('velocities/vt-fps'),
+                               vt0 / fpstokts, delta=1E-6)
+
         ExecuteUntil(fdm, 1.0)
 
         mod = Table()
         mod.ReadCSV(self.sandbox('JSBout172B.csv'))
-
-        for col, title in enumerate(mod._lines[0]):
-            if title == 'V_{Total} (ft/s)':
-                self.assertTrue(abs(mod._lines[1][col] - (vt0 / fpstokts)) < 1E-5,
-                                msg="Modified script %s\nThe total velocity is %f. The value %f was expected" % (self.sandbox('JSBout172B.csv'), mod._lines[1][col], vt0 / fpstokts))
-                break
-        else:
-            self.fail("The total velocity is not exported in %s" % (sandbox('JSBout172B.csv'),))
+        self.assertAlmostEqual(mod.get_column('V_{Total} (ft/s)')[1],
+                               vt0 / fpstokts, delta=1E-6)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestICOverride)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
 if test_result.failures or test_result.errors:
-    sys.exit(-1) # 'make test' will report the test failed.
-
+    sys.exit(-1)  # 'make test' will report the test failed.
