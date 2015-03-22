@@ -30,7 +30,11 @@ endmacro()
 
 if(WIN32 AND (MSVC OR MINGW))
   # not applicable to cygwin
-  set(JSBSIM_LINK_LIBRARIES "-lwsock32 -lws2_32")
+  if(MSVC)
+    set(JSBSIM_LINK_LIBRARIES "wsock32.lib" "ws2_32.lib")
+  else()
+    set(JSBSIM_LINK_LIBRARIES "-lwsock32 -lws2_32")
+  endif(MSVC)
 elseif(UNIX)
   # not applicable to cygwin
   set(JSBSIM_LINK_LIBRARIES "m")
