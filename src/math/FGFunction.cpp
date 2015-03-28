@@ -43,7 +43,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.56 2015/02/27 20:42:55 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.57 2015/03/28 14:49:01 bcoconni Exp $");
 IDENT(IdHdr,ID_FUNCTION);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -543,7 +543,7 @@ double FGFunction::GetValue(void) const
     break;
   case eSwitch:
     {
-      unsigned int n = Parameters.size()-1;
+      size_t n = Parameters.size()-1;
       i = int(temp+0.5);
       if (i < n) {
         temp = Parameters[i+1]->GetValue();
@@ -555,7 +555,7 @@ double FGFunction::GetValue(void) const
     break;
   case eInterpolate1D:
     {
-      unsigned int sz = Parameters.size();
+      size_t sz = Parameters.size();
       if (temp <= Parameters[1]->GetValue()) {
         temp = Parameters[2]->GetValue();
       } else if (temp >= Parameters[sz-2]->GetValue()) {

@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInput.cpp,v 1.30 2015/02/27 04:07:09 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGInput.cpp,v 1.31 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,7 @@ bool FGInput::Load(Element* el)
   
   FGModel::PreLoad(element, PropertyManager);
 
-  unsigned int idx = InputTypes.size();
+  size_t idx = InputTypes.size();
   string type = element->GetAttributeValue("type");
   FGInputType* Input = 0;
 

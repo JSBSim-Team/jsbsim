@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUTTYPE "$Id: FGInputType.h,v 1.1 2015/02/15 12:04:32 bcoconni Exp $"
+#define ID_INPUTTYPE "$Id: FGInputType.h,v 1.2 2015/03/28 14:49:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ public:
   /** Set the idx for this output instance
       @param idx ID of the output instance that is constructed
    */
-  void SetIdx(int idx);
+  void SetIdx(unsigned int idx);
 
   /** Init the input directives from an XML file (implement the FGModel interface).
       @param element XML Element that is pointing to the input directives
@@ -135,7 +135,7 @@ public:
   virtual const std::string& GetInputName(void) const { return Name; }
 
 protected:
-  int InputIdx;
+  unsigned int InputIdx;
   bool enabled;
 
   void Debug(int from);

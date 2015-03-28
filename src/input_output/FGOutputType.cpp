@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.11 2014/09/12 20:10:04 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.12 2015/03/28 14:49:01 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
@@ -87,7 +87,7 @@ FGOutputType::~FGOutputType()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutputType::SetIdx(int idx)
+void FGOutputType::SetIdx(unsigned int idx)
 {
   typedef double (FGOutputType::*iOPMF)(void) const;
   string outputProp = CreateIndexedPropertyName("simulation/output", idx) + "/log_rate_hz";

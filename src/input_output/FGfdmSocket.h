@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.21 2015/02/27 04:06:15 dpculp Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.22 2015/03/28 14:49:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -112,8 +112,8 @@ public:
   enum DirectionType {dIN, dOUT};
  
 private:
-  int sckt;
-  int sckt_in;
+  SOCKET sckt;
+  SOCKET sckt_in;
   int udpsckt;
   DirectionType Direction;
   ProtocolType Protocol;

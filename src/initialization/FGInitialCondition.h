@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.42 2015/02/19 05:18:45 dpculp Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.43 2015/03/28 14:49:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -218,7 +218,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.42 2015/02/19 05:18:45 dpculp Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.43 2015/03/28 14:49:01 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -657,7 +657,7 @@ public:
   /** Is an engine running ?
       @param index of the engine to be checked
       @return true if the engine is running. */
-  bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)); }
+  bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)) != 0; }
   
   /** Does initialization file call for trim ?
       @return true if initialization file (version 1) called for trim. */

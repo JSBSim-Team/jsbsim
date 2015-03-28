@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.21 2015/02/14 14:03:00 bcoconni Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.22 2015/03/28 14:49:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -196,10 +196,9 @@ CLASS DECLARATION
 
   string replace(string str, const string& oldstr, const string& newstr)
   {
-    int old_idx;
     string temp;
-    old_idx = str.find(oldstr);
-    if (old_idx >= 0) {
+    size_t old_idx = str.find(oldstr);
+    if (old_idx != string::npos) {
       temp = str.replace(old_idx, 1, newstr);
     }
     return temp;

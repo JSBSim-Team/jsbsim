@@ -123,7 +123,7 @@ public:
             comp->setFdm(m_fdm);
             m_components.push_back(comp);
         }
-        int getSize() const
+        size_t getSize() const
         {
             return m_components.size();
         }

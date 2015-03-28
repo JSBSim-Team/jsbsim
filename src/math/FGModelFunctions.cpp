@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.14 2014/05/30 17:26:42 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGModelFunctions.cpp,v 1.15 2015/03/28 14:49:01 bcoconni Exp $");
 IDENT(IdHdr,ID_MODELFUNCTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +123,7 @@ void FGModelFunctions::PostLoad(Element* el, FGPropertyManager* PM, string prefi
 
 void FGModelFunctions::RunPreFunctions(void)
 {
-  unsigned int sz = PreFunctions.size();
+  size_t sz = PreFunctions.size();
   for (unsigned int i=0; i<sz; i++) {
     PreFunctions[i]->cacheValue(true);
   }
@@ -137,7 +137,7 @@ void FGModelFunctions::RunPreFunctions(void)
 
 void FGModelFunctions::RunPostFunctions(void)
 {
-  unsigned int sz = PostFunctions.size();
+  size_t sz = PostFunctions.size();
   for (unsigned int i=0; i<sz; i++) {
     PostFunctions[i]->cacheValue(true);
   }

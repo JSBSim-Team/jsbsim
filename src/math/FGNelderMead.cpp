@@ -85,7 +85,7 @@ void FGNelderMead::update()
         {
             m_cost[vertex] = eval(m_simplex[vertex]);   
         }
-        catch (const std::exception & e)
+        catch (...)
         {
             m_status = -1;
             throw;
@@ -238,7 +238,7 @@ void FGNelderMead::update()
         }
     }
 
-    catch (const std::exception & e)
+    catch (...)
     {
         m_status = -1;
         throw;

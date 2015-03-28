@@ -52,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.80 2014/09/12 20:10:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.81 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,7 +213,7 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
                     std::string port, std::string name, double outRate,
                     std::vector<FGPropertyNode_ptr> & outputProperties)
 {
-  unsigned int idx = OutputTypes.size();
+  size_t idx = OutputTypes.size();
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << endl;
@@ -270,7 +270,7 @@ bool FGOutput::Load(Element* el)
 
   FGModel::PreLoad(element, PropertyManager);
 
-  unsigned int idx = OutputTypes.size();
+  size_t idx = OutputTypes.size();
   string type = element->GetAttributeValue("type");
   FGOutputType* Output = 0;
 

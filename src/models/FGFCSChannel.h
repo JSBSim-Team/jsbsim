@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.4 2013/12/22 15:21:51 bcoconni Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.5 2015/03/28 14:49:02 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ public:
   /// Adds a component to a channel
   void Add(FGFCSComponent* comp) {FCSComponents.push_back(comp);}
   /// Returns the number of components in the channel.
-  unsigned int GetNumComponents() {return FCSComponents.size();}
+  size_t GetNumComponents() {return FCSComponents.size();}
   /// Retrieves a specific component.
   FGFCSComponent* GetComponent(unsigned int i) {
     if (i >= GetNumComponents()) {
