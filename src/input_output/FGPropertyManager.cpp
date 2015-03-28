@@ -155,7 +155,7 @@ string FGPropertyNode::GetFullyQualifiedName(void) const
     }
 
     string fqname="";
-    for(unsigned i=stack.size()-1;i>0;i--) {
+    for(size_t i=stack.size()-1;i>0;i--) {
       fqname+= stack[i];
       fqname+= "/";
     }

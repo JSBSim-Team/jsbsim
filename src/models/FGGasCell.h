@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.15 2014/06/29 10:18:16 bcoconni Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.16 2015/03/28 14:49:02 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -183,7 +183,8 @@ public:
       @param exec Executive a pointer to the parent executive object
       @param el   Pointer to configuration file XML node
       @param num  Gas cell index number. */
-  FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs& input);
+  FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
+            const struct Inputs& input);
   ~FGGasCell();
 
   /** Runs the gas cell model; called by BuoyantForces
@@ -236,7 +237,7 @@ private:
 
   GasType Type;
   std::string type;
-  int CellNum;
+  unsigned int CellNum;
   // Structural constants
   double MaxVolume;                 // [ft^3]
   double MaxOverpressure;           // [lbs/ft^2]
@@ -307,7 +308,8 @@ private:
 class FGBallonet : public FGJSBBase
 {
 public:
-  FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent, const struct FGGasCell::Inputs& input);
+  FGBallonet(FGFDMExec* exec, Element* el, unsigned int num, FGGasCell* parent,
+             const struct FGGasCell::Inputs& input);
   ~FGBallonet();
 
   /** Runs the ballonet model; called by FGGasCell
@@ -341,7 +343,7 @@ public:
   const struct FGGasCell::Inputs& in;
 
 private:
-  int CellNum;
+  unsigned int CellNum;
   // Structural constants
   double MaxVolume;                 // [ft^3]
   double MaxOverpressure;           // [lbs/ft^2]

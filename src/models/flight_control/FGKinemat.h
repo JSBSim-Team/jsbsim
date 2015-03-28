@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.10 2009/10/24 22:59:30 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.11 2015/03/28 14:49:02 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -131,7 +131,7 @@ public:
 private:
   std::vector<double> Detents;
   std::vector<double> TransitionTimes;
-  int NumDetents;
+  size_t NumDetents;
   double OutputPct;
   bool  DoScale;
 

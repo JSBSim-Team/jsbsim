@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInputType.cpp,v 1.1 2015/02/15 12:04:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInputType.cpp,v 1.2 2015/03/28 14:49:01 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUTTYPE);
 
 using namespace std;
@@ -71,7 +71,7 @@ FGInputType::~FGInputType()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGInputType::SetIdx(int idx)
+void FGInputType::SetIdx(unsigned int idx)
 {
   InputIdx = idx;
 }

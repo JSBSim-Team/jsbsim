@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id$"
+#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.6 2015/03/28 14:49:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +106,7 @@ public:
   /** Set the idx for this output instance
       @param idx ID of the output instance that is constructed
    */
-  void SetIdx(int idx);
+  void SetIdx(unsigned int idx);
 
   /** Set the output rate for this output instances.
       @param rtHz new output rate in Hz */
@@ -194,7 +194,7 @@ public:
   } subsystems;
 
 protected:
-  int OutputIdx;
+  unsigned int OutputIdx;
   int SubSystems;
   std::vector <FGPropertyNode_ptr> OutputProperties;
   std::vector <std::string> OutputCaptions;

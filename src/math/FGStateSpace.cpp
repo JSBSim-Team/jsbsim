@@ -50,8 +50,8 @@ void FGStateSpace::linearize(
 void FGStateSpace::numericalJacobian(std::vector< std::vector<double> >  & J, ComponentVector & y,
                                      ComponentVector & x, const std::vector<double> & y0, const std::vector<double> & x0, double h, bool computeYDerivative)
 {
-    int nX = x.getSize();
-    int nY = y.getSize();
+    size_t nX = x.getSize();
+    size_t nY = y.getSize();
     double f1 = 0, f2 = 0, fn1 = 0, fn2 = 0;
     J.resize(nY);
     for (int iY=0;iY<nY;iY++)
@@ -141,13 +141,13 @@ std::ostream &operator<<( std::ostream &out, const FGStateSpace &ss )
 
 std::ostream &operator<<( std::ostream &out, const std::vector< std::vector<double> > &vec2d )
 {
-    int width = out.width();
-    int nI = vec2d.size();
+    std::streamsize width = out.width();
+    size_t nI = vec2d.size();
     out << std::left << std::setw(1) << "[" << std::right;
     for (int i=0;i<nI;i++)
     {
 		//std::cout << "i: " << i << std::endl;
-        int nJ = vec2d[i].size();
+        size_t nJ = vec2d[i].size();
         for (int j=0;j<nJ;j++)
         {
 			//std::cout << "j: " << j << std::endl;
@@ -168,8 +168,8 @@ std::ostream &operator<<( std::ostream &out, const std::vector< std::vector<doub
 
 std::ostream &operator<<( std::ostream &out, const std::vector<double> &vec )
 {
-    int width = out.width();
-    int nI = vec.size();
+    std::streamsize width = out.width();
+    size_t nI = vec.size();
     out << std::left << std::setw(1) << "[" << std::right;
     for (int i=0;i<nI;i++)
     {

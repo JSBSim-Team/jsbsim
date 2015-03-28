@@ -50,7 +50,7 @@ using std::max;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGasCell.cpp,v 1.21 2014/06/29 10:18:16 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGGasCell.cpp,v 1.22 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_GASCELL);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,8 @@ const double FGGasCell::M_air = 0.0019186;       // [slug/mol]
 const double FGGasCell::M_hydrogen = 0.00013841; // [slug/mol]
 const double FGGasCell::M_helium = 0.00027409;   // [slug/mol]
 
-FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num, const struct Inputs& input)
+FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
+                     const struct Inputs& input)
   : FGForce(exec), in(input)
 {
   string token;
@@ -268,7 +269,7 @@ void FGGasCell::Calculate(double dt)
   const double OldTemperature = Temperature;
   const double OldPressure    = Pressure;
   unsigned int i;
-  const unsigned int no_ballonets = Ballonet.size();
+  const size_t no_ballonets = Ballonet.size();
 
   //-- Read ballonet state --
   // NOTE: This model might need a more proper integration technique. 
@@ -504,7 +505,8 @@ const double FGBallonet::R = 3.4071;              // [lbs ft/(mol Rankine)]
 const double FGBallonet::M_air = 0.0019186;       // [slug/mol]
 const double FGBallonet::Cv_air = 5.0/2.0;        // [??]
 
-FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent, const struct FGGasCell::Inputs& input)
+FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
+                       FGGasCell* parent, const struct FGGasCell::Inputs& input)
   : in(input)
 {
   string token;

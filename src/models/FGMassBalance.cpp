@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.52 2015/02/15 10:14:46 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.53 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,9 +337,8 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 const FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
-  unsigned int size;
+  size_t size = PointMasses.size();
 
-  size = PointMasses.size();
   if (size == 0) return pmJ;
 
   pmJ = FGMatrix33();
@@ -411,7 +410,8 @@ void FGMassBalance::bind(void)
 //
 // This function binds properties for each pointmass object created.
 //
-void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager, int num) {
+void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
+                                    unsigned int num) {
   string tmp = CreateIndexedPropertyName("inertia/pointmass-weight-lbs", num);
   PropertyManager->Tie( tmp.c_str(), this, &PointMass::GetPointMassWeight,
                                        &PointMass::SetPointMassWeight);

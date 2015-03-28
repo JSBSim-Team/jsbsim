@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.6 2014/02/17 05:33:25 jberndt Exp $"
+#define ID_DISTRIBUTOR "$Id: FGDistributor.h,v 1.7 2015/03/28 14:49:02 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 @author Jon S. Berndt
-@version $Id: FGDistributor.h,v 1.6 2014/02/17 05:33:25 jberndt Exp $
+@version $Id: FGDistributor.h,v 1.7 2015/03/28 14:49:02 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +206,7 @@ private:
       for (unsigned int i=0; i<PropValPairs.size(); i++) PropValPairs[i]->SetPropToValue();
     }
     PropValPair* GetPropValPair(unsigned int idx) { return PropValPairs[idx]; }
-    unsigned int GetNumPropValPairs(void) {return PropValPairs.size();}
+    size_t GetNumPropValPairs(void) {return PropValPairs.size();}
     bool HasTest() {return (Test != 0);}
     bool GetTestResult() { return Test->Evaluate(); }
 

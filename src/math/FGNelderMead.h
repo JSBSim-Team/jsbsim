@@ -65,7 +65,8 @@ private:
     double m_randomization;
     const std::vector<double> & m_lowerBound;
     const std::vector<double> & m_upperBound;
-    int m_nDim, m_nVert, m_iMax, m_iNextMax, m_iMin;
+    size_t m_nDim, m_nVert;
+    int m_iMax, m_iNextMax, m_iMin;
     std::vector< std::vector<double> > m_simplex;
     std::vector<double> m_cost;
     std::vector<double> m_elemSum;

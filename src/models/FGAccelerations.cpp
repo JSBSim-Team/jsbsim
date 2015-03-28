@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.21 2015/01/31 14:56:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.22 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,7 +255,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   const FGMatrix33& Jinv = in.Jinv;
   FGColumnVector3 vdot, wdot;
   vector<LagrangeMultiplier*>& multipliers = *in.MultipliersList;
-  int n = multipliers.size();
+  size_t n = multipliers.size();
 
   vFrictionForces.InitMatrix();
   vFrictionMoments.InitMatrix();
@@ -267,13 +267,13 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   vector<double> rhs(n);
 
   // Assemble the linear system of equations
-  for (int i=0; i < n; i++) {
+  for (unsigned int i=0; i < n; i++) {
     FGColumnVector3 v1 = invMass * multipliers[i]->ForceJacobian;
     FGColumnVector3 v2 = Jinv * multipliers[i]->MomentJacobian; // Should be J^-T but J is symmetric and so is J^-1
 
-    for (int j=0; j < i; j++)
+    for (unsigned int j=0; j < i; j++)
       a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of Jac^T*M^-1*Jac
-    for (int j=i; j < n; j++)
+    for (unsigned int j=i; j < n; j++)
       a[i*n+j] = DotProduct(v1, multipliers[j]->ForceJacobian)
                + DotProduct(v2, multipliers[j]->MomentJacobian);
   }

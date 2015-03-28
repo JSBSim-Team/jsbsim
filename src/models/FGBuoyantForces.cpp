@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.29 2015/01/31 14:56:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.30 2015/03/28 14:49:02 bcoconni Exp $");
 IDENT(IdHdr,ID_BUOYANTFORCES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,7 +170,7 @@ const FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
 
 const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
 {
-  const unsigned int size = Cells.size();
+  size_t size = Cells.size();
   
   if (size == 0) return gasCellJ;
 
