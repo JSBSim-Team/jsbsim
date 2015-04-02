@@ -13,7 +13,8 @@ set(SOURCES FGGroundCallback.cpp
             FGModelLoader.cpp
             FGInputType.cpp
             FGInputSocket.cpp
-            FGUDPInputSocket.cpp)
+            FGUDPInputSocket.cpp
+            FGUDPOutputSocket.cpp)
 
 set(HEADERS FGGroundCallback.h
             FGPropertyManager.h
@@ -33,7 +34,8 @@ set(HEADERS FGGroundCallback.h
             FGModelLoader.h
             FGInputType.h
             FGInputSocket.h
-            FGUDPInputSocket.h)
+            FGUDPInputSocket.h
+            FGUDPOutputSocket.h)
 
 add_full_path_name(INPUT_OUTPUT_SRC "${SOURCES}")
 add_full_path_name(INPUT_OUTPUT_HDR "${HEADERS}")
