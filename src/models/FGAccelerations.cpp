@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.23 2015/04/02 17:39:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.24 2015/04/02 18:30:06 ehofman Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +157,7 @@ void FGAccelerations::CalculatePQRdot(void)
   // Compute body frame rotational accelerations based on the current body
   // moments and the total inertial angular velocity expressed in the body
   // frame.
-  if (HoldDown) {
+  if (HoldDown && !FDMExec->GetTrimStatus()) {
     // The rotational acceleration in ECI is calculated so that the rotational
     // acceleration is zero in the body frame.
     vPQRdot.InitMatrix();
@@ -201,7 +201,7 @@ void FGAccelerations::CalculateQuatdot(void)
 
 void FGAccelerations::CalculateUVWdot(void)
 {
-  if (HoldDown)
+  if (HoldDown && !FDMExec->GetTrimStatus())
     vBodyAccel.InitMatrix();
   else
     vBodyAccel = in.Force / in.Mass;
