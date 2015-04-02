@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.22 2015/03/28 14:49:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.23 2015/04/02 17:39:28 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,12 +294,12 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // 1. Compute the right hand side member 'rhs'
   // 2. Divide every line of 'a' and 'rhs' by a[i,i]. This is in order to save
   //    a division computation at each iteration of Gauss-Seidel.
-  for (int i=0; i < n; i++) {
+  for (unsigned int i=0; i < n; i++) {
     double d = 1.0 / a[i*n+i];
 
     rhs[i] = -(DotProduct(multipliers[i]->ForceJacobian, vdot)
               +DotProduct(multipliers[i]->MomentJacobian, wdot))*d;
-    for (int j=0; j < n; j++)
+    for (unsigned int j=0; j < n; j++)
       a[i*n+j] *= d;
   }
 
@@ -307,11 +307,11 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   for (int iter=0; iter < 50; iter++) {
     double norm = 0.;
 
-    for (int i=0; i < n; i++) {
+    for (unsigned int i=0; i < n; i++) {
       double lambda0 = multipliers[i]->value;
       double dlambda = rhs[i];
 
-      for (int j=0; j < n; j++)
+      for (unsigned int j=0; j < n; j++)
         dlambda -= a[i*n+j]*multipliers[j]->value;
 
       multipliers[i]->value = Constrain(multipliers[i]->Min, lambda0+dlambda, multipliers[i]->Max);
@@ -325,7 +325,7 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // Calculate the total friction forces and moments
 
-  for (int i=0; i< n; i++) {
+  for (unsigned int i=0; i< n; i++) {
     double lambda = multipliers[i]->value;
     vFrictionForces += lambda * multipliers[i]->ForceJacobian;
     vFrictionMoments += lambda * multipliers[i]->MomentJacobian;
