@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.11 2015/02/15 12:03:21 bcoconni Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.12 2015/04/02 13:02:29 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
 
     The class FGInput is the manager of the inputs requested by the user. It
     manages a list of instances derived from the abstract class FGInputType.
-    @version $Id: FGInput.h,v 1.11 2015/02/15 12:03:21 bcoconni Exp $
+    @version $Id: FGInput.h,v 1.12 2015/04/02 13:02:29 ehofman Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,10 +148,10 @@ public:
       @param idx ID of the input instance from which the name identifier must
                  be obtained
       @result the name identifier.*/
-  string GetInputName(unsigned int idx) const;
+  std::string GetInputName(unsigned int idx) const;
 
 private:
-  vector<FGInputType*> InputTypes;
+  std::vector<FGInputType*> InputTypes;
 
   void Debug(int from);
 };
