@@ -54,10 +54,10 @@ void FGStateSpace::numericalJacobian(std::vector< std::vector<double> >  & J, Co
     size_t nY = y.getSize();
     double f1 = 0, f2 = 0, fn1 = 0, fn2 = 0;
     J.resize(nY);
-    for (int iY=0;iY<nY;iY++)
+    for (unsigned int iY=0;iY<nY;iY++)
     {
         J[iY].resize(nX);
-        for (int iX=0;iX<nX;iX++)
+        for (unsigned int iX=0;iX<nX;iX++)
         {
             x.set(x0);
             x.set(iX,x.get(iX)+h);
@@ -123,7 +123,7 @@ std::ostream &operator<<( std::ostream &out, const FGStateSpace::Component &c )
 
 std::ostream &operator<<( std::ostream &out, const FGStateSpace::ComponentVector &v )
 {
-    for (int i=0; i< v.getSize(); i++)
+    for (unsigned int i=0; i< v.getSize(); i++)
     {
         out << *(v.getComp(i)) << "\n";
     }
@@ -144,11 +144,11 @@ std::ostream &operator<<( std::ostream &out, const std::vector< std::vector<doub
     std::streamsize width = out.width();
     size_t nI = vec2d.size();
     out << std::left << std::setw(1) << "[" << std::right;
-    for (int i=0;i<nI;i++)
+    for (unsigned int i=0;i<nI;i++)
     {
 		//std::cout << "i: " << i << std::endl;
         size_t nJ = vec2d[i].size();
-        for (int j=0;j<nJ;j++)
+        for (unsigned int j=0;j<nJ;j++)
         {
 			//std::cout << "j: " << j << std::endl;
             if (i==0 && j==0) out << std::setw(width-1) << vec2d[i][j];
@@ -171,7 +171,7 @@ std::ostream &operator<<( std::ostream &out, const std::vector<double> &vec )
     std::streamsize width = out.width();
     size_t nI = vec.size();
     out << std::left << std::setw(1) << "[" << std::right;
-    for (int i=0;i<nI;i++)
+    for (unsigned int i=0;i<nI;i++)
     {
         if (i==0) out << std::setw(width-1) << vec[i];
         else out << std::setw(width) << vec[i];

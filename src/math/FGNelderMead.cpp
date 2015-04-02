@@ -79,7 +79,7 @@ void FGNelderMead::update()
     }
 
     // find vertex costs
-    for (int vertex=0;vertex<m_nVert;vertex++)
+    for (unsigned int vertex=0;vertex<m_nVert;vertex++)
     {
         try
         {
@@ -94,7 +94,7 @@ void FGNelderMead::update()
 
     // find max cost, next max cost, and min cost
     m_iMax = m_iNextMax = m_iMin = 0;
-    for (int vertex=0;vertex<m_nVert;vertex++)
+    for (unsigned int vertex=0;vertex<m_nVert;vertex++)
     {
         if ( m_cost[vertex] > m_cost[m_iMax] )
         {
@@ -128,10 +128,10 @@ void FGNelderMead::update()
     }
 
     // compute element sum of simplex vertices
-    for (int dim=0;dim<m_nDim;dim++)
+    for (unsigned int dim=0;dim<m_nDim;dim++)
     {
         m_elemSum[dim] = 0;
-        for (int vertex=0;vertex<m_nVert;vertex++)
+        for (unsigned int vertex=0;vertex<m_nVert;vertex++)
             m_elemSum[dim] += m_simplex[vertex][dim];
     }
 
@@ -170,15 +170,15 @@ void FGNelderMead::update()
     if (showSimplex)
     {
         std::cout << "simplex: " << std::endl;;
-        for (int j=0;j<m_nVert;j++)
+        for (unsigned int j=0;j<m_nVert;j++)
             std::cout << "\t" << std::scientific
                       << std::setw(10) << m_cost[j];
         std::cout << std::endl;
-        for (int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
+        for (unsigned int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
         std::cout << std::endl;
-        for (int i=0;i<m_nDim;i++)
+        for (unsigned int i=0;i<m_nDim;i++)
         {
-            for (int j=0;j<m_nVert;j++)
+            for (unsigned int j=0;j<m_nVert;j++)
                 std::cout << "\t" << std::setw(10) << m_simplex[j][i];
             std::cout << std::endl;
         }
@@ -275,7 +275,7 @@ double FGNelderMead::tryStretch(double factor)
     double a= (1.0-factor)/m_nDim;
     double b = a - factor;
     std::vector<double> tryVertex(m_nDim);
-    for (int dim=0;dim<m_nDim;dim++)
+    for (unsigned int dim=0;dim<m_nDim;dim++)
     {
         tryVertex[dim] = m_elemSum[dim]*a - m_simplex[m_iMax][dim]*b;
         boundVertex(tryVertex,m_lowerBound,m_upperBound);
@@ -288,10 +288,10 @@ double FGNelderMead::tryStretch(double factor)
     if (costTry < m_cost[m_iMax])
     {
         // update the element sum of the simplex
-        for (int dim=0;dim<m_nDim;dim++) m_elemSum[dim] +=
+        for (unsigned int dim=0;dim<m_nDim;dim++) m_elemSum[dim] +=
                 tryVertex[dim] - m_simplex[m_iMax][dim];
         // replace the max vertex with the trial vertex
-        for (int dim=0;dim<m_nDim;dim++) m_simplex[m_iMax][dim] = tryVertex[dim];
+        for (unsigned int dim=0;dim<m_nDim;dim++) m_simplex[m_iMax][dim] = tryVertex[dim];
         // update the cost
         m_cost[m_iMax] = costTry;
         if (showSimplex) std::cout << "stretched\t" << m_iMax << "\tby : " << factor << std::endl;
@@ -301,9 +301,9 @@ double FGNelderMead::tryStretch(double factor)
 
 void FGNelderMead::contract()
 {
-    for (int dim=0;dim<m_nDim;dim++)
+    for (unsigned int dim=0;dim<m_nDim;dim++)
     {
-        for (int vertex=0;vertex<m_nVert;vertex++)
+        for (unsigned int vertex=0;vertex<m_nVert;vertex++)
         {
             m_simplex[vertex][dim] =
                 getRandomFactor()*0.5*(m_simplex[vertex][dim] +
@@ -315,12 +315,12 @@ void FGNelderMead::contract()
 void FGNelderMead::constructSimplex(const std::vector<double> & guess,
                                     const std::vector<double> & stepSize)
 {
-    for (int vertex=0;vertex<m_nVert;vertex++)
+    for (unsigned int vertex=0;vertex<m_nVert;vertex++)
     {
         m_simplex[vertex] = guess;
     }
 
-    for (int dim=0;dim<m_nDim;dim++)
+    for (unsigned int dim=0;dim<m_nDim;dim++)
     {
         int vertex = dim + 1;
         m_simplex[vertex][dim] += stepSize[dim]*getRandomFactor();
@@ -329,11 +329,11 @@ void FGNelderMead::constructSimplex(const std::vector<double> & guess,
     if (showSimplex)
     {
         std::cout << "simplex: " << std::endl;;
-        for (int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
+        for (unsigned int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
         std::cout << std::endl;
-        for (int i=0;i<m_nDim;i++)
+        for (unsigned int i=0;i<m_nDim;i++)
         {
-            for (int j=0;j<m_nVert;j++)
+            for (unsigned int j=0;j<m_nVert;j++)
                 std::cout << "\t" << std::setw(10) << m_simplex[j][i];
             std::cout << std::endl;
         }
@@ -344,7 +344,7 @@ void FGNelderMead::boundVertex(std::vector<double> & vertex,
                                const std::vector<double> & lowerBound,
                                const std::vector<double> & upperBound)
 {
-    for (int dim=0;dim<m_nDim;dim++)
+    for (unsigned int dim=0;dim<m_nDim;dim++)
     {
         if (vertex[dim] > upperBound[dim]) vertex[dim] = upperBound[dim];
         else if (vertex[dim] < lowerBound[dim]) vertex[dim] = lowerBound[dim];

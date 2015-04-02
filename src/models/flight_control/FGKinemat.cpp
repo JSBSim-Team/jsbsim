@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGKinemat.cpp,v 1.14 2014/01/13 10:46:09 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGKinemat.cpp,v 1.15 2015/04/02 17:39:28 bcoconni Exp $");
 IDENT(IdHdr,ID_FLAPS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ bool FGKinemat::Run(void )
   while ( dt0 > 0.0 && !EqualToRoundoff(Input, Output) ) {
 
     // Find the area where Output is in
-    int ind;
+    unsigned int ind;
     for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
       if (NumDetents <= ind)
         break;
@@ -190,7 +190,7 @@ void FGKinemat::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       cout << "      DETENTS: " << NumDetents << endl;
-      for (int i=0;i<NumDetents;i++) {
+      for (unsigned int i=0;i<NumDetents;i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
       if (IsOutput) {
