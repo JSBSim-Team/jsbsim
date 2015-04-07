@@ -129,7 +129,7 @@
    <location unit="IN">
      <x> 173.23 </x>
      <y>   0.00 </y>
-     <z>  -9.45 </z>
+     <z>  9.45 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -145,7 +145,7 @@
     <location unit="IN">
      <x>    0.0 </x>
      <y> -133.9 </y>
-     <z>  -35.8 </z>
+     <z>  35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -157,7 +157,7 @@
     <location unit="IN">
      <x>    0.0 </x>
      <y>  133.9 </y>
-     <z>  -35.8 </z>
+     <z>  35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -169,7 +169,7 @@
     <location unit="IN">
      <x>   -8.7 </x>
      <y> -112.2 </y>
-     <z>  -33.5 </z>
+     <z>  33.5 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -181,7 +181,7 @@
     <location unit="IN">
      <x>   -8.7 </x>
      <y>  112.2 </y>
-     <z>  -33.5 </z>
+     <z>  33.5 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -231,6 +231,8 @@
        <roll>   0.00 </roll>
        <yaw>   0.00 </yaw>
      </orient>
+     <sense> -1 </sense>
+     <p_factor> 60 </p_factor>
     </thruster>
   </engine>
 
