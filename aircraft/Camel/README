@@ -1,0 +1,57 @@
+http://forum.flightgear.org/viewtopic.php?f=4&t=19584
+
+
+51 posts • Page 1 of 4 • 1234
+New historically realistic Sopwith Camel JSBSim FDM released
+
+Postby flug » Sun Mar 31, 2013 5:33 am
+I've released a new JSBSim FDM for the Sopwith Camel that is as historically realistic as I can make it. Download the current version here:
+
+http://brenthugh.com/flightgear/sopwith ... Sim-16.zip [ver 1.8, 1/9/2014]
+
+- Choose the JSBSim version of the Camel, which is called "sopwithCamel-Bombable/JSBSim" in FGRun. The JSBSim FDM is my contribution to this project.
+- A YASim version is included in the package for convenience and comparison, but it does not incorporate any of the historically realistic features that the JSBSim FDM includes. the YASim version flies much like a modern aircraft would.
+
+In flying the existing Sopwith Camel flight models in Flightgear with Bombable in simulated combat situations, the shortcomings of these flight models became apparent to me. Flightgear flight models are typically designed and optimized for flying aircraft well within their design envelopes, as a commercial airline pilot does (and for good reason!). The FDMs work very well in those situations.
+
+However, combat aircraft are often operated near the limits--or even over the limits--of their documented capabilities. Particularly for an aircraft like the Camel, working with and against the quirks of its design was an integral part of operating the aircraft in both everyday operations and in combat. These operational quirks were openly exploited by combat pilots.
+
+As one writer said:
+
+    I enjoyed flying the Camel, but its vices of control instability, extreme control sensitivity and pronounced gyroscopic effects all combined to create the impression of balancing an egg on the point of a needle rather than flying an aircraft . . .
+
+    It was never forced into manoeuvres - they were executed by light pressure on the controls and subsequently relaxing, or sometimes reversing, the pressure once the desired rate of response was attained.
+
+
+
+In flying the Camel in FlightGear/Bombable, I became curious about the real historical experience of flying a Camel. What about the famous strong gyroscopic effect that causes the nose to rise in a LH and drop in a RH turn? It's commented on by most every pilot who writes about flying the Camel, but (it turns out) impossible to implement in YASim. What about the famous sensitivity to the controls, the quick turns (especially to the right), and propensity to fall into spins, and all the rest?
+
+I set out to create a flight model of the Camel that would incorporate as many of the documented combat flight characteristics of the Camel as possible, and in as realistic a way as possible. In addition, as of ver 1.3 it includes:
+
+- More historically accurate lift/drag profile
+- Historically accurate modelling of gyroscopic moment of engine and prop, which has very noticeable effects on turns and other maneuvers.
+- More realistic start sequence
+- Engine starves of fuel and stops in inverted/negative-G flight, just as in historical Camel; restarts when positive G flight resumes.
+- Option of manual mixture control (fiddly engine controls are an often-mentioned feature of the Camel)
+
+Ver. 1.6:
+- Tweaked controls that better fit historic descriptions--but are far different (and generally, weaker and less effective) than controls on modern aircraft we are more familiar with. Particularly:
+
+- Weak rudder, too weak to completely counter engines gyroscopic moment in fast turns.
+- Ailerons have a vast amount of adverse yaw, a high amount of drag, and generally far less effective in inducing roll than you would expect from four such large barn-door-like affairs.
+- Elevator is more powerful than the rudder or ailerons but still relatively weaker than in previous versions.
+
+- First really convincing demonstration of the faster right/slower left turn characteristic cause by the gyroscopic moment of the rotary engine together with that other control characteristics of the aircraft. (Most obvious in sustained, constant speed, level turns at about 60-65 knots.)
+- Generally smoother and
+- Improved stall and spin response compared with ver. 1.3.
+- Tweaked overall weight, center of gravity, fuel tanks, and a few other items mentioned by people who posted on this thread (THANK YOU!)
+
+Ver. 1.8:
+- Incorporated many suggestions made by users when the historically accurate Camel was Aircraft of the Month in May 2013.
+- Improved spin characteristics--now it doesn't get 'stuck' in certain situations and just float straight down without getting into a spin.
+- Improved realism of the control surfaces further, which further makes the difference in speed between left and right turns obvious
+- Generally, further refinements to FDM and realism.
+
+The new JSBSim FDM is my first try at accomplishing this--any feedback appreciated. It is included as part of the Bombable FG add-on package, but it also works as a free-standing aircraft (and installs alongside the existing Sopwith Camel, so it doesn't over-write anything.)
+
+If this new FDM works for people, I'd like to see it included in the next FG release. I think it would be a simple drop-in addition to the existing FG 2.10 UIUC and YASim Sopwith Camel versions.
