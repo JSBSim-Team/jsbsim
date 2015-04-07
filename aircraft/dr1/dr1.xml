@@ -129,7 +129,23 @@
    <location unit="IN">
      <x> 173.23 </x>
      <y>   0.00 </y>
-     <z>  9.45 </z>
+     <z>  -9.45 </z>
+   </location>
+   <static_friction>  0.80 </static_friction>
+   <dynamic_friction> 0.50 </dynamic_friction>
+   <rolling_friction> 0.02 </rolling_friction>
+   <spring_coeff unit="LBS/FT">       200 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  100 </damping_coeff>
+   <max_steer unit="DEG"> 0.00 </max_steer>
+   <brake_group>NONE</brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="STRUCTURE" name="RUDDER_TOP">
+   <location unit="IN">
+     <x> 173.23 </x>
+     <y>   0.00 </y>
+     <z>  16.93 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -145,7 +161,7 @@
     <location unit="IN">
      <x>    0.0 </x>
      <y> -133.9 </y>
-     <z>  35.8 </z>
+     <z>   35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -157,7 +173,7 @@
     <location unit="IN">
      <x>    0.0 </x>
      <y>  133.9 </y>
-     <z>  35.8 </z>
+     <z>   35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -169,7 +185,7 @@
     <location unit="IN">
      <x>   -8.7 </x>
      <y> -112.2 </y>
-     <z>  33.5 </z>
+     <z>  -33.5 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -181,7 +197,7 @@
     <location unit="IN">
      <x>   -8.7 </x>
      <y>  112.2 </y>
-     <z>  33.5 </z>
+     <z>  -33.5 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
