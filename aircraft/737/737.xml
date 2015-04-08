@@ -8,7 +8,7 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2006-01-04 </filecreationdate>
-        <version>$Revision: 1.41 $</version>
+        <version>$Revision: 1.42 $</version>
         <description> Models a Boeing 737. </description>
         <license>
           <licenseName>GPL (General Public License)</licenseName>
@@ -915,7 +915,7 @@
  <input port="5137" /> 
  
  <!-- 6 properties input, + 1 for the time stamp -->
- <input port="5139" type="UDPSOCKET" rate="20">
+ <input port="5139" type="QTJSBSIM" rate="20">
   <property> fcs/aileron-cmd-norm </property> 
   <property> fcs/elevator-cmd-norm </property> 
   <property> fcs/rudder-cmd-norm </property> 
