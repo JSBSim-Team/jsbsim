@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInput.cpp,v 1.32 2015/04/02 02:20:50 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGInput.cpp,v 1.33 2015/04/08 19:35:00 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,8 @@ bool FGInput::Load(Element* el)
   } else if (type == "QTJSBSIM") {
     Input = new FGUDPInputSocket(FDMExec);
   } else if (type != string("NONE")) {
-    cerr << "Unknown type of input specified in config file" << endl;
+    cerr << element->ReadFrom()
+         << "Unknown type of input specified in config file" << endl;
   }
 
   if (!Input) return false;
