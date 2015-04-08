@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.17 2015/02/15 11:57:52 bcoconni Exp $
+    @version $Id: FlightGear.hxx,v 1.18 2015/04/07 07:56:42 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 

@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<system name="automixture">
+  <property value="1.">fcs/mixture-gain</property>
+  <property value="1.">fcs/automixture-enable</property>
+
+  <channel name="Clerget9B">
+     
+    <fcs_function name="systems/mixture-cmd">
+      <function>
+        <product>
+          <table>
+            <independentVar lookup="row">atmosphere/P-psf</independentVar>
+            <!-- This keeps the engine at 1250 rpm  2013/04/15 -->
+            <tableData>
+                  <!--
+                  50     0.075 
+                  990    0.52 
+                  1078   0.62325
+                  1215.7 0.72225
+                  1364.6 0.824
+                  1679   0.714
+                  2048   0.846
+                  2110   0.86525
+                  2500   1.0
+                  -->
+                  
+                  <!-- 
+                  50     0.075 
+                  990    0.52
+                  1208   0.5655
+                  1470   0.6425
+                  1671   0.725
+                  2043   0.846
+                  2111   0.86525
+                  -->
+                  
+                  50     0.075 
+                  990    0.52
+                  1207   0.61775  <!-- wont reach 1250, about 1210 -->
+                  1469   0.843
+                  1684   0.78275
+                  2048   0.9065
+                  2113   0.934
+                  2500   1.0
+                  
+                  
+                  
+                  
+            </tableData>
+          </table>
+        </product>
+      </function>
+    </fcs_function>
+    
+    <switch name="systems/mixture-pos-norm">
+      <default value="fcs/mixture-cmd-norm"/>
+      <test value="systems/mixture-cmd">fcs/automixture-enable == 1</test>
+    </switch>
+    
+    <pure_gain name="systems/mixture-pos-gain-norm">
+      <input>systems/mixture-pos-norm</input>
+      <gain>fcs/mixture-gain</gain>
+      <output>fcs/mixture-pos-norm</output>
+    </pure_gain>
+  </channel>
+</system>
+
+<!-- Orig:
+
+<pure_gain>
+     <input>atmosphere/delta</input>
+     <gain>1.0</gain>
+     <output>/controls/engines/engine[0]/mixture</output>
+    </pure_gain>
+
+-->

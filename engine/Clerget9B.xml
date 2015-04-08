@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+  File:     Clerget9B.xml
+  Author:   Aero-Matic v 0.82
+
+  Inputs:
+    name:           Clerget9B
+    type:           piston
+    power:          130 hp
+    augmented?      no
+    injected?       no
+    
+    the clerget 130hp 9b is as follows:
+
+no. of cylinders...........................9
+bore..........................................120 mm
+stroke........................................160 mm
+weight complete...........................381 lbs
+compression ratio..........................4:1
+normal h.p....................................130
+effective h.p.................................135
+r.p.m...........................................12 50
+oil consumption per h.p. hour............   0.09 pints
+petrol consumption per h.p. hour.......   0.74 pints
+[0.74 pints = 0.0925 gallons; 6.073 pounds per gallon of gasoline =   .5617525 pounds per hp hr.       In grams per kW hr that is  341.701125 ]
+
+the 110 hp 9z is:
+
+no. of cylinders..............................9
+bore.............................................1 20 mm
+stroke..........................................16 0 mm
+weight complete.............................397 lbs
+compression ratio............................4:1
+normal h.p.....................................110
+effective h.p..................................115
+r.p.m............................................. 1180
+oil consumption per h.p. hour............ 0.14 pints
+petrol consumption per h.p. hour........ 0.75 pints
+
+the 140 hp 9bf *is:
+
+no. of cylinders ................................9
+bore.............................................. .120 mm
+stroke............................................ .172 mm
+weight complete...............................381 lbs
+compression ratio..............................5.3:1
+normal h.p.......................................140
+effective h.p....................................153
+r.p.m............................................. .1250
+oil consumption per h.p. hour.............. 0.11 pints
+petrol consumption per h.p. hour......... 0.59 pints
+
+SRC: http://www.theaerodrome.com/forum/2001/10278-clerget-9b-fuel-consumption.html
+-->
+
+<piston_engine name="Clerget9B">
+  <minmp unit="INHG">          23.0 </minmp>
+  <maxmp unit="INHG">         28.5 </maxmp>
+  <displacement unit="IN3"> 993.8 </displacement>
+  <maxhp unit="HP">        130.00 </maxhp>
+  <cycles>         4.0 </cycles>
+  <idlerpm>      300.0 </idlerpm>
+  <maxrpm>      1250.0 </maxrpm>
+  <maxthrottle>    1.0 </maxthrottle><!-- Deprecated -->
+  <minthrottle>    0.1 </minthrottle><!-- Deprecated -->
+  <sparkfaildrop>  0.17 </sparkfaildrop>
+  
+  <volumetric-efficiency> 0.673 </volumetric-efficiency>
+<!-- Optional items that affect engine performance -->
+ <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->
+<bsfc unit="LBS/HP*HR"> 0.54 </bsfc> <!-- 0.5617525 is the calculated amount but the JSBSim manual says that JSBSim incorporates some of this internally so the number may need to be reduced some.  0.353 gives the rated top speed of 116 kts for the Camel at high rpm with unaltered CamelProp.xml.  But with the adjusted CamelProp C_THRUST values it is more like .50-->
+ <stroke unit="IN">  6.2992  </stroke>
+ <bore unit="IN">    4.72441 </bore>
+ <cylinders>         9.0  </cylinders>
+ <compression-ratio> 4.0 </compression-ratio> 
+ 
+ 
+</piston_engine>

@@ -9,18 +9,6 @@
   <filecreationdate> 2008-07-26 </filecreationdate>
   <version>$Revison: $</version>
   <description> Models a Fokker Dr.1. </description>
-      <note>
-        This model was created using publicly available data, publicly available
-        technical reports, textbooks, and guesses. It contains no proprietary or
-        restricted data. If this model has been validated at all, it would be
-        only to the extent that it seems to "fly right", and that it possibly
-        complies with published, publicly known, performance data (maximum speed,
-        endurance, etc.). Thus, this model is meant for educational and entertainment
-        purposes only.
-
-        This simulation model is not endorsed by the manufacturer. This model is not
-        to be sold.
-      </note>
  </fileheader>
 
 <!--
@@ -79,7 +67,7 @@
    <ixx unit="SLUG*FT2">    368.55 </ixx>
    <iyy unit="SLUG*FT2">    522.24 </iyy>
    <izz unit="SLUG*FT2">    731.37 </izz>
-   <emptywt unit="LBS" >       775 </emptywt>
+   <emptywt unit="LBS" >       895 </emptywt>
    <location name="CG" unit="IN">
      <x>   0.00 </x>
      <y>   0.00 </y>
@@ -91,9 +79,9 @@
 
   <contact type="BOGEY" name="LEFT_MAIN">
    <location unit="IN">
-     <x>  -8.5 </x>
-     <y> -30.59 </y>
-     <z> -69.60 </z>
+     <x>  -8.66 </x>
+     <y> -30.32 </y>
+     <z> -76.77 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -103,13 +91,13 @@
    <max_steer unit="DEG">0</max_steer>
    <brake_group>NONE</brake_group>
    <retractable>0</retractable>
- </contact>
+  </contact>
 
   <contact type="BOGEY" name="RIGHT_MAIN">
    <location unit="IN">
-     <x>  -8.5 </x>
-     <y>  30.59 </y>
-     <z> -69.60 </z>
+     <x>  -8.66 </x>
+     <y>  30.32 </y>
+     <z> -76.77 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -119,13 +107,13 @@
    <max_steer unit="DEG">0</max_steer>
    <brake_group>NONE</brake_group>
    <retractable>0</retractable>
- </contact>
+  </contact>
 
-  <contact type="BOGEY" name="TAIL">
+  <contact type="BOGEY" name="TAIL_SKID">
    <location unit="IN">
-     <x> 157.48 </x>
+     <x> 162.20 </x>
      <y>   0.00 </y>
-     <z> -26.85 </z>
+     <z> -26.77 </z>
    </location>
    <static_friction>  0.80 </static_friction>
    <dynamic_friction> 0.50 </dynamic_friction>
@@ -135,41 +123,112 @@
    <max_steer unit="DEG"> 0.00 </max_steer>
    <brake_group>NONE</brake_group>
    <retractable>0</retractable>
- </contact>
+  </contact>
 
-  <contact type="STRUCTURE" name="LEFT_WING">
+  <contact type="STRUCTURE" name="TAIL">
+   <location unit="IN">
+     <x> 173.23 </x>
+     <y>   0.00 </y>
+     <z>  -9.45 </z>
+   </location>
+   <static_friction>  0.80 </static_friction>
+   <dynamic_friction> 0.50 </dynamic_friction>
+   <rolling_friction> 0.02 </rolling_friction>
+   <spring_coeff unit="LBS/FT">       200 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  100 </damping_coeff>
+   <max_steer unit="DEG"> 0.00 </max_steer>
+   <brake_group>NONE</brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="STRUCTURE" name="RUDDER_TOP">
+   <location unit="IN">
+     <x> 173.23 </x>
+     <y>   0.00 </y>
+     <z>  16.93 </z>
+   </location>
+   <static_friction>  0.80 </static_friction>
+   <dynamic_friction> 0.50 </dynamic_friction>
+   <rolling_friction> 0.02 </rolling_friction>
+   <spring_coeff unit="LBS/FT">       200 </spring_coeff>
+   <damping_coeff unit="LBS/FT/SEC">  100 </damping_coeff>
+   <max_steer unit="DEG"> 0.00 </max_steer>
+   <brake_group>NONE</brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="STRUCTURE" name="LEFT_UPPER_WING">
     <location unit="IN">
-     <x>   22.4 </x>
-     <y> -108.8 </y>
-     <z>  -34.8 </z>
+     <x>    0.0 </x>
+     <y> -133.9 </y>
+     <z>   35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
     <spring_coeff unit="LBS/FT">        300 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC">   150 </damping_coeff>
- </contact>
+  </contact>
 
-  <contact type="STRUCTURE" name="RIGHT_WING">
+  <contact type="STRUCTURE" name="RIGHT_UPPER_WING">
     <location unit="IN">
-     <x>   22.4 </x>
-     <y>  108.8 </y>
-     <z>  -34.8 </z>
+     <x>    0.0 </x>
+     <y>  133.9 </y>
+     <z>   35.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
     <spring_coeff unit="LBS/FT">        300 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC">   150 </damping_coeff>
- </contact>
+  </contact>
+
+  <contact type="STRUCTURE" name="LEFT_LOWER_WING">
+    <location unit="IN">
+     <x>   -8.7 </x>
+     <y> -112.2 </y>
+     <z>  -33.5 </z>
+    </location>
+    <static_friction>  0.80 </static_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <spring_coeff unit="LBS/FT">        300 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC">   150 </damping_coeff>
+  </contact>
+
+  <contact type="STRUCTURE" name="RIGHT_LOWER_WING">
+    <location unit="IN">
+     <x>   -8.7 </x>
+     <y>  112.2 </y>
+     <z>  -33.5 </z>
+    </location>
+    <static_friction>  0.80 </static_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <spring_coeff unit="LBS/FT">        300 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC">   150 </damping_coeff>
+  </contact>
 
  </ground_reactions>
+
+ <external_reactions>
+  <force name="pushback" frame="BODY">
+   <location unit="IN">
+     <x> 173.23 </x>
+     <y>   0.00 </y>
+     <z>  -9.45 </z>
+   </location>
+   <direction>
+    <x>1</x>
+    <y>0</y>
+    <z>0</z>
+   </direction>
+  </force>
+ </external_reactions>
 
  <propulsion>
 
    <engine file="Oberursel-UrII">
     <location unit="IN">
-      <x> -25.00 </x>
+      <x> -18.90 </x>
       <y>   0.00 </y>
-      <z>   0.00 </z>
+      <z> -16.14 </z>
     </location>
     <orient unit="DEG">
       <pitch> 0.00 </pitch>
@@ -188,27 +247,32 @@
        <roll>   0.00 </roll>
        <yaw>   0.00 </yaw>
      </orient>
+     <sense> -1 </sense>
+     <p_factor> 60 </p_factor>
     </thruster>
   </engine>
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x>   0.04 </x>
+       <x>  -5.91 </x>
        <y>   0.00 </y>
-       <z>  -5.68 </z>
+       <z>  -7.09 </z>
      </location>
-     <capacity unit="LBS"> 100.00 </capacity>
+     <capacity unit="LBS"> 125.00 </capacity>
      <contents unit="LBS">  50.00 </contents>
   </tank>
 
  </propulsion>
+
+ <system file="pushback"/>
+ <!-- <system file="chocks"/> -->
 
  <flight_control name="FCS: Fokker Dr.1">
 
   <channel name="Pitch">
    <summer name="Pitch Trim Sum">
       <input>fcs/elevator-cmd-norm</input>
-      <input>fcs/pitch-trim-cmd-norm</input>
+<!--  <input>fcs/pitch-trim-cmd-norm</input> -->
       <clipto>
         <min> -1 </min>
         <max>  1 </max>
@@ -242,7 +306,7 @@
   <channel name="Roll">
    <summer name="Roll Trim Sum">
       <input>fcs/aileron-cmd-norm</input>
-      <input>fcs/roll-trim-cmd-norm</input>
+<!--  <input>fcs/roll-trim-cmd-norm</input> -->
       <clipto>
         <min> -1 </min>
         <max>  1 </max>
@@ -298,7 +362,7 @@
   <channel name="Yaw">
    <summer name="Rudder Command Sum">
       <input>fcs/rudder-cmd-norm</input>
-      <input>fcs/yaw-trim-cmd-norm</input>
+<!--  <input>fcs/yaw-trim-cmd-norm</input> -->
       <clipto>
         <min> -0.35 </min>
         <max>  0.35 </max>
@@ -334,10 +398,6 @@
  <aerodynamics>
 
   <axis name="LIFT">
-    <!--
-       CLadot:	0.759 (/rad)
-       CLq:	1.245 (/rad)
-     -->
 
     <function name="aero/coefficient/CLalpha">
       <description>Lift_due_to_alpha</description>
@@ -461,15 +521,35 @@
        </product>
     </function>
 
+    <function name="aero/coefficient/CLadot">
+       <description>Delta_Lift_due_to_alpha_rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>aero/alphadot-rad_sec</property>
+           <property>aero/ci2vel</property>
+           <value>0.759</value>
+       </product>
+    </function>
+
+    <function name="aero/coefficient/CLq">
+       <description>Lift_due_to_pitch_rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>velocities/q-aero-rad_sec</property>
+           <property>aero/ci2vel</property>
+           <value>1.245</value>
+       </product>
+    </function>
+
   </axis>
 
   <axis name="DRAG">
     <!--
-       CDo:	0.0323	[x]
-       CDde:	0.0136	[x]
        CDK:	0.0922
      -->
-    <function name="aero/coefficient/CD0">
+    <function name="aero/coefficient/CDo">
        <description>Drag_at_zero_lift</description>
        <product>
           <property>aero/qbar-psf</property>
@@ -595,21 +675,24 @@
   </axis>
 
   <axis name="SIDE">
-    <!--
-       CYbeta:	-0.3855 (/rad)	[x]
-       CYda:	0
-       CYdr:	0.094 (/rad)	[x]
-       CYp:	-0.01 (/rad)	[x]
-       CYr:	0.1047 (/rad)	[x]
-     -->
 
-    <function name="aero/coefficient/CYb">
+    <function name="aero/coefficient/CYbeta">
        <description>Side_force_due_to_beta</description>
        <product>
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>aero/beta-rad</property>
            <value>-0.3855</value>
+       </product>
+    </function>
+
+    <function name="aero/coefficient/CYda">
+       <description>Side_force_due_to_aileron</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>fcs/left-aileron-pos-rad</property>
+           <value>0.0000</value>
        </product>
     </function>
 
@@ -648,15 +731,8 @@
   </axis>
 
   <axis name="ROLL">
-    <!--
-       Clbeta:	-0.02 (/rad)	[x]
-       Clda:	-0.087 (/rad)	[x]
-       Cldr:	0.005 (/rad)	[x]
-       Clp:	-0.193 (/rad)	[x]
-       Clr:	0.0458 (/rad)	[x]
-    -->
 
-    <function name="aero/coefficient/Clb">
+    <function name="aero/coefficient/Clbeta">
        <description>Roll_moment_due_to_beta</description>
        <product>
            <property>aero/qbar-psf</property>
@@ -687,7 +763,7 @@
            <property>metrics/bw-ft</property>
            <property>aero/bi2vel</property>
            <property>velocities/r-aero-rad_sec</property>
-           <value>0.458</value>
+           <value>-0.0458</value>
        </product>
     </function>
 
@@ -709,17 +785,13 @@
            <property>metrics/Sw-sqft</property>
            <property>metrics/bw-ft</property>
            <property>fcs/rudder-pos-rad</property>
-           <value>0.005</value>
+           <value>-0.005</value>
        </product>
     </function>
 
   </axis>
 
   <axis name="PITCH">
-    <!--
-       Cmadot:	-1.122 (/rad)	[x]
-       Cmq:	-1.839 (/rad)	[x]
-    -->
 
     <function name="aero/coefficient/Cmalpha">
        <description>Pitch_moment_due_to_alpha</description>
@@ -912,15 +984,8 @@
   </axis>
 
   <axis name="YAW">
-    <!--
-       Cnbeta:	0.096 (/rad)	[x]
-       Cnda:	0.0552 (/rad)	[x]
-       Cndr:	-0.0502 (/rad)	[x]
-       Cnp:	-0.0109 (/rad)	[x]
-       Cnr:	-0.082 (/rad)	[x]
-     -->
 
-    <function name="aero/coefficient/Cnb">
+    <function name="aero/coefficient/Cnbeta">
        <description>Yaw_moment_due_to_beta</description>
        <product>
            <property>aero/qbar-psf</property>

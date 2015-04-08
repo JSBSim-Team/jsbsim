@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<system name="chocks">
+ <channel name="Gear">
+
+   <switch name="/sim/model/fkdr1/chocks">
+     <default value="0"/>
+     <test value="1">
+        /controls/gear/brake-parking == 1
+     </test>
+    <output>forces/hold-down</output>
+   </switch>
+
+ </channel>
+</system>
+

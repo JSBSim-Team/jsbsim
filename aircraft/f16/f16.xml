@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-12-28 </filecreationdate>
-        <version> $Revision: 1.92 $ </version>
+        <version> $Revision: 1.93 $ </version>
         <license>
          <licenseName>GPL (General Public License)</licenseName>
          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -31,7 +31,7 @@
         <reference refID="None" author="Richard Murray" title="http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/" date="n/a"/>
         <reference refID="H-1999" author="NASA" title="Dynamic ground effects flight test of an F-15 aircraft" date="n/a"/>
         <reference refID="H-2177" author="NASA" title="Dynamic ground effect for a Cranked Arrow Wing Airplane" date="n/a"/>
-        <reference refID="None" author="n/a" title="http://www.codeonemagazine.com/article.html?item_id=37" date="n/a"/>
+        <reference refID="None" author="n/a" title="http://www.codeonemagazine.com/archives/1991/articles/jul_91/july2a_91.html" date="n/a"/>
     </fileheader>
 
     <metrics>
@@ -683,10 +683,17 @@
 
         <channel name="Yaw">
             <!-- Calculate the normalized yaw-rate -->
-            <pure_gain name="fcs/yaw-rate-norm">
+            <scheduled_gain name="fcs/yaw-rate-norm">
                 <input>velocities/r-aero-rad_sec</input>
-                <gain>100</gain>
-            </pure_gain>
+                <table>
+                    <independentVar>velocities/vg-fps</independentVar>
+                    <tableData>
+                        80.0        0.0
+                        100.0       15.0
+                        150.0       100.0
+                    </tableData>
+                </table>
+            </scheduled_gain>
 
             <!-- Calculate the normalized yaw-load -->
             <pure_gain name="fcs/yaw-load-norm">
@@ -730,10 +737,10 @@
             </pid>
 
             <summer name="fcs/yaw-scheduler">
-                <input>fcs/rudder-cmd-norm</input>
-                <input>fcs/yaw-trim-cmd-norm</input>
-                <input>fcs/yaw-load-pid</input>
-                <clipto>
+              <input>fcs/rudder-cmd-norm</input>
+              <input>fcs/yaw-trim-cmd-norm</input>
+              <input>fcs/yaw-load-pid</input>
+              <clipto>
                 <min>-1</min>
                 <max>1</max>
               </clipto>
@@ -960,8 +967,15 @@
 
         <channel name="Canopy">
 
+            <switch name="fcs/canopy-trigger">
+                <default value="fcs/canopy-engage"/>
+                <test value="0">
+                    velocities/u-fps gt 1.0
+                </test>
+            </switch>
+
             <kinematic name="fcs/canopy-control">
-                <input>fcs/canopy-engage</input>
+                <input>fcs/canopy-trigger</input>
                 <traverse>
                     <setting>
                         <position>0</position>

@@ -1,0 +1,2498 @@
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+
+<!--
+
+************************************************************************
+
+JSBSim aerodynamic model for a Sopwith Camel 1F1 
+
+Version: 1.6
+
+Author: Brent Hugh, 6 May 2013
+
+Goal: Create a flight model of the Camel that would incorporate as many of the documented combat flight characteristics of the Camel as possible, and in as realistic a way as possible.
+
+Sources & Acknowledgements: See SopwithCamel-Realistic-JSBSim-Flight-Model-Notes.txt in the Docs subdirectory, other docs in that directory, and the notes below. 
+
+************************************************************************
+
+-->
+
+
+
+<!-- Max sustained turn rate is about 76 deg/sec.  That is near stall speed, level flight, at sea level.  http://home.comcast.net/~clipper-108/AIAAPaper2005-119.pdf p. 7 -->
+
+<!-- "I lived its quick response - it was so remarkably swift and sensitive that it demanded constant attention.  The torque caused the nose to rise in a left-hand turn and drop in a right-hand turn.  Fairly large amounts of left rudder were needed in bothturns to correct for these idiosyncrasis. The tiny biplane was so snesitive in a turn, however, that if the turn were tightened just a little, it was likely to whip into a tight spin - quickly and without warning.  Oddly this very ease for spining was used in combat by many pilots to shake a persisten German from their tails. sopwith Came vs Fokker Dr 1: Western Front 1917-18 by Jon Guttman, Harry Dempsey, quoting from mark Curtis Kinney's memoir, I Flew a Camel 
+
+Here is a description about the Camel's traits from BARKER VC, (via author Wayne Ralph at http://www.theaerodrome.com/forum/2001/11306-sopwith-camel-flight-characteristics.html ):
+
+Quote:
+
+All the weight of the engine, guns, and pilot was concentrated in the first seven feet of a short 18-foot fuselage. The various models of rotary engine fitted to the Camel, from a 110-hp Le Rhone, to a 130-hp Clerget, to a 150-hp Bentley, had the propeller attached to the engine crankcase and the crankshaft to the aircraft so that the propeller and engine revolved together at more than 1250 rpm. This heavy whirling engine was lubricated continually by castor oil which was not recycled, but rather was burned in the combustion process and vented overboard, soaking the aircraft, the pilot's flying suit, helmet and goggles.
+The gyroscopic forces that were generated varied in intensity based on a complex interaction of engine rpm, aircraft speed, and control input. The scout had a different character turning left or right, as did all the rotary-engined aeroplanes, but the Camel to an extreme degree. It was sluggish in left turns and the nose always pitched up, while right turns were very quick, with the nose dropping sharply. Without plenty of top (ie, left) rudder to correct the pitch down, it would spin.
+A Camel pilot had to apply left rudder turning left or right, the amount varying with aircraft speed and engine rpm. Since the engine rotation countered the input of left stick and rudder, some pilots made all turns to the right because the aircraft was quicker through 270 degrees, than 90 degrees to the left. The Camel's elevator was powerful and sensitive, while the rudder was too small and relatively ineffective.
+Coordinated turns demanded a fine touch. Correcting sideslip, the tendency of the aeroplane to slide to the inside of a banked turn, by applying opposite rudder, caused the Camel to tighten up in the turn. In steep turns over 45 degrees of bank, the aircraft tended to pitch up its nose, and tighten up its bank angle as speed reduced, requiring continual adjustments in the amount of forward pressure on the stick with engine rpm changes. In the words of test pilot W/C Paul A. Hartman, RCAF, the Camel has no 'dynamic longitudinal stability' in steep turns.
+Accelerating the aircraft caused the nose to climb, and swing to the left. At 110 miles per hour, there was about 15 to 20 pounds of back force on the control column, which could not be trimmed out because the aircraft had no pilot-adjustable, moveable horizontal stabilizer. Therefore, Camel pilots had to fly two-to-three hour missions, continually applying forward pressure just to maintain level flight. Letting go resulted in the aircraft pitching up, and rolling inverted to the right. Moving the stick forward to enter a dive caused the Camel to yaw left because of gyroscopic force, and correcting this yaw with right rudder caused the nose to pitch down sharply. By today's standards the Camel was completely unacceptable, and yet many pilots of 1917-8, most with under 100 hours of flying time used it as a lethal weapon.
+
+- - - 
+http://www.theaerodrome.com/forum/2001/11306-sopwith-camel-flight-characteristics-3.html
+
+ In those notes are a description of when and why the mixture had to be adjusted. If memory serves, it was perilously low to the ground, under 250 feet. The shift to left rudder would have to have taken place either just before or just after this, because the whole point of changing the mixture was that the engine would have been on the verge of choking, which means that you'd be trying to maintain flying speed.
+
+My guess is that the shift would have to happen within 10-20 seconds of getting airborne under normal circumstances.
+
+- - - 
+
+"...all flights of these early machines were conducted from the grass surface of the airfield, not the paved runways, and the steerable tail skid of the Camel helped to overcome a slight swing to the left as I opened the throttle. The tail came up at about 20 knots.
+
+As the speed reached 40 knots I eased the stick back slightly and the Camel became airborne. It accelerated rapidly to 55 knots and I held it in a climb at that speed until I reached 500 feet. I leveled off, leaned the mixture, and started a left hand turn. The gyroscopic effect from the rotary engine quickly became apparent...
+
+...I enjoyed flying the Camel, but its vices of control instability, extreme control sensitivity and pronounced gyroscopic effects all combined to create the impression of balancing an egg on the point of a needle rather than flying an aircraft...it was never forced into manoeuvres - they were executed by light pressure on the controls and subsequently relaxing, or sometimes reversing, the pressure once the desired rate of response was attained.
+
+By modern standards of stability and control, the Camel would be totally unacceptable as a military aircraft...
+
+(quoted from Canada's National Aviation Museum - Its History and Collection, by K.M. Molson)
+
+http://www.theaerodrome.com/forum/2001/11306-sopwith-camel-flight-characteristics.html
+
+
+
+"As I opened the throttle I simultaneously applied full left rudder and as I became airborn I found that I had full left rudder on. (This was the answer always, as I afterwards found, and I was never in trouble again from this cause)"
+
+August 98 issue of FLight journal has the flying of the Camel by Rich King. 160 Hp Gnome engine (yes, rotary)
+qoute:
+..Right rudder is needed to keep the Camel tracking straight ahead while it is on the runway, and as the tail comes up, I find that my rudder correction was right on. I m facing straight down the center of the runway.........A little back pressure on the control stick and the bumpy ground falls away behind me, and the Camels speed continues to increase at an exhilarating rate. A little forward pressure on the "closh handle" hold the aeroplane a few feet above the runway while its speed continues to increase. ....
+Left Rudder is now needed to keep the racing Camel straight....." end quote
+
+http://www.theaerodrome.com/forum/2001/11306-sopwith-camel-flight-characteristics-2.html
+
+
+From the Frank Tallman book "Flying the old planes"...
+
+My Sopwith Camel is, as far as I'm aware, the only original World War 1 Camel ever brought back to flying condition. It was originally owned by Colonel Jarrett of the Jarrett War Museum located on the old Steel Pier in Atlantic City; who in the 1930's had the best museum of WWI equipment ever assembled, including the Belgian War Museum in Brussels. The Jarrett Museum fell on hard times following WWII and, with time and money on my side after my service period, and a lifelong ambition of owning a WWI aircraft, I purchased for a small sum (by today's standards) several antique aircraft including the Camel, a Nieuport 28, a Pfalz D.XII, a Fokker D.VII and a SPAD VII.
+
+The Camel was the first WWI aircraft I brought back to flying condition and required some major rebuilding, which took several years, many thousands of dollars and a whole host of experts including Paul Poberzney of the Experimental Aircraft Association, the gifted master craftsman Ned Kensinger, the Hawker Siddeley Group and a number of very dedicated volunteer's.
+
+(NB: There is quite a bit on the rebuilding process in the Chapter but I have left it out of this extract for the sake of space).
+
+When the day finally came to fly the air was filled with great anticipation. On arrival at the airport though I was dismayed to hear from my team that they had been trying to get the temperamental 110 h.p. Le Rhone started since 8.00am that morning, without success. The lack of knowledge amongst us regarding the Le Rhone was appalling. Did we have spark? Yes. Was the mag set? Yes. Had the commutator ring been wiped off? Yes. Had we primed it? Only every other cylinder.
+
+With only a vague notion of what I was doing I clambered into the cockpit (a very tight fit) and reviewed the cord-wrapped Spade stick, the Block tube, carburettors next to one's knees, the flexible air intake to the outside air scoops, the wood wire brace longerons, the instrument panel with it's clutter and the duel control cables to the wooden rudder bar. At my request, the crew forced open the intake valves as the engine was pushed through (switch off) and shot a charge of fuel in each cylinder, as the cylinder came in front of the hole in the cowling. By accident, rather than by knowledge, I advanced the long lever controlling the air, and in pushing the manet (a small wheel knob on the miniature control quadrant) forward and then returning it, I had hit on the correct starting procedure. Wonder of wonders, as I flipped the porcelain-mounted switch up and called for contact, the Le Rhone started with a full-throated bellow, scaring both me and the crew!
+
+By shoving the fuel-controlling lever forward and using the coupe (cut-out) button on the stick, I was able to keep the engine running. Soon the never-to-be-forgotten smell of castor oil infused our area, and the sight of oil splattering the leading edge of the low wings indicated that the engine was lubricating properly. Taxiing practice ended ignominiously a hundred feet from the starting point, when my newfound knowledge wasn't equal to the delicate adjustment of fuel and air, and the Le Rhone quit.
+
+The revitalised ground crew hauled the 900 pound airplane over the grass and faced me into the wind. For safety sake we changed the plugs, and the Le Rhone started first try. I headed down the field with the throttle wide open. The tail came up almost instantly, and visibility was good, except for the Aldis sight and the twin Vickers. Not having planned on flight it came as something of a shock to find the Camel airborne at about 35 mph after a ground run of just 150 feet. Being afraid of jockeying with my ticklish fuel and air controls I stayed low and just got used to the Camel's sensitive ailerons, elevators and rudder.
+
+I circled the field once, got into position for landing, shut fuel air and switch off, and made a light forward slip, touching down gently on three points. Total landing couldn't have been much longer than the initial take-off run.
+
+So much for my first (unintentional) flight in the Camel.
+
+Since then I've spent more time flying the Camel than any of the other historical aircraft in our collection. I've also had more forced landings in it than all the rest of the WWI aircraft combined. It's that temperamental Le Rhone. Cylinders have blown, magneto's have failed, even fouled spark plugs have brought me down unceremoniously, with sweating hands and my heart in my mouth, desperately seeking a patch of open ground on which to land. Yet for all that it's the one I turn to first for any show or exhibition, as the Camel gets my blood going like no other. This is an aircraft that is a joy to fly.
+
+With the Le Rhone 9J, you cannot adjust either the fuel or air intake without running the risk of a dead-stick landing. You must leave them alone and use you Coupe (cut-out) button for all fight handling.
+
+The take-off run is easy. In a wind of 10 to 15 knots you are airborne in a couple of plane lengths at 35 mph and climbing out at 60 mph, with a rate of climb of almost 1,000 feet a minute. The elevators are sensitive, as is the rudder. Consequently, when fling for any distance I often put the heels of my shoes on the floor tie wires, because the vibration of the Le Rhone through the rudder bar exaggerates the rudder movements.
+
+In level flight at 100 mph indicated, the Camel is delightful, with just a hint of rudder being required for straight flight. The structure is rugged enough to feel comfortable in loops, and being slightly tail-heavy it goes up and over in an incredibly small circle in the sky, and faster than any other WWI aircraft I have flown. Sneeze and your halfway through a loop before your aware of what's happened. 110 mph is enough to carry you through, and as you slow down over the top you must feed in rudder against the torque.
+
+In military shows I have ground strafed, and as soon as the airspeed reaches 130 to 140 mph the nose begins to hunt up and down, and the elevator becomes extremely sensitive. I feel this action is due largely to the square windshield between the two Vickers guns, causing a substantial burble over the tail surfaces.
+
+Turns are what the Camel is all about. Turning to the right with the torque requires the top rudder to hold the nose up, and the speed with which you can complete a 360-degree turn is breathtaking. Left turns are slower, with the nose wanting to rise during the turn. But small rudder input easily keeps the nose level with the horizon. In stalls at 35 to 40 mph the nose drops frighteningly fast and hard to the right, but you also get control back quickly, although a surprising amount of altitude has been lost. I have had the pleasure of limited dog fighting with other WWI fighters, and there are none that can stay with a Camel in a turn.
+
+With the Le Rhone being temperamental as it is, flying the Camel is best done at times when there are few other aircraft in the sky, leaving easy access to the airport in cases of emergency. The Camel touches down easily but runs out of rudder control almost instantly, and if you bounce your landing at all, you are likely to find yourself in a hairy ground loop looking at a rapidly bending aileron dragging in the grass.
+
+For a wide variety of reasons, the Camel is a fascinating airplane, flight-wise as well as historically. But don't think I ever got out of the Camel after being airborne even in the coldest weather without buckets of perspiration and considerable gratitude that I had gotten the little girl home again without breaking her into splinters!
+
+http://www.theaerodrome.com/forum/aircraft/45869-sopwith-camel-myth-6.html
+
+
+
+Additional comments on Camel handling characteristics by  Victor Yeates, author of "Winged Victory" (yes, it's a fictional novel, but his experiences of flying a camel were realistic, and are a valid, honest description)...
+
+
+Re training:
+
+"Camels were wonderful fliers when you had got used to them, which took about three months of hard flying. At the end of that time you were either dead, a nervous wreck, or the hell of a pilot and a terror to Huns . . ."
+
+Re turns:
+
+"And in the more legitimate matter of vertical turns, nothing in the skies could follow in so tight a circle..."
+
+Re the half-roll (Split S):
+
+"The same with the half-roll. Nothing would half-roll like a Camel. A twitch of the stick and flick of the rudder and you were on your back. The nose dropped at once and you pulled out having made a complete reversal of direction in the least possible time.
+
+Thomson, the squadron stunt expert told him that it (half-roll) was just the first half of a roll followed by the second half of a loop; the only stunt useful in fighting. If you were going the wrong way, it was the quickest known method of returning in your slipstream."
+
+Re the loop (he didn't like looping a Camel):
+
+"But a Camel had to be flown carefully round with exactly the right amount of left rudder, or else it would rear and buck and hang upside down and flop and spin."
+
+Re general flight:
+
+" . . . a Camel had to be held in flying position all the time, and was out of it in a flash. It was nose light, having a rotary engine weighing next to nothing per horse power, and was rigged tail heavy so that you had to be holding her down all the time. Take your hand off the stick and it would rear right up with a terrific jerk and stand on its tail."
+
+Re ground strafing (which he hated due to ground anti-ac machine gun fire):
+
+"Unfortunately, they were good machines for ground-strafing. They could dive straight down on anything, and when a few feet off the ground, go straight up again."
+
+Re speed:"...a Camel was a wonderful machine in a scrap. If only it had been fifty per cent faster! There was the rub. A Camel could neither catch anything except by surprise, nor hurry away from an awkward situation, and seldom had the option of accepting or declining combat...You couldn't have everything."
+
+http://www.theaerodrome.com/forum/aircraft/45869-sopwith-camel-myth-6.html
+
+-->
+<fdm_config name="Sopwith Camel" version="2.0" release="Alpha">
+
+    <fileheader>
+        <author> Brent Hugh</author>
+        <filecreationdate> 2011-10-29 </filecreationdate>
+        <description>Sopwith Camel with Weapons, matches available data for climb, max speed, general handling</description>
+        <version>Version 1.6</version>
+    </fileheader>
+
+    <metrics>
+        <!-- wing area 19.76 m^2 per sopwith-camel-specs-drawings-2-2.jpg, see docs directory-->
+        <!-- Note: per wikipedia winspan is 28.0 ft & wing area is 231 ft^2-->
+        <!-- Per http://aviation.technomuses.ca/collections/artifacts/aircraft/Sopwith2F1Camel/ :
+              Wing Span	8.2 m (26 ft 11 in)
+              Length	5.6 m (18 ft 6 in)
+              Height	2.8 m (9 ft 1 in)
+              Weight, Empty	434 kg (956 lb)
+              Weight, Gross	691 kg (1,523 lb)
+        -->
+        <!-- This is Sw-sqft used many times below: -->
+        <wingarea unit="FT2"> 212.6948698 </wingarea>
+        
+        <!--bw-ft used below: -->
+        <wingspan unit="FT"> 26.91 </wingspan>
+        <!-- wing chord calculated by measuring drawing sopwith-camel-specs-drawings-2-2.jpg; see calculations at Camel-JSBSim-calcs-2011-10D.xls sheet Camel Dimensions. -->
+        <!-- See CamelVsFokker in Docs directory for possibly more accurate figures for all aircraft parts. -->
+        <!-- Does the chord need to be doubled since this is a bi-plane? -->
+        
+        <!-- <chord unit="FT"> 4.5045 </chord> -->
+        <!--cbarw-ft -->
+        <chord unit="FT"> 9.01 </chord>
+        
+        <wing_incidence unit=""> 2.5 </wing_incidence>
+        
+        
+        <!-- htailarea calculated by measuring drawing sopwith-camel-specs-drawings-2-2.jpg; see calculations at Camel-JSBSim-calcs-2011-10D.xls sheet Camel Dimensions
+          But we assume 13.1 ft2 for htail, plus about half of elevator area (11.8 ft2) because the
+          elevator is there but unless the pilot is holding it absolutely steady it doesn't really work to 
+          stabilize as well as a fixed surface. -->
+        <htailarea unit="FT2"> 19.6 </htailarea>
+        
+        <!-- htailarm calculated by measuring drawing sopwith-camel-specs-drawings-2-2.jpg; see calculations at Camel-JSBSim-calcs-2011-10D.xls sheet Camel Dimensions -->
+        <htailarm unit="FT"> 12.38 </htailarm>
+        
+        
+        <!--Indeed you are correct about the Rudder - it's area was a paltry 4.9 sq. ft. (and fin at 3 sq. ft.) http://www.theaerodrome.com/forum/aircraft/47951-sopwith-camel-myth-2-a.html 
+        
+        The pathetically small fixed area on the fin/rudder made the problems in yaw even worse. A pilot generally doesn't hold the rudder pedals stiffly enough 
+for the rudder to contribute very much to yaw stability.
+
+        http://www.djaerotech.com/dj_askjd/dj_questions/short_coupled.html  
+         -->
+        
+        <!-- <vtailarea unit="FT2"> 7.90 </vtailarea> -->
+        <!-- We'll say 3 sq ft for fin plus an additional 2 sq ft for
+        the effect of the rudder -->
+        <vtailarea unit="FT2"> 5 </vtailarea> 
+        <!-- htailarm calculated by measuring drawing sopwith-camel-specs-drawings-2-2.jpg; see calculations at Camel-JSBSim-calcs-2011-10D.xls sheet Camel Dimensions -->
+        <vtailarm unit="FT"> 13.66 </vtailarm>
+
+        <location name="AERORP" unit="IN">
+            <x> 47 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 29.25 </x>
+            <y> -18 </y>
+            <z> 57 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    
+    <mass_balance>
+        <!-- iyy and izz are .3 X that of a typical plane of these dimensions due to Camel design concentrating mass v. close to c of g.  ixx is not affected by this
+         design feature so remains unchanged. --> 
+        <!-- <ixx unit="SLUG*FT2">708</ixx> -->
+        <ixx unit="SLUG*FT2">740</ixx>
+        <iyy unit="SLUG*FT2">182.7</iyy>
+        <izz unit="SLUG*FT2">366.9</izz>
+        <ixz unit="KG*M2">0</ixz>
+        <iyz unit="KG*M2">0</iyz>
+        <ixy unit="KG*M2">0</ixy>
+        <emptywt unit="LBS">1210</emptywt>
+        <!-- This was used in ver 1.0-1.3: 
+        <location name="CG" unit="IN">
+            <x>60</x>
+            <y>0</y>
+            <z>-5.62</z>
+        </location>
+        -->
+        <!-- Updated CoG info, courtesy Simon,
+         http://www.flightgear.org/forums/viewtopic.php?f=4&t=19584&start=30#p182202 
+          x=111.8cm  = 44.012 in
+          y=0
+          z=8cm (above)
+          -->
+        <location name="CG" unit="IN">
+            <x>44</x>
+            <y>0</y>
+            <z>3.54</z>
+        </location>
+        
+        <pointmass name="Equipment">
+            <form shape="ball">
+               <radius unit="FT"> 3 </radius>
+            </form> 
+            <weight unit="LBS"> 90 </weight>
+            <location name="cockpit_rear" unit="IN">
+                <x> 80 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+       <pointmass name="Castor Oil/Engine Lube">        
+            <form shape="ball">
+               <radius unit="FT"> 1.5 </radius>
+            </form> 
+            <!-- <weight unit="LBS"> 62.31 </weight>-->
+            <weight unit="LBS"> 0 </weight>
+            <location name="just_behind_engine" unit="IN">
+                <x> 30 </x>
+                <y> 0 </y>
+                <z> 10.62 </z>
+            </location>
+        </pointmass>
+    </mass_balance>
+
+    <ground_reactions>
+        <contact type="BOGEY" name="LEFT_MAIN">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> -29.06 </y>
+                <z> -65 </z>
+            </location>
+            <static_friction> 0.99 </static_friction>
+            <dynamic_friction> 0.9 </dynamic_friction>
+            <rolling_friction> 0.02 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 1000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 900 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_MAIN">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> 29.06 </y>
+                <z> -65 </z>
+            </location>
+            <static_friction> 0.99 </static_friction>
+            <dynamic_friction> 0.9 </dynamic_friction>
+            <rolling_friction> 0.02 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 1000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 900 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="TAIL">
+            <location unit="IN">
+                <x> 239 </x>
+                <y> 0 </y>
+                <z> -18 </z>
+            </location>
+            <static_friction> 5 </static_friction>
+            <dynamic_friction> 5 </dynamic_friction>
+            <rolling_friction> .1 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> -20 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="STRUCTURE" name="LEFT_WING">
+            <location unit="IN">
+                <x> 45 </x>
+                <y> -164 </y>
+                <z> -16.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="STRUCTURE" name="RIGHT_WING">
+            <location unit="IN">
+                <x> 45 </x>
+                <y> 164 </y>
+                <z> -12.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="LEFT_WING_REAR">
+            <location unit="IN">
+                <x> 125 </x>
+                <y> -164 </y>
+                <z> 18.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_WING_REAR">
+            <location unit="IN">
+                <x> 125 </x>
+                <y> 164 </y>
+                <z> -16.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="STRUCTURE" name="LEFT_WING_OUTER_TOP">
+            <location unit="IN">
+                <x> 85 </x>
+                <y> -164 </y>
+                <z> 24.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_WING_OUTER_TOP">
+            <location unit="IN">
+                <x> 85 </x>
+                <y> 164 </y>
+                <z> 24.62 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 195 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="NOSE">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="PROP_TOP">
+            <location unit="IN">
+                <x> -10 </x>
+                <y> 0 </y>
+                <z> 59 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+        <contact type="BOGEY" name="PROP_BOTTOM">
+            <location unit="IN">
+                <x> -10 </x>
+                <y> 0 </y>
+                <z> -59 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        
+        <contact type="BOGEY" name="WING_TOP">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> 0 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="WING_TOP_MID_LEFT">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> -50 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="WING_TOP_MID_RIGHT">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> 50 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="MIDDLE_UPPER">
+            <location unit="IN">
+                <x> 70 </x>
+                <y> 0 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="MIDDLE_BACK_UPPER">
+            <location unit="IN">
+                <x> 130 </x>
+                <y> 0 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        <contact type="BOGEY" name="BACK_UPPER">
+            <location unit="IN">
+                <x> 180 </x>
+                <y> 0 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+
+
+        <contact type="BOGEY" name="TAIL_TOP">
+            <location unit="IN">
+                <x> 239 </x>
+                <y> 0 </y>
+                <z> 36 </z>
+            </location>
+            <static_friction> 2 </static_friction>
+            <dynamic_friction> 2 </dynamic_friction>
+            <rolling_friction> 2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 300 </damping_coeff>
+            <max_steer unit="DEG"> 0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable> 0 </retractable>
+        </contact>
+
+        
+    </ground_reactions>
+
+    <propulsion>
+        <engine file="Clerget9B">
+            <location unit="IN">
+                <x> 10 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0 </roll>
+                <pitch> 0 </pitch>
+                <yaw> 0 </yaw>
+            </orient>
+            <feed>0</feed>
+            <thruster file="CamelProp">
+                <!--OK, the docs say that sense =1 for CW propeller as seen
+                from the cockpit.  The camel has a CW propeller by every example
+                I've been able to find. This source definitely says, "The 
+                direction of rotation was counter-clockwise as seen from the 
+                propeller-end of the engine." The photos also show a CCW (from 
+                propeller-end) rotating prop.  That would be clockwise as seen 
+                from the pilot's seat and sense=1. 
+                http://www.gracesguide.co.uk/Clerget
+                 
+                But sense=1 makes the Camel climb on RH 
+                turn and dive on LH turn.  Lots of sources say the opposite,
+                especially including this experienced pilot who is clearly 
+                flying a craft with a CW propeller (as seen from cockpit) and 
+                yet he says the Camel dives on RH turn and climbs on LH.
+                
+                 http://www.youtube.com/watch?v=j6PnKUEFX8g
+                
+                Wikipedia says, "To easily ascertain the direction of gyro effect, simply remember that a rolling wheel tends, when it leans to the side, to turn in the direction of the lean." http://en.wikipedia.org/wiki/Gyroscope#Properties That means, for a CW (from the rear) propeller, a turn to the right causes nose to drop, exactly what is reported for the Camel.
+                
+                My conclusion is that JSBSim has it backwards and sense=1 corresponds to CCW rotation of the prop, as seen from the rear, as far as gyroscopic moment is concerned.
+
+				However, as far as p_factor & torque is concerned, JSBSim seems to have it right.
+                
+                So what we're going to do is put in sense=1 here to get correct p_factor and torque effects, but then put in a correction down in the aero section
+				to correct the moments, which JSBSim seems to have reversed.
+                -->
+                <sense>-1</sense>
+                <location unit="IN">
+                    <x> 0 </x>
+                    <y> 0 </y>
+                    <z> 0 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0 </roll>
+                    <pitch> 0 </pitch>
+                    <yaw> 0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <!-- Fuel is behind the pilot, 22 gal, 133.6 lb.  Appears to be
+          about half way between nose & tail.  With fuel full, 
+          AC was tailheavy acc to http://www.theaerodrome.com/forum/2000/9166-sopwith-camel-facts-2.html With fuel empty, nose heavy. 
+         
+         The above 22 gal figure appears to be incorrect (though 2X22gallon tanks = 37 Imperial Gallons, so perhaps that explains the discrepancy), here is more detail:
+         
+         http://www.theaerodrome.com/forum/aircraft/58481-sopwith-camel-fuel-tank-capacities.html    
+           Bruce Robertson in 'Sopwith - The man and his Aircraft' has the following Fuel and Oil capacities for the Sopwith Camel in his data tables:
+F.1/1 130hp Clerget - 37 galls. of fuel, no oil given.
+TF.1 110 hp Le Rhone - 37 galls. fuel, 2 1/2 galls. oil.
+F.1 150 hp Mono Gnome - 27 1/2 galls. fuel, 5 1/4 galls. oil.
+F.1 180 hp Le Rhone - 26 1/4 galls fuel, 5 1/4 galls. oil.
+F.1 150 hp BR.1 - 37 galls. fuel, 5 1/4 galls. oil.
+F.1 150 hp BR.1 HC - 37 galls. fuel, 5 1/4 galls. oil.
+2F.1 130 hp Clerget - 37 galls. fuel, 5 1/2 galls. oil.
+2F.1 150 hp BR.2 - 37 galls. fuel, 5 1/2 galls. oil.
+
+Jack Bruce's 'British Aeroplanes 1914-1918', page 589, the tankage is - Petrol: main (pressure) tank, 30 gallons; gravity tank, 7 gallons; total 37 gallons. Oil: 6 1/2 gallons. (all imperial).
+
+More: 
+130 HP Clerget - 243 lb.
+110 HP Le Rhone - 252 lb.
+150 HP AR.1 - 250 lb.
+100 HP Gnome Monosoupape - 224 lb.
+150 HP Gnome Monosoupape - 230 lb.
+180 HP Le Rhone - 238 lb.
+
+2.F.1 Camel:
+130 HP Clerget - 286 lb.
+150 HP BR.1 - 223 lb.
+
+Taper Wing Camel:
+130 HP Clerget - 252 lb.
+
+We're modeling the 130 HP Clerget here, so 30 imp. gal in one tank and 7 in the other; plus 6.5 imperial gallons oil just behind engine.  Gasoline is 6.1 lbs per gallon and castor oil is    956 kg/m^3 or 7.97820666 pounds per u.s. gallon.  
+ 30 imp gal = 36.0285 gal = 219.8 lbs
+  7 imp gal = 8.40665 gal = 51.3 lbs
+  6.5 imp gal = 30 liters = 7.81 gal = 62.31 lbs 
+          
+  TODO: Not sure if fuel tanks need more code to draw from one to the other or switch between them.
+  TODO: Oil is just a pointmass & doesn't empty throughout the flight (see Castor Oil below under pointmass).        
+          -->
+        <tank type="FUEL">
+            <location unit="IN">
+                <x> 90 </x>
+                <y> 0 </y>
+                <z> -5.62 </z>
+            </location>
+            <capacity unit="LBS">219.8</capacity>
+            <contents unit="LBS">219.8</contents>
+        </tank>
+          <tank type="FUEL">
+            <location unit="IN">
+                <x> 60 </x>
+                <y> 0 </y>
+                <z> -5.62 </z>
+            </location>
+            <capacity unit="LBS">51.3</capacity>
+            <contents unit="LBS">51.3</contents>
+        </tank>
+    </propulsion>
+
+    <flight_control name="FCS: Camel">
+
+        <channel name="Pitch">
+
+            <summer name="Pitch Trim Sum">
+              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/pitch-trim-cmd-norm</input>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </summer>
+
+            <aerosurface_scale name="Elevator Control">
+              <input>fcs/pitch-trim-sum</input>
+              <range>
+                <min>-0.55</min>
+                <max>0.55</max>
+              </range>
+              <output>fcs/elevator-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="elevator normalization">
+              <input>fcs/elevator-pos-rad</input>
+              <domain>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </domain>
+              <range>
+                <min>-1</min>
+                <max>1</max>
+              </range>
+              <output>fcs/elevator-pos-norm</output>
+            </aerosurface_scale>
+
+        </channel>
+
+        <channel name="Roll">
+
+            <summer name="Roll Trim Sum">
+              <input>fcs/aileron-cmd-norm</input>
+              <input>fcs/roll-trim-cmd-norm</input>
+              
+              <!-- This bias value just trims out the ailerons a bit so that
+              the Camel doesn't require continual aileron input under
+              full power.   -->
+              <!-- <bias> 0.11825 </bias> -->
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+            </summer>
+
+            <aerosurface_scale name="Left Aileron Control">
+              <input>fcs/roll-trim-sum</input>
+              <range>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </range>
+              <output>fcs/left-aileron-pos-rad</output>
+            </aerosurface_scale>
+            
+
+            <aerosurface_scale name="Right Aileron Control">
+              <input>fcs/roll-trim-sum</input>
+              <range>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </range>
+              <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="left aileron normalization">
+              <input>fcs/left-aileron-pos-rad</input>
+              <domain>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </domain>
+              <range>
+                <min>-1</min>
+                <max>1</max>
+              </range>
+              <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="right aileron normalization">
+              <input>fcs/right-aileron-pos-rad</input>
+              <domain>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </domain>
+              <range>
+                <min>-1</min>
+                <max>1</max>
+              </range>
+              <output>fcs/right-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+        </channel>
+
+        <channel name="Yaw">
+
+            <summer name="Rudder Command Sum">
+              <input>fcs/rudder-cmd-norm</input>
+              <input>fcs/yaw-trim-cmd-norm</input>
+              <clipto>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </clipto>
+            </summer>
+
+            <aerosurface_scale name="Rudder Control">
+              <input>fcs/rudder-command-sum</input>
+              <range>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </range>
+              <output>fcs/rudder-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="rudder normalization">
+              <input>fcs/rudder-pos-rad</input>
+              <domain>
+                <min>-0.35</min>
+                <max>0.35</max>
+              </domain>
+              <range>
+                <min>-1</min>
+                <max>1</max>
+              </range>
+              <output>fcs/rudder-pos-norm</output>
+            </aerosurface_scale>
+
+        </channel>
+
+        <channel name="Throttle">
+            <!-- This is a bit of a kludge to reduce the Camel service ceiling to 19,600 ft, and reduce performance above 12,000 as reported at the time. 
+            This function simply reduces throttle at these altitudes to give lower engine performance.-->
+            <scheduled_gain name="fcs/pitch_scheduled_gain_1">
+                <input>fcs/throttle-cmd-norm</input>
+                <table>
+                    <independentVar>atmosphere/pressure-altitude</independentVar>
+                      <tableData>
+                      -10000 1
+                      11000  1
+                      19600  .58
+                      </tableData>
+                 </table>
+                 <output>fcs/throttle-pos-norm</output>
+            </scheduled_gain>
+
+        </channel>
+        
+        
+
+    </flight_control>
+
+    
+    <system file="crash-detect"/>
+    <system file="automixture"/>
+    
+    <aerodynamics>
+            <function name="aero/function/kCDge">
+            <description>Change_in_drag_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	0.4800
+                          0.1000	0.5150
+                          0.1500	0.6290
+                          0.2000	0.7090
+                          0.3000	0.8150
+                          0.4000	0.8820
+                          0.5000	0.9280
+                          0.6000	0.9620
+                          0.7000	0.9880
+                          0.8000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kCLge">
+            <description>Change_in_u_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	1.2030
+                          0.1000	1.1270
+                          0.1500	1.0900
+                          0.2000	1.0730
+                          0.3000	1.0460
+                          0.4000	1.0550
+                          0.5000	1.0190
+                          0.6000	1.0130
+                          0.7000	1.0080
+                          0.8000	1.0060
+                          0.9000	1.0030
+                          1.0000	1.0020
+                          1.1000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+        <!-- Below two functions from c172p.xml, FG2.10 -->
+        <function name="aero/function/velocity-induced-fps">
+            <description> velocity including the propulsion induced velocity.</description>
+            <sum>
+                <property>velocities/u-aero-fps</property>
+                <property>propulsion/engine/prop-induced-velocity_fps</property>
+                <property>propulsion/engine/prop-induced-velocity_fps</property>
+            </sum>
+        </function> 
+
+        <function name="aero/function/qbar-induced-psf">
+            <description> q bar including the propulsion induced velocity.</description>
+            <product>
+                <property>aero/function/velocity-induced-fps</property>
+                <property>aero/function/velocity-induced-fps</property>
+                <property>atmosphere/rho-slugs_ft3</property>
+                <value>0.5</value>
+            </product>
+        </function> 
+    
+        <axis name="LIFT" unit="LBS">
+            <function name="aero/force/Lift_alpha">
+                <description>Lift due to alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/function/kCLge</property>
+                    <!-- 1.4 candidate <value>1.4</value> -->
+                    <value>1.4</value>
+                    <table>
+                        <!--
+                        <independentVar>aero/alpha-rad</independentVar>
+                        <tableData>
+                          -0.2          -0.5        
+                          0             0.15        
+                          0.23          1           
+                          0.3           1.03        
+                          0.6           0.4         
+                        </tableData>
+                        -->
+                        <!-- the lift data is based on wind tunnel data from:
+                          On the Effect of Cutting a Hole in the Top Plan of a Biplane
+                          By C.H. Powell, Repots and Memoranda (New Series), No. 419, Feb 1918
+                          That includes data for the wings only, so it has been
+                          massaged to approximate the entire AC and also extended
+                          to create data for -90 to 90 degrees.  See 
+                          Camel-JSBSim-calcs-2011-10D.xls in Docs directory for details.
+                        -->  
+                        
+                        <independentVar>aero/alpha-deg</independentVar>
+                        <tableData>                        
+<!-- -90	0
+-60	-0.1
+-30	-0.4
+-20	-0.6
+-14	-0.512
+-12	-0.449
+-10	-0.379
+-8	-0.306
+-6	-0.2444
+-4	-0.116
+-3	-0.0484
+-2	0.018
+-1	0.0804
+0	0.148
+1	0.2254
+2	0.3054
+3	0.379
+4	0.449
+5	0.512
+6	0.574
+8	0.69
+10	0.79
+12	0.896
+14	0.99
+16	1.062
+18	1.066
+20	1.042
+30	0.7
+60	0.3
+90	0 -->
+
+-90	0
+-60	-0.1
+-30	-0.4
+-20	-0.6
+-14	-0.512
+-12	-0.449
+-10	-0.379
+-8	-0.306
+-6	-0.2444
+-4	-0.116
+-3	-0.0484
+-2	0.018
+-1	0.0804
+0	0.148
+1	0.2254
+2	0.3054
+3	0.379
+4	0.449
+4.5	0.512
+5	0.574
+6	0.69
+7	0.79
+8 0.896
+9	0.99
+10	1.062
+11	1.066
+12	1.042
+17	0.7
+20  0.5
+23  0.7
+26  0.5
+30  0.2
+60	0.1
+90	0
+                        </tableData>                  
+                        <!-- The lift data from LesterBoffo -->
+                        <!--
+                        <independentVar>aero/alpha-rad</independentVar>
+                        <tableData>                        
+                          -0.2793        -1.298    
+                          -0.1396        -0.5118    
+                          -0.1047        -0.3244    
+                          -0.0698        -0.1446    
+                          -0.0349        0.0581
+                           0.000         0.170
+                           0.01745       0.355    
+                           0.03491       0.536
+                           0.0428        0.69
+                           0.0523        0.84   
+                           0.06981       0.984    
+                           0.1047         1.045    
+                           0.1396         1.18    
+                           0.1745         1.316    
+                           0.1918         1.59    
+                           0.2443         1.565    
+                           0.2793         1.491    
+                           0.3142         1.383    
+                           0.3316         1.214    
+                           0.3491         1.191    
+                           0.3665         1.037    
+                           0.3840         0.8031    
+                           0.436         0.6785
+                        </tableData>
+                        -->
+                        
+                    </table>
+                </product>
+            </function>
+            <function name="aero/force/Lift_elevator">
+                <description>Lift due to Elevator Deflection</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/elevator-pos-rad</property>
+                    <!-- Aeromatic: <value>0.15</value> -->
+                    <value>0.05</value>
+                </product>
+            </function>
+        </axis>
+        <axis name="DRAG" unit="LBS">
+            <function name="aero/force/Drag_basic">
+                <description>Drag at zero lift</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <!--  Zero Lift Drag Coefficient for Camel is 0.0378 per http://en.wikipedia.org/wiki/Sopwith_Camel-->
+                    <!-- Cruising speed for Camel with 130 HP Clerget, per SopwithCamelSpecs-1955.pdf - Flight, "Sopwith Camel", 22 April 1955, is 
+                          115 mph @ 6500 ft      = 99.3 kts      
+                          113 mph @ 10000 ft     = 98.2 kts
+                          106.5 mph @ 15000 ft   = 92.5 kts
+                          
+                          2013/04/13 measured w/ 0.0378 for Cd0:
+                           6500 = 100.4 kts IAS  115.2 KTS GROUNDSPEED   110.8 kts vtrue
+                           10000 = 92.5 kts IAS  110.7 KTS GROUNDSPEED   107.7 kts vtrue
+                           15000 = 82.8 kts IAS  109.2 KTS GROUNDSPEED   104.8 kts vtrue
+                           
+                           2013/04/13 measured w/ 0.0478 for Cd0:
+                           6500 = 91.9 kts IAS   97.49 KTS GROUNDSPEED   101.8 kts vtrue
+                           10000 = 85.7 kts IAS  100.4 KTS GROUNDSPEED   99.9 kts vtrue
+                           15000 = 76.0 kts IAS  91.2  KTS GROUNDSPEED   95.7  kts vtrue
+
+                           2013/04/13, later, measured w/ 0.0378 for Cd0 and numerous other changes to lift/drag to make the 10,000 ft climb perf chart at Camel JSBSim Climb vs Speed1.3a in Camel-JSBSim-calcs-2011-10D.xls:
+                           6500 =  86.5 kts IAS    96.0 kts vtrue
+                           10000 = 81.5 kts IAS    95.3 kts vtrue
+                           15000 = 75.3 kts IAS    95.5 kts vtrue
+                           
+                           2013/04/15
+                           6500 = 100.8 vtrue 
+                           10000 = 96.5 vtrue
+                           15000 = 90.3 vtrue
+                           
+                         
+                         Climb to
+                          6500 ft = 6 min 0 sec
+                          10000 ft = 10 min 35 sec
+                          15000 ft = 20 min 40 sec
+                    
+                    -->
+                  
+                    <value>0.0378 </value>
+                </product>
+            </function> 
+
+            <function name="aero/force/Drag_induced">
+                <description>Induced drag</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/function/kCDge</property>
+                    <!-- ver 1.4 candidate <value>1.5</value> --> <!-- because the drag data is from the wings only we use this factor to adjust is so that it matches published speed & climb data for the Camel A/C as a whole -->
+                    <value>1.5</value>
+                    <table>
+                        <independentVar>aero/alpha-deg</independentVar>                    
+                        <tableData>
+-90	2.79
+-60	1.39
+-30	0.39
+-20	0.11
+-14	0.067
+-12	0.054
+-10	0.043
+-8	0.033
+-6	0.0264
+-4	0.005
+-3	0.003
+-2	0.002
+-1	0.001
+0	0
+1	0.001
+2	0.005
+3	0.0075
+4	0.0085
+5	0.0105
+6	0.015
+8	0.025
+10	0.032
+12	0.045
+14	0.0633
+16	0.08
+18	0.125
+20	0.22
+30	0.39
+60	1.39
+90	2.79
+
+                        </tableData>
+                    </table>   
+                </product>
+            </function>
+            
+            <function name="aero/force/Drag_mach">
+                <description>Drag due to mach</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <table>
+                        <independentVar>velocities/mach</independentVar>
+                        <tableData>
+                          0             0           
+                          0.7           0           
+                          1.1           0.023       
+                          1.8           0.015       
+                        </tableData>
+                    </table>
+                </product>
+            </function>
+            
+            <function name="aero/force/Drag_beta">
+                <description>Drag due to sideslip</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <value>1.5</value>
+                    <table>
+                        <!--
+                        <independentVar>aero/beta-rad</independentVar>
+                        <tableData>
+                          -1.57         0.5        
+                          -0.26         0.05        
+                          0             0           
+                          0.26          0.05        
+                          1.57          0.5        
+                        </tableData>
+                        -->
+                        <!-- Switching this to degrees just for
+                        consistency with alpha drag -->
+                        
+                        <independentVar>aero/beta-deg</independentVar>
+                        <tableData>
+                         -180           0
+                         -160           .2
+                          -90           1.2        
+                          -30           0.15    
+                          -10           0.02    
+                          0             0
+                          10            0.02
+                          30.0          0.15        
+                          90            1.2
+                          160           .2
+                          180           0
+                        </tableData>
+                        
+                    </table>
+                </product>
+            </function>
+            
+            <function name="aero/force/Drag_elevator">
+                <description>Drag due to Elevator Deflection</description>
+                <product> 
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <abs>
+                        <property>fcs/elevator-pos-norm</property>
+                    </abs>
+                    <!--Aeromatic: 0.02 -->
+                    <value>0.015</value>
+                </product>
+            </function>
+            
+            <!-- Camels large (but ineffective) 'barn door' ailerons produced 
+            'awe-inspiring' amounts of adverse yaw and also a great deal of drag. With no 
+            rudder correction it falls into a deep side-slip within a few seconds. 
+            http://riseofflight.com/Forum/download/file.php?id=31942&mode=view
+            -->
+            <function name="aero/force/Drag_left_aileron">
+                <description>Drag due to Left Aileron Deflection</description>
+                <product> 
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <abs>
+                        <property>fcs/left-aileron-pos-norm</property>
+                    </abs>
+                    <!--Aeromatic for Elevators: 0.02 
+                    Each aileron is nearly as large as the Elevator and there
+                    are two of them on each side . . .
+                    Max aileron deflection is about 15 degrees, per 
+                    http://www.theaerodrome.com/forum/replica-aircraft/43868-airdrome-f-1-camel-64.html    
+                    .04 seems to work OK. 
+                     
+                    Ballpark calculations:
+                    Based on idea the fully deployed ailerons are about as draggy as say 1/3 the clean A/C (.0378 drag coefficient, so 0.0126) or as say 2/15 of the total wing drag @ 15 degrees alpha, which would be about .07 * 1.5 * 2/15 = .014
+                    -->
+                    <value>0.006</value>  <!-- ver 1.6 value .015 -->
+                </product>
+            </function>
+            <function name="aero/force/Drag_right_aileron">
+                <description>Drag due to Right Aileron Deflection</description>
+                <product> 
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <abs>
+                        <property>fcs/right-aileron-pos-norm</property>
+                    </abs>
+                    <!--Aeromatic for Elevators: 0.02 
+                    Each aileron is nearly as large as the Elevator and there
+                    are two of them on each side . . . 
+                    -->
+                    <value>0.006</value>  <!-- ver 1.6 value .015 -->
+                </product>
+            </function>
+
+
+        </axis>
+        <axis name="SIDE" unit="LBS">
+            <function name="aero/force/Side_beta">
+                <description>Side force due to beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <!--Aeromatic: <property>aero/beta-rad</property>
+                    <value>-1</value> -->
+                    <value>2</value> <!-- 1.6b experiment -->
+                    <table>
+                          <independentVar lookup="row">aero/beta-deg</independentVar>
+                          <!-- Based on values from c172p plus generic wing lift graph data-->
+                          <tableData>
+                              -90     0
+                              -15	    0.1370	
+                              0.0000	0.0000	
+                              15	    -0.1370
+                              90      0	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
+        
+        <axis name="ROLL" unit="LBS*FT">
+            <!-- This is to compensate for the fact the JSBSim has the direction of the gyroscopic moment from the propellor/engine 
+            reversed.  So we're switching sense to -1 to compensate, but then Torque is reversed.  So
+            We're using this function to reverse the torque. -->
+            <!--  Note for dummies:   
+              X = Axial drag force
+              Y Side Force
+              Z Normal Lift force
+            
+              l = roll (moments)
+              m = pitch
+              n = yaw
+              
+              p Roll Rate
+              q Pitch Rate
+              r Yaw Rate
+              
+              U Axial Velocity
+              V Lateral Velocity
+              W Normal Velocity
+            -->
+              
+           <!--  rem-ing this out for now --> 
+              
+     		    <function name="aero/moment/Roll_moment_prop_torque_jsbsim_correction">
+                <description>This reverses the roll moment of the propeller, which we have reversed to compensate for the reversed sense of the gyroscopic moment in JSBSim</description>
+                <product>
+                    <property>moments/l-prop-lbsft</property>
+                    <value>-2</value>
+                </product>
+            </function>
+            
+            
+            <!-- Dihedral --> 
+            <function name="aero/moment/Roll_beta">
+                <description>Roll moment due to beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <!-- <property>aero/beta-rad</property> plain alpha-rad is OK for small values, but for larger than abs(1) or so, need sin(alpha-rad) instead-->
+                    <!-- <sin>
+                        <property>aero/beta-rad</property>
+                    </sin> -->
+                    
+                    <table>
+                        <independentVar>aero/beta-rad</independentVar>
+                        <tableData>
+                          -3.415            -0
+                          -1                0
+                          -.200             -0.2
+                          0                  0
+                          .2                 0.2
+                          1                0
+                          3.415              0       
+                        </tableData>
+                    </table>
+
+                    
+                    
+
+                    
+                    <!-- value>-0.2</value -->
+                    <!-- -0.1 according to Aeromatic -->
+                    <!-- <value>-0.075</value> -->
+                    <value>-0.1</value>
+                    <!-- Asymmetric stall -->
+                    <!-- This is cribbed directly from p51d-jsbsim.xml for now -->                  
+                    <!-- Assymmetric stall - at higher alpha/beta angles the beta starts to destabilize the roll rather than stabilize it-->
+
+                    <!--
+                    <table>                            
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        
+                  
+                        <independentVar lookup="column">velocities/vc-kts</independentVar>
+                         <tableData>
+                                 0  22  38   44   48  52
+                            -45  -1 -1.1  -2     -1    -1   -1
+                            -14.5  -1  -1.1 -2     -2    -1   -1
+                            -13   1  1  1     1    1   1
+                            13 1  1  1     1    1   1
+                            14.5   -1  -1.1 -2     -2   -2   -1
+                            30   -1  -1.1 -2     -2   -1.5   -1
+                            45   -1  -1 -2     -2.5    -1   -1
+                        </tableData>
+                    </table>
+                    -->
+                </product>
+            </function>
+            <function name="aero/moment/Roll_damp">
+                <description>Roll moment due to roll rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/p-aero-rad_sec</property>
+                    
+                    <!-- Aeromatic value was -0.4; this is replaced by the value * table value 
+                    below, to reduce the damping values for the Camel -->                     
+					          
+                    <!-- Camel was sensitive & poorly damped in all directions of motion.  Adjusting this 0-1 adjusts this sensitivity. -->
+                    
+                    <!--this tends to damp or *stop* the roll, thus the negative numbers (the overall effect is always to reduce the amount of roll moment).
+          					With the Camel, in certain situations the roll actually won't damp out (ie, when in a tailspin - if you take your hands off the controls it will
+          					just keep tailspinning indefinitely, unlike modern aircraft which are designed to naturally recover if you take your hands off the controls); 
+          					this is like having a roll damp of 0 or close to it.
+                    
+                    "its time period is 1 to 2 seconds, and the loss of height per turn 150 to 200 
+                    feet." The table below is designed to 'channel' the spin to a speed of between 
+                    3.14 and 6.28 rad per second.
+          					-->
+                    
+                    <!-- <value>0.9</value> -->
+                    
+                    <value>1.9</value><!-- testing -->
+                     
+          					<table>
+                        <independentVar>velocities/p-aero-rad_sec</independentVar>
+                        <tableData>
+                          -100         -0.25
+                          -6.28        -0.75
+					              	-3           -0.4 
+                          -2.14        -0.005     
+                          -1.9         -0.05
+                    
+                          -1.1         -0.25       
+                          -0.01        -0.27
+                          0            -.3
+                          0.01          -0.27
+                          1.1          -0.25 
+                              
+                          1.9          -0.05        
+                          2.14         -0.005
+						              3            -0.4
+						              6.28         -0.75
+                          100          -0.25
+                        </tableData>
+                        
+                        <!--
+                        <tableData>
+                          -100         -0.25
+                          -6.28        -0.75
+					              	-5           -0.005 
+                          -3.14        -0.005     
+                          -2.5         -0.1 
+                          -0.4         -0.1       
+                          0            -0.35
+                          0.4          -0.1           
+                          2.5          -0.1        
+                          3.14         -0.005
+						              5            -0.005
+						              6.28         -0.75
+                          100          -0.25
+                        </tableData>
+                        -->
+                    </table>
+                    
+
+                    <!-- camel is poorly damped and won't get out of spin/dive/etc just by releasing the controls -->
+                    
+                </product>
+            </function>
+            <function name="aero/moment/Roll_yaw">
+                <description>Roll moment due to yaw rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/r-aero-rad_sec</property>
+                    <!-- value>0.35</value -->
+                    <value>0.35</value>
+                    <value>0</value> <!-- testing -->
+                    <!-- Spin on stall -->
+                        <!-- This seems to provide the main source of spin/rotation for the aircraft 
+                        when it is stalling. In the abscence of wind tunnel data the numbers are a 
+                        guess, of course, but it matches well the contemporary description, that if in 
+                        a sharp turn you tightened up the elevator just a little too much, you would 
+                        end up in a severe spin. The trick is that the alpha angles less than 20 
+                        degrees or so (whatever the the stall angle of the wing is) shouldn't produce 
+                        any spin, especially at low speeds, or landing and takeoff become almost 
+                        impossible.--> 
+                    <table>
+
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <independentVar lookup="column">velocities/vc-kts</independentVar>
+                        <tableData>
+                                 0   13  28  38  48  70  100   150
+                            -45  -1 -2 -3  -2.5   -3   -1.5  -1    -1.5
+                            -35  -1 -2 -4  -4  -4  -3 -2    -1.5
+                            -30  -1 -2 -4  -4  -4  -3 -2    -1.5
+                            -14.5  -1 -2 -3   -3   -3   -2  -1.5  -1
+                            -13  0 0   0    0    0    0  0     0
+                             0     0 0   0    0    0    0  0     0
+                            13   0 0   0    0    0    0  0     0
+                            14.5   1  2  3     3    3   2   1.5     1
+                            30   1  4  4    4   4  3  2     1.5
+                            35   1  4  4    4   4  3  2     1.5
+                            45   1  2  3    2.5    3   1.5   1     1.5
+                        </tableData>
+                    </table>
+                </product>
+            </function>
+            <function name="aero/moment/Roll_aileron">
+                <description>Roll moment due to aileron</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+
+                    <!-- .08 per aeromatic; Camel had relatively ineffective ailerons;  they
+                    are large as 'barn doors' but induce tons of drag & adverse yaw. 23 seconds 
+                    to slow roll - if could even be done at all! 
+                    I'm taking this to mean that, being far larger in surface area than ailerons in modern plane, they produce quite a bit of roll but perhaps even more of drag and adverse yaw.-->
+                    <table>
+                        <independentVar>velocities/mach</independentVar>
+                        <tableData>
+                          0             0.10 <!-- ver 1.6: .14-->          
+                          2             0.01       
+                        </tableData>
+                    </table>
+                    <!-- It became harder & harder to deflect the Camel's 
+                    ailerons as the speed increased. 
+                    p. 7: http://assets.cambridge.org/97805218/09924/sample/9780521809924ws.pdf  -->
+                   <table>
+                        <independentVar>velocities/ve-kts</independentVar>
+                        <tableData>
+                          0             1
+                          70            0.9
+                          180           0.3
+                          400           0       
+                        </tableData>
+                    </table>
+                    <!-- Asymmetric stall; you lose aileron control as stall deepens -->
+                    <!-- This is cribbed directly from p51d-jsbsim.xml for now -->
+                    <table>
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <tableData>
+                        -35    0.05
+                        -19    0.3
+                        -12    1
+                        12     1
+                        19     0.3
+                        35     0.05
+                        </tableData>
+                    </table>
+                </product>
+            </function>
+            <function name="aero/moment/Roll_rudder">
+                <description>Roll moment due to rudder</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/rudder-pos-rad</property>
+                    <!-- Aeromatic 0.01 -->
+                    <value>0.01</value>
+                </product>
+            </function>
+            <!--
+               Create roll moment with a tendency
+               to drop a wing at stall.
+               This will help to induce a spin.
+
+               From example/source of the following table (not Sopwith Camel):
+               #The positive value at aero/alpha-deg = 10.35
+               #is to simulate actual behavior.  The NACA
+               #test report on stall behavior says that
+               #initially it will drop the right wing and then
+               #roll to the left as the stall deepens.
+               #this commented out for Camel.
+               
+               Camel: The idea of the r-aero-rad-_sec table is to turn the spin in the 
+               direction the yaw is moving, ie if we're yawing towards the left wing then we drop the left wing. 
+            -->
+           <function name="aero/moment/Roll_Clalpha">
+                <description>roll_moment_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <value>1</value><!-- set to 0 to disable or 1 to enable -->
+                    <value>300</value><!-- ver 1.6a: 400 -->
+                    <table>
+                        <!-- ver 1.6: <independentVar>velocities/r-aero-rad_sec</independentVar> -->
+                        <independentVar>velocities/r-aero-rad_sec</independentVar>
+                        <tableData>
+                          -4             -1
+                          -3.415             -5
+                          -.02             -1
+                          0                  0
+                          .02             1
+                          3.415             5 
+                          4             1
+                                
+                        </tableData>
+                    </table>
+                    <table>
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <independentVar lookup="column">aero/Re</independentVar>
+                        <tableData>
+                                          0  1000000  10000000   20000000
+                                 -180.0    0.0    -0.0005   -0.00025   -0.000025                                          
+                                 -24.0    0.0    -0.0005   -0.00025   -0.000025
+                                 -17.8      0.0    -0.00025 -0.000125 -0.0000125
+                                 -11.8      0       0       0         0
+                                   0.0    0.0     0.0     0.0       0.0
+                                  11.8      0       0       0         0
+                                  17.8      0.0     0.00025 0.000125  0.00000125
+                                  24      0.0     0.0005  0.00025   0.0000025
+                                  180      0.0     0.0005  0.00025   0.0000025
+                        </tableData>
+                    </table>
+                </product>
+            </function>
+            
+            
+        </axis>
+        <axis name="PITCH" unit="LBS*FT">
+            <function name="aero/moment/Pitch_alpha">
+                <description>Pitch moment due to alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <!-- <property>aero/alpha-rad</property> plain alpha-rad is OK for small values, but for larger than abs(1) or so, need sin(alpha-rad) instead-->
+                    
+                    <table>
+                        <independentVar>aero/alpha-rad</independentVar>
+                        <tableData>
+                          -3.415            -0
+                          -3.4              -2.4
+                          -.200             -0.2
+                          0                  0
+                          .2                 0.2
+                          3.4                2.4
+                          3.415              0       
+                        </tableData>
+                    </table>
+                    
+                    
+                    <!-- <sin>
+                        <property>aero/alpha-rad</property>
+                    </sin> -->
+                    
+                    <!-- <value>-0.5</value> orig -->
+                    <value>-0.5</value>
+                </product>
+            </function>
+            
+            <function name="aero/moment/Pitch_elevator">
+                <description>Pitch moment due to elevator</description>
+                <product>
+                    <!-- <property>aero/qbar-psf</property> -->
+                    <property>aero/function/qbar-induced-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>fcs/elevator-pos-rad</property>
+                    <table>
+                        <independentVar>velocities/mach</independentVar>
+                        <tableData>
+                            <!-- aeromatic original values:
+                                        <tableData>
+                                          0.0     -1.100
+                                          2.0     -0.275
+                                        </tableData>
+                                  Camel had a powerful and sensitive elevator      
+                            --> 
+                            <!-- ver. 1.6 0      -0.32                      
+                            2      -0.1  -->
+                            0      -0.5                      
+                            2      -0.15
+
+
+                        </tableData>
+                    </table>
+                    
+                    <!-- The idea of the following table is to model the force feedback or the 
+                    idea that as you pull higher & higher Gs you really can't just keep yanking on 
+                    the controls as hard. They are pulling back harder and harder with back-force 
+                    or maybe you are just feeling the G forces physically with your body that 
+                    gives you the feedback to stop yanking on the controls so hard.
+                    Load factor is in Gs, http://en.wikipedia.org/wiki/Load_factor_(aeronautics) 
+                    -->
+                    
+                    <table>
+
+                        <independentVar>forces/load-factor</independentVar>
+                        <tableData>
+                            <!-- -.0551 = aeromatic original value; Camel had a powerful and 
+                            sensitive elevator --> 
+                           -100     0.01
+                            -10     0.2
+                             -1     1
+                              0     1                      
+                              1     1
+                             10     0.2
+                            100     0.01
+
+                        </tableData>
+                    </table>
+                    
+                    <!-- Asymmetric stall; you lose elevator control as stall deepens -->
+                    <table>
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <tableData>
+                        -50    0.2
+                        -24    0.3
+                        -17.5    1
+                        17.5     1
+                        24     0.3
+                        50     0.2
+                        </tableData>
+                    </table>
+
+                </product>
+            </function>
+            <function name="aero/moment/Pitch_damp">
+                <description>Pitch moment due to pitch rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>velocities/q-aero-rad_sec</property>
+
+                    <!-- Aeromatic value was -12; this is replaced by the value * table value 
+                    below, to reduce the damping values for the Camel --> 
+                    
+                    <value>-12</value>   <!-- ver. 1.6: -12 -->
+                    
+                    <table>
+                        <independentVar>velocities/q-aero-rad_sec</independentVar>
+                        <tableData>
+                          -32.14        0.2
+						              -4            0.2  
+                          -2            0.02
+						              -1.57         0.2        
+                          -0.7          0.2
+                          -0.25         0.2      <!-- ver 1.6a = .5-->        
+                          0              .4        <!-- ver. 1.6 = 1.5, 1.6a .75 -->
+                          0.25          0.2           
+                          0.7           0.2
+                          1.57          0.2       
+						              2             0.02
+                          4             0.2
+						              32.14         0.2        
+                        </tableData>
+                    </table>
+
+                    <!-- orig: <value>-12</value> -->
+                    <!-- Camel is pretty poorly damped in most all ways -->
+                </product>
+            </function>
+            
+            <function name="aero/moment/Pitch_alphadot">
+                <description>Pitch moment due to alpha rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <!-- <property>aero/alphadot-rad_sec</property>       -->
+                    
+                    <!-- If this is allowed to grow unrestricted there are pretty nasty results, at slow speed stalls -->
+                    <table>
+                        <independentVar>aero/alphadot-rad_sec</independentVar>
+                        <tableData>
+                          -32.14        -.75  
+
+						              -.5         -.5        
+                          0             0
+                          .5          .5 
+						              32.14         .75        
+                        </tableData>
+                    </table>
+                    
+                    
+                    <value>-7</value>
+                </product>
+            </function>
+
+            <!-- "On strafing runs, as soon as the airspeed reaches 130 to 140 mph the nose 
+            begins to hunt up and down, and the elevator becomes extremely sensitive. I 
+            feel this action is due largely to the square windshield between the two 
+            Vickers guns, causing a substantial burble over the tail surfaces."
+            We're modeling it here as simply reduced elevator effectiveness starting at 
+            that speed (130 mph = 0.17 mach) - which may not be the best way. -->                            
+                    
+            <function name="aero/moment/Pitch_burble">
+                <description>Pitch moment due to burble at high speeds</description>
+                <product>
+                     <value> 1200 </value> <!-- ver 1.6: 1200 -->
+                     <!-- <abs> 
+                       <urandom/>
+                     </abs>
+                     --> 
+                     <table>
+                        <independentVar>velocities/ve-kts</independentVar>
+                        <tableData>
+                            <!-- -.0551 = aeromatic original value; Camel had a powerful and 
+                            sensitive elevator --> 
+                            0      0
+                            <!-- "On strafing runs, as soon as the airspeed reaches 130 to 140 mph the nose 
+                            begins to hunt up and down, and the elevator becomes extremely sensitive. I 
+                            feel this action is due largely to the square windshield between the two 
+                            Vickers guns, causing a substantial burble over the tail surfaces."
+                            We're modeling it here as simply bumps up/down in pitch starting at 
+                            that speed (130 mph = 0.196 mach= 113 kts). -->                            
+                            112.96688	0
+                            113.5432416	-0.5
+                            114.1196033	0.5
+                            114.6959649	-0.6
+                            115.2723265	0.6
+                            115.8486882	-0.7
+                            116.4250498	0.7
+                            117.0014114	-0.8
+                            117.5777731	0.8
+                            118.1541347	-0.9
+                            118.961041	0.9
+                            119.306858	-1
+                            120.0561281	1
+                            120.4595812	-1.1
+                            121.093579	1.9
+                            121.6295953	-1.3
+                            122.2001934	2.4
+                            122.7880822	-1.5
+                            123.3759711	1.6
+                            123.9235146	-2.7
+                            124.5229307	1.7
+                            125.0877651	-3.3
+                            125.6583632	1.7
+                            126.246252	-1.4
+                            126.8341409	1.5
+                            127.3816844	-1.7
+                            127.9811005	1.7
+                            128.5344077	-1.7
+                            129.1338238	1.1
+                            129.687131	-1.7
+                            130.2865471	1.7
+                            130.8340906	-1.9
+                            131.2375438	3
+                            131.5833607	-1.7
+                            131.8715416	2
+                            131.9868139	-1.2
+                            132.6208117	1.1
+                            133.156828	-1
+                            133.727426	1.8
+                            134.3153149	-1.4
+                            134.9032037	1.2
+                            135.4507473	-1.8
+                            136.0501634	1.9
+                            136.5977069	-2.3
+                            137.1740686	1.6
+                            137.7504302	-2.7
+                            138.3267918	1.7
+                            138.9031535	-3.3
+                            139.4795151	1.7
+                            140.0558767	-1.4
+                            140.6322384	1.5
+                            141.2086	-1.7
+                            141.7849616	1.7
+                            141.8425978	-1.7
+                            141.900234	1.1
+                            141.9578701	-1.7
+                            142.0155063	1.7
+                            142.0731424	-1.9
+                            142.1307786	3
+                            142.1884148	-1.7
+                            142.2460509	2
+                            142.3036871	-1.2
+                            142.3325052	1.1
+                            142.3613233	-1
+                            142.9376849	1.8
+                            143.5140465	-1.4
+                            144.0904082	1.2
+                            144.6667698	-1.8
+                            145.2431314	1.9
+                            145.3007676	-2.3
+                            145.3584038	1.6
+                            145.4160399	-2.7
+                            145.4736761	1.7
+                            145.5313122	-3.3
+                            145.5889484	1.7
+                            145.6465846	-1.4
+                            145.7042207	1.5
+                            145.7618569	-1.7
+                            145.790675	1.7
+                            145.8194931	-1.7
+                            145.8771292	1.1
+                            145.9347654	-1.7
+                            145.9924016	1.7
+                            146.0500377	-1.9
+                            146.1076739	3
+                            146.16531	-1.7
+                            146.2229462	2
+                            146.2805824	-1.2
+                            146.3382185	1.1
+                            146.3670366	-1
+                            146.3958547	1.8
+                            146.4534909	-1.4
+                            146.511127	1.2
+                            146.5687632	-1.8
+                            146.6263993	1.9
+                            146.6840355	-2.3
+                            146.7416717	1.6
+                            146.7993078	-2.7
+                            146.856944	1.7
+                            146.9145802	-3.3
+                            146.9433982	1.7
+                            146.9722163	-1.4
+                            147.0298525	1.5
+                            147.0874887	-1.7
+                            147.1451248	1.7
+                            147.202761	-1.7
+                            147.2603971	1.1
+                            147.3180333	-1.7
+                            147.3756695	1.7
+                            147.4333056	-1.9
+                            147.4909418	3
+                            147.5197599	-1.7
+                            147.548578	2
+                            147.6062141	-1.2
+                            147.6638503	1.1
+                            147.7214864	-1
+                            147.7791226	1.8
+                            147.8367588	-1.4
+                            147.8943949	1.2
+                            147.9520311	-1.8
+                            148.0096673	1.9
+                            148.0673034	-2.3
+                            148.0961215	1.6
+                            148.1249396	-2.7
+                            148.1825758	1.7
+                            148.2402119	-3.3
+                            148.2978481	1.7
+                            148.3554842	-1.4
+                            148.4131204	1.5
+                            148.4707566	-1.7
+                            148.5283927	1.7
+                            148.5860289	-1.7
+                            148.6436651	1.1
+                            148.6724831	1.6
+                            148.7013012	-2.7
+                            148.7589374	1.7
+                            148.8165736	-3.3
+                            148.8742097	1.7
+                            148.9318459	-1.4
+                            148.989482	1.5
+                            149.0471182	-1.7
+                            149.1047544	1.7
+                            149.1623905	-1.7
+                            149.2200267	1.1
+                            149.2488448	-1.7
+                            149.2776629	1.7
+                            149.335299	-1.9
+                            149.3929352	3
+                            149.4505713	-1.7
+                            149.5082075	2
+                            149.5658437	-1.2
+                            149.6234798	1.1
+                            149.681116	-1
+                            149.7387522	1.8
+                            149.7963883	-1.4
+                            149.8252064	1.2
+                            149.8540245	-1.8
+                            150.4303861	1.9
+                            151.0067478	-2.3
+                            151.5831094	4
+                            152.159471	-5.1
+                            152.7358327	6.4
+                            153.3121943	-7.9
+                            153.8885559	8.5
+                            154.4649176	-9
+                            155.0412792	10
+                            155.6176408	-12
+                            156.1940024	14
+                            156.7703641	1.8
+                            157.3467257	20
+                            157.9230873	-22
+                            158.499449	28.5
+                            159.0758106	-39
+                            159.6521722	30
+                            160.2285339	-32
+                            160.8048955	24
+                            161.3812571	-25.1
+                            161.9576188	24
+                            162.5339804	-25.1
+                            163.110342	26.4
+                            163.6867037	-27.9
+                            164.2630653	28.5
+                            164.8394269	-39
+                            165.4157886	30
+                            165.9921502	-32
+                            166.5685118	30
+                            167.1448735	-32
+                            167.7212351	34
+                            168.2975967	-35.1
+                            168.8739584	36.4
+                            169.45032	-37.9
+                            170.0266816	38.5
+                            170.6030433	-39
+                            171.1794049	30
+                            171.7557665	36.4
+                            172.3321282	-37.9
+                            172.9084898	38.5
+                            173.4848514	-39
+                            174.0612131	30
+                            174.6375747	-32
+                            175.2139363	40
+                            175.790298	-42
+                            176.3666596	44
+                            176.9430212	-45.1
+                            177.5193829	46.4
+                            178.0957445	-47.9
+                            178.6721061	48.5
+                            179.2484678	-49
+                            179.8248294	40
+                            180.401191	-42
+                            1152.723265	0
+
+
+                        </tableData>
+                     </table>
+                </product>
+            </function>
+            
+            <!-- This is to compensate for the fact the JSBSim has the direction of the gyroscopic moment from the propellor/engine 
+            reversed.  However it seems to have some feedback/delay problems of its own so for now we're going to remove it
+            and live with the fact that the gyroscopic moment is reversed. -->
+                   
+      			<!-- <function name="aero/moment/Pitch_moment_gyroscopic_jsbsim_correction">
+                      <description>This reverses the pitch moment due to the gyrosopic action of the propeller, which JSBSim seems to have reversed</description>
+                      <product>
+                          <property>moments/m-prop-lbsft</property>
+                          <value>-2</value>
+                      </product>
+            </function>
+            -->
+                       
+        </axis>
+        
+        <axis name="YAW" unit="LBS*FT">
+            <function name="aero/moment/Yaw_beta">
+                <description>Yaw moment due to beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <!-- <property>aero/beta-rad</property> plain alpha-rad is OK for small values, but for larger than abs(1) or so, need sin(alpha-rad) instead-->
+                    <sin>
+                        <property>aero/beta-rad</property>
+                    </sin>
+                    
+                    <!-- <value>0.12</value> orig -->
+                    <value>0.06</value>
+                </product>
+            </function>
+            <function name="aero/moment/Yaw_damp">
+                <description>Yaw moment due to yaw rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>0
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <!-- Aeromatic value was -0.15; this is replaced by the value * table value 
+                    below, to reduce the damping values for the Camel --> 
+                    
+                    <!-- Camel was sensitive & poorly damped in all directions of motion, particularly in yaw stability, where the pathetically small tail fin doesn't do much and the rudder doesn't do much in terms of damping.  Adjusting this 0-1 adjusts this sensitivity. -->
+                    <!-- <value>-0.10</value>  accidentally left this un-remed out and it worked quite well, so  . . . -->
+                    <!-- orig: <value>-0.15</value> -->
+                    <!-- camel is poorly damped and won't get out of spin/turn automatically if the controls are released.  You have to steer it out. -->
+					<!--this tends to damp or *stop* the yaw, thus the negative numbers (the overall effect is always to reduce the amount of yaw moment).
+					With the Camel, in certain situations the yaw & roll actually won't damp out (ie, when in a tailspin - if you take your hands off the controls it will
+					just keep tailspinning indefinitely, unlike modern aircraft which are designed to naturally recover if you take your hands off the controls); 
+					this is like having a yaw damp of 0 or close to it. 
+					-->
+                    
+                    <property>velocities/r-aero-rad_sec</property>
+                    <value>1.9</value> 
+                    <table>
+                        <independentVar>velocities/r-aero-rad_sec</independentVar>
+                        <tableData>
+                          <!-- ver 1.6a:  -->
+                          
+                          -32.14        -0.50
+                          -4            -0.5
+						              -1.25          -0.06  
+                          -1            -0.003
+						              -.97         -0.01        
+                          -0.7          -0.03                       
+                          -0.25         -0.05
+                          -0.1          -0.40     
+                          0              -0.5
+                          0.1           -0.40
+                          0.25          -0.05           
+                          0.7           -0.03
+                          .97          -0.01       
+						              1             -0.003
+                          1.25           -0.06
+                          4             -.5
+						              32.14         -0.5
+                          
+                          <!-- ver 1.6b experiment: Less damp right around stability, doesn't really work quite right  -->
+                          <!--
+                          -32.14        -0.50
+                          -4            -0.5
+						              -1.25          -0.06  
+                          -1            -0.003
+						              -.97         -0.01        
+                          -0.7          -0.03                       
+                          -0.25         -0.05
+                          -0.01          -0.05     
+                          0              -0.08
+                          0.01           -0.05
+                          0.25          -0.05           
+                          0.7           -0.03
+                          .97          -0.01       
+						              1             -0.003
+                          1.25           -0.06
+                          4             -.5
+						              32.14         -0.5
+                          -->        
+                        </tableData>
+                    </table>
+                    
+                    <!--
+                    <value>0.2</value> 
+                    <table>
+                        <independentVar>velocities/r-aero-rad_sec</independentVar>
+                        <tableData>                    
+                    -32.14	1.607
+                    -9	0.27
+                    -2	0.006
+                    -1.57	0.0157
+                    -0.7	0.03
+                    -0.25	0.05
+                    -0.05	0.2
+                    -0.000001	0.5
+                    0	0
+                    0.000001	-0.5
+                    0.05	-0.2
+                    0.25	-0.05
+                    0.7	-0.03
+                    1.57	-0.0157
+                    2	-0.006
+                    9	-0.27
+                    32.14	-1.607
+
+                    </tableData>
+                  </table>
+                  -->
+                    
+                </product>
+            </function>
+            <function name="aero/moment/Yaw_rudder">
+                <description>Yaw moment due to rudder</description>
+                <product>
+                    <!-- <property>aero/qbar-psf</property> -->
+                    <property>aero/function/qbar-induced-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/rudder-pos-rad</property>
+                    <!-- 0.18 - Aeromatic -->
+                    <!-- <value>-0.18</value> ver 1.4RC-->
+                    <!-- According to a simple calculation (sq ft of rudder/elevator area X distance from CoG) the elevator should have about 2X the effectiveness of the rudder.  This is approx. true for -0.20 here and -1.1 for elevator
+                    Two data points on the rudder:
+                      - We know that some used FULL RUDDER on takeoff, easing it off after becoming airborne.
+                      - We know that both R & L turns at max turn rate used FULL RUDDER.
+                      
+                      - The rudder was considered rather small and ineffective; consideration was given to increasing its size
+                      
+                     All these put a rather low bound how on effective the rudder was.
+                     
+                     Cessna 172 has rudder area 7.43 sq ft, 27ft 2 in in length; Whereas Camel is 4.9 sq ft. X 18ft 6 in in length                    
+                    -->
+                    <!-- <value>-0.1</value> -->
+                    <value>-0.05</value>  <!--ver 1.6 value .05 -->
+                    <!-- it became harder & hard to rudder with speed,
+                    due to wind pressure -->
+                    <!-- <table>
+                        <independentVar>velocities/ve-kts</independentVar>
+                        <tableData>
+                          0              0
+                          50             1
+                          105           0.95
+                          180           0.5
+                          500           0       
+                        </tableData>
+                    </table>
+                    -->
+
+                    <!-- Rudder effectiveness lost as soon as tail sets down on landing -->                    
+                    <table>
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <tableData>
+                        -90    0.01
+                        -20    1
+                        12     1
+                        14     0.7
+                        90     0.01
+                        </tableData>
+                    </table> 
+                    
+                                       
+                    <!-- Asymmetric stall; you lose rudder as a stall in beta occurs -->
+                    <!-- Based p51d-jsbsim.xml -->
+                    <table>
+                        <independentVar lookup="row">aero/beta-deg</independentVar>
+                        <tableData>
+                        -180   -.7
+                        -90    0.05
+                        -22    0.3
+                        -17    1
+                        17     1
+                        22     0.3
+                        90     0.05
+                        180    -.7
+                        </tableData>
+                    </table>
+                                        
+                </product>
+            </function>
+            <function name="aero/moment/Yaw_aileron">
+                <!-- Camels large (but ineffective) 'barn door' ailerons produced 'awe-inspiring'
+                amounts of adverse yaw and also a great deal of drag. With no rudder correction it falls into a deep 
+                side-slip with a few seconds. 
+                http://riseofflight.com/Forum/download/file.php?id=31942&mode=view
+                Sopwith Camel replica
+
+                extract from P1lot magazine November 1981
+
+                Engine: Warner Super Scarab
+                
+                The rudder and elevator are very light and sensitive while the ailerons are astonishingly heavy, and appear to have practically no effect on anything at all. Heaving the stick from side to side produces a sort of drunken wallowing, like a politician trying to duck out of a commitment. A suspicious glance at the vibrating wings reveals that the ailerons are in fact still connected up -and the sight of them moving sluggishly in the airflow suggests the answer to the conundrum: the Camel has four enormous ailerons, and they are quite simply far too big. Furthermore, they have all the design subtlety of a quartet of barn doors. Frise effect, slotting, balancing, differential -these weren't even words in the aviation dictionary in 1916 when this lady was conceived, if you wanted your aeroplane to roll faster you just made the ailerons bigger. (And then, presumably, wondered why it didn't roll faster ... ) Those huge control surfaces so degrade the airflow over the wings that not only is their primary effect vastly blunted, but at the same time the drag thus engendered is awe-inspiring. Adverse yaw completely overcomes the normal secondary effect of roll, so that if you are so misguided as to take your feet off the Camel's rudder and then bank (say) to the left, the stubby round nose will instantly zap off to the right and keep going.    . . . 
+                
+                Thus I found that the Camel performed tight little loops, well-behaved spins, good stall-turns, and somewhat ponderous barrel rolls. Slow rolls, however, were something else again. She would just about do it if you insisted, but you had to start at nigh on Vne , use both hands to crank on full aileron -and then wait. And wait. And wait. She took 23 seconds to go round (compared to about six seconds in, say, a Chipmunk), and that 23 seconds felt like a fortnight. After the first 100 degrees or so the engine would pack up and you were left rolling in hideous slow motion with only the howl of the wind in the wires for company. Treading the rudder very gently -for only a touch too much out-roll rudder would be enough to overcome the ailerons and stop the roll altogether, leaving you stuck on your back like some helpless airborne turtle -you finally regained erect flight with perhaps 80 mph left ,whereupon you had to wait several more seconds before the Scarab would cough and splutter and belch and finally struggle back to its normal asthmatic blattering. (In the end I did slow rolls at three or four shows before sanity prevailed and I dropped the exercise as being too hard on both the airframe and the nervous system).
+                 http://riseofflight.com/forum/viewtopic.php?f=49&t=30890&start=30 
+                 -->
+                <description>Adverse yaw</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+                    <!-- Aeromatic: -0.01  -.07 is QUITE large ver 1.6a: -0.06-->
+                    <value>-0.04</value>
+                    <table>
+                        <independentVar>velocities/ve-kts</independentVar>
+                        <tableData>
+                          0             1
+                          70            0.9
+                          180           0.3
+                          400           0       
+                        </tableData>
+                    </table>
+                </product>                                                 
+            </function>
+            
+            <!-- This is to compensate for the fact the JSBSim has the direction of the gyroscopic moment from the propellor/engine 
+            reversed.  However it seems to have some feedback/delay problems of its own so for now we're going to remove it
+            and live with the fact that the gyroscopic moment is reversed. -->
+             
+     		    <!-- <function name="aero/moment/Yaw_moment_gyroscopic_jsbsim_correction">
+                <description>This reverses the yaw moment due to the gyrosopic action of the propeller, which JSBSim seems to have reversed</description>
+                <product>
+                    <property>moments/n-prop-lbsft</property>
+                    <value>-2</value>
+                </product>
+            </function>
+            -->
+            
+
+            <!--
+               Create YAW to help drop a wing at stall.
+               This will help to induce a spin or a snap
+               roll depending on how fast the stall entry
+               speed is.
+               Which wing is dropped and how hard it
+               drops depends on the beta angle.
+            -->
+           <!-- This is based on p51d-jsbsim.xml, modified to produce better/more realistic results for the Camel --> 
+            
+           <function name="aero/moment/Yaw_Cnalphabeta">
+                <description>Yaw_moment_due_to_alpha-beta</description>
+                <product>
+                    <value>0</value> <!-- set to 0 to disable for testing; 1 to enable -->
+                    <value> -2.5 </value> <!--ver 1.6: -2.5 -->
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    
+                    <!-- See Yaw_Cnalphabeta Table worksheet in Camel-JSBSim-calcs.xlsx workshop for the original/editable table -->
+                    
+                  <table>						
+                        <independentVar>velocities/p-aero-rad_sec</independentVar>
+                       <tableData>
+                            -100     1
+                            -5       3
+                            -3.2       0
+                            0        0
+                            3.2        0
+                            5        3
+                            100      1
+                        </tableData>                        
+                  </table>   
+                  
+
+                    <table>						
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>						
+                        <independentVar lookup="column">aero/beta-deg</independentVar>						
+                        <independentVar lookup="table">aero/Re</independentVar>						
+                        <tableData breakPoint="2500000">						
+						
+	-50	-5	-2	2.5	6	52
+-27	0	0.005	0.003	-0.003	-0.005	0
+-15	0	0.005	0.003	-0.003	-0.005	0
+-14.7	0	0.005	0.003	-0.003	-0.005	0
+-14.3	0	0.005	0.003	-0.003	-0.005	0
+-13.9	0	0.005	0.003	-0.003	-0.005	0
+-13.4	0	0.005	0.003	-0.003	-0.005	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0.001	0.005	-0.005	-0.001	0
+14	0	0.0015	0.006	-0.006	-0.0015	0
+14.4	0	0.0025	0.008	-0.008	-0.0025	0
+14.8	0	0.0035	0.01	-0.01	-0.0035	0
+17.5	0	0.005	0.012	-0.012	-0.005	0
+19.5	0	0.00625	0.013	-0.013	-0.00625	0
+21.5	0	0.0075	0.015	-0.015	-0.0075	0
+27	0	0.00125	0.005	-0.005	-0.00125	0
+</tableData>						
+<tableData	breakPoint="5000000">					
+	-50	-5	-2	2.5	6	52
+-27	0	0.005	0.003	-0.003	-0.005	0
+-15	0	0.005	0.003	-0.003	-0.005	0
+-14.7	0	0.005	0.003	-0.003	-0.005	0
+-14.3	0	0.005	0.003	-0.003	-0.005	0
+-13.9	0	0.005	0.003	-0.003	-0.005	0
+-13.4	0	0.005	0.003	-0.003	-0.005	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0.005	0.01	-0.01	-0.005	0
+14	0	0.015	0.01	-0.01	-0.015	0
+14.4	0	0.02	0.015	-0.015	-0.02	0
+14.8	0	0.025	0.02	-0.02	-0.025	0
+17.5	0	0.03	0.023	-0.023	-0.03	0
+19.5	0	0.04	0.026	-0.026	-0.04	0
+21.5	0	0.05	0.03	-0.03	-0.05	0
+27	0	0.02	0.01	-0.01	-0.02	0
+</tableData>						
+<tableData	breakPoint="10000000">					
+	-50	-5	-2	2.5	6	52
+-27	0	0.005	0.003	-0.003	-0.005	0
+-15	0	0.005	0.003	-0.003	-0.005	0
+-14.7	0	0.005	0.003	-0.003	-0.005	0
+-14.3	0	0.005	0.003	-0.003	-0.005	0
+-13.9	0	0.002	0.001	-0.001	-0.002	0
+-13.4	0	0.0005	0.0003	-0.0003	-0.0005	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0.002	0.006	-0.006	-0.002	0
+14	0	0.005	0.005	-0.005	-0.005	0
+14.4	0	0.01	0.01	-0.01	-0.01	0
+14.8	0	0.015	0.015	-0.015	-0.015	0
+17.5	0	0.03	0.02	-0.02	-0.03	0
+19.5	0	0.035	0.025	-0.025	-0.035	0
+21.5	0	0.04	0.03	-0.03	-0.04	0
+27	0	0.02	0.01	-0.01	-0.02	0
+</tableData>						
+<tableData	breakPoint="20000000">					
+	-50	-5	-2	2.5	6	52
+-27	0	0.005	0.003	-0.003	-0.005	0
+-15	0	0.005	0.003	-0.003	-0.005	0
+-14.7	0	0.005	0.003	-0.003	-0.005	0
+-14.3	0	0.002	0.001	-0.001	-0.002	0
+-13.9	0	0.005	0.003	-0.003	-0.005	0
+-13.4	0	0.002	0.001	-0.001	-0.002	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0	0	0	0	0
+14	0	0	0	0	0	0
+14.4	0	0	0	0	0	0
+14.8	0	0.01	0.01	-0.01	-0.01	0
+17.5	0	0.02	0.016	-0.016	-0.02	0
+19.5	0	0.03	0.023	-0.023	-0.03	0
+21.5	0	0.05	0.03	-0.03	-0.05	0
+27	0	0.02	0.01	-0.01	-0.02	0
+</tableData>						
+<tableData	breakPoint="30000000">					
+	-50	-5	-2	2.5	6	52
+-27	0	0.05	0.03	-0.03	-0.05	0
+-15	0	0.05	0.03	-0.03	-0.05	0
+-14.7	0	0.02	0.01	-0.01	-0.02	0
+-14.3	0	0.005	0.003	-0.003	-0.005	0
+-13.9	0	0.002	0.001	-0.001	-0.002	0
+-13.4	0	0	0	0	0	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0	0	0	0	0
+14	0	0	0	0	0	0
+14.4	0	0	0	0	0	0
+14.8	0	0	0	0	0	0
+17.5	0	0.01	0.01	-0.01	-0.01	0
+19.5	0	0.03	0.02	-0.02	-0.03	0
+21.5	0	0.05	0.03	-0.03	-0.05	0
+27	0	0.02	0.01	-0.01	-0.02	0
+</tableData>						
+<tableData	breakPoint="40000000">					
+	-50	-5	-2	2.5	6	52
+-27	0	0.05	0.03	-0.03	-0.05	0
+-15	0	0.05	0.03	-0.03	-0.05	0
+-14.7	0	0.02	0.01	-0.01	-0.02	0
+-14.3	0	0.005	0.003	-0.003	-0.005	0
+-13.9	0	0.002	0.001	-0.001	-0.002	0
+-13.4	0	0	0	0	0	0
+-13	0	0	0	0	0	0
+0	0	0	0	0	0	0
+13	0	0	0	0	0	0
+13.5	0	0	0	0	0	0
+14	0	0	0	0	0	0
+14.4	0	0	0	0	0	0
+14.8	0	0	0	0	0	0
+17.5	0	0	0	0	0	0
+19.5	0	0.03	0.02	-0.02	-0.03	0
+21.5	0	0.05	0.03	-0.03	-0.05	0
+27	0	0.02	0.01	-0.01	-0.02	0
+						
+                        </tableData>						
+                    </table>						
+
+
+
+
+                </product>
+            </function>
+            
+            
+            
+            <function name="aero/moment/Yaw_roll">
+                <description>Yaw moment due to roll rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/p-aero-rad_sec</property>
+                    <!-- value>0.35</value -->
+                    <value>0.035</value>
+                    <value>1</value> <!-- testing -->
+                    <!-- Spin on stall -->
+                        <!-- This seems to provide the main source of spin/rotation for the aircraft 
+                        when it is stalling. In the abscence of wind tunnel data the numbers are a 
+                        guess, of course, but it matches well the contemporary description, that if in 
+                        a sharp turn you tightened up the elevator just a little too much, you would 
+                        end up in a severe spin. The trick is that the alpha angles less than 20 
+                        degrees or so (whatever the the stall angle of the wing is) shouldn't produce 
+                        any spin, especially at low speeds, or landing and takeoff become almost 
+                        impossible.--> 
+                    <table>
+
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <independentVar lookup="column">velocities/vc-kts</independentVar>
+                        <tableData>
+                                 0   13  28  38  48  70  100   150
+                            -45  -1 -2 -3  -2.5   -3   -1.5  -1    -1.5
+                            -35  -1 -2 -4  -4  -4  -3 -2    -1.5
+                            -30  -1 -2 -4  -4  -4  -3 -2    -1.5
+                            -14.5  -1 -2 -3   -3   -3   -2  -1.5  -1
+                            -13  0 0   0    0    0    0  0     0
+                             0     0 0   0    0    0    0  0     0
+                            13   0 0   0    0    0    0  0     0
+                            14.5   1  2  3     3    3   2   1.5     1
+                            30   1  4  4    4   4  3  2     1.5
+                            35   1  4  4    4   4  3  2     1.5
+                            45   1  2  3    2.5    3   1.5   1     1.5
+                        </tableData>
+                    </table>
+                </product>
+            </function>
+            
+            
+        </axis>
+    </aerodynamics>
+
+	<!-- <output name="JSBout.csv" type="CSV" rate="100">
+        <simulation> ON </simulation>
+        <atmosphere> ON </atmosphere>
+        <massprops> ON </massprops>
+        <aerosurfaces> ON </aerosurfaces>
+        <rates> ON </rates>
+        <velocities> ON </velocities>
+        <forces> ON </forces>
+        <moments> ON </moments>
+        <position> ON </position>
+        <coefficients> ON </coefficients>
+        <ground_reactions> ON </ground_reactions>
+        <fcs> ON </fcs>
+        <propulsion> ON </propulsion>
+    </output>
+	-->
+</fdm_config>
