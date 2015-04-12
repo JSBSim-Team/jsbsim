@@ -193,8 +193,8 @@
       <!-- THIS MUST BE COMMENTED OUT FOR USE IN FLIGHTGEAR ... I think -->
 
       <property>/systems/l410/battery-all-ok</property>
-      <property>/systems/l410/battery-one-ok</property>
-      <property>/systems/l410/battery-two-ok</property>
+      <property>/systems/l410/battery1-ok</property>
+      <property>/systems/l410/battery2-ok</property>
       <property>/systems/l410/bus36v-on</property>
       <property>/systems/l410/bus24v-on</property>
       <property>/systems/l410/extinguish-e1-1-ok</property>
