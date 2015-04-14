@@ -50,12 +50,6 @@ class CheckScripts(unittest.TestCase):
             if tree.getroot().tag != 'runscript':
                 continue
 
-            # * Aircrafts WK450 and StellarJ do not exist
-            # * blank is using version 1.0 of JSBSim format which is no longer
-            #   supported.
-            if f in ('WK450.xml', 'StellarJ_Fly.xml', 'blank.xml'):
-                continue
-
             fdm = CreateFDM(self.sandbox)
             self.assertTrue(fdm.load_script(os.path.join(script_path, f)),
                             msg="Failed to load script %s" % (fullpath,))
