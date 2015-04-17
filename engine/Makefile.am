@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	CFM56_5.xml \
 	CFM56.xml \
 	direct.xml \
+	dowty-rotol-aero.xml \
 	Dr1_propeller.xml \
 	electric147kW.xml \
 	electric_1mw.xml \
@@ -55,6 +56,7 @@ EXTRA_DIST = \
 	PT6A-27.xml \
 	PT6A-68.xml \
 	PW125B.xml \
+	PW125BX.xml \
 	R-1820-97.xml \
 	RB211-524.xml \
 	RL10_nozzle.xml \
@@ -77,4 +79,5 @@ EXTRA_DIST = \
 	WrightGR-2600.xml \
 	xlr99_nozzle.xml \
 	XLR99.xml \
+	YJ93-GE-3.xml \
 	Zenoah_G-26A.xml
