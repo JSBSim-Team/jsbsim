@@ -27,7 +27,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestFuelTanksInertia
                  TestInputSocket
                  TestInitialConditions
-                 CheckScripts)
+                 CheckScripts
+                 CheckAircrafts)
 
 foreach(test ${PYTHON_TESTS})
   add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
