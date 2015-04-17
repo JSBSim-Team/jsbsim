@@ -19,7 +19,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, unittest, sys
+import os, unittest, sys, string
 import xml.etree.ElementTree as et
 from JSBSim_utils import SandBox, CreateFDM
 
@@ -47,7 +47,7 @@ class CheckScripts(unittest.TestCase):
                 continue
 
             # Does f contains a JSBSim script ?
-            if tree.getroot().tag != 'runscript':
+            if string.upper(tree.getroot().tag) != 'RUNSCRIPT':
                 continue
 
             fdm = CreateFDM(self.sandbox)
