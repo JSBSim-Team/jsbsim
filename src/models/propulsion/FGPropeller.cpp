@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.50 2015/04/20 11:40:44 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.51 2015/04/20 12:12:49 ehofman Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,8 +81,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
 
   Sense_multiplier = 1.0;
-  if (prop_element->GetAttributeValueAsNumber("version") < 1.1)
-    Sense_multiplier = 1.0;
+  if (prop_element->HasAttribute("version"))
+    if  (prop_element->GetAttributeValueAsNumber("version") > 1.0)
+      Sense_multiplier = -1.0;
 
   if (prop_element->FindElement("diameter"))
     Diameter = prop_element->FindElementValueAsNumberConvertTo("diameter", "FT");
