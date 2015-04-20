@@ -1,6 +1,6 @@
-# CheckScripts.py
+# CheckAircrafts.py
 #
-# A regression test that checks that all the scripts can be read by JSBSim
+# A regression test that checks that all the aircrafts can be read by JSBSim
 # without issuing errors.
 #
 # Copyright (c) 2015 Bertrand Coconnier
@@ -21,42 +21,51 @@
 
 import os, unittest, sys, string
 import xml.etree.ElementTree as et
-from JSBSim_utils import SandBox, CreateFDM
+from JSBSim_utils import SandBox, append_xml, CreateFDM
 
 
-class CheckScripts(unittest.TestCase):
+class CheckAircrafts(unittest.TestCase):
     def setUp(self):
         self.sandbox = SandBox()
 
     def tearDown(self):
         self.sandbox.erase()
 
-    def testScripts(self):
-        script_path = self.sandbox.path_to_jsbsim_file('scripts')
-        for f in os.listdir(self.sandbox.elude(script_path)):
-            fullpath = os.path.join(self.sandbox.elude(script_path), f)
+    def testAircrafts(self):
+        aircraft_path = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('aircraft'))
+        for d in os.listdir(aircraft_path):
+            fullpath = os.path.join(aircraft_path, d)
+
+            # Is d a directory ?
+            if not os.path.isdir(fullpath):
+                continue
+
+            f = os.path.join(aircraft_path, d, append_xml(d))
 
             # Is f a file ?
-            if not os.path.isfile(fullpath):
+            if not os.path.isfile(f):
                 continue
 
             # Is f an XML file ?
             try:
-                tree = et.parse(fullpath)
+                tree = et.parse(f)
             except et.ParseError:
                 continue
 
-            # Does f contains a JSBSim script ?
-            if string.upper(tree.getroot().tag) != 'RUNSCRIPT':
+            # Is f an aircraft definition file ?
+            if string.upper(tree.getroot().tag) != 'FDM_CONFIG':
+                continue
+
+            if d in ('blank'):
                 continue
 
             fdm = CreateFDM(self.sandbox)
-            self.assertTrue(fdm.load_script(os.path.join(script_path, f)),
-                            msg="Failed to load script %s" % (fullpath,))
-            fdm.run_ic()
+            self.assertTrue(fdm.load_model(d),
+                            msg='Failed to load aircraft %s' % (d,))
             del fdm
 
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckScripts)
+
+suite = unittest.TestLoader().loadTestsFromTestCase(CheckAircrafts)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
 if test_result.failures or test_result.errors:
     sys.exit(-1)  # 'make test' will report the test failed.
