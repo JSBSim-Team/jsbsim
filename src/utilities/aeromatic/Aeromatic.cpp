@@ -373,7 +373,7 @@ string Aeromatic::PrintProp() {
   f << "       static thrust (lbs): " << static_thrust << endl;
   f << "-->\n\n";
 
-  f << "<propeller name=\"" << PropName << "\">\n";
+  f << "<propeller version=\"1.01\" name=\"" << PropName << "\">\n";
   f << "  <ixx> " << ixx << " </ixx>\n";
   f << "  <diameter unit=\"IN\"> " << diameter * 12 << " </diameter>\n";
   f << "  <numblades> " << blades << " </numblades>\n";
