@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<!--
+
+  Airship nose cone and main wire mooring system for JSBSim.
+
+    Copyright (C) 2008 - 2015  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="airship-mooring">
+
+ <documentation>
+  This system models a mast mooring system with a mooring cone connection
+  and a mooring wire. The mooring cone MUST be located at the aircraft's
+  visual reference point (VRP).
+
+  Usage:
+
+   Include the visual-reference-point-extensions system first.
+
+   Define the following constant properties:
+     For the mooring cone connection:
+       mooring/mooring-spring-coeff-lbs_ft      [lbs/ft]
+       mooring/mooring-damping-coeff-lbs_fps    [lbs*sec/ft]
+       mooring/max-mooring-force-lbs            [lbs]
+
+     For the mooring wire:
+       mooring/wire-spring-coeff-lbs_ft         [lbs/ft]
+       mooring/max-wire-force-lbs               [lbs]
+       mooring/max-winch-speed-fps              [ft/sec]
+
+     For the mooring cone connection:
+       mooring/mooring-spring-coeff-lbs_ft
+       mooring/mooring-damping-coeff-lbs_fps
+       mooring/max-mooring-force-lbs
+
+   Define the following external forces:
+
+     <force name="mooring-coupling-north" frame="LOCAL">
+      <location unit="M">
+       { VRP }
+      </location>
+      <direction>
+       <x> 1.0 </x>
+       <y> 0.0 </y>
+       <z> 0.0 </z>
+      </direction>
+     </force>
+     <force name="mooring-coupling-east" frame="LOCAL">
+      <location unit="M">
+       { VRP }
+      </location>
+      <direction>
+       <x> 0.0 </x>
+       <y> 1.0 </y>
+       <z> 0.0 </z>
+      </direction>
+     </force>
+     <force name="mooring-coupling-down" frame="LOCAL">
+      <location unit="M">
+       { VRP }
+      </location>
+      <direction>
+       <x> 0.0 </x>
+       <y> 0.0 </y>
+       <z> 1.0 </z>
+      </direction>
+     </force>
+
+   The following control the mooring operation:
+       mooring/wire-connected          Connect the wire    {0,1.0}
+       mooring/winch-speed-fps         Winch speed         [ft/sec]
+       mooring/initial-wire-length-ft                      [ft]
+
+   Location of the mooring mast:
+       mooring/latitude-deg
+       mooring/longitude-deg
+       mooring/altitude-ft
+
+ </documentation>
+
+ <!-- INTERFACE PROPERTIES -->
+
+ <!--  Mooring actions -->
+ <property value="0.0"> mooring/wire-connected </property>
+ <property value="0.0"> mooring/winch-speed-fps </property>
+ <property value="0.0"> mooring/initial-wire-length-ft </property>
+
+ <!--  Mooring mast location. Note: Geodetic latitude and altitude. -->
+ <property value="0.0"> mooring/latitude-deg  </property>
+ <property value="0.0"> mooring/longitude-deg </property>
+ <property value="0.0"> mooring/altitude-ft </property>
+
+ <channel name="Mooring Forces">
+
+   <fcs_function name="mooring/latitude-diff-ft">
+    <function>
+     <product>
+      <property> position/latitude-unit-distance-ft_deg </property>
+      <difference>
+       <property> mooring/latitude-deg </property>
+       <property> position/vrp-latitude-deg </property>
+      </difference>
+     </product>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="mooring/longitude-diff-ft">
+    <function>
+     <product>
+      <property> position/longitude-unit-distance-ft_deg </property>
+      <difference>
+       <property> mooring/longitude-deg </property>
+       <property> position/vrp-longitude-deg </property>
+      </difference>
+     </product>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="mooring/altitude-diff-ft">
+    <function>
+     <difference>
+      <property> position/vrp-altitude-ft </property>
+      <property> mooring/altitude-ft </property>
+     </difference>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="mooring/total-distance-ft">
+    <function>
+     <pow>
+      <sum>
+       <pow>
+        <property> mooring/latitude-diff-ft </property>
+        <value> 2.0 </value>
+       </pow>
+       <pow>
+        <property> mooring/longitude-diff-ft </property>
+        <value> 2.0 </value>
+       </pow>
+       <pow>
+        <property> mooring/altitude-diff-ft </property>
+        <value> 2.0 </value>
+       </pow>
+      </sum>
+      <value> 0.5 </value>
+     </pow>
+    </function>
+   </fcs_function>
+
+   <switch name="mooring/moored">
+    <default value="0.0"/>
+    <test logic="AND" value="1.0">
+     mooring/wire-connected GE 1.0
+     mooring/total-distance-ft LE 5.0
+    </test>
+   </switch>
+
+   <fcs_function name="mooring/mooring-force-lbs">
+    <function>
+     <product>
+      <property> mooring/moored </property>
+      <property> mooring/mooring-spring-coeff-lbs_ft </property>
+      <property> mooring/total-distance-ft </property>
+     </product>
+    </function>
+    <clipto>
+     <min> 0.0 </min>
+     <max> mooring/max-mooring-force-lbs </max>
+    </clipto>
+   </fcs_function>
+
+   <switch name="mooring/winch-reset">
+    <default value="-1.0"/>
+    <test logic="AND" value="0.0">
+     mooring/wire-connected GT 0.0
+    </test>
+   </switch>
+
+   <pid name="mooring/wire-length-change-ft">
+    <!-- NOTE: The plain integrator component does not reset. -->
+    <input> mooring/winch-speed-fps </input>
+    <kp>    0.00 </kp>
+    <ki>    1.00 </ki>
+    <kd>    0.00 </kd>
+    <trigger> mooring/winch-reset </trigger>
+    <clipto>
+     <min>-mooring/initial-wire-length-ft </min>
+     <max> 0.0 </max> <!-- Might not be wise. -->
+    </clipto>
+   </pid>
+
+   <fcs_function name="mooring/wire-length-ft">
+    <function>
+     <sum>
+      <property> mooring/initial-wire-length-ft </property>
+      <property> mooring/wire-length-change-ft </property>
+     </sum>
+    </function>
+    <clipto>
+     <min> 0.0 </min>
+     <max> mooring/initial-wire-length-ft </max> <!-- Might not be wise. -->
+    </clipto>
+   </fcs_function>
+
+   <fcs_function name="mooring/wire-force-lbs">
+    <function>
+     <product>
+      <property> mooring/wire-connected </property>
+      <property> mooring/wire-spring-coeff-lbs_ft </property>
+      <max>
+       <difference>
+        <property> mooring/total-distance-ft </property>
+        <property> mooring/wire-length-ft </property>
+       </difference>
+       <value> 0.0 </value>
+      </max>
+     </product>
+    </function>
+    <clipto>
+     <min> 0.0 </min>
+     <max> mooring/max-wire-force-lbs </max>
+    </clipto>
+   </fcs_function>
+
+   <fcs_function name="mooring/total-force-lbs">
+    <function>
+     <sum>
+      <property> mooring/wire-force-lbs </property>
+      <property> mooring/mooring-force-lbs </property>
+     </sum>
+    </function>
+   </fcs_function>
+
+   <fcs_function name="mooring/force-north-lbs">
+    <function>
+     <product>
+      <property> mooring/wire-connected </property>
+      <sum>
+       <product>
+        <property> mooring/total-force-lbs </property>
+        <quotient>
+         <property> mooring/latitude-diff-ft </property>
+         <property> mooring/total-distance-ft </property>
+        </quotient>
+       </product>
+       <product>
+        <property> mooring/moored </property>
+        <property> mooring/mooring-damping-coeff-lbs_fps </property>
+        <property> velocities/vrp-v-north-fps </property>
+       </product>
+      </sum>
+     </product>
+    </function>
+    <output> external_reactions/mooring-coupling-north/magnitude </output>
+   </fcs_function>
+
+   <fcs_function name="mooring/force-east-lbs">
+    <function>
+     <product>
+      <property> mooring/wire-connected </property>
+      <sum>
+       <product>
+        <property> mooring/total-force-lbs </property>
+        <quotient>
+         <property> mooring/longitude-diff-ft </property>
+         <property> mooring/total-distance-ft </property>
+        </quotient>
+       </product>
+       <product>
+        <property> mooring/moored </property>
+        <property> mooring/mooring-damping-coeff-lbs_fps </property>
+        <property> velocities/vrp-v-east-fps </property>
+       </product>
+      </sum>
+     </product>
+    </function>
+    <output> external_reactions/mooring-coupling-east/magnitude </output>
+   </fcs_function>
+
+   <fcs_function name="mooring/force-down-lbs">
+    <function>
+     <product>
+      <property> mooring/wire-connected </property>
+      <sum>
+       <product>
+        <property> mooring/total-force-lbs </property>
+        <quotient>
+         <property> mooring/altitude-diff-ft </property>
+         <property> mooring/total-distance-ft </property>
+        </quotient>
+       </product>
+       <product>
+        <property> mooring/moored </property>
+        <property> mooring/mooring-damping-coeff-lbs_fps </property>
+        <property> velocities/vrp-v-down-fps </property>
+       </product>
+      </sum>
+     </product>
+    </function>
+    <output> external_reactions/mooring-coupling-down/magnitude </output>
+   </fcs_function>
+
+ </channel>
+
+</system>
