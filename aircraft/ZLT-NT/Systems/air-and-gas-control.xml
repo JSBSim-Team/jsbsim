@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- $Id: air-and-gas-control.xml,v 1.1 2010/04/02 22:18:37 andgi Exp $ -->
 <!--
 
   ZLT NT-07 airship flight model for JSBSim.
@@ -26,6 +25,40 @@
  <!--
  === Ballonet control system ===============================================
  -->
+
+ <documentation>
+  Gas and ballonet valve controls (from pictures and other sources):
+
+  - Air valve 1
+    - Closed (aft) - Auto - ... (fwd)
+  - Air valve 2
+    - Locked closed (aft) - Closed - Auto - ... (fwd)
+  - Air valve 3
+    - Locked closed (aft) - Closed - Auto - ... (fwd)
+  - Helium valve 1
+    - Closed (aft) - Auto - ... (fwd)
+  - Helium valve 2
+    - Closed (aft) - Auto - ... (fwd)
+
+  Accordig to some sources there are two valves on the aft ballonet and
+  one on the fore.
+
+  There appears to be backup/emergency (wire-pull) helium valve handles on the
+  left side of the overhead panel.
+
+  The control panel for the ballonet blowers seems to be on the left side of
+  the overhead panel just behind the ballonet valve levers.
+ </documentation>
+
+ <property>fcs/ballonet-valve-cmd-norm[0]</property>
+ <property>fcs/ballonet-valve-cmd-norm[1]</property>
+ <property>fcs/ballonet-valve-cmd-norm[2]</property>
+
+ <property>fcs/helium-valve-cmd-norm[0]</property>
+ <property>fcs/helium-valve-cmd-norm[1]</property>
+
+ <property>fcs/ballonet-blower-cmd-norm[0]</property>
+ <property>fcs/ballonet-blower-cmd-norm[1]</property>
 
  <!-- Interface properties -->
  <property>fcs/ballonet-inflation-cmd-norm[0]</property>

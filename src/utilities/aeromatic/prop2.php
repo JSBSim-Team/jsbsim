@@ -120,7 +120,7 @@ printf("                       Ct0: %7.6f\n", $ct0);
 printf("       static thrust (lbs): %7.2f\n", $static_thrust);
 print("-->\n\n");
 
-print("<propeller name=\"prop\">\n");
+print("<propeller version=\"1.01\" name=\"prop\">\n");
 printf("  <ixx> %6.2f </ixx>\n", $ixx);
 printf("  <diameter unit=\"IN\"> %5.1f </diameter>\n", $ac_diameter * 12);
 print("  <numblades> $blades </numblades>\n");

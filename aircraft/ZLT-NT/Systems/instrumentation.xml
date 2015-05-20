@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+<!--
+
+  ZLT NT-07 airship flight model for JSBSim.
+
+    Copyright (C) 2009 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+<system name="Instrumentation">
+
+ <channel name="Envelope Pressure Indicator">
+
+  <documentation>
+   According to [FAA:2008:E8-6600] the ZLT envelope pressure indicator (EPI)
+   instrument provides "annunciation of the Helium and Ballonet Pressure
+   as well as indication of the aft and forward Fan and Sensor Fail status
+   using LED columns".
+  </documentation>
+
+  <fcs_function name="instrumentation/gas-pressure-psf">
+   <function>
+    <difference>
+     <property> buoyant_forces/gas-cell/pressure-psf </property>
+     <property> atmosphere/P-psf </property>
+    </difference>
+   </function>
+   <output>/instrumentation/envelope-pressure-indicator/indicated-gas-pressure-psf</output>
+  </fcs_function>
+
+  <fcs_function name="instrumentation/ballonet-pressure-psf[0]">
+   <function>
+    <difference>
+     <property> buoyant_forces/gas-cell/ballonet[0]/pressure-psf[0] </property>
+     <property> atmosphere/P-psf </property>
+    </difference>
+   </function>   
+   <output>/instrumentation/envelope-pressure-indicator/indicated-fwd-ballonet-pressure-psf</output>
+  </fcs_function>
+
+  <fcs_function name="instrumentation/ballonet-pressure-psf[1]">
+   <function>
+    <difference>
+     <property> buoyant_forces/gas-cell/ballonet[1]/pressure-psf </property>
+     <property> atmosphere/P-psf </property>
+    </difference>
+   </function>   
+   <output>/instrumentation/envelope-pressure-indicator/indicated-aft-ballonet-pressure-psf</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="OAT and Superheat Indicator">
+
+  <documentation>
+   Provide outside air temperatur and superheat in degF.
+
+   From photos of the cockpit it can be determined that the OAT and superheat
+   indicator shows relative superheat with the range -8 to +20 degC and
+   outside air temperture with the range -20 to +50 degC. 
+  </documentation>
+
+  <fcs_function name="instrumentation/oat-degf">
+   <function>
+    <difference>
+     <property> atmosphere/T-R </property>
+     <value> 459.67 </value>
+    </difference>
+   </function>   
+   <output>/instrumentation/oat-indicator/indicated-oat-degf</output>
+  </fcs_function>
+
+  <fcs_function name="instrumentation/superheat-degf">
+   <function>
+    <difference>
+     <property> buoyant_forces/gas-cell/temp-R </property>
+     <property> atmosphere/T-R </property>
+    </difference>
+   </function>   
+   <output>/instrumentation/superheat-indicator/indicated-superheat-degf</output>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
+  Provide exhaust gas temperature in degC.
+ </documentation>
+ <!-- Updated by FlightGear. -->
+ <property value="0.0">/engines/engine[0]/egt-degf</property>
+ <property value="0.0">/engines/engine[1]/egt-degf</property>
+ <property value="0.0">/engines/engine[2]/egt-degf</property>
+
+ <channel name="Engine EGT">
+
+  <fcs_function name="instrumentation/engines/egt-degc[0]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[0]/egt-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1832.0  1000.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[0]/egt-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/egt-degc[1]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[1]/egt-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1832.0  1000.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[1]/egt-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/egt-degc[2]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[2]/egt-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1832.0  1000.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[2]/egt-degc</output>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
+  Provide cylinder head temperature in degC.
+  The maximum allowable value is 260 degC according to the type certificate
+  FAA AS1CE.
+  The temperature computed by JSBSim seems a bit high compared
+  to the data in the type certificate. Remap?
+ </documentation>
+ <!-- Updated by FlightGear. -->
+ <property value="0.0">/engines/engine[0]/cht-degf</property>
+ <property value="0.0">/engines/engine[1]/cht-degf</property>
+ <property value="0.0">/engines/engine[2]/cht-degf</property>
+
+ <channel name="Engine CHT">
+
+  <fcs_function name="instrumentation/engines/cht-degc[0]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[0]/cht-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[0]/cht-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/cht-degc[1]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[1]/cht-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[1]/cht-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/cht-degc[2]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[2]/cht-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[2]/cht-degc</output>
+  </fcs_function>
+
+ </channel>
+
+ <documentation>
+  Provide oil temperature in degC.
+  The maximum allowable value is 118 degC (100F) and take-off
+  minimum is 37.8 degC (240F) according to the type certificates
+  FAA AS1CE and E1CE.
+  The temperature computed by JSBSim seems ok.
+ </documentation>
+ <!-- Updated by FlightGear. -->
+ <property value="0.0">/engines/engine[0]/oil-temperature-degf</property>
+ <property value="0.0">/engines/engine[1]/oil-temperature-degf</property>
+ <property value="0.0">/engines/engine[2]/oil-temperature-degf</property>
+
+ <channel name="Engine oil temperature">
+
+  <fcs_function name="instrumentation/engines/oil-temperature-degc[0]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[0]/oil-temperature-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[0]/oil-temperature-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/oil-temperature-degc[1]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[1]/oil-temperature-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[1]/oil-temperature-degc</output>
+  </fcs_function>
+  <fcs_function name="instrumentation/engines/oil-temperature-degc[2]">
+   <function>
+    <table>
+     <independentVar>/engines/engine[2]/oil-temperature-degf</independentVar>
+     <tableData>
+      -148.0  -100.0
+      1652.0   900.0
+     </tableData>
+    </table>
+   </function>   
+   <output>/engines/engine[2]/oil-temperature-degc</output>
+  </fcs_function>
+
+ </channel>
+
+</system>

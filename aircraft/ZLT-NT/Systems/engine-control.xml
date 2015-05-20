@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- $Id: engine-control.xml,v 1.1 2010/04/02 22:18:37 andgi Exp $ -->
 <!--
 
   ZLT NT-07 airship flight model for JSBSim.
@@ -40,7 +39,7 @@
   - Mixture levers
     - LH AFT RH: LEAN - RICH
     - the standard mixture properties
-      fcs/mixture-cmd-norm[0|1|2]
+      fcs/mixture-cmd-norm[0|1|2] range [0, 1].
   - Thrust (prop pitch) levers (direct propeller pitch [FAA:2008:E8-6600])
     - LH RH AFT: REV - ZERO - T/O - CRUISE
     - fcs/thrust-cmd-norm[0|1|2] range [0, 1].
@@ -55,11 +54,9 @@
  <property value="0.0">fcs/propeller-speed-cmd-norm[1]</property>
  <property value="0.0">fcs/propeller-speed-cmd-norm[2]</property>
 
- <!-- Automatically created by JSBSim.
  <property value="0.0">fcs/mixture-cmd-norm[0]</property>
  <property value="0.0">fcs/mixture-cmd-norm[1]</property>
  <property value="0.0">fcs/mixture-cmd-norm[2]</property>
- -->
 
  <property value="0.0">fcs/thrust-cmd-norm[0]</property>
  <property value="0.0">fcs/thrust-cmd-norm[1]</property>

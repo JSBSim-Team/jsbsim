@@ -31,4 +31,5 @@ EXTRA_DIST = \
   x153.xml \
   f16_runway_test.xml \
   c172_elevation_test.xml \
-  c172_runway_at_rest_cg_shift.xml
+  c172_runway_at_rest_cg_shift.xml \
+  ZLT-NT-moored-1.xml
