@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<runscript name="static test">
+ <!--
+   This run is for testing lighter-than-air aircraft at the mooring mast.
+
+   If you visualize it in FlightGear start with -lat=37.420 -lon=-122.044
+   to get the mast truck appropriately placed.
+
+   Unfortunately, the native-fdm protocol appears to send the CG position
+   rather than the VRP position, so the mast truck will be out of place
+   as soon as the airship rotates.
+ -->
+
+ <use aircraft="ZLT-NT" initialize="reset00"/>
+ <run start="0.0" end="240" dt="0.00833333">
+
+  <property value="0">simulation/notify-time-trigger</property>
+
+  <event name="Initialize 1">
+   <description>Configure the aircraft</description>
+   <condition>
+    simulation/sim-time-sec GT 0.0
+   </condition>
+   <notify>
+    <property>static-condition/net-lift-lbs</property>
+    <property>inertia/cg-x-in</property>
+    <property>mooring/moored</property>
+    <property>position/vrp-latitude-deg</property>
+    <property>position/vrp-longitude-deg</property>
+    <property>position/vrp-altitude-ft</property>
+    <property>mooring/total-distance-ft</property>
+   </notify>
+   <!-- Weigh-off. -->
+   <set name="inertia/pointmass-weight-lbs[0]" value="2500.0"/>  
+  </event>
+
+  <event name="Initialize 2">
+   <description>Configure the mooring</description>
+   <condition>
+    simulation/sim-time-sec GT 0.5
+   </condition>
+   <notify>
+    <property>static-condition/net-lift-lbs</property>
+    <property>inertia/cg-x-in</property>
+    <property>mooring/moored</property>
+    <property>position/vrp-latitude-deg</property>
+    <property>position/vrp-longitude-deg</property>
+    <property>position/vrp-altitude-ft</property>
+    <property>mooring/total-distance-ft</property>
+   </notify>
+   <!-- Mooring mast position. -->
+   <set name="mooring/latitude-deg" value="37.420540"/>
+   <set name="mooring/longitude-deg" value="-122.044"/>
+   <set name="mooring/altitude-ft" value="69.0"/>
+  </event>
+
+  <event name="Initialize 3">
+   <description>Connect the mooring</description>
+   <condition>
+    simulation/sim-time-sec GT 1.0
+   </condition>
+   <notify>
+    <property>static-condition/net-lift-lbs</property>
+    <property>inertia/cg-x-in</property>
+    <property>mooring/moored</property>
+    <property>position/vrp-latitude-deg</property>
+    <property>position/vrp-longitude-deg</property>
+    <property>position/vrp-altitude-ft</property>
+    <property>mooring/total-distance-ft</property>
+   </notify>
+   <!-- Connect the mooring. -->
+   <set name="mooring/wire-connected" value="1.0"/>  
+  </event>
+
+  <event name="Strong wind from north">
+   <description>Strong wind from north</description>
+   <condition>
+    simulation/sim-time-sec GT 30.0
+   </condition>
+   <notify>
+    <property>static-condition/net-lift-lbs</property>
+    <property>inertia/cg-x-in</property>
+    <property>mooring/moored</property>
+    <property>mooring/total-distance-ft</property>
+   </notify>
+   <!-- Ramp up the wind. -->
+   <set name="atmosphere/wind-east-fps" value="30.0"
+        action="FG_RAMP" tc ="30.0"/>  
+  </event>
+
+  <event name="Time Notify" type="FG_DELTA" persistent="true">
+   <description>Output message at 10 second intervals</description>
+   <notify>
+    <property>static-condition/net-lift-lbs</property>
+    <property>inertia/cg-x-in</property>
+    <property>mooring/moored</property>
+    <property>position/vrp-latitude-deg</property>
+    <property>position/vrp-longitude-deg</property>
+    <property>position/vrp-altitude-ft</property>
+    <property>mooring/total-distance-ft</property>
+    <property>velocities/vc-kts</property>
+    <property>position/h-agl-ft</property>
+    <property>attitude/pitch-rad</property>
+    <property>atmosphere/wind-mag-fps</property>
+   </notify>
+   <condition>
+    simulation/sim-time-sec GE simulation/notify-time-trigger
+   </condition>
+   <set name="simulation/notify-time-trigger" value="10" type="FG_DELTA"/>
+  </event>
+
+ </run>
+</runscript>
