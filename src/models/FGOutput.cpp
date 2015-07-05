@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.82 2015/04/02 02:20:50 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.83 2015/07/05 15:36:10 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +144,24 @@ void FGOutput::Disable(void)
   vector<FGOutputType*>::iterator it;
   for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
     (*it)->Disable();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::Suspend(void)
+{
+  vector<FGOutputType*>::iterator it;
+  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
+    (*it)->Suspend();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::Restore(void)
+{
+  vector<FGOutputType*>::iterator it;
+  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
+    (*it)->Restore();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

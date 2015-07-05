@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.24 2014/11/30 12:35:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.25 2015/07/05 15:36:10 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +202,7 @@ bool FGTrim::DoTrim(void) {
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
   }
 
-  fdmex->DisableOutput();
+  fdmex->SuspendOutput();
 
   fdmex->SetTrimStatus(true);
   fdmex->SuspendIntegration();
@@ -342,7 +342,7 @@ bool FGTrim::DoTrim(void) {
 
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
-  fdmex->EnableOutput();
+  fdmex->RestoreOutput();
 
   for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);

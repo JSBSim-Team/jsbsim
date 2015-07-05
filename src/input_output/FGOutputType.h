@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.6 2015/03/28 14:49:01 bcoconni Exp $"
+#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.7 2015/07/05 15:36:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -175,6 +175,14 @@ public:
       @result the output generation status i.e. true if the output has been
               enabled, false if the output has been disabled. */
   bool Toggle(void) {enabled = !enabled; return enabled;}
+  /** Suspends the output and saves the current state
+      @see Restore
+   */
+  void Suspend(void) { save_output = enabled; enabled = false; }
+  /** Restores the output to the state it had prior to the last call to Suspend()
+      @see Suspend
+   */
+  void Restore(void) { enabled = save_output; }
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  eSubSystems {
@@ -199,6 +207,7 @@ protected:
   std::vector <FGPropertyNode_ptr> OutputProperties;
   std::vector <std::string> OutputCaptions;
   bool enabled;
+  bool save_output;
 
   FGAerodynamics* Aerodynamics;
   FGAuxiliary* Auxiliary;

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.23 2015/07/05 11:53:36 bcoconni Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.24 2015/07/05 15:36:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ public:
 
   virtual bool InitModel(void);
   virtual void SetRate(double tt) {rate = tt;}
-  virtual int  GetRate(void)   {return rate;}
+  virtual double GetRate(void)   {return rate;}
   FGFDMExec* GetExec(void)     {return FDMExec;}
 
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}

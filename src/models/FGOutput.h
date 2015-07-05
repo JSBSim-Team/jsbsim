@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.29 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.30 2015/07/05 15:36:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.29 2013/11/24 11:40:56 bcoconni Exp $
+    @version $Id: FGOutput.h,v 1.30 2015/07/05 15:36:10 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,6 +193,14 @@ public:
               of the output generation (i.e. true if the output has been
               enabled, false if the output has been disabled) */
   bool Toggle(int idx);
+  /** Suspends the output and saves the current state
+      @see Restore
+   */
+  void Suspend(void);
+  /** Restores the output to the state it had prior to the last call to Suspend()
+      @see Suspend
+   */
+  void Restore(void);
   /** Modifies the output rate for all output instances.
       @param rate new output rate in Hz */
   void SetRate(double rate);
