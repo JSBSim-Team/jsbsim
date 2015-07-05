@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.29 2013/11/24 11:40:56 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.31 2015/07/05 20:11:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.29 2013/11/24 11:40:56 bcoconni Exp $
+    @version $Id: FGOutput.h,v 1.31 2015/07/05 20:11:47 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

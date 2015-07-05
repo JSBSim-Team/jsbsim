@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.12 2015/03/28 14:49:01 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.14 2015/07/05 20:11:47 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
@@ -90,9 +90,10 @@ FGOutputType::~FGOutputType()
 void FGOutputType::SetIdx(unsigned int idx)
 {
   typedef double (FGOutputType::*iOPMF)(void) const;
-  string outputProp = CreateIndexedPropertyName("simulation/output", idx) + "/log_rate_hz";
+  string outputProp = CreateIndexedPropertyName("simulation/output", idx);
 
-  PropertyManager->Tie(outputProp, this, (iOPMF)0, &FGOutputType::SetRate, false);
+  PropertyManager->Tie(outputProp + "/log_rate_hz", this, (iOPMF)&FGModel::GetRate, &FGOutputType::SetRate, false);
+  PropertyManager->Tie(outputProp + "/enabled", &enabled);
   OutputIdx = idx;
 }
 
@@ -172,8 +173,9 @@ bool FGOutputType::InitModel(void)
 
 bool FGOutputType::Run(bool Holding)
 {
-  if (!enabled) return true;
+  if (FDMExec->GetTrimStatus()) return true;
   if (FGModel::Run(Holding)) return true;
+  if (!enabled) return true;
   if (Holding) return false;
 
   RunPreFunctions();

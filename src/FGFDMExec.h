@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.95 2015/02/07 17:52:36 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.97 2015/07/05 20:11:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.95 $
+    @version $Revision: 1.97 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,9 +564,11 @@ public:
       is also incremented.
       @return the new simulation time.     */
   double IncrTime(void) {
-    if (!holding) sim_time += dT;
-    GetGroundCallback()->SetTime(sim_time);
-    Frame++;
+    if (!holding && !IntegrationSuspended()) {
+      sim_time += dT;
+      GetGroundCallback()->SetTime(sim_time);
+      Frame++;
+    }
     return sim_time;
   }
 
