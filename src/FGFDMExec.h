@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.96 2015/07/05 15:36:10 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.97 2015/07/05 20:11:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.96 $
+    @version $Revision: 1.97 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -468,10 +468,6 @@ public:
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
   void EnableOutput(void) { Output->Enable(); }
-  /// Suspends data logging to all outputs.
-  void SuspendOutput(void) { Output->Suspend(); }
-  /// Restores data logging to all outputs.
-  void RestoreOutput(void) { Output->Restore(); }
   /// Pauses execution by preventing time from incrementing.
   void Hold(void) {holding = true;}
   /// Turn on hold after increment
@@ -568,9 +564,11 @@ public:
       is also incremented.
       @return the new simulation time.     */
   double IncrTime(void) {
-    if (!holding) sim_time += dT;
-    GetGroundCallback()->SetTime(sim_time);
-    Frame++;
+    if (!holding && !IntegrationSuspended()) {
+      sim_time += dT;
+      GetGroundCallback()->SetTime(sim_time);
+      Frame++;
+    }
     return sim_time;
   }
 

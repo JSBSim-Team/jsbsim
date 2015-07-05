@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.13 2015/07/05 15:36:10 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.14 2015/07/05 20:11:47 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
@@ -58,8 +58,7 @@ CLASS IMPLEMENTATION
 FGOutputType::FGOutputType(FGFDMExec* fdmex) :
   FGModel(fdmex),
   SubSystems(0),
-  enabled(true),
-  save_output(true)
+  enabled(true)
 {
   Aerodynamics = FDMExec->GetAerodynamics();
   Auxiliary = FDMExec->GetAuxiliary();
@@ -174,6 +173,7 @@ bool FGOutputType::InitModel(void)
 
 bool FGOutputType::Run(bool Holding)
 {
+  if (FDMExec->GetTrimStatus()) return true;
   if (FGModel::Run(Holding)) return true;
   if (!enabled) return true;
   if (Holding) return false;
