@@ -19,16 +19,17 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, unittest, sys, string
-import xml.etree.ElementTree as et
-from JSBSim_utils import SandBox, CreateFDM
+import os, unittest, sys
+from JSBSim_utils import SandBox, CreateFDM, CheckXMLFile
 
 
 class CheckScripts(unittest.TestCase):
     def setUp(self):
         self.sandbox = SandBox()
+        self.scripts = 0
 
     def tearDown(self):
+        print "Tested %g scripts" % (self.scripts,)
         self.sandbox.erase()
 
     def testScripts(self):
@@ -36,24 +37,16 @@ class CheckScripts(unittest.TestCase):
         for f in os.listdir(self.sandbox.elude(script_path)):
             fullpath = os.path.join(self.sandbox.elude(script_path), f)
 
-            # Is f a file ?
-            if not os.path.isfile(fullpath):
-                continue
-
-            # Is f an XML file ?
-            try:
-                tree = et.parse(fullpath)
-            except et.ParseError:
-                continue
-
             # Does f contains a JSBSim script ?
-            if string.upper(tree.getroot().tag) != 'RUNSCRIPT':
+            if not CheckXMLFile(fullpath, 'runscript'):
                 continue
 
             fdm = CreateFDM(self.sandbox)
             self.assertTrue(fdm.load_script(os.path.join(script_path, f)),
                             msg="Failed to load script %s" % (fullpath,))
             fdm.run_ic()
+
+            self.scripts += 1
             del fdm
 
 suite = unittest.TestLoader().loadTestsFromTestCase(CheckScripts)

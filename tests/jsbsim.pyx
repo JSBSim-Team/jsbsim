@@ -27,6 +27,11 @@ cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
         void InitRunning(int n)
         int GetNumEngines()
 
+cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
+    cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
+        c_FGInitialCondition(c_FGFDMExec* fdm)
+        bool Load(string rstfile, bool useStoredPath)
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(int root, int fdmctr)
@@ -85,6 +90,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         double IncrTime()
         int GetDebugLevel()
         c_FGPropulsion* GetPropulsion()
+        c_FGInitialCondition* GetIC()
 
 # this is the python wrapper class
 cdef class FGFDMExec:
@@ -564,3 +570,6 @@ cdef class FGFDMExec:
 
     def propulsion_get_num_engines(self):
         return self.thisptr.GetPropulsion().GetNumEngines()
+
+    def load_ic(self, rstfile, useStoredPath):
+        return self.thisptr.GetIC().Load(rstfile, useStoredPath)
