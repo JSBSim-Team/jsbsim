@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.24 2014/06/29 10:13:18 bcoconni Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.25 2015/07/12 19:34:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +137,7 @@ CLASS DOCUMENTATION
     - GAL = gallon (U.S. liquid) 
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.24 2014/06/29 10:13:18 bcoconni Exp $
+    @version $Id: FGXMLElement.h,v 1.25 2015/07/12 19:34:08 bcoconni Exp $
 */
 
 class Element;
@@ -328,7 +328,8 @@ public:
       @return a column vector object built from the LOCATION or ORIENT components. */
   FGColumnVector3 FindElementTripletConvertTo( const std::string& target_units);
 
-  double DisperseValue(Element *e, double val, const std::string supplied_units="", const std::string target_units="");
+  double DisperseValue(Element *e, double val, const std::string& supplied_units="",
+                       const std::string& target_units="");
 
   /** This function sets the value of the parent class attribute to the supplied
       Element pointer.

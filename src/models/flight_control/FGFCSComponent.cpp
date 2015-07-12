@@ -37,18 +37,19 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFCSComponent.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/FGXMLElement.h"
-#include "math/FGPropertyValue.h"
 #include <iostream>
 #include <cstdlib>
+
+#include "FGFCSComponent.h"
+#include "input_output/FGXMLElement.h"
+#include "math/FGPropertyValue.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCSComponent.cpp,v 1.40 2014/01/13 10:46:08 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFCSComponent.cpp,v 1.41 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_FCSCOMPONENT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,9 +130,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InitSigns.push_back( 1.0);
     }
-    FGPropertyNode* node = 0L;
+
     if (PropertyManager->HasNode(init)) {
-      node = PropertyManager->GetNode(init);
+      FGPropertyNode* node = PropertyManager->GetNode(init);
       InitNodes.push_back(new FGPropertyValue( node ));
     } else {
       InitNodes.push_back(new FGPropertyValue( init,
@@ -151,9 +152,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InputSigns.push_back( 1.0);
     }
-    FGPropertyNode* node = 0L;
+
     if (PropertyManager->HasNode(input)) {
-      node = PropertyManager->GetNode(input);
+      FGPropertyNode* node = PropertyManager->GetNode(input);
       InputNodes.push_back(new FGPropertyValue( node ));
     } else {
       InputNodes.push_back(new FGPropertyValue( input,
@@ -319,8 +320,6 @@ void FGFCSComponent::bind(void)
 
 void FGFCSComponent::Debug(int from)
 {
-  string propsign="";
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -329,17 +328,20 @@ void FGFCSComponent::Debug(int from)
                    << "\" of type: " << Type << endl;
 
       if (clip) {
+        string propsign;
+
         if (ClipMinPropertyNode != 0L) {
           if (clipMinSign < 0.0) propsign="-";
           cout << "      Minimum limit: " << propsign << ClipMinPropertyNode->GetName() << endl;
-          propsign="";
         } else {
           cout << "      Minimum limit: " << clipmin << endl;
         }
+
+        propsign="";
+
         if (ClipMaxPropertyNode != 0L) {
           if (clipMaxSign < 0.0) propsign="-";
           cout << "      Maximum limit: " << propsign << ClipMaxPropertyNode->GetName() << endl;
-          propsign="";
         } else {
           cout << "      Maximum limit: " << clipmax << endl;
         }

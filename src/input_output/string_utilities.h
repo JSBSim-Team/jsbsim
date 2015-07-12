@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.22 2015/03/28 14:49:01 bcoconni Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.23 2015/07/12 19:34:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,9 +88,7 @@ CLASS DECLARATION
 #else
   #include <cctype>
 
-  using namespace std;
-
-  string& trim_left(string& str)
+  std::string& trim_left(std::string& str)
   {
     while (str.size() && isspace((unsigned char)str[0])) {
       str = str.erase(0,1);
@@ -98,7 +96,7 @@ CLASS DECLARATION
     return str;
   }
 
-  string& trim_right(string& str)
+  std::string& trim_right(std::string& str)
   {
     while (str.size() && isspace((unsigned char)str[str.size()-1])) {
       str = str.erase(str.size()-1,1);
@@ -106,14 +104,14 @@ CLASS DECLARATION
     return str;
   }
 
-  string& trim(string& str)
+  std::string& trim(std::string& str)
   {
     if (str.size() == 0) return str;
-    string temp_str = trim_right(str);
+    std::string temp_str = trim_right(str);
     return str = trim_left(temp_str);
   }
 
-  string& trim_all_space(string& str)
+  std::string& trim_all_space(std::string& str)
   {
     for (size_t i=0; i<str.size(); i++) {
       if (isspace((unsigned char)str[i])) {
@@ -124,35 +122,35 @@ CLASS DECLARATION
     return str;
   }
 
-  string& to_upper(string& str)
+  std::string& to_upper(std::string& str)
   {
     for (size_t i=0; i<str.size(); i++) str[i] = toupper(str[i]);
     return str;
   }
 
-  string& to_lower(string& str)
+  std::string& to_lower(std::string& str)
   {
     for (size_t i=0; i<str.size(); i++) str[i] = tolower(str[i]);
     return str;
   }
 
-  bool is_number(const string& str)
+  bool is_number(const std::string& str)
   {
     if (str.size())
-      return (str.find_first_not_of("+-.0123456789Ee") == string::npos);
+      return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
     else
       return false;
   }
 
-  vector <string> split(string str, char d)
+  std::vector <std::string> split(std::string str, char d)
   {
-    vector <string> str_array;
+    std::vector <std::string> str_array;
     size_t index=0;
-    string temp = "";
+    std::string temp = "";
 
     trim(str);
     index = str.find(d);
-    while (index != string::npos) {
+    while (index != std::string::npos) {
       temp = str.substr(0,index);
       trim(temp);
       if (temp.size() > 0) str_array.push_back(temp);
@@ -172,33 +170,33 @@ CLASS DECLARATION
   // * libc++ for all C++ language versions
   // * Visual Studio for versions greater than 2010 (1700 -> MSVC++ 11.0 and VS 2012)
 #if !defined(_LIBCPP_VERSION) && _MSC_VER < 1700 && __cplusplus < 201103L
-  string to_string(int i)
+  std::string to_string(int i)
   {
     char buffer[32];
     sprintf(buffer, "%d", i);
-    return string(buffer);
+    return std::string(buffer);
   }
 
-  string to_string(float x)
+  std::string to_string(float x)
   {
     std::ostringstream o;
-    if (!(o << x)) cerr << "Bad float to string conversion" << endl;
+    if (!(o << x)) std::cerr << "Bad float to string conversion" << std::endl;
     return o.str();
   }
 
-  string to_string(double x)
+  std::string to_string(double x)
   {
     std::ostringstream o;
-    if (!(o << x)) cerr << "Bad double to string conversion" << endl;
+    if (!(o << x)) std::cerr << "Bad double to string conversion" << std::endl;
     return o.str();
   }
 #endif
 
-  string replace(string str, const string& oldstr, const string& newstr)
+  std::string replace(std::string str, const std::string& oldstr, const std::string& newstr)
   {
-    string temp;
+    std::string temp;
     size_t old_idx = str.find(oldstr);
-    if (old_idx != string::npos) {
+    if (old_idx != std::string::npos) {
       temp = str.replace(old_idx, 1, newstr);
     }
     return temp;

@@ -42,12 +42,13 @@ INCLUDES
 #include "FGGyro.h"
 #include "models/FGAccelerations.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGyro.cpp,v 1.10 2014/01/13 10:46:09 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGGyro.cpp,v 1.11 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_GYRO);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

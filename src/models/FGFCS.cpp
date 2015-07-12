@@ -44,7 +44,6 @@ INCLUDES
 #include "FGFCS.h"
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
-#include "input_output/FGPropertyManager.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
 
@@ -71,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.91 2015/07/12 17:47:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.92 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

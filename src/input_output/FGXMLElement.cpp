@@ -45,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.52 2014/06/29 10:13:18 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.53 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -569,10 +569,10 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double Element::DisperseValue(Element *e, double val, const std::string supplied_units, const std::string target_units)
+double Element::DisperseValue(Element *e, double val, const std::string& supplied_units,
+                              const std::string& target_units)
 {
   double value=val;
-  double disp=0.0;
 
   bool disperse = false;
   try {
@@ -586,7 +586,7 @@ double Element::DisperseValue(Element *e, double val, const std::string supplied
   }
 
   if (e->HasAttribute("dispersion") && disperse) {
-    disp = e->GetAttributeValueAsNumber("dispersion");
+    double disp = e->GetAttributeValueAsNumber("dispersion");
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
     if (attType == "gaussian" || attType == "gaussiansigned") {

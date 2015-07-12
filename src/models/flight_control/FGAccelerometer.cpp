@@ -44,14 +44,14 @@ INCLUDES
 #include "models/FGPropagate.h"
 #include "models/FGAccelerations.h"
 #include "models/FGMassBalance.h"
-#include "models/FGInertial.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerometer.cpp,v 1.15 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAccelerometer.cpp,v 1.16 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELEROMETER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,29 +44,20 @@ you have chosen your IC's wisely) even after setting it up with this class.
 INCLUDES
 *******************************************************************************/
 
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
 
 #include "FGInitialCondition.h"
 #include "FGFDMExec.h"
-#include "math/FGQuaternion.h"
 #include "models/FGInertial.h"
 #include "models/FGAtmosphere.h"
-#include "models/FGPropagate.h"
-#include "models/FGPropulsion.h"
 #include "models/FGAccelerations.h"
-#include "models/FGFCS.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/string_utilities.h"
 #include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.99 2015/02/19 05:18:45 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.100 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
