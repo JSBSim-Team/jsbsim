@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.47 2015/02/27 20:36:47 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.48 2015/07/12 17:47:13 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.47 $
+    @version $Revision: 1.48 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -553,7 +553,7 @@ public:
       @param el pointer to the Element instance
       @param systype type of system (FCS, Autopilot, System) 
       @return true if succesful */
-  bool Load(Element* el, SystemType systype);
+  bool Load(Element* el);
 
   std::string FindFullPathName(const std::string& system_filename) const;
 
