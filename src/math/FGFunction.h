@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.31 2013/06/20 04:37:27 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.32 2015/07/12 13:03:23 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ A function definition consists of an operation, a value, a table, or a property
 - log2 (takes 1 arg)
 - ln (takes 1 arg)
 - log10 (takes 1 arg)
-- abs (takes n args)
+- abs (takes 1 arg)
 - sin (takes 1 arg)
 - cos (takes 1 arg)
 - tan (takes 1 arg)
