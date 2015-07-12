@@ -9,6 +9,25 @@
     <property value="0">propulsion/tank[4]/priority</property>
     <property value="0">systems/right-flor-gain</property>
 
+    <!-- Additional properties which are defined separately in FlightGear -->
+    <property value="0">/controls/gear/gear-unsafe-light-check</property>
+    <property value="0">/controls/lighting/left-flor-pos</property>
+    <property value="0">/controls/lighting/right-flor-pos</property>
+    <property value="0">/controls/armament/weapons-select</property>
+    <property value="0">/controls/armament/trigger</property>
+    <property>/controls/armament/guns-enabled</property>
+    <property>/controls/armament/rocket[1]/trigger</property>
+    <property>/controls/armament/rocket[2]/trigger</property>
+    <property>/controls/armament/rocket[3]/trigger</property>
+    <property>/controls/armament/rocket[4]/trigger</property>
+    <property>/controls/armament/rocket[5]/trigger</property>
+    <property>/controls/armament/rocket[6]/trigger</property>
+    <property>/controls/armament/rocket[7]/trigger</property>
+    <property>/controls/armament/rocket[8]/trigger</property>
+    <property>/controls/armament/rocket[9]/trigger</property>
+    <property>/controls/armament/rocket[10]/trigger</property>
+    <property>/controls/armament/User-Selected-Stores</property>
+
     <channel name="warning lights">
 
        <switch name="/controls/engines/engine/boost-light-on">
@@ -25,7 +44,7 @@
          <default value="0"/>
          <test login="AND" value ="1">
              /controls/engines/engine[0]/throttle LT 0.25
-             /gear/gear/position-norm GT 0.99
+             gear/unit/pos-norm GT 0.99
          </test>
          <test value="1">
             /controls/gear/gear-safe-light-check GT 0.9
@@ -36,7 +55,7 @@
          <default value="0"/>
          <test login="AND" value ="1">
              /controls/engines/engine[0]/throttle LT 0.25
-             /gear/gear/position-norm LT 0.99
+             gear/unit/pos-norm LT 0.99
          </test>
          <test value="1">
             /controls/gear/gear-unsafe-light-check GT 0.9
