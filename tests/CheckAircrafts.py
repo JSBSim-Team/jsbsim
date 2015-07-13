@@ -21,7 +21,7 @@
 
 import os, unittest, sys, string
 import xml.etree.ElementTree as et
-from JSBSim_utils import SandBox, append_xml, CreateFDM
+from JSBSim_utils import SandBox, append_xml, CreateFDM, CheckXMLFile
 
 
 class CheckAircrafts(unittest.TestCase):
@@ -42,18 +42,8 @@ class CheckAircrafts(unittest.TestCase):
 
             f = os.path.join(aircraft_path, d, append_xml(d))
 
-            # Is f a file ?
-            if not os.path.isfile(f):
-                continue
-
-            # Is f an XML file ?
-            try:
-                tree = et.parse(f)
-            except et.ParseError:
-                continue
-
             # Is f an aircraft definition file ?
-            if string.upper(tree.getroot().tag) != 'FDM_CONFIG':
+            if not CheckXMLFile(f, 'fdm_config'):
                 continue
 
             if d in ('blank'):
@@ -62,6 +52,19 @@ class CheckAircrafts(unittest.TestCase):
             fdm = CreateFDM(self.sandbox)
             self.assertTrue(fdm.load_model(d),
                             msg='Failed to load aircraft %s' % (d,))
+
+            for f in os.listdir(fullpath):
+                f = os.path.join(aircraft_path, d, f)
+                if CheckXMLFile(f, 'initialize'):
+                    self.assertTrue(fdm.load_ic(f, False),
+                                    msg='Failed to load IC %s for aircraft %s' %(f,d))
+                    try:
+                        fdm.run_ic()
+                    except RuntimeError:
+                        self.fail('Failed to run IC %s for aircraft %s' %(f,d))
+
+                    break
+
             del fdm
 
 

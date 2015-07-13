@@ -37,16 +37,17 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "math/FGPropertyValue.h"
 #include <string>
 #include <vector>
+
+#include "FGJSBBase.h"
+#include "math/FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.26 2014/02/17 05:33:25 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.27 2015/07/12 19:34:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +83,7 @@ CLASS DOCUMENTATION
     - FGAngle
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.26 2014/02/17 05:33:25 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.27 2015/07/12 19:34:08 bcoconni Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -141,7 +142,4 @@ protected:
 
 } //namespace JSBSim
 
-#include "../FGFCS.h"
-
 #endif
-

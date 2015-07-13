@@ -40,9 +40,8 @@ INCLUDES
 
 #include <iosfwd>
 #include <vector>
-
 #include <string>
-#include "models/flight_control/FGFCSComponent.h"
+
 #include "models/FGModel.h"
 #include "models/FGLGear.h"
 
@@ -50,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.47 2015/02/27 20:36:47 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.49 2015/07/12 19:34:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.47 $
+    @version $Revision: 1.49 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -551,9 +550,8 @@ public:
   /** Loads the Flight Control System.
       Load() is called from FGFDMExec.
       @param el pointer to the Element instance
-      @param systype type of system (FCS, Autopilot, System) 
       @return true if succesful */
-  bool Load(Element* el, SystemType systype);
+  bool Load(Element* el);
 
   std::string FindFullPathName(const std::string& system_filename) const;
 
@@ -564,10 +562,6 @@ public:
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
   bool GetTrimStatus(void) const { return FDMExec->GetTrimStatus(); }
-
-  struct Inputs {
-    unsigned int NumGear;
-  } in;
 
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;

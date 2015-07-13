@@ -44,7 +44,6 @@ INCLUDES
 #include "FGFCS.h"
 #include "FGFDMExec.h"
 #include "FGGroundReactions.h"
-#include "input_output/FGPropertyManager.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
 
@@ -71,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.90 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.92 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +81,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   int i;
   Name = "FGFCS";
+  systype = stFCS;
 
   DaCmd = DeCmd = DrCmd = DsCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
@@ -326,11 +326,10 @@ void FGFCS::SetDspPos( int form , double pos )
 
 void FGFCS::SetThrottleCmd(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
+      for (unsigned int ctr=0; ctr<ThrottleCmd.size(); ctr++)
+        ThrottleCmd[ctr] = setting;
     } else {
       ThrottleCmd[engineNum] = setting;
     }
@@ -345,11 +344,10 @@ void FGFCS::SetThrottleCmd(int engineNum, double setting)
 
 void FGFCS::SetThrottlePos(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<ThrottlePos.size();ctr++) ThrottlePos[ctr] = setting;
+      for (unsigned int ctr=0; ctr<ThrottlePos.size(); ctr++)
+        ThrottlePos[ctr] = setting;
     } else {
       ThrottlePos[engineNum] = setting;
     }
@@ -400,11 +398,10 @@ double FGFCS::GetThrottlePos(int engineNum) const
 
 void FGFCS::SetMixtureCmd(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<MixtureCmd.size();ctr++) MixtureCmd[ctr] = setting;
+      for (unsigned int ctr=0; ctr<MixtureCmd.size(); ctr++)
+        MixtureCmd[ctr] = setting;
     } else {
       MixtureCmd[engineNum] = setting;
     }
@@ -415,11 +412,10 @@ void FGFCS::SetMixtureCmd(int engineNum, double setting)
 
 void FGFCS::SetMixturePos(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
+      for (unsigned int ctr=0; ctr<MixtureCmd.size(); ctr++)
+        MixturePos[ctr] = MixtureCmd[ctr];
     } else {
       MixturePos[engineNum] = setting;
     }
@@ -430,11 +426,10 @@ void FGFCS::SetMixturePos(int engineNum, double setting)
 
 void FGFCS::SetPropAdvanceCmd(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<PropAdvanceCmd.size();ctr++) PropAdvanceCmd[ctr] = setting;
+      for (unsigned int ctr=0; ctr<PropAdvanceCmd.size(); ctr++)
+        PropAdvanceCmd[ctr] = setting;
     } else {
       PropAdvanceCmd[engineNum] = setting;
     }
@@ -445,11 +440,10 @@ void FGFCS::SetPropAdvanceCmd(int engineNum, double setting)
 
 void FGFCS::SetPropAdvance(int engineNum, double setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<PropAdvanceCmd.size();ctr++) PropAdvance[ctr] = PropAdvanceCmd[ctr];
+      for (unsigned int ctr=0; ctr<PropAdvanceCmd.size(); ctr++)
+        PropAdvance[ctr] = PropAdvanceCmd[ctr];
     } else {
       PropAdvance[engineNum] = setting;
     }
@@ -460,11 +454,10 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 
 void FGFCS::SetFeatherCmd(int engineNum, bool setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<PropFeatherCmd.size();ctr++) PropFeatherCmd[ctr] = setting;
+      for (unsigned int ctr=0; ctr<PropFeatherCmd.size(); ctr++)
+        PropFeatherCmd[ctr] = setting;
     } else {
       PropFeatherCmd[engineNum] = setting;
     }
@@ -475,11 +468,10 @@ void FGFCS::SetFeatherCmd(int engineNum, bool setting)
 
 void FGFCS::SetPropFeather(int engineNum, bool setting)
 {
-  unsigned int ctr;
-
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<PropFeatherCmd.size();ctr++) PropFeather[ctr] = PropFeatherCmd[ctr];
+      for (unsigned int ctr=0; ctr<PropFeatherCmd.size(); ctr++)
+        PropFeather[ctr] = PropFeatherCmd[ctr];
     } else {
       PropFeather[engineNum] = setting;
     }
@@ -488,34 +480,30 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::Load(Element* document, SystemType type)
+bool FGFCS::Load(Element* document)
 {
-  string name, parent_name;
-  Element *component_element;
-  Element *channel_element;
-  
-  systype = type;
+  if (document->GetName() == "autopilot") {
+    Name = "Autopilot: ";
+    systype = stAutoPilot;
+  } else if (document->GetName() == "flight_control") {
+    Name = "FCS: ";
+    systype = stFCS;
+  } else if (document->GetName() == "system") {
+    Name = "System: ";
+    systype = stSystem;
+  }
 
   // Load interface properties from document
   if (!FGModel::Load(document))
     return false;
 
-  name = document->GetAttributeValue("name");
+  Name += document->GetAttributeValue("name");
 
-  Name = "Flight Control Systems Model: " + document->GetAttributeValue("name");
-
-  if (document->GetName() == "autopilot") {
-    Name = "Autopilot: " + document->GetAttributeValue("name");
-  } else if (document->GetName() == "flight_control") {
-    Name = "FCS: " + document->GetAttributeValue("name");
-  } else if (document->GetName() == "system") {
-    Name = "System: " + document->GetAttributeValue("name");
-  }
   Debug(2);
 
-  if (document->GetName() == "flight_control") bindModel();
+  if (systype == stFCS) bindModel();
 
-  channel_element = document->FindElement("channel");
+  Element* channel_element = document->FindElement("channel");
   
   while (channel_element) {
   
@@ -523,9 +511,8 @@ bool FGFCS::Load(Element* document, SystemType type)
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
-    FGPropertyNode* OnOffPropertyNode = 0;
     if (sOnOffProperty.length() > 0) {
-      OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
+      FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {
         cerr << highint << fgred
              << "The On/Off property, " << sOnOffProperty << " specified for channel "
@@ -545,7 +532,7 @@ bool FGFCS::Load(Element* document, SystemType type)
       cout << endl << highint << fgblue << "    Channel " 
          << normint << channel_element->GetAttributeValue("name") << reset << endl;
   
-    component_element = channel_element->GetElement();
+    Element* component_element = channel_element->GetElement();
     while (component_element) {
       try {
         if ((component_element->GetName() == string("lag_filter")) ||
@@ -593,7 +580,7 @@ bool FGFCS::Load(Element* document, SystemType type)
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
-      } catch(string s) {
+      } catch(string& s) {
         cerr << highint << fgred << endl << "  " << s << endl;
         cerr << reset << endl;
         return false;

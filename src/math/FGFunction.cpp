@@ -32,18 +32,18 @@ INCLUDES
 #include <iomanip>
 #include <cstdlib>
 #include <cmath>
+
 #include "FGFunction.h"
 #include "FGTable.h"
 #include "FGPropertyValue.h"
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.57 2015/03/28 14:49:01 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFunction.cpp,v 1.58 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_FUNCTION);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,9 +254,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
           property_name = replace(property_name,"#",Prefix);
         }
       }
-      FGPropertyNode* newNode = 0L;
       if (PropertyManager->HasNode(property_name)) {
-        newNode = PropertyManager->GetNode(property_name);
+        FGPropertyNode* newNode = PropertyManager->GetNode(property_name);
         Parameters.push_back(new FGPropertyValue( newNode ));
       } else {
         // cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."

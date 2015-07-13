@@ -42,12 +42,13 @@ INCLUDES
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGRealValue.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.37 2014/08/28 13:44:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGActuator.cpp,v 1.38 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_ACTUATOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,8 +58,6 @@ CLASS IMPLEMENTATION
 
 FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  double denom;
-
   // inputs are read from the base class constructor
 
   PreviousOutput = 0.0;
@@ -119,7 +118,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
   if ( element->FindElement("lag") ) {
     lag = element->FindElementValueAsNumber("lag");
-    denom = 2.00 + dt*lag;
+    double denom = 2.00 + dt*lag;
     ca = dt*lag / denom;
     cb = (2.00 - dt*lag) / denom;
   }

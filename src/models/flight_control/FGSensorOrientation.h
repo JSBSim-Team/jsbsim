@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.5 2013/11/17 05:12:57 jberndt Exp $"
+#define ID_SensorOrientation "$Id: FGSensorOrientation.h,v 1.6 2015/07/13 21:50:26 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,7 +65,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @author Jon S. Berndt
-@version $Revision: 1.5 $
+@version $Revision: 1.6 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,7 @@ public:
     Element* orient_element = element->FindElement("orientation");
     if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
 
+    axis = 0;
 
     Element* axis_element = element->FindElement("axis");
     if (axis_element) {
@@ -90,10 +91,12 @@ public:
         axis = 2;
       } else if (sAxis == "Z" || sAxis == "z") {
         axis = 3;
-      } else {
-        std::cerr << "  Incorrect/no axis specified for this sensor; assuming X axis" << std::endl;
-        axis = 1;
       }
+    }
+
+    if (!axis) {
+      std::cerr << "  Incorrect/no axis specified for this sensor; assuming X axis" << std::endl;
+      axis = 1;
     }
 
     CalculateTransformMatrix();

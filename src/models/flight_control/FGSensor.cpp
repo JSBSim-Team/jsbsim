@@ -37,16 +37,17 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSensor.h"
-#include "input_output/FGXMLElement.h"
 #include <iostream>
 #include <cstdlib>
+
+#include "FGSensor.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGSensor.cpp,v 1.27 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGSensor.cpp,v 1.28 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_SENSOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,8 +57,6 @@ CLASS IMPLEMENTATION
 
 FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  double denom;
-
   // inputs are read from the base class constructor
 
   bits = quantized = divisions = 0;
@@ -94,7 +93,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
   if ( element->FindElement("lag") ) {
     lag = element->FindElementValueAsNumber("lag");
-    denom = 2.00 + dt*lag;
+    double denom = 2.00 + dt*lag;
     ca = dt*lag / denom;
     cb = (2.00 - dt*lag) / denom;
   }

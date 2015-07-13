@@ -42,9 +42,11 @@ INCLUDES
 #include <sstream>
 #include <cstdlib>
 
+using namespace std;
+
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.39 2014/09/03 17:35:04 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.40 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_JSBBASE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,17 +110,13 @@ const double FGJSBBase::kgtoslug = 0.06852168;
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = "1.0 " __DATE__ " " __TIME__ ;
 
-std::queue <FGJSBBase::Message> FGJSBBase::Messages;
+queue <FGJSBBase::Message> FGJSBBase::Messages;
 FGJSBBase::Message FGJSBBase::localMsg;
 unsigned int FGJSBBase::messageId = 0;
 
 int FGJSBBase::gaussian_random_number_phase = 0;
 
 short FGJSBBase::debug_lvl  = 1;
-
-using std::cerr;
-using std::cout;
-using std::endl;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -180,19 +178,12 @@ void FGJSBBase::PutMessage(const string& text, double dVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGJSBBase::SomeMessages(void)
-{
-  return !Messages.empty();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGJSBBase::ProcessMessage(void)
 {
   if (Messages.empty()) return;
   localMsg = Messages.front();
 
-  while (Messages.size() > 0) {
+  while (SomeMessages()) {
       switch (localMsg.type) {
       case JSBSim::FGJSBBase::Message::eText:
         cout << localMsg.messageId << ": " << localMsg.text << endl;
@@ -211,7 +202,7 @@ void FGJSBBase::ProcessMessage(void)
         break;
       }
       Messages.pop();
-      if (Messages.size() > 0) localMsg = Messages.front();
+      if (SomeMessages()) localMsg = Messages.front();
       else break;
   }
 
@@ -249,7 +240,7 @@ void FGJSBBase::disableHighLighting(void)
 
 string FGJSBBase::CreateIndexedPropertyName(const string& Property, int index)
 {
-  std::ostringstream buf;
+  ostringstream buf;
   buf << Property << '[' << index << ']';
   return buf.str();
 }

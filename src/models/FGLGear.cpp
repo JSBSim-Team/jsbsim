@@ -42,11 +42,9 @@ INCLUDES
 
 #include <cstdlib>
 #include <cstring>
-#include <sstream>
 
 #include "math/FGFunction.h"
 #include "FGLGear.h"
-#include "input_output/FGPropertyManager.h"
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
 #include "input_output/FGXMLElement.h"
@@ -63,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.118 2014/11/30 12:35:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.119 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in

@@ -57,7 +57,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.41 2014/09/03 17:35:04 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.42 2015/07/12 19:34:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.41 2014/09/03 17:35:04 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.42 2015/07/12 19:34:08 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +175,7 @@ public:
   void PutMessage(const std::string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return 1 if some messages */
-  int SomeMessages(void);
+  int SomeMessages(void) { return !Messages.empty(); }
   /** Reads the message on the queue and removes it from the queue.
       This function also prints out the message.*/
   void ProcessMessage(void);

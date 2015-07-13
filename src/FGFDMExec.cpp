@@ -63,20 +63,17 @@ INCLUDES
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
-#include "initialization/FGInitialCondition.h"
 #include "initialization/FGTrim.h"
 #include "initialization/FGSimplexTrim.h"
 #include "initialization/FGLinearization.h"
-#include "input_output/FGPropertyManager.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.171 2015/02/15 12:03:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.173 2015/07/12 19:34:08 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -584,7 +581,6 @@ void FGFDMExec::LoadPlanetConstants(void)
 void FGFDMExec::LoadModelConstants(void)
 {
   Winds->in.wingspan             = Aircraft->GetWingSpan();
-  FCS->in.NumGear                = GroundReactions->GetNumGearUnits();
   Aerodynamics->in.Wingarea      = Aircraft->GetWingArea();
   Aerodynamics->in.Wingchord     = Aircraft->Getcbar();
   Aerodynamics->in.Wingincidence = Aircraft->GetWingIncidence();
@@ -828,7 +824,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the system element[s]. This element is OPTIONAL, and there may be more than one.
     element = document->FindElement("system");
     while (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element, FGFCS::stSystem);
+      result = ((FGFCS*)Models[eSystems])->Load(element);
       if (!result) {
         cerr << endl << "Aircraft system element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -839,7 +835,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the autopilot element. This element is OPTIONAL.
     element = document->FindElement("autopilot");
     if (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element, FGFCS::stAutoPilot);
+      result = ((FGFCS*)Models[eSystems])->Load(element);
       if (!result) {
         cerr << endl << "Aircraft autopilot element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -849,7 +845,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the flight_control element. This element is OPTIONAL.
     element = document->FindElement("flight_control");
     if (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element, FGFCS::stFCS);
+      result = ((FGFCS*)Models[eSystems])->Load(element);
       if (!result) {
         cerr << endl << "Aircraft flight_control element has problems in file " << aircraftCfgFileName << endl;
         return result;

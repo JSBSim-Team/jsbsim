@@ -39,11 +39,9 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "initialization/FGInitialCondition.h"
 #include "initialization/FGTrim.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -73,7 +71,7 @@ using JSBSim::Element;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.85 2015/02/19 05:18:45 dpculp Exp $");
+IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.86 2015/07/12 19:34:08 bcoconni Exp $");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -281,7 +279,7 @@ int main(int argc, char* argv[])
 {
   try {
     real_main(argc, argv);
-  } catch (string msg) {
+  } catch (string& msg) {
     std::cerr << "FATAL ERROR: JSBSim terminated with an exception."
               << std::endl << "The message was: " << msg << std::endl;
   } catch (...) {

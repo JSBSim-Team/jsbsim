@@ -71,6 +71,20 @@ def append_xml(name):
         return name+'.xml'
     return name
 
+def CheckXMLFile(f, header):
+    # Is f a file ?
+    if not os.path.isfile(f):
+        return False
+
+    # Is f an XML file ?
+    try:
+        tree = et.parse(f)
+    except et.ParseError:
+        return False
+
+    # Check the file header
+    return string.upper(tree.getroot().tag) == string.upper(header)
+
 class MismatchError(Exception):
     pass
 
