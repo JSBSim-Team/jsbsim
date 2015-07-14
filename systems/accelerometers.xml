@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<system name="Sensors">
+  <property value="0">fcs/accelerometer/on</property>
+  <channel name="accelerometers" execute="fcs/accelerometer/on">
+    <accelerometer name="accelerometer_X">
+      <location unit="FT">
+        <x> 0 </x>
+        <y> 0 </y>
+        <z> 0 </z>
+      </location>
+      <axis> X </axis>
+      <output> fcs/accelerometer/X </output>
+    </accelerometer>
+    <accelerometer name="accelerometer_Y">
+      <location unit="FT">
+        <x> 0 </x>
+        <y> 0 </y>
+        <z> 0 </z>
+      </location>
+      <axis> Y </axis>
+      <output> fcs/accelerometer/Y </output>
+    </accelerometer>
+    <accelerometer name="accelerometer_Z">
+      <location unit="FT">
+        <x> 0 </x>
+        <y> 0 </y>
+        <z> 0 </z>
+      </location>
+      <axis> Z </axis>
+      <output> fcs/accelerometer/Z </output>
+    </accelerometer>
+  </channel>
+</system>
