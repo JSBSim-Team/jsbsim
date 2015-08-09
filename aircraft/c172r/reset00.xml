@@ -10,7 +10,7 @@
   <latitude>   47.0 </latitude>
   <longitude> 122.0 </longitude>
   <phi>         0.0 </phi>
-  <theta>       0.0 </theta>
-  <psi>       330.0 </psi>
-  <altitude>   4.45  </altitude>
+  <theta unit="DEG"> 0.302 </theta>
+  <psi unit="DEG"> 330.0 </psi>
+  <altitude>   4.4265  </altitude>
 </initialize>
