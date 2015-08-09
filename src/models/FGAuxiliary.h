@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.29 2014/12/27 05:41:11 dpculp Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.30 2015/08/09 17:42:01 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.29 2014/12/27 05:41:11 dpculp Exp $
+    @version $Id: FGAuxiliary.h,v 1.30 2015/08/09 17:42:01 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,7 +269,8 @@ public:
     FGMatrix33 Tl2b;
     FGMatrix33 Tb2l;
     FGColumnVector3 vPQR;
-    FGColumnVector3 vPQRdot;
+    FGColumnVector3 vPQRi;
+    FGColumnVector3 vPQRidot;
     FGColumnVector3 vUVW;
     FGColumnVector3 vUVWdot;
     FGColumnVector3 vVel;

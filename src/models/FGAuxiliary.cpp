@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.68 2014/12/27 05:41:11 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.69 2015/08/09 17:42:01 bcoconni Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,8 +242,8 @@ bool FGAuxiliary::Run(bool Holding)
   // Nz is Acceleration in "g's", along normal axis (-Z body axis)
   Nz = -vNcg(eZ);
   Ny =  vNcg(eY);
-  vPilotAccel = in.vBodyAccel + in.vPQRdot * in.ToEyePt;
-  vPilotAccel += in.vPQR * (in.vPQR * in.ToEyePt);
+  vPilotAccel = in.vBodyAccel + in.vPQRidot * in.ToEyePt;
+  vPilotAccel += in.vPQRi * (in.vPQRi * in.ToEyePt);
 
   vNwcg = mTb2w * vNcg;
   vNwcg(eZ) = 1.0 - vNwcg(eZ);

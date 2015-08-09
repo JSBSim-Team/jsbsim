@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerometer.cpp,v 1.16 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerometer.cpp,v 1.17 2015/08/09 17:29:48 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELEROMETER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,9 +92,8 @@ bool FGAccelerometer::Run(void )
     
   //aircraft forces
   vAccel = (Accelerations->GetBodyAccel()
-              + Propagate->GetTi2b() * Accelerations->GetGravAccel()
-              + Accelerations->GetPQRdot() * vRadius
-              + Propagate->GetPQR() * (Propagate->GetPQR() * vRadius));
+            + Accelerations->GetPQRidot() * vRadius
+            + Propagate->GetPQRi() * (Propagate->GetPQRi() * vRadius));
 
   // transform to the specified orientation
   vAccel = mT * vAccel;
