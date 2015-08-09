@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.173 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.174 2015/08/09 17:42:01 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,7 +422,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.Tl2b         = Propagate->GetTl2b();
     Auxiliary->in.Tb2l         = Propagate->GetTb2l();
     Auxiliary->in.vPQR         = Propagate->GetPQR();
-    Auxiliary->in.vPQRdot      = Accelerations->GetPQRdot();
+    Auxiliary->in.vPQRi        = Propagate->GetPQRi();
+    Auxiliary->in.vPQRidot     = Accelerations->GetPQRidot();
     Auxiliary->in.vUVW         = Propagate->GetUVW();
     Auxiliary->in.vUVWdot      = Accelerations->GetUVWdot();
     Auxiliary->in.vVel         = Propagate->GetVel();
