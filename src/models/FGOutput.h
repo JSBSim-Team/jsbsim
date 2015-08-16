@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.31 2015/07/05 20:11:47 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.32 2015/08/16 13:19:52 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.31 2015/07/05 20:11:47 bcoconni Exp $
+    @version $Id: FGOutput.h,v 1.32 2015/08/16 13:19:52 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +195,7 @@ public:
   bool Toggle(int idx);
   /** Modifies the output rate for all output instances.
       @param rate new output rate in Hz */
-  void SetRate(double rate);
+  void SetRateHz(double rate);
   /** Load the output directives and adds a new output instance to the Output
       Manager list.
       @param el XMLElement that is pointing to the output directives

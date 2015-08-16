@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGUDPOutputSocket.cpp,v 1.1 2015/04/02 02:23:33 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGUDPOutputSocket.cpp,v 1.2 2015/08/16 13:19:52 bcoconni Exp $");
 IDENT(IdHdr,ID_UDPOUTPUTSOCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,6 @@ bool FGUDPOutputSocket::Load(Element* el)
   Element *property_element = el->FindElement("property");
 
   while (property_element) {
-    string caption="";
     string property_str = property_element->GetDataLine();
     FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
@@ -98,7 +97,7 @@ bool FGUDPOutputSocket::Load(Element* el)
   if (!el->GetAttributeValue("rate").empty()) {
     outRate = el->GetAttributeValueAsNumber("rate");
   }
-  SetRate(outRate);
+  SetRateHz(outRate);
   
   SockPort = atoi(el->GetAttributeValue("port").c_str());
   if (SockPort == 0) {
