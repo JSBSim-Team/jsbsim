@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.15 2015/08/16 13:19:52 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.16 2015/08/16 15:27:18 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTYPE);
 
 using namespace std;
@@ -197,6 +197,13 @@ void FGOutputType::SetRateHz(double rtHz)
     SetRate(1);
     Disable();
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGOutputType::GetRateHz(void) const
+{
+  return 1.0 / (rate * FDMExec->GetDeltaT());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
