@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.174 2015/08/09 17:42:01 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.175 2015/08/16 10:33:26 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -900,13 +900,14 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 
     modelLoaded = true;
 
+    LoadInputs(eMassBalance); // Update all input mass properties for the report.
+    Models[eMassBalance]->Run(false);  // Update all mass properties for the report.
+    LoadInputs(ePropulsion); // Update propulsion properties for the report.
+    Models[ePropulsion]->Run(false);  // Update propulsion properties for the report.
+    LoadInputs(eMassBalance); // Update all (one more time) input mass properties for the report.
+    Models[eMassBalance]->Run(false);  // Update all (one more time) mass properties for the report.
+
     if (debug_lvl > 0) {
-      LoadInputs(eMassBalance); // Update all input mass properties for the report.
-      Models[eMassBalance]->Run(false);  // Update all mass properties for the report.
-      LoadInputs(ePropulsion); // Update propulsion properties for the report.
-      Models[ePropulsion]->Run(false);  // Update propulsion properties for the report.
-      LoadInputs(eMassBalance); // Update all (one more time) input mass properties for the report.
-      Models[eMassBalance]->Run(false);  // Update all (one more time) mass properties for the report.
       ((FGMassBalance*)Models[eMassBalance])->GetMassPropertiesReport(0);
 
       cout << endl << fgblue << highint

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.24 2015/07/05 15:36:10 bcoconni Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.25 2015/08/16 13:19:52 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,15 +93,17 @@ public:
   virtual bool Run(bool Holding);
 
   virtual bool InitModel(void);
-  virtual void SetRate(double tt) {rate = tt;}
-  virtual double GetRate(void)   {return rate;}
+  /// Set the ouput rate for the model in frames
+  void SetRate(unsigned int tt) {rate = tt;}
+  /// Get the output rate for the model in frames
+  unsigned int GetRate(void)   {return rate;}
   FGFDMExec* GetExec(void)     {return FDMExec;}
 
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
   virtual std::string FindFullPathName(const std::string& filename) const;
 
 protected:
-  int exe_ctr;
+  unsigned int exe_ctr;
   unsigned int rate;
 
   /** Loads this model.

@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.84 2015/07/05 20:11:47 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutput.cpp,v 1.85 2015/08/16 13:19:52 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,11 +158,11 @@ bool FGOutput::Toggle(int idx)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::SetRate(double rate)
+void FGOutput::SetRateHz(double rate)
 {
   vector<FGOutputType*>::iterator it;
   for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    (*it)->SetRate(rate);
+    (*it)->SetRateHz(rate);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,7 +248,7 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
   Output->SetIdx(idx);
   Output->SetOutputName(name);
-  Output->SetRate(outRate);
+  Output->SetRateHz(outRate);
   Output->SetSubSystems(subSystems);
   Output->SetOutputProperties(outputProperties);
 

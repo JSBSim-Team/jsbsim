@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.119 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.120 2015/08/16 16:13:31 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -260,7 +260,13 @@ void FGLGear::ResetToIC(void)
   WheelSlip = 0.0;
 
   // Initialize Lagrange multipliers
-  memset(LMultiplier, 0, sizeof(LMultiplier));
+  for (int i=0; i < 3; i++) {
+    LMultiplier[i].ForceJacobian.InitMatrix();
+    LMultiplier[i].MomentJacobian.InitMatrix();
+    LMultiplier[i].Min = 0.0;
+    LMultiplier[i].Max = 0.0;
+    LMultiplier[i].value = 0.0;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

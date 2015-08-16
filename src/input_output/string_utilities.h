@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.23 2015/07/12 19:34:08 bcoconni Exp $"
+#define ID_STRINGUTILS "$Id: string_utilities.h,v 1.24 2015/08/16 16:06:28 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DECLARATION
 
   std::string& trim_left(std::string& str)
   {
-    while (str.size() && isspace((unsigned char)str[0])) {
+    while (!str.empty() && isspace((unsigned char)str[0])) {
       str = str.erase(0,1);
     }
     return str;
@@ -98,7 +98,7 @@ CLASS DECLARATION
 
   std::string& trim_right(std::string& str)
   {
-    while (str.size() && isspace((unsigned char)str[str.size()-1])) {
+    while (!str.empty() && isspace((unsigned char)str[str.size()-1])) {
       str = str.erase(str.size()-1,1);
     }
     return str;
@@ -106,7 +106,7 @@ CLASS DECLARATION
 
   std::string& trim(std::string& str)
   {
-    if (str.size() == 0) return str;
+    if (str.empty()) return str;
     std::string temp_str = trim_right(str);
     return str = trim_left(temp_str);
   }
@@ -136,10 +136,10 @@ CLASS DECLARATION
 
   bool is_number(const std::string& str)
   {
-    if (str.size())
-      return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
-    else
+    if (str.empty())
       return false;
+    else
+      return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
   }
 
   std::vector <std::string> split(std::string str, char d)
@@ -153,13 +153,13 @@ CLASS DECLARATION
     while (index != std::string::npos) {
       temp = str.substr(0,index);
       trim(temp);
-      if (temp.size() > 0) str_array.push_back(temp);
+      if (!temp.empty()) str_array.push_back(temp);
       str = str.erase(0,index+1);
       index = str.find(d);
     }
-    if (str.size() > 0) {
+    if (!str.empty()) {
       temp = trim(str);
-      if (temp.size() > 0) str_array.push_back(temp);
+      if (!temp.empty()) str_array.push_back(temp);
     }
 
     return str_array;
@@ -194,7 +194,7 @@ CLASS DECLARATION
 
   std::string replace(std::string str, const std::string& oldstr, const std::string& newstr)
   {
-    std::string temp;
+    std::string temp = str;
     size_t old_idx = str.find(oldstr);
     if (old_idx != std::string::npos) {
       temp = str.replace(old_idx, 1, newstr);

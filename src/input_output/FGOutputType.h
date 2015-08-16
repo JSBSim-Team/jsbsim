@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.8 2015/07/05 20:11:47 bcoconni Exp $"
+#define ID_OUTPUTTYPE "$Id: FGOutputType.h,v 1.10 2015/08/16 15:27:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -110,7 +110,10 @@ public:
 
   /** Set the output rate for this output instances.
       @param rtHz new output rate in Hz */
-  void SetRate(double rtHz);
+  void SetRateHz(double rtHz);
+
+  /// Get the output rate in Hz for this output.
+  double GetRateHz(void) const;
 
   /** Set the activated subsystems for this output instance.
       @param subSystems bitfield that describes the activated subsystems

@@ -52,8 +52,9 @@ class CheckOutputRate(unittest.TestCase):
                                                          append_xml(aircraft_name))
         tree = et.parse(self.sandbox.elude(aircraft_path))
         output_tag = tree.getroot().find("./output")
-        self.output_file = output_tag.attrib['name']
-        self.rate = int(0.5 + 1.0/(float(output_tag.attrib['rate']) * self.dt))
+        self.output_file = self.sandbox(output_tag.attrib['name'])
+        self.rateHz = float(output_tag.attrib['rate'])
+        self.rate = int(1.0 / (self.rateHz * self.dt))
 
     def tearDown(self):
         del self.fdm
@@ -68,8 +69,8 @@ class CheckOutputRate(unittest.TestCase):
 
         # Check that the rate is consistent with the values extracted from the
         # script and the aircraft definition
-        self.assertEqual(self.fdm.get_property_value("simulation/output/log_rate_hz"),
-                         self.rate)
+        self.assertAlmostEqual(self.fdm.get_property_value("simulation/output/log_rate_hz"),
+                               self.rateHz, delta=1E-5)
 
         self.fdm.run_ic()
 
@@ -77,7 +78,7 @@ class CheckOutputRate(unittest.TestCase):
             self.fdm.run()
 
         output = Table()
-        output.ReadCSV(self.sandbox(self.output_file))
+        output.ReadCSV(self.output_file)
 
         # According to the settings, the output file must contain 2 lines in
         # addition to the headers :
@@ -99,7 +100,7 @@ class CheckOutputRate(unittest.TestCase):
             self.fdm.run()
 
         output = Table()
-        output.ReadCSV(self.sandbox(self.output_file))
+        output.ReadCSV(self.output_file)
 
         # According to the settings, the output file must contain 1 line in
         # addition to the headers :
@@ -129,7 +130,7 @@ class CheckOutputRate(unittest.TestCase):
             self.fdm.run()
 
         output = Table()
-        output.ReadCSV(self.sandbox(self.output_file))
+        output.ReadCSV(self.output_file)
 
         # The frame at which the data is logged must be the next multiple of the
         # output rate
@@ -155,7 +156,7 @@ class CheckOutputRate(unittest.TestCase):
             self.fdm.run()
 
         output = Table()
-        output.ReadCSV(self.sandbox(self.output_file))
+        output.ReadCSV(self.output_file)
 
         # According to the settings, the output file must contain 1 line in
         # addition to the headers :
