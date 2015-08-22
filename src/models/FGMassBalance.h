@@ -48,13 +48,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.35 2015/03/28 14:49:02 bcoconni Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.36 2015/08/22 18:09:00 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-using std::string;
 
 namespace JSBSim {
 
@@ -248,7 +246,7 @@ private:
     double Weight; /// Weight in pounds.
     double Radius; /// Radius in feet.
     double Length; /// Length in feet.
-    string Name;
+    std::string Name;
     FGMatrix33 mPMInertia;
 
     double GetPointMassLocation(int axis) const {return Location(axis);}
@@ -256,7 +254,7 @@ private:
     esShape GetShapeType(void) {return eShapeType;}
     const FGColumnVector3& GetLocation(void) {return Location;}
     const FGMatrix33& GetPointMassInertia(void) {return mPMInertia;}
-    const string& GetName(void) {return Name;}
+    const std::string& GetName(void) {return Name;}
 
     void SetPointMassLocation(int axis, double value) {Location(axis) = value;}
     void SetPointMassWeight(double wt) {
@@ -266,7 +264,7 @@ private:
     void SetPointMassShapeType(esShape st) {eShapeType = st;}
     void SetRadius(double r) {Radius = r;}
     void SetLength(double l) {Length = l;}
-    void SetName(string name) {Name = name;}
+    void SetName(const std::string& name) {Name = name;}
     void SetPointMassMoI(const FGMatrix33& MoI) { mPMInertia = MoI; }
     double GetPointMassMoI(int r, int c) {return mPMInertia(r,c);}
 
