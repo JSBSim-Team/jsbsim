@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.32 2015/08/16 13:19:52 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.33 2015/08/23 09:43:31 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.32 2015/08/16 13:19:52 bcoconni Exp $
+    @version $Id: FGOutput.h,v 1.33 2015/08/23 09:43:31 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,10 +183,10 @@ public:
       @return true if the execution succeeded. */
   bool SetDirectivesFile(const std::string& fname);
   /// Enables the output generation for all output instances.
-  void Enable(void);
+  void Enable(void) { enabled = true; }
   /// Disables the output generation for all output instances.
-  void Disable(void);
-  /** Toggles the output generation for an ouput instances.
+  void Disable(void) { enabled = false; }
+  /** Toggles the output generation of each ouput instance.
       @param idx ID of the output instance which output generation will be
                  toggled.
       @result false if the instance does not exist otherwise returns the status
@@ -224,6 +224,7 @@ public:
 
 private:
   std::vector<FGOutputType*> OutputTypes;
+  bool enabled;
 
   void Debug(int from);
 };

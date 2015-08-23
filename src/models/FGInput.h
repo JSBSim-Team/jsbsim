@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.12 2015/04/02 13:02:29 ehofman Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.13 2015/08/23 09:43:31 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
 
     The class FGInput is the manager of the inputs requested by the user. It
     manages a list of instances derived from the abstract class FGInputType.
-    @version $Id: FGInput.h,v 1.12 2015/04/02 13:02:29 ehofman Exp $
+    @version $Id: FGInput.h,v 1.13 2015/08/23 09:43:31 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,10 +125,10 @@ public:
   bool SetDirectivesFile(const std::string& fname);
 
   /// Enables the input generation for all input instances.
-  void Enable(void);
+  void Enable(void) { enabled = true; }
   /// Disables the input generation for all input instances.
-  void Disable(void);
-  /** Toggles the input generation for an ouput instances.
+  void Disable(void) { enabled = false; }
+  /** Toggles the input generation of each input instance.
       @param idx ID of the input instance which input generation will be
                  toggled.
       @result false if the instance does not exist otherwise returns the status
@@ -152,6 +152,7 @@ public:
 
 private:
   std::vector<FGInputType*> InputTypes;
+  bool enabled;
 
   void Debug(int from);
 };

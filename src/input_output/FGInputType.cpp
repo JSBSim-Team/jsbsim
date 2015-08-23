@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInputType.cpp,v 1.3 2015/08/16 16:40:24 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInputType.cpp,v 1.4 2015/08/23 09:43:31 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUTTYPE);
 
 using namespace std;
@@ -106,10 +106,8 @@ bool FGInputType::InitModel(void)
 
 bool FGInputType::Run(bool Holding)
 {
-  if (FDMExec->GetTrimStatus()) return true;
-  if (!enabled) return true;
   if (FGModel::Run(Holding)) return true;
-  // if (Holding) return false;
+  if (!enabled) return true;
 
   RunPreFunctions();
   Read(Holding);

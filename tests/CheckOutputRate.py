@@ -85,6 +85,7 @@ class CheckOutputRate(unittest.TestCase):
         # 1. The initial conditions
         # 2. The output after 'rate' iterations
         self.assertEqual(output.get_column(0)[1], 0.0)
+        self.assertEqual(output.get_column(0)[2], self.rate * self.dt)
         self.assertEqual(output.get_column(0)[2],
                          self.fdm.get_property_value("simulation/sim-time-sec"))
 
@@ -115,7 +116,8 @@ class CheckOutputRate(unittest.TestCase):
         self.fdm.set_property_value("simulation/output/enabled", 0.0)
         self.fdm.run_ic()
 
-        # Check that the output remains disabled even after the trim is executed
+        # Check that the output remains disabled even after the trim is
+        # executed
         while self.fdm.get_property_value("simulation/sim-time-sec") < self.trim_date + 2.0*self.dt:
             self.fdm.run()
             self.assertEqual(self.fdm.get_property_value("simulation/output/enabled"),
@@ -132,8 +134,8 @@ class CheckOutputRate(unittest.TestCase):
         output = Table()
         output.ReadCSV(self.output_file)
 
-        # The frame at which the data is logged must be the next multiple of the
-        # output rate
+        # The frame at which the data is logged must be the next multiple of
+        # the output rate
         self.assertEqual(int(output.get_column(0)[1]/self.dt),
                          (1 + frame/self.rate)*self.rate)
 

@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.126 2014/11/30 12:35:32 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.127 2015/08/22 18:09:00 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,12 +188,10 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
 void FGPropagate::InitializeDerivatives()
 {
-  for (int i=0; i<5; i++) {
-    VState.dqPQRidot[i] = in.vPQRidot;
-    VState.dqUVWidot[i] = in.vUVWidot;
-    VState.dqInertialVelocity[i] = VState.vInertialVelocity;
-    VState.dqQtrndot[i] = in.vQtrndot;
-  }
+  VState.dqPQRidot.assign(5, in.vPQRidot);
+  VState.dqUVWidot.assign(5, in.vUVWidot);
+  VState.dqInertialVelocity.assign(5, VState.vInertialVelocity);
+  VState.dqQtrndot.assign(5, in.vQtrndot);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -636,7 +634,6 @@ void FGPropagate::WriteStateFile(int num)
 
   string filename = FDMExec->GetFullAircraftPath();
 
-  string sim_time = to_string((double)FDMExec->GetSimTime());
   if (filename.empty()) filename = "initfile.";
   else                  filename.append("/initfile.");
 
