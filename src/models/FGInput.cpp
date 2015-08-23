@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInput.cpp,v 1.33 2015/04/08 19:35:00 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInput.cpp,v 1.34 2015/08/23 09:43:31 bcoconni Exp $");
 IDENT(IdHdr,ID_INPUT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +60,7 @@ CLASS IMPLEMENTATION
 FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGInput";
+  enabled = true;
 
   Debug(0);
 }
@@ -139,7 +140,9 @@ bool FGInput::InitModel(void)
 
 bool FGInput::Run(bool Holding)
 {
+  if (FDMExec->GetTrimStatus()) return true;
   if (FGModel::Run(Holding)) return true;
+  if (!enabled) return true;
 
   vector<FGInputType*>::iterator it;
   for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
@@ -160,24 +163,6 @@ bool FGInput::SetDirectivesFile(const std::string& fname)
     cerr << endl << "Aircraft input element has problems in file " << fname << endl;
 
   return result;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGInput::Enable(void)
-{
-  vector<FGInputType*>::iterator it;
-  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
-    (*it)->Enable();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGInput::Disable(void)
-{
-  vector<FGInputType*>::iterator it;
-  for (it = InputTypes.begin(); it != InputTypes.end(); ++it)
-    (*it)->Disable();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
