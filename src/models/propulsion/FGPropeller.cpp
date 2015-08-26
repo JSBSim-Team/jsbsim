@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.51 2015/04/20 12:12:49 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.52 2015/08/26 00:21:20 dpculp Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   CtFactor = CpFactor = 1.0;
   ConstantSpeed = 0;
   cThrust = cPower = CtMach = CpMach = 0;
-  Vinduced = 0.0;
+  Vinduced = Vinflow = 0.0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
@@ -203,7 +203,7 @@ double FGPropeller::Calculate(double EnginePower)
   FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
   double omega, PowerAvailable;
 
-  double Vel = localAeroVel(eU);
+  double Vel = localAeroVel(eU) + Vinflow;
   double rho = in.Density;
   double RPS = RPM/60.0;
 
@@ -275,6 +275,12 @@ double FGPropeller::Calculate(double EnginePower)
 
   vFn(eX) = Thrust;
 
+  // Calculate inflow velocity at the propeller disk, from: 
+  // http://adg.stanford.edu/aa200b/propeller/propanalysis.html
+  double qbar = (in.qbar == 0) ? 0.0001 : in.qbar;
+  double Tbar = Thrust/qbar/Area;
+  Vinflow = localAeroVel(eU)*0.5*(sqrt(1.0 + Tbar) -1.0); 
+
   // The Ixx value and rotation speed given below are for rotation about the
   // natural axis of the engine. The transform takes place in the base class
   // FGForce::GetBodyForces() function.
@@ -303,7 +309,7 @@ double FGPropeller::GetPowerRequired(void)
 {
   double cPReq, J;
   double rho = in.Density;
-  double Vel = in.AeroUVW(eU);
+  double Vel = in.AeroUVW(eU) + Vinflow;
   double RPS = RPM / 60.0;
 
   if (RPS != 0.0) J = Vel / (Diameter * RPS);
