@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.23 2015/08/26 00:21:20 dpculp Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.23 2015/08/26 00:21:20 dpculp Exp $
+    @version $Id: FGPropeller.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -290,7 +290,6 @@ private:
   double D5;
   double HelicalTipMach;
   double Vinduced;
-  double Vinflow;
   FGColumnVector3 vTorque;
   FGTable *cThrust;
   FGTable *cPower;

@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.63 2015/08/26 00:21:20 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.64 2015/08/29 10:27:39 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,7 +168,6 @@ void FGEngine::LoadThrusterInputs()
   Thruster->in.Alpha           = in.alpha;
   Thruster->in.Beta            = in.beta;
   Thruster->in.Vt              = in.Vt;
-  Thruster->in.qbar            = in.qbar;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

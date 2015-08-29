@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.23 2015/08/26 00:21:20 dpculp Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.23 2015/08/26 00:21:20 dpculp Exp $
+    @version $Id: FGThruster.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +126,6 @@ public:
     double Alpha;
     double Beta;
     double Vt;
-    double qbar;
   } in;
 
 protected:
