@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.51 2015/04/20 12:12:49 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.53 2015/08/29 10:27:39 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,6 @@ CLASS IMPLEMENTATION
 FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
                        : FGThruster(exec, prop_element, num)
 {
-  string token;
   Element *table_element, *local_element;
   string name="";
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();
@@ -119,7 +118,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       } else {
         cerr << "Unknown table type: " << name << " in propeller definition." << endl;
       }
-    } catch (std::string str) {
+    } catch (std::string& str) {
       throw("Error loading propeller table:" + name + ". " + str);
     }
   }
@@ -203,7 +202,7 @@ double FGPropeller::Calculate(double EnginePower)
   FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
   double omega, PowerAvailable;
 
-  double Vel = localAeroVel(eU);
+  double Vel = localAeroVel(eU) + Vinduced;
   double rho = in.Density;
   double RPS = RPM/60.0;
 
@@ -303,7 +302,7 @@ double FGPropeller::GetPowerRequired(void)
 {
   double cPReq, J;
   double rho = in.Density;
-  double Vel = in.AeroUVW(eU);
+  double Vel = in.AeroUVW(eU) + Vinduced;
   double RPS = RPM / 60.0;
 
   if (RPS != 0.0) J = Vel / (Diameter * RPS);
