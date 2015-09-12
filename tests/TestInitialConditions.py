@@ -29,6 +29,7 @@ ktstofps = 1.68781
 radtodeg = 57.295779513082320876798154814105
 mtoft = 1.0 / 0.3048
 
+
 class TestInitialConditions(unittest.TestCase):
     def setUp(self):
         self.sandbox = SandBox()
@@ -50,8 +51,8 @@ class TestInitialConditions(unittest.TestCase):
                  'ic_prop': 'ic/long-gc-deg', 'prop': 'position/long-gc-deg',
                  'CSV_header': 'Longitude (deg)'},
                 {'tag': 'altitude', 'unit': 'M', 'conv': mtoft,
-                 'ic_prop': 'ic/h-sl-ft', 'prop': 'position/h-sl-ft',
-                 'CSV_header': 'Altitude ASL (ft)'},
+                 'ic_prop': 'ic/h-agl-ft', 'prop': 'position/h-agl-ft',
+                 'CSV_header': 'Altitude AGL (ft)'},
                 {'tag': 'phi', 'unit': 'RAD', 'conv': radtodeg,
                  'ic_prop': 'ic/phi-deg', 'prop': 'attitude/phi-deg',
                  'CSV_header': 'Phi (deg)'},
@@ -130,4 +131,4 @@ class TestInitialConditions(unittest.TestCase):
 suite = unittest.TestLoader().loadTestsFromTestCase(TestInitialConditions)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
 if test_result.failures or test_result.errors:
-    sys.exit(-1) # 'make test' will report the test failed.
+    sys.exit(-1)  # 'make test' will report the test failed.
