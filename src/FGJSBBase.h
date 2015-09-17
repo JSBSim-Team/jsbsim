@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.43 2015/08/22 18:09:00 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.44 2015/09/17 19:44:13 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.43 2015/08/22 18:09:00 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.44 2015/09/17 19:44:13 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,7 +290,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(double a, double b) {
     double eps = 2.0*DBL_EPSILON;
-    return std::fabs(a - b) <= eps * std::max(std::fabs(a), std::fabs(b));
+    return std::fabs(a - b) <= eps * std::max<double>(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
@@ -299,7 +299,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(float a, float b) {
     float eps = 2.0*FLT_EPSILON;
-    return std::fabs(a - b) <= eps * std::max(std::fabs(a), std::fabs(b));
+    return std::fabs(a - b) <= eps * std::max<double>(std::fabs(a), std::fabs(b));
   }
 
   /** Finite precision comparison.
