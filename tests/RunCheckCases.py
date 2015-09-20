@@ -19,26 +19,35 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys
+import sys, unittest, os
 from JSBSim_utils import CreateFDM, Table, SandBox
 
-sandbox = SandBox('check_cases', 'orbit')
 
-fdm = CreateFDM(sandbox)
-fdm.load_script(sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
-fdm.run_ic()
+class TestOrbitCheckCase(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = SandBox('check_cases', 'orbit')
 
-while fdm.run():
-    pass
+    def tearDown(self):
+        self.sandbox.erase()
 
-ref, current = Table(), Table()
-ref.ReadCSV(sandbox.elude(sandbox.path_to_jsbsim_file('logged_data', 'BallOut.csv')))
-current.ReadCSV(sandbox('BallOut.csv'))
+    def testOrbitCheckCase(self):
+        os.environ['JSBSIM_DEBUG'] = str(0)
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
+        fdm.run_ic()
 
-diff = ref.compare(current)
-if not diff.empty():
-    print diff
-    sys.exit(-1) # Needed for 'make test' to report the test passed.
+        while fdm.run():
+            pass
 
-sandbox.erase()
+        ref, current = Table(), Table()
+        ref.ReadCSV(self.sandbox.elude(self.sandbox.path_to_jsbsim_file('logged_data', 'BallOut.csv')))
+        current.ReadCSV(self.sandbox('BallOut.csv'))
 
+        diff = ref.compare(current)
+        self.longMessage = True
+        self.assertTrue(diff.empty(), msg='\n'+repr(diff))
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestOrbitCheckCase)
+test_result = unittest.TextTestRunner(verbosity=2).run(suite)
+if test_result.failures or test_result.errors:
+    sys.exit(-1)  # 'make test' will report the test failed.
