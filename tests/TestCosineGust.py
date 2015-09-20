@@ -71,5 +71,5 @@ class TestCosineGust(unittest.TestCase):
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestCosineGust)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures:
+if test_result.failures or test_result.errors:
     sys.exit(-1)  # 'make test' will report the test failed.
