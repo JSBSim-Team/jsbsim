@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.98 2015/08/16 13:19:52 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.99 2015/09/20 16:32:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.98 $
+    @version $Revision: 1.99 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,6 +361,8 @@ public:
   FGAuxiliary* GetAuxiliary(void)      {return (FGAuxiliary*)Models[eAuxiliary];}
   /// Returns the FGInput pointer.
   FGInput* GetInput(void)              {return (FGInput*)Models[eInput];}
+  /// Returns the FGOutput pointer.
+  FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
   /** Get a pointer to the ground callback currently used. It is recommanded
       to store the returned pointer in a 'smart pointer' FGGroundCallback_ptr.
       @return A pointer to the current ground callback object.

@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.60 2014/06/08 12:50:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.61 2015/09/20 16:32:11 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,18 +96,15 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript(string script, double deltaT, const string initfile)
+bool FGScript::LoadScript(const string& script, double default_dT,
+                          const string& initfile)
 {
-  string aircraft="", initialize="", comparison = "", prop_name="";
+  string aircraft="", initialize="", prop_name="";
   string notifyPropertyName="";
   Element *element=0, *run_element=0, *event_element=0;
-  Element *condition_element=0, *set_element=0, *delay_element=0;
+  Element *set_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
-  Element *output_element = 0L;
-  Element *input_element = 0L;
-  bool result = false;
   double dt = 0.0, value = 0.0;
-  struct event *newEvent;
   FGCondition *newCondition;
 
   FGXMLFileRead XMLFileRead;
@@ -117,11 +114,6 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
     cerr << "File: " << script << " could not be loaded." << endl;
     return false;
   }
-
-  // Set up input and output files if specified
-  
-  output_element = document->FindElement("output");
-  input_element = document->FindElement("input");
 
   if (document->GetName() != string("runscript")) {
     cerr << "File: " << script << " is not a script file" << endl;
@@ -153,12 +145,12 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   // Make sure that the desired time is reached and executed.
   EndTime += 0.99*FDMExec->GetDeltaT();
 
-  if (deltaT == 0.0)
+  if (default_dT == 0.0)
     dt = run_element->GetAttributeValueAsNumber("dt");
   else {
-    dt = deltaT;
+    dt = default_dT;
     cout << endl << "Overriding simulation step size from the command line. New step size is: "
-         << deltaT << " seconds (" << 1/deltaT << " Hz)" << endl << endl;
+         << default_dT << " seconds (" << 1/default_dT << " Hz)" << endl << endl;
   }
 
   FDMExec->Setdt(dt);
@@ -169,8 +161,8 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   if (element) {
     aircraft = element->GetAttributeValue("aircraft");
     if (!aircraft.empty()) {
-      result = FDMExec->LoadModel(aircraft);
-      if (!result) return false;
+      if (!FDMExec->LoadModel(aircraft))
+        return false;
     } else {
       cerr << "Aircraft must be specified in use element." << endl;
       return false;
@@ -200,18 +192,21 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   }
 
   // Now, read input spec if given.
-  if (input_element > 0) {
-    FDMExec->GetInput()->Load(input_element);
+  element = document->FindElement("input");
+  while (element) {
+    if (!FDMExec->GetInput()->Load(element))
+      return false;
+ 
+    element = document->FindNextElement("input");
   }
 
   // Now, read output spec if given.
-  if (output_element > 0) {
-    string output_file = output_element->GetAttributeValue("file");
-    if (output_file.empty()) {
-      cerr << "No logging directives file was specified." << endl;
-    } else {
-      if (!FDMExec->SetOutputDirectives(output_file)) return false;
-    }
+  element = document->FindElement("output");
+  while (element) {
+    if (!FDMExec->GetOutput()->Load(element))
+      return false;
+ 
+    element = document->FindNextElement("output");
   }
 
   // Read local property/value declarations
@@ -226,7 +221,7 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
   while (event_element) { // event processing
 
     // Create the event structure
-    newEvent = new struct event();
+    struct event *newEvent = new struct event();
 
     // Retrieve the event name if given
     newEvent->Name = event_element->GetAttributeValue("name");
@@ -243,11 +238,11 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
     }
 
     // Process the conditions
-    condition_element = event_element->FindElement("condition");
+    Element* condition_element = event_element->FindElement("condition");
     if (condition_element != 0) {
       try {
         newCondition = new FGCondition(condition_element, PropertyManager);
-      } catch(string str) {
+      } catch(string& str) {
         cout << endl << fgred << str << reset << endl << endl;
         delete newEvent;
         return false;
@@ -262,9 +257,11 @@ bool FGScript::LoadScript(string script, double deltaT, const string initfile)
     // Is there a delay between the time this event is triggered, and when the event
     // actions are executed?
 
-    delay_element = event_element->FindElement("delay");
-    if (delay_element) newEvent->Delay = event_element->FindElementValueAsNumber("delay");
-    else newEvent->Delay = 0.0;
+    Element* delay_element = event_element->FindElement("delay");
+    if (delay_element)
+      newEvent->Delay = event_element->FindElementValueAsNumber("delay");
+    else
+      newEvent->Delay = 0.0;
 
     // Notify about when this event is triggered?
     if ((notify_element = event_element->FindElement("notify")) != 0) {
@@ -397,7 +394,7 @@ bool FGScript::RunScript(void)
           if (thisEvent.Functions[i] != 0) { // Parameter should be set to a function value
             try {
               thisEvent.SetValue[i] = thisEvent.Functions[i]->GetValue();
-            } catch (string msg) {
+            } catch (string& msg) {
               std::cerr << std::endl << "A problem occurred in the execution of the script. " << msg << endl;
               throw;
             }

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.2 2013/11/15 22:43:02 bcoconni Exp $"
+#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.3 2015/09/20 20:53:13 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGWaypoint.h,v 1.2 2013/11/15 22:43:02 bcoconni Exp $
+    @version $Id: FGWaypoint.h,v 1.3 2015/09/20 20:53:13 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,10 +112,6 @@ private:
   FGPropertyNode_ptr target_longitude_pNode;
   FGPropertyNode_ptr source_latitude_pNode;
   FGPropertyNode_ptr source_longitude_pNode;
-  double target_latitude;
-  double target_longitude;
-  double source_latitude;
-  double source_longitude;
   double target_latitude_unit;
   double target_longitude_unit;
   double source_latitude_unit;

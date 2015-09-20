@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.30 2015/08/09 17:42:01 bcoconni Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.31 2015/09/20 20:53:13 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.30 2015/08/09 17:42:01 bcoconni Exp $
+    @version $Id: FGAuxiliary.h,v 1.31 2015/09/20 20:53:13 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ public:
   const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;     }
   const FGLocation&      GetLocationVRP(void) const { return vLocationVRP; }
 
-  double GethVRP(void) const;
+  double GethVRP(void) const { return vLocationVRP.GetAltitudeASL(); }
   double GetAeroUVW (int idx) const { return vAeroUVW(idx); }
   double Getalpha   (void) const { return alpha;      }
   double Getbeta    (void) const { return beta;       }
@@ -247,9 +247,9 @@ public:
   int    GetDayOfYear    (void) const { return day_of_year;    }
   double GetSecondsInDay (void) const { return seconds_in_day; }
 
-  double GetLongitudeRelativePosition (void) const { return lon_relative_position; }
-  double GetLatitudeRelativePosition  (void) const { return lat_relative_position; }
-  double GetDistanceRelativePosition  (void) const { return relative_position; }
+  double GetLongitudeRelativePosition (void) const;
+  double GetLatitudeRelativePosition  (void) const;
+  double GetDistanceRelativePosition  (void) const;
 
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
@@ -280,7 +280,6 @@ public:
     FGColumnVector3 VRPBody;
     FGColumnVector3 vFw;
     FGLocation vLocation;
-    double ReferenceRadius;
     double CosTht;
     double SinTht;
     double CosPhi;
@@ -326,12 +325,6 @@ private:
   int    day_of_year;     // GMT day, 1 .. 366
 
   double hoverbcg, hoverbmac;
-
-  // helper data, calculation of distance from initial position
-
-  double lon_relative_position;
-  double lat_relative_position;
-  double relative_position;
 
   void UpdateWindMatrices(void);
 

@@ -19,7 +19,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, telnetlib, time, string, threading
+import sys, unittest, telnetlib, time, string, threading, socket
 import xml.etree.ElementTree as et
 from JSBSim_utils import CreateFDM, SandBox, CopyAircraftDef
 
@@ -39,6 +39,9 @@ class JSBSimThread(threading.Thread):
         self._cond = cond
         self._end_time = end_time
         self._t0 = t0
+
+    def __del_(self):
+        del self._fdm
 
     def run(self):
         self._cond.acquire()
@@ -60,46 +63,33 @@ class JSBSimThread(threading.Thread):
                 self._cond.release()
 
 
-class TestInputSocket(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
-
-        # The aircraft c172x does not contain an <input> tag so we need
-        # to add one.
-        tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
-        self.root = tree.getroot()
-        input_tag = et.SubElement(self.root, 'input')
-        input_tag.attrib['port'] = '1137'
-        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
-
-        self.fdm = CreateFDM(self.sandbox)
-        self.fdm.set_aircraft_path('aircraft')
-        self.fdm.load_script(script_path)
-        self.fdm.run_ic()
-        self.fdm.hold()
-
+class TelnetInterface:
+    def __init__(self, fdm, end_time, port):
         # Execute JSBSim in a separate thread
         self.cond = threading.Condition()
-        self.thread = JSBSimThread(self.fdm, self.cond, 5., time.time())
+        self.thread = JSBSimThread(fdm, self.cond, end_time, time.time())
         self.thread.start()
 
         # Wait for the thread to be started before connecting a telnet session
         self.cond.acquire()
         self.cond.wait()
-        self.tn = telnetlib.Telnet("localhost", 1137)
-        self.cond.release()
+        try:
+            self.tn = telnetlib.Telnet("localhost", port, 2.0)
+        finally:
+            self.cond.release()
 
-    def tearDown(self):
-        self.tn.close()
+    def __del__(self):
+        if 'tn' in self.__dict__.keys():  # Check if the Telnet session has been succesfully open
+            self.tn.close()
         self.thread.quit = True
         self.thread.join()
-        self.sandbox.erase()
+        del self.thread
 
     def sendCommand(self, command):
         self.cond.acquire()
         self.tn.write(command+"\n")
-        # Wait for a time step to be executed before reading the output from telnet
+        # Wait for a time step to be executed before reading the output from
+        # telnet
         self.cond.wait()
         msg = self.tn.read_very_eager()
         self.cond.release()
@@ -109,14 +99,14 @@ class TestInputSocket(unittest.TestCase):
     def getSimTime(self):
         self.cond.acquire()
         self.cond.wait()
-        t = self.fdm.get_sim_time()
+        t = self.thread._fdm.get_sim_time()
         self.cond.release()
         return t
 
     def getDeltaT(self):
         self.cond.acquire()
         self.cond.wait()
-        dt = self.fdm.get_delta_t()
+        dt = self.thread._fdm.get_delta_t()
         self.cond.release()
         return dt
 
@@ -124,23 +114,71 @@ class TestInputSocket(unittest.TestCase):
         msg = string.split(self.sendCommand("get "+property), '\n')
         return float(string.split(msg[0], '=')[1])
 
-    def test_input_socket(self):
-        # Check that the connection has been established
+    def getOutput(self):
         self.cond.acquire()
         self.cond.wait()
         out = self.tn.read_very_eager()
         self.cond.release()
+        return out
+
+    def wait(self, seconds):
+        self.thread.join(seconds)
+
+    def setRealTime(self, rt):
+        self.thread.realTime = rt
+
+
+class TestInputSocket(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = SandBox()
+        self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                            'c1722.xml')
+
+    def tearDown(self):
+        self.sandbox.erase()
+
+    def sanityCheck(self, _tn):
+        # Check that the connection has been established
+        out = _tn.getOutput()
         self.assertTrue(string.split(out, '\n')[0] == 'Connected to JSBSim server',
                         msg="Not connected to the JSBSim server.\nGot message '%s' instead" % (out,))
 
         # Check that "help" returns the minimum set of commands that will be
         # tested
         self.assertEqual(sorted(map(lambda x: string.strip(string.split(x, '{')[0]),
-                                    string.split(self.sendCommand("help"), '\n')[2:-2])),
+                                    string.split(_tn.sendCommand("help"), '\n')[2:-2])),
                          ['get', 'help', 'hold', 'info', 'iterate', 'quit', 'resume', 'set'])
 
+    def test_no_input(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+        fdm.hold()
+
+        with self.assertRaises(socket.error):
+            TelnetInterface(fdm, 5., 1137)
+
+    def test_input_socket(self):
+        # The aircraft c172x does not contain an <input> tag so we need
+        # to add one.
+        tree, aircraft_name, b = CopyAircraftDef(self.script_path, self.sandbox)
+        self.root = tree.getroot()
+        input_tag = et.SubElement(self.root, 'input')
+        input_tag.attrib['port'] = '1137'
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+        fdm.hold()
+
+        tn = TelnetInterface(fdm, 5., 1137)
+        self.sanityCheck(tn)
+
         # Check the aircraft name and its version
-        msg = string.split(self.sendCommand("info"), '\n')
+        msg = string.split(tn.sendCommand("info"), '\n')
         self.assertEqual(string.strip(string.split(msg[2], ':')[1]),
                          string.strip(self.root.attrib['name']))
         self.assertEqual(string.strip(string.split(msg[1], ':')[1]),
@@ -148,50 +186,61 @@ class TestInputSocket(unittest.TestCase):
 
         # Check that the simulation time is 0.0
         self.assertEqual(float(string.strip(string.split(msg[3], ':')[1])), 0.0)
-        self.assertEqual(self.getSimTime(), 0.0)
-        self.assertEqual(self.getPropertyValue("simulation/sim-time-sec"), 0.0)
+        self.assertEqual(tn.getSimTime(), 0.0)
+        self.assertEqual(tn.getPropertyValue("simulation/sim-time-sec"), 0.0)
 
         # Check that 'iterate' iterates the correct number of times
-        self.sendCommand("iterate 19")
-        self.assertEqual(self.getSimTime(), 19. * self.getDeltaT())
-        self.assertAlmostEqual(self.getPropertyValue("simulation/sim-time-sec"),
-                               self.getSimTime(), delta=1E-5)
+        tn.sendCommand("iterate 19")
+        self.assertEqual(tn.getSimTime(), 19. * tn.getDeltaT())
+        self.assertAlmostEqual(tn.getPropertyValue("simulation/sim-time-sec"),
+                               tn.getSimTime(), delta=1E-5)
 
         # Wait a little bit and make sure that the simulation time has not
         # changed meanwhile thus confirming that the simulation is on hold.
-        self.thread.join(0.1)
-        self.assertEqual(self.getSimTime(), 19. * self.getDeltaT())
-        self.assertAlmostEqual(self.getPropertyValue("simulation/sim-time-sec"),
-                               self.getSimTime(), delta=1E-5)
+        tn.wait(0.1)
+        self.assertEqual(tn.getSimTime(), 19. * tn.getDeltaT())
+        self.assertAlmostEqual(tn.getPropertyValue("simulation/sim-time-sec"),
+                               tn.getSimTime(), delta=1E-5)
 
         # Modify the tank[0] contents via the "send" command
-        half_contents = 0.5 * self.getPropertyValue("propulsion/tank/contents-lbs")
-        self.sendCommand("set propulsion/tank/contents-lbs " + str(half_contents))
-        self.cond.acquire()
-        self.cond.wait()
-        self.assertEqual(self.fdm.get_property_value("propulsion/tank/contents-lbs"),
+        half_contents = 0.5 * tn.getPropertyValue("propulsion/tank/contents-lbs")
+        tn.sendCommand("set propulsion/tank/contents-lbs " + str(half_contents))
+        self.assertEqual(tn.getPropertyValue("propulsion/tank/contents-lbs"),
                          half_contents)
-        self.cond.release()
 
         # Check the resume/hold commands
-        self.thread.realTime = True
-        t = self.getSimTime()
-        self.sendCommand("resume")
-        self.thread.join(0.5)
-        self.assertNotEqual(self.getSimTime(), t)
-        self.thread.join(0.5)
-        self.sendCommand("hold")
-        self.thread.realTime = False
-        t = self.getSimTime()
-        self.assertAlmostEqual(self.getPropertyValue("simulation/sim-time-sec"),
+        tn.setRealTime(True)
+        t = tn.getSimTime()
+        tn.sendCommand("resume")
+        tn.wait(0.5)
+        self.assertNotEqual(tn.getSimTime(), t)
+        tn.wait(0.5)
+        tn.sendCommand("hold")
+        tn.setRealTime(False)
+        t = tn.getSimTime()
+        self.assertAlmostEqual(tn.getPropertyValue("simulation/sim-time-sec"),
                                t, delta=1E-5)
 
         # Wait a little bit and make sure that the simulation time has not
         # changed meanwhile thus confirming that the simulation is on hold.
-        self.thread.join(0.1)
-        self.assertEqual(self.getSimTime(), t)
-        self.assertAlmostEqual(self.getPropertyValue("simulation/sim-time-sec"),
+        tn.wait(0.1)
+        self.assertEqual(tn.getSimTime(), t)
+        self.assertAlmostEqual(tn.getPropertyValue("simulation/sim-time-sec"),
                                t, delta=1E-5)
+
+    def test_script_input(self):
+        tree = et.parse(self.sandbox.elude(self.script_path))
+        input_tag = et.SubElement(tree.getroot(), 'input')
+        input_tag.attrib['port'] = '1138'
+        tree.write(self.sandbox('c1722_1.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script('c1722_1.xml')
+        fdm.run_ic()
+        fdm.hold()
+
+        tn = TelnetInterface(fdm, 5., 1138)
+        self.sanityCheck(tn)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestInputSocket)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)

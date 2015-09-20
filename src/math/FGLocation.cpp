@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGLocation.cpp,v 1.33 2014/08/28 11:46:11 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLocation.cpp,v 1.34 2015/09/20 20:53:13 bcoconni Exp $");
 IDENT(IdHdr,ID_LOCATION);
 
 // Set up the default ground callback object.
@@ -395,6 +395,68 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   // Mark the cached values as valid
   mCacheValid = true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//  The calculations, below, implement the Haversine formulas to calculate
+//  heading and distance to a set of lat/long coordinates from the current
+//  position.
+//
+//  The basic equations are (lat1, long1 are source positions; lat2
+//  long2 are target positions):
+//
+//  R = earth’s radius
+//  Δlat = lat2 − lat1
+//  Δlong = long2 − long1
+//
+//  For the waypoint distance calculation:
+//
+//  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
+//  c = 2∙atan2(√a, √(1−a))
+//  d = R∙c
+
+double FGLocation::GetDistanceTo(double target_longitude,
+                                 double target_latitude) const
+{
+  double delta_lat_rad = target_latitude  - GetLatitude();
+  double delta_lon_rad = target_longitude - GetLongitude();
+
+  double distance_a = pow(sin(0.5*delta_lat_rad), 2.0)
+    + (GetCosLatitude() * cos(target_latitude)
+       * (pow(sin(0.5*delta_lon_rad), 2.0)));
+
+  return 2.0 * GetRadius() * atan2(sqrt(distance_a), sqrt(1.0 - distance_a));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//  The calculations, below, implement the Haversine formulas to calculate
+//  heading and distance to a set of lat/long coordinates from the current
+//  position.
+//
+//  The basic equations are (lat1, long1 are source positions; lat2
+//  long2 are target positions):
+//
+//  R = earth’s radius
+//  Δlat = lat2 − lat1
+//  Δlong = long2 − long1
+//
+//  For the heading angle calculation:
+//
+//  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1)∙cos(lat2)∙cos(Δlong))
+
+double FGLocation::GetHeadingTo(double target_longitude,
+                                double target_latitude) const
+{
+  double delta_lon_rad = target_longitude - GetLongitude();
+
+  double Y = sin(delta_lon_rad) * cos(target_latitude);
+  double X = GetCosLatitude() * sin(target_latitude)
+    - GetSinLatitude() * cos(target_latitude) * cos(delta_lon_rad);
+
+  double heading_to_waypoint_rad = atan2(Y, X);
+  if (heading_to_waypoint_rad < 0) heading_to_waypoint_rad += 2.0*M_PI;
+
+  return heading_to_waypoint_rad;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
