@@ -40,12 +40,13 @@ INCLUDES
 #include "FGWaypoint.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
+#include "math/FGLocation.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.5 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.6 2015/09/20 20:53:13 bcoconni Exp $");
 IDENT(IdHdr,ID_WAYPOINT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,9 +72,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         target_latitude_unit = 0.017453293;
       }
     }
-  } else {
+  } else
     throw("Target latitude is required for waypoint component: "+Name);
-  }
 
   if (element->FindElement("target_longitude") ) {
     target_longitude_pNode = PropertyManager->GetNode(element->FindElementValue("target_longitude"));
@@ -82,9 +82,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         target_longitude_unit = 0.017453293;
       }
     }
-  } else {
+  } else
     throw("Target longitude is required for waypoint component: "+Name);
-  }
 
   if (element->FindElement("source_latitude") ) {
     source_latitude_pNode = PropertyManager->GetNode(element->FindElementValue("source_latitude"));
@@ -93,9 +92,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         source_latitude_unit = 0.017453293;
       }
     }
-  } else {
+  } else
     throw("Source latitude is required for waypoint component: "+Name);
-  }
 
   if (element->FindElement("source_longitude") ) {
     source_longitude_pNode = PropertyManager->GetNode(element->FindElementValue("source_longitude"));
@@ -104,30 +102,28 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
         source_longitude_unit = 0.017453293;
       }
     }
-  } else {
+  } else
     throw("Source longitude is required for waypoint component: "+Name);
-  }
 
-  if (element->FindElement("radius")) {
+  if (element->FindElement("radius"))
     radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
-  } else {
+  else
     radius = 21144000; // Radius of Earth in feet.
-  }
 
   unit = element->GetAttributeValue("unit");
   if (WaypointType == eHeading) {
     if (!unit.empty()) {
-    if      (unit == "DEG") eUnit = eDeg;
-    else if (unit == "RAD") eUnit = eRad;
-    else throw("Unknown unit "+unit+" in HEADING waypoint component, "+Name);
-  } else {
+      if      (unit == "DEG") eUnit = eDeg;
+      else if (unit == "RAD") eUnit = eRad;
+      else throw("Unknown unit "+unit+" in HEADING waypoint component, "+Name);
+    } else {
       eUnit = eRad; // Default is radians if unspecified
     }
   } else {
     if (!unit.empty()) {
-    if      (unit == "FT") eUnit = eFeet;
-    else if (unit == "M")  eUnit = eMeters;
-    else throw("Unknown unit "+unit+" in DISTANCE waypoint component, "+Name);
+      if      (unit == "FT") eUnit = eFeet;
+      else if (unit == "M")  eUnit = eMeters;
+      else throw("Unknown unit "+unit+" in DISTANCE waypoint component, "+Name);
     } else {
       eUnit = eFeet; // Default is feet if unspecified
     }
@@ -145,47 +141,18 @@ FGWaypoint::~FGWaypoint()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position. The latitude and longitude are expected to be in radian units
-//  and are measured from the 0 meridian and the equator, with positive 
-//  longitude being east from there, and positive latitude being north.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the heading angle calculation:
-//
-//  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1) ∙cos(lat2)∙cos(Δlong) )
-//
-//  For the waypoint distance calculation:
-//
-//  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
-//  c = 2∙atan2(√a, √(1−a))
-//  d = R∙c
 
 bool FGWaypoint::Run(void )
 {
-  target_latitude = target_latitude_pNode->getDoubleValue() * target_latitude_unit;
-  target_longitude = target_longitude_pNode->getDoubleValue() * target_longitude_unit;
-  source_latitude = source_latitude_pNode->getDoubleValue() * source_latitude_unit;
-  source_longitude = source_longitude_pNode->getDoubleValue() * source_longitude_unit;
-
-  double delta_lat_rad = target_latitude  - source_latitude;
-  double delta_lon_rad = target_longitude - source_longitude;
+  double target_latitude = target_latitude_pNode->getDoubleValue() * target_latitude_unit;
+  double target_longitude = target_longitude_pNode->getDoubleValue() * target_longitude_unit;
+  double source_latitude = source_latitude_pNode->getDoubleValue() * source_latitude_unit;
+  double source_longitude = source_longitude_pNode->getDoubleValue() * source_longitude_unit;
+  FGLocation source(source_longitude, source_latitude, radius);
 
   if (WaypointType == eHeading) {     // Calculate Heading
-
-    double Y = sin(delta_lon_rad) * cos(target_latitude);
-    double X = (cos(source_latitude) * sin(target_latitude))
-               - (sin(source_latitude) * cos(target_latitude) * cos(delta_lon_rad));
-
-    double heading_to_waypoint_rad = atan2(Y, X);
-    if (heading_to_waypoint_rad < 0) heading_to_waypoint_rad += 2.0*M_PI;
+    double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude,
+                                                         target_latitude);
 
     double heading_to_waypoint = 0;
     if (eUnit == eDeg) heading_to_waypoint = heading_to_waypoint_rad * radtodeg;
@@ -194,12 +161,7 @@ bool FGWaypoint::Run(void )
     Output = heading_to_waypoint;
 
   } else {                            // Calculate Distance
-
-    double distance_a = pow(sin(delta_lat_rad/2.0), 2.0)
-                        + (cos(source_latitude) * cos(target_latitude)
-                          * (pow(sin(delta_lon_rad/2.0), 2.0)));
-
-    double wp_distance = 2.0 * radius * atan2(pow(distance_a, 0.5), pow((1.0 - distance_a), 0.5));
+    double wp_distance = source.GetDistanceTo(target_longitude, target_latitude);
 
     if (eUnit == eMeters) {
       Output = FeetToMeters(wp_distance);

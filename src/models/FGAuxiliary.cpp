@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.69 2015/08/09 17:42:01 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.70 2015/09/20 20:53:13 bcoconni Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
   Nz = Ny = 0.0;
-  lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
@@ -117,7 +116,6 @@ bool FGAuxiliary::InitModel(void)
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
   Nz = Ny = 0.0;
-  lon_relative_position = lat_relative_position = relative_position = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
@@ -259,9 +257,6 @@ bool FGAuxiliary::Run(bool Holding)
   FGColumnVector3 vMac = in.Tb2l * in.RPBody;
   hoverbmac = (in.DistanceAGL + vMac(3)) / in.Wingspan;
 
-  // When all models are executed calculate the distance from the initial point.
-  CalculateRelativePosition();
-
   return false;
 }
 
@@ -344,13 +339,6 @@ double FGAuxiliary::GetCrossWind(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAuxiliary::GethVRP(void) const
-{
-  return vLocationVRP.GetRadius() - in.ReferenceRadius;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGAuxiliary::GetNlf(void) const
 {
   if (in.Mass != 0)
@@ -361,13 +349,36 @@ double FGAuxiliary::GetNlf(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAuxiliary::CalculateRelativePosition(void)  //ToDo: This belongs elsewhere - perhaps in FGPropagate or Exec
+double FGAuxiliary::GetLongitudeRelativePosition(void) const
 {
-  const double earth_radius_mt = in.ReferenceRadius*fttom;
-  lat_relative_position=(in.vLocation.GetLatitude()  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
-  lon_relative_position=(in.vLocation.GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
-  relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
-};
+  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
+                    FDMExec->GetIC()->GetLatitudeRadIC(),
+                    in.vLocation.GetSeaLevelRadius());
+  return source.GetDistanceTo(in.vLocation.GetLongitude(),
+                              FDMExec->GetIC()->GetLatitudeRadIC()) * fttom;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::GetLatitudeRelativePosition(void) const
+{
+  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
+                    FDMExec->GetIC()->GetLatitudeRadIC(),
+                    in.vLocation.GetSeaLevelRadius());
+  return source.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
+                              in.vLocation.GetLatitude()) * fttom;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::GetDistanceRelativePosition(void) const
+{
+  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
+                    FDMExec->GetIC()->GetLatitudeRadIC(),
+                    in.vLocation.GetSeaLevelRadius());
+  return source.GetDistanceTo(in.vLocation.GetLongitude(),
+                              in.vLocation.GetLatitude()) * fttom;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
