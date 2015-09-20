@@ -20,6 +20,8 @@
 
 import sys, unittest
 import xml.etree.ElementTree as et
+import pandas as pd
+import numpy as np
 from JSBSim_utils import CreateFDM, SandBox, ExecuteUntil
 
 
@@ -41,7 +43,7 @@ class TestScriptOutput(unittest.TestCase):
         self.assertFalse(self.sandbox.exists('output.csv'),
                          msg="Results have unexpectedly been written to 'output.csv'")
 
-    def test_output(self):
+    def test_output_from_file(self):
         tree = et.parse(self.sandbox.elude(self.script_path))
         output_tag = et.SubElement(tree.getroot(), 'output')
         output_tag.attrib['file'] = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
@@ -54,6 +56,29 @@ class TestScriptOutput(unittest.TestCase):
 
         self.assertTrue(self.sandbox.exists('output.csv'),
                         msg="The file 'output.csv' has not been created")
+
+    def test_output(self):
+        tree = et.parse(self.sandbox.elude(self.script_path))
+        output_tag = et.SubElement(tree.getroot(), 'output')
+        output_tag.attrib['name'] = 'test.csv'
+        output_tag.attrib['type'] = 'CSV'
+        output_tag.attrib['rate'] = '10'
+        property_tag = et.SubElement(output_tag, 'property')
+        property_tag.text = 'position/vrp-radius-ft'
+        tree.write(self.sandbox('c1722_0.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script('c1722_0.xml')
+        fdm.run_ic()
+        ExecuteUntil(fdm, 10.)
+
+        self.assertTrue(self.sandbox.exists(output_tag.attrib['name']),
+                        msg="The file 'output.csv' has not been created")
+        orig = pd.read_csv(self.sandbox('JSBout172B.csv'))
+        test = pd.read_csv(self.sandbox('test.csv'))
+        self.assertEqual(np.max(orig['Time']-test['Time']), 0.0)
+        pname = '/fdm/jsbsim/' + property_tag.text
+        self.assertEqual(np.max(orig[pname]-test[pname]), 0.0)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestScriptOutput)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.29 2014/05/29 18:46:44 bcoconni Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.30 2015/09/20 16:32:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -161,7 +161,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.29 2014/05/29 18:46:44 bcoconni Exp $"
+    @version "$Id: FGScript.h,v 1.30 2015/09/20 16:32:11 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,16 +178,18 @@ public:
   ~FGScript();
 
   /** Loads a script to drive JSBSim (usually in standalone mode).
-      The language is the Script Directives for JSBSim. If a simulation step size
-      has been supplied on the command line, it will be override the script-
+      The language is the Script Directives for JSBSim. If a simulation step
+      size has been supplied on the command line, it will override the script
       specified simulation step size.
       @param script the filename (including path name, if any) for the script.
-      @param deltaT a simulation step size.
+      @param default_dT the default simulation step size if no value is specified
+                        in the script
       @param initfile An optional initialization file name passed in, empty by
                       default. If a file name is passed in, it will override the
                       one present in the script.
       @return true if successful */
-  bool LoadScript(std::string script, double deltaT, const std::string initfile);
+  bool LoadScript(const std::string& script, double default_dT,
+                  const std::string& initfile);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.
