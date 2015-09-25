@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!--
+ Source:
+ "Evolution of Wright Flyer Propellers between 1903 and 1912"
+ http://www.wrightexperience.com/pdfs/props.pdf
+
+ "Wright propellers"
+ http://www.slideshare.net/RolandBoucher/wright-propellers-rev3-16632071
+ - Prop diameter            = 8.5 feet
+ - Blade width at tip       = 8 inches
+ - Blade twist at tip       = 1.66 degrees
+ - Blade area               = 2 sq. ft.
+ - Prop speed               = 245 Rpm
+ - Speed at C.P.            = 61 mph
+ - Normal pressure          = 12.4 lb./sq. ft.
+ - Thrust                   = 18.75 lbs.
+ - CL = 18.76/24.8          = 0.756
+ - Angle of Airfoil #31     = 7.25 deg
+ - Measured torque          = 3.5 lbs
+ - Measured power           = 0.58 HP
+ - L/D of propeller airfoil = 5.4
+
+ 1903 WrightFlyer propeller:
+ 90 lbs. of thrust at  an airspeed of 24 mph with a propeller speed of 330 rpm.
+ Calculated torque force of 40 lbs requiring an 8.7. H.P. motor and an estimated
+ downwash (throw down) of 7.7 fps, resulting in a pitch angle of 27 degrees to
+ yield a 7 degree angle of incidence. Calculated efficiency is 66 percent.
+
+ Tests on the 1903 flyer made in winds of 20 to 25 mph gave thrust at between
+ 120 lbs and 132 lbs. This was much higher than expected.
+
+ Airpseed  Efficiency    Power    Thrust  Incidence
+    24	     66         8.7@330	    90       7.0
+   20-25     N/A         12@350    132       N/A
+   20-25     N/A         12@350    120       N/A
+    24       66          12@370    124      11.6
+    30       75        10.6@370    99.8      8.6
+
+ Also:
+ http://www.wright-brothers.org/Information_Desk/Just_the_Facts/Engines_&_Props/1903_Props.htm
+-->
+ 
+
+<!-- this version models both propellers -->
+<propeller name="wright1903_propellers" version="1.01">
+  <ixx>  12.07 </ixx>
+  <diameter unit="IN"> 102.0 </diameter>		<!-- Flyer -->
+  <numblades> 4 </numblades>				<!-- Flyer -->
+  <gearratio>  2.8824 </gearratio>			<!-- Flyer -->
+  <p_factor>   8.06 </p_factor>
+
+  <table name="C_THRUST" type="internal">		<!-- aeromatic -->
+     <tableData>
+       0.0   0.0204
+       0.1   0.0196
+       0.2   0.0188
+       0.3   0.0173
+       0.4   0.0155
+       0.5   0.0137
+       0.6   0.0110
+       0.7   0.0084
+       0.8   0.0045
+       1.0  -0.0015
+       1.2  -0.0080
+       1.4  -0.0145
+     </tableData>
+  </table>
+
+  <table name="C_POWER" type="internal">		<!-- aeromatic -->
+     <tableData>
+       0.0   0.0013
+       0.1   0.0013
+       0.2   0.0013
+       0.3   0.0012
+       0.4   0.0012
+       0.5   0.0011
+       0.6   0.0010
+       0.7   0.0008
+       0.8   0.0007
+       1.0   0.0002
+       1.2  -0.0004
+       1.4  -0.0011
+       1.6  -0.0019
+     </tableData>
+  </table>
+
+</propeller>
+
