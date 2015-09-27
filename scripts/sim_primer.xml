@@ -36,9 +36,9 @@
       <set name="fcs/elevator-cmd-norm" value="0.0" action="FG_RAMP" tc="0.01"/>
       <set name="fcs/rudder-cmd-norm" value="0.0" action="FG_RAMP" tc="0.01"/>
       <set name="ap/afcs/psi-trim-rad" value="1.0" action="FG_RAMP" tc="0.01"/>
-      <set name="ap/afcs/x-lat-trim" value="-0.0100" action="FG_RAMP" tc="0.01"/>
+      <!-- set name="ap/afcs/x-lat-trim" value="-0.0100" action="FG_RAMP" tc="0.01"/>
       <set name="ap/afcs/x-lon-trim" value="0.0558" action="FG_RAMP" tc="0.01"/>
-      <set name="ap/afcs/h-agl-trim-ft" value="50.0" action="FG_RAMP" tc="0.01"/>
+      <set name="ap/afcs/h-agl-trim-ft" value="50.0" action="FG_RAMP" tc="0.01"/-->
       <set name="propulsion/set-running" value="-1"/>
       <!-- do not use this with the electric_engine substitute
       <set name="propulsion/starter_cmd" value="1"/>
