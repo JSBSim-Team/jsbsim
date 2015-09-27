@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.53 2015/08/29 10:27:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.54 2015/09/27 09:29:41 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,7 +285,7 @@ double FGPropeller::Calculate(double EnginePower)
   if (omega > 0.0) ExcessTorque = PowerAvailable / omega;
   else             ExcessTorque = PowerAvailable / 1.0;
 
-  RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+  RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * in.TotalDeltaT) * 60.0;
 
   if (RPM < 0.0) RPM = 0.0; // Engine won't turn backwards
 
@@ -326,7 +326,7 @@ double FGPropeller::GetPowerRequired(void)
           double dRPM = rpmReq - RPM;
           // The pitch of a variable propeller cannot be changed when the RPMs are
           // too low - the oil pump does not work.
-          if (RPM > 200) Pitch -= dRPM * deltaT;
+          if (RPM > 200) Pitch -= dRPM * in.TotalDeltaT;
           if (Pitch < MinPitch)       Pitch = MinPitch;
           else if (Pitch > MaxPitch)  Pitch = MaxPitch;
 

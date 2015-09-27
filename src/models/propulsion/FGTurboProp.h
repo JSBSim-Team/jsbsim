@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.19 2015/02/27 20:36:48 bcoconni Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.21 2015/09/27 09:54:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,13 +215,14 @@ private:
 
   void SetDefaults(void);
   bool Load(FGFDMExec *exec, Element *el);
-  void bindmodel(void);
+  void bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
   FGTable* ITT_N1;             // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
   FGTable* EnginePowerVC;
   FGTable* CombustionEfficiency_N1;
+  FGFDMExec* FDMExec;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

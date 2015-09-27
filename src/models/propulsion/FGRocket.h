@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.20 2013/11/24 11:40:57 bcoconni Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.22 2015/09/27 09:54:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.20 2013/11/24 11:40:57 bcoconni Exp $
+    $Id: FGRocket.h,v 1.22 2015/09/27 09:54:21 bcoconni Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -214,7 +214,7 @@ private:
       @return The vacuum thrust in lbs. */
   double GetVacThrust(void) const {return VacThrust;}
 
-  void bindmodel(void);
+  void bindmodel(FGPropertyManager* pm);
 
   double Isp; // Vacuum Isp
   double It;    // Total actual Isp
@@ -236,6 +236,7 @@ private:
   double BuildupTime;
   FGTable* ThrustTable;
   FGFunction* isp_function;
+  FGFDMExec* FDMExec;
 
   void Debug(int from);
 };

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.44 2015/03/28 14:49:02 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.47 2015/09/27 10:16:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.44 2015/03/28 14:49:02 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.47 2015/09/27 10:16:57 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,6 @@ class FGEngine : public FGModelFunctions
 {
 public:
   struct Inputs {
-    double SLPressure;
     double Pressure;
     double PressureRatio;
     double Temperature;
@@ -130,7 +129,6 @@ public:
     double DensityRatio;
     double Soundspeed;
     double TotalPressure;
-    double TotalTempearture;
     double TAT_c;
     double Vt;
     double Vc;
@@ -150,7 +148,7 @@ public:
     double TotalDeltaT;
   };
 
-  FGEngine(FGFDMExec* exec, int engine_number, struct Inputs& input);
+  FGEngine(int engine_number, struct Inputs& input);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
@@ -208,7 +206,7 @@ public:
   virtual const FGColumnVector3& GetBodyForces(void);
   virtual const FGColumnVector3& GetMoments(void);
 
-  void LoadThruster(Element *el);
+  void LoadThruster(FGFDMExec* exec, Element *el);
   FGThruster* GetThruster(void) const {return Thruster;}
 
   unsigned int GetSourceTank(unsigned int i) const;
@@ -221,14 +219,7 @@ public:
   void LoadThrusterInputs();
 
 protected:
-  /** Reduces the fuel in the active tanks by the amount required.
-      This function should be called from within the
-      derived class' Calculate() function before any other calculations are
-      done. This base class method removes fuel from the fuel tanks as
-      appropriate, and sets the starved flag if necessary. * /
-  virtual void ConsumeFuel(void); */
 
-  FGPropertyManager* PropertyManager;
   std::string Name;
   const int   EngineNumber;
   EngineType Type;
@@ -253,8 +244,7 @@ protected:
   double FuelUsedLbs;
   double FuelDensity;
 
-  FGFDMExec*      FDMExec;
-  FGThruster*     Thruster;
+  FGThruster* Thruster;
 
   std::vector <int> SourceTanks;
 

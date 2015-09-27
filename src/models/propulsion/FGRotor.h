@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.16 2013/11/15 22:43:03 bcoconni Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.17 2015/09/27 10:03:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -230,7 +230,7 @@ CLASS DOCUMENTATION
     </dl>
 
     @author Thomas Kreitler
-    @version $Id: FGRotor.h,v 1.16 2013/11/15 22:43:03 bcoconni Exp $
+    @version $Id: FGRotor.h,v 1.17 2015/09/27 10:03:53 bcoconni Exp $
   */
 
 
@@ -350,7 +350,7 @@ private:
   FGColumnVector3 body_moments(double a_ic = 0.0 , double b_ic = 0.0 );
 
   // interface
-  bool BindModel(void);
+  bool bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
   // environment

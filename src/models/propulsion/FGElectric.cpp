@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGElectric.cpp,v 1.18 2014/06/08 12:00:35 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGElectric.cpp,v 1.20 2015/09/27 09:54:21 bcoconni Exp $");
 IDENT(IdHdr,ID_ELECTRIC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,10 +58,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine::Inputs& input)
-  : FGEngine(exec, engine_number, input)
+  : FGEngine(engine_number, input)
 {
-  string token;
-
   Load(exec,el);
 
   Type = etElectric;
@@ -71,10 +69,9 @@ FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number, struct F
   if (el->FindElement("power"))
     PowerWatts = el->FindElementValueAsNumberConvertTo("power","WATTS");
 
-  string property_name, base_property_name;
-  base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
-  property_name = base_property_name + "/power-hp";
-  PropertyManager->Tie(property_name, &HP);
+  string base_property_name = CreateIndexedPropertyName("propulsion/engine",
+                                                        EngineNumber);
+  exec->GetPropertyManager()->Tie(base_property_name + "/power-hp", &HP);
 
   Debug(0); // Call Debug() routine from constructor if needed
 }

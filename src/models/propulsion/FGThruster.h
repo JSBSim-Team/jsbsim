@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.26 2015/09/27 10:03:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.24 2015/08/29 10:27:39 bcoconni Exp $
+    @version $Id: FGThruster.h,v 1.26 2015/09/27 10:03:53 bcoconni Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +100,6 @@ public:
   virtual void SetRPM(double rpm) {};
   virtual void SetEngineRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
-  virtual void SetdeltaT(double dt) {deltaT = dt;}
   double GetThrust(void) const {return Thrust;}
   eType GetType(void) {return Type;}
   std::string GetName(void) {return Name;}
@@ -133,12 +132,10 @@ protected:
   std::string Name;
   double Thrust;
   double PowerRequired;
-  double deltaT;
   double GearRatio;
   double ThrustCoeff;
   double ReverserAngle;
   int EngineNum;
-  FGPropertyManager* PropertyManager;
   virtual void Debug(int from);
 };
 }

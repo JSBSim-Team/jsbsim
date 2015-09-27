@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.99 2015/09/20 16:32:11 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.100 2015/09/27 20:47:29 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.99 $
+    @version $Revision: 1.100 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -576,10 +576,6 @@ public:
 
   /** Retrieves the current debug level setting. */
   int GetDebugLevel(void) const {return debug_lvl;};
-
-  /** Initializes the simulation with initial conditions
-      @param FGIC The initial conditions that will be passed to the simulation. */
-  void Initialize(FGInitialCondition *FGIC);
 
 private:
   int Error;

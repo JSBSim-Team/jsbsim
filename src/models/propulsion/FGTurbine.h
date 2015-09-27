@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.26 2015/09/27 10:07:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -152,7 +152,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.26 2015/09/27 10:07:53 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,7 +252,6 @@ private:
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottlePos;      ///< FCS-supplied throttle position - modified for local use!
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
-  double TAT;              ///< total air temperature (deg C)
   double N1_spinup;        ///< N1 spin up rate from starter (per second)
   double N2_spinup;        ///< N2 spin up rate from starter (per second)
   bool Stalled;            ///< true if engine is compressor-stalled
@@ -295,9 +294,10 @@ private:
   FGFunction *MilThrustLookup;
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
+  FGFDMExec* FDMExec;
 
   bool Load(FGFDMExec *exec, Element *el);
-  void bindmodel(void);
+  void bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
 };

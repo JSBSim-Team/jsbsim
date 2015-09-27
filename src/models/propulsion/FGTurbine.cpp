@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.44 2014/12/12 01:21:17 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.47 2015/09/27 10:07:53 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ CLASS IMPLEMENTATION
 
 
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, engine_number, input)
+  : FGEngine(engine_number, input), FDMExec(exec)
 {
   Type = etTurbine;
 
@@ -104,9 +104,8 @@ void FGTurbine::ResetToIC(void)
   Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
   Cutoff = true;
   phase = tpOff;
-  TAT = (in.TotalTempearture - 491.69) * 0.5555556;
-  EGT_degC = TAT;
-  OilTemp_degK = TAT + 273.0;
+  EGT_degC = in.TAT_c;
+  OilTemp_degK = in.TAT_c + 273.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +120,6 @@ void FGTurbine::Calculate(void)
 
   ThrottlePos = in.ThrottlePos[EngineNumber];
 
-  TAT = (in.TotalTempearture - 491.69) * 0.5555556;
   if (ThrottlePos > 1.0) {
     AugmentCmd = ThrottlePos - 1.0;
     ThrottlePos -= AugmentCmd;
@@ -142,7 +140,7 @@ void FGTurbine::Calculate(void)
     } else {
       phase = tpOff;
       Cutoff = true;
-      EGT_degC = TAT;
+      EGT_degC = in.TAT_c;
     }
   }
 
@@ -185,8 +183,8 @@ double FGTurbine::Off(void)
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
   N1 = Seek(&N1, in.qbar/10.0, N1/2.0, N1/2.0);
   N2 = Seek(&N2, in.qbar/15.0, N2/2.0, N2/2.0);
-  EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
-  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
+  EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
+  OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0.2, 0.2);
   OilPressure_psi = N2 * 0.62;
   NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   EPR = Seek(&EPR, 1.0, 0.2, 0.2);
@@ -223,7 +221,7 @@ double FGTurbine::Run()
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, spoolup, spoolup * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
-  EGT_degC = TAT + 363.1 + ThrottlePos * 357.1;
+  EGT_degC = in.TAT_c + 363.1 + ThrottlePos * 357.1;
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
@@ -284,9 +282,9 @@ double FGTurbine::SpinUp(void)
   FuelFlow_pph = 0.0;
   N2 = Seek(&N2, 25.18, N2_spinup, N2/2.0);
   N1 = Seek(&N1, 5.21, N1_spinup, N1/2.0);
-  EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
+  EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
   OilPressure_psi = N2 * 0.62;
-  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
+  OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0.2, 0.2);
   EPR = 1.0;
   NozzlePosition = 1.0;
   if (Starter == false) phase = tpOff;
@@ -302,7 +300,7 @@ double FGTurbine::Start(void)
     if (N2 < IdleN2) {
       N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
       N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
-      EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
+      EGT_degC = Seek(&EGT_degC, in.TAT_c + 363.1, 21.3, 7.3);
       FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
       if ((Starter == false) && (in.qbar < 30.0)) phase = tpOff; // aborted start
@@ -326,7 +324,7 @@ double FGTurbine::Start(void)
 
 double FGTurbine::Stall(void)
 {
-  EGT_degC = TAT + 903.14;
+  EGT_degC = in.TAT_c + 903.14;
   FuelFlow_pph = IdleFF;
   N1 = Seek(&N1, in.qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, in.qbar/15.0, 0, N2/10.0);
@@ -345,7 +343,7 @@ double FGTurbine::Seize(void)
     N1 = Seek(&N1, in.qbar/20.0, 0, N1/15.0);
     FuelFlow_pph = Cutoff ? 0.0 : IdleFF;
     OilPressure_psi = 0.0;
-    OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0, 0.2);
+    OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0, 0.2);
     Running = false;
     return 0.0;
 }
@@ -354,12 +352,11 @@ double FGTurbine::Seize(void)
 
 double FGTurbine::Trim()
 {
-    double idlethrust, milthrust, thrust, tdiff, N2, N2norm;
-    idlethrust = MilThrust * IdleThrustLookup->GetValue();
-    milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
-    N2 = IdleN2 + ThrottlePos * N2_factor;
-    N2norm = (N2 - IdleN2) / N2_factor;
-    thrust = (idlethrust + (milthrust * N2norm * N2norm))
+    double idlethrust = MilThrust * IdleThrustLookup->GetValue();
+    double milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
+    double N2 = IdleN2 + ThrottlePos * N2_factor;
+    double N2norm = (N2 - IdleN2) / N2_factor;
+    double thrust = (idlethrust + (milthrust * N2norm * N2norm))
           * (1.0 - BleedDemand);
 
     if (AugMethod == 1) {
@@ -373,7 +370,7 @@ double FGTurbine::Trim()
 
     if (AugMethod == 2) {
       if (AugmentCmd > 0.0) {
-        tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
+        double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
         thrust += (tdiff * AugmentCmd);
       }
     }
@@ -487,10 +484,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   delay = 90.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
-  OilTemp_degK = (in.TotalTempearture - 491.69) * 0.5555556 + 273.0;
+  OilTemp_degK = in.TAT_c + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
-  bindmodel();
+  bindmodel(exec->GetPropertyManager());
   return true;
 }
 
@@ -522,7 +519,7 @@ string FGTurbine::GetEngineValues(const string& delimiter)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTurbine::bindmodel()
+void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
 {
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);

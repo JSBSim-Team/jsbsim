@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFilter.cpp,v 1.20 2014/01/13 10:46:09 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFilter.cpp,v 1.21 2015/09/27 20:26:23 bcoconni Exp $");
 IDENT(IdHdr,ID_FILTER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,11 +188,9 @@ void FGFilter::CalculateDynamicFilters(void)
 
 bool FGFilter::Run(void)
 {
-  double test = 0.0;
-
   if (Initialize) {
 
-    PreviousOutput1 = PreviousInput1 = Output = Input;
+    PreviousOutput2 = PreviousInput2 = PreviousOutput1 = PreviousInput1 = Output = Input;
     Initialize = false;
 
   } else {
@@ -217,7 +215,7 @@ bool FGFilter::Run(void)
         break;
       case eIntegrator:
         if (Trigger != 0) {
-          test = Trigger->getDoubleValue();
+          double test = Trigger->getDoubleValue();
           if (fabs(test) > 0.000001) {
             Input  = PreviousInput1 = PreviousInput2 = 0.0;
           }
