@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.38 2015/09/27 09:39:10 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGRocket.cpp,v 1.39 2015/09/27 09:54:21 bcoconni Exp $");
 IDENT(IdHdr,ID_ROCKET);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,9 +87,10 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   std::stringstream strEngineNumber;
   strEngineNumber << EngineNumber;
 
-  Element* isp_el = el->FindElement("isp");
+  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  bindmodel(PropertyManager); // Bind model properties first, since they might be needed in functions.
 
-  bindmodel(); // Bind model properties first, since they might be needed in functions.
+  Element* isp_el = el->FindElement("isp");
 
   // Specific impulse may be specified as a constant value or as a function - perhaps as a function of mixture ratio.
   if (isp_el) {
@@ -283,7 +284,7 @@ string FGRocket::GetEngineValues(const string& delimiter)
 // This function should tie properties to rocket engine specific properties
 // that are not bound in the base class (FGEngine) code.
 //
-void FGRocket::bindmodel()
+void FGRocket::bindmodel(FGPropertyManager* PropertyManager)
 {
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);

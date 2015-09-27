@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.80 2015/09/27 09:39:10 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.81 2015/09/27 09:54:21 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   Load(exec, el);
 
   Element *table_element;
+  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
 
   // Defaults and initializations
 

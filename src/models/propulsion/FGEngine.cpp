@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.66 2015/09/27 09:39:10 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.67 2015/09/27 09:54:21 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +201,7 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   Element* local_element;
   FGColumnVector3 location, orientation;
 
-  PropertyManager = exec->GetPropertyManager();
+  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
 
   Name = engine_element->GetAttributeValue("name");
 

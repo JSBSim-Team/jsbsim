@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.24 2015/09/27 09:39:10 bcoconni Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.25 2015/09/27 09:54:21 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -152,7 +152,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.24 2015/09/27 09:39:10 bcoconni Exp $"
+    @version "$Id: FGTurbine.h,v 1.25 2015/09/27 09:54:21 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,7 +298,7 @@ private:
   FGFDMExec* FDMExec;
 
   bool Load(FGFDMExec *exec, Element *el);
-  void bindmodel(void);
+  void bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
 };
