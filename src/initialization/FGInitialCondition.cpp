@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.100 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.101 2015/09/27 15:45:31 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -910,9 +910,23 @@ bool FGInitialCondition::Load_v1(Element* document)
 {
   bool result = true;
 
-  if (document->FindElement("latitude")) {
+  Element* latitude_el = document->FindElement("latitude");
+  if (latitude_el) {
     double latitude = document->FindElementValueAsNumberConvertTo("latitude", "RAD");
-    string lat_type = document->FindElement("latitude")->GetAttributeValue("type");
+    if (fabs(latitude) > 0.5*M_PI) {
+      string unit_type = latitude_el->GetAttributeValue("unit");
+      if (unit_type.empty()) unit_type="RAD";
+      cerr << latitude_el->ReadFrom() << "The latitude value "
+           << latitude_el->GetDataAsNumber() << " " << unit_type
+           << " is outside the range [";
+      if (unit_type == "DEG")
+        cerr << "-90 DEG ; +90 DEG]" << endl;
+      else
+        cerr << "-PI/2 RAD; +PI/2 RAD]" << endl;
+      result = false;
+    }
+
+    string lat_type = latitude_el->GetAttributeValue("type");
     if (lat_type == "geod" || lat_type == "geodetic")
       position.SetPositionGeodetic(0.0, latitude, 0.0); // Longitude and altitude will be set later on
     else
