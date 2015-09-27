@@ -94,7 +94,7 @@ class TestInitialConditions(unittest.TestCase):
         script_path = self.sandbox.path_to_jsbsim_file('scripts')
         for f in os.listdir(self.sandbox.elude(script_path)):
             # TODO These scripts need some further investigation
-            if f in ('weather-balloon.xml', 'x153.xml', 'ZLT-NT-moored-1.xml'):
+            if f in ('ZLT-NT-moored-1.xml',):
                 continue
             fullpath = os.path.join(self.sandbox.elude(script_path), f)
 
