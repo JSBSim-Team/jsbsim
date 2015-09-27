@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.61 2015/09/20 16:32:11 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.62 2015/09/27 15:43:39 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +188,7 @@ bool FGScript::LoadScript(const string& script, double default_dT,
   FGInitialCondition *IC=FDMExec->GetIC();
   if ( ! IC->Load( initialize )) {
     cerr << "Initialization unsuccessful" << endl;
-    exit(-1);
+    return false;
   }
 
   // Now, read input spec if given.
@@ -296,7 +296,7 @@ bool FGScript::LoadScript(const string& script, double default_dT,
     while (set_element) {
       prop_name = set_element->GetAttributeValue("name");
       if (PropertyManager->HasNode(prop_name)) {
-      newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
+        newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
       } else {
         newEvent->SetParam.push_back( 0L );
       }
