@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.176 2015/09/20 20:53:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.177 2015/09/27 10:16:57 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,7 +448,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     // Dynamic inputs come into the components that FCS manages through properties
     break;
   case ePropulsion:
-    Propulsion->in.SLPressure       = Atmosphere->GetPressureSL();
     Propulsion->in.Pressure         = Atmosphere->GetPressure();
     Propulsion->in.PressureRatio    = Atmosphere->GetPressureRatio();
     Propulsion->in.Temperature      = Atmosphere->GetTemperature();
@@ -456,7 +455,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.Density          = Atmosphere->GetDensity();
     Propulsion->in.Soundspeed       = Atmosphere->GetSoundSpeed();
     Propulsion->in.TotalPressure    = Auxiliary->GetTotalPressure();
-    Propulsion->in.TotalTempearture = Auxiliary->GetTotalTemperature();
     Propulsion->in.Vc               = Auxiliary->GetVcalibratedKTS();
     Propulsion->in.Vt               = Auxiliary->GetVt();
     Propulsion->in.qbar             = Auxiliary->Getqbar();
