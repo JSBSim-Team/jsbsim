@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.19 2015/02/27 20:36:48 bcoconni Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.20 2015/09/27 09:39:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -222,6 +222,7 @@ private:
   FGTable* EnginePowerRPM_N1;
   FGTable* EnginePowerVC;
   FGTable* CombustionEfficiency_N1;
+  FGFDMExec* FDMExec;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

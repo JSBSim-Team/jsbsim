@@ -54,7 +54,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.30 2014/06/08 12:00:35 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.31 2015/09/27 09:39:10 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,8 +62,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), CombustionEfficiency_N1(NULL)
+  : FGEngine(engine_number, input),
+    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), CombustionEfficiency_N1(NULL),
+    FDMExec(exec)
 {
   FGEngine::Load(exec, el);
   SetDefaults();

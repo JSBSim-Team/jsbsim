@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.44 2014/12/12 01:21:17 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.45 2015/09/27 09:39:10 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ CLASS IMPLEMENTATION
 
 
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, engine_number, input)
+  : FGEngine(engine_number, input), FDMExec(exec)
 {
   Type = etTurbine;
 
@@ -354,12 +354,11 @@ double FGTurbine::Seize(void)
 
 double FGTurbine::Trim()
 {
-    double idlethrust, milthrust, thrust, tdiff, N2, N2norm;
-    idlethrust = MilThrust * IdleThrustLookup->GetValue();
-    milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
-    N2 = IdleN2 + ThrottlePos * N2_factor;
-    N2norm = (N2 - IdleN2) / N2_factor;
-    thrust = (idlethrust + (milthrust * N2norm * N2norm))
+    double idlethrust = MilThrust * IdleThrustLookup->GetValue();
+    double milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
+    double N2 = IdleN2 + ThrottlePos * N2_factor;
+    double N2norm = (N2 - IdleN2) / N2_factor;
+    double thrust = (idlethrust + (milthrust * N2norm * N2norm))
           * (1.0 - BleedDemand);
 
     if (AugMethod == 1) {
@@ -373,7 +372,7 @@ double FGTurbine::Trim()
 
     if (AugMethod == 2) {
       if (AugmentCmd > 0.0) {
-        tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
+        double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
         thrust += (tdiff * AugmentCmd);
       }
     }

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.44 2015/03/28 14:49:02 bcoconni Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.45 2015/09/27 09:39:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
   documentation for engine and thruster classes.
 </pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.44 2015/03/28 14:49:02 bcoconni Exp $
+    @version $Id: FGEngine.h,v 1.45 2015/09/27 09:39:10 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ public:
     double TotalDeltaT;
   };
 
-  FGEngine(FGFDMExec* exec, int engine_number, struct Inputs& input);
+  FGEngine(int engine_number, struct Inputs& input);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
@@ -208,7 +208,7 @@ public:
   virtual const FGColumnVector3& GetBodyForces(void);
   virtual const FGColumnVector3& GetMoments(void);
 
-  void LoadThruster(Element *el);
+  void LoadThruster(FGFDMExec* exec, Element *el);
   FGThruster* GetThruster(void) const {return Thruster;}
 
   unsigned int GetSourceTank(unsigned int i) const;
@@ -253,7 +253,6 @@ protected:
   double FuelUsedLbs;
   double FuelDensity;
 
-  FGFDMExec*      FDMExec;
   FGThruster*     Thruster;
 
   std::vector <int> SourceTanks;

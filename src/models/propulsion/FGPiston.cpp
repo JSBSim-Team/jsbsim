@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.79 2015/02/27 20:36:47 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.80 2015/09/27 09:39:10 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input)
-  : FGEngine(exec, engine_number, input),
+  : FGEngine(engine_number, input),
   R_air(287.3),                  // Gas constant for air J/Kg/K
   calorific_value_fuel(47.3e6),  // J/Kg
   Cp_air(1005),                  // Specific heat (constant pressure) J/Kg/K
@@ -69,8 +69,6 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   Load(exec, el);
 
   Element *table_element;
-  string token;
-  string name="";
 
   // Defaults and initializations
 
@@ -236,7 +234,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   }
 
   while((table_element = el->FindNextElement("table")) != 0) {
-    name = table_element->GetAttributeValue("name");
+    string name = table_element->GetAttributeValue("name");
     try {
       if (name == "COMBUSTION") {
         Lookup_Combustion_Efficiency = new FGTable(PropertyManager, table_element);
@@ -245,7 +243,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
       } else {
         cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
       }
-    } catch (std::string str) {
+    } catch (std::string& str) {
       // Make sure allocated resources are freed before rethrowing.
       // (C++ standard guarantees that a null pointer deletion is no-op).
       delete Lookup_Combustion_Efficiency;

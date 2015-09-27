@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.24 2015/09/27 09:39:10 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -152,7 +152,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.23 2014/12/12 01:21:17 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.24 2015/09/27 09:39:10 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,6 +295,7 @@ private:
   FGFunction *MilThrustLookup;
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
+  FGFDMExec* FDMExec;
 
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(void);

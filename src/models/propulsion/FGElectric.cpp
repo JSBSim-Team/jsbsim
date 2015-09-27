@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGElectric.cpp,v 1.18 2014/06/08 12:00:35 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGElectric.cpp,v 1.19 2015/09/27 09:39:10 bcoconni Exp $");
 IDENT(IdHdr,ID_ELECTRIC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGElectric::FGElectric(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine::Inputs& input)
-  : FGEngine(exec, engine_number, input)
+  : FGEngine(engine_number, input)
 {
   string token;
 
