@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.64 2015/08/29 10:27:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.65 2015/09/27 09:29:41 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,8 +190,6 @@ void FGEngine::LoadThruster(Element *thruster_element)
     cerr << thruster_element->ReadFrom() << " Unknown thruster type" << endl;
     throw("Failed to load the thruster");
   }
-
-  Thruster->SetdeltaT(in.TotalDeltaT);
 
   Debug(2);
 }
