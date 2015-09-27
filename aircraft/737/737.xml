@@ -8,7 +8,7 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2006-01-04 </filecreationdate>
-        <version>$Revision: 1.42 $</version>
+        <version>$Revision: 1.43 $</version>
         <description> Models a Boeing 737. </description>
         <license>
           <licenseName>GPL (General Public License)</licenseName>
@@ -861,7 +861,7 @@
     </aerodynamics>
 
     <!-- 41 properties output, + 1 for the time stamp -->
- <output name="localhost" type="SOCKET" port="5138" protocol="UDP" rate="10">
+ <!--output name="localhost" type="SOCKET" port="5138" protocol="UDP" rate="10">
    
   <property> velocities/vc-kts </property>
   <property> position/h-sl-ft </property>
@@ -909,7 +909,7 @@
   
   <property> fcs/rudder-pos-norm </property>
   
- </output>
+ </output-->
 
  <!-- this is the telnet interface -->
  <input port="5137" /> 
