@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.25 2015/09/27 09:29:41 bcoconni Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.26 2015/09/27 10:03:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     1.57 (pi/2) results in no thrust at all.
  
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.25 2015/09/27 09:29:41 bcoconni Exp $
+    @version $Id: FGThruster.h,v 1.26 2015/09/27 10:03:53 bcoconni Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,6 @@ protected:
   double ThrustCoeff;
   double ReverserAngle;
   int EngineNum;
-  FGPropertyManager* PropertyManager;
   virtual void Debug(int from);
 };
 }

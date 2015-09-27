@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGThruster.cpp,v 1.21 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGThruster.cpp,v 1.22 2015/09/27 10:03:53 bcoconni Exp $");
 IDENT(IdHdr,ID_THRUSTER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   GearRatio = 1.0;
   EngineNum = num;
-  PropertyManager = FDMExec->GetPropertyManager();
+  FGPropertyManager* PropertyManager = FDMExec->GetPropertyManager();
 
 // Determine the initial location and orientation of this thruster and load the
 // thruster with this information.
