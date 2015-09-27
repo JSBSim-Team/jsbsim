@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.177 2015/09/27 10:16:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.178 2015/09/27 20:47:29 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -597,13 +597,24 @@ bool FGFDMExec::RunIC(void)
 {
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
+  SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
+  Propagate->SetInitialState(IC);
+  Run();
+
   Models[eInput]->InitModel();
   Models[eOutput]->InitModel();
 
-  SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
-  Initialize(IC);
   Run();
   ResumeIntegration(); // Restores the integration rate to what it was.
+
+  if (debug_lvl > 0) {
+    MassBalance->GetMassPropertiesReport(0);
+
+    cout << endl << fgblue << highint
+         << "End of vehicle configuration loading." << endl
+         << "-------------------------------------------------------------------------------"
+         << reset << setprecision(6) << endl;
+  }
 
   for (unsigned int n=0; n < propulsion->GetNumEngines(); ++n) {
     if (IC->IsEngineRunning(n)) {
@@ -617,24 +628,6 @@ bool FGFDMExec::RunIC(void)
   }
 
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::Initialize(FGInitialCondition *FGIC)
-{
-  Setsim_time(0.0);
-
-  Propagate->SetInitialState( FGIC );
-  LoadInputs(eInertial);
-  Inertial->Run(false);
-  LoadInputs(eAccelerations);
-  Accelerations->Run(false);
-  LoadInputs(ePropagate);
-  Propagate->InitializeDerivatives();
-  Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
-  LoadInputs(eMassBalance);
-  MassBalance->Run(false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -896,22 +889,6 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     LoadModelConstants();
 
     modelLoaded = true;
-
-    LoadInputs(eMassBalance); // Update all input mass properties for the report.
-    Models[eMassBalance]->Run(false);  // Update all mass properties for the report.
-    LoadInputs(ePropulsion); // Update propulsion properties for the report.
-    Models[ePropulsion]->Run(false);  // Update propulsion properties for the report.
-    LoadInputs(eMassBalance); // Update all (one more time) input mass properties for the report.
-    Models[eMassBalance]->Run(false);  // Update all (one more time) mass properties for the report.
-
-    if (debug_lvl > 0) {
-      ((FGMassBalance*)Models[eMassBalance])->GetMassPropertiesReport(0);
-
-      cout << endl << fgblue << highint
-           << "End of vehicle configuration loading." << endl
-           << "-------------------------------------------------------------------------------"
-           << reset << endl;
-    }
 
     if (IsChild) debug_lvl = saved_debug_lvl;
 

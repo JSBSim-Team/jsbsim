@@ -221,7 +221,7 @@ public:
 
     void run() {
         // initialize
-        m_fdm->Initialize(m_fdm->GetIC());
+      m_fdm->GetPropagate()->SetInitialState(m_fdm->GetIC());
         for (unsigned int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++) {
             m_fdm->GetPropulsion()->GetEngine(i)->InitRunning();
         }
