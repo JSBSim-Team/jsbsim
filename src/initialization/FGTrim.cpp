@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.27 2015/09/27 20:47:29 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.28 2015/09/28 20:50:41 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -327,7 +327,7 @@ bool FGTrim::DoTrim(void) {
     for (unsigned int i=0; i < throttle0.size(); i++)
       FCS->SetThrottleCmd(i, throttle0[i]);
 
-    fdmex->GetPropagate()->SetInitialState(&fgic);
+    fdmex->Initialize(&fgic);
     fdmex->Run();
 
     // If WOW is true we must make sure there are no gears into the ground.
@@ -417,7 +417,7 @@ void FGTrim::trimOnGround(void)
   // Update the initial conditions: this should remove the forces generated
   // by overcompressed landing gears
   fgic.SetAltitudeASLFtIC(fgic.GetAltitudeASLFtIC() - hmin);
-  Propagate->SetInitialState(&fgic);
+  fdmex->Initialize(&fgic);
   fdmex->Run();
 
   // Compute the rotation axis: it is obtained from the direction of the

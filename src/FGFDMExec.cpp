@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.178 2015/09/27 20:47:29 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.179 2015/09/28 20:50:41 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -598,8 +598,7 @@ bool FGFDMExec::RunIC(void)
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
-  Propagate->SetInitialState(IC);
-  Run();
+  Initialize(IC);
 
   Models[eInput]->InitModel();
   Models[eOutput]->InitModel();
@@ -628,6 +627,16 @@ bool FGFDMExec::RunIC(void)
   }
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::Initialize(FGInitialCondition* FGIC)
+{
+  Propagate->SetInitialState(FGIC);
+  Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
+  Run();
+  Propagate->InitializeDerivatives();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
