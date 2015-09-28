@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.179 2015/09/28 20:50:41 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.180 2015/09/28 21:14:15 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -655,9 +655,12 @@ void FGFDMExec::ResetToInitialConditions(int mode)
     Models[i]->InitModel();
   }
 
-  if (Script) Script->ResetEvents();
-
   RunIC();
+
+  if (Script)
+    Script->ResetEvents();
+  else
+    Setsim_time(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1168,19 +1171,16 @@ void FGFDMExec::CheckIncrementalHold(void)
 
 void FGFDMExec::DoTrim(int mode)
 {
-  double saved_time;
-
   if (Constructing) return;
 
   if (mode < 0 || mode > JSBSim::tNone) {
     cerr << endl << "Illegal trimming mode!" << endl << endl;
     return;
   }
-  saved_time = sim_time;
+
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
-  Setsim_time(saved_time);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
