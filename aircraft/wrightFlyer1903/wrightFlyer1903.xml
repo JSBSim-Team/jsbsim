@@ -7,7 +7,7 @@
  <fileheader>
   <author> Michael Selig, Erik Hofman </author>
   <filecreationdate>2015-09-19</filecreationdate>
-  <version>$Revision: 1.1 $</version>
+  <version>$Revision: 1.2 $</version>
   <description> Models the 1903 Wright Flyer. </description>
  </fileheader>
 
@@ -59,6 +59,8 @@
 
   Sources:
   * http://www.wright-brothers.org/Information_Desk/Just_the_Facts/Airplanes/Flyer_I.htm
+
+  * http://www.wrightsfly.info/Page_27.html
 
   * UIUC FDM Data:
      - Culick, F.E.C. and Jex, H.R., "Aerodynamics, Stability and
@@ -413,20 +415,13 @@
 
   <channel name="Yaw">
 
-   <!-- wing warp - rudder interlink -->
    <pure_gain name="fcs/scheduled-aileron">
       <input>fcs/aileron-cmd-norm</input>
       <gain>-0.25</gain>
    </pure_gain>
 
-   <summer name="fcs/auto-coordination">
-      <input>fcs/scheduled-aileron</input>
-      <input>fcs/rudder-cmd-norm</input>
-   </summer>
-   <!-- end of wing warp - rudder interlink -->
-
    <aerosurface_scale name="Rudder Control">
-      <input>fcs/auto-coordination</input>
+      <input>fcs/scheduled-aileron</input>
       <range>
         <min> -0.74 </min>			<!-- UIUC -->
         <max>  0.74 </max>			<!-- UIUC -->
