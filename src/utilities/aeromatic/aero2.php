@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.95;
+$version = 0.96;
 
 //****************************************************
 //                                                   *
@@ -22,6 +22,7 @@ $version = 0.95;
 // Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
 // Updated: 21 Jul 2011, DPC - fix rudder travel limit bug
 // Updated:  2 Nov 2011, RKJ - better fuel estimates, payload pointmass
+// Updated  29 Sep 2015, EMH - add a taildragger with a castered tailwheel
 
 
 //***** GET DATA FROM USER ***************************
@@ -293,7 +294,7 @@ switch($ac_type) {
 // set main gear longitudinal location relative to CG
 switch($ac_geartype) {
   case 0: $ac_gearlocx_main = $ac_cglocx * 1.04; break;
-  case 1: $ac_gearlocx_main = $ac_cglocx * 0.91; break;
+  case 1: case 2:  $ac_gearlocx_main = $ac_cglocx * 0.91; break;
   }
 
 // set main gear lateral location
@@ -313,7 +314,7 @@ switch($ac_type) {
 // set main gear length (from aircraft centerline, extended)
 switch($ac_geartype) {
   case 0: $ac_gearlocz_main = -($ac_length * 0.12 * $ft_to_in); break;
-  case 1: $ac_gearlocz_main = -($ac_length * 0.20 * $ft_to_in); break;
+  case 1: case 2: $ac_gearlocz_main = -($ac_length * 0.20 * $ft_to_in); break;
   }
 if($ac_type == 0) $ac_gearlocz_main = -($ac_length / 10 * $ft_to_in);  // glider
 
@@ -341,9 +342,6 @@ $ac_gearrolling = 0.02;
 $ac_bearingrolling = 0.003;	// 2 x 0.0015, friction for a ball-bearing
 if($ac_type == 0) $ac_gearrolling = 0.5;  // glider
 
-$ac_gearsteerable_nose = 'STEERABLE';
-$ac_gearsteerable_main = 'FIXED';
-$ac_gearsteerable_tail = 'CASTERED';
 $ac_gearmaxsteer = 5;
 if($ac_gearretract == 0)
   $ac_retract = '0';
@@ -805,7 +803,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.16 $</version>\n");
+print("  <version>\$Revision: 1.17 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -834,6 +832,7 @@ else
 switch($ac_geartype) {
   case 0: print("    gear type:     tricycle\n"); break;
   case 1: print("    gear type:     taildragger\n"); break; 
+  case 2: print("    gear type:     taildragger with castered tailwheel\n"); break;
 }
 switch($ac_gearretract) {
   case 0: print("    retractable?:  no\n"); break;
@@ -1053,7 +1052,7 @@ if($ac_type == 0) {  // if this is a glider
     print("   <retractable>$ac_retract</retractable>\n");
     print("  </contact>\n\n");
 
-   if ($ac_geartype == 1) {  // if this is a taildragger
+   if ($ac_geartype == 1 || ($ac_geartype == 2) {  // if this is a taildragger
 
     print("  <contact type=\"BOGEY\" name=\"TAIL\">\n");
     print("   <location unit=\"IN\">\n");
@@ -1066,6 +1065,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_tail);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_tail);
+    if (($ac_geartype == 2) $ac_gearmaxsteer = 360;
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
     print("   <brake_group>NONE</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
