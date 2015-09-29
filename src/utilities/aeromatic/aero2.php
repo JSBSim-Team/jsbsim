@@ -294,7 +294,7 @@ switch($ac_type) {
 // set main gear longitudinal location relative to CG
 switch($ac_geartype) {
   case 0: $ac_gearlocx_main = $ac_cglocx * 1.04; break;
-  case 1: case 2:  $ac_gearlocx_main = $ac_cglocx * 0.91; break;
+  case 1: case 2: $ac_gearlocx_main = $ac_cglocx * 0.91; break;
   }
 
 // set main gear lateral location
@@ -803,7 +803,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.17 $</version>\n");
+print("  <version>\$Revision: 1.18 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -1052,7 +1052,7 @@ if($ac_type == 0) {  // if this is a glider
     print("   <retractable>$ac_retract</retractable>\n");
     print("  </contact>\n\n");
 
-   if ($ac_geartype == 1 || ($ac_geartype == 2) {  // if this is a taildragger
+   if ($ac_geartype == 1 or $ac_geartype == 2) {  // if this is a taildragger
 
     print("  <contact type=\"BOGEY\" name=\"TAIL\">\n");
     print("   <location unit=\"IN\">\n");
@@ -1065,7 +1065,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_tail);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_tail);
-    if (($ac_geartype == 2) $ac_gearmaxsteer = 360;
+    if ($ac_geartype == 2) $ac_gearmaxsteer = 360;
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
     print("   <brake_group>NONE</brake_group>\n");
     print("   <retractable>$ac_retract</retractable>\n");
