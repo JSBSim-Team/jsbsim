@@ -56,7 +56,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.18 2015/09/27 20:47:29 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.19 2015/09/28 20:50:41 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIMAXIS);
 
 /*****************************************************************************/
@@ -256,7 +256,7 @@ void FGTrimAxis::Run(void) {
   while(!stable) {
     i++;
     last_state_value=state_value;
-    fdmex->GetPropagate()->SetInitialState(fgic);
+    fdmex->Initialize(fgic);
     fdmex->Run();
     getState();
     if(i > 1) {
@@ -283,7 +283,7 @@ void FGTrimAxis::setThrottlesPct(void) {
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
       fdmex->GetPropulsion()->in.ThrottlePos[i] = tMin +control_value*(tMax - tMin);
 
-      fdmex->GetPropagate()->SetInitialState(fgic);
+      fdmex->Initialize(fgic);
       fdmex->Run(); //apply throttle change
       fdmex->GetPropulsion()->GetSteadyState();
   }

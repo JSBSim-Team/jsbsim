@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+  File:     wright1903.xml
+  Author:   Aero-Matic v 0.82
+
+  Inputs:
+    name:           wright1903
+    type:           piston
+    power:          12 hp
+    augmented?      no
+    injected?       no
+-->
+
+<!--
+ Sources:
+ http://www.wright-brothers.org/Information_Desk/Just_the_Facts/Engines_&_Props/1903_Engine.htm
+ http://www.wright-brothers.org/Information_Desk/Help_with_Homework/Help_with_Homework_Intro/Flyer_Specifications_11x17.pdf
+ http://www.gutenberg.org/files/38739/38739-h/38739-h.htm
+
+ Specifications:
+
+    Cylinders: 4
+    Stroke: 4 in (10.2 cm)
+    Bore: 4 in (10.2 cm)
+    Displacement: 208 in3 (3.4 l)
+    Horsepower: 21
+    Ignition: Make-and-brake powered by low-tension (10-volt) magneto.
+    Unique features: Aluminum block, no carburetor.
+    Weight of engine: 152 lbs (68.95 kg)
+    Weight of magneto: 18 lbs (8.16 kg)
+
+ "The completed engine weighed 180 pounds and developed 12 horsepower at 1,025 revolutions per minute. [It actually produced nearly 16 hp when it was first started, by this dropped to 12 hp as the engine heated up.]
+-->
+
+<piston_engine name="Wright 1903">
+  <minmp unit="INHG">         12.0 </minmp>
+  <maxmp unit="INHG">         29.0 </maxmp>
+  <displacement unit="IN3"> 208.0 </displacement>	<!-- Flyer -->
+  <maxhp>        24.00 </maxhp>				<!-- Flyer III -->
+  <!--bsfc>           0.45 </bsfc-->
+  <cycles>         4.0 </cycles>			<!-- Flyer -->
+  <idlerpm>     1050.0 </idlerpm>			<!-- Gutenberg -->
+  <maxrpm>      1300.0 </maxrpm>			<!-- Gutenberg -->
+  <maxthrottle>    1.0 </maxthrottle><!-- Deprecated -->
+  <minthrottle>    0.1 </minthrottle><!-- Deprecated -->
+  <sparkfaildrop>  0.0 </sparkfaildrop>
+  <stroke unit="IN">  4.0  </stroke>			<!-- Flyer -->
+  <bore unit="IN">    4.0 </bore>			<!-- Flyer -->
+  <cylinders>         4.0  </cylinders>			<!-- Flyer -->
+  <compression-ratio> 4.4 </compression-ratio>		<!-- Gutenberg -->
+  <volumetric-efficiency> 0.39 </volumetric-efficiency>	<!-- Gutenberg -->
+</piston_engine>

@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.95;
+$version = 0.96;
 
 //****************************************************
 //                                                   *
@@ -22,6 +22,7 @@ $version = 0.95;
 // Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
 // Updated: 21 Jul 2011, DPC - fix rudder travel limit bug
 // Updated:  2 Nov 2011, RKJ - better fuel estimates, payload pointmass
+// Updated  29 Sep 2015, EMH - add a taildragger with a castered tailwheel
 
 
 //***** GET DATA FROM USER ***************************
@@ -35,6 +36,7 @@ $ac_wingincidence   = $_POST['ac_wingincidence'];
 $ac_length          = $_POST['ac_length'];
 $ac_wingarea        = $_POST['ac_wingarea'];
 $ac_geartype        = $_POST['ac_geartype'];
+$ac_castering       = $_POST['ac_castering'];
 $ac_gearretract     = $_POST['ac_gearretract'];
 $ac_numengines      = $_POST['ac_numengines'];
 $ac_enginetype      = $_POST['ac_enginetype'];
@@ -341,10 +343,11 @@ $ac_gearrolling = 0.02;
 $ac_bearingrolling = 0.003;	// 2 x 0.0015, friction for a ball-bearing
 if($ac_type == 0) $ac_gearrolling = 0.5;  // glider
 
-$ac_gearsteerable_nose = 'STEERABLE';
-$ac_gearsteerable_main = 'FIXED';
-$ac_gearsteerable_tail = 'CASTERED';
-$ac_gearmaxsteer = 5;
+if ($ac_castering != 1)
+  $ac_gearmaxsteer = 5;
+else
+  $ac_gearmaxsteer = 360;
+
 if($ac_gearretract == 0)
   $ac_retract = '0';
 else
@@ -805,7 +808,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.16 $</version>\n");
+print("  <version>\$Revision: 1.19 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -835,6 +838,7 @@ switch($ac_geartype) {
   case 0: print("    gear type:     tricycle\n"); break;
   case 1: print("    gear type:     taildragger\n"); break; 
 }
+print("    castering:     $ac_castering\n");
 switch($ac_gearretract) {
   case 0: print("    retractable?:  no\n"); break;
   case 1: print("    retractable?:  yes\n"); break; 

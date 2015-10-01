@@ -43,6 +43,7 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <string>
 #include <sstream>
 
 #include "FGRotor.h"
@@ -53,11 +54,12 @@ INCLUDES
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::string;
 using std::ostringstream;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRotor.cpp,v 1.24 2015/09/27 10:03:53 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGRotor.cpp,v 1.25 2015/09/28 08:57:32 ehofman Exp $");
 IDENT(IdHdr,ID_ROTOR);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
