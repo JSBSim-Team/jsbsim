@@ -23,8 +23,8 @@ Lets assume we want to make a model of the MiG-21.  In this case we will need
 two configuration files, an <i>aero</i> configuration, and an <i>engine</i>
 configuration.  Obviously we won't need a propeller configuration for the MiG-21.
 <br><br>
-The first step is to open <i>aeromatic.html</i> in a browser.  Step one in 
-<i>aeromatic.html</i> is to
+The first step is to open <i>aeromatic2.html</i> in a browser.  Step one in 
+<i>aeromatic2.html</i> is to
 define an engine for the MiG-21. From <i>The Encyclopedia of World Airpower</i>
 <sup>1</sup> I find the following information on the engine used by the MiG-21.
 Name: Tumansky_R25, type: Turbine, thrust (without afterburning): 10000 lb.,
@@ -33,13 +33,13 @@ you chose for your engine should be a suitable file name, so only use appropriat
 characters.
 <br><br>
 When you click on the "generate" button Aero-Matic will send the information to
-<i>engine.php</i>, which will do some calculations and send the results back to you.
+<i>engine2.php</i>, which will do some calculations and send the results back to you.
 The results will look like garbage because the configuration file was not meant to
 look nice in a browser window.  If you view the document source you will see the
 file as it really is.  Save this file with the file name <b>Tumansky_R25.xml</b>,
 and place it in the $FGROOT/Engine directory with all the other engines.
 <BR><BR>
-Use your browser's "back" button to return to <i>aeromatic.html</i>.  Skip over the
+Use your browser's "back" button to return to <i>aeromatic2.html</i>.  Skip over the
 propeller form and fill in the aero form.  You must first select a system of units,
 either English or metric. You cannot mix units! Now for the airplane data. For the
 MiG-21 I have the following data. Name: Mig21, type: Single Engine Fighter, maximum
@@ -50,7 +50,7 @@ say whether the MiG-21 had a yaw damper, but since it's a high-performance jet I
 assume it needs one.
 <br><br>
 Now click on "generate" and the data will be sent to <i>
-aero.php</i>, which will do some calculations and return the configuration file to you.
+aero2.php</i>, which will do some calculations and return the configuration file to you.
 As with the previous configuration file, it will look like garbage in your browser
 window, but will look properly if you view the document source.  Save this file as
 <b>Mig21.xml</b>, and place it in a $FGROOT/Aircraft/Mig21 folder.  You will now have
