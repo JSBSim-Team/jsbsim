@@ -27,9 +27,12 @@ header("Content-Disposition: inline; filename=\"eng_$ac_enginename.xml\"");
 
 //***** CONVERT TO ENGLISH UNITS *********************
 
+// convert kilowatts to horsepower
 if($ac_engineunits == 1) {
   $ac_enginepower *= 1.341;
   }
+
+// convert newtons to pounds
 if($ac_engineunits == 3) {
   $ac_enginepower *= 0.2248;
   }

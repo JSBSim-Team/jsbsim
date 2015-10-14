@@ -190,16 +190,16 @@ if ($ac_vtailarm == 0) {
 // estimate empty weight, based on max weight
 if ($ac_emptyweight == 0) {
   switch($ac_type) {
-    case 0:  $ac_emptyweight = $ac_weight * .84;
-    case 1:  $ac_emptyweight = $ac_weight * .62;
-    case 2:  $ac_emptyweight = $ac_weight * .61;
-    case 3:  $ac_emptyweight = $ac_weight * .61;
-    case 4:  $ac_emptyweight = $ac_weight * .53;
-    case 5:  $ac_emptyweight = $ac_weight * .50;
-    case 6:  $ac_emptyweight = $ac_weight * .55;
-    case 7:  $ac_emptyweight = $ac_weight * .52;
-    case 8:  $ac_emptyweight = $ac_weight * .49;
-    case 9:  $ac_emptyweight = $ac_weight * .60;
+    case 0:  $ac_emptyweight = $ac_weight * .84; break;
+    case 1:  $ac_emptyweight = $ac_weight * .62; break;
+    case 2:  $ac_emptyweight = $ac_weight * .61; break;
+    case 3:  $ac_emptyweight = $ac_weight * .61; break;
+    case 4:  $ac_emptyweight = $ac_weight * .53; break;
+    case 5:  $ac_emptyweight = $ac_weight * .50; break;
+    case 6:  $ac_emptyweight = $ac_weight * .55; break;
+    case 7:  $ac_emptyweight = $ac_weight * .52; break;
+    case 8:  $ac_emptyweight = $ac_weight * .49; break;
+    case 9:  $ac_emptyweight = $ac_weight * .60; break;
     }
   }
   
@@ -808,7 +808,7 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate>$date_string</filecreationdate>\n");
-print("  <version>\$Revision: 1.19 $</version>\n");
+print("  <version>\$Revision: 1.20 $</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
