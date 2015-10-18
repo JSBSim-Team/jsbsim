@@ -91,3 +91,9 @@ include (CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
+################################################################################
+# Build the utilities                                                          #
+################################################################################
+
+add_subdirectory(utils)
+

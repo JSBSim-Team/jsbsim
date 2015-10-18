@@ -44,6 +44,10 @@ class TestSimTimeReset(unittest.TestCase):
         self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), 0.0)
         ExecuteUntil(fdm, 5.0)
 
+        t = fdm.get_property_value('simulation/sim-time-sec')
+        fdm.set_property_value('simulation/do_simple_trim', 1)
+        self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), t)
+
         fdm.reset_to_initial_conditions(1)
         self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), 0.0)
 

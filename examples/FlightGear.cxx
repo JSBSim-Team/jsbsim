@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.18 2015/04/07 07:56:42 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.19 2015/10/18 09:45:45 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -523,7 +523,12 @@ void FGJSBsim::update( double dt )
     trimmed->setBoolValue(false);
 
     for ( int i=0; i < multiloop; i++ ) {
-      fdmex->Run();
+      if (!fdmex->Run()) {
+        // The property fdm/jsbsim/simulation/terminate has been set to true
+        // by the user. The sim is considered crashed.
+        crashed = true;
+        break;
+      }
       update_external_forces(fdmex->GetSimTime() + i * fdmex->GetDeltaT());
     }
 

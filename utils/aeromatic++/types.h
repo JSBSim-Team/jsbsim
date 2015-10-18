@@ -1,0 +1,205 @@
+// types.h -- Implements type conversions
+//
+// Based on Aeromatic2 PHP code by David P. Culp
+// Started June 2003
+//
+// C++-ified and modulized by Erik Hofman, started October 2015.
+//
+// Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
+// Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+#ifndef _TYPES_H
+#define _TYPES_H 1
+
+#include "config.h"
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+#define DO_MKSTR(X)		#X
+#define MKSTR(X)		DO_MKSTR(X)
+
+#define AEROMATIC_VERSION_STR   MKSTR(AEROMATIC_MAJOR_VERSION)"." \
+                                MKSTR(AEROMATIC_MINOR_VERSION)"." \
+                                MKSTR(AEROMATIC_MICRO_VERSION)
+
+#define PI			3.1415926535f
+
+#define FEET_TO_INCH		12.0f
+#define INCH_TO_FEET		0.08333333f
+
+#define CUBIC_INCH_TO_LITER	61.02398343f
+#define LITER_TO_CUBINC_INCH	0.016387f
+
+#define KG_TO_LBS		0.4535f
+#define LBS_TO_KG		2.205f
+
+#define KG_M2_TO_SLUG_FT2	0.737562142f
+#define SLUG_FT2_TO_KG_M2	1.355817962f
+
+#define METER_TO_FEET		3.28084f
+#define FEET_TO_METER		0.3048f
+
+#define M2_TO_FT2		10.7639104f
+#define FT2_TO_M2		0.09290304f
+
+// one horsepower equals 745.69987 Watts 
+#define KW_TO_HP		1.341f
+#define HP_TO_KW		0.7457f
+
+#define NETWON_TO_LBS		0.2248f
+#define LBS_TO_NEWTON		4.448f
+
+#define KNOTS_TO_MPH		0.8689f
+#define MPH_TO_KNOTS		1.1507f
+#define KMPH_TO_KNOTS		1.1851852f
+#define KNOTS_KMPH		0.54f
+
+#define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
+#define _MIN(a,b)		(((a)<(b)) ? (a) : (b))
+#define _MINMAX(a,b,c)		(((a)>(c)) ? (c) : (((a)<(b)) ? (b) : (a)))
+
+namespace Aeromatic
+{
+
+#define X			0
+#define Y			1
+#define Z			2
+
+#define MAIN			0
+#define NOSE			1
+#define TAIL			2
+
+#define PITCH			0
+#define YAW			1
+#define ROLL			2
+
+enum AircraftType
+{
+    LIGHT = 0,
+    PERFORMANCE,
+    FIGHTER,
+    JET_TRANSPORT,
+    PROP_TRANSPORT,
+
+    MAX_AIRCRAFT
+};
+
+enum ControlsType
+{
+    CONVENTIONAL = 0,
+    YAW_DAMPER,
+    FLY_BY_WIRE,
+
+    MAX_CONTROL
+};
+
+enum EngineType
+{
+    PISTON = 0,
+    TURBINE,
+    TURBOPROP,
+    ROCKET,
+    ELECTRIC,
+
+    MAX_PROPULSION
+};
+
+enum EngineLayout
+{
+    FWD_FUSELAGE = 0,
+    MID_FUSELAGE,
+    AFT_FUSELAGE,
+    WINGS,
+    WINGS_AND_TAIL,
+    WINGS_AND_NOSE
+};
+
+enum ParamType
+{
+    PARAM_BOOL = 0,
+    PARAM_INT,
+    PARAM_FLOAT,
+    PARAM_STRING,
+    PARAM_UNSUPPORTED,
+
+    PARAM_MAX_STRING = 64
+};
+
+enum ParamUnit
+{
+    UNSPECIFIED = 0,
+    WEIGHT,
+    INERTIA,
+    LENGTH,
+    AREA,
+    SPEED,
+    POWER,
+    THRUST,
+
+    MAX_UNITS
+};
+
+class Param
+{
+public:
+    template <typename T>
+    Param (const char* n, T* v, bool* c = 0, unsigned t = 0);
+    ~Param() {}
+
+    std::string& name() { return _name; }
+
+    void set(std::string& s);
+    std::string get();
+
+    const char* get_units() {
+        return _convert ? _cvt_t[_utype].name[*_convert] : "";
+    }
+
+    // options add a 'one of n' selection type
+    unsigned no_options() { return _options.size(); }
+    void add_option(const char* s) { _options.push_back(s); }
+    void add_option(std::string &s) { _options.push_back(s); }
+    std::string& get_option(unsigned n) { return _options[n]; }
+
+private:
+    std::string _name;
+    std::vector<std::string> _options;
+    unsigned _ptype;
+    bool* _convert;
+    unsigned _utype;
+    union {
+        unsigned *i;
+        float *f;
+        bool *b;
+        char *s;
+    } _value;
+
+    struct __cvt
+    {
+        float fact;
+        const char *name[2];
+    };
+
+    static __cvt const _cvt_t[MAX_UNITS];
+};
+
+} /* namespace Aeromatic */
+
+#endif /* _TYPES_H */
+
