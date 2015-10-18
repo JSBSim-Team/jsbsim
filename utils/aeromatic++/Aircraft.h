@@ -538,7 +538,7 @@ public:
     unsigned _atype;
 
     char _path[PARAM_MAX_STRING+1];
-    unsigned _units;
+    bool _metric;
 
     /* weight and balance */
     float _max_weight;

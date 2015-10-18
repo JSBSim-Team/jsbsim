@@ -33,25 +33,41 @@ namespace Aeromatic
 {
 
 template <>
-Param::Param<bool>(const char* n, bool* v) : _name(n), _ptype(PARAM_BOOL)
+Param::Param<bool>(const char* n, bool* v, bool* c, unsigned t) :
+    _name(n),
+    _ptype(PARAM_BOOL),
+    _convert(c),
+    _utype(t)
 {
     _value.b = v;
 }
 
 template <>
-Param::Param<unsigned>(const char* n, unsigned* v) : _name(n), _ptype(PARAM_INT)
+Param::Param<unsigned>(const char* n, unsigned* v, bool* c, unsigned t) :
+    _name(n),
+    _ptype(PARAM_INT),
+    _convert(c),
+    _utype(t)
 { 
     _value.i = v; 
 }
 
 template <>
-Param::Param<float>(const char* n, float* v) : _name(n), _ptype(PARAM_FLOAT)
+Param::Param<float>(const char* n, float* v, bool* c, unsigned t) :
+    _name(n),
+    _ptype(PARAM_FLOAT),
+    _convert(c),
+    _utype(t)
 {
     _value.f = v;
 }
 
 template <>
-Param::Param<char>(const char* n, char* v) : _name(n), _ptype(PARAM_STRING)
+Param::Param<char>(const char* n, char* v, bool* c, unsigned t) :
+    _name(n),
+    _ptype(PARAM_STRING),
+    _convert(c),
+    _utype(t)
 {
     _value.s = v;
 }
@@ -67,9 +83,11 @@ void Param::set(std::string& v)
         break;
     case PARAM_INT:
         *_value.i = strtol(v.c_str(), NULL, 10);
+        if (_convert) *_value.i = (*_value.i * _cvt_t[_utype].fact);
         break;
     case PARAM_FLOAT:
         *_value.f = strtof(v.c_str(), NULL);
+        if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;
     case PARAM_STRING:
         snprintf(_value.s, PARAM_MAX_STRING, "%s", v.c_str());
@@ -83,6 +101,7 @@ void Param::set(std::string& v)
 std::string Param::get()
 {
     char val[PARAM_MAX_STRING+1];
+    float fact = 1.0f;
     std::string str;
 
     switch(_ptype)
@@ -91,11 +110,13 @@ std::string Param::get()
         str = (*_value.b == false) ? "no" : "yes";
         break;
     case PARAM_INT:
-        snprintf(val, PARAM_MAX_STRING, "%u", *_value.i);
+        if (_convert) fact = 1.0f/_cvt_t[_utype].fact;
+        snprintf(val, PARAM_MAX_STRING, "%u", *_value.i * fact);
         str = val;
         break;
     case PARAM_FLOAT:
-        snprintf(val, PARAM_MAX_STRING, "%g", *_value.f);
+        if (_convert) fact = 1.0f/_cvt_t[_utype].fact;
+        snprintf(val, PARAM_MAX_STRING, "%g", *_value.f * fact);
         str = val;
         break;
     case PARAM_STRING:
@@ -107,6 +128,20 @@ std::string Param::get()
     }
     return str;
 }
+
+// ---------------------------------------------------------------------------
+
+Param::__cvt const Param::_cvt_t[MAX_UNITS] =
+{
+    { 1.0f,                     {         "",      "" } },	// UNSPECIFIED
+    { KG_TO_LBS,		{      "lbs",    "kg" } },	// WEIGHT
+    { KG_M2_TO_SLUG_FT2,	{ "slug/ft2", "kg/m2" } } ,	// INERTIA
+    { METER_TO_FEET,		{       "ft",     "m" } },	// LENGTH
+    { M2_TO_FT2,		{      "ft2",    "m2" } },	// AREA
+    { KMPH_TO_KNOTS,		{       "kt",  "km/h" } },	// SPEED
+    { KW_TO_HP,			{       "hp",    "kW" } },	// POWER
+    { NETWON_TO_LBS,		{      "lbs",    "kN" } } ,	// THRUST
+};
 
 } /* namespace Aeromatic */
 

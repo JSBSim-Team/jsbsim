@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     for (unsigned i=0; i<aeromatic._general.size(); ++i)
     {
         cout << aeromatic._general[i]->name();
+        cout << " [" << aeromatic._general[i]->get_units() << "]";
         cout << " (" << aeromatic._general[i]->get() << ")";
         cout << ": ";
 
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
     for (unsigned i=0; i<aeromatic._weight_balance.size(); ++i)
     {
         cout << aeromatic._weight_balance[i]->name();
+        cout << " [" << aeromatic._weight_balance[i]->get_units() << "]";
         cout << " (" << aeromatic._weight_balance[i]->get() << ")";
         cout << ": ";
 
@@ -90,6 +92,7 @@ int main(int argc, char *argv[])
     for (unsigned i=0; i<aeromatic._geometry.size(); ++i)
     {
         cout << aeromatic._geometry[i]->name();
+        cout << " [" << aeromatic._geometry[i]->get_units() << "]";
         cout << " (" << aeromatic._geometry[i]->get() << ")";
         cout << ": ";
 
@@ -124,6 +127,7 @@ int main(int argc, char *argv[])
         while ((param = system->param_next()) != 0)
         {
             cout << param->name();
+            cout << " [" << param->get_units() << "]";
             cout << " (" << param->get() << ")";
             cout << ": ";
 

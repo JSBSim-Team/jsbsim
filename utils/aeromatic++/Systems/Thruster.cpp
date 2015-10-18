@@ -25,6 +25,7 @@
 #include <math.h>
 #include <sstream>
 
+#include <Aircraft.h>
 #include "Propulsion.h"
 #include "Thruster.h"
 
@@ -68,8 +69,8 @@ Propeller::Propeller(Engine *p) : Thruster(p),
 {
     snprintf(_thruster_name, PARAM_MAX_STRING, "my_propeller");
     _inputs.push_back(new Param("Thruster name", _thruster_name));
-    _inputs.push_back(new Param("Propeller diameter", &_diameter));
-    _inputs.push_back(new Param("Is the propeller fixed ptich?", &_fixed_pitch));
+    _inputs.push_back(new Param("Propeller diameter", &_diameter, &_engine->_aircraft->_metric, LENGTH));
+    _inputs.push_back(new Param("Is the propeller fixed pitch?", &_fixed_pitch));
 }
 
 void Propeller::set_thruster()

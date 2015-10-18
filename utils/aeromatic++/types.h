@@ -49,8 +49,14 @@
 #define KG_TO_LBS		0.4535f
 #define LBS_TO_KG		2.205f
 
+#define KG_M2_TO_SLUG_FT2	0.737562142f
+#define SLUG_FT2_TO_KG_M2	1.355817962f
+
 #define METER_TO_FEET		3.28084f
 #define FEET_TO_METER		0.3048f
+
+#define M2_TO_FT2		10.7639104f
+#define FT2_TO_M2		0.09290304f
 
 // one horsepower equals 745.69987 Watts 
 #define KW_TO_HP		1.341f
@@ -135,17 +141,35 @@ enum ParamType
     PARAM_MAX_STRING = 64
 };
 
+enum ParamUnit
+{
+    UNSPECIFIED = 0,
+    WEIGHT,
+    INERTIA,
+    LENGTH,
+    AREA,
+    SPEED,
+    POWER,
+    THRUST,
+
+    MAX_UNITS
+};
+
 class Param
 {
 public:
     template <typename T>
-    Param (const char* n, T* v);
+    Param (const char* n, T* v, bool* c = 0, unsigned t = 0);
     ~Param() {}
 
     std::string& name() { return _name; }
 
     void set(std::string& s);
     std::string get();
+
+    const char* get_units() {
+        return _convert ? _cvt_t[_utype].name[*_convert] : "";
+    }
 
     // options add a 'one of n' selection type
     unsigned no_options() { return _options.size(); }
@@ -157,12 +181,22 @@ private:
     std::string _name;
     std::vector<std::string> _options;
     unsigned _ptype;
+    bool* _convert;
+    unsigned _utype;
     union {
         unsigned *i;
         float *f;
         bool *b;
         char *s;
     } _value;
+
+    struct __cvt
+    {
+        float fact;
+        const char *name[2];
+    };
+
+    static __cvt const _cvt_t[MAX_UNITS];
 };
 
 } /* namespace Aeromatic */

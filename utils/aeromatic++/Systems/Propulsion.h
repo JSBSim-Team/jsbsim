@@ -76,15 +76,7 @@ public:
 class PistonEngine : public Engine
 {
 public:
-    PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-        _max_rpm(2400.0f)
-    {
-        _description.push_back("Piston Engine");
-        _inputs.push_back(new Param("Engine Power", &_power));
-        _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
-        _thruster = new Propeller(this);
-    }
-
+    PistonEngine(Aeromatic *a, Propulsion *p);
     ~PistonEngine() {}
 
     std::string engine();
@@ -116,14 +108,7 @@ public:
 class TurbopropEngine : public Engine
 {
 public:
-    TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-        _water_injection(false)
-    {
-        _description.push_back("Turboprop Engine");
-        _inputs.push_back(new Param("Engine Power", &_power));
-        _thruster = new Direct(this);
-    }
-
+    TurbopropEngine(Aeromatic *a, Propulsion *p);
     ~TurbopropEngine() {}
 
     std::string engine();
@@ -151,15 +136,7 @@ private:
 class TurbineEngine : public Engine
 {
 public:
-    TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-        _injected(false),
-        _augmented(false)
-    {
-        _description.push_back("Turbine Engine");
-        _inputs.push_back(new Param("Engine Thrust", &_power));
-        _thruster = new Direct(this);
-    }
-
+    TurbineEngine(Aeromatic *a, Propulsion *p);
     ~TurbineEngine() {}
 
     std::string engine();
@@ -181,13 +158,7 @@ private:
 class RocketEngine : public Engine
 {
 public:
-    RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
-    {
-        _description.push_back("Rocket Engine");
-        _inputs.push_back(new Param("Engine Thrust", &_power));
-        _thruster = new Direct(this);
-    }
-
+    RocketEngine(Aeromatic *a, Propulsion *p);
     ~RocketEngine() {}
 
     std::string engine();
@@ -208,14 +179,7 @@ public:
 class ElectricEngine : public Engine
 {
 public:
-    ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
-   {
-        _description.push_back("Electric Engine");
-        _inputs.push_back(new Param("Engine Power", &_power));
-        _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
-        _thruster = new Propeller(this);
-    }
-
+    ElectricEngine(Aeromatic *a, Propulsion *p);
     ~ElectricEngine() {}
 
     std::string engine();

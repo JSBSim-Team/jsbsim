@@ -404,6 +404,16 @@ std::string Propulsion::fdm()
     return file.str();
 }
 
+
+PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _max_rpm(2400.0f)
+{
+    _description.push_back("Piston Engine");
+    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
+    _thruster = new Propeller(this);
+}
+
 std::string PistonEngine::engine()
 {
     std::stringstream file;
@@ -442,6 +452,16 @@ std::string PistonEngine::engine()
     file << "</piston_engine>" << std::endl;
 
     return file.str();
+}
+
+
+TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _injected(false),
+    _augmented(false)
+{
+    _description.push_back("Turbine Engine");
+    _inputs.push_back(new Param("Engine Thrust", &_power, &_aircraft->_metric, THRUST));
+    _thruster = new Direct(this);
 }
 
 std::string TurbineEngine::engine()
@@ -559,6 +579,14 @@ std::string TurbineEngine::engine()
     return file.str();
 }
 
+TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _water_injection(false)
+{
+    _description.push_back("Turboprop Engine");
+    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
+    _thruster = new Direct(this);
+}
+
 std::string TurbopropEngine::engine()
 {
     std::stringstream file;
@@ -612,6 +640,13 @@ std::string TurbopropEngine::engine()
     return file.str();
 }
 
+RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
+{
+    _description.push_back("Rocket Engine");
+    _inputs.push_back(new Param("Engine Thrust", &_power, &_aircraft->_metric, THRUST));
+    _thruster = new Direct(this);
+}
+
 std::string RocketEngine::engine()
 {
     std::stringstream file;
@@ -630,12 +665,21 @@ std::string RocketEngine::engine()
     return file.str();
 }
 
+
+ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
+{
+    _description.push_back("Electric Engine");
+    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
+    _thruster = new Propeller(this);
+}
+
 std::string ElectricEngine::engine()
 {
     std::stringstream file;
 
     file << "<electric_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << " <power unit=\"WATTS\">  " << _power << " </power>" << std::endl;
+    file << " <power unit=\"WATTS\">  " << (_power*HP_TO_KW*1000.0f) << " </power>" << std::endl;
     file << "</electric_engine>" << std::endl;
     return file.str();
 }
