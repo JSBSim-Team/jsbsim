@@ -1,0 +1,331 @@
+// Systems.h -- Implements a Aeromatic Systems.
+//
+// Based on Aeromatic2 PHP code by David P. Culp
+// Started June 2003
+//
+// C++-ified and modulized by Erik Hofman, started October 2015.
+//
+// Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
+// Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+#ifndef __SYSTEMS_H
+#define __SYSTEMS_H
+
+#include <stdio.h>
+#include <string>
+#include <vector>
+
+#include <types.h>
+
+namespace Aeromatic
+{
+
+class Aeromatic;
+
+class System
+{
+public:
+    System(Aeromatic *p, bool e = false) :
+        _aircraft(p),
+        _enabled(e),
+        _param(0),
+        _subtype(0) {}
+
+    virtual ~System() {
+        std::vector<Param*>::iterator it;
+        for(it = _inputs.begin(); it != _inputs.end(); ++it) {
+            delete *it;
+        }
+    }
+
+    /* construct the configuration file(s) */
+    virtual void set(const float* cg_loc) {}
+    virtual std::string comment() { return ""; }
+    virtual std::string fdm() { return ""; }
+    virtual std::string mass_balance() { return ""; }
+    virtual std::string system() { return ""; }
+
+    virtual std::string lift() { return ""; }
+    virtual std::string drag() { return ""; }
+    virtual std::string side() { return ""; }
+    virtual std::string roll() { return ""; }
+    virtual std::string pitch() { return ""; }
+    virtual std::string yaw() { return ""; }
+
+    unsigned no_descriptors() {
+        return _description.size();
+    }
+
+    std::string& get_description() {
+        return _description[_subtype];
+    }
+
+
+    virtual void param_reset() {
+        _param = 0;
+    }
+
+    virtual Param* param_next() {
+        return ((!_param || _enabled) && (_param < _inputs.size())) ? _inputs[_param++] : 0;
+    }
+
+    bool enabled() {
+        return _enabled;
+    }
+
+public:
+    Aeromatic* _aircraft;
+    std::vector<std::string> _description;
+    bool _enabled;
+
+protected:
+    std::vector<Param*> _inputs;
+    unsigned _param;
+    int _subtype;
+};
+
+
+class Flaps : public System
+{
+public:
+    Flaps(Aeromatic *p) : System(p, true) {
+        _description.push_back("Flaps");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~Flaps() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system();
+
+    std::string lift();
+    std::string drag();
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+
+private:
+    static float const _dCLflaps_t[MAX_AIRCRAFT][5];
+    static float const _CDflaps_t[MAX_AIRCRAFT][5];
+};
+
+
+class LandingGear : public System
+{
+public:
+    LandingGear(Aeromatic *p) : System(p, true),
+        _taildragger(false),
+        _retractable(true),
+        _castering(false) {
+        _description.push_back("Landing Gear");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+        _inputs.push_back(new Param("Is this a taildragger?", &_taildragger));
+        _inputs.push_back(new Param("Is landing gear retractable?", &_retractable));
+        _inputs.push_back(new Param("Does the nose or tail wheel caster?", &_castering));
+    }
+    ~LandingGear() {}
+
+    void set(const float* cg_loc);
+    std::string comment();
+    std::string fdm();
+    std::string mass_balance() { return ""; };
+    std::string system();
+
+    std::string lift() { return ""; }
+    std::string drag();
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+
+private:
+    bool _taildragger;
+    bool _retractable;
+    bool _castering;
+
+    float _cg_loc[3];
+    float _gear_loc[3][3];
+    float _gear_spring[3];
+    float _gear_damp[3];
+    float _gear_static;
+    float _gear_dynamic;
+    float _gear_rolling;
+    float _gear_max_steer;
+
+    static float const _CDgear_t[MAX_AIRCRAFT][5];
+    static float const _CDfixed_gear_t[MAX_AIRCRAFT][5];
+};
+
+
+class ArrestorHook : public System
+{
+public:
+    ArrestorHook(Aeromatic *p) : System(p) {
+        _description.push_back("Arrestor Hook");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~ArrestorHook() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system() { return ""; }
+
+    std::string lift() { return ""; }
+    std::string drag() { return ""; }
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+};
+
+
+/* Was called Speedbrake in Aeromatic 2 */
+class Spoilers : public System
+{
+public:
+    Spoilers(Aeromatic *p) : System(p) {
+        _description.push_back("Spoilers");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~Spoilers() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system();
+
+    std::string lift();
+    std::string drag();
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+
+private:
+    static float const _dCLspoilers_t[MAX_AIRCRAFT][5];
+};
+
+
+class Speedbrake : public System
+{
+public:
+    Speedbrake(Aeromatic *p) : System(p) {
+        _description.push_back("Speedbrake");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~Speedbrake() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system();
+
+    std::string lift() { return ""; }
+    std::string drag();
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+
+private:
+    static float const _CDspeedbrak_t[MAX_AIRCRAFT][5];
+};
+
+
+class ThrustReverse : public System
+{
+public:
+    ThrustReverse(Aeromatic *p) : System(p) {
+        _description.push_back("Thrust Reverse");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~ThrustReverse() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system() { return ""; }
+
+    std::string lift() { return ""; }
+    std::string drag() { return ""; }
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+};
+
+
+class DragChute : public System
+{
+public:
+    DragChute(Aeromatic *p) : System(p) {
+        _description.push_back("Drag Chute");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~DragChute() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system() { return ""; }
+
+    std::string lift() { return ""; }
+    std::string drag() { return ""; }
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+};
+
+
+class RescueChute : public System
+{
+public:
+    RescueChute(Aeromatic *p) : System(p) {
+        _description.push_back("Rescue Chute");
+        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    }
+    ~RescueChute() {}
+
+    void set(const float* cg_loc) {}
+    std::string comment() { return ""; }
+    std::string fdm() { return ""; }
+    std::string mass_balance() { return ""; }
+    std::string system() { return ""; }
+
+    std::string lift() { return ""; }
+    std::string drag() { return ""; }
+    std::string side() { return ""; }
+    std::string roll() { return ""; }
+    std::string pitch() { return ""; }
+    std::string yaw() { return ""; }
+};
+
+} /* namespace Aeromatic */
+
+#endif /* __SYSTEMS_H */
+
