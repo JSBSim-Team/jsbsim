@@ -148,6 +148,7 @@ enum ParamUnit
     INERTIA,
     LENGTH,
     AREA,
+    VOLUME,
     SPEED,
     POWER,
     THRUST,

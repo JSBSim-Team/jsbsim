@@ -30,7 +30,25 @@
 namespace Aeromatic
 {
 
-float _CDgear_t[MAX_AIRCRAFT][5];
+LandingGear::LandingGear(Aeromatic *p) : System(p, true),
+    _taildragger(false),
+    _retractable(true),
+    _steering(0)
+{
+
+    _description.push_back("Landing Gear");
+    _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+
+    _inputs.push_back(new Param("Is landing gear retractable?", &_retractable));
+
+    Param *steer = new Param("Nose or tail wheel type", &_steering);
+    _inputs.push_back(steer);
+    steer->add_option("steering");
+    steer->add_option("castering");
+    steer->add_option("fixed");
+
+    _inputs.push_back(new Param("Is this a taildragger?", &_taildragger));
+}
 
 void LandingGear::set(const float *cg_loc)
 {
@@ -85,8 +103,10 @@ void LandingGear::set(const float *cg_loc)
     _gear_rolling = (glider) ? 0.5 : 0.02;
 
     _gear_max_steer = 5.0f;
-    if (_castering) {
+    if (_steering == 1) {		// castering
         _gear_max_steer = 360.0f;
+    } else if (_steering == 2) {	// fixed
+        _gear_max_steer = 0.0f;
     }
 }
 
@@ -100,7 +120,12 @@ std::string LandingGear::comment()
     } else {
        file << "tricycle" << std::endl;
     }
-    file << "    castering:     " << (_castering ? "yes" : "no") << std::endl;
+
+    file << "    steering type: ";
+    if (_steering == 0) file << "steering" << std::endl;
+    else if (_steering == 1) file << "castering" << std::endl;
+    else file << "fixed" << std::endl;
+
     file << "    retractable?:  " << (_retractable ? "yes" : "no") << std::endl;
 
     return file.str();

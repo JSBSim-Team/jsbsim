@@ -294,7 +294,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.2 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.3 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -426,7 +426,7 @@ bool Aeromatic::fdm()
         {
             std::string fdm = systems[i]->fdm();
             if (!fdm.empty()) {
-                file << std::endl;
+                file << fdm << std::endl;
             }
         }
     }

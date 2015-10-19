@@ -131,16 +131,7 @@ private:
 class LandingGear : public System
 {
 public:
-    LandingGear(Aeromatic *p) : System(p, true),
-        _taildragger(false),
-        _retractable(true),
-        _castering(false) {
-        _description.push_back("Landing Gear");
-        _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
-        _inputs.push_back(new Param("Is this a taildragger?", &_taildragger));
-        _inputs.push_back(new Param("Is landing gear retractable?", &_retractable));
-        _inputs.push_back(new Param("Does the nose or tail wheel caster?", &_castering));
-    }
+    LandingGear(Aeromatic *p);
     ~LandingGear() {}
 
     void set(const float* cg_loc);
@@ -159,7 +150,7 @@ public:
 private:
     bool _taildragger;
     bool _retractable;
-    bool _castering;
+    unsigned _steering;
 
     float _cg_loc[3];
     float _gear_loc[3][3];

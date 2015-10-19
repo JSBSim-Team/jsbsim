@@ -591,8 +591,13 @@ std::string TurbopropEngine::engine()
 {
     std::stringstream file;
 
+    // estimate thrust if given power in HP
+    // Thrust = bhp * 550 * prop_efficiency / velocity
+    // fact = 550 * 0.85 / 195 = 2.24;
+    float thrust = _power * 2.24f;
+
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <milthrust> " << _power << " </milthrust>" << std::endl;
+    file << "  <milthrust> " << thrust << " </milthrust>" << std::endl;
     file << "  <bypassratio>     0.0  </bypassratio>" << std::endl;
     file << "  <tsfc>            0.55 </tsfc>" << std::endl;
     file << "  <bleed>           0.03 </bleed>" << std::endl;
