@@ -47,7 +47,7 @@ std::string Chute::system()
     file << "          <time>     1.5 </time>" << std::endl;
     file << "       </setting>" << std::endl;
     file << "     </traverse>" << std::endl;
-    file << "     <output>fcs/parachute_reef_pos_norm</output>" << std::endl;
+    file << "     <output>fcs/parachute-reef-pos-norm</output>" << std::endl;
     file << "   </kinematic>" << std::endl;
     file << "  </channel>" << std::endl;
 
@@ -60,13 +60,13 @@ std::string Chute::external_force()
     float Area = _ChuteArea_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
-    file << "  <property value=\"0\">fcs/parachute_reef_pos_norm</property>" << std::endl;
+    file << "  <property value=\"0\">fcs/parachute-reef-pos-norm</property>" << std::endl;
     file << std::endl;
     file << "  <force name=\"parachute\" frame=\"WIND\">" << std::endl;
     file << "   <function>" << std::endl;
     file << "    <product>" << std::endl;
     file << "     <p> aero/qbar-psf </p>" << std::endl;
-    file << "     <p> fcs/parachute_reef_pos_norm </p>" << std::endl;
+    file << "     <p> fcs/parachute-reef-pos-norm </p>" << std::endl;
     file << "     <v> " << CDchute << " </v>" << std::endl;
     file << "     <v> " << Area << " </v>" << std::endl;
     file << "    </product>" << std::endl;

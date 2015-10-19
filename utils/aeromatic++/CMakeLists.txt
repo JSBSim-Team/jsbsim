@@ -55,6 +55,7 @@ SET(AEROMATIC_OBJS
      Systems/Propulsion.cpp
      Systems/Speedbrake.cpp
      Systems/Chute.cpp
+     Systems/ArrestorHook.cpp
      Systems/Spoilers.cpp
      Systems/Thruster.cpp
    )

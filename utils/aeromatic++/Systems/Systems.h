@@ -162,6 +162,12 @@ public:
     }
     ~ArrestorHook() {}
 
+    void set(const float* cg_loc) { _cg_loc_x = cg_loc[X]; }
+    std::string system();
+    std::string external_force();
+
+private:
+    float _cg_loc_x;
 };
 
 
