@@ -54,6 +54,7 @@ SET(AEROMATIC_OBJS
      Systems/LandingGear.cpp
      Systems/Propulsion.cpp
      Systems/Speedbrake.cpp
+     Systems/Chute.cpp
      Systems/Spoilers.cpp
      Systems/Thruster.cpp
    )

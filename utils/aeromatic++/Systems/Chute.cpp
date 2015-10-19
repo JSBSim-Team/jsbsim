@@ -1,4 +1,4 @@
-// Speedbrake.cpp -- Implements a Speedbrake system.
+// Chute.cpp -- Implements a Chute system.
 //
 // Based on Aeromatic2 PHP code by David P. Culp
 // Started June 2003
@@ -30,13 +30,13 @@
 namespace Aeromatic
 {
 
-std::string Speedbrake::system()
+std::string Chute::system()
 {
     std::stringstream file;
 
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
     file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
-    file << "     <input>fcs/speedbrake-cmd-norm</input>" << std::endl;
+    file << "     <input>fcs/chute-cmd-norm</input>" << std::endl;
     file << "     <traverse>" << std::endl;
     file << "       <setting>" << std::endl;
     file << "          <position> 0 </position>" << std::endl;
@@ -44,43 +44,70 @@ std::string Speedbrake::system()
     file << "       </setting>" << std::endl;
     file << "       <setting>" << std::endl;
     file << "          <position> 1 </position>" << std::endl;
-    file << "          <time>     1 </time>" << std::endl;
+    file << "          <time>     1.5 </time>" << std::endl;
     file << "       </setting>" << std::endl;
     file << "     </traverse>" << std::endl;
-    file << "     <output>fcs/speedbrake-pos-norm</output>" << std::endl;
+    file << "     <output>fcs/parachute_reef_pos_norm</output>" << std::endl;
     file << "   </kinematic>" << std::endl;
     file << "  </channel>" << std::endl;
 
     return file.str();
 }
 
-std::string Speedbrake::drag()
+std::string Chute::external_force()
 {
-    float CDspeedbrake = _CDspeedbrake_t[_aircraft->_atype][_aircraft->_engines];
+    float CDchute = _CDchute_t[_aircraft->_atype][_aircraft->_engines];
+    float Area = _ChuteArea_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
-    file << "    <function name=\"aero/force/Drag_speedbrake\">" << std::endl;
-    file << "       <description>Drag due to speedbrakes</description>" << std::endl;
-    file << "         <product>" << std::endl;
-    file << "           <property>aero/qbar-psf</property>" << std::endl;
-    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
-    file << "           <property>fcs/speedbrake-pos-norm</property>" << std::endl;
-    file << "           <value> " << (CDspeedbrake) << " </value>" << std::endl;
-    file << "         </product>" << std::endl;
-    file << "    </function>" << std::endl;
+    file << "  <property value=\"0\">fcs/parachute_reef_pos_norm</property>" << std::endl;
+    file << std::endl;
+    file << "  <force name=\"parachute\" frame=\"WIND\">" << std::endl;
+    file << "   <function>" << std::endl;
+    file << "    <product>" << std::endl;
+    file << "     <p> aero/qbar-psf </p>" << std::endl;
+    file << "     <p> fcs/parachute_reef_pos_norm </p>" << std::endl;
+    file << "     <v> " << CDchute << " </v>" << std::endl;
+    file << "     <v> " << Area << " </v>" << std::endl;
+    file << "    </product>" << std::endl;
+    file << "   </function>" << std::endl;
+    file << "   <location unit=\"FT\">" << std::endl;
+    if (_aircraft->_atype < FIGHTER) {
+        file << "    <x> 0 </x>" << std::endl;
+    } else {
+        file << "    <x> " << (_aircraft->_length * 0.91f) << " </x>" << std::endl;
+    }
+    file << "    <y> 0 </y>" << std::endl;
+    file << "    <z> 0 </z>" << std::endl;
+    file << "   </location>" << std::endl;
+    file << "   <direction>" << std::endl;
+    file << "    <x>-1</x>" << std::endl;
+    file << "    <y> 0 </y>" << std::endl;
+    file << "    <z> 0 </z>" << std::endl;
+    file << "   </direction>" << std::endl;
+    file << "  </force>" << std::endl;
 
     return file.str();
 }
 
 // ----------------------------------------------------------------------------
 
-float const Speedbrake::_CDspeedbrake_t[MAX_AIRCRAFT][5] =
+float const Chute::_CDchute_t[MAX_AIRCRAFT][5] =
 {
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// LIGHT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// PERFORMANCE
-    { 0.60f, 0.60f, 0.80f, 0.80f, 0.80f },		// FIGHTER
-    { 0.12f, 0.12f, 0.12f, 0.12f, 0.12f },		// JET_TRANSPORT
+    { 0.75f, 0.75f, 0.90f, 0.90f, 0.90f },		// FIGHTER
+    { 1.50f, 1.50f, 1.50f, 2.20f, 2.20f },		// JET_TRANSPORT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f }		// PROP_TRANSPORT
+};
+
+float const Chute::_ChuteArea_t[MAX_AIRCRAFT][5] =
+{
+    { 190.f, 190.f, 265.f, 265.f, 265.f },		// LIGHT
+    { 190.f, 190.f, 265.f, 265.f, 265.f },		// PERFORMANCE
+    { 265.f, 265.f, 265.f, 256.f, 256.f },		// FIGHTER
+    { 500.f, 500.f, 570.f, 570.f, 570.f },		// JET_TRANSPORT
+    {   0.f,   0.f,   0.f,   0.f,   0.f }
 };
  
 } /* namespace Aeromatic */

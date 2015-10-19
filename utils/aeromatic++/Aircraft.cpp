@@ -53,7 +53,7 @@ Aircraft::~Aircraft()
 
 Aeromatic::Aeromatic() : Aircraft(this),
     _atype(LIGHT),
-    _metric(false),
+    _metric(0),
     _max_weight(10000.0),
     _empty_weight(0),
     _length(40.0),
@@ -99,7 +99,7 @@ Aeromatic::Aeromatic() : Aircraft(this),
     _geometry.push_back(new Param("Wing area (enter 0 to use estimated value)",
                             &_wing_area, &_metric, AREA));
     _geometry.push_back(new Param("Wing chord (enter 0 to use estimated value)",
-                            &_wing_chord, &_metric, AREA));
+                            &_wing_chord, &_metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence (enter 0 to use estimated value)",
                             &_wing_incidence));
     _geometry.push_back(new Param("Htail area (enter 0 to use estimated value)",
@@ -294,7 +294,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.3 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.4 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -571,8 +571,22 @@ bool Aeromatic::fdm()
     
     file << " </aerodynamics>" << std::endl;
     file << std::endl;
+
     file << " <external_reactions>" << std::endl;
+
+    for (unsigned i=0; i<systems.size(); ++i)
+    {
+        if (systems[i]->enabled())
+        {
+            std::string force = systems[i]->external_force();
+            if (!force.empty()) {
+                file << force << std::endl;
+            }
+        }
+    }
+
     file << " </external_reactions>" << std::endl;
+
     file << std::endl;
     file << "</fdm_config>" << std::endl;
 
