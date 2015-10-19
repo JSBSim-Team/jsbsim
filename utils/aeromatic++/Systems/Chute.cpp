@@ -94,20 +94,23 @@ std::string Chute::external_force()
 
 float const Chute::_CDchute_t[MAX_AIRCRAFT][5] =
 {
-    { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// LIGHT
+    { 1.00f, 1.00f, 1.00f, 1.00f, 1.00f },		// LIGHT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// PERFORMANCE
-    { 0.75f, 0.75f, 0.90f, 0.90f, 0.90f },		// FIGHTER
-    { 1.50f, 1.50f, 1.50f, 2.20f, 2.20f },		// JET_TRANSPORT
+    { 0.90f, 0.90f, 0.90f, 0.90f, 0.90f },		// FIGHTER
+    { 1.00f, 1.00f, 1.00f, 1.00f, 1.00f },		// JET_TRANSPORT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f }		// PROP_TRANSPORT
 };
 
+// LIGHT chutes are rescue chutes of 55'or 65'
+// FIGHTER chutes are drag chutes of 24' (+ shaped)
+// TRANSPORT chutes are 2 or 3 FIGHTER drag chutes
 float const Chute::_ChuteArea_t[MAX_AIRCRAFT][5] =
 {
-    { 190.f, 190.f, 265.f, 265.f, 265.f },		// LIGHT
-    { 190.f, 190.f, 265.f, 265.f, 265.f },		// PERFORMANCE
-    { 265.f, 265.f, 265.f, 256.f, 256.f },		// FIGHTER
-    { 500.f, 500.f, 570.f, 570.f, 570.f },		// JET_TRANSPORT
-    {   0.f,   0.f,   0.f,   0.f,   0.f }
+    { 2375.f, 2375.f, 3320.f, 3320.f, 3320.f },		// LIGHT
+    {    0.f,    0.f,    0.f,    0.f,    0.f },		// PERFORMANCE
+    {  452.f,  452.f,  452.f,  452.f,  452.f },		// FIGHTER
+    {  900.f,  900.f, 1200.f, 1200.f, 1200.f },		// JET_TRANSPORT
+    {    0.f,    0.f,    0.f,    0.f,    0.f }
 };
  
 } /* namespace Aeromatic */
