@@ -113,7 +113,7 @@ std::string Param::get()
         str = val;
         break;
     case PARAM_FLOAT:
-        if (_convert) fact = 1.0f/_cvt_t[_utype].fact;
+        if (*_convert) fact = 1.0f/_cvt_t[_utype].fact;
         snprintf(val, PARAM_MAX_STRING, "%g", *_value.f * fact);
         str = val;
         break;
