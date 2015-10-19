@@ -86,7 +86,7 @@ void Param::set(std::string& v)
         break;
     case PARAM_FLOAT:
         *_value.f = strtof(v.c_str(), NULL);
-        if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
+        if (*_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;
     case PARAM_STRING:
         snprintf(_value.s, PARAM_MAX_STRING, "%s", v.c_str());
