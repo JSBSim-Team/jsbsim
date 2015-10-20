@@ -440,6 +440,7 @@ std::string PistonEngine::engine()
     file << "  <maxrpm>      2800.0 </maxrpm>" << std::endl;
     file << "  <sparkfaildrop>  0.1 </sparkfaildrop>" << std::endl;
     file << "  <volumetric-efficiency> 0.85 </volumetric-efficiency>" << std::endl;
+    file << "  <man-press-lag> 0.1 </man-press-lag>" << std::endl;
     file << "  <static-friction  unit=\"HP\"> " << (_power * 0.005f) << " </static-friction>" << std::endl;
     file << "  <starter-torque> " << (_power * 0.8f) << " </starter-torque>" << std::endl;
     file << "  <starter-rpm> 1400 </starter-rpm>" << std::endl;
