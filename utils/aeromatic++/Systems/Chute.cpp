@@ -101,15 +101,19 @@ float const Chute::_CDchute_t[MAX_AIRCRAFT][5] =
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f }		// PROP_TRANSPORT
 };
 
-// LIGHT chutes are rescue chutes of 55'or 65'
-// FIGHTER chutes are drag chutes of 24' (+ shaped)
+// LIGHT chutes are rescue chutes of 55ft or 65ft
+// FIGHTER chutes are drag chutes of 24ft (+ shaped)
 // TRANSPORT chutes are 2 or 3 FIGHTER drag chutes
+// 
+// Given radiuses are laying flat on the ground:
+// Project their surface area on half a sphere and recalculate
+// the diameter and new surface area from there.
 float const Chute::_ChuteArea_t[MAX_AIRCRAFT][5] =
 {
-    { 2375.f, 2375.f, 3320.f, 3320.f, 3320.f },		// LIGHT
+    {  600.f,  600.f,  830.f,  830.f,  830.f },		// LIGHT
     {    0.f,    0.f,    0.f,    0.f,    0.f },		// PERFORMANCE
-    {  452.f,  452.f,  452.f,  452.f,  452.f },		// FIGHTER
-    {  900.f,  900.f, 1200.f, 1200.f, 1200.f },		// JET_TRANSPORT
+    {  115.f,  115.f,  115.f,  115.f,  115.f },		// FIGHTER
+    {  230.f,  230.f,  230.f,  345.f,  345.f },		// JET_TRANSPORT
     {    0.f,    0.f,    0.f,    0.f,    0.f }
 };
  
