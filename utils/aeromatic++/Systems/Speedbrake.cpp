@@ -23,6 +23,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
 
 #include <Aircraft.h>
 #include "Systems.h"
@@ -59,6 +60,7 @@ std::string Speedbrake::drag()
     float CDspeedbrake = _CDspeedbrake_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_speedbrake\">" << std::endl;
     file << "       <description>Drag due to speedbrakes</description>" << std::endl;
     file << "         <product>" << std::endl;

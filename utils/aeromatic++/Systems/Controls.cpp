@@ -23,6 +23,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
 
 #include <types.h>
 #include <Aircraft.h>
@@ -79,6 +80,7 @@ std::string CableControls::lift()
 
     alpha = (CLmax-CL0)/CLalpha;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_alpha\">" << std::endl;
     file << "      <description>Lift due to alpha</description>" << std::endl;
     file << "      <product>" << std::endl;
@@ -89,7 +91,7 @@ std::string CableControls::lift()
     file << "            <tableData>" << std::endl;
     file << "              -0.20  " << (-0.2*CLalpha + CL0) << std::endl;
     file << "               0.00  " << CL0 << std::endl;
-    file << "               " << (alpha) << "  " << (CLmax) << std::endl;
+    file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
     file << "               0.60  " << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
@@ -120,6 +122,7 @@ std::string CableControls::drag()
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_basic\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -128,11 +131,11 @@ std::string CableControls::drag()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "             -1.57    1.500" << std::endl;
+    file << "             -1.57    1.5000" << std::endl;
     file << "             -0.26    " << (1.3f*CD0) << std::endl;
     file << "              0.00    " << (CD0) << std::endl;
     file << "              0.26    " << (1.3f*CD0) << std::endl;
-    file << "              1.57    1.500" << std::endl;
+    file << "              1.57    1.5000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
@@ -156,10 +159,10 @@ std::string CableControls::drag()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "                0.00      0.000" << std::endl;
-    file << "                " << (Mcrit) << "      0.000" << std::endl;
-    file << "                1.10      0.023" << std::endl;
-    file << "                1.80      0.015" << std::endl;
+    file << "                0.00    0.0000" << std::endl;
+    file << "                " << std::setprecision(2) << (Mcrit) << std::setprecision(4) << "    0.0000" << std::endl;
+    file << "                1.10    0.0230" << std::endl;
+    file << "                1.80    0.0150" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "        </product>" << std::endl;
@@ -173,11 +176,11 @@ std::string CableControls::drag()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/beta-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "              -1.57    1.230" << std::endl;
+    file << "              -1.57    1.2300" << std::endl;
     file << "              -0.26    " << (0.25*CDbeta) << std::endl;
-    file << "               0.00    0.000" << std::endl;
+    file << "               0.00    0.0000" << std::endl;
     file << "               0.26    " << (0.25*CDbeta) << std::endl;
-    file << "               1.57    1.230" << std::endl;
+    file << "               1.57    1.2300" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
@@ -203,7 +206,8 @@ std::string CableControls::side()
 
     CYbeta = _aircraft->_CYbeta;
 
-    file << "    <function name=\"aero/force/Side_beta\">" << std::endl;
+    file << std::setprecision(4) << std::fixed << std::showpoint;
+file << "    <function name=\"aero/force/Side_beta\">" << std::endl;
     file << "       <description>Side force due to beta</description>" << std::endl;
     file << "       <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
@@ -227,6 +231,7 @@ std::string CableControls::roll()
     Clda = _aircraft->_Clda;
     Cldr = _aircraft->_Cldr;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Roll_beta\">" << std::endl;
     file << "       <description>Roll moment due to beta</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -297,6 +302,7 @@ std::string CableControls::pitch()
     Cmadot = _aircraft->_Cmadot;
     Cmde = _aircraft->_Cmde;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Pitch_alpha\">" << std::endl;
     file << "       <description>Pitch moment due to alpha</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -318,8 +324,8 @@ std::string CableControls::pitch()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "              0.0     " << (Cmde) << std::endl;
-    file << "              2.0     " << (0.25*Cmde) << std::endl;
+    file << "              0.0    " << (Cmde) << std::endl;
+    file << "              2.0    " << (0.25*Cmde) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
@@ -361,6 +367,7 @@ std::string CableControls::yaw()
     Cndr = _aircraft->_Cndr;
     Cnda = _aircraft->_Cnda;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Yaw_beta\">" << std::endl;
     file << "       <description>Yaw moment due to beta</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -427,6 +434,7 @@ std::string CableControls::system()
 {
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "  <channel name=\"Pitch\">" << std::endl;
     file << "   <summer name=\"Pitch Trim Sum\">" << std::endl;
     file << "      <input>fcs/elevator-cmd-norm</input>" << std::endl;

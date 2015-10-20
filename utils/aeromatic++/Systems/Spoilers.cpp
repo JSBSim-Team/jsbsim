@@ -23,6 +23,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
 
 #include <Aircraft.h>
 #include "Systems.h"
@@ -59,6 +60,7 @@ std::string Spoilers::lift()
     float dCLspoilers = _dCLspoilers_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_spoilers\">" << std::endl;
     file << "       <description>Delta Lift due to spoilers</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -77,6 +79,7 @@ std::string Spoilers::drag()
     float CDspoilers = _aircraft->_CD0;
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_spoilers\">" << std::endl;
     file << "       <description>Drag due to spoilerss</description>" << std::endl;
     file << "         <product>" << std::endl;

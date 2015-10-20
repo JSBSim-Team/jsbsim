@@ -23,6 +23,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
 
 #include <Aircraft.h>
 #include "Systems.h"
@@ -76,6 +77,7 @@ std::string Flaps::lift()
     float dCLflaps = _dCLflaps_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_flap\">" << std::endl;
     file << "       <description>Delta Lift due to flaps</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -94,6 +96,7 @@ std::string Flaps::drag()
     float CDflaps = _CDflaps_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_flap\">" << std::endl;
     file << "       <description>Drag due to flaps</description>" << std::endl;
     file << "         <product>" << std::endl;

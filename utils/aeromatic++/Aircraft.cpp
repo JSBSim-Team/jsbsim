@@ -28,6 +28,7 @@
 #include <ctime>
 #include <locale>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 
 #include <Systems/Systems.h>
@@ -284,6 +285,10 @@ bool Aeromatic::fdm()
         return false;
     }
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
+
     file << "<?xml version=\"1.0\"?>" << std::endl;
     file << "<?xml-stylesheet type=\"text/xsl\" href=\"http://jsbsim.sourceforge.net/JSBSim.xsl\"?>" << std::endl;
     file << std::endl;
@@ -294,7 +299,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.8 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.9 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -359,48 +364,48 @@ bool Aeromatic::fdm()
 //***** METRICS **********************************
 
     file << " <metrics>" << std::endl;
-    file << "   <wingarea  unit=\"FT2\"> " << _wing_area << " </wingarea>" << std::endl;
-    file << "   <wingspan  unit=\"FT\" > " << _wing_span << " </wingspan>" << std::endl;
-    file << "   <wing_incidence>       " << _wing_incidence << " </wing_incidence>" << std::endl;
-    file << "   <chord     unit=\"FT\" > " << _wing_chord << " </chord>" << std::endl;
-    file << "   <htailarea unit=\"FT2\"> " << _htail_area << " </htailarea>" << std::endl;
-    file << "   <htailarm  unit=\"FT\" > " << _htail_arm << " </htailarm>" << std::endl;
-    file << "   <vtailarea  unit=\"FT\" > " << _vtail_area << " </vtailarea>" << std::endl;
-    file << "   <vtailarm  unit=\"FT\" > " << _vtail_arm << " </vtailarm>" << std::endl;
+    file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing_area << " </wingarea>" << std::endl;
+    file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing_span << " </wingspan>" << std::endl;
+    file << "   <wing_incidence>       " << std::setw(8) << _wing_incidence << " </wing_incidence>" << std::endl;
+    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing_chord << " </chord>" << std::endl;
+    file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail_area << " </htailarea>" << std::endl;
+    file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail_arm << " </htailarm>" << std::endl;
+    file << "   <vtailarea  unit=\"FT\"> " << std::setw(8) << _vtail_area << " </vtailarea>" << std::endl;
+    file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail_arm << " </vtailarm>" << std::endl;
     file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << aero_rp[X] << " </x>" << std::endl;
-    file << "     <y> " << aero_rp[Y] << " </y>" << std::endl;
-    file << "     <z> " << aero_rp[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << aero_rp[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << aero_rp[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << aero_rp[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"EYEPOINT\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << eyept_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << eyept_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << eyept_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << eyept_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << eyept_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << eyept_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"VRP\" unit=\"IN\">" << std::endl;
-    file << "     <x> 0.0 </x>" << std::endl;
-    file << "     <y> 0.0 </y>" << std::endl;
-    file << "     <z> 0.0 </z>" << std::endl;
+    file << "     <x>     0.0 </x>" << std::endl;
+    file << "     <y>     0.0 </y>" << std::endl;
+    file << "     <z>     0.0 </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << " </metrics>"<< std::endl;
     file << std::endl;
     file << " <mass_balance>" << std::endl;
-    file << "   <ixx unit=\"SLUG*FT2\">  " << _inertia[X] << " </ixx>" << std::endl;
-    file << "   <iyy unit=\"SLUG*FT2\">  " << _inertia[Y] << " </iyy>" << std::endl;
-    file << "   <izz unit=\"SLUG*FT2\">  " << _inertia[Z] << " </izz>" << std::endl;
-    file << "   <emptywt unit=\"LBS\" >  " << _empty_weight << " </emptywt>" << std::endl;
+    file << "   <ixx unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[X] << " </ixx>" << std::endl;
+    file << "   <iyy unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Y] << " </iyy>" << std::endl;
+    file << "   <izz unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Z] << " </izz>" << std::endl;
+    file << "   <emptywt unit=\"LBS\" >  " << std::setw(8) << _empty_weight << " </emptywt>" << std::endl;
     file << "   <location name=\"CG\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << cg_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << cg_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << cg_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <pointmass name=\"Payload\">" << std::endl;
     file << "    <description> " << _payload << " LBS should bring model up to entered max weight </description>" << std::endl;
     file << "    <weight unit=\"LBS\"> " << _payload << " </weight>" << std::endl;
     file << "    <location name=\"POINTMASS\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << payload_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << payload_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << payload_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << payload_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << payload_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << payload_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
 

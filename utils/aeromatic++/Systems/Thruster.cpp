@@ -198,7 +198,7 @@ std::string Propeller::thruster()
         {
             float a = (-0.2f + i*0.2f);
             if (a > 4.1f) a = 6.0f;
-            file << std::setw(10) << std::setprecision(1) << a; 
+            file << std::setw(10) << std::setprecision(1) << a;
             for (unsigned j=0; j<9; ++j) {
                 file << std::fixed << std::setw(10) << std::setprecision(4) << _ct0 * _thrust_t[i][j];
             }

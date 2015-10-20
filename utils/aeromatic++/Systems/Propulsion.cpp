@@ -30,6 +30,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 #include <types.h>
 #include <Aircraft.h>
@@ -296,13 +297,16 @@ std::string Propulsion::mass_balance()
 {
     std::stringstream file;
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << "   <pointmass name=\"Fuel\">" << std::endl;
     file << "    <description> " << _fuel_weight << " fuel contents </description>" << std::endl;
     file << "    <weight unit=\"LBS\"> " << _fuel_weight << " </weight>" << std::endl;
     file << "    <location name=\"POINTMASS\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << _tank_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << _tank_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << _tank_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _tank_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _tank_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
 
@@ -349,6 +353,9 @@ std::string Propulsion::fdm()
     unsigned no_engines = _aircraft->_no_engines;
     std::stringstream file;
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << " <propulsion>" << std::endl;
     file << std::endl;
 
@@ -356,14 +363,14 @@ std::string Propulsion::fdm()
     {
         file << "   <engine file=\"" << _engine_name << "\">" << std::endl;
         file << "    <location unit=\"IN\">" << std::endl;
-        file << "      <x> " << _eng_loc[i][X] << " </x>" << std::endl;
-        file << "      <y> " << _eng_loc[i][Y] << " </y>" << std::endl;
-        file << "      <z> " << _eng_loc[i][Z] << " </z>" << std::endl;
+        file << "      <x> " << std::setw(8) << _eng_loc[i][X] << " </x>" << std::endl;
+        file << "      <y> " << std::setw(8) << _eng_loc[i][Y] << " </y>" << std::endl;
+        file << "      <z> " << std::setw(8) << _eng_loc[i][Z] << " </z>" << std::endl;
         file << "    </location>" << std::endl;
         file << "    <orient unit=\"DEG\">" << std::endl;
-        file << "      <pitch> " << _eng_orient[i][PITCH] << " </pitch>" << std::endl;
-        file << "       <roll> "<< _eng_orient[i][ROLL] << " </roll>" << std::endl;
-        file << "        <yaw> " << _eng_orient[i][YAW] << " </yaw>" << std::endl;
+        file << "      <pitch> " << std::setw(8) << _eng_orient[i][PITCH] << " </pitch>" << std::endl;
+        file << "       <roll> " << std::setw(8) << _eng_orient[i][ROLL] << " </roll>" << std::endl;
+        file << "        <yaw> " << std::setw(8) << _eng_orient[i][YAW] << " </yaw>" << std::endl;
         file << "    </orient>" << std::endl;
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
@@ -373,14 +380,14 @@ std::string Propulsion::fdm()
         // file << thruster();
 
         file << "     <location unit=\"IN\">" << std::endl;
-        file << "       <x> " << _thruster_loc[i][X] << " </x>" << std::endl;
-        file << "       <y> " << _thruster_loc[i][Y] << " </y>" << std::endl;
-        file << "       <z> " << _thruster_loc[i][Z] << " </z>" << std::endl;
+        file << "       <x> " << std::setw(8) << _thruster_loc[i][X] << " </x>" << std::endl;
+        file << "       <y> " << std::setw(8) << _thruster_loc[i][Y] << " </y>" << std::endl;
+        file << "       <z> " << std::setw(8) << _thruster_loc[i][Z] << " </z>" << std::endl;
         file << "     </location>" << std::endl;
         file << "     <orient unit=\"DEG\">" << std::endl;
-        file << "       <pitch> " << _thruster_orient[i][PITCH] << " </pitch>" << std::endl;
-        file << "        <roll> " << _thruster_orient[i][ROLL] << " </roll>" << std::endl;
-        file << "         <yaw> " << _thruster_orient[i][YAW] << " </yaw>" << std::endl;
+        file << "       <pitch> " << std::setw(8) << _thruster_orient[i][PITCH] << " </pitch>" << std::endl;
+        file << "        <roll> " << std::setw(8) << _thruster_orient[i][ROLL] << " </roll>" << std::endl;
+        file << "         <yaw> " << std::setw(8) << _thruster_orient[i][YAW] << " </yaw>" << std::endl;
         file << "     </orient>" << std::endl;
         file << "    </thruster>" << std::endl;
         file << "  </engine>" << std::endl;
@@ -391,9 +398,9 @@ std::string Propulsion::fdm()
     {
         file << "  <tank type=\"FUEL\" number=\"" << i << "\">" << std::endl;
         file << "     <location unit=\"IN\">" << std::endl;
-        file << "       <x> " << _tank_loc[X] << " </x>" << std::endl;
-        file << "       <y> " << _tank_loc[Y] << " </y>" << std::endl;
-        file << "       <z> " << _tank_loc[Z] << " </z>" << std::endl;
+        file << "       <x> " << std::setw(8) << _tank_loc[X] << " </x>" << std::endl;
+        file << "       <y> " << std::setw(8) << _tank_loc[Y] << " </y>" << std::endl;
+        file << "       <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
         file << "     </location>" << std::endl;
         file << "     <capacity unit=\"LBS\"> " << _tank_capacity << " </capacity>" << std::endl;
         file << "     <contents unit=\"LBS\"> " << _tank_contents << " </contents>" << std::endl;
