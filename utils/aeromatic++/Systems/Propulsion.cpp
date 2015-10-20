@@ -288,6 +288,8 @@ void Propulsion::set(const float* cg_loc)
     }
 
     _aircraft->_payload -= _fuel_weight;
+
+    _propulsion[_ptype]->_thruster->set_thruster();
 }
 
 std::string Propulsion::mass_balance()

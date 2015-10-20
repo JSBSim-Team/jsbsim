@@ -24,6 +24,7 @@
 
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 
 #include <Aircraft.h>
 #include "Propulsion.h"
@@ -78,11 +79,10 @@ void Propeller::set_thruster()
     PistonEngine *engine = (PistonEngine*)_engine;
 
     // find rpm which gives a tip mach of 0.88 (static at sea level)
-    float max_rpm = 18763.0f / _diameter;
+    _max_rpm = 18763.0f / _diameter;
+    _gear_ratio = engine->_max_rpm / _max_rpm;
 
-    _gear_ratio = engine->_max_rpm / max_rpm;
-
-    float max_rps = max_rpm / 60.0f;
+    float max_rps = _max_rpm / 60.0f;
     float rps2 = max_rps * max_rps;
     float rps3 = rps2 * max_rps;
     float d4 = _diameter * _diameter * _diameter * _diameter;
@@ -93,7 +93,7 @@ void Propeller::set_thruster()
     // for fixed pitch design point is beta=22, J=0.2
     // for variable pitch design point is beta=15, j=0
     _cp0 = _engine->_power * 550.0f / rho / rps3 / d5;
-    if (_fixed_pitch)
+    if (_fixed_pitch == false)
     {
         _ct0 = _cp0 * 2.33f;
         _static_thrust = _ct0 * rho * rps2 * d4;
@@ -142,7 +142,7 @@ std::string Propeller::thruster()
     file << "        prop diameter (ft): " << _diameter << std::endl;
     file << std::endl;
     file << "     Outputs:" << std::endl;
-    file << "              max prop rpm: " << engine->_max_rpm << std::endl;
+    file << "              max prop rpm: " << _max_rpm << std::endl;
     file << "                gear ratio: " << _gear_ratio << std::endl;
     file << "                       Cp0: " << _cp0 << std::endl;
     file << "                       Ct0: " << _ct0 << std::endl;
@@ -153,7 +153,7 @@ std::string Propeller::thruster()
     file << "<propeller version=\"1.01\" name=\"prop\">" << std::endl;
     file << "  <ixx> " << _ixx << " </ixx>" << std::endl;
     file << "  <diameter unit=\"IN\"> " << (_diameter * FEET_TO_INCH) << " </diameter>" << std::endl;
-    file << "  <numblades> $blades </numblades>" << std::endl;
+    file << "  <numblades> " << _blades << " </numblades>" << std::endl;
     file << "  <gearratio> " << _gear_ratio << " </gearratio>" << std::endl;
     file << "  <cp_factor> 1.00 </cp_factor>" << std::endl;
     file << "  <ct_factor> 1.00 </ct_factor>" << std::endl;
@@ -162,8 +162,8 @@ std::string Propeller::thruster()
     {
         file << "  <minpitch> 12 </minpitch>" << std::endl;
         file << "  <maxpitch> 45 </maxpitch>" << std::endl;
-        file << "  <minrpm> " << (engine->_max_rpm * 0.85f) << " </minrpm>" << std::endl;
-        file << "  <maxrpm> " << engine->_max_rpm << " </maxrpm>" << std::endl;
+        file << "  <minrpm> " << (_max_rpm * 0.85f) << " </minrpm>" << std::endl;
+        file << "  <maxrpm> " << _max_rpm << " </maxrpm>" << std::endl;
     }
     file << std::endl;
 
@@ -192,13 +192,15 @@ std::string Propeller::thruster()
         file << " <!-- thrust coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "      <tableData>" << std::endl;
-        file << "                -10        0         15        25        35        45        55        65       90" << std::endl;
+        file << "               -10        0         15        25        35        45        55        65        90" << std::endl;
 
         for (unsigned i=0; i<23; ++i)
         {
-            file << "       " << (-0.2f + i*0.2f); 
-            for (unsigned j=0; i<9; ++j) {
-                file << "        " << _ct0 * _thrust_t[i][j];
+            float a = (-0.2f + i*0.2f);
+            if (a > 4.1f) a = 6.0f;
+            file << std::setw(10) << std::setprecision(1) << a; 
+            for (unsigned j=0; j<9; ++j) {
+                file << std::fixed << std::setw(10) << std::setprecision(4) << _ct0 * _thrust_t[i][j];
             }
             file << std::endl;
         }
@@ -233,13 +235,15 @@ std::string Propeller::thruster()
         file << " <!-- power coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "               -10        0        15        25        35        45        55        65       90" << std::endl;
+        file << "               -10        0         15        25        35        45        55        65        90" << std::endl;
 
         for (unsigned i=0; i<23; ++i)
         {
-            file << "       " << (-0.2f + i*0.2f);
-            for (unsigned j=0; i<9; ++j) {
-                file << "        " << (_cp0 * _power_t[i][j]);
+            float a = (-0.2f + i*0.2f);
+            if (a > 4.1f) a = 6.0f;
+            file << std::setw(10) << std::setprecision(1) << a;
+            for (unsigned j=0; j<9; ++j) {
+                file << std::fixed << std::setw(10) << std::setprecision(4) << (_cp0 * _power_t[i][j]);
             }
             file << std::endl;
         }

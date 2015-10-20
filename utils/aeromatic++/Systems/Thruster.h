@@ -89,6 +89,7 @@ private:
     bool _fixed_pitch;
     unsigned _blades;
     float _diameter;
+    float _max_rpm;
 
     float _gear_ratio;
     float _static_thrust;
