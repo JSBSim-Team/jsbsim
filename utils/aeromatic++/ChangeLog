@@ -1,0 +1,30 @@
+Started July 2003, David P. Culp, davidculp2@comcast.net 
+
+--- AeromatiC++ ---
+Update:  6 Oct 2015, EMH, Converted C++ and modulized the systems
+
+--- aeromatic2.php ---
+Update: 13 Dec 2004, DPC, new configuration file format 2.0
+Update: 16 Oct 2003, DPC, better FCS, version 0.7
+Update: 29 Sep 2003, DPC, added high-alpha/beta drag
+Update:  5 Sep 2003, DPC, added multi-engine prop transport
+Update: 26 Jul 2003, DPC, new aero2.php with flap changes
+
+--- aero2.php ---
+Updated  29 Sep 2015, EMH - add a taildragger with a castered tailwheel
+Updated:  2 Nov 2011, RKJ - better fuel estimates, payload pointmass
+Updated: 21 Jul 2011, DPC - fix rudder travel limit bug
+Updated: 11 Apr 2009, DPC - use "0|1" for gear retractability
+Updated: 21 Oct 2008, DPC - fixed drag due to elevator with <abs>
+Updated: 29 Dec 2005, DPC - more v2.0 updates, added incidence
+Updated: 14 Dec 2004, DPC - adapted to new XML format, v2.0
+Updated: 17 Jun 2004, JSB - increased version number to 1.65
+Updated: 21 Feb 2004, DPC - added VRP, increased version to 1.61
+Updated:  9 Nov 2003, JSB - removed INVERT keyword and inserted "-"
+Updated: 16 Oct 2003, DPC - added better FCS
+Updated:  5 Sep 2003, DPC - added prop transport
+Updated: 29 Sep 2003, DPC - added high alpha/beta drag
+
+--- engine2.php ---
+Updated: 20 Dec 2004, DPC, new XML version 2.0
+Updated: 16 Oct 2003, DPC, new SimTurbine support
