@@ -30,6 +30,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 #include <types.h>
 #include <Aircraft.h>
@@ -42,13 +43,13 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     _layout(FWD_FUSELAGE)
 {
     _description.push_back("Propulsion");
-    _inputs.push_back(new Param(_description[0].c_str(), &_enabled));
+    _inputs.push_back(new Param(_description[0].c_str(), _enabled));
 
     snprintf(_engine_name, PARAM_MAX_STRING, "my_engine");
     _inputs.push_back(new Param("Engine name", _engine_name));
 
-    _inputs.push_back(new Param("Number of engines", &_aircraft->_no_engines));
-    Param *layout = new Param("Engine layout", &_layout);
+    _inputs.push_back(new Param("Number of engines", _aircraft->_no_engines));
+    Param *layout = new Param("Engine layout", _layout);
     _inputs.push_back(layout);
     layout->add_option("fwd fuselage");
     layout->add_option("mid fuselage");
@@ -57,7 +58,7 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     layout->add_option("wings and tail");
     layout->add_option("wings and nose");
 
-    Param *type = new Param("Engine type", &_ptype);
+    Param *type = new Param("Engine type", _ptype);
     _inputs.push_back(type);
     _propulsion[0] = new PistonEngine(p, this);
     type->add_option(_propulsion[0]->get_description());
@@ -288,19 +289,24 @@ void Propulsion::set(const float* cg_loc)
     }
 
     _aircraft->_payload -= _fuel_weight;
+
+    _propulsion[_ptype]->_thruster->set_thruster();
 }
 
 std::string Propulsion::mass_balance()
 {
     std::stringstream file;
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << "   <pointmass name=\"Fuel\">" << std::endl;
     file << "    <description> " << _fuel_weight << " fuel contents </description>" << std::endl;
     file << "    <weight unit=\"LBS\"> " << _fuel_weight << " </weight>" << std::endl;
     file << "    <location name=\"POINTMASS\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << _tank_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << _tank_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << _tank_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _tank_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _tank_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
 
@@ -347,6 +353,9 @@ std::string Propulsion::fdm()
     unsigned no_engines = _aircraft->_no_engines;
     std::stringstream file;
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << " <propulsion>" << std::endl;
     file << std::endl;
 
@@ -354,14 +363,14 @@ std::string Propulsion::fdm()
     {
         file << "   <engine file=\"" << _engine_name << "\">" << std::endl;
         file << "    <location unit=\"IN\">" << std::endl;
-        file << "      <x> " << _eng_loc[i][X] << " </x>" << std::endl;
-        file << "      <y> " << _eng_loc[i][Y] << " </y>" << std::endl;
-        file << "      <z> " << _eng_loc[i][Z] << " </z>" << std::endl;
+        file << "      <x> " << std::setw(8) << _eng_loc[i][X] << " </x>" << std::endl;
+        file << "      <y> " << std::setw(8) << _eng_loc[i][Y] << " </y>" << std::endl;
+        file << "      <z> " << std::setw(8) << _eng_loc[i][Z] << " </z>" << std::endl;
         file << "    </location>" << std::endl;
         file << "    <orient unit=\"DEG\">" << std::endl;
-        file << "      <pitch> " << _eng_orient[i][PITCH] << " </pitch>" << std::endl;
-        file << "       <roll> "<< _eng_orient[i][ROLL] << " </roll>" << std::endl;
-        file << "        <yaw> " << _eng_orient[i][YAW] << " </yaw>" << std::endl;
+        file << "      <pitch> " << std::setw(8) << _eng_orient[i][PITCH] << " </pitch>" << std::endl;
+        file << "       <roll> " << std::setw(8) << _eng_orient[i][ROLL] << " </roll>" << std::endl;
+        file << "        <yaw> " << std::setw(8) << _eng_orient[i][YAW] << " </yaw>" << std::endl;
         file << "    </orient>" << std::endl;
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
@@ -371,14 +380,14 @@ std::string Propulsion::fdm()
         // file << thruster();
 
         file << "     <location unit=\"IN\">" << std::endl;
-        file << "       <x> " << _thruster_loc[i][X] << " </x>" << std::endl;
-        file << "       <y> " << _thruster_loc[i][Y] << " </y>" << std::endl;
-        file << "       <z> " << _thruster_loc[i][Z] << " </z>" << std::endl;
+        file << "       <x> " << std::setw(8) << _thruster_loc[i][X] << " </x>" << std::endl;
+        file << "       <y> " << std::setw(8) << _thruster_loc[i][Y] << " </y>" << std::endl;
+        file << "       <z> " << std::setw(8) << _thruster_loc[i][Z] << " </z>" << std::endl;
         file << "     </location>" << std::endl;
         file << "     <orient unit=\"DEG\">" << std::endl;
-        file << "       <pitch> " << _thruster_orient[i][PITCH] << " </pitch>" << std::endl;
-        file << "        <roll> " << _thruster_orient[i][ROLL] << " </roll>" << std::endl;
-        file << "         <yaw> " << _thruster_orient[i][YAW] << " </yaw>" << std::endl;
+        file << "       <pitch> " << std::setw(8) << _thruster_orient[i][PITCH] << " </pitch>" << std::endl;
+        file << "        <roll> " << std::setw(8) << _thruster_orient[i][ROLL] << " </roll>" << std::endl;
+        file << "         <yaw> " << std::setw(8) << _thruster_orient[i][YAW] << " </yaw>" << std::endl;
         file << "     </orient>" << std::endl;
         file << "    </thruster>" << std::endl;
         file << "  </engine>" << std::endl;
@@ -389,9 +398,9 @@ std::string Propulsion::fdm()
     {
         file << "  <tank type=\"FUEL\" number=\"" << i << "\">" << std::endl;
         file << "     <location unit=\"IN\">" << std::endl;
-        file << "       <x> " << _tank_loc[X] << " </x>" << std::endl;
-        file << "       <y> " << _tank_loc[Y] << " </y>" << std::endl;
-        file << "       <z> " << _tank_loc[Z] << " </z>" << std::endl;
+        file << "       <x> " << std::setw(8) << _tank_loc[X] << " </x>" << std::endl;
+        file << "       <y> " << std::setw(8) << _tank_loc[Y] << " </y>" << std::endl;
+        file << "       <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
         file << "     </location>" << std::endl;
         file << "     <capacity unit=\"LBS\"> " << _tank_capacity << " </capacity>" << std::endl;
         file << "     <contents unit=\"LBS\"> " << _tank_contents << " </contents>" << std::endl;
@@ -409,8 +418,8 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
+    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -440,6 +449,7 @@ std::string PistonEngine::engine()
     file << "  <maxrpm>      2800.0 </maxrpm>" << std::endl;
     file << "  <sparkfaildrop>  0.1 </sparkfaildrop>" << std::endl;
     file << "  <volumetric-efficiency> 0.85 </volumetric-efficiency>" << std::endl;
+    file << "  <man-press-lag> 0.1 </man-press-lag>" << std::endl;
     file << "  <static-friction  unit=\"HP\"> " << (_power * 0.005f) << " </static-friction>" << std::endl;
     file << "  <starter-torque> " << (_power * 0.8f) << " </starter-torque>" << std::endl;
     file << "  <starter-rpm> 1400 </starter-rpm>" << std::endl;
@@ -460,7 +470,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine Thrust", &_power, &_aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
     _thruster = new Direct(this);
 }
 
@@ -583,7 +593,7 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
     _thruster = new Direct(this);
 }
 
@@ -591,8 +601,13 @@ std::string TurbopropEngine::engine()
 {
     std::stringstream file;
 
+    // estimate thrust if given power in HP
+    // Thrust = bhp * 550 * prop_efficiency / velocity
+    // fact = 550 * 0.85 / 195 = 2.24;
+    float thrust = _power * 2.24f;
+
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <milthrust> " << _power << " </milthrust>" << std::endl;
+    file << "  <milthrust> " << thrust << " </milthrust>" << std::endl;
     file << "  <bypassratio>     0.0  </bypassratio>" << std::endl;
     file << "  <tsfc>            0.55 </tsfc>" << std::endl;
     file << "  <bleed>           0.03 </bleed>" << std::endl;
@@ -643,7 +658,7 @@ std::string TurbopropEngine::engine()
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine Thrust", &_power, &_aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
     _thruster = new Direct(this);
 }
 
@@ -669,8 +684,8 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine Power", &_power, &_aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", &_max_rpm));
+    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
     _thruster = new Propeller(this);
 }
 

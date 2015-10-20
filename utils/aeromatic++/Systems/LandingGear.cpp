@@ -23,6 +23,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
 
 #include <Aircraft.h>
 #include "Systems.h"
@@ -30,7 +31,25 @@
 namespace Aeromatic
 {
 
-float _CDgear_t[MAX_AIRCRAFT][5];
+LandingGear::LandingGear(Aeromatic *p) : System(p, true),
+    _taildragger(false),
+    _retractable(true),
+    _steering(0)
+{
+
+    _description.push_back("Landing Gear");
+    _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+
+    _inputs.push_back(new Param("Is landing gear retractable?", _retractable));
+
+    Param *steer = new Param("Nose or tail wheel type", _steering);
+    _inputs.push_back(steer);
+    steer->add_option("steering");
+    steer->add_option("castering");
+    steer->add_option("fixed");
+
+    _inputs.push_back(new Param("Is this a taildragger?", _taildragger));
+}
 
 void LandingGear::set(const float *cg_loc)
 {
@@ -85,8 +104,10 @@ void LandingGear::set(const float *cg_loc)
     _gear_rolling = (glider) ? 0.5 : 0.02;
 
     _gear_max_steer = 5.0f;
-    if (_castering) {
+    if (_steering == 1) {		// castering
         _gear_max_steer = 360.0f;
+    } else if (_steering == 2) {	// fixed
+        _gear_max_steer = 0.0f;
     }
 }
 
@@ -100,7 +121,12 @@ std::string LandingGear::comment()
     } else {
        file << "tricycle" << std::endl;
     }
-    file << "    castering:     " << (_castering ? "yes" : "no") << std::endl;
+
+    file << "    steering type: ";
+    if (_steering == 0) file << "steering" << std::endl;
+    else if (_steering == 1) file << "castering" << std::endl;
+    else file << "fixed" << std::endl;
+
     file << "    retractable?:  " << (_retractable ? "yes" : "no") << std::endl;
 
     return file.str();
@@ -112,14 +138,17 @@ std::string LandingGear::fdm()
 
     bool glider = (_aircraft->_atype == LIGHT && _aircraft->_engines == 0) ? true : false;
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << " <ground_reactions>" << std::endl;
     file << std::endl;
 
     file << "  <contact type=\"BOGEY\" name=\"" << (_taildragger ? "TAIL" : "NOSE") << "\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << _gear_loc[_taildragger ? TAIL : NOSE][X] << " </x>" << std::endl;
-    file << "      <y> " << _gear_loc[_taildragger ? TAIL : NOSE][Y] << " </y>" << std::endl;
-    file << "      <z> " << _gear_loc[_taildragger ? TAIL : NOSE][Z] << " </z>" << std::endl;
+    file << "      <x> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][X] << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][Y] << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
@@ -133,9 +162,9 @@ std::string LandingGear::fdm()
     file << std::endl;
     file << "  <contact type=\"BOGEY\" name=\"LEFT_MAIN\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << _gear_loc[MAIN][X] << " </x>" << std::endl;
-    file << "      <y> " << -_gear_loc[MAIN][Y] << " </y>" << std::endl;
-    file << "      <z> " << _gear_loc[MAIN][Z] << " </z>" << std::endl;
+    file << "      <x> " << std::setw(8) << _gear_loc[MAIN][X] << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << -_gear_loc[MAIN][Y] << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << _gear_loc[MAIN][Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
@@ -149,9 +178,9 @@ std::string LandingGear::fdm()
     file << std::endl;
     file << "  <contact type=\"BOGEY\" name=\"RIGHT_MAIN\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << _gear_loc[MAIN][X] << " </x>" << std::endl;
-    file << "      <y> " << _gear_loc[MAIN][Y] << " </y>" << std::endl;
-    file << "      <z> " << _gear_loc[MAIN][Z] << " </z>" << std::endl;
+    file << "      <x> " << std::setw(8) << _gear_loc[MAIN][X] << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << _gear_loc[MAIN][Y] << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << _gear_loc[MAIN][Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
@@ -165,9 +194,9 @@ std::string LandingGear::fdm()
     file << std::endl;
     file << "  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
-    file << "     <x> " << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << -_aircraft->_wing_span/2 << " </y>" << std::endl;
-    file << "     <z> " << _cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << -_aircraft->_wing_span/2 << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
     file << "   <dynamic_friction> 1 </dynamic_friction>" << std::endl;
@@ -177,9 +206,9 @@ std::string LandingGear::fdm()
     file << std::endl;
     file << "  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
-    file << "     <x> " << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << _aircraft->_wing_span/2 << " </y>" << std::endl;
-    file << "     <z> " << _cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << (_aircraft->_wing_span/2) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
     file << "   <dynamic_friction> 1 </dynamic_friction>" << std::endl;
@@ -227,6 +256,7 @@ std::string LandingGear::drag()
         CDgear = _CDfixed_gear_t[_aircraft->_atype][_aircraft->_engines];
     }
 
+    file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_gear\">" << std::endl;
     file << "       <description>Drag due to gear</description>" << std::endl;
     file << "         <product>" << std::endl;

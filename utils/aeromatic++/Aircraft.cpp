@@ -28,6 +28,7 @@
 #include <ctime>
 #include <locale>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 
 #include <Systems/Systems.h>
@@ -53,7 +54,7 @@ Aircraft::~Aircraft()
 
 Aeromatic::Aeromatic() : Aircraft(this),
     _atype(LIGHT),
-    _metric(false),
+    _metric(0),
     _max_weight(10000.0),
     _empty_weight(0),
     _length(40.0),
@@ -81,37 +82,37 @@ Aeromatic::Aeromatic() : Aircraft(this),
     _general.push_back(new Param("Output directory", _path));
 
                 /* general information */
-    Param* units = new Param("Chose a system of measurement", &_metric);
+    Param* units = new Param("Chose a system of measurement", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
 
     /* weight and balance */
-    _weight_balance.push_back(new Param("Maximum takeoff weight", &_max_weight, &_metric, WEIGHT));
-    _weight_balance.push_back(new Param("Empty weight (enter 0 to use estimated value)", &_empty_weight, &_metric, WEIGHT));
-    _weight_balance.push_back(new Param("Inertia Ixx (enter 0 to use estimated value)", &_inertia[X], &_metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Iyy (enter 0 to use estimated value)", &_inertia[Y], &_metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Izz (enter 0 to use estimated value)", &_inertia[Z], &_metric, INERTIA));
+    _weight_balance.push_back(new Param("Maximum takeoff weight", _max_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Empty weight (enter 0 to use estimated value)", _empty_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Inertia Ixx (enter 0 to use estimated value)", _inertia[X], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Iyy (enter 0 to use estimated value)", _inertia[Y], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Izz (enter 0 to use estimated value)", _inertia[Z], _metric, INERTIA));
 
     /* geometry */
-    _geometry.push_back(new Param("Length", &_length, &_metric, LENGTH));
-    _geometry.push_back(new Param("Wing span", &_wing_span, &_metric, LENGTH));
+    _geometry.push_back(new Param("Length", _length, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing span", _wing_span, _metric, LENGTH));
     _geometry.push_back(new Param("Wing area (enter 0 to use estimated value)",
-                            &_wing_area, &_metric, AREA));
+                            _wing_area, _metric, AREA));
     _geometry.push_back(new Param("Wing chord (enter 0 to use estimated value)",
-                            &_wing_chord, &_metric, AREA));
+                            _wing_chord, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence (enter 0 to use estimated value)",
-                            &_wing_incidence));
+                            _wing_incidence));
     _geometry.push_back(new Param("Htail area (enter 0 to use estimated value)",
-                            &_htail_area, &_metric, AREA));
+                            _htail_area, _metric, AREA));
     _geometry.push_back(new Param("Htail arm (enter 0 to use estimated value)",
-                            &_htail_arm, &_metric, LENGTH));
+                            _htail_arm, _metric, LENGTH));
     _geometry.push_back(new Param("Vtail area (enter 0 to use estimated value)",
-                            &_vtail_area, &_metric, AREA));
+                            _vtail_area, _metric, AREA));
     _geometry.push_back(new Param("Vtail arm (enter 0 to use estimated value)",
-                            &_vtail_arm, &_metric, LENGTH));
+                            _vtail_arm, _metric, LENGTH));
 
-    Param *param = new Param("Type of aircraft (Select closest aerodynamic type)", &_atype);
+    Param *param = new Param("Type of aircraft (Select closest aerodynamic type)", _atype);
     _general.push_back(param);
     _aircraft[0] = new Light(this);
     param->add_option(_aircraft[0]->get_description());
@@ -284,6 +285,10 @@ bool Aeromatic::fdm()
         return false;
     }
 
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
+
     file << "<?xml version=\"1.0\"?>" << std::endl;
     file << "<?xml-stylesheet type=\"text/xsl\" href=\"http://jsbsim.sourceforge.net/JSBSim.xsl\"?>" << std::endl;
     file << std::endl;
@@ -294,7 +299,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.2 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.9 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -359,48 +364,48 @@ bool Aeromatic::fdm()
 //***** METRICS **********************************
 
     file << " <metrics>" << std::endl;
-    file << "   <wingarea  unit=\"FT2\"> " << _wing_area << " </wingarea>" << std::endl;
-    file << "   <wingspan  unit=\"FT\" > " << _wing_span << " </wingspan>" << std::endl;
-    file << "   <wing_incidence>       " << _wing_incidence << " </wing_incidence>" << std::endl;
-    file << "   <chord     unit=\"FT\" > " << _wing_chord << " </chord>" << std::endl;
-    file << "   <htailarea unit=\"FT2\"> " << _htail_area << " </htailarea>" << std::endl;
-    file << "   <htailarm  unit=\"FT\" > " << _htail_arm << " </htailarm>" << std::endl;
-    file << "   <vtailarea  unit=\"FT\" > " << _vtail_area << " </vtailarea>" << std::endl;
-    file << "   <vtailarm  unit=\"FT\" > " << _vtail_arm << " </vtailarm>" << std::endl;
+    file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing_area << " </wingarea>" << std::endl;
+    file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing_span << " </wingspan>" << std::endl;
+    file << "   <wing_incidence>       " << std::setw(8) << _wing_incidence << " </wing_incidence>" << std::endl;
+    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing_chord << " </chord>" << std::endl;
+    file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail_area << " </htailarea>" << std::endl;
+    file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail_arm << " </htailarm>" << std::endl;
+    file << "   <vtailarea  unit=\"FT\"> " << std::setw(8) << _vtail_area << " </vtailarea>" << std::endl;
+    file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail_arm << " </vtailarm>" << std::endl;
     file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << aero_rp[X] << " </x>" << std::endl;
-    file << "     <y> " << aero_rp[Y] << " </y>" << std::endl;
-    file << "     <z> " << aero_rp[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << aero_rp[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << aero_rp[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << aero_rp[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"EYEPOINT\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << eyept_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << eyept_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << eyept_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << eyept_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << eyept_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << eyept_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"VRP\" unit=\"IN\">" << std::endl;
-    file << "     <x> 0.0 </x>" << std::endl;
-    file << "     <y> 0.0 </y>" << std::endl;
-    file << "     <z> 0.0 </z>" << std::endl;
+    file << "     <x>     0.0 </x>" << std::endl;
+    file << "     <y>     0.0 </y>" << std::endl;
+    file << "     <z>     0.0 </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << " </metrics>"<< std::endl;
     file << std::endl;
     file << " <mass_balance>" << std::endl;
-    file << "   <ixx unit=\"SLUG*FT2\">  " << _inertia[X] << " </ixx>" << std::endl;
-    file << "   <iyy unit=\"SLUG*FT2\">  " << _inertia[Y] << " </iyy>" << std::endl;
-    file << "   <izz unit=\"SLUG*FT2\">  " << _inertia[Z] << " </izz>" << std::endl;
-    file << "   <emptywt unit=\"LBS\" >  " << _empty_weight << " </emptywt>" << std::endl;
+    file << "   <ixx unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[X] << " </ixx>" << std::endl;
+    file << "   <iyy unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Y] << " </iyy>" << std::endl;
+    file << "   <izz unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Z] << " </izz>" << std::endl;
+    file << "   <emptywt unit=\"LBS\" >  " << std::setw(8) << _empty_weight << " </emptywt>" << std::endl;
     file << "   <location name=\"CG\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << cg_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << cg_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << cg_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <pointmass name=\"Payload\">" << std::endl;
     file << "    <description> " << _payload << " LBS should bring model up to entered max weight </description>" << std::endl;
     file << "    <weight unit=\"LBS\"> " << _payload << " </weight>" << std::endl;
     file << "    <location name=\"POINTMASS\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << payload_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << payload_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << payload_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << payload_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << payload_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << payload_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
 
@@ -426,7 +431,7 @@ bool Aeromatic::fdm()
         {
             std::string fdm = systems[i]->fdm();
             if (!fdm.empty()) {
-                file << std::endl;
+                file << fdm << std::endl;
             }
         }
     }
@@ -571,8 +576,22 @@ bool Aeromatic::fdm()
     
     file << " </aerodynamics>" << std::endl;
     file << std::endl;
+
     file << " <external_reactions>" << std::endl;
+
+    for (unsigned i=0; i<systems.size(); ++i)
+    {
+        if (systems[i]->enabled())
+        {
+            std::string force = systems[i]->external_force();
+            if (!force.empty()) {
+                file << force << std::endl;
+            }
+        }
+    }
+
     file << " </external_reactions>" << std::endl;
+
     file << std::endl;
     file << "</fdm_config>" << std::endl;
 

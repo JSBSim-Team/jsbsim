@@ -33,37 +33,37 @@ namespace Aeromatic
 {
 
 template <>
-Param::Param<bool>(const char* n, bool* v, bool* c, unsigned t) :
+Param::Param<bool>(const char* n, bool& v, const bool& c, unsigned t) :
     _name(n),
     _ptype(PARAM_BOOL),
     _convert(c),
     _utype(t)
 {
-    _value.b = v;
+    _value.b = &v;
 }
 
 template <>
-Param::Param<unsigned>(const char* n, unsigned* v, bool* c, unsigned t) :
+Param::Param<unsigned>(const char* n, unsigned& v, const bool& c, unsigned t) :
     _name(n),
     _ptype(PARAM_INT),
     _convert(c),
     _utype(t)
 { 
-    _value.i = v; 
+    _value.i = &v; 
 }
 
 template <>
-Param::Param<float>(const char* n, float* v, bool* c, unsigned t) :
+Param::Param<float>(const char* n, float& v, const bool& c, unsigned t) :
     _name(n),
     _ptype(PARAM_FLOAT),
     _convert(c),
     _utype(t)
 {
-    _value.f = v;
+    _value.f = &v;
 }
 
 template <>
-Param::Param<char>(const char* n, char* v, bool* c, unsigned t) :
+Param::Param<char>(const char* n, char* v, const bool& c, unsigned t) :
     _name(n),
     _ptype(PARAM_STRING),
     _convert(c),
@@ -83,7 +83,6 @@ void Param::set(std::string& v)
         break;
     case PARAM_INT:
         *_value.i = strtol(v.c_str(), NULL, 10);
-        if (_convert) *_value.i = (*_value.i * _cvt_t[_utype].fact);
         break;
     case PARAM_FLOAT:
         *_value.f = strtof(v.c_str(), NULL);
@@ -110,8 +109,7 @@ std::string Param::get()
         str = (*_value.b == false) ? "no" : "yes";
         break;
     case PARAM_INT:
-        if (_convert) fact = 1.0f/_cvt_t[_utype].fact;
-        snprintf(val, PARAM_MAX_STRING, "%u", *_value.i * fact);
+        snprintf(val, PARAM_MAX_STRING, "%u", *_value.i);
         str = val;
         break;
     case PARAM_FLOAT:
@@ -131,6 +129,8 @@ std::string Param::get()
 
 // ---------------------------------------------------------------------------
 
+bool const Param::_false = false;
+
 Param::__cvt const Param::_cvt_t[MAX_UNITS] =
 {
     { 1.0f,                     {         "",      "" } },	// UNSPECIFIED
@@ -138,6 +138,7 @@ Param::__cvt const Param::_cvt_t[MAX_UNITS] =
     { KG_M2_TO_SLUG_FT2,	{ "slug/ft2", "kg/m2" } } ,	// INERTIA
     { METER_TO_FEET,		{       "ft",     "m" } },	// LENGTH
     { M2_TO_FT2,		{      "ft2",    "m2" } },	// AREA
+    { LITER_TO_CUBINC_INCH,	{      "in3",     "l" } },	// VOLUME
     { KMPH_TO_KNOTS,		{       "kt",  "km/h" } },	// SPEED
     { KW_TO_HP,			{       "hp",    "kW" } },	// POWER
     { NETWON_TO_LBS,		{      "lbs",    "kN" } } ,	// THRUST
