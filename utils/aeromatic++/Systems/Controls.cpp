@@ -37,7 +37,7 @@ Controls::Controls(Aeromatic *p) :
 {
     _description.push_back("Aircraft control");
 
-    Param *controls = new Param("Control system", &_ctype);
+    Param *controls = new Param("Control system", _ctype);
     _inputs.push_back(controls);
 
     _control[0] = new CableControls(p);

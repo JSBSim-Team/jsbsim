@@ -160,7 +160,11 @@ class Param
 {
 public:
     template <typename T>
-    Param (const char* n, T* v, bool* c = 0, unsigned t = 0);
+    Param (const char* n, T& v, const bool& c = _false, unsigned t = 0);
+
+    template <typename T>
+    Param (const char* n, T* v, const bool& c = _false, unsigned t = 0);
+
     ~Param() {}
 
     std::string& name() { return _name; }
@@ -169,7 +173,7 @@ public:
     std::string get();
 
     const char* get_units() {
-        return _convert ? _cvt_t[_utype].name[*_convert] : "";
+        return _convert ? _cvt_t[_utype].name[_convert] : "";
     }
 
     // options add a 'one of n' selection type
@@ -182,13 +186,13 @@ private:
     std::string _name;
     std::vector<std::string> _options;
     unsigned _ptype;
-    bool* _convert;
+    const bool& _convert;
     unsigned _utype;
     union {
-        unsigned *i;
-        float *f;
-        bool *b;
-        char *s;
+        unsigned* i;
+        float* f;
+        bool* b;
+        char* s;
     } _value;
 
     struct __cvt
@@ -198,6 +202,7 @@ private:
     };
 
     static __cvt const _cvt_t[MAX_UNITS];
+    static bool const _false;
 };
 
 } /* namespace Aeromatic */

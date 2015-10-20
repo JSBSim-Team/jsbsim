@@ -81,37 +81,37 @@ Aeromatic::Aeromatic() : Aircraft(this),
     _general.push_back(new Param("Output directory", _path));
 
                 /* general information */
-    Param* units = new Param("Chose a system of measurement", &_metric);
+    Param* units = new Param("Chose a system of measurement", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
 
     /* weight and balance */
-    _weight_balance.push_back(new Param("Maximum takeoff weight", &_max_weight, &_metric, WEIGHT));
-    _weight_balance.push_back(new Param("Empty weight (enter 0 to use estimated value)", &_empty_weight, &_metric, WEIGHT));
-    _weight_balance.push_back(new Param("Inertia Ixx (enter 0 to use estimated value)", &_inertia[X], &_metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Iyy (enter 0 to use estimated value)", &_inertia[Y], &_metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Izz (enter 0 to use estimated value)", &_inertia[Z], &_metric, INERTIA));
+    _weight_balance.push_back(new Param("Maximum takeoff weight", _max_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Empty weight (enter 0 to use estimated value)", _empty_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Inertia Ixx (enter 0 to use estimated value)", _inertia[X], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Iyy (enter 0 to use estimated value)", _inertia[Y], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Izz (enter 0 to use estimated value)", _inertia[Z], _metric, INERTIA));
 
     /* geometry */
-    _geometry.push_back(new Param("Length", &_length, &_metric, LENGTH));
-    _geometry.push_back(new Param("Wing span", &_wing_span, &_metric, LENGTH));
+    _geometry.push_back(new Param("Length", _length, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing span", _wing_span, _metric, LENGTH));
     _geometry.push_back(new Param("Wing area (enter 0 to use estimated value)",
-                            &_wing_area, &_metric, AREA));
+                            _wing_area, _metric, AREA));
     _geometry.push_back(new Param("Wing chord (enter 0 to use estimated value)",
-                            &_wing_chord, &_metric, LENGTH));
+                            _wing_chord, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence (enter 0 to use estimated value)",
-                            &_wing_incidence));
+                            _wing_incidence));
     _geometry.push_back(new Param("Htail area (enter 0 to use estimated value)",
-                            &_htail_area, &_metric, AREA));
+                            _htail_area, _metric, AREA));
     _geometry.push_back(new Param("Htail arm (enter 0 to use estimated value)",
-                            &_htail_arm, &_metric, LENGTH));
+                            _htail_arm, _metric, LENGTH));
     _geometry.push_back(new Param("Vtail area (enter 0 to use estimated value)",
-                            &_vtail_area, &_metric, AREA));
+                            _vtail_area, _metric, AREA));
     _geometry.push_back(new Param("Vtail arm (enter 0 to use estimated value)",
-                            &_vtail_arm, &_metric, LENGTH));
+                            _vtail_arm, _metric, LENGTH));
 
-    Param *param = new Param("Type of aircraft (Select closest aerodynamic type)", &_atype);
+    Param *param = new Param("Type of aircraft (Select closest aerodynamic type)", _atype);
     _general.push_back(param);
     _aircraft[0] = new Light(this);
     param->add_option(_aircraft[0]->get_description());
@@ -294,7 +294,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.6 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.7 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
