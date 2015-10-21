@@ -296,7 +296,7 @@ void Propulsion::set(const float* cg_loc)
 std::string Propulsion::mass_balance()
 {
     std::stringstream file;
-
+/*
     file.precision(2);
     file.flags(std::ios::right);
     file << std::fixed << std::showpoint;
@@ -309,7 +309,7 @@ std::string Propulsion::mass_balance()
     file << "     <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
-
+*/
     return file.str();
 }
 
