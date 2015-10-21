@@ -35,6 +35,8 @@ std::string Spoilers::system()
 {
     std::stringstream file;
 
+    file << "  <property value=\"0\">fcs/spoilers-cmd-norm</property>" << std::endl;
+    file << std::endl;
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
     file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
     file << "     <input>fcs/spoilers-cmd-norm</input>" << std::endl;

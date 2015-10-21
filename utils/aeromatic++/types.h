@@ -174,7 +174,7 @@ public:
     std::string get();
 
     const char* get_units() {
-        return _convert ? _cvt_t[_utype].name[_convert] : "";
+        return _cvt_t[_utype].name[_convert];
     }
 
     // options add a 'one of n' selection type

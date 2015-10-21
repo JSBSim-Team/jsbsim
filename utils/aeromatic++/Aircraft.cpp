@@ -299,7 +299,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.9 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.10 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -370,7 +370,7 @@ bool Aeromatic::fdm()
     file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing_chord << " </chord>" << std::endl;
     file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail_area << " </htailarea>" << std::endl;
     file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail_arm << " </htailarm>" << std::endl;
-    file << "   <vtailarea  unit=\"FT\"> " << std::setw(8) << _vtail_area << " </vtailarea>" << std::endl;
+    file << "   <vtailarea  unit=\"FT2\"> " << std::setw(8) << _vtail_area << " </vtailarea>" << std::endl;
     file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail_arm << " </vtailarm>" << std::endl;
     file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << aero_rp[X] << " </x>" << std::endl;
