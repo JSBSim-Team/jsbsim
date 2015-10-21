@@ -379,6 +379,17 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
+    file << "<function name=\"aero/moment/Yaw_damp\">" << std::endl;
+    file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>metrics/bw-ft</property>" << std::endl;
+    file << "           <property>aero/bi2vel</property>" << std::endl;
+    file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
+    file << "           <value> " << (_aircraft->_Cnr) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
     file << "    <function name=\"aero/moment/Yaw_rudder\">" << std::endl;
     file << "       <description>Yaw moment due to rudder</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -398,31 +409,6 @@ std::string CableControls::yaw()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>fcs/left-aileron-pos-rad</property>" << std::endl;
     file << "           <value> " << (Cnda) << " </value>" << std::endl;
-    file << "       </product>" << std::endl;
-    file << "    </function>" << std::endl;
-
-    return file.str();
-}
-
-std::string YawDamper::yaw()
-{
-    std::stringstream file;
-    float Cnr;
-
-    Cnr = _aircraft->_Cnr;
-
-    file << _control->yaw();
-
-    file << std::endl;
-    file << "    <function name=\"aero/moment/Yaw_damp\">" << std::endl;
-    file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
-    file << "       <product>" << std::endl;
-    file << "           <property>aero/qbar-psf</property>" << std::endl;
-    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
-    file << "           <property>metrics/bw-ft</property>" << std::endl;
-    file << "           <property>aero/bi2vel</property>" << std::endl;
-    file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
-    file << "           <value> " << (Cnr) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
 

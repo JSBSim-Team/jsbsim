@@ -80,7 +80,9 @@ public:
     std::string pitch() {
         return _control->pitch();
     }
-    std::string yaw();
+    std::string yaw() {
+        return _control->yaw();
+    }
 
 private:
     System *_control;
