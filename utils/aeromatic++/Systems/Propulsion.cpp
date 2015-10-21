@@ -374,7 +374,7 @@ std::string Propulsion::fdm()
         file << "    </orient>" << std::endl;
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
-        file << "    <thruster file=\"" << _thruster << "\">" << std::endl;
+        file << "    <thruster file=\"" << get_thruster() << "\">" << std::endl;
 
         // TODO: open a new file for the thruster
         // file << thruster();
@@ -439,6 +439,18 @@ std::string PistonEngine::engine()
     float n_cylinders = displacement /  (stroke * bore_s);
     n_cylinders = ((n_cylinders < 1) ? 1 : floorf(n_cylinders+0.5f));
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGPiston" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    power:          " << _power << " hp" << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
     file << "<piston_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <minmp unit=\"INHG\">         10.0 </minmp>" << std::endl;
     file << "  <maxmp unit=\"INHG\">         28.5 </maxmp>" << std::endl;
@@ -483,6 +495,20 @@ std::string TurbineEngine::engine()
         max_thrust *= 1.5f;
     }
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurbine" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "    augmented?      " << (_augmented ? "yes" : "no") << std::endl;
+    file << "    injected?       " << (_injected ? "yes" : "no") << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <milthrust> " << _power << " </milthrust>" << std::endl;
     if (_augmented) {
@@ -590,11 +616,13 @@ std::string TurbineEngine::engine()
 }
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _max_rpm(2700.0f),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
     _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _thruster = new Direct(this);
+    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _thruster = new Propeller(this);
 }
 
 std::string TurbopropEngine::engine()
@@ -606,7 +634,19 @@ std::string TurbopropEngine::engine()
     // fact = 550 * 0.85 / 195 = 2.24;
     float thrust = _power * 2.24f;
 
-    file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurboprop" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
+file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <milthrust> " << thrust << " </milthrust>" << std::endl;
     file << "  <bypassratio>     0.0  </bypassratio>" << std::endl;
     file << "  <tsfc>            0.55 </tsfc>" << std::endl;
@@ -659,20 +699,33 @@ RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
     _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
-    _thruster = new Direct(this);
+    _thruster = new Nozzle(this);
 }
 
 std::string RocketEngine::engine()
 {
     std::stringstream file;
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGRocket" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    thrust:           " << _power << " lb" << std::endl;
+    file << std::endl;
+    file << "  Outputs:" << std::endl;
+    file << "    ISP (sea level)     400.0" << std::endl;
+    file << "    Fuel Flow Rate (SL)  91.5" << std::endl;
+    file << "    Ox. Flow Rate (SL)  105.2" << std::endl;
+    file << "-->" << std::endl;
+    file << std::endl;
+
     file << "<rocket_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <shr>              1.23 </shr>" << std::endl;
-    file << "  <max_pc>       86556.00 </max_pc>" << std::endl;
-    file << "  <variance>         0.10 </variance>" << std::endl;
-    file << "  <prop_eff>         0.67 </prop_eff>" << std::endl;
-    file << "  <maxthrottle>      1.00 </maxthrottle>" << std::endl;
-    file << "  <minthrottle>      0.40 </minthrottle>" << std::endl;
+    file << "  <isp>            400.00 </isp>" << std::endl;
+    file << "  <minthrottle>      0.40  </minthrottle>" << std::endl;
+    file << "  <maxthrottle>      1.00  </maxthrottle>" << std::endl;
     file << "  <slfuelflowmax>   91.50 </slfuelflowmax>" << std::endl;
     file << "  <sloxiflowmax>   105.20 </sloxiflowmax>" << std::endl;
     file << "</rocket_engine>" << std::endl;
@@ -693,6 +746,16 @@ std::string ElectricEngine::engine()
 {
     std::stringstream file;
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGElectric" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    power:          " << _power << " hp" << std::endl;
+    file << "-->" << std::endl;
+    file << std::endl;
     file << "<electric_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << " <power unit=\"WATTS\">  " << (_power*HP_TO_KW*1000.0f) << " </power>" << std::endl;
     file << "</electric_engine>" << std::endl;

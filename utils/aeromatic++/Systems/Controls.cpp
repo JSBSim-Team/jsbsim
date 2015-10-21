@@ -454,7 +454,7 @@ std::string CableControls::system()
     file << "      <output>fcs/elevator-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"elevator normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Elevator Normalization\">" << std::endl;
     file << "      <input>fcs/elevator-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -496,7 +496,7 @@ std::string CableControls::system()
     file << "      <output>fcs/right-aileron-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"left aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Left Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/left-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -509,7 +509,7 @@ std::string CableControls::system()
     file << "      <output>fcs/left-aileron-pos-norm</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"right aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Right Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/right-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -542,7 +542,7 @@ std::string CableControls::system()
     file << "      <output>fcs/rudder-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"rudder normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Rudder Normalization\">" << std::endl;
     file << "      <input>fcs/rudder-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -584,7 +584,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/elevator-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"elevator normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Elevator Normalization\">" << std::endl;
     file << "      <input>fcs/elevator-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -626,7 +626,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/right-aileron-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"left aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Left Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/left-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -639,7 +639,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/left-aileron-pos-norm</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"right aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Right Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/right-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -697,7 +697,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/rudder-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"rudder normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Rudder Normalization\">" << std::endl;
     file << "      <input>fcs/rudder-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;

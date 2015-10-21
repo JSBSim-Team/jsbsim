@@ -23,6 +23,8 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <sstream>
+#include <iomanip>
+#include <math.h>
 
 #include <Aircraft.h>
 #include "Systems.h"
@@ -34,14 +36,22 @@ std::string ArrestorHook::system()
 {
     std::stringstream file;
 
+    float min_deg = -2.0f;
+    float max_deg = 42.0f;
+    float loc_z = (_aircraft->_length * 0.12f);
+    float length = loc_z * cosf((90.0f - max_deg) * DEG_TO_RAD);
+
+    file.precision(2);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << "  <property>systems/tailhook-cmd-norm</property>" << std::endl;
-    file << "  <property value=\"6.75\">systems/hook/tailhook-length-ft</property>" << std::endl;
-    file << "  <property value=\"-18.0\">systems/hook/tailhook-pos-min-deg</property>" << std::endl;
-    file << "  <property value=\"42.0\">systems/hook/tailhook-pos-max-deg</property>" << std::endl;
-    file << "  <property value=\"196.0\">systems/hook/tailhook-offset-x-in</property>" << std::endl;
-    file << "  <property value=  \"0.0\">systems/hook/tailhook-offset-y-in</property>" << std::endl;
-    file << "  <property value=\"-16.0\">systems/hook/tailhook-offset-z-in</property>" << std::endl;
-    file << "  <property value=\"-18.0\">systems/hook/tailhook-pos-deg</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << length << "\">systems/hook/tailhook-length-ft</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << min_deg << "\">systems/hook/tailhook-pos-min-deg</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << max_deg << "\">systems/hook/tailhook-pos-max-deg</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << (_aircraft->_length * 0.91f * FEET_TO_INCH) << "\">systems/hook/tailhook-offset-x-in</property>" << std::endl;
+    file << "  <property value=\"  0.00\">systems/hook/tailhook-offset-y-in</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << -(_aircraft->_length * 0.02 * FEET_TO_INCH) << "\">systems/hook/tailhook-offset-z-in</property>" << std::endl;
+    file << "  <property value=\"" << std::setw(6) << min_deg << "\">systems/hook/tailhook-pos-deg</property>" << std::endl;
     file << std::endl;
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
     file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
@@ -59,14 +69,15 @@ std::string ArrestorHook::system()
     file << "     <output>systems/hook/tailhook-pos-norm</output>" << std::endl;
     file << "   </kinematic>" << std::endl;
     file << std::endl;
-    file << "   <switch name=\"systems/hook/ready\">" << std::endl;
+    file << "   <switch name=\"" << _description[_subtype] << " Ready\">" << std::endl;
     file << "     <default value=\"0\"/>" << std::endl;
     file << "     <test logic=\"AND\" value=\"1\">" << std::endl;
     file << "         systems/hook/tailhook-pos-norm gt 0.99" << std::endl;
     file << "     </test>" << std::endl;
+    file << "     <output>systems/hook/ready</output>" << std::endl;
     file << "   </switch>" << std::endl;
     file << std::endl;
-    file << "   <scheduled_gain name=\"systems/hook/hook-decel-multiplier\">" << std::endl;
+    file << "   <scheduled_gain name=\"" << _description[_subtype] << " Decel Multiplier\">" << std::endl;
     file << "    <input>systems/hook/ready</input>" << std::endl;
     file << "    <table>" << std::endl;
     file << "      <tableData>" << std::endl;
@@ -75,26 +86,29 @@ std::string ArrestorHook::system()
     file << "         80    2.20" << std::endl;
     file << "      </tableData>" << std::endl;
     file << "    </table>" << std::endl;
+    file << "    <output>systems/hook/hook-decel-multiplier</output>" << std::endl;
     file << "   </scheduled_gain>" << std::endl;
     file << std::endl;
-    file << "   <pure_gain name=\"systems/hook/hook-decel-force\">" << std::endl;
-    file << "      <input>systems/hook/hook-decel-multiplier</input>" << std::endl;
+    file << "   <pure_gain name=\"" << _description[_subtype] << " Decel Force\">" << std::endl;
+    file << "     <input>systems/hook/hook-decel-multiplier</input>" << std::endl;
     file << "     <gain>inertia/weight-lbs</gain>" << std::endl;
+    file << "     <output>systems/hook/hook-decel-force</output>" << std::endl;
     file << "   </pure_gain>" << std::endl;
     file << std::endl;
-    file << "   <summer name=\"systems/hook/force\">" << std::endl;
+    file << "   <summer name=\"" << _description[_subtype] << " Force\">" << std::endl;
     file << "     <input>systems/hook/hook-decel-force</input>" << std::endl;
     file << "     <input>forces/fbx-prop-lbs</input>" << std::endl;
+    file << "     <output>systems/hook/force</output>" << std::endl;
     file << "   </summer>" << std::endl;
     file << std::endl;
-    file << "   <fcs_function name=\"systems/hook/animation-norm\">" << std::endl;
+    file << "   <fcs_function name=\"" << _description[_subtype] << " Animation\">" << std::endl;
     file << "     <function>" << std::endl;
     file << "       <product>" << std::endl;
     file << "         <sum>" << std::endl;
     file << "          <property>systems/hook/tailhook-pos-deg</property>" << std::endl;
-    file << "          <value>8</value>" << std::endl;
+    file << "          <value> " << std::setw(4) << min_deg << " </value>" << std::endl;
     file << "         </sum>" << std::endl;
-    file << "         <value>0.02</value>" << std::endl;
+    file << "         <value>  0.02 </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "     </function>" << std::endl;
     file << "     <output>gear/tailhook-pos-norm</output>" << std::endl;
@@ -113,7 +127,7 @@ std::string ArrestorHook::external_force()
     file << "   <location unit=\"FT\">" << std::endl;
     file << "    <x> " << (_aircraft->_length * 0.91f) << " </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;
-    file << "    <z> " << _cg_loc_x << "</z>" << std::endl;
+    file << "    <z> " << -(_aircraft->_length * 0.02) << "</z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <direction>" << std::endl;
     file << "    <x>-0.9995</x>" << std::endl;

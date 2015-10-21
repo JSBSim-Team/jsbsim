@@ -49,6 +49,10 @@ public:
 
     virtual std::string engine() { return ""; }
 
+    virtual std::string get_thruster() {
+        return _thruster->get_name();
+    }
+
 
 public:
     Propulsion *_propulsion;
@@ -83,6 +87,9 @@ public:
     ~TurbopropEngine() {}
 
     std::string engine();
+
+public:
+    float _max_rpm;
 
 private:
     bool _water_injection;

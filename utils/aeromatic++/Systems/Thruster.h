@@ -101,6 +101,20 @@ private:
     static float const _power_t[23][9];
 };
 
+class Nozzle : public Thruster
+{
+public:
+    Nozzle(Engine *p);
+    ~Nozzle() {}
+
+    void set_thruster() {}
+    std::string thruster();
+
+private:
+    float _pe;
+    float _diameter;
+};
+
 } /* namespace Aeromatic */
 
 #endif /* __THRUSTER_H */

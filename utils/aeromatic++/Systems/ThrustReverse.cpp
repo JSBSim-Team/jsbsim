@@ -1,4 +1,4 @@
-// ThrustReverse.cpp -- Implements a Speedbrake system.
+// ThrustReverse.cpp -- Implements a Thrust Reverser system.
 //
 // Based on Aeromatic2 PHP code by David P. Culp
 // Started June 2003
@@ -37,9 +37,10 @@ std::string ThrustReverse::system()
 
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
 
-    file << "    <pure_gain name=\"systems/reverser/reverser-pos-norm\">" << std::endl;
+    file << "    <pure_gain name=\"" << _description[_subtype] << " Position\">" << std::endl;
     file << "      <input>systems/reverser/command</input>" << std::endl;
     file << "      <gain>2.0</gain>" << std::endl;
+    file << "      <output>systems/reverser/reverser-pos-norm</output>" << std::endl;
     file << "    </pure_gain>" << std::endl;
 
     for (unsigned i=0; i<_aircraft->_no_engines; ++i)

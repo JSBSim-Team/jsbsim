@@ -39,6 +39,7 @@
                                 MKSTR(AEROMATIC_MICRO_VERSION)
 
 #define PI			3.1415926535f
+#define DEG_TO_RAD		0.01745329251994329547f
 
 #define FEET_TO_INCH		12.0f
 #define INCH_TO_FEET		0.08333333f
