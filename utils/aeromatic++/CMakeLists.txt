@@ -58,6 +58,7 @@ SET(AEROMATIC_OBJS
      Systems/ArrestorHook.cpp
      Systems/Spoilers.cpp
      Systems/Thruster.cpp
+     Systems/ThrustReverse.cpp
    )
 
 ADD_LIBRARY( ${LIBAEROMATIC3} STATIC ${AEROMATIC_OBJS} )

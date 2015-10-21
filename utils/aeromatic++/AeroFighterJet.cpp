@@ -37,10 +37,10 @@ Fighter::Fighter(Aeromatic *p) : Aircraft(p)
     _systems.push_back(new Propulsion(_aircraft));
     _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
-    _systems.push_back(new ArrestorHook(_aircraft));
-    _systems.push_back(new Speedbrake(_aircraft));
-    _systems.push_back(new DragChute(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
+    _systems.push_back(new Speedbrake(_aircraft));
+    _systems.push_back(new ArrestorHook(_aircraft));
+    _systems.push_back(new DragChute(_aircraft));
 }
 
 void Fighter::set_lift()

@@ -218,6 +218,7 @@ public:
     }
     ~ThrustReverse() {}
 
+    std::string system();
 };
 
 

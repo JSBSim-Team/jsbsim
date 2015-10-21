@@ -43,6 +43,7 @@ Performance::Performance(Aeromatic *p) : Aircraft(p)
     _systems.push_back(new CableControls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
+    _systems.push_back(new Spoilers(_aircraft));
 }
 
 void Performance::set_lift()

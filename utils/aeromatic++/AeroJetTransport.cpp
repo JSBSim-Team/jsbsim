@@ -39,12 +39,12 @@ JetTransport::JetTransport(Aeromatic *p) : Aircraft(p)
     _subclasses.push_back("Transonic Jet Transport");
 
     _systems.push_back(new Propulsion(_aircraft));
-    _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new ThrustReverse(_aircraft));
+    _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
-    _systems.push_back(new Speedbrake(_aircraft));
-    _systems.push_back(new Spoilers(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
+    _systems.push_back(new Spoilers(_aircraft));
+    _systems.push_back(new Speedbrake(_aircraft));
 }
 
 void JetTransport::set_lift()
