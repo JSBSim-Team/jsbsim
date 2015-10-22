@@ -55,7 +55,7 @@ std::string Flaps::system()
     file << "    <output>fcs/flap-pos-deg</output>" << std::endl;
     file << "   </kinematic>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"flap normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Flap Normalization\">" << std::endl;
     file << "    <input>fcs/flap-pos-deg</input>" << std::endl;
     file << "    <domain>" << std::endl;
     file << "      <min>  0 </min>" << std::endl;
@@ -77,7 +77,8 @@ std::string Flaps::lift()
     float dCLflaps = _dCLflaps_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
-    file << std::setprecision(4) << std::fixed << std::showpoint;
+    file.precision(4);
+    file << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_flap\">" << std::endl;
     file << "       <description>Delta Lift due to flaps</description>" << std::endl;
     file << "       <product>" << std::endl;

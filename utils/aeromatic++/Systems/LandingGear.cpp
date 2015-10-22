@@ -38,17 +38,17 @@ LandingGear::LandingGear(Aeromatic *p) : System(p, true),
 {
 
     _description.push_back("Landing Gear");
-    _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+    _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
 
-    _inputs.push_back(new Param("Is landing gear retractable?", _retractable));
+    _inputs.push_back(new Param("Is landing gear retractable?", 0, _retractable));
 
-    Param *steer = new Param("Nose or tail wheel type", _steering);
+    Param *steer = new Param("Nose or tail wheel type", 0,_steering);
     _inputs.push_back(steer);
     steer->add_option("steering");
     steer->add_option("castering");
     steer->add_option("fixed");
 
-    _inputs.push_back(new Param("Is this a taildragger?", _taildragger));
+    _inputs.push_back(new Param("Is this a taildragger?", 0, _taildragger));
 }
 
 void LandingGear::set(const float *cg_loc)

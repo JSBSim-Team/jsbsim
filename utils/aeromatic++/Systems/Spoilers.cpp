@@ -37,7 +37,7 @@ std::string Spoilers::system()
 
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
     file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
-    file << "     <input>fcs/spoilers-cmd-norm</input>" << std::endl;
+    file << "     <input>fcs/spoiler-cmd-norm</input>" << std::endl;
     file << "     <traverse>" << std::endl;
     file << "       <setting>" << std::endl;
     file << "          <position> 0 </position>" << std::endl;
@@ -81,7 +81,7 @@ std::string Spoilers::drag()
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_spoilers\">" << std::endl;
-    file << "       <description>Drag due to spoilerss</description>" << std::endl;
+    file << "       <description>Drag due to spoilers</description>" << std::endl;
     file << "         <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;

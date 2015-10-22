@@ -22,15 +22,11 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#if (win32)
-#else
-# include <sys/stat.h>
-#endif
-#include <math.h>
-
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <math.h>
 
 #include <types.h>
 #include <Aircraft.h>
@@ -43,13 +39,13 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     _layout(FWD_FUSELAGE)
 {
     _description.push_back("Propulsion");
-    _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+    _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
 
     snprintf(_engine_name, PARAM_MAX_STRING, "my_engine");
-    _inputs.push_back(new Param("Engine name", _engine_name));
+    _inputs.push_back(new Param("Engine name", 0, _engine_name));
 
-    _inputs.push_back(new Param("Number of engines", _aircraft->_no_engines));
-    Param *layout = new Param("Engine layout", _layout);
+    _inputs.push_back(new Param("Number of engines", 0, _aircraft->_no_engines));
+    Param *layout = new Param("Engine layout", 0, _layout);
     _inputs.push_back(layout);
     layout->add_option("fwd fuselage");
     layout->add_option("mid fuselage");
@@ -58,7 +54,7 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     layout->add_option("wings and tail");
     layout->add_option("wings and nose");
 
-    Param *type = new Param("Engine type", _ptype);
+    Param *type = new Param("Engine type", 0, _ptype);
     _inputs.push_back(type);
     _propulsion[0] = new PistonEngine(p, this);
     type->add_option(_propulsion[0]->get_description());
@@ -115,49 +111,52 @@ std::string Propulsion::system()
     std::stringstream file;
 
     // Create Engines directory
-    std::string dir = std::string(_aircraft->_path) + "/Engines";
-#if (win32)
-    if (!PathFileExists(dir) {
-        if (CreateDirectory(dir, NULL) == 0) {
-            return file.str();
-        }
+    std::string dir = Aeromatic::create_dir(_aircraft->_dir, "Engines");
+    if (dir.empty()) {
+        return file.str();
     }
-#else
-    struct stat sb;
-    if (stat(dir.c_str(), &sb))
-    {
-        int mode = strtol("0755", 0, 8);
-        if (mkdir(dir.c_str(), mode) == -1) {
-            return file.str();
-        }
-    }
-#endif
 
     // open egnine file
     std::string efname = dir + "/" + get_propulsion() + ".xml";
-    std::ofstream efile;
-
-    efile.open(efname.c_str());
-    if (!efile.fail() && !efile.bad())
+    if (_aircraft->_overwrite || !Aeromatic::overwrite(efname))
     {
-        efile << "<?xml version=\"1.0\"?>" << std::endl;
-        efile << std::endl;
-        efile << propulsion();
+        std::ofstream efile;
+        efile.open(efname.c_str());
+        if (!efile.fail() && !efile.bad())
+        {
+            efile << "<?xml version=\"1.0\"?>" << std::endl;
+            efile << std::endl;
+            efile << propulsion();
+        }
+        else {
+            std::cerr << "Failed to open file: " << efname << std::endl;
+        }
+        efile.close();
     }
-    efile.close();
+    else {
+        std::cout << "File already exsists: " << efname << std::endl;
+    }
 
     // open thruster file
     std::string tfname = dir + "/" + get_thruster() + ".xml";
-    std::ofstream tfile;
-
-    tfile.open(tfname.c_str());
-    if (!tfile.fail() && !tfile.bad())
+    if (_aircraft->_overwrite || !Aeromatic::overwrite(tfname))
     {
-        tfile << "<?xml version=\"1.0\"?>" << std::endl;
-        tfile << std::endl;
-        tfile << thruster();
+        std::ofstream tfile;
+        tfile.open(tfname.c_str());
+        if (!tfile.fail() && !tfile.bad())
+        {
+            tfile << "<?xml version=\"1.0\"?>" << std::endl;
+            tfile << std::endl;
+            tfile << thruster();
+        }
+        else {
+            std::cerr << "Failed to open file: " << efname << std::endl;
+        }
+        tfile.close();
     }
-    tfile.close();
+    else {
+        std::cout << "File already exsists: " << tfname << std::endl;
+    }
 
     return file.str();
 }
@@ -296,7 +295,7 @@ void Propulsion::set(const float* cg_loc)
 std::string Propulsion::mass_balance()
 {
     std::stringstream file;
-
+/*
     file.precision(2);
     file.flags(std::ios::right);
     file << std::fixed << std::showpoint;
@@ -309,7 +308,7 @@ std::string Propulsion::mass_balance()
     file << "     <z> " << std::setw(8) << _tank_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
-
+*/
     return file.str();
 }
 
@@ -374,11 +373,8 @@ std::string Propulsion::fdm()
         file << "    </orient>" << std::endl;
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
-        file << "    <thruster file=\"" << _thruster << "\">" << std::endl;
-
-        // TODO: open a new file for the thruster
-        // file << thruster();
-
+        file << "    <thruster file=\"" << get_thruster() << "\">" << std::endl;
+        file << "     <sense> 1 </sense>" << std::endl;
         file << "     <location unit=\"IN\">" << std::endl;
         file << "       <x> " << std::setw(8) << _thruster_loc[i][X] << " </x>" << std::endl;
         file << "       <y> " << std::setw(8) << _thruster_loc[i][Y] << " </y>" << std::endl;
@@ -418,8 +414,8 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -439,6 +435,18 @@ std::string PistonEngine::engine()
     float n_cylinders = displacement /  (stroke * bore_s);
     n_cylinders = ((n_cylinders < 1) ? 1 : floorf(n_cylinders+0.5f));
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGPiston" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    power:          " << _power << " hp" << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
     file << "<piston_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <minmp unit=\"INHG\">         10.0 </minmp>" << std::endl;
     file << "  <maxmp unit=\"INHG\">         28.5 </maxmp>" << std::endl;
@@ -470,7 +478,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
     _thruster = new Direct(this);
 }
 
@@ -483,6 +491,20 @@ std::string TurbineEngine::engine()
         max_thrust *= 1.5f;
     }
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurbine" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "    augmented?      " << (_augmented ? "yes" : "no") << std::endl;
+    file << "    injected?       " << (_injected ? "yes" : "no") << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <milthrust> " << _power << " </milthrust>" << std::endl;
     if (_augmented) {
@@ -590,11 +612,13 @@ std::string TurbineEngine::engine()
 }
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _max_rpm(2700.0f),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _thruster = new Direct(this);
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _thruster = new Propeller(this);
 }
 
 std::string TurbopropEngine::engine()
@@ -606,7 +630,19 @@ std::string TurbopropEngine::engine()
     // fact = 550 * 0.85 / 195 = 2.24;
     float thrust = _power * 2.24f;
 
-    file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurboprop" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    name:           " << _propulsion->_engine_name << std::endl;
+    file << "    type:           " << _description[0] <<  std::endl;
+    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "-->" << std::endl;
+    file <<std::endl;
+file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <milthrust> " << thrust << " </milthrust>" << std::endl;
     file << "  <bypassratio>     0.0  </bypassratio>" << std::endl;
     file << "  <tsfc>            0.55 </tsfc>" << std::endl;
@@ -658,21 +694,34 @@ std::string TurbopropEngine::engine()
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
-    _thruster = new Direct(this);
+    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
+    _thruster = new Nozzle(this);
 }
 
 std::string RocketEngine::engine()
 {
     std::stringstream file;
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGRocket" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    thrust:           " << _power << " lb" << std::endl;
+    file << std::endl;
+    file << "  Outputs:" << std::endl;
+    file << "    ISP (sea level)     400.0" << std::endl;
+    file << "    Fuel Flow Rate (SL)  91.5" << std::endl;
+    file << "    Ox. Flow Rate (SL)  105.2" << std::endl;
+    file << "-->" << std::endl;
+    file << std::endl;
+
     file << "<rocket_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <shr>              1.23 </shr>" << std::endl;
-    file << "  <max_pc>       86556.00 </max_pc>" << std::endl;
-    file << "  <variance>         0.10 </variance>" << std::endl;
-    file << "  <prop_eff>         0.67 </prop_eff>" << std::endl;
-    file << "  <maxthrottle>      1.00 </maxthrottle>" << std::endl;
-    file << "  <minthrottle>      0.40 </minthrottle>" << std::endl;
+    file << "  <isp>            400.00 </isp>" << std::endl;
+    file << "  <minthrottle>      0.40  </minthrottle>" << std::endl;
+    file << "  <maxthrottle>      1.00  </maxthrottle>" << std::endl;
     file << "  <slfuelflowmax>   91.50 </slfuelflowmax>" << std::endl;
     file << "  <sloxiflowmax>   105.20 </sloxiflowmax>" << std::endl;
     file << "</rocket_engine>" << std::endl;
@@ -684,8 +733,8 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -693,6 +742,16 @@ std::string ElectricEngine::engine()
 {
     std::stringstream file;
 
+    file << "<!--" << std::endl;
+    file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
+    file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
+    file << std::endl;
+    file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGElectric" << std::endl;
+    file << std::endl;
+    file << "  Inputs:" << std::endl;
+    file << "    power:          " << _power << " hp" << std::endl;
+    file << "-->" << std::endl;
+    file << std::endl;
     file << "<electric_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << " <power unit=\"WATTS\">  " << (_power*HP_TO_KW*1000.0f) << " </power>" << std::endl;
     file << "</electric_engine>" << std::endl;

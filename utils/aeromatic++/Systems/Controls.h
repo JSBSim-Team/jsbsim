@@ -41,10 +41,6 @@ public:
     }
     ~CableControls() {}
 
-    void set(const float* cg_loc) {}
-    std::string comment() {return ""; }
-    std::string fdm() { return ""; }
-    std::string mass_balance() { return ""; }
     std::string system();
 
     std::string lift();
@@ -67,10 +63,6 @@ public:
         delete _control;
     }
 
-    void set(const float* cg_loc) {}
-    std::string comment() { return ""; }
-    std::string fdm() { return ""; }
-    std::string mass_balance() { return ""; }
     std::string system();
 
     std::string lift() {
@@ -88,7 +80,9 @@ public:
     std::string pitch() {
         return _control->pitch();
     }
-    std::string yaw();
+    std::string yaw() {
+        return _control->yaw();
+    }
 
 private:
     System *_control;
@@ -105,10 +99,6 @@ public:
         delete _control;
     }
 
-    void set(const float* cg_loc) {}
-    std::string comment() { return ""; }
-    std::string fdm() { return ""; }
-    std::string mass_balance() { return ""; }
     std::string system();
 
     std::string lift() {

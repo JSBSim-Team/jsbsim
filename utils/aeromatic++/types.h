@@ -39,6 +39,7 @@
                                 MKSTR(AEROMATIC_MICRO_VERSION)
 
 #define PI			3.1415926535f
+#define DEG_TO_RAD		0.01745329251994329547f
 
 #define FEET_TO_INCH		12.0f
 #define INCH_TO_FEET		0.08333333f
@@ -160,20 +161,21 @@ class Param
 {
 public:
     template <typename T>
-    Param (const char* n, T& v, const bool& c = _false, unsigned t = 0);
+    Param (const char* n, const char *h, T& v, const bool& c = _false, unsigned t = 0);
 
     template <typename T>
-    Param (const char* n, T* v, const bool& c = _false, unsigned t = 0);
+    Param (const char* n, const char *h, T* v, const bool& c = _false, unsigned t = 0);
 
     ~Param() {}
 
     std::string& name() { return _name; }
+    std::string& help() { return _help; }
 
     void set(std::string& s);
     std::string get();
 
     const char* get_units() {
-        return _convert ? _cvt_t[_utype].name[_convert] : "";
+        return _cvt_t[_utype].name[_convert];
     }
 
     // options add a 'one of n' selection type
@@ -184,6 +186,7 @@ public:
 
 private:
     std::string _name;
+    std::string _help;
     std::vector<std::string> _options;
     unsigned _ptype;
     const bool& _convert;
@@ -202,6 +205,7 @@ private:
     };
 
     static __cvt const _cvt_t[MAX_UNITS];
+    static std::string const _unspecified;
     static bool const _false;
 };
 

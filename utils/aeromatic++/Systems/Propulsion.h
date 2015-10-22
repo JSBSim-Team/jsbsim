@@ -47,25 +47,12 @@ public:
         delete _thruster;
     }
 
-    void set(const float* cg_loc) {}
-    virtual std::string comment() { return ""; }
-    virtual std::string fdm() { return ""; }
-    virtual std::string mass_balance() { return ""; }
-    virtual std::string system() { return ""; }
     virtual std::string engine() { return ""; }
 
-    virtual std::string lift() { return ""; }
-    virtual std::string drag() { return ""; }
-    virtual std::string side() { return ""; }
-    virtual std::string roll() { return ""; }
-    virtual std::string pitch() { return ""; }
-    virtual std::string yaw() { return ""; }
+    virtual std::string get_thruster() {
+        return _thruster->get_name();
+    }
 
-    virtual std::string get_propulsion() { return ""; }
-    virtual std::string propulsion() { return ""; }
-
-    virtual std::string get_thruster() { return ""; }
-    virtual std::string thruster() { return ""; }
 
 public:
     Propulsion *_propulsion;
@@ -80,18 +67,6 @@ public:
     ~PistonEngine() {}
 
     std::string engine();
-
-    std::string lift() { return ""; }
-    std::string drag() { return ""; }
-    std::string side() { return ""; }
-    std::string roll() { return ""; }
-    std::string pitch() { return ""; }
-    std::string yaw() { return ""; }
-
-    virtual std::string add_propulsion() { return ""; }
-
-    void set_augmentation(bool v) {}
-    void set_water_injection(bool v) {}
 
 public:
     float _max_rpm;
@@ -113,20 +88,8 @@ public:
 
     std::string engine();
 
-    std::string lift() { return ""; }
-    std::string drag() { return ""; }
-    std::string side() { return ""; }
-    std::string roll() { return ""; }
-    std::string pitch() { return ""; }
-    std::string yaw() { return ""; }
-
-    std::string add_propulsion() { return ""; }
-
-    void set_augmentation(bool v) {}
-
-    void set_water_injection(bool v) {
-        _water_injection = v;
-    }
+public:
+    float _max_rpm;
 
 private:
     bool _water_injection;
@@ -141,15 +104,6 @@ public:
 
     std::string engine();
 
-    std::string lift() { return ""; }
-    std::string drag() { return ""; }
-    std::string side() { return ""; }
-    std::string roll() { return ""; }
-    std::string pitch() { return ""; }
-    std::string yaw() { return ""; }
-
-    std::string add_propulsion() { return ""; }
-
 private:
     bool _injected;
     bool _augmented;
@@ -162,18 +116,6 @@ public:
     ~RocketEngine() {}
 
     std::string engine();
-
-    std::string lift() { return ""; }
-    std::string drag() { return ""; }
-    std::string side() { return ""; }
-    std::string roll() { return ""; }
-    std::string pitch() { return ""; }
-    std::string yaw() { return ""; }
-
-    std::string add_propulsion() { return ""; }
-
-    void set_augmentation(bool v) {}
-    void set_water_injection(bool v) {}
 };
 
 class ElectricEngine : public Engine
@@ -183,18 +125,6 @@ public:
     ~ElectricEngine() {}
 
     std::string engine();
-
-    std::string lift() { return ""; }
-    std::string drag() { return ""; }
-    std::string side() { return ""; }
-    std::string roll() { return ""; }
-    std::string pitch() { return ""; }
-    std::string yaw() { return ""; }
-
-    std::string add_propulsion() { return ""; }
-
-    void set_augmentation(bool v) {}
-    void set_water_injection(bool v) {}
 
 public:
     float _max_rpm;

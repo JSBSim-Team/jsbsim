@@ -33,8 +33,9 @@ namespace Aeromatic
 {
 
 template <>
-Param::Param<bool>(const char* n, bool& v, const bool& c, unsigned t) :
+Param::Param<bool>(const char* n, const char *h,  bool& v, const bool& c, unsigned t) :
     _name(n),
+    _help(h ? h : _unspecified),
     _ptype(PARAM_BOOL),
     _convert(c),
     _utype(t)
@@ -43,8 +44,9 @@ Param::Param<bool>(const char* n, bool& v, const bool& c, unsigned t) :
 }
 
 template <>
-Param::Param<unsigned>(const char* n, unsigned& v, const bool& c, unsigned t) :
+Param::Param<unsigned>(const char* n, const char *h, unsigned& v, const bool& c, unsigned t) :
     _name(n),
+    _help(h ? h : _unspecified),
     _ptype(PARAM_INT),
     _convert(c),
     _utype(t)
@@ -53,8 +55,9 @@ Param::Param<unsigned>(const char* n, unsigned& v, const bool& c, unsigned t) :
 }
 
 template <>
-Param::Param<float>(const char* n, float& v, const bool& c, unsigned t) :
+Param::Param<float>(const char* n, const char *h, float& v, const bool& c, unsigned t) :
     _name(n),
+    _help(h ? h : _unspecified),
     _ptype(PARAM_FLOAT),
     _convert(c),
     _utype(t)
@@ -63,8 +66,9 @@ Param::Param<float>(const char* n, float& v, const bool& c, unsigned t) :
 }
 
 template <>
-Param::Param<char>(const char* n, char* v, const bool& c, unsigned t) :
+Param::Param<char>(const char* n, const char *h, char* v, const bool& c, unsigned t) :
     _name(n),
+    _help(h ? h : _unspecified),
     _ptype(PARAM_STRING),
     _convert(c),
     _utype(t)
@@ -130,6 +134,7 @@ std::string Param::get()
 // ---------------------------------------------------------------------------
 
 bool const Param::_false = false;
+std::string const Param::_unspecified = "not available";
 
 Param::__cvt const Param::_cvt_t[MAX_UNITS] =
 {

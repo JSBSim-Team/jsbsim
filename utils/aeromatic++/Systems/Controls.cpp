@@ -38,7 +38,7 @@ Controls::Controls(Aeromatic *p) :
 {
     _description.push_back("Aircraft control");
 
-    Param *controls = new Param("Control system", _ctype);
+    Param *controls = new Param("Control system", 0, _ctype);
     _inputs.push_back(controls);
 
     _control[0] = new CableControls(p);
@@ -89,10 +89,10 @@ std::string CableControls::lift()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "              -0.20  " << (-0.2*CLalpha + CL0) << std::endl;
-    file << "               0.00  " << CL0 << std::endl;
+    file << "              -0.20 " << std::setw(5) << (-0.2*CLalpha + CL0) << std::endl;
+    file << "               0.00 " << std::setw(5) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
-    file << "               0.60  " << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+    file << "               0.60 " << std::setw(5) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
@@ -379,6 +379,17 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
+    file << "    <function name=\"aero/moment/Yaw_damp\">" << std::endl;
+    file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>metrics/bw-ft</property>" << std::endl;
+    file << "           <property>aero/bi2vel</property>" << std::endl;
+    file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
+    file << "           <value> " << (_aircraft->_Cnr) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
     file << "    <function name=\"aero/moment/Yaw_rudder\">" << std::endl;
     file << "       <description>Yaw moment due to rudder</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -398,31 +409,6 @@ std::string CableControls::yaw()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>fcs/left-aileron-pos-rad</property>" << std::endl;
     file << "           <value> " << (Cnda) << " </value>" << std::endl;
-    file << "       </product>" << std::endl;
-    file << "    </function>" << std::endl;
-
-    return file.str();
-}
-
-std::string YawDamper::yaw()
-{
-    std::stringstream file;
-    float Cnr;
-
-    Cnr = _aircraft->_Cnr;
-
-    file << _control->yaw();
-
-    file << std::endl;
-    file << "    <function name=\"aero/moment/Yaw_damp\">" << std::endl;
-    file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
-    file << "       <product>" << std::endl;
-    file << "           <property>aero/qbar-psf</property>" << std::endl;
-    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
-    file << "           <property>metrics/bw-ft</property>" << std::endl;
-    file << "           <property>aero/bi2vel</property>" << std::endl;
-    file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
-    file << "           <value> " << (Cnr) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
 
@@ -454,7 +440,7 @@ std::string CableControls::system()
     file << "      <output>fcs/elevator-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"elevator normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Elevator Normalization\">" << std::endl;
     file << "      <input>fcs/elevator-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -488,7 +474,7 @@ std::string CableControls::system()
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
     file << "   <aerosurface_scale name=\"Right Aileron Control\">" << std::endl;
-    file << "      <input>fcs/roll-trim-sum</input>" << std::endl;
+    file << "      <input>-fcs/roll-trim-sum</input>" << std::endl;
     file << "      <range>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
     file << "        <max>  0.35 </max>" << std::endl;
@@ -496,7 +482,7 @@ std::string CableControls::system()
     file << "      <output>fcs/right-aileron-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"left aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Left Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/left-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -509,7 +495,7 @@ std::string CableControls::system()
     file << "      <output>fcs/left-aileron-pos-norm</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"right aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Right Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/right-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -542,7 +528,7 @@ std::string CableControls::system()
     file << "      <output>fcs/rudder-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"rudder normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Rudder Normalization\">" << std::endl;
     file << "      <input>fcs/rudder-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -584,7 +570,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/elevator-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"elevator normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Elevator Normalization\">" << std::endl;
     file << "      <input>fcs/elevator-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -626,7 +612,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/right-aileron-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"left aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Left Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/left-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -639,7 +625,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/left-aileron-pos-norm</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"right aileron normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Right Aileron Normalization\">" << std::endl;
     file << "      <input>fcs/right-aileron-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -697,7 +683,7 @@ std::string YawDamper::system()
     file << "      <output>fcs/rudder-pos-rad</output>" << std::endl;
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
-    file << "   <aerosurface_scale name=\"rudder normalization\">" << std::endl;
+    file << "   <aerosurface_scale name=\"Rudder Normalization\">" << std::endl;
     file << "      <input>fcs/rudder-pos-rad</input>" << std::endl;
     file << "      <domain>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
@@ -720,6 +706,10 @@ std::string FlyByWire::system()
     std::stringstream file;
     return file.str();
 }
+
+// ---------------------------------------------------------------------------
+
+char const* System::_supported = "Does the aircraft include this system?";
 
 } /* namespace Aeromatic */
 
