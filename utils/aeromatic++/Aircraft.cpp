@@ -112,6 +112,7 @@ Aeromatic::Aeromatic() : Aircraft(this),
 
     Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype);
     _general.push_back(param);
+
     _aircraft[0] = new Light(this);
     param->add_option(_aircraft[0]->get_description());
     _aircraft[1] = new Performance(this);
@@ -147,7 +148,9 @@ bool Aeromatic::fdm()
     Aircraft *aircraft = _aircraft[_atype];
     std::vector<System*> systems = _aircraft[_atype]->get_systems();
 
-    aircraft->_engines = _MIN(_no_engines, 4);
+    _engines = _MIN(_no_engines, 4);
+    aircraft->_engines = _engines;
+
 
 //***** METRICS ***************************************
     _payload = _max_weight;
@@ -303,7 +306,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.13 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.14 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

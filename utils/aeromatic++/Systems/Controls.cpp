@@ -89,10 +89,10 @@ std::string CableControls::lift()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "              -0.20  " << (-0.2*CLalpha + CL0) << std::endl;
-    file << "               0.00  " << CL0 << std::endl;
+    file << "              -0.20 " << std::setw(5) << (-0.2*CLalpha + CL0) << std::endl;
+    file << "               0.00 " << std::setw(5) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
-    file << "               0.60  " << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+    file << "               0.60 " << std::setw(5) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
@@ -379,7 +379,7 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
-    file << "<function name=\"aero/moment/Yaw_damp\">" << std::endl;
+    file << "    <function name=\"aero/moment/Yaw_damp\">" << std::endl;
     file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
     file << "       <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
@@ -474,7 +474,7 @@ std::string CableControls::system()
     file << "   </aerosurface_scale>" << std::endl;
     file << std::endl;
     file << "   <aerosurface_scale name=\"Right Aileron Control\">" << std::endl;
-    file << "      <input>fcs/roll-trim-sum</input>" << std::endl;
+    file << "      <input>-fcs/roll-trim-sum</input>" << std::endl;
     file << "      <range>" << std::endl;
     file << "        <min> -0.35 </min>" << std::endl;
     file << "        <max>  0.35 </max>" << std::endl;

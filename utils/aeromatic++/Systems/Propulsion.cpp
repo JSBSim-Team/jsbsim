@@ -374,10 +374,7 @@ std::string Propulsion::fdm()
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
         file << "    <thruster file=\"" << get_thruster() << "\">" << std::endl;
-
-        // TODO: open a new file for the thruster
-        // file << thruster();
-
+        file << "     <sense> 1 </sense>" << std::endl;
         file << "     <location unit=\"IN\">" << std::endl;
         file << "       <x> " << std::setw(8) << _thruster_loc[i][X] << " </x>" << std::endl;
         file << "       <y> " << std::setw(8) << _thruster_loc[i][Y] << " </y>" << std::endl;

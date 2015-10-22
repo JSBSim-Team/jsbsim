@@ -59,7 +59,7 @@ void LandingGear::set(const float *cg_loc)
 
     // set main gear longitudinal location relative to CG
     // set main gear length (from aircraft centerline, extended)0
-    bool glider = (_aircraft->_atype == LIGHT && _aircraft->_no_engines == 0) ? true : false;
+    bool glider = (_aircraft->_atype == LIGHT && _aircraft->_engines == 0) ? true : false;
     if (_taildragger)
     {
         _gear_loc[MAIN][X] = cg_loc[X] * 0.91;
