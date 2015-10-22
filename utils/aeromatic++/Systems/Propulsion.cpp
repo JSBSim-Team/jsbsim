@@ -22,6 +22,7 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -117,29 +118,45 @@ std::string Propulsion::system()
 
     // open egnine file
     std::string efname = dir + "/" + get_propulsion() + ".xml";
-    std::ofstream efile;
-
-    efile.open(efname.c_str());
-    if (!efile.fail() && !efile.bad())
+    if (_aircraft->_overwrite || !Aeromatic::overwrite(efname))
     {
-        efile << "<?xml version=\"1.0\"?>" << std::endl;
-        efile << std::endl;
-        efile << propulsion();
+        std::ofstream efile;
+        efile.open(efname.c_str());
+        if (!efile.fail() && !efile.bad())
+        {
+            efile << "<?xml version=\"1.0\"?>" << std::endl;
+            efile << std::endl;
+            efile << propulsion();
+        }
+        else {
+            std::cerr << "Failed to open file: " << efname << std::endl;
+        }
+        efile.close();
     }
-    efile.close();
+    else {
+        std::cout << "File already exsists: " << efname << std::endl;
+    }
 
     // open thruster file
     std::string tfname = dir + "/" + get_thruster() + ".xml";
-    std::ofstream tfile;
-
-    tfile.open(tfname.c_str());
-    if (!tfile.fail() && !tfile.bad())
+    if (_aircraft->_overwrite || !Aeromatic::overwrite(tfname))
     {
-        tfile << "<?xml version=\"1.0\"?>" << std::endl;
-        tfile << std::endl;
-        tfile << thruster();
+        std::ofstream tfile;
+        tfile.open(tfname.c_str());
+        if (!tfile.fail() && !tfile.bad())
+        {
+            tfile << "<?xml version=\"1.0\"?>" << std::endl;
+            tfile << std::endl;
+            tfile << thruster();
+        }
+        else {
+            std::cerr << "Failed to open file: " << efname << std::endl;
+        }
+        tfile.close();
     }
-    tfile.close();
+    else {
+        std::cout << "File already exsists: " << tfname << std::endl;
+    }
 
     return file.str();
 }

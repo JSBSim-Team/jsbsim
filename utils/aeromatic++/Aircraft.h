@@ -478,6 +478,7 @@ public:
     ~Aeromatic();
 
     static std::string create_dir(std::string path, std::string subdir);
+    static bool overwrite(std::string path);
 
     const std::vector<System*> get_systems() {
         return _aircraft[_atype]->get_systems();

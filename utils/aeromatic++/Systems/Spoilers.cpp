@@ -83,7 +83,7 @@ std::string Spoilers::drag()
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_spoilers\">" << std::endl;
-    file << "       <description>Drag due to spoilerss</description>" << std::endl;
+    file << "       <description>Drag due to spoilers</description>" << std::endl;
     file << "         <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;

@@ -56,7 +56,7 @@ Aircraft::Aircraft(Aeromatic *p) :
 
     _general.push_back(new Param("Create a subdirectory?", "Set to yes to create a new subdirectory with the same name as the aircraft", _subdir));
 
-    _general.push_back(new Param("Overwrite?", "Overwrite file that are already present?", _overwrite));
+    _general.push_back(new Param("Overwrite?", "Overwrite files that are already present?", _overwrite));
 
     snprintf(_name, PARAM_MAX_STRING, "my_aircraft");
     _general.push_back(new Param("Aircraft name", "This defines the name and filename of the aircraft", _name));
@@ -276,7 +276,11 @@ bool Aeromatic::fdm()
 
     std::string version = AEROMATIC_VERSION_STR;
 
-printf("fname: '%s\n", fname.c_str());
+    if (!_overwrite && overwrite(fname)) {
+        std::cout << "File already exists: " << fname << std::endl;
+        return false;
+    }
+
     std::ofstream file;
     file.open(fname.c_str());
     if (file.fail() || file.bad())
@@ -299,7 +303,7 @@ printf("fname: '%s\n", fname.c_str());
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.12 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.13 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -629,6 +633,24 @@ std::string Aeromatic::create_dir(std::string path, std::string subdir)
 #endif
 
     return dir;
+}
+
+bool Aeromatic::overwrite(std::string path)
+{
+    bool rv = true;
+
+#if (win32)
+    if (!PathFileExists(path)) {
+        rv = false;
+    }
+#else
+    struct stat sb;
+    if (stat(path.c_str(), &sb) != 0) {
+        rv = false;
+    }
+#endif
+
+    return rv;
 }
 
 } /* namespace Aeromatic */

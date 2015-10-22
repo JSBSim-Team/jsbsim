@@ -112,5 +112,14 @@ int main(int argc, char *argv[])
         cout << endl;
     }
 
-    aeromatic.fdm();
+    if (aeromatic.fdm())
+    {
+        cout << "We're finished, the files have been written to: " << endl;
+        cout << aeromatic._dir;
+    }
+    else {
+        cout << "Error: Unable to write files to: " << endl;
+        cout << aeromatic._dir;
+    }
+    cout << endl << endl;
 }
