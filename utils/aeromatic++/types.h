@@ -161,14 +161,15 @@ class Param
 {
 public:
     template <typename T>
-    Param (const char* n, T& v, const bool& c = _false, unsigned t = 0);
+    Param (const char* n, const char *h, T& v, const bool& c = _false, unsigned t = 0);
 
     template <typename T>
-    Param (const char* n, T* v, const bool& c = _false, unsigned t = 0);
+    Param (const char* n, const char *h, T* v, const bool& c = _false, unsigned t = 0);
 
     ~Param() {}
 
     std::string& name() { return _name; }
+    std::string& help() { return _help; }
 
     void set(std::string& s);
     std::string get();
@@ -185,6 +186,7 @@ public:
 
 private:
     std::string _name;
+    std::string _help;
     std::vector<std::string> _options;
     unsigned _ptype;
     const bool& _convert;
@@ -203,6 +205,7 @@ private:
     };
 
     static __cvt const _cvt_t[MAX_UNITS];
+    static std::string const _unspecified;
     static bool const _false;
 };
 

@@ -78,8 +78,12 @@ public:
 //***** USER INPUTS ************************************
 
     /* general information */
+    std::string _dir;
+    char _path[PARAM_MAX_STRING+1];
     char _name[PARAM_MAX_STRING+1];
     unsigned _subtype;
+    bool _overwrite;
+    bool _subdir;
 
 //***** USER INPUTS ************************************
 
@@ -473,6 +477,8 @@ public:
     Aeromatic();
     ~Aeromatic();
 
+    static std::string create_dir(std::string path, std::string subdir);
+
     const std::vector<System*> get_systems() {
         return _aircraft[_atype]->get_systems();
     }
@@ -537,7 +543,6 @@ public:
     Aircraft *_aircraft[MAX_AIRCRAFT];
     unsigned _atype;
 
-    char _path[PARAM_MAX_STRING+1];
     bool _metric;
 
     /* weight and balance */

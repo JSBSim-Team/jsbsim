@@ -22,15 +22,10 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#if (win32)
-#else
-# include <sys/stat.h>
-#endif
-#include <math.h>
-
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <math.h>
 
 #include <types.h>
 #include <Aircraft.h>
@@ -43,13 +38,13 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     _layout(FWD_FUSELAGE)
 {
     _description.push_back("Propulsion");
-    _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+    _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
 
     snprintf(_engine_name, PARAM_MAX_STRING, "my_engine");
-    _inputs.push_back(new Param("Engine name", _engine_name));
+    _inputs.push_back(new Param("Engine name", 0, _engine_name));
 
-    _inputs.push_back(new Param("Number of engines", _aircraft->_no_engines));
-    Param *layout = new Param("Engine layout", _layout);
+    _inputs.push_back(new Param("Number of engines", 0, _aircraft->_no_engines));
+    Param *layout = new Param("Engine layout", 0, _layout);
     _inputs.push_back(layout);
     layout->add_option("fwd fuselage");
     layout->add_option("mid fuselage");
@@ -58,7 +53,7 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     layout->add_option("wings and tail");
     layout->add_option("wings and nose");
 
-    Param *type = new Param("Engine type", _ptype);
+    Param *type = new Param("Engine type", 0, _ptype);
     _inputs.push_back(type);
     _propulsion[0] = new PistonEngine(p, this);
     type->add_option(_propulsion[0]->get_description());
@@ -115,23 +110,10 @@ std::string Propulsion::system()
     std::stringstream file;
 
     // Create Engines directory
-    std::string dir = std::string(_aircraft->_path) + "/Engines";
-#if (win32)
-    if (!PathFileExists(dir) {
-        if (CreateDirectory(dir, NULL) == 0) {
-            return file.str();
-        }
+    std::string dir = Aeromatic::create_dir(_aircraft->_dir, "Engines");
+    if (dir.empty()) {
+        return file.str();
     }
-#else
-    struct stat sb;
-    if (stat(dir.c_str(), &sb))
-    {
-        int mode = strtol("0755", 0, 8);
-        if (mkdir(dir.c_str(), mode) == -1) {
-            return file.str();
-        }
-    }
-#endif
 
     // open egnine file
     std::string efname = dir + "/" + get_propulsion() + ".xml";
@@ -418,8 +400,8 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -482,7 +464,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
     _thruster = new Direct(this);
 }
 
@@ -620,8 +602,8 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -698,7 +680,7 @@ file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine Thrust", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
     _thruster = new Nozzle(this);
 }
 
@@ -737,8 +719,8 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine Power", _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", _max_rpm));
+    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 

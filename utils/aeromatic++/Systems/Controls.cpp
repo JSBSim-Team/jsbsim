@@ -38,7 +38,7 @@ Controls::Controls(Aeromatic *p) :
 {
     _description.push_back("Aircraft control");
 
-    Param *controls = new Param("Control system", _ctype);
+    Param *controls = new Param("Control system", 0, _ctype);
     _inputs.push_back(controls);
 
     _control[0] = new CableControls(p);
@@ -706,6 +706,10 @@ std::string FlyByWire::system()
     std::stringstream file;
     return file.str();
 }
+
+// ---------------------------------------------------------------------------
+
+char const* System::_supported = "Does the aircraft include this system?";
 
 } /* namespace Aeromatic */
 

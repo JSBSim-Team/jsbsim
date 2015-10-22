@@ -40,12 +40,26 @@ namespace Aeromatic
 
 Aircraft::Aircraft(Aeromatic *p) :
     _subtype(0),
+    _overwrite(true),
+    _subdir(false),
     _engines(0),
     _aircraft(p)
 {
                     /* general information */
+#if defined(WIN32)
+    std::string dir(getenv("HOMEPATH"));
+#else
+    std::string dir(getenv("HOME"));
+#endif
+    snprintf(_path, PARAM_MAX_STRING, "%s", dir.c_str());
+    _general.push_back(new Param("Output directory", "Specify the output directory for the configuration files", _path));
+
+    _general.push_back(new Param("Create a subdirectory?", "Set to yes to create a new subdirectory with the same name as the aircraft", _subdir));
+
+    _general.push_back(new Param("Overwrite?", "Overwrite file that are already present?", _overwrite));
+
     snprintf(_name, PARAM_MAX_STRING, "my_aircraft");
-    _general.push_back(new Param("Aircraft name", _name));
+    _general.push_back(new Param("Aircraft name", "This defines the name and filename of the aircraft", _name));
 }
 
 Aircraft::~Aircraft()
@@ -72,47 +86,31 @@ Aeromatic::Aeromatic() : Aircraft(this),
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;
 
-                        /* general information */
-#if defined(WIN32)
-    std::string dir(getenv("HOMEPATH"));
-#else
-    std::string dir(getenv("HOME"));
-#endif
-    snprintf(_path, PARAM_MAX_STRING, "%s", dir.c_str());
-    _general.push_back(new Param("Output directory", _path));
-
-                /* general information */
-    Param* units = new Param("Chose a system of measurement", _metric);
+    /* general information */
+    Param* units = new Param("Chose a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
 
     /* weight and balance */
-    _weight_balance.push_back(new Param("Maximum takeoff weight", _max_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Empty weight (enter 0 to use estimated value)", _empty_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Inertia Ixx (enter 0 to use estimated value)", _inertia[X], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Iyy (enter 0 to use estimated value)", _inertia[Y], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Izz (enter 0 to use estimated value)", _inertia[Z], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Empty weight", "enter 0 to use estimated value", _empty_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Inertia Ixx", "enter 0 to use estimated value", _inertia[X], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Iyy", "enter 0 to use estimated value", _inertia[Y], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Izz", "enter 0 to use estimated value", _inertia[Z], _metric, INERTIA));
 
     /* geometry */
-    _geometry.push_back(new Param("Length", _length, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing span", _wing_span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area (enter 0 to use estimated value)",
-                            _wing_area, _metric, AREA));
-    _geometry.push_back(new Param("Wing chord (enter 0 to use estimated value)",
-                            _wing_chord, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing incidence (enter 0 to use estimated value)",
-                            _wing_incidence));
-    _geometry.push_back(new Param("Htail area (enter 0 to use estimated value)",
-                            _htail_area, _metric, AREA));
-    _geometry.push_back(new Param("Htail arm (enter 0 to use estimated value)",
-                            _htail_arm, _metric, LENGTH));
-    _geometry.push_back(new Param("Vtail area (enter 0 to use estimated value)",
-                            _vtail_area, _metric, AREA));
-    _geometry.push_back(new Param("Vtail arm (enter 0 to use estimated value)",
-                            _vtail_arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing span", 0, _wing_span, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing area", "enter 0 to use estimated value", _wing_area,_metric, AREA));
+    _geometry.push_back(new Param("Wing chord", "enter 0 to use estimated value", _wing_chord, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing incidence", "enter 0 to use estimated value", _wing_incidence));
+    _geometry.push_back(new Param("Htail area", "enter 0 to use estimated value", _htail_area, _metric, AREA));
+    _geometry.push_back(new Param("Htail arm", "enter 0 to use estimated value", _htail_arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Vtail area", "enter 0 to use estimated value", _vtail_area, _metric, AREA));
+    _geometry.push_back(new Param("Vtail arm", "enter 0 to use estimated value", _vtail_arm, _metric, LENGTH));
 
-    Param *param = new Param("Type of aircraft (Select closest aerodynamic type)", _atype);
+    Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype);
     _general.push_back(param);
     _aircraft[0] = new Light(this);
     param->add_option(_aircraft[0]->get_description());
@@ -273,11 +271,13 @@ bool Aeromatic::fdm()
 //  std::strftime(str, sizeof(str), "%Y-%m-%d", std::localtime(&t));
     std::strftime(str, sizeof(str), "%d %b %Y", std::localtime(&t));
 
-    std::ofstream file;
-    std::string fname = std::string(_path) + "/" + std::string(_name) + ".xml";
+    _dir = _subdir ? create_dir(_path, _name) : _path;
+    std::string fname = _dir + "/" + std::string(_name) + ".xml";
 
     std::string version = AEROMATIC_VERSION_STR;
 
+printf("fname: '%s\n", fname.c_str());
+    std::ofstream file;
     file.open(fname.c_str());
     if (file.fail() || file.bad())
     {
@@ -299,7 +299,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.11 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.12 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -598,6 +598,37 @@ bool Aeromatic::fdm()
     file.close();
 
     return true;
+}
+
+// ----------------------------------------------------------------------------
+
+#if (win32)
+#else
+# include <sys/stat.h>
+#endif
+
+std::string Aeromatic::create_dir(std::string path, std::string subdir)
+{
+    // Create Engines directory
+    std::string dir = path + "/" + subdir;
+#if (win32)
+    if (!PathFileExists(dir) {
+        if (CreateDirectory(dir, NULL) == 0) {
+            dir.clear();
+        }
+    }
+#else
+    struct stat sb;
+    if (stat(dir.c_str(), &sb))
+    {
+        int mode = strtol("0755", 0, 8);
+        if (mkdir(dir.c_str(), mode) == -1) {
+            dir.clear();
+        }
+    }
+#endif
+
+    return dir;
 }
 
 } /* namespace Aeromatic */

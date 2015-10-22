@@ -98,6 +98,8 @@ protected:
     std::vector<Param*> _inputs;
     unsigned _param;
     int _subtype;
+
+    static char const* _supported;
 };
 
 
@@ -106,7 +108,7 @@ class Flaps : public System
 public:
     Flaps(Aeromatic *p) : System(p, true) {
         _description.push_back("Flaps");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Flaps() {}
 
@@ -158,7 +160,7 @@ class ArrestorHook : public System
 public:
     ArrestorHook(Aeromatic *p) : System(p) {
         _description.push_back("Arrestor Hook");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~ArrestorHook() {}
 
@@ -173,7 +175,7 @@ class Spoilers : public System
 public:
     Spoilers(Aeromatic *p) : System(p) {
         _description.push_back("Spoilers");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Spoilers() {}
 
@@ -192,7 +194,7 @@ class Speedbrake : public System
 public:
     Speedbrake(Aeromatic *p) : System(p) {
         _description.push_back("Speedbrake");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Speedbrake() {}
 
@@ -210,7 +212,7 @@ class ThrustReverse : public System
 public:
     ThrustReverse(Aeromatic *p) : System(p) {
         _description.push_back("Thrust Reverse");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~ThrustReverse() {}
 
@@ -223,7 +225,7 @@ class Chute : public System
 public:
     Chute(Aeromatic *p) : System(p) {
         _description.push_back("Chute");
-        _inputs.push_back(new Param(_description[0].c_str(), _enabled));
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Chute() {}
 

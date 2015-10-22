@@ -74,8 +74,8 @@ Nozzle::Nozzle(Engine *p) : Thruster(p),
 {
     snprintf(_thruster_name, PARAM_MAX_STRING, "my_nozzle");
 
-    _inputs.push_back(new Param("Nozzle name", _thruster_name));
-    _inputs.push_back(new Param("Nozzle diameter", _diameter, _engine->_aircraft->_metric, LENGTH));
+    _inputs.push_back(new Param("Nozzle name", 0, _thruster_name));
+    _inputs.push_back(new Param("Nozzle diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
 }
 
 std::string Nozzle::thruster()
@@ -106,9 +106,9 @@ Propeller::Propeller(Engine *p) : Thruster(p),
     _diameter(8)
 {
     snprintf(_thruster_name, PARAM_MAX_STRING, "my_propeller");
-    _inputs.push_back(new Param("Thruster name", _thruster_name));
-    _inputs.push_back(new Param("Propeller diameter", _diameter, _engine->_aircraft->_metric, LENGTH));
-    _inputs.push_back(new Param("Is the propeller fixed pitch?", _fixed_pitch));
+    _inputs.push_back(new Param("Thruster name", 0, _thruster_name));
+    _inputs.push_back(new Param("Propeller diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
+    _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch setting", _fixed_pitch));
 }
 
 void Propeller::set_thruster()

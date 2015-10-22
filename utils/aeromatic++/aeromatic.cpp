@@ -35,81 +35,63 @@
 
 using namespace std;
 
+void ask(Aeromatic::Param* param)
+{
+    string input;
+
+    cout << param->name();
+    cout << " [" << param->get_units() << "]";
+    cout << " (" << param->get() << ")";
+    cout << ": ";
+
+    unsigned options = param->no_options();
+    for(unsigned j=0; j<options; ++j)
+    {
+        cout << endl;
+        cout << " " << j << ": ";
+        cout << param->get_option(j);
+    }
+    if (options) cout << endl;
+
+    getline(cin, input);
+    if (!input.empty())
+    {
+        if (input == "?" || input == "h" || input == "help")
+        {
+            cout << param->help() << endl;
+            getline(cin, input);
+        }
+        if (!input.empty()) {
+            param->set(input);
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
     Aeromatic::Aeromatic aeromatic;
-    string input;
+
+    cout << endl;
+    cout << "** AeromatiC++ version " << AEROMATIC_VERSION_STR << endl;
+    cout << "A JSBSim configuration file generation utility" << endl << endl;
+    cout << "You can always enter 'h' to get verbose help" << endl << endl;
 
     cout << "** General Information **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._general.size(); ++i)
-    {
-        cout << aeromatic._general[i]->name();
-        cout << " [" << aeromatic._general[i]->get_units() << "]";
-        cout << " (" << aeromatic._general[i]->get() << ")";
-        cout << ": ";
-
-        unsigned options = aeromatic._general[i]->no_options();
-        for(unsigned j=0; j<options; ++j)
-        {
-            cout << endl;
-            cout << " " << j << ": ";
-            cout << aeromatic._general[i]->get_option(j);
-        }
-        if (options) cout << endl;
-
-        getline(cin, input);
-        if (!input.empty()) {
-            aeromatic._general[i]->set(input);
-        }
-    };
+    for (unsigned i=0; i<aeromatic._general.size(); ++i) {
+        ask(aeromatic._general[i]);
+    }
     cout << endl;
 
     cout << "** Weight and Balance **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._weight_balance.size(); ++i)
-    {
-        cout << aeromatic._weight_balance[i]->name();
-        cout << " [" << aeromatic._weight_balance[i]->get_units() << "]";
-        cout << " (" << aeromatic._weight_balance[i]->get() << ")";
-        cout << ": ";
-
-        unsigned options = aeromatic._weight_balance[i]->no_options();
-        for(unsigned j=0; j<options; ++j)
-        {
-            cout << endl;
-            cout << " " << j << ": ";
-            cout << aeromatic._weight_balance[i]->get_option(j);
-        }
-        if (options) cout << endl;
-
-        getline(cin, input);
-        if (!input.empty()) {
-            aeromatic._weight_balance[i]->set(input);
-        }
-    };  
+    for (unsigned i=0; i<aeromatic._weight_balance.size(); ++i) {
+        ask(aeromatic._weight_balance[i]);
+    }  
     cout << endl;
 
     cout << "** Geometry **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._geometry.size(); ++i)
-    {
-        cout << aeromatic._geometry[i]->name();
-        cout << " [" << aeromatic._geometry[i]->get_units() << "]";
-        cout << " (" << aeromatic._geometry[i]->get() << ")";
-        cout << ": ";
-
-        unsigned options = aeromatic._geometry[i]->no_options();
-        for(unsigned j=0; j<options; ++j)
-        {
-            cout << endl;
-            cout << " " << j << ": ";
-            cout << aeromatic._geometry[i]->get_option(j);
-        }
-        if (options) cout << endl;
-
-        getline(cin, input);
-        if (!input.empty()) {
-            aeromatic._geometry[i]->set(input);
-        }
-    };  
+    for (unsigned i=0; i<aeromatic._geometry.size(); ++i) {
+        ask(aeromatic._geometry[i]);
+    }
     cout << endl;
 
     cout << "** Systems **" << endl << endl;
@@ -124,26 +106,8 @@ int main(int argc, char *argv[])
 
         Aeromatic::Param* param;
         system->param_reset();
-        while ((param = system->param_next()) != 0)
-        {
-            cout << param->name();
-            cout << " [" << param->get_units() << "]";
-            cout << " (" << param->get() << ")";
-            cout << ": ";
-
-            unsigned options = param->no_options();
-            for (unsigned k=0; k<options; ++k)
-            {
-                cout << endl;
-                cout << " " << k << ": ";
-                cout << param->get_option(k);
-            }
-            if (options) cout << endl;
-
-            getline(cin, input);
-            if (!input.empty()) {
-                param->set(input);
-            }
+        while ((param = system->param_next()) != 0) {
+            ask(param);
         }
         cout << endl;
     }
