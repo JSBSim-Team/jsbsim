@@ -635,7 +635,7 @@ std::string TurbopropEngine::engine()
     _thruster->set_thruster(_max_rpm);
     float max_rpm = propeller->max_rpm();
     float Cp0 = propeller->Cp0();
-    float psfc = Cp0 * _power /100.0f;
+    float psfc = 0.5f;
 
     // estimate thrust if given power in HP
     float thrust = _power * 2.24f;
@@ -664,13 +664,13 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "  <maxn1>                       100.0   </maxn1>" << std::endl;
     file << "  <idlen2>                       60.0   </idlen2>" << std::endl;
     file << "  <maxn2>                       100.0   </maxn2>" << std::endl;
-    file << "  <maxpower unit=\"HP\">          " << _power << "   </maxpower>" << std::endl;
-    file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(2) << " </psfc>" << std::endl;
+    file << "  <maxpower unit=\"HP\">         " << std::setw(6) << _power << "   </maxpower>" << std::endl;
+    file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(1) << " </psfc>" << std::endl;
     file << "  <idlefuelflow>                 50.0   </idlefuelflow>" << std::endl;
     file << "  <n1idle_max_delay>              1     </n1idle_max_delay>" << std::endl;
     file << "  <maxstartingtime>              20     </maxstartingtime>" << std::endl;
     file << "  <startern1>                    20     </startern1>" << std::endl;
-    file << "  <ielumaxtorque unit=\"FT*LB\"> " << std::setprecision(1) << torque << "   </ielumaxtorque>" << std::endl;
+    file << "  <ielumaxtorque unit=\"FT*LB\"> " << torque << "   </ielumaxtorque>" << std::endl;
     file << "  <itt_delay>                     0.05  </itt_delay>" << std::endl;
     file << "  <betarangeend>                 64     </betarangeend>" << std::endl;
     file << "  <reversemaxpower>              60     </reversemaxpower>" << std::endl;
