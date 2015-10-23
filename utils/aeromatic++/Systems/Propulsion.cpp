@@ -666,7 +666,6 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "  <maxn2>                       100.0   </maxn2>" << std::endl;
     file << "  <maxpower unit=\"HP\">         " << std::setw(6) << _power << "   </maxpower>" << std::endl;
     file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(1) << " </psfc>" << std::endl;
-    file << "  <idlefuelflow>                 50.0   </idlefuelflow>" << std::endl;
     file << "  <n1idle_max_delay>              1     </n1idle_max_delay>" << std::endl;
     file << "  <maxstartingtime>              20     </maxstartingtime>" << std::endl;
     file << "  <startern1>                    20     </startern1>" << std::endl;
@@ -675,9 +674,8 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "  <betarangeend>                 64     </betarangeend>" << std::endl;
     file << "  <reversemaxpower>              60     </reversemaxpower>" << std::endl;
     file << std::endl;
-    file << "  <function name=\"EnginePowerVC\">" << std::endl;
-    file << "   <description> Engine power, function of airspeed and pressure </description>" << std::endl;
-    file << "   <table>" << std::endl;
+    file << "  <table name=\"EnginePowerVC\">" << std::endl;
+    file << "    <description> Engine power, function of airspeed and pressure </description>" << std::endl;
     file << "    <independentVar lookup=\"row\">atmosphere/P-sl-psf</independentVar>" << std::endl;
     file << "    <independentVar lookup=\"column\">velocities/ve-kts</independentVar>" << std::endl;
     file << "    <tableData>" << std::endl;
@@ -691,12 +689,10 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "     2135   1      1.011  1.029  1.043  1.083  1.150" << std::endl;
     file << "     2213   1.029  1.043  1.057  1.079  1.114  1.171" << std::endl;
     file << "   </tableData>" << std::endl;
-    file << "   </table>" << std::endl;
-    file << "  </function>" << std::endl;
+    file << "  </table>" << std::endl;
     file << std::endl;
-    file << "  <function name=\"EnginePowerRPM_N1\" type=\"internal\">" << std::endl;
-    file << "   <description> Engine Power, function of RPM and N1 </description>" << std::endl;
-    file << "   <table>" << std::endl;
+    file << "  <table name=\"EnginePowerRPM_N1\" type=\"internal\">" << std::endl;
+    file << "    <description> Engine Power, function of RPM and N1 </description>" << std::endl;
     file << "    <tableData>" << std::endl;
 
     file << "             0       5       60      86      94      95      96      97      98      99     100     101" << std::endl;
@@ -705,15 +701,13 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
         file << std::setw(9) << _turboprop_eng_pwr_t[i][0] * max_rpm;
         for (unsigned j=1; j<13; ++j)
         {
-           file << std::fixed << std::setw(7) << std::setprecision(1) << (_turboprop_eng_pwr_t[i][j] * _power);
-           if (j < 12) file << ",";
+           file << std::fixed << std::setw(8) << std::setprecision(1) << (_turboprop_eng_pwr_t[i][j] * _power);
         }
         file << std::endl;
     }
 
     file << "    </tableData>" << std::endl;
-    file << "   </table>" << std::endl;
-    file << "  </function>" << std::endl;
+    file << "  </table>" << std::endl;
     file << std::endl;
     file << "  <table name=\"ITT_N1\" type=\"internal\">" << std::endl;
     file << "    <description> Inter-Turbine Temperature ITT [deg C] depending on N1 and engine run (0=off / 1=running) </description>" << std::endl;
@@ -727,6 +721,22 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "    </tableData>" << std::endl;
     file << "  </table>" << std::endl;
     file << std::endl;
+    file << "  <table name=\"CombustionEfficiency_N1\" type=\"internal\">" << std::endl;
+    file << "    <description>Dependency of fuel efficiency coefficient on N1 (and RPM)</description>" << std::endl;
+    file << "    <tableData>" << std::endl;
+
+    // TODO: Make engine specific?
+    file << "      90    0.1221" << std::endl;
+    file << "      91.2  0.2834" << std::endl;
+    file << "      92.2  0.5336" << std::endl;
+    file << "      93.4  0.7188" << std::endl;
+    file << "      94.1  0.7741" << std::endl;
+    file << "      95.2  0.8471" << std::endl;
+    file << "      96.5  0.9001" << std::endl;
+    file << "     100    1" << std::endl;
+
+    file << "      </tableData>" << std::endl;
+    file << "  </table>" << std::endl;
     file << "</turboprop_engine>" << std::endl;
 
     return file.str();
