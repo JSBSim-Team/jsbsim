@@ -94,21 +94,21 @@ Aeromatic::Aeromatic() : Aircraft(this),
 
     /* weight and balance */
     _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Empty weight", "enter 0 to use estimated value", _empty_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Inertia Ixx", "enter 0 to use estimated value", _inertia[X], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Iyy", "enter 0 to use estimated value", _inertia[Y], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Izz", "enter 0 to use estimated value", _inertia[Z], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
+    _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Iyy", _estimate, _inertia[Y], _metric, INERTIA));
+    _weight_balance.push_back(new Param("Inertia Izz", _estimate, _inertia[Z], _metric, INERTIA));
 
     /* geometry */
     _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
     _geometry.push_back(new Param("Wing span", 0, _wing_span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area", "enter 0 to use estimated value", _wing_area,_metric, AREA));
-    _geometry.push_back(new Param("Wing chord", "enter 0 to use estimated value", _wing_chord, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing incidence", "enter 0 to use estimated value", _wing_incidence));
-    _geometry.push_back(new Param("Htail area", "enter 0 to use estimated value", _htail_area, _metric, AREA));
-    _geometry.push_back(new Param("Htail arm", "enter 0 to use estimated value", _htail_arm, _metric, LENGTH));
-    _geometry.push_back(new Param("Vtail area", "enter 0 to use estimated value", _vtail_area, _metric, AREA));
-    _geometry.push_back(new Param("Vtail arm", "enter 0 to use estimated value", _vtail_arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing area", _estimate, _wing_area,_metric, AREA));
+    _geometry.push_back(new Param("Wing chord", _estimate, _wing_chord, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing incidence", _estimate, _wing_incidence));
+    _geometry.push_back(new Param("Htail area", _estimate, _htail_area, _metric, AREA));
+    _geometry.push_back(new Param("Htail arm", _estimate, _htail_arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Vtail area", _estimate, _vtail_area, _metric, AREA));
+    _geometry.push_back(new Param("Vtail arm", _estimate, _vtail_arm, _metric, LENGTH));
 
     Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype);
     _general.push_back(param);
@@ -306,7 +306,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.14 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.15 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -608,6 +608,8 @@ bool Aeromatic::fdm()
 }
 
 // ----------------------------------------------------------------------------
+
+char const* Aeromatic::_estimate = "enter 0 to use estimated value";
 
 #if (win32)
 #else

@@ -288,8 +288,6 @@ void Propulsion::set(const float* cg_loc)
     }
 
     _aircraft->_payload -= _fuel_weight;
-
-    _propulsion[_ptype]->_thruster->set_thruster();
 }
 
 std::string Propulsion::mass_balance()
@@ -423,6 +421,8 @@ std::string PistonEngine::engine()
 {
     std::stringstream file;
 
+    _thruster->set_thruster(_max_rpm);
+
     Engine *propulsion = this;
     float displacement = propulsion->_power *1.9f;
 
@@ -486,6 +486,7 @@ std::string TurbineEngine::engine()
 {
     std::stringstream file;
 
+    _thruster->set_thruster();
     float max_thrust = _power;
     if (_augmented) {
         max_thrust *= 1.5f;
@@ -613,23 +614,38 @@ std::string TurbineEngine::engine()
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2700.0f),
+    _itt(800.0f),
+    _psfc(0.66f),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
     _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _inputs.push_back(new Param("Inlet Turbine Temperature", Aeromatic::_estimate, _itt));
     _thruster = new Propeller(this);
 }
 
+// http://www.aerocompinc.com/ftp/literature/walter601.pdf
+// http://www.smartcockpit.com/docs/Fokker_50-Power_Plant.pdf
 std::string TurbopropEngine::engine()
 {
+    Propeller *propeller = (Propeller*)_thruster;
     std::stringstream file;
 
+    _thruster->set_thruster(_max_rpm);
+    float max_rpm = propeller->max_rpm();
+    float Cp0 = propeller->Cp0();
+    float psfc = Cp0 * _power /100.0f;
+
     // estimate thrust if given power in HP
-    // Thrust = bhp * 550 * prop_efficiency / velocity
-    // fact = 550 * 0.85 / 195 = 2.24;
     float thrust = _power * 2.24f;
 
+    // Torque = Power * 5252 / RPM
+    float torque = _power * 5252.0f / max_rpm;
+
+    file.precision(1);
+    file.flags(std::ios::right);
+    file << std::fixed; //  << std::showpoint;
     file << "<!--" << std::endl;
     file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
     file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
@@ -639,54 +655,79 @@ std::string TurbopropEngine::engine()
     file << "  Inputs:" << std::endl;
     file << "    name:           " << _propulsion->_engine_name << std::endl;
     file << "    type:           " << _description[0] <<  std::endl;
-    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "    power:          " << _power << " hp" << std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
-file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <milthrust> " << thrust << " </milthrust>" << std::endl;
-    file << "  <bypassratio>     0.0  </bypassratio>" << std::endl;
-    file << "  <tsfc>            0.55 </tsfc>" << std::endl;
-    file << "  <bleed>           0.03 </bleed>" << std::endl;
-    file << "  <idlen1>         30.0  </idlen1>" << std::endl;
-    file << "  <idlen2>         60.0  </idlen2>" << std::endl;
-    file << "  <maxn1>         100.0  </maxn1>" << std::endl;
-    file << "  <maxn2>         100.0  </maxn2>" << std::endl;
-    file << "  <augmented>         0  </augmented>" << std::endl;
-    file << "  <injected>          0  </injected>" << std::endl;
+file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
+    file << "  <milthrust unit=\"LBS\">       " << thrust << " </milthrust>" << std::endl;
+    file << "  <idlen1>                       60.0   </idlen1>" << std::endl;
+    file << "  <maxn1>                       100.0   </maxn1>" << std::endl;
+    file << "  <idlen2>                       60.0   </idlen2>" << std::endl;
+    file << "  <maxn2>                       100.0   </maxn2>" << std::endl;
+    file << "  <maxpower unit=\"HP\">          " << _power << "   </maxpower>" << std::endl;
+    file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(2) << " </psfc>" << std::endl;
+    file << "  <idlefuelflow>                 50.0   </idlefuelflow>" << std::endl;
+    file << "  <n1idle_max_delay>              1     </n1idle_max_delay>" << std::endl;
+    file << "  <maxstartingtime>              20     </maxstartingtime>" << std::endl;
+    file << "  <startern1>                    20     </startern1>" << std::endl;
+    file << "  <ielumaxtorque unit=\"FT*LB\"> " << std::setprecision(1) << torque << "   </ielumaxtorque>" << std::endl;
+    file << "  <itt_delay>                     0.05  </itt_delay>" << std::endl;
+    file << "  <betarangeend>                 64     </betarangeend>" << std::endl;
+    file << "  <reversemaxpower>              60     </reversemaxpower>" << std::endl;
     file << std::endl;
-    file << "  <function name=\"IdleThrust\">" << std::endl;
+    file << "  <function name=\"EnginePowerVC\">" << std::endl;
+    file << "   <description> Engine power, function of airspeed and pressure </description>" << std::endl;
     file << "   <table>" << std::endl;
-    file << "    <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
-    file << "    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>" << std::endl;
+    file << "    <independentVar lookup=\"row\">atmosphere/P-sl-psf</independentVar>" << std::endl;
+    file << "    <independentVar lookup=\"column\">velocities/ve-kts</independentVar>" << std::endl;
     file << "    <tableData>" << std::endl;
-    file << "         -10000       0   10000   20000   30000   40000   50000" << std::endl;
-    file << "     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.0" << std::endl;
-    file << "     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.0" << std::endl;
-    file << "     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.0" << std::endl;
-    file << "     0.6  0.0     0.0     0.0     0.0276  0.0718  0.0430  0.0" << std::endl;
-    file << "     0.8  0.0     0.0     0.0     0.0     0.0174  0.0086  0.0" << std::endl;
-    file << "     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0" << std::endl;
+    file << "              0      50    100    150    200    250" << std::endl;
+    file << "      503   0.357  0.380  0.400  0.425  0.457  0.486" << std::endl;
+    file << "     1048   0.586  0.589  0.600  0.621  0.650  0.686" << std::endl;
+    file << "     1328   0.707  0.721  0.731  0.757  0.786  0.821" << std::endl;
+    file << "     1496   0.779  0.786  0.808  0.821  0.857  0.900" << std::endl;
+    file << "     1684   0.850  0.857  0.874  0.900  0.943  0.979" << std::endl;
+    file << "     1896   0.914  0.929  0.946  0.971  1      1.057" << std::endl;
+    file << "     2135   1      1.011  1.029  1.043  1.083  1.150" << std::endl;
+    file << "     2213   1.029  1.043  1.057  1.079  1.114  1.171" << std::endl;
     file << "   </tableData>" << std::endl;
     file << "   </table>" << std::endl;
     file << "  </function>" << std::endl;
     file << std::endl;
-    file << "  <function name=\"MilThrust\">" << std::endl;
+    file << "  <function name=\"EnginePowerRPM_N1\" type=\"internal\">" << std::endl;
+    file << "   <description> Engine Power, function of RPM and N1 </description>" << std::endl;
     file << "   <table>" << std::endl;
-    file << "    <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
-    file << "    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>" << std::endl;
     file << "    <tableData>" << std::endl;
-    file << "         -10000       0   10000   20000   30000   40000   50000" << std::endl;
-    file << "     0.0  1.1260  1.0000  0.7400  0.5340  0.3720  0.2410  0.0" << std::endl;
-    file << "     0.2  1.1000  0.9340  0.6970  0.5060  0.3550  0.2310  0.0" << std::endl;
-    file << "     0.4  1.0000  0.6410  0.6120  0.4060  0.3570  0.2330  0.0" << std::endl;
-    file << "     0.6  0.4430  0.3510  0.2710  0.2020  0.1780  0.1020  0.0" << std::endl;
-    file << "     0.8  0.0240  0.0200  0.0160  0.0130  0.0110  0.0100  0.0" << std::endl;
-    file << "     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0" << std::endl;
+
+    file << "             0       5       60      86      94      95      96      97      98      99     100     101" << std::endl;
+    for (unsigned i=0; i<6; ++i)
+    {
+        file << std::setw(9) << _turboprop_eng_pwr_t[i][0] * max_rpm;
+        for (unsigned j=1; j<13; ++j)
+        {
+           file << std::fixed << std::setw(7) << std::setprecision(1) << (_turboprop_eng_pwr_t[i][j] * _power);
+           if (j < 12) file << ",";
+        }
+        file << std::endl;
+    }
+
     file << "    </tableData>" << std::endl;
     file << "   </table>" << std::endl;
     file << "  </function>" << std::endl;
     file << std::endl;
-    file << "</turbine_engine>" << std::endl;
+    file << "  <table name=\"ITT_N1\" type=\"internal\">" << std::endl;
+    file << "    <description> Inter-Turbine Temperature ITT [deg C] depending on N1 and engine run (0=off / 1=running) </description>" << std::endl;
+    file << "    <tableData>" << std::endl;
+    file << "              0     1" << std::endl;
+    file << "        0     0     0" << std::endl;
+    file << "       15" << std::setw(8) << (0.145f * _itt) << std::setw(8) << (0.145f * _itt) << std::endl;
+    file << "       60" << std::setw(8) << (0.26f * _itt) << std::setw(8) << (0.754f * _itt) << std::endl;
+    file << "       96" << std::setw(8) << (0.391f * _itt) << std::setw(8) << (0.986f * _itt) << std::endl;
+    file << "      100"<< std::setw(8) << (0.406f * _itt) << std::setw(8) << (1.09f * _itt) << std::endl;
+    file << "    </tableData>" << std::endl;
+    file << "  </table>" << std::endl;
+    file << std::endl;
+    file << "</turboprop_engine>" << std::endl;
 
     return file.str();
 }
@@ -702,6 +743,7 @@ std::string RocketEngine::engine()
 {
     std::stringstream file;
 
+    _thruster->set_thruster();
     file << "<!--" << std::endl;
     file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
     file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
@@ -742,6 +784,7 @@ std::string ElectricEngine::engine()
 {
     std::stringstream file;
 
+    _thruster->set_thruster(_max_rpm);
     file << "<!--" << std::endl;
     file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
     file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
@@ -757,6 +800,18 @@ std::string ElectricEngine::engine()
     file << "</electric_engine>" << std::endl;
     return file.str();
 }
+
+// ---------------------------------------------------------------------------
+
+float const TurbopropEngine::_turboprop_eng_pwr_t[6][13] =
+{
+    { 0.000f,  0.0000f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f },
+    { 0.364f, 0.0000f, 0.0007f, 0.0471f, 0.2692f, 0.4711f, 0.5114f, 0.5653f, 0.6191f, 0.6729f, 0.7133f, 0.7806f, 0.8345f },
+    { 0.545f, 0.0000f, 0.0007f, 0.0404f, 0.3096f, 0.5384f, 0.5787f, 0.6326f, 0.6797f, 0.7402f, 0.7941f, 0.8614f, 0.9152f },
+    { 0.727f, 0.0000f, 0.0007f, 0.0067f, 0.3230f, 0.5922f, 0.6393f, 0.6864f, 0.7402f, 0.8008f, 0.8479f, 0.9152f, 0.9690f },
+    { 0.909f, 0.0000f, 0.0001f, 0.0001f, 0.3028f, 0.6057f, 0.6662f, 0.7066f, 0.7604f, 0.8210f, 0.8748f, 0.9421f, 1.0027f },
+    { 1.000f, 0.0000f, 0.0001f, 0.0001f, 0.2759f, 0.5922f, 0.6460f, 0.6931f, 0.7537f, 0.8143f, 0.8681f, 0.9354f, 1.0000f }
+};
 
 } /* namespace Aeromatic */
 

@@ -65,10 +65,10 @@ std::string Chute::external_force()
     file << "  <force name=\"parachute\" frame=\"WIND\">" << std::endl;
     file << "   <function>" << std::endl;
     file << "    <product>" << std::endl;
-    file << "     <p> aero/qbar-psf </p>" << std::endl;
-    file << "     <p> fcs/parachute-reef-pos-norm </p>" << std::endl;
-    file << "     <v> " << CDchute << " </v>" << std::endl;
-    file << "     <v> " << Area << " </v>" << std::endl;
+    file << "     <property>aero/qbar-psf</property>" << std::endl;
+    file << "     <property>fcs/parachute-reef-pos-norm</property>" << std::endl;
+    file << "     <value> " << CDchute << " </value>" << std::endl;
+    file << "     <value> " << Area << " </value>" << std::endl;
     file << "    </product>" << std::endl;
     file << "   </function>" << std::endl;
     file << "   <location unit=\"FT\">" << std::endl;

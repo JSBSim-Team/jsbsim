@@ -90,9 +90,13 @@ public:
 
 public:
     float _max_rpm;
+    float _itt;
+    float _psfc;
 
 private:
     bool _water_injection;
+
+    static float const _turboprop_eng_pwr_t[6][13];
 };
 
 

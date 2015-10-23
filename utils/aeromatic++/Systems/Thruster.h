@@ -42,7 +42,7 @@ public:
     Thruster(Engine *p);
     virtual ~Thruster();
 
-    virtual void set_thruster() {}
+    virtual void set_thruster(float mrpm = 0.0f) {}
     virtual std::string thruster() { return ""; }
 
     const char* get_name() {
@@ -71,7 +71,6 @@ public:
     Direct(Engine *p);
     ~Direct() {}
 
-    void set_thruster() {}
     std::string thruster();
 };
 
@@ -82,10 +81,15 @@ public:
     Propeller(Engine *p);
     ~Propeller() {}
 
-    void set_thruster();
+    void set_thruster( float mrpm);
     std::string thruster();
 
+    float max_rpm() { return _max_rpm; }
+    float Cp0() { return _Cp0; }
+    float Ct0() { return _Ct0; }
+
 private:
+    float _engine_rpm;
     bool _fixed_pitch;
     unsigned _blades;
     float _diameter;
@@ -94,8 +98,8 @@ private:
     float _gear_ratio;
     float _static_thrust;
     float _ixx;
-    float _ct0;
-    float _cp0;
+    float _Ct0;
+    float _Cp0;
 
     static float const _thrust_t[23][9];
     static float const _power_t[23][9];
@@ -107,7 +111,6 @@ public:
     Nozzle(Engine *p);
     ~Nozzle() {}
 
-    void set_thruster() {}
     std::string thruster();
 
 private:
