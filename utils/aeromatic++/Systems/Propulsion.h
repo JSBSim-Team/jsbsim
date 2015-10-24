@@ -110,6 +110,7 @@ public:
     std::string engine();
 
 private:
+    float _bypass_ratio;
     bool _injected;
     bool _augmented;
 };

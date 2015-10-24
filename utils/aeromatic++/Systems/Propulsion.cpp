@@ -473,12 +473,15 @@ std::string PistonEngine::engine()
 }
 
 
+// http://web.mit.edu/16.unified/www/SPRING/propulsion/UnifiedPropulsion3/UnifiedPropulsion3.htm
 TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _bypass_ratio(1.0f),
     _injected(false),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
     _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Bypass ratio", 0, _bypass_ratio));
     _thruster = new Direct(this);
 }
 
@@ -492,6 +495,12 @@ std::string TurbineEngine::engine()
         max_thrust *= 1.5f;
     }
 
+    // Figure 3.10
+    float tsfc = 1.4f - 0.109f * (4.6 + logf(_bypass_ratio));
+
+    file.precision(1);
+    file.flags(std::ios::right);
+    file << std::fixed << std::showpoint;
     file << "<!--" << std::endl;
     file << "  File:     " << _propulsion->_engine_name << ".xml" << std::endl;
     file << "  Author:   AeromatiC++ v " << AEROMATIC_VERSION_STR << std::endl;
@@ -501,7 +510,8 @@ std::string TurbineEngine::engine()
     file << "  Inputs:" << std::endl;
     file << "    name:           " << _propulsion->_engine_name << std::endl;
     file << "    type:           " << _description[0] <<  std::endl;
-    file << "    thrust:         " << _power << " lb" << std::endl;
+    file << "    thrust:         " << _power << " lbf" << std::endl;
+    file << "    bypass ratio:   " << _bypass_ratio << ":1" << std::endl;
     file << "    augmented?      " << (_augmented ? "yes" : "no") << std::endl;
     file << "    injected?       " << (_injected ? "yes" : "no") << std::endl;
     file << "-->" << std::endl;
@@ -511,10 +521,10 @@ std::string TurbineEngine::engine()
     if (_augmented) {
         file << "  <maxthrust> " << max_thrust << " </maxthrust>" << std::endl;
     }
-    file << "  <bypassratio>     1.0 </bypassratio>" << std::endl;
-    file << "  <tsfc>            0.8 </tsfc>" << std::endl;
+    file << "  <bypassratio>     " << _bypass_ratio << " </bypassratio>" << std::endl;
+    file << "  <tsfc>            " << std::setprecision(3) << tsfc << " </tsfc>" << std::endl;
     if (_augmented) {
-        file << "  <atsfc>           1.7 </atsfc>" << std::endl;
+        file << "  <atsfc>           " << (tsfc + 0.9f) << " </atsfc>" << std::endl;
     }
     file << "  <bleed>           0.03</bleed>" << std::endl;
     file << "  <idlen1>         30.0 </idlen1>" << std::endl;
@@ -623,7 +633,7 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
     _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
-    _inputs.push_back(new Param("Inlet Turbine Temperature", Aeromatic::_estimate, _itt));
+    _inputs.push_back(new Param("Turbine Inlet Temperature", "in degrees Celcius", _itt));
     _thruster = new Propeller(this);
 }
 
@@ -645,7 +655,6 @@ std::string TurbopropEngine::engine()
 
     _thruster->set_thruster(_max_rpm);
     float max_rpm = propeller->max_rpm();
-    float Cp0 = propeller->Cp0();
     float psfc = 0.5f;
 
     // calculate psfc in KG/SEC/KW
@@ -671,17 +680,17 @@ std::string TurbopropEngine::engine()
     file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurboprop" << std::endl;
     file << std::endl;
     file << "  Inputs:" << std::endl;
-    file << "    name:           " << _propulsion->_engine_name << std::endl;
-    file << "    type:           " << _description[0] <<  std::endl;
-    file << "    power:          " << _power << " hp" << std::endl;
+    file << "    name:                   " << _propulsion->_engine_name << std::endl;
+    file << "    type:                   " << _description[0] <<  std::endl;
+    file << "    power:                  " << _power << " hp" << std::endl;
+    file << "    inlet temperature:      " << _itt << " degrees C"<< std::endl;
+    file << "    overall pressure ratio: " << _oapr << ":1" << std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
 file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <milthrust unit=\"LBS\">       " << thrust << " </milthrust>" << std::endl;
+    file << "  <milthrust unit=\"LBS\">       " << thrust << "   </milthrust>" << std::endl;
     file << "  <idlen1>                       60.0   </idlen1>" << std::endl;
     file << "  <maxn1>                       100.0   </maxn1>" << std::endl;
-    file << "  <idlen2>                       60.0   </idlen2>" << std::endl;
-    file << "  <maxn2>                       100.0   </maxn2>" << std::endl;
     file << "  <maxpower unit=\"HP\">         " << std::setw(6) << _power << "   </maxpower>" << std::endl;
     file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(1) << " </psfc>" << std::endl;
     file << "  <n1idle_max_delay>              1     </n1idle_max_delay>" << std::endl;
@@ -713,7 +722,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "    <description> Engine Power, function of RPM and N1 </description>" << std::endl;
     file << "    <tableData>" << std::endl;
 
-    file << "             0       5       60      86      94      95      96      97      98      99     100     101" << std::endl;
+    file << "              0       5       60      86      94      95      96      97      98      99     100     101" << std::endl;
     for (unsigned i=0; i<6; ++i)
     {
         file << std::setw(9) << _turboprop_eng_pwr_t[i][0] * max_rpm;
