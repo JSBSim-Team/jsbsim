@@ -614,6 +614,7 @@ std::string TurbineEngine::engine()
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2700.0f),
+    _oapr(15.0f),
     _itt(800.0f),
     _psfc(0.66f),
     _water_injection(false)
@@ -621,12 +622,22 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _description.push_back("Turboprop Engine");
     _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
     _inputs.push_back(new Param("Inlet Turbine Temperature", Aeromatic::_estimate, _itt));
     _thruster = new Propeller(this);
 }
 
-// http://www.aerocompinc.com/ftp/literature/walter601.pdf
-// http://www.smartcockpit.com/docs/Fokker_50-Power_Plant.pdf
+// http://www.fzt.haw-hamburg.de/pers/Scholz/Airport2030/Airport2030_PUB_ICAS_12-09-23.pdf
+//
+// _power is in kW for the following computations:
+// _oapr = overall  pressure ratio at static sea level 
+// Ttet = turbine  entry  temperature at static sea level in Kelvin
+//
+// mass_eng = 0.246f * _power;
+// eng_length = 0.1068f * powf(_power, 0.4094f);
+// eng_diameter = 0.1159f * powf(_power, 0.2483f);
+// psfc = 2.56*10e-4 - logf(_power * _oapr * Ttet)*10e-5;
+
 std::string TurbopropEngine::engine()
 {
     Propeller *propeller = (Propeller*)_thruster;
@@ -636,6 +647,13 @@ std::string TurbopropEngine::engine()
     float max_rpm = propeller->max_rpm();
     float Cp0 = propeller->Cp0();
     float psfc = 0.5f;
+
+    // calculate psfc in KG/SEC/KW
+    float Ttet = _itt + 274.15f;	// in Kelvin
+    psfc = 2.56e-4f - logf(_power*HP_TO_KW * _oapr * Ttet)*1e-5f;
+
+    // Convert psfc to LBS/HR/HP
+    psfc *= 5918.3525f;
 
     // estimate thrust if given power in HP
     float thrust = _power * 2.24f;

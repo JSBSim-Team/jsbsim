@@ -90,6 +90,7 @@ public:
 
 public:
     float _max_rpm;
+    float _oapr;
     float _itt;
     float _psfc;
 
