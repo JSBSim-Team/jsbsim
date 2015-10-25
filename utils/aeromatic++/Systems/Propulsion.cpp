@@ -498,7 +498,7 @@ std::string TurbineEngine::engine()
     }
 
     // Figure 3.10
-    float tsfc = 1.4f - 0.109f * (5.6f + logf(_bypass_ratio));
+    float tsfc = 0.7533f - 0.0941f * logf(_bypass_ratio);
 
     file.precision(2);
     file.flags(std::ios::right);
