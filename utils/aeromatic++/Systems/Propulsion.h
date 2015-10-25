@@ -90,9 +90,14 @@ public:
 
 public:
     float _max_rpm;
+    float _oapr;
+    float _itt;
+    float _psfc;
 
 private:
     bool _water_injection;
+
+    static float const _turboprop_eng_pwr_t[6][13];
 };
 
 
@@ -105,6 +110,7 @@ public:
     std::string engine();
 
 private:
+    float _bypass_ratio;
     bool _injected;
     bool _augmented;
 };

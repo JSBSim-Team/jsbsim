@@ -27,6 +27,11 @@
 
 #include "config.h"
 
+#ifdef WIN32
+# include <windows.h>
+# include <Shlwapi.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -47,8 +52,8 @@
 #define CUBIC_INCH_TO_LITER	61.02398343f
 #define LITER_TO_CUBINC_INCH	0.016387f
 
-#define KG_TO_LBS		0.4535f
-#define LBS_TO_KG		2.205f
+#define LBS_TO_KG		0.4535f
+#define KG_TO_LBS		2.205f
 
 #define KG_M2_TO_SLUG_FT2	0.737562142f
 #define SLUG_FT2_TO_KG_M2	1.355817962f
@@ -78,17 +83,20 @@
 namespace Aeromatic
 {
 
-#define X			0
-#define Y			1
-#define Z			2
+enum indicators
+{
+    X = 0,
+    Y,
+    Z,
 
-#define MAIN			0
-#define NOSE			1
-#define TAIL			2
+    MAIN = 0,
+    NOSE,
+    TAIL,
 
-#define PITCH			0
-#define YAW			1
-#define ROLL			2
+    PITCH = 0,
+    YAW,
+    ROLL
+};
 
 enum AircraftType
 {
@@ -156,6 +164,13 @@ enum ParamUnit
 
     MAX_UNITS
 };
+
+void strCopy(char *b, std::string str);
+#ifdef WIN32
+char* getEnv(const char*);
+#else
+# define getEnv(a)		getenv(a)
+#endif
 
 class Param
 {

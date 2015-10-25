@@ -49,7 +49,7 @@ Thruster::~Thruster()
 
 Direct::Direct(Engine *p) : Thruster(p)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "direct");
+    strCopy(_thruster_name, "direct");
 }
 
 std::string Direct::thruster()
@@ -72,7 +72,7 @@ std::string Direct::thruster()
 Nozzle::Nozzle(Engine *p) : Thruster(p),
     _diameter(3.25f)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "my_nozzle");
+    strCopy(_thruster_name, "my_nozzle");
 
     _inputs.push_back(new Param("Nozzle name", 0, _thruster_name));
     _inputs.push_back(new Param("Nozzle diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
@@ -105,19 +105,19 @@ Propeller::Propeller(Engine *p) : Thruster(p),
     _fixed_pitch(true),
     _diameter(8)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "my_propeller");
+    strCopy(_thruster_name, "my_propeller");
+
     _inputs.push_back(new Param("Thruster name", 0, _thruster_name));
     _inputs.push_back(new Param("Propeller diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
     _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch setting", _fixed_pitch));
 }
 
-void Propeller::set_thruster()
+void Propeller::set_thruster(float mrpm)
 {
-    PistonEngine *engine = (PistonEngine*)_engine;
-
     // find rpm which gives a tip mach of 0.88 (static at sea level)
+    _engine_rpm = mrpm;
     _max_rpm = 18763.0f / _diameter;
-    _gear_ratio = engine->_max_rpm / _max_rpm;
+    _gear_ratio = _engine_rpm / _max_rpm;
 
     float max_rps = _max_rpm / 60.0f;
     float rps2 = max_rps * max_rps;
@@ -129,21 +129,21 @@ void Propeller::set_thruster()
     // power and thrust coefficients at design point
     // for fixed pitch design point is beta=22, J=0.2
     // for variable pitch design point is beta=15, j=0
-    _cp0 = _engine->_power * 550.0f / rho / rps3 / d5;
+    _Cp0 = _engine->_power * 550.0f / rho / rps3 / d5;
     if (_fixed_pitch == false)
     {
-        _ct0 = _cp0 * 2.33f;
-        _static_thrust = _ct0 * rho * rps2 * d4;
+        _Ct0 = _Cp0 * 2.33f;
+        _static_thrust = _Ct0 * rho * rps2 * d4;
     } else {
-        float rpss = powf(_engine->_power * 550.0f / 1.025f / _cp0 / rho / d5, 0.3333f);
-        _ct0 = _cp0 * 1.4f;
-        _static_thrust = 1.09f * _ct0 * rho * rpss * rpss * d4;
+        float rpss = powf(_engine->_power * 550.0f / 1.025f / _Cp0 / rho / d5, 0.3333f);
+        _Ct0 = _Cp0 * 1.4f;
+        _static_thrust = 1.09f * _Ct0 * rho * rpss * rpss * d4;
     }
 
     // estimate the number of blades
-    if (_cp0 < 0.035f) {
+    if (_Cp0 < 0.035f) {
       _blades = 2;
-    } else if (_cp0 > 0.065f) {
+    } else if (_Cp0 > 0.065f) {
       _blades = 4;
     } else {
       _blades = 3;
@@ -173,14 +173,14 @@ std::string Propeller::thruster()
     file << "    Inputs:" << std::endl;
     file << "           horsepower: " << _engine->_power << std::endl;
     file << "                pitch: " << (_fixed_pitch ? "fixed" : "variable") << std::endl;
-    file << "       max engine rpm: " << engine->_max_rpm << std::endl;
+    file << "       max engine rpm: " << _engine_rpm << std::endl;
     file << "   prop diameter (ft): " << _diameter << std::endl;
     file << std::endl;
     file << "    Outputs:" << std::endl;
     file << "         max prop rpm: " << _max_rpm << std::endl;
     file << "           gear ratio: " << _gear_ratio << std::endl;
-    file << "                  Cp0: " << _cp0 << std::endl;
-    file << "                  Ct0: " << _ct0 << std::endl;
+    file << "                  Cp0: " << _Cp0 << std::endl;
+    file << "                  Ct0: " << _Ct0 << std::endl;
     file << "  static thrust (lbs): " << _static_thrust << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
@@ -206,18 +206,18 @@ std::string Propeller::thruster()
     {
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "       0.0   " << (_ct0 * 1.090f) << std::endl;
-        file << "       0.1   " << (_ct0 * 1.045f) << std::endl;
-        file << "       0.2   " << (_ct0 * 1.000f) << std::endl;
-        file << "       0.3   " << (_ct0 * 0.920f) << std::endl;
-        file << "       0.4   " << (_ct0 * 0.826f) << std::endl;
-        file << "       0.5   " << (_ct0 * 0.728f) << std::endl;
-        file << "       0.6   " << (_ct0 * 0.589f) << std::endl;
-        file << "       0.7   " << (_ct0 * 0.447f) << std::endl;
-        file << "       0.8   " << (_ct0 * 0.242f) << std::endl;
-        file << "       1.0  " << (_ct0 * -0.082f) << std::endl;
-        file << "       1.2  " << (_ct0 * -0.429f) << std::endl;
-        file << "       1.4  " << (_ct0 * -0.772f) << std::endl;
+        file << "       0.0   " << (_Ct0 * 1.090f) << std::endl;
+        file << "       0.1   " << (_Ct0 * 1.045f) << std::endl;
+        file << "       0.2   " << (_Ct0 * 1.000f) << std::endl;
+        file << "       0.3   " << (_Ct0 * 0.920f) << std::endl;
+        file << "       0.4   " << (_Ct0 * 0.826f) << std::endl;
+        file << "       0.5   " << (_Ct0 * 0.728f) << std::endl;
+        file << "       0.6   " << (_Ct0 * 0.589f) << std::endl;
+        file << "       0.7   " << (_Ct0 * 0.447f) << std::endl;
+        file << "       0.8   " << (_Ct0 * 0.242f) << std::endl;
+        file << "       1.0  " << (_Ct0 * -0.082f) << std::endl;
+        file << "       1.2  " << (_Ct0 * -0.429f) << std::endl;
+        file << "       1.4  " << (_Ct0 * -0.772f) << std::endl;
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
         file << std::endl;
@@ -235,7 +235,7 @@ std::string Propeller::thruster()
             if (a > 4.1f) a = 6.0f;
             file << std::setw(10) << std::setprecision(1) << a;
             for (unsigned j=0; j<9; ++j) {
-                file << std::fixed << std::setw(10) << std::setprecision(4) << _ct0 * _thrust_t[i][j];
+                file << std::fixed << std::setw(10) << std::setprecision(4) << _Ct0 * _thrust_t[i][j];
             }
             file << std::endl;
         }
@@ -249,19 +249,19 @@ std::string Propeller::thruster()
     {
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "       0.0   " << (_cp0 * 1.025f) << std::endl;
-        file << "       0.1   " << (_cp0 * 1.025f) << std::endl;
-        file << "       0.2   " << (_cp0 * 1.000f) << std::endl;
-        file << "       0.3   " << (_cp0 * 0.976f) << std::endl;
-        file << "       0.4   " << (_cp0 * 0.920f) << std::endl;
-        file << "       0.5   " << (_cp0 * 0.843f) << std::endl;
-        file << "       0.6   " << (_cp0 * 0.774f) << std::endl;
-        file << "       0.7   " << (_cp0 * 0.650f) << std::endl;
-        file << "       0.8   " << (_cp0 * 0.531f) << std::endl;
-        file << "       1.0   " << (_cp0 * 0.190f) << std::endl;
-        file << "       1.2  " << (_cp0 * -0.303f) << std::endl;
-        file << "       1.4  " << (_cp0 * -0.912f) << std::endl;
-        file << "       1.6  " << (_cp0 * -1.548f) << std::endl;
+        file << "       0.0   " << (_Cp0 * 1.025f) << std::endl;
+        file << "       0.1   " << (_Cp0 * 1.025f) << std::endl;
+        file << "       0.2   " << (_Cp0 * 1.000f) << std::endl;
+        file << "       0.3   " << (_Cp0 * 0.976f) << std::endl;
+        file << "       0.4   " << (_Cp0 * 0.920f) << std::endl;
+        file << "       0.5   " << (_Cp0 * 0.843f) << std::endl;
+        file << "       0.6   " << (_Cp0 * 0.774f) << std::endl;
+        file << "       0.7   " << (_Cp0 * 0.650f) << std::endl;
+        file << "       0.8   " << (_Cp0 * 0.531f) << std::endl;
+        file << "       1.0   " << (_Cp0 * 0.190f) << std::endl;
+        file << "       1.2  " << (_Cp0 * -0.303f) << std::endl;
+        file << "       1.4  " << (_Cp0 * -0.912f) << std::endl;
+        file << "       1.6  " << (_Cp0 * -1.548f) << std::endl;
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
     }
@@ -278,7 +278,7 @@ std::string Propeller::thruster()
             if (a > 4.1f) a = 6.0f;
             file << std::setw(10) << std::setprecision(1) << a;
             for (unsigned j=0; j<9; ++j) {
-                file << std::fixed << std::setw(10) << std::setprecision(4) << (_cp0 * _power_t[i][j]);
+                file << std::fixed << std::setw(10) << std::setprecision(4) << (_Cp0 * _power_t[i][j]);
             }
             file << std::endl;
         }

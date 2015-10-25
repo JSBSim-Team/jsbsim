@@ -575,6 +575,9 @@ public:
     float _Clbeta, _Clp, _Clr, _Clda, _Cldr;
     float _Cmalpha, _Cmde, _Cmq, _Cmadot;
     float _Cnbeta, _Cnr, _Cndr, _Cnda;
+
+public:
+    static char const* _estimate;
 };
 
 } /* namespace Aeromatic */
