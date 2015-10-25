@@ -23,7 +23,6 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <math.h>
-#include <string.h>
 
 #include <ctime>
 #include <locale>
@@ -47,18 +46,18 @@ Aircraft::Aircraft(Aeromatic *p) :
 {
                     /* general information */
 #if defined(WIN32)
-    std::string dir(getenv("HOMEPATH"));
+    std::string dir(getEnv("HOMEPATH"));
 #else
-    std::string dir(getenv("HOME"));
+    std::string dir(getEnv("HOME"));
 #endif
-    snprintf(_path, PARAM_MAX_STRING, "%s", dir.c_str());
+    strCopy(_path, dir);
     _general.push_back(new Param("Output directory", "Specify the output directory for the configuration files", _path));
 
     _general.push_back(new Param("Create a subdirectory?", "Set to yes to create a new subdirectory with the same name as the aircraft", _subdir));
 
     _general.push_back(new Param("Overwrite?", "Overwrite files that are already present?", _overwrite));
 
-    snprintf(_name, PARAM_MAX_STRING, "my_aircraft");
+    strCopy(_name, "my_aircraft");
     _general.push_back(new Param("Aircraft name", "This defines the name and filename of the aircraft", _name));
 }
 
@@ -205,7 +204,7 @@ bool Aeromatic::fdm()
     // use Roskam's formulae to estimate moments of inertia
     if (_inertia[X] == 0.0f && _inertia[Y] == 0.0f && _inertia[Z] == 0.0f)
     {
-        float slugs = (_empty_weight / 32.2);	// sluggishness
+        float slugs = (_empty_weight / 32.2f);	// sluggishness
         const float *R = aircraft->get_roskam();
 
         // These are for an empty airplane
@@ -219,7 +218,7 @@ bool Aeromatic::fdm()
     float cg_loc[3];
     cg_loc[X] = (_length - _htail_arm) * FEET_TO_INCH;
     cg_loc[Y] = 0;
-    cg_loc[Z] = -(_length / 40.0) * FEET_TO_INCH;
+    cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
 //***** AERO REFERENCE POINT **************************
 
@@ -306,7 +305,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.18 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.19 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -620,9 +619,9 @@ std::string Aeromatic::create_dir(std::string path, std::string subdir)
 {
     // Create Engines directory
     std::string dir = path + "/" + subdir;
-#if (win32)
-    if (!PathFileExists(dir) {
-        if (CreateDirectory(dir, NULL) == 0) {
+#if (win32 || __MINGW32__)
+    if (!PathFileExists(dir.c_str())) {
+        if (CreateDirectory(dir.c_str(), NULL) == 0) {
             dir.clear();
         }
     }

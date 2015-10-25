@@ -41,7 +41,7 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     _description.push_back("Propulsion");
     _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
 
-    snprintf(_engine_name, PARAM_MAX_STRING, "my_engine");
+    strCopy(_engine_name, "my_engine");
     _inputs.push_back(new Param("Engine name", 0, _engine_name));
 
     _inputs.push_back(new Param("Number of engines", 0, _aircraft->_no_engines));
@@ -482,6 +482,8 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _description.push_back("Turbine Engine");
     _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
     _inputs.push_back(new Param("Bypass ratio", 0, _bypass_ratio));
+    _inputs.push_back(new Param("Augmented?", 0, _augmented));
+    _inputs.push_back(new Param("water injection?", 0, _injected));   
     _thruster = new Direct(this);
 }
 
@@ -496,9 +498,9 @@ std::string TurbineEngine::engine()
     }
 
     // Figure 3.10
-    float tsfc = 1.4f - 0.109f * (4.6 + logf(_bypass_ratio));
+    float tsfc = 1.4f - 0.109f * (5.6f + logf(_bypass_ratio));
 
-    file.precision(1);
+    file.precision(2);
     file.flags(std::ios::right);
     file << std::fixed << std::showpoint;
     file << "<!--" << std::endl;

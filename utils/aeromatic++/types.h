@@ -27,6 +27,11 @@
 
 #include "config.h"
 
+#ifdef WIN32
+# include <windows.h>
+# include <Shlwapi.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -78,17 +83,20 @@
 namespace Aeromatic
 {
 
-#define X			0
-#define Y			1
-#define Z			2
+enum indicators
+{
+    X = 0,
+    Y,
+    Z,
 
-#define MAIN			0
-#define NOSE			1
-#define TAIL			2
+    MAIN = 0,
+    NOSE,
+    TAIL,
 
-#define PITCH			0
-#define YAW			1
-#define ROLL			2
+    PITCH = 0,
+    YAW,
+    ROLL
+};
 
 enum AircraftType
 {
@@ -156,6 +164,13 @@ enum ParamUnit
 
     MAX_UNITS
 };
+
+void strCopy(char *b, std::string str);
+#ifdef WIN32
+char* getEnv(const char*);
+#else
+# define getEnv(a)		getenv(a)
+#endif
 
 class Param
 {

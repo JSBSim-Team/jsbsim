@@ -49,7 +49,7 @@ Thruster::~Thruster()
 
 Direct::Direct(Engine *p) : Thruster(p)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "direct");
+    strCopy(_thruster_name, "direct");
 }
 
 std::string Direct::thruster()
@@ -72,7 +72,7 @@ std::string Direct::thruster()
 Nozzle::Nozzle(Engine *p) : Thruster(p),
     _diameter(3.25f)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "my_nozzle");
+    strCopy(_thruster_name, "my_nozzle");
 
     _inputs.push_back(new Param("Nozzle name", 0, _thruster_name));
     _inputs.push_back(new Param("Nozzle diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
@@ -105,7 +105,8 @@ Propeller::Propeller(Engine *p) : Thruster(p),
     _fixed_pitch(true),
     _diameter(8)
 {
-    snprintf(_thruster_name, PARAM_MAX_STRING, "my_propeller");
+    strCopy(_thruster_name, "my_propeller");
+
     _inputs.push_back(new Param("Thruster name", 0, _thruster_name));
     _inputs.push_back(new Param("Propeller diameter", 0, _diameter, _engine->_aircraft->_metric, LENGTH));
     _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch setting", _fixed_pitch));

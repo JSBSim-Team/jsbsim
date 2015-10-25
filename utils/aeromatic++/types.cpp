@@ -23,14 +23,37 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <iostream>
-
-#include <stdlib.h>
-#include <stdio.h>
+#include <sstream>
+#include <string>
 
 #include "types.h"
 
 namespace Aeromatic
 {
+
+void strCopy(char *b, std::string str)
+{
+    std::size_t l = str.copy(b, PARAM_MAX_STRING);
+    b[l] = 0;
+}
+
+#ifdef WIN32
+char*
+getEnv(const char*name)
+{
+   static char _key[256] = "";
+   char *rv = NULL;
+   DWORD res, err;
+
+   res = GetEnvironmentVariable(name, (LPSTR)&_key, 256);
+   err = GetLastError();
+   if (res || !err) {
+       rv = (char*)&_key;
+   }
+
+   return rv;
+}
+#endif
 
 template <>
 Param::Param<bool>(const char* n, const char *h,  bool& v, const bool& c, unsigned t) :
@@ -93,7 +116,7 @@ void Param::set(std::string& v)
         if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;
     case PARAM_STRING:
-        snprintf(_value.s, PARAM_MAX_STRING, "%s", v.c_str());
+        strCopy(_value.s, v);
         break;
     case PARAM_UNSUPPORTED:
     default:
@@ -103,23 +126,24 @@ void Param::set(std::string& v)
 
 std::string Param::get()
 {
-    char val[PARAM_MAX_STRING+1];
-    float fact = 1.0f;
+    std::ostringstream oss;
     std::string str;
+    float fact;
 
+    fact = 1.0f;
     switch(_ptype)
     {
     case PARAM_BOOL:
         str = (*_value.b == false) ? "no" : "yes";
         break;
     case PARAM_INT:
-        snprintf(val, PARAM_MAX_STRING, "%u", *_value.i);
-        str = val;
+        oss << (*_value.i);
+        str = oss.str();
         break;
     case PARAM_FLOAT:
-        if (_convert) fact = 1.0f/_cvt_t[_utype].fact;
-        snprintf(val, PARAM_MAX_STRING, "%g", *_value.f * fact);
-        str = val;
+        if (_convert) fact = _cvt_t[_utype].fact;
+        oss << (*_value.f * fact);
+        str = oss.str();
         break;
     case PARAM_STRING:
         str = _value.s;
@@ -150,4 +174,5 @@ Param::__cvt const Param::_cvt_t[MAX_UNITS] =
 };
 
 } /* namespace Aeromatic */
+
 
