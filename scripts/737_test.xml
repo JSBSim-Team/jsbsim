@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Cruise flight in 737.">
+
+  <description>
+    This script trims the aircraft at cruise altitude and mach. Some state
+    data is printed out at the completion of trimming. 
+  </description>
+
+  <use aircraft="737" initialize="cruise_init"/> 
+
+  <run start="0" end="1" dt="0.008333">
+
+    <property value="0"> simulation/notify-time-trigger </property>
+
+    <event name="Reset Initial Conditions"> 
+      <condition> simulation/sim-time-sec ge 0 </condition>
+      <set name="ic/h-sl-ft" value="30000"/>
+      <set name="ic/mach"    value="0.78"/>
+      <notify>
+        <property caption="Altitude ASL">ic/h-sl-ft</property>
+        <property caption="Mach .......">ic/mach</property>
+      </notify>
+    </event>
+
+    <event name="Set engines running / raise gear">
+      <condition> simulation/sim-time-sec ge 0 </condition>
+      <set name="propulsion/engine[0]/set-running" value="1"/>
+      <set name="propulsion/engine[1]/set-running" value="1"/>
+      <set name="gear/gear-cmd-norm" value="0"/>
+      <set name="gear/gear-pos-norm" value="0"/>
+      <notify>
+        <property caption="Eng[0] Thrust (lbs)">propulsion/engine[0]/thrust-lbs</property>
+        <property caption="Eng[1] Thrust (lbs)">propulsion/engine[1]/thrust-lbs</property>
+        <property caption="Gear Position .....">gear/gear-pos-norm</property>
+      </notify>
+    </event>
+
+    <!--
+      For "do_simple_trim" (Classic trim):
+      0: Longitudinal
+      1: Full
+      2: Ground
+      3: Pullup
+      4: Custom
+      5: Turn
+      6: None
+    -->
+    
+    <event name="Start Trim">
+      <condition> gear/gear-pos-norm eq 0 </condition>
+      <set name="simulation/do_simple_trim" value="0"/>
+    </event>
+
+
+    <event name="Repeating Notify" persistent="true">
+      <description>Output message at 10 second intervals, starting after
+                   trimming is completed.
+      </description>
+      <notify>
+        <property>position/h-agl-ft</property>
+        <property>velocities/mach</property>  
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+        <property>velocities/vc-fps</property>
+        <property>velocities/vt-fps</property>
+        <property>attitude/theta-rad</property>
+        <property>aero/alpha-deg</property>
+        <property>simulation/frame</property>
+      </notify>
+      <condition> 
+         <and>
+            simulation/sim-time-sec >= simulation/notify-time-trigger
+            simulation/trim-completed eq 1
+         </and>
+      </condition>
+      <set name="simulation/notify-time-trigger" value="10" type="FG_DELTA"/>
+    </event>
+
+  </run>
+
+</runscript>
