@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.101 2015/09/28 20:50:41 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.102 2015/10/25 21:18:29 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.101 $
+    @version $Revision: 1.102 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -574,6 +574,9 @@ public:
     return sim_time;
   }
 
+  /** Retrieves the current frame count. */
+  unsigned int GetFrame(void) const {return Frame;}
+
   /** Retrieves the current debug level setting. */
   int GetDebugLevel(void) const {return debug_lvl;};
 
@@ -625,6 +628,7 @@ private:
   bool trim_status;
   int ta_mode;
   unsigned int ResetMode;
+  int trim_completed;
 
   FGScript*           Script;
   FGInitialCondition* IC;
