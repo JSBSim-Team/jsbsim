@@ -25,6 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstdlib>
 
 #include "types.h"
 
@@ -56,7 +57,7 @@ getEnv(const char*name)
 #endif
 
 template <>
-Param::Param<bool>(const char* n, const char *h,  bool& v, const bool& c, unsigned t) :
+Param::Param(const char* n, const char *h,  bool& v, const bool& c, unsigned t) :
     _name(n),
     _help(h ? h : _unspecified),
     _ptype(PARAM_BOOL),
@@ -67,7 +68,7 @@ Param::Param<bool>(const char* n, const char *h,  bool& v, const bool& c, unsign
 }
 
 template <>
-Param::Param<unsigned>(const char* n, const char *h, unsigned& v, const bool& c, unsigned t) :
+Param::Param(const char* n, const char *h, unsigned& v, const bool& c, unsigned t) :
     _name(n),
     _help(h ? h : _unspecified),
     _ptype(PARAM_INT),
@@ -78,7 +79,7 @@ Param::Param<unsigned>(const char* n, const char *h, unsigned& v, const bool& c,
 }
 
 template <>
-Param::Param<float>(const char* n, const char *h, float& v, const bool& c, unsigned t) :
+Param::Param(const char* n, const char *h, float& v, const bool& c, unsigned t) :
     _name(n),
     _help(h ? h : _unspecified),
     _ptype(PARAM_FLOAT),
@@ -89,7 +90,7 @@ Param::Param<float>(const char* n, const char *h, float& v, const bool& c, unsig
 }
 
 template <>
-Param::Param<char>(const char* n, const char *h, char* v, const bool& c, unsigned t) :
+Param::Param(const char* n, const char *h, char* v, const bool& c, unsigned t) :
     _name(n),
     _help(h ? h : _unspecified),
     _ptype(PARAM_STRING),
@@ -106,13 +107,17 @@ void Param::set(std::string& v)
     case PARAM_BOOL:
         if (v == "y" || v == "yes" || v == "true") *_value.b = true;
         else if (v == "n" || v == "no" || v == "false") *_value.b = false;
-        else *_value.b = (strtol(v.c_str(), NULL, 10) == 0) ? false : true;
+        else *_value.b = (std::strtol(v.c_str(), NULL, 10) == 0) ? false : true;
         break;
     case PARAM_INT:
-        *_value.i = strtol(v.c_str(), NULL, 10);
+        *_value.i = std::strtol(v.c_str(), NULL, 10);
         break;
     case PARAM_FLOAT:
-        *_value.f = strtof(v.c_str(), NULL);
+#if (_MSC_VER)
+        *_value.f = std::stof(v, NULL);
+#else
+        *_value.f = std::strtof(v.c_str(), NULL);
+#endif
         if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;
     case PARAM_STRING:

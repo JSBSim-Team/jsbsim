@@ -62,46 +62,46 @@ void LandingGear::set(const float *cg_loc)
     bool glider = (_aircraft->_atype == LIGHT && _aircraft->_engines == 0) ? true : false;
     if (_taildragger)
     {
-        _gear_loc[MAIN][X] = cg_loc[X] * 0.91;
-        _gear_loc[MAIN][Z] = -(_aircraft->_length * 0.20) * FEET_TO_INCH;
+        _gear_loc[MAIN][X] = cg_loc[X] * 0.91f;
+        _gear_loc[MAIN][Z] = -(_aircraft->_length * 0.20f) * FEET_TO_INCH;
     }
     else
     {
-        _gear_loc[MAIN][X] = cg_loc[X] * 1.04;
-        _gear_loc[MAIN][Z] = -(_aircraft->_length * 0.12) * FEET_TO_INCH;
+        _gear_loc[MAIN][X] = cg_loc[X] * 1.04f;
+        _gear_loc[MAIN][Z] = -(_aircraft->_length * 0.12f) * FEET_TO_INCH;
     }
     if (glider) {
-        _gear_loc[MAIN][Z] = -(_aircraft->_length / 10) * FEET_TO_INCH;
+        _gear_loc[MAIN][Z] = -(_aircraft->_length / 10.0f) * FEET_TO_INCH;
     }
 
     // set main gear lateral location
     _gear_loc[MAIN][Y] = (_aircraft->_wing_span * _aircraft->get_gear_loc()) * FEET_TO_INCH;
 
     // set nose gear location
-    _gear_loc[NOSE][X] = _aircraft->_length * 0.13 * FEET_TO_INCH;
+    _gear_loc[NOSE][X] = _aircraft->_length * 0.13f * FEET_TO_INCH;
     _gear_loc[NOSE][Y] = 0;
     _gear_loc[NOSE][Z] = _gear_loc[MAIN][Z];
     if (glider) {
-        _gear_loc[NOSE][Z] *= 0.6;
+        _gear_loc[NOSE][Z] *= 0.6f;
     }
 
     // set tail gear location
-    _gear_loc[TAIL][X] = _aircraft->_length * 0.91 * FEET_TO_INCH;
+    _gear_loc[TAIL][X] = _aircraft->_length * 0.91f * FEET_TO_INCH;
     _gear_loc[TAIL][Y] = 0;
-    _gear_loc[TAIL][Z] = _gear_loc[MAIN][Z] * 0.30;
+    _gear_loc[TAIL][Z] = _gear_loc[MAIN][Z] * 0.30f;
 
     // set spring and damp coefficients
-    _gear_spring[MAIN] = _aircraft->_max_weight * 1.0;
-    _gear_spring[NOSE] = _aircraft->_max_weight * 0.3;
-    _gear_spring[TAIL] = _aircraft->_max_weight * 1.0;
+    _gear_spring[MAIN] = _aircraft->_max_weight * 1.0f;
+    _gear_spring[NOSE] = _aircraft->_max_weight * 0.3f;
+    _gear_spring[TAIL] = _aircraft->_max_weight * 1.0f;
 
-    _gear_damp[MAIN] = _aircraft->_max_weight * 0.5;
-    _gear_damp[NOSE] = _aircraft->_max_weight * 0.15;
-    _gear_damp[TAIL] = _aircraft->_max_weight * 0.5;
+    _gear_damp[MAIN] = _aircraft->_max_weight * 0.5f;
+    _gear_damp[NOSE] = _aircraft->_max_weight * 0.15f;
+    _gear_damp[TAIL] = _aircraft->_max_weight * 0.5f;
 
-    _gear_static = 0.8;
-    _gear_dynamic = 0.5;
-    _gear_rolling = (glider) ? 0.5 : 0.02;
+    _gear_static = 0.8f;
+    _gear_dynamic = 0.5f;
+    _gear_rolling = (glider) ? 0.5f : 0.02f;
 
     _gear_max_steer = 5.0f;
     if (_steering == 1) {		// castering

@@ -23,8 +23,8 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <math.h>
+#include <time.h>
 
-#include <ctime>
 #include <locale>
 #include <iostream>
 #include <iomanip>
@@ -37,7 +37,7 @@
 namespace Aeromatic
 {
 
-Aircraft::Aircraft(Aeromatic *p) :
+Aircraft::Aircraft(Aeromatic *p = 0) :
     _subtype(0),
     _overwrite(true),
     _subdir(false),
@@ -45,7 +45,7 @@ Aircraft::Aircraft(Aeromatic *p) :
     _aircraft(p)
 {
                     /* general information */
-#if defined(WIN32)
+#ifdef WIN32
     std::string dir(getEnv("HOMEPATH"));
 #else
     std::string dir(getEnv("HOME"));
@@ -65,7 +65,7 @@ Aircraft::~Aircraft()
 {
 }
 
-Aeromatic::Aeromatic() : Aircraft(this),
+Aeromatic::Aeromatic() : Aircraft(),
     _atype(LIGHT),
     _metric(0),
     _max_weight(10000.0),
@@ -122,6 +122,8 @@ Aeromatic::Aeromatic() : Aircraft(this),
     param->add_option(_aircraft[3]->get_description());
     _aircraft[4] = new PropTransport(this);
     param->add_option(_aircraft[4]->get_description());
+
+    Aircraft::_aircraft = this;
 }
 
 Aeromatic::~Aeromatic()
@@ -269,9 +271,17 @@ bool Aeromatic::fdm()
 //************************************************
 
     char str[64];
-    std::time_t t = std::time(NULL);
-//  std::strftime(str, sizeof(str), "%Y-%m-%d", std::localtime(&t));
-    std::strftime(str, sizeof(str), "%d %b %Y", std::localtime(&t));
+    time_t t;
+
+    time(&t);
+#ifdef _MSC_VER
+    struct tm ti;
+    localtime_s(&ti, &t);
+    strftime(str, sizeof(str), "%d %b %Y", &ti);
+#else
+    struct tm *ti= localtime(&t);
+    strftime(str, sizeof(str), "%d %b %Y", ti);
+#endif
 
     _dir = _subdir ? create_dir(_path, _name) : _path;
     std::string fname = _dir + "/" + std::string(_name) + ".xml";
@@ -304,8 +314,8 @@ bool Aeromatic::fdm()
     file << std::endl;
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
-    file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.20 $</version>" << std::endl;
+    file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
+    file << "  <version>$Revision: 1.21 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -610,7 +620,7 @@ bool Aeromatic::fdm()
 
 char const* Aeromatic::_estimate = "enter 0 to use estimated value";
 
-#if (win32)
+#ifdef WIN32
 #else
 # include <sys/stat.h>
 #endif
@@ -619,7 +629,7 @@ std::string Aeromatic::create_dir(std::string path, std::string subdir)
 {
     // Create Engines directory
     std::string dir = path + "/" + subdir;
-#if (win32 || __MINGW32__)
+#ifdef WIN32
     if (!PathFileExists(dir.c_str())) {
         if (CreateDirectory(dir.c_str(), NULL) == 0) {
             dir.clear();
@@ -643,8 +653,8 @@ bool Aeromatic::overwrite(std::string path)
 {
     bool rv = true;
 
-#if (win32)
-    if (!PathFileExists(path)) {
+#ifdef WIN32
+    if (!PathFileExists(path.c_str())) {
         rv = false;
     }
 #else

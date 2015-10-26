@@ -147,7 +147,7 @@ float const PropTransport::_vtail_arm_t[1][5] =
 
 float const PropTransport::_empty_weight_t[1][5] =
 {
-    { 0.60, 0.60, 0.60, 0.60, 0.60 }
+    { 0.60f, 0.60f, 0.60f, 0.60f, 0.60f }
 };
 
 float const PropTransport::_roskam_t[1][5][3] =
@@ -209,7 +209,7 @@ float const PropTransport::_K_t[1][5] =
 
 float const PropTransport::_Mcrit_t[1][5] =
 {
-    { 0.70f, 0.70f, 0.70f, 0.70f, 0.70 }
+    { 0.70f, 0.70f, 0.70f, 0.70f, 0.70f }
 };
 
 float const PropTransport::_Cmalpha_t[1][5] =

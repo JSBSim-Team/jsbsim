@@ -146,7 +146,7 @@ float const Fighter::_vtail_arm_t[1][5] =
 
 float const Fighter::_empty_weight_t[1][5] =
 {
-    { 0.53, 0.53, 0.50, 0.50, 0.50 }
+    { 0.53f, 0.53f, 0.50f, 0.50f, 0.50f }
 };
 
 float const Fighter::_roskam_t[1][5][3] =

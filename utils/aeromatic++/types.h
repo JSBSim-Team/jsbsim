@@ -194,7 +194,7 @@ public:
     }
 
     // options add a 'one of n' selection type
-    unsigned no_options() { return _options.size(); }
+    unsigned no_options() { return (unsigned)_options.size(); }
     void add_option(const char* s) { _options.push_back(s); }
     void add_option(std::string &s) { _options.push_back(s); }
     std::string& get_option(unsigned n) { return _options[n]; }

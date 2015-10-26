@@ -35,7 +35,7 @@
 namespace Aeromatic
 {
 
-Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
+Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
     _layout(FWD_FUSELAGE)
 {
     _description.push_back("Propulsion");
@@ -66,6 +66,8 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, this),
     type->add_option(_propulsion[3]->get_description());
     _propulsion[4] = new ElectricEngine(p, this);
     type->add_option(_propulsion[4]->get_description());
+
+    Engine::_propulsion = this;
 }
 
 Propulsion::~Propulsion()
@@ -412,8 +414,8 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -475,15 +477,17 @@ std::string PistonEngine::engine()
 
 // http://web.mit.edu/16.unified/www/SPRING/propulsion/UnifiedPropulsion3/UnifiedPropulsion3.htm
 TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
+    _oapr(16.0f),
     _bypass_ratio(1.0f),
     _injected(false),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine thrust", 0, _power, _aircraft->_metric, THRUST));
     _inputs.push_back(new Param("Bypass ratio", 0, _bypass_ratio));
+    _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
     _inputs.push_back(new Param("Augmented?", 0, _augmented));
-    _inputs.push_back(new Param("water injection?", 0, _injected));   
+    _inputs.push_back(new Param("Water injection?", 0, _injected));
     _thruster = new Direct(this);
 }
 
@@ -498,7 +502,7 @@ std::string TurbineEngine::engine()
     }
 
     // Figure 3.10
-    float tsfc = 0.7533f - 0.0941f * logf(_bypass_ratio);
+    float tsfc = 0.7533f - 0.161f * log10f(0.0625f * _oapr * _bypass_ratio);
 
     file.precision(2);
     file.flags(std::ios::right);
@@ -516,6 +520,9 @@ std::string TurbineEngine::engine()
     file << "    bypass ratio:   " << _bypass_ratio << ":1" << std::endl;
     file << "    augmented?      " << (_augmented ? "yes" : "no") << std::endl;
     file << "    injected?       " << (_injected ? "yes" : "no") << std::endl;
+     file << std::endl;
+    file << "  Outputs" << std::endl;
+    file << "    tsfc            " << tsfc << std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
@@ -625,17 +632,16 @@ std::string TurbineEngine::engine()
 }
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-    _max_rpm(2700.0f),
-    _oapr(15.0f),
+    _max_rpm(23500.0f),
+    _oapr(16.0f),
     _itt(800.0f),
-    _psfc(0.66f),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
     _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
-    _inputs.push_back(new Param("Turbine Inlet Temperature", "in degrees Celcius", _itt));
+    _inputs.push_back(new Param("Turbine inlet temperature", "in degrees Celcius", _itt));
     _thruster = new Propeller(this);
 }
 
@@ -687,6 +693,12 @@ std::string TurbopropEngine::engine()
     file << "    power:                  " << _power << " hp" << std::endl;
     file << "    inlet temperature:      " << _itt << " degrees C"<< std::endl;
     file << "    overall pressure ratio: " << _oapr << ":1" << std::endl;
+    file << std::endl;
+    file << "  Outputs:" << std::endl;
+    file << "    psfc:                   " << std::setprecision(3) << psfc << std::setprecision(1) << " lbs/hr/hp" << std::endl;
+    file << "    engine mass:            " << (0.246f * _power * KG_TO_LBS) << " lbs" << std::endl;
+    file << "    engine length:          " << (0.1068f * powf(_power, 0.4094f) * METER_TO_FEET) << " ft" << std::endl;
+    file << "    engine diameter:        " << (0.1159f * powf(_power, 0.2483f) * METER_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
 file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
@@ -774,7 +786,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine Thrust", 0, _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine thrust", 0, _power, _aircraft->_metric, THRUST));
     _thruster = new Nozzle(this);
 }
 
@@ -814,8 +826,8 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine Power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum Engine RPM", 0, _max_rpm));
+    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
     _thruster = new Propeller(this);
 }
 

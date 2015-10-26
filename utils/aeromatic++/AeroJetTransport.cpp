@@ -149,7 +149,7 @@ float const JetTransport::_vtail_arm_t[1][5] =
 
 float const JetTransport::_empty_weight_t[1][5] =
 {
-    { 0.55, 0.55, 0.55, 0.52, 0.49 }
+    { 0.55f, 0.55f, 0.55f, 0.52f, 0.49f }
 };
 
 float const JetTransport::_roskam_t[1][5][3] =

@@ -148,7 +148,7 @@ float const Light::_vtail_arm_t[1][5] =
 
 float const Light::_empty_weight_t[1][5] =
 {
-    { 0.84, 0.62, 0.61, 0.61, 0.61 }
+    { 0.84f, 0.62f, 0.61f, 0.61f, 0.61f }
 };
 
 float const Light::_roskam_t[1][5][3] =

@@ -149,7 +149,7 @@ float const Performance::_vtail_arm_t[1][5] =
 
 float const Performance::_empty_weight_t[1][5] =
 {
-    { 0.61, 0.61, 0.61, 0.61, 0.61 }
+    { 0.61f, 0.61f, 0.61f, 0.61f, 0.61f }
 };
 
 float const Performance::_roskam_t[1][5][3] =
