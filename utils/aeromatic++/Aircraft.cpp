@@ -67,6 +67,7 @@ Aircraft::~Aircraft()
 
 Aeromatic::Aeromatic() : Aircraft(),
     _atype(LIGHT),
+    _system_files(true),
     _metric(0),
     _max_weight(10000.0),
     _empty_weight(0),
@@ -86,6 +87,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _payload = _max_weight;
 
     /* general information */
+    _general.push_back(new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files));
     Param* units = new Param("Chose a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
@@ -284,6 +286,22 @@ bool Aeromatic::fdm()
 #endif
 
     _dir = _subdir ? create_dir(_path, _name) : _path;
+    if (_dir.empty()) {
+        std::cout << "Unable to create directory: " << _path << "/" << _name << std::endl;
+        return false;
+    }
+
+    std::string systems_dir;
+    if (_system_files)
+    {
+        systems_dir = create_dir(_dir, "Systems");
+        if (systems_dir.empty())
+        {
+            std::cout << "Unable to create directory: " << _dir<< "/Systems" << std::endl;
+            _system_files = false;
+        }
+    }
+
     std::string fname = _dir + "/" + std::string(_name) + ".xml";
 
     std::string version = AEROMATIC_VERSION_STR;
@@ -315,7 +333,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.21 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.22 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -454,16 +472,52 @@ bool Aeromatic::fdm()
 
 //***** SYSTEMS ***********************************************
 
+    if (_system_files == true)
+    {
+        for (unsigned i=0; i<systems.size(); ++i)
+        {
+            if (systems[i]->enabled())
+            {
+                std::string system = systems[i]->system();
+                if (!system.empty())
+                {
+                    std::string sname = systems[i]->get_description();
+                    std::string sfname = sname + ".xml";
+                    file << " <system file=\"" << sfname << "\"/>" << std::endl;
+
+                    std::string sfpath = systems_dir + "/" + sfname;
+                    std::ofstream sfile;
+                    sfile.open(sfpath.c_str());
+                    if (sfile.fail() || sfile.bad()) {
+                        file << system << std::endl;
+                    }
+                    else
+                    {
+                        sfile << "<?xml version=\"1.0\"?>" << std::endl;
+                        sfile << "<system name=\"" << sname << "\">" << std::endl;
+                        sfile << system << std::endl;
+                        sfile << "</system>" << std::endl;
+                    }
+                    sfile.close();
+                }
+            }
+        }
+        file << std::endl;
+    }
+
     file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
     file << std::endl;
 
-    for (unsigned i=0; i<systems.size(); ++i)
+    if (_system_files == false)
     {
-        if (systems[i]->enabled())
+        for (unsigned i=0; i<systems.size(); ++i)
         {
-            std::string system = systems[i]->system();
-            if (!system.empty()) {
-                file << system << std::endl;
+            if (systems[i]->enabled())
+            {
+                std::string system = systems[i]->system();
+                if (!system.empty()) {
+                    file << system << std::endl;
+                }
             }
         }
     }

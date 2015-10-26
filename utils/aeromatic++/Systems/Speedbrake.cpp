@@ -80,7 +80,7 @@ float const Speedbrake::_CDspeedbrake_t[MAX_AIRCRAFT][5] =
 {
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// LIGHT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f },		// PERFORMANCE
-    { 0.60f, 0.60f, 0.80f, 0.80f, 0.80f },		// FIGHTER
+    { 0.06f, 0.06f, 0.08f, 0.08f, 0.08f },		// FIGHTER
     { 0.12f, 0.12f, 0.12f, 0.12f, 0.12f },		// JET_TRANSPORT
     { 0.00f, 0.00f, 0.00f, 0.00f, 0.00f }		// PROP_TRANSPORT
 };

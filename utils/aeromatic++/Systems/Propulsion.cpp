@@ -696,7 +696,7 @@ std::string TurbopropEngine::engine()
     file << std::endl;
     file << "  Outputs:" << std::endl;
     file << "    psfc:                   " << std::setprecision(3) << psfc << std::setprecision(1) << " lbs/hr/hp" << std::endl;
-    file << "    engine mass:            " << (0.246f * _power * KG_TO_LBS) << " lbs" << std::endl;
+    file << "    engine weight:          " << (0.246f * _power * KG_TO_LBS) << " lbs" << std::endl;
     file << "    engine length:          " << (0.1068f * powf(_power, 0.4094f) * METER_TO_FEET) << " ft" << std::endl;
     file << "    engine diameter:        " << (0.1159f * powf(_power, 0.2483f) * METER_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;

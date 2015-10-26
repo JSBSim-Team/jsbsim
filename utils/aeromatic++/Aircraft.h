@@ -544,6 +544,7 @@ public:
     Aircraft *_aircraft[MAX_AIRCRAFT];
     unsigned _atype;
 
+    bool _system_files;
     bool _metric;
 
     /* weight and balance */
