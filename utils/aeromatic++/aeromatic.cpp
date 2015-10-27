@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
 
     cout << endl;
     cout << "** AeromatiC++ version " << AEROMATIC_VERSION_STR << endl;
-    cout << "A JSBSim configuration file generation utility" << endl << endl;
+    cout << "Aeromatiic is a JSBSim configuration file generation utility." << endl;
+    cout << "Please enter aircraft data when prompted." << endl << endl;
     cout << "You can always enter 'h' to get verbose help" << endl << endl;
 
     cout << "** General Information **" << endl << endl;
@@ -122,4 +123,8 @@ int main(int argc, char *argv[])
         cout << aeromatic._dir;
     }
     cout << endl << endl;
+
+    cout << "Press enter to continue." << endl;
+    string input;
+    getline(cin, input);
 }

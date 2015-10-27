@@ -42,9 +42,9 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
     _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
 
     strCopy(_engine_name, "my_engine");
-    _inputs.push_back(new Param("Engine name", 0, _engine_name));
+    _inputs.push_back(new Param("Engine name", "The engine name is used for the engine configuration file name", _engine_name));
 
-    _inputs.push_back(new Param("Number of engines", 0, _aircraft->_no_engines));
+    _inputs.push_back(new Param("Number of engines", "Engines are distributed evenly across the wing span", _aircraft->_no_engines));
     Param *layout = new Param("Engine layout", 0, _layout);
     _inputs.push_back(layout);
     layout->add_option("fwd fuselage");
@@ -414,8 +414,8 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+   _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _thruster = new Propeller(this);
 }
 
@@ -483,11 +483,11 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine thrust", 0, _power, _aircraft->_metric, THRUST));
-    _inputs.push_back(new Param("Bypass ratio", 0, _bypass_ratio));
-    _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
-    _inputs.push_back(new Param("Augmented?", 0, _augmented));
-    _inputs.push_back(new Param("Water injection?", 0, _injected));
+    _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Bypass ratio", "The bypass ratio is mainly used for calculating fuel consumption", _bypass_ratio));
+    _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
+    _inputs.push_back(new Param("Augmented?", "Does the engine have afterburner capability?", _augmented));
+    _inputs.push_back(new Param("Water injection?", "Does the engine have ater injection boost?", _injected));
     _thruster = new Direct(this);
 }
 
@@ -638,10 +638,10 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
-    _inputs.push_back(new Param("Overall pressure ratio", Aeromatic::_estimate, _oapr));
-    _inputs.push_back(new Param("Turbine inlet temperature", "in degrees Celcius", _itt));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
+    _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
+    _inputs.push_back(new Param("Turbine inlet temperature", "Turbine inlet temperature is used to finetune the engine configuration", _itt));
     _thruster = new Propeller(this);
 }
 
@@ -786,7 +786,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine thrust", 0, _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
     _thruster = new Nozzle(this);
 }
 
@@ -826,8 +826,8 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine power", 0, _power, _aircraft->_metric, POWER));
-    _inputs.push_back(new Param("Maximum engine rpm", 0, _max_rpm));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _thruster = new Propeller(this);
 }
 

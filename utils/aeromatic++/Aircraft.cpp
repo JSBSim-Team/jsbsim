@@ -40,7 +40,7 @@ namespace Aeromatic
 Aircraft::Aircraft(Aeromatic *p = 0) :
     _subtype(0),
     _overwrite(true),
-    _subdir(false),
+    _subdir(true),
     _engines(0),
     _aircraft(p)
 {
@@ -333,7 +333,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.22 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.23 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -483,22 +483,33 @@ bool Aeromatic::fdm()
                 {
                     std::string sname = systems[i]->get_description();
                     std::string sfname = sname + ".xml";
-                    file << " <system file=\"" << sfname << "\"/>" << std::endl;
 
-                    std::string sfpath = systems_dir + "/" + sfname;
-                    std::ofstream sfile;
-                    sfile.open(sfpath.c_str());
-                    if (sfile.fail() || sfile.bad()) {
-                        file << system << std::endl;
+                    if (!_overwrite && overwrite(sfname))
+                    {
+                        std::cout << "File already exists: " << fname << std::endl;
+                        std::cout << "Skipping." << std::endl;
                     }
                     else
                     {
-                        sfile << "<?xml version=\"1.0\"?>" << std::endl;
-                        sfile << "<system name=\"" << sname << "\">" << std::endl;
-                        sfile << system << std::endl;
-                        sfile << "</system>" << std::endl;
+                        file << " <system file=\"" << sfname << "\"/>" << std::endl;
+
+                        std::string sfpath = systems_dir + "/" + sfname;
+                        std::ofstream sfile;
+                        sfile.open(sfpath.c_str());
+                        if (sfile.fail() || sfile.bad())
+                        {
+                            std::cout << "Error opening file: " << fname << std::endl;
+                            std::cout << "Skipping." << std::endl;
+                        }
+                        else
+                        {
+                            sfile << "<?xml version=\"1.0\"?>" << std::endl;
+                            sfile << "<system name=\"" << sname << "\">" << std::endl;
+                            sfile << system << std::endl;
+                            sfile << "</system>" << std::endl;
+                        }
+                        sfile.close();
                     }
-                    sfile.close();
                 }
             }
         }
