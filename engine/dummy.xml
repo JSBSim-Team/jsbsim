@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!--
+  File:     my_engine.xml
+  Author:   AeromatiC++ v 2.9.9
+
+  See: http://wiki.flightgear.org/JSBSim_Engines#FGElectric
+
+  Inputs:
+    power:          1 hp = 745.1 Watt
+-->
+
+<electric_engine name="dummy">
+ <power unit="WATTS">   0 </power>
+</electric_engine>
