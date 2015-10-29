@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.54 2015/09/27 09:29:41 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.55 2015/10/29 10:59:35 ehofman Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Vinduced = 0.0;
 
   if (prop_element->FindElement("ixx"))
-    Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
+    Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 0.001);
 
   Sense_multiplier = 1.0;
   if (prop_element->HasAttribute("version"))
@@ -85,11 +85,11 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       Sense_multiplier = -1.0;
 
   if (prop_element->FindElement("diameter"))
-    Diameter = prop_element->FindElementValueAsNumberConvertTo("diameter", "FT");
+    Diameter = max(prop_element->FindElementValueAsNumberConvertTo("diameter", "FT"), 0.001);
   if (prop_element->FindElement("numblades"))
     numBlades = (int)prop_element->FindElementValueAsNumber("numblades");
   if (prop_element->FindElement("gearratio"))
-    GearRatio = prop_element->FindElementValueAsNumber("gearratio");
+    GearRatio = max(prop_element->FindElementValueAsNumber("gearratio"), 0.001);
   if (prop_element->FindElement("minpitch"))
     MinPitch = prop_element->FindElementValueAsNumber("minpitch");
   if (prop_element->FindElement("maxpitch"))
