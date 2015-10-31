@@ -8,7 +8,7 @@
  <fileheader>
   <author> Aeromatic v 2.9.9 </author>
   <filecreationdate> 27 Oct 2015 </filecreationdate>
-  <version>$Revision: 1.1 $</version>
+  <version>$Revision: 1.2 $</version>
   <description> Models a Pterosaur. </description>
  </fileheader>
 
@@ -96,9 +96,9 @@
  </metrics>
 
  <mass_balance>
-   <ixx unit="SLUG*FT2">    166.83 </ixx>
-   <iyy unit="SLUG*FT2">    242.14 </iyy>
-   <izz unit="SLUG*FT2">    361.58 </izz>
+   <ixx unit="SLUG*FT2">    528.43 </ixx>
+   <iyy unit="SLUG*FT2">    269.14 </iyy>
+   <izz unit="SLUG*FT2">    613.46 </izz>
    <emptywt unit="LBS" >    187.26 </emptywt>
    <location name="CG" unit="IN">
      <x>   188.99 </x>
@@ -147,11 +147,11 @@
       <z>   -65.62 </z>
     </location>
     <static_friction>  0.80 </static_friction>
-    <dynamic_friction> 0.05 </dynamic_friction>
-    <rolling_friction> 0.001 </rolling_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.20 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     352 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC"> 176 </damping_coeff>
-    <max_steer unit="DEG"> 0.50 </max_steer>
+    <damping_coeff unit="LBS/FT/SEC"> 352 </damping_coeff>
+    <max_steer unit="DEG"> 20.0 </max_steer>
     <brake_group> NONE </brake_group>
     <retractable> 1 </retractable>
   </contact>
@@ -160,11 +160,11 @@
     <location unit="IN">
       <x>   171.98 </x>
       <y>   -39.69 </y>
-      <z>   -78.74 </z>
+      <z>   -72.62 </z>
     </location>
     <static_friction>  0.80 </static_friction>
-    <dynamic_friction> 0.05 </dynamic_friction>
-    <rolling_friction> 0.001 </rolling_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.02 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     352 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 176 </damping_coeff>
     <max_steer unit="DEG">0</max_steer>
@@ -176,11 +176,11 @@
     <location unit="IN">
       <x>   171.98 </x>
       <y>    39.69 </y>
-      <z>   -78.74 </z>
+      <z>   -72.62 </z>
     </location>
     <static_friction>  0.80 </static_friction>
-    <dynamic_friction> 0.05 </dynamic_friction>
-    <rolling_friction> 0.001 </rolling_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.02 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     352 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 176 </damping_coeff>
     <max_steer unit="DEG">0</max_steer>
@@ -188,7 +188,38 @@
     <retractable> 1 </retractable>
   </contact>
 
-<!--
+  <contact type="BOGEY" name="LEFT_FRONT">
+    <location unit="IN">
+      <x>   -23.98 </x>
+      <y>   -39.69 </y>
+      <z>   -45.62 </z>
+    </location>
+    <static_friction>  0.80 </static_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.02 </rolling_friction>
+    <spring_coeff  unit="LBS/FT">     352 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 176 </damping_coeff>
+    <max_steer unit="DEG">0</max_steer>
+    <brake_group> LEFT </brake_group>
+    <retractable> 1 </retractable>
+  </contact>
+
+  <contact type="BOGEY" name="RIGHT_FRONT">
+    <location unit="IN">
+      <x>   -23.98 </x>
+      <y>    39.69 </y>
+      <z>   -45.62 </z>
+    </location>
+    <static_friction>  0.80 </static_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.02 </rolling_friction>
+    <spring_coeff  unit="LBS/FT">     352 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 176 </damping_coeff>
+    <max_steer unit="DEG">0</max_steer>
+    <brake_group> RIGHT </brake_group>
+    <retractable> 1 </retractable>
+  </contact>
+
   <contact type="STRUCTURE" name="BELLY">
     <location unit="IN">
      <x>     0.00 </x>
@@ -197,10 +228,9 @@
     </location>
    <static_friction>  0.3 </static_friction>
    <dynamic_friction> 0.2 </dynamic_friction>
-   <spring_coeff unit="LBS/FT">      5500 </spring_coeff>
+   <spring_coeff unit="LBS/FT">      550 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 550 </damping_coeff>
   </contact>
--->
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
@@ -587,6 +617,18 @@
  </aerodynamics>
 
  <external_reactions>
+  <force name="legs" frame="BODY">
+   <location unit="IN">
+    <x> 188.99 </x>
+    <y>   0.00 </y>
+    <z>  -9.84 </z>
+   </location>
+   <direction>
+    <x> 1 </x>
+    <y> 0 </y>
+    <z> 0 </z>
+   </direction>
+  </force>
  </external_reactions>
 
 </fdm_config>
