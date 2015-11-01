@@ -257,6 +257,19 @@ public:
     ~RescueChute() {}
 };
 
+class Catapult : public System
+{
+public:
+    Catapult(Aeromatic *p) : System(p) {
+        _description.push_back("Catapult");
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
+    }
+    ~Catapult() {}
+
+    std::string system();
+    std::string external_force();
+};
+
 } /* namespace Aeromatic */
 
 #endif /* __SYSTEMS_H */

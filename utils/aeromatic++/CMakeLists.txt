@@ -55,6 +55,7 @@ SET(AEROMATIC_OBJS
      Systems/Spoilers.cpp
      Systems/Thruster.cpp
      Systems/ThrustReverse.cpp
+     Systems/Catapult.cpp
    )
 
 ADD_LIBRARY( ${LIBAEROMATIC3} STATIC ${AEROMATIC_OBJS} )

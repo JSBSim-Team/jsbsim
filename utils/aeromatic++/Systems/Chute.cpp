@@ -62,7 +62,7 @@ std::string Chute::external_force()
 
     file << "  <property value=\"0\">fcs/parachute-reef-pos-norm</property>" << std::endl;
     file << std::endl;
-    file << "  <force name=\"parachute\" frame=\"WIND\">" << std::endl;
+    file << "  <force name=\"" + _description[_subtype] + "\" frame=\"WIND\">" << std::endl;
     file << "   <function>" << std::endl;
     file << "    <product>" << std::endl;
     file << "     <property>aero/qbar-psf</property>" << std::endl;
@@ -81,7 +81,7 @@ std::string Chute::external_force()
     file << "    <z> 0 </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <direction>" << std::endl;
-    file << "    <x>-1</x>" << std::endl;
+    file << "    <x>-1 </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;
     file << "    <z> 0 </z>" << std::endl;
     file << "   </direction>" << std::endl;
