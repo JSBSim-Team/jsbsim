@@ -81,7 +81,7 @@ std::string Chute::system()
         file << "     <output>systems/chute/chute-not-released</output>" << std::endl;
         file << "   </switch>" << std::endl;
         file << std::endl;
-        file << "   <switch name=\"Roque " + _description[_subtype] + " Deployed\">" << std::endl;
+        file << "   <switch name=\"Drogue " + _description[_subtype] + " Deployed\">" << std::endl;
         file << "     <default value=\"0\"/>" << std::endl;
         file << "     <test logic=\"OR\" value=\"1\">" << std::endl;
         file << "       <test logic=\"AND\" value=\"1\">" << std::endl;
@@ -89,9 +89,9 @@ std::string Chute::system()
         file << "          gear/unit[2]/WOW eq 1" << std::endl;
         file << "          systems/chute/chute-available eq 1" << std::endl;
         file << "       </test>" << std::endl;
-        file << "       systems/chute/roque-chute-deployed eq 1" << std::endl;
+        file << "       systems/chute/drogue-chute-deployed eq 1" << std::endl;
         file << "     </test>" << std::endl;
-        file << "     <output>systems/chute/roque-chute-deployed</output>" << std::endl;
+        file << "     <output>systems/chute/drogue-chute-deployed</output>" << std::endl;
         file << "   </switch>" << std::endl;
         file << std::endl;
         file << "   <switch name=\"" + _description[_subtype] + " Deployed\">" << std::endl;
@@ -99,7 +99,7 @@ std::string Chute::system()
         file << "     <test logic=\"OR\" value=\"1\">" << std::endl;
         file << "       <test logic=\"AND\" value=\"1\">" << std::endl;
         file << "          gear/unit[0]/WOW eq 1" << std::endl;
-        file << "          systems/chute/roque-chute-deployed eq 1" << std::endl;
+        file << "          systems/chute/drogue-chute-deployed eq 1" << std::endl;
         file << "       </test>" << std::endl;
         file << "       systems/chute/drag-chute-deployed eq 1" << std::endl;
         file << "     </test>" << std::endl;
@@ -123,7 +123,7 @@ std::string Chute::system()
         file << "     <output>systems/chute/drag-chute-pos-norm</output>" << std::endl;
         file << "   </fcs_function>" << std::endl;
         file << std::endl;
-        file << "   <kinematic name=\"Rogue " + _description[_subtype] + " Control\">" << std::endl;
+        file << "   <kinematic name=\"Drogue " + _description[_subtype] + " Control\">" << std::endl;
         file << "     <input>systems/chute/drag-chute-pos-norm</input>" << std::endl;
         file << "     <traverse>" << std::endl;
         file << "       <setting>" << std::endl;
