@@ -44,7 +44,7 @@ std::string ArrestorHook::system()
     file.precision(2);
     file.flags(std::ios::right);
     file << std::fixed << std::showpoint;
-    file << "  <property>systems/tailhook-cmd-norm</property>" << std::endl;
+    file << "  <property value=\"0\">systems/hook/tailhook-cmd-norm</property>" << std::endl;
     file << "  <property value=\"" << std::setw(6) << length << "\">systems/hook/tailhook-length-ft</property>" << std::endl;
     file << "  <property value=\"" << std::setw(6) << min_deg << "\">systems/hook/tailhook-pos-min-deg</property>" << std::endl;
     file << "  <property value=\"" << std::setw(6) << max_deg << "\">systems/hook/tailhook-pos-max-deg</property>" << std::endl;
@@ -55,7 +55,7 @@ std::string ArrestorHook::system()
     file << std::endl;
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
     file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
-    file << "     <input>systems/tailhook-cmd-norm</input>" << std::endl;
+    file << "     <input>systems/hook/tailhook-cmd-norm</input>" << std::endl;
     file << "     <traverse>" << std::endl;
     file << "       <setting>" << std::endl;
     file << "          <position> 0 </position>" << std::endl;
@@ -80,6 +80,7 @@ std::string ArrestorHook::system()
     file << "   <scheduled_gain name=\"" << _description[_subtype] << " Decel Multiplier\">" << std::endl;
     file << "    <input>systems/hook/ready</input>" << std::endl;
     file << "    <table>" << std::endl;
+    file << "      <independentVar lookup=\"row\">gear/unit[1]/wheel-speed-fps</independentVar>" << std::endl;
     file << "      <tableData>" << std::endl;
     file << "         0     0.00" << std::endl;
     file << "         1     0.00" << std::endl;
@@ -123,7 +124,7 @@ std::string ArrestorHook::external_force()
     std::stringstream file;
 
     file << std::endl;
-    file << "  <force name=\"hook\" frame=\"BODY\">" << std::endl;
+    file << "  <force name=\"Hook\" frame=\"BODY\">" << std::endl;
     file << "   <location unit=\"FT\">" << std::endl;
     file << "    <x> " << (_aircraft->_length * 0.91f) << " </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;
