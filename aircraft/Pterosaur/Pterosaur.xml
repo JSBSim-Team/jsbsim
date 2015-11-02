@@ -8,7 +8,7 @@
  <fileheader>
   <author> Aeromatic v 2.9.9 </author>
   <filecreationdate> 27 Oct 2015 </filecreationdate>
-  <version>$Revision: 1.2 $</version>
+  <version>$Revision: 1.3 $</version>
   <description> Models a Pterosaur. </description>
  </fileheader>
 
@@ -38,6 +38,9 @@
   References:
    * "Flight in slow motion: aerodynamics of the pterosaur wing"
       http://rspb.royalsocietypublishing.org/content/278/1713/1881.full.pdf
+
+   * "Multi-Body Simulation of a Flying Pterosaur"
+      http://www.simpack.com/fileadmin/simpack/doc/newsletter/2012/Dec_2012/SN-2-Dec-2012_DLR_MBS_Flying_Pterosaur.pdf
 
    * "Student guest blog post: pterosaur weight estimation"
       http://lorenabarba.com/blog/student-guest-blog-post-pterosaur-weight-estimation/
@@ -228,7 +231,7 @@
     </location>
    <static_friction>  0.3 </static_friction>
    <dynamic_friction> 0.2 </dynamic_friction>
-   <spring_coeff unit="LBS/FT">      550 </spring_coeff>
+   <spring_coeff unit="LBS/FT">      352 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 550 </damping_coeff>
   </contact>
 
@@ -241,7 +244,7 @@
    <static_friction>  1 </static_friction>
    <dynamic_friction> 1 </dynamic_friction>
    <spring_coeff unit="LBS/FT">      352 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 352 </damping_coeff>
+   <damping_coeff unit="LBS/FT/SEC"> 550 </damping_coeff>
   </contact>
 
   <contact type="STRUCTURE" name="RIGHT_WING">
@@ -253,7 +256,7 @@
    <static_friction>  1 </static_friction>
    <dynamic_friction> 1 </dynamic_friction>
    <spring_coeff unit="LBS/FT">      352 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 352 </damping_coeff>
+   <damping_coeff unit="LBS/FT/SEC"> 550 </damping_coeff>
   </contact>
 
  </ground_reactions>
@@ -326,6 +329,7 @@
               10.0    1.9
               15.0    1.5
               20.0    1.0
+              30.0    0.4
             </tableData>
           </table>
       </product>
@@ -362,10 +366,10 @@
                0.0    0.000
                5.0    0.000
               10.0    0.001
-              15.0    0.009
-              20.0    0.011
-              25.0    0.013
-              30.0    0.020
+              15.0    0.021
+              20.0    0.054
+              25.0    0.100
+              30.0    0.220
             </tableData>
           </table>
        </product>
@@ -465,14 +469,14 @@
           <table>
             <independentVar lookup="row">fcs/wing-alpha-deg</independentVar>
             <tableData>
-              -5.0    0.0
-               0.0   -0.0251
-               5.0   -0.0628
-              10.0   -0.0942
-              15.0   -0.1256
-              20.0   -0.1193
-              25.0   -0.0942
-              30.0   -0.0628
+             -10.0   -0.075
+              -5.0   -0.095
+               0.0   -0.140
+               5.0   -0.142
+              10.0   -0.115
+              15.0   -0.100
+              25.0   -0.092
+              30.0   -0.068
             </tableData>
           </table>
       </product>
@@ -485,7 +489,7 @@
           <property>metrics/Sw-sqft</property>
           <property>metrics/cbarw-ft</property>
           <property>fcs/elevator-pos-rad</property>
-          <value> -0.8000 </value>
+          <value> -1.2000 </value>
        </product>
     </function>
 
