@@ -48,7 +48,7 @@
     <fcs_function name="Wing Flap Motion">
       <function>
         <product>	<!-- 20.0 * cos(x + 0.25*cos(0.75*x))     -->
-          <value>-20.0</value>
+          <value>20.0</value>
           <property>fcs/throttle-pos-norm</property>
           <sum>
             <cos>				<!-- cos(x + 0.25*cos(x)) -->
