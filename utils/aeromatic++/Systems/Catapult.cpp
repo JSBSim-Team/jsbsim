@@ -36,7 +36,6 @@ std::string Catapult::system()
 
     file << "  <property value=\"0\">systems/catapult/cat-pos-norm</property>" << std::endl;
     file << "  <property value=\"0\">systems/catapult/cat-launch-cmd</property>" << std::endl;
-    file << "  <property value=\"0\">systems/catapult/cat-cmd-norm</property>" << std::endl;
     file << "  <property value=\"0\">systems/catapult/cat-force</property>" << std::endl;
     file << std::endl;
     file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
@@ -51,8 +50,8 @@ std::string Catapult::system()
     file << "      <output>systems/catapult/cat-launch-cmd</output>" << std::endl;
     file << "    </switch>" << std::endl;
     file << std::endl;
-    file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
-    file << "     <input>systems/catapult/cat-cmd-norm</input>" << std::endl;
+    file << "   <kinematic name=\"" + _description[_subtype] + " Timer\">" << std::endl;
+    file << "     <input>systems/catapult/cat-launch-cmd</input>" << std::endl;
     file << "     <traverse>" << std::endl;
     file << "       <setting>" << std::endl;
     file << "          <position> 0 </position>" << std::endl;
@@ -69,6 +68,7 @@ std::string Catapult::system()
     file << "   <pure_gain name=\"" + _description[_subtype] + " Force\">" << std::endl;
     file << "     <input>inertia/weight-lbs</input>" << std::endl;
     file << "     <gain>3</gain>" << std::endl;
+    file << "     <output>systems/catapult/cat-force</output>" << std::endl;
     file << "   </pure_gain>" << std::endl;
     file << std::endl;
     file << "   <switch name=\"" + _description[_subtype] + " Final\">" << std::endl;
@@ -90,7 +90,7 @@ std::string Catapult::external_force()
 {
     std::stringstream file;
 
-    file << "  <force name=\"" + _description[_subtype] + "\" frame=\"BODY\">" << std::endl;
+    file << "  <force name=\"catapult\" frame=\"BODY\">" << std::endl;
     file << "   <location unit=\"IN\">" << std::endl;
     file << "    <x> " << (_aircraft->_length * 0.13f * FEET_TO_INCH) << " </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;

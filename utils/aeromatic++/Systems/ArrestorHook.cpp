@@ -124,7 +124,7 @@ std::string ArrestorHook::external_force()
     std::stringstream file;
 
     file << std::endl;
-    file << "  <force name=\"Hook\" frame=\"BODY\">" << std::endl;
+    file << "  <force name=\"hook\" frame=\"BODY\">" << std::endl;
     file << "   <location unit=\"FT\">" << std::endl;
     file << "    <x> " << (_aircraft->_length * 0.91f) << " </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;

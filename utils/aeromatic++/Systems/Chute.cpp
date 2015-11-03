@@ -153,7 +153,7 @@ std::string Chute::external_force()
     file << "  <property value=\"0\">systems/chute/chute-reef-pos-norm</property>" << std::endl;
     file << "  <property value=\"0\">systems/chute/chute-size-factor</property>" << std::endl;
     file << std::endl;
-    file << "  <force name=\"Chute\" frame=\"WIND\">" << std::endl;
+    file << "  <force name=\"chute\" frame=\"WIND\">" << std::endl;
     file << "   <function>" << std::endl;
     file << "    <product>" << std::endl;
     file << "     <property>aero/qbar-psf</property>" << std::endl;

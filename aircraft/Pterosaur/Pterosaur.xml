@@ -8,7 +8,7 @@
  <fileheader>
   <author> Aeromatic v 2.9.9 </author>
   <filecreationdate> 27 Oct 2015 </filecreationdate>
-  <version>$Revision: 1.3 $</version>
+  <version>$Revision: 1.4 $</version>
   <description> Models a Pterosaur. </description>
  </fileheader>
 
@@ -301,6 +301,7 @@
       <product>
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
+          <property>aero/function/kCLge</property>
           <table>
             <independentVar lookup="row">aero/alpha-deg</independentVar>
             <tableData>
@@ -318,6 +319,7 @@
       <product>
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
+          <property>aero/function/kCLge</property>
           <table>
             <independentVar lookup="row">fcs/wing-alpha-deg</independentVar>
             <tableData>
