@@ -3,7 +3,30 @@
 
   <property value="0">fcs/wing-pos-linear</property>
 
-  <channel name="Wing Flapping">
+  <channel name="Wing Motion">
+
+    <switch name="Wing Fold Request">
+     <default value="1"/>
+     <test value="0">
+        /controls/flight/wing-fold eq 1
+     </test>
+     <output>fcs/wing-not-fold</output>
+   </switch>
+
+    <kinematic name="Winfg Folding Control">
+     <input>fcs/wing-not-fold</input>
+     <traverse>
+       <setting>
+          <position> 0 </position>
+          <time>     0 </time>
+       </setting>
+       <setting>
+          <position> 1 </position>
+          <time>     1.1 </time>
+       </setting>
+     </traverse>
+     <output>fcs/wing-fold</output>
+   </kinematic>
 
     <!--
       bind to: simulation/dt
