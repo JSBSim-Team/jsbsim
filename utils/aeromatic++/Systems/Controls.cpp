@@ -274,7 +274,13 @@ std::string CableControls::roll()
     file << "          <property>metrics/Sw-sqft</property>" << std::endl;
     file << "          <property>metrics/bw-ft</property>" << std::endl;
     file << "          <property>fcs/left-aileron-pos-rad</property>" << std::endl;
-    file << "          <value> " << (Clda) << " </value>" << std::endl;
+    file << "           <table>" << std::endl;
+    file << "            <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
+    file << "            <tableData>" << std::endl;
+    file << "              0.0    " << (Clda) << std::endl;
+    file << "              2.0    " << (0.25*Clda) << std::endl;
+    file << "            </tableData>" << std::endl;
+    file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
