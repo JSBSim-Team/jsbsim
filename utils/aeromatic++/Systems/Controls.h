@@ -41,6 +41,7 @@ public:
     }
     ~CableControls() {}
 
+    void set(const float* cg_loc);
     std::string system();
 
     std::string lift();
@@ -49,6 +50,11 @@ public:
     std::string roll();
     std::string pitch();
     std::string yaw();
+
+private:
+    float _CLalpha;
+    float _wing_sweep_le; 	// wing sweep at leading edge
+    float _e;			// Oswald Efficiency Factor
 };
 
 /* Conventional Controls with Yaw Damper */
@@ -63,6 +69,9 @@ public:
         delete _control;
     }
 
+    void set(const float* cg_loc) {
+        _control->set(cg_loc);
+    }
     std::string system();
 
     std::string lift() {
@@ -99,6 +108,9 @@ public:
         delete _control;
     }
 
+    void set(const float* cg_loc) {
+        _control->set(cg_loc);
+    }
     std::string system();
 
     std::string lift() {
@@ -131,7 +143,9 @@ public:
     Controls(Aeromatic *p);
     ~Controls();
 
-    void set(const float* cg_loc) {}
+    void set(const float* cg_loc) {
+        _control[_ctype]->set(cg_loc);
+    }
     std::string comment();
     std::string fdm() {
         return _control[_ctype]->fdm();

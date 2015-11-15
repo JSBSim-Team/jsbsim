@@ -57,6 +57,7 @@ public:
     }
 
     virtual float get_wing_loading() { return 0.0f; }
+    virtual float get_aspect_ratio() { return 0.0f; }
     virtual float get_htail_area() { return 0.0f; }
     virtual float get_htail_arm() { return 0.0f; }
     virtual float get_vtail_area() { return 0.0f; }
@@ -110,6 +111,9 @@ public:
     float get_wing_loading() {
         return _wing_loading_t[_subtype][_engines];
     }
+    float get_aspect_ratio() {
+        return _aspect_ratio_t[_subtype][_engines];
+    }
     float get_htail_area() {
         return _htail_area_t[_subtype][_engines];
     }
@@ -147,6 +151,7 @@ public:
 
 protected:
     static float const _wing_loading_t[1][5];
+    static float const _aspect_ratio_t[1][5];
     static float const _htail_area_t[1][5];
     static float const _htail_arm_t[1][5];
     static float const _vtail_area_t[1][5];
@@ -184,6 +189,9 @@ public:
     float get_wing_loading() {
         return _wing_loading_t[_subtype][_engines];
     }
+    float get_aspect_ratio() {
+        return _aspect_ratio_t[_subtype][_engines];
+    }
     float get_htail_area() {
         return _htail_area_t[_subtype][_engines];
     }
@@ -221,6 +229,7 @@ public:
 
 protected:
     static float const _wing_loading_t[1][5];
+    static float const _aspect_ratio_t[1][5];
     static float const _htail_area_t[1][5];
     static float const _htail_arm_t[1][5];
     static float const _vtail_area_t[1][5];
@@ -258,6 +267,9 @@ public:
     float get_wing_loading() {
         return _wing_loading_t[_subtype][_engines];
     }
+    float get_aspect_ratio() {
+        return _aspect_ratio_t[_subtype][_engines];
+    }
     float get_htail_area() {
         return _htail_area_t[_subtype][_engines];
     }
@@ -295,6 +307,7 @@ public:
 
 protected:
     static float const _wing_loading_t[1][5];
+    static float const _aspect_ratio_t[1][5];
     static float const _htail_area_t[1][5];
     static float const _htail_arm_t[1][5];
     static float const _vtail_area_t[1][5];
@@ -332,6 +345,9 @@ public:
     float get_wing_loading() {
         return _wing_loading_t[_subtype][_engines];
     }
+    float get_aspect_ratio() {
+        return _aspect_ratio_t[_subtype][_engines];
+    }
     float get_htail_area() {
         return _htail_area_t[_subtype][_engines];
     }
@@ -369,6 +385,7 @@ public:
 
 protected:
     static float const _wing_loading_t[1][5];
+    static float const _aspect_ratio_t[1][5];
     static float const _htail_area_t[1][5];
     static float const _htail_arm_t[1][5];
     static float const _vtail_area_t[1][5];
@@ -406,6 +423,9 @@ public:
     float get_wing_loading() {
         return _wing_loading_t[_subtype][_engines];
     }
+    float get_aspect_ratio() {
+        return _aspect_ratio_t[_subtype][_engines];
+    }
     float get_htail_area() {
         return _htail_area_t[_subtype][_engines];
     }
@@ -443,6 +463,7 @@ public:
 
 protected:
     static float const _wing_loading_t[1][5];
+    static float const _aspect_ratio_t[1][5];
     static float const _htail_area_t[1][5];
     static float const _htail_arm_t[1][5];
     static float const _vtail_area_t[1][5];
@@ -488,6 +509,9 @@ public:
 
     float get_wing_loading() {
         return _aircraft[_atype]->get_wing_loading();
+    }
+    float get_aspect_ratio() {
+        return _aircraft[_atype]->get_aspect_ratio();
     }
     float get_htail_area() {
         return _aircraft[_atype]->get_htail_area();
@@ -554,15 +578,20 @@ public:
 
     /* geometry */
     float _length;
+    unsigned _wing_shape;
     float _wing_span;
     float _wing_area;
     float _wing_chord;
     float _wing_incidence;
+    float _wing_dihedral;
+    float _wing_sweep;
     float _htail_area;
     float _htail_arm;
     float _vtail_area;
     float _vtail_arm;
 
+    float _aspect_ratio;
+    float _taper_ratio;
     float _payload;
 
     /* array index, can not be greater than 4 */
@@ -570,7 +599,7 @@ public:
 
 public:
     /* Coefficients */
-    float _CLalpha, _CL0, _CLmax, _CLde;
+    float _CLalpha, _CLalphaM, _CL0, _CLmax, _CLde;
     float _CD0, _K, _CDde, _CDbeta, _CDMcrit;
     float _CYbeta;
     float _Clbeta, _Clp, _Clr, _Clda, _Cldr;

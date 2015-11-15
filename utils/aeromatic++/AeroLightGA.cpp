@@ -126,6 +126,11 @@ float const Light::_wing_loading_t[1][5] =
     {   7.0f,  14.0f,  29.0f,  29.0f,  29.0f }
 };
 
+float const Light::_aspect_ratio_t[1][5] =
+{
+    {  17.5f,  5.5f, 8.0f, 10.0f, 10.0f }
+};
+
 float const Light::_htail_area_t[1][5] =
 {
     { 0.12f, 0.16f, 0.16f, 0.16f, 0.16f }

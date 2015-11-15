@@ -22,6 +22,15 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+/**
+ * References:
+ *
+ * https://www.princeton.edu/~stengel/MAE331Lecture4.pdf
+ * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
+ */
+
+#include <math.h>
+
 #include <sstream>
 #include <iomanip>
 
@@ -67,6 +76,72 @@ std::string Controls::comment()
     return file.str();
 }
 
+void CableControls::set(const float* cg_loc)
+{
+    // wing (root) chord
+    float chord = _aircraft->_wing_chord;
+
+    // aspect ratio
+    float AR = _aircraft->_aspect_ratio;
+
+    // taper ratio
+    float TR = _aircraft->_taper_ratio;
+
+    // max thickness
+    float MT = 0.25f * chord;
+
+    // lift coefficient gradient over angle of attack in incompressible flow
+    float CLalpha_ic = 1.0f;
+
+    // Pamadi approximation for Oswald Efficiency Factor e
+    float k = (AR*TR) / cosf(_wing_sweep_le);
+    float R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
+
+    // Mach 0
+    float M = 0;
+
+    float dihedral = _aircraft->_wing_dihedral;
+    float sweep = _aircraft->_wing_sweep;
+    float TRC = (1.0f - TR)/(1.0f + TR);
+    float PAR = PI*AR;
+    float AR2 = AR*AR;
+    float M2 = M*M;
+
+
+    // account for fuselage width
+    float span = 0.45f*_aircraft->_wing_span;
+    float root_tip = chord*(1.0f - 1.0f/TR);
+    _wing_sweep_le = atanf(root_tip/span);
+
+    switch (_aircraft->_wing_shape)
+    {
+    case ELLIPTICAL:
+        _wing_sweep_le /= 2.0f;
+        _wing_sweep_le += sweep;
+
+        _CLalpha = PAR/2.0f;
+        _e = 1.0f;
+        break;
+    case DELTA:
+        _wing_sweep_le += sweep;
+
+        _CLalpha = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(_wing_sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
+
+        _e = (1.1f*_CLalpha) / (R*_CLalpha + ((1.0f-R)*PAR));
+        break;
+    case VARIABLE_SWEEP:
+    case STRAIGHT:
+    default:
+        _wing_sweep_le /= 2.0f;
+        _wing_sweep_le += sweep;
+
+        _CLalpha = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
+
+        _e = (1.1f*_CLalpha) / (R*_CLalpha + ((1.0f-R)*PAR));
+        break;
+    }
+}
+
 
 std::string CableControls::lift()
 {
@@ -78,6 +153,7 @@ std::string CableControls::lift()
     CL0 = _aircraft->_CL0;
     CLde = _aircraft->_CLde;
 
+    CLalpha = _CLalpha;
     alpha = (CLmax-CL0)/CLalpha;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
@@ -122,6 +198,14 @@ std::string CableControls::drag()
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
 
+    float AR = _aircraft->_aspect_ratio;
+    float Aar_corr = 1.0f;  // 0.1f + 0.16f*(5.5f/AR);
+    float sweep = _aircraft->_wing_sweep;
+    float Mcrit_corr = Mcrit / cosf(sweep);
+
+    CD0 = (1.0f - sinf(sweep)) * CD0;
+    K = 1.0f/(PI * fabs(_e) * AR);
+
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_basic\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
@@ -132,9 +216,9 @@ std::string CableControls::drag()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "             -1.57    1.5000" << std::endl;
-    file << "             -0.26    " << (1.3f*CD0) << std::endl;
+    file << "             " << std::setprecision(2) << (-Aar_corr) << "    " << std::setprecision(4) << (1.3f*CD0) << std::endl;
     file << "              0.00    " << (CD0) << std::endl;
-    file << "              0.26    " << (1.3f*CD0) << std::endl;
+    file << "              " << std::setprecision(2) << (Aar_corr) << "    " << std::setprecision(4) << (1.3f*CD0) << std::endl;
     file << "              1.57    1.5000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
@@ -160,7 +244,7 @@ std::string CableControls::drag()
     file << "            <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "                0.00    0.0000" << std::endl;
-    file << "                " << std::setprecision(2) << (Mcrit) << std::setprecision(4) << "    0.0000" << std::endl;
+    file << "                " << std::setprecision(2) << (Mcrit_corr) << std::setprecision(4) << "    0.0000" << std::endl;
     file << "                1.10    0.0230" << std::endl;
     file << "                1.80    0.0150" << std::endl;
     file << "            </tableData>" << std::endl;

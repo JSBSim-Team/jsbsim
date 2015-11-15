@@ -125,6 +125,11 @@ float const PropTransport::_wing_loading_t[1][5] =
     {  57.0f,  57.0f,  57.0f,  57.0f,  57.0f }
 };
 
+float const PropTransport::_aspect_ratio_t[1][5] =
+{
+    {  10.2f,  10.2f, 12.4f, 10.2f, 10.2f }
+};
+
 float const PropTransport::_htail_area_t[1][5] =
 {
     { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f }

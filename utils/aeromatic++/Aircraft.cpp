@@ -69,18 +69,23 @@ Aeromatic::Aeromatic() : Aircraft(),
     _atype(LIGHT),
     _system_files(true),
     _metric(0),
-    _max_weight(10000.0),
+    _max_weight(10000.0f),
     _empty_weight(0),
-    _length(40.0),
-    _wing_span(40.0),
+    _length(40.0f),
+    _wing_shape(STRAIGHT),
+    _wing_span(40.0f),
     _wing_area(0),
     _wing_chord(0),
     _wing_incidence(0),
+    _wing_dihedral(0),
+    _wing_sweep(0),
     _htail_area(0),
     _htail_arm(0),
     _vtail_area(0),
     _vtail_arm(0),
-    _payload(10000.0),
+    _aspect_ratio(0),
+    _taper_ratio(0),
+    _payload(10000.0f),
     _no_engines(0)
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
@@ -88,7 +93,7 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     /* general information */
     _general.push_back(new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files));
-    Param* units = new Param("Chose a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
+    Param* units = new Param("Select a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
@@ -102,10 +107,21 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     /* geometry */
     _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
+    Param* wingshape = new Param("Select a wing shape", "Wing shapes determaine the lift and drag of the aircraft", _wing_shape);
+    _geometry.push_back(wingshape);
+    wingshape->add_option("Straight");
+    wingshape->add_option("Elliptical");
+    wingshape->add_option("Delta");
+//  wingshape->add_option("Variable sweep");
+
     _geometry.push_back(new Param("Wing span", 0, _wing_span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area", _estimate, _wing_area,_metric, AREA));
+    _geometry.push_back(new Param("Wing area", _estimate, _wing_area, _metric, AREA));
+    _geometry.push_back(new Param("Wing aspect ratio", _estimate, _aspect_ratio));
+    _geometry.push_back(new Param("Wing taper ratio", _estimate, _taper_ratio));
     _geometry.push_back(new Param("Wing chord", _estimate, _wing_chord, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence", _estimate, _wing_incidence));
+    _geometry.push_back(new Param("Wing dihedral", _estimate, _wing_dihedral));
+    _geometry.push_back(new Param("Wing sweep (max)", _estimate, _wing_sweep));
     _geometry.push_back(new Param("Htail area", _estimate, _htail_area, _metric, AREA));
     _geometry.push_back(new Param("Htail arm", _estimate, _htail_arm, _metric, LENGTH));
     _geometry.push_back(new Param("Vtail area", _estimate, _vtail_area, _metric, AREA));
@@ -175,10 +191,26 @@ bool Aeromatic::fdm()
     }
 
     // calculate wing chord
-    _wing_chord = _wing_area / _wing_span;
+    if (_aspect_ratio == 0) {
+        _aspect_ratio = aircraft->get_aspect_ratio();
+    }
+    if (_wing_chord == 0)
+    {
+        if (_aspect_ratio > 0) {
+            _wing_chord = _wing_span / _aspect_ratio;
+        } else {
+            _wing_chord = _wing_area / _wing_span;
+        }
+    }
 
     // calculate aspect ratio
-//  float aspect_ratio = _wing_span / _wing_chord;
+    if (_aspect_ratio == 0) {
+        _aspect_ratio = (_wing_span*_wing_span) / _wing_area;
+    }
+
+    if (_taper_ratio == 0) {
+        _taper_ratio = 1.0f;
+    }
 
     // for now let's use a standard 2 degrees wing incidence
     if (_wing_incidence == 0) {
@@ -333,7 +365,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.26 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.27 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -372,6 +404,7 @@ bool Aeromatic::fdm()
     } else {
         file << "unspecified" << std::endl;
     }
+    file << "    aspect ratio:  " << _aspect_ratio << ":1" << std::endl;
     file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)

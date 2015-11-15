@@ -45,6 +45,7 @@
 
 #define PI			3.1415926535f
 #define DEG_TO_RAD		0.01745329251994329547f
+#define RAD_TO_DEG		(1.0f/DEG_TO_RAD)
 
 #define FEET_TO_INCH		12.0f
 #define INCH_TO_FEET		0.08333333f
@@ -107,6 +108,14 @@ enum AircraftType
     PROP_TRANSPORT,
 
     MAX_AIRCRAFT
+};
+
+enum WingType
+{
+    STRAIGHT = 0,
+    ELLIPTICAL,
+    DELTA,
+    VARIABLE_SWEEP
 };
 
 enum ControlsType

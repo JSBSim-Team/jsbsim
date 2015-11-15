@@ -127,6 +127,11 @@ float const JetTransport::_wing_loading_t[1][5] =
     { 110.0f, 110.0f, 110.0f, 110.0f, 110.0f }
 };
 
+float const JetTransport::_aspect_ratio_t[1][5] =
+{
+    {  9.3f,  9.3f, 9.3f, 7.8f, 7.8f }
+};
+
 float const JetTransport::_htail_area_t[1][5] =
 {
     { 0.25f, 0.25f, 0.25f, 0.25f, 0.25f }

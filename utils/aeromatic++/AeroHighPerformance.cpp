@@ -127,6 +127,11 @@ float const Performance::_wing_loading_t[1][5] =
     {  45.0f,  45.0f,  45.0f,  45.0f,  45.0f }
 };
 
+float const Performance::_aspect_ratio_t[1][5] =
+{
+    {  5.5f,  6.7f, 10.7f, 10.7f, 10.7f }
+};
+
 float const Performance::_htail_area_t[1][5] =
 {
     { 0.17f, 0.17f, 0.17f, 0.17f, 0.17f }

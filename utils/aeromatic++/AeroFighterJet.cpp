@@ -38,6 +38,7 @@ Fighter::Fighter(Aeromatic *p) : Aircraft(p)
     _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
+    _systems.push_back(new Spoilers(_aircraft));
     _systems.push_back(new Speedbrake(_aircraft));
     _systems.push_back(new ArrestorHook(_aircraft));
     _systems.push_back(new DragChute(_aircraft));
@@ -123,6 +124,11 @@ void Fighter::set_yaw()
 float const Fighter::_wing_loading_t[1][5] =
 {
     {  95.0f,  95.0f, 100.0f, 100.0f, 100.0f }
+};
+
+float const Fighter::_aspect_ratio_t[1][5] =
+{
+    {  3.2f,  3.2f, 3.5f, 4.3f, 4.3f }
 };
 
 float const Fighter::_htail_area_t[1][5] =
