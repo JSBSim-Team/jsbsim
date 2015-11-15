@@ -175,7 +175,7 @@ Param::__cvt const Param::_cvt_t[MAX_UNITS] =
     { LITER_TO_CUBINC_INCH,	{      "in3",     "l" } },	// VOLUME
     { KMPH_TO_KNOTS,		{       "kt",  "km/h" } },	// SPEED
     { KW_TO_HP,			{       "hp",    "kW" } },	// POWER
-    { NETWON_TO_LBS,		{      "lbs",    "kN" } } ,	// THRUST
+    { NETWON_TO_LBS,		{      "lbs",    "kN" } } 	// THRUST
 };
 
 } /* namespace Aeromatic */

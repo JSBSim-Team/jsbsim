@@ -100,8 +100,8 @@ void CableControls::set(const float* cg_loc)
     // Mach 0
     float M = 0;
 
-    float dihedral = _aircraft->_wing_dihedral;
-    float sweep = _aircraft->_wing_sweep;
+    float dihedral = _aircraft->_wing_dihedral * DEG_TO_RAD;
+    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
     float TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
     float AR2 = AR*AR;
@@ -200,7 +200,7 @@ std::string CableControls::drag()
 
     float AR = _aircraft->_aspect_ratio;
     float Aar_corr = 0.26f;  // 0.1f + 0.16f*(5.5f/AR);
-    float sweep = _aircraft->_wing_sweep;
+    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
     float Mcrit_corr = Mcrit / cosf(sweep);
 
     CD0 = (1.0f - sinf(sweep)) * CD0;
