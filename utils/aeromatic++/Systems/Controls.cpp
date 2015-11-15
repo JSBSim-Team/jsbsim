@@ -199,7 +199,7 @@ std::string CableControls::drag()
     CDde = _aircraft->_CDde;
 
     float AR = _aircraft->_aspect_ratio;
-    float Aar_corr = 1.0f;  // 0.1f + 0.16f*(5.5f/AR);
+    float Aar_corr = 0.26f;  // 0.1f + 0.16f*(5.5f/AR);
     float sweep = _aircraft->_wing_sweep;
     float Mcrit_corr = Mcrit / cosf(sweep);
 
