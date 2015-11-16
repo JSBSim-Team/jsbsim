@@ -93,25 +93,29 @@ void CableControls::set(const float* cg_loc)
     // lift coefficient gradient over angle of attack in incompressible flow
     float CLalpha_ic = 1.0f;
 
+    // Mach 0
+    float M = 0;
+
+    // Wing dihedral
+    float dihedral = _aircraft->_wing_dihedral * DEG_TO_RAD;
+
+    // Wing Seeep
+    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
+
+    // device span by two and account for fuselage width
+    float span = 0.45f*_aircraft->_wing_span;
+    float root_tip = chord*(1.0f - 1.0f/TR);
+    _wing_sweep_le = atanf(root_tip/span);
+
     // Pamadi approximation for Oswald Efficiency Factor e
     float k = (AR*TR) / cosf(_wing_sweep_le);
     float R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
 
-    // Mach 0
-    float M = 0;
-
-    float dihedral = _aircraft->_wing_dihedral * DEG_TO_RAD;
-    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
+    // Required to calculate _CLalpha
     float TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
     float AR2 = AR*AR;
     float M2 = M*M;
-
-
-    // account for fuselage width
-    float span = 0.45f*_aircraft->_wing_span;
-    float root_tip = chord*(1.0f - 1.0f/TR);
-    _wing_sweep_le = atanf(root_tip/span);
 
     switch (_aircraft->_wing_shape)
     {
