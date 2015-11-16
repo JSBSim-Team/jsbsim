@@ -72,10 +72,12 @@
 #define NETWON_TO_LBS		0.2248f
 #define LBS_TO_NEWTON		4.448f
 
-#define KNOTS_TO_MPH		0.8689f
-#define MPH_TO_KNOTS		1.1507f
+#define MPH_TO_KNOTS		0.868976242f
+#define KNOTS_TO_MPH		1.15077945f
 #define KMPH_TO_KNOTS		1.1851852f
 #define KNOTS_KMPH		0.54f
+
+#define KNOTS_TO_FPS		1.68780839895013f
 
 #define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
 #define _MIN(a,b)		(((a)<(b)) ? (a) : (b))

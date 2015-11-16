@@ -140,6 +140,27 @@ void CableControls::set(const float* cg_loc)
         _e = (1.1f*_CLalpha) / (R*_CLalpha + ((1.0f-R)*PAR));
         break;
     }
+    _aircraft->_CLalpha = _CLalpha;
+
+    _CLmax = 0.0f;
+    float v = _aircraft->_stall_speed * KNOTS_TO_FPS;
+    if (v)
+    {
+        float rho = 0.0023769f;
+        float S = _aircraft->_wing_area;
+        float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
+
+        _CLmax = 2*W/(rho*S*v*v);
+        _aircraft->_CLmax = _CLmax;
+
+#if 0
+        // approximation by Keith Shaw:
+        // stall speed = 3.7 * sqrt(wing_loading)
+        v = _aircraft->_stall_speed * KNOTS_TO_MPH;
+        float _wing_loading = v*v/(3.7f*3.7f);
+        _wing_loading *= 0.0625f;	// oz/ft2 to lbs/ft
+#endif
+    }
 }
 
 
@@ -148,12 +169,11 @@ std::string CableControls::lift()
     float CLalpha, CLmax, CL0, CLde, alpha;
     std::stringstream file;
 
-    CLalpha = _aircraft->_CLalpha;
-    CLmax = _aircraft->_CLmax;
+    CLalpha = _CLalpha ? _CLalpha : _aircraft->_CLalpha;
+    CLmax = _CLmax ? _CLmax : _aircraft->_CLmax;
     CL0 = _aircraft->_CL0;
     CLde = _aircraft->_CLde;
 
-    CLalpha = _CLalpha;
     alpha = (CLmax-CL0)/CLalpha;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
