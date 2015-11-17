@@ -23,8 +23,8 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <math.h>
+#include <time.h>
 
-#include <ctime>
 #include <locale>
 #include <iostream>
 #include <iomanip>
@@ -37,15 +37,15 @@
 namespace Aeromatic
 {
 
-Aircraft::Aircraft(Aeromatic *p) :
+Aircraft::Aircraft(Aeromatic *p = 0) :
     _subtype(0),
     _overwrite(true),
-    _subdir(false),
+    _subdir(true),
     _engines(0),
     _aircraft(p)
 {
                     /* general information */
-#if defined(WIN32)
+#ifdef WIN32
     std::string dir(getEnv("HOMEPATH"));
 #else
     std::string dir(getEnv("HOME"));
@@ -65,33 +65,42 @@ Aircraft::~Aircraft()
 {
 }
 
-Aeromatic::Aeromatic() : Aircraft(this),
+Aeromatic::Aeromatic() : Aircraft(),
     _atype(LIGHT),
+    _system_files(true),
     _metric(0),
-    _max_weight(10000.0),
+    _stall_speed(0),
+    _max_weight(10000.0f),
     _empty_weight(0),
-    _length(40.0),
-    _wing_span(40.0),
+    _length(40.0f),
+    _wing_shape(STRAIGHT),
+    _wing_span(40.0f),
     _wing_area(0),
     _wing_chord(0),
     _wing_incidence(0),
+    _wing_dihedral(0),
+    _wing_sweep(0),
     _htail_area(0),
     _htail_arm(0),
     _vtail_area(0),
     _vtail_arm(0),
-    _payload(10000.0),
+    _aspect_ratio(0),
+    _taper_ratio(0),
+    _payload(10000.0f),
     _no_engines(0)
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;
 
     /* general information */
-    Param* units = new Param("Chose a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
+    _general.push_back(new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files));
+    Param* units = new Param("Select a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
     _general.push_back(units);
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
 
-    /* weight and balance */
+    /* performance, weight and balance */
+    _weight_balance.push_back(new Param("Stall speed", "The stall speed (landing speed/1.3) halfway between max. weight and empty weight", _stall_speed, _metric, SPEED));
     _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
@@ -100,10 +109,21 @@ Aeromatic::Aeromatic() : Aircraft(this),
 
     /* geometry */
     _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
+    Param* wingshape = new Param("Select a wing shape", "Wing shapes determaine the lift and drag of the aircraft", _wing_shape);
+    _geometry.push_back(wingshape);
+    wingshape->add_option("Straight");
+    wingshape->add_option("Elliptical");
+    wingshape->add_option("Delta");
+//  wingshape->add_option("Variable sweep");
+
     _geometry.push_back(new Param("Wing span", 0, _wing_span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area", _estimate, _wing_area,_metric, AREA));
+    _geometry.push_back(new Param("Wing area", _estimate, _wing_area, _metric, AREA));
+    _geometry.push_back(new Param("Wing aspect ratio", _estimate, _aspect_ratio));
+    _geometry.push_back(new Param("Wing taper ratio", _estimate, _taper_ratio));
     _geometry.push_back(new Param("Wing chord", _estimate, _wing_chord, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence", _estimate, _wing_incidence));
+    _geometry.push_back(new Param("Wing dihedral", _estimate, _wing_dihedral));
+    _geometry.push_back(new Param("Wing sweep (max)", _estimate, _wing_sweep));
     _geometry.push_back(new Param("Htail area", _estimate, _htail_area, _metric, AREA));
     _geometry.push_back(new Param("Htail arm", _estimate, _htail_arm, _metric, LENGTH));
     _geometry.push_back(new Param("Vtail area", _estimate, _vtail_area, _metric, AREA));
@@ -122,6 +142,8 @@ Aeromatic::Aeromatic() : Aircraft(this),
     param->add_option(_aircraft[3]->get_description());
     _aircraft[4] = new PropTransport(this);
     param->add_option(_aircraft[4]->get_description());
+
+    Aircraft::_aircraft = this;
 }
 
 Aeromatic::~Aeromatic()
@@ -171,10 +193,26 @@ bool Aeromatic::fdm()
     }
 
     // calculate wing chord
-    _wing_chord = _wing_area / _wing_span;
+    if (_aspect_ratio == 0) {
+        _aspect_ratio = aircraft->get_aspect_ratio();
+    }
+    if (_wing_chord == 0)
+    {
+        if (_aspect_ratio > 0) {
+            _wing_chord = _wing_span / _aspect_ratio;
+        } else {
+            _wing_chord = _wing_area / _wing_span;
+        }
+    }
 
     // calculate aspect ratio
-//  float aspect_ratio = _wing_span / _wing_chord;
+    if (_aspect_ratio == 0) {
+        _aspect_ratio = (_wing_span*_wing_span) / _wing_area;
+    }
+
+    if (_taper_ratio == 0) {
+        _taper_ratio = 1.0f;
+    }
 
     // for now let's use a standard 2 degrees wing incidence
     if (_wing_incidence == 0) {
@@ -269,11 +307,35 @@ bool Aeromatic::fdm()
 //************************************************
 
     char str[64];
-    std::time_t t = std::time(NULL);
-//  std::strftime(str, sizeof(str), "%Y-%m-%d", std::localtime(&t));
-    std::strftime(str, sizeof(str), "%d %b %Y", std::localtime(&t));
+    time_t t;
+
+    time(&t);
+#ifdef _MSC_VER
+    struct tm ti;
+    localtime_s(&ti, &t);
+    strftime(str, sizeof(str), "%d %b %Y", &ti);
+#else
+    struct tm *ti= localtime(&t);
+    strftime(str, sizeof(str), "%d %b %Y", ti);
+#endif
 
     _dir = _subdir ? create_dir(_path, _name) : _path;
+    if (_dir.empty()) {
+        std::cout << "Unable to create directory: " << _path << "/" << _name << std::endl;
+        return false;
+    }
+
+    std::string systems_dir;
+    if (_system_files)
+    {
+        systems_dir = create_dir(_dir, "Systems");
+        if (systems_dir.empty())
+        {
+            std::cout << "Unable to create directory: " << _dir<< "/Systems" << std::endl;
+            _system_files = false;
+        }
+    }
+
     std::string fname = _dir + "/" + std::string(_name) + ".xml";
 
     std::string version = AEROMATIC_VERSION_STR;
@@ -304,8 +366,8 @@ bool Aeromatic::fdm()
     file << std::endl;
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
-    file << "  <filecreationdate> " << str << "</filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.20 $</version>" << std::endl;
+    file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
+    file << "  <version>$Revision: 1.31 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -344,6 +406,7 @@ bool Aeromatic::fdm()
     } else {
         file << "unspecified" << std::endl;
     }
+    file << "    aspect ratio:  " << _aspect_ratio << ":1" << std::endl;
     file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
@@ -359,9 +422,9 @@ bool Aeromatic::fdm()
     file << "  Outputs:" << std::endl;
     file << "    wing loading:  " << wing_loading << " lb/sq-ft" << std::endl;
     file << "    payload:       " << _payload << " lbs" << std::endl;
-    file << "    CL-alpha:      " << _CLalpha << " per radian" << std::endl;
+    file << "    CL-alpha:      " << _CLalpha[0] << " per radian" << std::endl;
     file << "    CL-0:          " << _CL0 << std::endl;
-    file << "    CL-max:        " << _CLmax << std::endl;
+    file << "    CL-max:        " << _CLmax[0] << std::endl;
     file << "    CD-0:          " << _CD0 << std::endl;
     file << "    K:             " << _K << std::endl;
     file << "-->" << std::endl;
@@ -444,16 +507,63 @@ bool Aeromatic::fdm()
 
 //***** SYSTEMS ***********************************************
 
+    if (_system_files == true)
+    {
+        for (unsigned i=0; i<systems.size(); ++i)
+        {
+            if (systems[i]->enabled())
+            {
+                std::string system = systems[i]->system();
+                if (!system.empty())
+                {
+                    std::string sname = systems[i]->get_description();
+                    std::string sfname = sname + ".xml";
+
+                    if (!_overwrite && overwrite(sfname))
+                    {
+                        std::cout << "File already exists: " << fname << std::endl;
+                        std::cout << "Skipping." << std::endl;
+                    }
+                    else
+                    {
+                        file << " <system file=\"" << sfname << "\"/>" << std::endl;
+
+                        std::string sfpath = systems_dir + "/" + sfname;
+                        std::ofstream sfile;
+                        sfile.open(sfpath.c_str());
+                        if (sfile.fail() || sfile.bad())
+                        {
+                            std::cout << "Error opening file: " << fname << std::endl;
+                            std::cout << "Skipping." << std::endl;
+                        }
+                        else
+                        {
+                            sfile << "<?xml version=\"1.0\"?>" << std::endl;
+                            sfile << "<system name=\"" << sname << "\">" << std::endl;
+                            sfile << system << std::endl;
+                            sfile << "</system>" << std::endl;
+                        }
+                        sfile.close();
+                    }
+                }
+            }
+        }
+        file << std::endl;
+    }
+
     file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
     file << std::endl;
 
-    for (unsigned i=0; i<systems.size(); ++i)
+    if (_system_files == false)
     {
-        if (systems[i]->enabled())
+        for (unsigned i=0; i<systems.size(); ++i)
         {
-            std::string system = systems[i]->system();
-            if (!system.empty()) {
-                file << system << std::endl;
+            if (systems[i]->enabled())
+            {
+                std::string system = systems[i]->system();
+                if (!system.empty()) {
+                    file << system << std::endl;
+                }
             }
         }
     }
@@ -610,7 +720,7 @@ bool Aeromatic::fdm()
 
 char const* Aeromatic::_estimate = "enter 0 to use estimated value";
 
-#if (win32)
+#ifdef WIN32
 #else
 # include <sys/stat.h>
 #endif
@@ -619,7 +729,7 @@ std::string Aeromatic::create_dir(std::string path, std::string subdir)
 {
     // Create Engines directory
     std::string dir = path + "/" + subdir;
-#if (win32 || __MINGW32__)
+#ifdef WIN32
     if (!PathFileExists(dir.c_str())) {
         if (CreateDirectory(dir.c_str(), NULL) == 0) {
             dir.clear();
@@ -643,8 +753,8 @@ bool Aeromatic::overwrite(std::string path)
 {
     bool rv = true;
 
-#if (win32)
-    if (!PathFileExists(path)) {
+#ifdef WIN32
+    if (!PathFileExists(path.c_str())) {
         rv = false;
     }
 #else

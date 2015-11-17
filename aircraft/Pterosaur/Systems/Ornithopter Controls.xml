@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<system name="Conventional Controls">
+  <channel name="Pitch">
+
+   <pure_gain name="Pitch rate norm">
+      <input>velocities/q-aero-rad_sec</input>
+      <gain>6.2</gain>
+      <output>fcs/pitch-rate-norm</output>
+   </pure_gain>
+
+   <summer name="Pitch Trim error">
+      <input>fcs/elevator-cmd-norm</input>
+      <input>fcs/pitch-trim-cmd-norm</input>
+      <input>fcs/pitch-rate-norm</input>
+      <clipto>
+        <min> -1 </min>
+        <max>  1 </max>
+      </clipto>
+      <output>fcs/pitch-trim-error</output>
+   </summer>
+
+   <pid name="Pitch pid">
+      <input>fcs/pitch-trim-error</input>
+      <kp> 0.94737 </kp>
+      <ki> 0.00050 </ki>
+      <kd> 0.000 </kd>
+      <clipto>
+         <min>-1</min>
+         <max>1</max>
+      </clipto>
+      <output>fcs/pitch-scheduler</output>
+   </pid>
+
+   <kinematic name="Elevator Control">
+      <input>fcs/pitch-scheduler</input>
+      <traverse>
+          <setting>
+              <position>-1</position>
+              <time>0.3</time>
+          </setting>
+          <setting>
+              <position>1</position>
+              <time>0.3</time>
+          </setting>
+      </traverse>
+      <output>fcs/elevator-pos-norm</output>
+   </kinematic>
+
+   <aerosurface_scale name="fcs/elevator-position">
+      <input>fcs/elevator-pos-norm</input>
+      <range>
+          <min>-0.45</min>
+          <max>0.45</max>
+      </range>
+      <output>fcs/elevator-pos-rad</output>
+   </aerosurface_scale>
+  </channel>
+
+  <channel name="Roll">
+   <summer name="Roll Trim Sum">
+      <input>fcs/aileron-cmd-norm</input>
+      <input>fcs/roll-trim-cmd-norm</input>
+      <clipto>
+        <min> -1 </min>
+        <max>  1 </max>
+      </clipto>
+   </summer>
+
+   <aerosurface_scale name="Left Aileron Control">
+      <input>fcs/roll-trim-sum</input>
+      <range>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </range>
+      <output>fcs/left-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Right Aileron Control">
+      <input>-fcs/roll-trim-sum</input>
+      <range>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </range>
+      <output>fcs/right-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Left Aileron Normalization">
+      <input>fcs/left-aileron-pos-rad</input>
+      <domain>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </domain>
+      <range>
+        <min> -1 </min>
+        <max>  1 </max>
+      </range>
+      <output>fcs/left-aileron-pos-norm</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Right Aileron Normalization">
+      <input>fcs/right-aileron-pos-rad</input>
+      <domain>
+        <min> -0.35 </min>
+        <max>  0.35 </max>
+      </domain>
+      <range>
+        <min> -1 </min>
+        <max>  1 </max>
+      </range>
+      <output>fcs/right-aileron-pos-norm</output>
+   </aerosurface_scale>
+  </channel>
+
+  <channel name="Yaw">
+   <pure_gain name="fcs/scheduled-aileron">
+      <input>fcs/aileron-cmd-norm</input>
+      <gain>-0.25</gain>
+   </pure_gain>
+
+   <aerosurface_scale name="Rudder Control">
+      <input>fcs/scheduled-aileron</input>
+      <range>
+        <min> -0.74 </min>                      <!-- UIUC -->
+        <max>  0.74 </max>                      <!-- UIUC -->
+      </range>
+      <output>fcs/rudder-pos-rad</output>
+   </aerosurface_scale>
+  </channel>
+
+</system>

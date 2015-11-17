@@ -81,7 +81,7 @@ public:
     Propeller(Engine *p);
     ~Propeller() {}
 
-    void set_thruster( float mrpm);
+    void set_thruster(float mrpm);
     std::string thruster();
 
     float max_rpm() { return _max_rpm; }

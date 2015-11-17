@@ -49,13 +49,17 @@ void Light::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    _aircraft->_CLalpha = _CLalpha_t[_subtype][_engines];
+    if (_aircraft->_CLalpha[0] < 0.01f) {
+        _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
+    }
 
     // estimate CL at zero alpha
     _aircraft->_CL0 = _CL0_t[_subtype][_engines];
 
     // estimate stall CL, based on airplane type
-    _aircraft->_CLmax = _CLmax_t[_subtype][_engines];
+    if (_aircraft->_CLmax[0] < 0.01f) {
+        _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
+    }
 
     // estimate lift due to elevator deflection
     _aircraft->_CLde = 0.2f;
@@ -126,6 +130,11 @@ float const Light::_wing_loading_t[1][5] =
     {   7.0f,  14.0f,  29.0f,  29.0f,  29.0f }
 };
 
+float const Light::_aspect_ratio_t[1][5] =
+{
+    {  17.5f,  5.5f, 8.0f, 10.0f, 10.0f }
+};
+
 float const Light::_htail_area_t[1][5] =
 {
     { 0.12f, 0.16f, 0.16f, 0.16f, 0.16f }
@@ -148,7 +157,7 @@ float const Light::_vtail_arm_t[1][5] =
 
 float const Light::_empty_weight_t[1][5] =
 {
-    { 0.84, 0.62, 0.61, 0.61, 0.61 }
+    { 0.84f, 0.62f, 0.61f, 0.61f, 0.61f }
 };
 
 float const Light::_roskam_t[1][5][3] =

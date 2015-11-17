@@ -50,13 +50,17 @@ void Performance::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    _aircraft->_CLalpha = _CLalpha_t[_subtype][_engines];
+    if (_aircraft->_CLalpha[0] < 0.01f) {
+        _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
+    }
 
     // estimate CL at zero alpha
     _aircraft->_CL0 = _CL0_t[_subtype][_engines];
 
     // estimate stall CL, based on airplane type
-    _aircraft->_CLmax = _CLmax_t[_subtype][_engines];
+    if (_aircraft->_CLmax[0] < 0.01f) {
+        _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
+    }
 
     // estimate lift due to elevator deflection
     _aircraft->_CLde = 0.2f;
@@ -127,6 +131,11 @@ float const Performance::_wing_loading_t[1][5] =
     {  45.0f,  45.0f,  45.0f,  45.0f,  45.0f }
 };
 
+float const Performance::_aspect_ratio_t[1][5] =
+{
+    {  5.5f,  6.7f, 10.7f, 10.7f, 10.7f }
+};
+
 float const Performance::_htail_area_t[1][5] =
 {
     { 0.17f, 0.17f, 0.17f, 0.17f, 0.17f }
@@ -149,7 +158,7 @@ float const Performance::_vtail_arm_t[1][5] =
 
 float const Performance::_empty_weight_t[1][5] =
 {
-    { 0.61, 0.61, 0.61, 0.61, 0.61 }
+    { 0.61f, 0.61f, 0.61f, 0.61f, 0.61f }
 };
 
 float const Performance::_roskam_t[1][5][3] =

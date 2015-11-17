@@ -93,6 +93,40 @@ std::string Spoilers::drag()
     return file.str();
 }
 
+std::string Spoilers::roll()
+{
+    std::stringstream file;
+
+    if (_differential)
+    {
+        float Cldsp = 0.24f;
+
+        file.precision(4);
+        file.flags(std::ios::right);
+        file << std::fixed << std::showpoint;
+        file << "    <function name=\"aero/moment/Roll_spoilers\">" << std::endl;
+        file << "       <description>Roll moment due to spoilers</description>" << std::endl;
+        file << "       <product>" << std::endl;
+        file << "          <property>aero/qbar-psf</property>" << std::endl;
+        file << "          <property>metrics/Sw-sqft</property>" << std::endl;
+        file << "          <property>metrics/bw-ft</property>" << std::endl;
+        file << "          <property>fcs/spoilers-pos-norm</property>" << std::endl;
+        file << "          <property>fcs/left-aileron-pos-rad</property>" << std::endl;
+        file << "          <table>" << std::endl;
+        file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
+        file << "            <tableData>" << std::endl;
+        file << "             -0.175   " << (0.0) << std::endl;
+        file << "              0.0     " << (Cldsp) << std::endl;
+        file << "              0.175   " << (0.0) << std::endl;
+        file << "            </tableData>" << std::endl;
+        file << "          </table>" << std::endl;
+        file << "       </product>" << std::endl;
+        file << "    </function>" << std::endl;
+    }
+
+    return file.str();
+}
+
 // ----------------------------------------------------------------------------
 
 float const Spoilers::_dCLspoilers_t[MAX_AIRCRAFT][5] =

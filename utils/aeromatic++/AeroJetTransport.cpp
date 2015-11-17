@@ -51,13 +51,17 @@ void JetTransport::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    _aircraft->_CLalpha = _CLalpha_t[_subtype][_engines];
+    if (_aircraft->_CLalpha[0] < 0.01f) {
+        _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
+    }
 
     // estimate CL at zero alpha
     _aircraft->_CL0 = _CL0_t[_subtype][_engines];
 
     // estimate stall CL, based on airplane type
-    _aircraft->_CLmax = _CLmax_t[_subtype][_engines];
+    if (_aircraft->_CLmax[0] < 0.01f) {
+        _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
+    }
 
     // estimate lift due to elevator deflection
     _aircraft->_CLde = 0.2f;
@@ -127,6 +131,11 @@ float const JetTransport::_wing_loading_t[1][5] =
     { 110.0f, 110.0f, 110.0f, 110.0f, 110.0f }
 };
 
+float const JetTransport::_aspect_ratio_t[1][5] =
+{
+    {  9.3f,  9.3f, 9.3f, 7.8f, 7.8f }
+};
+
 float const JetTransport::_htail_area_t[1][5] =
 {
     { 0.25f, 0.25f, 0.25f, 0.25f, 0.25f }
@@ -149,7 +158,7 @@ float const JetTransport::_vtail_arm_t[1][5] =
 
 float const JetTransport::_empty_weight_t[1][5] =
 {
-    { 0.55, 0.55, 0.55, 0.52, 0.49 }
+    { 0.55f, 0.55f, 0.55f, 0.52f, 0.49f }
 };
 
 float const JetTransport::_roskam_t[1][5][3] =

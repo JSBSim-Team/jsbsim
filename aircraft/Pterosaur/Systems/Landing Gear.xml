@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<system name="Landing Gear">
+  <channel name="Landing Gear">
+   <kinematic name="Landing Gear Control">
+     <input>gear/gear-cmd-norm</input>
+     <traverse>
+       <setting>
+          <position> 0 </position>
+          <time>     0 </time>
+       </setting>
+       <setting>
+          <position> 1 </position>
+          <time>     5 </time>
+       </setting>
+     </traverse>
+     <output>gear/gear-pos-norm</output>
+   </kinematic>
+
+   <switch name="Gear Weight on Wheels">
+     <default value="0"/>
+     <test logic="AND" value="1">
+        gear/unit[1]/WOW eq 1
+        gear/unit[2]/WOW eq 1
+        fcs/throttle-pos-norm eq 0
+     </test>
+     <output>/controls/gear/brake-parking</output>
+   </switch>
+
+   <fcs_function name="Running Force">
+      <function>
+        <product name="Running Force">
+          <property>inertia/weight-lbs</property>
+          <property>fcs/throttle-pos-norm</property>
+          <value>0.3</value>
+        </product>
+      </function>
+      <output>systems/legs/running-force</output>
+   </fcs_function>
+
+   <switch name="Running">
+     <default value="0"/>
+     <test logic="AND" value="systems/legs/running-force">
+        gear/unit[1]/WOW eq 1
+        gear/unit[2]/WOW eq 1
+        fcs/throttle-pos-norm gt 0
+     </test>
+     <output>external_reactions/legs/magnitude</output>
+   </switch>
+
+  </channel>
+
+</system>

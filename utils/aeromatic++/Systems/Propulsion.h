@@ -92,7 +92,6 @@ public:
     float _max_rpm;
     float _oapr;
     float _itt;
-    float _psfc;
 
 private:
     bool _water_injection;
@@ -110,6 +109,7 @@ public:
     std::string engine();
 
 private:
+    float _oapr;
     float _bypass_ratio;
     bool _injected;
     bool _augmented;

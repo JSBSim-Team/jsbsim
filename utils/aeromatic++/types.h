@@ -45,6 +45,7 @@
 
 #define PI			3.1415926535f
 #define DEG_TO_RAD		0.01745329251994329547f
+#define RAD_TO_DEG		(1.0f/DEG_TO_RAD)
 
 #define FEET_TO_INCH		12.0f
 #define INCH_TO_FEET		0.08333333f
@@ -71,10 +72,12 @@
 #define NETWON_TO_LBS		0.2248f
 #define LBS_TO_NEWTON		4.448f
 
-#define KNOTS_TO_MPH		0.8689f
-#define MPH_TO_KNOTS		1.1507f
-#define KMPH_TO_KNOTS		1.1851852f
-#define KNOTS_KMPH		0.54f
+#define MPH_TO_KNOTS		0.868976242f
+#define KNOTS_TO_MPH		1.15077945f
+#define KMPH_TO_KNOTS		0.539956803f
+#define KNOTS_TO_KMPH		1.852f
+
+#define KNOTS_TO_FPS		1.68780839895013f
 
 #define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
 #define _MIN(a,b)		(((a)<(b)) ? (a) : (b))
@@ -107,6 +110,14 @@ enum AircraftType
     PROP_TRANSPORT,
 
     MAX_AIRCRAFT
+};
+
+enum WingType
+{
+    STRAIGHT = 0,
+    ELLIPTICAL,
+    DELTA,
+    VARIABLE_SWEEP
 };
 
 enum ControlsType
@@ -194,7 +205,7 @@ public:
     }
 
     // options add a 'one of n' selection type
-    unsigned no_options() { return _options.size(); }
+    unsigned no_options() { return (unsigned)_options.size(); }
     void add_option(const char* s) { _options.push_back(s); }
     void add_option(std::string &s) { _options.push_back(s); }
     std::string& get_option(unsigned n) { return _options[n]; }

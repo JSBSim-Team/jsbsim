@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<system name="Wing Flapping">
+
+  <property value="0">fcs/wing-pos-linear</property>
+
+  <channel name="Wing Motion">
+
+    <switch name="Wing Fold Request">
+     <default value="1"/>
+     <test value="0">
+        /controls/flight/wing-fold eq 1
+     </test>
+     <output>fcs/wing-not-fold</output>
+   </switch>
+
+    <kinematic name="Winfg Folding Control">
+     <input>fcs/wing-not-fold</input>
+     <traverse>
+       <setting>
+          <position> 0 </position>
+          <time>     0 </time>
+       </setting>
+       <setting>
+          <position> 1 </position>
+          <time>     1.1 </time>
+       </setting>
+     </traverse>
+     <output>fcs/wing-fold</output>
+   </kinematic>
+
+    <!--
+      bind to: simulation/dt
+      Speed up Flapping based on: fcs/throttle-pos-norm
+    -->
+    <fcs_function name="Wing Flap Frequency Control">
+      <function>
+        <product name="Wing Flap Frequency Control">
+          <property>simulation/dt</property>
+          <property>fcs/throttle-pos-norm</property>
+          <value>3.33</value>
+        </product>
+      </function>
+      <output>fcs/wing-flap-advance</output>
+    </fcs_function>
+
+    <summer name="Wing Position Updater">
+      <input>fcs/wing-pos-linear</input>
+      <input>fcs/wing-flap-advance</input>
+      <output>fcs/wing-pos-linear</output>
+    </summer>
+
+    <!-- fcs/wing-pos-linear %= 2π -->
+    <fcs_function name="Wing Position Range Limiter">
+      <function>
+        <ifthen>
+          <ge>
+            <property>fcs/wing-pos-linear</property>
+            <value>6.28318530717958647692</value>
+          </ge>
+          <sum>
+            <property>fcs/wing-pos-linear</property>
+            <value>-6.28318530717958647692</value>
+          </sum>
+          <property>fcs/wing-pos-linear</property>
+        </ifthen>
+      </function>
+      <output>fcs/wing-pos-linear</output>
+    </fcs_function>
+
+    <!-- Google: y = 20.0 * cos(x + 0.25*cos(x))         -->
+    <fcs_function name="Wing Flap Motion">
+      <function>
+        <product>	<!-- 20.0 * cos(x + 0.25*cos(0.75*x))     -->
+          <value>20.0</value>
+          <property>fcs/throttle-pos-norm</property>
+          <sum>
+            <cos>				<!-- cos(x + 0.25*cos(x)) -->
+              <sum>				<!-- x + 0.25*cos(x)      -->
+                <property>fcs/wing-pos-linear</property>
+                <product>			<!-- 0.25*cos(x)          -->
+                  <value>0.25</value>
+                  <cos>				<!-- cos(x)               -->
+                    <property>fcs/wing-pos-linear</property>
+                  </cos>
+                </product>
+              </sum>
+            </cos>
+          </sum>
+        </product>
+      </function>
+      <output>fcs/wing-alpha-scaled-deg</output>
+    </fcs_function>
+
+    <summer>
+      <input>-aero/alpha-deg</input>
+      <input>fcs/wing-alpha-scaled-deg</input>
+      <output>fcs/wing-alpha-deg</output>
+      <clipto>
+        <min>-30.0</min>
+        <max> 30.0</max>
+      </clipto>
+    </summer>
+
+  </channel>
+</system>

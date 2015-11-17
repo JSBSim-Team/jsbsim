@@ -176,6 +176,7 @@ public:
     Spoilers(Aeromatic *p) : System(p) {
         _description.push_back("Spoilers");
         _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
+        _inputs.push_back(new Param("Is the spoiler differential?", "Differential spoilers are used for faster roll rate", _differential));
     }
     ~Spoilers() {}
 
@@ -183,8 +184,11 @@ public:
 
     std::string lift();
     std::string drag();
+    std::string roll();
 
 private:
+    bool _differential;
+
     static float const _dCLspoilers_t[MAX_AIRCRAFT][5];
 };
 
@@ -255,6 +259,19 @@ public:
         _description.push_back("Rescue Chute");
     }
     ~RescueChute() {}
+};
+
+class Catapult : public System
+{
+public:
+    Catapult(Aeromatic *p) : System(p) {
+        _description.push_back("Catapult");
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
+    }
+    ~Catapult() {}
+
+    std::string system();
+    std::string external_force();
 };
 
 } /* namespace Aeromatic */

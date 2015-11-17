@@ -48,13 +48,17 @@ void PropTransport::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    _aircraft->_CLalpha = _CLalpha_t[_subtype][_engines];
+    if (_aircraft->_CLalpha[0] < 0.01f) {
+        _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
+    }
 
     // estimate CL at zero alpha
     _aircraft->_CL0 = _CL0_t[_subtype][_engines];
 
     // estimate stall CL, based on airplane type
-    _aircraft->_CLmax = _CLmax_t[_subtype][_engines];
+    if (_aircraft->_CLmax[0] < 0.01f) {
+        _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
+    }
 
     // estimate lift due to elevator deflection
     _aircraft->_CLde = 0.2f;
@@ -125,6 +129,11 @@ float const PropTransport::_wing_loading_t[1][5] =
     {  57.0f,  57.0f,  57.0f,  57.0f,  57.0f }
 };
 
+float const PropTransport::_aspect_ratio_t[1][5] =
+{
+    {  10.2f,  10.2f, 12.4f, 10.2f, 10.2f }
+};
+
 float const PropTransport::_htail_area_t[1][5] =
 {
     { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f }
@@ -147,7 +156,7 @@ float const PropTransport::_vtail_arm_t[1][5] =
 
 float const PropTransport::_empty_weight_t[1][5] =
 {
-    { 0.60, 0.60, 0.60, 0.60, 0.60 }
+    { 0.60f, 0.60f, 0.60f, 0.60f, 0.60f }
 };
 
 float const PropTransport::_roskam_t[1][5][3] =
@@ -209,7 +218,7 @@ float const PropTransport::_K_t[1][5] =
 
 float const PropTransport::_Mcrit_t[1][5] =
 {
-    { 0.70f, 0.70f, 0.70f, 0.70f, 0.70 }
+    { 0.70f, 0.70f, 0.70f, 0.70f, 0.70f }
 };
 
 float const PropTransport::_Cmalpha_t[1][5] =

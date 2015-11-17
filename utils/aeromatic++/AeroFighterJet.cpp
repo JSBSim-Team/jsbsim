@@ -38,22 +38,28 @@ Fighter::Fighter(Aeromatic *p) : Aircraft(p)
     _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
+    _systems.push_back(new Spoilers(_aircraft));
     _systems.push_back(new Speedbrake(_aircraft));
     _systems.push_back(new ArrestorHook(_aircraft));
     _systems.push_back(new DragChute(_aircraft));
+    _systems.push_back(new Catapult(_aircraft));
 }
 
 void Fighter::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    _aircraft->_CLalpha = _CLalpha_t[_subtype][_engines];
+    if (_aircraft->_CLalpha[0] < 0.01f) {
+        _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
+    }
 
     // estimate CL at zero alpha
     _aircraft->_CL0 = _CL0_t[_subtype][_engines];
 
     // estimate stall CL, based on airplane type
-    _aircraft->_CLmax = _CLmax_t[_subtype][_engines];
+    if (_aircraft->_CLmax[0] < 0.01f) {
+        _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
+    }
 
     // estimate lift due to elevator deflection
     _aircraft->_CLde = 0.2f;
@@ -124,6 +130,11 @@ float const Fighter::_wing_loading_t[1][5] =
     {  95.0f,  95.0f, 100.0f, 100.0f, 100.0f }
 };
 
+float const Fighter::_aspect_ratio_t[1][5] =
+{
+    {  3.2f,  3.2f, 3.5f, 4.3f, 4.3f }
+};
+
 float const Fighter::_htail_area_t[1][5] =
 {
     { 0.20f, 0.20f, 0.20f, 0.20f, 0.20f }
@@ -146,7 +157,7 @@ float const Fighter::_vtail_arm_t[1][5] =
 
 float const Fighter::_empty_weight_t[1][5] =
 {
-    { 0.53, 0.53, 0.50, 0.50, 0.50 }
+    { 0.53f, 0.53f, 0.50f, 0.50f, 0.50f }
 };
 
 float const Fighter::_roskam_t[1][5][3] =
