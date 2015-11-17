@@ -52,8 +52,7 @@ public:
     std::string yaw();
 
 private:
-    float _CLmax;
-    float _CLalpha;
+    float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
     float _wing_sweep_le; 	// wing sweep at leading edge
     float _e;			// Oswald Efficiency Factor
 };
