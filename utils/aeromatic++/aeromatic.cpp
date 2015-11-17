@@ -26,7 +26,9 @@
 #include "config.h"
 #endif
 
+#include <string.h>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 
 #include <Systems/Systems.h>
@@ -35,7 +37,27 @@
 
 using namespace std;
 
-void ask(Aeromatic::Param* param)
+char *
+getCommandLineOption(int argc, char **argv, char *option)
+{
+    int slen = strlen(option);
+    char *rv = 0;
+    int i;
+
+    for (i=0; i<argc; i++)
+    {
+        if (strncmp(argv[i], option, slen) == 0)
+        {
+            rv = (char*)"";
+            i++;
+            if (i<argc) rv = argv[i];
+        }
+    }
+
+    return rv;
+}
+
+void ask(istream& in, ofstream& log, Aeromatic::Param* param)
 {
     string input;
 
@@ -53,23 +75,61 @@ void ask(Aeromatic::Param* param)
     }
     if (options) cout << endl;
 
-    getline(cin, input);
+    getline(in, input);
     if (!input.empty())
     {
         if (input == "?" || input == "h" || input == "help")
         {
             cout << param->help() << endl;
-            getline(cin, input);
+            getline(in, input);
         }
         if (!input.empty()) {
             param->set(input);
         }
     }
+    if (log.is_open()) {
+        log << input << endl;
+    }
 }
+
+struct noop {
+    void operator()(...) const {}
+};
 
 int main(int argc, char *argv[])
 {
     Aeromatic::Aeromatic aeromatic;
+    ofstream log;
+    ifstream in;
+
+    char *file = getCommandLineOption(argc, argv, (char*)"-l");
+    if (file)
+    {
+       log.open(file);
+       if (log.fail() || log.bad())
+       {
+            cerr << "Failed to open logfile: " << file << endl;
+            log.close();
+        }
+    }
+
+    file = getCommandLineOption(argc, argv, (char*)"-i");
+    if (file)
+    {
+       in.open(file);
+       if (in.fail() || in.bad())
+       {
+            cerr << "Failed to open parameter file: " << file << endl;
+            in.close();
+        }
+    }
+
+    if (!in.is_open())
+    {
+        in.copyfmt(cin);
+        in.clear(cin.rdstate());
+        in.basic_ios<char>::rdbuf(cin.rdbuf());
+    }
 
     cout << endl;
     cout << "** AeromatiC++ version " << AEROMATIC_VERSION_STR << endl;
@@ -79,24 +139,24 @@ int main(int argc, char *argv[])
 
     cout << "** General Information **" << endl << endl;
     for (unsigned i=0; i<aeromatic._general.size(); ++i) {
-        ask(aeromatic._general[i]);
+        ask(in, log, aeromatic._general[i]);
     }
     cout << endl;
 
     cout << "** Weight and Balance **" << endl << endl;
     for (unsigned i=0; i<aeromatic._weight_balance.size(); ++i) {
-        ask(aeromatic._weight_balance[i]);
+        ask(in, log, aeromatic._weight_balance[i]);
     }  
     cout << endl;
 
     cout << "** Geometry **" << endl << endl;
     for (unsigned i=0; i<aeromatic._geometry.size(); ++i) {
-        ask(aeromatic._geometry[i]);
+        ask(in, log, aeromatic._geometry[i]);
     }
     cout << endl;
 
     cout << "** Systems **" << endl << endl;
-    const std::vector<Aeromatic::System*> systems = aeromatic.get_systems();
+    const vector<Aeromatic::System*> systems = aeromatic.get_systems();
     for (unsigned i=0; i<systems.size(); ++i)
     {
         Aeromatic::System* system = systems[i];
@@ -108,7 +168,7 @@ int main(int argc, char *argv[])
         Aeromatic::Param* param;
         system->param_reset();
         while ((param = system->param_next()) != 0) {
-            ask(param);
+            ask(in, log, param);
         }
         cout << endl;
     }
@@ -127,4 +187,12 @@ int main(int argc, char *argv[])
     cout << "Press enter to continue." << endl;
     string input;
     getline(cin, input);
+
+    if (in.is_open()) {
+        in.close();
+    }
+
+    if (log.is_open()) {
+       log.close();
+    }
 }
