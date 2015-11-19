@@ -586,6 +586,7 @@ public:
     float _wing_incidence;
     float _wing_dihedral;
     float _wing_sweep;
+    float _wing_sweep_le;
     float _htail_area;
     float _htail_arm;
     float _vtail_area;

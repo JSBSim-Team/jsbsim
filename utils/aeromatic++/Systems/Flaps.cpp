@@ -22,6 +22,7 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <math.h>
 #include <sstream>
 #include <iomanip>
 
@@ -77,6 +78,13 @@ std::string Flaps::lift()
     float dCLflaps = _dCLflaps_t[_aircraft->_atype][_aircraft->_engines];
     std::stringstream file;
 
+    // http://adg.stanford.edu/aa241/highlift/clmaxest.html
+    // K(sweep) is an empirically-derived sweep-correction factor.
+    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
+    float sweep_le = _aircraft->_wing_sweep_le * DEG_TO_RAD;
+    float csweep_te = cosf(sweep - (sweep_le-sweep));
+    float K = (1.0 - 0.08f*powf(csweep_te, 2.0f))*powf(csweep_te, 0.75f);
+
     file.precision(4);
     file << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_flap\">" << std::endl;
@@ -85,7 +93,7 @@ std::string Flaps::lift()
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>fcs/flap-pos-deg</property>" << std::endl;
-    file << "           <value> " << (dCLflaps/30.0) << " </value>" << std::endl;
+    file << "           <value> " << (K*dCLflaps/30.0) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>\n" << std::endl;
 

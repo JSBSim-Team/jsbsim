@@ -99,11 +99,7 @@ void CableControls::set(const float* cg_loc)
 
     // Wing Seeep
     float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
-
-    // device span by two and account for fuselage width
-    float span = 0.45f*_aircraft->_wing_span;
-    float root_tip = chord*(1.0f - TR);
-    _wing_sweep_le = atanf(root_tip/span);
+    float sweep_le = _aircraft->_wing_sweep_le * DEG_TO_RAD;
 
     // Required to calculate _CLalpha
     float TRC = (1.0f - TR)/(1.0f + TR);
@@ -114,20 +110,14 @@ void CableControls::set(const float* cg_loc)
     switch (_aircraft->_wing_shape)
     {
     case ELLIPTICAL:
-        _wing_sweep_le /= 2.0f;
-        _wing_sweep_le += sweep;
-
         _CLalpha[0] = PAR/2.0f;
         _CLalpha[1] = PAR/2.0f;
         _CLalpha[2] = PAR/2.0f;
         _e = 1.0f;
         break;
     case DELTA:
-        _wing_sweep_le = sweep;
-        sweep /= 2;
-
         M = 0.0f; M2 = 0.0f;
-        _CLalpha[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(_wing_sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
+        _CLalpha[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
 
         _CLalpha[1] = PAR/2.0f;
 
@@ -135,16 +125,13 @@ void CableControls::set(const float* cg_loc)
         _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
         // Pamadi approximation for Oswald Efficiency Factor e
-        k = (AR*TR) / cosf(_wing_sweep_le);
+        k = (AR*TR) / cosf(sweep_le);
         R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
         _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
         break;
     case VARIABLE_SWEEP:
     case STRAIGHT:
     default:
-        _wing_sweep_le /= 2.0f;
-        _wing_sweep_le += sweep;
-
         M = 0.0f; M2 = 0.0f;
         _CLalpha[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
 
@@ -154,7 +141,7 @@ void CableControls::set(const float* cg_loc)
         _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
         // Pamadi approximation for Oswald Efficiency Factor e
-        k = (AR*TR) / cosf(_wing_sweep_le);
+        k = (AR*TR) / cosf(sweep_le);
         R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
         _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
         break;
@@ -167,23 +154,23 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_Mcrit = _Mcrit;
 
     _CLmax[0] = _aircraft->_CLmax[0];
-    float v = _aircraft->_stall_speed * KNOTS_TO_FPS;
-    if (v)
+    float Vs = _aircraft->_stall_speed * KNOTS_TO_FPS;
+    if (Vs)
     {
         float rho = 0.0023769f;
         float S = _aircraft->_wing_area;
         float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
 
-        _CLmax[0] = 2*W/(rho*S*v*v); // 1.11f;
+        _CLmax[0] = 2*W/(rho*S*Vs*Vs); // 1.11f;
         _aircraft->_CLmax[0] = _CLmax[0];
 
         // Hofman equation for t/c
-        float TC = 0.0447f*S*powf(cosf(_wing_sweep_le), 5.0f)/v;
+        float TC = 0.0447f*S*powf(cosf(sweep_le), 5.0f)/Vs;
         if (TC > 0.01f && TC < 0.25f)
         {
             // Korn  equation
             float CL = 0.0f;
-            float CS = cosf(_wing_sweep_le);
+            float CS = cosf(sweep_le);
             float CS2 = CS*CS, CS3 = CS2*CS;
 
             // Historically speaking most aircraft are modern since the number
@@ -201,15 +188,11 @@ void CableControls::set(const float* cg_loc)
 #if 0
         // approximation by Keith Shaw:
         // stall speed = 3.7 * sqrt(wing_loading)
-        v = _aircraft->_stall_speed * KNOTS_TO_MPH;
-        float _wing_loading = v*v/(3.7f*3.7f);
+        Vs = _aircraft->_stall_speed * KNOTS_TO_MPH;
+        float _wing_loading = Vs*Vs/(3.7f*3.7f);
         _wing_loading *= 0.0625f;       // oz/ft2 to lbs/ft
 #endif
     }
-
-#if 0
-    float Kflap = 1.0f - 0.08f*powf(cosf(sweep), 2.0f)*powf(cosf(sweep), 0.75f);
-#endif
 }
 
 

@@ -214,6 +214,17 @@ bool Aeromatic::fdm()
         _taper_ratio = 1.0f;
     }
 
+    // leading edge sweep
+    // devide the span by two and account for fuselage width
+    float span = 0.45f*_wing_span;
+    float root_tip = _wing_chord*(1.0f - _taper_ratio);
+    _wing_sweep_le = atanf(root_tip/span);
+    if (_wing_shape != DELTA) {
+        _wing_sweep_le *= 0.5f;
+    }
+    _wing_sweep_le *= RAD_TO_DEG;
+    _wing_sweep_le += _wing_sweep;
+
     // for now let's use a standard 2 degrees wing incidence
     if (_wing_incidence == 0) {
         _wing_incidence = 2.0;
@@ -367,7 +378,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.32 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.33 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
