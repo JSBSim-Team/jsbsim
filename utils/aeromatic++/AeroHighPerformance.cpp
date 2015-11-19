@@ -79,7 +79,9 @@ void Performance::set_drag()
     _aircraft->_CDbeta = 0.2f;     // sideslip
 
     // estimate critical mach, based on airplane type
-    _aircraft->_CDMcrit = _Mcrit_t[_subtype][_engines];
+    if ( _aircraft->_Mcrit < 0.01) {
+        _aircraft->_Mcrit = _Mcrit_t[_subtype][_engines];
+    }
 }
 
 void Performance::set_side()

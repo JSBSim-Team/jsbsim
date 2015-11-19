@@ -26,6 +26,7 @@
  * References:
  *
  * https://www.princeton.edu/~stengel/MAE331Lecture4.pdf
+ * http://www.dept.aoe.vt.edu/~mason/Mason_f/ConfigAeroTransonics.pdf
  * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
  */
 
@@ -101,19 +102,15 @@ void CableControls::set(const float* cg_loc)
 
     // device span by two and account for fuselage width
     float span = 0.45f*_aircraft->_wing_span;
-    float root_tip = chord*(1.0f - 1.0f/TR);
+    float root_tip = chord*(1.0f - TR);
     _wing_sweep_le = atanf(root_tip/span);
-
-    // Pamadi approximation for Oswald Efficiency Factor e
-    float k = (AR*TR) / cosf(_wing_sweep_le);
-    float R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
 
     // Required to calculate _CLalpha
     float TRC = (1.0f - TR)/(1.0f + TR);
-    float M = 0.0f, M2 = 0.0f;
     float PAR = PI*AR;
     float AR2 = AR*AR;
 
+    float M, M2, k, R;
     switch (_aircraft->_wing_shape)
     {
     case ELLIPTICAL:
@@ -126,8 +123,10 @@ void CableControls::set(const float* cg_loc)
         _e = 1.0f;
         break;
     case DELTA:
-        _wing_sweep_le += sweep;
+        _wing_sweep_le = sweep;
+        sweep /= 2;
 
+        M = 0.0f; M2 = 0.0f;
         _CLalpha[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(_wing_sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
 
         _CLalpha[1] = PAR/2.0f;
@@ -135,6 +134,9 @@ void CableControls::set(const float* cg_loc)
         M = 2.0f; M2 = M*M;
         _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
+        // Pamadi approximation for Oswald Efficiency Factor e
+        k = (AR*TR) / cosf(_wing_sweep_le);
+        R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
         _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
         break;
     case VARIABLE_SWEEP:
@@ -143,12 +145,17 @@ void CableControls::set(const float* cg_loc)
         _wing_sweep_le /= 2.0f;
         _wing_sweep_le += sweep;
 
+        M = 0.0f; M2 = 0.0f;
         _CLalpha[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
+
         _CLalpha[1] = PAR/2.0f;
 
         M = 2.0f; M2 = M*M;
         _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
+        // Pamadi approximation for Oswald Efficiency Factor e
+        k = (AR*TR) / cosf(_wing_sweep_le);
+        R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
         _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
         break;
     }
@@ -156,23 +163,47 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLalpha[1] = _CLalpha[1];
     _aircraft->_CLalpha[2] = _CLalpha[2];
 
+    _Mcrit = 0.0f;
+    _aircraft->_Mcrit = _Mcrit;
+
     _CLmax[0] = _aircraft->_CLmax[0];
     float v = _aircraft->_stall_speed * KNOTS_TO_FPS;
     if (v)
     {
-//      float _fuel_weight=_aircraft->_max_weight*_aircraft->get_fuel_weight();
         float rho = 0.0023769f;
         float S = _aircraft->_wing_area;
         float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
 
-        _CLmax[0] = 2*W/(rho*S*v*v) / 1.11f;
+        _CLmax[0] = 2*W/(rho*S*v*v); // 1.11f;
         _aircraft->_CLmax[0] = _CLmax[0];
+
+        // Hofman equation for t/c
+        float TC = 0.0447f*S*powf(cosf(_wing_sweep_le), 5.0f)/v;
+        if (TC > 0.01f && TC < 0.25f)
+        {
+            // Korn  equation
+            float CL = 0.0f;
+            float CS = cosf(_wing_sweep_le);
+            float CS2 = CS*CS, CS3 = CS2*CS;
+
+            // Historically speaking most aircraft are modern since the number
+            // of aircraft types has exploded since the late sixties.
+            float Ka = 0.95f; 			// for supercritical
+            if (_aircraft->_atype == LIGHT) {    // for NACA6
+                Ka = 0.87f;
+            }
+
+            float Mdd = Ka/CS - TC/CS2 - CL/(10.0f*CS3);
+            _Mcrit = Mdd - 0.1077217345f;
+            _aircraft->_Mcrit = _Mcrit;
+        }
+
 #if 0
         // approximation by Keith Shaw:
         // stall speed = 3.7 * sqrt(wing_loading)
         v = _aircraft->_stall_speed * KNOTS_TO_MPH;
         float _wing_loading = v*v/(3.7f*3.7f);
-        _wing_loading *= 0.0625f;	// oz/ft2 to lbs/ft
+        _wing_loading *= 0.0625f;       // oz/ft2 to lbs/ft
 #endif
     }
 
@@ -187,8 +218,8 @@ std::string CableControls::lift()
     float CLalpha, CLmax, CL0, CLde, alpha;
     std::stringstream file;
 
-    CLalpha = _CLalpha[0] ? _CLalpha[0] : _aircraft->_CLalpha[0];
-    CLmax = _CLmax[0] ? _CLmax[0] : _aircraft->_CLmax[0];
+    CLalpha = _aircraft->_CLalpha[0];
+    CLmax = _aircraft->_CLmax[0];
     CL0 = _aircraft->_CL0;
     CLde = _aircraft->_CLde;
 
@@ -204,9 +235,9 @@ std::string CableControls::lift()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "              -0.20 " << std::setw(5) << (-0.2*CLalpha + CL0) << std::endl;
-    file << "               0.00 " << std::setw(5) << CL0 << std::endl;
+    file << "               0.00 " << std::setw(6) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
-    file << "               0.60 " << std::setw(5) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+    file << "               0.60 " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
@@ -232,14 +263,13 @@ std::string CableControls::drag()
 
     CD0 = _aircraft->_CD0;
     K = _aircraft->_K;
-    Mcrit = _aircraft->_CDMcrit;
+    Mcrit = _aircraft->_Mcrit;
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
 
     float AR = _aircraft->_aspect_ratio;
     float Aar_corr = 0.26f;  // 0.1f + 0.16f*(5.5f/AR);
     float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
-    float Mcrit_corr = Mcrit / cosf(sweep);
 
     CD0 = (1.0f - sinf(sweep)) * CD0;
     K = 1.0f/(PI * fabs(_e) * AR);
@@ -282,7 +312,7 @@ std::string CableControls::drag()
     file << "            <independentVar lookup=\"row\">velocities/mach</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "                0.00    0.0000" << std::endl;
-    file << "                " << std::setprecision(2) << (Mcrit_corr) << std::setprecision(4) << "    0.0000" << std::endl;
+    file << "                " << std::setprecision(2) << (Mcrit) << std::setprecision(4) << "    0.0000" << std::endl;
     file << "                1.10    0.0230" << std::endl;
     file << "                1.80    0.0150" << std::endl;
     file << "            </tableData>" << std::endl;

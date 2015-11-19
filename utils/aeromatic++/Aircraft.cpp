@@ -100,7 +100,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     units->add_option("Metric (meters, kilograms)");
 
     /* performance, weight and balance */
-    _weight_balance.push_back(new Param("Stall speed", "The stall speed (landing speed/1.3) halfway between max. weight and empty weight", _stall_speed, _metric, SPEED));
+    _weight_balance.push_back(new Param("Stall speed (clean, no flaps)", "The stall speed (landing speed/1.3) halfway between max. weight and empty weight", _stall_speed, _metric, SPEED));
     _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
@@ -367,7 +367,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.31 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.32 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
