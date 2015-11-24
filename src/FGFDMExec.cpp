@@ -73,7 +73,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.181 2015/10/25 21:18:29 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.182 2015/11/24 13:06:24 ehofman Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1176,13 +1176,16 @@ void FGFDMExec::DoTrim(int mode)
   if (Constructing) return;
 
   if (mode < 0 || mode > JSBSim::tNone) {
-    cerr << endl << "Illegal trimming mode!" << endl << endl;
+    throw("Illegal trimming mode!");
     return;
   }
  
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
-  if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
+  if ( !trim.DoTrim() ) {
+    throw("Trim Failed");
+    return;
+  }
   trim.Report();
   trim_completed = 1;
 }
