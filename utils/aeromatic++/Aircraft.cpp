@@ -74,6 +74,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _empty_weight(0),
     _length(40.0f),
     _wing_shape(STRAIGHT),
+    _user_wing_data(-2),
     _wing_span(40.0f),
     _wing_area(0),
     _wing_chord(0),
@@ -144,6 +145,16 @@ Aeromatic::Aeromatic() : Aircraft(),
     param->add_option(_aircraft[4]->get_description());
 
     Aircraft::_aircraft = this;
+
+    _CLalpha[0] = _CLalpha[1] = _CLalpha[2] = 0.0f;
+    _CLmax[0] = _CLmax[1] = _CLmax[2] = 0.0f;
+    _CL0 = 0.0f; _CLde = 0.0f;
+    _CD0 = 0.0f; _CDde = 0.0f; _CDbeta = 0.0f;
+    _Kdi = 0.0f; _Mcrit = 0.0f;
+    _CYbeta = 0.0f; _CYr = 0.0f; _CYp = 0.0f; _CYdr = 0.0f;
+    _Clbeta = 0.0f; _Clp = 0.0f; _Clr = 0.0f; _Clda = 0.0f; _Cldr = 0.0f;
+    _Cmalpha = 0.0f; _Cmde = 0.0f; _Cmq = 0.0f; _Cmadot = 0.0f;
+    _Cnbeta = 0.0f; _Cnr = 0.0f; _Cnp = 0.0f; _Cndr = 0.0f; _Cnda = 0.0f;
 }
 
 Aeromatic::~Aeromatic()
@@ -195,6 +206,8 @@ bool Aeromatic::fdm()
     // calculate wing chord
     if (_aspect_ratio == 0) {
         _aspect_ratio = aircraft->get_aspect_ratio();
+    } else {
+        _user_wing_data++;
     }
     if (_wing_chord == 0)
     {
@@ -204,10 +217,15 @@ bool Aeromatic::fdm()
             _wing_chord = _wing_area / _wing_span;
         }
     }
+    else {
+        _user_wing_data++;
+    }
 
     // calculate aspect ratio
     if (_aspect_ratio == 0) {
         _aspect_ratio = (_wing_span*_wing_span) / _wing_area;
+    } else {
+        _user_wing_data++;
     }
 
     if (_taper_ratio == 0) {
@@ -378,7 +396,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.34 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.35 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -437,7 +455,8 @@ bool Aeromatic::fdm()
     file << "    CL-0:          " << _CL0 << std::endl;
     file << "    CL-max:        " << _CLmax[0] << std::endl;
     file << "    CD-0:          " << _CD0 << std::endl;
-    file << "    K:             " << _K << std::endl;
+    file << "    K:             " << _Kdi << std::endl;
+    file << "    Mcrit:         " << _Mcrit << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
 

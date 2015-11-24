@@ -51,80 +51,126 @@ void JetTransport::set_lift()
 {
     // estimate slope of lift curve based on airplane type
     // units: per radian
-    if (_aircraft->_CLalpha[0] < 0.01f) {
+    if (_aircraft->_CLalpha[0] == 0.0f) {
         _aircraft->_CLalpha[0] = _CLalpha_t[_subtype][_engines];
     }
 
     // estimate CL at zero alpha
-    _aircraft->_CL0 = _CL0_t[_subtype][_engines];
+    if (_aircraft->_CL0 == 0.0f) {
+        _aircraft->_CL0 = _CL0_t[_subtype][_engines];
+    }
 
     // estimate stall CL, based on airplane type
-    if (_aircraft->_CLmax[0] < 0.01f) {
+    if (_aircraft->_CLmax[0] == 0.0f) {
         _aircraft->_CLmax[0] = _CLmax_t[_subtype][_engines];
     }
 
     // estimate lift due to elevator deflection
-    _aircraft->_CLde = 0.2f;
+    if (_aircraft->_CLde == 0.0f) {
+        _aircraft->_CLde = 0.2f;
+    }
 }
 
 void JetTransport::set_drag()
 {
     // estimate drag at zero lift, based on airplane type
     // NOT including landing gear
-    _aircraft->_CD0 = _CD0_t[_subtype][_engines];
+    if (_aircraft->_CD0 == 0.0f) {
+        _aircraft->_CD0 = _CD0_t[_subtype][_engines];
+    }
 
     // estimate induced drag coefficient K
-    _aircraft->_K = _K_t[_subtype][_engines];
+    if (_aircraft->_Kdi == 0.0f) {
+        _aircraft->_Kdi = _K_t[_subtype][_engines];
+    }
 
-    _aircraft->_CDde = 0.04f;      // elevator deflection
-    _aircraft->_CDbeta = 0.2f;     // sideslip
+    if (_aircraft->_CDde == 0.0f) {
+        _aircraft->_CDde = 0.04f;      // elevator deflection
+    }
+
+    if (_aircraft->_CDbeta == 0.0f) {
+        _aircraft->_CDbeta = 0.2f;     // sideslip
+    }
 
     // estimate critical mach, based on airplane type
-    if ( _aircraft->_Mcrit < 0.01) {
+    if ( _aircraft->_Mcrit == 0.0f) {
         _aircraft->_Mcrit = _Mcrit_t[_subtype][_engines];
     }
 }
 
 void JetTransport::set_side()
 {
-    _aircraft->_CYbeta = -1.0f;
+    if (_aircraft->_CYbeta == 0.0f) {
+        _aircraft->_CYbeta = -1.0f;
+    }
 }
 
 void JetTransport::set_roll()
 {
     // estimate roll coefficients
-    _aircraft->_Clbeta = -0.1f;    // sideslip
-    _aircraft->_Clp = -0.4f;       // roll rate
-    _aircraft->_Clr = 0.15f;       // yaw rate
-    _aircraft->_Cldr = 0.01f;      // rudder deflection
+    if (_aircraft->_Clbeta == 0.0f) {
+        _aircraft->_Clbeta = -0.1f;    // sideslip
+    }
+
+    if (_aircraft->_Clp == 0.0f) {
+        _aircraft->_Clp = -0.4f;       // roll rate
+    }
+
+    if (_aircraft->_Clr == 0.0f) {
+        _aircraft->_Clr = 0.15f;       // yaw rate
+    }
+
+    if (_aircraft->_Cldr == 0.0f) {
+        _aircraft->_Cldr = 0.01f;      // rudder deflection
+    }
 
     // aileron
-    _aircraft->_Clda = _Clda_t[_subtype][_engines];
+    if (_aircraft->_Clda == 0.0f) {
+        _aircraft->_Clda = _Clda_t[_subtype][_engines];
+    }
 }
 
 void JetTransport::set_pitch()
 {
     // per radian alpha
-    _aircraft->_Cmalpha = _Cmalpha_t[_subtype][_engines];
+    if (_aircraft->_Cmalpha == 0.0f) {
+        _aircraft->_Cmalpha = _Cmalpha_t[_subtype][_engines];
+    }
 
     // elevator deflection
-    _aircraft->_Cmde = _Cmde_t[_subtype][_engines];
+    if (_aircraft->_Cmde == 0.0f) {
+        _aircraft->_Cmde = _Cmde_t[_subtype][_engines];
+    }
 
     // pitch rate
-    _aircraft->_Cmq = _Cmq_t[_subtype][_engines];
+    if (_aircraft->_Cmq == 0.0f) {
+        _aircraft->_Cmq = _Cmq_t[_subtype][_engines];
+    }
 
     // alpha-dot
-    _aircraft->_Cmadot = _Cmadot_t[_subtype][_engines];
+    if (_aircraft->_Cmadot == 0.0f) {
+        _aircraft->_Cmadot = _Cmadot_t[_subtype][_engines];
+    }
 }
 
 void JetTransport::set_yaw()
 {
-    _aircraft->_Cnbeta = 0.12f;    // sideslip
-    _aircraft->_Cnr = -0.15f;      // yaw rate
-    _aircraft->_Cndr = -0.10f;        // rudder deflection
+    if (_aircraft->_Cnbeta == 0.0f) {
+        _aircraft->_Cnbeta = 0.12f;    // sideslip
+    }
+
+    if (_aircraft->_Cnr == 0.0f) {
+        _aircraft->_Cnr = -0.15f;      // yaw rate
+    }
+
+    if (_aircraft->_Cndr == 0.0f) {
+        _aircraft->_Cndr = -0.10f;        // rudder deflection
+    }
 
     // adverse yaw
-    _aircraft->_Cnda = _Cnda_t[_subtype][_engines];
+    if (_aircraft->_Cnda == 0.0f) {
+        _aircraft->_Cnda = _Cnda_t[_subtype][_engines];
+    }
 }
 // ----------------------------------------------------------------------------
 

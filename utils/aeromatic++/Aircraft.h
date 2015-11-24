@@ -580,6 +580,7 @@ public:
     /* geometry */
     float _length;
     unsigned _wing_shape;
+    int _user_wing_data;
     float _wing_span;
     float _wing_area;
     float _wing_chord;
@@ -603,11 +604,12 @@ public:
     /* Coefficients */
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
     float _CL0, _CLde;
-    float _CD0, _K, _CDde, _CDbeta, _Mcrit;
-    float _CYbeta;
+    float _CD0, _CDde, _CDbeta;
+    float _Kdi, _Mcrit;
+    float _CYbeta, _CYr, _CYp, _CYdr;
     float _Clbeta, _Clp, _Clr, _Clda, _Cldr;
     float _Cmalpha, _Cmde, _Cmq, _Cmadot;
-    float _Cnbeta, _Cnr, _Cndr, _Cnda;
+    float _Cnbeta, _Cnr, _Cnp, _Cndr, _Cnda;
 
 public:
     static char const* _estimate;

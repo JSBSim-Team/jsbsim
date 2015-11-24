@@ -27,6 +27,8 @@
  *
  * https://www.princeton.edu/~stengel/MAE331Lecture4.pdf
  * http://www.dept.aoe.vt.edu/~mason/Mason_f/ConfigAeroTransonics.pdf
+ * http://aerostudents.com/files/flightDynamics/lateralStabilityDerivatives.pdf
+ * http://aerostudents.com/files/flightDynamics/longitudinalStabilityDerivatives.pdf
  * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
  */
 
@@ -80,7 +82,7 @@ std::string Controls::comment()
 void CableControls::set(const float* cg_loc)
 {
     // wing (root) chord
-    float chord = _aircraft->_wing_chord;
+    float cbar = _aircraft->_wing_chord;
 
     // aspect ratio
     float AR = _aircraft->_aspect_ratio;
@@ -89,7 +91,7 @@ void CableControls::set(const float* cg_loc)
     float TR = _aircraft->_taper_ratio;
 
     // max thickness
-    float MT = 0.25f * chord;
+    float MT = 0.25f * cbar;
 
     // lift coefficient gradient over angle of attack in incompressible flow
     float CLalpha_ic = 1.0f;
@@ -101,75 +103,75 @@ void CableControls::set(const float* cg_loc)
     float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
     float sweep_le = _aircraft->_wing_sweep_le * DEG_TO_RAD;
 
-    // Required to calculate _CLalpha
+    // Required to calculate CLalpha_wing
     float TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
     float AR2 = AR*AR;
 
+    // *** CLalpha_wing based on wing geometry ***
     float M, M2, k, R;
+    float CLaw[3];
     switch (_aircraft->_wing_shape)
     {
     case ELLIPTICAL:
-        _CLalpha[0] = PAR/2.0f;
-        _CLalpha[1] = PAR/2.0f;
-        _CLalpha[2] = PAR/2.0f;
+        CLaw[0] = PAR/2.0f;
+        CLaw[1] = PAR/2.0f;
+        CLaw[2] = PAR/2.0f;
         _e = 1.0f;
         break;
     case DELTA:
         M = 0.0f; M2 = 0.0f;
-        _CLalpha[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
+        CLaw[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
 
-        _CLalpha[1] = PAR/2.0f;
+        CLaw[1] = PAR/2.0f;
 
         M = 2.0f; M2 = M*M;
-        _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
+        CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
         // Pamadi approximation for Oswald Efficiency Factor e
         k = (AR*TR) / cosf(sweep_le);
         R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
-        _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
+        _e = (1.1f* CLaw[0]) / (R* CLaw[0] + ((1.0f-R)*PAR));
         break;
     case VARIABLE_SWEEP:
     case STRAIGHT:
     default:
         M = 0.0f; M2 = 0.0f;
-        _CLalpha[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
+        CLaw[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
 
-        _CLalpha[1] = PAR/2.0f;
+        CLaw[1] = PAR/2.0f;
 
         M = 2.0f; M2 = M*M;
-        _CLalpha[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
+        CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
         // Pamadi approximation for Oswald Efficiency Factor e
         k = (AR*TR) / cosf(sweep_le);
         R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
-        _e = (1.1f*_CLalpha[0]) / (R*_CLalpha[0] + ((1.0f-R)*PAR));
+        _e = (1.1f* CLaw[0]) / (R* CLaw[0] + ((1.0f-R)*PAR));
         break;
     }
-    _aircraft->_CLalpha[0] = _CLalpha[0];
-    _aircraft->_CLalpha[1] = _CLalpha[1];
-    _aircraft->_CLalpha[2] = _CLalpha[2];
 
-    _Mcrit = 0.0f;
-    _aircraft->_Mcrit = _Mcrit;
-
-    _CLmax[0] = _aircraft->_CLmax[0];
+    float CL = 0.0f;
+    float Sw = _aircraft->_wing_area;
+    float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
     float Vs = _aircraft->_stall_speed * KNOTS_TO_FPS;
     if (Vs)
     {
+        float Vt = 4.2f*Vs;
         float rho = 0.0023769f;
-        float S = _aircraft->_wing_area;
-        float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
+        float Q = 0.5f*rho*Vt*Vt;
 
-        _CLmax[0] = 2*W/(rho*S*Vs*Vs); // 1.11f;
-        _aircraft->_CLmax[0] = _CLmax[0];
+        CL = W/Q/Sw;
 
+        // *** CLmax based on wing geometry and stall speed ***
+         _aircraft->_CLmax[0] = 2*W/(rho*Sw*Vs*Vs);
+
+        // *** Critical Mach based on wing geometry and stall speed ***
         // Hofman equation for t/c
-        float TC = 0.0447f*S*powf(cosf(sweep_le), 5.0f)/Vs;
+        float TC = 0.0447f*Sw*powf(cosf(sweep_le), 5.0f)/Vs;
         if (TC > 0.01f && TC < 0.25f)
         {
             // Korn  equation
-            float CL = 0.0f;
             float CS = cosf(sweep_le);
             float CS2 = CS*CS, CS3 = CS2*CS;
 
@@ -181,8 +183,7 @@ void CableControls::set(const float* cg_loc)
             }
 
             float Mdd = Ka/CS - TC/CS2 - CL/(10.0f*CS3);
-            _Mcrit = Mdd - 0.1077217345f;
-            _aircraft->_Mcrit = _Mcrit;
+             _aircraft->_Mcrit = Mdd - 0.1077217345f;
         }
 
 #if 0
@@ -193,6 +194,96 @@ void CableControls::set(const float* cg_loc)
         _wing_loading *= 0.0625f;       // oz/ft2 to lbs/ft
 #endif
     }
+
+#if 1
+    // *** Pitch, Roll and Yaw moments ***
+    // Approximations based on code by Mark Peters for MPX-5.
+    // https://engineering.purdue.edu/~andrisan/Courses/AAE451%20Fall2000/mpx5
+
+    float bw = _aircraft->_wing_span;
+
+    // calculate mean wing chord
+    float cw = 0.75f*cbar*(1.0f+TR+TR*TR)/(1.0f+TR);
+
+    // *** Pitch moment ***
+    float Sh = _aircraft->_htail_area;
+    float lh = _aircraft->_htail_arm;
+    float Vh = lh*Sh/cw/Sw;
+  
+    float nh = 0.9f;		// Horizontal tail efficiency
+    float Ee = 0.266f;		// Elevator Flap to chord ratio
+    float CLah = 0.85f*CLaw[0];	// CLalpha horizontal tail
+    float cgx = -cg_loc[Z]*INCH_TO_FEET;
+    float ch = cw*sqrtf(_aircraft->get_htail_area());
+
+    float deda = 4.0f/(AR+2.0f); // de/da
+    float Cmtde = CLah/PI*(1.0f-Ee)*sqrtf(Ee-Ee*Ee);
+    float Cltde = ((CLah/PI)*(acosf(1.0f-2.0f*Ee)+2.0f*sqrtf(Ee-Ee*Ee)));
+
+    // lift
+    _aircraft->_CLalpha[0] = CLaw[0]+CLah*Sh/Sw*(1.0f-deda);
+    _aircraft->_CLalpha[1] = CLaw[1];
+    _aircraft->_CLalpha[2] = CLaw[2];
+    _aircraft->_CLde = Cltde*Sh/Sw;
+
+    // pitch
+    if (_aircraft->_user_wing_data > 0)
+    {
+        _aircraft->_Cmalpha =  CLaw[0]*(cgx/cw) - Vh*CLah*(1.0f-deda);
+        _aircraft->_Cmadot = -2.0f*nh*CLah*Vh*lh/cw*deda;
+        _aircraft->_Cmq = _aircraft->_Cmadot/deda;
+        _aircraft->_Cmde = (Sh*ch/Sw/cw*Cmtde - lh*Sh*Cltde/cw/Sw);
+    }
+
+    float Sv = _aircraft->_vtail_area;
+    float lv = _aircraft->_vtail_arm;
+    float Vv = Sv*lv/bw/Sw;
+
+    float nv = 1.0f;		// Vertical Tail Efficiency
+    float Er = 0.2556f;		// Rudder Flap to Chord ratio
+    float CLav = 0.72f*CLaw[0];	// CLalpha vertical tail
+    float dsdB = 0.0f;		// ds/dB
+
+    float CYbeta = -nv*Sv/Sw*CLav*(1.0f+dsdB);
+    float Cltdr = (CLav/PI)*(acosf(1.0f-2.0f*Er)+2.0f*sqrtf(Er-Er*Er));
+    float CYp_const = (AR+cosf(sweep))/(AR+4*cosf(sweep))*tanf(sweep);
+    float Clr_const = -2.0f*lv*lv/bw/bw*CYbeta;
+
+    // side
+    _aircraft->_CYbeta = CYbeta;
+    _aircraft->_CYr = -2.0f*(lv/bw)*(CYbeta);
+    _aircraft->_CYp = -CL*CYp_const;
+    _aircraft->_CYdr = (Sv/Sw)*Cltdr;
+
+    // roll
+    _aircraft->_Clbeta = -((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CL*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f))));
+    _aircraft->_Clp = -(CLaw[0]/12.0f)*(1.0f+3.0f*TR)/(1.0f+TR);
+    _aircraft->_Clr = -((CL/4.0f)-Clr_const);
+
+    // yaw
+    _aircraft->_Cnbeta = nv*Vv*CLav*(1+dsdB);
+    _aircraft->_Cnr = -2.0f*nv*Vv*(lv/bw)*CLav;
+    _aircraft->_Cndr = -Vv*Cltdr;
+    _aircraft->_Cnp = -CL/8.0f;
+
+#if 0
+    // Sfus: Fuselage wetted area
+    float k1 = 0.2f*TC; // 1.256f; // correction factor for wing thickness
+    float k2 = 1.12f;		// fuselage fineness ratio correction factor
+    float Cf = 0.006f;		// skin Friction Coefficient
+    float wings = Cf*(Sw+Sh+Sv)*2.04f*k1;
+    float ffus   = Cf*Sfus*k2;
+    _aircraft->_CD0 = (fwings+ffus)/Sw;
+#endif
+
+#if 0
+printf("CLa: %f, CLmax: %f, CLde: %f\n", _aircraft->_CLalpha[0], _aircraft->_CLmax[0], _aircraft->_CLde);
+printf("Cma: %f, Cmadot: %f, Cmq: %f, Cmde: %f\n",  _aircraft->_Cmalpha, _aircraft->_Cmadot, _aircraft->_Cmq, _aircraft->_Cmde);
+printf("CYbeta: %f, CYr: %f, CYp: %f, CYdr: %f\n", _aircraft->_CYbeta, _aircraft->_CYr, _aircraft->_CYp, _aircraft->_CYdr);
+printf("Cnbeta: %f, Cnr: %f, Cnp: %f, Cndr: %f\n", _aircraft->_Cnbeta, _aircraft->_Cnr, _aircraft->_Cnp, _aircraft->_Cndr);
+printf("Clbeta: %f, Clr: %f, Clp: %f\n", _aircraft->_Clbeta, _aircraft->_Clr, _aircraft->_Clp);
+#endif
+#endif
 }
 
 
@@ -245,7 +336,7 @@ std::string CableControls::drag()
     std::stringstream file;
 
     CD0 = _aircraft->_CD0;
-    K = _aircraft->_K;
+    K = _aircraft->_Kdi;
     Mcrit = _aircraft->_Mcrit;
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
@@ -337,18 +428,53 @@ std::string CableControls::drag()
 std::string CableControls::side()
 {
     std::stringstream file;
-    float CYbeta;
+    float CYbeta, CYp, CYr, CYdr;
 
     CYbeta = _aircraft->_CYbeta;
+    CYp = _aircraft->_CYp;
+    CYr = _aircraft->_CYr;
+    CYdr = _aircraft->_CYdr;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
-file << "    <function name=\"aero/force/Side_beta\">" << std::endl;
+    file << "    <function name=\"aero/force/Side_beta\">" << std::endl;
     file << "       <description>Side force due to beta</description>" << std::endl;
     file << "       <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>aero/beta-rad</property>" << std::endl;
     file << "           <value> " << (CYbeta) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+    file << std::endl;
+    file << "    <function name=\"aero/force/Side_roll_rate\">" << std::endl;
+    file << "       <description>Side_force_due_to_roll_rate</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>aero/bi2vel</property>" << std::endl;
+    file << "           <property>velocities/p-rad_sec</property>" << std::endl;
+    file << "           <value> " << (CYp) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+    file << std::endl;
+    file << "    <function name=\"aero/force/Side_yaw_rate\">" << std::endl;
+    file << "       <description>Side_force_due_to_yaw_rate</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>aero/bi2vel</property>" << std::endl;
+    file << "           <property>velocities/r-rad_sec</property>" << std::endl;
+    file << "           <value> " << (CYr) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+    file << std::endl;
+    file << "    <function name=\"aero/force/Side_rudder\">" << std::endl;
+    file << "       <description>Side_force_due_to_rudder</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>fcs/rudder-pos-rad</property>" << std::endl;
+    file << "           <value> " << (CYdr) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
 
@@ -501,12 +627,14 @@ std::string CableControls::pitch()
 
 std::string CableControls::yaw()
 {
-    float Cnbeta, Cndr, Cnda;
+    float Cnbeta, Cndr, Cnda, Cnp, Cnr;
     std::stringstream file;
 
     Cnbeta = _aircraft->_Cnbeta;
     Cndr = _aircraft->_Cndr;
     Cnda = _aircraft->_Cnda;
+    Cnp = _aircraft->_Cnp;
+    Cnr = _aircraft->_Cnr;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Yaw_beta\">" << std::endl;
@@ -520,6 +648,18 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
+    file << "    <function name=\"aero/moment/Yaw_rol_rate\">" << std::endl;
+    file << "       <description>Yaw_moment_due_to_roll_rate</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>metrics/bw-ft</property>" << std::endl;
+    file << "           <property>aero/bi2vel</property>" << std::endl;
+    file << "           <property>velocities/p-rad_sec</property>" << std::endl;
+    file << "           <value> " << (Cnp) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+    file << std::endl;
     file << "    <function name=\"aero/moment/Yaw_damp\">" << std::endl;
     file << "       <description>Yaw moment due to yaw rate</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -528,9 +668,10 @@ std::string CableControls::yaw()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/bi2vel</property>" << std::endl;
     file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
-    file << "           <value> " << (_aircraft->_Cnr) << " </value>" << std::endl;
+    file << "           <value> " << (Cnr) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
+    file << std::endl;
     file << "    <function name=\"aero/moment/Yaw_rudder\">" << std::endl;
     file << "       <description>Yaw moment due to rudder</description>" << std::endl;
     file << "       <product>" << std::endl;
