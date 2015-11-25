@@ -81,10 +81,14 @@ Aeromatic::Aeromatic() : Aircraft(),
     _wing_incidence(0),
     _wing_dihedral(0),
     _wing_sweep(0),
+    _htail_efficiency(0.9f),
     _htail_area(0),
     _htail_arm(0),
+    _elevator_ratio(0.27f),
+    _vtail_efficiency(1.0f),
     _vtail_area(0),
     _vtail_arm(0),
+    _rudder_ratio(0.25f),
     _aspect_ratio(0),
     _taper_ratio(0),
     _payload(10000.0f),
@@ -396,7 +400,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.35 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.36 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

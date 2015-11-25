@@ -588,10 +588,14 @@ public:
     float _wing_dihedral;
     float _wing_sweep;
     float _wing_sweep_le;
+    float _htail_efficiency;
     float _htail_area;
     float _htail_arm;
+    float _elevator_ratio;
+    float _vtail_efficiency;
     float _vtail_area;
     float _vtail_arm;
+    float _rudder_ratio;
 
     float _aspect_ratio;
     float _taper_ratio;

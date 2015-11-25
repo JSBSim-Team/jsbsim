@@ -210,8 +210,8 @@ void CableControls::set(const float* cg_loc)
     float lh = _aircraft->_htail_arm;
     float Vh = lh*Sh/cw/Sw;
   
-    float nh = 0.9f;		// Horizontal tail efficiency
-    float Ee = 0.266f;		// Elevator Flap to chord ratio
+    float nh = _aircraft->_htail_efficiency;
+    float Ee = _aircraft->_elevator_ratio;
     float CLah = 0.85f*CLaw[0];	// CLalpha horizontal tail
     float cgx = -cg_loc[Z]*INCH_TO_FEET;
     float ch = cw*sqrtf(_aircraft->get_htail_area());
@@ -224,7 +224,7 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLalpha[0] = CLaw[0]+CLah*Sh/Sw*(1.0f-deda);
     _aircraft->_CLalpha[1] = CLaw[1];
     _aircraft->_CLalpha[2] = CLaw[2];
-    _aircraft->_CLde = Cltde*Sh/Sw;
+    _aircraft->_CLde = (Cltde*Sh/Sw)*2.0f/PI;
 
     // pitch
     if (_aircraft->_user_wing_data > 0)
@@ -239,8 +239,8 @@ void CableControls::set(const float* cg_loc)
     float lv = _aircraft->_vtail_arm;
     float Vv = Sv*lv/bw/Sw;
 
-    float nv = 1.0f;		// Vertical Tail Efficiency
-    float Er = 0.2556f;		// Rudder Flap to Chord ratio
+    float nv = _aircraft->_vtail_efficiency;
+    float Er = _aircraft->_rudder_ratio;
     float CLav = 0.72f*CLaw[0];	// CLalpha vertical tail
     float dsdB = 0.0f;		// ds/dB
 
@@ -417,7 +417,7 @@ std::string CableControls::drag()
     file << "       <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
-    file << "           <abs><property>fcs/elevator-pos-norm</property></abs>" << std::endl;
+    file << "           <abs><property>fcs/elevator-pos-rad</property></abs>" << std::endl;
     file << "           <value> " << (CDde) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
