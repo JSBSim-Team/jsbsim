@@ -214,7 +214,7 @@ void Propulsion::set(const float* cg_loc)
         for (i=0; i<halfcount; ++i)		// left wing
         {
             _eng_loc[i][X] = cg_loc[X];
-            _eng_loc[i][Y] = _aircraft->_wing_span * -2.0f;	// span/-2/3*12
+            _eng_loc[i][Y] = _aircraft->_wing.span * -2.0f;	// span/-2/3*12
             _eng_loc[i][Z] = -40.0f;
         }
         switch (_layout)
@@ -248,7 +248,7 @@ void Propulsion::set(const float* cg_loc)
         for (; i<no_engines; ++i)		// right wing
         {
             _eng_loc[i][X] = cg_loc[X];
-            _eng_loc[i][Y] = _aircraft->_wing_span * 2.0f;	// span/2/3*12
+            _eng_loc[i][Y] = _aircraft->_wing.span * 2.0f;	// span/2/3*12
             _eng_loc[i][Z] = -40.0f;
         }
         break;
