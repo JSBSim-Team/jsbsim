@@ -99,7 +99,7 @@ void CableControls::set(const float* cg_loc)
     float TR = _aircraft->_wing.taper;
     if (Vs)
     {
-        float Vt = 2.25f*Vs;
+        float Vt = 2.8f*Vs;
         float rho = 0.0023769f;
         float Q = 0.5f*rho*Vt*Vt;
 

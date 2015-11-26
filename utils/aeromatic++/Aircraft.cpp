@@ -249,7 +249,8 @@ bool Aeromatic::fdm()
     {
         // Hofman equation for t/c
         float Vs = _stall_speed * KNOTS_TO_FPS;
-        float TC = 0.0447f * _wing.area *powf(cosf(_wing.sweep_le), 5.0f)/Vs;
+        float sweep = _wing.sweep * DEG_TO_RAD;
+        float TC = 0.0447f * _wing.area *powf(cosf(sweep), 5.0f)/Vs;
         _wing.thickness = TC * _wing.chord;
     }
 
@@ -268,12 +269,16 @@ bool Aeromatic::fdm()
         _htail.arm = _length * aircraft->get_htail_arm();
     }
 
-    float ht_w = 1.3f*sqrtf(_htail.area / _wing.area);
+    if (_htail.aspect == 0) {
+        _htail.aspect = 5.0f;	// ht_w * _wing.aspect;
+    }
+    if (_htail.taper == 0) {
+        _htail.taper = 0.5f;
+    }
+
+    float ht_w = 0.33f; // sqrtf(_htail.area / _wing.area);
     if (_htail.span == 0) {
         _htail.span = ht_w * _wing.span;
-    }
-    if (_htail.aspect == 0) {
-        _htail.aspect = ht_w * _wing.aspect;
     }
 
     // estimate vertical tail area
@@ -286,12 +291,15 @@ bool Aeromatic::fdm()
         _vtail.arm = _length * aircraft->get_vtail_arm();
     }
 
-    float vt_w = 1.3f*sqrtf(_vtail.area / _wing.area*0.5f);
+    float vt_w = 0.15f; // sqrtf(_vtail.area / _wing.area*0.5f);
     if (_vtail.span == 0) {
         _vtail.span = vt_w * _wing.span;
     }
     if (_vtail.aspect == 0) {
-        _vtail.aspect = vt_w * _wing.aspect;
+        _vtail.aspect = 1.7f;	// vt_w * _wing.aspect;
+    }
+    if (_htail.taper == 0) {
+        _htail.taper = 0.7f;
     }
 
 //***** EMPTY WEIGHT *********************************
@@ -430,7 +438,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.37 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.38 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
