@@ -84,6 +84,7 @@
 #define KNOTS_TO_KMPH		1.852f
 
 #define KNOTS_TO_FPS		1.68780839895013f
+#define FPS_TO_KNOTS		0.592483801f
 
 #define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
 #define _MIN(a,b)		(((a)<(b)) ? (a) : (b))
