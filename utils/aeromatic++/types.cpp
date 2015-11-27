@@ -25,7 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <cstdlib>
+#include <stdlib.h>
 
 #include "types.h"
 
@@ -107,16 +107,16 @@ void Param::set(std::string& v)
     case PARAM_BOOL:
         if (v == "y" || v == "yes" || v == "true") *_value.b = true;
         else if (v == "n" || v == "no" || v == "false") *_value.b = false;
-        else *_value.b = (std::strtol(v.c_str(), NULL, 10) == 0) ? false : true;
+        else *_value.b = (strtol(v.c_str(), NULL, 10) == 0) ? false : true;
         break;
     case PARAM_INT:
-        *_value.i = std::strtol(v.c_str(), NULL, 10);
+        *_value.i = strtol(v.c_str(), NULL, 10);
         break;
     case PARAM_FLOAT:
 #if (_MSC_VER)
-        *_value.f = std::stof(v, NULL);
+        *_value.f = stof(v, NULL);
 #else
-        *_value.f = std::strtof(v.c_str(), NULL);
+        *_value.f = strtof(v.c_str(), NULL);
 #endif
         if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;

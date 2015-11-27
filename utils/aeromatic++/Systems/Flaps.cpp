@@ -36,10 +36,10 @@ void Flaps::set(const float* cg_loc)
 {
     // http://adg.stanford.edu/aa241/highlift/clmaxest.html
     // K(sweep) is an empirically-derived sweep-correction factor.
-    float sweep = _aircraft->_wing.sweep * DEG_TO_RAD;
-    float sweep_le = _aircraft->_wing.sweep_le * DEG_TO_RAD;
+    float sweep = _aircraft->_wing_sweep * DEG_TO_RAD;
+    float sweep_le = _aircraft->_wing_sweep_le * DEG_TO_RAD;
     float csweep_te = cosf(sweep - (sweep_le-sweep));
-    _K = (1.0 - 0.08f*powf(csweep_te, 2.0f))*powf(csweep_te, 0.75f);
+    _K = (1.0f - 0.08f*powf(csweep_te, 2.0f))*powf(csweep_te, 0.75f);
 }
 
 std::string Flaps::system()

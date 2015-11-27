@@ -579,57 +579,27 @@ public:
 
     /* geometry */
     float _length;
-    float _payload;
-
+    unsigned _wing_shape;
     int _user_wing_data;
-    struct _lift_device_t
-    {
-        _lift_device_t() :
-            shape(STRAIGHT),
-            arm(0),
-            span(0),
-            area(0),
-            aspect(0),
-            taper(1.0f),
-            chord(0),
-            incidence(0),
-            dihedral(0),
-            sweep(0),
-            sweep_le(0),
-            efficiency(0),
-            thickness(0),
-            flap_ratio(0),
-            Ktf(0),
-            twist(0),
-            camber(0)
-        {}
+    float _wing_span;
+    float _wing_area;
+    float _wing_chord;
+    float _wing_incidence;
+    float _wing_dihedral;
+    float _wing_sweep;
+    float _wing_sweep_le;
+    float _htail_efficiency;
+    float _htail_area;
+    float _htail_arm;
+    float _elevator_ratio;
+    float _vtail_efficiency;
+    float _vtail_area;
+    float _vtail_arm;
+    float _rudder_ratio;
 
-        unsigned shape;
-        float arm;
-        float span;
-        float area;
-        float aspect;	// ratio
-        float taper;	// ratio
-        float chord;	// root
-        float incidence;
-        float dihedral;
-        float sweep;
-        float sweep_le;	// sweep leading edge
-        float efficiency;
-        float thickness;
-        float flap_ratio;
-
-        // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
-        float Ktf;
-
-        // *** currently unused **
-        float twist;
-        float camber;
-    } _lift_device;
-
-    _lift_device_t _wing;
-    _lift_device_t _htail;
-    _lift_device_t _vtail;
+    float _aspect_ratio;
+    float _taper_ratio;
+    float _payload;
 
     /* array index, can not be greater than 4 */
     unsigned _no_engines;

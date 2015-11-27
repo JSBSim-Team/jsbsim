@@ -75,7 +75,7 @@ void LandingGear::set(const float *cg_loc)
     }
 
     // set main gear lateral location
-    _gear_loc[MAIN][Y] = (_aircraft->_wing.span * _aircraft->get_gear_loc()) * FEET_TO_INCH;
+    _gear_loc[MAIN][Y] = (_aircraft->_wing_span * _aircraft->get_gear_loc()) * FEET_TO_INCH;
 
     // set nose gear location
     _gear_loc[NOSE][X] = _aircraft->_length * 0.13f * FEET_TO_INCH;
@@ -195,7 +195,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << -_aircraft->_wing.span/2 << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << -_aircraft->_wing_span/2 << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
@@ -207,7 +207,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << (_aircraft->_wing.span/2) << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << (_aircraft->_wing_span/2) << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;

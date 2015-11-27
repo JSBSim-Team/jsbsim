@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-#include <Aircraft.h>
 #include <types.h>
 
 namespace Aeromatic
@@ -53,7 +52,8 @@ public:
     std::string pitch();
     std::string yaw();
 
-    void _get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing);
+private:
+    float _e;			// Oswald Efficiency Factor
 };
 
 /* Conventional Controls with Yaw Damper */
