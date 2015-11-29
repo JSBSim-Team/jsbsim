@@ -96,7 +96,7 @@ public:
 private:
     bool _water_injection;
 
-    static float const _turboprop_eng_pwr_t[6][13];
+    static float const _eng_pwr_t[6][13];
 };
 
 
@@ -113,6 +113,8 @@ private:
     float _bypass_ratio;
     bool _injected;
     bool _augmented;
+
+    static float const _milthrust_t[8][8];
 };
 
 class RocketEngine : public Engine

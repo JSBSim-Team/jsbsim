@@ -75,8 +75,8 @@
 #define KW_TO_HP		1.341f
 #define HP_TO_KW		0.7457f
 
-#define NETWON_TO_LBS		0.2248f
-#define LBS_TO_NEWTON		4.448f
+#define KNETWON_TO_LBS		224.808943f
+#define LBS_TO_KNEWTON		0.00444822162f
 
 #define MPH_TO_KNOTS		0.868976242f
 #define KNOTS_TO_MPH		1.15077945f

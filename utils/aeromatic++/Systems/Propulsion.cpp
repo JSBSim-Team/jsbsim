@@ -476,6 +476,13 @@ std::string PistonEngine::engine()
 
 
 // http://web.mit.edu/16.unified/www/SPRING/propulsion/UnifiedPropulsion3/UnifiedPropulsion3.htm
+// http://adg.stanford.edu/aa241/propulsion/images/tvsv.gif
+// http://adg.stanford.edu/aa241/propulsion/nacelledesign.html
+// http://adg.stanford.edu/aa241/propulsion/enginedata.html
+// mass_eng = 0.4054 * powf(_power, 0.9255f);
+// eng_length = 2.4077f * powf(_power, 0.3876f);
+// eng_diameter = 1.0827f * powf(_power, 0.4134f);
+
 TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _oapr(16.0f),
     _bypass_ratio(1.0f),
@@ -504,7 +511,7 @@ std::string TurbineEngine::engine()
     // Figure 3.10
     float tsfc = 0.7533f - 0.161f * log10f(0.0625f * _oapr * _bypass_ratio);
 
-    file.precision(2);
+    file.precision(1);
     file.flags(std::ios::right);
     file << std::fixed << std::showpoint;
     file << "<!--" << std::endl;
@@ -514,15 +521,19 @@ std::string TurbineEngine::engine()
     file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGTurbine" << std::endl;
     file << std::endl;
     file << "  Inputs:" << std::endl;
-    file << "    name:           " << _propulsion->_engine_name << std::endl;
-    file << "    type:           " << _description[0] <<  std::endl;
-    file << "    thrust:         " << _power << " lbf" << std::endl;
-    file << "    bypass ratio:   " << _bypass_ratio << ":1" << std::endl;
-    file << "    augmented?      " << (_augmented ? "yes" : "no") << std::endl;
-    file << "    injected?       " << (_injected ? "yes" : "no") << std::endl;
+    file << "    name:                    " << _propulsion->_engine_name << std::endl;
+    file << "    type:                    " << _description[0] <<  std::endl;
+    file << "    thrust:                  " << _power << " lbf" << std::endl;
+    file << "    bypass ratio:            " << _bypass_ratio << ":1" << std::endl;
+    file << "    overall pressure ratio:  " << _oapr << ":1" << std::endl;
+    file << "    augmented?               " << (_augmented ? "yes" : "no") << std::endl;
+    file << "    injected?                " << (_injected ? "yes" : "no") << std::endl;
      file << std::endl;
     file << "  Outputs" << std::endl;
-    file << "    tsfc            " << tsfc << std::endl;
+    file << "    tsfc:                    " << tsfc << std::endl;
+    file << "    engine weight:           " << (0.4054 * powf(_power, 0.9255f)) << " lbs" << std::endl;
+    file << "    engine length:           " << (2.4077f * powf(_power, 0.3876f) * INCH_TO_FEET) << " ft" << std::endl;
+    file << "    engine diameter:         " << (1.0827f * powf(_power, 0.4134f) * INCH_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
@@ -557,9 +568,9 @@ std::string TurbineEngine::engine()
     file << "     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.1467  0" << std::endl;
     file << "     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342  0" << std::endl;
     file << "     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203  0" << std::endl;
-    file << "     0.6  0.0     0.0     0.0     0.0     0.0276  0.0718  0.1073  0" << std::endl;
-    file << "     0.8  0.0     0.0     0.0     0.0     0.0474  0.0868  0.0900  0" << std::endl;
-    file << "     1.0  0.0     0.0     0.0     0.0     0.0     0.0552  0.0800  0" << std::endl;
+    file << "     0.6 -0.0804 -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073  0" << std::endl;
+    file << "     0.8 -0.2129 -0.2129 -0.1498 -0.1025  0.0474  0.0868  0.0900  0" << std::endl;
+    file << "     1.0 -0.2839 -0.2839 -0.1104 -0.0469 -0.0270  0.0552  0.0800  0" << std::endl;
     file << "    </tableData>" << std::endl;
     file << "   </table>" << std::endl;
     file << "  </function>" << std::endl;
@@ -570,14 +581,24 @@ std::string TurbineEngine::engine()
     file << "    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>" << std::endl;
     file << "    <tableData>" << std::endl;
     file << "          -10000       0   10000   20000   30000   40000   50000   60000" << std::endl;
-    file << "     0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490  0" << std::endl;
-    file << "     0.2   1.1710  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430  0" << std::endl;
-    file << "     0.4   1.1500  0.9210  0.6920  0.5060  0.3570  0.2330  0.1450  0" << std::endl;
-    file << "     0.6   1.1810  0.9510  0.7210  0.5320  0.3780  0.2480  0.1540  0" << std::endl;
-    file << "     0.8   1.2580  1.0200  0.7820  0.5820  0.4170  0.2750  0.1700  0" << std::endl;
-    file << "     1.0   1.3690  1.1200  0.8710  0.6510  0.4750  0.3150  0.1950  0" << std::endl;
-    file << "     1.2   1.4850  1.2300  0.9750  0.7440  0.5450  0.3640  0.2250  0" << std::endl;
-    file << "     1.4   1.5941  1.3400  1.0860  0.8450  0.6280  0.4240  0.2630  0" << std::endl;
+
+    float BPR = _bypass_ratio;
+    for (unsigned i=0; i<8; ++i)
+    {
+        float M = 0.2f*i;
+        file << std::setw(9) <<std::setprecision(1) << M;
+        for (unsigned j=0; j<8; ++j)
+        {
+           file << std::fixed << std::setw(8) << std::setprecision(4);
+           if (BPR < 1.0f) {
+               file << _milthrust_t[i][j];
+           } else {
+               file << (((1.0f - 0.2f*M) - 0.05f*M*BPR)*_milthrust_t[i][j]);
+           }
+        }
+        file << std::endl;
+    }
+
     file << "    </tableData>" << std::endl;
     file << "   </table>" << std::endl;
     file << "  </function>" << std::endl;
@@ -739,10 +760,10 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "              0       5       60      86      94      95      96      97      98      99     100     101" << std::endl;
     for (unsigned i=0; i<6; ++i)
     {
-        file << std::setw(9) << _turboprop_eng_pwr_t[i][0] * max_rpm;
+        file << std::setw(9) << _eng_pwr_t[i][0] * max_rpm;
         for (unsigned j=1; j<13; ++j)
         {
-           file << std::fixed << std::setw(8) << std::setprecision(1) << (_turboprop_eng_pwr_t[i][j] * _power);
+           file << std::fixed << std::setw(8) << std::setprecision(1) << (_eng_pwr_t[i][j] * _power);
         }
         file << std::endl;
     }
@@ -854,7 +875,19 @@ std::string ElectricEngine::engine()
 
 // ---------------------------------------------------------------------------
 
-float const TurbopropEngine::_turboprop_eng_pwr_t[6][13] =
+float const TurbineEngine::_milthrust_t[8][8] =
+{
+   { 1.2600f, 1.0000f, 0.7400f, 0.5340f, 0.3720f, 0.2410f, 0.1490f, 0.0f, },
+   { 1.1710f, 0.9340f, 0.6970f, 0.5060f, 0.3550f, 0.2310f, 0.1430f, 0.0f, },
+   { 1.1500f, 0.9210f, 0.6920f, 0.5060f, 0.3570f, 0.2330f, 0.1450f, 0.0f, },
+   { 1.1810f, 0.9510f, 0.7210f, 0.5320f, 0.3780f, 0.2480f, 0.1540f, 0.0f, },
+   { 1.2580f, 1.0200f, 0.7820f, 0.5820f, 0.4170f, 0.2750f, 0.1700f, 0.0f, },
+   { 1.3690f, 1.1200f, 0.8710f, 0.6510f, 0.4750f, 0.3150f, 0.1950f, 0.0f, },
+   { 1.4850f, 1.2300f, 0.9750f, 0.7440f, 0.5450f, 0.3640f, 0.2250f, 0.0f, },
+   { 1.5941f, 1.3400f, 1.0860f, 0.8450f, 0.6280f, 0.4240f, 0.2630f, 0.0f, }
+};
+
+float const TurbopropEngine::_eng_pwr_t[6][13] =
 {
     { 0.000f,  0.0000f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f, 0.0007f },
     { 0.364f, 0.0000f, 0.0007f, 0.0471f, 0.2692f, 0.4711f, 0.5114f, 0.5653f, 0.6191f, 0.6729f, 0.7133f, 0.7806f, 0.8345f },
