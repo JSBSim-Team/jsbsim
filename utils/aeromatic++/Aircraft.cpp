@@ -70,6 +70,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _system_files(true),
     _metric(0),
     _stall_speed(0),
+    _stall_weight(0),
     _max_weight(10000.0f),
     _empty_weight(0),
     _length(40.0f),
@@ -99,7 +100,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     units->add_option("Metric (meters, kilograms)");
 
     /* performance, weight and balance */
-    _weight_balance.push_back(new Param("Stall speed (clean, no flaps)", "The stall speed (landing speed/1.3) halfway between max. weight and empty weight", _stall_speed, _metric, SPEED));
+    _weight_balance.push_back(new Param("Stall speed VS1 (clean, no flaps)", "The stall speed at maximum takeoff weight", _stall_speed, _metric, SPEED));
     _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
@@ -305,7 +306,10 @@ bool Aeromatic::fdm()
 //***** EMPTY WEIGHT *********************************
 
     // estimate empty weight, based on max weight
-    _empty_weight = _max_weight * aircraft->get_empty_weight();
+    if (_empty_weight == 0) {
+        _empty_weight = _max_weight * aircraft->get_empty_weight();
+    }
+    _stall_weight = _max_weight;
 
 
 //***** MOMENTS OF INERTIA ******************************
@@ -438,7 +442,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.41 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.42 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

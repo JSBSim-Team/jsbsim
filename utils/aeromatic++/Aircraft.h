@@ -573,6 +573,7 @@ public:
 
     /* performance, weight and balance */
     float _stall_speed;
+    float _stall_weight;
     float _max_weight;
     float _empty_weight;
     float _inertia[3];                  // xx, yy, zz

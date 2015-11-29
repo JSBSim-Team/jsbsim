@@ -89,7 +89,8 @@ void CableControls::set(const float* cg_loc)
 
     float CL = 0.0f;
     float Sw = _aircraft->_wing.area;
-    float W = _aircraft->_empty_weight + 0.5f*_aircraft->_payload;
+    float W = _aircraft->_empty_weight + _aircraft->_payload;
+    float Ws = _aircraft->_stall_weight;
     float Vs = _aircraft->_stall_speed * KNOTS_TO_FPS;
     float dihedral = _aircraft->_wing.dihedral * DEG_TO_RAD;
     float sweep_le = _aircraft->_wing.sweep_le * DEG_TO_RAD;
@@ -102,11 +103,12 @@ void CableControls::set(const float* cg_loc)
         float Vt = 2.8f*Vs;
         float rho = 0.0023769f;
         float Q = 0.5f*rho*Vt*Vt;
+        float g = 32.2f;
 
         CL = W/Q/Sw;
 
         // *** CLmax based on wing geometry and stall speed ***
-        _aircraft->_CLmax[0] = 2*W/(rho*Sw*Vs*Vs);
+        _aircraft->_CLmax[0] = 2*Ws/(rho*Sw*Vs*Vs);
 
         if (_aircraft->_Mcrit == 0)
         {
