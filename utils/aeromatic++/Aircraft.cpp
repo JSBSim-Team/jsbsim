@@ -80,6 +80,7 @@ Aeromatic::Aeromatic() : Aircraft(),
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;
+    _stall_weight = _max_weight;
 
     _wing.span = 40.0f;
     // Historically speaking most aircraft are modern since the
@@ -123,7 +124,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _geometry.push_back(new Param("Wing chord", _estimate, _wing.chord, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence", _estimate, _wing.incidence));
     _geometry.push_back(new Param("Wing dihedral", _estimate, _wing.dihedral));
-    _geometry.push_back(new Param("Wing sweep (max)", _estimate, _wing.sweep));
+    _geometry.push_back(new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep));
     _geometry.push_back(new Param("Htail area", _estimate, _htail.area, _metric, AREA));
     _geometry.push_back(new Param("Htail arm", _estimate, _htail.arm, _metric, LENGTH));
     _geometry.push_back(new Param("Vtail area", _estimate, _vtail.area, _metric, AREA));
@@ -185,6 +186,7 @@ bool Aeromatic::fdm()
 
 //***** METRICS ***************************************
     _payload = _max_weight;
+    _stall_weight = _max_weight;
 
     // first, estimate wing loading in psf
     float wing_loading = aircraft->get_wing_loading();
@@ -249,9 +251,10 @@ bool Aeromatic::fdm()
     if (_wing.thickness == 0)
     {
         // Hofman equation for t/c
+        float Ws = _stall_weight;
         float Vs = _stall_speed * KNOTS_TO_FPS;
         float sweep = _wing.sweep * DEG_TO_RAD;
-        float TC = 0.0447f * _wing.area *powf(cosf(sweep), 5.0f)/Vs;
+        float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
         _wing.thickness = TC * _wing.chord;
     }
 
@@ -309,8 +312,6 @@ bool Aeromatic::fdm()
     if (_empty_weight == 0) {
         _empty_weight = _max_weight * aircraft->get_empty_weight();
     }
-    _stall_weight = _max_weight;
-
 
 //***** MOMENTS OF INERTIA ******************************
 
@@ -442,7 +443,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.42 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.43 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

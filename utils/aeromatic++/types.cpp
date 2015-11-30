@@ -146,7 +146,7 @@ std::string Param::get()
         str = oss.str();
         break;
     case PARAM_FLOAT:
-        if (_convert) fact = _cvt_t[_utype].fact;
+        if (_convert) fact /= _cvt_t[_utype].fact;
         oss << (*_value.f * fact);
         str = oss.str();
         break;

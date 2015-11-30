@@ -490,7 +490,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine mil. thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
     _inputs.push_back(new Param("Bypass ratio", "The bypass ratio is mainly used for calculating fuel consumption", _bypass_ratio));
     _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
     _inputs.push_back(new Param("Augmented?", "Does the engine have afterburner capability?", _augmented));
@@ -524,7 +524,7 @@ std::string TurbineEngine::engine()
     file << "    name:                    " << _propulsion->_engine_name << std::endl;
     file << "    type:                    " << _description[0] <<  std::endl;
     file << "    thrust:                  " << _power << " lbf" << std::endl;
-    file << "    bypass ratio:            " << _bypass_ratio << ":1" << std::endl;
+    file << "    bypass ratio:            " << std::setprecision(3) << _bypass_ratio << std::setprecision(1) << ":1" << std::endl;
     file << "    overall pressure ratio:  " << _oapr << ":1" << std::endl;
     file << "    augmented?               " << (_augmented ? "yes" : "no") << std::endl;
     file << "    injected?                " << (_injected ? "yes" : "no") << std::endl;
@@ -532,7 +532,7 @@ std::string TurbineEngine::engine()
     file << "  Outputs" << std::endl;
     file << "    tsfc:                    " << tsfc << std::endl;
     file << "    engine weight:           " << (0.4054 * powf(_power, 0.9255f)) << " lbs" << std::endl;
-    file << "    engine length:           " << (2.4077f * powf(_power, 0.3876f) * INCH_TO_FEET) << " ft" << std::endl;
+    file << "    engine length:           " << ((2.4077f * powf(_power, 0.3876f) * INCH_TO_FEET) * (_augmented ? 2.0f : 1.0f)) << " ft" << std::endl;
     file << "    engine diameter:         " << (1.0827f * powf(_power, 0.4134f) * INCH_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
@@ -541,8 +541,8 @@ std::string TurbineEngine::engine()
     if (_augmented) {
         file << "  <maxthrust> " << max_thrust << " </maxthrust>" << std::endl;
     }
-    file << "  <bypassratio>     " << _bypass_ratio << " </bypassratio>" << std::endl;
-    file << "  <tsfc>            " << std::setprecision(3) << tsfc << " </tsfc>" << std::endl;
+    file << "  <bypassratio>     " << std::setprecision(3) << _bypass_ratio << " </bypassratio>" << std::endl;
+    file << "  <tsfc>            " << tsfc << " </tsfc>" << std::endl;
     if (_augmented) {
         file << "  <atsfc>           " << (tsfc + 0.9f) << " </atsfc>" << std::endl;
     }
