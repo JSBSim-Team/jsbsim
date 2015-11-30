@@ -509,7 +509,16 @@ std::string TurbineEngine::engine()
     }
 
     // Figure 3.10
-    float tsfc = 0.7533f - 0.161f * log10f(0.0625f * _oapr * _bypass_ratio);
+    float tsfc, atsfc;
+    if (_bypass_ratio < 1.0f)
+    {
+        tsfc =  0.635f - 0.144f * log10f(_oapr) * log10f(_bypass_ratio);
+        atsfc = 3.27f - 0.451f * log10f(2.9f * _oapr / _bypass_ratio);
+    }
+    else
+    {
+        tsfc = 0.7533f - 0.161f * log10f(0.0625f * _oapr * _bypass_ratio);
+    }
 
     file.precision(1);
     file.flags(std::ios::right);
@@ -544,7 +553,7 @@ std::string TurbineEngine::engine()
     file << "  <bypassratio>     " << std::setprecision(3) << _bypass_ratio << " </bypassratio>" << std::endl;
     file << "  <tsfc>            " << tsfc << " </tsfc>" << std::endl;
     if (_augmented) {
-        file << "  <atsfc>           " << (tsfc + 0.9f) << " </atsfc>" << std::endl;
+        file << "  <atsfc>           " << atsfc << " </atsfc>" << std::endl;
     }
     file << "  <bleed>           0.03</bleed>" << std::endl;
     file << "  <idlen1>         30.0 </idlen1>" << std::endl;
