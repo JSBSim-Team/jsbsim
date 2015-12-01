@@ -706,7 +706,7 @@ std::string TurbopropEngine::engine()
     float thrust = _power * 2.24f;
 
     // Torque = Power * 5252 / RPM
-    float torque = _power * 5252.0f / max_rpm;
+    float torque = _power * 5252.0f / _max_rpm;
 
     file.precision(1);
     file.flags(std::ios::right);
