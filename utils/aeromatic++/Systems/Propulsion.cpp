@@ -600,7 +600,7 @@ std::string TurbineEngine::engine()
         {
            file << std::fixed << std::setw(8) << std::setprecision(4);
            if (BPR < 1.0f) {
-               file << _milthrust_t[i][j];
+               file << (((1.0f - 0.2f*M) + 0.0357f*M*BPR)*_milthrust_t[i][j]);
            } else {
                file << (((1.0f - 0.2f*M) - 0.05f*M*BPR)*_milthrust_t[i][j]);
            }
