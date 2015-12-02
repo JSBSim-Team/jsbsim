@@ -512,6 +512,7 @@ std::string TurbineEngine::engine()
     float tsfc, atsfc;
     if (_bypass_ratio < 1.0f)
     {
+        if (_bypass_ratio < 0.07f) _bypass_ratio = 0.07f;
         tsfc =  0.635f - 0.144f * log10f(_oapr) * log10f(_bypass_ratio);
         atsfc = 3.27f - 0.451f * log10f(2.9f * _oapr / _bypass_ratio);
     }
@@ -591,7 +592,6 @@ std::string TurbineEngine::engine()
     file << "    <tableData>" << std::endl;
     file << "          -10000       0   10000   20000   30000   40000   50000   60000" << std::endl;
 
-    float BPR = _bypass_ratio;
     for (unsigned i=0; i<8; ++i)
     {
         float M = 0.2f*i;
@@ -599,11 +599,7 @@ std::string TurbineEngine::engine()
         for (unsigned j=0; j<8; ++j)
         {
            file << std::fixed << std::setw(8) << std::setprecision(4);
-           if (BPR < 1.0f) {
-               file << (((1.0f - 0.2f*M) + 0.0357f*M*BPR)*_milthrust_t[i][j]);
-           } else {
-               file << (((1.0f - 0.2f*M) - 0.05f*M*BPR)*_milthrust_t[i][j]);
-           }
+           file << (1.0f - 0.11*M*_bypass_ratio)*_milthrust_t[i][j];
         }
         file << std::endl;
     }

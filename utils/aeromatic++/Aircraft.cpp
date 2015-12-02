@@ -443,7 +443,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.45 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.46 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -473,16 +473,23 @@ bool Aeromatic::fdm()
         file << "multi-engine prop transport" << std::endl;
         break;
     }
+    file << "    stall speed:   " << _stall_speed << "kts" << std::endl;
     file << "    max weight:    " << _max_weight << " lb" << std::endl;
-    file << "    wing span:     " << _wing.span << " ft" << std::endl;
     file << "    length:        " << _length << " ft" << std::endl;
-    file << "    wing area:     ";
+    file << "    wing: " << std::endl;
+    file << "     span:         " << _wing.span << " ft" << std::endl;
+    file << "     area:         ";
     if (wingarea_input) {
         file << _wing.area << " sq-ft" << std::endl;
     } else {
         file << "unspecified" << std::endl;
     }
-    file << "    aspect ratio:  " << _wing.aspect << ":1" << std::endl;
+    file << "     chord:        " << _wing.chord << " ft" << std::endl;
+    file << "     aspect ratio: " << _wing.aspect << ":1" << std::endl;
+    file << "     taper ratio:  " << _wing.taper << ":1" << std::endl;
+    file << "     incidence:    " << _wing.incidence << " degrees" << std::endl;
+    file << "     dihedral:     " << _wing.dihedral << " degrees" << std::endl;
+    file << "     sweep:        " << _wing.sweep << " degrees" << std::endl;
     file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
