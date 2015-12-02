@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.47 2015/09/27 10:07:53 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.48 2015/12/02 04:25:23 dpculp Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -569,7 +569,7 @@ int FGTurbine::InitRunning(void)
   N1 = IdleN1 + ThrottlePos * N1_factor;
   Calculate();
   FDMExec->ResumeIntegration();
-  return phase==tpRun;
+  return phase=tpRun;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
