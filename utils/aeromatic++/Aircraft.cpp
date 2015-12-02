@@ -148,7 +148,7 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     _CLalpha[0] = _CLalpha[1] = _CLalpha[2] = 0.0f;
     _CLmax[0] = _CLmax[1] = _CLmax[2] = 0.0f;
-    _CL0 = 0.0f; _CLde = 0.0f;
+    _CL0 = 0.0f; _CLde = 0.0f; _CLq = 0.0f; _CLadot = 0.0f;
     _CD0 = 0.0f; _CDde = 0.0f; _CDbeta = 0.0f;
     _Kdi = 0.0f; _Mcrit = 0.0f;
     _CYbeta = 0.0f; _CYr = 0.0f; _CYp = 0.0f; _CYdr = 0.0f;
@@ -443,7 +443,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.46 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.47 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

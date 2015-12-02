@@ -638,7 +638,7 @@ public:
 public:
     /* Coefficients */
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
-    float _CL0, _CLde;
+    float _CL0, _CLde, _CLq, _CLadot;
     float _CD0, _CDde, _CDbeta;
     float _Kdi, _Mcrit;
     float _CYbeta, _CYr, _CYp, _CYdr;

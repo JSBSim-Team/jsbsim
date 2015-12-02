@@ -151,13 +151,16 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLalpha[0] = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
     _aircraft->_CLalpha[1] = CLaw[1];
     _aircraft->_CLalpha[2] = CLaw[2];
+    _aircraft->_CLadot = 2.0f*nh*CLah[0]*Vh*deda;
+    _aircraft->_CLq = _aircraft->_CLadot/deda;
     _aircraft->_CLde = (Cltde*Sh/Sw)*2.0f/PI;
+
 
     // pitch
     if (_aircraft->_user_wing_data > 0)
     {
         _aircraft->_Cmalpha =  CLaw[0]*(cgx/cbarw) - Vh*CLah[0]*(1.0f-deda);
-        _aircraft->_Cmadot = -2.0f*nh*CLah[0]*Vh*lh/cbarw*deda;
+        _aircraft->_Cmadot = -_aircraft->_CLq*lh/cbarw*deda;
         _aircraft->_Cmq = _aircraft->_Cmadot/deda;
         _aircraft->_Cmde = (Sh*ch/Sw/cbarw*Cmtde - lh*Sh*Cltde/cbarw/Sw);
     }
@@ -216,12 +219,14 @@ printf("Clbeta: %f, Clr: %f, Clp: %f\n", _aircraft->_Clbeta, _aircraft->_Clr, _a
 
 std::string CableControls::lift()
 {
-    float CLalpha, CLmax, CL0, CLde, alpha;
+    float CLalpha, CLmax, CL0, CLde, CLq, CLadot, alpha;
     std::stringstream file;
 
     CLalpha = _aircraft->_CLalpha[0];
     CLmax = _aircraft->_CLmax[0];
     CL0 = _aircraft->_CL0;
+    CLq = _aircraft->_CLq;
+    CLadot = _aircraft->_CLadot;
     CLde = _aircraft->_CLde;
 
     alpha = (CLmax-CL0)/CLalpha;
@@ -236,13 +241,35 @@ std::string CableControls::lift()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "              -0.20 " << std::setw(5) << (-0.2*CLalpha + CL0) << std::endl;
-    file << "               0.00 " << std::setw(6) << CL0 << std::endl;
+    file << "               0.00  " << std::setw(6) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
-    file << "               0.60 " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+    file << "               0.60  " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
     file << "    </function>" << std::endl;
+    file << std::endl;
+    file << "    <function name=\"aero/force/Lift_pitch_rate\">" << std::endl;
+    file << "        <description>Lift_due_to_pitch_rate</description>" << std::endl;
+    file << "        <product>" << std::endl;
+    file << "          <property>aero/qbar-psf</property>" << std::endl;
+    file << "          <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "          <property>velocities/q-aero-rad_sec</property>" << std::endl;
+    file << "          <property>aero/ci2vel</property>" << std::endl;
+    file << "          <value> " << (CLq) << " </value>" << std::endl;
+    file << "        </product>" << std::endl;
+    file << "      </function>" << std::endl;
+    file << std::endl;
+    file << "      <function name=\"ero/force/Lift_alpha_rate\">" << std::endl;
+    file << "        <description>Lift_due_to_alpha_rate</description>" << std::endl;
+    file << "        <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>aero/alphadot-rad_sec</property>" << std::endl;
+    file << "           <property>aero/ci2vel</property>" << std::endl;
+    file << "           <value> " << (CLadot) << " </value>" << std::endl;
+    file << "        </product>" << std::endl;
+    file << "      </function>" << std::endl;
     file << std::endl;
     file << "    <function name=\"aero/force/Lift_elevator\">" << std::endl;
     file << "       <description>Lift due to Elevator Deflection</description>" << std::endl;
