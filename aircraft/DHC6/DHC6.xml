@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.21 2014/02/09 10:36:32 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.22 2015/12/07 10:01:48 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
@@ -323,18 +323,10 @@
         </channel>
         <channel name="Thrust">
             <summer name="fcs/engine-thrust-lbs">
-                <input>propulsion/engine[0]/thrust-lbs</input>
-                <input>propulsion/engine[1]/thrust-lbs</input>
-            </summer>
-            <aerosurface_scale name="fcs/engine-thrust-control">
-                <input>fcs/engine-thrust-lbs</input>
-                <range>
-                    <min>0.0</min>
-                    <max>0.0001004</max>
-                    <!-- 0.26/(1295+1295): CTmax = 0.26, 1295 lbs per engine -->
-                </range>
+                <input>propulsion/engine[0]/thrust-coefficient</input>
+                <input>propulsion/engine[1]/thrust-coefficient</input>
                 <output>fcs/engine-thrust-coefficient</output>
-            </aerosurface_scale>
+            </summer>
         </channel>
     </flight_control>
  

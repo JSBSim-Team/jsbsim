@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.21 2015/11/24 13:06:24 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.22 2015/12/07 10:01:48 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -433,11 +433,7 @@ void FGJSBsim::init()
         fgic->SetVEastFpsIC(gndVelNED(2));
         fgic->SetVDownFpsIC(gndVelNED(3));
       }
-      try {
-        do_trim();
-      } catch (...) {
-        SG_LOG(SG_FLIGHT, SG_AELERT("Ground trimming failed");
-      }
+      do_trim();
       needTrim = false;
     }
 

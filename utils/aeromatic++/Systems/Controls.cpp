@@ -260,7 +260,7 @@ std::string CableControls::lift()
     file << "        </product>" << std::endl;
     file << "      </function>" << std::endl;
     file << std::endl;
-    file << "      <function name=\"ero/force/Lift_alpha_rate\">" << std::endl;
+    file << "      <function name=\"aero/force/Lift_alpha_rate\">" << std::endl;
     file << "        <description>Lift_due_to_alpha_rate</description>" << std::endl;
     file << "        <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
