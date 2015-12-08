@@ -35,6 +35,51 @@
 namespace Aeromatic
 {
 
+std::string Engine::system()
+{
+    std::stringstream file;
+
+    if (_aircraft->_no_engines > 1)
+    {
+        file << "  <channel name=\"Thruster\">" << std::endl;
+        file << "   <summer name=\"Thrust Coefficient Left\">" << std::endl;
+    
+        for (unsigned i = 0; i < _aircraft->_no_engines; ++i)
+        {   
+            if (_mount_point[i] == LEFT_WING) {
+                file << "    <input>propulsion/engine[" << i << "]/thrust-coefficient</input>" << std::endl;
+            }
+        }
+        file << "    <output>systems/propulsion/thrust-coefficient-left</output>" << std::endl;
+        file << "   </summer>" << std::endl;
+        file << "   <summer name=\"Thrust Coefficient Right\">" << std::endl;
+
+        for (unsigned i = 0; i < _aircraft->_no_engines; ++i)
+        {
+            if (_mount_point[i] == RIGHT_WING) {
+                file << "    <input>propulsion/engine[" << i << "]/thrust-coefficient</input>" << std::endl;
+            }
+        }
+        file << "    <output>systems/propulsion/thrust-coefficient-right</output>" << std::endl;
+        file << "   </summer>" << std::endl;
+        file << "   <summer name=\"Thrust Coefficient Left-Right\">" << std::endl;
+
+        file << "    <input>systems/propulsion/thrust-coefficient-left</input>" << std::endl;
+        file << "    <input>-systems/propulsion/thrust-coefficient-right</input>" << std::endl;
+        file << "    <output>systems/propulsion/thrust-coefficient-left-right</output>" << std::endl;
+        file << "   </summer>" << std::endl;
+        file << "   <summer name=\"Thrust Coefficient\">" << std::endl;
+    
+        file << "    <input>systems/propulsion/thrust-coefficient-left</input>" << std::endl;
+        file << "    <input>systems/propulsion/thrust-coefficient-right</input>" << std::endl;
+        file << "    <output>systems/propulsion/thrust-coefficient</output>" << std::endl;
+        file << "   </summer>" << std::endl;
+        file << "  </channel>" << std::endl;
+    }
+    
+    return file.str();
+}
+
 Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
     _layout(FWD_FUSELAGE)
 {
@@ -110,12 +155,12 @@ Param* Propulsion::param_next()
 
 std::string Propulsion::system()
 {
-    std::stringstream file;
+    std::string file = Engine::system();
 
     // Create Engines directory
     std::string dir = Aeromatic::create_dir(_aircraft->_dir, "Engines");
     if (dir.empty()) {
-        return file.str();
+        return file;
     }
 
     // open egnine file
@@ -160,7 +205,7 @@ std::string Propulsion::system()
         std::cout << "File already exsists: " << tfname << std::endl;
     }
 
-    return file.str();
+    return file;
 }
 
 void Propulsion::set(const float* cg_loc)
@@ -178,6 +223,7 @@ void Propulsion::set(const float* cg_loc)
             _eng_loc[i][X] = 36.0f;
             _eng_loc[i][Y] = leftmost + (i * 40.0f);
             _eng_loc[i][Z] = 0.0f;
+            _mount_point[i] = FUSELAGE;
         }
         break;
     }
@@ -189,6 +235,7 @@ void Propulsion::set(const float* cg_loc)
             _eng_loc[i][X] = cg_loc[X];
             _eng_loc[i][Y] = leftmost + (i * 40.0f);
             _eng_loc[i][Z] = -12.0f;
+            _mount_point[i] = FUSELAGE;
         }
         break;
     }
@@ -200,6 +247,7 @@ void Propulsion::set(const float* cg_loc)
             _eng_loc[i][X] = (_aircraft->_length * FEET_TO_INCH) - 60.0f;
             _eng_loc[i][Y] = leftmost + (i * 40.0f);
             _eng_loc[i][Z] = 0.0f;
+            _mount_point[i] = FUSELAGE;
         }
         break;
     }
@@ -208,6 +256,10 @@ void Propulsion::set(const float* cg_loc)
     case WINGS_AND_NOSE:	// wing and nose engines
     default:
     {
+        if (no_engines > 1) {
+            _aircraft->_wing_mounted_engines = true;
+         }
+
         unsigned i, halfcount = no_engines / 2;
         unsigned remainder = no_engines - (halfcount * 2);
 
@@ -216,6 +268,7 @@ void Propulsion::set(const float* cg_loc)
             _eng_loc[i][X] = cg_loc[X];
             _eng_loc[i][Y] = _aircraft->_wing.span * -2.0f;	// span/-2/3*12
             _eng_loc[i][Z] = -40.0f;
+            _mount_point[i] = LEFT_WING;
         }
         switch (_layout)
         {
@@ -225,6 +278,7 @@ void Propulsion::set(const float* cg_loc)
                 _eng_loc[i][X] = cg_loc[X];
                 _eng_loc[i][Y] = 0.0f;
                 _eng_loc[i][Z] = -20.0f;
+                _mount_point[i] = FUSELAGE;
             }
             break;
         case WINGS_AND_TAIL:			// tail
@@ -233,6 +287,7 @@ void Propulsion::set(const float* cg_loc)
                 _eng_loc[i][X] = _aircraft->_length - 60;
                 _eng_loc[i][Y] = 0.0f;
                 _eng_loc[i][Z] = 60.0f;
+                _mount_point[i] = FUSELAGE;
             }
             break;
         case WINGS_AND_NOSE:			// nose
@@ -242,6 +297,7 @@ void Propulsion::set(const float* cg_loc)
                 _eng_loc[i][X] = 36.0f;
                 _eng_loc[i][Y] = 0.0f;
                 _eng_loc[i][Z] = 0.0f;
+                _mount_point[i] = FUSELAGE;
             }
             break;
         }
@@ -250,6 +306,7 @@ void Propulsion::set(const float* cg_loc)
             _eng_loc[i][X] = cg_loc[X];
             _eng_loc[i][Y] = _aircraft->_wing.span * 2.0f;	// span/2/3*12
             _eng_loc[i][Z] = -40.0f;
+            _mount_point[i] = RIGHT_WING;
         }
         break;
     }
@@ -416,7 +473,7 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _description.push_back("Piston Engine");
     _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
    _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
-    _thruster = new Propeller(this);
+    _thruster = new Propeller(p);
 }
 
 std::string PistonEngine::engine()
@@ -495,7 +552,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
     _inputs.push_back(new Param("Augmented?", "Does the engine have afterburner capability?", _augmented));
     _inputs.push_back(new Param("Water injection?", "Does the engine have ater injection boost?", _injected));
-    _thruster = new Direct(this);
+    _thruster = new Direct(p);
 }
 
 std::string TurbineEngine::engine()
@@ -668,7 +725,7 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
     _inputs.push_back(new Param("Turbine inlet temperature", "Turbine inlet temperature is used to finetune the engine configuration", _itt));
-    _thruster = new Propeller(this);
+    _thruster = new Propeller(p);
 }
 
 // http://www.fzt.haw-hamburg.de/pers/Scholz/Airport2030/Airport2030_PUB_ICAS_12-09-23.pdf
@@ -688,6 +745,7 @@ std::string TurbopropEngine::engine()
     std::stringstream file;
 
     _thruster->set_thruster(_max_rpm);
+
     float max_rpm = propeller->max_rpm();
     float psfc = 0.5f;
 
@@ -815,7 +873,7 @@ RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
     _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
-    _thruster = new Nozzle(this);
+    _thruster = new Nozzle(p);
 }
 
 std::string RocketEngine::engine()
@@ -856,7 +914,7 @@ ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
     _description.push_back("Electric Engine");
     _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
-    _thruster = new Propeller(this);
+    _thruster = new Propeller(p);
 }
 
 std::string ElectricEngine::engine()

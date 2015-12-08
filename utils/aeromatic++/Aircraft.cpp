@@ -76,7 +76,8 @@ Aeromatic::Aeromatic() : Aircraft(),
     _length(40.0f),
     _payload(10000.0f),
     _user_wing_data(-2),
-    _no_engines(0)
+    _no_engines(0),
+    _wing_mounted_engines(false)
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;
@@ -233,6 +234,10 @@ bool Aeromatic::fdm()
         _wing.taper = 1.0f;
     }
 
+    float TR = _wing.taper;
+    _wing.chord_mean = 0.75f*_wing.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _wing.de_da = 4.0f/(_wing.aspect+2.0f);
+
     // leading edge sweep
     // devide the span by two and account for fuselage width
     float span = 0.45f*_wing.span;
@@ -285,6 +290,10 @@ bool Aeromatic::fdm()
         _htail.span = ht_w * _wing.span;
     }
 
+    TR = _htail.taper;
+    _htail.chord_mean = 0.75f*_htail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _htail.de_da = 4.0f/(_htail.aspect+2.0f);
+
     // estimate vertical tail area
     if (_vtail.area == 0) {
         _vtail.area = _wing.area * aircraft->get_vtail_area();
@@ -302,9 +311,13 @@ bool Aeromatic::fdm()
     if (_vtail.aspect == 0) {
         _vtail.aspect = 1.7f;	// vt_w * _wing.aspect;
     }
-    if (_htail.taper == 0) {
-        _htail.taper = 0.7f;
+    if (_vtail.taper == 0) {
+        _vtail.taper = 0.7f;
     }
+
+    TR = _vtail.taper;
+    _vtail.chord_mean = 0.75f*_vtail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
 
 //***** EMPTY WEIGHT *********************************
 
@@ -329,17 +342,15 @@ bool Aeromatic::fdm()
 
 //***** CG LOCATION ***********************************
 
-    float cg_loc[3];
-    cg_loc[X] = (_length - _htail.arm) * FEET_TO_INCH;
-    cg_loc[Y] = 0;
-    cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
+    _cg_loc[X] = (_length - _htail.arm) * FEET_TO_INCH;
+    _cg_loc[Y] = 0;
+    _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
 //***** AERO REFERENCE POINT **************************
 
-    float aero_rp[3];
-    aero_rp[X] = cg_loc[X];
-    aero_rp[Y] = 0;
-    aero_rp[Z] = 0;
+    _aero_rp[X] = _cg_loc[X];
+    _aero_rp[Y] = 0;
+    _aero_rp[Z] = 0;
 
 //***** PILOT EYEPOINT *********************************
 
@@ -355,16 +366,16 @@ bool Aeromatic::fdm()
     // A point mass will be placed at the CG weighing
     // 1/2 of the usable aircraft load.
     float payload_loc[3];
-    payload_loc[X] = cg_loc[X];
-    payload_loc[Y] = cg_loc[Y];
-    payload_loc[Z] = cg_loc[Z];
+    payload_loc[X] = _cg_loc[X];
+    payload_loc[Y] = _cg_loc[Y];
+    payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
 
 //***** SYSTEMS ***************************************
     for (unsigned i=0; i<systems.size(); ++i)
     {
         if (systems[i]->enabled()) {
-            systems[i]->set(cg_loc);
+            systems[i]->set(_cg_loc);
         }
     }
 
@@ -443,7 +454,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.47 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.48 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -526,9 +537,9 @@ bool Aeromatic::fdm()
     file << "   <vtailarea  unit=\"FT2\">" << std::setw(8) << _vtail.area << " </vtailarea>" << std::endl;
     file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail.arm << " </vtailarm>" << std::endl;
     file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << aero_rp[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << aero_rp[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << aero_rp[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _aero_rp[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _aero_rp[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _aero_rp[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"EYEPOINT\" unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << eyept_loc[X] << " </x>" << std::endl;
@@ -548,9 +559,9 @@ bool Aeromatic::fdm()
     file << "   <izz unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Z] << " </izz>" << std::endl;
     file << "   <emptywt unit=\"LBS\" >  " << std::setw(8) << _empty_weight << " </emptywt>" << std::endl;
     file << "   <location name=\"CG\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << cg_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _cg_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <pointmass name=\"Payload\">" << std::endl;
     file << "    <description> " << _payload << " LBS should bring model up to entered max weight </description>" << std::endl;

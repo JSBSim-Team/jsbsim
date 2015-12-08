@@ -129,9 +129,8 @@ void CableControls::set(const float* cg_loc)
     // https://engineering.purdue.edu/~andrisan/Courses/AAE451%20Fall2000/mpx5
 
     float bw = _aircraft->_wing.span;
-
-    // calculate mean wing chord
-    float cbarw = 0.75f*cbar*(1.0f+TR+TR*TR)/(1.0f+TR);
+    float cbarw = _aircraft->_wing.chord_mean;
+    float deda = _aircraft->_wing.de_da;
 
     // *** Pitch moment ***
     float Sh = _aircraft->_htail.area;
@@ -143,7 +142,6 @@ void CableControls::set(const float* cg_loc)
     float cgx = -cg_loc[Z]*INCH_TO_FEET;
     float ch = cbarw*sqrtf(Sh/Sw);
 
-    float deda = 4.0f/(AR+2.0f); // de/da
     float Cmtde = CLah[0]/PI*(1.0f-Ee)*sqrtf(Ee-Ee*Ee);
     float Cltde = ((CLah[0]/PI)*(acosf(1.0f-2.0f*Ee)+2.0f*sqrtf(Ee-Ee*Ee)));
 

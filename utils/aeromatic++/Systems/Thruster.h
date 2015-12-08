@@ -36,15 +36,20 @@ namespace Aeromatic
 {
 
 class Engine;
+class Propulsion;
 
 class Thruster
 {
 public:
-    Thruster(Engine *p);
+    Thruster(Propulsion *p);
     virtual ~Thruster();
 
     virtual void set_thruster(float mrpm = 0.0f) {}
     virtual std::string thruster() { return ""; }
+
+    virtual std::string lift() { return ""; }
+    virtual std::string pitch() { return ""; }
+    virtual std::string roll() { return ""; }
 
     const char* get_name() {
         return _thruster_name;
@@ -62,14 +67,14 @@ protected:
     char _thruster_name[PARAM_MAX_STRING+1];
     std::vector<Param*> _inputs;
     unsigned _param;
-    Engine *_engine;
+    Propulsion *_propulsion;
 };
 
 
 class Direct : public Thruster
 {
 public:
-    Direct(Engine *p);
+    Direct(Propulsion *p);
     ~Direct() {}
 
     std::string thruster();
@@ -79,11 +84,15 @@ public:
 class Propeller : public Thruster
 {
 public:
-    Propeller(Engine *p);
+    Propeller(Propulsion *p);
     ~Propeller() {}
 
     void set_thruster(float mrpm);
     std::string thruster();
+
+    std::string lift();
+    std::string pitch();
+    std::string roll();
 
     float max_rpm() { return _max_rpm; }
     float Cp0() { return _Cp0; }
@@ -102,6 +111,12 @@ private:
     float _Ct0;
     float _Cp0;
 
+    float _dCLT0;
+    float _dCLTalpha;
+    float _dCLTmax;
+    float _prop_span_left;
+    float _prop_span_right;
+
     static float const _thrust_t[23][9];
     static float const _power_t[23][9];
 };
@@ -109,7 +124,7 @@ private:
 class Nozzle : public Thruster
 {
 public:
-    Nozzle(Engine *p);
+    Nozzle(Propulsion *p);
     ~Nozzle() {}
 
     std::string thruster();

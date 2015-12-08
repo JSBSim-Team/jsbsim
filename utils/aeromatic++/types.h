@@ -154,7 +154,11 @@ enum EngineLayout
     AFT_FUSELAGE,
     WINGS,
     WINGS_AND_TAIL,
-    WINGS_AND_NOSE
+    WINGS_AND_NOSE,
+
+    FUSELAGE = 0,
+    LEFT_WING = 1,
+    RIGHT_WING = 2
 };
 
 enum ParamType

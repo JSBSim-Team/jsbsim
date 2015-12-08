@@ -572,6 +572,8 @@ public:
     bool _metric;
 
     /* performance, weight and balance */
+    float _aero_rp[3];
+    float _cg_loc[3];
     float _stall_speed;
     float _stall_weight;
     float _max_weight;
@@ -605,6 +607,7 @@ public:
             camber(0)
         {}
 
+        // Inputs
         unsigned shape;
         float arm;
         float span;
@@ -620,12 +623,16 @@ public:
         float thickness;
         float flap_ratio;
 
-        // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
-        float Ktf;
-
         // *** currently unused **
         float twist;
         float camber;
+
+        // Calculated
+        float chord_mean;
+        float de_da;
+
+        // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
+        float Ktf;
     } _lift_device;
 
     _lift_device_t _wing;
@@ -634,6 +641,7 @@ public:
 
     /* array index, can not be greater than 4 */
     unsigned _no_engines;
+    bool _wing_mounted_engines;
 
 public:
     /* Coefficients */

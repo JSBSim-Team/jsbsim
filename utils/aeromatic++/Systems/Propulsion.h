@@ -47,17 +47,19 @@ public:
         delete _thruster;
     }
 
+    virtual std::string system();
     virtual std::string engine() { return ""; }
 
     virtual std::string get_thruster() {
         return _thruster->get_name();
     }
 
-
 public:
     Propulsion *_propulsion;
     Thruster *_thruster;
     float _power;
+
+    int _mount_point[8];
 };
 
 class PistonEngine : public Engine
@@ -67,6 +69,16 @@ public:
     ~PistonEngine() {}
 
     std::string engine();
+
+    std::string lift() {
+        return _thruster->lift();
+    }
+    std::string pitch() {
+        return _thruster->pitch();
+    }
+    std::string roll() {
+        return _thruster->roll();
+    }
 
 public:
     float _max_rpm;
@@ -87,6 +99,16 @@ public:
     ~TurbopropEngine() {}
 
     std::string engine();
+
+    std::string lift() {
+        return _thruster->lift();
+    }
+    std::string pitch() {
+        return _thruster->pitch();
+    }
+    std::string roll() {
+        return _thruster->roll();
+    }
 
 public:
     float _max_rpm;
@@ -190,7 +212,7 @@ public:
     Param* param_next();
 
     char _engine_name[PARAM_MAX_STRING+1];
-private:
+public:
     Engine *_propulsion[MAX_PROPULSION];
     unsigned _ptype;
 
