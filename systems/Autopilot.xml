@@ -1,4 +1,16 @@
 <?xml version="1.0"?>
+<!DOCTYPE system [
+  <!ENTITY none  "0"> <!-- No magnetos    -->
+  <!ENTITY left  "1"> <!-- Left magnetos  -->
+  <!ENTITY right "2"> <!-- Right magnetos -->
+  <!ENTITY both  "3"> <!-- Both magnetos  -->
+  <!ENTITY wingLevelerMode  "0"> <!-- Roll autopilot: wing leveler mode    -->
+  <!ENTITY rollAngleHold    "1"> <!-- Roll autopilot: roll angle hold mode -->
+  <!ENTITY waypointHeading  "0"> <!-- Guidance-calculated waypoint heading -->
+  <!ENTITY specifiedHeading "1"> <!-- User-specified heading               -->
+  <!ENTITY on              "1">
+  <!ENTITY off             "0">
+]>
 <system name="Autopilot"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">

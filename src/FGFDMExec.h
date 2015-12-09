@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.102 2015/10/25 21:18:29 dpculp Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.103 2015/12/09 04:28:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.102 $
+    @version $Revision: 1.103 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -459,12 +459,6 @@ public:
   * - tTurn
   * - tNone  */
   void DoTrim(int mode);
-  void DoSimplexTrim(int mode);
-
-  /** Executes linearization with state-space output
-   * You must trim first to get an accurate state-space model
-   */
-  void DoLinearization(int mode);
 
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
@@ -596,6 +590,7 @@ private:
   bool holding;
   bool IncrementThenHolding;
   int TimeStepsUntilHold;
+  int RandomSeed;
   bool Constructing;
   bool modelLoaded;
   bool IsChild;
@@ -649,6 +644,7 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void SRand(int sr);
+  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);

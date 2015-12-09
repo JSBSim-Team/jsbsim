@@ -115,8 +115,14 @@
         <property caption="Roll angle (rad):        "> attitude/phi-rad </property>
         <property caption="Pitch angle (rad):       "> attitude/theta-rad </property>
         <property caption="Heading (rad):           "> attitude/psi-rad </property>
+        <property caption="Qbar (psf):              "> aero/qbar-psf </property>
         <property caption="Hold-down discrete:      "> forces/hold-down </property>
         <property caption="Throttle (norm):         "> fcs/throttle-cmd-norm[0] </property>
+        <property caption="Thrust 0 (norm):         "> propulsion/engine[0]/thrust-lbs </property>
+        <property caption="Thrust 1 (norm):         "> propulsion/engine[1]/thrust-lbs </property>
+        <property caption="Thrust 2 (norm):         "> propulsion/engine[2]/thrust-lbs </property>
+        <property caption="Thrust 3 (norm):         "> propulsion/engine[3]/thrust-lbs </property>
+        <property caption="Thrust 4 (norm):         "> propulsion/engine[4]/thrust-lbs </property>
         <property caption="GNC Mode:                "> guidance/executive/current-mode </property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>

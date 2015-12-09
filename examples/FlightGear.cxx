@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.22 2015/12/07 10:01:48 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.23 2015/12/09 04:28:17 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -75,6 +75,7 @@
 #include <FDM/JSBSim/models/propulsion/FGTank.h>
 #include <FDM/JSBSim/input_output/FGPropertyManager.h>
 #include <FDM/JSBSim/input_output/FGGroundCallback.h>
+#include <FDM/JSBSim/math/FGLocation.h>
 
 using namespace JSBSim;
 

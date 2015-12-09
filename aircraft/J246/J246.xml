@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon S. Berndt </author>
         <filecreationdate> 2010-01-14 </filecreationdate>
-        <version> $Revision: 1.5 $ </version>
+        <version> $Revision: 1.6 $ </version>
         <description>
           Rough model of the DIRECT Jupiter-246 
           Lunar Crew Launch Vehicle Configuration.
@@ -28,7 +28,7 @@
         to be sold.
       </note>
         <reference
-          refID="http://www.launchcomplexmodels.com/Direct/documents/Baseball_Cards/J246-41.4003.10050_CLV_090606.pdf"
+          refID="http://directlauncher.org/documents/Baseball_Cards/J246-41.4003.10050_CLV_090606.pdf"
           author="DIRECT Team"
           title="Jupiter-246 - Lunar Crew Launch Vehicle Configuration"
           date="6 June 2009"/>

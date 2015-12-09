@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<initialize name="reset00">
+<initialize name="reset00" version="2">
   <!--
     This file sets up the aircraft to start off
     from the runway in preparation for takeoff.
-  -->
+
   <ubody unit="FT/SEC">    0.0  </ubody>
   <vbody unit="FT/SEC">    0.0  </vbody>
   <wbody unit="FT/SEC">    0.0  </wbody>
@@ -14,4 +14,30 @@
   <psi unit="DEG">         0.0  </psi>
   <altitude unit="FT">     4.5  </altitude>
   <elevation unit="FT">   32.0  </elevation>
+  -->
+
+  <position frame="ECEF">
+    <altitudeAGL unit="FT"> 29.5  </altitudeAGL>
+    <latitude type="geodetic" unit="DEG"> 29.594656 </latitude>
+    <longitude unit="DEG"> -95.16384722 </longitude>
+  </position>
+
+  <orientation unit="DEG" frame="LOCAL">
+    <yaw>   0.0  </yaw>
+  </orientation>
+
+  <velocity unit="FT/SEC" frame="LOCAL">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </velocity>
+
+  <attitude_rate unit="DEG/SEC" frame="LOCAL">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </attitude_rate>
+
+  <elevation unit="FT">   26.0  </elevation>
+
 </initialize>

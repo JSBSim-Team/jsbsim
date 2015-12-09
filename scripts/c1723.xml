@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<!DOCTYPE runscript [
+  <!ENTITY none  "0"> <!-- No magnetos    -->
+  <!ENTITY left  "1"> <!-- Left magnetos  -->
+  <!ENTITY right "2"> <!-- Right magnetos -->
+  <!ENTITY both  "3"> <!-- Both magnetos  -->
+  <!ENTITY wingLevelerMode  "0"> <!-- Roll autopilot: wing leveler mode    -->
+  <!ENTITY rollAngleHold    "1"> <!-- Roll autopilot: roll angle hold mode -->
+  <!ENTITY waypointHeading  "0"> <!-- Guidance-calculated waypoint heading -->
+  <!ENTITY specifiedHeading "1"> <!-- User-specified heading               -->
+  <!ENTITY on              "1">
+  <!ENTITY off             "0">
+]>
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="C172-01A takeoff run">
@@ -13,21 +25,21 @@
     <!-- Initialize with brakes on -->
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
-    <property value="1"> fcs/left-brake-cmd-norm </property>
-    <property value="1"> fcs/right-brake-cmd-norm </property>
-    <property value="1"> fcs/center-brake-cmd-norm </property>
+    <property value="&on;"> fcs/left-brake-cmd-norm </property>
+    <property value="&on;"> fcs/right-brake-cmd-norm </property>
+    <property value="&on;"> fcs/center-brake-cmd-norm </property>
     <property value="3.49"> guidance/specified-heading-rad </property>
-    <property value="1"> guidance/heading-selector-switch </property>
+    <property value="&specifiedHeading;"> guidance/heading-selector-switch </property>
     <property value="2498"> simulation/randomseed </property>
 
     <event name="engine start">
       <description>Start the engine and set roll control to heading hold</description>
       <condition> simulation/sim-time-sec >= 0.25 </condition>
-      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.5"/>
-      <set name="propulsion/magneto_cmd" value="3"/>
-      <set name="propulsion/starter_cmd" value="1"/>
-      <set name="ap/roll-attitude-mode" value="1"/>
-      <set name="ap/autopilot-roll-on" value="1"/>
+      <set name="fcs/throttle-cmd-norm"  value="1.0" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="&both;"/>
+      <set name="propulsion/starter_cmd" value="&on;"/>
+      <set name="ap/roll-attitude-mode"  value="&rollAngleHold;"/>
+      <set name="ap/autopilot-roll-on"   value="&on;"/>
       <notify>
         <property caption="Sim Run ID: ">simulation/run_id</property>
         <property>ap/hdg-roll-err-c1</property>
@@ -123,6 +135,7 @@
       <condition> velocities/vc-kts >= 51 </condition>
       <delay>10.0</delay>
       <set name="ap/altitude_setpoint" value="6000.0"/>
+      <set name="simulation/output/log_rate_hz" value="10"/>
       <notify>
         <property caption="Cal. airspeed (kts):  "> velocities/vc-kts</property>
         <property caption="Altitude (AGL, ft):   "> position/h-agl-ft</property>
@@ -144,6 +157,7 @@
       <set name="fcs/flap-cmd-norm" value="0"/>
       <set name="guidance/specified-heading-rad" value="1.75"/>
       <set name="ap/roll-attitude-mode" value="1"/>
+      <set name="simulation/write-state-file" value="2"/>
     </event>
 
     <event name="Time Notify" persistent="true">

@@ -45,6 +45,7 @@ INCLUDES
 #include <iostream>
 #include <iterator>
 #include <cstdlib>
+#include <iomanip>
 
 #include "FGFDMExec.h"
 #include "models/atmosphere/FGStandardAtmosphere.h"
@@ -64,8 +65,6 @@ INCLUDES
 #include "models/FGInput.h"
 #include "models/FGOutput.h"
 #include "initialization/FGTrim.h"
-#include "initialization/FGSimplexTrim.h"
-#include "initialization/FGLinearization.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -73,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.182 2015/11/24 13:06:24 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.183 2015/12/09 04:28:17 jberndt Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +99,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   Terminate = false;
   StandAlone = false;
   ResetMode = 0;
+  RandomSeed = 0;
 
   IncrementThenHolding = false;  // increment then hold is off by default
   TimeStepsUntilHold = -1;
@@ -163,61 +163,16 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-//  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis, false);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim, false);
-  instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
-  instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions, false);
   instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
-  instance->Tie("simulation/randomseed", this, (iPMF)0, &FGFDMExec::SRand, false);
+  instance->Tie("simulation/randomseed", this, (iPMF)&FGFDMExec::SRand, &FGFDMExec::SRand, false);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/dt", this, &FGFDMExec::GetDeltaT);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
   instance->Tie("simulation/frame", (int *)&Frame, false);
   instance->Tie("simulation/trim-completed", (int *)&trim_completed, false);
-
-  // simplex trim properties
-  instanceRoot->SetDouble("trim/solver/rtol",0.0001);
-  instanceRoot->SetDouble("trim/solver/speed",2);
-  instanceRoot->SetDouble("trim/solver/abstol",0.001);
-  instanceRoot->SetDouble("trim/solver/iterMax",2000);
-  instanceRoot->SetInt("trim/solver/debugLevel",0);
-  instanceRoot->SetDouble("trim/solver/random",0);
-  instanceRoot->SetBool("trim/solver/showSimplex",false);
-  instanceRoot->SetBool("trim/solver/showConvergence",false);
-  instanceRoot->SetBool("trim/solver/pause",false);
-  instanceRoot->SetBool("trim/solver/variablePropPitch",false);
-
-  instanceRoot->SetDouble("trim/solver/throttleGuess",0.50);
-  instanceRoot->SetDouble("trim/solver/throttleMin",0.0);
-  instanceRoot->SetDouble("trim/solver/throttleMax",1.0);
-  instanceRoot->SetDouble("trim/solver/throttleStep",0.1);
-
-  instanceRoot->SetDouble("trim/solver/aileronGuess",0);
-  instanceRoot->SetDouble("trim/solver/aileronMin",-1.00);
-  instanceRoot->SetDouble("trim/solver/aileronMax",1.00);
-  instanceRoot->SetDouble("trim/solver/aileronStep",0.1);
-
-  instanceRoot->SetDouble("trim/solver/rudderGuess",0);
-  instanceRoot->SetDouble("trim/solver/rudderMin",-1.00);
-  instanceRoot->SetDouble("trim/solver/rudderMax",1.00);
-  instanceRoot->SetDouble("trim/solver/rudderStep",0.1);
-
-  instanceRoot->SetDouble("trim/solver/elevatorGuess",-0.1);
-  instanceRoot->SetDouble("trim/solver/elevatorMin",-1.0);
-  instanceRoot->SetDouble("trim/solver/elevatorMax",1.0);
-  instanceRoot->SetDouble("trim/solver/elevatorStep",0.1);
-
-  instanceRoot->SetDouble("trim/solver/alphaGuess",0.05);
-  instanceRoot->SetDouble("trim/solver/alphaMin",-0.1);
-  instanceRoot->SetDouble("trim/solver/alphaMax",.18);
-  instanceRoot->SetDouble("trim/solver/alphaStep",0.05);
-
-  instanceRoot->SetDouble("trim/solver/betaGuess",0);
-  instanceRoot->SetDouble("trim/solver/betaMin",-0.1);
-  instanceRoot->SetDouble("trim/solver/betaMax",0.1);
-  instanceRoot->SetDouble("trim/solver/betaStep",0.0001);
 
   Constructing = false;
 }
@@ -614,7 +569,7 @@ bool FGFDMExec::RunIC(void)
     cout << endl << fgblue << highint
          << "End of vehicle configuration loading." << endl
          << "-------------------------------------------------------------------------------"
-         << reset << setprecision(6) << endl;
+         << reset << std::setprecision(6) << endl;
   }
 
   for (unsigned int n=0; n < propulsion->GetNumEngines(); ++n) {
@@ -1192,38 +1147,10 @@ void FGFDMExec::DoTrim(int mode)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::DoSimplexTrim(int mode)
-{
-  double saved_time;
-  if (Constructing) return;
-  if (mode < 0 || mode > JSBSim::tNone) {
-      cerr << endl << "Illegal trimming mode!" << endl << endl;
-      return;
-  }
-  saved_time = sim_time;
-  FGSimplexTrim trim(this, (JSBSim::TrimMode)mode);
-  Setsim_time(saved_time);
-  std::cout << "dT: " << dT << std::endl;
-  trim_completed = 1;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::DoLinearization(int mode)
-{
-  double saved_time;
-  if (Constructing) return;
-  saved_time = sim_time;
-  FGLinearization lin(this,mode);
-  Setsim_time(saved_time);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGFDMExec::SRand(int sr)
 {
-  gaussian_random_number_phase = 0;
-  srand(sr);
+  RandomSeed = sr;
+  srand(RandomSeed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

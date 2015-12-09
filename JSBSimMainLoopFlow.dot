@@ -36,14 +36,14 @@ digraph G {
   Inertial ->
   Atmosphere ->
   Winds ->
-  Auxiliary ->
   "Control Systems" ->
+  MassBalance ->
+  Auxiliary ->
   Propulsion ->
   Aerodynamics ->
   GroundReactions ->
   ExternalReactions ->
   BuoyantForces ->
-  MassBalance ->
   Aircraft ->
   Accelerations->
   Output [color=blue, style=bold];
@@ -74,11 +74,9 @@ digraph G {
     Tw2b;
     Vtotal;
     RadiusToVehicle;
-    planetRadius;
     Latitude;
     "Delta T";
     Mass;
-    Weight;
     EmptyWeight;
     Force_w;
     Forces;
@@ -97,8 +95,6 @@ digraph G {
     BodyAccel;
     Location;
     LocationBody;
-    Latitude;
-    Longitude;
     CosTheta;
     SinTheta;
     CosPhi;
@@ -230,9 +226,6 @@ digraph G {
   Executive -> "Delta T" -> Winds;
   Auxiliary -> Tw2b -> Winds;
   Auxiliary -> Vtotal -> Winds [color=orange, style=bold];
-  Propagate -> Longitude -> Winds;
-  Propagate -> Latitude -> Winds;
-  Inertial  -> planetRadius -> Winds;
 
   // Auxiliary
   Atmosphere -> Pressure -> Auxiliary;
@@ -247,7 +240,8 @@ digraph G {
   Propagate -> Tl2b -> Auxiliary;
   Propagate -> Tb2l ->Auxiliary;
   Propagate -> PQR -> Auxiliary;
-  Accelerations -> PQRdot -> Auxiliary;
+  Propagate -> PQRi -> Auxiliary;
+  Accelerations -> PQRidot -> Auxiliary;
   Propagate -> UVW -> Auxiliary;
   Accelerations -> UVWdot -> Auxiliary;
   Propagate -> VelocityNED -> Auxiliary;
@@ -266,10 +260,12 @@ digraph G {
   Winds -> TurbPQR -> Auxiliary;
   Winds -> WindPsi -> Auxiliary;
   Winds -> Vwind -> Auxiliary;
+  Aircraft -> "Pitot Angle" -> Auxiliary;
 
   // Propulsion
   Atmosphere -> PressureSL -> Propulsion;
   Atmosphere -> Pressure -> Propulsion;
+  Atmosphere -> PressureRatio -> Propulsion;
   Atmosphere -> Temperature -> Propulsion;
   Atmosphere -> Density -> Propulsion;
   Atmosphere -> DensityRatio -> Propulsion;
@@ -293,7 +289,6 @@ digraph G {
   "Control Systems" -> PropFeather -> Propulsion;
   Propagate -> DistanceAGL -> Propulsion;
   Propagate -> PQR -> Propulsion;
-  MassBalance -> TankBodyLocation -> Propulsion
 
   // Aerodynamics
   Auxiliary -> Alpha -> Aerodynamics;
@@ -349,8 +344,6 @@ digraph G {
   GroundReactions -> "Ground Moments" -> Aircraft;
   ExternalReactions -> "External Moments" -> Aircraft;
   BuoyantForces -> "Buoyant Moments" -> Aircraft;
-  MassBalance -> Weight -> Aircraft;
-  Propagate -> Tl2b -> Aircraft;
 
   // Inertial
   Propagate -> RadiusToVehicle -> Inertial;

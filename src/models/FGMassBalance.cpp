@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.53 2015/03/28 14:49:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.54 2015/12/09 04:28:18 jberndt Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -435,12 +435,14 @@ void FGMassBalance::GetMassPropertiesReport(int i)
        << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
        << reset << endl;
   cout << "                                  " << underon << "    Weight    CG-X    CG-Y"
-       << "    CG-Z         Ixx         Iyy         Izz" << underoff << endl;
+       << "    CG-Z         Ixx         Iyy         Izz" 
+       << "         Ixy         Ixz         Iyz" << underoff << endl;
   cout.precision(1);
   cout << highint << setw(34) << left << "    Base Vehicle " << normint
-       << right << setw(10) << EmptyWeight << setw(8) << vbaseXYZcg(eX) << setw(8)
-       << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ) << setw(12) << baseJ(1,1)
-       << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3) << endl;
+       << right << setw(10) << EmptyWeight
+       << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
+       << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
+       << setw(12) << baseJ(1,2) << setw(12) << baseJ(1,3) << setw(12) << baseJ(2,3) << endl;
 
   for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
@@ -448,13 +450,13 @@ void FGMassBalance::GetMassPropertiesReport(int i)
     cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
          << right << setw(10) << pmweight << setw(8) << pm->GetLocation()(eX)
          << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
-         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2)
-         << setw(12) << pm->GetPointMassMoI(3,3) << endl;
+         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
+         << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;         
   }
 
   cout << FDMExec->GetPropulsionTankReport();
 
-  cout << underon << setw(104) << " " << underoff << endl;
+  cout << "    " << underon << setw(136) << " " << underoff << endl;
   cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight 
        << setw(8) << vXYZcg(eX)
        << setw(8) << vXYZcg(eY)
@@ -462,6 +464,9 @@ void FGMassBalance::GetMassPropertiesReport(int i)
        << setw(12) << mJ(1,1)
        << setw(12) << mJ(2,2)
        << setw(12) << mJ(3,3)
+       << setw(12) << mJ(1,2)
+       << setw(12) << mJ(1,3)
+       << setw(12) << mJ(2,3)
        << normint << endl;
 
   cout.setf(ios_base::fixed);
