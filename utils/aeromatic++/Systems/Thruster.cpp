@@ -166,14 +166,14 @@ void Propeller::set_thruster(float mrpm)
     // Thruster effects on coefficients
     Aeromatic* aircraft = _propulsion->_aircraft;
     float Swp = 0.9f*_diameter/aircraft->_wing.span;
-    float lt = aircraft->_aero_rp[X] - _propulsion->_thruster_loc[0][X];;
+    float lt = aircraft->_aero_rp[X] - _propulsion->_thruster_loc[0][X];
     if (lt) {
         Swp *= aircraft->_wing.chord_mean/lt;
     }
 
     _dCLT0 = aircraft->_CL0*Swp;
     _dCLTmax = aircraft->_CLmax[0]*Swp;
-    _dCLTalpha = aircraft->_CLalpha[0]*Swp;
+    _dCLTalpha = aircraft->_CLaw[0]*Swp;
 
     _prop_span_left = 0;
     _prop_span_right = 0;
@@ -246,20 +246,19 @@ std::string Propeller::pitch()
     float AR = aircraft->_wing.aspect;
     float lh = aircraft->_htail.arm;
     float Sh = aircraft->_htail.area;
-    float deda = aircraft->_wing.de_da;
     float cbarw = aircraft->_wing.chord_mean;
     
     float Knp = aircraft->_no_engines;
     if (Knp > 3.0f) Knp = 2.0f;
     Knp /= aircraft->_no_engines;
 
-    float pfact = Knp*(lh/cbarw)*(Sh/Sw)*(1-deda);
+    float pfact = -Knp*lh*Sh/cbarw/Sw;
 
-    float Cm0 = _dCLT0/pfact;
-    float Cmmax = _dCLTmax/pfact;
-    float Cmalpha = _dCLTalpha;
+    float Cm0 = _dCLT0*pfact;
+    float Cmmax = _dCLTmax*pfact;
+    float Cmalpha = _dCLTalpha*pfact;
 
-    float alpha = alpha = (_dCLTmax-_dCLT0)/_dCLTalpha;
+    float alpha = (Cmmax-Cm0)/Cmalpha;
 
     file << std::setprecision(3) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Pitch_propwash\">" << std::endl;
@@ -281,7 +280,7 @@ std::string Propeller::pitch()
     file << "              " << std::setprecision(2) << std::setw(5) << _MIN(Cm0*alpha, -0.01f) << "  0.000   0.000" << std::endl;
     file << "               0.00 " << std::setprecision(3) << std::setw(6) << (Cm0) << std::setw(8) << (FACT * Cm0) << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(3) << std::setw(7) << (Cmmax) << std::setw(8) << (FACT * Cmmax) << std::endl;
-    file << "               " << std::setprecision(2) << (2.0f*alpha) << "  0.000   0.000" << std::endl;
+    file << "               " << std::setprecision(2) << (1.3f*alpha) << "  0.000   0.000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
@@ -299,7 +298,6 @@ std::string Propeller::roll()
     float k = y/(aircraft->_wing.span/2.0f);
     float TR = aircraft->_wing.taper;
 
-printf("_prop_span_left: %f, _diameter: %f, y: %f, k: %f\n", _prop_span_left, _diameter, y, k);
     // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
     float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
     

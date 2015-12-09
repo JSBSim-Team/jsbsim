@@ -656,6 +656,7 @@ public:
 
 public:
     static char const* _estimate;
+    float _CLaw[3], _CLah[3], _CLav[3];
 };
 
 } /* namespace Aeromatic */

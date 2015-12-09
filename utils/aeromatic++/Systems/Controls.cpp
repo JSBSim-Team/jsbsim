@@ -82,7 +82,9 @@ std::string Controls::comment()
 void CableControls::set(const float* cg_loc)
 {
     // *** CLalpha_wing based on wing geometry ***
-    float CLaw[3], CLah[3], CLav[3];
+    float *CLaw = _aircraft->_CLaw;
+    float *CLah = _aircraft->_CLah;
+    float *CLav = _aircraft->_CLav;
     _get_CLaw(CLaw, _aircraft->_wing);
     _get_CLaw(CLah, _aircraft->_htail);
     _get_CLaw(CLav, _aircraft->_vtail);
@@ -152,7 +154,6 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLadot = 2.0f*nh*CLah[0]*Vh*deda;
     _aircraft->_CLq = _aircraft->_CLadot/deda;
     _aircraft->_CLde = (Cltde*Sh/Sw)*2.0f/PI;
-
 
     // pitch
     if (_aircraft->_user_wing_data > 0)
