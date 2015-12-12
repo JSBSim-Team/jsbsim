@@ -48,13 +48,14 @@ INCLUDES
 #include "FGTurboProp.h"
 #include "FGPropeller.h"
 #include "FGRotor.h"
+#include "math/FGFunction.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.32 2015/09/27 09:54:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.33 2015/12/07 10:01:48 ehofman Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,15 +64,12 @@ CLASS IMPLEMENTATION
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
   : FGEngine(engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), CombustionEfficiency_N1(NULL),
+    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), EnginePowerVCFN(NULL), CombustionEfficiency_N1(NULL),
     FDMExec(exec)
 {
-  FGEngine::Load(exec, el);
   SetDefaults();
-  thrusterType = Thruster->GetType();
 
   Load(exec, el);
-  bindmodel(exec->GetPropertyManager());
   Debug(0);
 }
 
@@ -92,6 +90,24 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 {
   MaxStartingTime = 999999; //very big timeout -> infinite
   Ielu_max_torque=-1;
+
+  Element* function_element = el->FindElement("function");
+
+  while(function_element) {
+    string name = function_element->GetAttributeValue("name");
+    if (name == "EnginePowerVC")
+      function_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
+
+    function_element = el->FindNextElement("function");
+  }
+
+  FGEngine::Load(exec, el);
+  thrusterType = Thruster->GetType();
+
+  string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+
+  EnginePowerVCFN = GetPreFunction(property_prefix+"/EnginePowerVC");
+
 
 // ToDo: Need to make sure units are properly accounted for below.
 
@@ -138,8 +154,9 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     table_element = el->FindNextElement("table");
     if (!table_element) break;
     name = table_element->GetAttributeValue("name");
-    if (name == "EnginePowerVC") {
+    if (!EnginePowerVCFN && name == "EnginePowerVC") {
       EnginePowerVC = new FGTable(PropertyManager, table_element);
+      std::cerr << "Note: Using the EnginePowerVC without enclosed <function> tag is deprecated" << std::endl;
     } else if (name == "EnginePowerRPM_N1") {
       EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
@@ -171,7 +188,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     *CombustionEfficiency_N1 << 110.0 << 6.0;
   }
   
-
+  bindmodel(exec->GetPropertyManager());
   return true;
 }
 
@@ -321,7 +338,7 @@ double FGTurboProp::Run(void)
   N1 = ExpSeek(&N1, IdleN1 + ThrottlePos * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-  EngPower_HP *= EnginePowerVC->GetValue();
+  EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
   CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);
@@ -370,7 +387,7 @@ double FGTurboProp::SpinUp(void)
   NozzlePosition = 1.0;
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-  EngPower_HP *= EnginePowerVC->GetValue();
+  EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
   if (StartTime>=0) StartTime+=in.TotalDeltaT;
@@ -394,7 +411,7 @@ double FGTurboProp::Start(void)
     Cranking = true;                   // provided for sound effects signal
     if (N1 < IdleN1) {
       EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-      EngPower_HP *= EnginePowerVC->GetValue();
+      EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
       if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
       N1 = ExpSeek(&N1, IdleN1*1.1, Idle_Max_Delay*4, Idle_Max_Delay * 2.4);
       CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);

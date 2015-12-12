@@ -8,24 +8,30 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #ifndef _TYPES_H
 #define _TYPES_H 1
 
 #include "config.h"
+
+#ifdef _WIN32
+# ifndef WIN32
+#  define WIN32
+# endif
+#endif
 
 #ifdef WIN32
 # include <windows.h>
@@ -69,8 +75,8 @@
 #define KW_TO_HP		1.341f
 #define HP_TO_KW		0.7457f
 
-#define NETWON_TO_LBS		0.2248f
-#define LBS_TO_NEWTON		4.448f
+#define KNETWON_TO_LBS		224.808943f
+#define LBS_TO_KNEWTON		0.00444822162f
 
 #define MPH_TO_KNOTS		0.868976242f
 #define KNOTS_TO_MPH		1.15077945f
@@ -78,6 +84,7 @@
 #define KNOTS_TO_KMPH		1.852f
 
 #define KNOTS_TO_FPS		1.68780839895013f
+#define FPS_TO_KNOTS		0.592483801f
 
 #define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
 #define _MIN(a,b)		(((a)<(b)) ? (a) : (b))
@@ -147,7 +154,11 @@ enum EngineLayout
     AFT_FUSELAGE,
     WINGS,
     WINGS_AND_TAIL,
-    WINGS_AND_NOSE
+    WINGS_AND_NOSE,
+
+    FUSELAGE = 0,
+    LEFT_WING = 1,
+    RIGHT_WING = 2
 };
 
 enum ParamType

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<plotset>
+<plotset
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../JSBSimPlot.xsd">
   <!--
     This file contains plot descriptions for the position data logged by JSBSim
     when the position flag is turned ON.

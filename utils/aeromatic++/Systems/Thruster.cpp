@@ -8,19 +8,19 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <math.h>
 #include <sstream>
@@ -33,8 +33,10 @@
 namespace Aeromatic
 {
 
-Thruster::Thruster(Engine *p) :
-    _engine(p)
+#define FACT		2.667f
+
+Thruster::Thruster(Propulsion *p) :
+    _propulsion(p)
 {
 }
 
@@ -47,7 +49,7 @@ Thruster::~Thruster()
 }
 
 
-Direct::Direct(Engine *p) : Thruster(p)
+Direct::Direct(Propulsion *p) : Thruster(p)
 {
     strCopy(_thruster_name, "direct");
 }
@@ -69,13 +71,13 @@ std::string Direct::thruster()
 }
 
 
-Nozzle::Nozzle(Engine *p) : Thruster(p),
+Nozzle::Nozzle(Propulsion *p) : Thruster(p),
     _diameter(3.25f)
 {
     strCopy(_thruster_name, "my_nozzle");
 
     _inputs.push_back(new Param("Nozzle name", "The name is used for the configuration file name", _thruster_name));
-    _inputs.push_back(new Param("Nozzle diameter", "Nozzle diameter influences the nozzle area and exit pressure", _diameter, _engine->_aircraft->_metric, LENGTH));
+    _inputs.push_back(new Param("Nozzle diameter", "Nozzle diameter influences the nozzle area and exit pressure", _diameter, _propulsion->_aircraft->_metric, LENGTH));
 }
 
 std::string Nozzle::thruster()
@@ -83,7 +85,7 @@ std::string Nozzle::thruster()
     std::stringstream file;
 
     float area = _diameter * _diameter * PI/4;
-    float pe = area / _engine->_power;
+    float pe = area / _propulsion->_power;
 
     file << "<!--" << std::endl;
     file << "    See:  http://wiki.flightgear.org/JSBSim_Thrusters#FGNozzle" << std::endl;
@@ -101,14 +103,14 @@ std::string Nozzle::thruster()
 }
 
 
-Propeller::Propeller(Engine *p) : Thruster(p),
+Propeller::Propeller(Propulsion *p) : Thruster(p),
     _fixed_pitch(true),
     _diameter(8)
 {
     strCopy(_thruster_name, "my_propeller");
 
     _inputs.push_back(new Param("Thruster name", "The name is used for the configuration file name", _thruster_name));
-    _inputs.push_back(new Param("Propeller diameter", "Propeller diameter is critical for a good thrust estimation", _diameter, _engine->_aircraft->_metric, LENGTH));
+    _inputs.push_back(new Param("Propeller diameter", "Propeller diameter is critical for a good thrust estimation", _diameter, _propulsion->_aircraft->_metric, LENGTH));
     _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch angle", _fixed_pitch));
 }
 
@@ -129,13 +131,13 @@ void Propeller::set_thruster(float mrpm)
     // power and thrust coefficients at design point
     // for fixed pitch design point is beta=22, J=0.2
     // for variable pitch design point is beta=15, j=0
-    _Cp0 = _engine->_power * 550.0f / rho / rps3 / d5;
+    _Cp0 = _propulsion->_power * 550.0f / rho / rps3 / d5;
     if (_fixed_pitch == false)
     {
         _Ct0 = _Cp0 * 2.33f;
         _static_thrust = _Ct0 * rho * rps2 * d4;
     } else {
-        float rpss = powf(_engine->_power * 550.0f / 1.025f / _Cp0 / rho / d5, 0.3333f);
+        float rpss = powf(_propulsion->_power * 550.0f / 1.025f / _Cp0 / rho / d5, 0.3333f);
         _Ct0 = _Cp0 * 1.4f;
         _static_thrust = 1.09f * _Ct0 * rho * rpss * rpss * d4;
     }
@@ -159,6 +161,164 @@ void Propeller::set_thruster(float mrpm)
     float ixx_blades = _blades * (0.33333f * mass_blade * L * L);
     float ixx_hub = 0.5f * mass_hub * R * R;
     _ixx = ixx_blades + ixx_hub;
+
+
+    // Thruster effects on coefficients
+    Aeromatic* aircraft = _propulsion->_aircraft;
+    float Swp = 0.9f*_diameter/aircraft->_wing.span;
+    float lt = aircraft->_aero_rp[X] - _propulsion->_thruster_loc[0][X];
+    if (lt) {
+        Swp *= aircraft->_wing.chord_mean/lt;
+    }
+
+    _dCLT0 = aircraft->_CL0*Swp;
+    _dCLTmax = aircraft->_CLmax[0]*Swp;
+    _dCLTalpha = aircraft->_CLaw[0]*Swp;
+
+    _prop_span_left = 0;
+    _prop_span_right = 0;
+    int left = 0, right = 0;
+    for (unsigned i = 0; i < aircraft->_no_engines; ++i)
+    {
+        if (_propulsion->_mount_point[i] == LEFT_WING)
+        {
+            left++;
+            _prop_span_left += _propulsion->_thruster_loc[i][Y];
+        }
+        else if (_propulsion->_mount_point[i] == RIGHT_WING)
+        {
+            right++;
+            _prop_span_right += _propulsion->_thruster_loc[i][Y];
+        }
+    }
+    if (aircraft->_no_engines > 1)
+    {
+       _prop_span_left /= left;
+       _prop_span_right /= right;
+    }
+}
+
+std::string Propeller::lift()
+{
+    std::stringstream file;
+
+    Aeromatic* aircraft = _propulsion->_aircraft;
+    float dCL0 = _dCLT0;
+    float dCLmax = _dCLTmax;
+    float dCLalpha = _dCLTalpha;
+
+    float alpha = (dCLmax-dCL0)/dCLalpha;
+
+    file << std::setprecision(3) << std::fixed << std::showpoint;
+    file << "    <function name=\"aero/force/Lift_propwash\">" << std::endl;
+    file << "      <description>Delta lift due to propeller induced velocity</description>" << std::endl;
+    file << "      <product>" << std::endl;
+    if (aircraft->_no_engines > 1) {
+        file << "         <property>systems/propulsion/thrust-coefficient</property>" << std::endl;
+    } else {
+        file << "         <property>propulsion/engine[0]/thrust-coefficient</property>" << std::endl;
+    }
+    file << "          <property>aero/qbar-psf</property>" << std::endl;
+    file << "          <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "          <table>" << std::endl;
+    file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
+    file << "            <independentVar lookup=\"column\">fcs/flap-pos-deg</independentVar>" << std::endl;
+    file << "            <tableData>" << std::endl;
+    file << "                     0.0     60.0" << std::endl;
+    file << "              " << std::setprecision(2) << std::setw(5) << _MIN(-dCL0/alpha, -0.01f) << "  0.000   0.000" << std::endl;
+    file << "               0.00  " << std::setprecision(3) << std::setw(5) << (dCL0) << std::setw(8) << (FACT * dCL0) << std::endl;
+    file << "               " << std::setprecision(2) << (alpha) << std::setprecision(3) << std::setw(7) << (dCLmax) << std::setw(8) << (FACT * dCLmax) << std::endl;
+    file << "               " << std::setprecision(2) << (2.0f*alpha) << "  0.000   0.000" << std::endl;
+    file << "            </tableData>" << std::endl;
+    file << "          </table>" << std::endl;
+    file << "      </product>" << std::endl;
+    file << "    </function>" << std::endl;
+
+    return file.str();
+}
+
+std::string Propeller::pitch()
+{
+    std::stringstream file;
+
+    Aeromatic* aircraft = _propulsion->_aircraft;
+    float Sw = aircraft->_wing.area;
+    float AR = aircraft->_wing.aspect;
+    float lh = aircraft->_htail.arm;
+    float Sh = aircraft->_htail.area;
+    float cbarw = aircraft->_wing.chord_mean;
+    
+    float Knp = aircraft->_no_engines;
+    if (Knp > 3.0f) Knp = 2.0f;
+    Knp /= aircraft->_no_engines;
+
+    float pfact = -Knp*lh*Sh/cbarw/Sw;
+
+    float Cm0 = _dCLT0*pfact;
+    float Cmmax = _dCLTmax*pfact;
+    float Cmalpha = _dCLTalpha*pfact;
+
+    float alpha = (Cmmax-Cm0)/Cmalpha;
+
+    file << std::setprecision(3) << std::fixed << std::showpoint;
+    file << "    <function name=\"aero/moment/Pitch_propwash\">" << std::endl;
+    file << "      <description>Pitch moment due to propeller induced velocity</description>" << std::endl;
+    file << "      <product>" << std::endl;
+    if (aircraft->_no_engines > 1) {
+        file << "         <property>systems/propulsion/thrust-coefficient</property>" << std::endl;
+    } else {
+        file << "          <property>propulsion/engine[0]/thrust-coefficient</property>" << std::endl;
+    }
+    file << "          <property>aero/qbar-psf</property>" << std::endl;
+    file << "          <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "          <property>metrics/bw-ft</property>" << std::endl;
+    file << "          <table>" << std::endl;
+    file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
+    file << "            <independentVar lookup=\"column\">fcs/flap-pos-deg</independentVar>" << std::endl;
+    file << "            <tableData>" << std::endl;
+    file << "                     0.0     60.0" << std::endl;
+    file << "              " << std::setprecision(2) << std::setw(5) << _MIN(Cm0*alpha, -0.01f) << "  0.000   0.000" << std::endl;
+    file << "               0.00 " << std::setprecision(3) << std::setw(6) << (Cm0) << std::setw(8) << (FACT * Cm0) << std::endl;
+    file << "               " << std::setprecision(2) << (alpha) << std::setprecision(3) << std::setw(7) << (Cmmax) << std::setw(8) << (FACT * Cmmax) << std::endl;
+    file << "               " << std::setprecision(2) << (1.3f*alpha) << "  0.000   0.000" << std::endl;
+    file << "            </tableData>" << std::endl;
+    file << "          </table>" << std::endl;
+    file << "      </product>" << std::endl;
+    file << "    </function>" << std::endl;
+
+    return file.str();
+}
+
+std::string Propeller::roll()
+{
+    std::stringstream file;
+
+    Aeromatic* aircraft = _propulsion->_aircraft;
+    float y = _prop_span_left - _diameter/2.0f;
+    float k = y/(aircraft->_wing.span/2.0f);
+    float TR = aircraft->_wing.taper;
+
+    // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
+    float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
+    
+    file << std::setprecision(4) << std::fixed << std::showpoint;
+    file << "    <function name=\"aero/moment/Roll_differential_propwash\">" << std::endl;
+    file << "       <description>Roll moment due to differential propwash</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    if (aircraft->_no_engines > 1) {
+        file << "           <property>systems/propulsion/thrust-coefficient-left-right</property>" << std::endl;
+    } else {
+        file << "           <property>propulsion/engine[0]/thrust-coefficient</property>" << std::endl;
+    }
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>metrics/bw-ft</property>" << std::endl;
+    file << "           <property>aero/alpha-rad</property>" << std::endl;
+    file << "           <value> " << (dClT) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+
+    return file.str();
 }
 
 std::string Propeller::thruster()
@@ -171,7 +331,7 @@ std::string Propeller::thruster()
     file << "    See: http://wiki.flightgear.org/JSBSim_Thrusters#FGPropeller" << std::endl;
     file << std::endl;
     file << "    Inputs:" << std::endl;
-    file << "           horsepower: " << _engine->_power << std::endl;
+    file << "           horsepower: " << _propulsion->_power << std::endl;
     file << "                pitch: " << (_fixed_pitch ? "fixed" : "variable") << std::endl;
     file << "       max engine rpm: " << _engine_rpm << std::endl;
     file << "   prop diameter (ft): " << _diameter << std::endl;

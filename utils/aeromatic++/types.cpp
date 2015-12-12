@@ -8,24 +8,24 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <cstdlib>
+#include <stdlib.h>
 
 #include "types.h"
 
@@ -107,16 +107,16 @@ void Param::set(std::string& v)
     case PARAM_BOOL:
         if (v == "y" || v == "yes" || v == "true") *_value.b = true;
         else if (v == "n" || v == "no" || v == "false") *_value.b = false;
-        else *_value.b = (std::strtol(v.c_str(), NULL, 10) == 0) ? false : true;
+        else *_value.b = (strtol(v.c_str(), NULL, 10) == 0) ? false : true;
         break;
     case PARAM_INT:
-        *_value.i = std::strtol(v.c_str(), NULL, 10);
+        *_value.i = strtol(v.c_str(), NULL, 10);
         break;
     case PARAM_FLOAT:
 #if (_MSC_VER)
-        *_value.f = std::stof(v, NULL);
+        *_value.f = stof(v, NULL);
 #else
-        *_value.f = std::strtof(v.c_str(), NULL);
+        *_value.f = strtof(v.c_str(), NULL);
 #endif
         if (_convert) *_value.f = (*_value.f * _cvt_t[_utype].fact);
         break;
@@ -146,7 +146,7 @@ std::string Param::get()
         str = oss.str();
         break;
     case PARAM_FLOAT:
-        if (_convert) fact = _cvt_t[_utype].fact;
+        if (_convert) fact /= _cvt_t[_utype].fact;
         oss << (*_value.f * fact);
         str = oss.str();
         break;
@@ -175,7 +175,7 @@ Param::__cvt const Param::_cvt_t[MAX_UNITS] =
     { LITER_TO_CUBINC_INCH,	{      "in3",     "l" } },	// VOLUME
     { KMPH_TO_KNOTS,		{       "kt",  "km/h" } },	// SPEED
     { KW_TO_HP,			{       "hp",    "kW" } },	// POWER
-    { NETWON_TO_LBS,		{      "lbs",    "kN" } } 	// THRUST
+    { KNETWON_TO_LBS,		{      "lbs",    "kN" } } 	// THRUST
 };
 
 } /* namespace Aeromatic */

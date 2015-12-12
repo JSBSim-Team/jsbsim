@@ -378,9 +378,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\initialization\fglinearization.h" />
-    <ClInclude Include="src\initialization\FGSimplexTrim.h" />
-    <ClInclude Include="src\initialization\FGTrimmer.h" />
     <ClInclude Include="src\input_output\FGInputSocket.h" />
     <ClInclude Include="src\input_output\FGInputType.h" />
     <ClInclude Include="src\input_output\fgmodelloader.h" />
@@ -393,8 +390,6 @@
     <ClInclude Include="src\input_output\FGUDPInputSocket.h" />
     <ClInclude Include="src\input_output\FGUDPOutputSocket.h" />
     <ClInclude Include="src\input_output\string_utilities.h" />
-    <ClInclude Include="src\math\FGNelderMead.h" />
-    <ClInclude Include="src\math\FGStateSpace.h" />
     <ClInclude Include="src\math\LagrangeMultiplier.h" />
     <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
     <ClInclude Include="src\models\atmosphere\FGWinds.h" />
@@ -502,9 +497,6 @@
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\initialization\FGLinearization.cpp" />
-    <ClCompile Include="src\initialization\FGSimplexTrim.cpp" />
-    <ClCompile Include="src\initialization\FGTrimmer.cpp" />
     <ClCompile Include="src\input_output\FGInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGInputType.cpp" />
     <ClCompile Include="src\input_output\FGModelLoader.cpp" />
@@ -516,8 +508,6 @@
     <ClCompile Include="src\input_output\FGPropertyReader.cpp" />
     <ClCompile Include="src\input_output\FGUDPInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGUDPOutputSocket.cpp" />
-    <ClCompile Include="src\math\FGNelderMead.cpp" />
-    <ClCompile Include="src\math\FGStateSpace.cpp" />
     <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
     <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
     <ClCompile Include="src\models\FGAccelerations.cpp" />

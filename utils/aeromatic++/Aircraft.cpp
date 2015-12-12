@@ -8,19 +8,19 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <math.h>
 #include <time.h>
@@ -70,27 +70,29 @@ Aeromatic::Aeromatic() : Aircraft(),
     _system_files(true),
     _metric(0),
     _stall_speed(0),
+    _stall_weight(0),
     _max_weight(10000.0f),
     _empty_weight(0),
     _length(40.0f),
-    _wing_shape(STRAIGHT),
-    _wing_span(40.0f),
-    _wing_area(0),
-    _wing_chord(0),
-    _wing_incidence(0),
-    _wing_dihedral(0),
-    _wing_sweep(0),
-    _htail_area(0),
-    _htail_arm(0),
-    _vtail_area(0),
-    _vtail_arm(0),
-    _aspect_ratio(0),
-    _taper_ratio(0),
     _payload(10000.0f),
-    _no_engines(0)
+    _user_wing_data(-2),
+    _no_engines(0),
+    _wing_mounted_engines(false)
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;
+    _stall_weight = _max_weight;
+
+    _wing.span = 40.0f;
+    // Historically speaking most aircraft are modern since the
+    // number of aircraft types has exploded since the late sixties.
+    if (_atype == LIGHT) {
+        _wing.Ktf = 0.87f; // for NACA-6
+    } else {
+        _wing.Ktf = 0.95f; // for supercritical
+    }
+    _htail.flap_ratio = 0.27f;	// elevator
+    _vtail.flap_ratio = 0.25f;	// rudder
 
     /* general information */
     _general.push_back(new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files));
@@ -100,7 +102,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     units->add_option("Metric (meters, kilograms)");
 
     /* performance, weight and balance */
-    _weight_balance.push_back(new Param("Stall speed", "The stall speed (landing speed/1.3) halfway between max. weight and empty weight", _stall_speed, _metric, SPEED));
+    _weight_balance.push_back(new Param("Stall speed VS1 (clean, no flaps)", "The stall speed at maximum takeoff weight", _stall_speed, _metric, SPEED));
     _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
     _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
@@ -109,25 +111,25 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     /* geometry */
     _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
-    Param* wingshape = new Param("Select a wing shape", "Wing shapes determaine the lift and drag of the aircraft", _wing_shape);
+    Param* wingshape = new Param("Select a wing shape", "Wing shapes determaine the lift and drag of the aircraft", _wing.shape);
     _geometry.push_back(wingshape);
     wingshape->add_option("Straight");
     wingshape->add_option("Elliptical");
     wingshape->add_option("Delta");
 //  wingshape->add_option("Variable sweep");
 
-    _geometry.push_back(new Param("Wing span", 0, _wing_span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area", _estimate, _wing_area, _metric, AREA));
-    _geometry.push_back(new Param("Wing aspect ratio", _estimate, _aspect_ratio));
-    _geometry.push_back(new Param("Wing taper ratio", _estimate, _taper_ratio));
-    _geometry.push_back(new Param("Wing chord", _estimate, _wing_chord, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing incidence", _estimate, _wing_incidence));
-    _geometry.push_back(new Param("Wing dihedral", _estimate, _wing_dihedral));
-    _geometry.push_back(new Param("Wing sweep (max)", _estimate, _wing_sweep));
-    _geometry.push_back(new Param("Htail area", _estimate, _htail_area, _metric, AREA));
-    _geometry.push_back(new Param("Htail arm", _estimate, _htail_arm, _metric, LENGTH));
-    _geometry.push_back(new Param("Vtail area", _estimate, _vtail_area, _metric, AREA));
-    _geometry.push_back(new Param("Vtail arm", _estimate, _vtail_arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing span", 0, _wing.span, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing area", _estimate, _wing.area, _metric, AREA));
+    _geometry.push_back(new Param("Wing aspect ratio", _estimate, _wing.aspect));
+    _geometry.push_back(new Param("Wing taper ratio", _estimate, _wing.taper));
+    _geometry.push_back(new Param("Wing chord", _estimate, _wing.chord, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing incidence", _estimate, _wing.incidence));
+    _geometry.push_back(new Param("Wing dihedral", _estimate, _wing.dihedral));
+    _geometry.push_back(new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep));
+    _geometry.push_back(new Param("Htail area", _estimate, _htail.area, _metric, AREA));
+    _geometry.push_back(new Param("Htail arm", _estimate, _htail.arm, _metric, LENGTH));
+    _geometry.push_back(new Param("Vtail area", _estimate, _vtail.area, _metric, AREA));
+    _geometry.push_back(new Param("Vtail arm", _estimate, _vtail.arm, _metric, LENGTH));
 
     Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype);
     _general.push_back(param);
@@ -144,6 +146,16 @@ Aeromatic::Aeromatic() : Aircraft(),
     param->add_option(_aircraft[4]->get_description());
 
     Aircraft::_aircraft = this;
+
+    _CLalpha[0] = _CLalpha[1] = _CLalpha[2] = 0.0f;
+    _CLmax[0] = _CLmax[1] = _CLmax[2] = 0.0f;
+    _CL0 = 0.0f; _CLde = 0.0f; _CLq = 0.0f; _CLadot = 0.0f;
+    _CD0 = 0.0f; _CDde = 0.0f; _CDbeta = 0.0f;
+    _Kdi = 0.0f; _Mcrit = 0.0f;
+    _CYbeta = 0.0f; _CYr = 0.0f; _CYp = 0.0f; _CYdr = 0.0f;
+    _Clbeta = 0.0f; _Clp = 0.0f; _Clr = 0.0f; _Clda = 0.0f; _Cldr = 0.0f;
+    _Cmalpha = 0.0f; _Cmde = 0.0f; _Cmq = 0.0f; _Cmadot = 0.0f;
+    _Cnbeta = 0.0f; _Cnr = 0.0f; _Cnp = 0.0f; _Cndr = 0.0f; _Cnda = 0.0f;
 }
 
 Aeromatic::~Aeromatic()
@@ -175,67 +187,144 @@ bool Aeromatic::fdm()
 
 //***** METRICS ***************************************
     _payload = _max_weight;
+    _stall_weight = _max_weight;
 
     // first, estimate wing loading in psf
     float wing_loading = aircraft->get_wing_loading();
 
     // if no wing area given, use wing loading to estimate
     bool wingarea_input;
-    if (_wing_area == 0)
+    if (_wing.area == 0)
     {
         wingarea_input = false;
-        _wing_area = _max_weight / wing_loading;
+        _wing.area = _max_weight / wing_loading;
     }
     else
     {
         wingarea_input = true;
-        wing_loading = _max_weight / _wing_area;
+        wing_loading = _max_weight / _wing.area;
     }
 
     // calculate wing chord
-    if (_aspect_ratio == 0) {
-        _aspect_ratio = aircraft->get_aspect_ratio();
+    if (_wing.aspect == 0) {
+        _wing.aspect = aircraft->get_aspect_ratio();
+    } else {
+        _user_wing_data++;
     }
-    if (_wing_chord == 0)
+    if (_wing.chord == 0)
     {
-        if (_aspect_ratio > 0) {
-            _wing_chord = _wing_span / _aspect_ratio;
+        if (_wing.aspect > 0) {
+            _wing.chord = _wing.span / _wing.aspect;
         } else {
-            _wing_chord = _wing_area / _wing_span;
+            _wing.chord = _wing.area / _wing.span;
         }
+    }
+    else {
+        _user_wing_data++;
     }
 
     // calculate aspect ratio
-    if (_aspect_ratio == 0) {
-        _aspect_ratio = (_wing_span*_wing_span) / _wing_area;
+    if (_wing.aspect == 0) {
+        _wing.aspect = (_wing.span*_wing.span) / _wing.area;
+    } else {
+        _user_wing_data++;
     }
 
-    if (_taper_ratio == 0) {
-        _taper_ratio = 1.0f;
+    if (_wing.taper == 0) {
+        _wing.taper = 1.0f;
+    }
+
+    float TR = _wing.taper;
+    _wing.chord_mean = 0.75f*_wing.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _wing.de_da = 4.0f/(_wing.aspect+2.0f);
+
+    // leading edge sweep
+    // devide the span by two and account for fuselage width
+    float span = 0.45f*_wing.span;
+    float root_tip = _wing.chord*(1.0f - _wing.taper);
+
+    if (_wing.sweep_le == 0)
+    {
+        _wing.sweep_le = atanf(root_tip/span);
+        if (_wing.shape != DELTA) {
+            _wing.sweep_le *= 0.5f;
+        }
+        _wing.sweep_le *= RAD_TO_DEG;
+        _wing.sweep_le += _wing.sweep;
+    }
+
+    if (_wing.thickness == 0)
+    {
+        // Hofman equation for t/c
+        float Ws = _stall_weight;
+        float Vs = _stall_speed * KNOTS_TO_FPS;
+        float sweep = _wing.sweep * DEG_TO_RAD;
+        float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
+        _wing.thickness = TC * _wing.chord;
     }
 
     // for now let's use a standard 2 degrees wing incidence
-    if (_wing_incidence == 0) {
-        _wing_incidence = 2.0;
+    if (_wing.incidence == 0) {
+        _wing.incidence = 2.0;
     }
 
     // estimate horizontal tail area
-    _htail_area = _wing_area * aircraft->get_htail_area();
+    if (_htail.area == 0) {
+        _htail.area = _wing.area * aircraft->get_htail_area();
+    }
 
     // estimate distance from CG to horizontal tail aero center
-    _htail_arm = _length * aircraft->get_htail_arm();
+    if (_htail.arm == 0) {
+        _htail.arm = _length * aircraft->get_htail_arm();
+    }
+
+    if (_htail.aspect == 0) {
+        _htail.aspect = 5.0f;	// ht_w * _wing.aspect;
+    }
+    if (_htail.taper == 0) {
+        _htail.taper = 0.5f;
+    }
+
+    float ht_w = 0.33f; // sqrtf(_htail.area / _wing.area);
+    if (_htail.span == 0) {
+        _htail.span = ht_w * _wing.span;
+    }
+
+    TR = _htail.taper;
+    _htail.chord_mean = 0.75f*_htail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _htail.de_da = 4.0f/(_htail.aspect+2.0f);
 
     // estimate vertical tail area
-    _vtail_area = _wing_area * aircraft->get_vtail_area();
+    if (_vtail.area == 0) {
+        _vtail.area = _wing.area * aircraft->get_vtail_area();
+    }
 
     // estimate distance from CG to vertical tail aero center
-    _vtail_arm = _length * aircraft->get_vtail_arm();
+    if (_vtail.arm == 0) {
+        _vtail.arm = _length * aircraft->get_vtail_arm();
+    }
+
+    float vt_w = 0.15f; // sqrtf(_vtail.area / _wing.area*0.5f);
+    if (_vtail.span == 0) {
+        _vtail.span = vt_w * _wing.span;
+    }
+    if (_vtail.aspect == 0) {
+        _vtail.aspect = 1.7f;	// vt_w * _wing.aspect;
+    }
+    if (_vtail.taper == 0) {
+        _vtail.taper = 0.7f;
+    }
+
+    TR = _vtail.taper;
+    _vtail.chord_mean = 0.75f*_vtail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
+    _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
 
 //***** EMPTY WEIGHT *********************************
 
     // estimate empty weight, based on max weight
-    _empty_weight = _max_weight * aircraft->get_empty_weight();
-
+    if (_empty_weight == 0) {
+        _empty_weight = _max_weight * aircraft->get_empty_weight();
+    }
 
 //***** MOMENTS OF INERTIA ******************************
 
@@ -246,24 +335,22 @@ bool Aeromatic::fdm()
         const float *R = aircraft->get_roskam();
 
         // These are for an empty airplane
-        _inertia[X] = slugs * powf((R[X] * _wing_span / 2), 2);
+        _inertia[X] = slugs * powf((R[X] * _wing.span / 2), 2);
         _inertia[Y] = slugs * powf((R[Y] * _length / 2), 2);
-        _inertia[Z] = slugs * powf((R[Z] * ((_wing_span + _length)/2)/2), 2);
+        _inertia[Z] = slugs * powf((R[Z] * ((_wing.span + _length)/2)/2), 2);
     }
 
 //***** CG LOCATION ***********************************
 
-    float cg_loc[3];
-    cg_loc[X] = (_length - _htail_arm) * FEET_TO_INCH;
-    cg_loc[Y] = 0;
-    cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
+    _cg_loc[X] = (_length - _htail.arm) * FEET_TO_INCH;
+    _cg_loc[Y] = 0;
+    _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
 //***** AERO REFERENCE POINT **************************
 
-    float aero_rp[3];
-    aero_rp[X] = cg_loc[X];
-    aero_rp[Y] = 0;
-    aero_rp[Z] = 0;
+    _aero_rp[X] = _cg_loc[X];
+    _aero_rp[Y] = 0;
+    _aero_rp[Z] = 0;
 
 //***** PILOT EYEPOINT *********************************
 
@@ -279,16 +366,16 @@ bool Aeromatic::fdm()
     // A point mass will be placed at the CG weighing
     // 1/2 of the usable aircraft load.
     float payload_loc[3];
-    payload_loc[X] = cg_loc[X];
-    payload_loc[Y] = cg_loc[Y];
-    payload_loc[Z] = cg_loc[Z];
+    payload_loc[X] = _cg_loc[X];
+    payload_loc[Y] = _cg_loc[Y];
+    payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
 
 //***** SYSTEMS ***************************************
     for (unsigned i=0; i<systems.size(); ++i)
     {
         if (systems[i]->enabled()) {
-            systems[i]->set(cg_loc);
+            systems[i]->set(_cg_loc);
         }
     }
 
@@ -367,7 +454,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.31 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.49 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -397,16 +484,23 @@ bool Aeromatic::fdm()
         file << "multi-engine prop transport" << std::endl;
         break;
     }
+    file << "    stall speed:   " << _stall_speed << "kts" << std::endl;
     file << "    max weight:    " << _max_weight << " lb" << std::endl;
-    file << "    wing span:     " << _wing_span << " ft" << std::endl;
     file << "    length:        " << _length << " ft" << std::endl;
-    file << "    wing area:     ";
+    file << "    wing: " << std::endl;
+    file << "     span:         " << _wing.span << " ft" << std::endl;
+    file << "     area:         ";
     if (wingarea_input) {
-        file << _wing_area << " sq-ft" << std::endl;
+        file << _wing.area << " sq-ft" << std::endl;
     } else {
         file << "unspecified" << std::endl;
     }
-    file << "    aspect ratio:  " << _aspect_ratio << ":1" << std::endl;
+    file << "     chord:        " << _wing.chord << " ft" << std::endl;
+    file << "     aspect ratio: " << _wing.aspect << ":1" << std::endl;
+    file << "     taper ratio:  " << _wing.taper << ":1" << std::endl;
+    file << "     incidence:    " << _wing.incidence << " degrees" << std::endl;
+    file << "     dihedral:     " << _wing.dihedral << " degrees" << std::endl;
+    file << "     sweep:        " << _wing.sweep << " degrees" << std::endl;
     file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
@@ -426,25 +520,26 @@ bool Aeromatic::fdm()
     file << "    CL-0:          " << _CL0 << std::endl;
     file << "    CL-max:        " << _CLmax[0] << std::endl;
     file << "    CD-0:          " << _CD0 << std::endl;
-    file << "    K:             " << _K << std::endl;
+    file << "    K:             " << _Kdi << std::endl;
+    file << "    Mcrit:         " << _Mcrit << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
 
 //***** METRICS **********************************
 
     file << " <metrics>" << std::endl;
-    file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing_area << " </wingarea>" << std::endl;
-    file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing_span << " </wingspan>" << std::endl;
-    file << "   <wing_incidence>       " << std::setw(8) << _wing_incidence << " </wing_incidence>" << std::endl;
-    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing_chord << " </chord>" << std::endl;
-    file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail_area << " </htailarea>" << std::endl;
-    file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail_arm << " </htailarm>" << std::endl;
-    file << "   <vtailarea  unit=\"FT2\">" << std::setw(8) << _vtail_area << " </vtailarea>" << std::endl;
-    file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail_arm << " </vtailarm>" << std::endl;
+    file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing.area << " </wingarea>" << std::endl;
+    file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing.span << " </wingspan>" << std::endl;
+    file << "   <wing_incidence>       " << std::setw(8) << _wing.incidence << " </wing_incidence>" << std::endl;
+    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing.chord << " </chord>" << std::endl;
+    file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail.area << " </htailarea>" << std::endl;
+    file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail.arm << " </htailarm>" << std::endl;
+    file << "   <vtailarea  unit=\"FT2\">" << std::setw(8) << _vtail.area << " </vtailarea>" << std::endl;
+    file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail.arm << " </vtailarm>" << std::endl;
     file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << aero_rp[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << aero_rp[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << aero_rp[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _aero_rp[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _aero_rp[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _aero_rp[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <location name=\"EYEPOINT\" unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << eyept_loc[X] << " </x>" << std::endl;
@@ -464,9 +559,9 @@ bool Aeromatic::fdm()
     file << "   <izz unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Z] << " </izz>" << std::endl;
     file << "   <emptywt unit=\"LBS\" >  " << std::setw(8) << _empty_weight << " </emptywt>" << std::endl;
     file << "   <location name=\"CG\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << cg_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << cg_loc[Z] << " </z>" << std::endl;
+    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << _cg_loc[Y] << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <pointmass name=\"Payload\">" << std::endl;
     file << "    <description> " << _payload << " LBS should bring model up to entered max weight </description>" << std::endl;

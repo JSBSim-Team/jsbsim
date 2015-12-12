@@ -8,19 +8,19 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #ifndef __AIRCRAFT_H
 #define __AIRCRAFT_H
@@ -572,44 +572,91 @@ public:
     bool _metric;
 
     /* performance, weight and balance */
+    float _aero_rp[3];
+    float _cg_loc[3];
     float _stall_speed;
+    float _stall_weight;
     float _max_weight;
     float _empty_weight;
     float _inertia[3];                  // xx, yy, zz
 
     /* geometry */
     float _length;
-    unsigned _wing_shape;
-    float _wing_span;
-    float _wing_area;
-    float _wing_chord;
-    float _wing_incidence;
-    float _wing_dihedral;
-    float _wing_sweep;
-    float _htail_area;
-    float _htail_arm;
-    float _vtail_area;
-    float _vtail_arm;
-
-    float _aspect_ratio;
-    float _taper_ratio;
     float _payload;
+
+    int _user_wing_data;
+    struct _lift_device_t
+    {
+        _lift_device_t() :
+            shape(STRAIGHT),
+            arm(0),
+            span(0),
+            area(0),
+            aspect(0),
+            taper(1.0f),
+            chord(0),
+            incidence(0),
+            dihedral(0),
+            sweep(0),
+            sweep_le(0),
+            efficiency(0),
+            thickness(0),
+            flap_ratio(0),
+            Ktf(0),
+            twist(0),
+            camber(0)
+        {}
+
+        // Inputs
+        unsigned shape;
+        float arm;
+        float span;
+        float area;
+        float aspect;	// ratio
+        float taper;	// ratio
+        float chord;	// root
+        float incidence;
+        float dihedral;
+        float sweep;
+        float sweep_le;	// sweep leading edge
+        float efficiency;
+        float thickness;
+        float flap_ratio;
+
+        // *** currently unused **
+        float twist;
+        float camber;
+
+        // Calculated
+        float chord_mean;
+        float de_da;
+
+        // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
+        float Ktf;
+    } _lift_device;
+
+    _lift_device_t _wing;
+    _lift_device_t _htail;
+    _lift_device_t _vtail;
 
     /* array index, can not be greater than 4 */
     unsigned _no_engines;
+    bool _wing_mounted_engines;
 
 public:
     /* Coefficients */
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
-    float _CL0, _CLde;
-    float _CD0, _K, _CDde, _CDbeta, _CDMcrit;
-    float _CYbeta;
+    float _CL0, _CLde, _CLq, _CLadot;
+    float _CD0, _CDde, _CDbeta;
+    float _Kdi, _Mcrit;
+    float _CYbeta, _CYr, _CYp, _CYdr;
     float _Clbeta, _Clp, _Clr, _Clda, _Cldr;
     float _Cmalpha, _Cmde, _Cmq, _Cmadot;
-    float _Cnbeta, _Cnr, _Cndr, _Cnda;
+    float _Cnbeta, _Cnr, _Cnp, _Cndr, _Cnda;
 
 public:
     static char const* _estimate;
+    float _CLaw[3], _CLah[3], _CLav[3];
 };
 
 } /* namespace Aeromatic */

@@ -30,19 +30,31 @@
       <set name="ap/heading-setpoint-select" value="0"/>
       <set name="ap/heading_hold" value="1"/>
       <set name="ap/active-waypoint" value="0"/>
-      <notify/>
+      <notify format="kml">
+        <property caption="Latitude       "> position/lat-geod-deg </property>
+        <property caption="Longitude      "> position/long-gc-deg </property>
+        <property caption="Airspeed (keas)"> velocities/ve-kts </property>
+      </notify>
     </event>
     
     <event name="Set altitude for 1,000 ft.">
       <condition>velocities/vc-fps ge 145.0</condition>
       <set name="ap/altitude_hold" value="1"/>
-      <notify/>
+      <notify format="kml">
+        <property caption="Latitude       "> position/lat-geod-deg </property>
+        <property caption="Longitude      "> position/long-gc-deg </property>
+        <property caption="Airspeed (keas)"> velocities/ve-kts </property>
+      </notify>
     </event>
     
     <event name="Raise landing gear">
       <condition>position/h-agl-ft  ge  40</condition>
       <set name="gear/gear-cmd-norm" value="0"/>
-      <notify/>
+      <notify format="kml">
+        <property caption="Latitude       "> position/lat-geod-deg </property>
+        <property caption="Longitude      "> position/long-gc-deg </property>
+        <property caption="Airspeed (keas)"> velocities/ve-kts </property>
+      </notify>
     </event>
     
     <event name="Head to first waypoint">
@@ -53,8 +65,11 @@
       <condition>position/h-agl-ft  ge  800</condition>
       <set name="ap/heading-setpoint-select" value="1"/>
       <set name="ap/active-waypoint" value="1"/>
-      <notify>
-        <property>guidance/wp-distance</property>
+      <notify format="kml">
+        <property caption="Latitude        "> position/lat-geod-deg </property>
+        <property caption="Longitude       "> position/long-gc-deg  </property>
+        <property caption="Airspeed (keas) "> velocities/ve-kts     </property>
+        <property caption="Distance to WP  "> guidance/wp-distance  </property>
       </notify>
     </event>
     
@@ -68,7 +83,11 @@
         ap/active-waypoint eq 5
       </condition>
       <set name="simulation/terminate" value="1"/>
-      <notify/>
+      <notify format="kml">
+        <property caption="Latitude       "> position/lat-geod-deg </property>
+        <property caption="Longitude      "> position/long-gc-deg </property>
+        <property caption="Airspeed (keas)"> velocities/ve-kts </property>
+      </notify>
     </event>
 
     <event name="Set last waypoint">
@@ -84,8 +103,11 @@
       <set name="guidance/target_wp_latitude_rad" value="0.516512"/>
       <set name="guidance/target_wp_longitude_rad" value="-1.660922"/>
       <set name="ap/active-waypoint" value="5"/>
-      <notify>
-        <property>guidance/wp-distance</property>
+      <notify format="kml">
+        <property caption="Latitude        "> position/lat-geod-deg </property>
+        <property caption="Longitude       "> position/long-gc-deg  </property>
+        <property caption="Airspeed (keas) "> velocities/ve-kts     </property>
+        <property caption="Distance to WP  "> guidance/wp-distance  </property>
       </notify>
     </event>
 
@@ -102,8 +124,11 @@
       <set name="guidance/target_wp_latitude_rad" value="0.511661"/>
       <set name="guidance/target_wp_longitude_rad" value="-1.653510"/>
       <set name="ap/active-waypoint" value="4"/>
-      <notify>
-        <property>guidance/wp-distance</property>
+      <notify format="kml">
+        <property caption="Latitude        "> position/lat-geod-deg </property>
+        <property caption="Longitude       "> position/long-gc-deg  </property>
+        <property caption="Airspeed (keas) "> velocities/ve-kts     </property>
+        <property caption="Distance to WP  "> guidance/wp-distance  </property>
       </notify>
     </event>
 
@@ -119,8 +144,11 @@
       <set name="guidance/target_wp_latitude_rad" value="0.507481"/>
       <set name="guidance/target_wp_longitude_rad" value="-1.660062"/>
       <set name="ap/active-waypoint" value="3"/>
-      <notify>
-        <property>guidance/wp-distance</property>
+      <notify format="kml">
+        <property caption="Latitude        "> position/lat-geod-deg </property>
+        <property caption="Longitude       "> position/long-gc-deg  </property>
+        <property caption="Airspeed (keas) "> velocities/ve-kts     </property>
+        <property caption="Distance to WP  "> guidance/wp-distance  </property>
       </notify>
     </event>
     
@@ -136,8 +164,11 @@
       <set name="guidance/target_wp_latitude_rad" value="0.517533"/>
       <set name="guidance/target_wp_longitude_rad" value="-1.663076"/>
       <set name="ap/active-waypoint" value="2"/>
-      <notify>
-        <property>guidance/wp-distance</property>
+      <notify format="kml">
+        <property caption="Latitude        "> position/lat-geod-deg </property>
+        <property caption="Longitude       "> position/long-gc-deg  </property>
+        <property caption="Airspeed (keas) "> velocities/ve-kts     </property>
+        <property caption="Distance to WP  "> guidance/wp-distance  </property>
       </notify>
     </event>
     

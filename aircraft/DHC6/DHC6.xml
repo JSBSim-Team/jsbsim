@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.21 2014/02/09 10:36:32 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.23 2015/12/08 13:31:48 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
@@ -323,18 +323,10 @@
         </channel>
         <channel name="Thrust">
             <summer name="fcs/engine-thrust-lbs">
-                <input>propulsion/engine[0]/thrust-lbs</input>
-                <input>propulsion/engine[1]/thrust-lbs</input>
-            </summer>
-            <aerosurface_scale name="fcs/engine-thrust-control">
-                <input>fcs/engine-thrust-lbs</input>
-                <range>
-                    <min>0.0</min>
-                    <max>0.0001004</max>
-                    <!-- 0.26/(1295+1295): CTmax = 0.26, 1295 lbs per engine -->
-                </range>
+                <input>propulsion/engine[0]/thrust-coefficient</input>
+                <input>propulsion/engine[1]/thrust-coefficient</input>
                 <output>fcs/engine-thrust-coefficient</output>
-            </aerosurface_scale>
+            </summer>
         </channel>
     </flight_control>
  
@@ -765,20 +757,17 @@
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
                           <tableData>
-                                       0.00      40.00
-                             -0.3491   0.0000    0.0000
-                             -0.2618   0.0013    0.0489
-                             -0.1745   0.0097    0.0792
-                             -0.0873   0.0384    0.0467
-                              0.0000   0.0411    0.0879
-                              0.0873   0.0598    0.2875
-                              0.1745   0.1179    0.3201
-                              0.2618   0.1803    0.0000
-                              0.3491   0.1452    0.0000
-                              0.4363   0.0000    0.0000
-                              0.5236   0.0000    0.0000
-                              0.6109   0.0000    0.0000
-                              0.6981   0.0000    0.0000
+                                       0.00    40.00
+                            -0.3491    0.0000   0.0000
+                            -0.2618    0.0025   0.0941
+                            -0.1745    0.0187   0.1523
+                            -0.0873    0.0739   0.0898
+                             0.0000    0.0791   0.1691
+                             0.0873    0.1150   0.5529
+                             0.1745    0.2268   0.6156
+                             0.2618    0.3468   0.0000
+                             0.3491    0.2793   0.0000
+                             0.4363    0.0000   0.0000
                           </tableData>
                       </table>
                 </product>

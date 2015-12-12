@@ -8,19 +8,19 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <sstream>
 #include <iomanip>
@@ -75,7 +75,7 @@ void LandingGear::set(const float *cg_loc)
     }
 
     // set main gear lateral location
-    _gear_loc[MAIN][Y] = (_aircraft->_wing_span * _aircraft->get_gear_loc()) * FEET_TO_INCH;
+    _gear_loc[MAIN][Y] = (_aircraft->_wing.span * _aircraft->get_gear_loc()) * FEET_TO_INCH;
 
     // set nose gear location
     _gear_loc[NOSE][X] = _aircraft->_length * 0.13f * FEET_TO_INCH;
@@ -195,7 +195,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << -_aircraft->_wing_span/2 << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << -_aircraft->_wing.span/2 << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
@@ -207,7 +207,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << (_aircraft->_wing_span/2) << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << (_aircraft->_wing.span/2) << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;

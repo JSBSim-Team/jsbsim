@@ -64,8 +64,6 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         bool SetOutputFileName(int n, string fname)
         string GetOutputFileName(int n)
         void DoTrim(int mode) except +
-        void DoSimplexTrim(int mode) except +
-        void DoLinearization(int mode)
         void DisableOutput()
         void EnableOutput()
         void Hold()
@@ -390,27 +388,6 @@ cdef class FGFDMExec:
             - tNone
         """
         self.thisptr.DoTrim(mode)
-
-    def do_simplex_trim(self, mode):
-        """
-        Executes simplex trimming in the selected mode.
-        @param mode Specifies how to trim:
-            - tLongitudinal=0
-            - tFull
-            - tGround
-            - tPullup
-            - tCustom
-            - tTurn
-            - tNone
-        """
-        self.thisptr.DoSimplexTrim(mode)
-
-    def do_linearization(self):
-        """
-        Executes linearization with state-space output
-            * You must trim first to get an accurate state-space model
-        """
-        self.thisptr.DoLinearization(0)
 
     def do_disable_output(self):
         """

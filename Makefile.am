@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-	autogen.sh JSBSim.xsd JSBSim.xsl JSBSim.vcproj JSBSim.vcxproj JSBSim.dox JSBSimMainLoopFlow.dot JSBSim.sln
+	autogen.sh JSBSim.xsd JSBSim.xsl JSBSim.vcproj JSBSim.vcxproj JSBSim.dox JSBSimMainLoopFlow.dot JSBSim.sln JSBSimSystem.xsd JSBSimPlot.xsd
 
 SUBDIRS	= src systems aircraft engine scripts data_output data_plot check_cases examples
 

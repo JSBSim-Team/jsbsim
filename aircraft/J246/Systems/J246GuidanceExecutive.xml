@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
-<system name="J246 Guidance Executive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimSystem.xsd">
+<system name="J246 Guidance Executive"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://jsbsim.sf.net/JSBSimSystem.xsd"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimSystem.xsd">
 
   <!--
   

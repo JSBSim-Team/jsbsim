@@ -8,19 +8,20 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+
 
 #ifndef __CONTROLS_H
 #define __CONTROLS_H
@@ -28,6 +29,7 @@
 #include <string>
 #include <vector>
 
+#include <Aircraft.h>
 #include <types.h>
 
 namespace Aeromatic
@@ -51,10 +53,7 @@ public:
     std::string pitch();
     std::string yaw();
 
-private:
-    float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
-    float _wing_sweep_le; 	// wing sweep at leading edge
-    float _e;			// Oswald Efficiency Factor
+    void _get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing);
 };
 
 /* Conventional Controls with Yaw Damper */

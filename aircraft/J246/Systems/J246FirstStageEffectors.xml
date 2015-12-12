@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <system name="J246 First Stage Effectors"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimSystem.xsd">
 
   <channel name="Pitch">
 

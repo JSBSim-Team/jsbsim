@@ -8,19 +8,19 @@
 // Copyright (C) 2003, David P. Culp <davidculp2@comcast.net>
 // Copyright (C) 2015 Erik Hofman <erik@ehofman.com>
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #ifndef __ENGINE_H
 #define __ENGINE_H
@@ -47,17 +47,19 @@ public:
         delete _thruster;
     }
 
+    virtual std::string system();
     virtual std::string engine() { return ""; }
 
     virtual std::string get_thruster() {
         return _thruster->get_name();
     }
 
-
 public:
     Propulsion *_propulsion;
     Thruster *_thruster;
     float _power;
+
+    int _mount_point[8];
 };
 
 class PistonEngine : public Engine
@@ -67,6 +69,16 @@ public:
     ~PistonEngine() {}
 
     std::string engine();
+
+    std::string lift() {
+        return _thruster->lift();
+    }
+    std::string pitch() {
+        return _thruster->pitch();
+    }
+    std::string roll() {
+        return _thruster->roll();
+    }
 
 public:
     float _max_rpm;
@@ -88,6 +100,16 @@ public:
 
     std::string engine();
 
+    std::string lift() {
+        return _thruster->lift();
+    }
+    std::string pitch() {
+        return _thruster->pitch();
+    }
+    std::string roll() {
+        return _thruster->roll();
+    }
+
 public:
     float _max_rpm;
     float _oapr;
@@ -96,7 +118,7 @@ public:
 private:
     bool _water_injection;
 
-    static float const _turboprop_eng_pwr_t[6][13];
+    static float const _eng_pwr_t[6][13];
 };
 
 
@@ -113,6 +135,8 @@ private:
     float _bypass_ratio;
     bool _injected;
     bool _augmented;
+
+    static float const _milthrust_t[8][8];
 };
 
 class RocketEngine : public Engine
@@ -188,7 +212,7 @@ public:
     Param* param_next();
 
     char _engine_name[PARAM_MAX_STRING+1];
-private:
+public:
     Engine *_propulsion[MAX_PROPULSION];
     unsigned _ptype;
 
