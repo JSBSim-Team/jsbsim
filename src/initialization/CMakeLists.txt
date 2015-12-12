@@ -1,16 +1,10 @@
 set(SOURCES FGInitialCondition.cpp
             FGTrim.cpp
-            FGTrimAxis.cpp
-            FGSimplexTrim.cpp
-            FGTrimmer.cpp
-            FGLinearization.cpp)
+            FGTrimAxis.cpp)
 
 set(HEADERS FGInitialCondition.h
             FGTrim.h
-            FGTrimAxis.h
-            FGSimplexTrim.h
-            FGTrimmer.h
-            FGLinearization.h)
+            FGTrimAxis.h)
 
 add_full_path_name(INITIALISATION_SRC "${SOURCES}")
 add_full_path_name(INITIALISATION_HDR "${HEADERS}")
