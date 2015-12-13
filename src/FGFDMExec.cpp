@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.183 2015/12/09 04:28:17 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.184 2015/12/13 07:54:48 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +152,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr) : Root(root)
   // this is to catch errors in binding member functions to the property tree.
   try {
     Allocate();
-  } catch ( string msg ) {
+  } catch (const string& msg ) {
     cout << "Caught error: " << msg << endl;
     exit(1);
   }
@@ -198,7 +198,7 @@ FGFDMExec::~FGFDMExec()
          FDMctr = 0;
       }
     }
-  } catch ( string msg ) {
+  } catch (const string& msg ) {
     cout << "Caught error: " << msg << endl;
   }
 
@@ -576,7 +576,7 @@ bool FGFDMExec::RunIC(void)
     if (IC->IsEngineRunning(n)) {
       try {
         propulsion->InitRunning(n);
-      } catch (string str) {
+      } catch (const string& str) {
         cerr << str << endl;
         return false;
       }
@@ -638,7 +638,7 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadScript(const string& script, double deltaT, const string initfile)
+bool FGFDMExec::LoadScript(const string& script, double deltaT, const string& initfile)
 {
   bool result;
 
@@ -664,9 +664,7 @@ bool FGFDMExec::LoadModel(const string& AircraftPath, const string& EnginePath, 
 
 bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 {
-  string token;
   string aircraftCfgFileName;
-  Element* element = 0L;
   bool result = false; // initialize result to false, indicating input file not yet read
 
   modelName = model; // Set the class modelName attribute
@@ -698,7 +696,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (IsChild) debug_lvl = saved_debug_lvl;
 
     // Process the fileheader element in the aircraft config file. This element is OPTIONAL.
-    element = document->FindElement("fileheader");
+    Element* element = document->FindElement("fileheader");
     if (element) {
       result = ReadFileHeader(element);
       if (!result) {
@@ -891,12 +889,11 @@ string FGFDMExec::GetPropulsionTankReport()
 void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 {
   struct PropertyCatalogStructure* pcsNew = new struct PropertyCatalogStructure;
-  int node_idx = 0;
 
   for (int i=0; i<pcs->node->nChildren(); i++) {
     string access="";
     pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
-    node_idx = pcs->node->getChild(i)->getIndex();
+    int node_idx = pcs->node->getChild(i)->getIndex();
     if (node_idx != 0) {
       pcsNew->base_string = CreateIndexedPropertyName(pcsNew->base_string, node_idx);
     }
@@ -1046,8 +1043,6 @@ bool FGFDMExec::ReadChild(Element* el)
   // Load the model given the aircraft name
   // reset debug level to prior setting
 
-  string token;
-
   struct childData* child = new childData;
 
   child->exec = new FGFDMExec(Root, FDMctr);
@@ -1130,18 +1125,16 @@ void FGFDMExec::DoTrim(int mode)
 {
   if (Constructing) return;
 
-  if (mode < 0 || mode > JSBSim::tNone) {
+  if (mode < 0 || mode > JSBSim::tNone)
     throw("Illegal trimming mode!");
-    return;
-  }
- 
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
-  if ( !trim.DoTrim() ) {
-    throw("Trim Failed");
-    return;
-  }
+  bool success = trim.DoTrim();
   trim.Report();
+
+  if (!success)
+    throw("Trim Failed");
+
   trim_completed = 1;
 }
 
