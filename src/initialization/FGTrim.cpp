@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.28 2015/09/28 20:50:41 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.29 2015/12/13 08:19:57 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -786,6 +786,7 @@ void FGTrim::setDebug(FGTrimAxis& axis) {
 
 void FGTrim::SetMode(TrimMode tt) {
     ClearStates();
+    fdmex->GetPropagate()->SetInitialState(&fgic);
     mode=tt;
     switch(tt) {
       case tFull:
