@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.101 2015/09/27 15:45:31 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.102 2015/12/13 08:16:00 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -897,7 +897,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   // Check to see if any engines are specified to be initialized in a running state
   Element* running_elements = document->FindElement("running");
   while (running_elements) {
-    enginesRunning &= 1 << int(running_elements->GetDataAsNumber());
+    enginesRunning |= 1 << int(running_elements->GetDataAsNumber());
     running_elements = document->FindNextElement("running");
   }
 
