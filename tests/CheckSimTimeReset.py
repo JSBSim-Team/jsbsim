@@ -35,10 +35,10 @@ class TestSimTimeReset(unittest.TestCase):
         fdm = CreateFDM(self.sandbox)
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         fdm.set_aircraft_path(aircraft_path)
-        fdm.load_model('ball')
+        fdm.load_model('c172x')
 
-        aircraft_path = os.path.join(self.sandbox.elude(aircraft_path), 'ball')
-        fdm.load_ic(os.path.join(aircraft_path, 'reset00.xml'), False)
+        aircraft_path = os.path.join(self.sandbox.elude(aircraft_path), 'c172x')
+        fdm.load_ic(os.path.join(aircraft_path, 'reset01.xml'), False)
         fdm.run_ic()
 
         self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'), 0.0)
