@@ -1,6 +1,6 @@
-set(SOURCES props.cxx propertyObject.cxx)
+set(SOURCES props.cxx)
 
-set(HEADERS props.hxx propertyObject.hxx)
+set(HEADERS props.hxx)
 
 add_full_path_name(PROPS_SRC "${SOURCES}")
 add_full_path_name(PROPS_HDR "${HEADERS}")
