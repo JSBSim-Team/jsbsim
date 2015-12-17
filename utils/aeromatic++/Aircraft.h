@@ -602,9 +602,11 @@ public:
             efficiency(0),
             thickness(0),
             flap_ratio(0),
-            Ktf(0),
             twist(0),
-            camber(0)
+            camber(0),
+            chord_mean(0),
+            de_da(0),
+            Ktf(0)
         {}
 
         // Inputs

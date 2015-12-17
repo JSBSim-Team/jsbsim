@@ -256,7 +256,7 @@ bool Aeromatic::fdm()
     if (_wing.thickness == 0)
     {
         // Hofman equation for t/c
-        float Ws = _stall_weight;
+//      float Ws = _stall_weight;
         float Vs = _stall_speed * KNOTS_TO_FPS;
         float sweep = _wing.sweep * DEG_TO_RAD;
         float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
@@ -454,7 +454,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.49 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.50 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

@@ -105,7 +105,7 @@ void CableControls::set(const float* cg_loc)
         float Vt = 2.8f*Vs;
         float rho = 0.0023769f;
         float Q = 0.5f*rho*Vt*Vt;
-        float g = 32.2f;
+//      float g = 32.2f;
 
         CL = W/Q/Sw;
 

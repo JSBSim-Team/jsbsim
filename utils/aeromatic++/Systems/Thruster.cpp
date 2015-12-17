@@ -243,7 +243,7 @@ std::string Propeller::pitch()
 
     Aeromatic* aircraft = _propulsion->_aircraft;
     float Sw = aircraft->_wing.area;
-    float AR = aircraft->_wing.aspect;
+//  float AR = aircraft->_wing.aspect;
     float lh = aircraft->_htail.arm;
     float Sh = aircraft->_htail.area;
     float cbarw = aircraft->_wing.chord_mean;
@@ -296,7 +296,7 @@ std::string Propeller::roll()
     Aeromatic* aircraft = _propulsion->_aircraft;
     float y = _prop_span_left - _diameter/2.0f;
     float k = y/(aircraft->_wing.span/2.0f);
-    float TR = aircraft->_wing.taper;
+//  float TR = aircraft->_wing.taper;
 
     // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
     float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
