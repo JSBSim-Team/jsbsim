@@ -594,7 +594,7 @@ public:
             area(0),
             aspect(0),
             taper(1.0f),
-            chord(0),
+            chord_mean(0),
             incidence(0),
             dihedral(0),
             sweep(0),
@@ -604,7 +604,6 @@ public:
             flap_ratio(0),
             twist(0),
             camber(0),
-            chord_mean(0),
             de_da(0),
             Ktf(0)
         {}
@@ -616,7 +615,7 @@ public:
         float area;
         float aspect;	// ratio
         float taper;	// ratio
-        float chord;	// root
+        float chord_mean;
         float incidence;
         float dihedral;
         float sweep;
@@ -630,7 +629,6 @@ public:
         float camber;
 
         // Calculated
-        float chord_mean;
         float de_da;
 
         // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
@@ -649,7 +647,7 @@ public:
     /* Coefficients */
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
     float _CL0, _CLde, _CLq, _CLadot;
-    float _CD0, _CDde, _CDbeta;
+    float _CD0, _CDde, _CDalpha, _CDbeta;
     float _Kdi, _Mcrit;
     float _CYbeta, _CYr, _CYp, _CYdr;
     float _Clbeta, _Clp, _Clr, _Clda, _Cldr;

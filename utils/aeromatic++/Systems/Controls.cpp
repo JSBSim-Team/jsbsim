@@ -30,6 +30,9 @@
  * http://aerostudents.com/files/flightDynamics/lateralStabilityDerivatives.pdf
  * http://aerostudents.com/files/flightDynamics/longitudinalStabilityDerivatives.pdf
  * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
+ *
+ * See also:
+ * http://www.flightlevelengineering.com/downloads/stab.pdf
  */
 
 #include <math.h>
@@ -97,7 +100,7 @@ void CableControls::set(const float* cg_loc)
     float dihedral = _aircraft->_wing.dihedral * DEG_TO_RAD;
     float sweep_le = _aircraft->_wing.sweep_le * DEG_TO_RAD;
     float sweep = _aircraft->_wing.sweep * DEG_TO_RAD;
-    float cbar = _aircraft->_wing.chord;
+    float cbarw = _aircraft->_wing.chord_mean;
     float AR = _aircraft->_wing.aspect;
     float TR = _aircraft->_wing.taper;
     if (Vs)
@@ -115,7 +118,7 @@ void CableControls::set(const float* cg_loc)
         if (_aircraft->_Mcrit == 0)
         {
             // *** Critical Mach based on wing geometry and stall speed ***
-            float TC = _aircraft->_wing.thickness/cbar;
+            float TC = _aircraft->_wing.thickness/cbarw;
 
             // Korn  equation
             float CS = cosf(sweep_le);
@@ -131,7 +134,6 @@ void CableControls::set(const float* cg_loc)
     // https://engineering.purdue.edu/~andrisan/Courses/AAE451%20Fall2000/mpx5
 
     float bw = _aircraft->_wing.span;
-    float cbarw = _aircraft->_wing.chord_mean;
     float deda = _aircraft->_wing.de_da;
 
     // *** Pitch moment ***
@@ -154,6 +156,10 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLadot = 2.0f*nh*CLah[0]*Vh*deda;
     _aircraft->_CLq = _aircraft->_CLadot/deda;
     _aircraft->_CLde = (Cltde*Sh/Sw)*2.0f/PI;
+
+    // drag
+    float Ew = _aircraft->_wing.efficiency;
+    _aircraft->_CDalpha = (2.0f*CL*_aircraft->_CLalpha[0])/(PI*AR*Ew);
 
     // pitch
     if (_aircraft->_user_wing_data > 0)
@@ -285,7 +291,7 @@ std::string CableControls::lift()
 
 std::string CableControls::drag()
 {
-    float CD0, K, Mcrit, CDbeta, CDde;
+    float CD0, CDalpha, K, Mcrit, CDbeta, CDde;
     std::stringstream file;
 
     CD0 = _aircraft->_CD0;
@@ -967,7 +973,7 @@ void CableControls::_get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing)
     float TR = wing.taper;
 
     // max thickness
-    float MT = 0.25f * wing.chord;
+    float MT = 0.25f * wing.chord_mean;
 
     // Required to calculate CLalpha_wing
     float TRC = (1.0f - TR)/(1.0f + TR);

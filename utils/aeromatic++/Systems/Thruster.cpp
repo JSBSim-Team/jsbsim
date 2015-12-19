@@ -114,6 +114,15 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
     _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch angle", _fixed_pitch));
 }
 
+/**
+ * Option for using blade element theory:
+ * http://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/propeller/prop1.html
+ *
+ * A simple propeller design with linear properties:
+ * http://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/propeller/propel.txt
+ * However with the inclusion of your own propeller geometry and section data
+ * a more accurate analysis of the specific propeller design can be obtained.
+ */
 void Propeller::set_thruster(float mrpm)
 {
     // find rpm which gives a tip mach of 0.88 (static at sea level)
