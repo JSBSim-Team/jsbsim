@@ -164,21 +164,16 @@ void Propeller::set_thruster(float mrpm)
     float weight = powf(_diameter, 2.8f) / 4.8f;
     float mass_prop = weight / 32.174f;		// Standard gravity
     float mass_hub = 0.1f * mass_prop;
-    float mass_blade = (0.9f * mass_prop) / _blades;
+    float mass_blade = (mass_prop - mass_hub) / _blades;
     float L = _diameter / 2;			// length each blade (feet)
-    float R = L * 0.1f;			// radius of hub (feet) 
+    float R = L * 0.1f;				// radius of hub (feet) 
     float ixx_blades = _blades * (0.33333f * mass_blade * L * L);
     float ixx_hub = 0.5f * mass_hub * R * R;
     _ixx = ixx_blades + ixx_hub;
 
-
     // Thruster effects on coefficients
     Aeromatic* aircraft = _propulsion->_aircraft;
-    float Swp = 0.9f*_diameter/aircraft->_wing.span;
-    float lt = aircraft->_aero_rp[X] - _propulsion->_thruster_loc[0][X];
-    if (lt) {
-        Swp *= aircraft->_wing.chord_mean/lt;
-    }
+    float Swp = 0.96f*_diameter/aircraft->_wing.span;
 
     _dCLT0 = aircraft->_CL0*Swp;
     _dCLTmax = aircraft->_CLmax[0]*Swp;

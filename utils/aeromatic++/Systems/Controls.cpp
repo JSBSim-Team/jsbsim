@@ -204,10 +204,11 @@ void CableControls::set(const float* cg_loc)
 
 #if 0
     // Sfus: Fuselage wetted area
+    float TC = _aircraft->_wing.thickness/cbarw;
     float k1 = 0.2f*TC; // 1.256f; // correction factor for wing thickness
     float k2 = 1.12f;		// fuselage fineness ratio correction factor
     float Cf = 0.006f;		// skin Friction Coefficient
-    float wings = Cf*(Sw+Sh+Sv)*2.04f*k1;
+    float fwings = Cf*(Sw+Sh+Sv)*2.04f*k1;
     float ffus   = Cf*Sfus*k2;
     _aircraft->_CD0 = (fwings+ffus)/Sw;
 #endif
@@ -291,22 +292,31 @@ std::string CableControls::lift()
 
 std::string CableControls::drag()
 {
-    float CD0, CDalpha, K, Mcrit, CDbeta, CDde;
+    float CD0, CDmax, CDalpha, K, Mcrit, CDbeta, CDde;
     std::stringstream file;
 
     CD0 = _aircraft->_CD0;
     K = _aircraft->_Kdi;
     Mcrit = _aircraft->_Mcrit;
+    CDalpha = _aircraft->_CDalpha;
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
 
     float AR = _aircraft->_wing.aspect;
-    float Aar_corr = 0.26f;  // 0.1f + 0.16f*(5.5f/AR);
     float sweep = _aircraft->_wing.sweep * DEG_TO_RAD;
     float Ew = _aircraft->_wing.efficiency;
 
+    float CL0 = _aircraft->_CL0;
+    float CLmax = _aircraft->_CLmax[0];
+    float CLalpha = _aircraft->_CLalpha[0];
+    float alpha = (CLmax-CL0)/CLalpha;
+
     CD0 = (1.0f - sinf(sweep)) * CD0;
     K = 1.0f/(PI * fabs(Ew) * AR);
+
+    float Sw = _aircraft->_wing.area;
+    float Sh = _aircraft->_htail.area;
+    CDmax = 1.28f * 1.1f*(Sw+(Sh/Sw))/Sw;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Drag_basic\">" << std::endl;
@@ -317,11 +327,11 @@ std::string CableControls::drag()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "             -1.57    1.5000" << std::endl;
-    file << "             " << std::setprecision(2) << (-Aar_corr) << "    " << std::setprecision(4) << (1.3f*CD0) << std::endl;
+    file << "             -1.57    " << (CDmax) << std::endl;
+    file << "             " << std::setprecision(2) << (-alpha) << "    " << std::setprecision(4) << (CD0 + alpha * CDalpha) << std::endl;
     file << "              0.00    " << (CD0) << std::endl;
-    file << "              " << std::setprecision(2) << (Aar_corr) << "    " << std::setprecision(4) << (1.3f*CD0) << std::endl;
-    file << "              1.57    1.5000" << std::endl;
+    file << "              " << std::setprecision(2) << (alpha) << "    " << std::setprecision(4) << (CD0 + alpha * CDalpha) << std::endl;
+    file << "              1.57    " << (CDmax) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
