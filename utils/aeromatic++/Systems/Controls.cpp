@@ -92,7 +92,6 @@ void CableControls::set(const float* cg_loc)
     _get_CLaw(CLah, _aircraft->_htail);
     _get_CLaw(CLav, _aircraft->_vtail);
 
-    float CL = 0.0f;
     float Sw = _aircraft->_wing.area;
     float W = _aircraft->_empty_weight + _aircraft->_payload;
     float Ws = _aircraft->_stall_weight;
@@ -103,15 +102,14 @@ void CableControls::set(const float* cg_loc)
     float cbarw = _aircraft->_wing.chord_mean;
     float AR = _aircraft->_wing.aspect;
     float TR = _aircraft->_wing.taper;
+
+    float Vt = (Vs > 1.0f) ? (2.8f*Vs) : 202.0f;	// approx. 120kts.
+    float rho = 0.0023769f;
+    float Q = 0.5f*rho*Vt*Vt;
+    float CL = W/Q/Sw;
+
     if (Vs)
     {
-        float Vt = 2.8f*Vs;
-        float rho = 0.0023769f;
-        float Q = 0.5f*rho*Vt*Vt;
-//      float g = 32.2f;
-
-        CL = W/Q/Sw;
-
         // *** CLmax based on wing geometry and stall speed ***
         _aircraft->_CLmax[0] = 2*Ws/(rho*Sw*Vs*Vs);
 
