@@ -645,6 +645,7 @@ public:
 
 public:
     /* Coefficients */
+    float _Re;
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
     float _CL0, _CLde, _CLq, _CLadot;
     float _CD0, _CDde, _CDalpha, _CDbeta;
