@@ -108,8 +108,6 @@ void CableControls::set(const float* cg_loc)
     float Q = 0.5f*rho*Vt*Vt;
     float CL = W/Q/Sw;
 
-    _aircraft->_Re = (0.0765f * Vs * cbarw)/ 1.983e-5f;
-
     if (Vs)
     {
         // *** CLmax based on wing geometry and stall speed ***
@@ -160,6 +158,9 @@ void CableControls::set(const float* cg_loc)
     float ih = ((CLh/CLah[0]) - (alpha*(1.0f-deda) - E0 + Ee*de));
     CL = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
     _aircraft->_CL0 = CL;
+
+    Vt = sqrtf(W/(0.5f*rho*CL*Sw));
+    _aircraft->_Re = (0.0765f * Vt * cbarw)/ 1.983e-5f;
 
     _aircraft->_CLalpha[0] = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
     _aircraft->_CLalpha[1] = CLaw[1];
