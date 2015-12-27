@@ -645,15 +645,15 @@ public:
 
 public:
     /* Coefficients */
-    float _Re;
+    float _Re[4];
     float _CLalpha[3], _CLmax[3];	// for mach 0, 1 and 2
     float _CL0, _CLde, _CLq, _CLadot;
-    float _CD0, _CDde, _CDalpha, _CDbeta;
+    float _CD0, _CDde, _CDalpha[4], _CDbeta;
     float _Kdi, _Mcrit;
-    float _CYbeta, _CYr, _CYp, _CYdr;
-    float _Clbeta, _Clp, _Clr, _Clda, _Cldr;
+    float _CYbeta, _CYr, _CYp[4], _CYdr;
+    float _Clbeta[4], _Clp, _Clr[4], _Clda, _Cldr;
     float _Cmalpha, _Cmde, _Cmq, _Cmadot;
-    float _Cnbeta, _Cnr, _Cnp, _Cndr, _Cnda;
+    float _Cnbeta, _Cnr, _Cnp[4], _Cndr, _Cnda;
 
 public:
     static char const* _estimate;
