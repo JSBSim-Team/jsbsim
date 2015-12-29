@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.29 2015/12/13 08:19:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.30 2015/12/29 13:44:39 ehofman Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -503,7 +503,11 @@ FGTrim::RotationParameters FGTrim::calcRotation(vector<ContactPoints>& contacts,
     double DistPlane = d0 * DotProduct(u, iter->normal) / length;
     // The coordinate of the point of intersection 'P' between the circle and
     // the ground is (0, DistPlane, alpha) in the basis (u, v, t)
-    double alpha = sqrt(sqrRadius - DistPlane * DistPlane);
+    double mag = sqrRadius - DistPlane * DistPlane;
+    if (mag < 0) {
+      cout << "FGTrim::calcRotation DistPlane^2 larger than sqrRadius" << endl;
+    }
+    double alpha = sqrt(max(mag, 0.0));
     FGColumnVector3 CP = alpha * t + DistPlane * v;
     // The transformation is now constructed: we can extract the angle using the
     // classical formulas (cosine is obtained from the dot product and sine from
