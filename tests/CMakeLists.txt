@@ -5,6 +5,7 @@ include(UseCython)
 set_source_files_properties(jsbsim.pyx PROPERTIES CYTHON_IS_CXX TRUE)
 
 # Build the Python module using Cython and the JSBSim library
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 cython_add_module(jsbsim jsbsim.pyx)
 target_link_libraries(jsbsim libJSBSim)
 

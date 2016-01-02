@@ -21,6 +21,9 @@ from libcpp.vector cimport vector
 
 import os, platform
 
+cdef extern from "ExceptionManagement.h":
+    cdef void convertJSBSimToPyExc()
+
 cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
     cdef cppclass c_FGPropulsion "JSBSim::FGPropulsion":
         c_FGPropulsion(c_FGFDMExec* fdm)
@@ -36,7 +39,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(int root, int fdmctr)
         void Unbind()
-        bool Run() except +
+        bool Run() except +convertJSBSimToPyExc
         bool RunIC() except +
         bool LoadModel(string model,
                        bool add_model_to_path)

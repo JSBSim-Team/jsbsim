@@ -182,7 +182,13 @@ class TestInitialConditions(unittest.TestCase):
 
             # Execute the first second of the script. This is to make sure that
             # the CSV file is open and the ICs have been written in it.
-            ExecuteUntil(fdm, 1.0)
+            try:
+                ExecuteUntil(fdm, 1.0)
+            except RuntimeError as e:
+                if e.args[0] == 'Trim Failed':
+                    self.fail("Trim failed in script %s" % (f,))
+                else:
+                    raise
 
             # Copies the CSV file content in a table
             ref = pd.read_csv(self.sandbox('check_csv_values.csv'))
