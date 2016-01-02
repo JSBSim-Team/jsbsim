@@ -53,7 +53,8 @@ public:
     std::string pitch();
     std::string yaw();
 
-    void _get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing);
+    std::string _print_vector(std::vector<float>& C);
+    void _get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_t &wing);
 };
 
 /* Conventional Controls with Yaw Damper */

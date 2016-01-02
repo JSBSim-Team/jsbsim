@@ -25,7 +25,7 @@
 /**
  * References:
  *
- * https://www.princeton.edu/~stengel/MAE331Lecture4.pdf
+ * http://www.princeton.edu/~stengel/MAE331Lectures.html
  * http://www.dept.aoe.vt.edu/~mason/Mason_f/ConfigAeroTransonics.pdf
  * http://aerostudents.com/files/flightDynamics/lateralStabilityDerivatives.pdf
  * http://aerostudents.com/files/flightDynamics/longitudinalStabilityDerivatives.pdf
@@ -43,6 +43,9 @@
 #include <types.h>
 #include <Aircraft.h>
 #include "Controls.h"
+
+#define MIN_ALPHA	(-10*DEG_TO_RAD)
+#define MAX_ALPHA	( 20*DEG_TO_RAD)
 
 namespace Aeromatic
 {
@@ -85,9 +88,9 @@ std::string Controls::comment()
 void CableControls::set(const float* cg_loc)
 {
     // *** CLalpha_wing based on wing geometry ***
-    float *CLaw = _aircraft->_CLaw;
-    float *CLah = _aircraft->_CLah;
-    float *CLav = _aircraft->_CLav;
+    std::vector<float>& CLaw = _aircraft->_CLaw;
+    std::vector<float>& CLah = _aircraft->_CLah;
+    std::vector<float>& CLav = _aircraft->_CLav;
     _get_CLaw(CLaw, _aircraft->_wing);
     _get_CLaw(CLah, _aircraft->_htail);
     _get_CLaw(CLav, _aircraft->_vtail);
@@ -133,31 +136,47 @@ void CableControls::set(const float* cg_loc)
 
     float bw = _aircraft->_wing.span;
     float deda = _aircraft->_wing.de_da;
+    float Sh = _aircraft->_htail.area;
+
+    _aircraft->_CLalpha.push_back(CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda));
+    _aircraft->_CLalpha.push_back(CLaw[1]);
+    _aircraft->_CLalpha.push_back(CLaw[2]);
 
     // *** Pitch moment ***
-    float Sh = _aircraft->_htail.area;
     float lh = _aircraft->_htail.arm;
     float Vh = lh*Sh/cbarw/Sw;
   
     float nh = _aircraft->_htail.efficiency;
     float Ee = _aircraft->_htail.flap_ratio;	// elevator
-    float cgx = -cg_loc[Z]*INCH_TO_FEET;
+    float dcgx = -(cg_loc[X] - _aircraft->_aero_rp[X])*INCH_TO_FEET;
     float ch = cbarw*sqrtf(Sh/Sw);
 
-    float Cmtde = CLah[0]/PI*(1.0f-Ee)*sqrtf(Ee-Ee*Ee);
-    float Cltde = ((CLah[0]/PI)*(acosf(1.0f-2.0f*Ee)+2.0f*sqrtf(Ee-Ee*Ee)));
+    // drag
+    float Sv = _aircraft->_vtail.area;
+
+    // Sfus: Fuselage wetted area
+    float TC = _aircraft->_wing.thickness/cbarw;
+    float k0 = 0.075f;
+    float k1 = 0.2f*TC; // 1.256f; // correction factor for wing thickness
+    float k2 = 1.12f;           // fuselage fineness ratio correction factor
+    float Cf = 0.006f;          // skin Friction Coefficient
+    float fwings = Cf*(Sw+Sh+Sv)*2.04f*k1;
+    float CD0w = fwings/Sw;
+//  float ffus   = Cf*Sfus*k2;
+//  float CD0f = ffus/Sw;
+//  _aircraft->_CD0 = CD0f + CD0w;
+    _aircraft->_CD0 *= (1.0f - sinf(sweep));
 
     // lift
+    float alpha = 0;
     float Ew = _aircraft->_wing.efficiency;
     float E0 = Ew*(CL/AR);
-    float alpha = 0;
     float de = 0;
     float CLh = W/Q/Sh;
     float a0w = _aircraft->_wing.incidence*DEG_TO_RAD;
     float iw = ((CL/CLaw[0]) + a0w - alpha);
     float ih = ((CLh/CLah[0]) - (alpha*(1.0f-deda) - E0 + Ee*de));
 
-    float Sv = _aircraft->_vtail.area;
     float lv = _aircraft->_vtail.arm;
     float Vv = Sv*lv/bw/Sw;
 
@@ -168,16 +187,27 @@ void CableControls::set(const float* cg_loc)
     float M2 = M*M;
 
     float dsdB = 0.0f;          // ds/dB
-    float CYbeta = -nv*Sv/Sw*CLav[0]*(1.0f+dsdB);
+    float CYbeta = -nv*(Sv/Sw)*CLav[0]*(1.0f+dsdB);
     float CYp_const = (AR+cosf(sweep))/(AR+4*cosf(sweep))*tanf(sweep);
     float Clr_const = 2.0f*lv*lv/bw/bw*CYbeta;
-    _aircraft->_CLalpha[0] = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
-    for (int i=3; i>=0; --i)
+
+    float CL0 = _aircraft->_CL0;
+    float CLalpha = _aircraft->_CLalpha[0];
+
+    float zw = -0.0f; // z-pos. wing: positive down
+    float zv = -1.0f; // z-pos. vertical tail:  positive down
+    float fus_diameter = AR/bw; // 0.1f*bw;
+    float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*fus_diameter)/(bw*bw));
+    float Clbvt = -(zv/bw)*CLah[0];
+
+    for (int i=0; i<4; ++i)
     {
         if (i == 3)
         {
-            CL = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
-            _aircraft->_CL0 = CL;
+            CL0 = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
+
+            _aircraft->_CL0 = CL = CL0;
+            _aircraft->_CDalpha.push_back(CLalpha*(2.0f*CL)/(PI*AR*Ew));
 
             Vt = sqrtf(W/(0.5f*rho*CL*Sw));
         }
@@ -185,34 +215,55 @@ void CableControls::set(const float* cg_loc)
         {
             if (i == 2) Vt = 1.33f*Vs;
             else if (i == 1) Vt = Vs;
-            else if (i == 0) Vt = 0.5f*Vs;
+            else if (i == 0) Vt = 10*KNOTS_TO_FPS; // 0.25f*Vs;
 
             Q = 0.5f*rho*Vt*Vt;
             CL = W/Q/Sw;
         }
-        _aircraft->_Re[i] = (0.0765f * Vt * cbarw)/ 1.983e-5f;
+        _aircraft->_Re.push_back((0.0765f * Vt * cbarw)/ 1.983e-5f);
 
-        _aircraft->_CDalpha[i] = _aircraft->_CLalpha[0]*(2.0f*CL)/(PI*AR*Ew);
-        _aircraft->_CYp[i] = -CL*CYp_const;
-        _aircraft->_Clbeta[i] = -((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CL*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f))));
-        _aircraft->_Clr[i] = ((CL/4.0f)-Clr_const);
-        _aircraft->_Cnp[i] = -CL/8.0f;
+        alpha = (CL-CL0)/CLalpha;
+        _aircraft->_alpha.push_back(alpha);
+
+        float CLmin = CL - (alpha-MIN_ALPHA)*CLalpha;
+        float CLmax = CL + (alpha+MAX_ALPHA)*CLalpha;
+
+        _aircraft->_CYp.push_back(-CL*CYp_const);
+        _aircraft->_Cnp.push_back(-CL/8.0f);
+//      _aircraft->_Clbeta.push_back(-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CL*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
+//      _aircraft->_Clr.push_back((CL/4.0f)-Clr_const);
+
+#if 1
+        float Cmin, Cmax;
+
+        // From Flight Dynamics by Robert F. Stengel page 99
+        Cmin = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmin*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
+        Cmax = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmax*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
+        _aircraft->_Clbeta.push_back(-Cmin - Clbwf - Clbvt);
+        _aircraft->_Clbeta.push_back(-Cmax - Clbwf - Clbvt);
+
+        Cmin = (CLmin/4.0f)-Clr_const;
+        Cmax = (CLmax/4.0f)-Clr_const;
+        _aircraft->_Clr.push_back(Cmin);
+        _aircraft->_Clr.push_back(Cmax);
+#endif
     }
 
-    _aircraft->_CLalpha[0] = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
-    _aircraft->_CLalpha[1] = CLaw[1];
-    _aircraft->_CLalpha[2] = CLaw[2];
-    _aircraft->_CLadot = 2.0f*nh*CLah[0]*Vh*deda;
-    _aircraft->_CLq = _aircraft->_CLadot/deda;
-    _aircraft->_CLde = (Cltde*Sh/Sw)*2.0f/PI;
+    _aircraft->_CLq = 2.0f*nh*Vh*CLah[0];
+    _aircraft->_CLadot = _aircraft->_CLq*deda;
+
+    float CLhde = ((CLah[0]/PI)*(acosf(1.0f-2.0f*Ee)+2.0f*sqrtf(Ee-Ee*Ee)));
+    _aircraft->_CLde = (CLhde*Sh/Sw)*2.0f/PI;
 
     // pitch
     if (_aircraft->_user_wing_data > 0)
     {
-        _aircraft->_Cmalpha =  CLaw[0]*(cgx/cbarw) - Vh*CLah[0]*(1.0f-deda);
-        _aircraft->_Cmadot = -_aircraft->_CLq*lh/cbarw*deda;
-        _aircraft->_Cmq = _aircraft->_Cmadot/deda;
-        _aircraft->_Cmde = (Sh*ch/Sw/cbarw*Cmtde - lh*Sh*Cltde/cbarw/Sw);
+        _aircraft->_Cmalpha =  CLaw[0]*(dcgx/cbarw) - Vh*CLah[0]*(1.0f-deda);
+        _aircraft->_Cmq = -_aircraft->_CLq*(lh/cbarw);
+        _aircraft->_Cmadot = -_aircraft->_CLadot*(lh/cbarw);
+
+        float Cmtde = CLah[0]/PI*(1.0f-Ee)*sqrtf(Ee-Ee*Ee);
+        _aircraft->_Cmde = (Sh*ch/Sw/cbarw*Cmtde - lh*Sh*CLhde/cbarw/Sw);
     }
 
     // side
@@ -222,23 +273,16 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CYdr = (Sv/Sw)*Cltdr;
 
     // roll
-    _aircraft->_Clp = -(CLaw[0]/12.0f)*(1.0f+3.0f*TR)/(1.0f+TR);
+    float TRh = _aircraft->_htail.taper;
+    float TRv = _aircraft->_vtail.taper;
+    _aircraft->_Clp = -(CLaw[0]/12.0f)*(1.0f+3.0f*TR)/(1.0f+TR)
+                      + (CLah[0]/12.0f)*(Sh/Sw)*(1.0f+3.0f*TRh)/(1.0f+TRh)
+                      + (CLav[0]/12.0f)*(Sv/Sw)*(1.0f+3.0f*TRh)/(1.0f+TRh);
 
     // yaw
-    _aircraft->_Cnbeta = nv*Vv*CLav[0]*(1+dsdB);
-    _aircraft->_Cnr = -2.0f*nv*Vv*(lv/bw)*CLav[0];
+    _aircraft->_Cnbeta = nv*Vv*CLav[0]*(1.0-dsdB);
+    _aircraft->_Cnr = -(k0*CL*CL + k1*CD0w) - 2.0f*nv*Vv*CLav[0]*(lv/bw);
     _aircraft->_Cndr = -Vv*Cltdr;
-
-#if 0
-    // Sfus: Fuselage wetted area
-    float TC = _aircraft->_wing.thickness/cbarw;
-    float k1 = 0.2f*TC; // 1.256f; // correction factor for wing thickness
-    float k2 = 1.12f;		// fuselage fineness ratio correction factor
-    float Cf = 0.006f;		// skin Friction Coefficient
-    float fwings = Cf*(Sw+Sh+Sv)*2.04f*k1;
-    float ffus   = Cf*Sfus*k2;
-    _aircraft->_CD0 = (fwings+ffus)/Sw;
-#endif
 
 #if 0
 printf("Cma: %f, Cmadot: %f, Cmq: %f, Cmde: %f\n",  _aircraft->_Cmalpha, _aircraft->_Cmadot, _aircraft->_Cmq, _aircraft->_Cmde);
@@ -318,13 +362,13 @@ std::string CableControls::lift()
 
 std::string CableControls::drag()
 {
-    float CD0, CDmax, CDalpha, K, Mcrit, CDbeta, CDde;
+    float CD0, CDi, CDmax, CDalpha, Mcrit, CDbeta, CDde;
     std::stringstream file;
 
     CD0 = _aircraft->_CD0;
-    K = _aircraft->_Kdi;
+    CDi = _aircraft->_Kdi;
     Mcrit = _aircraft->_Mcrit;
-    CDalpha = _aircraft->_CDalpha[3];
+    CDalpha = _aircraft->_CDalpha[0];
     CDbeta = _aircraft->_CDbeta;
     CDde = _aircraft->_CDde;
 
@@ -337,19 +381,13 @@ std::string CableControls::drag()
     float CLalpha = _aircraft->_CLalpha[0];
     float alpha = (CLmax-CL0)/CLalpha;
 
-    CD0 = (1.0f - sinf(sweep)) * CD0;
-    K = 1.0f/(PI * fabs(Ew) * AR);
+    CDi = 1.0f/(PI * fabs(Ew) * AR);
 
     float Sw = _aircraft->_wing.area;
     float Sh = _aircraft->_htail.area;
     CDmax = 1.28f * 1.1f*(Sw+(Sh/Sw))/Sw;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
-#if 0
-    for (int i=0; i<4; ++i) {
-        file << "    <!-- Re: " << _aircraft->_Re[i] << ", CDalpha = " << _aircraft->_CDalpha[i] << " -->" << std::endl;
-    }
-#endif
     file << "    <function name=\"aero/force/Drag_basic\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -374,7 +412,7 @@ std::string CableControls::drag()
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>aero/cl-squared</property>" << std::endl;
-    file << "           <value> " << (K) << " </value>" << std::endl;
+    file << "           <value> " << (CDi) << " </value>" << std::endl;
     file << "         </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
@@ -429,10 +467,10 @@ std::string CableControls::drag()
 std::string CableControls::side()
 {
     std::stringstream file;
-    float CYbeta, CYp, CYr, CYdr;
+    float CYbeta, CYr, CYdr;
 
     CYbeta = _aircraft->_CYbeta;
-    CYp = _aircraft->_CYp[3];
+//  CYp = _aircraft->_CYp[0];
     CYr = _aircraft->_CYr;
     CYdr = _aircraft->_CYdr;
 
@@ -446,10 +484,6 @@ std::string CableControls::side()
     file << "           <value> " << (CYbeta) << " </value>" << std::endl;
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
-    file << std::endl;
-    for (int i=0; i<4; ++i) {
-        file << "    <!-- Re: " << _aircraft->_Re[i] << ", CYp = " << _aircraft->_CYp[i] << " -->" << std::endl;
-    }
     file << "    <function name=\"aero/force/Side_roll_rate\">" << std::endl;
     file << "       <description>Side_force_due_to_roll_rate</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -457,7 +491,9 @@ std::string CableControls::side()
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>aero/bi2vel</property>" << std::endl;
     file << "           <property>velocities/p-aero-rad_sec</property>" << std::endl;
-    file << "           <value> " << (CYp) << " </value>" << std::endl;
+
+    file << _print_vector(_aircraft->_CYp);
+
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
@@ -487,19 +523,16 @@ std::string CableControls::side()
 
 std::string CableControls::roll()
 {
-    float Clbeta, Clp, Clr, Clda, Cldr;
+    float Clp, Clda, Cldr;
     std::stringstream file;
 
-    Clbeta = _aircraft->_Clbeta[3];
+//  Clbeta = _aircraft->_Clbeta[0];
     Clp = _aircraft->_Clp;
-    Clr = _aircraft->_Clr[3];
+//  Clr = _aircraft->_Clr[0];
     Clda = _aircraft->_Clda;
     Cldr = _aircraft->_Cldr;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
-    for (int i=0; i<4; ++i) {
-        file << "    <!-- Re: " << _aircraft->_Re[i] << ", Clbeta = " << _aircraft->_Clbeta[i] << " -->" << std::endl;
-    }
     file << "    <function name=\"aero/moment/Roll_beta\">" << std::endl;
     file << "       <description>Roll moment due to beta</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -507,7 +540,9 @@ std::string CableControls::roll()
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/beta-rad</property>" << std::endl;
-    file << "           <value> " << (Clbeta) << " </value>" << std::endl;
+
+    file << _print_vector(_aircraft->_Clbeta);
+
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
@@ -523,9 +558,6 @@ std::string CableControls::roll()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
-    for (int i=0; i<4; ++i) {
-        file << "    <!-- Re: " << _aircraft->_Re[i] << ", Clr = " << _aircraft->_Clr[i] << " -->" << std::endl;
-    }
     file << "    <function name=\"aero/moment/Roll_yaw\">" << std::endl;
     file << "       <description>Roll moment due to yaw rate</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -534,7 +566,9 @@ std::string CableControls::roll()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/bi2vel</property>" << std::endl;
     file << "           <property>velocities/r-aero-rad_sec</property>" << std::endl;
-    file << "           <value> " << (Clr) << " </value>" << std::endl;
+
+    file << _print_vector(_aircraft->_Clr);
+
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
@@ -637,13 +671,13 @@ std::string CableControls::pitch()
 
 std::string CableControls::yaw()
 {
-    float Cnbeta, Cndr, Cnda, Cnp, Cnr;
+    float Cnbeta, Cndr, Cnda, Cnr;
     std::stringstream file;
 
     Cnbeta = _aircraft->_Cnbeta;
     Cndr = _aircraft->_Cndr;
     Cnda = _aircraft->_Cnda;
-    Cnp = _aircraft->_Cnp[3];
+//  Cnp = _aircraft->_Cnp[0];
     Cnr = _aircraft->_Cnr;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
@@ -658,9 +692,6 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
-    for (int i=0; i<4; ++i) {
-        file << "    <!-- Re: " << _aircraft->_Re[i] << ", Cnp = " << _aircraft->_Cnp[i] << " -->" << std::endl;
-    }
     file << "    <function name=\"aero/moment/Yaw_rol_rate\">" << std::endl;
     file << "       <description>Yaw_moment_due_to_roll_rate</description>" << std::endl;
     file << "       <product>" << std::endl;
@@ -669,7 +700,9 @@ std::string CableControls::yaw()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/bi2vel</property>" << std::endl;
     file << "           <property>velocities/p-rad_sec</property>" << std::endl;
-    file << "           <value> " << (Cnp) << " </value>" << std::endl;
+
+    file << _print_vector(_aircraft->_Cnp);
+
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
@@ -1006,7 +1039,55 @@ std::string FlyByWire::system()
 
 char const* System::_supported = "Does the aircraft include this system?";
 
-void CableControls::_get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing)
+std::string CableControls::_print_vector(std::vector<float>& C)
+{
+    std::stringstream file;
+
+    file << std::fixed << std::showpoint;
+    if (C.size() == 1) {
+        file << "           <value> " << (C[0]) << " </value>" << std::endl;
+    }
+    else if (C.size() == 4)
+    {
+        file << "           <table>" << std::endl;
+        file << "             <independentVar lookup=\"row\">aero/Re</independentVar>" << std::endl;
+        file << "             <tableData>" << std::endl;
+        for (int i=0; i<4; ++i) {
+            file << std::setw(24) << int(_aircraft->_Re[i]) << std::setw(9) << std::setprecision(4) << C[i] << std::endl;
+        }
+        file << "             </tableData>" << std::endl;
+        file << "           </table>" << std::endl;
+    }
+    else
+    {
+        file << "           <table>" << std::endl;
+        file << "             <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
+        file << "             <independentVar lookup=\"column\">aero/Re</independentVar>" << std::endl;
+        file << "             <tableData>" << std::endl;
+        float Clra = (C[1] - C[0])/_aircraft->_alpha[1];
+        float alpha = MIN_ALPHA;
+        file << std::setw(24) << "";
+        for (int i=0; i<4; i++) {
+            file << std::setw(9) << int(_aircraft->_Re[i]);
+        }
+        for (int j=0; j<2; ++j)
+        {
+            file << std::endl << std::setprecision(4) << std::setw(24) << alpha;
+            for (int i=0; i<4; i++)
+            {
+                file << std::setw(9) << C[j+2*i];
+            }
+            alpha = MAX_ALPHA;
+        }
+        file << std::endl;
+        file << "             </tableData>" << std::endl;
+        file << "           </table>" << std::endl;
+    }
+
+    return file.str();
+}
+
+void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_t &wing)
 {
     // lift coefficient gradient over angle of attack in incompressible flow
     float CLalpha_ic = 1.0f;
@@ -1032,7 +1113,6 @@ void CableControls::_get_CLaw(float CLaw[3], Aeromatic::_lift_device_t &wing)
     float TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
     float AR2 = AR*AR;
-
     switch (wing.shape)
     {
     case ELLIPTICAL:
