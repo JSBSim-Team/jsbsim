@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.37 2015/02/27 20:36:47 bcoconni Exp $"
+#define ID_PISTON "$Id: FGPiston.h,v 1.38 2016/01/02 17:42:53 bcoconni Exp $"
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,7 @@ boostspeed they refer to:
     @author David Megginson (initial porting and additional code)
     @author Ron Jensen (additional engine code)
     @see Taylor, Charles Fayette, "The Internal Combustion Engine in Theory and Practice"
-    @version $Id: FGPiston.h,v 1.37 2015/02/27 20:36:47 bcoconni Exp $
+    @version $Id: FGPiston.h,v 1.38 2016/01/02 17:42:53 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,7 +351,6 @@ private:
   //
   // Inputs (in addition to those in FGEngine).
   //
-  double TotalDeltaT;        // Time in seconds between calls.
   double p_amb;              // Pascals
   double p_ram;              // Pascals
   double T_amb;              // degrees Kelvin

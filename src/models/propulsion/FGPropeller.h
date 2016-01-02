@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.25 2015/12/13 08:56:06 bcoconni Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.26 2016/01/02 17:42:53 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.25 2015/12/13 08:56:06 bcoconni Exp $
+    @version $Id: FGPropeller.h,v 1.26 2016/01/02 17:42:53 bcoconni Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -303,7 +303,6 @@ private:
   bool   Reversed;     // true, when propeller is reversed
   double Reverse_coef; // 0 - 1 defines AdvancePitch (0=MIN_PITCH 1=REVERSE_PITCH)
   bool   Feathered;    // true, if feather command
-  double deltaT;       // Time step
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
