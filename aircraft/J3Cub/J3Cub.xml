@@ -8,7 +8,7 @@
  <fileheader>
   <author> Erik Hofman using Aeromatic v 3.2.0 </author>
   <filecreationdate> 18 Dec 2015 </filecreationdate>
-  <version>$Revision: 1.2 $</version>
+  <version>$Revision: 1.3 $</version>
   <description> Models a J3Cub. </description>
   <note>
     This model was created using publicly available data, publicly available
@@ -79,19 +79,19 @@
    <vtailarea  unit="FT2">   10.20 </vtailarea>
    <vtailarm  unit="FT" >    13.40 </vtailarm>
    <location name="AERORP" unit="IN">
-     <x>   110.60 </x>
+     <x>     0.00 </x>
      <y>     0.00 </y>
-     <z>    17.00 </z>
+     <z>     0.00 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
-     <x>    34.97 </x>
-     <y>   -18.00 </y>
-     <z>    45.00 </z>
+     <x>    18.50 </x>
+     <y>     0.00 </y>
+     <z>   -11.81 </z>
    </location>
    <location name="VRP" unit="IN">
-     <x>     0.0 </x>
-     <y>     0.0 </y>
-     <z>     0.0 </z>
+     <x>   -13.78 </x>
+     <y>     0.00 </y>
+     <z>    -3.94 </z>
    </location>
  </metrics>
 
@@ -101,17 +101,17 @@
    <izz unit="SLUG*FT2">    871.03 </izz>
    <emptywt unit="LBS" >    765.00 </emptywt>
    <location name="CG" unit="IN">
-     <x>   110.60 </x>
+     <x>    -3.94 </x>
      <y>     0.00 </y>
-     <z>    -6.73 </z>
+     <z>   -22.83 </z>
    </location>
-   <pointmass name="Payload">
+   <pointmass name="Pilot">
     <description> 274.44 LBS should bring model up to max weight </description>
     <weight unit="LBS"> 137.22 </weight>
     <location name="POINTMASS" unit="IN">
-     <x>   110.60 </x>
+     <x>    20.87 </x>
      <y>     0.00 </y>
-     <z>    -6.73 </z>
+     <z>   -36.22 </z>
    </location>
   </pointmass>
  </mass_balance>
@@ -120,9 +120,9 @@
 
    <engine file="Continental A-65-8">
     <location unit="IN">
-      <x>    36.00 </x>
+      <x>   -56.30 </x>
       <y>     0.00 </y>
-      <z>     0.00 </z>
+      <z>   -25.98 </z>
     </location>
     <orient unit="DEG">
       <pitch>     0.00 </pitch>
@@ -134,9 +134,9 @@
     <thruster file="CM7445 MCCauley">
      <sense> 1 </sense>
      <location unit="IN">
-       <x>    36.00 </x>
+       <x>   -68.90 </x>
        <y>     0.00 </y>
-       <z>     0.00 </z>
+       <z>   -24.41 </z>
      </location>
      <orient unit="DEG">
        <pitch>     0.00 </pitch>
@@ -148,9 +148,9 @@
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x>   110.60 </x>
+       <x>     0.00 </x>
        <y>     0.00 </y>
-       <z>    17.00 </z>
+       <z>     0.00 </z>
      </location>
      <capacity unit="LBS"> 75.00 </capacity>
      <contents unit="LBS"> 65.00 </contents>
@@ -162,15 +162,15 @@
 
   <contact type="BOGEY" name="TAIL">
     <location unit="IN">
-      <x>   244.79 </x>
-      <y>     0.00 </y>
-      <z>   -22.14 </z>
+      <x> 189.37 </x>
+      <y>   0.00 </y>
+      <z> -33.86 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
     <rolling_friction> 0.02 </rolling_friction>
-    <spring_coeff  unit="LBS/FT">    1220.00 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC"> 610.00 </damping_coeff>
+    <spring_coeff  unit="LBS/FT">     220.00 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 110.00 </damping_coeff>
     <steerability> STEERABLE </steerability>
     <max_steer unit="DEG"> -30.00 </max_steer>
     <brake_group> NONE </brake_group>
@@ -179,15 +179,16 @@
 
   <contact type="BOGEY" name="LEFT_MAIN">
     <location unit="IN">
-      <x>   100.65 </x>
-      <y>   -35.43 </y>
-      <z>   -54.80 </z>
+      <x> -12.60 </x>
+      <y> -35.83 </y>
+      <z> -77.17   </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
     <rolling_friction> 0.02 </rolling_friction>
-    <spring_coeff  unit="LBS/FT">     1220.00 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC">  610.00 </damping_coeff>
+    <spring_coeff  unit="LBS/FT">     1000.00 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+    <damping_coeff_rebound unit="LBS/FT/SEC">850</damping_coeff_rebound>
     <max_steer unit="DEG">0</max_steer>
     <brake_group> LEFT </brake_group>
     <retractable> 0 </retractable>
@@ -195,15 +196,16 @@
 
   <contact type="BOGEY" name="RIGHT_MAIN">
     <location unit="IN">
-      <x>   100.65 </x>
-      <y>    35.43 </y>
-      <z>   -54.80 </z>
+      <x>  -12.60 </x>
+      <y>   35.83 </y>
+      <z>  -77.17 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
     <rolling_friction> 0.02 </rolling_friction>
-    <spring_coeff  unit="LBS/FT">     1220.00 </spring_coeff>
-    <damping_coeff unit="LBS/FT/SEC">  610.00 </damping_coeff>
+    <spring_coeff  unit="LBS/FT">     1000.00 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC">  500.00 </damping_coeff>
+    <damping_coeff_rebound unit="LBS/FT/SEC">850</damping_coeff_rebound>
     <max_steer unit="DEG">0</max_steer>
     <brake_group> RIGHT </brake_group>
     <retractable> 0 </retractable>
@@ -211,25 +213,25 @@
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
-     <x>   100.65 </x>
-     <y>  -211.62 </y>
-     <z>   -23.62 </z>
+     <x>     4.33 </x>
+     <y>  -209.45 </y>
+     <z>     0.00 </z>
     </location>
    <static_friction>  1 </static_friction>
    <dynamic_friction> 1 </dynamic_friction>
-   <spring_coeff unit="LBS/FT">      1220.00 </spring_coeff>
+   <spring_coeff unit="LBS/FT">      12200.00 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 1220.00 </damping_coeff>
   </contact>
 
   <contact type="STRUCTURE" name="RIGHT_WING">
     <location unit="IN">
-     <x>   100.65 </x>
-     <y>   211.62 </y>
-     <z>   -23.62 </z>
+     <x>     4.33 </x>
+     <y>   209.45 </y>
+     <z>     0.00 </z>
     </location>
    <static_friction>  1 </static_friction>
    <dynamic_friction> 1 </dynamic_friction>
-   <spring_coeff unit="LBS/FT">      1220.00 </spring_coeff>
+   <spring_coeff unit="LBS/FT">      12200.00 </spring_coeff>
    <damping_coeff unit="LBS/FT/SEC"> 1220.00 </damping_coeff>
   </contact>
 
@@ -346,10 +348,10 @@
           <table>
             <independentVar lookup="row">aero/alpha-rad</independentVar>
             <tableData>
-              -0.12  0.000
-               0.00  0.042
-               0.34  0.313
-               0.68  0.000
+              -0.22  0.000
+               0.00  0.068
+               0.31  0.313
+               0.62  0.000
             </tableData>
           </table>
       </product>
@@ -432,7 +434,6 @@
        <product>
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
-          <property>aero/function/kCDge</property>
           <table>
             <independentVar lookup="row">aero/alpha-rad</independentVar>
             <independentVar lookup="column">aero/Re</independentVar>
@@ -463,6 +464,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>aero/cl-squared</property>
+           <property>aero/function/kCDge</property>
            <value> 0.0485 </value>
          </product>
     </function>
@@ -571,9 +573,9 @@
             <independentVar lookup="row">aero/alpha-rad</independentVar>
             <tableData>
               -0.01  0.000
-               0.00 -0.015
-               0.34 -0.108
-               0.44  0.000
+               0.00  0.023
+               0.31  0.108
+               0.40  0.000
             </tableData>
           </table>
       </product>
@@ -749,8 +751,8 @@
            <table>
             <independentVar lookup="row">aero/Re</independentVar>
             <tableData>			<!-- Du Y -->
-               564033  -0.4738
-              1128067  -0.1184
+               341838  -2.1500
+              1128067  -0.1974
               1668183  -0.0531
               3707224  -0.0006
             </tableData>
