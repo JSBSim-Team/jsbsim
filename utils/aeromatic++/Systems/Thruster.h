@@ -117,8 +117,20 @@ private:
     float _prop_span_left;
     float _prop_span_right;
 
+    struct _performance_t {
+        _performance_t(float _J, float _CT, float _CP) :
+            J(_J), CT(_CT), CP(_CP) {}
+
+        float J;
+        float CT;
+        float CP;
+    };
+    std::vector<_performance_t> _performance;
+
     static float const _thrust_t[23][9];
     static float const _power_t[23][9];
+
+    void bladeElement();
 };
 
 class Nozzle : public Thruster

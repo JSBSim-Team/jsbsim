@@ -123,6 +123,88 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
  * However with the inclusion of your own propeller geometry and section data
  * a more accurate analysis of the specific propeller design can be obtained.
  */
+#define NUM_ELEMENTS	12
+void  Propeller::bladeElement()
+{
+    float dia = _diameter;
+    float RPM = _engine_rpm;
+
+    float chord = 0.10;      // max chord
+    float pitch = -3.0;
+    float hub = 65.0;        // pitch angle setting at 25% radius
+    float tip = 25.0;        // pitch angle setting at tip
+
+    float R = dia/2.0;
+    float xt = R;
+    float xs = 0.1*R;
+    float rho = 1.225;
+    float n = RPM/60.0;
+    float omega = n*2.0*PI;
+    float coef1 = (tip-hub)/(xt-xs);
+    float coef2 = hub - coef1*xs;
+    float rstep = (xt-xs)/(NUM_ELEMENTS-2);
+
+    float n2 = n*n;
+    float D4 = dia*dia*dia*dia;
+    float D5 = D4*dia;
+
+    float step = 0.05;
+    for (float J=0.1; J<2.4; J += step)
+    {
+        if (J > 1.36) step = 0.1;
+
+        float V = J*n*dia;
+        float thrust = 0.0;
+        float torque = 0.0;
+        for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
+        {
+            float rad = xs + i*rstep;
+            float theta = coef1*rad + coef2+pitch;
+            float th = theta/180.0*PI;
+            float a = 0.1;
+            float b = 0.01;
+            int finished = 0;
+            int sum = 1;
+
+            float DtDr, DqDr, tem1, tem2, anew, bnew;
+            while (finished == 0)
+            {
+                float V0 = V*(1+a);
+                float V2 = omega*rad*(1-b);
+                float phi = atan2(V0,V2);
+                float alpha = th-phi;
+                float cl = 6.2*alpha;
+                float cd = 0.008-0.003*cl+0.01*cl*cl;
+                float Vlocal = sqrt(V0*V0+V2*V2);
+
+                DtDr=0.5*rho*Vlocal*Vlocal*2.0*chord*(cl*cos(phi)-cd*sin(phi));
+                DqDr=0.5*rho*Vlocal*Vlocal*2.0*chord*rad*(cd*cos(phi)+cl*sin(phi));
+                tem1 = DtDr/(4.0*PI*rad*rho*V*V*(1+a));
+                tem2 = DqDr/(4.0*PI*rad*rad*rad*rho*V*(1+a)*omega);
+                anew = 0.5*(a+tem1);
+                bnew = 0.5*(b+tem2);
+                if (fabs(anew-a)<1.0e-5 && fabs(bnew-b)<1.0e-5) {
+                    finished=1;
+                }
+                a = anew;
+                b = bnew;
+                if (++sum > 500) {
+                    finished = 1;
+                }
+            }
+            thrust += DtDr*rstep;
+            torque += DqDr*rstep;
+        }
+
+        float power = 2.0*PI*n*torque;
+        float CT = 0.925*thrust/(rho*n2*D4);
+        float CP = fabs(power/(rho*n2*n*D5));
+
+        _performance_t entry(J, CT, CP);
+        _performance.push_back(entry);
+    }
+}
+
 void Propeller::set_thruster(float mrpm)
 {
     // find rpm which gives a tip mach of 0.88 (static at sea level)
@@ -200,6 +282,8 @@ void Propeller::set_thruster(float mrpm)
        _prop_span_left /= left;
        _prop_span_right /= right;
     }
+
+    bladeElement();
 }
 
 std::string Propeller::lift()
@@ -366,8 +450,19 @@ std::string Propeller::thruster()
     }
     file << std::endl;
 
+    file << std::fixed;
     if(_fixed_pitch)
     {
+        file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
+        file << "     <tableData>" << std::endl;
+#if 1
+        for (unsigned i=0; i<_performance.size(); ++i)
+        {
+            file << std::setw(10) << std::setprecision(2) << _performance[i].J;
+            file << std::setw(10) << std::setprecision(4) << _performance[i].CT;
+            file << std::endl;
+        }
+#else
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
         file << "       0.0   " << (_Ct0 * 1.090f) << std::endl;
@@ -382,6 +477,7 @@ std::string Propeller::thruster()
         file << "       1.0  " << (_Ct0 * -0.082f) << std::endl;
         file << "       1.2  " << (_Ct0 * -0.429f) << std::endl;
         file << "       1.4  " << (_Ct0 * -0.772f) << std::endl;
+#endif
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
         file << std::endl;
@@ -413,6 +509,14 @@ std::string Propeller::thruster()
     {
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
+#if 1
+        for (unsigned i=0; i<_performance.size(); ++i)
+        {
+            file << std::setw(10) << std::setprecision(2) << _performance[i].J;
+            file << std::setw(10) << std::setprecision(4) << _performance[i].CP;
+            file << std::endl;
+        }
+#else
         file << "       0.0   " << (_Cp0 * 1.025f) << std::endl;
         file << "       0.1   " << (_Cp0 * 1.025f) << std::endl;
         file << "       0.2   " << (_Cp0 * 1.000f) << std::endl;
@@ -427,6 +531,7 @@ std::string Propeller::thruster()
         file << "       1.4  " << (_Cp0 * -0.912f) << std::endl;
         file << "       1.6  " << (_Cp0 * -1.548f) << std::endl;
         file << "     </tableData>" << std::endl;
+#endif
         file << "  </table>" << std::endl;
     }
     else
