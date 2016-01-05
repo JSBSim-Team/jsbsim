@@ -129,7 +129,7 @@ void  Propeller::bladeElement()
     float dia = _diameter;
     float RPM = _engine_rpm;
 
-    float chord = 0.10;      // max chord
+    float max_chord = 0.10;  // max chord
     float pitch = -3.0;
     float hub = 65.0;        // pitch angle setting at 25% radius
     float tip = 25.0;        // pitch angle setting at tip
@@ -159,6 +159,8 @@ void  Propeller::bladeElement()
         for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
         {
             float rad = xs + i*rstep;
+            float r = 1.0 - rad/xt;
+            float chord = max_chord*(0.7 + 0.33*(pow(r,0.25)-pow(r,5)));
             float theta = coef1*rad + coef2+pitch;
             float th = theta/180.0*PI;
             float a = 0.1;
@@ -197,7 +199,7 @@ void  Propeller::bladeElement()
         }
 
         float power = 2.0*PI*n*torque;
-        float CT = 0.925*thrust/(rho*n2*D4);
+        float CT = thrust/(rho*n2*D4);
         float CP = fabs(power/(rho*n2*n*D5));
 
         _performance_t entry(J, CT, CP);

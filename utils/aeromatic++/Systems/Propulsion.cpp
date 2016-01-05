@@ -471,7 +471,7 @@ PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
 {
     _description.push_back("Piston Engine");
-    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _propulsion->_power, _aircraft->_metric, POWER));
    _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _thruster = new Propeller(p);
 }
@@ -482,8 +482,7 @@ std::string PistonEngine::engine()
 
     _thruster->set_thruster(_max_rpm);
 
-    Engine *propulsion = this;
-    float displacement = propulsion->_power *1.9f;
+    float displacement = _propulsion->_power *1.9f;
 
     // Guess the area of one piston (5.125/2)^2 * PI
     float stroke = 4.375f;
@@ -503,22 +502,22 @@ std::string PistonEngine::engine()
     file << "  Inputs:" << std::endl;
     file << "    name:           " << _propulsion->_engine_name << std::endl;
     file << "    type:           " << _description[0] <<  std::endl;
-    file << "    power:          " << _power << " hp" << std::endl;
+    file << "    power:          " << _propulsion->_power << " hp" << std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
     file << "<piston_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <minmp unit=\"INHG\">         10.0 </minmp>" << std::endl;
     file << "  <maxmp unit=\"INHG\">         28.5 </maxmp>" << std::endl;
     file << "    <displacement unit=\"IN3\"> " << displacement << " </displacement>" << std::endl;
-    file << "  <maxhp>        " << propulsion->_power << " </maxhp>" << std::endl;
+    file << "  <maxhp>        " << _propulsion->_power << " </maxhp>" << std::endl;
     file << "  <cycles>         4.0 </cycles>" << std::endl;
     file << "  <idlerpm>      700.0 </idlerpm>" << std::endl;
     file << "  <maxrpm>      2800.0 </maxrpm>" << std::endl;
     file << "  <sparkfaildrop>  0.1 </sparkfaildrop>" << std::endl;
     file << "  <volumetric-efficiency> 0.85 </volumetric-efficiency>" << std::endl;
     file << "  <man-press-lag> 0.1 </man-press-lag>" << std::endl;
-    file << "  <static-friction  unit=\"HP\"> " << (_power * 0.005f) << " </static-friction>" << std::endl;
-    file << "  <starter-torque> " << (_power * 0.8f) << " </starter-torque>" << std::endl;
+    file << "  <static-friction  unit=\"HP\"> " << (_propulsion->_power * 0.005f) << " </static-friction>" << std::endl;
+    file << "  <starter-torque> " << (_propulsion->_power * 0.8f) << " </starter-torque>" << std::endl;
     file << "  <starter-rpm> 1400 </starter-rpm>" << std::endl;
     file << " <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->" << std::endl;
     file << " <!--<bsfc>           0.45 </bsfc>-->" << std::endl;
@@ -547,7 +546,7 @@ TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _augmented(false)
 {
     _description.push_back("Turbine Engine");
-    _inputs.push_back(new Param("Engine mil. thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine mil. thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _propulsion->_power, _aircraft->_metric, THRUST));
     _inputs.push_back(new Param("Bypass ratio", "The bypass ratio is mainly used for calculating fuel consumption", _bypass_ratio));
     _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
     _inputs.push_back(new Param("Augmented?", "Does the engine have afterburner capability?", _augmented));
@@ -560,7 +559,7 @@ std::string TurbineEngine::engine()
     std::stringstream file;
 
     _thruster->set_thruster();
-    float max_thrust = _power;
+    float max_thrust = _propulsion->_power;
     if (_augmented) {
         max_thrust *= 1.5f;
     }
@@ -590,7 +589,7 @@ std::string TurbineEngine::engine()
     file << "  Inputs:" << std::endl;
     file << "    name:                    " << _propulsion->_engine_name << std::endl;
     file << "    type:                    " << _description[0] <<  std::endl;
-    file << "    thrust:                  " << _power << " lbf" << std::endl;
+    file << "    thrust:                  " << _propulsion->_power << " lbf" << std::endl;
     file << "    bypass ratio:            " << std::setprecision(3) << _bypass_ratio << std::setprecision(1) << ":1" << std::endl;
     file << "    overall pressure ratio:  " << _oapr << ":1" << std::endl;
     file << "    augmented?               " << (_augmented ? "yes" : "no") << std::endl;
@@ -598,13 +597,13 @@ std::string TurbineEngine::engine()
      file << std::endl;
     file << "  Outputs" << std::endl;
     file << "    tsfc:                    " << tsfc << std::endl;
-    file << "    engine weight:           " << (0.4054 * powf(_power, 0.9255f)) << " lbs" << std::endl;
-    file << "    engine length:           " << ((2.4077f * powf(_power, 0.3876f) * INCH_TO_FEET) * (_augmented ? 2.0f : 1.0f)) << " ft" << std::endl;
-    file << "    engine diameter:         " << (1.0827f * powf(_power, 0.4134f) * INCH_TO_FEET) << " ft" <<std::endl;
+    file << "    engine weight:           " << (0.4054 * powf(_propulsion->_power, 0.9255f)) << " lbs" << std::endl;
+    file << "    engine length:           " << ((2.4077f * powf(_propulsion->_power, 0.3876f) * INCH_TO_FEET) * (_augmented ? 2.0f : 1.0f)) << " ft" << std::endl;
+    file << "    engine diameter:         " << (1.0827f * powf(_propulsion->_power, 0.4134f) * INCH_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
     file << "<turbine_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << "  <milthrust> " << _power << " </milthrust>" << std::endl;
+    file << "  <milthrust> " << _propulsion->_power << " </milthrust>" << std::endl;
     if (_augmented) {
         file << "  <maxthrust> " << max_thrust << " </maxthrust>" << std::endl;
     }
@@ -721,7 +720,7 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _water_injection(false)
 {
     _description.push_back("Turboprop Engine");
-    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _propulsion->_power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _inputs.push_back(new Param("Overall pressure ratio", "Overall pressure ratio is used to finetune the estimated fuel consumption", _oapr));
     _inputs.push_back(new Param("Turbine inlet temperature", "Turbine inlet temperature is used to finetune the engine configuration", _itt));
@@ -751,16 +750,16 @@ std::string TurbopropEngine::engine()
 
     // calculate psfc in KG/SEC/KW
     float Ttet = _itt + 274.15f;	// in Kelvin
-    psfc = 2.56e-4f - logf(_power*HP_TO_KW * _oapr * Ttet)*1e-5f;
+    psfc = 2.56e-4f - logf(_propulsion->_power*HP_TO_KW * _oapr * Ttet)*1e-5f;
 
     // Convert psfc to LBS/HR/HP
     psfc *= 5918.3525f;
 
     // estimate thrust if given power in HP
-    float thrust = _power * 2.24f;
+    float thrust = _propulsion->_power * 2.24f;
 
     // Torque = Power * 5252 / RPM
-    float torque = 1.07f * _power * 5252.0f / max_rpm;
+    float torque = 1.07f * _propulsion->_power * 5252.0f / max_rpm;
 
     file.precision(1);
     file.flags(std::ios::right);
@@ -774,22 +773,22 @@ std::string TurbopropEngine::engine()
     file << "  Inputs:" << std::endl;
     file << "    name:                   " << _propulsion->_engine_name << std::endl;
     file << "    type:                   " << _description[0] <<  std::endl;
-    file << "    power:                  " << _power << " hp" << std::endl;
+    file << "    power:                  " << _propulsion->_power << " hp" << std::endl;
     file << "    inlet temperature:      " << _itt << " degrees C"<< std::endl;
     file << "    overall pressure ratio: " << _oapr << ":1" << std::endl;
     file << std::endl;
     file << "  Outputs:" << std::endl;
     file << "    psfc:                   " << std::setprecision(3) << psfc << std::setprecision(1) << " lbs/hr/hp" << std::endl;
-    file << "    engine weight:          " << (0.246f * _power * KG_TO_LBS) << " lbs" << std::endl;
-    file << "    engine length:          " << (0.1068f * powf(_power, 0.4094f) * METER_TO_FEET) << " ft" << std::endl;
-    file << "    engine diameter:        " << (0.1159f * powf(_power, 0.2483f) * METER_TO_FEET) << " ft" <<std::endl;
+    file << "    engine weight:          " << (0.246f * _propulsion->_power * KG_TO_LBS) << " lbs" << std::endl;
+    file << "    engine length:          " << (0.1068f * powf(_propulsion->_power, 0.4094f) * METER_TO_FEET) << " ft" << std::endl;
+    file << "    engine diameter:        " << (0.1159f * powf(_propulsion->_power, 0.2483f) * METER_TO_FEET) << " ft" <<std::endl;
     file << "-->" << std::endl;
     file <<std::endl;
 file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
     file << "  <milthrust unit=\"LBS\">       " << thrust << "   </milthrust>" << std::endl;
     file << "  <idlen1>                       60.0   </idlen1>" << std::endl;
     file << "  <maxn1>                       100.0   </maxn1>" << std::endl;
-    file << "  <maxpower unit=\"HP\">         " << std::setw(6) << _power << "   </maxpower>" << std::endl;
+    file << "  <maxpower unit=\"HP\">         " << std::setw(6) << _propulsion->_power << "   </maxpower>" << std::endl;
     file << "  <psfc unit=\"LBS/HR/HP\">         " << std::setprecision(3) << psfc << std::setprecision(1) << " </psfc>" << std::endl;
     file << "  <n1idle_max_delay>              1     </n1idle_max_delay>" << std::endl;
     file << "  <maxstartingtime>              20     </maxstartingtime>" << std::endl;
@@ -828,7 +827,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
         file << std::setw(9) << _eng_pwr_t[i][0] * max_rpm;
         for (unsigned j=1; j<13; ++j)
         {
-           file << std::fixed << std::setw(8) << std::setprecision(1) << (_eng_pwr_t[i][j] * _power);
+           file << std::fixed << std::setw(8) << std::setprecision(1) << (_eng_pwr_t[i][j] * _propulsion->_power);
         }
         file << std::endl;
     }
@@ -872,7 +871,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
 RocketEngine::RocketEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Rocket Engine");
-    _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _power, _aircraft->_metric, THRUST));
+    _inputs.push_back(new Param("Engine thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _propulsion->_power, _aircraft->_metric, THRUST));
     _thruster = new Nozzle(p);
 }
 
@@ -888,7 +887,7 @@ std::string RocketEngine::engine()
     file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGRocket" << std::endl;
     file << std::endl;
     file << "  Inputs:" << std::endl;
-    file << "    thrust:           " << _power << " lb" << std::endl;
+    file << "    thrust:           " << _propulsion->_power << " lb" << std::endl;
     file << std::endl;
     file << "  Outputs:" << std::endl;
     file << "    ISP (sea level)     400.0" << std::endl;
@@ -912,7 +911,7 @@ std::string RocketEngine::engine()
 ElectricEngine::ElectricEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Electric Engine");
-    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _power, _aircraft->_metric, POWER));
+    _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _propulsion->_power, _aircraft->_metric, POWER));
     _inputs.push_back(new Param("Maximum engine rpm", "The maximum rpm is used to calculate the propeller power and thrust tables", _max_rpm));
     _thruster = new Propeller(p);
 }
@@ -929,11 +928,11 @@ std::string ElectricEngine::engine()
     file << "  See: http://wiki.flightgear.org/JSBSim_Engines#FGElectric" << std::endl;
     file << std::endl;
     file << "  Inputs:" << std::endl;
-    file << "    power:          " << _power << " hp" << std::endl;
+    file << "    power:          " << _propulsion->_power << " hp" << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
     file << "<electric_engine name=\"" << _propulsion->_engine_name << "\">" << std::endl;
-    file << " <power unit=\"WATTS\">  " << (_power*HP_TO_KW*1000.0f) << " </power>" << std::endl;
+    file << " <power unit=\"WATTS\">  " << (_propulsion->_power*HP_TO_KW*1000.0f) << " </power>" << std::endl;
     file << "</electric_engine>" << std::endl;
     return file.str();
 }
