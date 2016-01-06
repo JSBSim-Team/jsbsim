@@ -105,7 +105,11 @@ std::string Nozzle::thruster()
 
 Propeller::Propeller(Propulsion *p) : Thruster(p),
     _fixed_pitch(true),
-    _diameter(8)
+    _diameter(8.0f),
+    _max_rpm(2100.0f),
+    _pitch_hub(73.0f),
+    _pitch_tip(18.0f),
+    _max_chord(0.18f)
 {
     strCopy(_thruster_name, "my_propeller");
 
@@ -122,6 +126,8 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
  * http://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/propeller/propel.txt
  * However with the inclusion of your own propeller geometry and section data
  * a more accurate analysis of the specific propeller design can be obtained.
+ *
+ * http://www.icas.org/ICAS_ARCHIVE/ICAS2010/PAPERS/434.PDF
  */
 #define NUM_ELEMENTS	12
 void  Propeller::bladeElement()
@@ -129,17 +135,16 @@ void  Propeller::bladeElement()
     float dia = _diameter;
     float RPM = _engine_rpm;
 
-    float max_chord = 0.10;  // max chord
-    float pitch = -3.0;
-    float hub = 65.0;        // pitch angle setting at 25% radius
-    float tip = 25.0;        // pitch angle setting at tip
+    float pitch = 0.0f;	// pitch of the propeller
+    float hub = _pitch_hub;
+    float tip = _pitch_tip;
 
-    float R = dia/2.0;
+    float R = dia/2.0f;
     float xt = R;
-    float xs = 0.1*R;
-    float rho = 1.225;
-    float n = RPM/60.0;
-    float omega = n*2.0*PI;
+    float xs = 0.1f*R;
+    float rho = 1.225f;
+    float n = RPM/60.0f;
+    float omega = 2.0f*PI*n;
     float coef1 = (tip-hub)/(xt-xs);
     float coef2 = hub - coef1*xs;
     float rstep = (xt-xs)/(NUM_ELEMENTS-2);
@@ -148,44 +153,70 @@ void  Propeller::bladeElement()
     float D4 = dia*dia*dia*dia;
     float D5 = D4*dia;
 
-    float step = 0.05;
-    for (float J=0.1; J<2.4; J += step)
+    float step = 0.05f;
+    for (float J=0.1f; J<2.4f; J += step)
     {
-        if (J > 1.36) step = 0.1;
+        if (J > 1.36f) step = 0.1f;
 
         float V = J*n*dia;
-        float thrust = 0.0;
-        float torque = 0.0;
+        float thrust = 0.0f;
+        float torque = 0.0f;
         for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
         {
             float rad = xs + i*rstep;
-            float r = 1.0 - rad/xt;
-            float chord = max_chord*(0.7 + 0.33*(pow(r,0.25)-pow(r,5)));
+            float r = 1.0f - rad/xt;
+#if 0
+            // Historic propeller
+            float chord = _max_chord*(0.25f + 0.9f*(pow(r,0.5f)-pow(r,5.0f)));
+#else
+            // modern propeller
+            float chord = _max_chord*(0.7f + 0.33f*(pow(r,0.25f)-pow(r,5.0f)));
+#endif
+            float TC = 0.2f*(0.1f + 0.9f*powf(r,2.5f));
+
             float theta = coef1*rad + coef2+pitch;
-            float th = theta/180.0*PI;
-            float a = 0.1;
-            float b = 0.01;
+            float th = theta*DEG_TO_RAD;
+            float a = 0.1f;
+            float b = 0.01f;
             int finished = 0;
             int sum = 1;
+
+            float eff = 0.69f;
+            float AR = _blades*rstep/chord;
+            float PAR = PI*AR;
+
+            float CL0 = -0.02f;
+            float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
+            float CD0 = 0.002448f*TC;
+            float CDa = -0.003f/0.8f; // 2.0f*CLa/(eff*PAR);
+            float CDi = 1.0f/(eff*PAR);
 
             float DtDr, DqDr, tem1, tem2, anew, bnew;
             while (finished == 0)
             {
-                float V0 = V*(1+a);
-                float V2 = omega*rad*(1-b);
-                float phi = atan2(V0,V2);
+                float V0 = V*(1.0f+a);
+                float V2 = omega*rad*(1.0f-b);
+                float phi = atan2f(V0,V2);
                 float alpha = th-phi;
-                float cl = 6.2*alpha;
-                float cd = 0.008-0.003*cl+0.01*cl*cl;
-                float Vlocal = sqrt(V0*V0+V2*V2);
+#if 0
+                float CL = 6.2f*alpha;
+                float CD = 0.008f - 0.003f*CL + 0.01f*CL*CL;
+#else
+                float CL = CL0 + CLa*alpha;
+                float CD = CD0 + CDa*alpha*CL + CDi*CL*CL;
+#endif
+                float CY = CL*cosf(phi) - CD*sinf(phi);
+                float CX = CD*cosf(phi) + CL*sinf(phi);
+                float Vlocal = sqrtf(V0*V0 + V2*V2);
+                float Vlocal2 = Vlocal*Vlocal;
 
-                DtDr=0.5*rho*Vlocal*Vlocal*2.0*chord*(cl*cos(phi)-cd*sin(phi));
-                DqDr=0.5*rho*Vlocal*Vlocal*2.0*chord*rad*(cd*cos(phi)+cl*sin(phi));
-                tem1 = DtDr/(4.0*PI*rad*rho*V*V*(1+a));
-                tem2 = DqDr/(4.0*PI*rad*rad*rad*rho*V*(1+a)*omega);
-                anew = 0.5*(a+tem1);
-                bnew = 0.5*(b+tem2);
-                if (fabs(anew-a)<1.0e-5 && fabs(bnew-b)<1.0e-5) {
+                DtDr = 0.5f*rho*Vlocal2*_blades*chord*CY;
+                DqDr = 0.5f*rho*Vlocal2*_blades*chord*rad*CX;
+                tem1 = DtDr/(4.0f*PI*rad*rho*V*V*(1.0f+a));
+                tem2 = DqDr/(4.0f*PI*rad*rad*rad*rho*V*(1.0f+a)*omega);
+                anew = 0.5f*(a+tem1);
+                bnew = 0.5f*(b+tem2);
+                if (fabsf(anew-a) < 1.0e-5f && fabsf(bnew-b) < 1.0e-5f) {
                     finished=1;
                 }
                 a = anew;
@@ -198,9 +229,9 @@ void  Propeller::bladeElement()
             torque += DqDr*rstep;
         }
 
-        float power = 2.0*PI*n*torque;
         float CT = thrust/(rho*n2*D4);
-        float CP = fabs(power/(rho*n2*n*D5));
+        float CQ = torque/(rho*n2*D5);
+        float CP = fabsf(2.0f*PI*CQ);
 
         _performance_t entry(J, CT, CP);
         _performance.push_back(entry);
@@ -465,8 +496,6 @@ std::string Propeller::thruster()
             file << std::endl;
         }
 #else
-        file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
-        file << "     <tableData>" << std::endl;
         file << "       0.0   " << (_Ct0 * 1.090f) << std::endl;
         file << "       0.1   " << (_Ct0 * 1.045f) << std::endl;
         file << "       0.2   " << (_Ct0 * 1.000f) << std::endl;

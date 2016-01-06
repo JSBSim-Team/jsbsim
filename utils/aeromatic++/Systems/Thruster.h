@@ -104,6 +104,9 @@ private:
     unsigned _blades;
     float _diameter;
     float _max_rpm;
+    float _pitch_hub;
+    float _pitch_tip;
+    float _max_chord;
 
     float _gear_ratio;
     float _static_thrust;
