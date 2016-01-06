@@ -563,6 +563,7 @@ std::string Propeller::thruster()
         file << "       1.6  " << (_Cp0 * -1.548f) << std::endl;
         file << "     </tableData>" << std::endl;
 #endif
+        file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
     }
     else
