@@ -129,6 +129,7 @@ private:
         float CP;
     };
     std::vector<_performance_t> _performance;
+    unsigned _pitch_levels;
 
     static float const _thrust_t[23][9];
     static float const _power_t[23][9];
