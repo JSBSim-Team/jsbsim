@@ -173,7 +173,7 @@ void  Propeller::bladeElement()
             for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
             {
                 float rad = xs + i*rstep;
-                float r = 1.0f - rad/xt;
+                float r = _MAX(1.0f - rad/xt, 0.0f);
 #if 0
                 // historic propeller
                 float chord = _max_chord*(0.25f + 0.9f*(pow(r,0.5f)-pow(r,5.0f)));
@@ -279,6 +279,10 @@ void Propeller::set_thruster(float mrpm)
     // estimate the number of blades
     if (_Cp0 < 0.035f) {
       _blades = 2;
+    } else if (_Cp0 > 0.160f) {
+        _blades = 8;
+    } else if (_Cp0 > 0.105f) {
+      _blades = 6;
     } else if (_Cp0 > 0.065f) {
       _blades = 4;
     } else {
