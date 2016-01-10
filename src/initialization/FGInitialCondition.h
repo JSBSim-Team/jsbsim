@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.43 2015/03/28 14:49:01 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.44 2016/01/10 16:35:28 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,6 +66,7 @@ class FGFDMExec;
 class FGMatrix33;
 class FGColumnVector3;
 class FGAtmosphere;
+class FGAircraft;
 class FGPropertyManager;
 class Element;
 
@@ -218,7 +219,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.43 2015/03/28 14:49:01 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.44 2016/01/10 16:35:28 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -684,6 +685,7 @@ private:
 
   FGFDMExec *fdmex;
   FGAtmosphere* Atmosphere;
+  FGAircraft* Aircraft;
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);
@@ -701,4 +703,3 @@ private:
 };
 }
 #endif
-

@@ -50,6 +50,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "models/FGInertial.h"
 #include "models/FGAtmosphere.h"
+#include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -57,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.103 2016/01/10 15:56:30 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.104 2016/01/10 16:35:28 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -68,6 +69,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
 
   if(FDMExec != NULL ) {
     Atmosphere=fdmex->GetAtmosphere();
+    Aircraft=fdmex->GetAircraft();
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
@@ -176,8 +178,9 @@ void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
   double rhoSL = Atmosphere->GetDensitySL();
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure, pressureSL, rhoSL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
+  double PitotAngle = Aircraft->GetPitotAngle();
 
-  SetVtrueFpsIC(mach*soundSpeed);
+  SetVtrueFpsIC(mach * soundSpeed / (cos(alpha+PitotAngle) * cos(beta)));
   lastSpeedSet = setvc;
 }
 
@@ -813,7 +816,9 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
   double pressureSL = Atmosphere->GetPressureSL();
   double rhoSL = Atmosphere->GetDensitySL();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
-  double mach = vt / soundSpeed;
+  double PitotAngle = Aircraft->GetPitotAngle();
+  double mach = vt * cos(alpha+PitotAngle) * cos(beta) / soundSpeed;
+
   return fpstokts * VcalibratedFromMach(mach, pressure, pressureSL, rhoSL);
 }
 
