@@ -29,6 +29,7 @@ from JSBSim_utils import CreateFDM, SandBox, append_xml, ExecuteUntil, CheckXMLF
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
 convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781}
 convtodeg = {'DEG': 1.0, 'RAD': 57.295779513082320876798154814105}
+convtokts = {'KTS': 1.0, 'FT/SEC': 1.0/1.68781}
 
 
 class TestInitialConditions(unittest.TestCase):
@@ -39,12 +40,16 @@ class TestInitialConditions(unittest.TestCase):
         self.sandbox.erase()
 
     def test_initial_conditions(self):
+        prop_output_to_CSV = ['velocities/vc-kts']
         # A dictionary that contains the XML tags to extract from the IC file
         # along with the name of the properties that contain the values
         # extracted from the IC file.
         vars = [{'tag': 'vt', 'unit': convtofps, 'default_unit': 'FT/SEC',
                  'ic_prop': 'ic/vt-fps', 'prop': 'velocities/vt-fps',
                  'CSV_header': 'V_{Total} (ft/s)'},
+                {'tag': 'vc', 'unit': convtokts, 'default_unit': 'KTS',
+                 'ic_prop': 'ic/vc-kts', 'prop': 'velocities/vc-kts',
+                 'CSV_header': '/fdm/jsbsim/velocities/vc-kts'},
                 {'tag': 'ubody', 'unit': convtofps, 'default_unit': 'FT/SEC',
                  'ic_prop': 'ic/u-fps', 'prop': 'velocities/u-fps',
                  'CSV_header': 'UBody'},
@@ -147,6 +152,9 @@ class TestInitialConditions(unittest.TestCase):
             position_tag.text = 'ON'
             velocities_tag = et.SubElement(output_tag, 'velocities')
             velocities_tag.text = 'ON'
+            for props in prop_output_to_CSV:
+                property_tag = et.SubElement(output_tag, 'property')
+                property_tag.text = props
             tree.write(self.sandbox(f))
 
             # Initialize the script
