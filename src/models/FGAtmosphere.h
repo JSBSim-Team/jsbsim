@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.31 2012/08/20 12:28:50 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.32 2016/01/10 15:56:30 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
   @property atmosphere/a-ratio
 
   @author Jon Berndt
-  @version $Id: FGAtmosphere.h,v 1.31 2012/08/20 12:28:50 jberndt Exp $
+  @version $Id: FGAtmosphere.h,v 1.32 2016/01/10 15:56:30 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,9 @@ public:
   /// Returns the speed of sound in ft/sec.
   virtual double GetSoundSpeed(void) const {return Soundspeed;}
 
+  /// Returns the speed of sound in ft/sec at a given altitude in ft.
+  virtual double GetSoundSpeed(double altitude) const;
+  
   /// Returns the sea level speed of sound in ft/sec.
   virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 

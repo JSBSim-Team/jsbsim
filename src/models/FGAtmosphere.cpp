@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAtmosphere.cpp,v 1.59 2014/05/07 19:51:43 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAtmosphere.cpp,v 1.60 2016/01/10 15:56:30 bcoconni Exp $");
 IDENT(IdHdr,ID_ATMOSPHERE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,6 +152,13 @@ void FGAtmosphere::SetPressureSL(ePressure unit, double pressure)
 double FGAtmosphere::GetDensity(double altitude) const
 {
   return GetPressure(altitude)/(Reng * GetTemperature(altitude));
+}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the sound speed at a specified altitude
+
+double FGAtmosphere::GetSoundSpeed(double altitude) const
+{
+  return sqrt(SHRatio * Reng * GetTemperature(altitude));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
