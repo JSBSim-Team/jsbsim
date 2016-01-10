@@ -21,9 +21,10 @@ import os, sys, csv, string, tempfile, shutil
 import xml.etree.ElementTree as et
 import jsbsim
 
+
 class SandBox:
     def __init__(self, *args):
-        self._tmpdir = tempfile.mkdtemp(dir = os.getcwd())
+        self._tmpdir = tempfile.mkdtemp(dir=os.getcwd())
         path_to_jsbsim = os.path.join(sys.argv[1], *args)
         self._relpath_to_jsbsim = os.path.relpath(path_to_jsbsim, self._tmpdir)
 
@@ -53,23 +54,27 @@ class SandBox:
             head, tail = os.path.split(head)
         return os.path.join(*newpath)
 
+
 def CreateFDM(sandbox):
-    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join(sandbox(),''))
+    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join(sandbox(), ''))
     path = sandbox.path_to_jsbsim_file()
     _fdm.set_aircraft_path(os.path.join(path, 'aircraft'))
     _fdm.set_engine_path(os.path.join(path, 'engine'))
     _fdm.set_systems_path(os.path.join(path, 'systems'))
     return _fdm
 
+
 def ExecuteUntil(_fdm, end_time):
     while _fdm.run():
         if _fdm.get_sim_time() > end_time:
             return
 
+
 def append_xml(name):
     if len(name) < 4 or name[-4:] != '.xml':
         return name+'.xml'
     return name
+
 
 def CheckXMLFile(f, header):
     # Is f a file ?
@@ -85,8 +90,10 @@ def CheckXMLFile(f, header):
     # Check the file header
     return string.upper(tree.getroot().tag) == string.upper(header)
 
+
 class MismatchError(Exception):
     pass
+
 
 class Table:
     def __init__(self, headers=[]):
@@ -95,11 +102,12 @@ class Table:
         else:
             self._lines = []
         self._missing = []
+
     def ReadCSV(self, filename):
         self._lines = []
         self.missing = []
 
-        file_csv = open(filename,'r')
+        file_csv = open(filename, 'r')
         first_line = True
         for line in csv.reader(file_csv, delimiter=','):
             if first_line:
@@ -108,19 +116,21 @@ class Table:
             else:
                 line = map(float, line)
             self._lines += [line]
-    
+
         file_csv.close()
+
     def add_line(self, line):
         if len(line) != len(self._lines[0]):
             raise MismatchError
         self._lines += [line]
+
     def get_column(self, col):
         column = []
 
-        if type(col) == type(0):
+        if isinstance(col, int):
             if col < 0 or col >= len(self._lines[0]):
                 raise AttributeError
-        elif type(col) == type(''):
+        elif isinstance(col, str):
             header = string.strip(col)
             for col in xrange(len(self._lines[0])):
                 if header == self._lines[0][col]:
@@ -135,7 +145,7 @@ class Table:
         return column
 
     def compare(self, other, precision=1E-5):
-        result = Table(['Property','delta','Time','ref value','value'])
+        result = Table(['Property', 'delta', 'Time', 'ref value', 'value'])
 
         if len(self._lines) != len(other._lines):
             raise MismatchError
@@ -174,6 +184,7 @@ class Table:
             output += "|" + "|".join("{:{}}".format(str(item), col_width[i]) for i, item in enumerate(line)) + "|\n"
         return output
 
+
 def CopyAircraftDef(script_path, sandbox):
     # Get the aircraft name
     tree = et.parse(sandbox.elude(script_path))
@@ -187,30 +198,36 @@ def CopyAircraftDef(script_path, sandbox):
     if not os.path.exists(aircraft_path):
         os.makedirs(aircraft_path)
 
-    # Make a copy of the initialization file in build/.../aircraft/aircraft_name
+    # Make a copy of the initialization file in
+    # build/.../aircraft/aircraft_name
     IC_file = append_xml(use_element.attrib['initialize'])
     shutil.copy(os.path.join(path_to_jsbsim_aircrafts, IC_file), aircraft_path)
 
     tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, aircraft_name+'.xml'))
 
     # The aircraft definition file may also load some data from external files.
-    # If so, we need to copy these files in our directory build/.../aircraft/aircraft_name
-    # Only the external files that are in the original directory aircraft/aircraft_name
-    # will be copied. The files located in 'engine' and 'systems' do not need to be
-    # copied.
+    # If so, we need to copy these files in our directory
+    # build/.../aircraft/aircraft_name Only the external files that are in the
+    # original directory aircraft/aircraft_name will be copied. The files
+    # located in 'engine' and 'systems' do not need to be copied.
     for element in list(tree.getroot()):
         if 'file' in element.keys():
             name = append_xml(element.attrib['file'])
             name_with_path = os.path.join(path_to_jsbsim_aircrafts, name)
+            subdirs = os.path.split(name)[0]
             if os.path.exists(name_with_path):
-                shutil.copy(name_with_path, aircraft_path)
+                shutil.copy(name_with_path, os.path.join(aircraft_path,
+                                                         subdirs))
             else:
-                name_with_system_path = os.path.join(path_to_jsbsim_aircrafts, 'Systems', name)
+                name_with_system_path = os.path.join(path_to_jsbsim_aircrafts,
+                                                     'Systems', name)
                 print name_with_system_path
                 if os.path.exists(name_with_system_path):
-                    system_path = sandbox(sandbox.elude(aircraft_path), 'Systems')
+                    system_path = sandbox(sandbox.elude(aircraft_path),
+                                          'Systems')
                     if not os.path.exists(system_path):
                         os.makedirs(system_path)
-                    shutil.copy(name_with_system_path, system_path)
+                    shutil.copy(name_with_system_path,
+                                os.path.join(system_path, subdirs))
 
     return tree, aircraft_name, path_to_jsbsim_aircrafts
