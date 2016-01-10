@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.185 2015/12/13 08:01:50 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.186 2016/01/10 16:32:26 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,7 +399,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
     Auxiliary->in.WindPsi      = Winds->GetWindPsi();
     Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
-    Auxiliary->in.PitotAngle   = Aircraft->GetPitotAngle();
     break;
   case eSystems:
     // Dynamic inputs come into the components that FCS manages through properties
@@ -542,6 +541,7 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
+  Auxiliary->in.PitotAngle       = Aircraft->GetPitotAngle();
   GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
 
   LoadPlanetConstants();
