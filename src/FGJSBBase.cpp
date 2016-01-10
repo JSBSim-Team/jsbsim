@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.40 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.41 2016/01/10 12:07:49 bcoconni Exp $");
 IDENT(IdHdr,ID_JSBBASE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,8 +84,8 @@ const double FGJSBBase::degtorad = 0.017453292519943295769236907684886;
 const double FGJSBBase::hptoftlbssec = 550.0;
 const double FGJSBBase::psftoinhg = 0.014138;
 const double FGJSBBase::psftopa = 47.88;
-const double FGJSBBase::fpstokts = 0.592484;
 const double FGJSBBase::ktstofps = 1.68781;
+const double FGJSBBase::fpstokts = 1.0/ktstofps;
 const double FGJSBBase::inchtoft = 0.08333333;
 const double FGJSBBase::in3tom3 = 1.638706E-5;
 const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
@@ -275,13 +275,11 @@ double FGJSBBase::GaussianRandomNumber(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGJSBBase::VcalibratedFromMach(double mach, double p, double psl, double rhosl)
+double FGJSBBase::PitotTotalPressure(double mach, double p)
 {
-  double pt,A;
-
-  if (mach < 0) mach=0;
+  if (mach < 0) return 0;
   if (mach < 1)    //calculate total pressure assuming isentropic flow
-    pt=p*pow((1 + 0.2*mach*mach),3.5);
+    return p*pow((1 + 0.2*mach*mach),3.5);
   else {
     // shock in front of pitot tube, we'll assume its normal and use
     // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
@@ -298,10 +296,17 @@ double FGJSBBase::VcalibratedFromMach(double mach, double p, double psl, double 
     // The denominator below is zero for Mach ~ 0.38, for which
     // we'll never be here, so we're safe
 
-    pt = p*166.92158*pow(mach,7.0)/pow(7*mach*mach-1,2.5);
+    return p*166.92158*pow(mach,7.0)/pow(7*mach*mach-1,2.5);
   }
+}
 
-  A = pow(((pt-p)/psl+1),0.28571);
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGJSBBase::VcalibratedFromMach(double mach, double p, double psl, double rhosl)
+{
+  double pt = PitotTotalPressure(mach, p);
+  double A = pow(((pt-p)/psl+1), 1./3.5);
+
   return sqrt(7*psl/rhosl*(A-1));
 }
 
@@ -312,7 +317,7 @@ double FGJSBBase::MachFromVcalibrated(double vcas, double p, double psl, double 
   double pt = p + psl*(pow(1+vcas*vcas*rhosl/(7.0*psl),3.5)-1);
 
   if (pt/p < 1.89293)
-    return sqrt(5.0*(pow(pt/p, 0.2857143) -1)); // Mach < 1
+    return sqrt(5.0*(pow(pt/p, 1./3.5) -1)); // Mach < 1
   else {
     // Mach >= 1
     double mach = sqrt(0.77666*pt/p); // Initial guess is based on a quadratic approximation of the Rayleigh formula
