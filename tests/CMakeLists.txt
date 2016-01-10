@@ -36,7 +36,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestCosineGust
                  TestScriptOutput
                  CheckSimTimeReset
-                 TestHoldDown)
+                 TestHoldDown
+                 TestPitotAngle)
 
 foreach(test ${PYTHON_TESTS})
   add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
