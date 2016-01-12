@@ -45,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.54 2015/09/27 15:39:45 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.55 2016/01/02 15:23:50 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -698,7 +698,7 @@ void Element::MergeAttributes(Element* el)
     if (attributes.find(it->first) == attributes.end())
       attributes[it->first] = it->second;
     else {
-      if (FGJSBBase::debug_lvl > 0)
+      if (FGJSBBase::debug_lvl > 0 && (attributes[it->first] != it->second))
         cout << el->ReadFrom() << " Attribute '" << it->first << "' is overridden in file "
              << GetFileName() << ": line " << GetLineNumber() << endl
              << " The value '" << attributes[it->first] << "' will be used instead of '"

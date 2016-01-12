@@ -195,7 +195,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << -_aircraft->_wing.span/2 << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << -(_aircraft->_wing.span*FEET_TO_INCH/2) << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
@@ -207,7 +207,7 @@ std::string LandingGear::fdm()
     file << "  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">" << std::endl;
     file << "    <location unit=\"IN\">" << std::endl;
     file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << (_aircraft->_wing.span/2) << " </y>" << std::endl;
+    file << "     <y> " << std::setw(8) << (_aircraft->_wing.span*FEET_TO_INCH/2) << " </y>" << std::endl;
     file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
@@ -225,22 +225,25 @@ std::string LandingGear::system()
 {
     std::stringstream file;
 
-    file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
-    file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
-    file << "     <input>gear/gear-cmd-norm</input>" << std::endl;
-    file << "     <traverse>" << std::endl;
-    file << "       <setting>" << std::endl;
-    file << "          <position> 0 </position>" << std::endl;
-    file << "          <time>     0 </time>" << std::endl;
-    file << "       </setting>" << std::endl;
-    file << "       <setting>" << std::endl;
-    file << "          <position> 1 </position>" << std::endl;
-    file << "          <time>     5 </time>" << std::endl;
-    file << "       </setting>" << std::endl;
-    file << "     </traverse>" << std::endl;
-    file << "     <output>gear/gear-pos-norm</output>" << std::endl;
-    file << "   </kinematic>" << std::endl;
-    file << "  </channel>" << std::endl;
+    if (_retractable)
+    {
+        file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
+        file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
+        file << "     <input>gear/gear-cmd-norm</input>" << std::endl;
+        file << "     <traverse>" << std::endl;
+        file << "       <setting>" << std::endl;
+        file << "          <position> 0 </position>" << std::endl;
+        file << "          <time>     0 </time>" << std::endl;
+        file << "       </setting>" << std::endl;
+        file << "       <setting>" << std::endl;
+        file << "          <position> 1 </position>" << std::endl;
+        file << "          <time>     5 </time>" << std::endl;
+        file << "       </setting>" << std::endl;
+        file << "     </traverse>" << std::endl;
+        file << "     <output>gear/gear-pos-norm</output>" << std::endl;
+        file << "   </kinematic>" << std::endl;
+        file << "  </channel>" << std::endl;
+    }
 
     return file.str();
 }
@@ -262,7 +265,9 @@ std::string LandingGear::drag()
     file << "         <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
-    file << "           <property>gear/gear-pos-norm</property>" << std::endl;
+    if (_retractable) {
+        file << "           <property>gear/gear-pos-norm</property>" << std::endl;
+    }
     file << "           <value> " << (CDgear) << " </value>" << std::endl;
     file << "         </product>" << std::endl;
     file << "    </function>" << std::endl;

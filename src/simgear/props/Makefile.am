@@ -1,8 +1,8 @@
 includedir = @includedir@/JSBSim/simgear/props
 
-LIBRARY_SOURCES = props.cxx
+LIBRARY_SOURCES = props.cxx propertyObject.cxx
 
-LIBRARY_INCLUDES = props.hxx
+LIBRARY_INCLUDES = props.hxx propertyObject.hxx
 
 if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libProperties.la

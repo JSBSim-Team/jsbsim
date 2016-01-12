@@ -33,7 +33,8 @@
 namespace Aeromatic
 {
 
-#define FACT		2.667f
+#define FACT			2.667f
+#define	NUM_PROP_PITCHES	6
 
 Thruster::Thruster(Propulsion *p) :
     _propulsion(p)
@@ -105,7 +106,12 @@ std::string Nozzle::thruster()
 
 Propeller::Propeller(Propulsion *p) : Thruster(p),
     _fixed_pitch(true),
-    _diameter(8)
+    _diameter(8.0f),
+    _max_rpm(2100.0f),
+    _pitch_hub(48.0f),
+    _pitch_tip(8.0f),
+    _max_chord(0.0f),
+    _pitch_levels(0)
 {
     strCopy(_thruster_name, "my_propeller");
 
@@ -114,12 +120,140 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
     _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch angle", _fixed_pitch));
 }
 
+/**
+ * Option for using blade element theory:
+ * http://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/propeller/prop1.html
+ *
+ * A simple propeller design with linear properties:
+ * http://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/propeller/propel.txt
+ * However with the inclusion of your own propeller geometry and section data
+ * a more accurate analysis of the specific propeller design can be obtained.
+ *
+ * http://www.icas.org/ICAS_ARCHIVE/ICAS2010/PAPERS/434.PDF
+ */
+#define NUM_ELEMENTS	12
+void  Propeller::bladeElement()
+{
+    float RPM = _engine_rpm;
+    float hub = _pitch_hub;
+    float tip = _pitch_tip;
+    float dia = _diameter;
+    float B = _blades;
+
+    if (_max_chord == 0) {
+        _max_chord = 0.17f*powf(dia,1.0f/B);
+    }
+
+    float R = dia/2.0f;
+    float xt = R;
+    float xs = 0.1f*R;
+    float rho = 1.225f;
+    float n = RPM/60.0f;
+    float omega = 2.0f*PI*n;
+    float coef1 = (tip-hub)/(xt-xs);
+    float coef2 = hub - coef1*xs;
+    float rstep = (xt-xs)/(NUM_ELEMENTS-2);
+
+    float n2 = n*n;
+    float D4 = dia*dia*dia*dia;
+    float D5 = D4*dia;
+
+    float pitch = _fixed_pitch ? 0.0f : -15.0f;
+    do
+    {
+        float eff = 0.89f;
+        float step = 0.05f;
+        for (float J=0.1; J<2.4f; J += step)
+        {
+            if (J > 1.36f) step = 0.1f;
+
+            float V = J*n*dia;
+            float thrust = 0.0f;
+            float torque = 0.0f;
+            for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
+            {
+                float rad = xs + i*rstep;
+                float r = _MAX(1.0f - rad/xt, 0.0f);
+#if 0
+                // historic propeller
+                float chord = _max_chord*(0.25f + 0.9f*(pow(r,0.5f)-pow(r,5.0f)));
+#else
+                // modern propeller
+                float chord = _max_chord*(0.5f + 0.53f*(pow(r,0.25f)-pow(r,5.0f)));
+#endif
+                float TC = 0.2f*(0.1f + 0.9f*powf(r,2.5f));
+
+                float theta = coef1*rad + coef2+pitch;
+                float th = theta*DEG_TO_RAD;
+                float a = 0.1f;
+                float b = 0.01f;
+                int finished = 0;
+                int sum = 1;
+
+                float AR = B*rstep/chord;
+                float PAR = PI*AR;
+
+                float CL0 = 0.42f;
+                float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
+                float CD0 = 0.002448f*TC;
+                float CDa = 2.0f*CLa/(B*eff*PAR);
+                float CDi = 1.0f/(eff*PAR);
+
+                float DtDr, DqDr, tem1, tem2, anew, bnew;
+                while (finished == 0)
+                {
+                    float V0 = V*(1.0f+a);
+                    float V2 = omega*rad*(1.0f-b);
+                    float phi = atan2f(V0,V2);
+                    float alpha = th-phi;
+
+                    float CL = CL0 + CLa*alpha;
+                    float CD = CD0 + CDa*alpha*CL + CDi*CL*CL;
+                    float CY = CL*cosf(phi) - CD*sinf(phi);
+                    float CX = CD*cosf(phi) + CL*sinf(phi);
+                    float Vlocal = sqrtf(V0*V0 + V2*V2);
+                    float Vlocal2 = Vlocal*Vlocal;
+
+                    DtDr = 0.5f*rho*Vlocal2*B*chord*CY;
+                    DqDr = 0.5f*rho*Vlocal2*B*chord*rad*CX;
+                    tem1 = DtDr/(4.0f*PI*rad*rho*V*V*(1.0f+a));
+                    tem2 = DqDr/(4.0f*PI*rad*rad*rad*rho*V*(1.0f+a)*omega);
+                    anew = 0.5f*(a+tem1);
+                    bnew = 0.5f*(b+tem2);
+                    if (fabsf(anew-a) < 1.0e-5f && fabsf(bnew-b) < 1.0e-5f) {
+                        finished=1;
+                    }
+                    a = anew;
+                    b = bnew;
+                    if (++sum > 500) {
+                        finished = 1;
+                    }
+                }
+                thrust += DtDr*rstep;
+                torque += DqDr*rstep;
+            }
+
+            float CT = thrust/(rho*n2*D4);
+            float CQ = torque/(rho*n2*D5);
+            float CP = 2.0f*PI*CQ;
+
+            _performance_t entry(J, CT, CP);
+            _performance.push_back(entry);
+        }
+
+        _pitch_levels++;
+        if (_fixed_pitch) break;
+        pitch += 15.0f;
+    }
+    while (_pitch_levels < NUM_PROP_PITCHES);
+}
+
 void Propeller::set_thruster(float mrpm)
 {
     // find rpm which gives a tip mach of 0.88 (static at sea level)
     _engine_rpm = mrpm;
     _max_rpm = 18763.0f / _diameter;
-    _gear_ratio = _engine_rpm / _max_rpm;
+    _gear_ratio = _MAX(_engine_rpm / _max_rpm, 1.0f);
 
     float max_rps = _max_rpm / 60.0f;
     float rps2 = max_rps * max_rps;
@@ -145,6 +279,10 @@ void Propeller::set_thruster(float mrpm)
     // estimate the number of blades
     if (_Cp0 < 0.035f) {
       _blades = 2;
+    } else if (_Cp0 > 0.160f) {
+        _blades = 8;
+    } else if (_Cp0 > 0.105f) {
+      _blades = 6;
     } else if (_Cp0 > 0.065f) {
       _blades = 4;
     } else {
@@ -155,21 +293,16 @@ void Propeller::set_thruster(float mrpm)
     float weight = powf(_diameter, 2.8f) / 4.8f;
     float mass_prop = weight / 32.174f;		// Standard gravity
     float mass_hub = 0.1f * mass_prop;
-    float mass_blade = (0.9f * mass_prop) / _blades;
+    float mass_blade = (mass_prop - mass_hub) / _blades;
     float L = _diameter / 2;			// length each blade (feet)
-    float R = L * 0.1f;			// radius of hub (feet) 
+    float R = L * 0.1f;				// radius of hub (feet) 
     float ixx_blades = _blades * (0.33333f * mass_blade * L * L);
     float ixx_hub = 0.5f * mass_hub * R * R;
     _ixx = ixx_blades + ixx_hub;
 
-
     // Thruster effects on coefficients
     Aeromatic* aircraft = _propulsion->_aircraft;
-    float Swp = 0.9f*_diameter/aircraft->_wing.span;
-    float lt = aircraft->_aero_rp[X] - _propulsion->_thruster_loc[0][X];
-    if (lt) {
-        Swp *= aircraft->_wing.chord_mean/lt;
-    }
+    float Swp = 0.96f*_diameter/aircraft->_wing.span;
 
     _dCLT0 = aircraft->_CL0*Swp;
     _dCLTmax = aircraft->_CLmax[0]*Swp;
@@ -196,6 +329,8 @@ void Propeller::set_thruster(float mrpm)
        _prop_span_left /= left;
        _prop_span_right /= right;
     }
+
+    bladeElement();
 }
 
 std::string Propeller::lift()
@@ -243,7 +378,7 @@ std::string Propeller::pitch()
 
     Aeromatic* aircraft = _propulsion->_aircraft;
     float Sw = aircraft->_wing.area;
-    float AR = aircraft->_wing.aspect;
+//  float AR = aircraft->_wing.aspect;
     float lh = aircraft->_htail.arm;
     float Sh = aircraft->_htail.area;
     float cbarw = aircraft->_wing.chord_mean;
@@ -296,7 +431,7 @@ std::string Propeller::roll()
     Aeromatic* aircraft = _propulsion->_aircraft;
     float y = _prop_span_left - _diameter/2.0f;
     float k = y/(aircraft->_wing.span/2.0f);
-    float TR = aircraft->_wing.taper;
+//  float TR = aircraft->_wing.taper;
 
     // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
     float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
@@ -362,22 +497,17 @@ std::string Propeller::thruster()
     }
     file << std::endl;
 
+    file << std::fixed;
     if(_fixed_pitch)
     {
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "       0.0   " << (_Ct0 * 1.090f) << std::endl;
-        file << "       0.1   " << (_Ct0 * 1.045f) << std::endl;
-        file << "       0.2   " << (_Ct0 * 1.000f) << std::endl;
-        file << "       0.3   " << (_Ct0 * 0.920f) << std::endl;
-        file << "       0.4   " << (_Ct0 * 0.826f) << std::endl;
-        file << "       0.5   " << (_Ct0 * 0.728f) << std::endl;
-        file << "       0.6   " << (_Ct0 * 0.589f) << std::endl;
-        file << "       0.7   " << (_Ct0 * 0.447f) << std::endl;
-        file << "       0.8   " << (_Ct0 * 0.242f) << std::endl;
-        file << "       1.0  " << (_Ct0 * -0.082f) << std::endl;
-        file << "       1.2  " << (_Ct0 * -0.429f) << std::endl;
-        file << "       1.4  " << (_Ct0 * -0.772f) << std::endl;
+        for (unsigned i=0; i<_performance.size(); ++i)
+        {
+            file << std::setw(10) << std::setprecision(2) << _performance[i].J;
+            file << std::setw(10) << std::setprecision(4) << _performance[i].CT;
+            file << std::endl;
+        }
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
         file << std::endl;
@@ -387,19 +517,22 @@ std::string Propeller::thruster()
         file << " <!-- thrust coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "      <tableData>" << std::endl;
-        file << "               -10        0         15        25        35        45        55        65        90" << std::endl;
+        unsigned size = _performance.size()/_pitch_levels;
+        file << std::setw(16) << "";
+        for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
+            file << std::setw(10) << -15+int(p*15);
+        }
 
-        for (unsigned i=0; i<23; ++i)
+        file << std::endl;
+        for (unsigned i=0; i<size; ++i)
         {
-            float a = (-0.2f + i*0.2f);
-            if (a > 4.1f) a = 6.0f;
-            file << std::setw(10) << std::setprecision(1) << a;
-            for (unsigned j=0; j<9; ++j) {
-                file << std::fixed << std::setw(10) << std::setprecision(4) << _Ct0 * _thrust_t[i][j];
+            file << std::setw(16) << std::setprecision(2) << _performance[i].J;
+            file << std::setprecision(4);
+            for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
+                file << std::setw(10) << _performance[(p*size)+i].CT;
             }
             file << std::endl;
         }
-
         file << "      </tableData>" << std::endl;
         file << "  </table>" << std::endl;
     }
@@ -409,19 +542,12 @@ std::string Propeller::thruster()
     {
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "       0.0   " << (_Cp0 * 1.025f) << std::endl;
-        file << "       0.1   " << (_Cp0 * 1.025f) << std::endl;
-        file << "       0.2   " << (_Cp0 * 1.000f) << std::endl;
-        file << "       0.3   " << (_Cp0 * 0.976f) << std::endl;
-        file << "       0.4   " << (_Cp0 * 0.920f) << std::endl;
-        file << "       0.5   " << (_Cp0 * 0.843f) << std::endl;
-        file << "       0.6   " << (_Cp0 * 0.774f) << std::endl;
-        file << "       0.7   " << (_Cp0 * 0.650f) << std::endl;
-        file << "       0.8   " << (_Cp0 * 0.531f) << std::endl;
-        file << "       1.0   " << (_Cp0 * 0.190f) << std::endl;
-        file << "       1.2  " << (_Cp0 * -0.303f) << std::endl;
-        file << "       1.4  " << (_Cp0 * -0.912f) << std::endl;
-        file << "       1.6  " << (_Cp0 * -1.548f) << std::endl;
+        for (unsigned i=0; i<_performance.size(); ++i)
+        {
+            file << std::setw(10) << std::setprecision(2) << _performance[i].J;
+            file << std::setw(10) << std::setprecision(4) << _performance[i].CP;
+            file << std::endl;
+        }
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
     }
@@ -430,19 +556,22 @@ std::string Propeller::thruster()
         file << " <!-- power coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        file << "               -10        0         15        25        35        45        55        65        90" << std::endl;
+        unsigned size = _performance.size()/_pitch_levels;
+        file << std::setw(16) << "";
+        for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
+            file << std::setw(10) << -15+int(p*15);
+        }
 
-        for (unsigned i=0; i<23; ++i)
+        file << std::endl;
+        for (unsigned i=0; i<size; ++i)
         {
-            float a = (-0.2f + i*0.2f);
-            if (a > 4.1f) a = 6.0f;
-            file << std::setw(10) << std::setprecision(1) << a;
-            for (unsigned j=0; j<9; ++j) {
-                file << std::fixed << std::setw(10) << std::setprecision(4) << (_Cp0 * _power_t[i][j]);
+            file << std::setw(16) << std::setprecision(2) << _performance[i].J;
+            file << std::setprecision(4);
+            for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
+                file << std::setw(10) << _performance[(p*size)+i].CP;
             }
             file << std::endl;
         }
-
         file << "     </tableData>" << std::endl;
         file << "  </table>" << std::endl;
     }
@@ -473,6 +602,7 @@ std::string Propeller::thruster()
 
 // ---------------------------------------------------------------------------
 
+#if 0
 float const Propeller::_thrust_t[23][9] =
 {
     {-0.488f, 0.275f, 1.000f, 1.225f, 1.350f, 1.425f, 1.313f, 1.125f, 0.0f },
@@ -526,7 +656,7 @@ float const Propeller::_power_t[23][9] =
     { 6.380f, 5.720f,-4.120f,-8.300f,-8.300f,-7.330f, 0.330f, 5.670f, 8.300f },
     { 8.300f, 8.300f,-8.300f,-8.300f,-8.300f,-8.300f,-8.300f,-5.000f, 8.300f }
 };
-
+#endif
 
 } /* namespace Aeromatic */
 

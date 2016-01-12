@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.103 2015/12/09 04:28:17 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.104 2015/12/13 07:54:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.103 $
+    @version $Revision: 1.104 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -311,7 +311,7 @@ public:
                       is not given in either place, an error will result.
       @return true if successfully loads; false otherwise. */
   bool LoadScript(const std::string& Script, double deltaT=0.0,
-                  const std::string initfile="");
+                  const std::string& initfile="");
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config

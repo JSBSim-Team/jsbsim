@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.84 2015/03/28 14:49:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.85 2016/01/02 17:42:53 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -281,12 +281,18 @@ bool FGPropulsion::GetSteadyState(void)
   int steady_count = 0, j = 0;
   bool steady = false;
   bool TrimMode = FDMExec->GetTrimStatus();
+  bool suspended = FDMExec->IntegrationSuspended();
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
   if (!FGModel::Run(false)) {
     FDMExec->SetTrimStatus(true);
+    if (suspended)
+      FDMExec->ResumeIntegration();
+    // This is a time marching algorithm so it needs a non-zero time step to
+    // reach a steady state.
+    in.TotalDeltaT = 0.5;
 
     for (unsigned int i=0; i<numEngines; i++) {
       steady=false;
@@ -311,6 +317,12 @@ bool FGPropulsion::GetSteadyState(void)
     }
 
     FDMExec->SetTrimStatus(TrimMode);
+    if (suspended) {
+      FDMExec->SuspendIntegration();
+      in.TotalDeltaT = 0.0;
+    }
+    else
+      in.TotalDeltaT = FDMExec->GetDeltaT() * rate;
 
     return false;
   } else {

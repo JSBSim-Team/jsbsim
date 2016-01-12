@@ -1,8 +1,8 @@
 # TestICOutput.py
 #
-# A regression test that checks that IC are correctly read from the IC file then
-# loaded in the ic/ properties. It also checks that the correct ICs are reported
-# in the data written in CSV files.
+# A regression test that checks that IC are correctly read from the IC file
+# then loaded in the ic/ properties. It also checks that the correct ICs are
+# reported in the data written in CSV files.
 #
 # Copyright (c) 2015 Bertrand Coconnier
 #
@@ -20,7 +20,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import unittest, sys, os, string
+import unittest, sys, os
 import xml.etree.ElementTree as et
 import pandas as pd
 from JSBSim_utils import CreateFDM, SandBox, append_xml, ExecuteUntil, CheckXMLFile
@@ -29,6 +29,7 @@ from JSBSim_utils import CreateFDM, SandBox, append_xml, ExecuteUntil, CheckXMLF
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
 convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781}
 convtodeg = {'DEG': 1.0, 'RAD': 57.295779513082320876798154814105}
+convtokts = {'KTS': 1.0, 'FT/SEC': 1.0/1.68781}
 
 
 class TestInitialConditions(unittest.TestCase):
@@ -39,12 +40,16 @@ class TestInitialConditions(unittest.TestCase):
         self.sandbox.erase()
 
     def test_initial_conditions(self):
+        prop_output_to_CSV = ['velocities/vc-kts']
         # A dictionary that contains the XML tags to extract from the IC file
         # along with the name of the properties that contain the values
         # extracted from the IC file.
         vars = [{'tag': 'vt', 'unit': convtofps, 'default_unit': 'FT/SEC',
                  'ic_prop': 'ic/vt-fps', 'prop': 'velocities/vt-fps',
                  'CSV_header': 'V_{Total} (ft/s)'},
+                {'tag': 'vc', 'unit': convtokts, 'default_unit': 'KTS',
+                 'ic_prop': 'ic/vc-kts', 'prop': 'velocities/vc-kts',
+                 'CSV_header': '/fdm/jsbsim/velocities/vc-kts'},
                 {'tag': 'ubody', 'unit': convtofps, 'default_unit': 'FT/SEC',
                  'ic_prop': 'ic/u-fps', 'prop': 'velocities/u-fps',
                  'CSV_header': 'UBody'},
@@ -88,13 +93,15 @@ class TestInitialConditions(unittest.TestCase):
                  'ic_prop': 'ic/psi-true-deg', 'prop': 'attitude/psi-deg',
                  'CSV_header': 'Psi (deg)'},
                 {'tag': 'elevation', 'unit': convtoft, 'default_unit': 'FT',
-                 'ic_prop': 'ic/terrain-elevation-ft', 'prop': 'position/terrain-elevation-asl-ft',
+                 'ic_prop': 'ic/terrain-elevation-ft',
+                 'prop': 'position/terrain-elevation-asl-ft',
                  'CSV_header': 'Terrain Elevation (ft)'}]
 
         script_path = self.sandbox.path_to_jsbsim_file('scripts')
         for f in os.listdir(self.sandbox.elude(script_path)):
             # TODO These scripts need some further investigation
-            if f in ('ZLT-NT-moored-1.xml',):
+            if f in ('ZLT-NT-moored-1.xml',
+                     '737_cruise_steady_turn_simplex.xml'):
                 continue
             fullpath = os.path.join(self.sandbox.elude(script_path), f)
 
@@ -135,8 +142,8 @@ class TestInitialConditions(unittest.TestCase):
                     conv = var['unit'][var['default_unit']]
                 var['value'] *= conv
 
-            # Generate a CSV file to check that it is correctly initialized with
-            # the initial values
+            # Generate a CSV file to check that it is correctly initialized
+            # with the initial values
             output_tag = et.SubElement(root, 'output')
             output_tag.attrib['name'] = 'check_csv_values.csv'
             output_tag.attrib['type'] = 'CSV'
@@ -145,6 +152,9 @@ class TestInitialConditions(unittest.TestCase):
             position_tag.text = 'ON'
             velocities_tag = et.SubElement(output_tag, 'velocities')
             velocities_tag.text = 'ON'
+            for props in prop_output_to_CSV:
+                property_tag = et.SubElement(output_tag, 'property')
+                property_tag.text = props
             tree.write(self.sandbox(f))
 
             # Initialize the script
@@ -157,9 +167,9 @@ class TestInitialConditions(unittest.TestCase):
             self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'),
                              0.0)
 
-            # Check that the properties (including in 'ic/') have been correctly
-            # initialized (i.e. that they contain the value read from the XML
-            # file).
+            # Check that the properties (including in 'ic/') have been
+            # correctly initialized (i.e. that they contain the value read from
+            # the XML file).
             for var in vars:
                 if not var['specified']:
                     continue
@@ -180,7 +190,13 @@ class TestInitialConditions(unittest.TestCase):
 
             # Execute the first second of the script. This is to make sure that
             # the CSV file is open and the ICs have been written in it.
-            ExecuteUntil(fdm, 1.0)
+            try:
+                ExecuteUntil(fdm, 1.0)
+            except RuntimeError as e:
+                if e.args[0] == 'Trim Failed':
+                    self.fail("Trim failed in script %s" % (f,))
+                else:
+                    raise
 
             # Copies the CSV file content in a table
             ref = pd.read_csv(self.sandbox('check_csv_values.csv'))

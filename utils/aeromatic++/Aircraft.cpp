@@ -122,7 +122,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _geometry.push_back(new Param("Wing area", _estimate, _wing.area, _metric, AREA));
     _geometry.push_back(new Param("Wing aspect ratio", _estimate, _wing.aspect));
     _geometry.push_back(new Param("Wing taper ratio", _estimate, _wing.taper));
-    _geometry.push_back(new Param("Wing chord", _estimate, _wing.chord, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing mean chord", _estimate, _wing.chord_mean, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence", _estimate, _wing.incidence));
     _geometry.push_back(new Param("Wing dihedral", _estimate, _wing.dihedral));
     _geometry.push_back(new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep));
@@ -147,15 +147,29 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     Aircraft::_aircraft = this;
 
-    _CLalpha[0] = _CLalpha[1] = _CLalpha[2] = 0.0f;
-    _CLmax[0] = _CLmax[1] = _CLmax[2] = 0.0f;
     _CL0 = 0.0f; _CLde = 0.0f; _CLq = 0.0f; _CLadot = 0.0f;
     _CD0 = 0.0f; _CDde = 0.0f; _CDbeta = 0.0f;
     _Kdi = 0.0f; _Mcrit = 0.0f;
-    _CYbeta = 0.0f; _CYr = 0.0f; _CYp = 0.0f; _CYdr = 0.0f;
-    _Clbeta = 0.0f; _Clp = 0.0f; _Clr = 0.0f; _Clda = 0.0f; _Cldr = 0.0f;
+    _CYbeta = 0.0f; _CYr = 0.0f; _CYdr = 0.0f;
+    _Clp = 0.0f; _Clda = 0.0f; _Cldr = 0.0f;
     _Cmalpha = 0.0f; _Cmde = 0.0f; _Cmq = 0.0f; _Cmadot = 0.0f;
-    _Cnbeta = 0.0f; _Cnr = 0.0f; _Cnp = 0.0f; _Cndr = 0.0f; _Cnda = 0.0f;
+    _Cnbeta = 0.0f; _Cnr = 0.0f; _Cndr = 0.0f; _Cnda = 0.0f;
+
+    _Re.reserve(4);
+    _alpha.reserve(4);
+
+    _CLalpha.reserve(3);
+    _CLmax.reserve(3);
+
+    _CDalpha.reserve(4);
+    _CYp.reserve(4);
+    _Clbeta.reserve(1);
+    _Clr.reserve(1);
+    _Cnp.reserve(4);
+
+    _CLaw.reserve(3);
+    _CLah.reserve(3);
+    _CLav.reserve(3);
 }
 
 Aeromatic::~Aeromatic()
@@ -211,12 +225,12 @@ bool Aeromatic::fdm()
     } else {
         _user_wing_data++;
     }
-    if (_wing.chord == 0)
+    if (_wing.chord_mean == 0)
     {
         if (_wing.aspect > 0) {
-            _wing.chord = _wing.span / _wing.aspect;
+            _wing.chord_mean = _wing.span / _wing.aspect;
         } else {
-            _wing.chord = _wing.area / _wing.span;
+            _wing.chord_mean = _wing.area / _wing.span;
         }
     }
     else {
@@ -234,20 +248,17 @@ bool Aeromatic::fdm()
         _wing.taper = 1.0f;
     }
 
-    float TR = _wing.taper;
-    _wing.chord_mean = 0.75f*_wing.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
-    _wing.de_da = 4.0f/(_wing.aspect+2.0f);
+    if (_wing.de_da == 0) {
+        _wing.de_da = 4.0f/(_wing.aspect+2.0f);
+    }
 
     // leading edge sweep
-    // devide the span by two and account for fuselage width
-    float span = 0.45f*_wing.span;
-    float root_tip = _wing.chord*(1.0f - _wing.taper);
-
     if (_wing.sweep_le == 0)
     {
-        _wing.sweep_le = atanf(root_tip/span);
+        float half_span = 0.5f*_wing.span;		// one wing side
+        _wing.sweep_le = atanf((1.0f-_wing.taper)/half_span);
         if (_wing.shape != DELTA) {
-            _wing.sweep_le *= 0.5f;
+            _wing.sweep_le *= 0.5f;	// same for leading and tailing edge
         }
         _wing.sweep_le *= RAD_TO_DEG;
         _wing.sweep_le += _wing.sweep;
@@ -256,11 +267,11 @@ bool Aeromatic::fdm()
     if (_wing.thickness == 0)
     {
         // Hofman equation for t/c
-        float Ws = _stall_weight;
+//      float Ws = _stall_weight;
         float Vs = _stall_speed * KNOTS_TO_FPS;
         float sweep = _wing.sweep * DEG_TO_RAD;
         float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
-        _wing.thickness = TC * _wing.chord;
+        _wing.thickness = TC * _wing.chord_mean;
     }
 
     // for now let's use a standard 2 degrees wing incidence
@@ -290,9 +301,9 @@ bool Aeromatic::fdm()
         _htail.span = ht_w * _wing.span;
     }
 
-    TR = _htail.taper;
-    _htail.chord_mean = 0.75f*_htail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
-    _htail.de_da = 4.0f/(_htail.aspect+2.0f);
+    if (_htail.de_da == 0) {
+        _htail.de_da = 4.0f/(_htail.aspect+2.0f);
+    }
 
     // estimate vertical tail area
     if (_vtail.area == 0) {
@@ -315,9 +326,9 @@ bool Aeromatic::fdm()
         _vtail.taper = 0.7f;
     }
 
-    TR = _vtail.taper;
-    _vtail.chord_mean = 0.75f*_vtail.chord*(1.0f+TR+TR*TR)/(1.0f+TR);
-    _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
+    if (_vtail.de_da == 0) {
+        _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
+    }
 
 //***** EMPTY WEIGHT *********************************
 
@@ -454,7 +465,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.49 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.62 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -495,7 +506,7 @@ bool Aeromatic::fdm()
     } else {
         file << "unspecified" << std::endl;
     }
-    file << "     chord:        " << _wing.chord << " ft" << std::endl;
+    file << "     mean chord:   " << _wing.chord_mean << " ft" << std::endl;
     file << "     aspect ratio: " << _wing.aspect << ":1" << std::endl;
     file << "     taper ratio:  " << _wing.taper << ":1" << std::endl;
     file << "     incidence:    " << _wing.incidence << " degrees" << std::endl;
@@ -531,7 +542,7 @@ bool Aeromatic::fdm()
     file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing.area << " </wingarea>" << std::endl;
     file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing.span << " </wingspan>" << std::endl;
     file << "   <wing_incidence>       " << std::setw(8) << _wing.incidence << " </wing_incidence>" << std::endl;
-    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing.chord << " </chord>" << std::endl;
+    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing.chord_mean << " </chord>" << std::endl;
     file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail.area << " </htailarea>" << std::endl;
     file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail.arm << " </htailarm>" << std::endl;
     file << "   <vtailarea  unit=\"FT2\">" << std::setw(8) << _vtail.area << " </vtailarea>" << std::endl;

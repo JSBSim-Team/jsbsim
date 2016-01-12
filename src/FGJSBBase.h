@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.44 2015/09/17 19:44:13 bcoconni Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.45 2016/01/10 12:07:49 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.44 2015/09/17 19:44:13 bcoconni Exp $
+    @version $Id: FGJSBBase.h,v 1.45 2016/01/10 12:07:49 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +260,15 @@ public:
   static double FeetToMeters (double measure) {
     return measure*0.3048;
   }
+
+  /** Compute the total pressure in front of the Pitot tube. It uses the
+  *   Rayleigh formula for supersonic speeds (See "Introduction to Aerodynamics
+  *   of a Compressible Fluid - H.W. Liepmann, A.E. Puckett - Wiley & sons
+  *   (1947)" §5.4 pp 75-80)
+  *   @param mach  The Mach number
+  *   @param p     Pressure in psf
+  *   @return The total pressure in front of the Pitot tube in psf */
+  static double PitotTotalPressure(double mach, double p);
 
   /** Calculate the calibrated airspeed from the Mach number. It uses the
   *   Rayleigh formula for supersonic speeds (See "Introduction to Aerodynamics

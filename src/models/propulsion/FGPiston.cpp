@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.81 2015/09/27 09:54:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.82 2016/01/02 17:42:53 bcoconni Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -470,8 +470,6 @@ void FGPiston::Calculate(void)
 
   RunPreFunctions();
 
-  TotalDeltaT = ( in.TotalDeltaT < 1e-9 ) ? 1.0 : in.TotalDeltaT;
-
 /* The thruster controls the engine RPM because it encapsulates the gear ratio and other transmission variables */
   RPM = Thruster->GetEngineRPM();
 
@@ -644,7 +642,7 @@ void FGPiston::doMAP(void)
 
   // Add a variable lag to manifold pressure changes
   double dMAP=(TMAP - p_ram * map_coefficient);
-  if (ManifoldPressureLag > TotalDeltaT) dMAP *= TotalDeltaT/ManifoldPressureLag;
+  if (ManifoldPressureLag > in.TotalDeltaT) dMAP *= in.TotalDeltaT/ManifoldPressureLag;
 
   TMAP -=dMAP;
 
@@ -833,7 +831,7 @@ void FGPiston::doEGT(void)
   } else {  // Drop towards ambient - guess an appropriate time constant for now
     combustion_efficiency = 0;
     dEGTdt = (RankineToKelvin(in.Temperature) - ExhaustGasTemp_degK) / 100.0;
-    delta_T_exhaust = dEGTdt * TotalDeltaT;
+    delta_T_exhaust = dEGTdt * in.TotalDeltaT;
 
     ExhaustGasTemp_degK += delta_T_exhaust;
   }
@@ -873,7 +871,7 @@ void FGPiston::doCHT(void)
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
 
   CylinderHeadTemp_degK +=
-    (dqdt_cylinder_head / HeatCapacityCylinderHead) * TotalDeltaT;
+    (dqdt_cylinder_head / HeatCapacityCylinderHead) * in.TotalDeltaT;
 
 }
 
@@ -908,7 +906,7 @@ void FGPiston::doOilTemperature(void)
 
   double dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
 
-  OilTemp_degK += (dOilTempdt * TotalDeltaT);
+  OilTemp_degK += (dOilTempdt * in.TotalDeltaT);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.70 2015/09/20 20:53:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAuxiliary.cpp,v 1.71 2016/01/10 12:12:59 bcoconni Exp $");
 IDENT(IdHdr,ID_AUXILIARY);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,8 +139,6 @@ FGAuxiliary::~FGAuxiliary()
 
 bool FGAuxiliary::Run(bool Holding)
 {
-  double A,B,D;
-
   if (FGModel::Run(Holding)) return true; // return true if error returned from base class
   if (Holding) return false;
 
@@ -215,20 +213,10 @@ bool FGAuxiliary::Run(bool Holding)
   Vpitot = vPitotUVW(eU);
   if (Vpitot < 0.0) Vpitot = 0.0;
   MachPitot = Vpitot / in.SoundSpeed;
-  double MachP2 = MachPitot * MachPitot;
+  pt = PitotTotalPressure(MachPitot, in.Pressure);
 
-  if (MachPitot < 1) {   // Calculate total pressure assuming isentropic flow
-    pt = in.Pressure*pow((1 + 0.2*MachP2),3.5);
-  } else {
-    // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
-    B = 5.76 * MachP2 / (5.6*MachP2 - 0.8);
-    D = (2.8 * MachP2 - 0.4) * 0.4167;
-    pt = in.Pressure*pow(B,3.5)*D;
-  }
-
-  A = pow(((pt-in.Pressure)/in.PressureSL + 1),0.28571);
   if (abs(MachPitot) > 0.0) {
-    vcas = sqrt(7 * in.PressureSL / in.DensitySL * (A-1));
+    vcas = VcalibratedFromMach(MachPitot, in.Pressure, in.PressureSL, in.DensitySL);
     veas = sqrt(2 * qbar / in.DensitySL);
     vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
   } else {

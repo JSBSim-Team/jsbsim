@@ -49,7 +49,7 @@
                                 MKSTR(AEROMATIC_MINOR_VERSION)"." \
                                 MKSTR(AEROMATIC_MICRO_VERSION)
 
-#define PI			3.1415926535f
+#define PI			3.14159265358979323846
 #define DEG_TO_RAD		0.01745329251994329547f
 #define RAD_TO_DEG		(1.0f/DEG_TO_RAD)
 

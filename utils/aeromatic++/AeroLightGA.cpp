@@ -106,16 +106,16 @@ void Light::set_side()
 void Light::set_roll()
 {
     // estimate roll coefficients
-    if (_aircraft->_Clbeta == 0.0f) {
-        _aircraft->_Clbeta = -0.1f;    // sideslip
+    if (_aircraft->_Clbeta[0] == 0.0f) {
+        _aircraft->_Clbeta[0] = -0.1f;    // sideslip
     }
 
     if (_aircraft->_Clp == 0.0f) {
         _aircraft->_Clp = -0.4f;       // roll rate
     }
 
-    if (_aircraft->_Clr == 0.0f) {
-        _aircraft->_Clr = 0.15f;       // yaw rate
+    if (_aircraft->_Clr[0] == 0.0f) {
+        _aircraft->_Clr[0] = 0.15f;       // yaw rate
     }
 
     if (_aircraft->_Cldr == 0.0f) {

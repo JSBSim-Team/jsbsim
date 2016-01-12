@@ -104,6 +104,9 @@ private:
     unsigned _blades;
     float _diameter;
     float _max_rpm;
+    float _pitch_hub;
+    float _pitch_tip;
+    float _max_chord;
 
     float _gear_ratio;
     float _static_thrust;
@@ -117,8 +120,21 @@ private:
     float _prop_span_left;
     float _prop_span_right;
 
+    struct _performance_t {
+        _performance_t(float _J, float _CT, float _CP) :
+            J(_J), CT(_CT), CP(_CP) {}
+
+        float J;
+        float CT;
+        float CP;
+    };
+    std::vector<_performance_t> _performance;
+    unsigned _pitch_levels;
+
     static float const _thrust_t[23][9];
     static float const _power_t[23][9];
+
+    void bladeElement();
 };
 
 class Nozzle : public Thruster
