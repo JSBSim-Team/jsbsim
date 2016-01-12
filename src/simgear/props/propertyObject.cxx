@@ -95,7 +95,7 @@ SGPropertyNode* PropertyObjectBase::getOrThrow() const
       path += _path;
     }
 
-    throw sg_exception("Unknown property:" + path);
+    throw("Unknown property:" + path);
   }
 
   return n;
