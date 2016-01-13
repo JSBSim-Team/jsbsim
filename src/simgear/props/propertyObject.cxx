@@ -21,7 +21,7 @@
 
 #include "propertyObject.hxx"
 
-#include <simgear/structure/exception.hxx>
+// #include <simgear/structure/exception.hxx>
 
 namespace simgear
 {
