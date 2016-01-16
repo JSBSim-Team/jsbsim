@@ -34,7 +34,6 @@ namespace Aeromatic
 {
 
 #define FACT			2.667f
-#define	NUM_PROP_PITCHES	6
 
 Thruster::Thruster(Propulsion *p) :
     _propulsion(p)
@@ -104,13 +103,15 @@ std::string Nozzle::thruster()
 }
 
 
+#define NUM_PROP_PITCHES	6
+#define NUM_ELEMENTS		12
 Propeller::Propeller(Propulsion *p) : Thruster(p),
     _fixed_pitch(true),
     _diameter(8.0f),
     _max_rpm(2100.0f),
-    _pitch_hub(48.0f),
-    _pitch_tip(8.0f),
     _max_chord(0.0f),
+    _pitch(45.0f),
+    _ixx(0.0f),
     _pitch_levels(0)
 {
     strCopy(_thruster_name, "my_propeller");
@@ -130,59 +131,62 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
  * a more accurate analysis of the specific propeller design can be obtained.
  *
  * http://www.icas.org/ICAS_ARCHIVE/ICAS2010/PAPERS/434.PDF
+ *
+ * http://www.engineeringtoolbox.com/density-solids-d_1265.html
+ * http://www.engineeringtoolbox.com/wood-density-d_40.html
+ * Mahogany:	 41
+ * Walnut:	 35
+ * Oak:		 46
+ * Aluminum:	167
  */
-#define NUM_ELEMENTS	12
 void  Propeller::bladeElement()
 {
+    const float Y = 167.0f;	// Specific Weight of aluminum
+    const float rho = 1.225f;
+    const float Cf = 0.006f;	// skin Friction Coefficient
+    const float k1 = 0.2f;	// correction factor for airfoil thickness
+
     float RPM = _engine_rpm;
-    float hub = _pitch_hub;
-    float tip = _pitch_tip;
-    float dia = _diameter;
+    float D = _diameter;
     float B = _blades;
+    float R = D/2.0f;
 
     if (_max_chord == 0) {
-        _max_chord = 0.17f*powf(dia,1.0f/B);
+        _max_chord = 0.76f*sqrtf(R/B);
     }
+    float max_thickness = 0.3*_max_chord;
 
-    float R = dia/2.0f;
     float xt = R;
-    float xs = 0.1f*R;
-    float rho = 1.225f;
+    float xs = R/NUM_ELEMENTS;
+    float hub = atanf(_pitch/(2.0f*PI*xs*FEET_TO_INCH))*RAD_TO_DEG;
+    float tip = atanf(_pitch/(2.0f*PI*xt*FEET_TO_INCH))*RAD_TO_DEG;
+
     float n = RPM/60.0f;
+    float n2 = n*n;
+    float D4 = D*D*D*D;
+    float D5 = D4*D;
+
     float omega = 2.0f*PI*n;
     float coef1 = (tip-hub)/(xt-xs);
     float coef2 = hub - coef1*xs;
-    float rstep = (xt-xs)/(NUM_ELEMENTS-2);
-
-    float n2 = n*n;
-    float D4 = dia*dia*dia*dia;
-    float D5 = D4*dia;
+    float rstep = (xt-xs)/NUM_ELEMENTS;
 
     float pitch = _fixed_pitch ? 0.0f : -15.0f;
     do
     {
-        float eff = 0.89f;
         float step = 0.05f;
-        for (float J=0.1; J<2.4f; J += step)
+        for (float J=1e-9; J<2.4f; J += step)
         {
+            _ixx = 0.0f;
+
             if (J > 1.36f) step = 0.1f;
 
-            float V = J*n*dia;
+            float V = J*n*D;
             float thrust = 0.0f;
             float torque = 0.0f;
-            for (unsigned i=0; i<NUM_ELEMENTS-1; ++i)
+            for (unsigned i=0; i<NUM_ELEMENTS; ++i)
             {
                 float rad = xs + i*rstep;
-                float r = _MAX(1.0f - rad/xt, 0.0f);
-#if 0
-                // historic propeller
-                float chord = _max_chord*(0.25f + 0.9f*(pow(r,0.5f)-pow(r,5.0f)));
-#else
-                // modern propeller
-                float chord = _max_chord*(0.5f + 0.53f*(pow(r,0.25f)-pow(r,5.0f)));
-#endif
-                float TC = 0.2f*(0.1f + 0.9f*powf(r,2.5f));
-
                 float theta = coef1*rad + coef2+pitch;
                 float th = theta*DEG_TO_RAD;
                 float a = 0.1f;
@@ -190,32 +194,40 @@ void  Propeller::bladeElement()
                 int finished = 0;
                 int sum = 1;
 
-                float AR = B*rstep/chord;
+                float r = rad/xt;
+                float x = 1.0f - r;
+                float chord=_max_chord*(0.55f+0.7f*(pow(r,0.25f)-pow(r,5.0f)));
+                float TC = max_thickness*(1.0f-0.99f*powf(r,0.05f))/chord;
+                float AR = rstep/chord;
                 float PAR = PI*AR;
 
-                float CL0 = 0.42f;
+                float eff = 0.71 + (i*0.23f/NUM_ELEMENTS);
+                float CL0 = 2.5*TC;
                 float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
-                float CD0 = 0.002448f*TC;
-                float CDa = 2.0f*CLa/(B*eff*PAR);
+                float CD0 = TC*k1*Cf;
                 float CDi = 1.0f/(eff*PAR);
+                float CDa = CLa*CDi;
 
                 float DtDr, DqDr, tem1, tem2, anew, bnew;
-                while (finished == 0)
+                do
                 {
                     float V0 = V*(1.0f+a);
                     float V2 = omega*rad*(1.0f-b);
                     float phi = atan2f(V0,V2);
+                    float sphi = sinf(phi);
+                    float cphi = cosf(phi);
                     float alpha = th-phi;
 
-                    float CL = CL0 + CLa*alpha;
-                    float CD = CD0 + CDa*alpha*CL + CDi*CL*CL;
-                    float CY = CL*cosf(phi) - CD*sinf(phi);
-                    float CX = CD*cosf(phi) + CL*sinf(phi);
-                    float Vlocal = sqrtf(V0*V0 + V2*V2);
-                    float Vlocal2 = Vlocal*Vlocal;
+                    float CL = CL0 + alpha*CLa;
+                    float CD = CD0 + alpha*CDa*CL + CDi*CL*CL;
+                    float CY = CL*cphi - CD*sphi;
+                    float CX = CD*cphi + CL*sphi;
 
-                    DtDr = 0.5f*rho*Vlocal2*B*chord*CY;
-                    DqDr = 0.5f*rho*Vlocal2*B*chord*rad*CX;
+                    // Blade element momentum theory
+                    float solidity = B*chord/(PI*R);
+                    DtDr = solidity*PI*rho*V0*V0/(sphi*sphi)*rad*CY;
+                    DqDr = solidity*PI*rho*V0*V0/(sphi*sphi)*rad*rad*CX;
+
                     tem1 = DtDr/(4.0f*PI*rad*rho*V*V*(1.0f+a));
                     tem2 = DqDr/(4.0f*PI*rad*rad*rad*rho*V*(1.0f+a)*omega);
                     anew = 0.5f*(a+tem1);
@@ -228,9 +240,16 @@ void  Propeller::bladeElement()
                     if (++sum > 500) {
                         finished = 1;
                     }
+                    break;
                 }
+                while (finished == 0);
+
                 thrust += DtDr*rstep;
                 torque += DqDr*rstep;
+
+                float V = PI*chord*(chord*TC)*rstep;
+                float m = B*V*Y*LB_TO_SLUGS;
+                _ixx += m*rad*rad;
             }
 
             float CT = thrust/(rho*n2*D4);
@@ -246,6 +265,12 @@ void  Propeller::bladeElement()
         pitch += 15.0f;
     }
     while (_pitch_levels < NUM_PROP_PITCHES);
+
+    // hub
+    float r = 0.1f*R;
+    float V = PI*r*r*max_thickness;
+    float m = V*Y*LB_TO_SLUGS;
+    _ixx += m*r*r;
 }
 
 void Propeller::set_thruster(float mrpm)
@@ -288,17 +313,6 @@ void Propeller::set_thruster(float mrpm)
     } else {
       _blades = 3;
     }
-
-    // estimate the moment of inertia
-    float weight = powf(_diameter, 2.8f) / 4.8f;
-    float mass_prop = weight / 32.174f;		// Standard gravity
-    float mass_hub = 0.1f * mass_prop;
-    float mass_blade = (mass_prop - mass_hub) / _blades;
-    float L = _diameter / 2;			// length each blade (feet)
-    float R = L * 0.1f;				// radius of hub (feet) 
-    float ixx_blades = _blades * (0.33333f * mass_blade * L * L);
-    float ixx_hub = 0.5f * mass_hub * R * R;
-    _ixx = ixx_blades + ixx_hub;
 
     // Thruster effects on coefficients
     Aeromatic* aircraft = _propulsion->_aircraft;
@@ -378,7 +392,6 @@ std::string Propeller::pitch()
 
     Aeromatic* aircraft = _propulsion->_aircraft;
     float Sw = aircraft->_wing.area;
-//  float AR = aircraft->_wing.aspect;
     float lh = aircraft->_htail.arm;
     float Sh = aircraft->_htail.area;
     float cbarw = aircraft->_wing.chord_mean;
@@ -467,9 +480,10 @@ std::string Propeller::thruster()
     file << std::endl;
     file << "    Inputs:" << std::endl;
     file << "           horsepower: " << _propulsion->_power << std::endl;
-    file << "                pitch: " << (_fixed_pitch ? "fixed" : "variable") << std::endl;
     file << "       max engine rpm: " << _engine_rpm << std::endl;
     file << "   prop diameter (ft): " << _diameter << std::endl;
+    file << "      prop chord (ft): " << _max_chord << std::endl;
+    file << "                pitch: " << (_fixed_pitch ? "fixed" : "variable") << " at " << _pitch << " inch" << std::endl;
     file << std::endl;
     file << "    Outputs:" << std::endl;
     file << "         max prop rpm: " << _max_rpm << std::endl;
@@ -601,6 +615,391 @@ std::string Propeller::thruster()
 }
 
 // ---------------------------------------------------------------------------
+
+float const Propeller::_CL_t[180] = {
+#if 0
+    0.0, 0.11, 0.22, 0.33, 0.44, 0.55, 0.66, 0.7483, 0.8442, 0.9260, 0.9937,
+    1.0363, 1.0508, 1.0302, 0.9801, 0.9119, 0.8401, 0.77, 0.7305, 0.7041,
+    0.699, 0.7097, 0.7298, 0.7593, 0.7961, 0.8353, 0.8838, 0.9473, 0.855,
+    0.98, 1.035, 1.05, 1.02, 0.955, 0.875, 0.76, 0.63, 0.5, 0.365, 0.23, 0.09,
+    -0.05, -0.185, -0.32, -0.45, -0.575, -0.67, -0.76, -0.85, -0.93, -0.98,
+    -0.9, -0.77, -0.67, -0.635, -0.68, -0.85, -0.66, 0.0
+#else
+    0.2500,
+0.3800,
+0.5100,
+0.6400,
+0.7700,
+0.9000,
+1.0000,
+1.1000,
+1.2000,
+1.3000,
+1.4000,
+1.4600,
+1.3500,
+1.2800,
+1.0000,
+0.8000,
+0.7900,
+0.7800,
+0.7700,
+0.7600,
+0.7500,
+0.7835,
+0.8085,
+0.8320,
+0.8540,
+0.8744,
+0.8933,
+0.9106,
+0.9264,
+0.9406,
+0.9532,
+0.9643,
+0.9739,
+0.9819,
+0.9884,
+0.9935,
+0.9971,
+0.9992,
+1.0000,
+0.9994,
+0.9974,
+0.9942,
+0.9897,
+0.9839,
+0.9770,
+0.9689,
+0.9597,
+0.9495,
+0.9382,
+0.9260,
+0.9128,
+0.8987,
+0.8838,
+0.8680,
+0.8515,
+0.8343,
+0.8163,
+0.7977,
+0.7785,
+0.7587,
+0.7384,
+0.7176,
+0.6962,
+0.6745,
+0.6523,
+0.6297,
+0.6068,
+0.5835,
+0.5599,
+0.5361,
+0.5119,
+0.4876,
+0.4630,
+0.4382,
+0.4133,
+0.3881,
+0.3628,
+0.3374,
+0.3119,
+0.2863,
+0.2605,
+0.2347,
+0.2088,
+0.1828,
+0.1568,
+0.1307,
+0.1046,
+0.0785,
+0.0524,
+0.0262,
+0.0000,
+-0.0262,
+-0.0524,
+-0.0785,
+-0.1046,
+-0.1307,
+-0.1568,
+-0.1828,
+-0.2088,
+-0.2347,
+-0.2605,
+-0.2863,
+-0.3119,
+-0.3374,
+-0.3628,
+-0.3881,
+-0.4133,
+-0.4382,
+-0.4630,
+-0.4876,
+-0.5119,
+-0.5361,
+-0.5599,
+-0.5835,
+-0.6068,
+-0.6297,
+-0.6523,
+-0.6745,
+-0.6962,
+-0.7176,
+-0.7384,
+-0.7587,
+-0.7785,
+-0.7977,
+-0.8163,
+-0.8343,
+-0.8515,
+-0.8680,
+-0.8838,
+-0.8987,
+-0.9128,
+-0.9260,
+-0.9382,
+-0.9495,
+-0.9597,
+-0.9689,
+-0.9770,
+-0.9839,
+-0.9897,
+-0.9942,
+-0.9974,
+-0.9994,
+-1.0000,
+-0.9992,
+-0.9971,
+-0.9935,
+-0.9884,
+-0.9819,
+-0.9739,
+-0.9643,
+-0.9532,
+-0.9406,
+-0.9264,
+-0.9106,
+-0.8933,
+-0.8744,
+-0.8540,
+-0.8320,
+-0.8085,
+-0.7835,
+-0.7571,
+-0.7292,
+-0.6999,
+-0.6693,
+-0.6373,
+-0.6041,
+-0.5696,
+-0.7460,
+-0.8526,
+-1.0003,
+-0.9790,
+-0.9185,
+-0.8588,
+-0.7999,
+-0.7415,
+-0.6838,
+-0.5965,
+-0.5095,
+-0.4229,
+-0.3364
+
+#endif
+};
+
+float const Propeller::_CD_t[180] = {
+#if 0
+    0.0077, 0.0078, 0.008, 0.0083, 0.0089, 0.0098, 0.0108, 0.0122, 0.0135,
+    0.0149, 0.0164, 0.0182, 0.02, 0.0221, 0.0244, 0.0269, 0.0297, 0.134,
+    0.238, 0.26, 0.282, 0.305, 0.329, 0.354, 0.379, 0.405, 0.432, 0.46,0.57, 
+    0.745, 0.92, 1.075, 1.215, 1.345, 1.47, 1.575, 1.665, 1.735, 1.78, 1.8,
+    1.8, 1.78, 1.75, 1.7, 1.635, 1.555, 1.465, 1.35, 1.225, 1.085, 0.925,
+    0.755, 0.575, 0.42, 0.32, 0.23, 0.14, 0.055, 0.25
+#else
+0.0000,
+0.0021,
+0.0042,
+0.0063,
+0.0084,
+0.0105,
+0.0125,
+0.0146,
+0.0167,
+0.0188,
+0.0209,
+0.0283,
+0.0356,
+0.0430,
+0.0503,
+0.0577,
+0.1371,
+0.2164,
+0.2366,
+0.2569,
+0.2771,
+0.2973,
+0.3176,
+0.3378,
+0.3737,
+0.4097,
+0.4456,
+0.4815,
+0.5175,
+0.5534,
+0.5893,
+0.6252,
+0.6612,
+0.6971,
+0.7292,
+0.7614,
+0.7935,
+0.8257,
+0.8578,
+0.8900,
+0.9221,
+0.9542,
+0.9864,
+1.0185,
+1.0507,
+1.0828,
+1.1166,
+1.1504,
+1.1843,
+1.2181,
+1.2519,
+1.2857,
+1.3195,
+1.3534,
+1.3872,
+1.4210,
+1.4368,
+1.4527,
+1.4685,
+1.4843,
+1.5002,
+1.5160,
+1.5318,
+1.5477,
+1.5635,
+1.5793,
+1.5952,
+1.6110,
+1.6268,
+1.6427,
+1.6585,
+1.6727,
+1.6870,
+1.7012,
+1.7155,
+1.7297,
+1.7440,
+1.7582,
+1.7725,
+1.7867,
+1.8010,
+1.8047,
+1.8083,
+1.8120,
+1.8157,
+1.8193,
+1.8230,
+1.8267,
+1.8304,
+1.8340,
+1.8377,
+1.8297,
+1.8218,
+1.8138,
+1.8059,
+1.7979,
+1.7899,
+1.7820,
+1.7740,
+1.7661,
+1.7581,
+1.7459,
+1.7337,
+1.7215,
+1.7093,
+1.6971,
+1.6850,
+1.6728,
+1.6606,
+1.6484,
+1.6362,
+1.6229,
+1.6097,
+1.5964,
+1.5832,
+1.5699,
+1.5567,
+1.5434,
+1.5302,
+1.5169,
+1.5037,
+1.4793,
+1.4550,
+1.4306,
+1.4063,
+1.3819,
+1.3575,
+1.3332,
+1.3088,
+1.2845,
+1.2601,
+1.2283,
+1.1966,
+1.1648,
+1.1331,
+1.1013,
+1.0695,
+1.0378,
+1.0060,
+0.9743,
+0.9425,
+0.9086,
+0.8748,
+0.8409,
+0.8070,
+0.7731,
+0.7393,
+0.7054,
+0.6715,
+0.6377,
+0.6038,
+0.5747,
+0.5456,
+0.5164,
+0.4873,
+0.4582,
+0.4291,
+0.4000,
+0.3708,
+0.3417,
+0.3126,
+0.2946,
+0.2766,
+0.2586,
+0.2406,
+0.2225,
+0.2045,
+0.1865,
+0.1685,
+0.1505,
+0.1325,
+0.1192,
+0.1060,
+0.0927,
+0.0795,
+0.0662,
+0.0530,
+0.0397,
+0.0265,
+0.0132
+#endif
+};
 
 #if 0
 float const Propeller::_thrust_t[23][9] =

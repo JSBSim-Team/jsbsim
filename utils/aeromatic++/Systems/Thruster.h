@@ -104,9 +104,8 @@ private:
     unsigned _blades;
     float _diameter;
     float _max_rpm;
-    float _pitch_hub;
-    float _pitch_tip;
     float _max_chord;
+    float _pitch;
 
     float _gear_ratio;
     float _static_thrust;
@@ -131,8 +130,10 @@ private:
     std::vector<_performance_t> _performance;
     unsigned _pitch_levels;
 
-    static float const _thrust_t[23][9];
-    static float const _power_t[23][9];
+    static float const _CL_t[180];
+    static float const _CD_t[180];
+//  static float const _thrust_t[23][9];
+//  static float const _power_t[23][9];
 
     void bladeElement();
 };
