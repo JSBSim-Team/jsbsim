@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.30 2015/12/29 13:44:39 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.31 2016/01/17 15:54:04 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
 
   Debug=0;DebugLevel=0;
   fdmex=FDMExec;
+  fgic = *fdmex->GetIC();
   total_its=0;
   gamma_fallback=false;
   mode=tt;
@@ -196,7 +197,6 @@ bool FGTrim::DoTrim(void) {
   double aileron0 = FCS->GetDaCmd();
   double rudder0 = FCS->GetDrCmd();
   double PitchTrim0 = FCS->GetPitchTrimCmd();
-  fgic = *fdmex->GetIC();
 
   for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
@@ -210,6 +210,8 @@ bool FGTrim::DoTrim(void) {
   fgic.SetRRadpsIC(0.0);
 
   if (mode == tGround) {
+    fdmex->Initialize(&fgic);
+    fdmex->Run();
     trimOnGround();
     double theta = fgic.GetThetaRadIC();
     double phi = fgic.GetPhiRadIC();
@@ -790,7 +792,6 @@ void FGTrim::setDebug(FGTrimAxis& axis) {
 
 void FGTrim::SetMode(TrimMode tt) {
     ClearStates();
-    fdmex->GetPropagate()->SetInitialState(&fgic);
     mode=tt;
     switch(tt) {
       case tFull:

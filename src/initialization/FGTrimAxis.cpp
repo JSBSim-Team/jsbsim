@@ -56,7 +56,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.19 2015/09/28 20:50:41 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.20 2016/01/17 15:54:04 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIMAXIS);
 
 /*****************************************************************************/
@@ -126,17 +126,17 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   case tAltAGL:
     control_min=0;
     control_max=30;
-    control_value=fdmex->GetPropagate()->GetDistanceAGL();
+    control_value=ic->GetAltitudeAGLFtIC();
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetPropagate()->GetEuler(eTht) - 5*degtorad;
-    control_max=fdmex->GetPropagate()->GetEuler(eTht) + 5*degtorad;
+    control_min=ic->GetThetaRadIC() - 5*degtorad;
+    control_max=ic->GetThetaRadIC() + 5*degtorad;
     state_convert=radtodeg;
     break;
   case tPhi:
-    control_min=fdmex->GetPropagate()->GetEuler(ePhi) - 30*degtorad;
-    control_max=fdmex->GetPropagate()->GetEuler(ePhi) + 30*degtorad;
+    control_min=ic->GetPhiRadIC() - 30*degtorad;
+    control_max=ic->GetPhiRadIC() + 30*degtorad;
     state_convert=radtodeg;
     control_convert=radtodeg;
     break;
@@ -147,8 +147,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_convert=radtodeg;
     break;
   case tHeading:
-    control_min=fdmex->GetPropagate()->GetEuler(ePsi) - 30*degtorad;
-    control_max=fdmex->GetPropagate()->GetEuler(ePsi) + 30*degtorad;
+    control_min=ic->GetPsiRadIC() - 30*degtorad;
+    control_max=ic->GetPsiRadIC() + 30*degtorad;
     state_convert=radtodeg;
     break;
   }
