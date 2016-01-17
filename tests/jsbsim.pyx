@@ -59,7 +59,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         string GetRootDir()
         string GetFullAircraftPath()
         double GetPropertyValue(string property)
-        void SetPropertyValue(string property, double value)
+        void SetPropertyValue(string property, double value) except +convertJSBSimToPyExc
         string GetModelName()
         bool SetOutputDirectives(string fname) except +
         #void ForceOutput(int idx=0)
