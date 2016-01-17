@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.41 2016/01/10 12:07:49 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGJSBBase.cpp,v 1.42 2016/01/17 18:42:52 bcoconni Exp $");
 IDENT(IdHdr,ID_JSBBASE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,7 +277,7 @@ double FGJSBBase::GaussianRandomNumber(void)
 
 double FGJSBBase::PitotTotalPressure(double mach, double p)
 {
-  if (mach < 0) return 0;
+  if (mach < 0) return p;
   if (mach < 1)    //calculate total pressure assuming isentropic flow
     return p*pow((1 + 0.2*mach*mach),3.5);
   else {
