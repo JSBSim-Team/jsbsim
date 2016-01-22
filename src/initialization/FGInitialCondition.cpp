@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.104 2016/01/10 16:35:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.105 2016/01/22 03:18:26 jberndt Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -1047,15 +1047,6 @@ bool FGInitialCondition::Load_v2(Element* document)
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
         Element* latitude_el = position_el->FindElement("latitude");
-        if (latitude_el) {
-          string lat_type = latitude_el->GetAttributeValue("type");
-          double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
-          if (lat_type == "geod" || lat_type == "geodetic")
-            position.SetPositionGeodetic(0.0, latitude, 0.0); // Longitude and altitude will be set later on
-          else
-            position.SetLatitude(latitude);
-        }
-
         if (position_el->FindElement("longitude"))
           position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
 
@@ -1068,6 +1059,18 @@ bool FGInitialCondition::Load_v2(Element* document)
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
+        }
+
+        double altitude = position.GetAltitudeASL();
+        double longitude = position.GetLongitude();
+
+        if (latitude_el) {
+          string lat_type = latitude_el->GetAttributeValue("type");
+          double latitude = position_el->FindElementValueAsNumberConvertTo("latitude", "RAD");
+          if (lat_type == "geod" || lat_type == "geodetic")
+            position.SetPositionGeodetic(longitude, latitude, altitude);
+          else
+            position.SetLatitude(latitude);
         }
 
       } else {
