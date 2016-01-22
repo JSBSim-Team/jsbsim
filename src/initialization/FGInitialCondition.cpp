@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.105 2016/01/22 03:18:26 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.106 2016/01/22 03:28:12 jberndt Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -909,6 +909,21 @@ bool FGInitialCondition::Load_v1(Element* document)
 {
   bool result = true;
 
+  if (document->FindElement("longitude"))
+    SetLongitudeRadIC(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
+  if (document->FindElement("elevation"))
+    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
+
+  if (document->FindElement("altitude")) // This is feet above ground level
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
+  else if (document->FindElement("altitudeAGL")) // This is feet above ground level
+    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
+  else if (document->FindElement("altitudeMSL")) // This is feet above sea level
+    SetAltitudeASLFtIC(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+
+  double altitude = GetAltitudeASLFtIC();
+  double longitude = GetLongitudeRadIC();
+
   Element* latitude_el = document->FindElement("latitude");
   if (latitude_el) {
     double latitude = document->FindElementValueAsNumberConvertTo("latitude", "RAD");
@@ -927,22 +942,10 @@ bool FGInitialCondition::Load_v1(Element* document)
 
     string lat_type = latitude_el->GetAttributeValue("type");
     if (lat_type == "geod" || lat_type == "geodetic")
-      position.SetPositionGeodetic(0.0, latitude, 0.0); // Longitude and altitude will be set later on
+      position.SetPositionGeodetic(longitude, latitude, altitude); // Longitude and altitude will be set later on
     else
       position.SetLatitude(latitude);
   }
-
-  if (document->FindElement("longitude"))
-    SetLongitudeRadIC(document->FindElementValueAsNumberConvertTo("longitude", "RAD"));
-  if (document->FindElement("elevation"))
-    SetTerrainElevationFtIC(document->FindElementValueAsNumberConvertTo("elevation", "FT"));
-
-  if (document->FindElement("altitude")) // This is feet above ground level
-    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
-  else if (document->FindElement("altitudeAGL")) // This is feet above ground level
-    SetAltitudeAGLFtIC(document->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
-  else if (document->FindElement("altitudeMSL")) // This is feet above sea level
-    SetAltitudeASLFtIC(document->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
 
   FGColumnVector3 vOrient = orientation.GetEuler();
 
