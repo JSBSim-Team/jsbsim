@@ -62,6 +62,9 @@
 #define LBS_TO_KG		0.4535f
 #define KG_TO_LBS		2.205f
 
+#define LB_TO_SLUGS		0.0310809502f
+#define SLUGS_TO_LB		32.1740486f
+
 #define KG_M2_TO_SLUG_FT2	0.737562142f
 #define SLUG_FT2_TO_KG_M2	1.355817962f
 

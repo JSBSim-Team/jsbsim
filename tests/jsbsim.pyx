@@ -59,7 +59,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         string GetRootDir()
         string GetFullAircraftPath()
         double GetPropertyValue(string property)
-        void SetPropertyValue(string property, double value)
+        void SetPropertyValue(string property, double value) except +convertJSBSimToPyExc
         string GetModelName()
         bool SetOutputDirectives(string fname) except +
         #void ForceOutput(int idx=0)
@@ -149,7 +149,7 @@ cdef class FGFDMExec:
         for path in search_paths:
             if verbose:
                 print '\t', path
-            if path is not  None and os.path.isdir(path):
+            if path is not None and os.path.isdir(path):
                 root_dir = path
                 break
         if root_dir is None:
@@ -171,6 +171,12 @@ cdef class FGFDMExec:
                 self.get_aircraft_path(),
                 self.get_engine_path(),
                 self.get_systems_path())
+
+    def __getitem__(self, key):
+        return self.get_property_value(key)
+
+    def __setitem__(self, key, value):
+        self.set_property_value(key, value)
 
     def run(self):
         """
