@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.127 2015/08/22 18:09:00 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.128 2016/01/23 10:48:11 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,8 +87,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
-  : FGModel(fdmex),
-    VehicleRadius(0)
+  : FGModel(fdmex)
 {
   Debug(0);
   Name = "FGPropagate";
@@ -172,7 +171,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   // Compute local terrain velocity
   RecomputeLocalTerrainVelocity();
-  VehicleRadius = GetRadius();
 
   // Set the angular velocities of the body frame relative to the ECEF frame,
   // expressed in the body frame.
@@ -254,7 +252,6 @@ bool FGPropagate::Run(bool Holding)
 
   // Set auxilliary state variables
   RecomputeLocalTerrainVelocity();
-  VehicleRadius = GetRadius(); // Calculate current aircraft radius from center of planet
 
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
 
@@ -551,7 +548,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
   UpdateLocationMatrices();
   SetInertialOrientation(vstate.qAttitudeECI);
   RecomputeLocalTerrainVelocity();
-  VehicleRadius = GetRadius();
   VState.vUVW = vstate.vUVW;
   vVel = Tb2l * VState.vUVW;
   VState.vPQR = vstate.vPQR;
@@ -564,7 +560,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
 void FGPropagate::UpdateVehicleState(void)
 {
   RecomputeLocalTerrainVelocity();
-  VehicleRadius = GetRadius();
   VState.vInertialPosition = Tec2i * VState.vLocation;
   UpdateLocationMatrices();
   UpdateBodyMatrices();

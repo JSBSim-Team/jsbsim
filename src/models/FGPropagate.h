@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.82 2015/08/22 18:09:00 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.83 2016/01/23 10:48:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.82 2015/08/22 18:09:00 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.83 2016/01/23 10:48:11 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -550,7 +550,6 @@ public:
   void SetRadius(double r)
   {
     VState.vLocation.SetRadius(r);
-    VehicleRadius = r;
     VState.vInertialPosition = Tec2i * VState.vLocation;
   }
 
@@ -618,7 +617,6 @@ private:
 
   FGQuaternion Qec2b;
 
-  double VehicleRadius;
   FGColumnVector3 LocalTerrainVelocity, LocalTerrainAngularVelocity;
 
   eIntegrateType integrator_rotational_rate;
