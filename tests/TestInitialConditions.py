@@ -1,4 +1,4 @@
-# TestICOutput.py
+# TestInitialConditions.py
 #
 # A regression test that checks that IC are correctly read from the IC file
 # then loaded in the ic/ properties. It also checks that the correct ICs are
@@ -39,7 +39,34 @@ class TestInitialConditions(unittest.TestCase):
     def tearDown(self):
         self.sandbox.erase()
 
-    def test_initial_conditions(self):
+    # Generator that returns the full path to all the scripts in JSBSim
+    def script_list(self, blacklist=[]):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts')
+        for f in os.listdir(self.sandbox.elude(script_path)):
+            if f in blacklist:
+                continue
+
+            fullpath = os.path.join(self.sandbox.elude(script_path), f)
+
+            # Does f contains a JSBSim script ?
+            if CheckXMLFile(fullpath, 'runscript'):
+                yield fullpath
+
+    def getElementTrees(self, s):
+        # Read the IC file name from the script
+        tree = et.parse(s)
+        use_tag = tree.getroot().find('use')
+
+        aircraft_name = use_tag.attrib['aircraft']
+        aircraft_path = os.path.join('aircraft', aircraft_name)
+        path_to_jsbsim_aircrafts = self.sandbox.elude(self.sandbox.path_to_jsbsim_file(aircraft_path))
+
+        IC_file = append_xml(use_tag.attrib['initialize'])
+        IC_tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, IC_file))
+
+        return (tree, IC_tree)
+
+    def test_initial_conditions_v1(self):
         prop_output_to_CSV = ['velocities/vc-kts']
         # A dictionary that contains the XML tags to extract from the IC file
         # along with the name of the properties that contain the values
@@ -97,129 +124,144 @@ class TestInitialConditions(unittest.TestCase):
                  'prop': 'position/terrain-elevation-asl-ft',
                  'CSV_header': 'Terrain Elevation (ft)'}]
 
-        script_path = self.sandbox.path_to_jsbsim_file('scripts')
-        for f in os.listdir(self.sandbox.elude(script_path)):
-            # TODO These scripts need some further investigation
-            if f in ('ZLT-NT-moored-1.xml',
-                     '737_cruise_steady_turn_simplex.xml'):
-                continue
-            fullpath = os.path.join(self.sandbox.elude(script_path), f)
-
-            # Does f contains a JSBSim script ?
-            if not CheckXMLFile(fullpath, 'runscript'):
-                continue
-
-            # Read the IC file name from the script
-            tree = et.parse(fullpath)
-            root = tree.getroot()
-            use_tag = root.find('use')
-
-            aircraft_name = use_tag.attrib['aircraft']
-            aircraft_path = os.path.join('aircraft', aircraft_name)
-            path_to_jsbsim_aircrafts = self.sandbox.elude(self.sandbox.path_to_jsbsim_file(aircraft_path))
-
-            IC_file = append_xml(use_tag.attrib['initialize'])
-            IC_tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, IC_file))
+        for s in self.script_list(('ZLT-NT-moored-1.xml',
+                                   '737_cruise_steady_turn_simplex.xml')):
+            (tree, IC_tree) = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 1.0 of init files
-            if 'version' in IC_root.attrib:
-                if float(IC_root.attrib['version']) == 2.0:
-                    continue
+            if 'version' in IC_root.attrib and float(IC_root.attrib['version']) != 1.0:
+                continue
 
-            # Extract the IC values from XML
-            for var in vars:
-                var_tag = IC_root.find('./'+var['tag'])
-                var['specified'] = var_tag is not None
-                if not var['specified']:
-                    var['value'] = 0.0
-                    continue
+            self.CheckICValues(vars, tree, IC_root, s, prop_output_to_CSV)
 
-                var['value'] = float(var_tag.text)
-                if 'unit' in var_tag.attrib:
-                    conv = var['unit'][var_tag.attrib['unit']]
-                else:
-                    conv = var['unit'][var['default_unit']]
-                var['value'] *= conv
+    def CheckICValues(self, vars, tree, IC_root, script_path,
+                      prop_output_to_CSV=[]):
+        # Extract the IC values from XML
+        for var in vars:
+            var_tag = IC_root.find(var['tag'])
+            var['specified'] = var_tag is not None
+            if not var['specified']:
+                var['value'] = 0.0
+                continue
 
-            # Generate a CSV file to check that it is correctly initialized
-            # with the initial values
-            output_tag = et.SubElement(root, 'output')
-            output_tag.attrib['name'] = 'check_csv_values.csv'
-            output_tag.attrib['type'] = 'CSV'
-            output_tag.attrib['rate'] = '10'
-            position_tag = et.SubElement(output_tag, 'position')
-            position_tag.text = 'ON'
-            velocities_tag = et.SubElement(output_tag, 'velocities')
-            velocities_tag.text = 'ON'
-            for props in prop_output_to_CSV:
-                property_tag = et.SubElement(output_tag, 'property')
-                property_tag.text = props
-            tree.write(self.sandbox(f))
+            var['value'] = float(var_tag.text)
+            if 'unit' in var_tag.attrib:
+                conv = var['unit'][var_tag.attrib['unit']]
+            else:
+                conv = var['unit'][var['default_unit']]
+            var['value'] *= conv
 
-            # Initialize the script
-            fdm = CreateFDM(self.sandbox)
-            fdm.load_script(f)
-            fdm.run_ic()
+        # Generate a CSV file to check that it is correctly initialized
+        # with the initial values
+        output_tag = et.SubElement(tree.getroot(), 'output')
+        output_tag.attrib['name'] = 'check_csv_values.csv'
+        output_tag.attrib['type'] = 'CSV'
+        output_tag.attrib['rate'] = '10'
+        position_tag = et.SubElement(output_tag, 'position')
+        position_tag.text = 'ON'
+        velocities_tag = et.SubElement(output_tag, 'velocities')
+        velocities_tag.text = 'ON'
+        for props in prop_output_to_CSV:
+            property_tag = et.SubElement(output_tag, 'property')
+            property_tag.text = props
+        f = os.path.split(script_path)[-1]  # Script name
+        tree.write(self.sandbox(f))
 
-            # Sanity check, we just initialized JSBSim with the ICs, the time
-            # must be set to 0.0
-            self.assertEqual(fdm.get_property_value('simulation/sim-time-sec'),
-                             0.0)
+        # Initialize the script
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(f)
+        fdm.run_ic()
 
-            # Check that the properties (including in 'ic/') have been
-            # correctly initialized (i.e. that they contain the value read from
-            # the XML file).
-            for var in vars:
-                if not var['specified']:
-                    continue
+        # Sanity check, we just initialized JSBSim with the ICs, the time must
+        # be set to 0.0
+        self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)
 
-                value = var['value']
-                prop = fdm.get_property_value(var['ic_prop'])
-                if var['tag'] == 'psi':
-                    if abs(prop - 360.0) <= 1E-8:
-                        prop = 0.0
-                self.assertAlmostEqual(value, prop, delta=1E-7,
-                                       msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
-                prop = fdm.get_property_value(var['prop'])
-                if var['tag'] == 'psi':
-                    if abs(prop - 360.0) <= 1E-8:
-                        prop = 0.0
-                self.assertAlmostEqual(value, prop, delta=1E-7,
-                                       msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
+        # Check that the properties (including in 'ic/') have been correctly
+        # initialized (i.e. that they contain the value read from the XML
+        # file).
+        for var in vars:
+            if not var['specified']:
+                continue
 
-            # Execute the first second of the script. This is to make sure that
-            # the CSV file is open and the ICs have been written in it.
-            try:
-                ExecuteUntil(fdm, 1.0)
-            except RuntimeError as e:
-                if e.args[0] == 'Trim Failed':
-                    self.fail("Trim failed in script %s" % (f,))
-                else:
-                    raise
+            value = var['value']
+            prop = fdm[var['ic_prop']]
+            if var['tag'] == 'psi':
+                if abs(prop - 360.0) <= 1E-8:
+                    prop = 0.0
+            self.assertAlmostEqual(value, prop, delta=1E-7,
+                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
+            prop = fdm[var['prop']]
+            if var['tag'] == 'psi':
+                if abs(prop - 360.0) <= 1E-8:
+                    prop = 0.0
+            self.assertAlmostEqual(value, prop, delta=1E-7,
+                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
 
-            # Copies the CSV file content in a table
-            ref = pd.read_csv(self.sandbox('check_csv_values.csv'))
+        # Execute the first second of the script. This is to make sure that the
+        # CSV file is open and the ICs have been written in it.
+        try:
+            ExecuteUntil(fdm, 1.0)
+        except RuntimeError as e:
+            if e.args[0] == 'Trim Failed':
+                self.fail("Trim failed in script %s" % (f,))
+            else:
+                raise
 
-            # Sanity check: make sure that the time step 0.0 has been copied in
-            # the CSV file.
-            self.assertEqual(ref['Time'][0], 0.0)
+        # Copies the CSV file content in a table
+        ref = pd.read_csv(self.sandbox('check_csv_values.csv'))
 
-            # Check that the value in the CSV file equals the value read from
-            # the IC file.
-            for var in vars:
-                if not var['specified']:
-                    continue
+        # Sanity check: make sure that the time step 0.0 has been copied in the
+        # CSV file.
+        self.assertEqual(ref['Time'][0], 0.0)
 
-                value = var['value']
-                csv_value = ref[var['CSV_header']][0]
-                if var['tag'] == 'psi':
-                    if abs(csv_value - 360.0) <= 1E-8:
-                        csv_value = 0.0
-                self.assertAlmostEqual(value, csv_value, delta=1E-7,
-                                       msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
+        # Check that the value in the CSV file equals the value read from the
+        # IC file.
+        for var in vars:
+            if not var['specified']:
+                continue
 
-            del fdm
+            value = var['value']
+            csv_value = ref[var['CSV_header']][0]
+            if var['tag'] == 'psi':
+                if abs(csv_value - 360.0) <= 1E-8:
+                    csv_value = 0.0
+            self.assertAlmostEqual(value, csv_value, delta=1E-7,
+                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
+
+        del fdm
+
+    def test_geod_position_from_init_file_v2(self):
+        prop_output_to_CSV = ['position/geod-alt-ft']
+        vars = [{'tag': 'latitude', 'unit': convtodeg, 'default_unit': 'RAD',
+                 'ic_prop': 'ic/lat-geod-deg', 'prop': 'position/lat-geod-deg',
+                 'CSV_header': 'Latitude Geodetic (deg)'},
+                {'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
+                 'ic_prop': 'ic/long-gc-deg', 'prop': 'position/long-gc-deg',
+                 'CSV_header': 'Longitude (deg)'},
+                {'tag': 'altitudeAGL', 'unit': convtoft, 'default_unit': 'FT',
+                 'ic_prop': 'ic/geod-alt-ft', 'prop': 'position/geod-alt-ft',
+                 'CSV_header': '/fdm/jsbsim/position/geod-alt-ft'},
+                {'tag': 'altitudeMSL', 'unit': convtoft, 'default_unit': 'FT',
+                 'ic_prop': 'ic/h-sl-ft', 'prop': 'position/h-sl-ft',
+                 'CSV_header': 'Altitude ASL (ft)'}]
+
+        for s in self.script_list(('ZLT-NT-moored-1.xml',
+                                   '737_cruise_steady_turn_simplex.xml')):
+            (tree, IC_tree) = self.getElementTrees(s)
+            IC_root = IC_tree.getroot()
+
+            # Only testing version 2.0 of init files
+            if ('version' not in IC_root.attrib
+                or float(IC_root.attrib['version']) != 2.0):
+                continue
+
+            position_tag = IC_root.find('position')
+            lat_tag = position_tag.find('latitude')
+            if lat_tag is None or 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
+                continue
+
+            self.CheckICValues(vars, tree, position_tag, s, prop_output_to_CSV)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestInitialConditions)
 test_result = unittest.TextTestRunner(verbosity=2).run(suite)
