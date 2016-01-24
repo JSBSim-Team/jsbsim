@@ -25,7 +25,8 @@ cdef class FGMatrix33:
         self.thisptr = NULL
 
     def __dealloc__(self):
-        del self.thisptr
+        if self.thisptr != NULL:
+            del self.thisptr
 
     def __call__(self, row, col):
         return self.thisptr.Entry(row, col)
@@ -38,7 +39,8 @@ cdef class FGColumnVector3:
         self.thisptr = NULL
 
     def __dealloc__(self):
-        del self.thisptr
+        if self.thisptr != NULL:
+            del self.thisptr
 
     def __call__(self, idx):
         return self.thisptr.Entry(idx)
@@ -59,9 +61,6 @@ cdef class FGPropagate:
 
     def __init__(self):
         self.thisptr = NULL
-
-    def __dealloc__(self):
-        del self.thisptr
 
     def get_Tl2b(self):
         Tl2b = FGMatrix33()
