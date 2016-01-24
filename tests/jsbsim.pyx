@@ -17,22 +17,15 @@
 
 import os, platform, numpy
 
-# cdef class FGInitialCondition:
-
-#     cdef c_FGInitialCondition *thisptr
-
-#     def __init__(self):
-#         self.thisptr = NULL
-
-#     def load(self, rstfile, useStoredPath):
-#         return self.thisptr.Load(rstfile, useStoredPath)
-
 cdef class FGMatrix33:
 
     cdef c_FGMatrix33 *thisptr
 
     def __init__(self):
         self.thisptr = NULL
+
+    def __dealloc__(self):
+        del self.thisptr
 
     def __call__(self, row, col):
         return self.thisptr.Entry(row, col)
@@ -43,6 +36,9 @@ cdef class FGColumnVector3:
 
     def __init__(self):
         self.thisptr = NULL
+
+    def __dealloc__(self):
+        del self.thisptr
 
     def __call__(self, idx):
         return self.thisptr.Entry(idx)
@@ -63,6 +59,9 @@ cdef class FGPropagate:
 
     def __init__(self):
         self.thisptr = NULL
+
+    def __dealloc__(self):
+        del self.thisptr
 
     def get_Tl2b(self):
         Tl2b = FGMatrix33()
