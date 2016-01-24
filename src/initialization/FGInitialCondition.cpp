@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.106 2016/01/22 03:28:12 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.107 2016/01/24 18:18:38 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -1439,6 +1439,12 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
+  PropertyManager->Tie("ic/lat-geod-rad", &position,
+                       &FGLocation::GetGeodLatitudeRad);
+  PropertyManager->Tie("ic/lat-geod-deg", &position,
+                       &FGLocation::GetGeodLatitudeDeg);
+  PropertyManager->Tie("ic/geod-alt-ft", &position,
+                       &FGLocation::GetGeodAltitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
