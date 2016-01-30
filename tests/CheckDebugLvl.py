@@ -1,7 +1,7 @@
-# RunCheckCases.py
+# CheckDebugLvl.py
 #
 # Regression test that check that the same results are obtained whether the
-# environment variable is set ot zero or not.
+# environment variable JSBSIM_DEBUG is set ot zero or not.
 #
 # Copyright (c) 2015 Bertrand Coconnier
 #
@@ -19,42 +19,38 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, os
-from JSBSim_utils import CreateFDM, Table, SandBox, ExecuteUntil
+import os
+from JSBSim_utils import JSBSimTestCase, CreateFDM, Table, ExecuteUntil, RunTest
 
 
-class TestDebugLvl(unittest.TestCase):
+class TestDebugLvl(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox('check_cases', 'orbit')
-
-    def tearDown(self):
-        self.sandbox.erase()
+        JSBSimTestCase.setUp(self, 'check_cases', 'orbit')
 
     def testDebugLvl(self):
         fdm = CreateFDM(self.sandbox)
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                         'ball_orbit.xml'))
         fdm.run_ic()
 
         ExecuteUntil(fdm, 1000.)
 
         ref, current = Table(), Table()
-        ref.ReadCSV(self.sandbox('BallOut.csv'))
+        ref.ReadCSV('BallOut.csv')
         del fdm
 
-        os.environ["JSBSIM_DEBUG"]=str(0)
+        os.environ["JSBSIM_DEBUG"] = str(0)
         fdm = CreateFDM(self.sandbox)
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                         'ball_orbit.xml'))
         fdm.run_ic()
 
         ExecuteUntil(fdm, 1000.)
 
-        current.ReadCSV(self.sandbox('BallOut.csv'))
+        current.ReadCSV('BallOut.csv')
 
         diff = ref.compare(current)
         self.longMessage = True
         self.assertTrue(diff.empty(), msg='\n'+repr(diff))
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestDebugLvl)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestDebugLvl)

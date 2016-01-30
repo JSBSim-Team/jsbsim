@@ -19,35 +19,31 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, os
-from JSBSim_utils import CreateFDM, Table, SandBox
+import os
+from JSBSim_utils import JSBSimTestCase, CreateFDM, Table, RunTest
 
 
-class TestOrbitCheckCase(unittest.TestCase):
+class TestOrbitCheckCase(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox('check_cases', 'orbit')
-
-    def tearDown(self):
-        self.sandbox.erase()
+        JSBSimTestCase.setUp(self, 'check_cases', 'orbit')
 
     def testOrbitCheckCase(self):
         os.environ['JSBSIM_DEBUG'] = str(0)
         fdm = CreateFDM(self.sandbox)
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                         'ball_orbit.xml'))
         fdm.run_ic()
 
         while fdm.run():
             pass
 
         ref, current = Table(), Table()
-        ref.ReadCSV(self.sandbox.elude(self.sandbox.path_to_jsbsim_file('logged_data', 'BallOut.csv')))
-        current.ReadCSV(self.sandbox('BallOut.csv'))
+        ref.ReadCSV(self.sandbox.path_to_jsbsim_file('logged_data',
+                                                     'BallOut.csv'))
+        current.ReadCSV('BallOut.csv')
 
         diff = ref.compare(current)
         self.longMessage = True
         self.assertTrue(diff.empty(), msg='\n'+repr(diff))
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestOrbitCheckCase)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestOrbitCheckCase)

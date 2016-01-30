@@ -46,14 +46,6 @@ class SandBox:
     def erase(self):
         shutil.rmtree(self._tmpdir)
 
-    def elude(self, path):
-        head, tail = os.path.split(path)
-        newpath = []
-        while head:
-            newpath = [tail] + newpath
-            head, tail = os.path.split(head)
-        return os.path.join(*newpath)
-
 
 def CreateFDM(sandbox):
     _fdm = jsbsim.FGFDMExec(root_dir=os.path.join(sandbox(), ''))
@@ -152,6 +144,7 @@ class Table:
 
         for row, line in enumerate(self._lines[1:]):
             if abs(line[0] - other._lines[row+1][0]) > 1E-10:
+                print row, line[0], other._lines[row+1][0]
                 raise MismatchError
 
         for col, key in enumerate(self._lines[0][1:]):
@@ -187,13 +180,13 @@ class Table:
 
 def CopyAircraftDef(script_path, sandbox):
     # Get the aircraft name
-    tree = et.parse(sandbox.elude(script_path))
+    tree = et.parse(script_path)
     use_element = tree.getroot().find('use')
     aircraft_name = use_element.attrib['aircraft']
 
     # Then, create a directory aircraft/aircraft_name in the build directory
     aircraft_path = os.path.join('aircraft', aircraft_name)
-    path_to_jsbsim_aircrafts = sandbox.elude(sandbox.path_to_jsbsim_file(aircraft_path))
+    path_to_jsbsim_aircrafts = sandbox.path_to_jsbsim_file(aircraft_path)
     aircraft_path = sandbox(aircraft_path)
     if not os.path.exists(aircraft_path):
         os.makedirs(aircraft_path)
@@ -203,7 +196,8 @@ def CopyAircraftDef(script_path, sandbox):
     IC_file = append_xml(use_element.attrib['initialize'])
     shutil.copy(os.path.join(path_to_jsbsim_aircrafts, IC_file), aircraft_path)
 
-    tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, aircraft_name+'.xml'))
+    tree = et.parse(os.path.join(path_to_jsbsim_aircrafts,
+                                 aircraft_name+'.xml'))
 
     # The aircraft definition file may also load some data from external files.
     # If so, we need to copy these files in our directory
@@ -223,8 +217,7 @@ def CopyAircraftDef(script_path, sandbox):
                                                      'Systems', name)
                 print name_with_system_path
                 if os.path.exists(name_with_system_path):
-                    system_path = sandbox(sandbox.elude(aircraft_path),
-                                          'Systems')
+                    system_path = sandbox(aircraft_path, 'Systems')
                     if not os.path.exists(system_path):
                         os.makedirs(system_path)
                     shutil.copy(name_with_system_path,
@@ -234,23 +227,25 @@ def CopyAircraftDef(script_path, sandbox):
 
 
 class JSBSimTestCase(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
+    def setUp(self, *args):
+        self.sandbox = SandBox(*args)
+        os.chdir(self.sandbox())
 
     def tearDown(self):
         self.sandbox.erase()
+        os.chdir('..')
 
     # Generator that returns the full path to all the scripts in JSBSim
     def script_list(self, blacklist=[]):
         script_path = self.sandbox.path_to_jsbsim_file('scripts')
-        for f in os.listdir(self.sandbox.elude(script_path)):
+        for f in os.listdir(script_path):
             if f in blacklist:
                 continue
 
             fullpath = os.path.join(script_path, f)
 
             # Does f contains a JSBSim script ?
-            if CheckXMLFile(self.sandbox.elude(fullpath), 'runscript'):
+            if CheckXMLFile(fullpath, 'runscript'):
                 yield fullpath
 
 

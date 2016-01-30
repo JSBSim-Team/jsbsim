@@ -23,35 +23,34 @@
 # 1. JSBSim does not hang when the parameter 'sense' of actuator <rate_limit>
 #    is used.
 # 2. The property 'fcs/left-aileron-pos-rad' remains equal to 0.0 during the
-#    execution of the script c1724.xml when <rate_limit> is read from a property.
+#    execution of the script c1724.xml when <rate_limit> is read from a
+#    property.
 # 3. The actuator output value is correctly driven by rate_limit.
 
-import unittest, os, time, sys, string
+import os, time, string
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
-from JSBSim_utils import SandBox, CreateFDM, CopyAircraftDef
+from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
 
-class CheckFGBug1503(unittest.TestCase):
+class CheckFGBug1503(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox()
-        self.script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1724.xml')
+        JSBSimTestCase.setUp(self)
+        self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                            'c1724.xml')
 
         # Since we will alter the aircraft definition file, we need make a copy
         # of it and of all the files it is refering to.
         self.tree, self.aircraft_name, self.path_to_jsbsim_aircrafts = CopyAircraftDef(self.script_path, self.sandbox)
-
-    def tearDown(self):
-        self.sandbox.erase()
 
     def ScriptExecution(self, fdm, time_limit=1E+9):
         fdm.load_script(self.script_path)
         fdm.run_ic()
 
         while fdm.run() and fdm.get_sim_time() < time_limit:
-            aileron_pos = fdm.get_property_value('fcs/left-aileron-pos-rad')
-            self.assertTrue(aileron_pos == 0.0,
+            aileron_pos = fdm['fcs/left-aileron-pos-rad']
+            self.assertEqual(aileron_pos, 0.0,
                             msg="Failed running the script %s at time step %f\nProperty fcs/left-aileron-pos-rad is non-zero (%f)" % (self.script_path, fdm.get_sim_time(), aileron_pos))
 
     def CheckRateValue(self, fdm, output_prop, rate_value):
@@ -59,8 +58,7 @@ class CheckFGBug1503(unittest.TestCase):
 
         t0 = fdm.get_sim_time()
         while fdm.run() and fdm.get_sim_time() <= t0 + 1.0:
-            aileron_course += [(fdm.get_sim_time(),
-                                fdm.get_property_value(output_prop))]
+            aileron_course += [(fdm.get_sim_time(), fdm[output_prop])]
 
         # Thanks to a linear regression on the values, we can check that the
         # value is following a slope equal to the rate limit. The correlation
@@ -76,21 +74,21 @@ class CheckFGBug1503(unittest.TestCase):
 
         self.ScriptExecution(fdm, 1.0)
 
-        fdm.set_property_value(input_prop, 1.0)
+        fdm[input_prop] = 1.0
 
         self.CheckRateValue(fdm, output_prop, incr_limit)
 
-        fdm.set_property_value(input_prop, 0.0)
+        fdm[input_prop] = 0.0
         self.CheckRateValue(fdm, output_prop, decr_limit)
 
-        # Because JSBSim internals use static pointers, we cannot rely on Python
-        # garbage collector to decide when the FDM is destroyed otherwise we can
-        # get dangling pointers.
+        # Because JSBSim internals use static pointers, we cannot rely on
+        # Python garbage collector to decide when the FDM is destroyed
+        # otherwise we can get dangling pointers.
         del fdm
 
     def test_regression_bug_1503(self):
-        # First, the execution time of the script c1724.xml is measured. It will
-        # be used as a reference to check if JSBSim hangs or not.
+        # First, the execution time of the script c1724.xml is measured. It
+        # will be used as a reference to check if JSBSim hangs or not.
         fdm = CreateFDM(self.sandbox)
         start_time = time.time()
         self.ScriptExecution(fdm)
@@ -131,13 +129,13 @@ class CheckFGBug1503(unittest.TestCase):
         # #######################
         #
         # The test is run again but this time, <rate_limit> will be read from a
-        # property instead of being read from a value hard coded in the aircraft
-        # definition file. It has been reported in the bug 1503 of FlightGear
-        # that for such a configuration the <actuator> output is constantly
-        # increasing even if the input is null. For this script the <actuator>
-        # output is stored in the property fcs/left-aileron-pos-rad. The
-        # function ScriptExecution will monitor that property and if it changes
-        # then the test is failed.
+        # property instead of being read from a value hard coded in the
+        # aircraft definition file. It has been reported in the bug 1503 of
+        # FlightGear that for such a configuration the <actuator> output is
+        # constantly increasing even if the input is null. For this script the
+        # <actuator> output is stored in the property
+        # fcs/left-aileron-pos-rad. The function ScriptExecution will monitor
+        # that property and if it changes then the test is failed.
 
         tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts, self.aircraft_name+'.xml'))
         actuator_element = tree.getroot().find('flight_control/channel/actuator//rate_limit/..')
@@ -166,14 +164,14 @@ class CheckFGBug1503(unittest.TestCase):
         ########################
         #
         # The test is run again but this time we are checking that rate_limit
-        # drives the actuator output value as expected. The idea is to store the
-        # output value of the actuator output vs the time and check with a
+        # drives the actuator output value as expected. The idea is to store
+        # the output value of the actuator output vs the time and check with a
         # linear regression that
         # 1. The actuator output value is evolving linearly
         # 2. The slope of the actuator output is equal to the rate_limit value
         # The test is run with the rate_limit given by a value, a property,
-        # different values of the ascending and descending rates and a number of
-        # combinations thereof.
+        # different values of the ascending and descending rates and a number
+        # of combinations thereof.
 
         # The aircraft file definition is modified such that the actuator
         # element input is driven by a unique property. The name of this unique
@@ -214,7 +212,7 @@ class CheckFGBug1503(unittest.TestCase):
         rate_element = actuator_element.find('rate_limit')
         rate_element.text = '0.1'
 
-        output_file = self.sandbox('aircraft', self.aircraft_name,
+        output_file = os.path.join('aircraft', self.aircraft_name,
                                    self.aircraft_name+'.xml')
         tree.write(output_file)
 
@@ -232,7 +230,8 @@ class CheckFGBug1503(unittest.TestCase):
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.15)
 
         # Checking when the ascending and descending rates are different.
-        # First with the 2 rates set by hard coded values (0.1 and 0.2 respectively)
+        # First with the 2 rates set by hard coded values (0.1 and 0.2
+        # respectively)
 
         rate_element.attrib['sense'] = 'decr'
         rate_element.text = '0.1'
@@ -243,8 +242,8 @@ class CheckFGBug1503(unittest.TestCase):
 
         self.CheckRateLimit(input_prop, output_prop, 0.2, -0.1)
 
-        # Check when the descending rate is set by a property and the ascending rate is
-        # set by a value.
+        # Check when the descending rate is set by a property and the ascending
+        # rate is set by a value.
 
         rate_element.text = 'fcs/rate-limit-value'
         tree.write(output_file)
@@ -267,7 +266,4 @@ class CheckFGBug1503(unittest.TestCase):
 
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
 
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckFGBug1503)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(CheckFGBug1503)

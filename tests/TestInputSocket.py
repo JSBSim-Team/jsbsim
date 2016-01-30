@@ -19,9 +19,9 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, telnetlib, time, string, threading, socket
+import telnetlib, time, string, threading, socket
 import xml.etree.ElementTree as et
-from JSBSim_utils import CreateFDM, SandBox, CopyAircraftDef
+from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
 # This test case runs JSBSim and a telnet session in two different threads.
 # As a consequence there is a significant amount of synchronization that needs
@@ -128,14 +128,11 @@ class TelnetInterface:
         self.thread.realTime = rt
 
 
-class TestInputSocket(unittest.TestCase):
+class TestInputSocket(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox()
+        JSBSimTestCase.setUp(self)
         self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                             'c1722.xml')
-
-    def tearDown(self):
-        self.sandbox.erase()
 
     def sanityCheck(self, _tn):
         # Check that the connection has been established
@@ -229,10 +226,10 @@ class TestInputSocket(unittest.TestCase):
                                t, delta=1E-5)
 
     def test_script_input(self):
-        tree = et.parse(self.sandbox.elude(self.script_path))
+        tree = et.parse(self.script_path)
         input_tag = et.SubElement(tree.getroot(), 'input')
         input_tag.attrib['port'] = '1138'
-        tree.write(self.sandbox('c1722_1.xml'))
+        tree.write('c1722_1.xml')
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_script('c1722_1.xml')
@@ -242,7 +239,4 @@ class TestInputSocket(unittest.TestCase):
         tn = TelnetInterface(fdm, 5., 1138)
         self.sanityCheck(tn)
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestInputSocket)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestInputSocket)

@@ -19,20 +19,15 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest
-from JSBSim_utils import CreateFDM, Table, SandBox, ExecuteUntil
+from JSBSim_utils import JSBSimTestCase, CreateFDM, Table, ExecuteUntil, RunTest
 
-class TestGustReset(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
 
-    def tearDown(self):
-        self.sandbox.erase()
-
+class TestGustReset(JSBSimTestCase):
     def test_gust_reset(self):
         fdm = CreateFDM(self.sandbox)
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'c172_cruise_8K.xml'))
-        fdm.set_property_value('simulation/randomseed', 0.0)
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                         'c172_cruise_8K.xml'))
+        fdm['simulation/randomseed'] = 0.0
         fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
 
         fdm.run_ic()
@@ -41,7 +36,7 @@ class TestGustReset(unittest.TestCase):
         ref, current = Table(), Table()
         ref.ReadCSV(self.sandbox('output.csv'))
 
-        fdm.set_property_value('simulation/randomseed', 0.0)
+        fdm['simulation/randomseed'] = 0.0
         fdm.reset_to_initial_conditions(1)
         ExecuteUntil(fdm, 15.5)
 
@@ -51,7 +46,4 @@ class TestGustReset(unittest.TestCase):
         self.longMessage = True
         self.assertTrue(diff.empty(), msg='\n'+repr(diff))
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestGustReset)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures:
-    sys.exit(-1) # 'make test' will report the test failed.
+RunTest(TestGustReset)

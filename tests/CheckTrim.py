@@ -18,17 +18,10 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import unittest, sys, os
-from JSBSim_utils import SandBox, CreateFDM
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
-class CheckTrim(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-
-    def tearDown(self):
-        self.sandbox.erase()
-
+class CheckTrim(JSBSimTestCase):
     def test_trim_doesnt_ignite_rockets(self):
         # Run a longitudinal trim with a rocket equipped with solid propellant
         # boosters (aka SRBs). The trim algorithm will try to reach a vertical
@@ -40,8 +33,8 @@ class CheckTrim(unittest.TestCase):
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('J246')
-        aircraft_path = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('aircraft'))
-        fdm.load_ic(os.path.join(aircraft_path, 'J246', 'LC39'), False)
+        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'J246',
+                                                     'LC39'), False)
         fdm.run_ic()
 
         # Check that the SRBs are not ignited
@@ -61,14 +54,13 @@ class CheckTrim(unittest.TestCase):
         self.assertEqual(fdm['propulsion/engine[1]/thrust-lbs'], 0.0)
 
     def test_trim_on_ground(self):
+        # Check that the trim is made with up to date initial conditions
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('c172x')
         fdm['ic/theta-deg'] = 10.0
         fdm.run_ic()
         fdm['ic/theta-deg'] = 0.0
+        # If the trim fails, it will raise an exception
         fdm['simulation/do_simple_trim'] = 2
 
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckTrim)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(CheckTrim)

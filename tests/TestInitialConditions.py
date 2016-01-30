@@ -40,7 +40,7 @@ class TestInitialConditions(JSBSimTestCase):
 
         aircraft_name = use_tag.attrib['aircraft']
         aircraft_path = os.path.join('aircraft', aircraft_name)
-        path_to_jsbsim_aircrafts = os.path.relpath(self.sandbox.path_to_jsbsim_file(aircraft_path), '..')
+        path_to_jsbsim_aircrafts = self.sandbox.path_to_jsbsim_file(aircraft_path)
 
         IC_file = append_xml(use_tag.attrib['initialize'])
         IC_tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, IC_file))
@@ -107,16 +107,14 @@ class TestInitialConditions(JSBSimTestCase):
 
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            script_path = os.path.relpath(s, '..')
-            (tree, IC_tree) = self.getElementTrees(script_path)
+            (tree, IC_tree) = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 1.0 of init files
             if 'version' in IC_root.attrib and float(IC_root.attrib['version']) != 1.0:
                 continue
 
-            self.CheckICValues(vars, tree, IC_root, script_path,
-                               prop_output_to_CSV)
+            self.CheckICValues(vars, tree, IC_root, s, prop_output_to_CSV)
 
     def CheckICValues(self, vars, tree, IC_root, script_path,
                       prop_output_to_CSV=[]):
@@ -124,7 +122,8 @@ class TestInitialConditions(JSBSimTestCase):
         for var in vars:
             var_tag = IC_root.find(var['tag'])
             var['specified'] = var_tag is not None
-            if not var['specified']:
+
+            if var_tag is None:
                 var['value'] = 0.0
                 continue
 
@@ -149,7 +148,7 @@ class TestInitialConditions(JSBSimTestCase):
             property_tag = et.SubElement(output_tag, 'property')
             property_tag.text = props
         f = os.path.split(script_path)[-1]  # Script name
-        tree.write(self.sandbox(f))
+        tree.write(f)
 
         # Initialize the script
         fdm = CreateFDM(self.sandbox)
@@ -191,11 +190,9 @@ class TestInitialConditions(JSBSimTestCase):
             else:
                 raise
 
-        # Copies the CSV file content in a table
-        ref = pd.read_csv(self.sandbox('check_csv_values.csv'))
-
         # Sanity check: make sure that the time step 0.0 has been copied in the
         # CSV file.
+        ref = pd.read_csv('check_csv_values.csv')
         self.assertEqual(ref['Time'][0], 0.0)
 
         # Check that the value in the CSV file equals the value read from the
@@ -231,8 +228,7 @@ class TestInitialConditions(JSBSimTestCase):
 
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            script_path = os.path.relpath(s, '..')
-            (tree, IC_tree) = self.getElementTrees(script_path)
+            (tree, IC_tree) = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 2.0 of init files
@@ -245,7 +241,6 @@ class TestInitialConditions(JSBSimTestCase):
             if lat_tag is None or 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
                 continue
 
-            self.CheckICValues(vars, tree, position_tag, script_path,
-                               prop_output_to_CSV)
+            self.CheckICValues(vars, tree, position_tag, s, prop_output_to_CSV)
 
 RunTest(TestInitialConditions)

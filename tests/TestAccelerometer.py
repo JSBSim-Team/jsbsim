@@ -19,19 +19,13 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, math, os
+import math, os
 import xml.etree.ElementTree as et
 import numpy as np
-from JSBSim_utils import CreateFDM, SandBox, CopyAircraftDef, ExecuteUntil
+from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, ExecuteUntil, RunTest
 
 
-class TestAccelerometer(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-
-    def tearDown(self):
-        self.sandbox.erase()
-
+class TestAccelerometer(JSBSimTestCase):
     def AddAccelerometersToAircraft(self, script_path):
         tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
         system_tag = et.SubElement(tree.getroot(), 'system')
@@ -45,10 +39,10 @@ class TestAccelerometer(unittest.TestCase):
 
         # The time step is too small in ball_orbit so let's increase it to 0.1s
         # for a quicker run
-        tree = et.parse(self.sandbox.elude(script_path))
+        tree = et.parse(script_path)
         run_tag = tree.getroot().find('./run')
         run_tag.attrib['dt'] = '0.1'
-        tree.write(self.sandbox(script_name))
+        tree.write(script_name)
 
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path('aircraft')
@@ -172,7 +166,7 @@ class TestAccelerometer(unittest.TestCase):
         # Offset the CG along Y (by 30")
         fdm['inertia/pointmass-weight-lbs[1]'] = 50.0
 
-        aircraft_path = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('aircraft', 'ball'))
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft', 'ball')
         fdm.load_ic(os.path.join(aircraft_path, 'reset00.xml'), False)
         # Switch the accel on
         fdm['fcs/accelerometer/on'] = 1.0
@@ -207,7 +201,4 @@ class TestAccelerometer(unittest.TestCase):
         # Acceleration along Z should be zero
         self.assertAlmostEqual(faz, 0.0, delta=1E-8)
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestAccelerometer)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestAccelerometer)

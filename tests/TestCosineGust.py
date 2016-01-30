@@ -18,17 +18,11 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, math
-from JSBSim_utils import CreateFDM, SandBox
+import math
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
-class TestCosineGust(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-
-    def tearDown(self):
-        self.sandbox.erase()
-
+class TestCosineGust(JSBSimTestCase):
     def testMagnitude(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
@@ -45,11 +39,11 @@ class TestCosineGust(unittest.TestCase):
 
         end_time = start_time + startup_duration + steady_duration + end_duration
 
-        while fdm.get_property_value('simulation/run_id') == 0:
+        while fdm['simulation/run_id'] == 0:
             fdm.run()
-            wn = fdm.get_property_value('atmosphere/total-wind-north-fps')
-            we = fdm.get_property_value('atmosphere/total-wind-east-fps')
-            wd = fdm.get_property_value('atmosphere/total-wind-down-fps')
+            wn = fdm['atmosphere/total-wind-north-fps']
+            we = fdm['atmosphere/total-wind-east-fps']
+            wd = fdm['atmosphere/total-wind-down-fps']
 
             if t >= start_time and t <= end_time:
                 wmag = math.sqrt(wn*wn + we*we + wd*wd)
@@ -67,9 +61,6 @@ class TestCosineGust(unittest.TestCase):
                             self.assertAlmostEqual(0.5 * magnitude * (1.0 + math.cos(math.pi*t/end_duration)),
                                                    wmag, delta=1E-3)
 
-            t = fdm.get_property_value('simulation/sim-time-sec')
+            t = fdm['simulation/sim-time-sec']
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestCosineGust)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestCosineGust)

@@ -19,20 +19,21 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest, string
+import string
 import xml.etree.ElementTree as et
-from JSBSim_utils import CreateFDM, SandBox, append_xml, Table
+from JSBSim_utils import JSBSimTestCase, CreateFDM, append_xml, Table, RunTest
 
 
-class CheckOutputRate(unittest.TestCase):
+class CheckOutputRate(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox()
+        JSBSimTestCase.setUp(self)
 
         self.fdm = CreateFDM(self.sandbox)
-        self.script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
+        self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                            'c1722.xml')
 
         # Read the time step 'dt' from the script file
-        self.tree = et.parse(self.sandbox.elude(self.script_path))
+        self.tree = et.parse(self.script_path)
         root = self.tree.getroot()
         use_tag = root.find("./use")
         aircraft_name = use_tag.attrib['aircraft']
@@ -50,26 +51,25 @@ class CheckOutputRate(unittest.TestCase):
         # Read the output rate and the output file from the aircraft file
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
                                                          append_xml(aircraft_name))
-        tree = et.parse(self.sandbox.elude(aircraft_path))
+        tree = et.parse(aircraft_path)
         output_tag = tree.getroot().find("./output")
-        self.output_file = self.sandbox(output_tag.attrib['name'])
+        self.output_file = output_tag.attrib['name']
         self.rateHz = float(output_tag.attrib['rate'])
         self.rate = int(1.0 / (self.rateHz * self.dt))
 
     def tearDown(self):
         del self.fdm
-        self.sandbox.erase()
+        JSBSimTestCase.tearDown(self)
 
     def testOutputRate(self):
         self.fdm.load_script(self.script_path)
 
         # Check that the output is enabled by default
-        self.assertEqual(self.fdm.get_property_value("simulation/output/enabled"),
-                         1.0)
+        self.assertEqual(self.fdm["simulation/output/enabled"], 1.0)
 
         # Check that the rate is consistent with the values extracted from the
         # script and the aircraft definition
-        self.assertAlmostEqual(self.fdm.get_property_value("simulation/output/log_rate_hz"),
+        self.assertAlmostEqual(self.fdm["simulation/output/log_rate_hz"],
                                self.rateHz, delta=1E-5)
 
         self.fdm.run_ic()
@@ -87,15 +87,15 @@ class CheckOutputRate(unittest.TestCase):
         self.assertEqual(output.get_column(0)[1], 0.0)
         self.assertEqual(output.get_column(0)[2], self.rate * self.dt)
         self.assertEqual(output.get_column(0)[2],
-                         self.fdm.get_property_value("simulation/sim-time-sec"))
+                         self.fdm["simulation/sim-time-sec"])
 
     def testDisablingOutput(self):
         self.fdm.load_script(self.script_path)
 
         # Disables the output during the initialization
-        self.fdm.set_property_value("simulation/output/enabled", 0.0)
+        self.fdm["simulation/output/enabled"] = 0.0
         self.fdm.run_ic()
-        self.fdm.set_property_value("simulation/output/enabled", 1.0)
+        self.fdm["simulation/output/enabled"] = 1.0
 
         for i in xrange(self.rate):
             self.fdm.run()
@@ -107,26 +107,25 @@ class CheckOutputRate(unittest.TestCase):
         # addition to the headers :
         # 1. The output after 'rate' iterations
         self.assertEqual(output.get_column(0)[1],
-                         self.fdm.get_property_value("simulation/sim-time-sec"))
+                         self.fdm["simulation/sim-time-sec"])
 
     def testTrimRestoresOutputSettings(self):
         self.fdm.load_script(self.script_path)
 
         # Disables the output during the initialization
-        self.fdm.set_property_value("simulation/output/enabled", 0.0)
+        self.fdm["simulation/output/enabled"] = 0.0
         self.fdm.run_ic()
 
         # Check that the output remains disabled even after the trim is
         # executed
-        while self.fdm.get_property_value("simulation/sim-time-sec") < self.trim_date + 2.0*self.dt:
+        while self.fdm["simulation/sim-time-sec"] < self.trim_date + 2.0*self.dt:
             self.fdm.run()
-            self.assertEqual(self.fdm.get_property_value("simulation/output/enabled"),
-                             0.0)
+            self.assertEqual(self.fdm["simulation/output/enabled"], 0.0)
 
         # Re-enable the output and check that the output rate is unaffected by
         # the previous operations
-        self.fdm.set_property_value("simulation/output/enabled", 1.0)
-        frame = int(self.fdm.get_property_value("simulation/frame"))
+        self.fdm["simulation/output/enabled"] = 1.0
+        frame = int(self.fdm["simulation/frame"])
 
         for i in xrange(self.rate):
             self.fdm.run()
@@ -143,16 +142,15 @@ class CheckOutputRate(unittest.TestCase):
         property = et.SubElement(self.run_tag, 'property')
         property.text = 'simulation/output/enabled'
         property.attrib['value'] = "0.0"
-        self.tree.write(self.sandbox('c1722_0.xml'))
+        self.tree.write('c1722_0.xml')
 
         self.fdm.load_script('c1722_0.xml')
 
         # Check that the output is disabled
-        self.assertEqual(self.fdm.get_property_value("simulation/output/enabled"),
-                         0.0)
+        self.assertEqual(self.fdm["simulation/output/enabled"], 0.0)
 
         self.fdm.run_ic()
-        self.fdm.set_property_value("simulation/output/enabled", 1.0)
+        self.fdm["simulation/output/enabled"] = 1.0
 
         for i in xrange(self.rate):
             self.fdm.run()
@@ -164,9 +162,6 @@ class CheckOutputRate(unittest.TestCase):
         # addition to the headers :
         # 1. The output after 'rate' iterations
         self.assertEqual(output.get_column(0)[1],
-                         self.fdm.get_property_value("simulation/sim-time-sec"))
+                         self.fdm["simulation/sim-time-sec"])
 
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckOutputRate)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(CheckOutputRate)

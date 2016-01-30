@@ -18,21 +18,18 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import sys, unittest
+import os
 import xml.etree.ElementTree as et
 import pandas as pd
 import numpy as np
-from JSBSim_utils import CreateFDM, SandBox, ExecuteUntil
+from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
 
 
-class TestScriptOutput(unittest.TestCase):
+class TestScriptOutput(JSBSimTestCase):
     def setUp(self):
-        self.sandbox = SandBox()
+        JSBSimTestCase.setUp(self)
         self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                             'c1722.xml')
-
-    def tearDown(self):
-        self.sandbox.erase()
 
     def test_no_output(self):
         fdm = CreateFDM(self.sandbox)
@@ -44,10 +41,13 @@ class TestScriptOutput(unittest.TestCase):
                          msg="Results have unexpectedly been written to 'output.csv'")
 
     def test_output_from_file(self):
-        tree = et.parse(self.sandbox.elude(self.script_path))
+        tree = et.parse(self.script_path)
         output_tag = et.SubElement(tree.getroot(), 'output')
-        output_tag.attrib['file'] = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
-        tree.write(self.sandbox('c1722_0.xml'))
+        # Relative path from the aircraft directory to the output directive
+        # file
+        output_tag.attrib['file'] = os.path.join('..', '..', 'tests',
+                                                 'output.xml')
+        tree.write('c1722_0.xml')
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_script('c1722_0.xml')
@@ -58,14 +58,14 @@ class TestScriptOutput(unittest.TestCase):
                         msg="The file 'output.csv' has not been created")
 
     def test_output(self):
-        tree = et.parse(self.sandbox.elude(self.script_path))
+        tree = et.parse(self.script_path)
         output_tag = et.SubElement(tree.getroot(), 'output')
         output_tag.attrib['name'] = 'test.csv'
         output_tag.attrib['type'] = 'CSV'
         output_tag.attrib['rate'] = '10'
         property_tag = et.SubElement(output_tag, 'property')
         property_tag.text = 'position/vrp-radius-ft'
-        tree.write(self.sandbox('c1722_0.xml'))
+        tree.write('c1722_0.xml')
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_script('c1722_0.xml')
@@ -74,13 +74,10 @@ class TestScriptOutput(unittest.TestCase):
 
         self.assertTrue(self.sandbox.exists(output_tag.attrib['name']),
                         msg="The file 'output.csv' has not been created")
-        orig = pd.read_csv(self.sandbox('JSBout172B.csv'))
-        test = pd.read_csv(self.sandbox('test.csv'))
+        orig = pd.read_csv('JSBout172B.csv')
+        test = pd.read_csv('test.csv')
         self.assertEqual(np.max(orig['Time']-test['Time']), 0.0)
         pname = '/fdm/jsbsim/' + property_tag.text
         self.assertEqual(np.max(orig[pname]-test[pname]), 0.0)
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestScriptOutput)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestScriptOutput)

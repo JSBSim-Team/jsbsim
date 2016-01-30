@@ -18,17 +18,12 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import unittest, sys, string, numpy
+import string, numpy
 import xml.etree.ElementTree as et
-from JSBSim_utils import SandBox, CreateFDM, ExecuteUntil, Table, CopyAircraftDef
+from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, Table, CopyAircraftDef, RunTest
 
-class TestPointMassInertia(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
 
-    def tearDown(self):
-        self.sandbox.erase()
-
+class TestPointMassInertia(JSBSimTestCase):
     def test_point_mass_inertia(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
         fdm = CreateFDM(self.sandbox)
@@ -40,7 +35,7 @@ class TestPointMassInertia(unittest.TestCase):
         ExecuteUntil(fdm, 50.0)
 
         ref = Table()
-        ref.ReadCSV(self.sandbox("output.csv"))
+        ref.ReadCSV("output.csv")
 
         tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, self.sandbox)
 
@@ -58,26 +53,27 @@ class TestPointMassInertia(unittest.TestCase):
         shape = form_element.attrib['shape']
         pointmass_element.remove(form_element)
 
-        inertia = numpy.zeros((3,3))
+        inertia = numpy.zeros((3, 3))
         if string.strip(shape) == 'tube':
-            inertia[0,0] = radius * radius
-            inertia[1,1] = (6.0 * inertia[0,0] + length * length) / 12.0
-            inertia[2,2] = inertia[1,1]
+            inertia[0, 0] = radius * radius
+            inertia[1, 1] = (6.0 * inertia[0, 0] + length * length) / 12.0
+            inertia[2, 2] = inertia[1, 1]
 
-        inertia = inertia * weight / 32.174049 # conversion between slug and lb
+        inertia = inertia * weight / 32.174049  # converting slugs to lbs
 
         ixx_element = et.SubElement(pointmass_element, 'ixx')
-        ixx_element.text = str(inertia[0,0])
+        ixx_element.text = str(inertia[0, 0])
         iyy_element = et.SubElement(pointmass_element, 'iyy')
-        iyy_element.text = str(inertia[1,1])
+        iyy_element.text = str(inertia[1, 1])
         izz_element = et.SubElement(pointmass_element, 'izz')
-        izz_element.text = str(inertia[2,2])
+        izz_element.text = str(inertia[2, 2])
 
-        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
 
-        # Because JSBSim internals use static pointers, we cannot rely on Python
-        # garbage collector to decide when the FDM is destroyed otherwise we can
-        # get dangling pointers.
+        # Because JSBSim internals use static pointers, we cannot rely on
+        # Python garbage collector to decide when the FDM is destroyed
+        # otherwise we can get dangling pointers.
         del fdm
 
         fdm = CreateFDM(self.sandbox)
@@ -90,13 +86,10 @@ class TestPointMassInertia(unittest.TestCase):
         ExecuteUntil(fdm, 50.0)
 
         mod = Table()
-        mod.ReadCSV(self.sandbox("output.csv"))
+        mod.ReadCSV("output.csv")
 
         diff = ref.compare(mod)
         self.assertTrue(diff.empty(),
                         msg='\n'+repr(diff))
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestPointMassInertia)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1) # 'make test' will report the test failed.
+RunTest(TestPointMassInertia)

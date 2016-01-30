@@ -19,20 +19,13 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, unittest, sys, string
-import xml.etree.ElementTree as et
-from JSBSim_utils import SandBox, append_xml, CreateFDM, CheckXMLFile
+import os
+from JSBSim_utils import JSBSimTestCase, append_xml, CreateFDM, CheckXMLFile, RunTest
 
 
-class CheckAircrafts(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-
-    def tearDown(self):
-        self.sandbox.erase()
-
+class CheckAircrafts(JSBSimTestCase):
     def testAircrafts(self):
-        aircraft_path = self.sandbox.elude(self.sandbox.path_to_jsbsim_file('aircraft'))
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         for d in os.listdir(aircraft_path):
             fullpath = os.path.join(aircraft_path, d)
 
@@ -57,18 +50,14 @@ class CheckAircrafts(unittest.TestCase):
                 f = os.path.join(aircraft_path, d, f)
                 if CheckXMLFile(f, 'initialize'):
                     self.assertTrue(fdm.load_ic(f, False),
-                                    msg='Failed to load IC %s for aircraft %s' %(f,d))
+                                    msg='Failed to load IC %s for aircraft %s' % (f, d))
                     try:
                         fdm.run_ic()
                     except RuntimeError:
-                        self.fail('Failed to run IC %s for aircraft %s' %(f,d))
+                        self.fail('Failed to run IC %s for aircraft %s' % (f, d))
 
                     break
 
             del fdm
 
-
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckAircrafts)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(CheckAircrafts)
