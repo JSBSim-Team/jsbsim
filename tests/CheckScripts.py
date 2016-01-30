@@ -19,37 +19,17 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, unittest, sys
-from JSBSim_utils import SandBox, CreateFDM, CheckXMLFile
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
-class CheckScripts(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-        self.scripts = 0
-
-    def tearDown(self):
-        print "Tested %g scripts" % (self.scripts,)
-        self.sandbox.erase()
-
+class CheckScripts(JSBSimTestCase):
     def testScripts(self):
-        script_path = self.sandbox.path_to_jsbsim_file('scripts')
-        for f in os.listdir(self.sandbox.elude(script_path)):
-            fullpath = os.path.join(self.sandbox.elude(script_path), f)
-
-            # Does f contains a JSBSim script ?
-            if not CheckXMLFile(fullpath, 'runscript'):
-                continue
-
+        for s in self.script_list():
             fdm = CreateFDM(self.sandbox)
-            self.assertTrue(fdm.load_script(os.path.join(script_path, f)),
-                            msg="Failed to load script %s" % (fullpath,))
+            self.assertTrue(fdm.load_script(s),
+                            msg="Failed to load script %s" % (s,))
             fdm.run_ic()
 
-            self.scripts += 1
             del fdm
 
-suite = unittest.TestLoader().loadTestsFromTestCase(CheckScripts)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(CheckScripts)

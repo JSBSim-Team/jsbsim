@@ -20,10 +20,10 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import unittest, sys, os
+import os
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import CreateFDM, SandBox, append_xml, ExecuteUntil, CheckXMLFile
+from JSBSim_utils import CreateFDM, append_xml, ExecuteUntil, JSBSimTestCase, RunTest
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
@@ -32,26 +32,7 @@ convtodeg = {'DEG': 1.0, 'RAD': 57.295779513082320876798154814105}
 convtokts = {'KTS': 1.0, 'FT/SEC': 1.0/1.68781}
 
 
-class TestInitialConditions(unittest.TestCase):
-    def setUp(self):
-        self.sandbox = SandBox()
-
-    def tearDown(self):
-        self.sandbox.erase()
-
-    # Generator that returns the full path to all the scripts in JSBSim
-    def script_list(self, blacklist=[]):
-        script_path = self.sandbox.path_to_jsbsim_file('scripts')
-        for f in os.listdir(self.sandbox.elude(script_path)):
-            if f in blacklist:
-                continue
-
-            fullpath = os.path.join(self.sandbox.elude(script_path), f)
-
-            # Does f contains a JSBSim script ?
-            if CheckXMLFile(fullpath, 'runscript'):
-                yield fullpath
-
+class TestInitialConditions(JSBSimTestCase):
     def getElementTrees(self, s):
         # Read the IC file name from the script
         tree = et.parse(s)
@@ -59,7 +40,7 @@ class TestInitialConditions(unittest.TestCase):
 
         aircraft_name = use_tag.attrib['aircraft']
         aircraft_path = os.path.join('aircraft', aircraft_name)
-        path_to_jsbsim_aircrafts = self.sandbox.elude(self.sandbox.path_to_jsbsim_file(aircraft_path))
+        path_to_jsbsim_aircrafts = os.path.relpath(self.sandbox.path_to_jsbsim_file(aircraft_path), '..')
 
         IC_file = append_xml(use_tag.attrib['initialize'])
         IC_tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, IC_file))
@@ -126,14 +107,16 @@ class TestInitialConditions(unittest.TestCase):
 
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            (tree, IC_tree) = self.getElementTrees(s)
+            script_path = os.path.relpath(s, '..')
+            (tree, IC_tree) = self.getElementTrees(script_path)
             IC_root = IC_tree.getroot()
 
             # Only testing version 1.0 of init files
             if 'version' in IC_root.attrib and float(IC_root.attrib['version']) != 1.0:
                 continue
 
-            self.CheckICValues(vars, tree, IC_root, s, prop_output_to_CSV)
+            self.CheckICValues(vars, tree, IC_root, script_path,
+                               prop_output_to_CSV)
 
     def CheckICValues(self, vars, tree, IC_root, script_path,
                       prop_output_to_CSV=[]):
@@ -248,7 +231,8 @@ class TestInitialConditions(unittest.TestCase):
 
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            (tree, IC_tree) = self.getElementTrees(s)
+            script_path = os.path.relpath(s, '..')
+            (tree, IC_tree) = self.getElementTrees(script_path)
             IC_root = IC_tree.getroot()
 
             # Only testing version 2.0 of init files
@@ -261,9 +245,7 @@ class TestInitialConditions(unittest.TestCase):
             if lat_tag is None or 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
                 continue
 
-            self.CheckICValues(vars, tree, position_tag, s, prop_output_to_CSV)
+            self.CheckICValues(vars, tree, position_tag, script_path,
+                               prop_output_to_CSV)
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestInitialConditions)
-test_result = unittest.TextTestRunner(verbosity=2).run(suite)
-if test_result.failures or test_result.errors:
-    sys.exit(-1)  # 'make test' will report the test failed.
+RunTest(TestInitialConditions)

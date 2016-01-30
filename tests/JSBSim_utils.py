@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 
-import os, sys, csv, string, tempfile, shutil
+import os, sys, csv, string, tempfile, shutil, unittest
 import xml.etree.ElementTree as et
 import jsbsim
 
@@ -231,3 +231,31 @@ def CopyAircraftDef(script_path, sandbox):
                                 os.path.join(system_path, subdirs))
 
     return tree, aircraft_name, path_to_jsbsim_aircrafts
+
+
+class JSBSimTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = SandBox()
+
+    def tearDown(self):
+        self.sandbox.erase()
+
+    # Generator that returns the full path to all the scripts in JSBSim
+    def script_list(self, blacklist=[]):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts')
+        for f in os.listdir(self.sandbox.elude(script_path)):
+            if f in blacklist:
+                continue
+
+            fullpath = os.path.join(script_path, f)
+
+            # Does f contains a JSBSim script ?
+            if CheckXMLFile(self.sandbox.elude(fullpath), 'runscript'):
+                yield fullpath
+
+
+def RunTest(test):
+    suite = unittest.TestLoader().loadTestsFromTestCase(test)
+    test_result = unittest.TextTestRunner(verbosity=2).run(suite)
+    if test_result.failures or test_result.errors:
+        sys.exit(-1)  # 'make test' will report the test failed.
