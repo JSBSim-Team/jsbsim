@@ -22,7 +22,8 @@ import os
 import xml.etree.ElementTree as et
 import pandas as pd
 import numpy as np
-from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil,
+                          isDataMatching, RunTest)
 
 
 class TestScriptOutput(JSBSimTestCase):
@@ -74,10 +75,22 @@ class TestScriptOutput(JSBSimTestCase):
 
         self.assertTrue(self.sandbox.exists(output_tag.attrib['name']),
                         msg="The file 'output.csv' has not been created")
-        orig = pd.read_csv('JSBout172B.csv')
-        test = pd.read_csv('test.csv')
-        self.assertEqual(np.max(orig['Time']-test['Time']), 0.0)
+        orig = pd.read_csv('JSBout172B.csv', index_col=0)
+        test = pd.read_csv('test.csv', index_col=0)
         pname = '/fdm/jsbsim/' + property_tag.text
-        self.assertEqual(np.max(orig[pname]-test[pname]), 0.0)
+        ref = orig[pname]
+        mod = test[pname]
+
+        # Check the data are matching i.e. the time steps are the same between
+        # the two data sets.
+        self.assertTrue(isDataMatching(ref, mod))
+
+        # Find all the data that are differing by more than 1E-8 between the
+        # two data sets.
+        delta = pd.concat([np.abs(ref - mod), ref, mod], axis=1)
+        delta.columns = ['delta', 'ref value', 'value']
+        diff = delta[delta['delta'] > 1E-8]
+        self.longMessage = True
+        self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
 RunTest(TestScriptOutput)

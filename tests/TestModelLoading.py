@@ -21,7 +21,10 @@
 
 import os
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, Table, CreateFDM, ExecuteUntil, append_xml, CopyAircraftDef, RunTest
+import pandas as pd
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil, append_xml,
+                          CopyAircraftDef, isDataMatching, FindDifferences,
+                          RunTest)
 
 
 class TestModelLoading(JSBSimTestCase):
@@ -38,12 +41,11 @@ class TestModelLoading(JSBSimTestCase):
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
 
-        self.ref = Table()
-        self.ref.ReadCSV("output.csv")
+        self.ref = pd.read_csv("output.csv", index_col=0)
 
         # Since the script will work with modified versions of the aircraft XML
-        # definition file, we need to make a copy of the directory that contains
-        # all the input data of that aircraft
+        # definition file, we need to make a copy of the directory that
+        # contains all the input data of that aircraft
 
         tree, self.aircraft_name, self.path_to_jsbsim_aircrafts = CopyAircraftDef(self.script, self.sandbox)
         self.aircraft_path = os.path.join('aircraft', self.aircraft_name)
@@ -94,9 +96,11 @@ class TestModelLoading(JSBSimTestCase):
         # directories in which the file is allowed to be stored until the file
         # is located.
         if not os.path.exists(section_file) and section_element.tag == 'system':
-            section_file = os.path.join(self.path_to_jsbsim_aircrafts, "systems", file_name)
+            section_file = os.path.join(self.path_to_jsbsim_aircrafts,
+                                        "systems", file_name)
             if not os.path.exists(section_file):
-                section_file = self.sandbox.path_to_jsbsim_file("systems", file_name)
+                section_file = self.sandbox.path_to_jsbsim_file("systems",
+                                                                file_name)
 
         # The original <section> tag is dropped and replaced by the content of
         # the file.
@@ -117,29 +121,32 @@ class TestModelLoading(JSBSimTestCase):
         # We need to tell JSBSim that the aircraft definition is located in the
         # directory build/.../aircraft
         fdm.set_aircraft_path('aircraft')
-        fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests', 'output.xml'))
+        fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests',
+                                                                  'output.xml'))
         fdm.load_script(self.script)
         fdm['simulation/randomseed'] = 0.0
 
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
 
-        mod = Table()
-        mod.ReadCSV('output.csv')
+        mod = pd.read_csv('output.csv', index_col=0)
+
+        # Check the data are matching i.e. the time steps are the same between
+        # the two data sets and that the output data are also the same.
+        self.assertTrue(isDataMatching(self.ref, mod))
 
         # Whether the data is read from the aircraft definition file or from an
         # external file, the results shall be exactly identical. Hence the
         # precision set to 0.0.
-        diff = self.ref.compare(mod, 0.0)
-        self.assertTrue(diff.empty(),
-                        msg='\nTesting section "'+section+'"\n'+repr(diff))
+        diff = FindDifferences(self.ref, mod, 0.0)
+        self.assertEqual(len(diff), 0,
+                         msg='\nTesting section "'+section+'"\n'+diff.to_string())
 
     def test_model_loading(self):
         self.longMessage = True
 
         self.BuildReference('c1724.xml')
-        output_ref = Table()
-        output_ref.ReadCSV('JSBout172B.csv')
+        output_ref = pd.read_csv('JSBout172B.csv', index_col=0)
 
         self.ProcessAndCompare('aerodynamics')
         self.ProcessAndCompare('autopilot')
@@ -158,11 +165,11 @@ class TestModelLoading(JSBSimTestCase):
         # the result 'mod' below where the <output> tag was moved in a separate
         # file.
         self.ProcessAndCompare('output')
-        mod = Table()
-        mod.ReadCSV('JSBout172B.csv')
-        diff = output_ref.compare(mod, 0.0)
-        self.assertTrue(diff.empty(),
-                        msg='\nTesting section "output"\n'+repr(diff))
+        mod = pd.read_csv('JSBout172B.csv', index_col=0)
+        self.assertTrue(isDataMatching(output_ref, mod))
+        diff = FindDifferences(output_ref, mod, 0.0)
+        self.assertEqual(len(diff), 0,
+                         msg='\nTesting section "output"\n'+diff.to_string())
 
         self.BuildReference('weather-balloon.xml')
         self.ProcessAndCompare('buoyant_forces')

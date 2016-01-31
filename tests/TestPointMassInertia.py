@@ -18,9 +18,13 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import string, numpy
+import string
+import numpy as np
+import pandas as pd
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, Table, CopyAircraftDef, RunTest
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil,
+                          CopyAircraftDef, isDataMatching, FindDifferences,
+                          RunTest)
 
 
 class TestPointMassInertia(JSBSimTestCase):
@@ -34,8 +38,7 @@ class TestPointMassInertia(JSBSimTestCase):
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
 
-        ref = Table()
-        ref.ReadCSV("output.csv")
+        ref = pd.read_csv("output.csv", index_col=0)
 
         tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, self.sandbox)
 
@@ -53,7 +56,7 @@ class TestPointMassInertia(JSBSimTestCase):
         shape = form_element.attrib['shape']
         pointmass_element.remove(form_element)
 
-        inertia = numpy.zeros((3, 3))
+        inertia = np.zeros((3, 3))
         if string.strip(shape) == 'tube':
             inertia[0, 0] = radius * radius
             inertia[1, 1] = (6.0 * inertia[0, 0] + length * length) / 12.0
@@ -85,11 +88,16 @@ class TestPointMassInertia(JSBSimTestCase):
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
 
-        mod = Table()
-        mod.ReadCSV("output.csv")
+        mod = pd.read_csv("output.csv", index_col=0)
 
-        diff = ref.compare(mod)
-        self.assertTrue(diff.empty(),
-                        msg='\n'+repr(diff))
+        # Check the data are matching i.e. the time steps are the same between
+        # the two data sets and that the output data are also the same.
+        self.assertTrue(isDataMatching(ref, mod))
+
+        # Find all the data that are differing by more than 1E-8 between the
+        # two data sets.
+        diff = FindDifferences(ref, mod, 1E-8)
+        self.longMessage = True
+        self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
 RunTest(TestPointMassInertia)

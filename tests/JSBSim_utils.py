@@ -19,6 +19,8 @@
 
 import os, sys, csv, string, tempfile, shutil, unittest
 import xml.etree.ElementTree as et
+import numpy as np
+import pandas as pd
 import jsbsim
 
 
@@ -81,101 +83,6 @@ def CheckXMLFile(f, header):
 
     # Check the file header
     return string.upper(tree.getroot().tag) == string.upper(header)
-
-
-class MismatchError(Exception):
-    pass
-
-
-class Table:
-    def __init__(self, headers=[]):
-        if headers:
-            self._lines = [headers]
-        else:
-            self._lines = []
-        self._missing = []
-
-    def ReadCSV(self, filename):
-        self._lines = []
-        self.missing = []
-
-        file_csv = open(filename, 'r')
-        first_line = True
-        for line in csv.reader(file_csv, delimiter=','):
-            if first_line:
-                first_line = False
-                line = map(string.strip, line)
-            else:
-                line = map(float, line)
-            self._lines += [line]
-
-        file_csv.close()
-
-    def add_line(self, line):
-        if len(line) != len(self._lines[0]):
-            raise MismatchError
-        self._lines += [line]
-
-    def get_column(self, col):
-        column = []
-
-        if isinstance(col, int):
-            if col < 0 or col >= len(self._lines[0]):
-                raise AttributeError
-        elif isinstance(col, str):
-            header = string.strip(col)
-            for col in xrange(len(self._lines[0])):
-                if header == self._lines[0][col]:
-                    break
-            else:
-                raise AttributeError
-        else:
-            raise TypeError
-
-        for line in self._lines:
-            column += [line[col]]
-        return column
-
-    def compare(self, other, precision=1E-5):
-        result = Table(['Property', 'delta', 'Time', 'ref value', 'value'])
-
-        if len(self._lines) != len(other._lines):
-            raise MismatchError
-
-        for row, line in enumerate(self._lines[1:]):
-            if abs(line[0] - other._lines[row+1][0]) > 1E-10:
-                print row, line[0], other._lines[row+1][0]
-                raise MismatchError
-
-        for col, key in enumerate(self._lines[0][1:]):
-            for col0, key0 in enumerate(other._lines[0]):
-                if key == key0:
-                    break
-            else:
-                result._missing += [key]
-                continue
-
-            comparison = [key, 0.0]
-            for row, line in enumerate(self._lines[1:]):
-                delta = abs(line[col+1] - other._lines[row+1][col0])
-                if delta > comparison[1]:
-                    comparison = [key, delta, line[0], line[col+1],
-                                  other._lines[row+1][col0]]
-
-            if comparison[1] > precision:
-                result.add_line(comparison)
-
-        return result
-
-    def empty(self):
-        return len(self._lines) <= 1
-
-    def __repr__(self):
-        col_width = [max(len(str(item)) for item in col) for col in zip(*self._lines)]
-        output = ''
-        for line in self._lines:
-            output += "|" + "|".join("{:{}}".format(str(item), col_width[i]) for i, item in enumerate(line)) + "|\n"
-        return output
 
 
 def CopyAircraftDef(script_path, sandbox):
@@ -254,3 +161,24 @@ def RunTest(test):
     test_result = unittest.TextTestRunner(verbosity=2).run(suite)
     if test_result.failures or test_result.errors:
         sys.exit(-1)  # 'make test' will report the test failed.
+
+
+def isDataMatching(ref, other):
+    delta = np.abs(ref - other)
+    # Check the data are matching i.e. the time steps are the same between the
+    # two data sets and is also the same for the output data. If it does not,
+    # pandas will fill the missing data with NaNs. Below we are checking there
+    # are no NaNs in delta.
+    return delta.notnull().any().any()
+
+
+def FindDifferences(ref, other, tol):
+    delta = np.abs(ref - other)
+
+    idxmax = delta.idxmax()
+    ref_max = pd.Series(ref.lookup(idxmax, ref.columns), index=ref.columns)
+    other_max = pd.Series(other.lookup(idxmax, other.columns),
+                          index=other.columns)
+    diff = pd.concat([idxmax, delta.max(), ref_max, other_max], axis=1)
+    diff.columns = ['Time', 'delta', 'ref value', 'value']
+    return diff[diff['delta'] > tol]

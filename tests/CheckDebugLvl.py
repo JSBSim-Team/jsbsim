@@ -20,7 +20,9 @@
 #
 
 import os
-from JSBSim_utils import JSBSimTestCase, CreateFDM, Table, ExecuteUntil, RunTest
+import pandas as pd
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil,
+                          isDataMatching, FindDifferences, RunTest)
 
 
 class TestDebugLvl(JSBSimTestCase):
@@ -35,8 +37,7 @@ class TestDebugLvl(JSBSimTestCase):
 
         ExecuteUntil(fdm, 1000.)
 
-        ref, current = Table(), Table()
-        ref.ReadCSV('BallOut.csv')
+        ref = pd.read_csv('BallOut.csv', index_col=0)
         del fdm
 
         os.environ["JSBSIM_DEBUG"] = str(0)
@@ -47,10 +48,16 @@ class TestDebugLvl(JSBSimTestCase):
 
         ExecuteUntil(fdm, 1000.)
 
-        current.ReadCSV('BallOut.csv')
+        current = pd.read_csv('BallOut.csv', index_col=0)
 
-        diff = ref.compare(current)
+        # Check the data are matching i.e. the time steps are the same between
+        # the two data sets and that the output data are also the same.
+        self.assertTrue(isDataMatching(ref, current))
+
+        # Find all the data that are differing by more than 1E-8 between the
+        # two data sets.
+        diff = FindDifferences(ref, current, 1E-8)
         self.longMessage = True
-        self.assertTrue(diff.empty(), msg='\n'+repr(diff))
+        self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
 RunTest(TestDebugLvl)
