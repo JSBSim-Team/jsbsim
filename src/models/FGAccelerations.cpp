@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.25 2015/12/09 04:28:18 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.26 2016/01/31 11:13:00 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,7 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
 
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
+  vUVWdot.InitMatrix();
   vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
@@ -101,6 +102,7 @@ bool FGAccelerations::InitModel(void)
 
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
+  vUVWdot.InitMatrix();
   vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
   vQtrndot = FGQuaternion(0,0,0);
