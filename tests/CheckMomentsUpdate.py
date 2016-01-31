@@ -19,7 +19,8 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, Table, ExecuteUntil, RunTest
+import pandas as pd
+from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
 
 mol2lbs = 0.00013841 * 32.174049
 
@@ -78,11 +79,10 @@ class CheckMomentsUpdate(JSBSimTestCase):
         self.fdm.run()
         self.CheckCGPosition()
 
-        csv = Table()
-        csv.ReadCSV('output.csv')
-        Mby = csv.get_column('M_{Buoyant} (ft-lbs)')[-1]
-        Fbx = csv.get_column('F_{Buoyant x} (lbs)')[-1]
-        Fbz = csv.get_column('F_{Buoyant z} (lbs)')[-1]
+        csv = pd.read_csv('output.csv')
+        Mby = csv['M_{Buoyant} (ft-lbs)'].iget(-1)
+        Fbx = csv['F_{Buoyant x} (lbs)'].iget(-1)
+        Fbz = csv['F_{Buoyant z} (lbs)'].iget(-1)
 
         self.assertAlmostEqual(Fbx * CGz - Fbz * CGx, Mby, delta=1E-7,
                                msg="Fbx*CGz-Fbz*CGx = %f and Mby = %f do not match" % (Fbx*CGz-Fbz*CGx, Mby))
