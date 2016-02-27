@@ -47,6 +47,8 @@
  <propulsion/>
 
  <flight_control name="FCS: blank"/>
+ <system file="system-rate-1"/>
+ <system file="system-rate-4"/>
 
  <aerodynamics>
   <axis name="LIFT"/>

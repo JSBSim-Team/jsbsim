@@ -1,0 +1,52 @@
+<system name="QUARTER" >
+    <property value="0">tests/rate-4</property>
+    <property value="0">tests/rate-4-actuator-dmd</property>
+    <property value="1">tests/rate-4-actuator-rate</property>
+
+    <channel name="control" execrate="4" execute="tests/system-rate-enabled">
+        <!-- this is just to do rate-4 = rate-4 + 1 -->
+        <fcs_function name="tests/rate-4-v">
+            <function>
+                <sum>
+                    <property>tests/rate-4</property>
+                </sum>
+            </function>
+        </fcs_function>
+
+        <fcs_function name="tests/rate-4">
+            <function>
+                <integer>
+                    <sum>
+                        <value>1.0</value>
+                        <property>tests/rate-4-v</property>
+                    </sum>
+                </integer>
+            </function>
+        </fcs_function>
+
+        <!-- use actuator to test dt is correctly set -->
+        <actuator name="tests/rate-4-actuator-value">
+            <input>tests/rate-4-actuator-dmd</input>
+            <rate_limit>tests/rate-4-actuator-rate</rate_limit>
+            <output>tests/rate-4-actuator-value</output>
+        </actuator>
+
+        <!-- extract dT into a property for examination -->
+        <fcs_function name="tests/rate-4-dt">
+            <function>
+                <sum>
+                    <property>simulation/channel-dt</property>
+                </sum>
+            </function>
+        </fcs_function>
+        <fcs_function name="tests/rate-4-dt-sum">
+            <function>
+                <sum>
+                    <property>tests/rate-4-dt-sum</property>
+                    <property>simulation/channel-dt</property>
+                </sum>
+            </function>
+        </fcs_function>
+
+    </channel>
+</system>
