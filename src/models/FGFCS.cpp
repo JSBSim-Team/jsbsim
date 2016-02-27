@@ -70,14 +70,14 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.92 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.93 2016/02/27 16:54:15 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
+FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex), ChannelRate(1)
 {
   int i;
   Name = "FGFCS";
@@ -181,8 +181,10 @@ bool FGFCS::Run(bool Holding)
   // Execute system channels in order
   for (i=0; i<SystemChannels.size(); i++) {
     if (debug_lvl & 4) cout << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
-    SystemChannels[i]->Execute();
+    ChannelRate = SystemChannels[i]->GetRate();
+    SystemChannels[i]->Execute(GetTrimStatus());
   }
+  ChannelRate = 1;
 
   RunPostFunctions();
 
@@ -511,6 +513,11 @@ bool FGFCS::Load(Element* document)
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
+    
+    int Rate = 0;
+    if (!channel_element->GetAttributeValue("execrate").empty())
+      Rate = channel_element->GetAttributeValueAsNumber("execrate");
+
     if (sOnOffProperty.length() > 0) {
       FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {
@@ -519,12 +526,10 @@ bool FGFCS::Load(Element* document)
              << channel_element->GetAttributeValue("name") << " is undefined or not "
              << "understood. The simulation will abort" << reset << endl;
         throw("Bad system definition");
-      } else {
-        newChannel = new FGFCSChannel(sChannelName, OnOffPropertyNode);
-      }
-    } else {
-      newChannel = new FGFCSChannel(sChannelName);
-    }
+      } else
+        newChannel = new FGFCSChannel(sChannelName, Rate, OnOffPropertyNode);
+    } else
+      newChannel = new FGFCSChannel(sChannelName, Rate);
 
     SystemChannels.push_back(newChannel);
 
@@ -690,7 +695,7 @@ void FGFCS::AddGear(unsigned int NumGear)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGFCS::GetDt(void)
+double FGFCS::GetDt(void) const
 {
   return FDMExec->GetDeltaT()*rate;
 }
@@ -752,6 +757,7 @@ void FGFCS::bind(void)
 
   PropertyManager->Tie("gear/tailhook-pos-norm", this, &FGFCS::GetTailhookPos, &FGFCS::SetTailhookPos);
   PropertyManager->Tie("fcs/wing-fold-pos-norm", this, &FGFCS::GetWingFoldPos, &FGFCS::SetWingFoldPos);
+  PropertyManager->Tie("simulation/channel-dt", this, &FGFCS::GetChannelDeltaT);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

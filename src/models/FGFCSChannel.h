@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.6 2015/09/28 08:57:32 ehofman Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.7 2016/02/27 16:54:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,7 +59,15 @@ CLASS DOCUMENTATION
   /** Represents a <channel> in a control system definition.
       The <channel> may be defined within a <system>, <autopilot> or <flight_control>
       element. Channels are a way to group sets of components that perform
-      a specific purpose or algorithm. */
+      a specific purpose or algorithm. 
+      Created within a <system> tag, the channel is defined as follows
+      <channel name="name" [execute="property"] [execrate="rate"]>
+      name is the name of the channel - in the old way this would also be used to bind elements
+      execute [optional] is the property that defines when to execute this channel; an on/off switch
+      execrate [optional] is the rate at which the channel should execute. 
+               A value of 0 or 1 will execute the channel every frame, a value of 2
+               every other frame (half rate), a value of 4 is every 4th frame (quarter rate)
+      */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -70,10 +78,12 @@ typedef std::vector <FGFCSComponent*> FCSCompVec;
 class FGFCSChannel {
 public:
   /// Constructor
-  FGFCSChannel(std::string name, FGPropertyNode* node=0) :
-  OnOffNode(node), Name(name)
+  FGFCSChannel(const std::string &name, int execRate, FGPropertyNode* node=0)
+    : OnOffNode(node), Name(name), ExecFrameCountSinceLastRun(1)
   {
+    ExecRate = execRate < 1 ? 1 : execRate;
   }
+
   /// Destructor
   ~FGFCSChannel() {
     for (unsigned int i=0; i<FCSComponents.size(); i++) delete FCSComponents[i];
@@ -83,7 +93,10 @@ public:
   std::string GetName() {return Name;}
 
   /// Adds a component to a channel
-  void Add(FGFCSComponent* comp) {FCSComponents.push_back(comp);}
+  void Add(FGFCSComponent* comp) {
+    FCSComponents.push_back(comp);
+    comp->SetDtForFrameCount(ExecRate);
+  }
   /// Returns the number of components in the channel.
   size_t GetNumComponents() {return FCSComponents.size();}
   /// Retrieves a specific component.
@@ -101,20 +114,31 @@ public:
       FCSComponents[i]->ResetPastStates();
   }
   /// Executes all the components in a channel.
-  void Execute() {
+  void Execute(bool trimStatus) {
     // If there is an on/off property supplied for this channel, check
     // the value. If it is true, permit execution to continue. If not, return
     // and do not execute the channel.
-    if (OnOffNode != 0)
-      if (!OnOffNode->getBoolValue()) return;
+    if (OnOffNode && !OnOffNode->getBoolValue()) return;
 
-    for (unsigned int i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run();
+    // channel will be run at rate 1 if trimming, or when the next execrate
+    // frame is reached
+    if (trimStatus || ExecFrameCountSinceLastRun >= ExecRate) {
+      for (unsigned int i=0; i<FCSComponents.size(); i++) 
+        FCSComponents[i]->Run();
+      ExecFrameCountSinceLastRun = 0;
+    }
+    ExecFrameCountSinceLastRun++;
   }
+  /// Get the channel rate
+  int GetRate(void) const { return ExecRate; }
 
   private:
     FCSCompVec FCSComponents;
     FGConstPropertyNode_ptr OnOffNode;
     std::string Name;
+
+    int ExecRate;        // rate at which this system executes, 0 or 1 every frame, 2 every second frame etc..
+    int ExecFrameCountSinceLastRun;
 };
 
 }

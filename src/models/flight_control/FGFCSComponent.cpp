@@ -49,7 +49,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCSComponent.cpp,v 1.41 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCSComponent.cpp,v 1.42 2016/02/27 16:54:15 bcoconni Exp $");
 IDENT(IdHdr,ID_FCSCOMPONENT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,9 +253,9 @@ void FGFCSComponent::SetOutput(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCSComponent::Run(void)
+void FGFCSComponent::SetDtForFrameCount(int FrameCount)
 {
-  return true;
+  dt = fcs->GetDt() * FrameCount;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,11 +282,12 @@ void FGFCSComponent::Clip(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
-// The old way of naming FCS components allowed upper or lower case, spaces, etc.
-// but then the names were modified to fit into a property name heirarchy. This
-// was confusing (it wasn't done intentionally - it was a carryover from the early
-// design). We now support the direct naming of properties in the FCS component
-// name attribute. The old way is supported in code at this time, but deprecated.
+// The old way of naming FCS components allowed upper or lower case, spaces,
+// etc. but then the names were modified to fit into a property name
+// hierarchy. This was confusing (it wasn't done intentionally - it was a
+// carryover from the early design). We now support the direct naming of
+// properties in the FCS component name attribute. The old way is supported in
+// code at this time, but deprecated.
 
 void FGFCSComponent::bind(void)
 {

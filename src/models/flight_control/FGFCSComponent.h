@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.27 2015/07/12 19:34:08 bcoconni Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.28 2016/02/27 16:54:16 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     - FGAngle
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.27 2015/07/12 19:34:08 bcoconni Exp $
+    @version $Id: FGFCSComponent.h,v 1.28 2016/02/27 16:54:16 bcoconni Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -99,8 +99,9 @@ public:
   /// Destructor
   virtual ~FGFCSComponent();
 
-  virtual bool Run(void);
+  virtual bool Run(void) { return true; }
   virtual void SetOutput(void);
+  void SetDtForFrameCount(int FrameCount);
   double GetOutput (void) const {return Output;}
   std::string GetName(void) const {return Name;}
   std::string GetType(void) const { return Type; }

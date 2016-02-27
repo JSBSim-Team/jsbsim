@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.49 2015/07/12 19:34:08 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.50 2016/02/27 16:54:15 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.49 $
+    @version $Revision: 1.50 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -557,11 +557,12 @@ public:
 
   void AddThrottle(void);
   void AddGear(unsigned int NumGear);
-  double GetDt(void);
+  double GetDt(void) const;
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
   bool GetTrimStatus(void) const { return FDMExec->GetTrimStatus(); }
+  double GetChannelDeltaT(void) const { return GetDt() * ChannelRate; }
 
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;
@@ -582,6 +583,7 @@ private:
   double GearCmd,GearPos;
   double TailhookPos, WingFoldPos;
   SystemType systype;
+  int ChannelRate;
 
   typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;
