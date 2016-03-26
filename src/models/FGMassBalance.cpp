@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.54 2015/12/09 04:28:18 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGMassBalance.cpp,v 1.55 2016/03/26 18:54:27 bcoconni Exp $");
 IDENT(IdHdr,ID_MASSBALANCE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,11 +258,11 @@ bool FGMassBalance::Run(bool Holding)
 
 void FGMassBalance::AddPointMass(Element* el)
 {
-  double radius=0, length=0;
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
-    cerr << "Pointmass " << pointmass_name << " has no location." << endl;
+    cerr << el->ReadFrom() << "Pointmass " << pointmass_name
+         << " has no location." << endl;
     exit(-1);
   }
 
@@ -274,6 +274,7 @@ void FGMassBalance::AddPointMass(Element* el)
 
   Element* form_element = el->FindElement("form");
   if (form_element) {
+    double radius=0, length=0;
     string shape = form_element->GetAttributeValue("shape");
     Element* radius_element = form_element->FindElement("radius");
     Element* length_element = form_element->FindElement("length");
@@ -401,6 +402,18 @@ void FGMassBalance::bind(void)
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/ixx-slugs_ft2", this,
+                       &FGMassBalance::GetIxx);
+  PropertyManager->Tie("inertia/iyy-slugs_ft2", this,
+                       &FGMassBalance::GetIyy);
+  PropertyManager->Tie("inertia/izz-slugs_ft2", this,
+                       &FGMassBalance::GetIzz);
+  PropertyManager->Tie("inertia/ixy-slugs_ft2", this,
+                       &FGMassBalance::GetIxy);
+  PropertyManager->Tie("inertia/ixz-slugs_ft2", this,
+                       &FGMassBalance::GetIxz);
+  PropertyManager->Tie("inertia/iyz-slugs_ft2", this,
+                       &FGMassBalance::GetIyz);
   typedef int (FGMassBalance::*iOPV)() const;
   PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0,
                        &FGMassBalance::GetMassPropertiesReport, false);

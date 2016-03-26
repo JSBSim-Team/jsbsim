@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.36 2015/08/22 18:09:00 bcoconni Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.37 2016/03/26 18:54:27 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -202,7 +202,12 @@ private:
   FGColumnVector3 vPMxyz;
   FGColumnVector3 PointMassCG;
   const FGMatrix33& CalculatePMInertias(void);
-
+  double GetIxx(void) const { return mJ(1,1); }
+  double GetIyy(void) const { return mJ(2,2); }
+  double GetIzz(void) const { return mJ(3,3); }
+  double GetIxy(void) const { return -mJ(1,2); }
+  double GetIxz(void) const { return -mJ(1,3); }
+  double GetIyz(void) const { return -mJ(2,3); }
 
   /** The PointMass structure encapsulates a point mass object, moments of inertia
      mass, location, etc. */
