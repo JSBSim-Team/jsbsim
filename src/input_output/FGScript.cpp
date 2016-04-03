@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.63 2015/09/28 21:14:15 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.64 2016/04/03 17:10:46 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,7 +353,7 @@ bool FGScript::LoadScript(const string& script, double default_dT,
 
 void FGScript::ResetEvents(void)
 {
-  //LocalProperties.ResetToIC();
+  LocalProperties.ResetToIC();
   FDMExec->Setsim_time(StartTime);
 
   for (unsigned int i=0; i<Events.size(); i++)
