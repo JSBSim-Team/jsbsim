@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.93 2016/02/27 16:54:15 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.94 2016/04/03 11:13:19 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +182,7 @@ bool FGFCS::Run(bool Holding)
   for (i=0; i<SystemChannels.size(); i++) {
     if (debug_lvl & 4) cout << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
     ChannelRate = SystemChannels[i]->GetRate();
-    SystemChannels[i]->Execute(GetTrimStatus());
+    SystemChannels[i]->Execute();
   }
   ChannelRate = 1;
 
@@ -521,15 +521,16 @@ bool FGFCS::Load(Element* document)
     if (sOnOffProperty.length() > 0) {
       FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {
-        cerr << highint << fgred
+        cerr << channel_element->ReadFrom() << highint << fgred
              << "The On/Off property, " << sOnOffProperty << " specified for channel "
              << channel_element->GetAttributeValue("name") << " is undefined or not "
              << "understood. The simulation will abort" << reset << endl;
         throw("Bad system definition");
       } else
-        newChannel = new FGFCSChannel(sChannelName, Rate, OnOffPropertyNode);
+        newChannel = new FGFCSChannel(this, sChannelName, Rate,
+                                      OnOffPropertyNode);
     } else
-      newChannel = new FGFCSChannel(sChannelName, Rate);
+      newChannel = new FGFCSChannel(this, sChannelName, Rate);
 
     SystemChannels.push_back(newChannel);
 

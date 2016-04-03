@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.7 2016/02/27 16:54:15 bcoconni Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.8 2016/04/03 11:13:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,10 +78,13 @@ typedef std::vector <FGFCSComponent*> FCSCompVec;
 class FGFCSChannel {
 public:
   /// Constructor
-  FGFCSChannel(const std::string &name, int execRate, FGPropertyNode* node=0)
-    : OnOffNode(node), Name(name), ExecFrameCountSinceLastRun(1)
+  FGFCSChannel(FGFCS* FCS, const std::string &name, int execRate,
+               FGPropertyNode* node=0)
+    : fcs(FCS), OnOffNode(node), Name(name)
   {
     ExecRate = execRate < 1 ? 1 : execRate;
+    // Set ExecFrameCountSinceLastRun so that each components are initialized
+    ExecFrameCountSinceLastRun = ExecRate;
   }
 
   /// Destructor
@@ -112,27 +115,35 @@ public:
   void Reset() {
     for (unsigned int i=0; i<FCSComponents.size(); i++)
       FCSComponents[i]->ResetPastStates();
+
+    // Set ExecFrameCountSinceLastRun so that each components are initialized
+    // after a reset.
+    ExecFrameCountSinceLastRun = ExecRate;
   }
   /// Executes all the components in a channel.
-  void Execute(bool trimStatus) {
+  void Execute() {
     // If there is an on/off property supplied for this channel, check
     // the value. If it is true, permit execution to continue. If not, return
     // and do not execute the channel.
     if (OnOffNode && !OnOffNode->getBoolValue()) return;
 
+    if (fcs->GetDt() != 0.0)
+      ++ExecFrameCountSinceLastRun;
+
     // channel will be run at rate 1 if trimming, or when the next execrate
     // frame is reached
-    if (trimStatus || ExecFrameCountSinceLastRun >= ExecRate) {
+    if (fcs->GetTrimStatus() || ExecFrameCountSinceLastRun >= ExecRate) {
       for (unsigned int i=0; i<FCSComponents.size(); i++) 
         FCSComponents[i]->Run();
+
       ExecFrameCountSinceLastRun = 0;
     }
-    ExecFrameCountSinceLastRun++;
   }
   /// Get the channel rate
   int GetRate(void) const { return ExecRate; }
 
   private:
+    FGFCS* fcs;
     FCSCompVec FCSComponents;
     FGConstPropertyNode_ptr OnOffNode;
     std::string Name;
