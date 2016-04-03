@@ -33,16 +33,31 @@ class TestChannelRate(JSBSimTestCase):
                                                          'systems-rate-test-0.xml'))
         fdm.run_ic()
 
-        ExecuteUntil(fdm, 30.)
+        while fdm['simulation/sim-time-sec'] < 30:
+            fdm.run()
+            self.assertEqual(fdm['simulation/frame'], fdm['tests/rate-1'])
+            self.assertEqual(int(fdm['simulation/frame']/4),
+                             fdm['tests/rate-4'])
+            self.assertEqual(fdm['simulation/sim-time-sec'],
+                             fdm['tests/rate-1-dt-sum'])
+            self.assertAlmostEqual(fdm['simulation/dt'] * fdm['tests/rate-4'] * 4,
+                                   fdm['tests/rate-4-dt-sum'])
 
-        self.assertEqual(fdm['simulation/frame'], fdm['tests/rate-1-v']-1)
-        self.assertEqual(int(fdm['simulation/frame']/4),
-                         fdm['tests/rate-4'])
         self.assertEqual(fdm['simulation/dt'], fdm['tests/rate-1-dt'])
         self.assertEqual(fdm['simulation/dt']*4, fdm['tests/rate-4-dt'])
-        self.assertEqual(fdm['simulation/sim-time-sec'],
-                         fdm['tests/rate-1-dt-sum'])
-        self.assertAlmostEqual(fdm['simulation/dt'] * fdm['tests/rate-4'] * 4,
-                               fdm['tests/rate-4-dt-sum'])
+
+        fdm.reset_to_initial_conditions(1)
+        tf = fdm['tests/rate-1-dt-sum']
+        xtraFrames = fdm['simulation/frame'] % 4
+
+        while fdm['simulation/sim-time-sec'] < 30:
+            fdm.run()
+            self.assertEqual(fdm['simulation/frame'], fdm['tests/rate-1'])
+            self.assertEqual(int((fdm['simulation/frame']-xtraFrames)/4),
+                             fdm['tests/rate-4'])
+            self.assertAlmostEqual(fdm['simulation/sim-time-sec'],
+                                   fdm['tests/rate-1-dt-sum']-tf)
+            self.assertAlmostEqual(fdm['simulation/dt']*fdm['tests/rate-4']*4,
+                                   fdm['tests/rate-4-dt-sum'])
 
 RunTest(TestChannelRate)

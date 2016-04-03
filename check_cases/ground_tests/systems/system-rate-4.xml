@@ -3,7 +3,7 @@
     <property value="0">tests/rate-4-actuator-dmd</property>
     <property value="1">tests/rate-4-actuator-rate</property>
 
-    <channel name="control" execrate="4" execute="tests/system-rate-enabled">
+    <channel name="control4" execrate="4" execute="tests/system-rate-enabled">
         <!-- this is just to do rate-4 = rate-4 + 1 -->
         <fcs_function name="tests/rate-4-v">
             <function>
@@ -17,8 +17,8 @@
             <function>
                 <integer>
                     <sum>
-                        <value>1.0</value>
                         <property>tests/rate-4-v</property>
+                        <property>tests/increment</property>
                     </sum>
                 </integer>
             </function>

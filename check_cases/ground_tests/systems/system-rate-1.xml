@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
 <system name="FULL">
-    <property value="-10.0">tests/rate-1</property>
+    <property value="0">tests/rate-1</property>
     <property value="0">tests/rate-1-dt-sum</property>
     <property value="0">tests/rate-1-actuator-dmd</property>
     <property value="1">tests/rate-1-actuator-rate</property>
     <property value="0">tests/system-rate-enabled</property>
 
-    <channel name="control" execrate="1" execute="tests/system-rate-enabled">
+    <channel name="control1" execrate="1" execute="tests/system-rate-enabled">
         <!-- this is just to do rate-1 = rate-1 + 1 -->
         <actuator name="tests/rate-1-actuator-value">
             <input>tests/rate-1-actuator-dmd</input>
@@ -23,13 +23,21 @@
             </function>
         </fcs_function>
 
+        <!-- skip the tests/rate-1 increment if dt == 0.0 -->
+        <switch name="tests/increment">
+            <default value="1.0"/>
+            <test value="simulation/dt">
+                simulation/dt == 0.0
+            </test>
+        </switch>
+
         <!-- use actuator to test dt is correctly set -->
         <fcs_function name="tests/rate-1">
             <function>
                 <integer>
                     <sum>
-                        <value>1.0</value>
                         <property>tests/rate-1-v</property>
+                        <property>tests/increment</property>
                     </sum>
                 </integer>
             </function>

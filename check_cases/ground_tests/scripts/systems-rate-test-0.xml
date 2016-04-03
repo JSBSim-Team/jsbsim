@@ -7,7 +7,7 @@
     <use aircraft="groundtest" initialize="reset00"/>
     <!-- launch with JSBSim root=check_cases/ground_tests scriptx=aircraft/systemsrate/systems-rate-test-0.xml -->
     <run start="0.0" end="60" dt="0.033333">
-      <property value="1">tests/system-rate-enabled</property>
+      <property value="1" persistent="true">tests/system-rate-enabled</property>
 
         <event name="monitor">
             <condition> simulation/sim-time-sec le 1 </condition>
