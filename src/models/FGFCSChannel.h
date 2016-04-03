@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.8 2016/04/03 11:13:19 bcoconni Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.9 2016/04/03 17:06:24 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -135,9 +135,10 @@ public:
     if (fcs->GetTrimStatus() || ExecFrameCountSinceLastRun >= ExecRate) {
       for (unsigned int i=0; i<FCSComponents.size(); i++) 
         FCSComponents[i]->Run();
-
-      ExecFrameCountSinceLastRun = 0;
     }
+
+    if (ExecFrameCountSinceLastRun >= ExecRate)
+      ExecFrameCountSinceLastRun = 0;
   }
   /// Get the channel rate
   int GetRate(void) const { return ExecRate; }

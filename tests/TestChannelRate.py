@@ -19,7 +19,7 @@
 #
 
 import os
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
 class TestChannelRate(JSBSimTestCase):
@@ -40,11 +40,29 @@ class TestChannelRate(JSBSimTestCase):
                              fdm['tests/rate-4'])
             self.assertEqual(fdm['simulation/sim-time-sec'],
                              fdm['tests/rate-1-dt-sum'])
-            self.assertAlmostEqual(fdm['simulation/dt'] * fdm['tests/rate-4'] * 4,
+            self.assertAlmostEqual(fdm['simulation/dt']*fdm['tests/rate-4']*4,
                                    fdm['tests/rate-4-dt-sum'])
 
         self.assertEqual(fdm['simulation/dt'], fdm['tests/rate-1-dt'])
         self.assertEqual(fdm['simulation/dt']*4, fdm['tests/rate-4-dt'])
+
+        try:
+            fdm['simulation/do_simple_trim'] = 1
+        except RuntimeError as e:
+            # The trim cannot succeed. Just make sure that the raised exception
+            # is due to the trim failure otherwise rethrow.
+            if e.args[0] != 'Trim Failed':
+                raise
+
+        while fdm['simulation/sim-time-sec'] < 40:
+            self.assertEqual(fdm['simulation/frame'], fdm['tests/rate-1'])
+            self.assertEqual(int(fdm['simulation/frame']/4),
+                             fdm['tests/rate-4'])
+            self.assertEqual(fdm['simulation/sim-time-sec'],
+                             fdm['tests/rate-1-dt-sum'])
+            self.assertAlmostEqual(fdm['simulation/dt']*fdm['tests/rate-4']*4,
+                                   fdm['tests/rate-4-dt-sum'])
+            fdm.run()
 
         fdm.reset_to_initial_conditions(1)
         tf = fdm['tests/rate-1-dt-sum']
