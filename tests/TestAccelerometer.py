@@ -97,7 +97,7 @@ class TestAccelerometer(JSBSimTestCase):
 
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], 0.0, delta=1E-7)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-7)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-6)
 
         del fdm
 
@@ -134,7 +134,7 @@ class TestAccelerometer(JSBSimTestCase):
                                   math.sin(pitch - latitude) * math.sin(roll),
                                   math.sin(pitch - latitude) * math.cos(roll)])
 
-        # Compute the acceleration measured by the accelrometer as the sum of
+        # Compute the acceleration measured by the accelerometer as the sum of
         # the gravity and the centrifugal and Coriolis forces.
         fa_yz = (fc * math.cos(latitude - pitch) - g * math.cos(pitch))
         fa = np.array([(fc * math.sin(latitude - pitch) + g * math.sin(pitch)),
@@ -173,19 +173,18 @@ class TestAccelerometer(JSBSimTestCase):
         # Set the orientation such that the spinning axis is Z.
         fdm['ic/phi-rad'] = 0.5*math.pi
 
-        # Set the angular velocities to 0.0 in the ECEF frame. The angular
-        # velocity R_{inertial} will therefore be equal to the Earth rotation
-        # rate 7.292115E-5 rad/sec
+        # Set the angular velocities so that angular velocity R_{inertial} will
+        # be equal to 1.0 rad/sec.
+        omega = 0.00007292115  # Earth rotation rate in rad/sec
         fdm['ic/p-rad_sec'] = 0.0
         fdm['ic/q-rad_sec'] = 0.0
-        fdm['ic/r-rad_sec'] = 0.0
+        fdm['ic/r-rad_sec'] = 1.0 - omega
         fdm.run_ic()
 
         fax = fdm['fcs/accelerometer/X']
         fay = fdm['fcs/accelerometer/Y']
         faz = fdm['fcs/accelerometer/Z']
         cgy_ft = fdm['inertia/cg-y-in'] / 12.
-        omega = 0.00007292115  # Earth rotation rate in rad/sec
 
         self.assertAlmostEqual(fdm['accelerations/a-pilot-x-ft_sec2'], fax,
                                delta=1E-8)
@@ -196,8 +195,8 @@ class TestAccelerometer(JSBSimTestCase):
 
         # Acceleration along X should be zero
         self.assertAlmostEqual(fax, 0.0, delta=1E-8)
-        # Acceleration along Y should be equal to r*omega^2
-        self.assertAlmostEqual(fay / (cgy_ft * omega * omega), 1.0, delta=1E-7)
+        # Acceleration along Y should be equal to d*r_dot^2
+        self.assertAlmostEqual(fay / cgy_ft, 1.0, delta=1E-7)
         # Acceleration along Z should be zero
         self.assertAlmostEqual(faz, 0.0, delta=1E-8)
 
