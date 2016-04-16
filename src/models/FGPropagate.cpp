@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.129 2016/04/16 12:01:51 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.130 2016/04/16 12:24:39 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,6 +266,20 @@ bool FGPropagate::Run(bool Holding)
 
   Debug(2);
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetHoldDown(bool hd)
+{
+  if (hd) {
+    VState.vUVW.InitMatrix();
+    CalculateInertialVelocity();
+    VState.vPQR.InitMatrix();
+    VState.vPQRi = Ti2b * in.vOmegaPlanet;
+    CalculateQuatdot();
+    InitializeDerivatives();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

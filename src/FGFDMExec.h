@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.104 2015/12/13 07:54:48 bcoconni Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.105 2016/04/16 12:24:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.104 $
+    @version $Revision: 1.105 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -578,6 +578,17 @@ public:
       @param FGIC The initial conditions that will be passed to the simulation. */
   void Initialize(FGInitialCondition *FGIC);
 
+  /** Sets the property forces/hold-down. This allows to do hard 'hold-down'
+      such as for rockets on a launch pad with engines ignited.
+      @param hd enables the 'hold-down' function if non-zero
+  */
+  void SetHoldDown(bool hd);
+
+  /** Gets the value of the property forces/hold-down.
+      @result zero if the 'hold-down' function is disabled, non-zero otherwise.
+  */
+  bool GetHoldDown(void) const {return HoldDown;}
+
 private:
   int Error;
   unsigned int Frame;
@@ -632,7 +643,9 @@ private:
   FGPropertyManager* Root;
   bool StandAlone;
   FGPropertyManager* instance;
-  
+
+  bool HoldDown;
+
   // The FDM counter is used to give each child FDM an unique ID. The root FDM has the ID 0
   unsigned int*      FDMctr;
 

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.84 2016/04/16 12:01:51 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.85 2016/04/16 12:24:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.84 2016/04/16 12:01:51 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.85 2016/04/16 12:24:39 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -595,6 +595,12 @@ public:
     VState.vInertialPosition -= Tb2i*deltaLoc;
     VState.vLocation -= Tb2ec*deltaLoc;
   }
+
+  /** Sets the property forces/hold-down. This allows to do hard 'hold-down'
+      such as for rockets on a launch pad with engines ignited.
+      @param hd enables the 'hold-down' function if non-zero
+  */
+  void SetHoldDown(bool hd);
 
   void DumpState(void);
 
