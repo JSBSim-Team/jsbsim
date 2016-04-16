@@ -19,7 +19,7 @@
 #
 
 import os
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 
 class TestHoldDown(JSBSimTestCase):
@@ -37,5 +37,32 @@ class TestHoldDown(JSBSimTestCase):
             fdm.run()
             t = fdm['simulation/sim-time-sec']
             self.assertAlmostEqual(fdm['position/h-sl-ft'], h0, delta=1E-5)
+
+    def test_hold_down_with_gnd_reactions(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                         'c1721.xml'))
+        fdm.run_ic()
+        ExecuteUntil(fdm, 0.25)
+
+        fdm['forces/hold-down'] = 1.0
+        h0 = fdm['position/h-sl-ft']
+        pitch = fdm['attitude/pitch-rad']
+        roll = fdm['attitude/roll-rad']
+        heading = fdm['attitude/heading-true-rad']
+
+        while fdm['simulation/sim-time-sec'] < 2.0:
+            fdm.run()
+            self.assertAlmostEqual(fdm['accelerations/pdot-rad_sec2'], 0.0)
+            self.assertAlmostEqual(fdm['accelerations/qdot-rad_sec2'], 0.0)
+            self.assertAlmostEqual(fdm['accelerations/rdot-rad_sec2'], 0.0)
+            self.assertAlmostEqual(fdm['accelerations/udot-ft_sec2'], 0.0)
+            self.assertAlmostEqual(fdm['accelerations/vdot-ft_sec2'], 0.0)
+            self.assertAlmostEqual(fdm['accelerations/wdot-ft_sec2'], 0.0)
+
+        self.assertAlmostEqual(fdm['position/h-sl-ft'], h0, delta=1E-6)
+        self.assertAlmostEqual(fdm['attitude/pitch-rad'], pitch)
+        self.assertAlmostEqual(fdm['attitude/roll-rad'], roll)
+        self.assertAlmostEqual(fdm['attitude/heading-true-rad'], heading)
 
 RunTest(TestHoldDown)
