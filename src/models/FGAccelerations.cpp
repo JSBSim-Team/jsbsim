@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.26 2016/01/31 11:13:00 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.27 2016/04/16 12:01:51 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,6 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
   vUVWdot.InitMatrix();
   vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
-  vQtrndot = FGQuaternion(0,0,0);
 
   bind();
   Debug(0);
@@ -105,7 +104,6 @@ bool FGAccelerations::InitModel(void)
   vUVWdot.InitMatrix();
   vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
-  vQtrndot = FGQuaternion(0,0,0);
 
   return true;
 }
@@ -122,7 +120,6 @@ bool FGAccelerations::Run(bool Holding)
 
   CalculatePQRdot();   // Angular rate derivative
   CalculateUVWdot();   // Translational rate derivative
-  CalculateQuatdot();  // Angular orientation derivative
 
   ResolveFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
 
@@ -170,19 +167,6 @@ void FGAccelerations::CalculatePQRdot(void)
     vPQRidot = in.Jinv * (in.Moment - in.vPQRi * (in.J * in.vPQRi));
     vPQRdot = vPQRidot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Compute the quaternion orientation derivative
-//
-// vQtrndot is the quaternion derivative.
-// Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
-//            Second edition (2004), eqn 1.5-16b (page 50)
-
-void FGAccelerations::CalculateQuatdot(void)
-{
-  // Compute quaternion orientation derivative on current body rates
-  vQtrndot = in.qAttitudeECI.GetQDot(in.vPQRi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,7 +335,6 @@ void FGAccelerations::InitializeDerivatives(void)
   // Make an initial run and set past values
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
-  CalculateQuatdot();          // Angular orientation derivative
   ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
 }
 

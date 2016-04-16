@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.83 2016/01/23 10:48:11 bcoconni Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.84 2016/04/16 12:01:51 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGPropagate.h,v 1.83 2016/01/23 10:48:11 bcoconni Exp $
+    @version $Id: FGPropagate.h,v 1.84 2016/04/16 12:01:51 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,6 +132,8 @@ public:
     /** The current orientation of the vehicle, that is, the orientation of the
         body frame relative to the inertial (ECI) frame. */
     FGQuaternion qAttitudeECI;
+
+    FGQuaternion vQtrndot;
 
     FGColumnVector3 vInertialVelocity;
 
@@ -228,6 +230,17 @@ public:
       @return The body frame inertial angular rates in rad/sec.
   */
   const FGColumnVector3& GetPQRi(void) const {return VState.vPQRi;}
+
+  /** Retrieves the time derivative of the body orientation quaternion.
+      Retrieves the time derivative of the body orientation quaternion based on
+      the rate of change of the orientation between the body and the ECI frame.
+      The quaternion returned is represented by an FGQuaternion reference. The
+      quaternion is 1-based, so that the first element can be retrieved using
+      the "()" operator.
+      units rad/sec^2
+      @return The time derivative of the body orientation quaternion.
+  */
+  const FGQuaternion& GetQuaterniondot(void) const {return VState.vQtrndot;}
 
   /** Retrieves the Euler angles that define the vehicle orientation.
       Extracts the Euler angles from the quaternion that stores the orientation
@@ -587,7 +600,6 @@ public:
 
   struct Inputs {
     FGColumnVector3 vPQRidot;
-    FGQuaternion vQtrndot;
     FGColumnVector3 vUVWidot;
     FGColumnVector3 vOmegaPlanet;
     double SemiMajor;
@@ -626,6 +638,7 @@ private:
 
   void CalculateInertialVelocity(void);
   void CalculateUVW(void);
+  void CalculateQuatdot(void);
 
   void Integrate( FGColumnVector3& Integrand,
                   FGColumnVector3& Val,

@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.128 2016/01/23 10:48:11 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.129 2016/04/16 12:01:51 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,6 +179,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   VState.vPQRi = VState.vPQR + Ti2b * in.vOmegaPlanet;
 
   CalculateInertialVelocity(); // Translational position derivative
+  CalculateQuatdot();  // Angular orientation derivative
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,7 +190,7 @@ void FGPropagate::InitializeDerivatives()
   VState.dqPQRidot.assign(5, in.vPQRidot);
   VState.dqUVWidot.assign(5, in.vUVWidot);
   VState.dqInertialVelocity.assign(5, VState.vInertialVelocity);
-  VState.dqQtrndot.assign(5, in.vQtrndot);
+  VState.dqQtrndot.assign(5, VState.vQtrndot);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,7 +222,7 @@ bool FGPropagate::Run(bool Holding)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
-  Integrate(VState.qAttitudeECI,      in.vQtrndot,          VState.dqQtrndot,          dt, integrator_rotational_position);
+  Integrate(VState.qAttitudeECI,      VState.vQtrndot,      VState.dqQtrndot,          dt, integrator_rotational_position);
   Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
   Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
   Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
@@ -255,6 +256,9 @@ bool FGPropagate::Run(bool Holding)
 
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
 
+  // Angular orientation derivative
+  CalculateQuatdot();
+
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
@@ -262,6 +266,19 @@ bool FGPropagate::Run(bool Holding)
 
   Debug(2);
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Compute the quaternion orientation derivative
+//
+// vQtrndot is the quaternion derivative.
+// Reference: See Stevens and Lewis, "Aircraft Control and Simulation",
+//            Second edition (2004), eqn 1.5-16b (page 50)
+
+void FGPropagate::CalculateQuatdot(void)
+{
+  // Compute quaternion orientation derivative on current body rates
+  VState.vQtrndot = VState.qAttitudeECI.GetQDot(VState.vPQRi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -457,6 +474,7 @@ void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi)
   VState.qAttitudeECI.Normalize();
   UpdateBodyMatrices();
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
+  CalculateQuatdot();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -472,6 +490,7 @@ void FGPropagate::SetInertialVelocity(const FGColumnVector3& Vi) {
 void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
   VState.vPQRi = Ti2b * vRates;
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
+  CalculateQuatdot();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -553,6 +572,7 @@ void FGPropagate::SetVState(const VehicleState& vstate)
   VState.vPQR = vstate.vPQR;
   VState.vPQRi = VState.vPQR + Ti2b * in.vOmegaPlanet;
   VState.vInertialPosition = vstate.vInertialPosition;
+  CalculateQuatdot();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

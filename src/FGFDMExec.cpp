@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.187 2016/01/31 11:12:59 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.188 2016/04/16 12:01:51 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,7 +345,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   switch(idx) {
   case ePropagate:
     Propagate->in.vPQRidot     = Accelerations->GetPQRidot();
-    Propagate->in.vQtrndot     = Accelerations->GetQuaterniondot();
     Propagate->in.vUVWidot     = Accelerations->GetUVWidot();
     Propagate->in.DeltaT       = dT;
     break;
@@ -497,7 +496,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Accelerations->in.Tb2i     = Propagate->GetTb2i();
     Accelerations->in.Tec2b    = Propagate->GetTec2b();
     Accelerations->in.Tec2i    = Propagate->GetTec2i();
-    Accelerations->in.qAttitudeECI = Propagate->GetQuaternionECI();
     Accelerations->in.Moment   = Aircraft->GetMoments();
     Accelerations->in.GroundMoment  = GroundReactions->GetMoments();
     Accelerations->in.Force    = Aircraft->GetForces();
