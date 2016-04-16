@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.9 2016/04/03 17:06:24 bcoconni Exp $"
+#define ID_FCSCHANNEL "$Id: FGFCSChannel.h,v 1.10 2016/04/16 11:00:11 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,8 +127,13 @@ public:
     // and do not execute the channel.
     if (OnOffNode && !OnOffNode->getBoolValue()) return;
 
-    if (fcs->GetDt() != 0.0)
+    if (fcs->GetDt() != 0.0) {
+      if (ExecFrameCountSinceLastRun >= ExecRate) {
+        ExecFrameCountSinceLastRun = 0;
+      }
+
       ++ExecFrameCountSinceLastRun;
+    }
 
     // channel will be run at rate 1 if trimming, or when the next execrate
     // frame is reached
@@ -136,9 +141,6 @@ public:
       for (unsigned int i=0; i<FCSComponents.size(); i++) 
         FCSComponents[i]->Run();
     }
-
-    if (ExecFrameCountSinceLastRun >= ExecRate)
-      ExecFrameCountSinceLastRun = 0;
   }
   /// Get the channel rate
   int GetRate(void) const { return ExecRate; }
