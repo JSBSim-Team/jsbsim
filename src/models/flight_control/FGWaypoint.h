@@ -38,13 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#include "simgear/props/propertyObject.hxx"
 #include "FGFCSComponent.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.3 2015/09/20 20:53:13 bcoconni Exp $"
+#define ID_WAYPOINT "$Id: FGWaypoint.h,v 1.4 2016/04/17 13:19:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +93,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGWaypoint.h,v 1.3 2015/09/20 20:53:13 bcoconni Exp $
+    @version $Id: FGWaypoint.h,v 1.4 2016/04/17 13:19:39 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,10 +109,10 @@ public:
   bool Run(void);
 
 private:
-  FGPropertyNode_ptr target_latitude_pNode;
-  FGPropertyNode_ptr target_longitude_pNode;
-  FGPropertyNode_ptr source_latitude_pNode;
-  FGPropertyNode_ptr source_longitude_pNode;
+  simgear::PropertyObject<double> target_latitude;
+  simgear::PropertyObject<double> target_longitude;
+  simgear::PropertyObject<double> source_latitude;
+  simgear::PropertyObject<double> source_longitude;
   double target_latitude_unit;
   double target_longitude_unit;
   double source_latitude_unit;

@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.6 2015/09/20 20:53:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.7 2016/04/17 13:19:39 bcoconni Exp $");
 IDENT(IdHdr,ID_WAYPOINT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,56 +66,80 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   source_longitude_unit = 1.0;
 
   if (element->FindElement("target_latitude") ) {
-    target_latitude_pNode = PropertyManager->GetNode(element->FindElementValue("target_latitude"));
+    target_latitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("target_latitude")));
     if (element->FindElement("target_latitude")->HasAttribute("unit")) {
       if (element->FindElement("target_latitude")->GetAttributeValue("unit") == "DEG") {
         target_latitude_unit = 0.017453293;
       }
     }
-  } else
-    throw("Target latitude is required for waypoint component: "+Name);
+  } else {
+    cerr << element->ReadFrom() << endl
+         << "Target latitude is required for waypoint component: " << Name
+         << endl;
+    throw("Malformed waypoint definition");
+  }
 
   if (element->FindElement("target_longitude") ) {
-    target_longitude_pNode = PropertyManager->GetNode(element->FindElementValue("target_longitude"));
+    target_longitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("target_longitude")));
     if (element->FindElement("target_longitude")->HasAttribute("unit")) {
       if (element->FindElement("target_longitude")->GetAttributeValue("unit") == "DEG") {
         target_longitude_unit = 0.017453293;
       }
     }
-  } else
-    throw("Target longitude is required for waypoint component: "+Name);
+  } else {
+    cerr << element->ReadFrom() << endl
+         << "Target longitude is required for waypoint component: " << Name
+         << endl;
+    throw("Malformed waypoint definition");
+  }
 
   if (element->FindElement("source_latitude") ) {
-    source_latitude_pNode = PropertyManager->GetNode(element->FindElementValue("source_latitude"));
+    source_latitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("source_latitude")));
     if (element->FindElement("source_latitude")->HasAttribute("unit")) {
       if (element->FindElement("source_latitude")->GetAttributeValue("unit") == "DEG") {
         source_latitude_unit = 0.017453293;
       }
     }
-  } else
-    throw("Source latitude is required for waypoint component: "+Name);
+  } else {
+    cerr << element->ReadFrom() << endl
+         << "Source latitude is required for waypoint component: " << Name
+         << endl;
+    throw("Malformed waypoint definition");
+  }
 
   if (element->FindElement("source_longitude") ) {
-    source_longitude_pNode = PropertyManager->GetNode(element->FindElementValue("source_longitude"));
+    source_longitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("source_longitude")));
     if (element->FindElement("source_longitude")->HasAttribute("unit")) {
       if (element->FindElement("source_longitude")->GetAttributeValue("unit") == "DEG") {
         source_longitude_unit = 0.017453293;
       }
     }
-  } else
-    throw("Source longitude is required for waypoint component: "+Name);
+  } else {
+    cerr << element->ReadFrom() << endl
+         << "Source longitude is required for waypoint component: " << Name
+         << endl;
+    throw("Malformed waypoint definition");
+  }
 
   if (element->FindElement("radius"))
     radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
-  else
-    radius = 21144000; // Radius of Earth in feet.
+  else {
+    FGLocation source(source_longitude * source_latitude_unit,
+                      source_latitude * source_longitude_unit, 1.0);
+    radius = source.GetSeaLevelRadius(); // Radius of Earth in feet.
+  }
 
   unit = element->GetAttributeValue("unit");
   if (WaypointType == eHeading) {
     if (!unit.empty()) {
       if      (unit == "DEG") eUnit = eDeg;
       else if (unit == "RAD") eUnit = eRad;
-      else throw("Unknown unit "+unit+" in HEADING waypoint component, "+Name);
+      else {
+        cerr << element->ReadFrom() << endl
+             << "Unknown unit " << unit << " in HEADING waypoint component, "
+             << Name << endl;
+        throw("Malformed waypoint definition");
+      }
     } else {
       eUnit = eRad; // Default is radians if unspecified
     }
@@ -123,7 +147,12 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
     if (!unit.empty()) {
       if      (unit == "FT") eUnit = eFeet;
       else if (unit == "M")  eUnit = eMeters;
-      else throw("Unknown unit "+unit+" in DISTANCE waypoint component, "+Name);
+      else {
+        cerr << element->ReadFrom() << endl
+             << "Unknown unit " << unit << " in DISTANCE waypoint component, "
+             << Name << endl;
+        throw("Malformed waypoint definition");
+      }
     } else {
       eUnit = eFeet; // Default is feet if unspecified
     }
@@ -144,30 +173,24 @@ FGWaypoint::~FGWaypoint()
 
 bool FGWaypoint::Run(void )
 {
-  double target_latitude = target_latitude_pNode->getDoubleValue() * target_latitude_unit;
-  double target_longitude = target_longitude_pNode->getDoubleValue() * target_longitude_unit;
-  double source_latitude = source_latitude_pNode->getDoubleValue() * source_latitude_unit;
-  double source_longitude = source_longitude_pNode->getDoubleValue() * source_longitude_unit;
-  FGLocation source(source_longitude, source_latitude, radius);
+  double target_latitude_rad = target_latitude * target_latitude_unit;
+  double target_longitude_rad = target_longitude * target_longitude_unit;
+  FGLocation source(source_longitude * source_latitude_unit,
+                    source_latitude * source_longitude_unit, radius);
 
   if (WaypointType == eHeading) {     // Calculate Heading
-    double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude,
-                                                         target_latitude);
+    double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude_rad,
+                                                         target_latitude_rad);
 
-    double heading_to_waypoint = 0;
-    if (eUnit == eDeg) heading_to_waypoint = heading_to_waypoint_rad * radtodeg;
-    else               heading_to_waypoint = heading_to_waypoint_rad;
-
-    Output = heading_to_waypoint;
+    if (eUnit == eDeg) Output = heading_to_waypoint_rad * radtodeg;
+    else               Output = heading_to_waypoint_rad;
 
   } else {                            // Calculate Distance
-    double wp_distance = source.GetDistanceTo(target_longitude, target_latitude);
+    double wp_distance = source.GetDistanceTo(target_longitude_rad,
+                                              target_latitude_rad);
 
-    if (eUnit == eMeters) {
-      Output = FeetToMeters(wp_distance);
-    } else {
-      Output = wp_distance;
-    }
+    if (eUnit == eMeters) Output = FeetToMeters(wp_distance);
+    else                  Output = wp_distance;
   }
 
   Clip();
