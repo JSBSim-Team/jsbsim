@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.23 2015/03/28 15:03:44 bcoconni Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.24 2016/04/17 13:13:29 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -114,7 +114,6 @@ public:
 private:
   int sckt;
   int sckt_in;
-  int udpsckt;
   DirectionType Direction;
   ProtocolType Protocol;
   struct sockaddr_in scktName;
