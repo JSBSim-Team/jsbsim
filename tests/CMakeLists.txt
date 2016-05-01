@@ -40,7 +40,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestPitotAngle
                  CheckTrim
                  TestChannelRate
-                 TestWaypoint)
+                 TestWaypoint
+                 TestSuspend)
 
 foreach(test ${PYTHON_TESTS})
   add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
