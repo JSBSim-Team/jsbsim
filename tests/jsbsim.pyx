@@ -382,13 +382,13 @@ cdef class FGFDMExec:
         """
         self.thisptr.DoTrim(mode)
 
-    def do_disable_output(self):
+    def disable_output(self):
         """
         Disables data logging to all outputs.
         """
         self.thisptr.DisableOutput()
 
-    def do_enable_output(self):
+    def enable_output(self):
         """
         Enables data logging to all outputs.
         """
