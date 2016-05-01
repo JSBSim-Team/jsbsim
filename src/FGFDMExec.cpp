@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.189 2016/04/16 12:24:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.190 2016/05/01 18:25:57 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -561,6 +561,7 @@ bool FGFDMExec::RunIC(void)
   Models[eOutput]->InitModel();
 
   Run();
+  Propagate->InitializeDerivatives();
   ResumeIntegration(); // Restores the integration rate to what it was.
 
   if (debug_lvl > 0) {
@@ -593,7 +594,6 @@ void FGFDMExec::Initialize(FGInitialCondition* FGIC)
   Propagate->SetInitialState(FGIC);
   Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
   Run();
-  Propagate->InitializeDerivatives();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -79,7 +79,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.130 2016/04/16 12:24:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropagate.cpp,v 1.131 2016/05/01 18:25:57 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPAGATE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,16 +222,18 @@ bool FGPropagate::Run(bool Holding)
 
   // Propagate rotational / translational velocity, angular /translational position, respectively.
 
-  Integrate(VState.qAttitudeECI,      VState.vQtrndot,      VState.dqQtrndot,          dt, integrator_rotational_position);
-  Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
-  Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
-  Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
+  if (!FDMExec->IntegrationSuspended()) {
+    Integrate(VState.qAttitudeECI,      VState.vQtrndot,      VState.dqQtrndot,          dt, integrator_rotational_position);
+    Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
+    Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
+    Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
+  }
 
   // CAUTION : the order of the operations below is very important to get transformation
   // matrices that are consistent with the new state of the vehicle
 
   // 1. Update the Earth position angle (EPA)
-  VState.vLocation.IncrementEarthPositionAngle(in.vOmegaPlanet(eZ)*(in.DeltaT*rate));
+  VState.vLocation.IncrementEarthPositionAngle(in.vOmegaPlanet(eZ)*dt);
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
   Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
