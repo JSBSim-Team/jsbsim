@@ -118,7 +118,7 @@ std::string Chute::system()
         file << "       <product name=\"" + _description[_subtype] + " Scaling\">" << std::endl;
         file << "         <property>systems/chute/drag-chute-offset</property>" << std::endl;
         file << "         <property>systems/chute/chute-not-released</property>" << std::endl;
-        file << "         <gain>0.9</gain>" << std::endl;
+        file << "         <value>0.9</value>" << std::endl;
         file << "       </product>" << std::endl;
         file << "      </function>" << std::endl;
         file << "     <output>systems/chute/drag-chute-pos-norm</output>" << std::endl;

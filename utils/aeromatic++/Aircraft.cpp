@@ -155,21 +155,21 @@ Aeromatic::Aeromatic() : Aircraft(),
     _Cmalpha = 0.0f; _Cmde = 0.0f; _Cmq = 0.0f; _Cmadot = 0.0f;
     _Cnbeta = 0.0f; _Cnr = 0.0f; _Cndr = 0.0f; _Cnda = 0.0f;
 
-    _Re.reserve(4);
-    _alpha.reserve(4);
+    _Re.resize(4, 0.0f);
+    _alpha.resize(4, 0.0f);
 
-    _CLalpha.reserve(3);
-    _CLmax.reserve(3);
+    _CLalpha.resize(3, 0.0f);
+    _CLmax.resize(3, 0.0f);
 
-    _CDalpha.reserve(4);
-    _CYp.reserve(4);
-    _Clbeta.reserve(1);
-    _Clr.reserve(1);
-    _Cnp.reserve(4);
+    _CDalpha.resize(4, 0.0f);
+    _CYp.resize(4, 0.0f);
+    _Clbeta.resize(1, 0.0f);
+    _Clr.resize(1, 0.0f);
+    _Cnp.resize(4, 0.0f);
 
-    _CLaw.reserve(3);
-    _CLah.reserve(3);
-    _CLav.reserve(3);
+    _CLaw.resize(3, 0.0f);
+    _CLah.resize(3, 0.0f);
+    _CLav.resize(3, 0.0f);
 }
 
 Aeromatic::~Aeromatic()
@@ -465,7 +465,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.64 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.65 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

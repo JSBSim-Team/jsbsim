@@ -155,7 +155,7 @@ void  Propeller::bladeElement()
         _max_chord = 0.76f*sqrtf(R/B);
     }
     float max_thickness = 0.3f*_max_chord;
-    float max_camber = 0.015f;
+    float max_camber = 0.035f;
 
     float xt = R;
     float xs = R/NUM_ELEMENTS;
@@ -207,8 +207,8 @@ void  Propeller::bladeElement()
                 float CL0 = 4.0f*PI*CC;
                 float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
                 float CDi = 1.0f/(eff*B*PAR);
-                float CD0 = 0.3333f*CDi*CL0*CL0;
-                float CDa = 2.0f*CLa*CDi;
+                float CD0 = TC*k1*Cf + 0.3333f*CDi*CL0*CL0;
+                float CDa = CLa*CDi;
 
                 float DtDr, DqDr, tem1, tem2, anew, bnew;
                 do
@@ -220,7 +220,7 @@ void  Propeller::bladeElement()
                     float cphi = cosf(phi);
                     float alpha = th-phi;
 
-                    float CL = CL0 + alpha*CLa;
+                    float CL = std::min(std::max(CL0 + alpha*CLa, -1.42f), 1.42f);
                     float CD = CD0 + alpha*CDa*CL + CDi*CL*CL;
                     float CY = CL*cphi - CD*sphi;
                     float CX = CD*cphi + CL*sphi;

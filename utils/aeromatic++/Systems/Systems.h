@@ -259,7 +259,7 @@ class RescueChute : public Chute
 public:
     RescueChute(Aeromatic *p) : Chute(p) {
         _description.clear();
-        _description.push_back("Rescue Chute");
+        _description.push_back("Rescue Chute (Ballistic Recovery System)");
     }
     ~RescueChute() {}
 };
