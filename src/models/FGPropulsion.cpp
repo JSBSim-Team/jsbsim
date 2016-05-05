@@ -65,7 +65,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.86 2016/01/17 15:26:18 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropulsion.cpp,v 1.87 2016/05/05 15:38:09 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPULSION);
 
 extern short debug_lvl;
@@ -84,11 +84,9 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numOxiTanks = numFuelTanks = 0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
-  refuel = dump = false;
   DumpRate = 0.0; 
   RefuelRate = 6000.0;
   FuelFreeze = false;
-  TotalFuelQuantity = 0.0;
   IsBound =
   HavePistonEngine =
   HaveTurbineEngine =
@@ -122,6 +120,9 @@ bool FGPropulsion::InitModel(void)
   vMoments.InitMatrix();
 
   for (unsigned int i=0; i<numTanks; i++) Tanks[i]->ResetToIC();
+  TotalFuelQuantity = 0.0;
+  TotalOxidizerQuantity = 0.0;
+  refuel = dump = false;
 
   for (unsigned int i=0; i<numEngines; i++)
     Engines[i]->ResetToIC();
@@ -151,15 +152,23 @@ bool FGPropulsion::Run(bool Holding)
   }
 
   TotalFuelQuantity = 0.0;
+  TotalOxidizerQuantity = 0.0;
   for (i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( in.TotalDeltaT, in.TAT_c);
-    if (Tanks[i]->GetType() == FGTank::ttFUEL) {
+    switch (Tanks[i]->GetType()) {
+    case FGTank::ttFUEL:
       TotalFuelQuantity += Tanks[i]->GetContents();
+      break;
+    case FGTank::ttOXIDIZER:
+      TotalOxidizerQuantity += Tanks[i]->GetContents();
+      break;
+    default:
+      break;
     }
   }
 
-  if (refuel) DoRefuel( in.TotalDeltaT );
-  if (dump) DumpFuel( in.TotalDeltaT );
+  if (refuel.node() && refuel) DoRefuel( in.TotalDeltaT );
+  if (dump.node() && dump) DumpFuel( in.TotalDeltaT );
 
   RunPostFunctions();
 
@@ -765,17 +774,16 @@ void FGPropulsion::bind(void)
 
   PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine,
                         &FGPropulsion::SetActiveEngine, true);
-  PropertyManager->Tie("propulsion/total-fuel-lbs", this, &FGPropulsion::GetTotalFuelQuantity);
-  PropertyManager->Tie("propulsion/refuel", this, &FGPropulsion::GetRefuel,
-                        &FGPropulsion::SetRefuel, true);
-  PropertyManager->Tie("propulsion/fuel_dump", this, &FGPropulsion::GetFuelDump,
-                        &FGPropulsion::SetFuelDump, true);
   PropertyManager->Tie("forces/fbx-prop-lbs", this, eX, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fby-prop-lbs", this, eY, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fbz-prop-lbs", this, eZ, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("moments/l-prop-lbsft", this, eX, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/m-prop-lbsft", this, eY, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/n-prop-lbsft", this, eZ, (PMF)&FGPropulsion::GetMoments);
+  TotalFuelQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-fuel-lbs");
+  TotalOxidizerQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-oxidizer-lbs");
+  refuel = PropertyManager->CreatePropertyObject<bool>("propulsion/refuel");
+  dump = PropertyManager->CreatePropertyObject<bool>("propulsion/fuel_dump");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

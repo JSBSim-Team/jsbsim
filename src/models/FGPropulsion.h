@@ -41,6 +41,7 @@ INCLUDES
 #include <vector>
 #include <iosfwd>
 
+#include "simgear/props/propertyObject.hxx"
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
@@ -49,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.35 2015/01/07 23:22:59 dpculp Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.36 2016/05/05 15:38:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +93,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.35 2015/01/07 23:22:59 dpculp Exp $
+    @version $Id: FGPropulsion.h,v 1.36 2016/05/05 15:38:08 bcoconni Exp $
     @see
     FGEngine
     FGTank
@@ -172,10 +173,6 @@ public:
   const FGColumnVector3& GetMoments(void) const {return vMoments;}
   double GetMoments(int n) const {return vMoments(n);}
 
-  bool GetRefuel(void) const {return refuel;}
-  void SetRefuel(bool setting) {refuel = setting;}
-  bool GetFuelDump(void) const {return dump;}
-  void SetFuelDump(bool setting) {dump = setting;}
   double Transfer(int source, int target, double amount);
   void DoRefuel(double time_slice);
   void DumpFuel(double time_slice);
@@ -186,7 +183,6 @@ public:
   std::string FindFullPathName(const std::string& filename) const;
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) const {return FuelFreeze;}
-  double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);
@@ -212,10 +208,11 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
-  bool refuel;
-  bool dump;
+  simgear::PropertyObject<bool> refuel;
+  simgear::PropertyObject<bool> dump;
   bool FuelFreeze;
-  double TotalFuelQuantity;
+  simgear::PropertyObject<double> TotalFuelQuantity;
+  simgear::PropertyObject<double> TotalOxidizerQuantity;
   double DumpRate;
   double RefuelRate;
   bool IsBound;
