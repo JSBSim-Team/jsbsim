@@ -42,7 +42,7 @@ INCLUDES
 #endif
 
 #include <string>
-#include "simgear/props/props.hxx"
+#include "simgear/props/propertyObject.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
 #endif
@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.29 2014/11/15 11:32:54 bcoconni Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.30 2016/05/05 15:32:42 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -383,7 +383,7 @@ class FGPropertyManager
     FGPropertyManager(void) { root = new FGPropertyNode; }
 
     /// Constructor
-    FGPropertyManager(FGPropertyNode* _root) : root(_root) {};
+    explicit FGPropertyManager(FGPropertyNode* _root) : root(_root) {};
 
     /// Destructor
     virtual ~FGPropertyManager(void) { Unbind(); }
@@ -686,6 +686,10 @@ class FGPropertyManager
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
+
+    template <class T> simgear::PropertyObject<T>
+    CreatePropertyObject(const std::string &path)
+    { return simgear::PropertyObject<T>(root->GetNode(path, true)); }
 
   private:
     std::vector<SGPropertyNode_ptr> tied_properties;

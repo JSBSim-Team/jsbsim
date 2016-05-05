@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.7 2016/04/17 13:19:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGWaypoint.cpp,v 1.8 2016/05/05 15:32:42 bcoconni Exp $");
 IDENT(IdHdr,ID_WAYPOINT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   source_longitude_unit = 1.0;
 
   if (element->FindElement("target_latitude") ) {
-    target_latitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("target_latitude")));
+    target_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_latitude"));
     if (element->FindElement("target_latitude")->HasAttribute("unit")) {
       if (element->FindElement("target_latitude")->GetAttributeValue("unit") == "DEG") {
         target_latitude_unit = 0.017453293;
@@ -80,7 +80,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("target_longitude") ) {
-    target_longitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("target_longitude")));
+    target_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_longitude"));
     if (element->FindElement("target_longitude")->HasAttribute("unit")) {
       if (element->FindElement("target_longitude")->GetAttributeValue("unit") == "DEG") {
         target_longitude_unit = 0.017453293;
@@ -94,7 +94,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("source_latitude") ) {
-    source_latitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("source_latitude")));
+    source_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_latitude"));
     if (element->FindElement("source_latitude")->HasAttribute("unit")) {
       if (element->FindElement("source_latitude")->GetAttributeValue("unit") == "DEG") {
         source_latitude_unit = 0.017453293;
@@ -108,7 +108,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("source_longitude") ) {
-    source_longitude = simgear::PropertyObject<double>(PropertyManager->GetNode(element->FindElementValue("source_longitude")));
+    source_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_longitude"));
     if (element->FindElement("source_longitude")->HasAttribute("unit")) {
       if (element->FindElement("source_longitude")->GetAttributeValue("unit") == "DEG") {
         source_longitude_unit = 0.017453293;
