@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.44 2015/12/02 04:23:26 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.45 2016/05/05 17:23:10 bcoconni Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   element = el->FindElement("location");
   if (element)  vXYZ = element->FindElementTripletConvertTo("IN");
-  else          cerr << "No location found for this tank." << endl;
+  else          cerr << el->ReadFrom() << "No location found for this tank."
+                     << endl;
 
   vXYZ_drain = vXYZ; // Set initial drain location to initial tank CG
 
@@ -116,13 +117,15 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   SetPriority( InitialPriority );     // this will also set the Selected flag
 
   if (Capacity == 0) {
-    cerr << "Tank capacity must not be zero. Reset to 0.00001 lbs!" << endl;
+    cerr << el->ReadFrom()
+         << "Tank capacity must not be zero. Reset to 0.00001 lbs!" << endl;
     Capacity = 0.00001;
     Contents = 0.0;
   }
   if (Contents > Capacity) {
-    cerr << "Tank content (" << Contents << " lbs) is greater than tank capacity ("
-         << Capacity << " lbs) for tank " << tank_number
+    cerr << el->ReadFrom() << "Tank content (" << Contents
+         << " lbs) is greater than tank capacity (" << Capacity
+         << " lbs) for tank " << tank_number
          << "! Did you accidentally swap contents and capacity?" << endl;
     throw("tank definition error");
   }
@@ -169,7 +172,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an izz must be specified when the FUNCTION grain type is specified.");
       }
     }
-    else                               cerr << "Unknown propellant grain type specified" << endl;
+    else
+      cerr << el->ReadFrom() << "Unknown propellant grain type specified"
+           << endl;
 
     if (element_Grain->FindElement("length"))
       Length = element_Grain->FindElementValueAsNumberConvertTo("length", "IN");
@@ -181,7 +186,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     switch (grainType) {
       case gtCYLINDRICAL:
         if (Radius <= InnerRadius) {
-          cerr << "The bore diameter should be smaller than the total grain diameter!" << endl;
+          cerr << element_Grain->ReadFrom()
+               << "The bore diameter should be smaller than the total grain diameter!"
+               << endl;
           exit(-1);
         }
         Volume = M_PI * Length * (Radius*Radius - InnerRadius*InnerRadius); // cubic inches
@@ -193,10 +200,12 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         Volume = 1;  // Volume is irrelevant for the FUNCTION type, but it can't be zero!
         break;
       case gtUNKNOWN:
-        cerr << "Unknown grain type found in this rocket engine definition." << endl;
+        cerr << el->ReadFrom()
+             << "Unknown grain type found in this rocket engine definition."
+             << endl;
         exit(-1);
     }
-    Density = (Contents*lbtoslug)/Volume; // slugs/in^3
+    Density = (Capacity*lbtoslug)/Volume; // slugs/in^3
   }
 
   CalculateInertias();
