@@ -18,8 +18,10 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import os
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, CopyAircraftDef, RunTest
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest,
+                          CopyAircraftDef)
 
 
 class TestFuelTanksInertia(JSBSimTestCase):
@@ -82,5 +84,34 @@ class TestFuelTanksInertia(JSBSimTestCase):
                                msg="Iyy does not vary as the tank content does\nIyy ratio=%f\nContents ratio=%f" % (iyy_ratio, contents_ratio))
         self.assertAlmostEqual(contents_ratio, izz_ratio, delta=1E-7,
                                msg="Izz does not vary as the tank content does\nIzz ratio=%f\nContents ratio=%f" % (izz_ratio, contents_ratio))
+
+    def test_fuel_tanks_content(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(script_path)
+        fdm.run_ic()
+
+        tree = et.parse(script_path)
+        use_tag = tree.getroot().find('use')
+        aircraft_name = use_tag.attrib['aircraft']
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft',
+                                                         aircraft_name)
+        aircraft_tree = et.parse(os.path.join(aircraft_path,
+                                              aircraft_name+'.xml'))
+
+        total_fuel_quantity = 0.0
+        total_oxidizer_quantity = 0.0
+        for tank in aircraft_tree.findall('propulsion/tank'):
+            contents = float(tank.find('contents').text)
+            if tank.attrib['type'] == "FUEL":
+                total_fuel_quantity += contents
+            elif tank.attrib['type'] == 'OXIDIZER':
+                total_oxidizer_quantity += contents
+
+        self.assertAlmostEqual(fdm['propulsion/total-fuel-lbs'],
+                               total_fuel_quantity)
+
+        self.assertAlmostEqual(fdm['propulsion/total-oxidizer-lbs'],
+                               total_oxidizer_quantity)
 
 RunTest(TestFuelTanksInertia)
