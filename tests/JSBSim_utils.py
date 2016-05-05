@@ -136,11 +136,12 @@ def CopyAircraftDef(script_path, sandbox):
 class JSBSimTestCase(unittest.TestCase):
     def setUp(self, *args):
         self.sandbox = SandBox(*args)
+        self.currentdir = os.getcwd()
         os.chdir(self.sandbox())
 
     def tearDown(self):
         self.sandbox.erase()
-        os.chdir('..')
+        os.chdir(self.currentdir)
 
     # Generator that returns the full path to all the scripts in JSBSim
     def script_list(self, blacklist=[]):
