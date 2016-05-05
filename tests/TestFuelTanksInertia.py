@@ -1,8 +1,12 @@
 # TestFuelTanksInertia.py
 #
-# A regression test that checks that the fuel tanks inertias are updated.
+# A regression test that checks that:
+# * Fuel tanks inertias are updated when the tanks content is modified.
+# * Fuel and oxidizer total quantities are correctly computed.
+# * Fuel tanks inertias computation does not depend on the initial content but
+#   rather on the tank capacity and current content.
 #
-# Copyright (c) 2015 Bertrand Coconnier
+# Copyright (c) 2015-2016 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -31,7 +35,7 @@ class TestFuelTanksInertia(JSBSimTestCase):
         # The aircraft c172x does not contain an <inertia_factor> tag so we
         # need to add one.
         tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
-        tank_tag = tree.getroot().find('./propulsion/tank')
+        tank_tag = tree.getroot().find('propulsion/tank')
         inertia_factor = et.SubElement(tank_tag, 'inertia_factor')
         inertia_factor.text = '1.0'
         tree.write(self.sandbox('aircraft', aircraft_name,
@@ -113,5 +117,58 @@ class TestFuelTanksInertia(JSBSimTestCase):
 
         self.assertAlmostEqual(fdm['propulsion/total-oxidizer-lbs'],
                                total_oxidizer_quantity)
+
+    def test_grain_tanks_content(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
+        tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
+
+        id = 0
+        for tank in tree.getroot().findall('propulsion/tank'):
+            grain_config = tank.find('grain_config')
+            if grain_config and grain_config.attrib['type'] == 'CYLINDRICAL':
+                break
+            ++id
+
+        capacity = float(tank.find('capacity').text)
+        tank.find('contents').text = str(0.5*capacity)
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+
+        radius_tag = tank.find('radius')
+        radius = float(radius_tag.text)
+        if 'unit' in radius_tag.attrib and radius_tag.attrib['unit'] == 'IN':
+            radius /= 12.0
+
+        bore_diameter_tag = tank.find('grain_config/bore_diameter')
+        bore_radius = 0.5*float(bore_diameter_tag.text)
+        if 'unit' in bore_diameter_tag.attrib and bore_diameter_tag.attrib['unit'] == 'IN':
+            bore_radius /= 12.0
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(script_path)
+        fdm.run_ic()
+
+        tank_name = 'propulsion/tank[%g]' % (id,)
+
+        self.assertAlmostEqual(fdm[tank_name+'/contents-lbs'], 0.5*capacity)
+        fdm['propulsion/tank/contents-lbs'] = capacity
+        mass = capacity / 32.174049  # Converting lbs to slugs
+        ixx = 0.5 * mass * (radius * radius + bore_radius*bore_radius)
+        self.assertAlmostEqual(fdm[tank_name+'local-ixx-slug_ft2'], ixx)
+
+        del fdm
+
+        tank.find('contents').text = '0.0'
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(script_path)
+        fdm.run_ic()
+
+        self.assertAlmostEqual(fdm[tank_name+'/contents-lbs'], 0.0)
+        fdm['propulsion/tank/contents-lbs'] = capacity
 
 RunTest(TestFuelTanksInertia)
