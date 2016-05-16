@@ -77,6 +77,16 @@ cdef class FGPropagate:
         vUVW.thisptr = new c_FGColumnVector3(self.thisptr.GetUVW())
         return convertToNumpyVec(vUVW)
 
+cdef class FGPropertyManager:
+
+     cdef c_FGPropertyManager *thisptr
+
+     def __init__(self):
+         self.thisptr = NULL
+
+     def hasNode(self, path):
+         return self.thisptr.HasNode(path)
+
 # this is the python wrapper class
 cdef class FGFDMExec:
 
@@ -548,3 +558,8 @@ cdef class FGFDMExec:
         propagate = FGPropagate()
         propagate.thisptr = self.thisptr.GetPropagate()
         return propagate
+
+    def get_property_manager(self):
+        pm = FGPropertyManager()
+        pm.thisptr = self.thisptr.GetPropertyManager()
+        return pm

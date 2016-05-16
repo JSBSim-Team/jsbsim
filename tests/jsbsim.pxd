@@ -53,6 +53,11 @@ cdef extern from "models/FGPropagate.h" namespace "JSBSim":
         c_FGMatrix33& GetTec2b()
         c_FGColumnVector3& GetUVW()
 
+cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
+    cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
+        c_FGPropertyManager()
+        bool HasNode(string path)
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(int root, int fdmctr)
@@ -111,3 +116,4 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGPropulsion* GetPropulsion()
         c_FGInitialCondition* GetIC()
         c_FGPropagate* GetPropagate()
+        c_FGPropertyManager* GetPropertyManager()
