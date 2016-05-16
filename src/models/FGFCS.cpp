@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.94 2016/04/03 11:13:19 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.95 2016/05/16 18:19:57 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex), ChannelRate(1)
   Name = "FGFCS";
   systype = stFCS;
 
-  DaCmd = DeCmd = DrCmd = DsCmd = DfCmd = DsbCmd = DspCmd = 0;
+  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   BrakePos.resize(FGLGear::bgNumBrakeGroups);
@@ -108,7 +108,6 @@ FGFCS::~FGFCS()
   MixturePos.clear();
   PropAdvanceCmd.clear();
   PropAdvance.clear();
-  SteerPosDeg.clear();
   PropFeatherCmd.clear();
   PropFeather.clear();
 
@@ -135,7 +134,7 @@ bool FGFCS::InitModel(void)
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = 0.0;
   for (i=0; i<PropFeather.size(); i++) PropFeather[i] = 0.0;
 
-  DaCmd = DeCmd = DrCmd = DsCmd = DfCmd = DsbCmd = DspCmd = 0;
+  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   TailhookPos = WingFoldPos = 0.0;
 
@@ -171,12 +170,6 @@ bool FGFCS::Run(bool Holding)
   for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
   for (i=0; i<PropFeather.size(); i++) PropFeather[i] = PropFeatherCmd[i];
-
-  // Set the default steering angle
-  for (i=0; i<SteerPosDeg.size(); i++) {
-    FGLGear* gear = FDMExec->GetGroundReactions()->GetGearUnit(i);
-    SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
-  }
 
   // Execute system channels in order
   for (i=0; i<SystemChannels.size(); i++) {
@@ -503,8 +496,6 @@ bool FGFCS::Load(Element* document)
 
   Debug(2);
 
-  if (systype == stFCS) bindModel();
-
   Element* channel_element = document->FindElement("channel");
   
   while (channel_element) {
@@ -688,14 +679,6 @@ void FGFCS::AddThrottle(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::AddGear(unsigned int NumGear)
-{
-  SteerPosDeg.clear();
-  for (unsigned int i=0; i<NumGear; i++) SteerPosDeg.push_back(0.0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGFCS::GetDt(void) const
 {
   return FDMExec->GetDeltaT()*rate;
@@ -754,7 +737,6 @@ void FGFCS::bind(void)
   PropertyManager->Tie("fcs/left-brake-cmd-norm", this, &FGFCS::GetLBrake, &FGFCS::SetLBrake);
   PropertyManager->Tie("fcs/right-brake-cmd-norm", this, &FGFCS::GetRBrake, &FGFCS::SetRBrake);
   PropertyManager->Tie("fcs/center-brake-cmd-norm", this, &FGFCS::GetCBrake, &FGFCS::SetCBrake);
-  PropertyManager->Tie("fcs/steer-cmd-norm", this, &FGFCS::GetDsCmd, &FGFCS::SetDsCmd);
 
   PropertyManager->Tie("gear/tailhook-pos-norm", this, &FGFCS::GetTailhookPos, &FGFCS::SetTailhookPos);
   PropertyManager->Tie("fcs/wing-fold-pos-norm", this, &FGFCS::GetWingFoldPos, &FGFCS::SetWingFoldPos);
@@ -793,21 +775,6 @@ void FGFCS::bindThrottle(unsigned int num)
   tmp = CreateIndexedPropertyName("fcs/feather-pos-norm", num);
   PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetPropFeather,
                                         &FGFCS::SetPropFeather);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCS::bindModel(void)
-{
-  unsigned int i;
-  string tmp;
-
-  for (i=0; i<SteerPosDeg.size(); i++) {
-    if (FDMExec->GetGroundReactions()->GetGearUnit(i)->GetSteerable()) {
-      tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", i);
-      PropertyManager->Tie( tmp.c_str(), this, i, &FGFCS::GetSteerPosDeg, &FGFCS::SetSteerPosDeg);
-    }
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

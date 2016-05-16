@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.51 2014/06/09 11:52:07 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGGroundReactions.cpp,v 1.52 2016/05/16 18:19:57 bcoconni Exp $");
 IDENT(IdHdr,ID_GROUNDREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,8 @@ CLASS IMPLEMENTATION
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) :
    FGModel(fgex),
-   FGSurface(fgex)
+   FGSurface(fgex),
+   DsCmd(0.0)
 {
   Name = "FGGroundReactions";
 
@@ -84,6 +85,7 @@ bool FGGroundReactions::InitModel(void)
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
+  DsCmd = 0.0;
 
   multipliers.clear();
 
@@ -134,6 +136,15 @@ bool FGGroundReactions::GetWOW(void) const
     }
   }
   return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGGroundReactions::SetDsCmd(double cmd)
+{
+  DsCmd = cmd;
+  for (unsigned int i=0; i<lGear.size(); ++i)
+    lGear[i]->SetSteerCmd(cmd);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,6 +269,8 @@ void FGGroundReactions::bind(void)
 
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
   PropertyManager->Tie("gear/wow", this, &FGGroundReactions::GetWOW);
+  PropertyManager->Tie("fcs/steer-cmd-norm", this, &FGGroundReactions::GetDsCmd,
+                       &FGGroundReactions::SetDsCmd);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

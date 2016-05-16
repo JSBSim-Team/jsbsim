@@ -45,7 +45,7 @@ INCLUDES
 #include "FGLGear.h"
 #include "math/FGColumnVector3.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.29 2014/01/16 12:31:49 ehofman Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.30 2016/05/16 18:19:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,6 +109,14 @@ public:
       @return a pointer to the FGLGear instance of the gear unit requested */
   FGLGear* GetGearUnit(int gear) const { return lGear[gear]; }
 
+  /** Gets the steering command.
+      @return steering command in range from -1.0 - 1.0 */
+  double GetDsCmd(void) const { return DsCmd; }
+
+  /** Sets the steering command
+      @param cmd steering command in percent*/
+  void SetDsCmd(double cmd);
+
   void RegisterLagrangeMultiplier(LagrangeMultiplier* lmult) { multipliers.push_back(lmult); }
   std::vector <LagrangeMultiplier*>* GetMultipliersList(void) { return &multipliers; }
 
@@ -119,6 +127,7 @@ private:
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   std::vector <LagrangeMultiplier*> multipliers;
+  double DsCmd;
 
   void bind(void);
   void Debug(int from);

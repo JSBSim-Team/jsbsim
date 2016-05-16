@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.122 2016/05/16 17:47:14 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.123 2016/05/16 18:19:57 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -80,7 +80,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   GearNumber(number),
   SteerAngle(0.0),
   Castered(false),
-  StaticFriction(false)
+  StaticFriction(false),
+  eSteerType(stSteer)
 {
   kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
   isRetractable = false;
@@ -253,6 +254,7 @@ void FGLGear::ResetToIC(void)
   LandingDistanceTraveled = TakeoffDistanceTraveled = TakeoffDistanceTraveled50ft = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
   SinkRate = GroundSpeed = 0.0;
+  SteerAngle = 0.0;
 
   vWhlVelVec.InitMatrix();
 
@@ -446,7 +448,7 @@ void FGLGear::ComputeGroundFrame(void)
 
 void FGLGear::ComputeSlipAngle(void)
 {
-// Check that the speed is non-null otherwise use the current angle
+// Check that the speed is non-null otherwise keep the current angle
   if (vGroundWhlVel.Magnitude(eX,eY) > 1E-3)
     WheelSlip = -atan2(vGroundWhlVel(eY), fabs(vGroundWhlVel(eX)))*radtodeg;
 }
@@ -457,25 +459,10 @@ void FGLGear::ComputeSlipAngle(void)
 
 void FGLGear::ComputeSteeringAngle(void)
 {
-  switch (eSteerType) {
-  case stSteer:
-    SteerAngle = degtorad * in.SteerPosDeg[GearNumber];
-    break;
-  case stFixed:
-    SteerAngle = 0.0;
-    break;
-  case stCaster:
-    if (!Castered)
-      SteerAngle = degtorad * in.SteerPosDeg[GearNumber];
-    else {
-      // Check that the speed is non-null otherwise use the current angle
+  if (Castered) {
+      // Check that the speed is non-null otherwise keep the current angle
       if (vWhlVelVec.Magnitude(eX,eY) > 0.1)
         SteerAngle = atan2(vWhlVelVec(eY), fabs(vWhlVelVec(eX)));
-    }
-    break;
-  default:
-    cerr << "Improper steering type membership detected for this gear." << endl;
-    break;
   }
 }
 
@@ -830,6 +817,14 @@ void FGLGear::bind(void)
   if( isRetractable ) {
     property_name = base_property_name + "/pos-norm";
     PropertyManager->Tie( property_name.c_str(), &GearPos );
+  }
+
+  if (eSteerType != stFixed) {
+    // This property allows the FCS to override the steering position angle that
+    // is set by the property fcs/steer-cmd-norm. The prefix fcs/ has been kept
+    // for backward compatibility.
+    string tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", GearNumber);
+    PropertyManager->Tie(tmp.c_str(), this, &FGLGear::GetSteerAngleDeg, &FGLGear::SetSteerAngleDeg);
   }
 }
 

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.64 2014/01/28 09:42:21 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.65 2016/05/16 18:19:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.64 2014/01/28 09:42:21 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.65 2016/05/16 18:19:57 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -210,7 +210,6 @@ public:
     FGColumnVector3 UVW;
     FGColumnVector3 vXYZcg; // CG coordinates expressed in the structural frame
     FGLocation Location;
-    std::vector <double> SteerPosDeg;
     std::vector <double> BrakePos;
     double FCSGearPos;
     double EmptyWeight;
@@ -275,7 +274,7 @@ public:
       @return true if reporting is turned on */
   bool GetReport(void) const  { return ReportEnable; }
   double GetSteerNorm(void) const { return radtodeg/maxSteerAngle*SteerAngle; }
-  double GetDefaultSteerAngle(double cmd) const { return cmd*maxSteerAngle; }
+  void SetSteerCmd(double cmd) { SetSteerAngleDeg(cmd * maxSteerAngle); }
   double GetstaticFCoeff(void) const { return staticFCoeff; }
 
   int  GetBrakeGroup(void) const   { return (int)eBrakeGrp; }
@@ -315,6 +314,10 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void) const;
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
+  void SetSteerAngleDeg(double angle) {
+    if (eSteerType != stFixed && !Castered)
+      SteerAngle = degtorad * angle;
+  }
 
   const struct Inputs& in;
 
