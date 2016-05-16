@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.121 2015/09/29 13:22:47 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.122 2016/05/16 17:47:14 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -154,7 +154,10 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   if (el->FindElement("max_steer"))
     maxSteerAngle = el->FindElementValueAsNumberConvertTo("max_steer", "DEG");
 
-  if (maxSteerAngle == 360) {
+  Element* castered_el = el->FindElement("castered");
+
+  if ((maxSteerAngle == 360 && !castered_el)
+      || (castered_el && castered_el->GetDataAsNumber() != 0.0)) {
     eSteerType = stCaster;
     Castered = true;
   }
@@ -163,23 +166,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   }
   else
     eSteerType = stSteer;
-
-  Element* castering = el->FindElement("castered");
-  if (castering) {
-    if (castering->GetDataAsNumber() != 0.0) {
-      eSteerType = stCaster;
-      Castered = true;
-    }
-    else {
-      if (maxSteerAngle == 0.0) {
-        eSteerType = stFixed;
-      }
-      else {
-        eSteerType = stSteer;
-      }
-      Castered = false;
-    }
-  }
 
   GroundReactions = fdmex->GetGroundReactions();
 
