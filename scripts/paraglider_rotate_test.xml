@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<!DOCTYPE runscript [
+  <!ENTITY none  "0"> <!-- No magnetos    -->
+  <!ENTITY left  "1"> <!-- Left magnetos  -->
+  <!ENTITY right "2"> <!-- Right magnetos -->
+  <!ENTITY both  "3"> <!-- Both magnetos  -->
+  <!ENTITY on              "1">
+  <!ENTITY off             "0">
+]>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Paraglider rotate test">
+  <description>For testing Paraglider rotate</description>
+  <use aircraft="paraglider" initialize="reset00"/>
+  <run start="0.0" end="200" dt="0.00833333">
+
+    <property value="1"> simulation/run_id </property>
+    <event name="Start engine: Starter">
+      <description>The starter for the engine is turned on.</description>
+      <condition>simulation/sim-time-sec ge 1.0</condition>
+      <set name="fcs/throttle-cmd-norm"  value="1.0" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="&both;"/>
+      <set name="propulsion/starter_cmd" value="&on;"/>
+      <notify/>
+    </event>
+
+    <event name="Rotate">     
+      <condition>simulation/sim-time-sec ge 2.0</condition>    
+      <set name="fcs/aileron-cmd-norm" value="1.0" action="FG_RAMP" tc="1.0"></set>            
+      <notify>
+        <property caption="Sim Run ID: ">simulation/run_id</property>
+        <property>position/geod-alt-ft</property>
+        <property>accelerations/a-pilot-x-ft_sec2</property>
+        <property>accelerations/a-pilot-y-ft_sec2</property>
+        <property>accelerations/a-pilot-z-ft_sec2</property>
+        <property>accelerations/n-pilot-x-norm</property>
+        <property>accelerations/n-pilot-y-norm</property>
+        <property>accelerations/n-pilot-z-norm</property>
+        <property>accelerations/Nz</property>
+        <property>accelerations/pdot-rad_sec2</property>
+        <property>accelerations/qdot-rad_sec2</property>
+        <property>accelerations/rdot-rad_sec2</property>
+        <property>accelerations/udot-ft_sec2</property>
+        <property>accelerations/vdot-ft_sec2</property>
+        <property>accelerations/wdot-ft_sec2</property>
+        <property>velocities/h-dot-fps</property>
+        <property>velocities/v-north-fps</property>
+        <property>velocities/v-east-fps</property>
+        <property>velocities/v-down-fps</property>
+        <property>velocities/u-fps</property>
+        <property>velocities/v-fps</property>
+        <property>velocities/w-fps</property>
+        <property>velocities/p-rad_sec</property>
+        <property>velocities/q-rad_sec</property>
+        <property>velocities/r-rad_sec</property>
+        <property>velocities/pi-rad_sec</property>
+        <property>velocities/qi-rad_sec</property>
+        <property>velocities/ri-rad_sec</property>
+        <property>velocities/eci-velocity-mag-fps</property>
+        <property>velocities/vc-fps</property>
+        <property>velocities/vc-kts</property>
+        <property>velocities/ve-fps</property>
+        <property>velocities/ve-kts</property>
+        <property>velocities/vtrue-fps</property>
+        <property>velocities/vtrue-kts</property>
+        <property>velocities/machU</property>
+        <property>velocities/p-aero-rad_sec</property>
+        <property>velocities/q-aero-rad_sec</property>
+        <property>velocities/r-aero-rad_sec</property>
+        <property>velocities/phidot-rad_sec</property>
+        <property>velocities/thetadot-rad_sec</property>
+        <property>velocities/psidot-rad_sec</property>
+        <property>velocities/u-aero-fps</property>
+        <property>velocities/v-aero-fps</property>
+        <property>velocities/w-aero-fps</property>
+        <property>velocities/vt-fps</property>
+        <property>velocities/mach</property>
+        <property>velocities/vg-fps</property>
+      </notify>     
+    </event>                  
+
+  </run>
+
+</runscript>
+

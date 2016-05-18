@@ -2,7 +2,7 @@
 
 <system name="Parahute Controls">
 
-  <channel name="Pit and Roll">
+  <channel name="Pitch and Roll">
 
     <summer name="Pitch Trim Summer">
       <input>fcs/elevator-cmd-norm</input>

@@ -22,10 +22,10 @@
     <wingarea unit="FT2"> 300 </wingarea>
     <wingspan unit="FT"> 32 </wingspan>
     <chord unit="FT"> 7 </chord>
-    <htailarea unit="FT2"> 0 </htailarea>
-    <htailarm unit="FT"> 0 </htailarm>
-    <vtailarea unit="FT2"> 0 </vtailarea>
-    <vtailarm unit="FT"> 0 </vtailarm>
+    <htailarea unit="FT2"> 1 </htailarea>
+    <htailarm unit="FT"> 1 </htailarm>
+    <vtailarea unit="FT2"> 1 </vtailarea>
+    <vtailarm unit="FT"> 1 </vtailarm>
     <location name="AERORP" unit="IN">
       <x> 0 </x>
       <y> 0 </y>
@@ -39,7 +39,7 @@
     <location name="VRP" unit="IN">
       <x> 0 </x>
       <y> 0 </y>
-      <z> -330 </z>
+      <z> 0 </z>
     </location>
   </metrics>
 
@@ -69,14 +69,16 @@
         <z> -330 </z>
       </location>
     </pointmass>
+<!--
     <pointmass name="DT Propeller">
-      <weight unit="LBS"> 25.13 </weight>
+      <weight unit="LBS"> 2.425 </weight>
       <location name="POINTMASS" unit="IN">
         <x> 10 </x>
         <y>  0 </y>
         <z> -330 </z>
       </location>
     </pointmass>
+-->
   </mass_balance>
 
   <ground_reactions>
