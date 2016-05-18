@@ -44,12 +44,13 @@ INCLUDES
 
 #include "models/FGModel.h"
 #include "models/FGLGear.h"
+#include "models/FGGroundReactions.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.51 2016/05/16 18:19:57 bcoconni Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.52 2016/05/18 07:21:16 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.51 $
+    @version $Revision: 1.52 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -223,6 +224,10 @@ public:
   /** Gets the rudder command.
       @return rudder command in range from -1.0 - 1.0 */
   double GetDrCmd(void) const { return DrCmd; }
+
+  /** Gets the steering command.
+       @return steering command in range from -1.0 - 1.0 */
+   double GetDsCmd(void) const { return gr->GetDsCmd(); }
 
   /** Gets the flaps command.
       @return flaps command in range from 0 to 1.0 */
@@ -380,6 +385,10 @@ public:
   /** Sets the rudder command
       @param cmd rudder command in percent*/
   void SetDrCmd(double cmd) { DrCmd = cmd; }
+
+  /** Sets the steering command
+       @param cmd steering command in percent*/
+   void SetDsCmd(double cmd) { gr->SetDsCmd( cmd ); }
 
   /** Sets the flaps command
       @param cmd flaps command in percent*/
@@ -564,6 +573,7 @@ private:
   double TailhookPos, WingFoldPos;
   SystemType systype;
   int ChannelRate;
+  FGGroundReactions *gr;
 
   typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;

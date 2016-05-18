@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.95 2016/05/16 18:19:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.96 2016/05/18 07:21:16 ehofman Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex), ChannelRate(1)
   Name = "FGFCS";
   systype = stFCS;
 
+  gr = fdmex->GetGroundReactions();
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
