@@ -70,20 +70,20 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.96 2016/05/18 07:21:16 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.97 2016/05/18 08:06:57 ehofman Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex), ChannelRate(1)
+FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm), ChannelRate(1)
 {
   int i;
   Name = "FGFCS";
   systype = stFCS;
 
-  gr = fdmex->GetGroundReactions();
+  fdmex = fdm;
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down

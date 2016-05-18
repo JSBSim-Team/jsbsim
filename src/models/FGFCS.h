@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.52 2016/05/18 07:21:16 ehofman Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.53 2016/05/18 08:06:57 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.52 $
+    @version $Revision: 1.53 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -227,7 +227,7 @@ public:
 
   /** Gets the steering command.
        @return steering command in range from -1.0 - 1.0 */
-   double GetDsCmd(void) const { return gr->GetDsCmd(); }
+   double GetDsCmd(void) const { return fdmex->GetGroundReactions()->GetDsCmd(); }
 
   /** Gets the flaps command.
       @return flaps command in range from 0 to 1.0 */
@@ -388,7 +388,7 @@ public:
 
   /** Sets the steering command
        @param cmd steering command in percent*/
-   void SetDsCmd(double cmd) { gr->SetDsCmd( cmd ); }
+   void SetDsCmd(double cmd) { fdmex->GetGroundReactions()->SetDsCmd( cmd ); }
 
   /** Sets the flaps command
       @param cmd flaps command in percent*/
@@ -573,7 +573,7 @@ private:
   double TailhookPos, WingFoldPos;
   SystemType systype;
   int ChannelRate;
-  FGGroundReactions *gr;
+  FGFDMExec* fdmex;
 
   typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;
