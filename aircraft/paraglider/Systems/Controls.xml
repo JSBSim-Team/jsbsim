@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<system name="Parahute Controls">
+
+  <channel name="Pit and Roll">
+
+    <summer name="Pitch Trim Summer">
+      <input>fcs/elevator-cmd-norm</input>
+      <input>fcs/pitch-trim-cmd-norm</input>
+      <clipto>
+        <min>  0 </min>
+        <max>  1 </max>
+      </clipto>
+      <output>fcs/elevator-pos-norm</output>
+   </summer>
+
+   <summer name="Roll Trim Summer">
+      <input>-fcs/aileron-cmd-norm</input>
+      <input>-fcs/roll-trim-cmd-norm</input>
+      <clipto>
+        <min> -1 </min>
+        <max>  1 </max>
+      </clipto>
+      <output>fcs/aileron-pos-norm</output>
+   </summer>
+
+   <summer name="Left Elevon Control">
+     <input>fcs/elevator-pos-norm</input>
+     <input>fcs/aileron-pos-norm</input>
+     <clipto>
+        <min>  0 </min>
+        <max>  1 </max>
+      </clipto>
+     <output>fcs/left-elevon-pos-norm</output>
+   </summer>
+
+   <aerosurface_scale name="Left Aileron Control">
+      <input>fcs/left-elevon-pos-norm</input>
+      <range>
+        <min>  0.000 </min>
+        <max>  0.785 </max>
+      </range>
+      <output>fcs/left-aileron-pos-rad</output>
+   </aerosurface_scale>
+
+   <summer name="Right Elevon Control">
+     <input>fcs/elevator-pos-norm</input>
+     <input>-fcs/aileron-pos-norm</input>
+     <clipto>
+        <min>  0 </min>
+        <max>  1 </max>
+      </clipto>
+     <output>fcs/right-elevon-pos-norm</output>
+   </summer>
+
+   <aerosurface_scale name="Right Aileron Control">
+      <input>-fcs/aileron-pos-norm</input>
+      <range>
+        <min>  0.000 </min>
+        <max>  0.785 </max>
+      </range>
+      <output>fcs/right-aileron-pos-rad</output>
+   </aerosurface_scale>
+  </channel>
+
+</system>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<!--
+  File:     THOR80.xml
+  Author:   AeromatiC++ v 3.2.5
+
+  See: http://wiki.flightgear.org/JSBSim_Engines#FGPiston
+
+  Inputs:
+    name:           THOR80
+    type:           Piston Engine
+    power:          17.1997 hp
+-->
+
+<piston_engine name="THOR80">
+  <minmp unit="INHG">         10.0 </minmp>
+  <maxmp unit="INHG">         28.5 </maxmp>
+   <displacement unit="IN3"> 2.248 </displacement>
+  <maxhp>        17.1997 </maxhp>
+  <cycles>         2.0 </cycles>
+  <idlerpm>      700.0 </idlerpm>
+  <maxrpm>     10450.0 </maxrpm>
+  <sparkfaildrop>  0.1 </sparkfaildrop>
+  <volumetric-efficiency> 0.85 </volumetric-efficiency>
+  <man-press-lag> 0.1 </man-press-lag>
+  <static-friction  unit="HP"> 0.0859983 </static-friction>
+  <starter-torque> 13.7597 </starter-torque>
+  <starter-rpm> 1400 </starter-rpm>
+ <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->
+ <!--<bsfc>           0.45 </bsfc>-->
+  <stroke unit="IN">  1.732 </stroke>
+  <bore unit="IN">    1.969 </bore>
+  <cylinders>         1  </cylinders>
+  <compression-ratio> 14.0 </compression-ratio>
+</piston_engine>
