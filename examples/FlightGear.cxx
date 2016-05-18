@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.23 2015/12/09 04:28:17 jberndt Exp $
+// $Id: FlightGear.cxx,v 1.24 2016/05/18 13:26:59 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -75,7 +75,6 @@
 #include <FDM/JSBSim/models/propulsion/FGTank.h>
 #include <FDM/JSBSim/input_output/FGPropertyManager.h>
 #include <FDM/JSBSim/input_output/FGGroundCallback.h>
-#include <FDM/JSBSim/math/FGLocation.h>
 
 using namespace JSBSim;
 
@@ -229,6 +228,8 @@ FGJSBsim::FGJSBsim( double dt )
     SGPropertyNode * node = fgGetNode("/fdm/jsbsim/simulation/sim-time-sec");
     fgGetNode("/fdm/jsbsim/sim-time-sec", true)->alias( node );
 // end of sim-time-sec deprecation patch
+
+    terrain = fgGetNode("/sim/fdm/surface", true);
 
     fdmex->Setdt( dt );
 
@@ -593,8 +594,8 @@ bool FGJSBsim::copy_to_JSBsim()
     FCS->SetDeCmd( globals->get_controls()->get_elevator());
     FCS->SetPitchTrimCmd( globals->get_controls()->get_elevator_trim() );
     FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
-    FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
     FCS->SetDsCmd( globals->get_controls()->get_rudder() );
+    FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
     FCS->SetDfCmd( globals->get_controls()->get_flaps() );
     FCS->SetDsbCmd( globals->get_controls()->get_speedbrake() );
     FCS->SetDspCmd( globals->get_controls()->get_spoilers() );
@@ -1352,8 +1353,6 @@ FGJSBsim::get_agl_ft(double t, const double pt[3], double alt_off,
   SGGeod geodPt = SGGeod::fromCart(SG_FEET_TO_METER*SGVec3d(pt));
   SGQuatd hlToEc = SGQuatd::fromLonLat(geodPt);
   *agl = dot(hlToEc.rotate(SGVec3d(0, 0, 1)), SGVec3d(contact) - SGVec3d(pt));
-
-  static SGPropertyNode_ptr terrain = fgGetNode("/sim/fdm/surface", true);
 
 #ifdef JSBSIM_USE_GROUNDREACTIONS
   bool terrain_active = (terrain->getIntValue("override-level", -1) > 0) ? false : true;

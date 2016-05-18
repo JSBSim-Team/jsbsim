@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: FlightGear.hxx,v 1.21 2015/12/07 10:01:48 ehofman Exp $
+    @version $Id: FlightGear.hxx,v 1.22 2016/05/18 13:26:59 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -238,9 +238,12 @@ private:
     JSBSim::FGAccelerations*   Accelerations;
     JSBSim::FGPropertyManager* PropertyManager;
 
+    // disabling unused members
+    /*
     int runcount;
     double trim_elev;
     double trim_throttle;
+     */
 
     SGPropertyNode_ptr startup_trim;
     SGPropertyNode_ptr trimmed;
@@ -287,6 +290,8 @@ private:
     SGPropertyNode_ptr wind_from_down;
 
     SGPropertyNode_ptr slaved;
+
+    SGPropertyNode_ptr terrain;
 
     static std::map<std::string,int> TURBULENCE_TYPE_NAMES;
 
