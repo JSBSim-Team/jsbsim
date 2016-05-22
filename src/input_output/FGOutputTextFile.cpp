@@ -64,7 +64,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputTextFile.cpp,v 1.11 2014/02/17 05:02:38 jberndt Exp $");
+IDENT(IdSrc,"$Id: FGOutputTextFile.cpp,v 1.12 2016/05/22 10:28:23 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTTEXTFILE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,6 +158,7 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "F_{Gear x} (lbs)" + delimeter + "F_{Gear y} (lbs)" + delimeter + "F_{Gear z} (lbs)" + delimeter;
     outstream << "F_{Ext x} (lbs)" + delimeter + "F_{Ext y} (lbs)" + delimeter + "F_{Ext z} (lbs)" + delimeter;
     outstream << "F_{Buoyant x} (lbs)" + delimeter + "F_{Buoyant y} (lbs)" + delimeter + "F_{Buoyant z} (lbs)" + delimeter;
+    outstream << "F_{Weight x} (lbs)" + delimeter + "F_{Weight y} (lbs)" + delimeter + "F_{Weight z} (lbs)" + delimeter;
     outstream << "F_{Total x} (lbs)" + delimeter + "F_{Total y} (lbs)" + delimeter + "F_{Total z} (lbs)";
   }
   if (SubSystems & ssMoments) {
@@ -315,20 +316,21 @@ void FGOutputTextFile::Print(void)
     outstream << Aerodynamics->GetLoD() << delimeter;
     outstream << Aerodynamics->GetForces().Dump(delimeter) << delimeter;
     outstream << Propulsion->GetForces().Dump(delimeter) << delimeter;
-    outstream << GroundReactions->GetForces().Dump(delimeter) << delimeter;
+    outstream << Accelerations->GetGroundForces().Dump(delimeter) << delimeter;
     outstream << ExternalReactions->GetForces().Dump(delimeter) << delimeter;
     outstream << BuoyantForces->GetForces().Dump(delimeter) << delimeter;
-    outstream << Aircraft->GetForces().Dump(delimeter);
+    outstream << Accelerations->GetWeight().Dump(delimeter) << delimeter;
+    outstream << Accelerations->GetForces().Dump(delimeter);
   }
   if (SubSystems & ssMoments) {
     outstream << delimeter;
     outstream << Aerodynamics->GetMoments().Dump(delimeter) << delimeter;
     outstream << Aerodynamics->GetMomentsMRC().Dump(delimeter) << delimeter;
     outstream << Propulsion->GetMoments().Dump(delimeter) << delimeter;
-    outstream << GroundReactions->GetMoments().Dump(delimeter) << delimeter;
+    outstream << Accelerations->GetGroundMoments().Dump(delimeter) << delimeter;
     outstream << ExternalReactions->GetMoments().Dump(delimeter) << delimeter;
     outstream << BuoyantForces->GetMoments().Dump(delimeter) << delimeter;
-    outstream << Aircraft->GetMoments().Dump(delimeter);
+    outstream << Accelerations->GetMoments().Dump(delimeter);
   }
   if (SubSystems & ssAtmosphere) {
     outstream << delimeter;

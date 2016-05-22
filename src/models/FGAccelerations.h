@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.19 2016/04/16 12:24:39 bcoconni Exp $"
+#define ID_ACCELERATIONS "$Id: FGAccelerations.h,v 1.20 2016/05/22 10:28:23 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
          NASA SP-8024, May 1969
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
-    @version $Id: FGAccelerations.h,v 1.19 2016/04/16 12:24:39 bcoconni Exp $
+    @version $Id: FGAccelerations.h,v 1.20 2016/05/22 10:28:23 bcoconni Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,6 +266,7 @@ public:
       @return The total moments applied on the body.
    */
   double GetMoments(int idx) const { return in.Moment(idx) + vFrictionMoments(idx); }
+  FGColumnVector3 GetMoments(void) const { return in.Moment + vFrictionMoments; }
 
   /** Retrieves the total forces applied on the body.
       Retrieves the total forces applied on the body. This does include the
@@ -279,6 +280,7 @@ public:
       @return The total forces applied on the body.
    */
   double GetForces(int idx) const { return in.Force(idx) + vFrictionForces(idx); }
+  FGColumnVector3 GetForces(void) const { return in.Force + vFrictionForces; }
 
   /** Retrieves the ground moments applied on the body.
       Retrieves the ground moments applied on the body. This does include the
@@ -292,19 +294,35 @@ public:
       @return The ground moments applied on the body.
    */
   double GetGroundMoments(int idx) const { return in.GroundMoment(idx) + vFrictionMoments(idx); }
+  FGColumnVector3 GetGroundMoments(void) const { return in.GroundMoment + vFrictionMoments; }
 
   /** Retrieves the ground forces applied on the body.
       Retrieves the ground forces applied on the body. This does include the
       ground normal reaction and friction forces.
-      The vector for the total moments in the body frame is organized (Fx, Fy
+      The vector for the ground forces in the body frame is organized (Fx, Fy
       , Fz). The vector is 1-based. In other words, GetGroundForces(1) returns
       Fx. Various convenience enumerators are defined in FGJSBBase. The relevant
       enumerators for the forces returned by this call are, eX=1, eY=2, eZ=3.
-      units lbs
+      units lbs.
       @param idx the index of the forces component desired (1-based).
       @return The ground forces applied on the body.
    */
   double GetGroundForces(int idx) const { return in.GroundForce(idx) + vFrictionForces(idx); }
+  FGColumnVector3 GetGroundForces(void) const { return in.GroundForce + vFrictionForces; }
+
+  /** Retrieves the weight applied on the body.
+      Retrieves the weight applied on the body i.e. the force that results from
+      the gravity applied to the body mass.
+      The vector for the weight forces in the body frame is organized (Fx, Fy ,
+      Fz). The vector is 1-based. In other words, GetWeight(1) returns
+      Fx. Various convenience enumerators are defined in FGJSBBase. The relevant
+      enumerators for the forces returned by this call are, eX=1, eY=2, eZ=3.
+      units lbs.
+      @param idx the index of the forces component desired (1-based).
+      @return The ground forces applied on the body.
+  */
+  double GetWeight(int idx) const { return in.Mass * (in.Ti2b * vGravAccel)(idx); }
+  FGColumnVector3 GetWeight(void) const { return in.Mass * in.Ti2b * vGravAccel; }
 
   /** Initializes the FGAccelerations class prior to a new execution.
       Initializes the class prior to a new execution when the input data stored

@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.28 2016/04/16 12:24:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAccelerations.cpp,v 1.29 2016/05/22 10:28:23 bcoconni Exp $");
 IDENT(IdHdr,ID_ACCELERATIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -367,6 +367,9 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
   PropertyManager->Tie("simulation/gravity-model", &gravType);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
+  PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, (PMF)&FGAccelerations::GetWeight);
+  PropertyManager->Tie("forces/fby-weight-lbs", this, eY, (PMF)&FGAccelerations::GetWeight);
+  PropertyManager->Tie("forces/fbz-weight-lbs", this, eZ, (PMF)&FGAccelerations::GetWeight);
 
   PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAccelerations::GetForces);
   PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAccelerations::GetForces);
