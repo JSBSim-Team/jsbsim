@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.57 2015/01/31 14:56:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.58 2016/05/22 17:02:13 bcoconni Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +144,7 @@ bool FGAerodynamics::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false; // if paused don't execute
 
-  unsigned int axis_ctr, ctr;
+  unsigned int axis_ctr;
   const double twovel=2*in.Vt;
 
   RunPreFunctions();
@@ -179,15 +179,23 @@ bool FGAerodynamics::Run(bool Holding)
   vFnative.InitMatrix();
   vFnativeAtCG.InitMatrix();
 
-  for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr=0; ctr < AeroFunctions[axis_ctr].size(); ctr++) {
-      vFnative(axis_ctr+1) += AeroFunctions[axis_ctr][ctr]->GetValue();
-    }
-  }
+  for (axis_ctr = 0; axis_ctr < 3; ++axis_ctr) {
+    AeroFunctionArray::iterator f;
 
-  for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr=0; ctr < AeroFunctionsAtCG[axis_ctr].size(); ctr++) {
-      vFnativeAtCG(axis_ctr+1) += AeroFunctionsAtCG[axis_ctr][ctr]->GetValue();
+    AeroFunctionArray* array = &AeroFunctions[axis_ctr];
+    for (f=array->begin(); f != array->end(); ++f) {
+      // Tell the Functions to cache values, so when the function values are
+      // being requested for output, the functions do not get calculated again
+      // in a context that might have changed, but instead use the values that
+      // have already been calculated for this frame.
+      (*f)->cacheValue(true);
+      vFnative(axis_ctr+1) += (*f)->GetValue();
+    }
+
+    array = &AeroFunctionsAtCG[axis_ctr];
+    for (f=array->begin(); f != array->end(); ++f) {
+      (*f)->cacheValue(true); // Same as above
+      vFnativeAtCG(axis_ctr+1) += (*f)->GetValue();
     }
   }
 
@@ -264,8 +272,14 @@ bool FGAerodynamics::Run(bool Holding)
   vMomentsMRC.InitMatrix();
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr = 0; ctr < AeroFunctions[axis_ctr+3].size(); ctr++) {
-      vMomentsMRC(axis_ctr+1) += AeroFunctions[axis_ctr+3][ctr]->GetValue();
+    AeroFunctionArray* array = &AeroFunctions[axis_ctr+3];
+    for (AeroFunctionArray::iterator f=array->begin(); f != array->end(); ++f) {
+      // Tell the Functions to cache values, so when the function values are
+      // being requested for output, the functions do not get calculated again
+      // in a context that might have changed, but instead use the values that
+      // have already been calculated for this frame.
+      (*f)->cacheValue(true);
+      vMomentsMRC(axis_ctr+1) += (*f)->GetValue();
     }
   }
   vMoments = vMomentsMRC + vDXYZcg*vForces; // M = r X F
@@ -283,7 +297,7 @@ bool FGAerodynamics::Run(bool Holding)
 
 bool FGAerodynamics::Load(Element *document)
 {
-  string parameter, axis, scratch;
+  string axis;
   string scratch_unit="";
   Element *temp_element, *axis_element, *function_element;
 
@@ -333,7 +347,7 @@ bool FGAerodynamics::Load(Element *document)
       if (!apply_at_cg) {
       try {
         ca.push_back( new FGFunction(PropertyManager, function_element) );
-      } catch (string const str) {
+      } catch (const string& str) {
         cerr << endl << fgred << "Error loading aerodynamic function in " 
              << current_func_name << ":" << str << " Aborting." << reset << endl;
         return false;
@@ -341,7 +355,7 @@ bool FGAerodynamics::Load(Element *document)
       } else {
         try {
           ca_atCG.push_back( new FGFunction(PropertyManager, function_element) );
-        } catch (string const str) {
+        } catch (const string& str) {
           cerr << endl << fgred << "Error loading aerodynamic function in " 
                << current_func_name << ":" << str << " Aborting." << reset << endl;
           return false;
