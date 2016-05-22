@@ -69,7 +69,6 @@
         <z> -330 </z>
       </location>
     </pointmass>
-<!--
     <pointmass name="DT Propeller">
       <weight unit="LBS"> 2.425 </weight>
       <location name="POINTMASS" unit="IN">
@@ -78,7 +77,6 @@
         <z> -330 </z>
       </location>
     </pointmass>
--->
   </mass_balance>
 
   <ground_reactions>
@@ -172,10 +170,10 @@
        10^6	0.4		0.35
        10^7	0.5 		0.48
     -->
-    <!-- Pilot area (area of a circle with a diameter of 1.25 meter) -->
+    <!-- pilot area (area of a circle with a diameter of 1.25 meter) -->
     <property type="float" value="13.2">metrics/Sp-sqft</property>
 
-    <!-- Pilot arm (-330 inches equals to 27.5 foot -->
+    <!-- pilot arm (-330 inches equals to 27.5 foot -->
     <property type="float" value="27.5">metrics/bp-ft</property>
 
     <axis name="DRAG">
@@ -209,7 +207,7 @@
       <product>
        <property>aero/qbar-psf</property>
        <property>metrics/Sp-sqft</property>
-       <value>0.5</value>
+       <value>1.8</value>
       </product>
      </function>
     </axis>
@@ -265,7 +263,7 @@
        <property>aero/qbar-psf</property>
        <property>metrics/Sp-sqft</property>
        <property>aero/beta-rad</property>
-       <value>-0.5</value>
+       <value>-1.8</value>
       </product>
      </function>
      <function name="aero/coefficient/CYp">
@@ -412,7 +410,7 @@
        <property>metrics/Sp-sqft</property>
        <property>metrics/bp-ft</property>
        <property>aero/beta-rad</property>
-       <value>-0.5</value>
+       <value>-1.8</value>
       </product>
      </function>
      <function name="aero/coefficient/Clp">
@@ -492,7 +490,7 @@
        <property>aero/qbar-psf</property>
        <property>metrics/Sp-sqft</property>
        <property>metrics/bp-ft</property>
-       <value>2</value>
+       <value>1.8</value>
        </product>
      </function>
      <function name="aero/moment/Cmadot">
