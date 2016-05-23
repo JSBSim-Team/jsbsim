@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="p51d-tail-wind">
+  <use aircraft="p51d" initialize="reset01"/>
+  <run start="0.0" end="30" dt="0.008333">
+    <property> simulation/notify-time-trigger </property>
+
+    <!-- Initialize with brakes on -->
+    <property value="1"> fcs/left-brake-cmd-norm   </property>
+    <property value="1"> fcs/right-brake-cmd-norm  </property>
+    <property value="1"> fcs/center-brake-cmd-norm </property>
+
+    <!-- Prepare a tail wind cosine gust -->
+    <property value="5">  atmosphere/cosine-gust/startup-duration-sec </property>
+    <property value="1">  atmosphere/cosine-gust/steady-duration-sec  </property>
+    <property value="5">  atmosphere/cosine-gust/end-duration-sec     </property>
+    <property value="25"> atmosphere/cosine-gust/magnitude-ft_sec     </property>
+    <property value="3">  atmosphere/cosine-gust/frame                </property>
+    <property value="0">  atmosphere/cosine-gust/X-velocity-ft_sec    </property>
+    <property value="1">  atmosphere/cosine-gust/Y-velocity-ft_sec    </property>
+    <property value="0">  atmosphere/cosine-gust/Z-velocity-ft_sec    </property>
+
+    <event name="Engine start">
+      <description>Start the engine</description>
+      <condition> simulation/sim-time-sec >= 4.0 </condition>
+      <set name="fcs/throttle-cmd-norm"  value="0.5" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify>
+        <property caption="Throttle pos:         "> fcs/throttle-pos-norm[0] </property>
+        <property caption="Mixture pos:          "> fcs/mixture-pos-norm[0] </property>
+        <property caption="Weight (lbs):         "> inertia/weight-lbs </property>
+        <property caption="Propeller RPM:        "> propulsion/engine/propeller-rpm </property>
+      </notify>
+    </event>
+
+    <event name="Throttling back to idle">
+      <condition> simulation/sim-time-sec >= 8.0 </condition>
+      <set name="fcs/throttle-cmd-norm"  value="0.0" action="FG_RAMP" tc ="0.5"/>
+      <notify>
+        <property caption="Throttle pos:         "> fcs/throttle-pos-norm[0] </property>
+        <property caption="Mixture pos:          "> fcs/mixture-pos-norm[0] </property>
+        <property caption="Weight (lbs):         "> inertia/weight-lbs </property>
+        <property caption="Propeller RPM:        "> propulsion/engine/propeller-rpm </property>
+      </notify>
+    </event>
+
+    <event name="Tailwind gust">
+      <condition> simulation/sim-time-sec >= 15 </condition>
+      <set name="atmosphere/cosine-gust/start" value="1"/>
+      <set name="fcs/elevator-cmd-norm" value="-1.0"/>
+      <notify>
+        <property caption="Cal. airspeed (kts):  "> velocities/vc-kts</property>
+        <property caption="Altitude (AGL, ft):   "> position/h-agl-ft</property>
+        <property caption="Throttle pos:         "> fcs/throttle-pos-norm[0] </property>
+        <property caption="Propeller RPM:        "> propulsion/engine/propeller-rpm </property>
+      </notify>
+    </event>
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at 1 second intervals</description>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="1" type="FG_DELTA"/>
+      <notify>
+        <property caption="Cal. airspeed (kts):  "> velocities/vc-kts</property>
+        <property caption="Altitude (AGL, ft):   "> position/h-agl-ft</property>
+        <property caption="Latitude (geod, deg): "> position/lat-geod-deg</property>
+        <property caption="Altitude (geod, ft):  "> position/geod-alt-ft</property>
+        <property caption="Throttle pos:         "> fcs/throttle-pos-norm[0] </property>
+        <property caption="Mixture pos:          "> fcs/mixture-pos-norm[0] </property>
+        <property caption="Weight (lbs):         "> inertia/weight-lbs </property>
+        <property caption="Propeller RPM:        "> propulsion/engine/propeller-rpm </property>
+        <property caption="Elevator position (rad)"> fcs/elevator-pos-rad </property>
+      </notify>
+    </event>
+  </run>
+
+  <output name="p51d.csv" type="CSV" rate="120">
+    <rates> ON             </rates>
+    <velocities> ON        </velocities>
+    <position> ON          </position>
+    <atmosphere> OFF       </atmosphere>
+    <fcs> OFF              </fcs>
+    <ground_reactions> OFF </ground_reactions>
+    <propulsion> ON        </propulsion>
+    <simulation> ON        </simulation>
+    <massprops> OFF        </massprops>
+    <forces> ON            </forces>
+    <moments> ON           </moments>
+    <aerosurfaces> OFF     </aerosurfaces>
+    <coefficients> ON      </coefficients>
+    <property> propulsion/engine/advance-ratio </property>
+    <property> propulsion/engine/prop-induced-velocity_fps </property>
+    <property> aero/cl-squared </property>
+  </output>
+</runscript>
