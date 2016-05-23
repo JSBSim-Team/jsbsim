@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="paraglider" version="2.0" release="BETA"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -15,12 +15,25 @@
     For Ram-Air Parachutes
 
     http://www.cobaltcfd.com/pdfs/2016/AIAA-2016-1536.pdf
+
+
+    http://www.ojovolador.com/eng/read/tests/discus/
+     Cells				44
+     Wing area (m²)			24	(258.33 ft²)
+     Wing area projected (m²)		20.5	(220.66 ft²)
+     Wing span (m)			11.2	( 36.75 ft)
+     Projected wing span (m)		 8.8	( 28.87 ft)
+     Aspect ratio			 5.2
+     Projected aspect ratio		 3.7
+     Glider weight (kg)			 4.9	( 10.8 lbs)
+     Max speed (km/h)			47 ±2	( 25.4 kts ±2)
+     Trim speed (km/h)			38 ±1	( 20.5 kts ±½)
 -->
   </fileheader>
 
   <metrics>
-    <wingarea unit="FT2"> 300 </wingarea>
-    <wingspan unit="FT"> 32 </wingspan>
+    <wingarea unit="FT2"> 220 </wingarea>
+    <wingspan unit="FT"> 29 </wingspan>
     <chord unit="FT"> 7 </chord>
     <htailarea unit="FT2"> 1 </htailarea>
     <htailarm unit="FT"> 1 </htailarm>
@@ -159,18 +172,7 @@
 
   <aerodynamics>
 
-    <!--
-      Drag of a spehere: 	0.5
-       Re	CD(rough)	CD(clean)
-       10^2	1.2		1.2
-       10^3	0.5		0.5
-       10^4	0.5		0.5
-       10^5	0.2		0.5
-       50^5			0.1
-       10^6	0.4		0.35
-       10^7	0.5 		0.48
-    -->
-    <!-- pilot area (area of a circle with a diameter of 1.25 meter) -->
+    <!-- pilot area (area of a circle with a diameter of 4.1 foot) -->
     <property type="float" value="13.2">metrics/Sp-sqft</property>
 
     <!-- pilot arm (-330 inches equals to 27.5 foot -->
@@ -363,6 +365,7 @@
        <property>aero/qbar-psf</property>
        <property>metrics/Sw-sqft</property>
        <property>metrics/bw-ft</property>
+       <value>2.5</value>
        <table>
         <independentVar lookup="row">aero/alpha-deg</independentVar>
         <independentVar lookup="column">fcs/aileron-pos-norm</independentVar>
@@ -522,20 +525,20 @@
        <property>metrics/cbarw-ft</property>
        <property>aero/ci2vel</property>
        <property>velocities/q-aero-rad_sec</property>
-       <value>-30</value>
-<!--
-       <table>
-        <independentVar>aero/alpha-deg</independentVar>
-        <tableData>
-           0.0  -1.9
-           2.0   0.5
-           4.0   0.0
-           6.0   2.9
-           8.0  -0.5
-          10.0   0.5
-        </tableData>
-       </table>
--->
+       <sum>
+        <value>-20</value>
+        <table>
+         <independentVar>aero/alpha-deg</independentVar>
+         <tableData>
+            0.0  -1.9
+            2.0   0.5
+            4.0   0.0
+            6.0   2.9
+            8.0  -0.5
+           10.0   0.5
+         </tableData>
+        </table>
+       </sum>
       </product>
      </function>
     </axis>
@@ -547,6 +550,7 @@
        <property>aero/qbar-psf</property>
        <property>metrics/Sw-sqft</property>
        <property>metrics/bw-ft</property>
+       <value>2.5</value>
        <table>
         <independentVar lookup="row">aero/alpha-deg</independentVar>
         <independentVar lookup="column">fcs/aileron-pos-norm</independentVar>
