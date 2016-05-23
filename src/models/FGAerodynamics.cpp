@@ -50,7 +50,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.58 2016/05/22 17:02:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGAerodynamics.cpp,v 1.59 2016/05/23 17:23:36 bcoconni Exp $");
 IDENT(IdHdr,ID_AERODYNAMICS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +146,13 @@ bool FGAerodynamics::Run(bool Holding)
 
   unsigned int axis_ctr;
   const double twovel=2*in.Vt;
+
+  // Calculate lift coefficient squared
+  // Make sure that aero/cl-squared is computed with the current qbar
+  if ( in.Qbar > 0) {
+    clsq = (vFw(eLift) + vFwAtCG(eLift))/ (in.Wingarea*in.Qbar);
+    clsq *= clsq;
+  }
 
   RunPreFunctions();
 
@@ -246,12 +253,6 @@ bool FGAerodynamics::Run(bool Holding)
       cerr << endl << "  A proper axis type has NOT been selected. Check "
                    << "your aerodynamics definition." << endl;
       exit(-1);
-  }
-
-  // Calculate lift coefficient squared
-  if ( in.Qbar > 0) {
-    clsq = (vFw(eLift) + vFwAtCG(eLift))/ (in.Wingarea*in.Qbar);
-    clsq *= clsq;
   }
 
   // Calculate lift Lift over Drag
