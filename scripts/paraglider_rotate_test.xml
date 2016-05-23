@@ -5,23 +5,19 @@
     name="Paraglider rotate test">
   <description>For testing Paraglider rotate</description>
   <use aircraft="paraglider" initialize="reset00"/>
-  <run start="0.0" end="1000" dt="0.00833333">
+  <run start="0.0" end="30" dt="0.00833333">
 
-    <event name="Trim">
-      <condition>simulation/sim-time-sec gt 0.1</condition>
-      <set name="fcs/aileron-cmd-norm" value="0.0"/>
-<!--  <set name="simulation/do_simple_trim" value="1"/> -->
-    </event>
+    <property value="0"> simulation/run_id </property>
 
     <event name="Start engine: Starter">
       <description>The starter for the engine is turned on.</description>
-      <condition>simulation/sim-time-sec ge 1.0</condition>
+      <condition>simulation/sim-time-sec gt 0.1</condition>
       <set name="fcs/throttle-cmd-norm"  action="FG_RAMP" value="1.0" tc ="1.0"/>
       <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="1.0" tc="1.0"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify>
-        <property>position/geod-alt-ft</property>
+        <property>position/h-agl-ft</property>
         <property>accelerations/a-pilot-x-ft_sec2</property>
         <property>accelerations/a-pilot-y-ft_sec2</property>
         <property>accelerations/a-pilot-z-ft_sec2</property>
@@ -33,7 +29,7 @@
       <condition>simulation/sim-time-sec ge 2.0</condition>
       <set name="fcs/aileron-cmd-norm" value="1.0" action="FG_RAMP" tc="0.5"/>
       <notify>
-        <property>position/geod-alt-ft</property>
+        <property>position/h-agl-ft</property>
         <property>accelerations/a-pilot-x-ft_sec2</property>
         <property>accelerations/a-pilot-y-ft_sec2</property>
         <property>accelerations/a-pilot-z-ft_sec2</property>
@@ -51,7 +47,7 @@
       <condition>simulation/sim-time-sec ge 4.7</condition>
       <set name="fcs/aileron-cmd-norm" value="1.0" action="FG_RAMP" tc="0.5"/>
       <notify>
-        <property>position/geod-alt-ft</property>
+        <property>position/h-agl-ft</property>
         <property>accelerations/a-pilot-x-ft_sec2</property>
         <property>accelerations/a-pilot-y-ft_sec2</property>
         <property>accelerations/a-pilot-z-ft_sec2</property>
@@ -69,6 +65,7 @@
       <condition>simulation/sim-time-sec ge 4.9</condition>
       <set name="fcs/aileron-cmd-norm" value="1.0" action="FG_RAMP" tc="0.5"/>
       <notify>
+        <property>position/h-agl-ft</property>
         <property>accelerations/a-pilot-x-ft_sec2</property>
         <property>accelerations/a-pilot-y-ft_sec2</property>
         <property>accelerations/a-pilot-z-ft_sec2</property>
