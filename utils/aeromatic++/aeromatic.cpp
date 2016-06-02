@@ -26,6 +26,12 @@
 #include "config.h"
 #endif
 
+#if defined(_MSC_VER)
+#  include <float.h>
+#elif defined(__GNUC__) && !defined(sgi)
+#  include <fenv.h>
+#endif
+
 #include <string.h>
 #include <iostream>
 #include <fstream>
@@ -101,6 +107,15 @@ int main(int argc, char *argv[])
     Aeromatic::Aeromatic aeromatic;
     ofstream log;
     ifstream in;
+
+#if defined(_MSC_VER)
+  _clearfp();
+  _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
+           _MCW_EM);
+#elif defined(__GNUC__) && !defined(sgi)
+  feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW|FE_UNDERFLOW);
+#endif
+
 
     char *file = getCommandLineOption(argc, argv, (char*)"-l");
     if (file)

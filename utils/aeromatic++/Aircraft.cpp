@@ -163,8 +163,8 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     _CDalpha.resize(4, 0.0f);
     _CYp.resize(4, 0.0f);
-    _Clbeta.resize(1, 0.0f);
-    _Clr.resize(1, 0.0f);
+    _Clbeta.resize(4, 0.0f);
+    _Clr.resize(4, 0.0f);
     _Cnp.resize(4, 0.0f);
 
     _CLaw.resize(3, 0.0f);
@@ -382,14 +382,6 @@ bool Aeromatic::fdm()
     payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
 
-//***** SYSTEMS ***************************************
-    for (unsigned i=0; i<systems.size(); ++i)
-    {
-        if (systems[i]->enabled()) {
-            systems[i]->set(_cg_loc);
-        }
-    }
-
 //***** COEFFICIENTS **********************************
     aircraft->set_lift();
     aircraft->set_drag();
@@ -397,6 +389,16 @@ bool Aeromatic::fdm()
     aircraft->set_roll();
     aircraft->set_pitch();
     aircraft->set_yaw();
+
+//***** SYSTEMS ***************************************
+    // Systems may make use of coefficients
+    for (unsigned i=0; i<systems.size(); ++i)
+    {
+        if (systems[i]->enabled()) {
+            systems[i]->set(_cg_loc);
+        }
+    }
+
 
 //************************************************
 //*                                              *
@@ -465,7 +467,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.65 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.66 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

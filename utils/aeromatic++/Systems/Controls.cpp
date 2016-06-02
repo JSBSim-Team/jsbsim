@@ -138,9 +138,9 @@ void CableControls::set(const float* cg_loc)
     float deda = _aircraft->_wing.de_da;
     float Sh = _aircraft->_htail.area;
 
-    _aircraft->_CLalpha.push_back(CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda));
-    _aircraft->_CLalpha.push_back(CLaw[1]);
-    _aircraft->_CLalpha.push_back(CLaw[2]);
+    _aircraft->_CLalpha.at(0) = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
+    _aircraft->_CLalpha.at(0) = CLaw[1];
+    _aircraft->_CLalpha.at(0) = CLaw[2];
 
     // *** Pitch moment ***
     float lh = _aircraft->_htail.arm;
@@ -207,7 +207,7 @@ void CableControls::set(const float* cg_loc)
             CL0 = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
 
             _aircraft->_CL0 = CL = CL0;
-            _aircraft->_CDalpha.push_back(CLalpha*(2.0f*CL)/(PI*AR*Ew));
+            _aircraft->_CDalpha.at(i) = CLalpha*(2.0f*CL)/(PI*AR*Ew);
 
             Vt = sqrtf(W/(0.5f*rho*CL*Sw));
         }
@@ -220,18 +220,18 @@ void CableControls::set(const float* cg_loc)
             Q = 0.5f*rho*Vt*Vt;
             CL = W/Q/Sw;
         }
-        _aircraft->_Re.push_back((0.0765f * Vt * cbarw)/ 1.983e-5f);
+        _aircraft->_Re.at(i) = (0.0765f * Vt * cbarw)/ 1.983e-5f;
 
         alpha = (CL-CL0)/CLalpha;
-        _aircraft->_alpha.push_back(alpha);
+        _aircraft->_alpha.at(i) = alpha;
 
         float CLmin = CL - (alpha-MIN_ALPHA)*CLalpha;
         float CLmax = CL + (alpha+MAX_ALPHA)*CLalpha;
 
-        _aircraft->_CYp.push_back(-CL*CYp_const);
-        _aircraft->_Cnp.push_back(-CL/8.0f);
-//      _aircraft->_Clbeta.push_back(-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CL*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
-//      _aircraft->_Clr.push_back((CL/4.0f)-Clr_const);
+        _aircraft->_CYp.at(i) = -CL*CYp_const;
+        _aircraft->_Cnp.at(i) = -CL/8.0f;
+//      _aircraft->_Clbeta.at(i) = -((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CL*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
+//      _aircraft->_Clr.at(i) = (CL/4.0f)-Clr_const;
 
 #if 1
         float Cmin, Cmax;
@@ -239,13 +239,13 @@ void CableControls::set(const float* cg_loc)
         // From Flight Dynamics by Robert F. Stengel page 99
         Cmin = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmin*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
         Cmax = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmax*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
-        _aircraft->_Clbeta.push_back(-Cmin - Clbwf - Clbvt);
-        _aircraft->_Clbeta.push_back(-Cmax - Clbwf - Clbvt);
+        _aircraft->_Clbeta.at(i) = -Cmin - Clbwf - Clbvt;
+        _aircraft->_Clbeta.at(i) = -Cmax - Clbwf - Clbvt;
 
         Cmin = (CLmin/4.0f)-Clr_const;
         Cmax = (CLmax/4.0f)-Clr_const;
-        _aircraft->_Clr.push_back(Cmin);
-        _aircraft->_Clr.push_back(Cmax);
+        _aircraft->_Clr.at(i) = Cmin;
+        _aircraft->_Clr.at(i) = Cmax;
 #endif
     }
 
@@ -692,7 +692,7 @@ std::string CableControls::yaw()
     file << "       </product>" << std::endl;
     file << "    </function>" << std::endl;
     file << std::endl;
-    file << "    <function name=\"aero/moment/Yaw_rol_rate\">" << std::endl;
+    file << "    <function name=\"aero/moment/Yaw_roll_rate\">" << std::endl;
     file << "       <description>Yaw_moment_due_to_roll_rate</description>" << std::endl;
     file << "       <product>" << std::endl;
     file << "           <property>aero/qbar-psf</property>" << std::endl;
