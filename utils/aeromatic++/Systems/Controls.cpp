@@ -139,8 +139,8 @@ void CableControls::set(const float* cg_loc)
     float Sh = _aircraft->_htail.area;
 
     _aircraft->_CLalpha.at(0) = CLaw[0]+CLah[0]*Sh/Sw*(1.0f-deda);
-    _aircraft->_CLalpha.at(0) = CLaw[1];
-    _aircraft->_CLalpha.at(0) = CLaw[2];
+    _aircraft->_CLalpha.at(1) = CLaw[1];
+    _aircraft->_CLalpha.at(2) = CLaw[2];
 
     // *** Pitch moment ***
     float lh = _aircraft->_htail.arm;
