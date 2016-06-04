@@ -57,10 +57,21 @@ class CheckTrim(JSBSimTestCase):
         # Check that the trim is made with up to date initial conditions
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('c172x')
-        fdm['ic/theta-deg'] = 10.0
+        fdm['ic/theta-deg'] = 90.0
         fdm.run_ic()
         fdm['ic/theta-deg'] = 0.0
         # If the trim fails, it will raise an exception
-        fdm['simulation/do_simple_trim'] = 2
+        fdm['simulation/do_simple_trim'] = 2  # Ground trim
+
+        # Check that the aircraft has been trimmed successfully (velocities
+        # should be zero i.e. the aircraft must be motionless once trimmed).
+        while fdm['simulation/sim-time-sec'] <= 1.0:
+            fdm.run()
+            self.assertAlmostEqual(fdm['velocities/p-rad_sec'], 0., delta=1E-4)
+            self.assertAlmostEqual(fdm['velocities/q-rad_sec'], 0., delta=1E-4)
+            self.assertAlmostEqual(fdm['velocities/r-rad_sec'], 0., delta=1E-4)
+            self.assertAlmostEqual(fdm['velocities/u-fps'], 0.0, delta=1E-4)
+            self.assertAlmostEqual(fdm['velocities/v-fps'], 0.0, delta=1E-4)
+            self.assertAlmostEqual(fdm['velocities/w-fps'], 0.0, delta=1E-4)
 
 RunTest(CheckTrim)
