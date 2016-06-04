@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.57 2016/01/02 17:42:53 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.58 2016/06/04 11:06:51 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,20 +241,6 @@ double FGPropeller::Calculate(double EnginePower)
     Vinduced = 0.5 * (-Vel + sqrt(Vel2sum));
   else
     Vinduced = 0.5 * (-Vel - sqrt(-Vel2sum));
-
-  // We need to drop the case where the downstream velocity is opposite in
-  // direction to the aircraft velocity. For example, in such a case, the
-  // direction of the airflow on the tail would be opposite to the airflow on
-  // the wing tips. When such complicated airflows occur, the momentum theory
-  // breaks down and the formulas above are no longer applicable
-  // (see H. Glauert, "The Elements of Airfoil and Airscrew Theory",
-  // 2nd edition, §16.3, pp. 219-221)
-
-  if ((Vel+2.0*Vinduced)*Vel < 0.0) {
-    // The momentum theory is no longer applicable so let's assume the induced
-    // saturates to -0.5*Vel so that the total velocity Vel+2*Vinduced equals 0.
-    Vinduced = -0.5*Vel;
-  }
     
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
