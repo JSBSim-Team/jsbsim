@@ -801,7 +801,7 @@ file << "<turboprop_engine name=\"" << _propulsion->_engine_name << "\">" << std
     file << "  <function name=\"EnginePowerVC\">" << std::endl;
     file << "    <table>" << std::endl;
     file << "      <description> Engine power, function of airspeed and pressure </description>" << std::endl;
-    file << "      <independentVar lookup=\"row\">atmosphere/P-sl-psf</independentVar>" << std::endl;
+    file << "      <independentVar lookup=\"row\">atmosphere/P-psf</independentVar>" << std::endl;
     file << "      <independentVar lookup=\"column\">velocities/ve-kts</independentVar>" << std::endl;
     file << "      <tableData>" << std::endl;
     file << "              0      50    100    150    200    250" << std::endl;
