@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.31 2016/01/17 15:54:04 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.32 2016/06/04 19:04:20 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,6 +340,7 @@ bool FGTrim::DoTrim(void) {
         cout << endl << "  Trim failed" << endl;
   }
 
+  fdmex->GetPropagate()->InitializeDerivatives();
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
 
