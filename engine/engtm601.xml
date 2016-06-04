@@ -42,7 +42,7 @@ itt_delay [-] time constant for ITT change
 
   <table name="EnginePowerVC">
     <description> Engine power, function of airspeed and pressure </description>
-    <independentVar lookup="row">atmosphere/P-sl-psf</independentVar>
+    <independentVar lookup="row">atmosphere/P-psf</independentVar>
     <independentVar lookup="column">velocities/ve-kts</independentVar>
     <tableData>
                  0     50    100    150    200    250
