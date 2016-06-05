@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.32 2016/06/04 19:04:20 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.33 2016/06/05 15:23:02 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,9 +198,8 @@ bool FGTrim::DoTrim(void) {
   double rudder0 = FCS->GetDrCmd();
   double PitchTrim0 = FCS->GetPitchTrimCmd();
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
+  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
-  }
 
   fdmex->SetTrimStatus(true);
   fdmex->SuspendIntegration();
@@ -344,9 +343,8 @@ bool FGTrim::DoTrim(void) {
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
+  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
-  }
 
   return !trim_failed;
 }
@@ -384,18 +382,16 @@ void FGTrim::trimOnGround(void)
   vector<ContactPoints> contacts;
   FGLocation CGLocation = Propagate->GetLocation();
   FGMatrix33 Tec2b = Propagate->GetTec2b();
-  FGMatrix33 Tl2b = Propagate->GetTl2b();
+  FGMatrix33 Tb2l = Propagate->GetTb2l();
   double hmin = 1E+10;
   int contactRef = -1;
 
   // Build the list of the aircraft contact points and take opportunity of the
   // loop to find which one is closer to (or deeper into) the ground.
-  for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++) {
+  for (int i = 0; i < GroundReactions->GetNumGearUnits(); ++i) {
     ContactPoints c;
-    FGLGear* gear = GroundReactions->GetGearUnit(i);
-    c.location = gear->GetLocalGear();
-    FGLocation gearLoc = CGLocation.LocalToLocation(c.location);
-    c.location = Tl2b * c.location;
+    c.location = GroundReactions->GetGearUnit(i)->GetBodyLocation();
+    FGLocation gearLoc = CGLocation.LocalToLocation(Tb2l * c.location);
 
     FGColumnVector3 normal, vDummy;
     FGLocation lDummy;
@@ -438,7 +434,7 @@ void FGTrim::trimOnGround(void)
   // Apply the computed rotation to all the contact points
   FGMatrix33 rot = q0.GetTInv();
   vector<ContactPoints>::iterator iter;
-  for (iter = contacts.begin(); iter != contacts.end(); iter++)
+  for (iter = contacts.begin(); iter != contacts.end(); ++iter)
     iter->location = contact0 + rot * (iter->location - contact0);
 
   // Remove the second point to come in contact with the ground from the list.
@@ -462,7 +458,7 @@ void FGTrim::trimOnGround(void)
   FGQuaternion q1(rParam.angleMin, rotationAxis);
 
   // Update the aircraft orientation
-  FGColumnVector3 euler = (q0 * q1 * fgic.GetOrientation()).GetEuler();
+  FGColumnVector3 euler = (fgic.GetOrientation() * q0 * q1).GetEuler();
 
   fgic.SetPhiRadIC(euler(1));
   fgic.SetThetaRadIC(euler(2));
@@ -487,7 +483,7 @@ FGTrim::RotationParameters FGTrim::calcRotation(vector<ContactPoints>& contacts,
 
   rParam.angleMin = 3.0 * M_PI;
 
-  for (iter = contacts.begin(); iter != contacts.end(); iter++) {
+  for (iter = contacts.begin(); iter != contacts.end(); ++iter) {
     // Below the processed contact point is named 'M'
     // Construct an orthonormal basis (u, v, t). The ground normal is obtained
     // from iter->normal.
