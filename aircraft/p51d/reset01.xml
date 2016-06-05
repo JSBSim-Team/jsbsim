@@ -3,11 +3,11 @@
   <ubody unit="FT/SEC"> 0.0 </ubody> 
   <vbody unit="FT/SEC"> 0.0 </vbody> 
   <wbody unit="FT/SEC"> 0.0 </wbody> 
-  <phi unit="DEG">   0.0 </phi>
-  <theta unit="DEG"> 11.6 </theta>
+  <phi unit="DEG">   10.0 </phi>
+  <theta unit="DEG"> 0.0 </theta>
   <psi unit="DEG">   90.0 </psi>
   <longitude unit="DEG"> 122.0 </longitude>
   <latitude unit="DEG">   47.0 </latitude>
-  <altitude unit="FT"> 5.9 </altitude>
+  <altitude unit="FT"> 0.0 </altitude>
   <hwind unit="KTS"> 3.0 </hwind>
 </initialize>

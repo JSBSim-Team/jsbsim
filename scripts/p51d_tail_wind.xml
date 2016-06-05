@@ -22,6 +22,11 @@
     <property value="1">  atmosphere/cosine-gust/Y-velocity-ft_sec    </property>
     <property value="0">  atmosphere/cosine-gust/Z-velocity-ft_sec    </property>
 
+    <event name="Trim">
+      <condition>simulation/sim-time-sec gt 0.0</condition>
+      <set name="simulation/do_simple_trim" value="2"/>
+    </event>
+
     <event name="Engine start">
       <description>Start the engine</description>
       <condition> simulation/sim-time-sec >= 4.0 </condition>
