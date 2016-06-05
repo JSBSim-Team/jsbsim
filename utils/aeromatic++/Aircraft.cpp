@@ -163,9 +163,13 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     _CDalpha.resize(4, 0.0f);
     _CYp.resize(4, 0.0f);
-    _Clbeta.resize(4, 0.0f);
-    _Clr.resize(4, 0.0f);
+    _Clbeta.resize(8, 0.0f);
+    _Clr.resize(8, 0.0f);
     _Cnp.resize(4, 0.0f);
+
+    _Cna.resize(8, 0.0f);
+    _Cna.at(0) = -1.0f;
+    _Cna.at(1) = 1.0f;
 
     _CLaw.resize(3, 0.0f);
     _CLah.resize(3, 0.0f);
@@ -467,7 +471,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.67 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.68 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

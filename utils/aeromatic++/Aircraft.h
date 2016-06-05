@@ -662,7 +662,7 @@ public:
 
     float _Cmalpha, _Cmde, _Cmq, _Cmadot;
 
-    std::vector<float> _Cnp;
+    std::vector<float> _Cna, _Cnp;
     float _Cnbeta, _Cnr, _Cndr, _Cnda;
 
 public:
