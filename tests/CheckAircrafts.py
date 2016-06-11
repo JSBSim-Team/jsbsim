@@ -56,8 +56,6 @@ class CheckAircrafts(JSBSimTestCase):
                     except RuntimeError:
                         self.fail('Failed to run IC %s for aircraft %s' % (f, d))
 
-                    break
-
             del fdm
 
 RunTest(CheckAircrafts)
