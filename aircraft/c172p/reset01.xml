@@ -7,14 +7,14 @@
   <ubody>       0.0 </ubody>
   <vbody>       0.0 </vbody>
   <wbody>       0.0 </wbody>
-  <latitude>   47.0 </latitude>
-  <longitude> 122.0 </longitude>
+  <latitude unit="DEG">   47.0 </latitude>
+  <longitude unit="DEG"> 122.0 </longitude>
   <phi>         0.0 </phi>
   <theta>       0.0 </theta>
-  <psi>       150.0 </psi>
+  <psi unit="DEG">       150.0 </psi>
   <altitude>    2000.00 </altitude>
   <hwind>        0.0 </hwind>
   <xwind>        0.0 </xwind>
   <vc>          90.0 </vc>
-  <gamma>        3.0 </gamma>
+  <gamma unit="DEG">        3.0 </gamma>
 </initialize>
