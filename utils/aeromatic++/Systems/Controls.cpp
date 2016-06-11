@@ -232,7 +232,7 @@ void CableControls::set(const float* cg_loc)
         _aircraft->_alpha.at(i) = alpha;
 
         float CLmin = CL0 + MIN_ALPHA*CLalpha;
-        float CLmax = CL0 + std::max(alpha,MAX_ALPHA)*CLalpha;
+        float CLmax = CL0 + std::max<float>(alpha,MAX_ALPHA)*CLalpha;
 
         _aircraft->_CYp.at(i) = -CL*CYp_const;
         _aircraft->_Cnp.at(i) = -CL/8.0f;

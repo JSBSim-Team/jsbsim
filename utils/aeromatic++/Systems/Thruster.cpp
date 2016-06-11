@@ -220,7 +220,7 @@ void  Propeller::bladeElement()
                     float cphi = cosf(phi);
                     float alpha = th-phi;
 
-                    float CL = std::min(std::max(CL0 + alpha*CLa, -1.42f), 1.42f);
+                    float CL = std::min<float>(std::max<float>(CL0 + alpha*CLa, -1.42f), 1.42f);
                     float CD = CD0 + alpha*CDa*CL + CDi*CL*CL;
                     float CY = CL*cphi - CD*sphi;
                     float CX = CD*cphi + CL*sphi;
