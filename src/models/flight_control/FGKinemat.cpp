@@ -39,6 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -46,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGKinemat.cpp,v 1.15 2015/04/02 17:39:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGKinemat.cpp,v 1.16 2016/06/12 14:47:46 bcoconni Exp $");
 IDENT(IdHdr,ID_FLAPS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +63,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element
   Detents.clear();
   TransitionTimes.clear();
 
-  Output = OutputPct = 0;
+  Output = 0;
   DoScale = true;
 
   if (element->FindElement("noscale")) DoScale = false;
@@ -76,16 +77,14 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element
     TransitionTimes.push_back(tmpTime);
     setting_element = traverse_element->FindNextElement("setting");
   }
-  NumDetents = Detents.size();
 
-  if (NumDetents <= 1) {
+  if (Detents.size() <= 1) {
     cerr << "Kinematic component " << Name
          << " must have more than 1 setting element" << endl;
     exit(-1);
   }
 
   FGFCSComponent::bind();
-//  treenode->Tie("output-norm", this, &FGKinemat::GetOutputPct );
 
   Debug(0);
 }
@@ -105,57 +104,55 @@ bool FGKinemat::Run(void )
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  if (DoScale) Input *= Detents[NumDetents-1];
+  if (DoScale) Input *= Detents.back();
 
   if (IsOutput) Output = OutputNodes[0]->getDoubleValue();
 
-  if (Input < Detents[0])
-    Input = Detents[0];
-  else if (Detents[NumDetents-1] < Input)
-    Input = Detents[NumDetents-1];
+  Input = Constrain(Detents.front(), Input, Detents.back());
 
-  // Process all detent intervals the movement traverses until either the
-  // final value is reached or the time interval has finished.
-  while ( dt0 > 0.0 && !EqualToRoundoff(Input, Output) ) {
+  if (fcs->GetTrimStatus())
+    // When trimming the output must be reached in one step
+    Output = Input;
+  else {
+    // Process all detent intervals the movement traverses until either the
+    // final value is reached or the time interval has finished.
+    while ( dt0 > 0.0 && !EqualToRoundoff(Input, Output) ) {
 
-    // Find the area where Output is in
-    unsigned int ind;
-    for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
-      if (NumDetents <= ind)
+      // Find the area where Output is in
+      unsigned int ind;
+      for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
+        if (ind >= Detents.size())
+          break;
+
+      // A transition time of 0.0 means an infinite rate.
+      // The output is reached in one step
+      if (TransitionTimes[ind] <= 0.0) {
+        Output = Input;
         break;
+      } else {
+        // Compute the rate in this area
+        double Rate = (Detents[ind] - Detents[ind-1])/TransitionTimes[ind];
+        // Compute the maximum input value inside this area
+        double ThisInput = Constrain(Detents[ind-1], Input, Detents[ind]);
+        // Compute the time to reach the value in ThisInput
+        double ThisDt = fabs((ThisInput-Output)/Rate);
 
-    // A transition time of 0.0 means an infinite rate.
-    // The output is reached in one step
-    if (TransitionTimes[ind] <= 0.0) {
-      Output = Input;
-      break;
-    } else {
-      // Compute the rate in this area
-      double Rate = (Detents[ind] - Detents[ind-1])/TransitionTimes[ind];
-      // Compute the maximum input value inside this area
-      double ThisInput = Input;
-      if (ThisInput < Detents[ind-1])   ThisInput = Detents[ind-1];
-      if (Detents[ind] < ThisInput)     ThisInput = Detents[ind];
-      // Compute the time to reach the value in ThisInput
-      double ThisDt = fabs((ThisInput-Output)/Rate);
+        // and clip to the timestep size
+        if (dt0 < ThisDt) {
+          ThisDt = dt0;
+          if (Output < Input)
+            Output += ThisDt*Rate;
+          else
+            Output -= ThisDt*Rate;
+        } else
+          // Handle this case separate to make shure the termination condition
+          // is met even in inexact arithmetics ...
+          Output = ThisInput;
 
-      // and clip to the timestep size
-      if (dt0 < ThisDt) {
-        ThisDt = dt0;
-        if (Output < Input)
-          Output += ThisDt*Rate;
-        else
-          Output -= ThisDt*Rate;
-      } else
-        // Handle this case separate to make shure the termination condition
-        // is met even in inexact arithmetics ...
-        Output = ThisInput;
-
-      dt0 -= ThisDt;
+        dt0 -= ThisDt;
+      }
     }
   }
-
-  OutputPct = (Output-Detents[0])/(Detents[NumDetents-1]-Detents[0]);
 
   Clip();
   if (IsOutput) SetOutput();
@@ -189,8 +186,8 @@ void FGKinemat::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      cout << "      DETENTS: " << NumDetents << endl;
-      for (unsigned int i=0;i<NumDetents;i++) {
+      cout << "      DETENTS: " << Detents.size() << endl;
+      for (unsigned int i=0;i<Detents.size();i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
       if (IsOutput) {

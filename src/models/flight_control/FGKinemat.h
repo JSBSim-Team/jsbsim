@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.11 2015/03/28 14:49:02 bcoconni Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.12 2016/06/12 14:47:46 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,8 @@ public:
 
   /** Kinematic component output value.
       @return the current output of the kinematic object on the range of [0,1]. */
-  double GetOutputPct() const { return OutputPct; }
+  double GetOutputPct() const
+  { return (Output-Detents[0])/(Detents.back()-Detents[0]); }
 
   /** Run method, overrides FGModel::Run().
       @return false on success, true on failure.
@@ -131,8 +132,6 @@ public:
 private:
   std::vector<double> Detents;
   std::vector<double> TransitionTimes;
-  size_t NumDetents;
-  double OutputPct;
   bool  DoScale;
 
   void Debug(int from);
