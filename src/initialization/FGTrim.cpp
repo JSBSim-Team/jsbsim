@@ -57,7 +57,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.33 2016/06/05 15:23:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTrim.cpp,v 1.34 2016/06/12 09:09:02 bcoconni Exp $");
 IDENT(IdHdr,ID_TRIM);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,7 +390,13 @@ void FGTrim::trimOnGround(void)
   // loop to find which one is closer to (or deeper into) the ground.
   for (int i = 0; i < GroundReactions->GetNumGearUnits(); ++i) {
     ContactPoints c;
-    c.location = GroundReactions->GetGearUnit(i)->GetBodyLocation();
+    FGLGear* gear = GroundReactions->GetGearUnit(i);
+
+    // Skip the retracted landing gears
+    if (!gear->GetGearUnitDown())
+      continue;
+
+    c.location = gear->GetBodyLocation();
     FGLocation gearLoc = CGLocation.LocalToLocation(Tb2l * c.location);
 
     FGColumnVector3 normal, vDummy;
@@ -402,7 +408,7 @@ void FGTrim::trimOnGround(void)
 
     if (height < hmin) {
       hmin = height;
-      contactRef = i;
+      contactRef = contacts.size() - 1;
     }
   }
 
