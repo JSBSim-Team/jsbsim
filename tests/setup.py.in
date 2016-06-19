@@ -1,4 +1,4 @@
-import os.path
+import os, sys
 
 from distutils.core import setup
 from distutils.extension import Extension
@@ -35,6 +35,18 @@ class InstallJSBSimModule(install_lib):
         self.copy_file(os.path.join('tests', self.module_name),
                        self.install_dir+self.module_name)
 
+
+class SilentBuild(build_ext):
+    def __init__(self, dist):
+        build_ext.__init__(self, dist)
+        self.oldstdout = os.dup(sys.stdout.fileno())
+        self.devnull = open('devnull.txt', 'w')
+        os.dup2(self.devnull.fileno(), sys.stdout.fileno())
+
+    def __del__(self):
+        os.dup2(self.oldstdout, sys.stdout.fileno())
+        self.devnull.close()
+
 # Installation process for the JSBSim Python module
 setup(
     name="${PROJECT_NAME}",
@@ -49,8 +61,10 @@ setup(
                            language='c++')])
 
 # Build process for the fpectl module
-setup(ext_modules=[Extension('fpectl',
-                             sources=[os.path.join('${CMAKE_SOURCE_DIR}',
-                                                   'tests',
-                                                   'fpectlmodule.cpp')],
-                             language='c++')])
+setup(
+    cmdclass={'build_ext': SilentBuild},
+    ext_modules=[Extension('fpectl',
+                           sources=[os.path.join('${CMAKE_SOURCE_DIR}',
+                                                 'tests',
+                                                 'fpectlmodule.cpp')],
+                           language='c++')])
