@@ -16,6 +16,7 @@
  * this program; if not, see <http://www.gnu.org/licenses/>
  */
 
+#include "Python.h"
 #include <exception>
 #include <string>
 
@@ -23,11 +24,14 @@ namespace JSBSim {
 class FloatingPointException: public std::exception
 {
 public:
-  FloatingPointException(const std::string& _msg) : msg(_msg) {}
+  FloatingPointException(PyObject* _pyexc, const std::string& _msg)
+    : pyexc(_pyexc), msg(_msg) {}
   const char* what() const throw() { return msg.c_str(); }
+  PyObject* getPyExc() const { return pyexc; }
   ~FloatingPointException() throw() {}
 
 private:
+  PyObject* pyexc;
   std::string msg;
 };
 }

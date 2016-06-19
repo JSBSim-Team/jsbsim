@@ -65,10 +65,9 @@
   ** JSBSim adaptation: June 18, 2016. Bertrand Coconnier
   */
 
-#include "Python.h"
-#include <signal.h>
-
 #include "fpectlmodule.h"
+
+#include <signal.h>
 
 #if defined(_MSC_VER)
 #  include <float.h>
@@ -80,6 +79,7 @@ static int fp_flags = 0;
 
 static PyOS_sighandler_t handler = 0;
 
+static PyObject *fpe_error;
 PyMODINIT_FUNC initfpectl(void);
 static PyObject *turnon_sigfpe(PyObject *self,PyObject *args);
 static PyObject *turnoff_sigfpe(PyObject *self,PyObject *args);
@@ -93,7 +93,8 @@ static PyMethodDef fpectl_methods[] = {
 static void sigfpe_handler(int signo)
 {
   PyOS_setsig(SIGFPE, sigfpe_handler);
-  throw JSBSim::FloatingPointException("Caught signal SIGFPE in JSBSim");
+  throw JSBSim::FloatingPointException(fpe_error,
+                                       "Caught signal SIGFPE in JSBSim");
 }
 
 static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
@@ -126,5 +127,12 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 
 PyMODINIT_FUNC initfpectl(void)
 {
-  Py_InitModule("fpectl", fpectl_methods);
+  PyObject *m = Py_InitModule("fpectl", fpectl_methods);
+  if (m == NULL)
+    return;
+  PyObject *d = PyModule_GetDict(m);
+  fpe_error = PyErr_NewException((char*)"fpectl.FloatingPointError",
+                                 PyExc_FloatingPointError, NULL);
+  if (fpe_error != NULL)
+    PyDict_SetItemString(d, "FloatingPointError", fpe_error);
 }
