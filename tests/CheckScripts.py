@@ -19,11 +19,14 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import fpectl
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
 class CheckScripts(JSBSimTestCase):
     def testScripts(self):
+        fpectl.turnon_sigfpe()
+
         for s in self.script_list():
             fdm = CreateFDM(self.sandbox)
             self.assertTrue(fdm.load_script(s),

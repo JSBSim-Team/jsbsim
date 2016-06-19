@@ -1,4 +1,4 @@
-/* Convert JSBSim exceptions to Python exceptions
+/* Python module to control floating point exceptions
  *
  * Copyright (c) 2016 Bertrand Coconnier
  *
@@ -16,23 +16,18 @@
  * this program; if not, see <http://www.gnu.org/licenses/>
  */
 
+#include <exception>
 #include <string>
-#include "Python.h"
-#include "fpectlmodule.h"
 
-void convertJSBSimToPyExc()
+namespace JSBSim {
+class FloatingPointException: public std::exception
 {
-  try {
-    if (!PyErr_Occurred())
-      throw;
-  }
-  catch (const std::string &msg) {
-    PyErr_SetString(PyExc_RuntimeError, msg.c_str());
-  }
-  catch (const char* msg) {
-    PyErr_SetString(PyExc_RuntimeError, msg);
-  }
-  catch (const JSBSim::FloatingPointException& e) {
-    PyErr_SetString(PyExc_FloatingPointError, e.what());
-  }
+public:
+  FloatingPointException(const std::string& _msg) : msg(_msg) {}
+  const char* what() const throw() { return msg.c_str(); }
+  ~FloatingPointException() throw() {}
+
+private:
+  std::string msg;
+};
 }

@@ -9,6 +9,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 cython_add_module(jsbsim jsbsim.pyx)
 target_link_libraries(jsbsim libJSBSim)
 
+set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+configure_file(setup.py.in ${SETUP_PY})
+add_custom_target(fpectl_module ALL DEPENDS ${SETUP_PY}
+  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -i)
+
 # Replicate the Python files in the build dir.
 # With CMake, the build tree can be separated from the source tree. For tests
 # written in Python to be executed by 'make test', the sources must be
@@ -52,8 +57,6 @@ endforeach()
 
 # Install the JSBSim Python module
 if (INSTALL_PYTHON_MODULE)
-  set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-  configure_file(setup.py.in ${SETUP_PY})
   install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install)")
 endif()
 
