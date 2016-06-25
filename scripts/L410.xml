@@ -6,6 +6,7 @@
   <description>For testing the L410 electrical system</description>
   <use aircraft="L410" initialize="reset00"/>
   <run start="0.0" end="10" dt="0.0010">
+    <property value="1.0">/controls/gear/gear-down-cond</property>
     <event name="Turn on battery 1">
       <condition>simulation/sim-time-sec  ge  5.0</condition>
       <set name="/systems/l410/battery1-ok" value="1"/>
