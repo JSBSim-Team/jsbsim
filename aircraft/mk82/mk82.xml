@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.12 $ </version>
+        <version> $Revision: 1.13 $ </version>
         <description> Mk-82 </description>
       <note>
         This model was created using publicly available data, publicly available
@@ -62,7 +62,7 @@
     </mass_balance>
 
     <ground_reactions>
-        <contact type="BOGEY" name="NOSE_CONTACT">
+        <contact type="STRUCTURE" name="NOSE_CONTACT">
             <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
@@ -77,7 +77,7 @@
             <brake_group> NONE </brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="TAIL_CONTACT">
+        <contact type="STRUCTURE" name="TAIL_CONTACT">
             <location unit="IN">
                 <x> 66 </x>
                 <y> 0 </y>
