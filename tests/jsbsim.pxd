@@ -63,7 +63,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGFDMExec(int root, int fdmctr)
         void Unbind()
         bool Run() except +convertJSBSimToPyExc
-        bool RunIC() except +
+        bool RunIC() except +convertJSBSimToPyExc
         bool LoadModel(string model,
                        bool add_model_to_path)
         bool LoadModel(string aircraft_path,
@@ -71,7 +71,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
                        string systems_path,
                        string model,
                        bool add_model_to_path)
-        bool LoadScript(string script, double delta_t, string initfile) except +
+        bool LoadScript(string script, double delta_t, string initfile) except +convertJSBSimToPyExc
         bool SetEnginePath(string path)
         bool SetAircraftPath(string path)
         bool SetSystemsPath(string path)
