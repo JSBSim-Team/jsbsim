@@ -86,6 +86,7 @@ set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
                                "/.deps/"
                                "/.libs/"
                                "/CVS/"
+                               "TAGS"
                                "${CPACK_SOURCE_IGNORE_FILES}")
 include (CPack)
 
