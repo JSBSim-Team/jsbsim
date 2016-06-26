@@ -20,18 +20,24 @@
 #
 
 import fpectl
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 
 class CheckScripts(JSBSimTestCase):
     def testScripts(self):
         fpectl.turnon_sigfpe()
 
-        for s in self.script_list():
+        for s in self.script_list(['737_cruise_steady_turn_simplex.xml']):
             fdm = CreateFDM(self.sandbox)
-            self.assertTrue(fdm.load_script(s),
-                            msg="Failed to load script %s" % (s,))
-            fdm.run_ic()
+            try:
+                self.assertTrue(fdm.load_script(s),
+                                msg="Failed to load script %s" % (s,))
+
+                fdm.run_ic()
+                ExecuteUntil(fdm, 30.)
+
+            except Exception as e:
+                self.fail("Script %s failed:\n%s" % (s, e.args[0]))
 
             del fdm
 
