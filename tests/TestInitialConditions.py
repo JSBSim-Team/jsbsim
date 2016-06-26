@@ -114,26 +114,11 @@ class TestInitialConditions(JSBSimTestCase):
             if 'version' in IC_root.attrib and float(IC_root.attrib['version']) != 1.0:
                 continue
 
-            self.CheckICValues(vars, tree, IC_root, s, prop_output_to_CSV)
+            f, fdm = self.LoadScript(tree, s, prop_output_to_CSV)
+            self.CheckICValues(vars, 'script %s' % (f,), fdm, IC_root)
+            del fdm
 
-    def CheckICValues(self, vars, tree, IC_root, script_path,
-                      prop_output_to_CSV=[]):
-        # Extract the IC values from XML
-        for var in vars:
-            var_tag = IC_root.find(var['tag'])
-            var['specified'] = var_tag is not None
-
-            if var_tag is None:
-                var['value'] = 0.0
-                continue
-
-            var['value'] = float(var_tag.text)
-            if 'unit' in var_tag.attrib:
-                conv = var['unit'][var_tag.attrib['unit']]
-            else:
-                conv = var['unit'][var['default_unit']]
-            var['value'] *= conv
-
+    def LoadScript(self, tree, script_path, prop_output_to_CSV=[]):
         # Generate a CSV file to check that it is correctly initialized
         # with the initial values
         output_tag = et.SubElement(tree.getroot(), 'output')
@@ -155,6 +140,25 @@ class TestInitialConditions(JSBSimTestCase):
         fdm.load_script(f)
         fdm.run_ic()
 
+        return (f, fdm)
+
+    def CheckICValues(self, vars, f, fdm, IC_root):
+        # Extract the IC values from XML
+        for var in vars:
+            var_tag = IC_root.find(var['tag'])
+            var['specified'] = var_tag is not None
+
+            if var_tag is None:
+                var['value'] = 0.0
+                continue
+
+            var['value'] = float(var_tag.text)
+            if 'unit' in var_tag.attrib:
+                conv = var['unit'][var_tag.attrib['unit']]
+            else:
+                conv = var['unit'][var['default_unit']]
+            var['value'] *= conv
+
         # Sanity check, we just initialized JSBSim with the ICs, the time must
         # be set to 0.0
         self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)
@@ -172,13 +176,13 @@ class TestInitialConditions(JSBSimTestCase):
                 if abs(prop - 360.0) <= 1E-8:
                     prop = 0.0
             self.assertAlmostEqual(value, prop, delta=1E-7,
-                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
+                                   msg="In %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
             prop = fdm[var['prop']]
             if var['tag'] == 'psi':
                 if abs(prop - 360.0) <= 1E-8:
                     prop = 0.0
             self.assertAlmostEqual(value, prop, delta=1E-7,
-                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
+                                   msg="In %s: %s should be %f but found %f" % (f, var['tag'], value, prop))
 
         # Execute the first second of the script. This is to make sure that the
         # CSV file is open and the ICs have been written in it.
@@ -186,7 +190,7 @@ class TestInitialConditions(JSBSimTestCase):
             ExecuteUntil(fdm, 1.0)
         except RuntimeError as e:
             if e.args[0] == 'Trim Failed':
-                self.fail("Trim failed in script %s" % (f,))
+                self.fail("Trim failed in %s" % (f,))
             else:
                 raise
 
@@ -207,40 +211,101 @@ class TestInitialConditions(JSBSimTestCase):
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
-                                   msg="In script %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
+                                   msg="In %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
 
-        del fdm
-
-    def test_geod_position_from_init_file_v2(self):
-        prop_output_to_CSV = ['position/geod-alt-ft']
-        vars = [{'tag': 'latitude', 'unit': convtodeg, 'default_unit': 'RAD',
-                 'ic_prop': 'ic/lat-geod-deg', 'prop': 'position/lat-geod-deg',
-                 'CSV_header': 'Latitude Geodetic (deg)'},
-                {'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
+    def GetVariables(self, lat_tag):
+        vars = [{'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
                  'ic_prop': 'ic/long-gc-deg', 'prop': 'position/long-gc-deg',
                  'CSV_header': 'Longitude (deg)'},
                 {'tag': 'altitudeAGL', 'unit': convtoft, 'default_unit': 'FT',
-                 'ic_prop': 'ic/geod-alt-ft', 'prop': 'position/geod-alt-ft',
-                 'CSV_header': '/fdm/jsbsim/position/geod-alt-ft'},
+                 'ic_prop': 'ic/h-agl-ft', 'prop': 'position/h-agl-ft',
+                 'CSV_header': 'Altitude AGL (ft)'},
                 {'tag': 'altitudeMSL', 'unit': convtoft, 'default_unit': 'FT',
                  'ic_prop': 'ic/h-sl-ft', 'prop': 'position/h-sl-ft',
                  'CSV_header': 'Altitude ASL (ft)'}]
 
+        if lat_tag is None:
+            lat_vars = []
+        elif 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
+            lat_vars = [{'tag': 'latitude', 'unit': convtodeg,
+                         'default_unit': 'RAD', 'ic_prop': 'ic/lat-gc-deg',
+                         'prop': 'position/lat-gc-deg',
+                         'CSV_header': 'Latitude (deg)'}]
+        else:
+            lat_vars = [{'tag': 'latitude', 'unit': convtodeg,
+                         'default_unit': 'RAD', 'ic_prop': 'ic/lat-geod-deg',
+                         'prop': 'position/lat-geod-deg',
+                         'CSV_header': 'Latitude Geodetic (deg)'}]
+
+        return lat_vars+vars
+
+    def test_geod_position_from_init_file_v2(self):
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
             (tree, IC_tree) = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 2.0 of init files
-            if ('version' not in IC_root.attrib
-                or float(IC_root.attrib['version']) != 2.0):
+            if ('version' not in IC_root.attrib or float(IC_root.attrib['version']) != 2.0):
                 continue
 
             position_tag = IC_root.find('position')
             lat_tag = position_tag.find('latitude')
-            if lat_tag is None or 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
-                continue
 
-            self.CheckICValues(vars, tree, position_tag, s, prop_output_to_CSV)
+            f, fdm = self.LoadScript(tree, s)
+            self.CheckICValues(self.GetVariables(lat_tag), 'script %s' % (f,),
+                               fdm, position_tag)
+            del fdm
+
+    def test_initial_latitude(self):
+        Output_file = self.sandbox.path_to_jsbsim_file('tests', 'output.xml')
+        GEODETIC, ELEVATION, ALTITUDE = (1, 2, 4)
+
+        for v in ('', '_v2'):
+            IC_file = self.sandbox.path_to_jsbsim_file('aircraft', 'ball',
+                                                       'reset00'+v+'.xml')
+
+            for i in xrange(8):
+                for latitude_pos in xrange(4):
+                    IC_tree = et.parse(IC_file)
+                    IC_root = IC_tree.getroot()
+                    if v:
+                        position_tag = IC_root.find('position')
+                        latitude_tag = et.SubElement(position_tag, 'latitude')
+                        latitude_tag.attrib['unit'] = 'DEG'
+                    else:
+                        position_tag = IC_root
+                        latitude_tag = IC_root.find('latitude')
+
+                    latitude_tag.text = str(latitude_pos*30.)
+
+                    if i & GEODETIC:
+                        latitude_tag.attrib['type'] = 'geod'
+
+                    if i & ELEVATION:
+                        elevation_tag = et.SubElement(IC_root, 'elevation')
+                        elevation_tag.text = '1000.'
+
+                    if i & ALTITUDE:
+                        if v:
+                            altitude_tag = position_tag.find('altitudeMSL')
+                            altitude_tag.tag = 'altitudeAGL'
+                        else:
+                            altitude_tag = position_tag.find('altitude')
+                            altitude_tag.tag = 'altitudeMSL'
+
+                    IC_tree.write('IC.xml')
+
+                    fdm = CreateFDM(self.sandbox)
+                    fdm.load_model('ball')
+                    fdm.set_output_directive(Output_file)
+                    fdm.set_output_filename(1, 'check_csv_values.csv')
+                    fdm.load_ic('IC.xml', False)
+                    fdm.run_ic()
+
+                    self.CheckICValues(self.GetVariables(latitude_tag),
+                                       'IC%d' % (i,), fdm, position_tag)
+
+                    del fdm
 
 RunTest(TestInitialConditions)
