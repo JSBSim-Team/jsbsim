@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.44 2016/01/10 16:35:28 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.45 2016/06/26 20:33:04 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -219,7 +219,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.44 2016/01/10 16:35:28 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.45 2016/06/26 20:33:04 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -677,6 +677,7 @@ private:
 
   FGMatrix33 Tw2b, Tb2w;
   double  alpha, beta;
+  double a, e2;
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
@@ -699,6 +700,7 @@ private:
   double GetBodyVelFpsIC(int idx) const;
   void calcAeroAngles(const FGColumnVector3& _vt_BODY);
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
+  bool LoadLatitude(Element* position_el);
   void Debug(int from);
 };
 }
