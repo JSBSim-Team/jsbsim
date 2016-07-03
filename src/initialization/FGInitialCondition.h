@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.45 2016/06/26 20:33:04 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.46 2016/07/03 17:20:55 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,8 @@ class FGPropertyManager;
 class Element;
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
-typedef enum { setasl, setagl} altitudeset;
+typedef enum { setasl, setagl } altitudeset;
+typedef enum { setgeoc, setgeod } latitudeset;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -219,7 +220,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.45 2016/06/26 20:33:04 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.46 2016/07/03 17:20:55 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -681,6 +682,7 @@ private:
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
+  latitudeset lastLatitudeSet;
   unsigned int enginesRunning;
   int needTrim;
 
@@ -700,6 +702,7 @@ private:
   double GetBodyVelFpsIC(int idx) const;
   void calcAeroAngles(const FGColumnVector3& _vt_BODY);
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
+  double ComputeGeodAltitude(double geodLatitude);
   bool LoadLatitude(Element* position_el);
   void Debug(int from);
 };

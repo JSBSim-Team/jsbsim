@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.110 2016/07/03 14:27:48 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.111 2016/07/03 17:20:55 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -104,6 +104,8 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   position.SetLongitude(lonRad0);
   position.SetLatitude(latRad0);
   position.SetAltitudeAGL(altAGLFt0);
+  lastLatitudeSet = setgeoc;
+  lastAltitudeSet = setagl;
 
   orientation = FGQuaternion(phi0, theta0, psi0);
   const FGMatrix33& Tb2l = orientation.GetTInv();
@@ -147,6 +149,7 @@ void FGInitialCondition::InitializeIC(void)
 
   lastSpeedSet = setvt;
   lastAltitudeSet = setasl;
+  lastLatitudeSet = setgeoc;
   enginesRunning = 0;
   needTrim = 0;
 }
@@ -702,8 +705,14 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double ve0 = vt * sqrt(rho/rhoSL);
   double PitotAngle = Aircraft->GetPitotAngle();
 
+  double geodLatitude = position.GetGeodLatitudeRad();
   altitudeASL=alt;
   position.SetAltitudeASL(alt);
+
+  if (lastLatitudeSet == setgeod) {
+    double h = ComputeGeodAltitude(geodLatitude);
+    position.SetPositionGeodetic(position.GetLongitude(), geodLatitude, h);
+  }
 
   soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   rho = Atmosphere->GetDensity(altitudeASL);
@@ -734,6 +743,8 @@ void FGInitialCondition::SetLatitudeRadIC(double lat)
 {
   double altitude;
 
+  lastLatitudeSet = setgeoc;
+
   switch(lastAltitudeSet) {
   case setagl:
     altitude = GetAltitudeAGLFtIC();
@@ -741,9 +752,8 @@ void FGInitialCondition::SetLatitudeRadIC(double lat)
     SetAltitudeAGLFtIC(altitude);
     break;
   default:
-    altitude = position.GetAltitudeASL();
     position.SetLatitude(lat);
-    position.SetAltitudeASL(altitude);
+    break;
   }
 }
 
@@ -910,15 +920,28 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 }
 
 //******************************************************************************
-// Load the latitude from the XML file. The computations below assume that the
-// terrain is a sphere and that the elevation is uniform all over the Earth.
-// Would that assumption fail, the computation below would need to be adapted
-// since the position radius would depend on the terrain elevation which depends
-// itself on the latitude.
+// Given an altitude above the sea level (or a position radius which is the
+// same) and a geodetic latitude, compute the geodetic altitude. It is assumed
+// that the terrain is a sphere and that the elevation is uniform all over the
+// Earth.  Would that assumption fail, the computation below would need to be
+// adapted since the position radius would depend on the terrain elevation which
+// depends itself on the latitude.
 //
 // This is an acceptable trade off because this routine is only used by
 // standalone JSBSim which uses FGDefaultGroundCallback which assumes that the
 // Earth is a sphere.
+
+double FGInitialCondition::ComputeGeodAltitude(double geodLatitude)
+{
+  double R = position.GetRadius();
+  double slat = sin(geodLatitude);
+  double RN = a / sqrt(1.0 - e2*slat*slat);
+  double p1 = e2*RN*slat*slat;
+  double p2 = e2*e2*RN*RN*slat*slat-R*R;
+  return p1 + sqrt(p1*p1-p2) - RN;
+}
+
+//******************************************************************************
 
 bool FGInitialCondition::LoadLatitude(Element* position_el)
 {
@@ -945,16 +968,14 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
     string lat_type = latitude_el->GetAttributeValue("type");
 
     if (lat_type == "geod" || lat_type == "geodetic") {
-      double R = position.GetRadius();
-      double slat = sin(latitude);
-      double RN = a / sqrt(1.0 - e2*slat*slat);
-      double p1 = e2*RN*slat*slat;
-      double p2 = e2*e2*RN*RN*slat*slat-R*R;
-      double h = p1 + sqrt(p1*p1-p2) - RN;
+      double h = ComputeGeodAltitude(latitude);
       position.SetPositionGeodetic(position.GetLongitude(), latitude, h);
+      lastLatitudeSet = setgeod;
     }
-    else
+    else {
       position.SetLatitude(latitude);
+      lastLatitudeSet = setgeoc;
+    }
   }
 
   return true;
