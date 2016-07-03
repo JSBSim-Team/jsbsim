@@ -58,7 +58,7 @@ class TestICOverride(JSBSimTestCase):
         #    <property value="..."> ic/vt-kts </property>
         # The modified script is then saved with the named 'c1724_0.xml'
         tree = et.parse(script_path)
-        run_tag = tree.getroot().find("./run")
+        run_tag = tree.getroot().find("run")
         property = et.SubElement(run_tag, 'property')
         property.text = 'ic/vt-kts'
         property.attrib['value'] = str(vt0)
@@ -88,5 +88,15 @@ class TestICOverride(JSBSimTestCase):
         mod = pd.read_csv('JSBout172B.csv')
         self.assertAlmostEqual(mod['V_{Total} (ft/s)'][0], vt0 / fpstokts,
                                delta=1E-6)
+
+    def test_asl_override_vs_geod_lat(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('c310')
+        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'c310',
+                                                     'ellington.xml'), False)
+
+        geod_lat = fdm['ic/lat-geod-deg']
+        fdm['ic/h-sl-ft'] = 35000.
+        self.assertAlmostEqual(fdm['ic/lat-geod-deg'], geod_lat)
 
 RunTest(TestICOverride)
