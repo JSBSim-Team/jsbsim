@@ -24,16 +24,19 @@ from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, append_xml,
 
 
 class TestPitotAngle(JSBSimTestCase):
+    def addPitotTube(self, root, angle):
+        metrics_tag = root.find('./metrics')
+        pitot_tag = et.SubElement(metrics_tag, 'pitot_angle')
+        pitot_tag.attrib['unit'] = 'DEG'
+        pitot_tag.text = str(angle)
+
     def test_CAS_ic(self):
         script_name = 'Short_S23_3.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
 
         # Add a Pitot angle to the Short S23
         tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, self.sandbox)
-        metrics_tag = tree.getroot().find('./metrics')
-        pitot_tag = et.SubElement(metrics_tag, 'pitot_angle')
-        pitot_tag.attrib['unit'] = 'DEG'
-        pitot_tag.text = '5.0'
+        self.addPitotTube(tree.getroot(), 5.0)
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
 
@@ -46,7 +49,7 @@ class TestPitotAngle(JSBSimTestCase):
         vc_tag = tree.getroot().find('./vc')
         VCAS = float(vc_tag.text)
         if 'unit' in vc_tag.attrib and vc_tag.attrib['unit'] == 'FT/SEC':
-            VCAS /= 1.68781
+            VCAS /= 1.68781  # Converts in kts
 
         # Run the IC and check that the model is initialized correctly
         fdm = CreateFDM(self.sandbox)
@@ -64,10 +67,8 @@ class TestPitotAngle(JSBSimTestCase):
         # Add a Pitot angle to the Cessna 172
         tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, self.sandbox)
         root = tree.getroot()
-        metrics_tag = root.find('./metrics')
-        pitot_tag = et.SubElement(metrics_tag, 'pitot_angle')
-        pitot_tag.attrib['unit'] = 'DEG'
-        pitot_tag.text = '5.0'
+        pitot_angle_deg = 5.0
+        self.addPitotTube(root, 5.0)
         contact_tag = root.find('./ground_reactions/contact')
         contact_tag.attrib['type'] = 'STRUCTURE'
         tree.write(self.sandbox('aircraft', aircraft_name,
@@ -76,7 +77,7 @@ class TestPitotAngle(JSBSimTestCase):
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path('aircraft')
         fdm.load_model('ball')
-        pitot_angle = float(pitot_tag.text) * math.pi / 180.
+        pitot_angle = pitot_angle_deg * math.pi / 180.
         weight = fdm['inertia/weight-lbs']
         spring_tag = contact_tag.find('./spring_coeff')
         spring_coeff = float(spring_tag.text)
@@ -115,5 +116,24 @@ class TestPitotAngle(JSBSimTestCase):
 
                 self.assertAlmostEqual(fdm['velocities/vc-kts'],
                                        max(0.0, vc) / 1.68781, delta=1E-7)
+
+    # Check that the VCAS is correctly updated when the initial altitude is
+    # modified and the aircraft has a tilted Pitot tube.
+    def test_alt_mod_vs_CAS(self):
+        script_name = 'Short_S23_3.xml'
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
+
+        # Add a Pitot angle to the Short S23
+        tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
+        self.addPitotTube(tree.getroot(), 10.0)
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_model('Short_S23')
+        fdm['ic/vc-kts'] = 172.0
+        fdm['ic/h-sl-ft'] = 15000.
+        fdm.run_ic()
+        self.assertAlmostEqual(fdm['velocities/vc-kts'], 172.0, delta=1E-7)
 
 RunTest(TestPitotAngle)
