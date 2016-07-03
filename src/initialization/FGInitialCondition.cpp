@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.108 2016/06/26 20:33:04 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.109 2016/07/03 13:55:59 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -700,6 +700,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double mach0 = vt / soundSpeed;
   double vc0 = VcalibratedFromMach(mach0, pressure, pressureSL, rhoSL);
   double ve0 = vt * sqrt(rho/rhoSL);
+  double PitotAngle = Aircraft->GetPitotAngle();
 
   altitudeASL=alt;
   position.SetAltitudeASL(alt);
@@ -710,8 +711,9 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = MachFromVcalibrated(vc0, pressure, pressureSL, rhoSL);
-      SetVtrueFpsIC(mach0 * soundSpeed);
+      mach0 = MachFromVcalibrated(vc0 * cos(alpha+PitotAngle), pressure,
+                                  pressureSL, rhoSL);
+      SetVtrueFpsIC(mach0 * soundSpeed / cos(alpha+PitotAngle));
       break;
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
