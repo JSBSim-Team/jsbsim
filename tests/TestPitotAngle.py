@@ -131,9 +131,13 @@ class TestPitotAngle(JSBSimTestCase):
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path('aircraft')
         fdm.load_model('Short_S23')
+        fdm['ic/beta-deg'] = 15.0  # Add some sideslip
         fdm['ic/vc-kts'] = 172.0
         fdm['ic/h-sl-ft'] = 15000.
+        self.assertAlmostEqual(fdm['ic/vc-kts'], 172.0, delta=1E-7)
+        self.assertAlmostEqual(fdm['ic/beta-deg'], 15.0, delta=1E-7)
         fdm.run_ic()
         self.assertAlmostEqual(fdm['velocities/vc-kts'], 172.0, delta=1E-7)
+        self.assertAlmostEqual(fdm['aero/beta-deg'], 15.0, delta=1E-7)
 
 RunTest(TestPitotAngle)
