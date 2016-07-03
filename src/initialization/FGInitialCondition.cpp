@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.109 2016/07/03 13:55:59 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.110 2016/07/03 14:27:48 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -711,9 +711,9 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = MachFromVcalibrated(vc0 * cos(alpha+PitotAngle), pressure,
-                                  pressureSL, rhoSL);
-      SetVtrueFpsIC(mach0 * soundSpeed / cos(alpha+PitotAngle));
+      mach0 = MachFromVcalibrated(vc0 * cos(alpha+PitotAngle) * cos(beta),
+                                  pressure, pressureSL, rhoSL);
+      SetVtrueFpsIC(mach0 * soundSpeed / (cos(alpha+PitotAngle) * cos(beta)));
       break;
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
