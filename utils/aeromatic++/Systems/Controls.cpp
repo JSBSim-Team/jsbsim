@@ -694,6 +694,7 @@ std::string CableControls::yaw()
     file << "           <property>metrics/Sw-sqft</property>" << std::endl;
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/alpha-rad</property>" << std::endl;
+    file << "           <property>fcs/gear-no-wow</property>" << std::endl;
 
     file << "           <table>" << std::endl;
         file << "             <independentVar lookup=\"row\">aero/beta-rad</independentVar>" << std::endl;
