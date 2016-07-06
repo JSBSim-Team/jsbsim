@@ -22,14 +22,14 @@
 <propeller version="1.01" name="prop">
   <ixx> 6.01793 </ixx>
   <diameter unit="IN"> 95 </diameter>
-  <numblades> 4 </numblades>
-  <gearratio> 15.8224 </gearratio>
+  <numblades> 3 </numblades>
+  <gearratio> 18.75 </gearratio>
   <cp_factor> 1.00 </cp_factor>
-  <ct_factor> 1.00 </ct_factor>
-  <minpitch> 12 </minpitch>
+  <ct_factor> 1.10 </ct_factor>
+  <minpitch> -12 </minpitch>
   <maxpitch> 45 </maxpitch>
-  <minrpm> 2014.55 </minrpm>
-  <maxrpm> 2370.06 </maxrpm>
+  <minrpm> 1900 </minrpm>
+  <maxrpm> 2200 </maxrpm>
 
  <!-- thrust coefficient as a function of advance ratio and blade angle -->
   <table name="C_THRUST" type="internal">
