@@ -18,7 +18,8 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+import xml.etree.ElementTree as et
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, CopyAircraftDef, ExecuteUntil
 
 
 class TestKinematic(JSBSimTestCase):
@@ -98,5 +99,48 @@ class TestKinematic(JSBSimTestCase):
         # <kinematic> system does not interfer with the trim on ground
         # algorithm.
         fdm['simulation/do_simple_trim'] = 2  # Ground trim
+
+        # Check that the gear is down after the trim as requested by
+        # gear/gear-cmd-norm
+        self.assertAlmostEqual(fdm['gear/gear-pos-norm'], 1.0)
+
+        # Check that the gear is not moving to another position after trim.
+        fdm.run()
+        self.assertAlmostEqual(fdm['gear/gear-pos-norm'], 1.0)
+
+    def testKinematicSetInitialValue(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('p51d')
+        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'p51d',
+                                                     'reset01'), False)
+        fdm.run_ic()
+
+        fdm['gear/gear-cmd-norm'] = 0.5
+        fdm['gear/gear-pos-norm'] = 0.5
+
+        while fdm['simulation/sim-time-sec'] < 1.0:
+            fdm.run()
+            self.assertAlmostEqual(fdm['gear/gear-cmd-norm'], 0.5)
+            self.assertAlmostEqual(fdm['gear/gear-pos-norm'], 0.5)
+
+    def testKinematicNoScale(self):
+        # Test the <nocale/> feature
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1721.xml')
+        tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
+        kinematic_tag = tree.getroot().find('flight_control/channel/kinematic')
+        et.SubElement(kinematic_tag, 'noscale')
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_model(aircraft_name)
+
+        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
+                                                     'reset00'), False)
+        fdm.run_ic()
+        fdm['fcs/flap-cmd-norm'] = 12.
+        ExecuteUntil(fdm, 2.2)
+        self.assertAlmostEqual(fdm['fcs/flap-pos-deg'], 12.)
 
 RunTest(TestKinematic)
