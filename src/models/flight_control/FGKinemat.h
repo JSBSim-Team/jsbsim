@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.12 2016/06/12 14:47:46 bcoconni Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.13 2016/07/09 11:35:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -56,14 +56,16 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates a kinematic (mechanical) component for the flight control system.
-This component models the action of a moving effector, such as an aerosurface or
-other mechanized entity such as a landing gear strut for the purpose of effecting
-vehicle control or configuration. The form of the component specification is:
+/** Encapsulates a kinematic (mechanical) component for the flight control
+system.  This component models the action of a moving effector, such as an
+aerosurface or other mechanized entity such as a landing gear strut for the
+purpose of effecting vehicle control or configuration. The form of the component
+specification is:
 
 @code
 <kinematic name="Gear Control">
   <input> [-]property </input>
+  [<noscale/>]
   <traverse>
     <setting>
       <position> number </position>
@@ -102,6 +104,13 @@ takes to get to that position from an adjacent setting. For example:
 
 In this case, it takes 5 seconds to get to a 1 setting. As this is a software
 mechanization of a servo-actuator, there should be an output specified.
+
+Positions must be given in ascending order.
+
+By default, the input is assumed to be in the range [-1;1] and is scaled to the
+value specified in the last <position> tag. This behavior can be modified by
+adding a <noscale/> tag to the component definition: in that case, the input
+value is directly used to determine the current position of the component.
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
