@@ -13,6 +13,6 @@
   <theta unit="DEG">       0.0  </theta>
   <psi unit="DEG">         0.0  </psi>
   <altitude unit="FT">     7.1 </altitude>
-  <elevation unit="FT">    0.0  </elevation>
+  <elevation unit="FT"> 2000.0 </elevation>
   <hwind> 0.0 </hwind>
 </initialize>
