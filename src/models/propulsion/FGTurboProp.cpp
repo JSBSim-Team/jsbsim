@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.33 2015/12/07 10:01:48 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.34 2016/07/10 09:16:37 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,11 +64,10 @@ CLASS IMPLEMENTATION
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
   : FGEngine(engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL), EnginePowerVCFN(NULL), CombustionEfficiency_N1(NULL),
-    FDMExec(exec)
+    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL),
+    CombustionEfficiency_N1(NULL)
 {
   SetDefaults();
-
   Load(exec, el);
   Debug(0);
 }
@@ -79,7 +78,8 @@ FGTurboProp::~FGTurboProp()
 {
   delete ITT_N1;
   delete EnginePowerRPM_N1;
-  delete EnginePowerVC;
+  if (dynamic_cast<FGTable*>(EnginePowerVC))
+    delete EnginePowerVC;
   delete CombustionEfficiency_N1;
   Debug(1);
 }
@@ -106,7 +106,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 
   string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
 
-  EnginePowerVCFN = GetPreFunction(property_prefix+"/EnginePowerVC");
+  EnginePowerVC = GetPreFunction(property_prefix+"/EnginePowerVC");
 
 
 // ToDo: Need to make sure units are properly accounted for below.
@@ -146,17 +146,16 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("itt_delay"))
     ITT_Delay = el->FindElementValueAsNumber("itt_delay");
 
-  Element *table_element;
-  string name;
+  Element *table_element = el->FindElement("table");
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();
 
-  while (true) {
-    table_element = el->FindNextElement("table");
-    if (!table_element) break;
-    name = table_element->GetAttributeValue("name");
-    if (!EnginePowerVCFN && name == "EnginePowerVC") {
+  while (table_element) {
+    string name = table_element->GetAttributeValue("name");
+    if (!EnginePowerVC && name == "EnginePowerVC") {
       EnginePowerVC = new FGTable(PropertyManager, table_element);
-      std::cerr << "Note: Using the EnginePowerVC without enclosed <function> tag is deprecated" << std::endl;
+      cerr << table_element->ReadFrom()
+           <<"Note: Using the EnginePowerVC without enclosed <function> tag is deprecated"
+           << endl;
     } else if (name == "EnginePowerRPM_N1") {
       EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
@@ -167,6 +166,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
       cerr << el->ReadFrom() << "Unknown table type: " << name
            << " in turboprop definition." << endl;
     }
+    table_element = el->FindNextElement("table");
   }
 
   // Pre-calculations and initializations
@@ -188,7 +188,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     *CombustionEfficiency_N1 << 110.0 << 6.0;
   }
   
-  bindmodel(exec->GetPropertyManager());
+  bindmodel(PropertyManager);
   return true;
 }
 
@@ -199,8 +199,6 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 void FGTurboProp::Calculate(void)
 {
   RunPreFunctions();
-
-  TAT = in.TAT_c;
 
   ThrottlePos = in.ThrottlePos[EngineNumber];
 
@@ -237,9 +235,9 @@ void FGTurboProp::Calculate(void)
     } else {
       phase = tpOff;
       Cutoff = true;
-      Eng_ITT_degC = TAT;
-      Eng_Temperature = TAT;
-      OilTemp_degK = TAT+273.15;
+      Eng_ITT_degC = in.TAT_c;
+      Eng_Temperature = in.TAT_c;
+      OilTemp_degK = in.TAT_c+273.15;
     }
   }
 
@@ -312,9 +310,9 @@ double FGTurboProp::Off(void)
   //allow the air turn with generator
   N1 = ExpSeek(&N1, in.qbar/15.0, Idle_Max_Delay*2.5, Idle_Max_Delay * 5);
 
-  OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + TAT, 400 , 400);
+  OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + in.TAT_c, 400 , 400);
 
-  Eng_Temperature = ExpSeek(&Eng_Temperature,TAT,300,400);
+  Eng_Temperature = ExpSeek(&Eng_Temperature,in.TAT_c,300,400);
   double ITT_goal = ITT_N1->GetValue(N1,0.1) + ((N1>20) ? 0.0 : (20-N1)/20.0 * Eng_Temperature);
   Eng_ITT_degC  = ExpSeek(&Eng_ITT_degC,ITT_goal,ITT_Delay,ITT_Delay*1.2);
 
@@ -338,7 +336,7 @@ double FGTurboProp::Run(void)
   N1 = ExpSeek(&N1, IdleN1 + ThrottlePos * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-  EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
+  EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
   CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);
@@ -377,17 +375,17 @@ double FGTurboProp::SpinUp(void)
 
   N1 = ExpSeek(&N1, StarterN1, Idle_Max_Delay * 6, Idle_Max_Delay * 2.4);
 
-  Eng_Temperature = ExpSeek(&Eng_Temperature,TAT,300,400);
+  Eng_Temperature = ExpSeek(&Eng_Temperature,in.TAT_c,300,400);
   double ITT_goal = ITT_N1->GetValue(N1,0.1) + ((N1>20) ? 0.0 : (20-N1)/20.0 * Eng_Temperature);
   Eng_ITT_degC  = ExpSeek(&Eng_ITT_degC,ITT_goal,ITT_Delay,ITT_Delay*1.2);
 
-  OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + TAT, 400 , 400);
+  OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + in.TAT_c, 400 , 400);
 
   OilPressure_psi = (N1/100.0*0.25+(0.1-(OilTemp_degK-273.15)*0.1/80.0)*N1/100.0) / 7692.0e-6; //from MPa to psi
   NozzlePosition = 1.0;
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-  EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
+  EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 
   if (StartTime>=0) StartTime+=in.TotalDeltaT;
@@ -411,7 +409,7 @@ double FGTurboProp::Start(void)
     Cranking = true;                   // provided for sound effects signal
     if (N1 < IdleN1) {
       EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
-      EngPower_HP *= EnginePowerVCFN ? EnginePowerVCFN->GetValue() : EnginePowerVC->GetValue();
+      EngPower_HP *= EnginePowerVC->GetValue();
       if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
       N1 = ExpSeek(&N1, IdleN1*1.1, Idle_Max_Delay*4, Idle_Max_Delay * 2.4);
       CombustionEfficiency = CombustionEfficiency_N1->GetValue(N1);
@@ -548,12 +546,13 @@ string FGTurboProp::GetEngineValues(const string& delimiter)
 
 int FGTurboProp::InitRunning(void)
 {
-  FDMExec->SuspendIntegration();
+  double dt = in.TotalDeltaT;
+  in.TotalDeltaT = 0.0;
   Cutoff=false;
   Running=true;  
   N2=16.0;
   Calculate();
-  FDMExec->ResumeIntegration();
+  in.TotalDeltaT = dt;
   return phase==tpRun;
 }
 

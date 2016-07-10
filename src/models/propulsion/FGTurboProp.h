@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.22 2015/12/07 10:01:48 ehofman Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.23 2016/07/10 09:16:37 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -163,7 +163,6 @@ private:
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottlePos;      ///< FCS-supplied throttle position, modified locally
-  double TAT;              ///< total air temperature (deg C)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
@@ -190,8 +189,6 @@ private:
   double StarterN1;            // rotates of generator maked by starter [%]
   double MaxStartingTime;      // maximal time for start [s] (-1 means not used)
   double RPM;                  // shaft RPM
-  //double Velocity;
-  //double rho;
   double PSFC;                 // Power specific fuel comsumption [lb/(HP*hr)] at best efficiency
   double CombustionEfficiency;
 
@@ -220,10 +217,8 @@ private:
 
   FGTable* ITT_N1;             // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
-  FGTable* EnginePowerVC;
-  FGFunction* EnginePowerVCFN;
+  FGParameter* EnginePowerVC;
   FGTable* CombustionEfficiency_N1;
-  FGFDMExec* FDMExec;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
