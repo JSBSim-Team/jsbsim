@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.34 2016/07/10 09:16:37 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.35 2016/07/10 12:39:28 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,12 +115,8 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     MilThrust = el->FindElementValueAsNumberConvertTo("milthrust","LBS");
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
-  if (el->FindElement("idlen2"))
-    IdleN2 = el->FindElementValueAsNumber("idlen2");
   if (el->FindElement("maxn1"))
     MaxN1 = el->FindElementValueAsNumber("maxn1");
-  if (el->FindElement("maxn2"))
-    MaxN2 = el->FindElementValueAsNumber("maxn2");
   if (el->FindElement("betarangeend"))
     BetaRangeThrottleEnd = el->FindElementValueAsNumber("betarangeend")/100.0;
   BetaRangeThrottleEnd = Constrain(0.0, BetaRangeThrottleEnd, 0.99999);
@@ -173,7 +169,6 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 
   delay=1;
   N1_factor = MaxN1 - IdleN1;
-  N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = in.TAT_c + 273.0;
 
   // default table based on '9.333 - (N1)/12.0' approximation
@@ -228,7 +223,6 @@ void FGTurboProp::Calculate(void)
   if ((phase == tpTrim) && (in.TotalDeltaT > 0)) {
     if (Running && !Starved) {
       phase = tpRun;
-      N2 = IdleN2;
       N1 = IdleN1;
       OilTemp_degK = 366.0;
       Cutoff = false;
@@ -382,7 +376,6 @@ double FGTurboProp::SpinUp(void)
   OilTemp_degK = ExpSeek(&OilTemp_degK,273.15 + in.TAT_c, 400 , 400);
 
   OilPressure_psi = (N1/100.0*0.25+(0.1-(OilTemp_degK-273.15)*0.1/80.0)*N1/100.0) / 7692.0e-6; //from MPa to psi
-  NozzlePosition = 1.0;
 
   EngPower_HP = EnginePowerRPM_N1->GetValue(RPM,N1);
   EngPower_HP *= EnginePowerVC->GetValue();
@@ -404,7 +397,7 @@ double FGTurboProp::Start(void)
   double EngPower_HP = 0.0;
 
   EngStarting = false;
-  if ((N1 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
+  if ((N1 > 15.0) && !Starved) {       // minimum 15% N1 needed for start
     double old_N1 = N1;
     Cranking = true;                   // provided for sound effects signal
     if (N1 < IdleN1) {
@@ -428,7 +421,7 @@ double FGTurboProp::Start(void)
       Cranking = false;
       FuelFlow_pph = 0;
     }
-  } else {                 // no start if N2 < 15% or Starved
+  } else {                 // no start if N1 < 15% or Starved
     phase = tpOff;
     Starter = false;
   }
@@ -481,23 +474,15 @@ double FGTurboProp::ExpSeek(double *var, double target, double accel_tau, double
 void FGTurboProp::SetDefaults(void)
 {
 //  Name = "Not defined";
-  N1 = N2 = 0.0;
+  N1 = 0.0;
   HP = 0.0;
   Type = etTurboprop;
   MilThrust = 10000.0;
   IdleN1 = 30.0;
-  IdleN2 = 60.0;
   MaxN1 = 100.0;
-  MaxN2 = 100.0;
-  InletPosition = 1.0;
-  NozzlePosition = 1.0;
   Reversed = false;
   Cutoff = true;
   phase = tpOff;
-  Stalled = false;
-  Seized = false;
-  Overtemp = false;
-  Fire = false;
   Eng_ITT_degC = 0.0;
 
   GeneratorPower=true;
@@ -521,7 +506,6 @@ string FGTurboProp::GetEngineLabels(const string& delimiter)
   std::ostringstream buf;
 
   buf << Name << "_N1[" << EngineNumber << "]" << delimiter
-      << Name << "_N2[" << EngineNumber << "]" << delimiter
       << Name << "_PwrAvail[" << EngineNumber << "]" << delimiter
       << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
@@ -535,7 +519,6 @@ string FGTurboProp::GetEngineValues(const string& delimiter)
   std::ostringstream buf;
 
   buf << N1 << delimiter
-      << N2 << delimiter
       << HP << delimiter
       << Thruster->GetThrusterValues(EngineNumber,delimiter);
 
@@ -550,7 +533,6 @@ int FGTurboProp::InitRunning(void)
   in.TotalDeltaT = 0.0;
   Cutoff=false;
   Running=true;  
-  N2=16.0;
   Calculate();
   in.TotalDeltaT = dt;
   return phase==tpRun;
@@ -564,8 +546,6 @@ void FGTurboProp::bindmodel(FGPropertyManager* PropertyManager)
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
   property_name = base_property_name + "/n1";
   PropertyManager->Tie( property_name.c_str(), &N1);
-  // property_name = base_property_name + "/n2";
-  // PropertyManager->Tie( property_name.c_str(), &N2);
   property_name = base_property_name + "/reverser";
   PropertyManager->Tie( property_name.c_str(), &Reversed);
   property_name = base_property_name + "/power-hp";

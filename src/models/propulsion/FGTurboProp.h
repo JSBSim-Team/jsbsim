@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.23 2016/07/10 09:16:37 bcoconni Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.24 2016/07/10 12:39:28 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,13 +102,13 @@ public:
   /// Destructor
   ~FGTurboProp();
 
-  enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
+  enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpTrim };
 
   void Calculate(void);
   double CalcFuelNeed(void);
 
   double GetPowerAvailable(void) const { return (HP * hptoftlbssec); }
-  double GetRPM(void) const { return (RPM); }
+  double GetRPM(void) const { return RPM; }
   double GetIeluThrottle(void) const { return (ThrottlePos); }
   bool GetIeluIntervent(void) const { return Ielu_intervent; }
 
@@ -117,16 +117,10 @@ public:
 
   phaseType GetPhase(void) const { return phase; }
 
-  bool GetOvertemp(void) const {return Overtemp; }
-  bool GetFire(void) const { return Fire; }
   bool GetReversed(void) const { return Reversed; }
   bool GetCutoff(void) const { return Cutoff; }
-  int GetIgnition(void) const {return Ignition;}
 
-  double GetInlet(void) const { return InletPosition; }
-  double GetNozzle(void) const { return NozzlePosition; }
   double GetN1(void) const {return N1;}
-  double GetN2(void) const {return N2;}
   double GetEPR(void) const {return EPR;}
   double GetITT(void) const {return Eng_ITT_degC;}
   double GetEngStarting(void) const { return EngStarting; }
@@ -137,7 +131,6 @@ public:
   inline bool GetGeneratorPower(void) const { return GeneratorPower; }
   inline int GetCondition(void) const { return Condition; }
 
-  void SetIgnition(int ignition) {Ignition = ignition;}
   void SetPhase( phaseType p ) { phase = p; }
   void SetEPR(double epr) {EPR = epr;}
   void SetReverse(bool reversed) { Reversed = reversed; }
@@ -154,28 +147,17 @@ private:
   phaseType phase;         ///< Operating mode, or "phase"
   double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
   double IdleN1;           ///< Idle N1
-  double IdleN2;           ///< Idle N2
   double N1;               ///< N1
-  double N2;               ///< N2
   double MaxN1;            ///< N1 at 100% throttle
-  double MaxN2;            ///< N2 at 100% throttle
   double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
   double N1_factor;        ///< factor to tie N1 and throttle
-  double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottlePos;      ///< FCS-supplied throttle position, modified locally
-  bool Stalled;            ///< true if engine is compressor-stalled
-  bool Seized;             ///< true if inner spool is seized
-  bool Overtemp;           ///< true if EGT exceeds limits
-  bool Fire;               ///< true if engine fire detected
   bool Reversed;
   bool Cutoff;
-  int Ignition;
 
   double EPR;
   double OilPressure_psi;
   double OilTemp_degK;
-  double InletPosition;
-  double NozzlePosition;
 
   double Ielu_max_torque;      // max propeller torque (before ielu intervent)
   bool Ielu_intervent;
