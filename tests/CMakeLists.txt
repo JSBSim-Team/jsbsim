@@ -49,7 +49,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestSuspend
                  TestLGearSteer
                  TestAeroFuncOutput
-                 TestKinematic)
+                 TestKinematic
+                 TestTurboProp)
 
 foreach(test ${PYTHON_TESTS})
   add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
