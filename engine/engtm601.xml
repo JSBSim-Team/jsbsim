@@ -31,7 +31,6 @@ itt_delay [-] time constant for ITT change
   <maxn1>                       100.0   </maxn1>
   <maxpower unit="HP">          700.0   </maxpower>
   <psfc unit="LBS/HR/HP">         0.669 </psfc>
-  <idlefuelflow>                 50.0   </idlefuelflow>
   <n1idle_max_delay>              1     </n1idle_max_delay>
   <maxstartingtime>              20     </maxstartingtime>
   <startern1>                    20     </startern1>
