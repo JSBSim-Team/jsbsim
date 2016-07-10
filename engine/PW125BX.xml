@@ -4,8 +4,6 @@ MILTHRUST   [LBS]
 MAXTHRUST   [LBS]
 idlen1      [%]
 maxn1       [%]
-idlen2      [%]
-maxn2       [%]
 betarangeend[%]
     if ThrottleCmd < betarangeend/100.0 then engine power=idle, propeller pitch
     is controled by ThrottleCmd (between MINPITCH and  REVERSEPITCH).
@@ -27,15 +25,12 @@ itt_delay [-] time constant for ITT change
     (ITT = Inter Turbine Temperature)
 -->
 
-<turboprop_engine name="M601">
+<turboprop_engine name="PW125BX">
   <milthrust unit="LBS">       5712   </milthrust>
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
-  <idlen2>                       60.0   </idlen2>
-  <maxn2>                       100.0   </maxn2>
   <maxpower unit="HP">          2500   </maxpower>
   <psfc unit="LBS/HR/HP">         0.31 </psfc>
-  <idlefuelflow>                 50.0   </idlefuelflow>
   <n1idle_max_delay>              1     </n1idle_max_delay>
   <maxstartingtime>              20     </maxstartingtime>
   <startern1>                    20     </startern1>
