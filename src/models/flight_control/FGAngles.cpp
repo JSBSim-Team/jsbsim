@@ -74,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGAngles.cpp,v 1.4 2014/01/13 10:46:07 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGAngles.cpp,v 1.5 2016/07/27 22:42:47 andgi Exp $");
 IDENT(IdHdr,ID_ANGLES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +145,8 @@ bool FGAngles::Run(void )
   double x2 = cos(target_angle);
   double y2 = sin(target_angle);
 
-  double angle_to_heading_rad = acos(x1*x2 + y1*y2);
+  double x1x2_y1y2 = max(-1.0, min(x1*x2 + y1*y2, 1.0));
+  double angle_to_heading_rad = acos(x1x2_y1y2);
   double x1y2 = x1*y2;
   double x2y1 = x2*y1;
 
