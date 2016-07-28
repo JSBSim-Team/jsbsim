@@ -304,13 +304,14 @@ void Propeller::set_thruster(float mrpm)
     }
 
     // estimate the number of blades
+printf("_Cp0: %f\n", _Cp0);
     if (_Cp0 < 0.035f) {
       _blades = 2;
-    } else if (_Cp0 > 0.160f) {
+    } else if (_Cp0 > 0.280f) {
         _blades = 8;
-    } else if (_Cp0 > 0.105f) {
+    } else if (_Cp0 > 0.140f) {
       _blades = 6;
-    } else if (_Cp0 > 0.065f) {
+    } else if (_Cp0 > 0.070f) {
       _blades = 4;
     } else {
       _blades = 3;
@@ -497,12 +498,12 @@ std::string Propeller::thruster()
     file << std::endl;
 
     file << "<propeller version=\"1.01\" name=\"prop\">" << std::endl;
-    file << "  <ixx> " << _ixx << " </ixx>" << std::endl;
+    file << "  <ixx> " << _ixx * _blades << " </ixx>" << std::endl;
     file << "  <diameter unit=\"IN\"> " << (_diameter * FEET_TO_INCH) << " </diameter>" << std::endl;
     file << "  <numblades> " << _blades << " </numblades>" << std::endl;
     file << "  <gearratio> " << _gear_ratio << " </gearratio>" << std::endl;
     file << "  <cp_factor> 1.00 </cp_factor>" << std::endl;
-    file << "  <ct_factor> 1.00 </ct_factor>" << std::endl;
+    file << "  <ct_factor> " << _blades << " </ct_factor> <!-- set to match the number of blades -->" << std::endl;
 
     if(_fixed_pitch == false)
     {
