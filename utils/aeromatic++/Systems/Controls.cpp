@@ -393,8 +393,19 @@ std::string CableControls::drag()
     CDmax = 1.28f * 1.1f*(Sw+(Sh/Sw))/Sw;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
-    file << "    <function name=\"aero/force/Drag_basic\">" << std::endl;
+    file << "    <function name=\"aero/force/Drag_zero_lift\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "          <property>aero/qbar-psf</property>" << std::endl;
+    file << "          <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "          <value> " << (CD0) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>" << std::endl;
+    file << std::endl;
+
+    file << std::setprecision(4) << std::fixed << std::showpoint;
+    file << "    <function name=\"aero/force/Drag_alpha\">" << std::endl;
+    file << "       <description>Drag due to alpha</description>" << std::endl;
     file << "       <product>" << std::endl;
     file << "          <property>aero/qbar-psf</property>" << std::endl;
     file << "          <property>metrics/Sw-sqft</property>" << std::endl;
@@ -402,9 +413,9 @@ std::string CableControls::drag()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "             -1.57    " << (CDmax) << std::endl;
-    file << "             " << std::setprecision(2) << (-alpha) << "    " << std::setprecision(4) << (CD0 + alpha * CDalpha) << std::endl;
-    file << "              0.00    " << (CD0) << std::endl;
-    file << "              " << std::setprecision(2) << (alpha) << "    " << std::setprecision(4) << (CD0 + alpha * CDalpha) << std::endl;
+    file << "             " << std::setprecision(2) << (-alpha) << "    " << std::setprecision(4) << (alpha * CDalpha) << std::endl;
+    file << "              0.00    " << 0.0f << std::endl;
+    file << "              " << std::setprecision(2) << (alpha) << "    " << std::setprecision(4) << (alpha * CDalpha) << std::endl;
     file << "              1.57    " << (CDmax) << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
