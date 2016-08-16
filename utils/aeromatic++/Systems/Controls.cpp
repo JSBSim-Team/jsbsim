@@ -37,6 +37,7 @@
 
 #include <math.h>
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 
@@ -290,19 +291,21 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_Cndr = -Vv*Cltdr;
 
 #if 0
-printf("Cma: %f, Cmadot: %f, Cmq: %f, Cmde: %f\n",  _aircraft->_Cmalpha, _aircraft->_Cmadot, _aircraft->_Cmq, _aircraft->_Cmde);
-printf("CYbeta: %f, CYr: %f, CYp: %f, CYdr: %f\n", _aircraft->_CYbeta, _aircraft->_CYr, _aircraft->_CYp, _aircraft->_CYdr);
-printf("Cnbeta: %f, Cnr: %f, Cnp: %f, Cndr: %f\n", _aircraft->_Cnbeta, _aircraft->_Cnr, _aircraft->_Cnp, _aircraft->_Cndr);
-printf("Clbeta: %f, Clr: %f, Clp: %f\n", _aircraft->_Clbeta, _aircraft->_Clr, _aircraft->_Clp);
+ printf("Cma: %f, Cmadot: %f, Cmq: %f, Cmde: %f\n",  _aircraft->_Cmalpha, _aircraft->_Cmadot, _aircraft->_Cmq, _aircraft->_Cmde);
+ printf("CYbeta: %f, CYr: %f, CYp: %f, CYdr: %f\n", _aircraft->_CYbeta, _aircraft->_CYr, _aircraft->_CYp, _aircraft->_CYdr);
+ printf("Cnbeta: %f, Cnr: %f, Cnp: %f, Cndr: %f\n", _aircraft->_Cnbeta, _aircraft->_Cnr, _aircraft->_Cnp, _aircraft->_Cndr);
+ printf("Clbeta: %f, Clr: %f, Clp: %f\n", _aircraft->_Clbeta, _aircraft->_Clr, _aircraft->_Clp);
 #endif
 }
 
 
 std::string CableControls::lift()
 {
-    float CLalpha, CLmax, CL0, CLde, CLq, CLadot, alpha;
+    float CLalpha, CLmax, CL0, CLde, CLq, CLadot;
+    float alpha, alpha0, TCF;
     std::stringstream file;
 
+    TCF = 1.0f + _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
     CLalpha = _aircraft->_CLalpha[0];
     CLmax = _aircraft->_CLmax[0];
     CL0 = _aircraft->_CL0;
@@ -311,7 +314,20 @@ std::string CableControls::lift()
     CLde = _aircraft->_CLde;
 
     alpha = (CLmax-CL0)/CLalpha;
+    alpha0 = -CL0/CLalpha;
 
+    if (alpha >= 0.60) {
+        std::cerr << std::endl;
+        std::cerr << "*** ERROR: The alpha value for maximum lift is too high." << std::endl;
+        std::cerr << "           This means the specified Stall Speed was too low." << std::endl;
+        std::cerr << "           Make sure it is for a clean (no gear and no flaps) configurtion." << std::endl;
+        std::cerr << std::endl;
+    }
+
+    // Post stall behaviour is loosly based on:
+    // http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140000500.pdf
+
+    file << "    <!-- Lift above 0.85 and below -0.85 is generalised -->" << std::endl;
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/force/Lift_alpha\">" << std::endl;
     file << "      <description>Lift due to alpha</description>" << std::endl;
@@ -321,10 +337,19 @@ std::string CableControls::lift()
     file << "          <table>" << std::endl;
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
-    file << "              -0.20 " << std::setw(5) << (-0.2*CLalpha + CL0) << std::endl;
+    file << "              -1.57  0.0000" << std::endl;
+    file << "              -1.22 " << std::setw(6) << (-0.6428*TCF) << std::endl;
+    file << "              -1.05 " << std::setw(6) << (-0.8660*TCF) << std::endl;
+    file << "              -0.88 " << std::setw(6) << (-1.0f*TCF) << std::endl;
+    file << "              " << std::setprecision(2) << (-0.6+alpha0) << " " << std::setw(6) << std::setprecision(4) << -(CLmax-(0.6*alpha*CLalpha)-CL0) << std::endl;
+    file << "              " << std::setprecision(2) << (-alpha+alpha0) << std::setprecision(4) << " " << (-CLmax) << std::endl;
     file << "               0.00  " << std::setw(6) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
     file << "               0.60  " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+    file << "               0.88  " << std::setw(6) << (1.0f*TCF) << std::endl;
+    file << "               1.05  " << std::setw(6) << (0.8660*TCF) << std::endl;
+    file << "               1.22  " << std::setw(6) << (0.6428*TCF) << std::endl;
+    file << "               1.57  0.0000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "      </product>" << std::endl;
@@ -1197,6 +1222,10 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
         M = 2.0f; M2 = M*M;
         CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
 
+/*
+ * Comparison of different methods of estimating the Oswald factor (Grosu).
+ * http://www.fzt.haw-hamburg.de/pers/Scholz/OPerA/OPerA_PUB_DLRK_12-09-10.pdf
+ */
         // Pamadi approximation for Oswald Efficiency Factor e
         k = (AR*TR) / cosf(sweep_le);
         R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
