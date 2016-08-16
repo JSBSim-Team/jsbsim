@@ -342,7 +342,7 @@ std::string CableControls::lift()
     file << "              -1.05 " << std::setw(6) << (-0.8660*TCF) << std::endl;
     file << "              -0.88 " << std::setw(6) << (-1.0f*TCF) << std::endl;
     file << "              " << std::setprecision(2) << (-0.6+alpha0) << " " << std::setw(6) << std::setprecision(4) << -(CLmax-(0.6*alpha*CLalpha)-CL0) << std::endl;
-    file << "              " << std::setprecision(2) << (-alpha+alpha0) << std::setprecision(4) << " " << (-CLmax) << std::endl;
+    file << "              " << std::setprecision(2) << (-alpha+alpha0) << std::setprecision(4) << " " << (-CLmax+CL0) << std::endl;
     file << "               0.00  " << std::setw(6) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
     file << "               0.60  " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
