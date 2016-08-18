@@ -174,6 +174,11 @@ void JetTransport::set_yaw()
 }
 // ----------------------------------------------------------------------------
 
+float const JetTransport::_fuselage_diameter_t[1][5] =
+{
+    { 4.0f, 8.0f, 10.0f, 19.5f, 22.5f }
+};
+
 float const JetTransport::_wing_loading_t[1][5] =
 {
     { 110.0f, 110.0f, 110.0f, 110.0f, 110.0f }

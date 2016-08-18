@@ -196,7 +196,7 @@ void CableControls::set(const float* cg_loc)
 
     float zw = -0.0f; // z-pos. wing: positive down
     float zv = -1.0f; // z-pos. vertical tail:  positive down
-    float fus_diameter = AR/bw; // 0.1f*bw;
+    float fus_diameter = _aircraft->get_fuselage_diameter();
     float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*fus_diameter)/(bw*bw));
     float Clbvt = -(zv/bw)*CLah[0];
 
@@ -302,10 +302,10 @@ void CableControls::set(const float* cg_loc)
 std::string CableControls::lift()
 {
     float CLalpha, CLmax, CL0, CLde, CLq, CLadot;
-    float alpha, alpha0, TCF;
+    float alpha, alpha0, TC;
     std::stringstream file;
 
-    TCF = 1.0f + _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
+    TC = _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
     CLalpha = _aircraft->_CLalpha[0];
     CLmax = _aircraft->_CLmax[0];
     CL0 = _aircraft->_CL0;
@@ -338,17 +338,17 @@ std::string CableControls::lift()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "              -1.57  0.0000" << std::endl;
-    file << "              -1.22 " << std::setw(6) << (-0.6428*TCF) << std::endl;
-    file << "              -1.05 " << std::setw(6) << (-0.8660*TCF) << std::endl;
-    file << "              -0.88 " << std::setw(6) << (-1.0f*TCF) << std::endl;
+    file << "              -1.22 " << std::setw(6) << (-0.6428*(1.0f-TC)) << std::endl;
+    file << "              -1.05 " << std::setw(6) << (-0.8660*(1.0f-TC)) << std::endl;
+    file << "              -0.88 " << std::setw(6) << (-1.0f*(1.0f-TC)) << std::endl;
     file << "              " << std::setprecision(2) << (-0.6+alpha0) << " " << std::setw(6) << std::setprecision(4) << -(CLmax-(0.6*alpha*CLalpha)-CL0) << std::endl;
     file << "              " << std::setprecision(2) << (-alpha+alpha0) << std::setprecision(4) << " " << (-CLmax+CL0) << std::endl;
     file << "               0.00  " << std::setw(6) << CL0 << std::endl;
     file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
     file << "               0.60  " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
-    file << "               0.88  " << std::setw(6) << (1.0f*TCF) << std::endl;
-    file << "               1.05  " << std::setw(6) << (0.8660*TCF) << std::endl;
-    file << "               1.22  " << std::setw(6) << (0.6428*TCF) << std::endl;
+    file << "               0.88  " << std::setw(6) << (1.0f*(1.0f+TC)) << std::endl;
+    file << "               1.05  " << std::setw(6) << (0.8660*(1.0f+TC)) << std::endl;
+    file << "               1.22  " << std::setw(6) << (0.6428*(1.0f+TC)) << std::endl;
     file << "               1.57  0.0000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
@@ -1167,7 +1167,7 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
 {
     // lift coefficient gradient over angle of attack in incompressible flow
     float CLalpha_ic = 1.0f;
-    float M, M2, k, R, e;
+    float M, M2, e;
 
     // Wing dihedral
     float dihedral = wing.dihedral * DEG_TO_RAD;
@@ -1195,7 +1195,6 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
         CLaw[0] = PAR/2.0f;
         CLaw[1] = PAR/2.0f;
         CLaw[2] = PAR/2.0f;
-        e = 1.0f;
         break;
     case DELTA:
         M = 0.0f; M2 = 0.0f;
@@ -1205,11 +1204,6 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
 
         M = 2.0f; M2 = M*M;
         CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
-
-        // Pamadi approximation for Oswald Efficiency Factor e
-        k = (AR*TR) / cosf(sweep_le);
-        R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
-        e = (1.1f* CLaw[0]) / (R* CLaw[0] + ((1.0f-R)*PAR));
         break;
     case VARIABLE_SWEEP:
     case STRAIGHT:
@@ -1221,19 +1215,56 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
 
         M = 2.0f; M2 = M*M;
         CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
-
-/*
- * Comparison of different methods of estimating the Oswald factor (Grosu).
- * http://www.fzt.haw-hamburg.de/pers/Scholz/OPerA/OPerA_PUB_DLRK_12-09-10.pdf
- */
-        // Pamadi approximation for Oswald Efficiency Factor e
-        k = (AR*TR) / cosf(sweep_le);
-        R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
-        e = (1.1f* CLaw[0]) / (R* CLaw[0] + ((1.0f-R)*PAR));
         break;
     }
 
-    if (wing.efficiency == 0) {
+    if (wing.efficiency == 0)
+    {
+        if (wing.shape != ELLIPTICAL)
+        {
+#if 0
+/*
+ * Raymer, D.
+ * Aircraft Design: A Conceptual Approach, 1999
+ */
+            if (fabsf(sweep_le) <  0.05f) {
+                e = 1.78f*(1.0f - 0.045f*powf(AR, 0.68f)) - 0.64f;
+            } else {
+                e = 4.61f*(1.0f - 0.045f*powf(AR, 0.86f))*powf(cosf(sweep_le), 0.15f) - 3.1f;
+            }
+
+#elif 0
+/*
+ * Pamadi, Bandu N.
+ * Performance, Stability, Dynamics, & Control, 2004
+ */
+            float k = (AR*TR) / cosf(sweep_le);
+            float R = 0.0004f*k*k*k - 0.008f*k*k + 0.05f*k + 0.86f;
+            e = (1.1f* CLaw[0]) / (R* CLaw[0] + ((1.0f-R)*PAR));
+#else
+/*
+ * Scholz, D. and Niță, M.
+ * Comparison of different methods of estimating the Oswald factor, 2012
+ * http://www.fzt.haw-hamburg.de/pers/Scholz/OPerA/OPerA_PUB_DLRK_12-09-10.pdf
+ */
+            float e_theo, fY, TR2, TRopt, kf, kd;
+            float bw = _aircraft->_wing.span;
+
+            TRopt = 0.45f*expf(-0.0375f*sweep);
+            TR += TRopt;
+            TR2 = TR*TR;
+            fY = 0.0524f*TR2*TR2-0.15f*TR2*TR+0.1659f*TR2-0.0706f*TR+0.0119f;
+            e_theo = 1.0f / (1.0f + fY*AR);
+
+            kf = 1.0f - 2.0f*powf(_aircraft->get_fuselage_diameter()/bw, 2.0f);
+            kd = powf(1.0f/cosf(dihedral), 2.0f);
+            e = e_theo * kf * kd;
+#endif
+        }
+        else {	// wing.shape == ELLIPTICAL
+            e = 1.0f;
+        }
+
         wing.efficiency = e;
     }
 }

@@ -304,7 +304,6 @@ void Propeller::set_thruster(float mrpm)
     }
 
     // estimate the number of blades
-printf("_Cp0: %f\n", _Cp0);
     if (_Cp0 < 0.035f) {
       _blades = 2;
     } else if (_Cp0 > 0.280f) {
