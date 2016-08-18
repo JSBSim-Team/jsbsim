@@ -1251,7 +1251,7 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
             float bw = _aircraft->_wing.span;
 
             TRopt = 0.45f*expf(-0.0375f*sweep);
-            TR += TRopt;
+            TR -= TRopt;
             TR2 = TR*TR;
             fY = 0.0524f*TR2*TR2-0.15f*TR2*TR+0.1659f*TR2-0.0706f*TR+0.0119f;
             e_theo = 1.0f / (1.0f + fY*AR);
