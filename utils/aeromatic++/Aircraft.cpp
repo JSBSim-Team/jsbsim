@@ -230,6 +230,11 @@ bool Aeromatic::fdm()
     } else {
         _user_wing_data++;
     }
+
+    if (_wing.taper == 0) {
+        _wing.taper = 1.0f;
+    }
+
     if (_wing.chord_mean == 0)
     {
         if (_wing.aspect > 0) {
@@ -238,7 +243,10 @@ bool Aeromatic::fdm()
             _wing.chord_mean = _wing.area / _wing.span;
         }
     }
-    else {
+    else
+    {
+        float TR = _wing.taper;
+        _wing.chord_mean = 2.0f*_wing.chord_mean*(1.0f+TR-(TR/(1.0f+TR)))/3.0f;
         _user_wing_data++;
     }
 
@@ -247,10 +255,6 @@ bool Aeromatic::fdm()
         _wing.aspect = (_wing.span*_wing.span) / _wing.area;
     } else {
         _user_wing_data++;
-    }
-
-    if (_wing.taper == 0) {
-        _wing.taper = 1.0f;
     }
 
     if (_wing.de_da == 0) {
@@ -306,6 +310,21 @@ bool Aeromatic::fdm()
         _htail.span = ht_w * _wing.span;
     }
 
+    if (_htail.chord_mean == 0) {
+        _htail.chord_mean = _htail.span / _htail.aspect;
+
+        float TR = _htail.taper;
+        _htail.chord_mean = 2.0f*_htail.chord_mean*(1.0f+TR-(TR/(1.0f+TR)))/3.0f;
+    }
+
+    if (_htail.sweep_le == 0) {
+        _htail.sweep_le = 1.05f * _wing.sweep_le;
+    }
+
+    if (_htail.thickness == 0) {
+        _htail.thickness = 0.085f * _htail.chord_mean;
+    }
+
     if (_htail.de_da == 0) {
         _htail.de_da = 4.0f/(_htail.aspect+2.0f);
     }
@@ -329,6 +348,21 @@ bool Aeromatic::fdm()
     }
     if (_vtail.taper == 0) {
         _vtail.taper = 0.7f;
+    }
+
+    if (_vtail.chord_mean == 0) {
+        _vtail.chord_mean = _vtail.span / _vtail.aspect;
+
+        float TR = _vtail.taper;
+        _vtail.chord_mean = 2.0f*_vtail.chord_mean*(1.0f+TR-(TR/(1.0f+TR)))/3.0f;
+    }
+
+    if (_vtail.sweep_le == 0) {
+        _vtail.sweep_le = 1.25f * _wing.sweep_le;
+    }
+
+    if (_vtail.thickness == 0) {
+        _vtail.thickness = 0.085f * _vtail.chord_mean;
     }
 
     if (_vtail.de_da == 0) {
@@ -472,7 +506,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.72 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.73 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;

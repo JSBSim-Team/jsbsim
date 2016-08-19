@@ -174,7 +174,7 @@ void Biplane::set_yaw()
 
 float const Biplane::_fuselage_diameter_t[1][5] =
 {
-    { 4.0f, 4.0f, 5.5f, 6.0f, 6.5f }
+    { 4.4f, 4.4f, 6.0f, 6.75f, 7.25f }
 };
 
 float const Biplane::_wing_loading_t[1][5] =

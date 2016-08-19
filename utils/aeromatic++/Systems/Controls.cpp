@@ -153,20 +153,76 @@ void CableControls::set(const float* cg_loc)
     float ch = cbarw*sqrtf(Sh/Sw);
 
     // drag
+// http://faculty.dwc.edu/sadraey/Chapter%203.%20Drag%20Force%20and%20its%20Coefficient.pdf
     float Sv = _aircraft->_vtail.area;
+    float TC = _aircraft->_wing.thickness/cbarw;
+
+    float Re = 150000;
+    float Cf = 1.328f/sqrtf(Re);
+
+    float M2, M = 0.01f;
+    float fM = 1.0f - 0.08f*powf(M, 1.45f);
 
     // Sfus: Fuselage wetted area
-    float TC = _aircraft->_wing.thickness/cbarw;
-    float k0 = 0.075f;
-    float k1 = 0.2f*TC; // 1.256f; // correction factor for wing thickness
-//  float k2 = 1.12f;           // fuselage fineness ratio correction factor
-    float Cf = 0.006f;          // skin Friction Coefficient
-    float fwings = Cf*(Sw+Sh+Sv)*2.04f*k1;
-    float CD0w = fwings/Sw;
-//  float ffus   = Cf*Sfus*k2;
-//  float CD0f = ffus/Sw;
-//  _aircraft->_CD0 = CD0f + CD0w;
-    _aircraft->_CD0 *= (1.0f - sinf(sweep));
+    float D = _aircraft->get_fuselage_diameter();
+    float L = _aircraft->_length;
+    float fLD = 1.0f + 60.0f/powf(L/D, 3.0f) + 0.0025f*(L/D);
+    float Sfus = 0.75f*PI*D*L;
+    float CD0f = Cf*fLD*fM*(Sfus/Sw);
+
+    // Main Wing
+    Cf = 0.2f*Cf + 0.8f*0.455f/powf(logf(Re),2.58f);
+    float CDminw = 0.004f;
+    float fD = powf(CDminw/0.004f, 0.4f);
+    float fTC = 1.0f + 2.7f*TC + 100.0f*powf(TC, 4.0f);
+    float Swing = 2.0f*(1.0f + 0.5f*TC)*bw*cbarw;
+    float CD0w = Cf*fM*fTC*fD*(Swing/Sw);
+    CD0w *= (1.0f - sinf(sweep));
+
+    // Horizontal tail
+    float cbarh = _aircraft->_htail.chord_mean;
+    float TCh = _aircraft->_htail.thickness/cbarh;
+    float CDminh = 0.002f;
+    float fDh = powf(CDminh/0.004f, 0.4f);
+    float fTCh = 1.0f + 2.7f*TCh + 100.0f*powf(TCh, 4.0f);
+    float CD0h = Cf*fM*fTCh*fDh*(Swing/Sw);
+    CD0h *= (1.0f - sinf(_aircraft->_htail.sweep));
+
+    // Vertical tail
+    float bv = _aircraft->_vtail.span;
+    float cbarv = _aircraft->_vtail.chord_mean;
+    float TCv = _aircraft->_vtail.thickness/cbarv;
+    float CDminv = 0.002f;
+    float fDv = powf(CDminv/0.004f, 0.4f);
+    float fTCv = 1.0f + 2.7f*TCv + 100.0f*powf(TCv, 4.0f);
+    float Svtail = 2.0f*(1.0f + 0.5f*TCv)*bv*cbarv;
+    float CD0v = Cf*fM*fTCv*fDv*(Svtail/Sv);
+    CD0v *= (1.0f - sinf(_aircraft->_vtail.sweep));
+
+    float Kc = 1.05f;
+    switch(_aircraft->_atype)
+    {
+    case LIGHT:
+        if (_aircraft->_no_engines > 0) Kc = 1.3f;
+        break;
+    case PERFORMANCE:
+    case PROP_TRANSPORT:
+        Kc = 1.2f;
+        break;
+    case FIGHTER:
+    case JET_TRANSPORT:
+        Kc = 1.1f;
+        break;
+//  case BIPLANE:
+    default:
+        Kc = 1.5f;
+        break;
+    }
+#if 0
+ printf("CD0: %f (%f), Kc: %f, CD0f: %f, CD0w: %f, CD0h: %f, CD0v: %f\n", _aircraft->_CD0, Kc*(CD0f + CD0w + CD0h + CD0v), Kc, CD0f, CD0w, CD0h, CD0v);
+#endif
+    _aircraft->_CD0 = Kc*(CD0f + CD0w + CD0h + CD0v);
+
 
     // lift
     float alpha = 0;
@@ -184,8 +240,8 @@ void CableControls::set(const float* cg_loc)
     float nv = _aircraft->_vtail.efficiency;
     float Er = _aircraft->_vtail.flap_ratio;    // rudder
 
-    float M = 0.0f;
-    float M2 = M*M;
+    M = 0.0f;
+    M2 = M*M;
 
     float dsdB = 0.0f;          // ds/dB
     float CYbeta = -nv*(Sv/Sw)*CLav[0]*(1.0f+dsdB);
@@ -196,8 +252,7 @@ void CableControls::set(const float* cg_loc)
 
     float zw = -0.0f; // z-pos. wing: positive down
     float zv = -1.0f; // z-pos. vertical tail:  positive down
-    float fus_diameter = _aircraft->get_fuselage_diameter();
-    float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*fus_diameter)/(bw*bw));
+    float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*D)/(bw*bw));
     float Clbvt = -(zv/bw)*CLah[0];
 
     CL0 = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
@@ -286,6 +341,8 @@ void CableControls::set(const float* cg_loc)
                       + (CLav[0]/12.0f)*(Sv/Sw)*(1.0f+3.0f*TRh)/(1.0f+TRh);
 
     // yaw
+    float k0 = 0.075f;
+    float k1 = 1.0f+TC; // 1.256f; // correction factor for wing thickness
     _aircraft->_Cnbeta = nv*Vv*CLav[0]*(1.0-dsdB);
     _aircraft->_Cnr = -(k0*CL*CL + k1*CD0w) - 2.0f*nv*Vv*CLav[0]*(lv/bw);
     _aircraft->_Cndr = -Vv*Cltdr;
@@ -418,6 +475,8 @@ std::string CableControls::drag()
     CDmax = 1.28f * 1.1f*(Sw+(Sh/Sw))/Sw;
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
+    file << "    <!-- CD0 is based on fuselage, wing, horizontal- en vertical tail -->" << std::endl;
+    file << "    <!-- Antennas, struts and wires are not taken into account        -->" << std::endl;
     file << "    <function name=\"aero/force/Drag_zero_lift\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
     file << "       <product>" << std::endl;

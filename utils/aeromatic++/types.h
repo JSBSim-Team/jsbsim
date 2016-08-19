@@ -118,6 +118,7 @@ enum AircraftType
     FIGHTER,
     JET_TRANSPORT,
     PROP_TRANSPORT,
+//  BIPLANE,
 
     MAX_AIRCRAFT
 };
