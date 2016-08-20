@@ -319,7 +319,10 @@ void CableControls::set(const float* cg_loc)
     // pitch
     if (_aircraft->_user_wing_data > 0)
     {
-        _aircraft->_Cmalpha =  CLaw[0]*(dcgx/cbarw) - Vh*CLah[0]*(1.0f-deda);
+//      float dwf = L/_aircraft->_aero_rp[X];
+//      float Kf = 0.033f + 0.538f*dwf + 1.5f*dwf*dwf;
+//      float Cmfus = Kf*D*D*L/Sw/cbarw/CLaw[0];
+        _aircraft->_Cmalpha = CLaw[0]*(dcgx/cbarw) - Vh*CLah[0]*(1.0f-deda);
         _aircraft->_Cmq = -_aircraft->_CLq*(lh/cbarw);
         _aircraft->_Cmadot = -_aircraft->_CLadot*(lh/cbarw);
 
@@ -477,6 +480,7 @@ std::string CableControls::drag()
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <!-- CD0 is based on fuselage, wing, horizontal- en vertical tail -->" << std::endl;
     file << "    <!-- Antennas, struts and wires are not taken into account        -->" << std::endl;
+    file << "    <!-- CD for gear (fixed and retractable) is defined below         -->" << std::endl;
     file << "    <function name=\"aero/force/Drag_zero_lift\">" << std::endl;
     file << "       <description>Drag at zero lift</description>" << std::endl;
     file << "       <product>" << std::endl;
