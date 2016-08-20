@@ -94,7 +94,12 @@ void ask(istream& in, ofstream& log, Aeromatic::Param* param)
         }
     }
     if (log.is_open()) {
-        log << input << endl;
+        log << input;
+        if (param->get_type() != Aeromatic::PARAM_STRING &&
+            param->get_type() != Aeromatic::PARAM_BOOL) {
+            log << std::setw(32-input.size()) << "; " << param->name();
+        }
+        log << endl;
     }
 }
 

@@ -215,6 +215,7 @@ public:
     void set(std::string& s);
     std::string get();
 
+    enum ParamType get_type() { return ParamType(_ptype); }
     const char* get_units() {
         return _cvt_t[_utype].name[_convert];
     }
