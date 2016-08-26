@@ -596,6 +596,7 @@
     <ClCompile Include="src\input_output\FGXMLElement.cpp" />
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
+    <ClCompile Include="src\simgear\props\propertyObject.cxx" />
     <ClCompile Include="src\simgear\props\props.cxx" />
     <ClCompile Include="src\simgear\xml\xmlparse.c" />
     <ClCompile Include="src\simgear\xml\xmlrole.c" />
