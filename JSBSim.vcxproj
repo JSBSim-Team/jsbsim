@@ -486,6 +486,7 @@
     <ClInclude Include="src\simgear\xml\macconfig.h" />
     <ClInclude Include="src\simgear\xml\nametab.h" />
     <ClInclude Include="src\input_output\net_fdm.hxx" />
+    <ClInclude Include="src\simgear\props\propertyObject.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
     <ClInclude Include="src\simgear\props\SGReferenced.hxx" />
     <ClInclude Include="src\simgear\props\SGSharedPtr.hxx" />

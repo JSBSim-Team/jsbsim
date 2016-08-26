@@ -552,6 +552,10 @@
 				RelativePath=".\src\input_output\net_fdm.hxx"
 				>
 			</File>
+                        <File
+                                RelativePath=".\src\simgear\props\propertyObject.hxx"
+                                >
+                        </File>
 			<File
 				RelativePath=".\src\simgear\props\props.hxx"
 				>
