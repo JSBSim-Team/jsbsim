@@ -912,6 +912,10 @@
 				RelativePath=".\src\JSBSim.cpp"
 				>
 			</File>
+                        <File
+                                RelativePath=".\src\simgear\props\propertyObject.cxx"
+                                >
+                        </File>
 			<File
 				RelativePath=".\src\simgear\props\props.cxx"
 				>
