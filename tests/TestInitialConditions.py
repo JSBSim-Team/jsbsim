@@ -20,7 +20,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os
+import os, math
 import xml.etree.ElementTree as et
 import pandas as pd
 from JSBSim_utils import CreateFDM, append_xml, ExecuteUntil, JSBSimTestCase, RunTest
@@ -307,5 +307,29 @@ class TestInitialConditions(JSBSimTestCase):
                                        'IC%d' % (i,), fdm, position_tag)
 
                     del fdm
+
+    def test_set_initial_geodetic_latitude(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       '737_cruise.xml')
+        output_file = self.sandbox.path_to_jsbsim_file('tests', 'output.xml')
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(script_path)
+        fdm.set_output_directive(output_file)
+
+        alt = fdm['ic/h-sl-ft']
+        glat = fdm['ic/lat-geod-deg'] - 30.
+        fdm['ic/lat-geod-deg'] = glat
+        fdm.run_ic()
+
+        self.assertAlmostEqual(fdm['ic/h-sl-ft'], alt)
+        self.assertAlmostEqual(fdm['ic/lat-geod-deg'], glat)
+        self.assertAlmostEqual(fdm['ic/lat-geod-rad'], glat*math.pi/180.)
+        self.assertAlmostEqual(fdm['position/lat-geod-deg'], glat)
+
+        # Sanity check: make sure that the time step 0.0 has been copied in the
+        # CSV file.
+        ref = pd.read_csv('output.csv')
+        self.assertEqual(ref['Time'][0], 0.0)
+        self.assertAlmostEqual(ref['Latitude Geodetic (deg)'][0], glat)
 
 RunTest(TestInitialConditions)
