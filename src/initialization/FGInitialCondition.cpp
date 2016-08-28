@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.111 2016/07/03 17:20:55 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.112 2016/08/28 12:13:09 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -735,6 +735,17 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   }
 
   lastAltitudeSet = setasl;
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetGeodLatitudeRadIC(double geodLatitude)
+{
+  double h = ComputeGeodAltitude(geodLatitude);
+  double lon = position.GetLongitude();
+
+  position.SetPositionGeodetic(lon, geodLatitude, h);
+  lastLatitudeSet = setgeod;
 }
 
 //******************************************************************************
@@ -1480,10 +1491,14 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
-  PropertyManager->Tie("ic/lat-geod-rad", &position,
-                       &FGLocation::GetGeodLatitudeRad);
-  PropertyManager->Tie("ic/lat-geod-deg", &position,
-                       &FGLocation::GetGeodLatitudeDeg);
+  PropertyManager->Tie("ic/lat-geod-rad", this,
+                       &FGInitialCondition::GetGeodLatitudeRadIC,
+                       &FGInitialCondition::SetGeodLatitudeRadIC,
+                       true);
+  PropertyManager->Tie("ic/lat-geod-deg", this,
+                       &FGInitialCondition::GetGeodLatitudeDegIC,
+                       &FGInitialCondition::SetGeodLatitudeDegIC,
+                       true);
   PropertyManager->Tie("ic/geod-alt-ft", &position,
                        &FGLocation::GetGeodAltitude);
 }
