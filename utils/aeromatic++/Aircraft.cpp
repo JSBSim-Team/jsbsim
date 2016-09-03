@@ -65,6 +65,31 @@ Aircraft::~Aircraft()
 {
 }
 
+const char*
+Aircraft::get_verbose_description(int no_engines)
+{
+    static char desc[1024];
+    int num = _subclasses.size();
+    std::string rv;
+
+    if (no_engines < 0 || num == 0) {
+        rv = _description;
+        if (num) rv += " (";
+    }
+
+    if (num)
+    {
+        for (int i=0; i<num; i++) {
+            rv += _subclasses[i];
+            if (i < (num-1)) rv += ", ";
+        }
+        if (no_engines < 0) rv += ')';
+    }
+
+    snprintf(desc, 1024, "%s", rv.c_str());
+    return desc;
+}
+
 Aeromatic::Aeromatic() : Aircraft(),
     _atype(LIGHT),
     _system_files(true),
@@ -135,15 +160,15 @@ Aeromatic::Aeromatic() : Aircraft(),
     _general.push_back(param);
 
     _aircraft[0] = new Light(this);
-    param->add_option(_aircraft[0]->get_description());
+    param->add_option(_aircraft[0]->get_verbose_description());
     _aircraft[1] = new Performance(this);
-    param->add_option(_aircraft[1]->get_description());
+    param->add_option(_aircraft[1]->get_verbose_description());
     _aircraft[2] = new Fighter(this);
-    param->add_option(_aircraft[2]->get_description());
+    param->add_option(_aircraft[2]->get_verbose_description());
     _aircraft[3] = new JetTransport(this);
-    param->add_option(_aircraft[3]->get_description());
+    param->add_option(_aircraft[3]->get_verbose_description());
     _aircraft[4] = new PropTransport(this);
-    param->add_option(_aircraft[4]->get_description());
+    param->add_option(_aircraft[4]->get_verbose_description());
 
     Aircraft::_aircraft = this;
 
@@ -278,9 +303,15 @@ bool Aeromatic::fdm()
         // Hofman equation for t/c
 //      float Ws = _stall_weight;
         float Vs = _stall_speed * KNOTS_TO_FPS;
-        float sweep = _wing.sweep * DEG_TO_RAD;
-        float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
-        _wing.thickness = TC * _wing.chord_mean;
+        if (Vs > 0)
+        {
+            float sweep = _wing.sweep * DEG_TO_RAD;
+            float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
+            _wing.thickness = TC * _wing.chord_mean;
+        }
+        else {
+            _wing.thickness = 0.15f * _wing.chord_mean;
+        }
     }
 
     // for now let's use a standard 2 degrees wing incidence
@@ -506,7 +537,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.75 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.76 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -514,29 +545,16 @@ bool Aeromatic::fdm()
     file << "  Inputs:" << std::endl;
     file << "    name:          " << _name << std::endl;
     file << "    type:          ";
-    switch(_atype)
-    {
-    case LIGHT:
-        if (_no_engines == 0) {
-            file << "glider" << std::endl;
-        } else {
-            file << "light commuter with " << _no_engines << " engines" << std::endl;
-        }
-        break;
-    case PERFORMANCE:
-        file << "WWII fighter, subsonic sport, aerobatic" << std::endl;
-        break;
-    case FIGHTER:
-        file << _no_engines << " engine transonic/supersonic fighter" << std::endl;
-        break;
-    case JET_TRANSPORT:
-        file << _no_engines << " engine transonic transport" << std::endl;
-        break;
-    case PROP_TRANSPORT:
-        file << "multi-engine prop transport" << std::endl;
-        break;
+    if (_no_engines == 0) file << "No engine ";
+    else if (_no_engines == 1) file << "Single engine ";
+    else file << "Multi-engine ";
+    file << _aircraft[_atype]->get_verbose_description(_no_engines) << std::endl;
+    file << "    stall speed:   ";
+    if (_stall_speed > 0.5f) {
+        file << _stall_speed << "kts" << std::endl;
+    } else {
+        file << "unspecified" << std::endl;
     }
-    file << "    stall speed:   " << _stall_speed << "kts" << std::endl;
     file << "    max weight:    " << _max_weight << " lb" << std::endl;
     file << "    length:        " << _length << " ft" << std::endl;
     file << "    wing: " << std::endl;

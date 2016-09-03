@@ -175,7 +175,7 @@ void PropTransport::set_yaw()
 
 float const PropTransport::_fuselage_diameter_t[1][5] =
 {
-    { 4.5f, 5.75f, 10.0f, 11.0f, 12.0f }
+    { 4.5f, 7.4f, 9.0f, 11.0f, 12.0f }
 };
 
 float const PropTransport::_wing_loading_t[1][5] =

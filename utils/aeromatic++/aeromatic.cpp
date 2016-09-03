@@ -82,14 +82,14 @@ void ask(istream& in, ofstream& log, Aeromatic::Param* param)
     if (options) cout << endl;
 
     getline(in, input);
-    if (!input.empty())
+    if (!input.empty() && input[0] != ' ')
     {
         if (input == "?" || input == "h" || input == "help")
         {
             cout << param->help() << endl;
             getline(in, input);
         }
-        if (!input.empty()) {
+        if (!input.empty() && input[0] != ' ') {
             param->set(input);
         }
     }
