@@ -45,7 +45,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.55 2016/01/02 15:23:50 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGXMLElement.cpp,v 1.56 2016/09/11 11:26:04 bcoconni Exp $");
 IDENT(IdHdr,ID_XMLELEMENT);
 
 bool Element::converterIsInitialized = false;
@@ -467,12 +467,14 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
 
   // Sanity check for angular values
   if ((supplied_units == "RAD") && (fabs(value) > 2 * M_PI)) {
-      cerr << element->ReadFrom() << "The value " << value
-           << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]" << endl;
+    cerr << element->ReadFrom() << element->GetName() << " value "
+         << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]"
+         << endl;
   }
   if ((supplied_units == "DEG") && (fabs(value) > 360.0)) {
-      cerr << element->ReadFrom() << "The value " << value
-           << " DEG is outside the range [ -360 DEG ; +360 DEG ]" << endl;
+    cerr << element->ReadFrom() << element->GetName() << " value "
+         << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]"
+         << endl;
   }
   
   
@@ -481,12 +483,14 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   }
 
   if ((target_units == "RAD") && (fabs(value) > 2 * M_PI)) {
-      cerr << element->ReadFrom() << "The value " << value
-           << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]" << endl;
+    cerr << element->ReadFrom() << element->GetName() << " value "
+         << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]"
+         << endl;
   }
   if ((target_units == "DEG") && (fabs(value) > 360.0)) {
-      cerr << element->ReadFrom() << "The value " << value
-           << " DEG is outside the range [ -360 DEG ; +360 DEG ]" << endl;
+    cerr << element->ReadFrom() << element->GetName() << " value "
+         << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]"
+         << endl;
   }
 
   value = DisperseValue(element, value, supplied_units, target_units);
