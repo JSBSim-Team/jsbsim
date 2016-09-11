@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.112 2016/08/28 12:13:09 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.113 2016/09/11 11:31:00 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -709,10 +709,10 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   altitudeASL=alt;
   position.SetAltitudeASL(alt);
 
-  if (lastLatitudeSet == setgeod) {
-    double h = ComputeGeodAltitude(geodLatitude);
-    position.SetPositionGeodetic(position.GetLongitude(), geodLatitude, h);
-  }
+  // The call to SetAltitudeASL has most likely modified the geodetic latitude
+  // so we need to restore it to its initial value.
+  if (lastLatitudeSet == setgeod)
+    SetGeodLatitudeRadIC(geodLatitude);
 
   soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   rho = Atmosphere->GetDensity(altitudeASL);
@@ -931,16 +931,11 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 }
 
 //******************************************************************************
-// Given an altitude above the sea level (or a position radius which is the
-// same) and a geodetic latitude, compute the geodetic altitude. It is assumed
-// that the terrain is a sphere and that the elevation is uniform all over the
-// Earth.  Would that assumption fail, the computation below would need to be
-// adapted since the position radius would depend on the terrain elevation which
-// depends itself on the latitude.
+// Given an altitude above the mean sea level (or a position radius which is the
+// same) and a geodetic latitude, compute the geodetic altitude.
 //
-// This is an acceptable trade off because this routine is only used by
-// standalone JSBSim which uses FGDefaultGroundCallback which assumes that the
-// Earth is a sphere.
+// TODO: extend the routine to the case where lastAltitudeSet is equal to
+// setagl.
 
 double FGInitialCondition::ComputeGeodAltitude(double geodLatitude)
 {
@@ -978,11 +973,8 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
 
     string lat_type = latitude_el->GetAttributeValue("type");
 
-    if (lat_type == "geod" || lat_type == "geodetic") {
-      double h = ComputeGeodAltitude(latitude);
-      position.SetPositionGeodetic(position.GetLongitude(), latitude, h);
-      lastLatitudeSet = setgeod;
-    }
+    if (lat_type == "geod" || lat_type == "geodetic")
+      SetGeodLatitudeRadIC(latitude);
     else {
       position.SetLatitude(latitude);
       lastLatitudeSet = setgeoc;
