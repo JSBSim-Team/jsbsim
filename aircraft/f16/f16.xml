@@ -7,7 +7,7 @@
  <fileheader>
   <author> Erik Hofman </author>
   <filecreationdate> 2001-12-28 </filecreationdate>
-  <version> $Revision: 1.94 $ </version>
+  <version> $Revision: 1.95 $ </version>
   <license>
    <licenseName>GPL (General Public License)</licenseName>
    <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
@@ -551,11 +551,11 @@
     <table>
      <independentVar>aero/alpha-rad</independentVar>
      <tableData>
-     -0.5236  0.0
-     -0.5	  0.11
-      0.0  1.0
-      0.5	  0.11
-      0.5236  0.0
+     -0.5236    0.0
+     -0.5       0.11
+      0.0       1.0
+      0.5       0.11
+      0.5236    0.0
      </tableData>
     </table>
    </scheduled_gain>
@@ -586,9 +586,9 @@
    <summer name="fcs/pitch-trim-error">
      <input>fcs/elevator-scheduler</input>
      <input>fcs/pitch-rate-norm</input>
-     <input>fcs/g-load-norm</input>
+     <input>-fcs/g-load-norm</input>
    </summer>
-  
+
    <!--
      - Make sure the PID controller is only active when the aircraft
      - has gained some speed. This will prevent bad behaviour when the
@@ -604,9 +604,9 @@
    <pid name="fcs/g-load-pid">
      <trigger>fcs/elevator-pid-trigger</trigger>
      <input>fcs/pitch-trim-error</input>
-     <kp> 0.94737 </kp>
-     <ki> 0.00050 </ki>
-     <kd> 0.000 </kd>
+     <kp> 0.3000 </kp>
+     <ki> 0.0250 </ki>
+     <kd> 0.0000 </kd>
      <clipto>
     <min>-1</min>
     <max>1</max>
