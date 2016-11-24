@@ -225,16 +225,17 @@ std::string LandingGear::system()
 {
     std::stringstream file;
 
+    file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
+    file << "   <switch name=\"fcs/gear-no-wow\">" << std::endl;
+    file << "     <default value=\"1\"/>" << std::endl;
+    file << "     <test logic=\"AND\" value=\"0\">" << std::endl;
+    file << "         gear/unit[1]/WOW eq 1" << std::endl;
+    file << "         gear/unit[2]/WOW eq 1" << std::endl;
+    file << "     </test>" << std::endl;
+    file << "   </switch>" << std::endl;
+
     if (_retractable)
     {
-        file << "  <channel name=\"" + _description[_subtype] + "\">" << std::endl;
-        file << "   <switch name=\"fcs/gear-no-wow\">" << std::endl;
-        file << "     <default value=\"1\"/>" << std::endl;
-        file << "     <test logic=\"AND\" value=\"0\">" << std::endl;
-        file << "         gear/unit[1]/WOW eq 1" << std::endl;
-        file << "         gear/unit[2]/WOW eq 1" << std::endl;
-        file << "     </test>" << std::endl;
-        file << "   </switch>" << std::endl;
         file <<  std::endl;
         file << "   <kinematic name=\"" + _description[_subtype] + " Control\">" << std::endl;
         file << "     <input>gear/gear-cmd-norm</input>" << std::endl;
@@ -250,8 +251,8 @@ std::string LandingGear::system()
         file << "     </traverse>" << std::endl;
         file << "     <output>gear/gear-pos-norm</output>" << std::endl;
         file << "   </kinematic>" << std::endl;
-        file << "  </channel>" << std::endl;
     }
+    file << "  </channel>" << std::endl;
 
     return file.str();
 }

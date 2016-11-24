@@ -147,7 +147,7 @@ Aeromatic::Aeromatic() : Aircraft(),
     _geometry.push_back(new Param("Wing area", _estimate, _wing.area, _metric, AREA));
     _geometry.push_back(new Param("Wing aspect ratio", _estimate, _wing.aspect));
     _geometry.push_back(new Param("Wing taper ratio", _estimate, _wing.taper));
-    _geometry.push_back(new Param("Wing mean chord", _estimate, _wing.chord_mean, _metric, LENGTH));
+    _geometry.push_back(new Param("Wing root chord", _estimate, _wing.chord_mean, _metric, LENGTH));
     _geometry.push_back(new Param("Wing incidence", _estimate, _wing.incidence));
     _geometry.push_back(new Param("Wing dihedral", _estimate, _wing.dihedral));
     _geometry.push_back(new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep));
@@ -271,6 +271,7 @@ bool Aeromatic::fdm()
     else
     {
         float TR = _wing.taper;
+
         _wing.chord_mean = 2.0f*_wing.chord_mean*(1.0f+TR-(TR/(1.0f+TR)))/3.0f;
         _user_wing_data++;
     }
@@ -421,18 +422,6 @@ bool Aeromatic::fdm()
         _inertia[Z] = slugs * powf((R[Z] * ((_wing.span + _length)/2)/2), 2);
     }
 
-//***** CG LOCATION ***********************************
-
-    _cg_loc[X] = (_length - _htail.arm) * FEET_TO_INCH;
-    _cg_loc[Y] = 0;
-    _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
-
-//***** AERO REFERENCE POINT **************************
-
-    _aero_rp[X] = _cg_loc[X];
-    _aero_rp[Y] = 0;
-    _aero_rp[Z] = 0;
-
 //***** PILOT EYEPOINT *********************************
 
     // place pilot's eyepoint based on airplane type
@@ -441,6 +430,31 @@ bool Aeromatic::fdm()
     eyept_loc[X] = (_length * _eyept_loc[X]) * FEET_TO_INCH;
     eyept_loc[Y] = _eyept_loc[Y];
     eyept_loc[Z] = _eyept_loc[Z];
+
+//***** AERO REFERENCE POINT **************************
+
+    _aero_rp[X] = (_length - _htail.arm) * FEET_TO_INCH;
+    _aero_rp[Y] = 0;
+    _aero_rp[Z] = 0;
+
+//***** CG LOCATION ***********************************
+#if 0
+    // http://www.rcgroups.com/forums/showatt.php?attachmentid=1651636
+    float TR = _wing.taper;
+    float Sw = _wing.area;
+    float cbar = _wing.chord_mean;
+    float Sh = _htail.area;
+    float L = _htail.arm;
+
+    float R =  3.0f*cbar/(2.0f*(1.0f+TR-(TR/(1.0f+TR))));
+    float T = R * TR;
+    float P = L*Sh/(3.0f*Sw) - ((R*R + R*T + T*T)/(R+T))/15.0f;
+    _cg_loc[X] = _aero_rp[X] + P * FEET_TO_INCH;
+#else
+    _cg_loc[X] = _aero_rp[X];
+#endif
+    _cg_loc[Y] = 0;
+    _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
 //***** PAYLOAD ***************************************
 
@@ -537,7 +551,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.76 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.77 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -601,7 +615,7 @@ bool Aeromatic::fdm()
     file << " <metrics>" << std::endl;
     file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing.area << " </wingarea>" << std::endl;
     file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing.span << " </wingspan>" << std::endl;
-    file << "   <wing_incidence>       " << std::setw(8) << _wing.incidence << " </wing_incidence>" << std::endl;
+    file << "   <wing_incidence unit=\"DEG\"> " << std::setw(2) << _wing.incidence << " </wing_incidence>" << std::endl;
     file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing.chord_mean << " </chord>" << std::endl;
     file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail.area << " </htailarea>" << std::endl;
     file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail.arm << " </htailarm>" << std::endl;

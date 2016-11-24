@@ -122,6 +122,28 @@ std::string Flaps::drag()
 
     return file.str();
 }
+
+#if 0
+std::string Flaps:pitch()
+{
+    float dCLflaps = _dCLflaps_t[_aircraft->_atype][_aircraft->_engines];
+
+    file.precision(4);
+    file << std::fixed << std::showpoint;
+    file << "    <function name=\"aero/moment/Pitch_flap\">" << std::endl;
+    file << "       <description>Pitch moment  due to flaps</description>" << std::endl;
+    file << "       <product>" << std::endl;
+    file << "           <property>aero/qbar-psf</property>" << std::endl;
+    file << "           <property>metrics/Sw-sqft</property>" << std::endl;
+    file << "           <property>metrics/cbarw-ft</property>" << std::endl;
+    file << "           <property>fcs/flap-pos-deg</property>" << std::endl;
+    file << "           <value> " << -0.327f*(_K*dCLflaps/30.0f) << " </value>" << std::endl;
+    file << "       </product>" << std::endl;
+    file << "    </function>\n" << std::endl;
+
+    return file.str();
+}
+#endif
  
 // ----------------------------------------------------------------------------
 

@@ -338,6 +338,7 @@ void CableControls::set(const float* cg_loc)
     {
         float dcgx = -(cg_loc[X] - _aircraft->_aero_rp[X])*INCH_TO_FEET;
 
+        // fuselage component: L = fuselage length, D = fuselage max. diameter.
         float dwf = L/_aircraft->_aero_rp[X];
         float Kf = 0.033f + 0.538f*dwf + 1.5f*dwf*dwf;
         float Cmaf = -Kf*D*D*L/Sw/cbarw/CLaw[0];
