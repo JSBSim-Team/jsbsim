@@ -4,10 +4,48 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
+<!--
+  File:     dhc6.xml
+  Inputs:
+    name:          dhc6
+    type:          Multi-engine Glider, Small Commuter
+    stall speed:   74.00kts
+    max weight:    12500.00 lb
+    length:        51.75 ft
+    wing: 
+     span:         65.00 ft
+     area:         422.50 sq-ft
+     mean chord:   6.47 ft
+     aspect ratio: 10.10:1
+     taper ratio:  0.99:1
+     incidence:    2.50 degrees
+     dihedral:     3.00 degrees
+     sweep:        0.00 degrees
+
+    no. engines:   2
+    engine type:   Turboprop Engine
+    engine layout: wings
+
+    gear type:     tricycle
+    steering type: steering
+    retractable?:  no
+
+  Outputs:
+    wing loading:       29.59 lb/sq-ft
+     - thickness ratio: 17.25%
+    payload:            3331.50 lbs
+    CL-alpha:           5.81 per radian
+    CL-0:               0.33
+    CL-max:             1.60
+    CD-0:               0.02
+    K:                  0.04
+    Mcrit:              0.72
+-->
+
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.23 2015/12/08 13:31:48 ehofman Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.24 2016/11/29 17:38:48 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
       <reference title="Smart Icing Systems Aerodynamics group UIUC
@@ -138,7 +176,7 @@
             </orient>
             <feed>0</feed>
             <feed>1</feed>
-            <thruster file="direct">
+            <thruster file="Propeller">
                 <location unit="IN">
                     <x> 142.4 </x>
                     <y> -109.3 </y>
@@ -164,7 +202,7 @@
             </orient>
             <feed>1</feed>
             <feed>0</feed>
-            <thruster file="direct">
+            <thruster file="Propeller">
                 <location unit="IN">
                     <x> 142.4 </x>
                     <y> 109.3 </y>
@@ -196,138 +234,13 @@
             <contents unit="LBS"> 892.1 </contents>
         </tank>
     </propulsion>
+
+    <system file="Propulsion.xml"/>
+    <system file="Conventional Controls.xml"/>
+    <system file="Landing Gear.xml"/>
+    <system file="Flaps.xml"/>
+
     <flight_control name="FCS: DHC-6 Twin Otter">
-        <channel name="Pitch">
-            <summer name="fcs/pitch-trim-sum">
-                <input>fcs/elevator-cmd-norm</input>
-                <input>fcs/pitch-trim-cmd-norm</input>
-                <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-            </summer>
-
-            <aerosurface_scale name="fcs/elevator-control">
-                <input>fcs/pitch-trim-sum</input>
-                <range>
-                    <min>-0.454</min>
-                    <max>0.244</max>
-                </range>
-                <output>fcs/elevator-pos-rad</output>
-            </aerosurface_scale>
-        </channel>
-        <channel name="Roll">
-            <summer name="fcs/roll-trim-sum">
-                <input>fcs/aileron-cmd-norm</input>
-                <input>fcs/roll-trim-cmd-norm</input>
-                <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-            </summer>
-
-            <aerosurface_scale name="fcs/left-aileron-control">
-                <input>fcs/roll-trim-sum</input>
-                <range>
-                    <min>-0.28</min>
-                    <max>0.33</max>
-                </range>
-                <output>fcs/left-aileron-pos-rad</output>
-            </aerosurface_scale>
-
-            <aerosurface_scale name="fcs/right-aileron-control">
-                <input>-fcs/roll-trim-sum</input>
-                <range>
-                    <min>-0.28</min>
-                    <max>0.33</max>
-                </range>
-                <output>fcs/right-aileron-pos-rad</output>
-            </aerosurface_scale>
-        </channel>
-        <channel name="Yaw">
-            <summer name="fcs/rudder-command-sum">
-                <input>fcs/rudder-cmd-norm</input>
-                <input>fcs/yaw-trim-cmd-norm</input>
-                <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-            </summer>
-
-            <aerosurface_scale name="fcs/rudder-control">
-                <input>fcs/rudder-command-sum</input>
-                <range>
-                    <min>-0.28</min>
-                    <max>0.28</max>
-                </range>
-                <output>fcs/rudder-pos-rad</output>
-            </aerosurface_scale>
-        </channel>
-        <channel name="Flaps">
-            <kinematic name="fcs/flaps-control">
-                <input>fcs/flap-cmd-norm</input>
-                <traverse>
-                    <setting>
-                        <position>0</position>
-                        <time>0</time>
-                    </setting>
-                    <setting>
-                        <position>10</position>
-                        <time>4</time>
-                    </setting>
-                    <setting>
-                        <position>20</position>
-                        <time>2</time>
-                    </setting>
-                    <setting>
-                        <position>30</position>
-                        <time>2</time>
-                    </setting>
-                    <setting>
-                        <position>40</position>
-                        <time>2</time>
-                    </setting>
-                </traverse>
-                <output>fcs/flap-pos-deg</output>
-            </kinematic>
-
-            <aerosurface_scale name="fcs/flap-position-normalizer">
-              <input>fcs/flap-pos-deg</input>
-              <domain>
-                <min>0</min>  <!-- Flaps actual minimum position -->
-                <max>40</max> <!-- Flaps actual maximum position -->
-              </domain>
-              <range>
-                <min>0</min>  <!-- Flaps normalized minimum position -->
-                <max>1</max>  <!-- Flaps normalized maximum position -->
-              </range>
-              <output>fcs/flap-pos-norm</output>
-            </aerosurface_scale>
-
-        </channel>
-        <channel name="Speedbrake">
-            <kinematic name="fcs/speedbrake-control">
-                <input>fcs/speedbrake-cmd-norm</input>
-                <traverse>
-                    <setting>
-                        <position>0</position>
-                        <time>0</time>
-                    </setting>
-                    <setting>
-                        <position>1</position>
-                        <time>1</time>
-                    </setting>
-                </traverse>
-                <output>fcs/speedbrake-pos-norm</output>
-            </kinematic>
-        </channel>
-        <channel name="Thrust">
-            <summer name="fcs/engine-thrust-lbs">
-                <input>propulsion/engine[0]/thrust-coefficient</input>
-                <input>propulsion/engine[1]/thrust-coefficient</input>
-                <output>fcs/engine-thrust-coefficient</output>
-            </summer>
-        </channel>
     </flight_control>
  
     <aerodynamics>
@@ -752,7 +665,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
-                    <property>fcs/engine-thrust-coefficient</property>
+                    <property>systems/propulsion/thrust-coefficient</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">fcs/flap-pos-deg</independentVar>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<system name="Landing Gear">
+  <channel name="Landing Gear">
+   <switch name="fcs/gear-no-wow">
+     <default value="1"/>
+     <test logic="AND" value="0">
+         gear/unit[1]/WOW eq 1
+         gear/unit[2]/WOW eq 1
+     </test>
+   </switch>
+  </channel>
+
+</system>

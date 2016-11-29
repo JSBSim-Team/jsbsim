@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<system name="Propulsion">
+  <channel name="Thruster">
+   <summer name="Thrust Coefficient Left">
+    <input>propulsion/engine[0]/thrust-coefficient</input>
+    <output>systems/propulsion/thrust-coefficient-left</output>
+   </summer>
+   <summer name="Thrust Coefficient Right">
+    <input>propulsion/engine[1]/thrust-coefficient</input>
+    <output>systems/propulsion/thrust-coefficient-right</output>
+   </summer>
+   <summer name="Thrust Coefficient Left-Right">
+    <input>systems/propulsion/thrust-coefficient-left</input>
+    <input>-systems/propulsion/thrust-coefficient-right</input>
+    <output>systems/propulsion/thrust-coefficient-left-right</output>
+   </summer>
+   <summer name="Thrust Coefficient">
+    <input>systems/propulsion/thrust-coefficient-left</input>
+    <input>systems/propulsion/thrust-coefficient-right</input>
+    <output>systems/propulsion/thrust-coefficient</output>
+   </summer>
+  </channel>
+
+</system>
