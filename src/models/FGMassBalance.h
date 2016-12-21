@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.37 2016/03/26 18:54:27 bcoconni Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.38 2016/12/21 08:08:32 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -236,6 +236,7 @@ private:
           mPMInertia(1,1) = (Weight/(slugtolb*3))*Radius*Radius*2; // (2mr^2)/3
           mPMInertia(2,2) = mPMInertia(1,1);
           mPMInertia(3,3) = mPMInertia(1,1);
+          break;
         case esBall:
           mPMInertia(1,1) = (Weight/(slugtolb*5))*Radius*Radius*2; // (2mr^2)/5
           mPMInertia(2,2) = mPMInertia(1,1);
