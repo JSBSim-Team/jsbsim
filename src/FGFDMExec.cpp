@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.191 2016/05/16 18:19:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.192 2017/01/22 09:46:48 ehofman Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,7 @@ FGFDMExec::~FGFDMExec()
   
   SetGroundCallback(0);
 
-  if (FDMctr > 0) (*FDMctr)--;
+  if (FDMctr != 0) (*FDMctr)--;
 
   Debug(1);
 }

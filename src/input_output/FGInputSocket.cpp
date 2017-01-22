@@ -192,7 +192,7 @@ void FGInputSocket::Read(bool Holding)
           } else {
             socket->Reply("Must be in HOLD to search properties\n");
           }
-        } else if (node > 0) {
+        } else {
           ostringstream buf;
           buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << endl;
           socket->Reply(buf.str());
