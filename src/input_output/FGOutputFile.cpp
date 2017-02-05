@@ -65,8 +65,8 @@ FGOutputFile::FGOutputFile(FGFDMExec* fdmex) :
 bool FGOutputFile::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
-    if (Filename.empty()) {
-      Filename = Name;
+    if (Filename.isNull()) {
+      Filename = SGPath(Name);
       runID_postfix = 0;
     }
     return OpenFile();
@@ -87,7 +87,7 @@ void FGOutputFile::SetStartNewOutput(void)
     } else {
       buf << Name << '_' << runID_postfix++;
     }
-    Filename = buf.str();
+    Filename = SGPath(buf.str());
   }
 
   CloseFile();

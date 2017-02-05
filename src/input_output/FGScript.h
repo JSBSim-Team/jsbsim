@@ -43,6 +43,7 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGPropertyReader.h"
 #include "input_output/FGPropertyManager.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -188,8 +189,8 @@ public:
                       default. If a file name is passed in, it will override the
                       one present in the script.
       @return true if successful */
-  bool LoadScript(const std::string& script, double default_dT,
-                  const std::string& initfile);
+  bool LoadScript(const SGPath& script, double default_dT,
+                  const SGPath& initfile);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.

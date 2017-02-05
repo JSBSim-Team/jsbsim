@@ -180,7 +180,7 @@ public:
   const FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void) const;
 
-  std::string FindFullPathName(const std::string& filename) const;
+  SGPath FindFullPathName(const SGPath& path) const;
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) const {return FuelFreeze;}
 

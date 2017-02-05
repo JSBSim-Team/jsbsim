@@ -463,14 +463,15 @@ bool FGPropulsion::Load(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::FindFullPathName(const string& filename) const
+SGPath FGPropulsion::FindFullPathName(const SGPath& path) const
 {
-  if (!ReadingEngine) return FGModel::FindFullPathName(filename);
+  if (!ReadingEngine) return FGModel::FindFullPathName(path);
 
-  string name = CheckFullPathName(FDMExec->GetFullAircraftPath() + "/Engines", filename);
-  if (!name.empty()) return name;
+  SGPath name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Engines"),
+                              path);
+  if (!name.isNull()) return name;
 
-  return CheckFullPathName(FDMExec->GetEnginePath(), filename);
+  return CheckPathName(FDMExec->GetEnginePath(), path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

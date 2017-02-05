@@ -87,19 +87,25 @@ cdef class FGPropertyManager:
      def hasNode(self, path):
          return self.thisptr.HasNode(path)
 
+cdef class SGPath:
+    cdef c_SGPath c_path
+
+    def __cinit__(self, path=None):
+        self.c_path = c_SGPath()
+        if path:
+            self.c_path.set(path)
+
 # this is the python wrapper class
 cdef class FGFDMExec:
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
-    def __cinit__(self, **kwargs):
+    def __cinit__(self, root_dir=None):
         # this hides startup message
         # os.environ["JSBSIM_DEBUG"]=str(0)
-        self.thisptr = new c_FGFDMExec(0,0)
+        self.thisptr = new c_FGFDMExec(NULL, NULL)
         if self.thisptr is NULL:
             raise MemoryError()
-
-    def __init__(self, root_dir=None):
         if root_dir is None:
             self.find_root_dir()
         else:
@@ -221,8 +227,9 @@ cdef class FGFDMExec:
             AircraftPath, defaults to true
         @return true if successful
         """
-        return self.thisptr.LoadModel(model, aircraft_path,
-            engine_path, systems_path, add_model_to_path)
+        return self.thisptr.LoadModel(SGPath(aircraft_path).c_path,
+            SGPath(engine_path).c_path, SGPath(systems_path).c_path, model,
+            add_model_to_path)
 
     def load_script(self, script, delta_t=0.0, initfile=""):
         """
@@ -237,7 +244,8 @@ cdef class FGFDMExec:
             is not given in either place, an error will result.
         @return true if successfully loads; false otherwise. */
         """
-        return self.thisptr.LoadScript(script, delta_t, initfile)
+        return self.thisptr.LoadScript(SGPath(script).c_path, delta_t,
+                                       SGPath(initfile).c_path)
 
     def set_engine_path(self, path):
         """
@@ -245,7 +253,7 @@ cdef class FGFDMExec:
         @param path path to the directory under which engine config
             files are kept, for instance "engine"
         """
-        return self.thisptr.SetEnginePath(path)
+        return self.thisptr.SetEnginePath(SGPath(path).c_path)
 
     def set_aircraft_path(self, path):
         """
@@ -254,7 +262,7 @@ cdef class FGFDMExec:
             "aircraft". Under aircraft, then, would be directories for various
             modeled aircraft such as C172/, x15/, etc.
         """
-        return self.thisptr.SetAircraftPath(path)
+        return self.thisptr.SetAircraftPath(SGPath(path).c_path)
 
     def set_systems_path(self, path):
         """
@@ -262,14 +270,14 @@ cdef class FGFDMExec:
         @param path path to the directory under which systems config
             files are kept, for instance "systems"
         """
-        return self.thisptr.SetSystemsPath(path)
+        return self.thisptr.SetSystemsPath(SGPath(path).c_path)
 
     def set_root_dir(self, path):
         """
         Sets the root directory where JSBSim starts looking for its system directories.
         @param path the string containing the root directory.
         """
-        self.thisptr.SetRootDir(path)
+        self.thisptr.SetRootDir(SGPath(path).c_path)
 
         # this is a hack to fix a bug in JSBSim
         self.set_engine_path("engine")
@@ -280,32 +288,32 @@ cdef class FGFDMExec:
         """
         Retrieves the engine path
         """
-        return self.thisptr.GetEnginePath()
+        return self.thisptr.GetEnginePath().utf8Str()
 
     def get_aircraft_path(self):
         """
         Retrieves the aircraft path
         """
-        return self.thisptr.GetAircraftPath()
+        return self.thisptr.GetAircraftPath().utf8Str()
 
     def get_systems_path(self):
         """
         Retrieves the systems path
         """
-        return self.thisptr.GetSystemsPath()
+        return self.thisptr.GetSystemsPath().utf8Str()
 
     def get_full_aircraft_path(self):
         """
         Retrieves the full aircraft path name
         """
-        return self.thisptr.GetFullAircraftPath()
+        return self.thisptr.GetFullAircraftPath().utf8Str()
 
     def get_root_dir(self):
         """
         Retrieves the Root Directory.
         @return the string representing the root (base) JSBSim directory.
         """
-        return self.thisptr.GetRootDir()
+        return self.thisptr.GetRootDir().utf8Str()
 
     def get_property_value(self, name):
         """
@@ -346,7 +354,7 @@ cdef class FGFDMExec:
         be logged.
         @param fname the filename of an output directives file.
         """
-        return self.thisptr.SetOutputDirectives(fname)
+        return self.thisptr.SetOutputDirectives(SGPath(fname).c_path)
 
     #def force_output(self, index):
         #"""
@@ -552,7 +560,7 @@ cdef class FGFDMExec:
         return self.thisptr.GetPropulsion().GetNumEngines()
 
     def load_ic(self, rstfile, useStoredPath):
-        return self.thisptr.GetIC().Load(rstfile, useStoredPath)
+        return self.thisptr.GetIC().Load(SGPath(rstfile).c_path, useStoredPath)
 
     def get_propagate(self):
         propagate = FGPropagate()

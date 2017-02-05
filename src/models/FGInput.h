@@ -122,7 +122,7 @@ public:
       @param fname the name of the file from which the ouput directives should
                    be read.
       @return true if the execution succeeded. */
-  bool SetDirectivesFile(const std::string& fname);
+  bool SetDirectivesFile(const SGPath& fname);
 
   /// Enables the input generation for all input instances.
   void Enable(void) { enabled = true; }

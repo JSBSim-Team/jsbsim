@@ -153,7 +153,7 @@ bool FGInput::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGInput::SetDirectivesFile(const std::string& fname)
+bool FGInput::SetDirectivesFile(const SGPath& fname)
 {
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);

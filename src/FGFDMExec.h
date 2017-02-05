@@ -49,6 +49,7 @@ INCLUDES
 #include "models/FGPropagate.h"
 #include "math/FGColumnVector3.h"
 #include "models/FGOutput.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -284,8 +285,8 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful */
-  bool LoadModel(const std::string& AircraftPath, const std::string& EnginePath,
-                 const std::string& SystemsPath, const std::string& model,
+  bool LoadModel(const SGPath& AircraftPath, const SGPath& EnginePath,
+                 const SGPath& SystemsPath, const std::string& model,
                  bool addModelToPath = true);
 
   /** Loads an aircraft model.  The paths to the aircraft and engine
@@ -310,24 +311,33 @@ public:
                       the file specified in the script will be used. If an initialization file 
                       is not given in either place, an error will result.
       @return true if successfully loads; false otherwise. */
-  bool LoadScript(const std::string& Script, double deltaT=0.0,
-                  const std::string& initfile="");
+  bool LoadScript(const SGPath& Script, double deltaT=0.0,
+                  const SGPath& initfile=SGPath());
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
       files are kept, for instance "engine"  */
-  bool SetEnginePath(const std::string& path)   { EnginePath = RootDir + path; return true; }
+  bool SetEnginePath(const SGPath& path) {
+    EnginePath = GetFullPath(path);
+    return true;
+  }
 
   /** Sets the path to the aircraft config file directories.
       @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
-  bool SetAircraftPath(const std::string& path) { AircraftPath = RootDir + path; return true; }
+  bool SetAircraftPath(const SGPath& path) {
+    AircraftPath = GetFullPath(path);
+    return true;
+  }
   
   /** Sets the path to the systems config file directories.
       @param path path to the directory under which systems config
       files are kept, for instance "systems"  */
-  bool SetSystemsPath(const std::string& path)   { SystemsPath = RootDir + path; return true; }
+  bool SetSystemsPath(const SGPath& path) {
+    SystemsPath = GetFullPath(path);
+    return true;
+  }
   
   /// @name Top-level executive State and Model retrieval mechanism
   ///@{
@@ -378,13 +388,13 @@ public:
   ///@}
 
   /// Retrieves the engine path.
-  const std::string& GetEnginePath(void)    {return EnginePath;}
+  const SGPath& GetEnginePath(void)    {return EnginePath;}
   /// Retrieves the aircraft path.
-  const std::string& GetAircraftPath(void)  {return AircraftPath;}
+  const SGPath& GetAircraftPath(void)  {return AircraftPath;}
   /// Retrieves the systems path.
-  const std::string& GetSystemsPath(void)   {return SystemsPath;}
+  const SGPath& GetSystemsPath(void)   {return SystemsPath;}
   /// Retrieves the full aircraft path name.
-  const std::string& GetFullAircraftPath(void) {return FullAircraftPath;}
+  const SGPath& GetFullAircraftPath(void) {return FullAircraftPath;}
 
   /** Retrieves the value of a property.
       @param property the name of the property
@@ -428,8 +438,8 @@ public:
       be logged.
       @param fname the filename of an output directives file.
     */
-  bool SetOutputDirectives(const std::string& fname)
-  {return Output->SetDirectivesFile(RootDir + fname);}
+  bool SetOutputDirectives(const SGPath& fname)
+  { return Output->SetDirectivesFile(GetFullPath(fname)); }
 
   /** Forces the specified output object to print its items once */
   void ForceOutput(int idx=0) { Output->ForceOutput(idx); }
@@ -550,11 +560,11 @@ public:
 
   /** Sets the root directory where JSBSim starts looking for its system directories.
       @param rootDir the string containing the root directory. */
-  void SetRootDir(const std::string& rootDir) {RootDir = rootDir;}
+  void SetRootDir(const SGPath& rootDir) {RootDir = rootDir;}
 
   /** Retrieves the Root Directory.
       @return the string representing the root (base) JSBSim directory. */
-  const std::string& GetRootDir(void) const {return RootDir;}
+  const SGPath& GetRootDir(void) const {return RootDir;}
 
   /** Increments the simulation time if not in Holding mode. The Frame counter
       is also incremented.
@@ -606,13 +616,13 @@ private:
   bool modelLoaded;
   bool IsChild;
   std::string modelName;
-  std::string AircraftPath;
-  std::string FullAircraftPath;
-  std::string EnginePath;
-  std::string SystemsPath;
+  SGPath AircraftPath;
+  SGPath FullAircraftPath;
+  SGPath EnginePath;
+  SGPath SystemsPath;
   std::string CFGVersion;
   std::string Release;
-  std::string RootDir;
+  SGPath RootDir;
 
   // Standard Model pointers - shortcuts for internal executive use only.
   FGPropagate* Propagate;
@@ -664,6 +674,12 @@ private:
   bool Allocate(void);
   bool DeAllocate(void);
   int GetDisperse(void) const {return disperse;}
+  SGPath GetFullPath(const SGPath& name) {
+    if (name.isRelative())
+      return RootDir/name.utf8Str();
+    else
+      return name;
+  }
 
   void Debug(int from);
 };

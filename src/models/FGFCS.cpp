@@ -602,16 +602,15 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::FindFullPathName(const string& sysfilename) const
+SGPath FGFCS::FindFullPathName(const SGPath& path) const
 {
-  string name = FGModel::FindFullPathName(sysfilename);
+  SGPath name = FGModel::FindFullPathName(path);
+  if (systype != stSystem || !name.isNull()) return name;
 
-  if (systype != stSystem || !name.empty()) return name;
+  name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Systems"), path);
+  if (!name.isNull()) return name;
 
-  name = CheckFullPathName(FDMExec->GetFullAircraftPath() + "/Systems", sysfilename);
-  if (!name.empty()) return name;
-
-  return CheckFullPathName(FDMExec->GetSystemsPath(), sysfilename);
+  return CheckPathName(FDMExec->GetSystemsPath(), path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,6 +53,7 @@ INCLUDES
 #include "models/FGInput.h"
 #include "math/FGCondition.h"
 #include "math/FGFunction.h"
+#include "simgear/misc/sg_path.hxx"
 
 using namespace std;
 
@@ -96,10 +97,11 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript(const string& script, double default_dT,
-                          const string& initfile)
+bool FGScript::LoadScript(const SGPath& script, double default_dT,
+                          const SGPath& initfile)
 {
-  string aircraft="", initialize="", prop_name="";
+  SGPath initialize;
+  string aircraft="", prop_name="";
   string notifyPropertyName="";
   Element *element=0, *run_element=0, *event_element=0;
   Element *set_element=0;
@@ -171,9 +173,9 @@ bool FGScript::LoadScript(const string& script, double default_dT,
       return false;
     }
 
-    if (initfile.empty()) {
-      initialize = element->GetAttributeValue("initialize");
-      if (initialize.empty()) {
+    initialize = SGPath::fromLocal8Bit(element->GetAttributeValue("initialize").c_str());
+    if (initfile.isNull()) {
+      if (initialize.isNull()) {
         cerr << "Initialization file must be specified in use element." << endl;
         return false;
       }

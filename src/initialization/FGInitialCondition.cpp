@@ -880,11 +880,11 @@ double FGInitialCondition::GetBodyVelFpsIC(int idx) const
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
+bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
 {
-  string init_file_name;
-  if( useStoredPath ) {
-    init_file_name = fdmex->GetFullAircraftPath() + "/" + rstfile + ".xml";
+  SGPath init_file_name;
+  if(useStoredPath && rstfile.isRelative()) {
+    init_file_name = fdmex->GetFullAircraftPath()/rstfile.utf8Str();
   } else {
     init_file_name = rstfile;
   }

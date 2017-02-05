@@ -106,9 +106,9 @@ public:
       the next call to SetStartNewOutput().
       @param name new name */
   void SetOutputName(const std::string& fname) {
-    Name = FDMExec->GetRootDir() + fname;
+    Name = (FDMExec->GetRootDir()/fname).utf8Str();
     runID_postfix = -1;
-    Filename = std::string();
+    Filename = SGPath();
   }
   /** Generate the output. This is a pure method so it must be implemented by
       the classes that inherits from FGOutputFile.
@@ -116,7 +116,7 @@ public:
   void Print(void) = 0;
 
 protected:
-  std::string Filename;
+  SGPath Filename;
 
   /// Opens the file
   virtual bool OpenFile(void) = 0;

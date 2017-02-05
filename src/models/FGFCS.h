@@ -544,7 +544,7 @@ public:
       @return true if succesful */
   bool Load(Element* el);
 
-  std::string FindFullPathName(const std::string& system_filename) const;
+  SGPath FindFullPathName(const SGPath& path) const;
 
   void AddThrottle(void);
   double GetDt(void) const;

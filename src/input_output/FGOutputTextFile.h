@@ -41,6 +41,7 @@ INCLUDES
 #include <fstream>
 
 #include "FGOutputFile.h"
+#include "simgear/misc/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -89,7 +90,7 @@ public:
 
 protected:
   std::string delimeter;
-  std::ofstream datafile;
+  sg_ofstream datafile;
 
   virtual bool OpenFile(void);
   virtual void CloseFile(void) { if (datafile.is_open()) datafile.close(); }

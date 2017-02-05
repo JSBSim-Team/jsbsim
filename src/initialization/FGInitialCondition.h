@@ -49,6 +49,7 @@ INCLUDES
 
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -677,7 +678,7 @@ public:
       @param rstname The name of an initial conditions file
       @param useStoredPath true if the stored path to the IC file should be used
       @return true if successful */
-  bool Load(std::string rstname, bool useStoredPath = true );
+  bool Load(const SGPath& rstname, bool useStoredPath = true );
 
   /** Is an engine running ?
       @param index of the engine to be checked

@@ -67,13 +67,13 @@ INCLUDES
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 
 #include "initialization/FGInitialCondition.h"
 #include "FGPropagate.h"
 #include "FGGroundReactions.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
+#include "simgear/misc/sgstream.hxx"
 
 using namespace std;
 
@@ -659,21 +659,21 @@ void FGPropagate::DumpState(void)
 
 void FGPropagate::WriteStateFile(int num)
 {
-  ofstream outfile;
+  sg_ofstream outfile;
 
   if (num == 0) return;
 
-  string filename = FDMExec->GetFullAircraftPath();
+  SGPath path = FDMExec->GetFullAircraftPath();
 
-  if (filename.empty()) filename = "initfile.";
-  else                  filename.append("/initfile.");
+  if (path.isNull()) path = SGPath("initfile.");
+  else               path.append("initfile.");
 
   // Append sim time to the filename since there may be more than one created during a simulation run
-  filename += to_string((double)FDMExec->GetSimTime())+".xml";
+  path.concat(to_string((double)FDMExec->GetSimTime())+".xml");
 
   switch(num) {
   case 1:
-    outfile.open(filename.c_str());
+    outfile.open(path);
     if (outfile.is_open()) {
       outfile << "<?xml version=\"1.0\"?>" << endl;
       outfile << "<initialize name=\"reset00\">" << endl;
@@ -689,11 +689,12 @@ void FGPropagate::WriteStateFile(int num)
       outfile << "</initialize>" << endl;
       outfile.close();
     } else {
-      cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
+      cerr << "Could not open and/or write the state to the initial conditions file: "
+           << path << endl;
     }
     break;
   case 2:
-    outfile.open(filename.c_str());
+    outfile.open(path);
     if (outfile.is_open()) {
       outfile << "<?xml version=\"1.0\"?>" << endl;
       outfile << "<initialize name=\"IC File\" version=\"2.0\">" << endl;
@@ -725,7 +726,8 @@ void FGPropagate::WriteStateFile(int num)
       outfile << "</initialize>" << endl;
       outfile.close();
     } else {
-      cerr << "Could not open and/or write the state to the initial conditions file: " << filename << endl;
+      cerr << "Could not open and/or write the state to the initial conditions file: "
+           << path << endl;
     }
     break;
   default:

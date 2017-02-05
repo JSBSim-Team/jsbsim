@@ -182,7 +182,7 @@ string FGOutput::GetOutputName(unsigned int idx) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::SetDirectivesFile(const std::string& fname)
+bool FGOutput::SetDirectivesFile(const SGPath& fname)
 {
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);

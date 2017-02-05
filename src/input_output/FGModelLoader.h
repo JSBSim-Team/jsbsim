@@ -41,6 +41,7 @@ INCLUDES
 #include <string>
 
 #include "FGXMLElement.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -75,7 +76,7 @@ private:
   std::map<std::string, Element_ptr> CachedFiles;
 };
 
- std::string CheckFullPathName(const std::string& path, const std::string& fname);
+SGPath CheckPathName(const SGPath& path, const SGPath& filename);
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

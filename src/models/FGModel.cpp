@@ -103,9 +103,9 @@ bool FGModel::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGModel::FindFullPathName(const string& fname) const
+SGPath FGModel::FindFullPathName(const SGPath& path) const
 {
-  return CheckFullPathName(FDMExec->GetFullAircraftPath(), fname);
+  return CheckPathName(FDMExec->GetFullAircraftPath(), path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

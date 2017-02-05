@@ -41,6 +41,7 @@ INCLUDES
 #include <string>
 
 #include "math/FGModelFunctions.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -100,7 +101,7 @@ public:
   FGFDMExec* GetExec(void)     {return FDMExec;}
 
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
-  virtual std::string FindFullPathName(const std::string& filename) const;
+  virtual SGPath FindFullPathName(const SGPath& path) const;
 
 protected:
   unsigned int exe_ctr;
@@ -119,4 +120,3 @@ protected:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

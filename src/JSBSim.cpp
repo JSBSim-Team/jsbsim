@@ -83,12 +83,12 @@ IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.89 2016/05/20 14:14:05 ehofman Exp $");
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-string RootDir = "";
-string ScriptName;
+SGPath RootDir;
+SGPath ScriptName;
 string AircraftName;
-string ResetName;
+SGPath ResetName;
 vector <string> LogOutputName;
-vector <string> LogDirectiveName;
+vector <SGPath> LogDirectiveName;
 vector <string> CommandLineProperties;
 vector <double> CommandLinePropertyValues;
 JSBSim::FGFDMExec* FDMExec;
@@ -151,28 +151,28 @@ void PrintHelp(void);
     of file is given on the command line */
 class XMLFile : public FGXMLFileRead {
 public:
-  bool IsScriptFile(std::string filename) {
+  bool IsScriptFile(const SGPath& filename) {
     bool result=false;
     Element *document = LoadXMLDocument(filename, false);
     if (document && document->GetName() == "runscript") result = true;
     ResetParser();
     return result;
   }
-  bool IsLogDirectiveFile(std::string filename) {
+  bool IsLogDirectiveFile(const SGPath& filename) {
     bool result=false;
     Element *document = LoadXMLDocument(filename, false);
     if (document && document->GetName() == "output") result = true;
     ResetParser();
     return result;
   }
-  bool IsAircraftFile(std::string filename) {
+  bool IsAircraftFile(const SGPath& filename) {
     bool result=false;
     Element* document = LoadXMLDocument(filename, false);
     if (document && document->GetName() == "fdm_config") result = true;
     ResetParser();
     return result;
   }
-  bool IsInitFile(std::string filename) {
+  bool IsInitFile(const SGPath& filename) {
     bool result=false;
     Element *document = LoadXMLDocument(filename, false);
     if (document && document->GetName() == "initialize") result = true;
@@ -345,9 +345,9 @@ int real_main(int argc, char* argv[])
   // *** SET UP JSBSIM *** //
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetRootDir(RootDir);
-  FDMExec->SetAircraftPath("aircraft");
-  FDMExec->SetEnginePath("engine");
-  FDMExec->SetSystemsPath("systems");
+  FDMExec->SetAircraftPath(SGPath("aircraft"));
+  FDMExec->SetEnginePath(SGPath("engine"));
+  FDMExec->SetSystemsPath(SGPath("systems"));
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
@@ -372,7 +372,7 @@ int real_main(int argc, char* argv[])
   }
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
-  if (!ScriptName.empty()) {
+  if (!ScriptName.isNull()) {
 
     result = FDMExec->LoadScript(ScriptName, override_sim_rate_value, ResetName);
 
@@ -383,14 +383,14 @@ int real_main(int argc, char* argv[])
     }
 
   // *** OPTION B: LOAD AN AIRCRAFT AND A SET OF INITIAL CONDITIONS *** //
-  } else if (!AircraftName.empty() || !ResetName.empty()) {
+  } else if (!AircraftName.empty() || !ResetName.isNull()) {
 
     if (catalog) FDMExec->SetDebugLevel(0);
 
-    if ( ! FDMExec->LoadModel( "aircraft",
-                               "engine",
-                               "systems",
-                               AircraftName)) {
+    if ( ! FDMExec->LoadModel(SGPath("aircraft"),
+                              SGPath("engine"),
+                              SGPath("systems"),
+                              AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       delete FDMExec;
       exit(-1);
@@ -417,7 +417,7 @@ int real_main(int argc, char* argv[])
 
   // Load output directives file[s], if given
   for (unsigned int i=0; i<LogDirectiveName.size(); i++) {
-    if (!LogDirectiveName[i].empty()) {
+    if (!LogDirectiveName[i].isNull()) {
       if (!FDMExec->SetOutputDirectives(LogDirectiveName[i])) {
         cout << "Output directives not properly set in file " << LogDirectiveName[i] << endl;
         delete FDMExec;
@@ -621,17 +621,14 @@ bool options(int count, char **arg)
       }
     } else if (keyword == "--logdirectivefile") {
       if (n != string::npos) {
-        LogDirectiveName.push_back(value);
+        LogDirectiveName.push_back(SGPath::fromLocal8Bit(value.c_str()));
       } else {
         gripe;
         exit(1);
       }
     } else if (keyword == "--root") {
       if (n != string::npos) {
-        RootDir = value;
-        if (RootDir[RootDir.length()-1] != '/') {
-          RootDir += '/';
-        }
+        RootDir = SGPath::fromLocal8Bit(value.c_str());
       } else {
         gripe;
         exit(1);
@@ -645,14 +642,14 @@ bool options(int count, char **arg)
       }
     } else if (keyword == "--script") {
       if (n != string::npos) {
-        ScriptName = value;
+        ScriptName = SGPath::fromLocal8Bit(value.c_str());
       } else {
         gripe;
         exit(1);
       }
     } else if (keyword == "--initfile") {
       if (n != string::npos) {
-        ResetName = value;
+        ResetName = SGPath::fromLocal8Bit(value.c_str());
       } else {
         gripe;
         exit(1);
@@ -704,12 +701,13 @@ bool options(int count, char **arg)
       // See what kind of files we are specifying on the command line
 
       XMLFile xmlFile;
+      SGPath path = SGPath::fromLocal8Bit(keyword.c_str());
       
-      if (xmlFile.IsScriptFile(keyword)) ScriptName = keyword;
-      else if (xmlFile.IsLogDirectiveFile(keyword))  LogDirectiveName.push_back(keyword);
-      else if (xmlFile.IsAircraftFile("aircraft/" + keyword + "/" + keyword)) AircraftName = keyword;
-      else if (xmlFile.IsInitFile(keyword)) ResetName = keyword;
-      else if (xmlFile.IsInitFile("aircraft/" + AircraftName + "/" + keyword)) ResetName = keyword;
+      if (xmlFile.IsScriptFile(path)) ScriptName = path;
+      else if (xmlFile.IsLogDirectiveFile(path))  LogDirectiveName.push_back(path);
+      else if (xmlFile.IsAircraftFile(SGPath("aircraft")/keyword/keyword)) AircraftName = keyword;
+      else if (xmlFile.IsInitFile(path)) ResetName = path;
+      else if (xmlFile.IsInitFile(SGPath("aircraft")/AircraftName/keyword)) ResetName = SGPath("aircraft")/AircraftName/keyword;
       else {
         cerr << "The argument \"" << keyword << "\" cannot be interpreted as a file name or option." << endl;
         exit(1);
@@ -727,15 +725,15 @@ bool options(int count, char **arg)
 
   // Post-processing for script options. check for incompatible options.
 
-  if (catalog && !ScriptName.empty()) {
+  if (catalog && !ScriptName.isNull()) {
     cerr << "Cannot specify catalog with script option" << endl << endl;
     result = false;
   }
-  if (AircraftName.size() > 0 && ResetName.size() == 0 && !catalog) {
+  if (AircraftName.size() > 0 && ResetName.isNull() && !catalog) {
     cerr << "You must specify an initialization file with the aircraft name." << endl << endl;
     result = false;
   }
-  if (ScriptName.size() > 0 && AircraftName.size() > 0) {
+  if (!ScriptName.isNull() && AircraftName.size() > 0) {
     cerr << "You cannot specify an aircraft file with a script." << endl;
     result = false;
   }
