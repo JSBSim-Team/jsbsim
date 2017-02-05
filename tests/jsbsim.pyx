@@ -87,14 +87,6 @@ cdef class FGPropertyManager:
      def hasNode(self, path):
          return self.thisptr.HasNode(path)
 
-cdef class SGPath:
-    cdef c_SGPath c_path
-
-    def __cinit__(self, path=None):
-        self.c_path = c_SGPath()
-        if path:
-            self.c_path.set(path)
-
 # this is the python wrapper class
 cdef class FGFDMExec:
 
@@ -227,8 +219,8 @@ cdef class FGFDMExec:
             AircraftPath, defaults to true
         @return true if successful
         """
-        return self.thisptr.LoadModel(SGPath(aircraft_path).c_path,
-            SGPath(engine_path).c_path, SGPath(systems_path).c_path, model,
+        return self.thisptr.LoadModel(c_SGPath(aircraft_path, NULL),
+            c_SGPath(engine_path, NULL), c_SGPath(systems_path, NULL), model,
             add_model_to_path)
 
     def load_script(self, script, delta_t=0.0, initfile=""):
@@ -244,8 +236,8 @@ cdef class FGFDMExec:
             is not given in either place, an error will result.
         @return true if successfully loads; false otherwise. */
         """
-        return self.thisptr.LoadScript(SGPath(script).c_path, delta_t,
-                                       SGPath(initfile).c_path)
+        return self.thisptr.LoadScript(c_SGPath(script, NULL), delta_t,
+                                       c_SGPath(initfile,NULL))
 
     def set_engine_path(self, path):
         """
@@ -253,7 +245,7 @@ cdef class FGFDMExec:
         @param path path to the directory under which engine config
             files are kept, for instance "engine"
         """
-        return self.thisptr.SetEnginePath(SGPath(path).c_path)
+        return self.thisptr.SetEnginePath(c_SGPath(path, NULL))
 
     def set_aircraft_path(self, path):
         """
@@ -262,7 +254,7 @@ cdef class FGFDMExec:
             "aircraft". Under aircraft, then, would be directories for various
             modeled aircraft such as C172/, x15/, etc.
         """
-        return self.thisptr.SetAircraftPath(SGPath(path).c_path)
+        return self.thisptr.SetAircraftPath(c_SGPath(path, NULL))
 
     def set_systems_path(self, path):
         """
@@ -270,14 +262,14 @@ cdef class FGFDMExec:
         @param path path to the directory under which systems config
             files are kept, for instance "systems"
         """
-        return self.thisptr.SetSystemsPath(SGPath(path).c_path)
+        return self.thisptr.SetSystemsPath(c_SGPath(path, NULL))
 
     def set_root_dir(self, path):
         """
         Sets the root directory where JSBSim starts looking for its system directories.
         @param path the string containing the root directory.
         """
-        self.thisptr.SetRootDir(SGPath(path).c_path)
+        self.thisptr.SetRootDir(c_SGPath(path, NULL))
 
         # this is a hack to fix a bug in JSBSim
         self.set_engine_path("engine")
@@ -354,7 +346,7 @@ cdef class FGFDMExec:
         be logged.
         @param fname the filename of an output directives file.
         """
-        return self.thisptr.SetOutputDirectives(SGPath(fname).c_path)
+        return self.thisptr.SetOutputDirectives(c_SGPath(fname, NULL))
 
     #def force_output(self, index):
         #"""
@@ -560,7 +552,7 @@ cdef class FGFDMExec:
         return self.thisptr.GetPropulsion().GetNumEngines()
 
     def load_ic(self, rstfile, useStoredPath):
-        return self.thisptr.GetIC().Load(SGPath(rstfile).c_path, useStoredPath)
+        return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
 
     def get_propagate(self):
         propagate = FGPropagate()

@@ -729,11 +729,11 @@ bool options(int count, char **arg)
     cerr << "Cannot specify catalog with script option" << endl << endl;
     result = false;
   }
-  if (AircraftName.size() > 0 && ResetName.isNull() && !catalog) {
+  if (!AircraftName.empty() && ResetName.isNull() && !catalog) {
     cerr << "You must specify an initialization file with the aircraft name." << endl << endl;
     result = false;
   }
-  if (!ScriptName.isNull() && AircraftName.size() > 0) {
+  if (!ScriptName.isNull() && !AircraftName.empty()) {
     cerr << "You cannot specify an aircraft file with a script." << endl;
     result = false;
   }

@@ -41,7 +41,6 @@ INCLUDES
 #include "FGModelLoader.h"
 #include "FGXMLFileRead.h"
 #include "models/FGModel.h"
-#include "simgear/misc/sg_path.hxx"
 
 using namespace std;
 

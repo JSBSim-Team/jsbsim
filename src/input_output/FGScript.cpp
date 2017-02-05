@@ -53,7 +53,6 @@ INCLUDES
 #include "models/FGInput.h"
 #include "math/FGCondition.h"
 #include "math/FGFunction.h"
-#include "simgear/misc/sg_path.hxx"
 
 using namespace std;
 

@@ -30,7 +30,7 @@ cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
 
 cdef extern from "simgear/misc/sg_path.hxx":
     cdef cppclass c_SGPath "SGPath":
-        c_SGPath()
+        c_SGPath(const string& path, int* validator)
         c_SGPath(const c_SGPath& p)
         void set(const string& p)
         string utf8Str()
