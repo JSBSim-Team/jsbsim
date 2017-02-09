@@ -27,3 +27,39 @@ code without any dependencies on simgear
 
 #define SG_LOG(type, level, message) (cout <<message << endl)
 #define SG_USING_STD(X) using std::X
+
+#ifdef __APPLE__
+#  define SG_MAC
+#  define SG_UNIX
+#endif
+
+#if defined (__FreeBSD__)
+#  define SG_UNIX
+#endif
+
+#if defined (__CYGWIN__)
+#  define SG_WINDOWS
+#  define SG_UNIX
+#  include <ieeefp.h>		// isnan
+#endif
+
+// includes both MSVC and mingw compilers
+#if defined(_WIN32) || defined(__WIN32__)
+#  define SG_WINDOWS
+#endif
+
+#if defined(__linux__) || defined(_AIX) || defined ( sgi )
+#  define SG_UNIX
+#endif
+
+#if defined( __GNUC__ )
+#  define DEPRECATED __attribute__ ((deprecated))
+#else
+#  define DEPRECATED
+#endif
+
+#if defined(__clang__)
+#  define SG_NO_RETURN [[noreturn]]
+#else
+#  define SG_NO_RETURN
+#endif

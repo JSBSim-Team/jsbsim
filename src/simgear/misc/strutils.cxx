@@ -707,7 +707,7 @@ std::string error_string(int errnum)
     }
 #endif
 
-    throw sg_error(msg, ostr.str());
+    throw msg + ostr.str();
   }
 
   return std::string(buf);

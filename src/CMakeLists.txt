@@ -5,7 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ################################################################################
 
 if(MSVC)
-  add_definitions("/D _USE_MATH_DEFINES")
+  add_definitions("/D _USE_MATH_DEFINES /D NOMINMAX")
 endif()
 
 ################################################################################
