@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.31 2015/12/09 04:28:18 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.32 2017/02/21 21:07:04 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -282,6 +282,13 @@ public:
   double GetIxx(void) const {return Ixx;}
   double GetIyy(void) const {return Iyy;}
   double GetIzz(void) const {return Izz;}
+
+  inline double GetLocationX(void) const { return vXYZ(eX); }
+  inline double GetLocationY(void) const { return vXYZ(eY); }
+  inline double GetLocationZ(void) const { return vXYZ(eZ); }
+  inline void SetLocationX(double x) { vXYZ(eX) = x; }
+  inline void SetLocationY(double y) { vXYZ(eY) = y; }
+  inline void SetLocationZ(double z) { vXYZ(eZ) = z; }
 
   double GetStandpipe(void) const {return Standpipe;}
 

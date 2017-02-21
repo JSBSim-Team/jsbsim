@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTank.cpp,v 1.45 2016/05/05 17:23:10 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTank.cpp,v 1.46 2017/02/21 21:07:04 bcoconni Exp $");
 IDENT(IdHdr,ID_TANK);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -465,6 +465,14 @@ void FGTank::bind(FGPropertyManager* PropertyManager)
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIyy);
   property_name = base_property_name + "/local-izz-slug_ft2";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetIzz);
+
+  property_name = base_property_name + "/x-position";
+  PropertyManager->Tie(property_name.c_str(), (FGTank*)this, &FGTank::GetLocationX, &FGTank::SetLocationX);
+  property_name = base_property_name + "/y-position";
+  PropertyManager->Tie(property_name.c_str(), (FGTank*)this, &FGTank::GetLocationY, &FGTank::SetLocationY);
+  property_name = base_property_name + "/z-position";
+  PropertyManager->Tie(property_name.c_str(), (FGTank*)this, &FGTank::GetLocationZ, &FGTank::SetLocationZ);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
