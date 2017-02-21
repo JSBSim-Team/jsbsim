@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.124 2016/06/25 17:48:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.125 2017/02/21 21:14:13 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -784,9 +784,15 @@ void FGLGear::bind(void)
 
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );
+  property_name = base_property_name + "/x-position";
+  PropertyManager->Tie( property_name.c_str(), (FGForce*)this,
+                        &FGForce::GetLocationX, &FGForce::SetLocationX);
+  property_name = base_property_name + "/y-position";
+  PropertyManager->Tie( property_name.c_str(), (FGForce*)this,
+                        &FGForce::GetLocationY, &FGForce::SetLocationY);
   property_name = base_property_name + "/z-position";
   PropertyManager->Tie( property_name.c_str(), (FGForce*)this,
-                          &FGForce::GetLocationZ, &FGForce::SetLocationZ);
+                        &FGForce::GetLocationZ, &FGForce::SetLocationZ);
   property_name = base_property_name + "/compression-ft";
   PropertyManager->Tie( property_name.c_str(), &compressLength );
   property_name = base_property_name + "/compression-velocity-fps";
