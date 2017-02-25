@@ -73,7 +73,7 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
-#include "simgear/misc/sgstream.hxx"
+#include "simgear/io/iostreams/sgstream.hxx"
 
 using namespace std;
 

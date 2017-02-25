@@ -1,6 +1,6 @@
-set(SOURCES sg_path.cxx strutils.cxx sgstream.cxx)
+set(SOURCES sg_path.cxx strutils.cxx)
 
-set(HEADERS stdint.hxx sg_path.hxx strutils.hxx sgstream.hxx)
+set(HEADERS stdint.hxx sg_path.hxx strutils.hxx)
 
 add_full_path_name(MISC_SRC "${SOURCES}")
 add_full_path_name(MISC_HDR "${HEADERS}")

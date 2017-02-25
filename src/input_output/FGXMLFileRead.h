@@ -40,7 +40,7 @@ INCLUDES
 
 #include "input_output/FGXMLParse.h"
 #include "simgear/misc/sg_path.hxx"
-#include "simgear/misc/sgstream.hxx"
+#include "simgear/io/iostreams/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
