@@ -77,7 +77,7 @@ using JSBSim::Element;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.90 2017/02/25 14:23:18 bcoconni Exp $");
+IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.91 2017/02/25 15:50:02 bcoconni Exp $");
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -287,7 +287,7 @@ int main(int argc, char* argv[])
   _clearfp();
   _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
            _MCW_EM);
-#elif defined(__GNUC__) && !defined(sgi)
+#elif defined(__GNUC__) && !defined(sgi) && !defined(__APPLE__)
   feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
 
