@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: strutils.cxx,v 1.1 2017/02/25 14:23:20 bcoconni Exp $
+// $Id: strutils.cxx,v 1.2 2017/02/25 15:47:03 bcoconni Exp $
 
 #include <ctype.h>
 #include <cstring>
@@ -178,7 +178,7 @@ namespace simgear {
 
         string_list split_on_any_of(const std::string& str, const char* seperators)
         {
-            if (seperators == nullptr || (strlen(seperators) == 0)) {
+            if (seperators == NULL || (strlen(seperators) == 0)) {
                 throw "illegal/missing seperator string";
             }
 
@@ -268,21 +268,21 @@ namespace simgear {
         void
         stripTrailingNewlines_inplace(string& s)
         {
-          // The following (harder to read) implementation is much slower on
-          // my system (g++ 6.2.1 on Debian): 11.4 vs. 3.9 seconds on
-          // 50,000,000 iterations performed on a short CRLF-terminated
-          // string---and it is even a bit slower (12.9 seconds) with
-          // std::next(it) instead of (it+1).
+          // Florent Rougon: The following (harder to read) implementation is
+          // much slower on my system (g++ 6.2.1 on Debian): 11.4 vs. 3.9
+          // seconds on 50,000,000 iterations performed on a short
+          // CRLF-terminated string---and it is even a bit slower (12.9 seconds)
+          // with std::next(it) instead of (it+1).
           //
-          // for (string::reverse_iterator it = s.rbegin();
-          //      it != s.rend() && (*it == '\r' || *it == '\n'); /* empty */) {
-          //   it = string::reverse_iterator(s.erase( (it+1).base() ));
-          // }
-
-          // Simple and fast
-          while (!s.empty() && (s.back() == '\r' || s.back() == '\n')) {
-            s.pop_back();
+          for (string::reverse_iterator it = s.rbegin();
+               it != s.rend() && (*it == '\r' || *it == '\n'); /* empty */) {
+            it = string::reverse_iterator(s.erase( (it+1).base() ));
           }
+
+          // Simple and fast but need C++11
+          // while (!s.empty() && (s.back() == '\r' || s.back() == '\n')) {
+          //   s.pop_back();
+          // }
         }
 
         string
