@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.24 2016/05/18 13:26:59 ehofman Exp $
+// $Id: FlightGear.cxx,v 1.25 2017/02/25 15:45:23 bcoconni Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -185,6 +185,7 @@ FGJSBsim::FGJSBsim( double dt )
         case SG_INFO:
         case SG_WARN:
         case SG_ALERT:
+        case SG_POPUP:
             FGJSBBase::debug_lvl = 0x00;
             break;
         }
@@ -233,9 +234,7 @@ FGJSBsim::FGJSBsim( double dt )
 
     fdmex->Setdt( dt );
 
-    result = fdmex->LoadModel( aircraft_path.str(),
-                               engine_path.str(),
-                               systems_path.str(),
+    result = fdmex->LoadModel( aircraft_path, engine_path, systems_path,
                                fgGetString("/sim/aero"), false );
 
     if (result) {
@@ -502,7 +501,6 @@ void FGJSBsim::unbind()
 /******************************************************************************/
 
 // Run an iteration of the EOM (equations of motion)
-
 void FGJSBsim::update( double dt )
 {
     if(crashed) {
@@ -654,7 +652,7 @@ bool FGJSBsim::copy_to_JSBsim()
         FGTurboProp* eng = (FGTurboProp*)Propulsion->GetEngine(i);
         eng->SetReverse( globals->get_controls()->get_reverser(i) );
         eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
-        eng->SetIgnition( globals->get_controls()->get_ignition(i) );
+        // eng->SetIgnition( globals->get_controls()->get_ignition(i) );
 
         eng->SetGeneratorPower( globals->get_controls()->get_generator_breaker(i) );
         eng->SetCondition( globals->get_controls()->get_condition(i) );
@@ -882,9 +880,9 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("n1", eng->GetN1());
         //node->setDoubleValue("n2", eng->GetN2());
         node->setDoubleValue("itt_degf", 32 + eng->GetITT()*9/5);
-        node->setBoolValue("ignition", eng->GetIgnition() != 0);
-        node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
-        node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
+        // node->setBoolValue("ignition", eng->GetIgnition() != 0);
+        // node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
+        // node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
         node->setBoolValue("reversed", eng->GetReversed());
         node->setBoolValue("cutoff", eng->GetCutoff());
@@ -1023,16 +1021,17 @@ void FGJSBsim::set_Latitude(double lat)
   SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Latitude: " << lat );
   SG_LOG(SG_FLIGHT,SG_INFO," cur alt (ft) =  " << alt );
 
-  sgGeodToGeoc( lat, alt * SG_FEET_TO_METER,
-                    &sea_level_radius_meters, &lat_geoc );
-
-  double sea_level_radius_ft = sea_level_radius_meters * SG_METER_TO_FEET;
-  _set_Sea_level_radius( sea_level_radius_ft );
-
   if (needTrim)
-    fgic->SetLatitudeRadIC( lat_geoc );
-  else
+    fgic->SetGeodLatitudeRadIC( lat );
+  else {
+    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER,
+                  &sea_level_radius_meters, &lat_geoc );
+
+    double sea_level_radius_ft = sea_level_radius_meters * SG_METER_TO_FEET;
+    _set_Sea_level_radius( sea_level_radius_ft );
+
     Propagate->SetLatitude(lat_geoc);
+  }
 
   FGInterface::set_Latitude(lat);
 }
@@ -1055,13 +1054,8 @@ void FGJSBsim::set_Altitude(double alt)
 {
   SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Altitude: " << alt );
 
-  if (needTrim) {
-    FGLocation position = fgic->GetPosition();
-
-    position.SetPositionGeodetic(0.0, position.GetGeodLatitudeRad(), alt);
-    fgic->SetAltitudeASLFtIC(position.GetAltitudeASL());
-    fgic->SetLatitudeRadIC(position.GetLatitude());
-  }
+  if (needTrim)
+    fgic->SetAltitudeASLFtIC(alt);
   else
     Propagate->SetAltitudeASL(alt);
 
@@ -1311,6 +1305,7 @@ bool FGJSBsim::update_ground_cache(const FGLocation& cart, double* cart_pos,
   // Compute the potential movement of this aircraft and query for the
   // ground in this area.
   double groundCacheRadius = acrad + 2*dt*Propagate->GetUVW().Magnitude();
+
   cart_pos[0] = cart(1);
   cart_pos[1] = cart(2);
   cart_pos[2] = cart(3);
