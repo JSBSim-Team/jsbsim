@@ -5,7 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ################################################################################
 
 if(MSVC)
-  add_definitions("/D _USE_MATH_DEFINES")
+  add_definitions("/D _USE_MATH_DEFINES /D NOMINMAX")
 endif()
 
 ################################################################################
@@ -81,6 +81,8 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   ${JSBSIM_SIMGEAR_PROPS_HDR} ${JSBSIM_SIMGEAR_PROPS_SRC}
   ${JSBSIM_SIMGEAR_XML_HDR} ${JSBSIM_SIMGEAR_XML_SRC}
   ${JSBSIM_SIMGEAR_MAGVAR_HDR} ${JSBSIM_SIMGEAR_MAGVAR_SRC}
+  ${JSBSIM_SIMGEAR_MISC_HDR} ${JSBSIM_SIMGEAR_MISC_SRC}
+  ${JSBSIM_SIMGEAR_IOSTREAMS_HDR} ${JSBSIM_SIMGEAR_IOSTREAMS_SRC}
   )
 
 set_target_properties (libJSBSim PROPERTIES

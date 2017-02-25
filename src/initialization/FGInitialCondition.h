@@ -49,12 +49,13 @@ INCLUDES
 
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.47 2016/08/28 12:13:09 bcoconni Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.48 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -220,7 +221,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.47 2016/08/28 12:13:09 bcoconni Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.48 2017/02/25 14:23:18 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -677,7 +678,7 @@ public:
       @param rstname The name of an initial conditions file
       @param useStoredPath true if the stored path to the IC file should be used
       @return true if successful */
-  bool Load(std::string rstname, bool useStoredPath = true );
+  bool Load(const SGPath& rstname, bool useStoredPath = true );
 
   /** Is an engine running ?
       @param index of the engine to be checked

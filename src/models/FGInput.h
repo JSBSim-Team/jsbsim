@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INPUT "$Id: FGInput.h,v 1.13 2015/08/23 09:43:31 bcoconni Exp $"
+#define ID_INPUT "$Id: FGInput.h,v 1.14 2017/02/25 14:23:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
 
     The class FGInput is the manager of the inputs requested by the user. It
     manages a list of instances derived from the abstract class FGInputType.
-    @version $Id: FGInput.h,v 1.13 2015/08/23 09:43:31 bcoconni Exp $
+    @version $Id: FGInput.h,v 1.14 2017/02/25 14:23:19 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,7 @@ public:
       @param fname the name of the file from which the ouput directives should
                    be read.
       @return true if the execution succeeded. */
-  bool SetDirectivesFile(const std::string& fname);
+  bool SetDirectivesFile(const SGPath& fname);
 
   /// Enables the input generation for all input instances.
   void Enable(void) { enabled = true; }

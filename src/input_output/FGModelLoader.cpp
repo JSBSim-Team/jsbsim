@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc, "$Id: FGModelLoader.cpp,v 1.3 2015/07/12 12:41:55 bcoconni Exp $");
+IDENT(IdSrc, "$Id: FGModelLoader.cpp,v 1.4 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr, ID_MODELLOADER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,28 +60,21 @@ Element_ptr FGModelLoader::Open(Element *el)
 
   if (!fname.empty()) {
     FGXMLFileRead XMLFileRead;
-    string file;
+    SGPath path(SGPath::fromLocal8Bit(fname.c_str()));
 
-    try {
-      file = model->FindFullPathName(fname);
-      if (file.empty()) throw string("File does not exist.");
-    }
-    catch(string& e) {
-      cerr << endl << el->ReadFrom()
-           << "Could not open file: " << fname << endl << e << endl;
-      return NULL;
-    }
+    if (path.isRelative())
+      path = model->FindFullPathName(path);
 
-    if (CachedFiles.find(file) != CachedFiles.end())
-      document = CachedFiles[file];
+    if (CachedFiles.find(path.utf8Str()) != CachedFiles.end())
+      document = CachedFiles[path.utf8Str()];
     else {
-      document = XMLFileRead.LoadXMLDocument(file);
+      document = XMLFileRead.LoadXMLDocument(path);
       if (document == 0L) {
         cerr << endl << el->ReadFrom()
-             << "Could not open file: " << file << endl;
+             << "Could not open file: " << path << endl;
         return NULL;
       }
-      CachedFiles[file] = document;
+      CachedFiles[path.utf8Str()] = document;
     }
 
     if (document->GetName() != el->GetName()) {
@@ -93,19 +86,12 @@ Element_ptr FGModelLoader::Open(Element *el)
   return document;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SGPath CheckPathName(const SGPath& path, const SGPath& filename) {
+  SGPath fullName = path/filename.utf8Str();
 
-string CheckFullPathName(const string& path, const string& fname)
-{
-  string name = path + "/" + fname;
+  if (fullName.extension().empty())
+    fullName.concat(".xml");
 
-  if (name.length() <=4 || name.substr(name.length()-4, 4) != ".xml")
-    name.append(".xml");
-
-  ifstream file(name.c_str());
-  if (!file.is_open())
-    return string();
-
-  return name;
+  return fullName.exists() ? fullName : SGPath();
 }
 }

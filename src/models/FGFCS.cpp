@@ -70,7 +70,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.97 2016/05/18 08:06:57 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFCS.cpp,v 1.98 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr,ID_FCS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -602,16 +602,15 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::FindFullPathName(const string& sysfilename) const
+SGPath FGFCS::FindFullPathName(const SGPath& path) const
 {
-  string name = FGModel::FindFullPathName(sysfilename);
+  SGPath name = FGModel::FindFullPathName(path);
+  if (systype != stSystem || !name.isNull()) return name;
 
-  if (systype != stSystem || !name.empty()) return name;
+  name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Systems"), path);
+  if (!name.isNull()) return name;
 
-  name = CheckFullPathName(FDMExec->GetFullAircraftPath() + "/Systems", sysfilename);
-  if (!name.empty()) return name;
-
-  return CheckFullPathName(FDMExec->GetSystemsPath(), sysfilename);
+  return CheckPathName(FDMExec->GetSystemsPath(), path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

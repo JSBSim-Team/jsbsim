@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.33 2015/08/23 09:43:31 bcoconni Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.34 2017/02/25 14:23:19 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ CLASS DOCUMENTATION
 
     The class FGOutput is the manager of the outputs requested by the user. It
     manages a list of instances derived from the abstract class FGOutputType.
-    @version $Id: FGOutput.h,v 1.33 2015/08/23 09:43:31 bcoconni Exp $
+    @version $Id: FGOutput.h,v 1.34 2017/02/25 14:23:19 bcoconni Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ public:
       @param fname the name of the file from which the ouput directives should
                    be read.
       @return true if the execution succeeded. */
-  bool SetDirectivesFile(const std::string& fname);
+  bool SetDirectivesFile(const SGPath& fname);
   /// Enables the output generation for all output instances.
   void Enable(void) { enabled = true; }
   /// Disables the output generation for all output instances.

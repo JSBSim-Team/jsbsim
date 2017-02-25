@@ -43,12 +43,13 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGPropertyReader.h"
 #include "input_output/FGPropertyManager.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.30 2015/09/20 16:32:11 bcoconni Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.31 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -161,7 +162,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.30 2015/09/20 16:32:11 bcoconni Exp $"
+    @version "$Id: FGScript.h,v 1.31 2017/02/25 14:23:18 bcoconni Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,8 +189,8 @@ public:
                       default. If a file name is passed in, it will override the
                       one present in the script.
       @return true if successful */
-  bool LoadScript(const std::string& script, double default_dT,
-                  const std::string& initfile);
+  bool LoadScript(const SGPath& script, double default_dT,
+                  const SGPath& initfile);
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled.

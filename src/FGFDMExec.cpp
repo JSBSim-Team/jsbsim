@@ -72,7 +72,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.192 2017/01/22 09:46:48 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGFDMExec.cpp,v 1.193 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr,ID_FDMEXEC);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -650,24 +650,26 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadScript(const string& script, double deltaT, const string& initfile)
+bool FGFDMExec::LoadScript(const SGPath& script, double deltaT,
+                           const SGPath& initfile)
 {
   bool result;
 
   Script = new FGScript(this);
-  result = Script->LoadScript(RootDir + script, deltaT, initfile);
+  result = Script->LoadScript(GetFullPath(script), deltaT, initfile);
 
   return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(const string& AircraftPath, const string& EnginePath, const string& SystemsPath,
-                const string& model, bool addModelToPath)
+bool FGFDMExec::LoadModel(const SGPath& AircraftPath, const SGPath& EnginePath,
+                          const SGPath& SystemsPath, const string& model,
+                          bool addModelToPath)
 {
-  FGFDMExec::AircraftPath = RootDir + AircraftPath;
-  FGFDMExec::EnginePath = RootDir + EnginePath;
-  FGFDMExec::SystemsPath = RootDir + SystemsPath;
+  FGFDMExec::AircraftPath = GetFullPath(AircraftPath);
+  FGFDMExec::EnginePath = GetFullPath(EnginePath);
+  FGFDMExec::SystemsPath = GetFullPath(SystemsPath);
 
   return LoadModel(model, addModelToPath);
 }
@@ -676,20 +678,20 @@ bool FGFDMExec::LoadModel(const string& AircraftPath, const string& EnginePath, 
 
 bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 {
-  string aircraftCfgFileName;
+  SGPath aircraftCfgFileName;
   bool result = false; // initialize result to false, indicating input file not yet read
 
   modelName = model; // Set the class modelName attribute
 
-  if( AircraftPath.empty() || EnginePath.empty() || SystemsPath.empty()) {
+  if( AircraftPath.isNull() || EnginePath.isNull() || SystemsPath.isNull()) {
     cerr << "Error: attempted to load aircraft with undefined ";
     cerr << "aircraft, engine, and system paths" << endl;
     return false;
   }
 
   FullAircraftPath = AircraftPath;
-  if (addModelToPath) FullAircraftPath += "/" + model;
-  aircraftCfgFileName = FullAircraftPath + "/" + model + ".xml";
+  if (addModelToPath) FullAircraftPath.append(model);
+  aircraftCfgFileName = FullAircraftPath/(model + ".xml");
 
   if (modelLoaded) {
     DeAllocate();

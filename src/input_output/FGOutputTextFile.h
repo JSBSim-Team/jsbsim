@@ -41,12 +41,13 @@ INCLUDES
 #include <fstream>
 
 #include "FGOutputFile.h"
+#include "simgear/io/iostreams/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.4 2012/12/15 16:13:58 bcoconni Exp $"
+#define ID_OUTPUTTEXTFILE "$Id: FGOutputTextFile.h,v 1.5 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +90,7 @@ public:
 
 protected:
   std::string delimeter;
-  std::ofstream datafile;
+  sg_ofstream datafile;
 
   virtual bool OpenFile(void);
   virtual void CloseFile(void) { if (datafile.is_open()) datafile.close(); }

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.53 2016/05/18 08:06:57 ehofman Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.54 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -168,7 +168,7 @@ CLASS DOCUMENTATION
     @property gear/tailhook-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.53 $
+    @version $Revision: 1.54 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -544,7 +544,7 @@ public:
       @return true if succesful */
   bool Load(Element* el);
 
-  std::string FindFullPathName(const std::string& system_filename) const;
+  SGPath FindFullPathName(const SGPath& path) const;
 
   void AddThrottle(void);
   double GetDt(void) const;

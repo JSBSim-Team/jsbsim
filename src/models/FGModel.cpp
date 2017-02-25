@@ -46,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGModel.cpp,v 1.26 2015/07/12 19:34:08 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGModel.cpp,v 1.27 2017/02/25 14:23:19 bcoconni Exp $");
 IDENT(IdHdr,ID_MODEL);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,9 +103,9 @@ bool FGModel::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGModel::FindFullPathName(const string& fname) const
+SGPath FGModel::FindFullPathName(const SGPath& path) const
 {
-  return CheckFullPathName(FDMExec->GetFullAircraftPath(), fname);
+  return CheckPathName(FDMExec->GetFullAircraftPath(), path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.113 2016/09/11 11:31:00 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.114 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr,ID_INITIALCONDITION);
 
 //******************************************************************************
@@ -880,11 +880,11 @@ double FGInitialCondition::GetBodyVelFpsIC(int idx) const
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
+bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
 {
-  string init_file_name;
-  if( useStoredPath ) {
-    init_file_name = fdmex->GetFullAircraftPath() + "/" + rstfile + ".xml";
+  SGPath init_file_name;
+  if(useStoredPath && rstfile.isRelative()) {
+    init_file_name = fdmex->GetFullAircraftPath()/rstfile.utf8Str();
   } else {
     init_file_name = rstfile;
   }

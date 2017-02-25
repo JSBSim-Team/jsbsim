@@ -41,12 +41,13 @@ INCLUDES
 #include <string>
 
 #include "FGXMLElement.h"
+#include "simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODELLOADER "$Id: FGModelLoader.h,v 1.1 2014/06/09 11:52:06 bcoconni Exp $"
+#define ID_MODELLOADER "$Id: FGModelLoader.h,v 1.2 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +76,7 @@ private:
   std::map<std::string, Element_ptr> CachedFiles;
 };
 
- std::string CheckFullPathName(const std::string& path, const std::string& fname);
+SGPath CheckPathName(const SGPath& path, const SGPath& filename);
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.9 2014/05/04 17:00:27 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGOutputFile.cpp,v 1.10 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr,ID_OUTPUTFILE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,8 +65,8 @@ FGOutputFile::FGOutputFile(FGFDMExec* fdmex) :
 bool FGOutputFile::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
-    if (Filename.empty()) {
-      Filename = Name;
+    if (Filename.isNull()) {
+      Filename = SGPath(Name);
       runID_postfix = 0;
     }
     return OpenFile();
@@ -87,7 +87,7 @@ void FGOutputFile::SetStartNewOutput(void)
     } else {
       buf << Name << '_' << runID_postfix++;
     }
-    Filename = buf.str();
+    Filename = SGPath(buf.str());
   }
 
   CloseFile();

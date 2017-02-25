@@ -28,11 +28,18 @@ cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
         void InitRunning(int n)
         int GetNumEngines()
 
+cdef extern from "simgear/misc/sg_path.hxx":
+    cdef cppclass c_SGPath "SGPath":
+        c_SGPath(const string& path, int* validator)
+        c_SGPath(const c_SGPath& p)
+        void set(const string& p)
+        string utf8Str()
+
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
     cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
         c_FGInitialCondition(c_FGFDMExec* fdm)
         c_FGInitialCondition(c_FGInitialCondition* ic)
-        bool Load(string rstfile, bool useStoredPath)
+        bool Load(const c_SGPath& rstfile, bool useStoredPath)
 
 cdef extern from "math/FGMatrix33.h" namespace "JSBSim":
     cdef cppclass c_FGMatrix33 "JSBSim::FGMatrix33":
@@ -60,31 +67,32 @@ cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
 
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
-        c_FGFDMExec(int root, int fdmctr)
+        c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
         void Unbind()
         bool Run() except +convertJSBSimToPyExc
         bool RunIC() except +convertJSBSimToPyExc
         bool LoadModel(string model,
                        bool add_model_to_path)
-        bool LoadModel(string aircraft_path,
-                       string engine_path,
-                       string systems_path,
-                       string model,
+        bool LoadModel(const c_SGPath aircraft_path,
+                       const c_SGPath engine_path,
+                       const c_SGPath systems_path,
+                       const string model,
                        bool add_model_to_path)
-        bool LoadScript(string script, double delta_t, string initfile) except +convertJSBSimToPyExc
-        bool SetEnginePath(string path)
-        bool SetAircraftPath(string path)
-        bool SetSystemsPath(string path)
-        void SetRootDir(string path)
-        string GetEnginePath()
-        string GetAircraftPath()
-        string GetSystemsPath()
-        string GetRootDir()
-        string GetFullAircraftPath()
+        bool LoadScript(const c_SGPath& script, double delta_t,
+                        const c_SGPath& initfile) except +convertJSBSimToPyExc
+        bool SetEnginePath(const c_SGPath& path)
+        bool SetAircraftPath(const c_SGPath& path)
+        bool SetSystemsPath(const c_SGPath& path)
+        void SetRootDir(const c_SGPath& path)
+        const c_SGPath& GetEnginePath()
+        const c_SGPath& GetAircraftPath()
+        const c_SGPath& GetSystemsPath()
+        const c_SGPath& GetRootDir()
+        const c_SGPath& GetFullAircraftPath()
         double GetPropertyValue(string property)
         void SetPropertyValue(string property, double value) except +convertJSBSimToPyExc
         string GetModelName()
-        bool SetOutputDirectives(string fname) except +
+        bool SetOutputDirectives(const c_SGPath& fname) except +
         #void ForceOutput(int idx=0)
         void SetLoggingRate(double rate)
         bool SetOutputFileName(int n, string fname)

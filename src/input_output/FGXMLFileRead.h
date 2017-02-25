@@ -35,15 +35,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "input_output/FGXMLParse.h"
 #include <iostream>
 #include <fstream>
+
+#include "input_output/FGXMLParse.h"
+#include "simgear/misc/sg_path.hxx"
+#include "simgear/io/iostreams/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.9 2013/12/01 14:33:51 bcoconni Exp $"
+#define ID_XMLFILEREAD "$Id: FGXMLFileRead.h,v 1.10 2017/02/25 14:23:18 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -56,20 +59,23 @@ public:
   FGXMLFileRead(void) {}
   ~FGXMLFileRead(void) {}
 
-  Element* LoadXMLDocument(std::string XML_filename, bool verbose=true)
+  Element* LoadXMLDocument(const SGPath& XML_filename, bool verbose=true)
   {
     return LoadXMLDocument(XML_filename, file_parser, verbose);
   }
 
-  Element* LoadXMLDocument(std::string XML_filename, FGXMLParse& fparse, bool verbose=true)
+  Element* LoadXMLDocument(const SGPath& XML_filename, FGXMLParse& fparse, bool verbose=true)
   {
-    std::ifstream infile;
+    sg_ifstream infile;
+    SGPath filename(XML_filename);
 
-    if ( !XML_filename.empty() ) {
-      if (XML_filename.find(".xml") == std::string::npos) XML_filename += ".xml";
-      infile.open(XML_filename.c_str());
+    if (!filename.isNull()) {
+      if (filename.extension().empty())
+        filename.concat(".xml");
+
+      infile.open(filename);
       if ( !infile.is_open()) {
-        if (verbose) std::cerr << "Could not open file: " << XML_filename << std::endl;
+        if (verbose) std::cerr << "Could not open file: " << filename << std::endl;
         return 0L;
       }
     } else {
@@ -77,7 +83,7 @@ public:
       return 0L;
     }
 
-    readXML(infile, fparse, XML_filename);
+    readXML(infile, fparse, filename.utf8Str());
     Element* document = fparse.GetDocument();
     infile.close();
 

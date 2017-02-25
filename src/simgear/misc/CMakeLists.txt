@@ -1,4 +1,8 @@
-set(JSBSIM_SIMGEAR_MISC_HDR stdint.hxx)
+set(SOURCES sg_path.cxx strutils.cxx)
 
-install(FILES ${JSBSIM_SIMGEAR_MISC_HDR} DESTINATION include/JSBSim/simgear/misc)
+set(HEADERS stdint.hxx sg_path.hxx strutils.hxx)
 
+add_full_path_name(MISC_SRC "${SOURCES}")
+add_full_path_name(MISC_HDR "${HEADERS}")
+
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/misc)

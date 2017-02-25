@@ -58,7 +58,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGScript.cpp,v 1.64 2016/04/03 17:10:46 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGScript.cpp,v 1.65 2017/02/25 14:23:18 bcoconni Exp $");
 IDENT(IdHdr,ID_FGSCRIPT);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,10 +96,11 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript(const string& script, double default_dT,
-                          const string& initfile)
+bool FGScript::LoadScript(const SGPath& script, double default_dT,
+                          const SGPath& initfile)
 {
-  string aircraft="", initialize="", prop_name="";
+  SGPath initialize;
+  string aircraft="", prop_name="";
   string notifyPropertyName="";
   Element *element=0, *run_element=0, *event_element=0;
   Element *set_element=0;
@@ -171,9 +172,9 @@ bool FGScript::LoadScript(const string& script, double default_dT,
       return false;
     }
 
-    if (initfile.empty()) {
-      initialize = element->GetAttributeValue("initialize");
-      if (initialize.empty()) {
+    initialize = SGPath::fromLocal8Bit(element->GetAttributeValue("initialize").c_str());
+    if (initfile.isNull()) {
+      if (initialize.isNull()) {
         cerr << "Initialization file must be specified in use element." << endl;
         return false;
       }
