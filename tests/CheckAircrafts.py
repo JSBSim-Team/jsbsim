@@ -20,7 +20,7 @@
 #
 
 import os
-from JSBSim_utils import JSBSimTestCase, append_xml, CreateFDM, CheckXMLFile, RunTest
+from JSBSim_utils import JSBSimTestCase, CreateFDM, CheckXMLFile, RunTest
 
 
 class CheckAircrafts(JSBSimTestCase):
@@ -33,7 +33,7 @@ class CheckAircrafts(JSBSimTestCase):
             if not os.path.isdir(fullpath):
                 continue
 
-            f = os.path.join(aircraft_path, d, append_xml(d))
+            f = os.path.join(aircraft_path, d, d+'.xml')
 
             # Is f an aircraft definition file ?
             if not CheckXMLFile(f, 'fdm_config'):

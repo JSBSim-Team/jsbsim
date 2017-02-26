@@ -167,9 +167,9 @@ def RunTest(test):
 def isDataMatching(ref, other):
     delta = np.abs(ref - other)
     # Check the data are matching i.e. the time steps are the same between the
-    # two data sets and is also the same for the output data. If it does not,
-    # pandas will fill the missing data with NaNs. Below we are checking there
-    # are no NaNs in delta.
+    # two data sets and that their layouts are also the same (same number of
+    # lines & columns). If they are not, pandas will fill the missing data with
+    # NaNs. The check consists therefore in checking there are no NaNs.
     return delta.notnull().any().any()
 
 

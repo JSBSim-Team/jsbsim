@@ -36,16 +36,15 @@ class CheckOutputRate(JSBSimTestCase):
         # Read the time step 'dt' from the script file
         self.tree = et.parse(self.script_path)
         root = self.tree.getroot()
-        use_tag = root.find("./use")
+        use_tag = root.find('use')
         aircraft_name = use_tag.attrib['aircraft']
-        self.run_tag = root.find("./run")
+        self.run_tag = root.find('run')
         self.dt = float(self.run_tag.attrib['dt'])
 
         # Read the date at which the trim will be run
-        event_tags = root.findall('./run/event')
-        for event in event_tags:
+        for event in root.findall('run/event'):
             if event.attrib['name'] == 'Trim':
-                cond_tag = event.find('./condition')
+                cond_tag = event.find('condition')
                 self.trim_date = float(string.split(cond_tag.text)[-1])
                 break
 
@@ -53,7 +52,7 @@ class CheckOutputRate(JSBSimTestCase):
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
                                                          append_xml(aircraft_name))
         tree = et.parse(aircraft_path)
-        output_tag = tree.getroot().find("./output")
+        output_tag = tree.getroot().find('output')
         self.output_file = output_tag.attrib['name']
         self.rateHz = float(output_tag.attrib['rate'])
         self.rate = int(1.0 / (self.rateHz * self.dt))

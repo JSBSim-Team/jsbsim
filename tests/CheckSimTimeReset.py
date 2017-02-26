@@ -28,7 +28,6 @@ class TestSimTimeReset(JSBSimTestCase):
     def test_no_script(self):
         fdm = CreateFDM(self.sandbox)
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.set_aircraft_path(aircraft_path)
         fdm.load_model('c172x')
 
         aircraft_path = os.path.join(aircraft_path, 'c172x')
