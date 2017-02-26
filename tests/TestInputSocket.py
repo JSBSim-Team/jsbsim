@@ -156,11 +156,15 @@ class TestInputSocket(JSBSimTestCase):
             TelnetInterface(fdm, 5., 1137)
 
     def test_input_socket(self):
+        # First, extract the time step from the script file
+        tree = et.parse(self.script_path)
+        dt = float(tree.getroot().find('run').attrib['dt'])
+
         # The aircraft c172x does not contain an <input> tag so we need
         # to add one.
         tree, aircraft_name, b = CopyAircraftDef(self.script_path, self.sandbox)
-        self.root = tree.getroot()
-        input_tag = et.SubElement(self.root, 'input')
+        root = tree.getroot()
+        input_tag = et.SubElement(root, 'input')
         input_tag.attrib['port'] = '1137'
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
@@ -177,14 +181,17 @@ class TestInputSocket(JSBSimTestCase):
         # Check the aircraft name and its version
         msg = string.split(tn.sendCommand("info"), '\n')
         self.assertEqual(string.strip(string.split(msg[2], ':')[1]),
-                         string.strip(self.root.attrib['name']))
+                         string.strip(root.attrib['name']))
         self.assertEqual(string.strip(string.split(msg[1], ':')[1]),
-                         string.strip(self.root.attrib['version']))
+                         string.strip(root.attrib['version']))
 
         # Check that the simulation time is 0.0
         self.assertEqual(float(string.strip(string.split(msg[3], ':')[1])), 0.0)
         self.assertEqual(tn.getSimTime(), 0.0)
         self.assertEqual(tn.getPropertyValue("simulation/sim-time-sec"), 0.0)
+
+        # Check the time step we get through the socket interface
+        self.assertEqual(tn.getDeltaT(), dt)
 
         # Check that 'iterate' iterates the correct number of times
         tn.sendCommand("iterate 19")
