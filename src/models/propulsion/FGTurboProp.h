@@ -46,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "math/FGTable.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.24 2016/07/10 12:39:28 bcoconni Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.25 2017/02/26 11:41:28 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,6 @@ public:
   bool GetCutoff(void) const { return Cutoff; }
 
   double GetN1(void) const {return N1;}
-  double GetEPR(void) const {return EPR;}
   double GetITT(void) const {return Eng_ITT_degC;}
   double GetEngStarting(void) const { return EngStarting; }
 
@@ -132,7 +131,6 @@ public:
   inline int GetCondition(void) const { return Condition; }
 
   void SetPhase( phaseType p ) { phase = p; }
-  void SetEPR(double epr) {EPR = epr;}
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
 
@@ -145,7 +143,6 @@ public:
 private:
 
   phaseType phase;         ///< Operating mode, or "phase"
-  double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
   double IdleN1;           ///< Idle N1
   double N1;               ///< N1
   double MaxN1;            ///< N1 at 100% throttle
@@ -155,7 +152,6 @@ private:
   bool Reversed;
   bool Cutoff;
 
-  double EPR;
   double OilPressure_psi;
   double OilTemp_degK;
 

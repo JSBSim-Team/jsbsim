@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.35 2016/07/10 12:39:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.36 2017/02/26 11:41:28 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,8 +111,6 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
 
 // ToDo: Need to make sure units are properly accounted for below.
 
-  if (el->FindElement("milthrust"))
-    MilThrust = el->FindElementValueAsNumberConvertTo("milthrust","LBS");
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
   if (el->FindElement("maxn1"))
@@ -197,7 +195,8 @@ void FGTurboProp::Calculate(void)
 
   ThrottlePos = in.ThrottlePos[EngineNumber];
 
-/* The thruster controls the engine RPM because it encapsulates the gear ratio and other transmission variables */
+  /* The thruster controls the engine RPM because it encapsulates the gear ratio
+     and other transmission variables */
   RPM = Thruster->GetEngineRPM();
   if (thrusterType == FGThruster::ttPropeller) {
     ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
@@ -320,7 +319,6 @@ double FGTurboProp::Off(void)
 
 double FGTurboProp::Run(void)
 {
-  double thrust = 0.0;
   double EngPower_HP;
 
   Running = true; Starter = false; EngStarting = false;
@@ -342,7 +340,6 @@ double FGTurboProp::Run(void)
 
   OilPressure_psi = (N1/100.0*0.25+(0.1-(OilTemp_degK-273.15)*0.1/80.0)*N1/100.0) / 7692.0e-6; //from MPa to psi
 //---
-  EPR = 1.0 + thrust/MilThrust;
 
   OilTemp_degK = Seek(&OilTemp_degK, 353.15, 0.4-N1*0.001, 0.04);
 
@@ -477,7 +474,6 @@ void FGTurboProp::SetDefaults(void)
   N1 = 0.0;
   HP = 0.0;
   Type = etTurboprop;
-  MilThrust = 10000.0;
   IdleN1 = 30.0;
   MaxN1 = 100.0;
   Reversed = false;
@@ -590,7 +586,6 @@ void FGTurboProp::Debug(int from)
     if (from == 2) { // called from Load()
       cout << "\n ****MUJ MOTOR TURBOPROP****\n";
       cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      MilThrust:   "         << MilThrust << endl;
       cout << "      IdleN1:      "         << IdleN1 << endl;
       cout << "      MaxN1:       "         << MaxN1 << endl;
 
