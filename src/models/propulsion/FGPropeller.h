@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.26 2016/01/02 17:42:53 bcoconni Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.27 2017/02/26 12:09:46 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.26 2016/01/02 17:42:53 bcoconni Exp $
+    @version $Id: FGPropeller.h,v 1.27 2017/02/26 12:09:46 bcoconni Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -162,6 +162,8 @@ public:
 
   /// Destructor for FGPropeller - deletes the FGTable objects
   ~FGPropeller();
+
+  void ResetToIC(void);
 
   /** Sets the Revolutions Per Minute for the propeller. Normally the propeller
       instance will calculate its own rotational velocity, given the Torque

@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.58 2016/06/04 11:06:51 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.59 2017/02/26 12:09:46 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,6 +187,14 @@ FGPropeller::~FGPropeller()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropeller::ResetToIC(void)
+{
+  FGThruster::ResetToIC();
+  Vinduced = 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
 // We must be getting the aerodynamic velocity here, NOT the inertial velocity.
 // We need the velocity with respect to the wind.
@@ -211,10 +219,10 @@ double FGPropeller::Calculate(double EnginePower)
   double Vtip = RPS * Diameter * M_PI;
   HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / in.Soundspeed;
 
-  PowerAvailable = EnginePower - GetPowerRequired();
-
   if (RPS > 0.0) J = Vel / (Diameter * RPS); // Calculate J normally
   else           J = Vel / Diameter;
+
+  PowerAvailable = EnginePower - GetPowerRequired();
 
   if (MaxPitch == MinPitch) {    // Fixed pitch prop
     ThrustCoeff = cThrust->GetValue(J);
@@ -286,13 +294,7 @@ double FGPropeller::Calculate(double EnginePower)
 
 double FGPropeller::GetPowerRequired(void)
 {
-  double cPReq, J;
-  double rho = in.Density;
-  double Vel = in.AeroUVW(eU) + Vinduced;
-  double RPS = RPM / 60.0;
-
-  if (RPS != 0.0) J = Vel / (Diameter * RPS);
-  else            J = Vel / Diameter;
+  double cPReq;
 
   if (MaxPitch == MinPitch) {   // Fixed pitch prop
     cPReq = cPower->GetValue(J);
@@ -349,9 +351,10 @@ double FGPropeller::GetPowerRequired(void)
   // Apply optional Mach effects from CP_MACH table
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
 
+  double RPS = RPM / 60.0;
   double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
 
-  PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*rho;
+  PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*in.Density;
   vTorque(eX) = -Sense*PowerRequired / (local_RPS*2.0*M_PI);
 
   return PowerRequired;
