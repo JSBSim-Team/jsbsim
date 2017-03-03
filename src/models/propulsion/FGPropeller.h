@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.27 2017/02/26 12:09:46 bcoconni Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.28 2017/03/03 23:00:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,13 +57,14 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** FGPropeller models a propeller given the tabular data for Ct and Cp,
-    indexed by the advance ratio "J". 
+/** FGPropeller models a propeller given the tabular data for Ct (thrust) and
+    Cp (power), indexed by the advance ratio "J".
 
-<h3>Configuration File Format:</h3>
-@code
+### Configuration File Format
+
+~~~{.xml}
 <sense> {1 | -1} </sense> 
-<propeller name="{string}">
+<propeller name="{string}" version="{string}">
   <ixx> {number} </ixx>
   <diameter unit="IN"> {number} </diameter>
   <numblades> {number} </numblades>
@@ -102,11 +103,11 @@ CLASS DOCUMENTATION
     </tableData>
   </table>
 
-
 </propeller>
-@endcode
+~~~
 
-<h3>Configuration Parameters:</h3>
+### Configuration Parameters
+
 <pre>
     \<ixx>           - Propeller rotational inertia.
     \<diameter>      - Propeller disk diameter.
@@ -126,25 +127,40 @@ CLASS DOCUMENTATION
     \<cp_factor>     - A multiplier for the coefficients of power.
 </pre>
 
-    Two tables are needed. One for coefficient of thrust (Ct) and one for
-    coefficient of power (Cp).
+Two tables are needed. One for coefficient of thrust (Ct) and one for
+coefficient of power (Cp).
 
-    Two tables are optional. They apply a factor to Ct and Cp based on the
-    helical tip Mach.  
-    <br>
+Two tables are optional. They apply a factor to Ct and Cp based on the
+helical tip Mach.
 
-    Several references were helpful, here:<ul>
-    <li>Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-     Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
-    <li>Edwin Hartman, David Biermann, "The Aerodynamic Characteristics of
-    Full Scale Propellers Having 2, 3, and 4 Blades of Clark Y and R.A.F. 6
-    Airfoil Sections", NACA Report TN-640, 1938 (?)</li>
-    <li>Various NACA Technical Notes and Reports</li>
-    </ul>
-    @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.27 2017/02/26 12:09:46 bcoconni Exp $
-    @see FGEngine
-    @see FGThruster
+In addition to thrust, the propeller applies two moments to the aircraft:
+- The torque that tends to roll the aircraft in the direction opposite to the
+propeller rotation,
+- and the gyroscopic moment.
+
+It should be noted that historically the gyroscopic moment had an incorrect
+sign. The correct sign can be obtained by specifying a **version** attribute
+higher than 1.0 to the propeller definition
+~~~.xml
+<propeller name="a_prop" version="1.1">
+  <!-- propeller definition -->
+</propeller>
+~~~
+For backward compatibility, the absence of the **version** attribute will result
+in the gyroscopic moment to be computed with the legacy incorrect sign.
+
+Several references were helpful, here:
++ Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+Wiley & Sons, 1979 ISBN 0-471-03032-5
++ Edwin Hartman, David Biermann, "The Aerodynamic Characteristics of
+Full Scale Propellers Having 2, 3, and 4 Blades of Clark Y and R.A.F. 6
+Airfoil Sections", NACA Report TN-640, 1938 (?)
++ Various NACA Technical Notes and Reports
+
+@author Jon S. Berndt
+@version $Id: FGPropeller.h,v 1.28 2017/03/03 23:00:39 bcoconni Exp $
+@see FGEngine
+@see FGThruster
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,17 +179,19 @@ public:
   /// Destructor for FGPropeller - deletes the FGTable objects
   ~FGPropeller();
 
+  /// Reset the initial conditions.
   void ResetToIC(void);
 
   /** Sets the Revolutions Per Minute for the propeller. Normally the propeller
       instance will calculate its own rotational velocity, given the Torque
       produced by the engine and integrating over time using the standard
-      equation for rotational acceleration "a": a = Q/I , where Q is Torque and
-      I is moment of inertia for the propeller.
+      equation for rotational acceleration \f$a\f$: \f$a = Q/I\f$ , where
+      \f$Q\f$ is Torque and \f$I\f$ is moment of inertia for the propeller.
       @param rpm the rotational velocity of the propeller */
   void SetRPM(double rpm) {RPM = rpm;}
 
-  /** Sets the Revolutions Per Minute for the propeller using the engine gear ratio **/
+  /** Sets the Revolutions Per Minute for the propeller using the engine gear
+      ratio */
   void SetEngineRPM(double rpm) {RPM = rpm/GearRatio;}
 
   /// Returns true of this propeller is variable pitch
@@ -188,6 +206,9 @@ public:
       @param pitch the pitch of the blade in degrees. */
   void SetPitch(double pitch) {Pitch = pitch;}
 
+  /** Set the propeller pitch.
+      @param advance the pitch command in percent (0.0 - 1.0)
+   */
   void SetAdvance(double advance) {Advance = advance;}
 
   /// Sets the P-Factor constant
@@ -257,20 +278,35 @@ public:
       would be slowed.
       @return the thrust in pounds */
   double Calculate(double EnginePower);
+  /// Retrieves the P-Factor constant
   FGColumnVector3 GetPFactor(void) const;
+  /// Generate the labels for the thruster standard CSV output
   std::string GetThrusterLabels(int id, const std::string& delimeter);
+  /// Generate the values for the thruster standard CSV output
   std::string GetThrusterValues(int id, const std::string& delimeter);
-
+  /** Set the propeller reverse pitch.
+      @param c the reverse pitch command in percent (0.0 - 1.0)
+  */
   void   SetReverseCoef (double c) { Reverse_coef = c; }
+  /// Retrieves the reverse pitch command.
   double GetReverseCoef (void) const { return Reverse_coef; }
+  /// If true, sets the propeller in reversed position.
   void   SetReverse (bool r) { Reversed = r; }
+  /// Returns true if the propeller is in reverse position.
   bool   GetReverse (void) const { return Reversed; }
+  /// If true, sets the propeller in feathered position.
   void   SetFeather (bool f) { Feathered = f; }
+  /// Returns true if the propeller is in feathered position.
   bool   GetFeather (void) const { return Feathered; }
+  /// Retrieves the thrust coefficient
   double GetThrustCoefficient(void) const {return ThrustCoeff;}
+  /// Retrieves the Mach number at the propeller tips.
   double GetHelicalTipMach(void) const {return HelicalTipMach;}
+  /// Returns a non-zero value if the propeller is constant speed.
   int    GetConstantSpeed(void) const {return ConstantSpeed;}
+  /// Set the propeller induced velocity
   void   SetInducedVelocity(double Vi) {Vinduced = Vi;}
+  /// Get the propeller induced velocity.
   double GetInducedVelocity(void) const {return Vinduced;}
 
 private:

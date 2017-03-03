@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.67 2015/09/27 09:54:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGEngine.cpp,v 1.68 2017/03/03 23:00:39 bcoconni Exp $");
 IDENT(IdHdr,ID_ENGINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +158,7 @@ void FGEngine::LoadThrusterInputs()
 {
   Thruster->in.TotalDeltaT     = in.TotalDeltaT;
   Thruster->in.H_agl           = in.H_agl;
-  Thruster->in.PQR             = in.PQR;
+  Thruster->in.PQRi            = in.PQRi;
   Thruster->in.AeroPQR         = in.AeroPQR;
   Thruster->in.AeroUVW         = in.AeroUVW;
   Thruster->in.Density         = in.Density;

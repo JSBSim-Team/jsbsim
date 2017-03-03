@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.59 2017/02/26 12:09:46 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.60 2017/03/03 23:00:39 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,8 +80,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 0.001);
 
   Sense_multiplier = 1.0;
-  if (prop_element->HasAttribute("version"))
-    if  (prop_element->GetAttributeValueAsNumber("version") > 1.0)
+  if (prop_element->HasAttribute("version")
+      && prop_element->GetAttributeValueAsNumber("version") > 1.0)
       Sense_multiplier = -1.0;
 
   if (prop_element->FindElement("diameter"))
@@ -146,6 +146,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Type = ttPropeller;
   RPM = 0;
   vTorque.InitMatrix();
+  vH.InitMatrix();
   D4 = Diameter*Diameter*Diameter*Diameter;
   D5 = D4*Diameter;
   Pitch = MinPitch;
@@ -273,8 +274,6 @@ double FGPropeller::Calculate(double EnginePower)
   // FGForce::GetBodyForces() function.
 
   vH(eX) = Ixx*omega*Sense*Sense_multiplier;
-  vH(eY) = 0.0;
-  vH(eZ) = 0.0;
 
   if (omega > 0.0) ExcessTorque = PowerAvailable / omega;
   else             ExcessTorque = PowerAvailable / 1.0;
@@ -285,7 +284,7 @@ double FGPropeller::Calculate(double EnginePower)
 
   // Transform Torque and momentum first, as PQR is used in this
   // equation and cannot be transformed itself.
-  vMn = in.PQR*(Transform()*vH) + Transform()*vTorque;
+  vMn = in.PQRi*(Transform()*vH) + Transform()*vTorque;
 
   return Thrust; // return thrust in pounds
 }
@@ -305,7 +304,7 @@ double FGPropeller::GetPowerRequired(void)
 
       // do normal calculation when propeller is neither feathered nor reversed
       // Note:  This method of feathering and reversing was added to support the
-      //        turboprop model.  It's left here for backward compatablity, but
+      //        turboprop model.  It's left here for backward compatiblity, but
       //        now feathering and reversing should be done in Manual Pitch Mode.
       if (!Feathered) {
         if (!Reversed) {
