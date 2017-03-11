@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.65 2016/05/16 18:19:57 bcoconni Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.66 2017/03/11 12:07:22 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -178,7 +178,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.65 2016/05/16 18:19:57 bcoconni Exp $
+    @version $Id: FGLGear.h,v 1.66 2017/03/11 12:07:22 bcoconni Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -273,7 +273,9 @@ public:
   /** Get the console touchdown reporting feature
       @return true if reporting is turned on */
   bool GetReport(void) const  { return ReportEnable; }
-  double GetSteerNorm(void) const { return radtodeg/maxSteerAngle*SteerAngle; }
+  double GetSteerNorm(void) const {
+    return maxSteerAngle == 0.0 ? 0.0 : radtodeg/maxSteerAngle*SteerAngle;
+  }
   void SetSteerCmd(double cmd) { SetSteerAngleDeg(cmd * maxSteerAngle); }
   double GetstaticFCoeff(void) const { return staticFCoeff; }
 
