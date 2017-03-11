@@ -87,6 +87,31 @@ cdef class FGPropertyManager:
      def hasNode(self, path):
          return self.thisptr.HasNode(path)
 
+cdef class FGGroundReactions:
+
+    cdef c_FGGroundReactions *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_gear_unit(self, gear):
+        lgear = FGLGear()
+        lgear.thisptr = self.thisptr.GetGearUnit(gear)
+        return lgear
+
+    def get_num_gear_units(self):
+        return self.thisptr.GetNumGearUnits()
+
+cdef class FGLGear:
+
+    cdef c_FGLGear *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_steer_norm(self):
+        return self.thisptr.GetSteerNorm()
+
 # this is the python wrapper class
 cdef class FGFDMExec:
 
@@ -563,3 +588,8 @@ cdef class FGFDMExec:
         pm = FGPropertyManager()
         pm.thisptr = self.thisptr.GetPropertyManager()
         return pm
+
+    def get_ground_reactions(self):
+        grndreact = FGGroundReactions()
+        grndreact.thisptr = self.thisptr.GetGroundReactions()
+        return grndreact

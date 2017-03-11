@@ -65,6 +65,16 @@ cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
         c_FGPropertyManager()
         bool HasNode(string path)
 
+cdef extern from "models/FGGroundReactions.h" namespace "JSBSim":
+    cdef cppclass c_FGGroundReactions "JSBSim::FGGroundReactions":
+        c_FGGroundReactions(c_FGFDMExec* fdm)
+        c_FGLGear* GetGearUnit(int gear)
+        int GetNumGearUnits()
+
+cdef extern from "models/FGLGear.h" namespace "JSBSim":
+    cdef cppclass c_FGLGear "JSBSim::FGLGear":
+        double GetSteerNorm()
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
@@ -125,3 +135,4 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGInitialCondition* GetIC()
         c_FGPropagate* GetPropagate()
         c_FGPropertyManager* GetPropertyManager()
+        c_FGGroundReactions* GetGroundReactions()
