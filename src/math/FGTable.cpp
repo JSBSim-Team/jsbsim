@@ -47,7 +47,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTable.cpp,v 1.32 2016/05/22 09:08:05 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTable.cpp,v 1.33 2017/03/11 19:31:48 bcoconni Exp $");
 IDENT(IdHdr,ID_TABLE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,9 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(propMan)
+FGTable::FGTable(FGPropertyManager* propMan, Element* el,
+                 const std::string& prefix)
+  : PropertyManager(propMan), Prefix(prefix)
 {
   unsigned int i;
 
@@ -174,6 +176,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
 
     while (axisElement) {
       property_string = axisElement->GetDataLine();
+      if (property_string.find("#") != string::npos) {
+        if (is_number(Prefix)) {
+          property_string = replace(property_string,"#",Prefix);
+        }
+      }
       // The property string passed into GetNode() must have no spaces or tabs.
       node = PropertyManager->GetNode(property_string);
 
@@ -347,7 +354,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     }
   }
 
-  bind();
+  bind(el);
 
   if (debug_lvl & 1) Print();
 }
@@ -632,11 +639,37 @@ void FGTable::Print(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::bind(void)
+void FGTable::bind(Element* el)
 {
   typedef double (FGTable::*PMF)(void) const;
   if ( !Name.empty() && !internal) {
-    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper
+    string tmp;
+    if (Prefix.empty())
+      tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper
+    else {
+      if (is_number(Prefix)) {
+        if (Name.find("#") != string::npos) { // if "#" is found
+          Name = replace(Name,"#",Prefix);
+          tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper
+        } else {
+          cerr << el->ReadFrom()
+               << "Malformed table name with number: " << Prefix
+               << " and property name: " << Name
+               << " but no \"#\" sign for substitution." << endl;
+        }
+      } else {
+        tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false);
+      }
+    }
+
+    if (PropertyManager->HasNode(tmp)) {
+      FGPropertyNode* _property = PropertyManager->GetNode(tmp);
+      if (_property->isTied()) {
+        cerr << el->ReadFrom()
+             << "Property " << tmp << " has already been successfully bound (late)." << endl;
+        throw("Failed to bind the property to an existing already tied node.");
+      }
+    }
     PropertyManager->Tie( tmp, this, (PMF)&FGTable::GetValue);
   }
 }

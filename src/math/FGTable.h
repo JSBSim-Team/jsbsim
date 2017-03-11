@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id$"
+#define ID_TABLE "$Id: FGTable.h,v 1.16 2017/03/11 19:31:48 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -233,7 +233,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @endcode
 
 @author Jon S. Berndt
-@version $Id$
+@version $Id: FGTable.h,v 1.16 2017/03/11 19:31:48 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +251,7 @@ public:
   FGTable(const FGTable& table);
 
   /// The constructor for a table
-  FGTable (FGPropertyManager* propMan, Element* el);
+  FGTable (FGPropertyManager* propMan, Element* el, const std::string& prefix="");
   FGTable (int );
   FGTable (int, int);
   double GetValue(void) const;
@@ -311,8 +311,9 @@ private:
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
   double** Allocate(void);
   FGPropertyManager* const PropertyManager;
+  std::string Prefix;
   std::string Name;
-  void bind(void);
+  void bind(Element*);
 
   unsigned int FindNumColumns(const std::string&);
   void Debug(int from);

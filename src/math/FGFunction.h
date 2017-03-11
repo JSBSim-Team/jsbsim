@@ -43,7 +43,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.32 2015/07/12 13:03:23 bcoconni Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.33 2017/03/11 19:31:47 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -812,7 +812,7 @@ private:
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 
   unsigned int GetBinary(double) const;
-  void bind(void);
+  void bind(Element*);
   void Debug(int from);
 };
 
