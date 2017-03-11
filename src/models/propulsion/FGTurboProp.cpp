@@ -55,7 +55,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.36 2017/02/26 11:41:28 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGTurboProp.cpp,v 1.37 2017/03/11 19:50:03 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBOPROP);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,14 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   while (table_element) {
     string name = table_element->GetAttributeValue("name");
     if (!EnginePowerVC && name == "EnginePowerVC") {
-      EnginePowerVC = new FGTable(PropertyManager, table_element);
+      // Get a different name for each engines otherwise FGTable::bind() will
+      // complain that the property 'EnginePowerVC' is already bound. This is a
+      // ugly hack but the functionality is obsolete and will be removed some
+      // time in the future.
+      table_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
+      EnginePowerVC = new FGTable(PropertyManager, table_element,
+                                  to_string((int)EngineNumber));
+      table_element->SetAttributeValue("name", name);
       cerr << table_element->ReadFrom()
            <<"Note: Using the EnginePowerVC without enclosed <function> tag is deprecated"
            << endl;
