@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.60 2017/03/03 23:00:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.61 2017/03/22 21:27:47 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,7 @@ double FGPropeller::Calculate(double EnginePower)
   FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
   double omega, PowerAvailable;
 
-  double Vel = localAeroVel(eU) + Vinduced;
+  double Vel = localAeroVel(eU);
   double rho = in.Density;
   double RPS = RPM/60.0;
 
