@@ -570,12 +570,11 @@ std::string TurbineEngine::engine()
     {
         if (_bypass_ratio < 0.07f) _bypass_ratio = 0.07f;
         tsfc =  0.635f - 0.144f * log10f(_oapr) * log10f(_bypass_ratio);
-        atsfc = 3.27f - 0.451f * log10f(2.9f * _oapr / _bypass_ratio);
     }
-    else
-    {
+    else {
         tsfc = 0.7533f - 0.161f * log10f(0.0625f * _oapr * _bypass_ratio);
     }
+    atsfc = 3.27f - 0.451f * log10f(2.9f * _oapr / _bypass_ratio);
 
     file.precision(1);
     file.flags(std::ios::right);

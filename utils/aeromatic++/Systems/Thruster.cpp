@@ -138,6 +138,12 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
  * Walnut:	 35
  * Oak:		 46
  * Aluminum:	167
+ *
+ * The code is based on:
+ *   PROPELLER BLADE ELEMENT MOMENTUM THEORY WITH VORTEX WAKE DEFLECTION
+ *   M. K. Rwigema, 2010
+ *   School of Mechanical, Industrial and Aeronautical Engineering
+ *   http://www.icas.org/ICAS_ARCHIVE/ICAS2010/PAPERS/434.PDF
  */
 void  Propeller::bladeElement()
 {
