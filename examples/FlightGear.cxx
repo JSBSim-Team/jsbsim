@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: FlightGear.cxx,v 1.25 2017/02/25 15:45:23 bcoconni Exp $
+// $Id: FlightGear.cxx,v 1.26 2017/04/29 11:17:42 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -186,6 +186,11 @@ FGJSBsim::FGJSBsim( double dt )
         case SG_WARN:
         case SG_ALERT:
         case SG_POPUP:
+            FGJSBBase::debug_lvl = 0x00;
+            break;
+
+        default:
+            // silence warning about unhandled cases
             FGJSBBase::debug_lvl = 0x00;
             break;
         }
