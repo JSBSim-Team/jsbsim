@@ -51,7 +51,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.82 2016/01/02 17:42:53 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPiston.cpp,v 1.83 2017/04/29 11:16:46 ehofman Exp $");
 IDENT(IdHdr,ID_PISTON);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,6 +233,19 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
     if (el->FindElement("ratedaltitude3"))
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
+
+  Design_Oil_Temp = 358;                // degK;
+  Oil_Viscosity_Index = 0.25;
+  Oil_Press_Relief_Valve = 60;          // psi
+  Oil_Press_RPM_Max = MaxRPM*0.75;
+  if (el->FindElement("oil-pressure-relief-valve-psi"))
+    Oil_Press_Relief_Valve = el->FindElementValueAsNumberConvertTo("oil-pressure-relief-valve-psi", "PSI");
+  if (el->FindElement("design-oil-temp-degK"))
+    Design_Oil_Temp = el->FindElementValueAsNumberConvertTo("design-oil-temp-degK", "DEGK");
+  if (el->FindElement("oil-pressure-rpm-max"))
+    Oil_Press_RPM_Max = el->FindElementValueAsNumber("oil-pressure-rpm-max");
+  if (el->FindElement("oil-viscosity-index"))
+    Oil_Viscosity_Index = el->FindElementValueAsNumber("oil-viscosity-index");
 
   while((table_element = el->FindNextElement("table")) != 0) {
     string name = table_element->GetAttributeValue("name");
@@ -920,11 +933,6 @@ void FGPiston::doOilTemperature(void)
 
 void FGPiston::doOilPressure(void)
 {
-  double Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
-  double Oil_Press_RPM_Max = MaxRPM * 0.75;    // 75% of max rpm FIXME: may vary by engine
-  double Design_Oil_Temp = 358;          // degK; FIXME: may vary by engine
-  double Oil_Viscosity_Index = 0.25;
-
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;
 
   if (OilPressure_psi >= Oil_Press_Relief_Valve) {
