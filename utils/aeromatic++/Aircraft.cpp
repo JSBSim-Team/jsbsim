@@ -551,7 +551,7 @@ bool Aeromatic::fdm()
     file << " <fileheader>" << std::endl;
     file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
-    file << "  <version>$Revision: 1.78 $</version>" << std::endl;
+    file << "  <version>$Revision: 1.79 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
     file << " </fileheader>" << std::endl;
     file << std::endl;
@@ -606,7 +606,16 @@ bool Aeromatic::fdm()
     file << "    CL-max:             " << _CLmax[0] << std::endl;
     file << "    CD-0:               " << _CD0 << std::endl;
     file << "    K:                  " << _Kdi << std::endl;
-    file << "    Mcrit:              " << _Mcrit << std::endl;
+    file << "    Mcrit:              " << _Mcrit << std::endl << std::endl;
+
+    float rho = 0.0023769f;
+    float V = 1.1f*_stall_speed*KNOTS_TO_FPS;
+    float qbar = rho*V*V;
+    float L = _CLmax[0]*qbar*_wing.area;
+    float n = L/_stall_weight;
+    float lfg = G*sqrtf(n*n - 1.0f);
+    file << "    min. turn radius    " << (V*V/lfg) << " ft" << std::endl;
+    file << "    max. turn rate:     " << (lfg/V) << " deg/s" << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
 
