@@ -112,6 +112,18 @@ cdef class FGLGear:
     def get_steer_norm(self):
         return self.thisptr.GetSteerNorm()
 
+cdef class FGAuxiliary:
+
+    cdef c_FGAuxiliary *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_Tw2b(self):
+        Tw2b = FGMatrix33()
+        Tw2b.thisptr = new c_FGMatrix33(self.thisptr.GetTw2b())
+        return convertToNumpyMat(Tw2b)
+
 # this is the python wrapper class
 cdef class FGFDMExec:
 
@@ -593,3 +605,8 @@ cdef class FGFDMExec:
         grndreact = FGGroundReactions()
         grndreact.thisptr = self.thisptr.GetGroundReactions()
         return grndreact
+
+    def get_auxiliary(self):
+        auxiliary = FGAuxiliary()
+        auxiliary.thisptr = self.thisptr.GetAuxiliary()
+        return auxiliary

@@ -75,6 +75,11 @@ cdef extern from "models/FGLGear.h" namespace "JSBSim":
     cdef cppclass c_FGLGear "JSBSim::FGLGear":
         double GetSteerNorm()
 
+cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
+    cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
+        c_FGAuxiliary(c_FGFDMExec* fdm)
+        c_FGMatrix33& GetTw2b()
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
@@ -136,3 +141,4 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGPropagate* GetPropagate()
         c_FGPropertyManager* GetPropertyManager()
         c_FGGroundReactions* GetGroundReactions()
+        c_FGAuxiliary* GetAuxiliary()
