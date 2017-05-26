@@ -53,7 +53,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGForce.cpp,v 1.19 2014/01/13 10:46:10 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGForce.cpp,v 1.20 2017/05/26 12:25:40 bcoconni Exp $");
 IDENT(IdHdr,ID_FORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,14 +64,12 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
 {
   vFn.InitMatrix();
   vMn.InitMatrix();
-  vH.InitMatrix();
   vOrient.InitMatrix();
   vXYZn.InitMatrix();
   vActingXYZn.InitMatrix();
 
   vFb.InitMatrix();
   vM.InitMatrix();
-  vDXYZ.InitMatrix();
 
   mT.InitMatrix(1., 0., 0.,
                 0., 1., 0.,
@@ -97,7 +95,7 @@ const FGColumnVector3& FGForce::GetBodyForces(void)
   // needs to be done like this to convert from structural to body coords.
   // CG and RP values are in inches
 
-  vDXYZ = fdmex->GetMassBalance()->StructuralToBody(vActingXYZn);
+  FGColumnVector3 vDXYZ = fdmex->GetMassBalance()->StructuralToBody(vActingXYZn);
 
   vM = vMn + vDXYZ*vFb;
 

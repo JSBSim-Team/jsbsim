@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.61 2017/03/22 21:27:47 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.62 2017/05/26 12:25:40 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,6 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Type = ttPropeller;
   RPM = 0;
   vTorque.InitMatrix();
-  vH.InitMatrix();
   D4 = Diameter*Diameter*Diameter*Diameter;
   D5 = D4*Diameter;
   Pitch = MinPitch;
@@ -273,7 +272,7 @@ double FGPropeller::Calculate(double EnginePower)
   // natural axis of the engine. The transform takes place in the base class
   // FGForce::GetBodyForces() function.
 
-  vH(eX) = Ixx*omega*Sense*Sense_multiplier;
+  FGColumnVector3 vH(Ixx*omega*Sense*Sense_multiplier, 0.0, 0.0);
 
   if (omega > 0.0) ExcessTorque = PowerAvailable / omega;
   else             ExcessTorque = PowerAvailable / 1.0;

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.14 2017/05/26 10:49:39 bcoconni Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.15 2017/05/26 12:25:40 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,11 +142,6 @@ class FGExternalForce : public FGForce
 public:
   /** Constructor.
       @param FDMExec pointer to the main executive class.
-  */
-  FGExternalForce(FGFDMExec *FDMExec);
-
-  /** Constructor.
-      @param FDMExec pointer to the main executive class.
       @param el pointer to the XML element defining an individual force.
       @param index the position of this force object in the whole list.
   */
@@ -175,7 +170,6 @@ public:
 
 private:
 
-  std::string Frame;
   std::string Name;
   FGFunction* Magnitude_Function;
   FGColumnVector3 vDirection;

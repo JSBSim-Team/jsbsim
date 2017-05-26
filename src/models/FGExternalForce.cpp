@@ -60,7 +60,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.17 2017/05/26 10:49:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.18 2017/05/26 12:25:40 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,17 +141,6 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
 
   Debug(0);
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Copy constructor
-
-FGExternalForce::FGExternalForce(const FGExternalForce& extForce) : FGForce(extForce)
-{
-  magnitude = extForce.magnitude;
-  Frame = extForce.Frame;
-  vDirection = extForce.vDirection;
-  Name = extForce.Name;
-}
   
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -207,8 +196,21 @@ void FGExternalForce::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "    " << Name << endl;
-      cout << "    Frame: " << Frame << endl;
-      cout << "    Location: (" << vXYZn(eX) << ", " << vXYZn(eY) << ", " << vXYZn(eZ) << ")" << endl;
+      cout << "    Frame: ";
+      switch(ttype) {
+      case tNone:
+        cout << "BODY";
+        break;
+      case tLocalBody:
+        cout << "LOCAL";
+        break;
+      case tWindBody:
+        cout << "WIND";
+        break;
+      default:
+        cout << "ERROR/UNKNOWN";
+      }
+      cout << endl << "    Location: (" << vXYZn(eX) << ", " << vXYZn(eY) << ", " << vXYZn(eZ) << ")" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
