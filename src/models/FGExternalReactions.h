@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.17 2015/02/27 20:36:47 bcoconni Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.18 2017/05/26 10:49:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,8 +166,6 @@ private:
   //unsigned int numForces;
   FGColumnVector3 vTotalForces;
   FGColumnVector3 vTotalMoments;
-
-  bool NoneDefined;
 
   void bind(void);
   void Debug(int from);

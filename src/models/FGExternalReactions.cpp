@@ -54,7 +54,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.21 2015/01/31 14:56:21 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.22 2017/05/26 10:49:39 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,8 +63,6 @@ CLASS IMPLEMENTATION
 
 FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 {
-  NoneDefined = true;
-
   Debug(0);
 }
 
@@ -80,18 +78,15 @@ bool FGExternalReactions::Load(Element* el)
 
   // Parse force elements
 
-  int index=0;
   Element* force_element = el->FindElement("force");
   while (force_element) {
-    Forces.push_back( new FGExternalForce(FDMExec, force_element, index) );
-    NoneDefined = false;
-    index++; 
+    Forces.push_back( new FGExternalForce(FDMExec, force_element) );
     force_element = el->FindNextElement("force");
   }
 
   PostLoad(el, PropertyManager);
 
-  if (!NoneDefined) bind();
+  if (!Forces.empty()) bind();
 
   return true;
 }
@@ -124,7 +119,7 @@ bool FGExternalReactions::Run(bool Holding)
 {
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false; // if paused don't execute
-  if (NoneDefined) return true;
+  if (Forces.empty()) return true;
 
   RunPreFunctions();
 

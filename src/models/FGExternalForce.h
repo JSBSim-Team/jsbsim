@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.13 2014/11/25 01:44:17 dpculp Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.14 2017/05/26 10:49:39 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -126,9 +126,9 @@ CLASS DOCUMENTATION
     runtime through the following properties:
 
     @code
-    external_reactions/{force name}/locx
-    external_reactions/{force name}/locy
-    external_reactions/{force name}/locz
+    external_reactions/{force name}/location-x-in
+    external_reactions/{force name}/location-y-in
+    external_reactions/{force name}/location-z-in
     @endcode
     
 */
@@ -150,7 +150,7 @@ public:
       @param el pointer to the XML element defining an individual force.
       @param index the position of this force object in the whole list.
   */
-  FGExternalForce(FGFDMExec *FDMExec, Element *el, int index);
+  FGExternalForce(FGFDMExec *FDMExec, Element *el);
 
   /** Copy Constructor
       @param extForce a reference to an existing FGExternalForce object
@@ -172,13 +172,7 @@ public:
   void SetX(double x) {vDirection(eX) = x;}
   void SetY(double y) {vDirection(eY) = y;}
   void SetZ(double z) {vDirection(eZ) = z;}
-  double GetLocX(void) const {return vActingXYZn(eX);}
-  double GetLocY(void) const {return vActingXYZn(eY);}
-  double GetLocZ(void) const {return vActingXYZn(eZ);}
-  void SetLocX(double x) {vXYZn(eX) = x; vActingXYZn(eX) = x;}
-  void SetLocY(double y) {vXYZn(eY) = y; vActingXYZn(eY) = y;}
-  void SetLocZ(double z) {vXYZn(eZ) = z; vActingXYZn(eZ) = z;}  
-  
+
 private:
 
   std::string Frame;

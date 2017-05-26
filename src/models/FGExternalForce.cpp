@@ -60,12 +60,12 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.16 2014/12/18 09:56:05 andgi Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.17 2017/05/26 10:49:39 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index)
+FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
   : FGForce(FDMExec)
 {
   Element* location_element=0;
@@ -124,9 +124,12 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index)
     location = location_element->FindElementTripletConvertTo("IN");
     SetLocation(location);
   }
-  PropertyManager->Tie( BasePropertyName + "/location-x-in", (FGExternalForce*)this, &FGExternalForce::GetLocX, &FGExternalForce::SetLocX);
-  PropertyManager->Tie( BasePropertyName + "/location-y-in", (FGExternalForce*)this, &FGExternalForce::GetLocY, &FGExternalForce::SetLocY);
-  PropertyManager->Tie( BasePropertyName + "/location-z-in", (FGExternalForce*)this, &FGExternalForce::GetLocZ, &FGExternalForce::SetLocZ);
+  PropertyManager->Tie( BasePropertyName + "/location-x-in", (FGForce*)this,
+                        &FGForce::GetLocationX, &FGForce::SetLocationX);
+  PropertyManager->Tie( BasePropertyName + "/location-y-in", (FGForce*)this,
+                        &FGForce::GetLocationY, &FGForce::SetLocationY);
+  PropertyManager->Tie( BasePropertyName + "/location-z-in", (FGForce*)this,
+                        &FGForce::GetLocationZ, &FGForce::SetLocationZ);
 
   direction_element = el->FindElement("direction");
   if (!direction_element) {
