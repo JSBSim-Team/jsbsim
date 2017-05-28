@@ -54,13 +54,15 @@
 
 #include "FGExternalForce.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGPropertyValue.h"
+#include "math/FGFunction.h"
 #include <iostream>
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.18 2017/05/26 12:25:40 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.19 2017/05/28 19:01:49 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,60 +70,50 @@ IDENT(IdHdr,ID_EXTERNALFORCE);
 FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
   : FGForce(FDMExec)
 {
-  Element* location_element=0;
-  Element* direction_element=0;
-  Element* function_element=0;
-  string sFrame;
-  string BasePropertyName;
-  FGColumnVector3 location;
-  Magnitude_Function = 0;
-  magnitude = 0.0;
-  azimuth = 0.0;
-
   FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
   Name = el->GetAttributeValue("name");
-  BasePropertyName = "external_reactions/" + Name;
+  string BasePropertyName = "external_reactions/" + Name;
 
   // The value sent to the sim through the external_forces/{force name}/magnitude
   // property will be multiplied against the unit vector, which can come in
   // initially in the direction vector. The frame in which the vector is defined
   // is specified with the frame attribute. The vector is normalized to magnitude 1.
 
-  function_element = el->FindElement("function");
+  Element* function_element = el->FindElement("function");
   if (function_element) {
-    Magnitude_Function = new FGFunction(PropertyManager, function_element);
+    Magnitude = new FGFunction(PropertyManager, function_element);
   } else {
-    PropertyManager->Tie( BasePropertyName + "/magnitude",(FGExternalForce*)this, &FGExternalForce::GetMagnitude, &FGExternalForce::SetMagnitude);
+    string nodeName = BasePropertyName + "/magnitude";
+    FGPropertyNode* node = PropertyManager->GetNode(nodeName, true);
+    Magnitude = new FGPropertyValue(node);
   }
 
-
   // Set frame (from FGForce).
-  sFrame = el->GetAttributeValue("frame");
+  string sFrame = el->GetAttributeValue("frame");
   if (sFrame.empty()) {
-    cerr << "No frame specified for external force, \"" << Name << "\"." << endl;
-    cerr << "Frame set to Body" << endl;
+    cerr << el->ReadFrom()
+         << "No frame specified for external force, \"" << Name << "\"." << endl
+         << "Frame set to Body" << endl;
     ttype = tNone;
   } else if (sFrame == "BODY") {
     ttype = tNone;
   } else if (sFrame == "LOCAL") {
     ttype = tLocalBody;
-    PropertyManager->Tie( BasePropertyName + "/azimuth", (FGExternalForce*)this, &FGExternalForce::GetAzimuth, &FGExternalForce::SetAzimuth);
   } else if (sFrame == "WIND") {
     ttype = tWindBody;
   } else {
-    cerr << "Invalid frame specified for external force, \"" << Name << "\"." << endl;
-    cerr << "Frame set to Body" << endl;
+    cerr << el->ReadFrom()
+         << "Invalid frame specified for external force, \"" << Name << "\"."
+         << endl << "Frame set to Body" << endl;
     ttype = tNone;
   }
-  PropertyManager->Tie( BasePropertyName + "/x", (FGExternalForce*)this, &FGExternalForce::GetX, &FGExternalForce::SetX);
-  PropertyManager->Tie( BasePropertyName + "/y", (FGExternalForce*)this, &FGExternalForce::GetY, &FGExternalForce::SetY);
-  PropertyManager->Tie( BasePropertyName + "/z", (FGExternalForce*)this, &FGExternalForce::GetZ, &FGExternalForce::SetZ);
 
-  location_element = el->FindElement("location");
+  Element* location_element = el->FindElement("location");
   if (!location_element) {
-    cerr << "No location element specified in force object." << endl;
+    cerr << el->ReadFrom()
+         << "No location element specified in force object." << endl;
   } else {
-    location = location_element->FindElementTripletConvertTo("IN");
+    FGColumnVector3 location = location_element->FindElementTripletConvertTo("IN");
     SetLocation(location);
   }
   PropertyManager->Tie( BasePropertyName + "/location-x-in", (FGForce*)this,
@@ -131,13 +123,22 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
   PropertyManager->Tie( BasePropertyName + "/location-z-in", (FGForce*)this,
                         &FGForce::GetLocationZ, &FGForce::SetLocationZ);
 
-  direction_element = el->FindElement("direction");
+  Element* direction_element = el->FindElement("direction");
   if (!direction_element) {
-    cerr << "No direction element specified in force object. Default is (0,0,0)." << endl;
+    cerr << el->ReadFrom()
+         << "No direction element specified in force object. Default is (0,0,0)."
+         << endl;
   } else {
     vDirection = direction_element->FindElementTripletConvertTo("IN");
     vDirection.Normalize();
   }
+
+  PropertyManager->Tie(BasePropertyName + "/x", (FGExternalForce*)this,
+                       &FGExternalForce::GetDirectionX, &FGExternalForce::SetDirectionX);
+  PropertyManager->Tie(BasePropertyName + "/y", (FGExternalForce*)this,
+                       &FGExternalForce::GetDirectionY, &FGExternalForce::SetDirectionY);
+  PropertyManager->Tie(BasePropertyName + "/z", (FGExternalForce*)this,
+                       &FGExternalForce::GetDirectionZ, &FGExternalForce::SetDirectionZ);
 
   Debug(0);
 }
@@ -146,27 +147,15 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
 
 FGExternalForce::~FGExternalForce()
 {
-  delete Magnitude_Function;
+  delete Magnitude;
   Debug(1);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGExternalForce::SetMagnitude(double mag)
-{
-  magnitude = mag;
-  vFn = vDirection*mag;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 const FGColumnVector3& FGExternalForce::GetBodyForces(void)
 {
-  if (Magnitude_Function) {
-    double mag = Magnitude_Function->GetValue();
-    SetMagnitude(mag);
-  }
-  
+  vFn = Magnitude->GetValue() * vDirection;
   return FGForce::GetBodyForces();
 }
 
