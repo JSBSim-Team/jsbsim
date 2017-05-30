@@ -658,6 +658,9 @@ std::string CableControls::roll()
     file << "           <property>metrics/bw-ft</property>" << std::endl;
     file << "           <property>aero/beta-rad</property>" << std::endl;
 
+    if (_aircraft->_Clbeta.size() > 1) {
+        file << "           <property>fcs/gear-no-wow</property>" << std::endl;
+    }
     file << _print_vector(_aircraft->_Clbeta);
 
     file << "       </product>" << std::endl;
