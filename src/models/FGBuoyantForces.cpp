@@ -38,16 +38,16 @@ INCLUDES
 
 #include <iostream>
 
+#include "FGFDMExec.h"
 #include "FGBuoyantForces.h"
 #include "FGMassBalance.h"
-#include "input_output/FGPropertyManager.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.30 2015/03/28 14:49:02 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGBuoyantForces.cpp,v 1.31 2017/06/03 19:49:20 bcoconni Exp $");
 IDENT(IdHdr,ID_BUOYANTFORCES);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

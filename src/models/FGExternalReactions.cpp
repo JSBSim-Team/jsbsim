@@ -39,6 +39,7 @@ INCLUDES
 #include <iostream>
 #include <string>
 
+#include "FGExternalForce.h"
 #include "FGExternalReactions.h"
 #include "input_output/FGXMLElement.h"
 
@@ -54,7 +55,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.22 2017/05/26 10:49:39 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.23 2017/06/03 19:49:20 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +97,6 @@ bool FGExternalReactions::Load(Element* el)
 FGExternalReactions::~FGExternalReactions()
 {
   for (unsigned int i=0; i<Forces.size(); i++) delete Forces[i];
-  Forces.clear();
 
   Debug(1);
 }

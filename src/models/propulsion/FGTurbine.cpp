@@ -42,6 +42,7 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 
+#include "FGFDMExec.h"
 #include "math/FGFunction.h"
 #include "FGTurbine.h"
 #include "FGThruster.h"
@@ -51,7 +52,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.48 2015/12/02 04:25:23 dpculp Exp $");
+IDENT(IdSrc,"$Id: FGTurbine.cpp,v 1.49 2017/06/03 19:49:20 bcoconni Exp $");
 IDENT(IdHdr,ID_TURBINE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

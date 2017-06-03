@@ -38,6 +38,7 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 
+#include "FGFDMExec.h"
 #include "FGPropeller.h"
 #include "input_output/FGXMLElement.h"
 
@@ -45,7 +46,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.62 2017/05/26 12:25:40 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGPropeller.cpp,v 1.63 2017/06/03 19:49:20 bcoconni Exp $");
 IDENT(IdHdr,ID_PROPELLER);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

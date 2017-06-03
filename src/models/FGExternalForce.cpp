@@ -51,18 +51,19 @@
 </external_reactions>
 
 */
+#include <iostream>
 
+#include "FGFDMExec.h"
 #include "FGExternalForce.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGPropertyValue.h"
 #include "math/FGFunction.h"
-#include <iostream>
 
 using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.19 2017/05/28 19:01:49 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.20 2017/06/03 19:49:20 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +75,7 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el)
   Name = el->GetAttributeValue("name");
   string BasePropertyName = "external_reactions/" + Name;
 
-  // The value sent to the sim through the external_forces/{force name}/magnitude
+  // The value sent to the sim through the external_reactions/{force name}/magnitude
   // property will be multiplied against the unit vector, which can come in
   // initially in the direction vector. The frame in which the vector is defined
   // is specified with the frame attribute. The vector is normalized to magnitude 1.
