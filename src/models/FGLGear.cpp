@@ -61,7 +61,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.125 2017/02/21 21:14:13 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.126 2017/06/03 12:06:14 bcoconni Exp $");
 IDENT(IdHdr,ID_LGEAR);
 
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
@@ -298,15 +298,19 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
     // Does this surface contact point interact with another surface?
     if (surface) {
-      height -= (*surface).GetBumpHeight();
+      if (!fdmex->GetTrimStatus())
+        height -= (*surface).GetBumpHeight();
       staticFFactor = (*surface).GetStaticFFactor();
       rollingFFactor = (*surface).GetRollingFFactor();
       maximumForce = (*surface).GetMaximumForce();
       isSolid =  (*surface).GetSolid();
     }
 
+    FGColumnVector3 vWhlDisplVec;
+    double LGearProj = 1.0;
+
     if (height < 0.0) {
-      WOW = isSolid;
+      WOW = true;
       vGroundNormal = in.Tec2b * normal;
 
       // The height returned by GetGroundCallback() is the AGL and is expressed
@@ -314,8 +318,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
       // this height in actual compression of the strut (BOGEY) or in the normal
       // direction to the ground (STRUCTURE)
       double normalZ = (in.Tec2l*normal)(eZ);
-      double LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
-      FGColumnVector3 vWhlDisplVec;
+      LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
 
       // The following equations use the vector to the tire contact patch
       // including the strut compression.
@@ -326,8 +329,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
           vWhlDisplVec = mTGear * FGColumnVector3(0., 0., -compressLength);
         } else {
           // Gears don't (or hardly) compress in liquids
-          compressLength = 0.0;
-          vWhlDisplVec = 0.0 * vGroundNormal;
+          WOW = false;
         }
         break;
       case ctSTRUCTURE:
@@ -335,19 +337,16 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
         vWhlDisplVec = compressLength * vGroundNormal;
         break;
       }
+    }
+    else
+      WOW = false;
 
+    if (WOW) {
       FGColumnVector3 vWhlContactVec = vWhlBodyVec + vWhlDisplVec;
       vActingXYZn = vXYZn + Tb2s * vWhlDisplVec;
       FGColumnVector3 vBodyWhlVel = in.PQR * vWhlContactVec;
       vBodyWhlVel += in.UVW - in.Tec2b * terrainVel;
-
-      if (isSolid) {
-        vWhlVelVec = mTGear.Transposed() * vBodyWhlVel;
-      } else {
-        // wheels don't spin up in liquids: let wheel spin down slowly
-        vWhlVelVec(eX) -= 13.0 * in.TotalDeltaT;
-        if (vWhlVelVec(eX) < 0.0) vWhlVelVec(eX) = 0.0;
-      }
+      vWhlVelVec = mTGear.Transposed() * vBodyWhlVel;
 
       InitializeReporting();
       ComputeSteeringAngle();
@@ -375,14 +374,12 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
       // Prepare the Jacobians and the Lagrange multipliers for later friction
       // forces calculations.
       ComputeJacobian(vWhlContactVec);
-
     } else { // Gear is NOT compressed
-
-      WOW = false;
       compressLength = 0.0;
       compressSpeed = 0.0;
       WheelSlip = 0.0;
       StrutForce = 0.0;
+      vWhlDisplVec.InitMatrix();
 
       LMultiplier[ftRoll].value = 0.0;
       LMultiplier[ftSide].value = 0.0;
@@ -397,11 +394,6 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
       ResetReporting();
     }
-
-  } else if (gearPos < 0.01) { // Gear UP
-
-    WOW = false;
-    vWhlVelVec.InitMatrix();
   }
 
   if (!fdmex->GetTrimStatus()) {

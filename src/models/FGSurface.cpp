@@ -45,7 +45,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.5 2014/01/28 09:42:21 ehofman Exp $");
+IDENT(IdSrc,"$Id: FGSurface.cpp,v 1.6 2017/06/03 12:06:14 bcoconni Exp $");
 IDENT(IdHdr,ID_SURFACE);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,6 +79,9 @@ void FGSurface::resetValues(void)
   maximumForce = DBL_MAX;
   bumpiness = 0.0;
   isSolid = true;
+  pos[0] = 0.0;
+  pos[1] = 0.0;
+  pos[2] = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
