@@ -55,7 +55,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.24 2017/06/04 17:39:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.25 2017/06/04 21:06:08 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,15 @@ bool FGExternalReactions::Load(Element* el)
     Forces.push_back(new FGExternalForce(FDMExec));
     Forces.back()->setForce(force_element);
     force_element = el->FindNextElement("force");
+  }
+
+  // Parse moment elements
+
+  Element* moment_element = el->FindElement("moment");
+  while (moment_element) {
+    Forces.push_back(new FGExternalForce(FDMExec));
+    Forces.back()->setMoment(moment_element);
+    moment_element = el->FindNextElement("moment");
   }
 
   PostLoad(el, PropertyManager);

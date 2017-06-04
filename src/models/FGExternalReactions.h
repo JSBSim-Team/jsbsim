@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.19 2017/06/03 19:49:20 bcoconni Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.20 2017/06/04 21:06:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,16 +61,17 @@ class FGExternalForce;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Manages the external and/or arbitrary forces.
+/** Manages the external and/or arbitrary forces and moments.
+
     The external reactions capability in JSBSim really should be named
-    "arbitrary forces", because this feature can be used to model a wide
-    variety of forces that act on a vehicle. Some examples include: parachutes,
-    catapult, arresting hook, and tow line.
+    "arbitrary forces and moments", because this feature can be used to model a
+    wide variety of forces and moments that act on a vehicle. Some examples
+    include: parachutes, catapult, arresting hook, and tow line.
     
-    This class acts similarly to the other "manager classes" (FGPropulsion, 
-    FGFCS, FGGroundReactions, FGAerodynamics) because it manages collections
-    of constituent forces. The individual forces are implemented with the
-    FGExternalForce class.
+    This class acts similarly to the other "manager classes" (FGPropulsion,
+    FGFCS, FGGroundReactions, FGAerodynamics) because it manages collections of
+    constituent elements. The individual forces and moments are implemented with
+    the FGExternalForce class.
     
     The format of the <em>optional</em> external reactions section in the config
     file is as follows:
@@ -81,35 +82,42 @@ CLASS DOCUMENTATION
   <!-- Interface properties, a.k.a. property declarations -->
   <property> ... </property>
     
-  <force name="name" frame="BODY | LOCAL | WIND" unit="unit">
+  <force name="name" frame="BODY | LOCAL | WIND">
     ...
   </force>
+  <moment name="name" frame="BODY | LOCAL | WIND">
+    ...
+  </moment>
 
-  <!-- Additional force definitions may follow -->
-  <force name="name" frame="BODY | LOCAL | WIND" unit="unit">
+  <!-- Additional force and moment definitions may follow -->
+  <force name="name" frame="BODY | LOCAL | WIND">
     ...
   </force>
+  <moment name="name" frame="BODY | LOCAL | WIND">
+    ...
+  </moment>
 
 </external_reactions>
     @endcode
 
     See the FGExternalForce class for more information on the format of the
-    force specification itself.
+    force and moment specifications.
     
-    When force elements are encountered in the configuration file, a new instance
-    of the FGExternalForce class is created and a pointer to the class is pushed
-    onto the Forces vector.
+    When force or moment elements are encountered in the configuration file, a
+    new instance of the FGExternalForce class is created and a pointer to the
+    class is pushed onto the Forces vector.
     
-    This class is one of a few of the manager classes that allows properties
-    to be "declared". In code, these are represented by the
+    This class is one of a few of the manager classes that allows properties to
+    be "declared". In code, these are represented by the
     <em>interface_properties</em> vector. Properties that have not yet been
     created in an already parsed section of the configuration file and that are
-    used in the definition of an external force should be declared in the
-    external_reactions section because they will not be created automatically,
-    and so would cause an error, since the property cannot be found to exist.
+    used in the definition of an external force or moment should be declared in
+    the external_reactions section because they will not be created
+    automatically, and so would cause an error, since the property cannot be
+    found to exist.
         
-    See the FGExternalForce documentation for details on how forces are
-    actually calculated.
+    See the FGExternalForce documentation for details on how forces and moments
+    are actually calculated.
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

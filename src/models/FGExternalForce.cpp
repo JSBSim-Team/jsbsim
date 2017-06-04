@@ -48,6 +48,17 @@
       </direction>
     </force>
 
+    <moment name="name" frame="BODY|LOCAL|WIND">
+
+      <function> ... </function>
+
+      <direction> <!-- optional for initial direction vector -->
+        <x> value </x>
+        <y> value </y>
+        <z> value </z>
+      </direction>
+    </force>
+
 </external_reactions>
 
 */
@@ -63,7 +74,7 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.21 2017/06/04 17:39:57 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.22 2017/06/04 21:06:08 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALFORCE);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +89,8 @@ FGPropertyVector3::FGPropertyVector3(FGPropertyManager* pm,
   data[1] = pm->CreatePropertyObject<double>(baseName + "/" + ycmp);
   data[2] = pm->CreatePropertyObject<double>(baseName + "/" + zcmp);
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGParameter* FGExternalForce::bind(Element *el, FGPropertyManager* pm,
                                    const string& magName, FGPropertyVector3& v)
@@ -129,6 +142,8 @@ FGParameter* FGExternalForce::bind(Element *el, FGPropertyManager* pm,
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGExternalForce::setForce(Element *el)
 {
   FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
@@ -155,12 +170,27 @@ void FGExternalForce::setForce(Element *el)
   PropertyManager->Tie( BasePropertyName + "/location-z-in", (FGForce*)this,
                         &FGForce::GetLocationZ, &FGForce::SetLocationZ);
 }
-  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGExternalForce::setMoment(Element *el)
+{
+  FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
+  Name = el->GetAttributeValue("name");
+  string BasePropertyName = "external_reactions/" + Name;
+
+  momentDirection = FGPropertyVector3(PropertyManager, BasePropertyName,
+                                      "l", "m", "n");
+  momentMagnitude = bind(el, PropertyManager, BasePropertyName + "/magnitude-lbsft",
+                         momentDirection);
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGExternalForce::~FGExternalForce()
 {
   delete forceMagnitude;
+  delete momentMagnitude;
   Debug(1);
 }
 
@@ -168,7 +198,12 @@ FGExternalForce::~FGExternalForce()
 
 const FGColumnVector3& FGExternalForce::GetBodyForces(void)
 {
-  vFn = forceMagnitude->GetValue() * forceDirection;
+  if (forceMagnitude)
+    vFn = forceMagnitude->GetValue() * forceDirection;
+
+  if (momentMagnitude)
+    vMn = Transform() * (momentMagnitude->GetValue() * momentDirection);
+
   return FGForce::GetBodyForces();
 }
 

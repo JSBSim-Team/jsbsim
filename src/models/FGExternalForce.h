@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.18 2017/06/04 17:39:57 bcoconni Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.19 2017/06/04 21:06:08 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,8 +65,8 @@ class FGPropertyManager;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates code that models an individual arbitrary force.
-    This class encapsulates an individual force applied at the specified
+/** Encapsulates code that models an individual arbitrary force, moment or a combination thereof.
+    This class encapsulates an individual reaction applied at the specified
     location on the vehicle, and oriented as specified in one of three frames:
 
     - BODY frame is defined with the X axis positive forward, the Y axis
@@ -105,36 +105,6 @@ CLASS DOCUMENTATION
     </force>
     @endcode
 
-    The initial direction can optionally be set by specifying a unit vector
-    in the chosen frame (body, local, or wind).
-
-    As an example, a parachute can be defined oriented in the wind axis frame
-    so the drag always acts in the drag direction - opposite the positive X
-    axis. That does not include the effects of parachute oscillations, but
-    those could be handled in the calling application.
-
-    The force direction is not actually required to be specified as a unit
-    vector, but prior to the force vector being calculated, the direction
-    vector is normalized when initialized.
-
-    The direction can be specified at runtime through setting any/all of the
-    following properties:
-
-    @code
-    external_reactions/{force name}/x
-    external_reactions/{force name}/y
-    external_reactions/{force name}/z
-    @endcode
-
-    However in that case, the direction is no longer normalized.
-
-    When no <function> has been provided in the definition, the force magnitude
-    can be specified through the following property:
-
-    @code
-    external_reactions/{force name}/magnitude
-    @endcode
-
     The location of the force vector, in structural coordinates, can be set at
     runtime through the following properties:
 
@@ -144,6 +114,67 @@ CLASS DOCUMENTATION
     external_reactions/{force name}/location-z-in
     @endcode
 
+    The XML definition of a moment (optional items are in []) is a bit simpler
+    because you do not need to specify the location:
+
+    @code
+    <moment name="name" frame="BODY | LOCAL | WIND">
+
+      [<function> ... </function>]
+
+      [<direction> <!-- optional initial direction vector -->
+        <x> {number} </x>
+        <y> {number} </y>
+        <z> {number} </z>
+      </direction>]
+    </moment>
+    @endcode
+
+    The initial direction can optionally be set by specifying a unit vector
+    in the chosen frame (body, local, or wind).
+
+    As an example, a parachute can be defined oriented in the wind axis frame
+    so the drag always acts in the drag direction - opposite the positive X
+    axis. That does not include the effects of parachute oscillations, but
+    those could be handled in the calling application.
+
+    The force (or moment) direction is not actually required to be specified as
+    a unit vector, but prior to the force (or moment) vector being calculated,
+    the direction vector is normalized when initialized.
+
+    The force direction can be specified at runtime through setting any/all of
+    the following properties:
+
+    @code
+    external_reactions/{force name}/x
+    external_reactions/{force name}/y
+    external_reactions/{force name}/z
+    @endcode
+
+    The moment direction can be specified at runtime through setting any/all of
+    the following properties:
+
+    @code
+    external_reactions/{moment name}/l
+    external_reactions/{moment name}/m
+    external_reactions/{moment name}/n
+    @endcode
+
+    However in that case, the direction is no longer normalized.
+
+    When no <function> has been provided in the force definition, its magnitude
+    can be specified through the following property:
+
+    @code
+    external_reactions/{force name}/magnitude
+    @endcode
+
+    When no <function> has been provided in the moment definition, its magnitude
+    can be specified through the following property:
+
+    @code
+    external_reactions/{moment name}/magnitude-lbsft
+    @endcode
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,7 +220,9 @@ public:
       @param FDMExec pointer to the main executive class.
       @param el pointer to the XML element defining an individual force.
   */
-  FGExternalForce(FGFDMExec *FDMExec) : FGForce(FDMExec) { Debug(0); }
+  FGExternalForce(FGFDMExec *FDMExec)
+    : FGForce(FDMExec), forceMagnitude(NULL), momentMagnitude(NULL)
+  { Debug(0); }
 
   /** Copy Constructor
       @param extForce a reference to an existing FGExternalForce object
@@ -200,6 +233,7 @@ public:
   ~FGExternalForce();
 
   void setForce(Element* el);
+  void setMoment(Element* el);
   const FGColumnVector3& GetBodyForces(void);
 
 private:
@@ -207,8 +241,8 @@ private:
                     const std::string& baseName, FGPropertyVector3& v);
 
   std::string Name;
-  FGParameter* forceMagnitude;
-  FGPropertyVector3 forceDirection;
+  FGParameter *forceMagnitude, *momentMagnitude;
+  FGPropertyVector3 forceDirection, momentDirection;
   void Debug(int from);
 };
 }

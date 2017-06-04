@@ -20,7 +20,9 @@
 
 import os, math
 import numpy as np
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+import xml.etree.ElementTree as et
+
+from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, CopyAircraftDef
 
 class TestExternalReactions(JSBSimTestCase):
     def getLeverArm(self, fdm, name):
@@ -197,6 +199,53 @@ class TestExternalReactions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['moments/l-external-lbsft'], m[0])
         self.assertAlmostEqual(fdm['moments/m-external-lbsft'], m[1])
         self.assertAlmostEqual(fdm['moments/n-external-lbsft'], m[2])
-        
+
+    def test_moment(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       'ball_chute.xml')
+        tree, aircraft_name, aircraft_path = CopyAircraftDef(script_path,
+                                                             self.sandbox)
+        extReact_element = tree.getroot().find('external_reactions')
+        moment_element = et.SubElement(extReact_element, 'moment')
+        moment_element.attrib['name'] = 'parachute'
+        moment_element.attrib['frame'] = 'WIND'
+        direction_element = et.SubElement(moment_element, 'direction')
+        x_element = et.SubElement(direction_element, 'x')
+        x_element.text = '0.2'
+        y_element = et.SubElement(direction_element, 'y')
+        y_element.text = '0.0'
+        z_element = et.SubElement(direction_element, 'z')
+        z_element.text = '-1.5'
+
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name+'.xml'))
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(script_path)
+        fdm.run_ic()
+
+        mDir = np.array([0.2, 0.0, -1.5])
+        mDir /= np.linalg.norm(mDir)
+        self.assertAlmostEqual(fdm['external_reactions/parachute/l'], mDir[0])
+        self.assertAlmostEqual(fdm['external_reactions/parachute/m'], mDir[1])
+        self.assertAlmostEqual(fdm['external_reactions/parachute/n'], mDir[2])
+
+        fdm['external_reactions/parachute/magnitude-lbsft'] = -3.5
+
+        while fdm.run():
+            Tw2b = fdm.get_auxiliary().get_Tw2b()
+            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*20.0
+            f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
+            self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
+            self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
+            self.assertAlmostEqual(fdm['forces/fbz-external-lbs'], f[2, 0])
+
+            m = -3.5 * Tw2b * np.mat(mDir).T
+            fm = np.cross(self.getLeverArm(fdm,'parachute'),
+                          np.array([f[0,0], f[1,0], f[2, 0]]))
+            self.assertAlmostEqual(fdm['moments/l-external-lbsft'], m[0, 0] + fm[0])
+            self.assertAlmostEqual(fdm['moments/m-external-lbsft'], m[1, 0] + fm[1])
+            self.assertAlmostEqual(fdm['moments/n-external-lbsft'], m[2, 0] + fm[2])
 
 RunTest(TestExternalReactions)
