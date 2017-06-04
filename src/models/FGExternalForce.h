@@ -43,12 +43,13 @@ INCLUDES
 
 #include "models/propulsion/FGForce.h"
 #include "math/FGColumnVector3.h"
+#include "simgear/props/propertyObject.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.17 2017/06/03 19:49:20 bcoconni Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.18 2017/06/04 17:39:57 bcoconni Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,6 +59,7 @@ namespace JSBSim {
 
 class FGParameter;
 class Element;
+class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -148,6 +150,38 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+class FGPropertyVector3
+{
+public:
+  FGPropertyVector3(void) {}
+  FGPropertyVector3(FGPropertyManager* pm, const std::string& baseName,
+                    const std::string& xcmp, const std::string& ycmp,
+                    const std::string& zcmp);
+
+  FGPropertyVector3& operator=(const FGColumnVector3& v) {
+    data[0] = v(1);
+    data[1] = v(2);
+    data[2] = v(3);
+
+    return *this;
+  }
+
+  operator FGColumnVector3() const {
+    return FGColumnVector3(data[0], data[1], data[2]);
+  }
+
+  FGColumnVector3 operator*(double a) const {
+    return FGColumnVector3(a * data[0], a * data[1], a * data[2]);
+  }
+
+private:
+  SGPropObjDouble data[3];
+};
+
+inline FGColumnVector3 operator*(double a, const FGPropertyVector3& v) {
+  return v*a;
+}
+
 class FGExternalForce : public FGForce
 {
 public:
@@ -155,7 +189,7 @@ public:
       @param FDMExec pointer to the main executive class.
       @param el pointer to the XML element defining an individual force.
   */
-  FGExternalForce(FGFDMExec *FDMExec, Element *el);
+  FGExternalForce(FGFDMExec *FDMExec) : FGForce(FDMExec) { Debug(0); }
 
   /** Copy Constructor
       @param extForce a reference to an existing FGExternalForce object
@@ -165,19 +199,16 @@ public:
   /// Destructor
   ~FGExternalForce();
 
+  void setForce(Element* el);
   const FGColumnVector3& GetBodyForces(void);
-  double GetDirectionX(void) const {return vDirection(eX);}
-  double GetDirectionY(void) const {return vDirection(eY);}
-  double GetDirectionZ(void) const {return vDirection(eZ);}
-  void SetDirectionX(double x) {vDirection(eX) = x;}
-  void SetDirectionY(double y) {vDirection(eY) = y;}
-  void SetDirectionZ(double z) {vDirection(eZ) = z;}
 
 private:
+  FGParameter* bind(Element* el, FGPropertyManager* pm,
+                    const std::string& baseName, FGPropertyVector3& v);
 
   std::string Name;
-  FGParameter* Magnitude;
-  FGColumnVector3 vDirection;
+  FGParameter* forceMagnitude;
+  FGPropertyVector3 forceDirection;
   void Debug(int from);
 };
 }

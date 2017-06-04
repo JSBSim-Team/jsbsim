@@ -55,7 +55,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.23 2017/06/03 19:49:20 bcoconni Exp $");
+IDENT(IdSrc,"$Id: FGExternalReactions.cpp,v 1.24 2017/06/04 17:39:57 bcoconni Exp $");
 IDENT(IdHdr,ID_EXTERNALREACTIONS);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,8 @@ bool FGExternalReactions::Load(Element* el)
 
   Element* force_element = el->FindElement("force");
   while (force_element) {
-    Forces.push_back( new FGExternalForce(FDMExec, force_element) );
+    Forces.push_back(new FGExternalForce(FDMExec));
+    Forces.back()->setForce(force_element);
     force_element = el->FindNextElement("force");
   }
 
