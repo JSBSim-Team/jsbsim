@@ -265,7 +265,7 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
               // nav state
               << "\n\nd/dt nav state"
               << "\n\td/dt altitude, ft/s\t:\t" << m_fdm->GetPropagate()->Gethdot()
-              << "\n\td/dt psi, deg/s\t\t:\t" << m_fdm->GetAuxiliary()->GetEulerRates(3)
+              << "\n\td/dt psi, deg/s\t\t:\t" << m_fdm->GetAuxiliary()->GetEulerRates(3)*180/M_PI
               //<< "\n\td/dt lat, deg/s\t\t:\t" << dlat
               //<< "\n\td/dt lon, deg/s\t\t:\t" << dlon
               << std::fixed
