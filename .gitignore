@@ -32,3 +32,35 @@ src/.libs/
 *.png
 *.catalog
 TAGS
+
+#################
+## Visual Studio
+#################
+
+## Ignore Visual Studio temporary files, build results
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+*.VC.db
+*.VC.opendb
+
