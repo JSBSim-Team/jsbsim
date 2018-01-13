@@ -53,6 +53,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestTurboProp
                  TestEngineIndexedProps
                  TestExternalReactions
+                 TestTurbine
                  )
 
 foreach(test ${PYTHON_TESTS})
