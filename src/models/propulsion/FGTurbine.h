@@ -247,7 +247,6 @@ private:
   double MaxN1;            ///< N1 at 100% throttle
   double MaxN2;            ///< N2 at 100% throttle
   double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
-  double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottlePos;      ///< FCS-supplied throttle position - modified for local use!
@@ -295,11 +294,32 @@ private:
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
   FGFDMExec* FDMExec;
+  FGParameter *N1SpoolUp;
+  FGParameter *N1SpoolDown;
+  FGParameter *N2SpoolUp;
+  FGParameter *N2SpoolDown;
 
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
+  friend class FGSpoolUp;
+};
+
+class FGSpoolUp : public FGParameter
+{
+public:
+  FGSpoolUp(FGTurbine* _turb, double BPR, double factor)
+    : turb(_turb), delay(factor * 90.0 / (BPR + 3.0)) {}
+  string GetName(void) const { return string(); };
+  double GetValue(void) const {
+    // adjust acceleration for N2 and atmospheric density
+    double n = std::min(1.0, turb->N2norm + 0.1);
+    return delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - turb->in.DensityRatio));
+  }
+private:
+  FGTurbine* turb;
+  double delay; ///< Inverse spool-up time from idle to 100% (seconds)
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

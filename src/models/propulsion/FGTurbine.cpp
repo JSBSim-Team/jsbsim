@@ -59,7 +59,6 @@ IDENT(IdHdr,ID_TURBINE);
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
   : FGEngine(engine_number, input), FDMExec(exec)
 {
@@ -198,8 +197,6 @@ double FGTurbine::Off(void)
 double FGTurbine::Run()
 {
   double idlethrust, milthrust, thrust;
-  double spoolup;                        // acceleration in pct/sec
-  double sigma = in.DensityRatio;
   double T = in.Temperature;
 
   idlethrust = MilThrust * IdleThrustLookup->GetValue();
@@ -208,18 +205,16 @@ double FGTurbine::Run()
   Running = true;
   Starter = false;
 
-  // adjust acceleration for N2 and atmospheric density
-  double n = N2norm + 0.1;
-  if (n > 1) n = 1; 
-  spoolup = delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma));
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   if ((Injected == 1) && Injection && (InjWaterNorm > 0)) {
     N1_factor += InjN1increment;
     N2_factor += InjN2increment;
   }  
-  N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, spoolup, spoolup * 3.0);
-  N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, spoolup, spoolup * 2.4);
+  N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor,
+            N2SpoolUp->GetValue(), N2SpoolDown->GetValue());
+  N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor,
+            N1SpoolUp->GetValue(), N1SpoolDown->GetValue());
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
   EGT_degC = in.TAT_c + 363.1 + ThrottlePos * 357.1;
@@ -424,7 +419,9 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
 
   while(function_element) {
     string name = function_element->GetAttributeValue("name");
-    if (name == "IdleThrust" || name == "MilThrust" || name == "AugThrust" || name == "Injection")
+    if (name == "IdleThrust" || name == "MilThrust" || name == "AugThrust"
+        || name == "Injection" || name == "N1SpoolUp" || name == "N1SpoolDown"
+        || name == "N2SpoolUp" || name == "N2SpoolDown")
       function_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
 
     function_element = el->FindNextElement("function");
@@ -481,8 +478,22 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   InjectionLookup = GetPreFunction(property_prefix+"/Injection");
 
   // Pre-calculations and initializations
+  N1SpoolUp = GetPreFunction(property_prefix+"/N1SpoolUp");
+  if (!N1SpoolUp)
+    N1SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
 
-  delay = 90.0 / (BypassRatio + 3.0);
+  N1SpoolDown = GetPreFunction(property_prefix+"/N1SpoolDown");
+  if (!N1SpoolDown)
+    N1SpoolDown = new FGSpoolUp(this, BypassRatio, 2.4);
+
+  N2SpoolUp = GetPreFunction(property_prefix+"/N2SpoolUp");
+  if (!N2SpoolUp)
+    N2SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
+
+  N2SpoolDown = GetPreFunction(property_prefix+"/N2SpoolDown");
+  if (!N2SpoolDown)
+    N2SpoolDown = new FGSpoolUp(this, BypassRatio, 3.0);
+
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = in.TAT_c + 273.0;

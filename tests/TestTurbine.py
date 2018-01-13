@@ -18,6 +18,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import shutil
 import xml.etree.ElementTree as et
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, append_xml
 
@@ -33,6 +34,40 @@ def seek(x, target, accel, decel):
         return x
 
 class TestTurbine(JSBSimTestCase):
+    def defaultSpoolUp(self, N2norm):
+        sigma = self.fdm['atmosphere/sigma']
+        n = min(1.0, N2norm + 0.1)
+        return self.delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma))
+
+    def runScript(self, n1SpoolUp, n1SpoolDown, n2SpoolUp, n2SpoolDown):
+        while self.fdm.run():
+            n1 = self.fdm['propulsion/engine/n1']
+            n2 = self.fdm['propulsion/engine/n2']
+            N2norm = (n2-self.idleN2)/self.N2_factor;
+
+            if n2 >= 100.:
+                # Trigger the engine spool down
+                self.fdm['fcs/throttle-cmd-norm'] = 0.0
+
+            if N2norm > 0.0:
+                self.assertAlmostEqual(n1, newN1)
+                self.assertAlmostEqual(n2, newN2)
+
+            if  n2 > 15.0:
+                sigma = self.fdm['atmosphere/sigma']
+                n = min(1.0, N2norm + 0.1)
+                spoolup = self.delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma))
+                throttlePos = self.fdm['fcs/throttle-cmd-norm']
+                targetN1 = self.idleN1+throttlePos*self.N1_factor
+                targetN2 = self.idleN2+throttlePos*self.N2_factor
+                newN1 = seek(n1, targetN1, n1SpoolUp(N2norm),
+                             n1SpoolDown(N2norm))
+                newN2 = seek(n2, targetN2, n2SpoolUp(N2norm),
+                             n2SpoolDown(N2norm))
+
+            if N2norm == 0.0 and self.fdm['fcs/throttle-cmd-norm'] == 0.0:
+                break
+
     def testSpoolUp(self):
         # Check that the same results are obtained whether the N1 & N2 spool up
         # are specified via the legacy <bypassratio> parameter or a <function>
@@ -46,46 +81,98 @@ class TestTurbine(JSBSimTestCase):
                                                          aircraft_name+'.xml'))
 
         engine_element = tree.getroot().find('propulsion/engine')
+        engine_name = append_xml(engine_element.attrib['file'])
         tree = et.parse(self.sandbox.path_to_jsbsim_file('engine',
-                                                         append_xml(engine_element.attrib['file'])))
+                                                         engine_name))
         root = tree.getroot()
-        idleN1 = float(root.find('idlen1').text)
+        self.idleN1 = float(root.find('idlen1').text)
         maxN1 = float(root.find('maxn1').text)
-        idleN2 = float(root.find('idlen2').text)
+        self.idleN2 = float(root.find('idlen2').text)
         maxN2 = float(root.find('maxn2').text)
         BPR = float(root.find('bypassratio').text)
-        N1_factor = maxN1 - idleN1
-        N2_factor = maxN2 - idleN2
+        self.N1_factor = maxN1 - self.idleN1
+        self.N2_factor = maxN2 - self.idleN2
 
-        fdm = CreateFDM(self.sandbox)
-        fdm.load_script(script_path)
-        fdm.run_ic()
-        dt = fdm['simulation/dt']
-        delay = 90.0*dt / (BPR + 3.0);
+        self.fdm = CreateFDM(self.sandbox)
+        self.fdm.load_script(script_path)
+        self.fdm.run_ic()
+        self.dt = self.fdm['simulation/dt']
+        self.delay = 90.0*self.dt / (BPR + 3.0);
 
-        while fdm.run():
-            n1 = fdm['propulsion/engine/n1']
-            n2 = fdm['propulsion/engine/n2']
-            N2norm = (n2-idleN2)/N2_factor;
+        self.runScript(self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
+                       self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
 
-            if n2 >= 100.:
-                # Trigger the engine spool down
-                fdm['fcs/throttle-cmd-norm'] = 0.0
+        del self.fdm
 
-            if N2norm > 0.0:
-                self.assertAlmostEqual(n1, newN1)
-                self.assertAlmostEqual(n2, newN2)
+        # Check N1 spool up custom function
+        # Append a <function name="N1SpoolUp"> to the engine definition
+        func_spoolUpDown = et.SubElement(root, 'function')
+        func_spoolUpDown.attrib['name'] = 'N1SpoolUp'
+        func_body = et.parse(self.sandbox.path_to_jsbsim_file('tests',
+                                                              'N1SpoolUp.xml'))
+        func_spoolUpDown.append(func_body.getroot())
+        tree.write(engine_name)
+        shutil.copy(self.sandbox.path_to_jsbsim_file('engine','direct.xml'),
+                    '.')
 
-            if  n2 > 15.0:
-                sigma = fdm['atmosphere/sigma']
-                n = min(1.0, N2norm + 0.1)
-                spoolup = delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma))
-                throttlePos = fdm['fcs/throttle-cmd-norm']
-                targetN1 = idleN1+throttlePos*N1_factor
-                targetN2 = idleN2+throttlePos*N2_factor
-                newN1 = seek(n1, targetN1, spoolup, spoolup*2.4)
-                newN2 = seek(n2, targetN2, spoolup, spoolup*3.0)
+        self.fdm = CreateFDM(self.sandbox)
+        self.fdm.set_engine_path('.')
+        self.fdm.load_script(script_path)
+        self.fdm.run_ic()
 
-        del fdm
+        self.runScript(lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
+                       self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
+
+        del self.fdm
+
+        # Check N1 spool down custom function
+        func_spoolUpDown.attrib['name'] = 'N1SpoolDown'
+        tree.write(engine_name)
+
+        self.fdm = CreateFDM(self.sandbox)
+        self.fdm.set_engine_path('.')
+        self.fdm.load_script(script_path)
+        self.fdm.run_ic()
+
+        self.runScript(self.defaultSpoolUp,
+                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+                       self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
+
+        del self.fdm
+
+        # Check N2 spool up custom function
+        func_spoolUpDown.attrib['name'] = 'N2SpoolUp'
+        tree.write(engine_name)
+
+        self.fdm = CreateFDM(self.sandbox)
+        self.fdm.set_engine_path('.')
+        self.fdm.load_script(script_path)
+        self.fdm.run_ic()
+
+        self.runScript(self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
+                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
+
+        del self.fdm
+
+        # Check N2 spool down custom function
+        func_spoolUpDown.attrib['name'] = 'N2SpoolDown'
+        tree.write(engine_name)
+
+        self.fdm = CreateFDM(self.sandbox)
+        self.fdm.set_engine_path('.')
+        self.fdm.load_script(script_path)
+        self.fdm.run_ic()
+
+        self.runScript(self.defaultSpoolUp,
+                       lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
+                       self.defaultSpoolUp,
+                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0)
 
 RunTest(TestTurbine)
