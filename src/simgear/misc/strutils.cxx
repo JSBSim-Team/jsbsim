@@ -38,7 +38,6 @@
 
 
 #if defined(SG_WINDOWS)
-   #define NOMINMAX	// To prevent min macro clash with std::min
 	#include <windows.h>
 #endif
 
