@@ -86,6 +86,14 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
 
 FGTurbine::~FGTurbine()
 {
+  // Delete those functions that have requested the construction of a FGSpoolUp
+  // instance. FGModelFunctions will manage the destruction of the other
+  // instances.
+  if (dynamic_cast<FGSpoolUp*>(N1SpoolUp)) delete N1SpoolUp;
+  if (dynamic_cast<FGSpoolUp*>(N1SpoolDown)) delete N1SpoolDown;
+  if (dynamic_cast<FGSpoolUp*>(N2SpoolUp)) delete N2SpoolUp;
+  if (dynamic_cast<FGSpoolUp*>(N2SpoolDown)) delete N2SpoolDown;
+
   Debug(1);
 }
 
