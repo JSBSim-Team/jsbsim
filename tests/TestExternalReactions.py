@@ -33,7 +33,7 @@ class TestExternalReactions(JSBSimTestCase):
         laz = (fdm['external_reactions/'+name+'/location-z-in']
                - fdm['inertia/cg-z-in'])
         # Convert from inches in the structural frame to feet in the body frame.
-        return np.array([-lax, lay, -laz]) * 0.08333333
+        return np.array([-lax, lay, -laz])/12
 
     def test_wind_frame(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',

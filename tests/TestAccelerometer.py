@@ -97,7 +97,7 @@ class TestAccelerometer(JSBSimTestCase):
 
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], 0.0, delta=1E-7)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-6)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-7)
 
         del fdm
 
@@ -150,8 +150,8 @@ class TestAccelerometer(JSBSimTestCase):
         # Deltas are relaxed because the tolerances of the trimming algorithm
         # are quite relaxed themselves.
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-6)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], fay, delta=1E-4)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-5)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], fay, delta=1E-5)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-6)
 
         del fdm
 
@@ -196,7 +196,7 @@ class TestAccelerometer(JSBSimTestCase):
         # Acceleration along X should be zero
         self.assertAlmostEqual(fax, 0.0, delta=1E-8)
         # Acceleration along Y should be equal to d*r_dot^2
-        self.assertAlmostEqual(fay / cgy_ft, 1.0, delta=1E-7)
+        self.assertAlmostEqual(fay / cgy_ft, 1.0, delta=1E-8)
         # Acceleration along Z should be zero
         self.assertAlmostEqual(faz, 0.0, delta=1E-8)
 
