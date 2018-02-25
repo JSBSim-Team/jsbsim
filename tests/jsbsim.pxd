@@ -79,6 +79,7 @@ cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
     cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
         c_FGAuxiliary(c_FGFDMExec* fdm)
         c_FGMatrix33& GetTw2b()
+        c_FGMatrix33& GetTb2w()
 
 cdef extern from "models/FGAerodynamics.h" namespace "JSBSim":
     cdef cppclass c_FGAerodynamics "JSBSim::FGAerodynamics":

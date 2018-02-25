@@ -87,6 +87,9 @@ cdef class FGAuxiliary:
     def get_Tw2b(self):
         return convertToNumpyMat(self.thisptr.GetTw2b())
 
+    def get_Tb2w(self):
+        return convertToNumpyMat(self.thisptr.GetTb2w())
+
 cdef class FGAerodynamics:
 
     cdef c_FGAerodynamics *thisptr
