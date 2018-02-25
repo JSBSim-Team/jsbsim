@@ -80,6 +80,22 @@ cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
         c_FGAuxiliary(c_FGFDMExec* fdm)
         c_FGMatrix33& GetTw2b()
 
+cdef extern from "models/FGAerodynamics.h" namespace "JSBSim":
+    cdef cppclass c_FGAerodynamics "JSBSim::FGAerodynamics":
+        c_FGAerodynamics(c_FGFDMExec* fdm)
+        c_FGColumnVector3& GetMomentsMRC()
+        c_FGColumnVector3& GetForces()
+
+cdef extern from "models/FGAircraft.h" namespace "JSBSim":
+    cdef cppclass c_FGAircraft "JSBSim::FGAircraft":
+        c_FGAircraft(c_FGFDMExec* fdm)
+        c_FGColumnVector3& GetXYZrp()
+
+cdef extern from "models/FGMassBalance.h" namespace "JSBSim":
+    cdef cppclass c_FGMassBalance "JSBSim::FGMassBalance":
+        c_FGMassBalance(c_FGFDMExec* fdm)
+        c_FGColumnVector3& GetXYZcg()
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
         c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
@@ -142,3 +158,6 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGPropertyManager* GetPropertyManager()
         c_FGGroundReactions* GetGroundReactions()
         c_FGAuxiliary* GetAuxiliary()
+        c_FGAerodynamics* GetAerodynamics()
+        c_FGAircraft* GetAircraft()
+        c_FGMassBalance* GetMassBalance()

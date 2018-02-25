@@ -17,43 +17,14 @@
 
 import os, platform, numpy
 
-cdef class FGMatrix33:
-
-    cdef c_FGMatrix33 *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
-
-    def __dealloc__(self):
-        if self.thisptr != NULL:
-            del self.thisptr
-
-    def __call__(self, row, col):
-        return self.thisptr.Entry(row, col)
-
-cdef class FGColumnVector3:
-
-    cdef c_FGColumnVector3 *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
-
-    def __dealloc__(self):
-        if self.thisptr != NULL:
-            del self.thisptr
-
-    def __call__(self, idx):
-        return self.thisptr.Entry(idx)
+cdef convertToNumpyMat(const c_FGMatrix33& m):
+    return numpy.mat([[m.Entry(1, 1), m.Entry(1, 2), m.Entry(1, 3)],
+                      [m.Entry(2, 1), m.Entry(2, 2), m.Entry(2, 3)],
+                      [m.Entry(3, 1), m.Entry(3, 2), m.Entry(3, 3)]])
 
 
-def convertToNumpyMat(m):
-    return numpy.mat([[m(1, 1), m(1, 2), m(1, 3)],
-                      [m(2, 1), m(2, 2), m(2, 3)],
-                      [m(3, 1), m(3, 2), m(3, 3)]])
-
-
-def convertToNumpyVec(v):
-    return numpy.mat([v(1), v(2), v(3)]).T
+cdef convertToNumpyVec(const c_FGColumnVector3& v):
+    return numpy.mat([v.Entry(1), v.Entry(2), v.Entry(3)]).T
 
 cdef class FGPropagate:
 
@@ -63,19 +34,13 @@ cdef class FGPropagate:
         self.thisptr = NULL
 
     def get_Tl2b(self):
-        Tl2b = FGMatrix33()
-        Tl2b.thisptr = new c_FGMatrix33(self.thisptr.GetTl2b())
-        return convertToNumpyMat(Tl2b)
+        return convertToNumpyMat(self.thisptr.GetTl2b())
 
     def get_Tec2b(self):
-        Tec2b = FGMatrix33()
-        Tec2b.thisptr = new c_FGMatrix33(self.thisptr.GetTec2b())
-        return convertToNumpyMat(Tec2b)
+        return convertToNumpyMat(self.thisptr.GetTec2b())
 
     def get_uvw(self):
-        vUVW = FGColumnVector3()
-        vUVW.thisptr = new c_FGColumnVector3(self.thisptr.GetUVW())
-        return convertToNumpyVec(vUVW)
+        return convertToNumpyVec(self.thisptr.GetUVW())
 
 cdef class FGPropertyManager:
 
@@ -120,9 +85,40 @@ cdef class FGAuxiliary:
         self.thisptr = NULL
 
     def get_Tw2b(self):
-        Tw2b = FGMatrix33()
-        Tw2b.thisptr = new c_FGMatrix33(self.thisptr.GetTw2b())
-        return convertToNumpyMat(Tw2b)
+        return convertToNumpyMat(self.thisptr.GetTw2b())
+
+cdef class FGAerodynamics:
+
+    cdef c_FGAerodynamics *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_moments_MRC(self):
+        return convertToNumpyVec(self.thisptr.GetMomentsMRC())
+
+    def get_forces(self):
+        return convertToNumpyVec(self.thisptr.GetForces())
+
+cdef class FGAircraft:
+
+    cdef c_FGAircraft *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_xyz_rp(self):
+        return convertToNumpyVec(self.thisptr.GetXYZrp())
+
+cdef class FGMassBalance:
+
+    cdef c_FGMassBalance *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def get_xyz_cg(self):
+        return convertToNumpyVec(self.thisptr.GetXYZcg())
 
 # this is the python wrapper class
 cdef class FGFDMExec:
@@ -610,3 +606,18 @@ cdef class FGFDMExec:
         auxiliary = FGAuxiliary()
         auxiliary.thisptr = self.thisptr.GetAuxiliary()
         return auxiliary
+
+    def get_aerodynamics(self):
+        aerodynamics = FGAerodynamics()
+        aerodynamics.thisptr = self.thisptr.GetAerodynamics()
+        return aerodynamics
+
+    def get_aircraft(self):
+        aircraft = FGAircraft()
+        aircraft.thisptr = self.thisptr.GetAircraft()
+        return aircraft
+
+    def get_mass_balance(self):
+        massbalance = FGMassBalance()
+        massbalance.thisptr = self.thisptr.GetMassBalance()
+        return massbalance
