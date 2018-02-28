@@ -227,7 +227,7 @@ public:
   } in;
 
 private:
-  enum eAxisType {atNone, atLiftDrag, atAxialNormal, atBodyXYZ} axisType;
+  enum eAxisType {atNone, atWind, atBodyAxialNormal, atBodyXYZ, atStability} forceAxisType, momentAxisType;
   typedef std::map<std::string,int> AxisIndex;
   AxisIndex AxisIdx;
   FGFunction* AeroRPShift;
@@ -242,6 +242,7 @@ private:
   FGColumnVector3 vForcesAtCG;
   FGColumnVector3 vMoments;
   FGColumnVector3 vMomentsMRC;
+  FGColumnVector3 vMomentsMRCBodyXYZ;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vDeltaRP;
   double alphaclmax, alphaclmin;
@@ -253,7 +254,10 @@ private:
 
   typedef double (FGAerodynamics::*PMF)(int) const;
   void DetermineAxisSystem(Element* document);
+  void ProcessAxesNameAndFrame(FGAerodynamics::eAxisType& axisType, const string& name, const string& frame, const string& validNames);
   void bind(void);
+
+  void BuildStabilityToBodyWindAxesTransforms(double alpha, double beta, FGMatrix33& Ts2b, FGMatrix33& Ts2w);
 
   void Debug(int from);
 };
