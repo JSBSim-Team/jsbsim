@@ -43,6 +43,15 @@ class TestAeroFuncFrame(JSBSimTestCase):
         del self.fdm
         JSBSimTestCase.tearDown(self)
 
+    def getTs2b(self):
+        alpha = self.fdm['aero/alpha-rad']
+        ca = math.cos(alpha)
+        sa = math.sin(alpha)
+        Ts2b = np.mat([[ca, 0., -sa],
+                       [0., 1., 0.],
+                       [sa, 0., ca]])
+        return Ts2b
+
     def checkForcesAndMoments(self, getForces, getMoment, aeroFunc):
         self.fdm.load_script(self.script_path)
         self.fdm.run_ic()
@@ -60,6 +69,8 @@ class TestAeroFuncFrame(JSBSimTestCase):
                     result[axis] += self.fdm[func]
 
             Fa, Fb = getForces(result)
+            Tb2s = self.getTs2b().T
+            Fs = self.aero2wind * (Tb2s * Fb)
 
             Mb_MRC = getMoment(result)
             cg = np.mat([self.fdm['inertia/cg-x-in'],
@@ -67,6 +78,9 @@ class TestAeroFuncFrame(JSBSimTestCase):
                          self.fdm['inertia/cg-z-in']])
             arm_ft = (cg - rp)/12.0 # Convert from inches to ft
             Mb = Mb_MRC + np.cross(arm_ft, Fb.T)
+            Tb2w = self.auxilliary.get_Tb2w()
+            Mw = Tb2w * Mb.T
+            Ms = Tb2s * Mb.T
 
             self.assertAlmostEqual(Fa[0,0], self.fdm['forces/fwx-aero-lbs'])
             self.assertAlmostEqual(Fa[1,0], self.fdm['forces/fwy-aero-lbs'])
@@ -74,9 +88,18 @@ class TestAeroFuncFrame(JSBSimTestCase):
             self.assertAlmostEqual(Fb[0,0], self.fdm['forces/fbx-aero-lbs'])
             self.assertAlmostEqual(Fb[1,0], self.fdm['forces/fby-aero-lbs'])
             self.assertAlmostEqual(Fb[2,0], self.fdm['forces/fbz-aero-lbs'])
+            self.assertAlmostEqual(Fs[0,0], self.fdm['forces/fsx-aero-lbs'])
+            self.assertAlmostEqual(Fs[1,0], self.fdm['forces/fsy-aero-lbs'])
+            self.assertAlmostEqual(Fs[2,0], self.fdm['forces/fsz-aero-lbs'])
             self.assertAlmostEqual(Mb[0,0], self.fdm['moments/l-aero-lbsft'])
             self.assertAlmostEqual(Mb[0,1], self.fdm['moments/m-aero-lbsft'])
             self.assertAlmostEqual(Mb[0,2], self.fdm['moments/n-aero-lbsft'])
+            self.assertAlmostEqual(Ms[0,0], self.fdm['moments/roll-stab-aero-lbsft'])
+            self.assertAlmostEqual(Ms[1,0], self.fdm['moments/pitch-stab-aero-lbsft'])
+            self.assertAlmostEqual(Ms[2,0], self.fdm['moments/yaw-stab-aero-lbsft'])
+            self.assertAlmostEqual(Mw[0,0], self.fdm['moments/roll-wind-aero-lbsft'])
+            self.assertAlmostEqual(Mw[1,0], self.fdm['moments/pitch-wind-aero-lbsft'])
+            self.assertAlmostEqual(Mw[2,0], self.fdm['moments/yaw-wind-aero-lbsft'])
 
     def checkAerodynamicsFrame(self, newAxisName, getForces, getMoment, frame):
         aeroFunc = {}
@@ -134,9 +157,9 @@ class TestAeroFuncFrame(JSBSimTestCase):
         def getForces(result):
             Tb2w = self.auxilliary.get_Tb2w()
             Fnative = np.mat([result['AXIAL'], result['SIDE'], result['NORMAL']]).T
-            Fa = Tb2w * Fnative
-            Fw = self.aero2wind * Fa
             Fb = self.aero2wind * Fnative
+            Fw = Tb2w * Fb
+            Fa = self.aero2wind * Fw
             return Fa, Fb
 
         def getMoment(result):
@@ -179,7 +202,6 @@ class TestAeroFuncFrame(JSBSimTestCase):
             Fw = self.aero2wind * Fa
             Fb = Tw2b * Fw
             return Fa, Fb
-            return Fa, Fb
 
         def getMoment(result):
             return np.mat([result['ROLL'], result['PITCH'], result['YAW']])
@@ -190,18 +212,9 @@ class TestAeroFuncFrame(JSBSimTestCase):
         newAxisName = {'DRAG': 'X', 'SIDE': 'Y', 'LIFT': 'Z',
                        'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
 
-        def getTs2b():
-            alpha = self.fdm['aero/alpha-rad']
-            ca = math.cos(alpha)
-            sa = math.sin(alpha)
-            Ts2b = np.mat([[ca, 0., -sa],
-                           [0., 1., 0.],
-                           [sa, 0., ca]])
-            return Ts2b
-
         def getForces(result):
             Tb2w = self.auxilliary.get_Tb2w()
-            Ts2b = getTs2b()
+            Ts2b = self.getTs2b()
             Fs = np.mat([result['X'], result['Y'], result['Z']]).T
             Fb = Ts2b * (self.aero2wind * Fs)
             Fw = Tb2w * Fb
@@ -209,7 +222,7 @@ class TestAeroFuncFrame(JSBSimTestCase):
             return Fa, Fb
 
         def getMoment(result):
-            Ts2b = getTs2b()
+            Ts2b = self.getTs2b()
             Ms = np.mat([result['ROLL'], result['PITCH'], result['YAW']]).T
             Mb = Ts2b*Ms
             return Mb.T
