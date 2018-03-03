@@ -181,6 +181,34 @@ public:
       axis force. */
   double GetvFw(int axis) const { return vFw(axis); }
 
+  /** Retrieves the aerodynamic forces in the stability axes.
+  @return a reference to a column vector containing the stability axis forces. */
+  const FGColumnVector3& GetForcesInStabilityAxes(void) const;
+
+  /** Retrieves the aerodynamic forces in the stability axes, given an axis.
+  @param axis the axis to return the force for (eX, eY, eZ).
+  @return a reference to a column vector containing the requested stability
+  axis force. */
+  double GetForcesInStabilityAxes(int axis) const { return GetForcesInStabilityAxes()(axis); }
+
+  /** Gets the total aerodynamic moment vector about the CG in the stability axes.
+  @return a moment vector reference. */
+  const FGColumnVector3& GetMomentsInStabilityAxes(void) const { return Tb2s*vMoments; }
+
+  /** Gets the aerodynamic moment about the CG for an axis.
+  @return the moment about a single axis (as described also in the
+  similar call to GetForces(int n).*/
+  double GetMomentsInStabilityAxes(int n) const { return GetMomentsInStabilityAxes()(n); }
+
+  /** Gets the total aerodynamic moment vector about the CG in the wind axes.
+  @return a moment vector reference. */
+  const FGColumnVector3& GetMomentsInWindAxes(void) const { return in.Tb2w*vMoments; }
+
+  /** Gets the aerodynamic moment about the CG for an axis.
+  @return the moment about a single axis (as described also in the
+  similar call to GetForces(int n).*/
+  double GetMomentsInWindAxes(int n) const { return GetMomentsInWindAxes()(n); }
+
   /** Retrieves the lift over drag ratio */
   double GetLoD(void) const { return lod; }
 
@@ -252,12 +280,15 @@ private:
   double bi2vel, ci2vel,alphaw;
   double clsq, lod, qbar_area;
 
+  FGMatrix33 Tb2s;
+
   typedef double (FGAerodynamics::*PMF)(int) const;
   void DetermineAxisSystem(Element* document);
   void ProcessAxesNameAndFrame(FGAerodynamics::eAxisType& axisType, const string& name, const string& frame, const string& validNames);
   void bind(void);
 
   void BuildStabilityToBodyWindAxesTransforms(double alpha, double beta, FGMatrix33& Ts2b, FGMatrix33& Ts2w);
+  void BuildBodyToStabilityAxesTransform(double alpha);
 
   void Debug(int from);
 };
