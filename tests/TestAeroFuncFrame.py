@@ -42,7 +42,7 @@ class TestAeroFuncFrame(JSBSimTestCase):
         del self.fdm
         JSBSimTestCase.tearDown(self)
 
-    def checkForcesAndMoments(self, getForces, aeroFunc):
+    def checkForcesAndMoments(self, getForces, getMoment, aeroFunc):
         self.fdm.load_script(self.script_path)
         self.fdm.run_ic()
 
@@ -60,7 +60,7 @@ class TestAeroFuncFrame(JSBSimTestCase):
 
             Fa, Fb = getForces(result)
 
-            Mb_MRC = np.mat([result['ROLL'], result['PITCH'], result['YAW']])
+            Mb_MRC = getMoment(result)
             cg = np.mat([self.fdm['inertia/cg-x-in'],
                          -self.fdm['inertia/cg-y-in'],
                          self.fdm['inertia/cg-z-in']])
@@ -76,6 +76,91 @@ class TestAeroFuncFrame(JSBSimTestCase):
             self.assertAlmostEqual(Mb[0,0], self.fdm['moments/l-aero-lbsft'])
             self.assertAlmostEqual(Mb[0,1], self.fdm['moments/m-aero-lbsft'])
             self.assertAlmostEqual(Mb[0,2], self.fdm['moments/n-aero-lbsft'])
+
+    def checkAerodynamicsFrame(self, newAxisName, getForces, getMoment, frame):
+        aeroFunc = {}
+
+        for axis in self.tree.findall('aerodynamics/axis'):
+            axisName = newAxisName[axis.attrib['name']]
+            axis.attrib['name'] = axisName
+            if frame:
+                axis.attrib['frame'] = frame
+            aeroFunc[axisName] = []
+
+            for func in axis.findall('function'):
+                aeroFunc[axisName].append(func.attrib['name'])
+
+                if (frame == 'BODY' or len(frame) == 0) and (axisName == 'X' or axisName == 'Z'):
+                    # Convert the signs of X and Z forces so that the force
+                    # along X is directed backward and the force along Z is
+                    # directed upward.
+                    product_tag = func.find('product')
+                    value_tag = et.SubElement(product_tag, 'value')
+                    value_tag.text = '-1.0'
+
+        self.tree.write(self.sandbox('aircraft', self.aircraft_name,
+                                     self.aircraft_name+'.xml'))
+        self.fdm.set_aircraft_path('aircraft')
+
+        self.checkForcesAndMoments(getForces, getMoment, aeroFunc)
+
+    def checkBodyFrame(self, frame):
+        newAxisName = {'DRAG': 'X', 'SIDE': 'Y', 'LIFT': 'Z',
+                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
+
+        def getForces(result):
+            Tb2w = self.auxilliary.get_Tb2w()
+            Fb = np.mat([result['X'], result['Y'], result['Z']]).T
+            Fw = Tb2w * Fb
+            Fa = self.aero2wind * Fw
+            return Fa, Fb
+
+        def getMoment(result):
+            return np.mat([result['ROLL'], result['PITCH'], result['YAW']])
+
+        self.checkAerodynamicsFrame(newAxisName, getForces, getMoment, '')
+
+    def testBodyFrame(self):
+        self.checkBodyFrame('')
+
+    def testBodyFrameAltSyntax(self):
+        self.checkBodyFrame('BODY')
+
+    def testAxialFrame(self):
+        newAxisName = {'DRAG': 'AXIAL', 'SIDE': 'SIDE', 'LIFT': 'NORMAL',
+                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
+
+        def getForces(result):
+            Tb2w = self.auxilliary.get_Tb2w()
+            Fnative = np.mat([result['AXIAL'], result['SIDE'], result['NORMAL']]).T
+            Fa = Tb2w * Fnative
+            Fw = self.aero2wind * Fa
+            Fb = self.aero2wind * Fnative
+            return Fa, Fb
+
+        def getMoment(result):
+            return np.mat([result['ROLL'], result['PITCH'], result['YAW']])
+
+        self.checkAerodynamicsFrame(newAxisName, getForces, getMoment, '')
+
+    def testWindFrame(self):
+        newAxisName = {'DRAG': 'X', 'SIDE': 'Y', 'LIFT': 'Z',
+                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
+
+        def getForces(result):
+            Tw2b = self.auxilliary.get_Tw2b()
+            Fa = np.mat([result['X'], result['Y'], result['Z']]).T
+            Fw = self.aero2wind * Fa
+            Fb = Tw2b * Fw
+            return Fa, Fb
+
+        def getMoment(result):
+            Tw2b = self.auxilliary.get_Tw2b()
+            Mw = np.mat([result['ROLL'], result['PITCH'], result['YAW']]).T
+            Mb = Tw2b*Mw
+            return Mb.T
+
+        self.checkAerodynamicsFrame(newAxisName, getForces, getMoment, 'WIND')
 
     def testAeroFrame(self):
         aeroFunc = {}
@@ -93,68 +178,11 @@ class TestAeroFuncFrame(JSBSimTestCase):
             Fw = self.aero2wind * Fa
             Fb = Tw2b * Fw
             return Fa, Fb
-
-        self.checkForcesAndMoments(getForces, aeroFunc)
-
-    def testBodyFrame(self):
-        aeroFunc = {}
-        newAxisName = {'DRAG': 'X', 'SIDE': 'Y', 'LIFT': 'Z',
-                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
-
-        for axis in self.tree.findall('aerodynamics/axis'):
-            axisName = newAxisName[axis.attrib['name']]
-            axis.attrib['name'] = axisName
-            aeroFunc[axisName] = []
-
-            for func in axis.findall('function'):
-                aeroFunc[axisName].append(func.attrib['name'])
-
-                if axisName == 'X' or axisName == 'Z':
-                    # Convert the signs of X and Z forces so that the force
-                    # along X is directed backward and the force along Z is
-                    # directed upward.
-                    product_tag = func.find('product')
-                    value_tag = et.SubElement(product_tag, 'value')
-                    value_tag.text = '-1.0'
-
-        self.tree.write(self.sandbox('aircraft', self.aircraft_name,
-                                     self.aircraft_name+'.xml'))
-        self.fdm.set_aircraft_path('aircraft')
-
-        def getForces(result):
-            Tb2w = self.auxilliary.get_Tb2w()
-            Fb = np.mat([result['X'], result['Y'], result['Z']]).T
-            Fw = Tb2w * Fb
-            Fa = self.aero2wind * Fw
             return Fa, Fb
 
-        self.checkForcesAndMoments(getForces, aeroFunc)
+        def getMoment(result):
+            return np.mat([result['ROLL'], result['PITCH'], result['YAW']])
 
-    def testAxialFrame(self):
-        aeroFunc = {}
-        newAxisName = {'DRAG': 'AXIAL', 'SIDE': 'SIDE', 'LIFT': 'NORMAL',
-                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
-
-        for axis in self.tree.findall('aerodynamics/axis'):
-            axisName = newAxisName[axis.attrib['name']]
-            axis.attrib['name'] = axisName
-            aeroFunc[axisName] = []
-
-            for func in axis.findall('function'):
-                aeroFunc[axisName].append(func.attrib['name'])
-
-        self.tree.write(self.sandbox('aircraft', self.aircraft_name,
-                                     self.aircraft_name+'.xml'))
-        self.fdm.set_aircraft_path('aircraft')
-
-        def getForces(result):
-            Tb2w = self.auxilliary.get_Tb2w()
-            Fnative = np.mat([result['AXIAL'], result['SIDE'], result['NORMAL']]).T
-            Fa = Tb2w * Fnative
-            Fw = self.aero2wind * Fa
-            Fb = self.aero2wind * Fnative
-            return Fa, Fb
-
-        self.checkForcesAndMoments(getForces, aeroFunc)
+        self.checkForcesAndMoments(getForces, getMoment, aeroFunc)
 
 RunTest(TestAeroFuncFrame)
