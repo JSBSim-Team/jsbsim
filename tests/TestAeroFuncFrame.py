@@ -21,6 +21,7 @@
 
 import xml.etree.ElementTree as et
 import numpy as np
+import math
 from JSBSim_utils import JSBSimTestCase, RunTest, CreateFDM, CopyAircraftDef
 
 
@@ -184,5 +185,35 @@ class TestAeroFuncFrame(JSBSimTestCase):
             return np.mat([result['ROLL'], result['PITCH'], result['YAW']])
 
         self.checkForcesAndMoments(getForces, getMoment, aeroFunc)
+
+    def testStabilityFrame(self):
+        newAxisName = {'DRAG': 'X', 'SIDE': 'Y', 'LIFT': 'Z',
+                       'ROLL': 'ROLL', 'PITCH': 'PITCH', 'YAW': 'YAW'}
+
+        def getTs2b():
+            alpha = self.fdm['aero/alpha-rad']
+            ca = math.cos(alpha)
+            sa = math.sin(alpha)
+            Ts2b = np.mat([[ca, 0., -sa],
+                           [0., 1., 0.],
+                           [sa, 0., ca]])
+            return Ts2b
+
+        def getForces(result):
+            Tb2w = self.auxilliary.get_Tb2w()
+            Ts2b = getTs2b()
+            Fs = np.mat([result['X'], result['Y'], result['Z']]).T
+            Fb = Ts2b * (self.aero2wind * Fs)
+            Fw = Tb2w * Fb
+            Fa = self.aero2wind * Fw
+            return Fa, Fb
+
+        def getMoment(result):
+            Ts2b = getTs2b()
+            Ms = np.mat([result['ROLL'], result['PITCH'], result['YAW']]).T
+            Mb = Ts2b*Ms
+            return Mb.T
+
+        self.checkAerodynamicsFrame(newAxisName, getForces, getMoment, 'STABILITY')
 
 RunTest(TestAeroFuncFrame)
