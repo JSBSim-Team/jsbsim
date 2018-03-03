@@ -282,7 +282,9 @@ private:
 
   typedef double (FGAerodynamics::*PMF)(int) const;
   void DetermineAxisSystem(Element* document);
-  void ProcessAxesNameAndFrame(FGAerodynamics::eAxisType& axisType, const string& name, const string& frame, const string& validNames);
+  void ProcessAxesNameAndFrame(FGAerodynamics::eAxisType& axisType,
+                               const string& name, const string& frame,
+                               Element* el, const string& validNames);
   void bind(void);
   void BuildStabilityTransformMatrices(void);
 

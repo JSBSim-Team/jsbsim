@@ -383,7 +383,8 @@ bool FGAerodynamics::Load(Element *document)
       try {
         ca.push_back( new FGFunction(PropertyManager, function_element) );
       } catch (const string& str) {
-        cerr << endl << fgred << "Error loading aerodynamic function in " 
+        cerr << endl << axis_element->ReadFrom()
+             << endl << fgred << "Error loading aerodynamic function in "
              << current_func_name << ":" << str << " Aborting." << reset << endl;
         return false;
       }
@@ -391,7 +392,8 @@ bool FGAerodynamics::Load(Element *document)
         try {
           ca_atCG.push_back( new FGFunction(PropertyManager, function_element) );
         } catch (const string& str) {
-          cerr << endl << fgred << "Error loading aerodynamic function in " 
+          cerr << endl << axis_element->ReadFrom()
+               << endl << fgred << "Error loading aerodynamic function in "
                << current_func_name << ":" << str << " Aborting." << reset << endl;
           return false;
         }
@@ -429,28 +431,34 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
     axis = axis_element->GetAttributeValue("name");
     string frame = axis_element->GetAttributeValue("frame");
     if (axis == "X" || axis == "Y" || axis == "Z") {
-      ProcessAxesNameAndFrame(forceAxisType, axis, frame, "(X Y Z)");
+      ProcessAxesNameAndFrame(forceAxisType, axis, frame, axis_element,
+                              "(X Y Z)");
     } else if (axis == "ROLL" || axis == "PITCH" || axis == "YAW") {
-      ProcessAxesNameAndFrame(momentAxisType, axis, frame, "(ROLL PITCH YAW)");
+      ProcessAxesNameAndFrame(momentAxisType, axis, frame, axis_element,
+                              "(ROLL PITCH YAW)");
     } else if (axis == "LIFT" || axis == "DRAG") {
       if (forceAxisType == atNone) forceAxisType = atWind;
       else if (forceAxisType != atWind) {
-        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+        cerr << endl << axis_element->ReadFrom()
+             << endl << "  Mixed aerodynamic axis systems have been used in the"
              << " aircraft config file. (LIFT DRAG)" << endl;
       }
     } else if (axis == "SIDE") {
       if (forceAxisType != atNone && forceAxisType != atWind && forceAxisType != atBodyAxialNormal) {
-        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+        cerr << endl << axis_element->ReadFrom()
+             << endl << "  Mixed aerodynamic axis systems have been used in the"
              << " aircraft config file. (SIDE)" << endl;
       }
     } else if (axis == "AXIAL" || axis == "NORMAL") {
       if (forceAxisType == atNone) forceAxisType = atBodyAxialNormal;
       else if (forceAxisType != atBodyAxialNormal) {
-        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+        cerr << endl << axis_element->ReadFrom()
+             << endl << "  Mixed aerodynamic axis systems have been used in the"
              << " aircraft config file. (NORMAL AXIAL)" << endl;
       }
     } else { // error
-      cerr << endl << "  An unknown axis type, " << axis << " has been specified"
+      cerr << endl << axis_element->ReadFrom()
+           << endl << "  An unknown axis type, " << axis << " has been specified"
            << " in the aircraft configuration file." << endl;
       exit(-1);
     }
@@ -471,26 +479,29 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAerodynamics::ProcessAxesNameAndFrame(FGAerodynamics::eAxisType& axisType, 
-                                             const string& name, const string& frame, 
+void FGAerodynamics::ProcessAxesNameAndFrame(eAxisType& axisType, const string& name,
+                                             const string& frame, Element* el,
                                              const string& validNames)
 {
   if (frame == "BODY" || frame.empty()) {
     if (axisType == atNone) axisType = atBodyXYZ;
     else if (axisType != atBodyXYZ)
-      cerr << endl << " Mixed aerodynamic axis systems have been used in the "
+      cerr << endl << el->ReadFrom()
+           << endl << " Mixed aerodynamic axis systems have been used in the "
                    << " aircraft config file." << validNames << " - BODY" << endl;
   }
   else if (frame == "STABILITY") {
     if (axisType == atNone) axisType = atStability;
     else if (axisType != atStability)
-      cerr << endl << " Mixed aerodynamic axis systems have been used in the "
+      cerr << endl << el->ReadFrom()
+           << endl << " Mixed aerodynamic axis systems have been used in the "
                    << " aircraft config file." << validNames << " - STABILITY" << endl;
   }
   else if (frame == "WIND") {
     if (axisType == atNone) axisType = atWind;
     else if (axisType != atWind)
-      cerr << endl << " Mixed aerodynamic axis systems have been used in the "
+      cerr << endl << el->ReadFrom()
+           << endl << " Mixed aerodynamic axis systems have been used in the "
                    << " aircraft config file." << validNames << " - WIND" << endl;
   }
   else {
