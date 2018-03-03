@@ -197,6 +197,8 @@ bool FGAerodynamics::Run(bool Holding)
   if (forceAxisType == atStability || momentAxisType == atStability)
 	  BuildStabilityToBodyWindAxesTransforms(in.Alpha, in.Beta, Ts2b, Ts2w);
 
+  BuildBodyToStabilityAxesTransform(in.Alpha);
+
   for (axis_ctr = 0; axis_ctr < 3; ++axis_ctr) {
     AeroFunctionArray::iterator f;
 
@@ -261,25 +263,25 @@ bool FGAerodynamics::Run(bool Holding)
       vForcesAtCG = vFnativeAtCG;
       break;
     case atStability:   // Convert from stability axes to both body and wind axes
-	   {
-		  FGColumnVector3 vFs;
-		  vFs.InitMatrix();
-		  vFs = vFnative;
-		  vFs(eDrag) *= -1; vFs(eLift) *= -1;
-		  vForces = Ts2b*vFs;
-		  vFw = Ts2w*vFs;
-		  vFs(eDrag) *= -1; vFs(eLift) *= -1;
-		  vFw(eDrag) *= -1; vFw(eLift) *= -1;
+      {
+        FGColumnVector3 vFs;
+        vFs.InitMatrix();
+        vFs = vFnative;
+        vFs(eDrag) *= -1; vFs(eLift) *= -1;
+        vForces = Ts2b*vFs;
+        vFw = Ts2w*vFs;
+        vFs(eDrag) *= -1; vFs(eLift) *= -1;
+        vFw(eDrag) *= -1; vFw(eLift) *= -1;
 
-		  FGColumnVector3 vFsAtCG;
-		  vFsAtCG.InitMatrix();
-		  vFsAtCG = vFnativeAtCG;
-		  vFsAtCG(eDrag) *= -1; vFsAtCG(eLift) *= -1;
-		  vForcesAtCG = Ts2b*vFsAtCG;
-		  vFwAtCG = Ts2w*vFsAtCG;
-		  vFsAtCG(eDrag) *= -1; vFsAtCG(eLift) *= -1;
-		  vFwAtCG(eDrag) *= -1; vFwAtCG(eLift) *= -1;
-	   }
+        FGColumnVector3 vFsAtCG;
+        vFsAtCG.InitMatrix();
+        vFsAtCG = vFnativeAtCG;
+        vFsAtCG(eDrag) *= -1; vFsAtCG(eLift) *= -1;
+        vForcesAtCG = Ts2b*vFsAtCG;
+        vFwAtCG = Ts2w*vFsAtCG;
+        vFsAtCG(eDrag) *= -1; vFsAtCG(eLift) *= -1;
+        vFwAtCG(eDrag) *= -1; vFwAtCG(eLift) *= -1;
+      }
       break;
     default:
       cerr << endl << "  A proper axis type has NOT been selected. Check "
@@ -340,6 +342,18 @@ bool FGAerodynamics::Run(bool Holding)
   RunPostFunctions();
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGColumnVector3& FGAerodynamics::GetForcesInStabilityAxes(void) const
+{ 
+  FGColumnVector3 vFs;
+  vFs = Tb2s*vForces; 
+  // Need sign flips since drag is positive and lift is positive in stability axes
+  vFs(eDrag) *= -1; vFs(eLift) *= -1;
+
+  return vFs;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -598,6 +612,15 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("forces/fwx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwy-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetvFw);
+  PropertyManager->Tie("forces/fsx-aero-lbs",  this, 1, (PMF)&FGAerodynamics::GetForcesInStabilityAxes);
+  PropertyManager->Tie("forces/fsy-aero-lbs",  this, 2, (PMF)&FGAerodynamics::GetForcesInStabilityAxes);
+  PropertyManager->Tie("forces/fsz-aero-lbs",  this, 3, (PMF)&FGAerodynamics::GetForcesInStabilityAxes);
+  PropertyManager->Tie("moments/ls-aero-lbsft", this, 1, (PMF)&FGAerodynamics::GetMomentsInStabilityAxes);
+  PropertyManager->Tie("moments/ms-aero-lbsft", this, 2, (PMF)&FGAerodynamics::GetMomentsInStabilityAxes);
+  PropertyManager->Tie("moments/ns-aero-lbsft", this, 3, (PMF)&FGAerodynamics::GetMomentsInStabilityAxes);
+  PropertyManager->Tie("moments/lw-aero-lbsft", this, 1, (PMF)&FGAerodynamics::GetMomentsInWindAxes);
+  PropertyManager->Tie("moments/mw-aero-lbsft", this, 2, (PMF)&FGAerodynamics::GetMomentsInWindAxes);
+  PropertyManager->Tie("moments/nw-aero-lbsft", this, 3, (PMF)&FGAerodynamics::GetMomentsInWindAxes);
   PropertyManager->Tie("forces/lod-norm",      this, &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared",      this, &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/qbar-area", &qbar_area);
@@ -671,6 +694,43 @@ void FGAerodynamics::BuildStabilityToBodyWindAxesTransforms(double alpha, double
 	Ts2w(3, 1) = 0.0;
 	Ts2w(3, 2) = 0.0;
 	Ts2w(3, 3) = 1.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// Build transformation matrix for transforming from body axes to 
+// stability axes. Where "a" is alpha:
+//
+// The transform from body to stability axes is:
+//
+//   cos(a)     0     sin(a)
+//   0          1     0
+//   -sin(a)    0     cos(a)
+//
+// The transform from stability to body axes is:
+//
+//   cos(a)     0     -sin(a)
+//   0          1     0
+//   sin(a)     0     cos(a)
+//
+//
+
+void FGAerodynamics::BuildBodyToStabilityAxesTransform(double alpha)
+{
+  double ca, sa;
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+
+  Tb2s(1, 1) = ca;
+  Tb2s(1, 2) = 0.0;
+  Tb2s(1, 3) = sa;
+  Tb2s(2, 1) = 0.0;
+  Tb2s(2, 2) = 1.0;
+  Tb2s(2, 3) = 0.0;
+  Tb2s(3, 1) = -sa;
+  Tb2s(3, 2) = 0.0;
+  Tb2s(3, 3) = ca;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
