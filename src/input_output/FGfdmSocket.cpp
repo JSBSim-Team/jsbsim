@@ -131,46 +131,69 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// assumes UDP socket on localhost, for inbound datagrams
-FGfdmSocket::FGfdmSocket(int port, int protocol, int direction) // assumes UDP
+// assumes TCP or UDP socket on localhost, for inbound datagrams
+FGfdmSocket::FGfdmSocket(int port, int protocol)
 {
   sckt = -1;
   connected = false;
   Protocol = (ProtocolType)protocol;
-  Direction = (DirectionType) direction;
+  string ProtocolName;
  
 #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL()) return;
 #endif
 
   if (Protocol == ptUDP) {  //use udp protocol
+    ProtocolName = "UDP";
     sckt = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 #if defined(_MSC_VER) || defined(__MINGW32__)
-	u_long NonBlock = 1; // True
-	ioctlsocket(sckt, FIONBIO, &NonBlock);
+    u_long NonBlock = 1; // True
+    ioctlsocket(sckt, FIONBIO, &NonBlock);
 #else
-	fcntl(sckt, F_SETFL, O_NONBLOCK);
+    fcntl(sckt, F_SETFL, O_NONBLOCK);
 #endif
-    cout << "Creating UDP input socket on port " << port << endl;
   }
+  else {
+    ProtocolName = "TCP";
+    sckt = socket(AF_INET, SOCK_STREAM, 0);
+  }
+  cout << "Creating input " << ProtocolName << " socket on port " << port << endl;
   
-    if (sckt != -1) { 
-      memset(&scktName, 0, sizeof(struct sockaddr_in));
-      scktName.sin_family = AF_INET;
-      scktName.sin_port = htons(port);
+  if (sckt != -1) {
+    memset(&scktName, 0, sizeof(struct sockaddr_in));
+    scktName.sin_family = AF_INET;
+    scktName.sin_port = htons(port);
+    if (Protocol == ptUDP)
       scktName.sin_addr.s_addr = htonl(INADDR_ANY);
-      int len = sizeof(struct sockaddr_in);
-      if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) { 
-        cout << "Successfully bound to UDP input socket on port " << port << endl <<endl;
+    int len = sizeof(struct sockaddr_in);
+    if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) {
+      cout << "Successfully bound to " << ProtocolName << " input socket on port "
+           << port << endl <<endl;
+      if (Protocol == ptTCP) {
+        unsigned long NoBlock = true;
+        if (listen(sckt, 5) >= 0) { // successful listen()
+#if defined(_MSC_VER) || defined(__MINGW32__)
+          ioctlsocket(sckt, FIONBIO, &NoBlock);
+          sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+#else
+          ioctl(sckt, FIONBIO, &NoBlock);
+          sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
+#endif
+          connected = true;
+        } else {
+          cerr << "Could not listen ..." << endl;
+        }
+      } else
         connected = true;
-      } else {                // unsuccessful
-        cout << "Could not bind to UDP input socket, error = " << errno << endl;
-      }
-    } else {          // unsuccessful
-      cout << "Could not create socket for UDP input, error = " << errno << endl;
+    } else {                // unsuccessful
+        cout << "Could not bind to " << ProtocolName << " input socket, error = "
+             << errno << endl;
     }
-    
-  
+  } else {          // unsuccessful
+      cout << "Could not create " << ProtocolName << " socket for input, error = "
+           << errno << endl;
+  }
+
   Debug(0);
 }
 
@@ -220,49 +243,6 @@ FGfdmSocket::FGfdmSocket(const string& address, int port) // assumes TCP
       cout << "Could not create socket for FDM output, error = " << errno << endl;
     }
   }
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGfdmSocket::FGfdmSocket(int port) // assumes TCP
-{
-  connected = false;
-  unsigned long NoBlock = true;
-  Protocol = ptTCP;
-
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
-  #endif
-
-  sckt = socket(AF_INET, SOCK_STREAM, 0);
-
-  if (sckt >= 0) {  // successful
-    memset(&scktName, 0, sizeof(struct sockaddr_in));
-    scktName.sin_family = AF_INET;
-    scktName.sin_port = htons(port);
-    int len = sizeof(struct sockaddr_in);
-    if (bind(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-      cout << "Successfully bound to socket for input on port " << port << endl;
-      if (listen(sckt, 5) >= 0) { // successful listen()
-        #if defined(_MSC_VER) || defined(__MINGW32__)
-          ioctlsocket(sckt, FIONBIO, &NoBlock);
-          sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
-        #else
-          ioctl(sckt, FIONBIO, &NoBlock);
-          sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
-        #endif
-      } else {
-        cerr << "Could not listen ..." << endl;
-      }
-      connected = true;
-    } else {                // unsuccessful
-      cerr << "Could not bind to socket for input ..." << endl;
-    }
-  } else {          // unsuccessful
-    cerr << "Could not create socket for FDM input, error = " << errno << endl;
-  }
-
   Debug(0);
 }
 

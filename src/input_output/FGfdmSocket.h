@@ -91,8 +91,7 @@ class FGfdmSocket : public FGJSBBase
 public:
   FGfdmSocket(const std::string&, int);
   FGfdmSocket(const std::string&, int, int);
-  FGfdmSocket(int, int, int);  
-  FGfdmSocket(int);
+  FGfdmSocket(int, int);
   ~FGfdmSocket();
   void Send(void);
   void Send(const char *data, int length);
@@ -109,12 +108,10 @@ public:
   bool GetConnectStatus(void) {return connected;}
 
   enum ProtocolType {ptUDP, ptTCP};
-  enum DirectionType {dIN, dOUT};
  
 private:
   int sckt;
   int sckt_in;
-  DirectionType Direction;
   ProtocolType Protocol;
   struct sockaddr_in scktName;
   struct hostent *host;

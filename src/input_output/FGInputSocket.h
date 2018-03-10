@@ -92,6 +92,7 @@ protected:
 
   unsigned int SockPort;
   FGfdmSocket* socket;
+  FGfdmSocket::ProtocolType SockProtocol;
   std::string data;
 };
 }
