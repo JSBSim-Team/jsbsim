@@ -424,6 +424,7 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("aero/h_b-cg-ft", this, &FGAuxiliary::GetHOverBCG);
   PropertyManager->Tie("aero/h_b-mac-ft", this, &FGAuxiliary::GetHOverBMAC);
   PropertyManager->Tie("flight-path/gamma-rad", this, &FGAuxiliary::GetGamma);
+  PropertyManager->Tie("flight-path/gamma-deg", this, inDegrees, (PMF)&FGAuxiliary::GetGamma);
   PropertyManager->Tie("flight-path/psi-gt-rad", this, &FGAuxiliary::GetGroundTrack);
 
   PropertyManager->Tie("position/distance-from-start-lon-mt", this, &FGAuxiliary::GetLongitudeRelativePosition);

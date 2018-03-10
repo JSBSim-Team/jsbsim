@@ -236,6 +236,11 @@ public:
   double GetGamma(void)              const { return gamma;         }
   double GetGroundTrack(void)        const { return psigt;         }
 
+  double GetGamma(int unit) const {
+    if (unit == inDegrees) return gamma*radtodeg;
+    else return BadUnits();
+  }
+
   double GetHeadWind(void) const;
   double GetCrossWind(void) const;
 
