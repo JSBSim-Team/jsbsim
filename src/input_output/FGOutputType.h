@@ -67,6 +67,7 @@ class FGFCS;
 class FGGroundReactions;
 class FGExternalReactions;
 class FGBuoyantForces;
+class FGPropertyValue;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -124,10 +125,7 @@ public:
   /** Set the list of properties that should be output for this output instance.
       @param outputProperties list of properties that should be output
   */
-  void SetOutputProperties(std::vector<FGPropertyNode_ptr> & outputProperties)
-  {
-    OutputProperties = outputProperties;
-  }
+  void SetOutputProperties(std::vector<FGPropertyNode_ptr> & outputProperties);
 
   /** Overwrites the name identifier under which the output will be logged.
       This method is taken into account if it is called before
@@ -199,7 +197,7 @@ public:
 protected:
   unsigned int OutputIdx;
   int SubSystems;
-  std::vector <FGPropertyNode_ptr> OutputProperties;
+  std::vector <FGPropertyValue*> OutputParameters;
   std::vector <std::string> OutputCaptions;
   bool enabled;
 

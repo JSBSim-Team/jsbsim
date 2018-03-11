@@ -55,6 +55,8 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class FGMetaFunction;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -222,8 +224,16 @@ public:
       @result the name identifier.*/
   std::string GetOutputName(unsigned int idx) const;
 
+  FGMetaFunction* GetMetaFunction(const std::string& name) {
+    if (MetaFunctions.count(name))
+      return MetaFunctions[name];
+    else
+      return NULL;
+  }
+
 private:
   std::vector<FGOutputType*> OutputTypes;
+  std::map<std::string, FGMetaFunction*> MetaFunctions;
   bool enabled;
 
   void Debug(int from);

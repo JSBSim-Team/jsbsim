@@ -55,6 +55,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGPropertyValue.h"
 
 using namespace std;
 
@@ -260,13 +261,11 @@ void FGOutputSocket::PrintHeaders(void)
   if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0)
     socket->Append(Propulsion->GetPropulsionStrings(","));
 
-  if (OutputProperties.size() > 0) {
-    for (unsigned int i=0;i<OutputProperties.size();i++)
-      if (OutputCaptions[i].size() > 0) {
-        socket->Append(OutputCaptions[i]);
-      } else {
-        socket->Append(OutputProperties[i]->GetPrintableName());
-      }
+  for (unsigned int i=0;i<OutputParameters.size();++i) {
+    if (!OutputCaptions[i].empty())
+      socket->Append(OutputCaptions[i]);
+    else
+      socket->Append(OutputParameters[i]->GetPrintableName());
   }
 
   socket->Send();
@@ -378,8 +377,8 @@ void FGOutputSocket::Print(void)
     socket->Append(Propulsion->GetPropulsionValues(","));
   }
 
-  for (unsigned int i=0;i<OutputProperties.size();i++) {
-    socket->Append(OutputProperties[i]->getDoubleValue());
+  for (unsigned int i=0;i<OutputParameters.size();++i) {
+    socket->Append(OutputParameters[i]->GetValue());
   }
 
   socket->Send();

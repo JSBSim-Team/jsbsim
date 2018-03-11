@@ -33,6 +33,7 @@ INCLUDES
 #include <cstdlib>
 #include <cmath>
 
+#include "simgear/misc/strutils.hxx"
 #include "FGFunction.h"
 #include "FGTable.h"
 #include "FGPropertyValue.h"
@@ -49,6 +50,8 @@ IDENT(IdHdr,ID_FUNCTION);
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+const double FGFunction::invlog2val = 1.0/log10(2.0);
 
 const std::string FGFunction::property_string = "property";
 const std::string FGFunction::value_string = "value";
@@ -108,21 +111,32 @@ const std::string FGFunction::ifthen_string = "ifthen";
 const std::string FGFunction::switch_string = "switch";
 const std::string FGFunction::interpolate1d_string = "interpolate1d";
 
-FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& prefix)
-                                      : PropertyManager(propMan), Prefix(prefix)
+FGFunction::FGFunction()
 {
-  Element* element;
-  string operation, property_name;
   cached = false;
   cachedValue = -HUGE_VAL;
-  invlog2val = 1.0/log10(2.0);
+  pCopyTo = 0L;
+}
+
+FGFunction::FGFunction(FGPropertyManager* PropertyManager, Element* el,
+                       const string& prefix, FGPropertyValue* var)
+  : Prefix(prefix)
+{
+  cached = false;
+  cachedValue = -HUGE_VAL;
   pCopyTo = 0L;
 
+  Load(PropertyManager, el, var);
+}
+
+void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
+                      FGPropertyValue* var)
+{
   Name = el->GetAttributeValue("name");
-  operation = el->GetName();
+  string operation = el->GetName();
 
   if (operation == function_string) {
-    sCopyTo = el->GetAttributeValue("copyto");
+    string sCopyTo = el->GetAttributeValue("copyto");
     if (!sCopyTo.empty()) {
 
       if (sCopyTo.find("#") != string::npos) {
@@ -232,7 +246,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
 
-  element = el->GetElement();
+  Element* element = el->GetElement();
   if (!element && Type != eRandom && Type != eUrandom && Type != ePi) {
     cerr << fgred << highint << endl;
     cerr << "  No element was specified as an argument to the \"" << operation << "\" operation" << endl;
@@ -248,26 +262,36 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
 
     // data types
     if (operation == property_string || operation == p_string) {
-      property_name = element->GetDataLine();
-      if (property_name.find("#") != string::npos) {
-        if (is_number(Prefix)) {
-          property_name = replace(property_name,"#",Prefix);
+      string property_name = element->GetDataLine();
+
+      if (var && simgear::strutils::strip(property_name) == "#")
+        Parameters.push_back(var);
+      else {
+        if (property_name.find("#") != string::npos) {
+          if (is_number(Prefix)) {
+            property_name = replace(property_name,"#",Prefix);
+          }
+          else
+            cerr << el->ReadFrom()
+                 << fgred << "Illegal use of the special character '#'"
+                 << reset << endl;
         }
-      }
-      if (PropertyManager->HasNode(property_name)) {
-        FGPropertyNode* newNode = PropertyManager->GetNode(property_name);
-        Parameters.push_back(new FGPropertyValue( newNode ));
-      } else {
-        // cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
-        //      << reset << endl;
-        Parameters.push_back(new FGPropertyValue( property_name,
-                                                  PropertyManager ));
+
+        if (PropertyManager->HasNode(property_name)) {
+          FGPropertyNode* newNode = PropertyManager->GetNode(property_name);
+          Parameters.push_back(new FGPropertyValue( newNode ));
+        } else {
+          // cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
+          //      << reset << endl;
+          Parameters.push_back(new FGPropertyValue( property_name,
+                                                    PropertyManager ));
+        }
       }
     } else if (operation == value_string || operation == v_string) {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));
     } else if (operation == table_string || operation == t_string) {
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
-    // operations
+      // operations
     } else if (operation == product_string ||
                operation == difference_string ||
                operation == sum_string ||
@@ -315,24 +339,17 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, const string& pr
                operation == ifthen_string ||
                operation == switch_string ||
                operation == interpolate1d_string)
-    {
-      Parameters.push_back(new FGFunction(PropertyManager, element, Prefix));
-    } else if (operation != description_string) {
+      {
+        Parameters.push_back(new FGFunction(PropertyManager, element, Prefix, var));
+      } else if (operation != description_string) {
       cerr << "Bad operation " << operation << " detected in configuration file" << endl;
     }
     element = el->GetNextElement();
   }
 
-  bind(el); // Allow any function to save its value
+  bind(el, PropertyManager); // Allow any function to save its value
 
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGFunction::~FGFunction(void)
-{
-  for (unsigned int i=0; i<Parameters.size(); i++) delete Parameters[i];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -784,7 +801,7 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::bind(Element* el)
+void FGFunction::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   if ( !Name.empty() ) {
     string tmp;

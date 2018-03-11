@@ -99,6 +99,7 @@ protected:
   FGPropertyManager* PropertyManager;
   FGPropertyNode* root;
   FGFDMExec* FDMExec;
+  std::vector<FGPropertyNode_ptr> OutputProperties;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

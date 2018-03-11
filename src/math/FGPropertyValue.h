@@ -68,12 +68,16 @@ public:
 
   FGPropertyValue(FGPropertyNode* propNode);
   FGPropertyValue(std::string propName, FGPropertyManager* propertyManager);
-  ~FGPropertyValue() {};
 
-  double GetValue(void) const;
+  virtual double GetValue(void) const;
   void SetNode(FGPropertyNode* node) {PropertyNode = node;}
 
-  std::string GetName(void) const;
+  virtual std::string GetName(void) const;
+  virtual std::string GetFullyQualifiedName(void) const;
+  virtual std::string GetPrintableName(void) const;
+
+protected:
+  FGPropertyNode* GetNode(void) const;
 
 private:
   FGPropertyManager* PropertyManager; // Property root used to do late binding.

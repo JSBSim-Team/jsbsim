@@ -22,7 +22,9 @@ set(HEADERS FGColumnVector3.h
             FGCondition.h
             FGRungeKutta.h
             FGModelFunctions.h
-            LagrangeMultiplier.h)
+            LagrangeMultiplier.h
+            FGMetaFunction.h
+            FGFunctionValue.h)
 
 add_full_path_name(MATH_SRC "${SOURCES}")
 add_full_path_name(MATH_HDR "${HEADERS}")

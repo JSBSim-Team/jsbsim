@@ -43,6 +43,8 @@ INCLUDES
 #include "FGOutputType.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
+#include "math/FGMetaFunction.h"
+#include "math/FGFunctionValue.h"
 
 namespace JSBSim {
 
@@ -81,7 +83,10 @@ FGOutputType::FGOutputType(FGFDMExec* fdmex) :
 
 FGOutputType::~FGOutputType()
 {
-  OutputProperties.clear();
+  vector<FGPropertyValue*>::iterator it;
+  for (it=OutputParameters.begin(); it != OutputParameters.end(); ++it)
+    delete *it;
+
   Debug(1);
 }
 
@@ -133,25 +138,41 @@ bool FGOutputType::Load(Element* element)
     string property_str = property_element->GetDataLine();
     FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
-      cerr << fgred << highint << endl << "  No property by the name "
+      cerr << property_element->ReadFrom()
+           << fgred << highint << endl << "  No property by the name "
            << property_str << " has been defined. This property will " << endl
            << "  not be logged. You should check your configuration file."
            << reset << endl;
     } else {
-      OutputProperties.push_back(node);
-      if (property_element->HasAttribute("caption")) {
-        OutputCaptions.push_back(property_element->GetAttributeValue("caption"));
-      } else {
-        OutputCaptions.push_back("");
+      if (property_element->HasAttribute("apply")) {
+        string function_str = property_element->GetAttributeValue("apply");
+        FGOutput* Output = FDMExec->GetOutput();
+        FGMetaFunction* f = Output->GetMetaFunction(function_str);
+        if (f)
+          OutputParameters.push_back(new FGFunctionValue(node, f));
+        else {
+          cerr << property_element->ReadFrom()
+               << fgred << highint << "  No function by the name "
+               << function_str << " has been defined. This property will "
+               << "not be logged. You should check your configuration file."
+               << reset << endl;
+        }
       }
+      else
+        OutputParameters.push_back(new FGPropertyValue(node));
+
+      if (property_element->HasAttribute("caption"))
+        OutputCaptions.push_back(property_element->GetAttributeValue("caption"));
+      else
+        OutputCaptions.push_back("");
     }
     property_element = element->FindNextElement("property");
   }
 
   double outRate = 1.0;
-  if (!element->GetAttributeValue("rate").empty()) {
+  if (element->HasAttribute("rate"))
     outRate = element->GetAttributeValueAsNumber("rate");
-  }
+
   SetRateHz(outRate);
 
   return true;
@@ -205,6 +226,16 @@ double FGOutputType::GetRateHz(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutputType::SetOutputProperties(vector<FGPropertyNode_ptr> & outputProperties)
+{
+  vector<FGPropertyNode_ptr>::iterator it;
+  for (it = outputProperties.begin(); it != outputProperties.end(); ++it)
+    OutputParameters.push_back(new FGPropertyValue(*it));
+}
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -245,9 +276,9 @@ void FGOutputType::Debug(int from)
       if (SubSystems & ssGroundReactions) cout << "    Ground parameters logged" << endl;
       if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
       if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;
-      if (OutputProperties.size() > 0)    cout << "    Properties logged:" << endl;
-      for (unsigned int i=0;i<OutputProperties.size();i++) {
-        cout << "      - " << OutputProperties[i]->GetName() << endl;
+      if (!OutputParameters.empty())      cout << "    Properties logged:" << endl;
+      for (unsigned int i=0;i<OutputParameters.size();i++) {
+        cout << "      - " << OutputParameters[i]->GetName() << endl;
       }
     }
   }

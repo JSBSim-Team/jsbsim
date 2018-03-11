@@ -48,6 +48,7 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
+#include "math/FGMetaFunction.h"
 
 using namespace std;
 
@@ -76,9 +77,13 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGOutput::~FGOutput()
 {
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    delete (*it);
+  vector<FGOutputType*>::iterator itv;
+  for (itv = OutputTypes.begin(); itv != OutputTypes.end(); ++itv)
+    delete (*itv);
+
+  map<string, FGMetaFunction*>::iterator itf;
+  for (itf = MetaFunctions.begin(); itf != MetaFunctions.end(); ++itf)
+    delete itf->second;
 
   Debug(1);
 }
@@ -258,7 +263,18 @@ bool FGOutput::Load(Element* el)
 
   if (!element) return false;
 
-  FGModel::PreLoad(element, PropertyManager);
+  Element *function = el->FindElement("function");
+
+  while (function) {
+    string fType = function->GetAttributeValue("type");
+
+    if (fType == "meta") {
+      string name = function->GetAttributeValue("name");
+      MetaFunctions[name] = new FGMetaFunction(PropertyManager, function);
+    }
+
+    function = el->FindNextElement("function");
+  }
 
   size_t idx = OutputTypes.size();
   string type = element->GetAttributeValue("type");
@@ -287,8 +303,9 @@ bool FGOutput::Load(Element* el)
   if (!Output) return false;
 
   Output->SetIdx(idx);
+  Output->PreLoad(element, PropertyManager);
   Output->Load(element);
-  PostLoad(element, PropertyManager);
+  Output->PostLoad(element, PropertyManager);
 
   OutputTypes.push_back(Output);
 
