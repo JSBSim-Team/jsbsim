@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<output name="output2.csv" type="CSV" rate="20" file="unitconversion.xml">
+  <function name="pre/p-aero-deg_sec">
+    <product>
+      <property>velocities/p-aero-rad_sec</property>
+      <value> 57.2957795130823 </value>
+    </product>
+  </function>
+
+  <property> aero/alpha-deg </property>
+  <property caption="meta/alpha-deg" apply="convertRadToDeg">
+    aero/alpha-rad
+  </property>
+  <property caption="meta/p-aero-deg_sec" apply="convertRadToDeg">
+    velocities/p-aero-rad_sec
+  </property>
+</output>
