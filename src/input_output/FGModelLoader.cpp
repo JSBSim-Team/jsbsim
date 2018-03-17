@@ -71,7 +71,7 @@ Element_ptr FGModelLoader::Open(Element *el)
       document = XMLFileRead.LoadXMLDocument(path);
       if (document == 0L) {
         cerr << endl << el->ReadFrom()
-             << "Could not open file: " << path << endl;
+             << "Could not open file: " << fname << endl;
         return NULL;
       }
       CachedFiles[path.utf8Str()] = document;

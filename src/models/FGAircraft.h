@@ -132,7 +132,7 @@ public:
       The executive calls this method to load the aircraft into JSBSim.
       @param el a pointer to the element tree
       @return true if successful */
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
 
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */

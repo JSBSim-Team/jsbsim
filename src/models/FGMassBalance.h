@@ -111,7 +111,7 @@ public:
   FGMassBalance(FGFDMExec*);
   ~FGMassBalance();
 
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
   bool InitModel(void);
   /** Runs the Mass Balance model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.

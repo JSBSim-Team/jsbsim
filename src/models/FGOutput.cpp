@@ -251,19 +251,13 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::Load(Element* el)
+bool FGOutput::Load(Element* document)
 {
-  // Unlike the other FGModel classes, properties listed in the <output> section
-  // are not intended to create new properties. For that reason, FGOutput
-  // cannot load its XML directives with FGModel::Load().
-  // Instead FGModelLoader::Open() and FGModel::PreLoad() must be explicitely
-  // called.
-  FGModelLoader ModelLoader(this);
-  Element* element = ModelLoader.Open(el);
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document, false))
+    return false;
 
-  if (!element) return false;
-
-  Element *function = el->FindElement("function");
+  Element *function = document->FindElement("function");
 
   while (function) {
     string fType = function->GetAttributeValue("type");
@@ -273,11 +267,11 @@ bool FGOutput::Load(Element* el)
       MetaFunctions[name] = new FGMetaFunction(PropertyManager, function);
     }
 
-    function = el->FindNextElement("function");
+    function = document->FindNextElement("function");
   }
 
   size_t idx = OutputTypes.size();
-  string type = element->GetAttributeValue("type");
+  string type = document->GetAttributeValue("type");
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
@@ -303,9 +297,9 @@ bool FGOutput::Load(Element* el)
   if (!Output) return false;
 
   Output->SetIdx(idx);
-  Output->PreLoad(element, PropertyManager);
-  Output->Load(element);
-  Output->PostLoad(element, PropertyManager);
+  Output->PreLoad(document, PropertyManager);
+  Output->Load(document);
+  Output->PostLoad(document, PropertyManager);
 
   OutputTypes.push_back(Output);
 

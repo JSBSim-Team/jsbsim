@@ -202,7 +202,7 @@ public:
       Manager list.
       @param el XMLElement that is pointing to the output directives
       @result true if the execution succeeded. */
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
   /** Load the output directives and adds a new output instance to the Output
       Manager list. Unlike the Load() method, the new output instance is not
       generated from output directives read in a XML file but from a list of
