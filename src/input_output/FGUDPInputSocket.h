@@ -38,8 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGInputType.h"
-#include "input_output/FGfdmSocket.h"
+#include "FGInputSocket.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -64,25 +63,16 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGUDPInputSocket : public FGInputType
+class FGUDPInputSocket : public FGInputSocket
 {
 public:
   /** Constructor. */
   FGUDPInputSocket(FGFDMExec* fdmex);
 
-  /** Destructor. */
-  ~FGUDPInputSocket();
-
   /** Reads the property names from an XML file.
       @param element The root XML Element of the input file.
   */
   bool Load(Element* el);
-
-  /** Initializes the instance. This method basically opens the socket to which
-      inputs will be directed.
-      @result true if the execution succeeded.
-   */
-  bool InitModel(void);
 
   /// Reads the socket and updates properties accordingly.
   void Read(bool Holding);
@@ -92,9 +82,6 @@ protected:
   int rate;
   double oldTimeStamp;
   std::vector<FGPropertyNode_ptr> InputProperties;
-  unsigned int SockPort;
-  FGfdmSocket* socket;
-  std::string data;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

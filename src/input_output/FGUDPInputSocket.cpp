@@ -57,36 +57,21 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGUDPInputSocket::FGUDPInputSocket(FGFDMExec* fdmex) :
-  FGInputType(fdmex),
-  socket(0)
+  FGInputSocket(fdmex), rate(20), oldTimeStamp(0.0)
 {
-  rate = 20;
   SockPort = 5139;
-  oldTimeStamp = 0.0;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGUDPInputSocket::~FGUDPInputSocket()
-{
-  delete socket;
+  SockProtocol = FGfdmSocket::ptUDP;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGUDPInputSocket::Load(Element* el)
 {
-  if (!FGInputType::Load(el))
+  if (!FGInputSocket::Load(el))
     return false;
    
   rate = atoi(el->GetAttributeValue("rate").c_str());
   SetRate(0.5 + 1.0/(FDMExec->GetDeltaT()*rate));
-   
-  SockPort = atoi(el->GetAttributeValue("port").c_str());
-  if (SockPort == 0) {
-    cerr << endl << "No port assigned in input element" << endl;
-    return false;
-  }
   
   Element *property_element = el->FindElement("property");
 
@@ -107,25 +92,8 @@ bool FGUDPInputSocket::Load(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGUDPInputSocket::InitModel(void)
-{
-  if (FGInputType::InitModel()) {
-    delete socket;
-    socket = new FGfdmSocket(SockPort, FGfdmSocket::ptUDP, FGfdmSocket::dIN);
-
-    if (socket == 0) return false;
-    cout << "UDP input socket established on port " << SockPort << endl;
-    return true;
-  }
-
-  return false;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGUDPInputSocket::Read(bool Holding)
 {
-
   if (socket == 0) return;
     
   data = socket->Receive();
@@ -160,9 +128,7 @@ void FGUDPInputSocket::Read(bool Holding)
     for (unsigned int i=1; i<values.size(); i++) {
       InputProperties[i-1]->setDoubleValue(values[i]);
     }
-    
   }
-  
 }
 
 }
