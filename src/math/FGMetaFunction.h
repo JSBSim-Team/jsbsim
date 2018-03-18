@@ -56,7 +56,8 @@ class FGMetaFunction : public FGFunction
 public:
 
   FGMetaFunction(FGPropertyManager* PropertyManager, Element* element)
-    : FGFunction(), var(0L) {
+    : var(0L)
+  {
     Load(PropertyManager, element, &var);
     // Since 'var' is a member of FGMetafunction, we don't want SGSharedPtr to
     // destroy 'var' when it would no longer be referenced by any shared
@@ -64,21 +65,6 @@ public:
     // extra time to make sure that it never reaches 0 when all shared pointers
     // referencing 'var' are destroyed.
     get(&var);
-  }
-
-  virtual ~FGMetaFunction() {
-    // Since the FGMetaFunction is a derived class of FGFunction, its destructor
-    // is called first and its member 'var' will be destroyed before the
-    // FGFunction destructor is called. This will cause the program to segfault
-    // when the FGFunction destructor will try to access the reference counter
-    // of 'var' in the attempt to destroy 'Parameters'.
-    //
-    // In order to prevent that, we must destroy the content of 'Parameters'
-    // before the FGFunction destructor is called.
-    //
-    // Since we manually increased the reference counter during the construction
-    // of FGMetaFunction, 'var' will not be destroyed in the process.
-    Parameters.clear();
   }
 
   double GetValue(FGPropertyNode* node) {
@@ -92,6 +78,9 @@ private:
   virtual void bind(Element*, FGPropertyManager*) {}
   FGPropertyValue var;
 };
+
+typedef SGSharedPtr<FGMetaFunction> FGMetaFunction_ptr;
+
 } // namespace JSBSim
 
 #endif

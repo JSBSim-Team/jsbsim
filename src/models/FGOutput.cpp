@@ -80,10 +80,6 @@ FGOutput::~FGOutput()
   for (itv = OutputTypes.begin(); itv != OutputTypes.end(); ++itv)
     delete (*itv);
 
-  map<string, FGMetaFunction*>::iterator itf;
-  for (itf = MetaFunctions.begin(); itf != MetaFunctions.end(); ++itf)
-    delete itf->second;
-
   Debug(1);
 }
 

@@ -111,21 +111,10 @@ const std::string FGFunction::ifthen_string = "ifthen";
 const std::string FGFunction::switch_string = "switch";
 const std::string FGFunction::interpolate1d_string = "interpolate1d";
 
-FGFunction::FGFunction()
-{
-  cached = false;
-  cachedValue = -HUGE_VAL;
-  pCopyTo = 0L;
-}
-
 FGFunction::FGFunction(FGPropertyManager* PropertyManager, Element* el,
                        const string& prefix, FGPropertyValue* var)
-  : Prefix(prefix)
+  : Prefix(prefix), cached(false), cachedValue(-HUGE_VAL), pCopyTo(0L)
 {
-  cached = false;
-  cachedValue = -HUGE_VAL;
-  pCopyTo = 0L;
-
   Load(PropertyManager, el, var);
 }
 

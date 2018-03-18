@@ -701,7 +701,8 @@ class FGFunction : public FGParameter, public FGJSBBase
 {
 public:
   /// Default constructor.
-  FGFunction();
+  FGFunction()
+    : cached(false), cachedValue(-HUGE_VAL), pCopyTo(0L) {}
 
   /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
@@ -746,7 +747,6 @@ protected:
   void Load(FGPropertyManager* PropertyManager, Element* element,
             FGPropertyValue* var);
   virtual void bind(Element*, FGPropertyManager*);
-  std::vector <FGParameter_ptr> Parameters;
 
 private:
   static const double invlog2val;
@@ -817,6 +817,7 @@ private:
   bool cached;
   double cachedValue;
   std::string Name;
+  std::vector <FGParameter_ptr> Parameters;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 
   unsigned int GetBinary(double) const;

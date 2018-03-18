@@ -69,9 +69,15 @@ public:
   std::string GetName(void) const {
     return function->GetName() + "(" + FGPropertyValue::GetName() + ")";
   }
+  std::string GetPrintableName(void) const {
+    return function->GetName() + "(" + FGPropertyValue::GetPrintableName() + ")";
+  }
+  std::string GetFullyQualifiedName(void) const {
+    return function->GetName() + "(" + FGPropertyValue::GetFullyQualifiedName() + ")";
+  }
 
 private:
-  FGMetaFunction* function;
+  FGMetaFunction_ptr function;
 };
 
 } // namespace JSBSim

@@ -42,6 +42,7 @@ INCLUDES
 
 #include "FGModel.h"
 #include "input_output/FGOutputType.h"
+#include "math/FGMetaFunction.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -54,8 +55,6 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
-
-class FGMetaFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -233,7 +232,7 @@ public:
 
 private:
   std::vector<FGOutputType*> OutputTypes;
-  std::map<std::string, FGMetaFunction*> MetaFunctions;
+  std::map<std::string, FGMetaFunction_ptr> MetaFunctions;
   bool enabled;
 
   void Debug(int from);
