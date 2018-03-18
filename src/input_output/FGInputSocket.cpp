@@ -61,7 +61,8 @@ CLASS IMPLEMENTATION
 
 FGInputSocket::FGInputSocket(FGFDMExec* fdmex) :
   FGInputType(fdmex),
-  socket(0)
+  socket(0),
+  SockProtocol(FGfdmSocket::ptTCP)
 {
 }
 
@@ -95,7 +96,7 @@ bool FGInputSocket::InitModel(void)
 {
   if (FGInputType::InitModel()) {
     delete socket;
-    socket = new FGfdmSocket(SockPort);
+    socket = new FGfdmSocket(SockPort, SockProtocol);
 
     if (socket == 0) return false;
     if (!socket->GetConnectStatus()) return false;

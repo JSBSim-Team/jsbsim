@@ -44,7 +44,6 @@ INCLUDES
 #include "input_output/FGOutputSocket.h"
 #include "input_output/FGOutputTextFile.h"
 #include "input_output/FGOutputFG.h"
-#include "input_output/FGUDPOutputSocket.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
@@ -226,9 +225,6 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   } else if (type == "FLIGHTGEAR") {
     Output = new FGOutputFG(FDMExec);
     name += ":" + port + "/" + protocol;
-  } else if (type == "QTJSBSIM") {
-    Output = new FGUDPOutputSocket(FDMExec);
-    name += ":" + port + "/" + protocol;
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
@@ -286,8 +282,6 @@ bool FGOutput::Load(Element* document)
     Output = new FGOutputSocket(FDMExec);
   } else if (type == "FLIGHTGEAR") {
     Output = new FGOutputFG(FDMExec);
-  } else if (type == "QTJSBSIM") {
-    Output = new FGUDPOutputSocket(FDMExec);
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
