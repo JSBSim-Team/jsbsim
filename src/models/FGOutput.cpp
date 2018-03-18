@@ -47,7 +47,7 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
-#include "math/FGMetaFunction.h"
+#include "math/FGTemplateFunc.h"
 
 using namespace std;
 
@@ -254,9 +254,9 @@ bool FGOutput::Load(Element* document)
   while (function) {
     string fType = function->GetAttributeValue("type");
 
-    if (fType == "meta") {
+    if (fType == "template") {
       string name = function->GetAttributeValue("name");
-      MetaFunctions[name] = new FGMetaFunction(PropertyManager, function);
+      TemplateFunctions[name] = new FGTemplateFunc(PropertyManager, function);
     }
 
     function = document->FindNextElement("function");

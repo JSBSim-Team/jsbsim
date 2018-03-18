@@ -1,6 +1,6 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  Header: FGMetaFunction.h
+  Header: FGTemplateFunc.h
   Author: Bertrand Coconnier
   Date started: March 10 2018
 
@@ -27,8 +27,8 @@
   SENTRY
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGMETAFUNCTION_H
-#define FGMETAFUNCTION_H
+#ifndef FGTEMPLATEFUNC_H
+#define FGTEMPLATEFUNC_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   INCLUDES
@@ -48,18 +48,18 @@ namespace JSBSim {
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  DECLARATION: FGMetaFunction
+  DECLARATION: FGTemplateFunc
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGMetaFunction : public FGFunction
+class FGTemplateFunc : public FGFunction
 {
 public:
 
-  FGMetaFunction(FGPropertyManager* PropertyManager, Element* element)
+  FGTemplateFunc(FGPropertyManager* PropertyManager, Element* element)
     : var(0L)
   {
     Load(PropertyManager, element, &var);
-    // Since 'var' is a member of FGMetafunction, we don't want SGSharedPtr to
+    // Since 'var' is a member of FGTemplateFunc, we don't want SGSharedPtr to
     // destroy 'var' when it would no longer be referenced by any shared
     // pointers. In order to avoid this, the reference counter is increased an
     // extra time to make sure that it never reaches 0 when all shared pointers
@@ -73,13 +73,13 @@ public:
   }
 
 private:
-  /** FGMetaFunctions must not be bound to the property manager. The bind method
+  /** FGTemplateFunc must not be bound to the property manager. The bind method
       is therefore overloaded as a no-op */
   virtual void bind(Element*, FGPropertyManager*) {}
   FGPropertyValue var;
 };
 
-typedef SGSharedPtr<FGMetaFunction> FGMetaFunction_ptr;
+typedef SGSharedPtr<FGTemplateFunc> FGTemplateFunc_ptr;
 
 } // namespace JSBSim
 

@@ -42,7 +42,7 @@ INCLUDES
 
 #include "FGModel.h"
 #include "input_output/FGOutputType.h"
-#include "math/FGMetaFunction.h"
+#include "math/FGTemplateFunc.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -223,16 +223,16 @@ public:
       @result the name identifier.*/
   std::string GetOutputName(unsigned int idx) const;
 
-  FGMetaFunction* GetMetaFunction(const std::string& name) {
-    if (MetaFunctions.count(name))
-      return MetaFunctions[name];
+  FGTemplateFunc* GetTemplateFunc(const std::string& name) {
+    if (TemplateFunctions.count(name))
+      return TemplateFunctions[name];
     else
       return NULL;
   }
 
 private:
   std::vector<FGOutputType*> OutputTypes;
-  std::map<std::string, FGMetaFunction_ptr> MetaFunctions;
+  std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
   bool enabled;
 
   void Debug(int from);

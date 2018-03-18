@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <output>
-  <function type="meta" name="convertRadToDeg">
+  <function type="template" name="convertRadToDeg">
     <product>
       <property>#</property>
       <value> 57.29577951 </value>

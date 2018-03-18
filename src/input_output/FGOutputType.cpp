@@ -43,7 +43,7 @@ INCLUDES
 #include "FGOutputType.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-#include "math/FGMetaFunction.h"
+#include "math/FGTemplateFunc.h"
 #include "math/FGFunctionValue.h"
 
 namespace JSBSim {
@@ -147,7 +147,7 @@ bool FGOutputType::Load(Element* element)
       if (property_element->HasAttribute("apply")) {
         string function_str = property_element->GetAttributeValue("apply");
         FGOutput* Output = FDMExec->GetOutput();
-        FGMetaFunction* f = Output->GetMetaFunction(function_str);
+        FGTemplateFunc* f = Output->GetTemplateFunc(function_str);
         if (f)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {

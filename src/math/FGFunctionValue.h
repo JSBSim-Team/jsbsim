@@ -58,10 +58,10 @@ class FGFunctionValue : public FGPropertyValue
 {
 public:
 
-  FGFunctionValue(FGPropertyNode* propNode, FGMetaFunction* f)
+  FGFunctionValue(FGPropertyNode* propNode, FGTemplateFunc* f)
     :FGPropertyValue(propNode), function(f) {}
   FGFunctionValue(std::string propName, FGPropertyManager* propertyManager,
-                  FGMetaFunction* f)
+                  FGTemplateFunc* f)
     :FGPropertyValue(propName, propertyManager), function(f) {}
 
   double GetValue(void) const { return function->GetValue(GetNode()); }
@@ -77,7 +77,7 @@ public:
   }
 
 private:
-  FGMetaFunction_ptr function;
+  FGTemplateFunc_ptr function;
 };
 
 } // namespace JSBSim

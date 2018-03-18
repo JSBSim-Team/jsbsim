@@ -8,10 +8,10 @@
   </function>
 
   <property> aero/alpha-deg </property>
-  <property caption="meta/alpha-deg" apply="convertRadToDeg">
+  <property caption="template/alpha-deg" apply="convertRadToDeg">
     aero/alpha-rad
   </property>
-  <property caption="meta/p-aero-deg_sec" apply="convertRadToDeg">
+  <property caption="template/p-aero-deg_sec" apply="convertRadToDeg">
     velocities/p-aero-rad_sec
   </property>
 </output>

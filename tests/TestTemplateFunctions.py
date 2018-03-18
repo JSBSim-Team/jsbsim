@@ -1,6 +1,6 @@
-# TestMetaFucntions.py
+# TestTemplateFucntions.py
 #
-# Cehck the meta functions
+# Check template functions
 #
 # Copyright (c) 2018 Bertrand Coconnier
 #
@@ -24,7 +24,7 @@ import pandas as pd
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 
-class TestMetaFunctions(JSBSimTestCase):
+class TestTemplateFunctions(JSBSimTestCase):
     def testUnitConversion(self):
         shutil.copy(self.sandbox.path_to_jsbsim_file('tests',
                                                      'output2.xml'),'.')
@@ -39,8 +39,8 @@ class TestMetaFunctions(JSBSimTestCase):
 
         ref = pd.read_csv("output2.csv", index_col=0)
         self.assertAlmostEqual(np.abs(ref['/fdm/jsbsim/aero/alpha-deg']-
-                                      ref['meta/alpha-deg']).max(), 0.0)
+                                      ref['template/alpha-deg']).max(), 0.0)
         self.assertAlmostEqual(np.abs(ref['pre/p-aero-deg_sec']-
-                                      ref['meta/p-aero-deg_sec']).max(), 0.0)
+                                      ref['template/p-aero-deg_sec']).max(), 0.0)
 
-RunTest(TestMetaFunctions)
+RunTest(TestTemplateFunctions)
