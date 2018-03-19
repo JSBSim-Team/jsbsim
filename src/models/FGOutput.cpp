@@ -47,6 +47,7 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
+#include "math/FGTemplateFunc.h"
 
 using namespace std;
 
@@ -75,9 +76,9 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGOutput::~FGOutput()
 {
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    delete (*it);
+  vector<FGOutputType*>::iterator itv;
+  for (itv = OutputTypes.begin(); itv != OutputTypes.end(); ++itv)
+    delete (*itv);
 
   Debug(1);
 }
@@ -242,22 +243,27 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::Load(Element* el)
+bool FGOutput::Load(Element* document)
 {
-  // Unlike the other FGModel classes, properties listed in the <output> section
-  // are not intended to create new properties. For that reason, FGOutput
-  // cannot load its XML directives with FGModel::Load().
-  // Instead FGModelLoader::Open() and FGModel::PreLoad() must be explicitely
-  // called.
-  FGModelLoader ModelLoader(this);
-  Element* element = ModelLoader.Open(el);
+  // Perform base class Pre-Load
+  if (!FGModel::Load(document, false))
+    return false;
 
-  if (!element) return false;
+  Element *function = document->FindElement("function");
 
-  FGModel::PreLoad(element, PropertyManager);
+  while (function) {
+    string fType = function->GetAttributeValue("type");
+
+    if (fType == "template") {
+      string name = function->GetAttributeValue("name");
+      TemplateFunctions[name] = new FGTemplateFunc(PropertyManager, function);
+    }
+
+    function = document->FindNextElement("function");
+  }
 
   size_t idx = OutputTypes.size();
-  string type = element->GetAttributeValue("type");
+  string type = document->GetAttributeValue("type");
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
@@ -281,8 +287,9 @@ bool FGOutput::Load(Element* el)
   if (!Output) return false;
 
   Output->SetIdx(idx);
-  Output->Load(element);
-  PostLoad(element, PropertyManager);
+  Output->PreLoad(document, PropertyManager);
+  Output->Load(document);
+  Output->PostLoad(document, PropertyManager);
 
   OutputTypes.push_back(Output);
 

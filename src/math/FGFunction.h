@@ -52,6 +52,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class Element;
+class FGPropertyValue;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -696,28 +697,32 @@ DECLARATION: FGFunction
 
 // Todo: Does this class need a copy constructor, like FGLGear?
 
-class FGFunction : public FGParameter
+class FGFunction : public FGParameter, public FGJSBBase
 {
 public:
+  /// Default constructor.
+  FGFunction()
+    : cached(false), cachedValue(-HUGE_VAL), pCopyTo(0L) {}
 
-/** Constructor.
+  /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
     element argument is traversed. If other FGParameter-derived objects (values,
     functions, properties, or tables) are encountered, this instance of the
-    FGFunction object will store a pointer to the found object and pass the relevant
-    Element pointer to the constructor for the new object. In other words, each
-    FGFunction object maintains a list of "child" FGParameter-derived objects which
-    in turn may each contain its own list, and so on. At runtime, each object
-    evaluates its child parameters, which each may have its own child parameters to
-    evaluate.
+    FGFunction object will store a pointer to the found object and pass the
+    relevant Element pointer to the constructor for the new object. In other
+    words, each FGFunction object maintains a list of "child"
+    FGParameter-derived objects which in turn may each contain its own list, and
+    so on. At runtime, each object evaluates its child parameters, which each
+    may have its own child parameters to evaluate.
+
     @param PropertyManager a pointer to the property manager instance.
-    @param element a pointer to the Element object containing the function definition.
-    @param prefix an optional prefix to prepend to the name given to the property
-           that represents this function (if given).
+    @param element a pointer to the Element object containing the function
+                   definition.
+    @param prefix an optional prefix to prepend to the name given to the
+                  property that represents this function (if given).
 */
-  FGFunction(FGPropertyManager* PropertyManager, Element* element, const std::string& prefix="");
-  /// Destructor.
-  virtual ~FGFunction();
+  FGFunction(FGPropertyManager* PropertyManager, Element* element,
+             const std::string& prefix="", FGPropertyValue* var=0L);
 
 /** Retrieves the value of the function object.
     @return the total value of the function. */
@@ -738,12 +743,13 @@ public:
     @param shouldCache specifies whether the function should cache the computed value. */
   void cacheValue(bool shouldCache);
 
+protected:
+  void Load(FGPropertyManager* PropertyManager, Element* element,
+            FGPropertyValue* var);
+  virtual void bind(Element*, FGPropertyManager*);
+
 private:
-  std::vector <FGParameter*> Parameters;
-  FGPropertyManager* const PropertyManager;
-  bool cached;
-  double invlog2val;
-  std::string Prefix;
+  static const double invlog2val;
   static const std::string description_string;
   static const std::string property_string;
   static const std::string value_string;
@@ -799,7 +805,7 @@ private:
   static const std::string ifthen_string;
   static const std::string switch_string;
   static const std::string interpolate1d_string;
-  double cachedValue;
+
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow, eSqrt, eToRadians,
                      eToDegrees, eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
                      eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eUrandom, ePi,
@@ -807,12 +813,14 @@ private:
                      eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local,
                      eRotation_beta_local, eRotation_gamma_local, eRotation_bf_to_wf,
                      eRotation_wf_to_bf} Type;
+  std::string Prefix;
+  bool cached;
+  double cachedValue;
   std::string Name;
-  std::string sCopyTo;        // Property name to copy function value to
+  std::vector <FGParameter_ptr> Parameters;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 
   unsigned int GetBinary(double) const;
-  void bind(Element*);
   void Debug(int from);
 };
 

@@ -42,6 +42,7 @@ INCLUDES
 
 #include "FGModel.h"
 #include "input_output/FGOutputType.h"
+#include "math/FGTemplateFunc.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -200,7 +201,7 @@ public:
       Manager list.
       @param el XMLElement that is pointing to the output directives
       @result true if the execution succeeded. */
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
   /** Load the output directives and adds a new output instance to the Output
       Manager list. Unlike the Load() method, the new output instance is not
       generated from output directives read in a XML file but from a list of
@@ -222,8 +223,16 @@ public:
       @result the name identifier.*/
   std::string GetOutputName(unsigned int idx) const;
 
+  FGTemplateFunc* GetTemplateFunc(const std::string& name) {
+    if (TemplateFunctions.count(name))
+      return TemplateFunctions[name];
+    else
+      return NULL;
+  }
+
 private:
   std::vector<FGOutputType*> OutputTypes;
+  std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
   bool enabled;
 
   void Debug(int from);

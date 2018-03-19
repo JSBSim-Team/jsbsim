@@ -62,7 +62,7 @@ FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* proper
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropertyValue::GetValue(void) const
+FGPropertyNode* FGPropertyValue::GetNode(void) const
 {
   FGPropertyNode* node = PropertyNode;
 
@@ -76,18 +76,45 @@ double FGPropertyValue::GetValue(void) const
     }
   }
 
-  return node->getDoubleValue()*Sign;
+  return node;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropertyValue::GetValue(void) const
+{
+
+  return GetNode()->getDoubleValue()*Sign;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 std::string FGPropertyValue::GetName(void) const
 {
-  if (PropertyNode) {
+  if (PropertyNode)
     return PropertyNode->GetName();
-  } else {
+  else
     return PropertyName;
-  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::string FGPropertyValue::GetFullyQualifiedName(void) const
+{
+  if (PropertyNode)
+    return PropertyNode->GetFullyQualifiedName();
+  else
+    return PropertyName;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::string FGPropertyValue::GetPrintableName(void) const
+{
+  if (PropertyNode)
+    return PropertyNode->GetPrintableName();
+ else
+   return PropertyName;
 }
 
 }

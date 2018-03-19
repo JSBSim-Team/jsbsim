@@ -108,9 +108,11 @@ protected:
   unsigned int rate;
 
   /** Loads this model.
-      @param el a pointer to the element
+      @param el      a pointer to the element
+      @param preLoad true if model functions and local properties must be
+                     preloaded.
       @return true if model is successfully loaded*/
-  virtual bool Load(Element* el);
+  virtual bool Load(Element* el, bool preLoad);
 
   virtual void Debug(int from);
 

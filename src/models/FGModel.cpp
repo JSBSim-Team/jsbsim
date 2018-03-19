@@ -110,7 +110,7 @@ SGPath FGModel::FindFullPathName(const SGPath& path) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModel::Load(Element* el)
+bool FGModel::Load(Element* el, bool preLoad)
 {
   FGModelLoader ModelLoader(this);
   Element* document = ModelLoader.Open(el);
@@ -124,17 +124,21 @@ bool FGModel::Load(Element* el)
     return false;
   }
 
-  bool result = FGModelFunctions::Load(document, PropertyManager);
+  bool result = true;
+
+  if (preLoad)
+    result = FGModelFunctions::Load(document, PropertyManager);
 
   if (document != el) {
     el->MergeAttributes(document);
 
-    // After reading interface properties in a file, read properties in the
-    // local model element. This allows general-purpose models to be defined in
-    // a file, with overrides or initial loaded constants supplied in the
-    // relevant element of the aircraft configuration file.
-
-    LocalProperties.Load(el, PropertyManager, true);
+    if (preLoad) {
+      // After reading interface properties in a file, read properties in the
+      // local model element. This allows general-purpose models to be defined
+      // in a file, with overrides or initial loaded constants supplied in the
+      // relevant element of the aircraft configuration file.
+      LocalProperties.Load(el, PropertyManager, true);
+    }
 
     Element* element = document->FindElement();
     while (element) {

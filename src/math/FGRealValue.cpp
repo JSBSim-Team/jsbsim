@@ -29,7 +29,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGRealValue.h"
-
+#include "FGJSBBase.h"
 #include "input_output/string_utilities.h"
 
 using namespace std;

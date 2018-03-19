@@ -128,7 +128,7 @@ public:
       have found the Buoyant_forces keyword in the configuration file.
       @param element pointer to the current XML element for Buoyant forces parameters.
       @return true if successful */
-  bool Load(Element* element);
+  virtual bool Load(Element* element);
 
   /** Gets the total Buoyant force vector.
       @return a force vector in lbs. */

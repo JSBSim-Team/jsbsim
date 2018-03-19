@@ -141,7 +141,7 @@ public:
       have found the aerodynamics keyword in the configuration file.
       @param element pointer to the current XML element for aerodynamics parameters.
       @return true if successful */
-  bool Load(Element* element);
+  virtual bool Load(Element* element);
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */

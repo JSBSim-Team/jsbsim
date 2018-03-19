@@ -59,6 +59,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGPropertyValue.h"
 
 using namespace std;
 
@@ -75,8 +76,6 @@ bool FGOutputTextFile::Load(Element* el)
 {
   if(!FGOutputFile::Load(el))
     return false;
-
-//  PreLoad(el, PropertyManager);
 
   string type = el->GetAttributeValue("type");
   string delim;
@@ -234,14 +233,12 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << delimeter;
     outstream << Propulsion->GetPropulsionStrings(delimeter);
   }
-  if (OutputProperties.size() > 0) {
-    for (unsigned int i=0;i<OutputProperties.size();i++) {
-      if (OutputCaptions[i].size() > 0) {
-        outstream << delimeter << OutputCaptions[i];
-      } else {
-        outstream << delimeter << OutputProperties[i]->GetFullyQualifiedName();
-      }
-    }
+
+  for (unsigned int i=0;i<OutputParameters.size();++i) {
+    if (!OutputCaptions[i].empty())
+      outstream << delimeter << OutputCaptions[i];
+    else
+      outstream << delimeter << OutputParameters[i]->GetFullyQualifiedName();
   }
 
   if (PreFunctions.size() > 0) {
@@ -394,8 +391,8 @@ void FGOutputTextFile::Print(void)
   }
 
   outstream.precision(18);
-  for (unsigned int i=0;i<OutputProperties.size();i++) {
-    outstream << delimeter << OutputProperties[i]->getDoubleValue();
+  for (unsigned int i=0;i<OutputParameters.size();++i) {
+    outstream << delimeter << OutputParameters[i]->GetValue();
   }
   for (unsigned int i=0;i<PreFunctions.size();i++) {
     outstream << delimeter << PreFunctions[i]->getDoubleValue();

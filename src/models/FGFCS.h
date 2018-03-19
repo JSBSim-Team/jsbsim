@@ -542,7 +542,7 @@ public:
       Load() is called from FGFDMExec.
       @param el pointer to the Element instance
       @return true if succesful */
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
 
   SGPath FindFullPathName(const SGPath& path) const;
 

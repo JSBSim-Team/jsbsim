@@ -93,7 +93,7 @@ public:
                      "Resume" command to be given.
       @return false if no error */
   bool Run(bool Holding);
-  bool Load(Element* el);
+  virtual bool Load(Element* el);
   const FGColumnVector3& GetForces(void) const {return vForces;}
   double GetForces(int idx) const {return vForces(idx);}
   const FGColumnVector3& GetMoments(void) const {return vMoments;}

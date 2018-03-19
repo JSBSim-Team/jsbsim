@@ -55,6 +55,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestExternalReactions
                  TestTurbine
                  TestAeroFuncFrame
+                 TestTemplateFunctions
                  )
 
 foreach(test ${PYTHON_TESTS})

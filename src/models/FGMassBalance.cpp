@@ -134,7 +134,7 @@ bool FGMassBalance::Load(Element* document)
   Name = "Mass Properties Model: " + document->GetAttributeValue("name");
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document))
+  if (!FGModel::Load(document, true))
     return false;
 
   SetAircraftBaseInertias(ReadInertiaMatrix(document));
