@@ -1,2 +1,0 @@
-SUBDIRS = \
-	c172x
