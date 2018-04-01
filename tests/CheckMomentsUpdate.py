@@ -80,9 +80,9 @@ class CheckMomentsUpdate(JSBSimTestCase):
         self.CheckCGPosition()
 
         csv = pd.read_csv('output.csv')
-        Mby = csv['M_{Buoyant} (ft-lbs)'].iget(-1)
-        Fbx = csv['F_{Buoyant x} (lbs)'].iget(-1)
-        Fbz = csv['F_{Buoyant z} (lbs)'].iget(-1)
+        Mby = csv['M_{Buoyant} (ft-lbs)'].iloc[-1]
+        Fbx = csv['F_{Buoyant x} (lbs)'].iloc[-1]
+        Fbz = csv['F_{Buoyant z} (lbs)'].iloc[-1]
 
         self.assertAlmostEqual(Fbx * CGz - Fbz * CGx, Mby, delta=1E-7,
                                msg="Fbx*CGz-Fbz*CGx = %f and Mby = %f do not match" % (Fbx*CGz-Fbz*CGx, Mby))
