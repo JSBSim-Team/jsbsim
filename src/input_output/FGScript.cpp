@@ -88,6 +88,8 @@ FGScript::~FGScript()
     delete Events[i].Condition;
     for (j=0; j<Events[i].Functions.size(); j++)
       delete Events[i].Functions[j];
+    for (j=0; j<Events[i].NotifyProperties.size(); j++)
+      delete Events[i].NotifyProperties[j];
   }
   Events.clear();
 
@@ -282,14 +284,13 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
       while (notify_property_element) {
         notifyPropertyName = notify_property_element->GetDataLine();
 
-        newEvent->NotifyPropertyNames.push_back(notifyPropertyName);
-        newEvent->NotifyProperties.push_back(0);
-          string caption_attribute = notify_property_element->GetAttributeValue("caption");
-          if (caption_attribute.empty()) {
-            newEvent->DisplayString.push_back(notifyPropertyName);
-          } else {
-            newEvent->DisplayString.push_back(caption_attribute);
-          }
+        newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager));
+        string caption_attribute = notify_property_element->GetAttributeValue("caption");
+        if (caption_attribute.empty()) {
+          newEvent->DisplayString.push_back(notifyPropertyName);
+        } else {
+          newEvent->DisplayString.push_back(caption_attribute);
+        }
 
         notify_property_element = notify_element->FindNextElement("property");
       }
@@ -487,13 +488,6 @@ bool FGScript::RunScript(void)
           cout << "    " << thisEvent.Description << endl;
         }
         for (j=0; j<thisEvent.NotifyProperties.size();j++) {
-          if (thisEvent.NotifyProperties[j] == 0) {
-            if (PropertyManager->HasNode(thisEvent.NotifyPropertyNames[j])) {
-              thisEvent.NotifyProperties[j] = PropertyManager->GetNode(thisEvent.NotifyPropertyNames[j]);
-            } else {
-              throw("Could not find property named "+thisEvent.NotifyPropertyNames[j]+" in script.");
-            }
-          }
           cout << "    " << thisEvent.DisplayString[j] << " = " << thisEvent.NotifyProperties[j]->getDoubleValue();
           if (thisEvent.NotifyKML) cout << " <br/>";
           cout << endl;
@@ -657,10 +651,10 @@ void FGScript::Debug(int from)
             } else {
               cout << "  Notifications:" << endl << "    {" << endl;
             }
-            for (unsigned j=0; j<Events[i].NotifyPropertyNames.size();j++) {
-              cout << "      "
-                   << Events[i].NotifyPropertyNames[j]
-                   << endl;
+            for (unsigned j=0; j<Events[i].NotifyProperties.size();j++) {
+					cout << "      "
+						  << Events[i].NotifyProperties[j]->GetPrintableName()
+                    << endl;
             }
             cout << "    }" << endl;
           }
