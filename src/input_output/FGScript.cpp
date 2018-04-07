@@ -53,6 +53,7 @@ INCLUDES
 #include "models/FGInput.h"
 #include "math/FGCondition.h"
 #include "math/FGFunction.h"
+#include "math/FGFunctionValue.h"
 
 using namespace std;
 
@@ -284,7 +285,23 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
       while (notify_property_element) {
         notifyPropertyName = notify_property_element->GetDataLine();
 
-        newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager));
+        if (notify_property_element->HasAttribute("apply")) {
+          string function_str = notify_property_element->GetAttributeValue("apply");
+          FGOutput* Output = FDMExec->GetOutput();
+          FGTemplateFunc* f = Output->GetTemplateFunc(function_str);
+          if (f)
+            newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f));
+          else {
+            cerr << notify_property_element->ReadFrom()
+              << fgred << highint << "  No function by the name "
+              << function_str << " has been defined. This property will "
+              << "not be logged. You should check your configuration file."
+              << reset << endl;
+          }
+        }
+        else
+          newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager));
+        
         string caption_attribute = notify_property_element->GetAttributeValue("caption");
         if (caption_attribute.empty()) {
           newEvent->DisplayString.push_back(notifyPropertyName);
