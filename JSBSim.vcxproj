@@ -261,7 +261,6 @@
     <ClInclude Include="src\models\FGAtmosphere.h" />
     <ClInclude Include="src\models\FGAuxiliary.h" />
     <ClInclude Include="src\models\FGBuoyantForces.h" />
-    <ClInclude Include="src\FGChildModel.h" />
     <ClInclude Include="src\math\FGColumnVector3.h" />
     <ClInclude Include="src\math\FGCondition.h" />
     <ClInclude Include="src\models\flight_control\FGDeadBand.h" />
@@ -334,8 +333,6 @@
     <ClInclude Include="src\input_output\net_fdm.hxx" />
     <ClInclude Include="src\simgear\props\propertyObject.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
-    <ClInclude Include="src\simgear\props\SGReferenced.hxx" />
-    <ClInclude Include="src\simgear\props\SGSharedPtr.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
     <ClInclude Include="src\simgear\xml\winconfig.h" />
