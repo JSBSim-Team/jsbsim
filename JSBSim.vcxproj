@@ -449,16 +449,6 @@
     <ClCompile Include="src\simgear\io\iostreams\sgstream.cxx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="aircraft\aa1\aa1.xml" />
-    <None Include="systems\afcs.xml" />
-    <None Include="aircraft\ah1s\ah1s.xml" />
-    <None Include="engine\ah1s_rotor.xml" />
-    <None Include="engine\avco_lycoming_t53.xml" />
-    <None Include="scripts\ball_chute.xml" />
-    <None Include="scripts\ball_orbit.xml" />
-    <None Include="scripts\c172pbrake.xml" />
-    <None Include="aircraft\F4N\F4N.xml" />
-    <None Include="systems\fg_glue.xml" />
     <CustomBuildStep Include="data_output\ground_reactions.xml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -467,13 +457,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="systems\jsb_glue.xml" />
     <CustomBuildStep Include="JSBSim.dox">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="aircraft\ah1s\Makefile.am" />
     <CustomBuildStep Include="data_output\Makefile.am">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -484,12 +472,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="aircraft\ah1s\reset00.xml" />
-    <None Include="systems\rpm_governor.xml" />
-    <None Include="engine\s64_rotor.xml" />
-    <None Include="scripts\sim_primer.xml" />
-    <None Include="engine\test_turbine.xml" />
-    <None Include="engine\twin_pratt_and_whitney_t73.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
