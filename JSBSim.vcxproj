@@ -22,6 +22,7 @@
     <ProjectGuid>{AF971B4F-3D53-4655-8A03-97E8054DC58B}</ProjectGuid>
     <RootNamespace>JSBSim</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -59,16 +60,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
@@ -234,7 +235,6 @@
     <ClInclude Include="src\input_output\fgoutputtype.h" />
     <ClInclude Include="src\input_output\fgpropertyreader.h" />
     <ClInclude Include="src\input_output\FGUDPInputSocket.h" />
-    <ClInclude Include="src\input_output\FGUDPOutputSocket.h" />
     <ClInclude Include="src\input_output\string_utilities.h" />
     <ClInclude Include="src\math\LagrangeMultiplier.h" />
     <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
@@ -261,7 +261,6 @@
     <ClInclude Include="src\models\FGAtmosphere.h" />
     <ClInclude Include="src\models\FGAuxiliary.h" />
     <ClInclude Include="src\models\FGBuoyantForces.h" />
-    <ClInclude Include="src\FGChildModel.h" />
     <ClInclude Include="src\math\FGColumnVector3.h" />
     <ClInclude Include="src\math\FGCondition.h" />
     <ClInclude Include="src\models\flight_control\FGDeadBand.h" />
@@ -334,8 +333,6 @@
     <ClInclude Include="src\input_output\net_fdm.hxx" />
     <ClInclude Include="src\simgear\props\propertyObject.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
-    <ClInclude Include="src\simgear\props\SGReferenced.hxx" />
-    <ClInclude Include="src\simgear\props\SGSharedPtr.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
     <ClInclude Include="src\simgear\xml\winconfig.h" />
@@ -354,7 +351,6 @@
     <ClCompile Include="src\input_output\FGOutputType.cpp" />
     <ClCompile Include="src\input_output\FGPropertyReader.cpp" />
     <ClCompile Include="src\input_output\FGUDPInputSocket.cpp" />
-    <ClCompile Include="src\input_output\FGUDPOutputSocket.cpp" />
     <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
     <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
     <ClCompile Include="src\models\FGAccelerations.cpp" />
@@ -451,16 +447,6 @@
     <ClCompile Include="src\simgear\io\iostreams\sgstream.cxx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="aircraft\aa1\aa1.xml" />
-    <None Include="systems\afcs.xml" />
-    <None Include="aircraft\ah1s\ah1s.xml" />
-    <None Include="engine\ah1s_rotor.xml" />
-    <None Include="engine\avco_lycoming_t53.xml" />
-    <None Include="scripts\ball_chute.xml" />
-    <None Include="scripts\ball_orbit.xml" />
-    <None Include="scripts\c172pbrake.xml" />
-    <None Include="aircraft\F4N\F4N.xml" />
-    <None Include="systems\fg_glue.xml" />
     <CustomBuildStep Include="data_output\ground_reactions.xml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -469,13 +455,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="systems\jsb_glue.xml" />
     <CustomBuildStep Include="JSBSim.dox">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="aircraft\ah1s\Makefile.am" />
     <CustomBuildStep Include="data_output\Makefile.am">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -486,12 +470,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="aircraft\ah1s\reset00.xml" />
-    <None Include="systems\rpm_governor.xml" />
-    <None Include="engine\s64_rotor.xml" />
-    <None Include="scripts\sim_primer.xml" />
-    <None Include="engine\test_turbine.xml" />
-    <None Include="engine\twin_pratt_and_whitney_t73.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
