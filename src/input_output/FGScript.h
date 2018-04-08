@@ -60,6 +60,7 @@ namespace JSBSim {
 class FGFDMExec;
 class FGCondition;
 class FGFunction;
+class FGPropertyValue;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -227,8 +228,7 @@ private:
     std::string           Description;
     std::vector <FGPropertyNode_ptr>  SetParam;
     std::vector <std::string>  SetParamName;
-    std::vector <FGPropertyNode_ptr>  NotifyProperties;
-    std::vector <std::string>              NotifyPropertyNames;
+    std::vector <FGPropertyValue*>  NotifyProperties;
     std::vector <std::string>              DisplayString;
     std::vector <eAction> Action;
     std::vector <eType>   Type;
