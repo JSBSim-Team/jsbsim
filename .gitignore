@@ -64,3 +64,4 @@ ipch/
 *.VC.db
 *.VC.opendb
 
+.vs/
