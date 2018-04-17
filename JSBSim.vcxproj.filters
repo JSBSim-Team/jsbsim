@@ -1,0 +1,653 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{727b14a6-4a24-441f-be00-99aa2c535efa}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0f959ee3-0f04-4576-bbee-1911468dacc3}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\input_output\FGInputSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGInputType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGOutputFG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGOutputFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGOutputSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGOutputTextFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGOutputType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGPropertyReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGUDPInputSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\FGWinds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAccelerations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGSurface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGAngles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGDistributor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGWaypoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTransmission.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\magvar\coremag.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\xml\easyxml.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGAccelerometer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGActuator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAerodynamics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAircraft.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAtmosphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGAuxiliary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGBuoyantForces.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGColumnVector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGCondition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGDeadBand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGElectric.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGExternalForce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGExternalReactions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGFCS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGFCSComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGFCSFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FGFDMExec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGfdmSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGForce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGGain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGGasCell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGGroundCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGGroundReactions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGGyro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGInertial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialization\FGInitialCondition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FGJSBBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGKinemat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGLGear.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGLocation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGMagnetometer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\FGMars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGMassBalance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGMatrix33.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGModelFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\FGMSIS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\FGMSISData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGNozzle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGOutput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGPID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGPiston.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGPropagate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGPropeller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGPropertyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGPropertyValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\FGPropulsion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGQuaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGRealValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGRocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGRotor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGRungeKutta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGSensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGSummer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGSwitch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTank.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGThruster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialization\FGTrim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialization\FGTrimAxis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTurbine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTurboProp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGXMLElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input_output\FGXMLParse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JSBSim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\props\propertyObject.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\props\props.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\xml\xmlparse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\xml\xmlrole.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\xml\xmltok.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\misc\sg_path.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\misc\strutils.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simgear\io\iostreams\sgstream.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\input_output\FGInputSocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGInputType.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgmodelloader.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgoutputfg.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgoutputfile.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgoutputsocket.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgoutputtextfile.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgoutputtype.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\fgpropertyreader.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGUDPInputSocket.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\string_utilities.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\LagrangeMultiplier.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\atmosphere\FGWinds.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGAccelerations.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGFCSChannel.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGSurface.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGAngles.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGDistributor.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGWaypoint.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGTransmission.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\ascii.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\asciitab.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\compiler.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\magvar\coremag.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\easyxml.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\expat.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\expat_config.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\expat_external.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGAccelerometer.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGActuator.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGAerodynamics.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGAircraft.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGAtmosphere.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGAuxiliary.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGBuoyantForces.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGColumnVector3.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGCondition.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGDeadBand.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGElectric.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGEngine.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGExternalForce.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGExternalReactions.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGFCS.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGFCSComponent.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGFCSFunction.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FGFDMExec.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGfdmSocket.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGFilter.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGForce.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGFunction.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGGain.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGGasCell.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGGroundCallback.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGGroundReactions.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGGyro.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGInertial.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\initialization\FGInitialCondition.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGInput.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FGJSBBase.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGKinemat.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGLGear.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGLocation.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGMagnetometer.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\atmosphere\FGMars.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGMassBalance.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGMatrix33.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGModel.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGModelFunctions.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\atmosphere\FGMSIS.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGNozzle.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGOutput.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGParameter.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGPID.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGPiston.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGPropagate.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGPropeller.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGPropertyManager.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGPropertyValue.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\FGPropulsion.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGQuaternion.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGRealValue.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGRocket.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGRotor.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGRungeKutta.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGScript.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGSensor.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGSensorOrientation.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGSummer.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGSwitch.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGTable.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGTank.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGThruster.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\initialization\FGTrim.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\initialization\FGTrimAxis.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGTurbine.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGTurboProp.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGXMLElement.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGXMLFileRead.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGXMLParse.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\iasciitab.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\internal.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\latin1tab.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\macconfig.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\nametab.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\net_fdm.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\props\propertyObject.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\props\props.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\misc\stdint.hxx" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\utf8tab.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\winconfig.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmlrole.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok_impl.h" >
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
