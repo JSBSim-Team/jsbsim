@@ -1,6 +1,5 @@
-
 # Introduction
-JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with FlightGear or other flight simulator.
+JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
 
 More information on JSBSim can be found at the JSBSim home page here:
 
@@ -45,7 +44,6 @@ or (SSH mode)
 ```bash
 > git clone git@github.com:JSBSim-Team/jsbsim.git jsbsim-code
 ```
----
 
 # Building JSBSim
 JSBSim can either be built with [CMake](https://cmake.org/) or [Microsoft Visual Studio](https://www.visualstudio.com/free-developer-offers/). If you are using a Mac OSX or a Linux platform, you must use CMake. If you are a Windows user you can use either one.
@@ -61,7 +59,7 @@ CMake is a multiplatform tool to build and test software. It can produce files t
 ```
 CMake *does not build* software, it produces files *for* a multitude of build tools. The following commands are assuming that you are using GNU make to build JSBSim.
 
-First, you should invoke CMake and then execute make
+First, you should invoke CMake and then execute `make`
 ```bash
 > cmake ..
 > make
@@ -77,7 +75,7 @@ If you want to set compiler options, you can pass flags to CMake to build a `Deb
 > cmake -DCMAKE_CXX_FLAGS_DEBUG="-g -Wall" -DCMAKE_C_FLAGS_DEBUG="-g -Wall" -DCMAKE_BUILD_TYPE=Debug ..
 > make
 ```
-Or alternatively you can build a release version of JSBSim and request GNU Make to use 4 cores to build the executable faster.
+Or alternatively you can build a `Release` version of JSBSim and request GNU Make to use 4 cores to build the executable faster.
 ```bash
 > cmake -DCMAKE_CXX_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_C_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_BUILD_TYPE=Release ..
 > make -j4
@@ -99,8 +97,6 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 
 **Note 2:** Since Visual Studio 2017, Microsoft has included CMake so you should be able to build JSBSim on VS2017 directly from the CMake file.
 
----
-
 # Testing JSBSim
 JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built](Building the Python module of JSBSim).
 
@@ -108,7 +104,6 @@ The test suite can be run using `ctest` in the `build` directory. Tests can be r
 ```bash
 > ctest -j4
 ```
----
 
 # Installing JSBSim
 Once JSBSim is built and tested, you can install the C++ headers and library platform wide. For that, you can invoke GNU make from the `build` directory
@@ -124,12 +119,10 @@ If you plan to install the Python module of JSBSim in addition to the C++ header
 > make install
 ```
 
-Alternatively, the Python module can be installed manually by invoking the following commands from the `build` directory
+Alternatively, the Python module can be installed manually by invoking the following command from the `build` directory
 ```bash
-> cd tests
-> python setup.py install
+> python tests/setup.py install
 ```
----
 
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
