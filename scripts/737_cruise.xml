@@ -59,6 +59,8 @@
         <property>propulsion/engine[1]/n2</property>
         <property>propulsion/engine[0]/thrust-lbs</property>
         <property>propulsion/engine[1]/thrust-lbs</property>
+        <property apply="convert-lbs-To-N" caption="propulsion/engine[0]/thrust-N">propulsion/engine[0]/thrust-lbs</property>
+        <property apply="convert-lbs-To-N" caption="propulsion/engine[1]/thrust-N">propulsion/engine[1]/thrust-lbs</property>
         <property>position/h-agl-ft</property>
         <property>velocities/vc-kts</property>
         <property>velocities/vc-fps</property>
@@ -72,5 +74,12 @@
     </event>
 
   </run>
+
+  <output name="737_cruise_output.csv" type="CSV" rate="10" file="unitconversions.xml">
+    <property apply="convert-lbs-To-N" caption="propulsion/engine[0]/thrust-N">propulsion/engine[0]/thrust-lbs</property>
+    <property apply="convert-lbs-To-N" caption="propulsion/engine[1]/thrust-N">propulsion/engine[1]/thrust-lbs</property>
+    <property>attitude/theta-rad</property>
+    <property apply="convert-rad-To-deg" caption="attitude/theta-deg">attitude/theta-rad</property>
+  </output>
 
 </runscript>
