@@ -209,8 +209,12 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
 
   // Now, read output spec if given.
   element = document->FindElement("output");
+  SGPath scriptDir = SGPath(script.dir());
+  if (scriptDir.isNull())
+    scriptDir = SGPath(".");
+
   while (element) {
-    if (!FDMExec->GetOutput()->Load(element, SGPath(script.dir())))
+    if (!FDMExec->GetOutput()->Load(element, scriptDir))
       return false;
  
     element = document->FindNextElement("output");
