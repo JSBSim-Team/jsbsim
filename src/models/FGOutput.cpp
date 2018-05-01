@@ -243,8 +243,11 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutput::Load(Element* document)
+bool FGOutput::Load(Element* document, const SGPath& dir)
 {
+  // Optional path to use for included files
+  includePath = dir;
+
   // Perform base class Pre-Load
   if (!FGModel::Load(document, false))
     return false;
@@ -295,6 +298,19 @@ bool FGOutput::Load(Element* document)
 
   Debug(2);
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+SGPath FGOutput::FindFullPathName(const SGPath& path) const
+{
+  // Check optional include path if set
+  if (!includePath.isNull()) {
+    SGPath name = CheckPathName(includePath, path);
+    if (!name.isNull()) return name;
+  }
+
+  return FGModel::FindFullPathName(path);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
