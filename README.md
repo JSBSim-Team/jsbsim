@@ -98,19 +98,27 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 **Note 2:** Since Visual Studio 2017, Microsoft has included CMake so you should be able to build JSBSim on VS2017 directly from the CMake file.
 
 # Testing JSBSim
-JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built](Building the Python module of JSBSim).
+JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built].
 
-The test suite can be run using `ctest` in the `build` directory. Tests can be run in parallel on several cores (4 in the example below) using the option `-j`
+The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
+
+The test suite can then be run using `ctest` in the `build` directory. Tests can also be run in parallel on several cores (4 in the example below) using the option `-j`
 ```bash
 > ctest -j4
 ```
 
 # Installing JSBSim
-Once JSBSim is built and tested, you can install the C++ headers and library platform wide. For that, you can invoke GNU make from the `build` directory
+Once JSBSim is built and tested, you can install the C++ headers and library. For that, you can invoke GNU make from the `build` directory
 ```bash
 > make install
 ```
 
+By default, CMake copies the files to a location where the headers and library are available platform wide (typically `/usr/include`, `/usr/lib` or `/usr/local/include`, `/usr/local/lib` for *nix OSes). If you want to install the files in another location you can pass the flag `CMAKE_INSTALL_PREFIX` to cmake.
+```bash
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install ..
+make
+make install
+```
 ## Installing the Python module
 If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_PYTHON_MODULE` to CMake
 ```bash
