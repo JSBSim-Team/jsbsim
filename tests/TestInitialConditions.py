@@ -20,7 +20,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math
+import os, math, shutil
 import xml.etree.ElementTree as et
 import pandas as pd
 from JSBSim_utils import CreateFDM, append_xml, ExecuteUntil, JSBSimTestCase, RunTest
@@ -119,6 +119,15 @@ class TestInitialConditions(JSBSimTestCase):
             del fdm
 
     def LoadScript(self, tree, script_path, prop_output_to_CSV=[]):
+        # Make a local copy of files referenced by the script.
+        for element in list(tree.getroot()):
+            if 'file' in element.keys():
+                name = append_xml(element.attrib['file'])
+                name_with_path = os.path.join(os.path.dirname(script_path),
+                                              name)
+                if os.path.exists(name_with_path):
+                    shutil.copy(name_with_path, name)
+
         # Generate a CSV file to check that it is correctly initialized
         # with the initial values
         output_tag = et.SubElement(tree.getroot(), 'output')
@@ -137,7 +146,8 @@ class TestInitialConditions(JSBSimTestCase):
 
         # Initialize the script
         fdm = CreateFDM(self.sandbox)
-        fdm.load_script(f)
+        self.assertTrue(fdm.load_script(f),
+                        msg="Failed to load script %s" % (f,))
         fdm.run_ic()
 
         return (f, fdm)
