@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<output>
+  
+  <!-- 
+  JSBSim exported non-SI units:
+  
+  - Angles
+  rad
+  
+  - Length
+  in
+  ft
+  
+  - Velocity
+  fps
+  kts
+  fpm
+  rad_sec
+  
+  - Acceleration
+  ft_sec2
+  rad_sec2
+  
+  - Area
+  sqft
+  
+  - Mass
+  slugs
+  
+  - Force
+  lbs
+  
+  - Moment
+  lbsft
+  
+  - Moment of Inertia
+  slugs_ft2
+  
+  - Density
+  slugs_ft3
+  
+  - Pressure
+  psf
+  lbs_sqft
+  
+  - Temperature
+  R (Rankine)
+  -->
+  
+  <!-- Angles -->
+  
+    <function name="convert-rad-To-deg" type="template">
+      <product>
+        <property> # </property>
+        <value> 57.29577951 </value>
+      </product>
+    </function>
+  
+  <!-- Length -->
+
+  <function name="convert-in-To-m" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.0254 </value>
+    </product>
+  </function>
+
+  <function name="convert-ft-To-m" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.3048 </value>
+    </product>
+  </function>
+  
+  <!-- Velocity -->
+
+  <function name="convert-fps-To-m_s" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.3048 </value>
+    </product>
+  </function>
+
+  <function name="convert-kts-To-m_s" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.5144 </value>
+    </product>
+  </function>
+
+  <function name="convert-fpm-To-m_s" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.00508 </value>
+    </product>
+  </function>
+
+  <function name="convert-rad_sec-To-deg_sec" type="template">
+    <product>
+      <property> # </property>
+      <value> 57.29577951 </value>
+    </product>
+  </function>
+
+  <!-- Acceleration -->
+
+  <function name="convert-ft_sec2-To-m_sec2" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.3048 </value>
+    </product>
+  </function>
+
+  <function name="convert-rad_sec2-To-deg_sec2" type="template">
+    <product>
+      <property> # </property>
+      <value> 57.29577951 </value>
+    </product>
+  </function>
+
+  <!-- Area -->
+
+  <function name="convert-sqft-To-m2" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.092903 </value>
+    </product>
+  </function>
+
+  <!-- Mass -->
+
+  <function name="convert-slugs-To-kg" type="template">
+    <product>
+      <property> # </property>
+      <value> 14.5939 </value>
+    </product>
+  </function>
+
+  <!-- Force -->
+
+  <function name="convert-lbs-To-N" type="template">
+    <product>
+      <property> # </property>
+      <value> 4.448222 </value>
+    </product>
+  </function>
+
+  <!-- Moment -->
+
+  <function name="convert-lbsft-To-Nm" type="template">
+    <product>
+      <property> # </property>
+      <value> 1.3558179483314 </value>
+    </product>
+  </function>
+
+  <!-- Moment of Inertia -->
+
+  <function name="convert-slugs_ft3-To-kg_m3" type="template">
+    <product>
+      <property> # </property>
+      <value> 515.378819 </value>
+    </product>
+  </function>
+
+  <!-- Pressure -->
+
+  <function name="convert-psf-To-Pa" type="template">
+    <product>
+      <property> # </property>
+      <value> 47.8803 </value>
+    </product>
+  </function>
+
+  <function name="convert-lbs_sqft-To-Pa" type="template">
+    <product>
+      <property> # </property>
+      <value> 47.8803 </value>
+    </product>
+  </function>
+
+  <!-- Temperature -->
+
+  <function name="convert-R-to-K" type="template">
+    <product>
+      <property> # </property>
+      <value> 0.555556 </value>
+    </product>
+  </function>
+
+</output>
+
+
+
