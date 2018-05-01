@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+#  - "3.6"
+# command to install dependencies
+notifications:
+  email: false
+before_install:
+  - pip install cython numpy pandas scipy
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON ..
+  - make
+install:
+  - make install
+# command to run tests
+script:
+  - ctest # or py.test for Python versions 3.5 and below
