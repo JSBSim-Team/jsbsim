@@ -29,9 +29,9 @@ artifacts:
 #---------------------------------#
 
 deploy:
-  tag: $(APPVEYOR_REPO_TAG_NAME)
   # Deploy to GitHub Releases
   - provider: GitHub
+    tag: $(APPVEYOR_REPO_TAG_NAME)
     artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
     draft: false
     prerelease: true
