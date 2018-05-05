@@ -27,7 +27,7 @@ artifacts:
   - path: Release\JSBSim.exe
     name: JSBSim_Release_x64_v2018a
 
----------------------------------#
+#---------------------------------#
 #     deployment configuration    #
 #---------------------------------#
 
