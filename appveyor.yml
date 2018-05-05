@@ -13,9 +13,6 @@ branches:
   only:
     - master
 
-# Do not build on tags (GitHub and BitBucket)
-skip_tags: true
-
 build_script:
   - cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
@@ -32,6 +29,7 @@ artifacts:
 #---------------------------------#
 
 deploy:
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   # Deploy to GitHub Releases
   - provider: GitHub
     artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
