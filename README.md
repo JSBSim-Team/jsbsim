@@ -93,11 +93,13 @@ JSBSim uses the [Expat library](https://libexpat.github.io/) to read XML files. 
 A Python module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
 
 ## Building with Microsoft Visual Studio
-From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a project for JSBSim. The project file will setup Visual Studio for building JSBSim executable.
+From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a project for JSBSim. The project file will setup Visual Studio for building the JSBSim executable.
 
-**Note 1:** JSBSim official build tool is CMake. Visual studio project files are provided as a convenience and are not guaranteed to be up to date with the code.
+**Note 1:** JSBSim official build tool is CMake. Visual Studio project files are provided as a convenience and are not guaranteed to be up to date with the code.
 
-**Note 2:** Since Visual Studio 2017, Microsoft has included CMake so you should be able to build JSBSim on VS2017 directly from the CMake file.
+**Note 2:** Since Visual Studio 2017, Microsoft has included CMake so you can build JSBSim on VS2017 directly from the CMake file.
+
+For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/building-using-visualstudio/).
 
 # Testing JSBSim
 JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built].
