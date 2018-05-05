@@ -1,39 +1,20 @@
 # see: https://www.appveyor.com/docs/appveyor-yml/
 
-#---------------------------------#
-#      general configuration      #
-#---------------------------------#
-
-# version format
 version: 1.0.{build}
 
-# branches to build
-branches:
-  # whitelist
-  only:
-    - master
-
 build_script:
-  - cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-
-#---------------------------------#
-#      artifacts configuration    #
-#---------------------------------#
+- cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 artifacts:
-  - path: Release\JSBSim.exe
-    name: JSBSim_Release_x64_v2018a
-
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
+- path: Release\JSBSim.exe
+  name: JSBSim_Release_x64_v2018a
 
 deploy:
-  # Deploy to GitHub Releases
-  - provider: GitHub
-    tag: $(APPVEYOR_REPO_TAG_NAME)
-    artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
-    draft: false
-    prerelease: true
-    on:
-      appveyor_repo_tag: true       # deploy on tag push only
+- provider: GitHub
+  tag: JSBSim-win64-v1.0.$(appveyor_build_version)
+  auth_token:
+    secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
+  artifact: Release\JSBSim.exe
+  prerelease: true
+  on:
+    branch: master
