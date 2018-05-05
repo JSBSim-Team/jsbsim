@@ -15,7 +15,8 @@ skip_tags: true
 
 deploy:
 - provider: GitHub
-  tag: JSBSim-win64-v1.0.$(appveyor_build_version)
+  tag: JSBSim-win64-v$(appveyor_build_version)
+  description: VS 2015 - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
   artifact: Release\JSBSim.exe
