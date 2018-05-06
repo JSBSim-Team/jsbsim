@@ -1,5 +1,7 @@
 # see: https://www.appveyor.com/docs/appveyor-yml/
 
+image: Visual Studio 2017
+
 version: 1.0.{build}
 
 build_script:
