@@ -45,7 +45,7 @@ class CheckOutputRate(JSBSimTestCase):
         for event in root.findall('run/event'):
             if event.attrib['name'] == 'Trim':
                 cond_tag = event.find('condition')
-                self.trim_date = float(string.split(cond_tag.text)[-1])
+                self.trim_date = float(cond_tag.text.split()[-1])
                 break
 
         # Read the output rate and the output file from the aircraft file
@@ -74,7 +74,7 @@ class CheckOutputRate(JSBSimTestCase):
 
         self.fdm.run_ic()
 
-        for i in xrange(self.rate):
+        for i in range(self.rate):
             self.fdm.run()
 
         output = pd.read_csv(self.output_file)
@@ -96,7 +96,7 @@ class CheckOutputRate(JSBSimTestCase):
         self.fdm.run_ic()
         self.fdm["simulation/output/enabled"] = 1.0
 
-        for i in xrange(self.rate):
+        for i in range(self.rate):
             self.fdm.run()
 
         output = pd.read_csv(self.output_file)
@@ -125,15 +125,15 @@ class CheckOutputRate(JSBSimTestCase):
         self.fdm["simulation/output/enabled"] = 1.0
         frame = int(self.fdm["simulation/frame"])
 
-        for i in xrange(self.rate):
+        for i in range(self.rate):
             self.fdm.run()
 
         output = pd.read_csv(self.output_file)
 
         # The frame at which the data is logged must be the next multiple of
         # the output rate
-        self.assertEqual(int(output['Time'].iloc[0]/self.dt),
-                         (1 + frame/self.rate)*self.rate)
+        self.assertEqual(int(output['Time'].iloc[0] / self.dt),
+                         (1 + frame // self.rate)*self.rate)
 
     def testDisablingOutputInScript(self):
         property = et.SubElement(self.run_tag, 'property')
@@ -149,7 +149,7 @@ class CheckOutputRate(JSBSimTestCase):
         self.fdm.run_ic()
         self.fdm["simulation/output/enabled"] = 1.0
 
-        for i in xrange(self.rate):
+        for i in range(self.rate):
             self.fdm.run()
 
         output = pd.read_csv(self.output_file)

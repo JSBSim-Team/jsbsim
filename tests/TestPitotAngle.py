@@ -81,15 +81,15 @@ class TestPitotAngle(JSBSimTestCase):
         weight = fdm['inertia/weight-lbs']
         spring_tag = contact_tag.find('./spring_coeff')
         spring_coeff = float(spring_tag.text)
-        print "Weight=%d Spring=%d" % (weight, spring_coeff)
+        print("Weight=%d Spring=%d" % (weight, spring_coeff))
         fdm['ic/h-sl-ft'] = weight / spring_coeff
         fdm['forces/hold-down'] = 1.0
         fdm.run_ic()
 
         ExecuteUntil(fdm, 10.)
 
-        for i in xrange(36):
-            for j in xrange(-9, 10):
+        for i in range(36):
+            for j in range(-9, 10):
                 angle = math.pi * i / 18.0
                 angle2 = math.pi * j / 18.0
                 ca2 = math.cos(angle2)

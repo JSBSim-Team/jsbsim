@@ -275,8 +275,8 @@ class TestInitialConditions(JSBSimTestCase):
             IC_file = self.sandbox.path_to_jsbsim_file('aircraft', 'ball',
                                                        'reset00'+v+'.xml')
 
-            for i in xrange(8):
-                for latitude_pos in xrange(4):
+            for i in range(8):
+                for latitude_pos in range(4):
                     IC_tree = et.parse(IC_file)
                     IC_root = IC_tree.getroot()
                     if v:

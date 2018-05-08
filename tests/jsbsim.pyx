@@ -50,7 +50,7 @@ cdef class FGPropertyManager:
          self.thisptr = NULL
 
      def hasNode(self, path):
-         return self.thisptr.HasNode(path)
+         return self.thisptr.HasNode(path.encode())
 
 cdef class FGGroundReactions:
 
@@ -221,7 +221,7 @@ cdef class FGFDMExec:
         """
         return  self.thisptr.RunIC()
 
-    def load_model(self, model, add_model_to_path = True):
+    def load_model(self, model, add_model_to_path=True):
         """
         Loads an aircraft model.
         @param AircraftPath path to the aircraft/ directory. For instance:
@@ -239,10 +239,11 @@ cdef class FGFDMExec:
             AircraftPath, defaults to true
         @return true if successful
         """
+        model = model.encode()
         return self.thisptr.LoadModel(model, add_model_to_path)
 
     def load_model_with_paths(self, model, aircraft_path,
-                   engine_path, systems_path, add_model_to_path = True):
+                   engine_path, systems_path, add_model_to_path=True):
         """
         Loads an aircraft model.  The paths to the aircraft and engine
         config file directories must be set prior to calling this.  See
@@ -255,6 +256,11 @@ cdef class FGFDMExec:
             AircraftPath, defaults to true
         @return true if successful
         """
+        model = model.encode()
+        aircraft_path = aircraft_path.encode()
+        engine_path = engine_path.encode()
+        systems_path = systems_path.encode()
+
         return self.thisptr.LoadModel(c_SGPath(aircraft_path, NULL),
             c_SGPath(engine_path, NULL), c_SGPath(systems_path, NULL), model,
             add_model_to_path)
@@ -268,10 +274,13 @@ cdef class FGFDMExec:
             the script file itself.
         @param initfile The initialization file that will override the initialization file
             specified in the script file. If no file name is given on the command line,
-            the file specified in the script will be used. If an initialization file 
+            the file specified in the script will be used. If an initialization file
             is not given in either place, an error will result.
         @return true if successfully loads; false otherwise. */
         """
+        script = script.encode()
+        initfile = initfile.encode()
+
         return self.thisptr.LoadScript(c_SGPath(script, NULL), delta_t,
                                        c_SGPath(initfile,NULL))
 
@@ -281,6 +290,7 @@ cdef class FGFDMExec:
         @param path path to the directory under which engine config
             files are kept, for instance "engine"
         """
+        path = path.encode()
         return self.thisptr.SetEnginePath(c_SGPath(path, NULL))
 
     def set_aircraft_path(self, path):
@@ -290,6 +300,7 @@ cdef class FGFDMExec:
             "aircraft". Under aircraft, then, would be directories for various
             modeled aircraft such as C172/, x15/, etc.
         """
+        path = path.encode()
         return self.thisptr.SetAircraftPath(c_SGPath(path, NULL))
 
     def set_systems_path(self, path):
@@ -298,6 +309,7 @@ cdef class FGFDMExec:
         @param path path to the directory under which systems config
             files are kept, for instance "systems"
         """
+        path = path.encode()
         return self.thisptr.SetSystemsPath(c_SGPath(path, NULL))
 
     def set_root_dir(self, path):
@@ -305,6 +317,7 @@ cdef class FGFDMExec:
         Sets the root directory where JSBSim starts looking for its system directories.
         @param path the string containing the root directory.
         """
+        path = path.encode()
         self.thisptr.SetRootDir(c_SGPath(path, NULL))
 
         # this is a hack to fix a bug in JSBSim
@@ -349,6 +362,7 @@ cdef class FGFDMExec:
         @param property the name of the property
         @result the value of the specified property
         """
+        name = name.encode()
         return self.thisptr.GetPropertyValue(name)
 
     def set_property_value(self, name, value):
@@ -357,7 +371,7 @@ cdef class FGFDMExec:
         @param property the property to be set
         @param value the value to set the property to *
         """
-        self.thisptr.SetPropertyValue(name, value)
+        self.thisptr.SetPropertyValue(name.encode(), value)
 
     def get_model_name(self):
         """
@@ -382,7 +396,7 @@ cdef class FGFDMExec:
         be logged.
         @param fname the filename of an output directives file.
         """
-        return self.thisptr.SetOutputDirectives(c_SGPath(fname, NULL))
+        return self.thisptr.SetOutputDirectives(c_SGPath(fname.encode(), NULL))
 
     #def force_output(self, index):
         #"""
@@ -403,7 +417,7 @@ cdef class FGFDMExec:
         @param fname the name of the file to output data to
         @return true if successful, false if there is no output specified for the flight model
         """
-        return self.thisptr.SetOutputFileName(n, fname)
+        return self.thisptr.SetOutputFileName(n, fname.encode())
 
     def get_output_filename(self, n):
         """
@@ -588,6 +602,7 @@ cdef class FGFDMExec:
         return self.thisptr.GetPropulsion().GetNumEngines()
 
     def load_ic(self, rstfile, useStoredPath):
+        rstfile = rstfile.encode()
         return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
 
     def get_propagate(self):
