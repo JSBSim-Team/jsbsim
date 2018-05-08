@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 
-import os, sys, string, tempfile, shutil, unittest
+import os, sys, tempfile, shutil, unittest
 import xml.etree.ElementTree as et
 import numpy as np
 import pandas as pd
@@ -82,7 +82,7 @@ def CheckXMLFile(f, header):
         return False
 
     # Check the file header
-    return string.upper(tree.getroot().tag) == string.upper(header)
+    return tree.getroot().tag.upper() == header.upper()
 
 
 def CopyAircraftDef(script_path, sandbox):
@@ -122,7 +122,7 @@ def CopyAircraftDef(script_path, sandbox):
             else:
                 name_with_system_path = os.path.join(path_to_jsbsim_aircrafts,
                                                      'Systems', name)
-                print name_with_system_path
+                print(name_with_system_path)
                 if os.path.exists(name_with_system_path):
                     system_path = sandbox(aircraft_path, 'Systems')
                     if not os.path.exists(system_path):
