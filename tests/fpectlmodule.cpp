@@ -68,6 +68,7 @@
 #include "fpectlmodule.h"
 
 #include <signal.h>
+#include <iostream>
 
 #if defined(_MSC_VER)
 #  include <float.h>
@@ -83,10 +84,12 @@ static PyObject *fpe_error;
 PyMODINIT_FUNC initfpectl(void);
 static PyObject *turnon_sigfpe(PyObject *self,PyObject *args);
 static PyObject *turnoff_sigfpe(PyObject *self,PyObject *args);
+static PyObject *test_sigfpe(PyObject *self,PyObject *args);
 
 static PyMethodDef fpectl_methods[] = {
   {"turnon_sigfpe", (PyCFunction) turnon_sigfpe, METH_VARARGS},
   {"turnoff_sigfpe", (PyCFunction) turnoff_sigfpe, METH_VARARGS},
+  {"test_sigfpe", (PyCFunction) test_sigfpe, METH_VARARGS},
   {0,0}
 };
 
@@ -135,4 +138,19 @@ PyMODINIT_FUNC initfpectl(void)
                                  PyExc_FloatingPointError, NULL);
   if (fpe_error != NULL)
     PyDict_SetItemString(d, "FloatingPointError", fpe_error);
+}
+
+static PyObject *test_sigfpe(PyObject *self, PyObject *args)
+{
+  try {
+    std::cout << "Executing faulty FP calculation..." << std::endl;
+    double x = sqrt(-1.0);
+  }
+  catch(const JSBSim::FloatingPointException &e) {
+    PyErr_SetString(fpe_error, e.what());
+    return NULL;
+  }
+
+  Py_INCREF(Py_None);
+  return Py_None;
 }
