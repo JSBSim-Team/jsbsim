@@ -18,12 +18,14 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
+import fpectl
 
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 
 class CheckScripts(JSBSimTestCase):
     def testScripts(self):
+        fpectl.turnon_sigfpe()
 
         for s in self.script_list(['737_cruise_steady_turn_simplex.xml']):
             fdm = CreateFDM(self.sandbox)

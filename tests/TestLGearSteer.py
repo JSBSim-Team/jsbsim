@@ -21,6 +21,7 @@
 import os
 import xml.etree.ElementTree as et
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, CopyAircraftDef
+import fpectl
 
 
 class TestLGearSteer(JSBSimTestCase):
@@ -33,11 +34,15 @@ class TestLGearSteer(JSBSimTestCase):
         self.assertAlmostEqual(fdm['fcs/steer-cmd-norm'], 0.0)
         self.assertAlmostEqual(fdm['fcs/steer-pos-deg'], 0.0)
 
+        # Should be part of a unit test in C++ ?
+        fpectl.turnon_sigfpe()
 
         grndreact = fdm.get_ground_reactions()
         for i in range(grndreact.get_num_gear_units()):
             gear = grndreact.get_gear_unit(i)
             self.assertEqual(gear.get_steer_norm(), 0.0)
+
+        fpectl.turnoff_sigfpe()
 
         fdm['fcs/steer-pos-deg'] = 5.0
         self.assertAlmostEqual(fdm['fcs/steer-pos-deg'], 5.0)

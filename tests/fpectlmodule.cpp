@@ -133,14 +133,50 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
   return Py_None;
 }
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+
+static struct PyModuleDef fpectl = {
+        PyModuleDef_HEAD_INIT,
+        "fpectl",
+        NULL,
+        sizeof(struct module_state),
+        fpectl_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
+PyMODINIT_FUNC PyInit_fpectl(void)
+#else
 PyMODINIT_FUNC initfpectl(void)
+#endif
 {
-  PyObject *m = Py_InitModule("fpectl", fpectl_methods);
+  #if PY_MAJOR_VERSION >= 3
+    PyObject *m = PyModule_Create(&fpectl);
+  #else
+    PyObject *m = Py_InitModule("fpectl", fpectl_methods);
+  #endif
+
   if (m == NULL)
-    return;
+    #if PY_MAJOR_VERSION >= 3
+      return NULL;
+    #else
+      return;
+    #endif
+
   PyObject *d = PyModule_GetDict(m);
   fpe_error = PyErr_NewException((char*)"fpectl.FloatingPointError",
                                  PyExc_FloatingPointError, NULL);
   if (fpe_error != NULL)
     PyDict_SetItemString(d, "FloatingPointError", fpe_error);
+
+  #if PY_MAJOR_VERSION >= 3
+    return m;
+  #endif
 }
