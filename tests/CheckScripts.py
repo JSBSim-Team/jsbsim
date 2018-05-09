@@ -18,8 +18,8 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
-
 import fpectl
+
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 

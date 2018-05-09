@@ -65,7 +65,7 @@ class TestEngineIndexedProps(JSBSimTestCase):
                    fdm['propulsion/engine[1]/engine-rpm'],
                    fdm['propulsion/engine[2]/engine-rpm'],
                    fdm['propulsion/engine[3]/engine-rpm']]
-            for i in xrange(4):
+            for i in range(4):
                 maxPower = max(0.0, 1.0-rpm[i]/400)*498.941*0.10471976*rpm[i]
                 self.assertAlmostEqual(fdm['propulsion/engine[%d]/starter-max-power-W' % (i,)],
                                        maxPower)
@@ -108,7 +108,7 @@ class TestEngineIndexedProps(JSBSimTestCase):
                    fdm['propulsion/engine[1]/engine-rpm'],
                    fdm['propulsion/engine[2]/engine-rpm'],
                    fdm['propulsion/engine[3]/engine-rpm']]
-            for i in xrange(4):
+            for i in range(4):
                 tabularData = max(0.0, 1.0-rpm[i]/400)
                 maxPower = tabularData*498.941*0.10471976*rpm[i]
                 self.assertAlmostEqual(fdm['propulsion/engine[%d]/starter-max-power-W' % (i,)],

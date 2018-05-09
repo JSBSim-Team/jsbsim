@@ -82,7 +82,7 @@ class TestAccelerometer(JSBSimTestCase):
         fdm['ic/psi-true-rad'] = 0.0
         fdm.run_ic()
 
-        for i in xrange(1000):
+        for i in range(1000):
             fdm.run()
 
         r = fdm['position/radius-to-vehicle-ft']

@@ -188,12 +188,12 @@ class CheckFGBug1503(JSBSimTestCase):
         hysteresis_element = actuator_element.find('hysteresis')
         actuator_element.remove(hysteresis_element)
         input_element = actuator_element.find('input')
-        input_prop = string.split(actuator_element.attrib['name'], '-')
+        input_prop = actuator_element.attrib['name'].split('-')
         input_prop[-1] = 'input'
-        input_prop = string.join(input_prop, '-')
+        input_prop = '-'.join(input_prop)
         input_element.text = input_prop
         output_element = actuator_element.find('output')
-        output_prop = string.strip(output_element.text)
+        output_prop = output_element.text.strip()
 
         # Add the new properties to <flight_control> so that we can make
         # reference to them without JSBSim complaining

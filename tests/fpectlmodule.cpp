@@ -73,7 +73,7 @@
 #if defined(_MSC_VER)
 #  include <float.h>
 static unsigned int fp_flags = 0;
-#elif defined(__GNUC__) && !defined(sgi)
+#elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
 #  include <fenv.h>
 static int fp_flags = 0;
 #endif
@@ -106,8 +106,12 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
+#elif defined(__clang__)
+  fp_flags = feraiseexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+
 #elif defined(__GNUC__) && !defined(sgi)
   fp_flags = feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+
 #endif
 
   handler = PyOS_setsig(SIGFPE, sigfpe_handler);
@@ -119,6 +123,10 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
 #if defined(_MSC_VER)
   _controlfp(fp_flags, _MCW_EM);
+
+#elif defined(__clang__)
+  feraiseexcept(fp_flags);
+
 #elif defined(__GNUC__) && !defined(sgi)
   fedisableexcept(fp_flags);
 #endif
@@ -128,16 +136,52 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
   return Py_None;
 }
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+
+static struct PyModuleDef fpectl = {
+        PyModuleDef_HEAD_INIT,
+        "fpectl",
+        NULL,
+        sizeof(struct module_state),
+        fpectl_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
+PyMODINIT_FUNC PyInit_fpectl(void)
+#else
 PyMODINIT_FUNC initfpectl(void)
+#endif
 {
-  PyObject *m = Py_InitModule("fpectl", fpectl_methods);
+  #if PY_MAJOR_VERSION >= 3
+    PyObject *m = PyModule_Create(&fpectl);
+  #else
+    PyObject *m = Py_InitModule("fpectl", fpectl_methods);
+  #endif
+
   if (m == NULL)
-    return;
+    #if PY_MAJOR_VERSION >= 3
+      return NULL;
+    #else
+      return;
+    #endif
+
   PyObject *d = PyModule_GetDict(m);
   fpe_error = PyErr_NewException((char*)"fpectl.FloatingPointError",
                                  PyExc_FloatingPointError, NULL);
   if (fpe_error != NULL)
     PyDict_SetItemString(d, "FloatingPointError", fpe_error);
+
+  #if PY_MAJOR_VERSION >= 3
+    return m;
+  #endif
 }
 
 static PyObject *test_sigfpe(PyObject *self, PyObject *args)

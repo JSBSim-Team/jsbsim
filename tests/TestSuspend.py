@@ -53,7 +53,7 @@ class TestSuspend(JSBSimTestCase):
 
         fdm.suspend_integration()
         fdm.disable_output()
-        for i in xrange(5):
+        for i in range(5):
             fdm.run()
         fdm.resume_integration()
         fdm.enable_output()
@@ -74,7 +74,7 @@ class TestSuspend(JSBSimTestCase):
         ExecuteUntil(fdm, 1.0)
 
         fdm.hold()
-        for i in xrange(5):
+        for i in range(5):
             fdm.run()
         fdm.resume()
 

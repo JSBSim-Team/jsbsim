@@ -57,7 +57,7 @@ class TestPointMassInertia(JSBSimTestCase):
         pointmass_element.remove(form_element)
 
         inertia = np.zeros((3, 3))
-        if string.strip(shape) == 'tube':
+        if shape.strip() == 'tube':
             inertia[0, 0] = radius * radius
             inertia[1, 1] = (6.0 * inertia[0, 0] + length * length) / 12.0
             inertia[2, 2] = inertia[1, 1]
