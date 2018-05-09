@@ -87,11 +87,11 @@ class TelnetInterface:
 
     def sendCommand(self, command):
         self.cond.acquire()
-        self.tn.write(command+"\n")
+        self.tn.write("{}\n".format(command).encode())
         # Wait for a time step to be executed before reading the output from
         # telnet
         self.cond.wait()
-        msg = self.tn.read_very_eager()
+        msg = self.tn.read_very_eager().decode()
         self.cond.release()
         self.thread.join(0.1)
         return msg
@@ -136,15 +136,15 @@ class TestInputSocket(JSBSimTestCase):
 
     def sanityCheck(self, _tn):
         # Check that the connection has been established
-        out = _tn.getOutput()
+        out = _tn.getOutput().decode()
         self.assertTrue(out.split('\n')[0] == 'Connected to JSBSim server',
                         msg="Not connected to the JSBSim server.\nGot message '%s' instead" % (out,))
 
         # Check that "help" returns the minimum set of commands that will be
         # tested
-        self.assertEqual(sorted(map(lambda x: x.split('{').strip()[0]),
-                                    _tn.sendCommand("help").split('\n')[2:-2]),
-                                    ['get', 'help', 'hold', 'info', 'iterate', 'quit', 'resume', 'set'])
+        self.assertEqual(sorted(map(lambda x: x.split('{')[0].strip(),
+                                    _tn.sendCommand("help").split('\n')[2:-2])),
+                         ['get', 'help', 'hold', 'info', 'iterate', 'quit', 'resume', 'set'])
 
     def test_no_input(self):
         fdm = CreateFDM(self.sandbox)
@@ -153,7 +153,7 @@ class TestInputSocket(JSBSimTestCase):
         fdm.hold()
 
         with self.assertRaises(socket.error):
-            TelnetInterface(fdm, 5., 1137)
+            TelnetInterface(fdm, 5., 2222)
 
     def test_input_socket(self):
         # First, extract the time step from the script file
@@ -180,9 +180,9 @@ class TestInputSocket(JSBSimTestCase):
 
         # Check the aircraft name and its version
         msg = tn.sendCommand("info").split('\n')
-        self.assertEqual(msg[2].split(':')[1],
+        self.assertEqual(msg[2].split(':')[1].strip(),
                          root.attrib['name'].strip())
-        self.assertEqual(msg[1].split(':')[1],
+        self.assertEqual(msg[1].split(':')[1].strip(),
                          root.attrib['version'].strip())
 
         # Check that the simulation time is 0.0
