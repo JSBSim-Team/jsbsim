@@ -72,7 +72,7 @@
 #if defined(_MSC_VER)
 #  include <float.h>
 static unsigned int fp_flags = 0;
-#elif defined(__GNUC__) && !defined(sgi)
+#elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
 #  include <fenv.h>
 static int fp_flags = 0;
 #endif
@@ -103,8 +103,12 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
+#elif defined(__clang__)
+  fp_flags = feraiseexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+
 #elif defined(__GNUC__) && !defined(sgi)
   fp_flags = feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+
 #endif
 
   handler = PyOS_setsig(SIGFPE, sigfpe_handler);
@@ -116,6 +120,10 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
 #if defined(_MSC_VER)
   _controlfp(fp_flags, _MCW_EM);
+
+#elif defined(__clang__)
+  feraiseexcept(fp_flags);
+
 #elif defined(__GNUC__) && !defined(sgi)
   fedisableexcept(fp_flags);
 #endif

@@ -61,10 +61,10 @@ setup(
                            language='c++')])
 
 # Build process for the fpectl module
-#setup(
-#    cmdclass={'build_ext': SilentBuild},
-#    ext_modules=[Extension('fpectl',
-#                           sources=[os.path.join('${CMAKE_SOURCE_DIR}',
-#                                                 'tests',
-#                                                 'fpectlmodule.cpp')],
-#                           language='c++')])
+setup(
+    cmdclass={'build_ext': SilentBuild},
+    ext_modules=[Extension('fpectl',
+                           sources=[os.path.join('${CMAKE_SOURCE_DIR}',
+                                                 'tests',
+                                                 'fpectlmodule.cpp')],
+                           language='c++')])
