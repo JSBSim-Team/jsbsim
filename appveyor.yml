@@ -4,6 +4,7 @@ image: Visual Studio 2017
 
 version: 1.0.{build}
 
+# TODO: switch to cmake approach
 build_script:
 - cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
