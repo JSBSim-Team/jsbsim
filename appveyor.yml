@@ -15,9 +15,11 @@ artifacts:
 # to avoid infinite build loops
 skip_tags: true
 
+# Removed tag: JSBSim-win64-v$(appveyor_build_version)
+
 deploy:
 - provider: GitHub
-  tag: JSBSim-win64-v$(appveyor_build_version)
+  tag: JSBSim-win64-v2018a
   description: VS 2015 - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
