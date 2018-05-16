@@ -10,6 +10,7 @@ notifications:
 branches:
   except:
     - /JSBSim-*-v2018a/
+    - /untagged-*/
 before_install:
   - pip install cython numpy pandas scipy
   - mkdir build
@@ -23,7 +24,8 @@ script:
 before_deploy:
   - git config --local user.name "bcoconni"
   - git config --local user.email "bcoconni@users.sourceforge.net"
-  - git tag -f JSBSim-trusty-v2018a
+  - git tag -f JSBSim-trusty-v2018a -m "Ubuntu Trusty 14.04 - Release - x64"
+  - git push origin :refs/tags/JSBSim-trusty-v2018a
 deploy:
   provider: releases
   api_key:
