@@ -189,6 +189,7 @@ static PyObject *test_sigfpe(PyObject *self, PyObject *args)
   try {
     std::cout << "Executing faulty FP calculation..." << std::endl;
     double x = sqrt(-1.0);
+    return PyFloat_FromDouble(x);
   }
   catch(const JSBSim::FloatingPointException &e) {
     PyErr_SetString(fpe_error, e.what());
