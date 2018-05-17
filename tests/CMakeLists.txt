@@ -6,13 +6,12 @@ set_source_files_properties(jsbsim.pyx PROPERTIES CYTHON_IS_CXX TRUE)
 
 # Build the Python module using Cython and the JSBSim library
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-cython_add_module(jsbsim jsbsim.pyx)
-target_link_libraries(jsbsim libJSBSim)
+compile_pyx(jsbsim JSBSIM_CXX jsbsim.pyx)
 
 set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 configure_file(setup.py.in ${SETUP_PY})
-add_custom_target(fpectl_module ALL DEPENDS ${SETUP_PY}
-  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -i)
+add_custom_target(python_modules ALL DEPENDS ${SETUP_PY} ${JSBSIM_CXX}
+  libJSBSim COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -i)
 
 # Replicate the Python files in the build dir.
 # With CMake, the build tree can be separated from the source tree. For tests
