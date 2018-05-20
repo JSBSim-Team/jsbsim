@@ -1,0 +1,5 @@
+/* versioning */
+#define AEROMATIC_MAJOR_VERSION 3
+#define AEROMATIC_MINOR_VERSION 3
+#define AEROMATIC_MICRO_VERSION 10
+
