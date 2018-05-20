@@ -91,6 +91,14 @@ JSBSim uses the [Expat library](https://libexpat.github.io/) to read XML files. 
 > make
 ```
 
+#### Building shared libraries
+Most of JSBSim code can be built as a shared library, so that the executable `JSBSim` and the Python module can share the same library which reduce the memory and disk space consumption.
+The option `BUILD_SHARED_LIBS` must then be passed to CMake
+```bash
+> cmake -DBUILD_SHARED_LIBS=ON ..
+> make
+```
+
 ### Building the [Python](https://www.python.org/) module of JSBSim
 A Python module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
 
