@@ -22,7 +22,11 @@ install:
   - make install
 script:
   - ctest -j2
+# If the build fails, the tests log will be uploaded to a gist under my account
+# (bcoconni) so that they can be deleted when irrelevant. The output of the
+# command line `gist` is the web address to the gist.
 after_failure:
+  - echo $GIST_TOKEN > ~/.gist
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
   - git config --local user.name "bcoconni"
