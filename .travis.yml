@@ -2,7 +2,6 @@ language: python
 python:
   - "2.7"
   - "3.6"
-# command to install dependencies
 notifications:
   email: false
 # Skip the build of tagged branches (otherwise the same commit is built
@@ -11,8 +10,10 @@ branches:
   except:
     - /^JSBSim-.*-v2018a.*$/
     - /^untagged-.*$/
+# command to install dependencies
 before_install:
   - pip install cython numpy pandas scipy
+  - gem install gist
   - mkdir build
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON ..
@@ -21,6 +22,8 @@ install:
   - make install
 script:
   - ctest -j2
+after_failure:
+  - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
   - git config --local user.name "bcoconni"
   - git config --local user.email "bcoconni@users.sourceforge.net"
