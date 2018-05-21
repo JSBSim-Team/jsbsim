@@ -29,5 +29,4 @@ set(HEADERS FGElectric.h
 add_full_path_name(PROPULSION_SRC "${SOURCES}")
 add_full_path_name(PROPULSION_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion COMPONENT devel)

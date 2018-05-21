@@ -8,9 +8,10 @@ project(JSBSim)
 set(PROJECT_VERSION_MAJOR "1")
 set(PROJECT_VERSION_MINOR "0")
 set(PROJECT_VERSION_PATCH "0")
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
+
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
@@ -58,7 +59,7 @@ function(get_tail INPUT_STRING OUTPUT_STRING)
   set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
 endfunction()
 
-# Get the host architecture for the package name
+# Extract the host architecture for the package name
 if (UNIX)
   execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
   execute_process(COMMAND lsb_release -i OUTPUT_VARIABLE DISTRIB_NAME)
@@ -71,7 +72,7 @@ if (UNIX)
   elseif(TEMP_NAME STREQUAL "ubuntu")
     if(LINUX_DISTRIB_RELEASE STREQUAL "14.04")
       set(LINUX_DISTRIB_NAME "~trusty")
-      set(LINUX_DISTRIB_RELEASE "")
+      set(LINUX_DISTRIB_RELEASE)
     endif()
     if(ARCH STREQUAL "x86_64")
       set(ARCH "amd64")
@@ -88,16 +89,44 @@ endif()
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(EXTENSION_NAME "_${CPACK_PACKAGE_VERSION}${HOST_ARCHITECTURE}")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING")
 set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CPACK_RESOURCE_FILE_README}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "JSBSim, an open source, platform-independent, flight dynamics & control software library in C++.")
 set(CPACK_PACKAGE_VENDOR ${PROJECT_CONTACT_VENDOR})
 set(CPACK_PACKAGE_CONTACT "${PROJECT_CONTACT_EMAIL}")
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON) # Extract automatically the package dependencies
-set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${HOST_ARCHITECTURE}")
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}")
+string(TOLOWER ${CMAKE_PROJECT_NAME} CPACK_PACKAGE_NAME)
+
+################################################################################
+# Debian/Ubuntu packaging                                                                    #
+################################################################################
+
 set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON) # Extract automatically the package dependencies
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+set(CPACK_DEBIAN_RUNTIME_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.deb")
+set(CPACK_DEBIAN_DEVEL_FILE_NAME "${CMAKE_PROJECT_NAME}-devel${EXTENSION_NAME}.deb")
+set(CPACK_DEBIAN_DEVEL_PACKAGE_DEPENDS "${CPACK_DEBIAN_RUNTIME_PACKAGE_NAME} (>=${CPACK_PACKAGE_VERSION})")
+
+################################################################################
+# Red Hat packaging                                                                    #
+################################################################################
+
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_RUNTIME_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+set(CPACK_RPM_RUNTIME_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.rpm")
+set(CPACK_RPM_DEVEL_FILE_NAME "${CMAKE_PROJECT_NAME}-devel${EXTENSION_NAME}.rpm")
+set(CPACK_RPM_DEVEL_PACKAGE_REQUIRES "${CPACK_RPM_RUNTIME_PACKAGE_NAME} >= ${CPACK_PACKAGE_VERSION}")
+set(CPACK_RPM_PACKAGE_LICENSE "LGPL-2.1")
+
+################################################################################
+# Source packaging                                                                    #
+################################################################################
+
 set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
                                "/admin/"
                                "/autom4te.cache"
@@ -133,4 +162,3 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 ################################################################################
 
 add_subdirectory(utils)
-

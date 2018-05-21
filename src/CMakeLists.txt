@@ -95,7 +95,21 @@ if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
                                    SOVERSION ${LIBRARY_SOVERSION}
                                    FRAMEWORK ON)
+  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+                            NAMELINK_SKIP
+                            COMPONENT runtime
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
+  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+                            NAMELINK_ONLY
+                            COMPONENT devel
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
 else()
+  install(TARGETS libJSBSim ARCHIVE DESTINATION lib
+                            COMPONENT devel
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
   # If JSBSim is built as a static library on an x86_64 *nix platform, the code
   # must be compiled with the -fPIC flag otherwise the compiler will complain:
   # relocation R_X86_64_32S against `a local symbol' can not be used when making
@@ -106,12 +120,6 @@ else()
   endif()
 endif()
 
-install(TARGETS libJSBSim LIBRARY DESTINATION lib
-                          ARCHIVE DESTINATION lib
-                          RUNTIME DESTINATION lib
-                          # For Mac
-                          FRAMEWORK DESTINATION "/Library/Frameworks")
-
 ################################################################################
 # Build and install command line executable                                    #
 ################################################################################
@@ -119,6 +127,5 @@ install(TARGETS libJSBSim LIBRARY DESTINATION lib
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
 
-install(TARGETS JSBSim RUNTIME DESTINATION bin)
-install(FILES ${HEADERS} DESTINATION include/JSBSim)
-
+install(TARGETS JSBSim RUNTIME DESTINATION bin COMPONENT runtime)
+install(FILES ${HEADERS} DESTINATION include/JSBSim COMPONENT devel)
