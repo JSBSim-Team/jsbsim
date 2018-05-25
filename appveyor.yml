@@ -27,6 +27,10 @@ artifacts:
 - path: build\src\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
 
+- path: build\utils\aeromatic++\aeromatic.exe
+  name: JSBSim_Release_x64_v2018a
+
+
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
 skip_tags: true
