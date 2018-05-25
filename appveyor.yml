@@ -9,7 +9,7 @@ version: 1.0.{build}
 #- cmake -–build . --config RelWithDebInfo
 
 #- cmake -G "Visual Studio 15 2017 Win64" ..
-#- cmake -–build . -–config Release
+#- cmake -–build . --config Release
 
 build_script:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
@@ -20,7 +20,7 @@ build_script:
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 - cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
-- cmake --build . -–config Release -- -j 2
+- cmake --build . --config Release -- -j 2
 
 
 artifacts:
