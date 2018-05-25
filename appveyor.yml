@@ -14,7 +14,8 @@ version: 1.0.{build}
 build_script:
 - SET PATH="C:\Python36-x64";%path%
 - python --version
-- cmd: ren c:\python27 python27-hide
+- ren c:\python27 python27-hide
+- pip install Cython
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
