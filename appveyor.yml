@@ -3,8 +3,13 @@
 image: Visual Studio 2017
 
 environment:
-matrix:
-- PYTHON: "C:\\Python36-x64"
+
+  matrix:
+
+    # For Python versions available on Appveyor, see
+    # http://www.appveyor.com/docs/installed-software#python
+
+    - PYTHON: "C:\\Python36-x64"
 
 version: 1.0.{build}
 
