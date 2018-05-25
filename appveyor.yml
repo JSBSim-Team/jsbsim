@@ -4,12 +4,16 @@ image: Visual Studio 2017
 
 version: 1.0.{build}
 
-# TODO: switch to cmake approach
 build_script:
-- cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+- md build
+- cd build
+- "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+- cmake -G "Ninja" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
+- cmake -–build . -–config Release
+
 
 artifacts:
-- path: Release\JSBSim.exe
+- path: build\src\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
 
 # Do not build on tags (GitHub and BitBucket)
@@ -24,7 +28,7 @@ deploy:
   description: VS 2017 - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: Release\JSBSim.exe
+  artifact: build\src\JSBSim.exe
   prerelease: true
   on:
     branch: master
