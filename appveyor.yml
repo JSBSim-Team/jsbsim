@@ -12,7 +12,7 @@ version: 1.0.{build}
 #- cmake -–build . -–config Release
 
 build_script:
-- set PATH="C:\Python36-x64";"C:\Python36-x64\Scripts";%PATH%
+- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - python --version
 - ren c:\python27 python27-hide
 - pip install Cython
