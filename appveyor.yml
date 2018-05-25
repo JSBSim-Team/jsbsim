@@ -2,15 +2,6 @@
 
 image: Visual Studio 2017
 
-environment:
-
-  matrix:
-
-    # For Python versions available on Appveyor, see
-    # http://www.appveyor.com/docs/installed-software#python
-
-    - PYTHON: "C:\\Python36-x64"
-
 version: 1.0.{build}
 
 #- call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
@@ -24,7 +15,7 @@ build_script:
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
+- cmake -G "Ninja" -DCMAKE_USE_PYTHON_VERSION=3.6 -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
 - cmake -–build . --config RelWithDebInfo ..
 
 
