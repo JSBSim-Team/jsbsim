@@ -4,16 +4,17 @@ image: Visual Studio 2017
 
 version: 1.0.{build}
 
-#- call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-#- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
-#- cmake -–build . --config RelWithDebInfo
-
-#- cmake -G "Visual Studio 15 2017 Win64" ..
-#- cmake -–build . --config Release
+# Need to add Python 3.6 explicitly to the path for CMake to pick it up,
+# also need to hide Python 2.7 otherwise CMake picks it up in preference to 3.6.
+# Cython isn't installed by default so we need to install it
+# Cython also gives a warning about not being on the path if the python36-x64 directory 
+# name in the PATH isn't all lowercase.
+# Need to call vcvarsall.bat to setup path and env variables for the 
+# the VS2017 compiler in order for CMake to pick them up
+# Need to explicitly set the path to Ninja.exe as the make program
 
 build_script:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
-- python --version
 - ren c:\python27 python27-hide
 - pip install Cython
 - md build
@@ -43,7 +44,7 @@ deploy:
   description: VS 2017 - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\JSBSim.exe
+  artifact: build\src\JSBSim.exe,build\utils\aeromatic++\aeromatic.exe
   prerelease: true
   on:
     branch: master
