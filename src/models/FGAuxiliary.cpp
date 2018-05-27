@@ -206,20 +206,14 @@ bool FGAuxiliary::Run(bool Holding)
   tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
   tatc = RankineToCelsius(tat);
 
-  // Pitot
+  pt = PitotTotalPressure(Mach, in.Pressure);
 
-  vWindUVW(eU) = Vt;
-  vPitotUVW = mTw2p * vWindUVW;
-  Vpitot = vPitotUVW(eU);
-  if (Vpitot < 0.0) Vpitot = 0.0;
-  MachPitot = Vpitot / in.SoundSpeed;
-  pt = PitotTotalPressure(MachPitot, in.Pressure);
-
-  if (abs(MachPitot) > 0.0) {
-    vcas = VcalibratedFromMach(MachPitot, in.Pressure, in.PressureSL, in.DensitySL);
+  if (abs(Mach) > 0.0) {
+    vcas = VcalibratedFromMach(Mach, in.Pressure, in.PressureSL, in.DensitySL);
     veas = sqrt(2 * qbar / in.DensitySL);
     vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
-  } else {
+  }
+  else {
     vcas = veas = vtrue = 0.0;
   }
 
