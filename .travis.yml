@@ -2,10 +2,12 @@ language: python
 python:
   - "2.7"
   - "3.6"
+env:
+  - USE_SYSTEM_EXPAT=OFF
+  - USE_SYSTEM_EXPAT=ON
 notifications:
   email: false
-# Skip the build of tagged branches (otherwise the same commit is built
-# multiple times)
+# Skip the build of tagged branches (otherwise the same commit is built multiple times)
 branches:
   except:
     - /^JSBSim-.*-v2018a.*$/
@@ -16,7 +18,7 @@ before_install:
   - gem install gist
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=ON ..
+  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
 install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
@@ -46,3 +48,4 @@ deploy:
   skip_cleanup: true
   on:
     python: 3.6
+    condition: $USE_SYSTEM_EXPAT = ON
