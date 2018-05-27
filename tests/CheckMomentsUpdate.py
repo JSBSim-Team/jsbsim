@@ -87,4 +87,6 @@ class CheckMomentsUpdate(JSBSimTestCase):
         self.assertAlmostEqual(Fbx * CGz - Fbz * CGx, Mby, delta=1E-7,
                                msg="Fbx*CGz-Fbz*CGx = %f and Mby = %f do not match" % (Fbx*CGz-Fbz*CGx, Mby))
 
+        del self.fdm
+
 RunTest(CheckMomentsUpdate)

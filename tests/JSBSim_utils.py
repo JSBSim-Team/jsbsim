@@ -140,8 +140,8 @@ class JSBSimTestCase(unittest.TestCase):
         os.chdir(self.sandbox())
 
     def tearDown(self):
-        self.sandbox.erase()
         os.chdir(self.currentdir)
+        self.sandbox.erase()
 
     # Generator that returns the full path to all the scripts in JSBSim
     def script_list(self, blacklist=[]):
