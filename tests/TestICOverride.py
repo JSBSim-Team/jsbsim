@@ -64,14 +64,14 @@ class TestICOverride(JSBSimTestCase):
         property.attrib['value'] = str(vt0)
         tree.write('c1724_0.xml')
 
-        # Re-run the same check than above. This time we are making sure than
-        # the total initial velocity is increased by 1 ft/s
-        self.sandbox.delete_csv_files()
-
         # Because JSBSim internals use static pointers, we cannot rely on
         # Python garbage collector to decide when the FDM is destroyed
         # otherwise we can get dangling pointers.
         del fdm
+
+        # Re-run the same check than above. This time we are making sure than
+        # the total initial velocity is increased by 1 ft/s
+        self.sandbox.delete_csv_files()
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_script('c1724_0.xml')

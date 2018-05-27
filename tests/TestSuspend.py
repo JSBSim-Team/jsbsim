@@ -69,6 +69,8 @@ class TestSuspend(JSBSimTestCase):
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
+        del fdm
+
     def testHold(self):
         fdm = self.initFDM()
         ExecuteUntil(fdm, 1.0)
@@ -88,5 +90,7 @@ class TestSuspend(JSBSimTestCase):
         diff = FindDifferences(self.ref, out, 1E-8)
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
+
+        del fdm
 
 RunTest(TestSuspend)
