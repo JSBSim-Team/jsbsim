@@ -28,8 +28,8 @@ class TestTemplateFunctions(JSBSimTestCase):
     def testUnitConversion(self):
         shutil.copy(self.sandbox.path_to_jsbsim_file('tests',
                                                      'output2.xml'),'.')
-        shutil.copy(self.sandbox.path_to_jsbsim_file('tests',
-                                                     'unitconversion.xml'),'.')
+        shutil.copy(self.sandbox.path_to_jsbsim_file('scripts',
+                                                     'unitconversions.xml'),'.')
         script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1723.xml')
         fdm = CreateFDM(self.sandbox)
         fdm.set_output_directive('output2.xml')

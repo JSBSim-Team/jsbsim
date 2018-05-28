@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<output name="output2.csv" type="CSV" rate="20" file="unitconversion.xml">
+<output name="output2.csv" type="CSV" rate="20" file="unitconversions.xml">
   <function name="pre/p-aero-deg_sec">
     <product>
       <property>velocities/p-aero-rad_sec</property>
@@ -8,10 +8,10 @@
   </function>
 
   <property> aero/alpha-deg </property>
-  <property caption="template/alpha-deg" apply="convertRadToDeg">
+  <property caption="template/alpha-deg" apply="convert-rad-To-deg">
     aero/alpha-rad
   </property>
-  <property caption="template/p-aero-deg_sec" apply="convertRadToDeg">
+  <property caption="template/p-aero-deg_sec" apply="convert-rad-To-deg">
     velocities/p-aero-rad_sec
   </property>
 </output>
