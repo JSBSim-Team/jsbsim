@@ -41,7 +41,6 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestScriptOutput
                  CheckSimTimeReset
                  TestHoldDown
-                 TestPitotAngle
                  CheckTrim
                  TestChannelRate
                  TestWaypoint

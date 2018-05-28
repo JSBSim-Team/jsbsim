@@ -78,7 +78,6 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
   lbarh = lbarv = 0.0;
   vbarh = vbarv = 0.0;
   WingIncidence = 0.0;
-  PitotAngle = 0.0;
 
   bind();
 
@@ -155,8 +154,6 @@ bool FGAircraft::Load(Element* el)
     VTailArea = el->FindElementValueAsNumberConvertTo("vtailarea", "FT2");
   if (el->FindElement("vtailarm"))
     VTailArm = el->FindElementValueAsNumberConvertTo("vtailarm", "FT");
-  if (el->FindElement("pitot_angle"))
-    PitotAngle = el->FindElementValueAsNumberConvertTo("pitot_angle", "RAD");
 
   // Find all LOCATION elements that descend from this METRICS branch of the
   // config file. This would be CG location, eyepoint, etc.

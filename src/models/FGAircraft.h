@@ -78,7 +78,6 @@ CLASS DOCUMENTATION
         <vtailarea unit="{FT2 | M}"> {number} </vtailarea>
         <vtailarm unit="{FT | M}"> {number} </vtailarm>
         <wing_incidence unit="{RAD | DEG}"> {number} </wing_incidence>
-        <pitot_angle unit="{RAD | DEG}"> {number} </pitot_angle>
         <location name="{AERORP | EYEPOINT | VRP}" unit="{IN | M}">
             <x> {number} </x>
             <y> {number} </y>
@@ -144,7 +143,6 @@ public:
   double GetWingSpan(void) const { return WingSpan; }
   /// Gets the average wing chord
   double Getcbar(void) const { return cbar; }
-  double GetPitotAngle(void) const { return PitotAngle; }
   double GetWingIncidence(void) const { return WingIncidence; }
   double GetWingIncidenceDeg(void) const { return WingIncidence*radtodeg; }
   double GetHTailArea(void) const { return HTailArea; }
@@ -197,7 +195,7 @@ private:
 
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;
-  double lbarh,lbarv,vbarh,vbarv,PitotAngle;
+  double lbarh,lbarv,vbarh,vbarv;
   std::string AircraftName;
 
   void Debug(int from);

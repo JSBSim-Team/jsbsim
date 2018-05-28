@@ -541,7 +541,6 @@ void FGFDMExec::LoadModelConstants(void)
   Aerodynamics->in.Wingspan      = Aircraft->GetWingSpan();
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
-  Auxiliary->in.PitotAngle       = Aircraft->GetPitotAngle();
   GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
 
   LoadPlanetConstants();
