@@ -1,4 +1,4 @@
-# TestWaypoint.py
+# TestDensityAltitude.py
 #
 # Test that density altitude works 
 #
