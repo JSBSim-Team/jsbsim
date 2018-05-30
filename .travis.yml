@@ -1,7 +1,7 @@
 language: python
 python:
   - "2.7"
-  - "3.6"
+  - "3.4"
 env:
   - USE_SYSTEM_EXPAT=OFF
   - USE_SYSTEM_EXPAT=ON
@@ -45,7 +45,8 @@ deploy:
   file:
     - "JSBSim-devel*.deb"
     - "JSBSim_*[0-9].deb"
+    - "python[2-3]-JSBSim*.deb"
   skip_cleanup: true
   on:
-    python: 3.6
+    python: 3.4
     condition: $USE_SYSTEM_EXPAT = ON
