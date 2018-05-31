@@ -68,10 +68,10 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
-  Mach = MachU = MachPitot = 0.0;
+  Mach = MachU = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
-  gamma = Vt = Vground = Vpitot = 0.0;
+  gamma = Vt = Vground = 0.0;
   psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
@@ -84,8 +84,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
-  vWindUVW.InitMatrix();
-  vPitotUVW.InitMatrix();
   vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
@@ -106,10 +104,10 @@ bool FGAuxiliary::InitModel(void)
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
-  Mach = MachU = MachPitot = 0.0;
+  Mach = MachU = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
-  gamma = Vt = Vground = Vpitot = 0.0;
+  gamma = Vt = Vground = 0.0;
   psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
@@ -206,20 +204,14 @@ bool FGAuxiliary::Run(bool Holding)
   tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
   tatc = RankineToCelsius(tat);
 
-  // Pitot
+  pt = PitotTotalPressure(Mach, in.Pressure);
 
-  vWindUVW(eU) = Vt;
-  vPitotUVW = mTw2p * vWindUVW;
-  Vpitot = vPitotUVW(eU);
-  if (Vpitot < 0.0) Vpitot = 0.0;
-  MachPitot = Vpitot / in.SoundSpeed;
-  pt = PitotTotalPressure(MachPitot, in.Pressure);
-
-  if (abs(MachPitot) > 0.0) {
-    vcas = VcalibratedFromMach(MachPitot, in.Pressure, in.PressureSL, in.DensitySL);
+  if (abs(Mach) > 0.0) {
+    vcas = VcalibratedFromMach(Mach, in.Pressure, in.PressureSL, in.DensitySL);
     veas = sqrt(2 * qbar / in.DensitySL);
     vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
-  } else {
+  }
+  else {
     vcas = veas = vtrue = 0.0;
   }
 
@@ -284,23 +276,6 @@ void FGAuxiliary::UpdateWindMatrices(void)
   mTw2b(3,3) =  ca;
 
   mTb2w = mTw2b.Transposed();
-
-  // The pitot frame is the same as the body frame except rotated about the
-  // Y axis by the pitot attachment angle.
-
-  ca = cos(alpha + in.PitotAngle);
-  sa = sin(alpha + in.PitotAngle);
-
-  mTw2p(1,1) =  ca*cb;
-  mTw2p(1,2) = -ca*sb;
-  mTw2p(1,3) = -sa;
-  mTw2p(2,1) =  sb;
-  mTw2p(2,2) =  cb;
-  mTw2p(2,3) =  0.0;
-  mTw2p(3,1) =  sa*cb;
-  mTw2p(3,2) = -sa*sb;
-  mTw2p(3,3) =  ca;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

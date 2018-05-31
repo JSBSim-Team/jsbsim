@@ -185,9 +185,8 @@ void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
   double rhoSL = Atmosphere->GetDensitySL();
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure, pressureSL, rhoSL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
-  double PitotAngle = Aircraft->GetPitotAngle();
 
-  SetVtrueFpsIC(mach * soundSpeed / (cos(alpha+PitotAngle) * cos(beta)));
+  SetVtrueFpsIC(mach * soundSpeed);
   lastSpeedSet = setvc;
 }
 
@@ -703,7 +702,6 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double mach0 = vt / soundSpeed;
   double vc0 = VcalibratedFromMach(mach0, pressure, pressureSL, rhoSL);
   double ve0 = vt * sqrt(rho/rhoSL);
-  double PitotAngle = Aircraft->GetPitotAngle();
 
   double geodLatitude = position.GetGeodLatitudeRad();
   altitudeASL=alt;
@@ -720,9 +718,8 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = MachFromVcalibrated(vc0 * cos(alpha+PitotAngle) * cos(beta),
-                                  pressure, pressureSL, rhoSL);
-      SetVtrueFpsIC(mach0 * soundSpeed / (cos(alpha+PitotAngle) * cos(beta)));
+      mach0 = MachFromVcalibrated(vc0, pressure, pressureSL, rhoSL);
+      SetVtrueFpsIC(mach0 * soundSpeed);
       break;
     case setmach:
       SetVtrueFpsIC(mach0 * soundSpeed);
@@ -843,8 +840,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
   double pressureSL = Atmosphere->GetPressureSL();
   double rhoSL = Atmosphere->GetDensitySL();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
-  double PitotAngle = Aircraft->GetPitotAngle();
-  double mach = vt * cos(alpha+PitotAngle) * cos(beta) / soundSpeed;
+  double mach = vt / soundSpeed;
 
   return fpstokts * VcalibratedFromMach(mach, pressure, pressureSL, rhoSL);
 }
