@@ -312,7 +312,6 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
-  FGColumnVector3 vWindUVW;
   FGLocation vLocationVRP;
 
   double Vt, Vground;

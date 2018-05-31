@@ -84,7 +84,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
-  vWindUVW.InitMatrix();
   vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
