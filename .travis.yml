@@ -27,6 +27,7 @@ script:
   - ctest
 after_success:
   - cpack
+  - export TRAVIS_TAG=JSBSim-trusty-v2018a
 # If the build fails, the tests log will be uploaded to a gist under my account
 # (bcoconni) so that they can be deleted when irrelevant. The output of the
 # command line `gist` is the web address to the gist.
@@ -34,9 +35,9 @@ after_failure:
   - echo $GIST_TOKEN > ~/.gist
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
-  - git config --local user.name "bcoconni"
-  - git config --local user.email "bcoconni@users.sourceforge.net"
-  - git tag "JSBSim-trusty-v2018a-$TRAVIS_BUILD_NUMBER" -m "Ubuntu Trusty 14.04 - Release - x64"
+# If running Python 2.7 then delete all Debian package but the Python module
+# The other packages will deployed by the Python 3.4 runtime
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then rm -f JSBSim*.deb; fi
 deploy:
   provider: releases
   api_key:
@@ -47,6 +48,7 @@ deploy:
     - "JSBSim_*[0-9].deb"
     - "python[2-3]-JSBSim*.deb"
   skip_cleanup: true
+  overwrite: true
   on:
-    python: 3.4
+    tags: true
     condition: $USE_SYSTEM_EXPAT = ON
