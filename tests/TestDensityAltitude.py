@@ -30,22 +30,19 @@ class TestDensityAltitude(JSBSimTestCase):
 
         # Reference data (Pressure Altitude, Temp Delta (Rankine), Density Altitude)
         reference_data = [
-            (0, 0, 0),
-            (0, -27, -1838.73),
-            (0, 27, 1724.16),
-            (10000, 0, 10000),
-            (10000, -27, 8839.83),
-            (10000, 27, 11113.20),
-            (20000, 0, 20000),
-            (20000, -27, 19508.06),
-            (20000, 27, 20493.17)
+            (0,        0,   0),
+            (0,      -27,  -1838.7331194627707),
+            (0,       27,   1724.1606364208037),
+            (10000,    0,   10000),
+            (10000,  -27,   8839.82645080842),
+            (10000,   27,   11113.201852749373),
+            (20000,    0,   20000),
+            (20000,  -27,   19508.060846598906),
+            (20000,   27,   20493.173549213785)
             ]
 
         # Run through refernce data and compare JSBSim calculated density altitude to expected
-        for data in reference_data:
-            pressure_alt = data[0]
-            delta_T = data[1]
-            density_alt = data[2]
+        for pressure_alt, delta_T, density_alt in reference_data:
 
             fdm['ic/h-agl-ft'] = pressure_alt
             fdm.run_ic()
@@ -53,9 +50,7 @@ class TestDensityAltitude(JSBSimTestCase):
 
             jsbSim_density_alt = fdm['atmosphere/density-altitude']
 
-            self.assertAlmostEqual(density_alt, jsbSim_density_alt, delta=1)
-
-            print('Pressure Altitude: {0}   Delta-T: {1}   Density Altitude: {2}'.format(pressure_alt, delta_T, jsbSim_density_alt))
+            self.assertAlmostEqual(density_alt, jsbSim_density_alt, delta=1e-7)
 
         del fdm
 
