@@ -31,7 +31,7 @@ add_subdirectory(src)
 ################################################################################
 
 option(INSTALL_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/tests/CMakeModules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/python/CMakeModules)
 find_package(Cython)
 
 if (CYTHON_FOUND)
@@ -40,6 +40,7 @@ if (CYTHON_FOUND)
     include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
     enable_testing()
     add_subdirectory(tests)
+    add_subdirectory(python)
   endif(PYTHONLIBS_FOUND)
 endif(CYTHON_FOUND)
 

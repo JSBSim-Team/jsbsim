@@ -27,7 +27,7 @@ setup(
                            include_dirs=[os.path.join('${CMAKE_SOURCE_DIR}',
                                                       'src'),
                                          os.path.join('${CMAKE_SOURCE_DIR}',
-                                                      'tests')],
+                                                      'python')],
                            library_dirs=[os.path.join('${CMAKE_BINARY_DIR}',
                                                       'src')],
                            language='c++')])
@@ -37,6 +37,6 @@ setup(
     cmdclass={'build_ext': SilentBuild},
     ext_modules=[Extension('fpectl',
                            sources=[os.path.join('${CMAKE_SOURCE_DIR}',
-                                                 'tests',
+                                                 'python',
                                                  'fpectlmodule.cpp')],
                            language='c++')])
