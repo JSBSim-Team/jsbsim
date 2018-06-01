@@ -108,7 +108,7 @@ const double FGJSBBase::kgtolb = 2.20462;
 const double FGJSBBase::kgtoslug = 0.06852168;
 
 const string FGJSBBase::needed_cfg_version = "2.0";
-const string FGJSBBase::JSBSim_version = "1.0 " __DATE__ " " __TIME__ ;
+const string FGJSBBase::JSBSim_version = JSBSIM_VERSION " " __DATE__ " " __TIME__ ;
 
 queue <FGJSBBase::Message> FGJSBBase::Messages;
 FGJSBBase::Message FGJSBBase::localMsg;

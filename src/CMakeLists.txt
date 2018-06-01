@@ -46,6 +46,15 @@ endif()
 # Build and install libraries                                                  #
 ################################################################################
 
+set(VERSION_MESSAGE)
+if(DEFINED ENV{TRAVIS})
+  set(VERSION_MESSAGE " [build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
+elseif(DEFINED ENV{APPVEYOR})
+  set(VERSION_MESSAGE " [build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+endif()
+
+add_definitions("-DJSBSIM_VERSION=\"${PROJECT_VERSION}${VERSION_MESSAGE}\"")
+
 set(STATIC_LIBNAME_SUFFIX)
 if(MSVC AND BUILD_SHARED_LIBS)
     set(STATIC_LIBNAME_SUFFIX "static")
