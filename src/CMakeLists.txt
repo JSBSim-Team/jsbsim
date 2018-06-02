@@ -124,7 +124,8 @@ else()
   # relocation R_X86_64_32S against `a local symbol' can not be used when making
   # a shared object; recompile with -fPIC
   # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
-  if (UNIX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  if (UNIX AND (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"
+        OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64"))
     set_target_properties(libJSBSim PROPERTIES COMPILE_FLAGS "-fPIC")
   endif()
 endif()
