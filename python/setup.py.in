@@ -4,24 +4,57 @@ from distutils.core import setup
 from distutils.extension import Extension
 from distutils.command.build_ext import build_ext
 from distutils.command.install_lib import install_lib
+from distutils.command.install_egg_info import install_egg_info
+from distutils import log
 
 
-class SilentBuild(build_ext):
+# Performs a build which verbosity is driven by VERBOSE
+class QuietBuild(build_ext):
+    def run(self):
+        if "VERBOSE" not in os.environ:
+            log.info("building '{}' extension".format(self.extensions[0].name))
+
+            self.oldstdout = os.dup(sys.stdout.fileno())
+            self.devnull = open('devnull.txt', 'w')
+            os.dup2(self.devnull.fileno(), sys.stdout.fileno())
+
+        build_ext.run(self)
+
+        if "VERBOSE" not in os.environ:
+            os.dup2(self.oldstdout, sys.stdout.fileno())
+            self.devnull.close()
+
+# The standard install_lib class installs every single file it finds in the
+# build directory. Here, we just want to install the JSBSim module so that it
+# can be accessed everywhere on the platform. This class is therefore
+# specializing the standard install_lib to do just that.
+class InstallJSBSimModule(install_lib):
     def __init__(self, dist):
-        build_ext.__init__(self, dist)
-        self.oldstdout = os.dup(sys.stdout.fileno())
-        self.devnull = open('devnull.txt', 'w')
-        os.dup2(self.devnull.fileno(), sys.stdout.fileno())
+        install_lib.__init__(self, dist)
+        # Append whichever platform specific extension to the jsbsim module
+        # name
+        build_ext = self.get_finalized_command('build_ext')
+        self.module_name = build_ext.get_ext_filename(build_ext.extensions[0].name)
 
-    def __del__(self):
-        os.dup2(self.oldstdout, sys.stdout.fileno())
-        self.devnull.close()
+    def install(self):
+        self.copy_file(os.path.join('tests', self.module_name),
+                       self.install_dir+self.module_name)
 
-# Installation process for the JSBSim Python module
+# Dummy class to skip the installation process of the library
+class SkipInstallLib(InstallJSBSimModule):
+    def run(self):
+        log.info("Skipped installation of %s", self.module_name)
+
+# Dummy class to skip the installation process of the egg infos
+class SkipInstallEgg(install_egg_info):
+    def run(self):
+        log.info("Skipped installation of %s", os.path.split(self.target)[-1])
+
+# Build & installation process for the JSBSim Python module
 setup(
     name="${PROJECT_NAME}",
     version="${PROJECT_VERSION}",
-    cmdclass={'build_ext': SilentBuild},
+    cmdclass={'build_ext': QuietBuild, 'install_lib': InstallJSBSimModule},
     ext_modules=[Extension('jsbsim', ['${JSBSIM_CXX}'],
                            libraries=['JSBSim'],
                            include_dirs=[os.path.join('${CMAKE_SOURCE_DIR}',
@@ -32,9 +65,10 @@ setup(
                                                       'src')],
                            language='c++')])
 
-# Build process for the fpectl module
+# Build process for the fpectl module (but don't install !!!)
 setup(
-    cmdclass={'build_ext': SilentBuild},
+    cmdclass={'build_ext': QuietBuild, 'install_lib': SkipInstallLib,
+              'install_egg_info': SkipInstallEgg},
     ext_modules=[Extension('fpectl',
                            sources=[os.path.join('${CMAKE_SOURCE_DIR}',
                                                  'python',

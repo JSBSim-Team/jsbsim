@@ -141,9 +141,9 @@ If you plan to install the Python module of JSBSim in addition to the C++ header
 > make install
 ```
 
-Alternatively, the Python module can be installed manually by invoking the following command from the `build` directory
+Alternatively, the Python module can be installed manually by invoking the following command from the `build` directory. The option `--skip-build` avoids to rebuild the module. The installation will be performed even if `INSTALL_PYTHON_MODULE` has not been set to `ON`.
 ```bash
-> python tests/setup.py install
+> python python/setup.py install --skip-build
 ```
 
 # Documentation

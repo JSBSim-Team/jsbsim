@@ -10,8 +10,9 @@ compile_pyx(jsbsim JSBSIM_CXX jsbsim.pyx)
 
 set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 configure_file(setup.py.in ${SETUP_PY})
-add_custom_target(python_modules ALL DEPENDS ${SETUP_PY} ${JSBSIM_CXX}
-  libJSBSim COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests)
+add_custom_target(PythonJSBSim ALL DEPENDS ${SETUP_PY} ${JSBSIM_CXX}
+  libJSBSim COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests
+  COMMENT "Building Python modules...")
 
 # Install the JSBSim Python module
 if (INSTALL_PYTHON_MODULE)
