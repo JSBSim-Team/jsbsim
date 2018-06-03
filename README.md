@@ -168,7 +168,7 @@ The packaging can be done by passing the option `CPACK_GENERATOR` to CMake then 
 
 *At the moment, only RPM and Debian packages are supported by JSBSim.*
 ```bash
-> cmake -DCPACK_GENERATOR=DEB # or RPM
+> cmake -DCPACK_GENERATOR=DEB .. # or RPM
 > make
 > cpack
 ```
