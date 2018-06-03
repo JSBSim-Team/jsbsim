@@ -135,34 +135,39 @@ make install
 ```
 ## Installing the Python module
 ### Installation with CMake
-If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_PYTHON_MODULE` to CMake. This is also the procedure you should follow if you plan to package JSBSim with CPack.
-**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html), if you are using one, in order to install the Python module platform-wide (i.e. in a directory such as `/usr`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `setuptools` as described in the second part of this paragraph.
+If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_PYTHON_MODULE` to CMake. This is the procedure you should follow if you plan to package JSBSim with CPack.
 ```bash
 > cmake -DINSTALL_PYTHON_MODULE=ON ..
 > make
 > make install
 ```
+**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html), if you are using one, in order to install the Python module platform-wide (i.e. in a directory such as `/usr`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `setuptools` as described below.
 
 ### Installation with Python setup tools.
-Alternatively, the Python module can be installed manually by invoking the following command from the `build` directory. You should follow this procedure to install JSBSim Python module if you are using Python virtual environments.
-The option `--skip-build` avoids to rebuild the module. The installation will be performed even if `INSTALL_PYTHON_MODULE` has **not** been set to `ON`.
+Alternatively, the Python module can be installed manually by invoking the Python `setuptools` from the `build` directory. The installation will be performed even if `INSTALL_PYTHON_MODULE` has **not** been set to `ON`.
+
+This is the procedure you should follow if you are using Python virtual environments.
+
 ```bash
 > python python/setup.py install --skip-build
 ```
+The option `--skip-build` avoids to rebuild the module.
 
 # Packaging JSBSim for releases
-JSBSim can also be packaged for releases. This is done automatically by Travis CI for the Ubuntu 14.04 LTS platform and the resulting Debian packages are available for download on the [JSBSim GitHub project](https://github.com/JSBSim-Team/jsbsim/releases).
+JSBSim can also be packaged for releases. This is done automatically by Travis CI for the Ubuntu 14.04 LTS platform and the resulting Debian packages are available for download on the [JSBSim GitHub project page](https://github.com/JSBSim-Team/jsbsim/releases).
+
 The packaging can be done by passing the option `CPACK_GENERATOR` to CMake then invoking CPack.
+
 *At the moment, only RPM and Debian packages are supported by JSBSim.*
 ```bash
 > cmake -DCPACK_GENERATOR=DEB # or RPM
 > make
 > cpack
 ```
-The following packages are then built
-- `JSBSim_[version].[platform].[architecture].deb` which contains the executables (and shared libraries if `BUILD_SHARED_LIBS` was set to `ON`)
+The following packages are then built (with the extension `.rpm` if you selected the RPM generator)
+- `JSBSim_[version].[platform].[architecture].deb` which contains the executables `JSBSim` and `aeromatic` (and shared libraries if `BUILD_SHARED_LIBS` was set to `ON`)
 - `JSBSim-devel_[version].[platform].[architecture].deb` which contains the files for C++ development headers (and the static library if `BUILD_SHARED_LIBS` was **not** set to `ON`)
-- `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
+- `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains the JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
 
 # Documentation
 
