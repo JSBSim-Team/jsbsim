@@ -112,7 +112,7 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/building-using-visualstudio/).
 
 # Testing JSBSim
-JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built](#building-the-python-module-of-JSBSim).
+JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built](#building-the-python-module-of-jsbsim).
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
