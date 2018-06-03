@@ -2,13 +2,13 @@
 |:-----------------:|:---------------------:|
 | [![Travis CI](https://travis-ci.org/JSBSim-Team/jsbsim.svg?branch=master)](https://travis-ci.org/JSBSim-Team/jsbsim) | [![Build status](https://ci.appveyor.com/api/projects/status/89wkiqja63kc6h2v/branch/master?svg=true)](https://ci.appveyor.com/project/agodemar/jsbsim/branch/master) |
 
-**[Download sources](#getting-the-source)**   |
-**[Build](#building-jsbsim)**                 |
-**[Tests](#testing-jsbsim)**                  |
-**[Installation](#installing-jsbsim)**        |
-**[Packaging](#packaging-jsbsim-for-releases) |
-**[Documentation](#documentation)**           |
-**[Contact](#contact)**                       |
+**[Download sources](#getting-the-source)**     |
+**[Build](#building-jsbsim)**                   |
+**[Tests](#testing-jsbsim)**                    |
+**[Installation](#installing-jsbsim)**          |
+**[Packaging](#packaging-jsbsim-for-releases)** |
+**[Documentation](#documentation)**             |
+**[Contact](#contact)**                         |
 
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
@@ -120,7 +120,7 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/building-using-visualstudio/).
 
 # Testing JSBSim
-JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need to [build the Python module of JSBSim](#building-the-python-module-of-jsbsim).
+JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need to [build the Python module of JSBSim](#building-the-python-module-of-jsbsim) first.
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
