@@ -180,6 +180,9 @@ class TestInitialConditions(JSBSimTestCase):
             if not var['specified']:
                 continue
 
+            if self.PhiOrPsiAndGimbalLock(var, vars):
+                continue
+
             value = var['value']
             prop = fdm[var['ic_prop']]
             if var['tag'] == 'psi':
@@ -213,6 +216,9 @@ class TestInitialConditions(JSBSimTestCase):
         # IC file.
         for var in vars:
             if not var['specified']:
+                continue
+
+            if self.PhiOrPsiAndGimbalLock(var, vars):
                 continue
 
             value = var['value']
@@ -341,5 +347,12 @@ class TestInitialConditions(JSBSimTestCase):
         ref = pd.read_csv('output.csv')
         self.assertEqual(ref['Time'][0], 0.0)
         self.assertAlmostEqual(ref['Latitude Geodetic (deg)'][0], glat)
+
+    def PhiOrPsiAndGimbalLock(self, var, vars):
+        # Look out for quaternion singularity/gimbal-lock when ic/theta == 90
+        # and avoid checking psi and phi in this case
+        if (var['tag'] == 'psi' or var['tag'] == 'phi') and [x for x in vars if x['tag'] == 'theta' and x['value'] == 90]:
+            return True
+        return False
 
 RunTest(TestInitialConditions)
