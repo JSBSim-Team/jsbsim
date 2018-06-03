@@ -99,8 +99,8 @@ The option `BUILD_SHARED_LIBS` must then be passed to CMake
 > make
 ```
 
-### Building the [Python](https://www.python.org/) module of JSBSim
-A Python module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
+### Building the Python module of JSBSim
+A [Python](https://www.python.org/) module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
 
 ## Building with Microsoft Visual Studio
 From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a project for JSBSim. The project file will setup Visual Studio for building the JSBSim executable.
@@ -112,7 +112,7 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/building-using-visualstudio/).
 
 # Testing JSBSim
-JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built].
+JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built](#building-the-python-module-of-JSBSim).
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
@@ -141,10 +141,10 @@ If you plan to install the Python module of JSBSim in addition to the C++ header
 > make
 > make install
 ```
-**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html), if you are using one, in order to install the Python module platform-wide (i.e. in a directory such as `/usr`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `setuptools` as described below.
+**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html) in order to install the Python module platform wide (i.e. in a directory such as `/usr/lib/python`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `setuptools` as described below.
 
 ### Installation with Python setup tools.
-Alternatively, the Python module can be installed manually by invoking the Python `setuptools` from the `build` directory. The installation will be performed even if `INSTALL_PYTHON_MODULE` has **not** been set to `ON`.
+Alternatively, the Python module can be installed manually by invoking the Python `setuptools` from the `build` directory. The installation will ignore the option `CMAKE_INSTALL_PREFIX` and will be performed even if `INSTALL_PYTHON_MODULE` has **not** been set to `ON`.
 
 This is the procedure you should follow if you are using Python virtual environments.
 
