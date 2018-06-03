@@ -351,7 +351,8 @@ class TestInitialConditions(JSBSimTestCase):
     def PhiOrPsiAndGimbalLock(self, var, vars):
         # Look out for quaternion singularity/gimbal-lock when ic/theta == 90
         # and avoid checking psi and phi in this case
-        if (var['tag'] == 'psi' or var['tag'] == 'phi') and [x for x in vars if x['tag'] == 'theta' and x['value'] == 90]:
+        if ((var['tag'] == 'psi' or var['tag'] == 'phi') and 
+            [x for x in vars if x['tag'] == 'theta' and abs(x['value'] - 90.0) <= 1E-8]):
             return True
         return False
 
