@@ -24,7 +24,7 @@ install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
   - make install
 script:
-  - ctest
+  - ctest -j2
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
