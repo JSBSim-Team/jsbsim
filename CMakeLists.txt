@@ -49,6 +49,21 @@ if (NOT (CYTHON_FOUND AND PYTHONLIBS_FOUND))
 endif()
 
 ################################################################################
+# Documentation
+################################################################################
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.dox.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  add_custom_target(doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+endif()
+
+################################################################################
 # Packaging                                                                    #
 ################################################################################
 
