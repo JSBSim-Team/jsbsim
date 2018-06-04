@@ -9,5 +9,4 @@ set(HEADERS FGInitialCondition.h
 add_full_path_name(INITIALISATION_SRC "${SOURCES}")
 add_full_path_name(INITIALISATION_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization COMPONENT devel)

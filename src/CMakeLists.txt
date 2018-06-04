@@ -46,6 +46,15 @@ endif()
 # Build and install libraries                                                  #
 ################################################################################
 
+set(VERSION_MESSAGE)
+if(DEFINED ENV{TRAVIS})
+  set(VERSION_MESSAGE " [build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
+elseif(DEFINED ENV{APPVEYOR})
+  set(VERSION_MESSAGE " [build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+endif()
+
+add_definitions("-DJSBSIM_VERSION=\"${PROJECT_VERSION}${VERSION_MESSAGE}\"")
+
 set(STATIC_LIBNAME_SUFFIX)
 if(MSVC AND BUILD_SHARED_LIBS)
     set(STATIC_LIBNAME_SUFFIX "static")
@@ -95,22 +104,31 @@ if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
                                    SOVERSION ${LIBRARY_SOVERSION}
                                    FRAMEWORK ON)
+  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+                            NAMELINK_SKIP
+                            COMPONENT runtime
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
+  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+                            NAMELINK_ONLY
+                            COMPONENT devel
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
 else()
+  install(TARGETS libJSBSim ARCHIVE DESTINATION lib
+                            COMPONENT devel
+                            # For Mac
+                            FRAMEWORK DESTINATION "/Library/Frameworks")
   # If JSBSim is built as a static library on an x86_64 *nix platform, the code
   # must be compiled with the -fPIC flag otherwise the compiler will complain:
   # relocation R_X86_64_32S against `a local symbol' can not be used when making
   # a shared object; recompile with -fPIC
   # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
-  if (UNIX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  if (UNIX AND (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"
+        OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64"))
     set_target_properties(libJSBSim PROPERTIES COMPILE_FLAGS "-fPIC")
   endif()
 endif()
-
-install(TARGETS libJSBSim LIBRARY DESTINATION lib
-                          ARCHIVE DESTINATION lib
-                          RUNTIME DESTINATION lib
-                          # For Mac
-                          FRAMEWORK DESTINATION "/Library/Frameworks")
 
 ################################################################################
 # Build and install command line executable                                    #
@@ -119,6 +137,5 @@ install(TARGETS libJSBSim LIBRARY DESTINATION lib
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
 
-install(TARGETS JSBSim RUNTIME DESTINATION bin)
-install(FILES ${HEADERS} DESTINATION include/JSBSim)
-
+install(TARGETS JSBSim RUNTIME DESTINATION bin COMPONENT runtime)
+install(FILES ${HEADERS} DESTINATION include/JSBSim COMPONENT devel)

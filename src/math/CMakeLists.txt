@@ -29,5 +29,4 @@ set(HEADERS FGColumnVector3.h
 add_full_path_name(MATH_SRC "${SOURCES}")
 add_full_path_name(MATH_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/math)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/math COMPONENT devel)

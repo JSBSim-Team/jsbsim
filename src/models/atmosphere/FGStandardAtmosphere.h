@@ -243,6 +243,8 @@ public:
   virtual double GetStdDensity(double altitude) const;
   //@}
 
+  virtual double GetDensityAltitude() const;
+
   /// Prints the U.S. Standard Atmosphere table.
   virtual void PrintStandardAtmosphereTable();
 

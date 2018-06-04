@@ -294,7 +294,6 @@ public:
     FGColumnVector3 TurbPQR;
     double WindPsi;
     double Vwind;
-    double PitotAngle;
   } in;
 
 private:
@@ -303,7 +302,6 @@ private:
 
   FGMatrix33 mTw2b;
   FGMatrix33 mTb2w;
-  FGMatrix33 mTw2p;
 
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vPilotAccelN;
@@ -314,12 +312,10 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
-  FGColumnVector3 vWindUVW;
-  FGColumnVector3 vPitotUVW;
   FGLocation vLocationVRP;
 
-  double Vt, Vground, Vpitot;
-  double Mach, MachU, MachPitot;
+  double Vt, Vground;
+  double Mach, MachU;
   double qbar, qbarUW, qbarUV;
   double Re; // Reynolds Number = V*c/mu
   double alpha, beta;

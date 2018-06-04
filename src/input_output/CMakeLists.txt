@@ -38,5 +38,4 @@ set(HEADERS FGGroundCallback.h
 add_full_path_name(INPUT_OUTPUT_SRC "${SOURCES}")
 add_full_path_name(INPUT_OUTPUT_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output COMPONENT devel)

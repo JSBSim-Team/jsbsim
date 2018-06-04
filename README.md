@@ -2,6 +2,14 @@
 |:-----------------:|:---------------------:|
 | [![Travis CI](https://travis-ci.org/JSBSim-Team/jsbsim.svg?branch=master)](https://travis-ci.org/JSBSim-Team/jsbsim) | [![Build status](https://ci.appveyor.com/api/projects/status/89wkiqja63kc6h2v/branch/master?svg=true)](https://ci.appveyor.com/project/agodemar/jsbsim/branch/master) |
 
+**[Download sources](#getting-the-source)**     |
+**[Build](#building-jsbsim)**                   |
+**[Tests](#testing-jsbsim)**                    |
+**[Installation](#installing-jsbsim)**          |
+**[Packaging](#packaging-jsbsim-for-releases)** |
+**[Documentation](#documentation)**             |
+**[Contact](#contact)**                         |
+
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
 
@@ -91,8 +99,16 @@ JSBSim uses the [Expat library](https://libexpat.github.io/) to read XML files. 
 > make
 ```
 
-### Building the [Python](https://www.python.org/) module of JSBSim
-A Python module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
+#### Building shared libraries
+Most of JSBSim code can be built as a shared library, so that the executable `JSBSim` and the Python module can share the same library which reduce the memory and disk space consumption.
+The option `BUILD_SHARED_LIBS` must then be passed to CMake
+```bash
+> cmake -DBUILD_SHARED_LIBS=ON ..
+> make
+```
+
+### Building the Python module of JSBSim
+A [Python](https://www.python.org/) module of JSBSim can also be built by CMake. For that, you need [Cython](http://cython.org/) installed on your platform. CMake will automatically detect Cython and build the Python module.
 
 ## Building with Microsoft Visual Studio
 From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a project for JSBSim. The project file will setup Visual Studio for building the JSBSim executable.
@@ -104,7 +120,7 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/building-using-visualstudio/).
 
 # Testing JSBSim
-JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need the [Python module for JSBSim to be built].
+JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need to [build the Python module of JSBSim](#building-the-python-module-of-jsbsim) first.
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
@@ -126,17 +142,40 @@ make
 make install
 ```
 ## Installing the Python module
-If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_PYTHON_MODULE` to CMake
+### Installation with CMake
+If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_PYTHON_MODULE` to CMake. This is the procedure you should follow if you plan to package JSBSim with CPack.
 ```bash
 > cmake -DINSTALL_PYTHON_MODULE=ON ..
 > make
 > make install
 ```
+**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html) in order to install the Python module platform wide (i.e. in a directory such as `/usr/lib/python`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `setuptools` as described below.
 
-Alternatively, the Python module can be installed manually by invoking the following command from the `build` directory
+### Installation with Python setup tools.
+Alternatively, the Python module can be installed manually by invoking the Python `setuptools` from the `build` directory. The installation will ignore the option `CMAKE_INSTALL_PREFIX` and will be performed even if `INSTALL_PYTHON_MODULE` has **not** been set to `ON`.
+
+This is the procedure you should follow if you are using Python virtual environments.
+
 ```bash
-> python tests/setup.py install
+> python python/setup.py install --skip-build
 ```
+The option `--skip-build` avoids to rebuild the module.
+
+# Packaging JSBSim for releases
+JSBSim can also be packaged for releases. This is done automatically by Travis CI for the Ubuntu 14.04 LTS platform and the resulting Debian packages are available for download on the [JSBSim GitHub project page](https://github.com/JSBSim-Team/jsbsim/releases).
+
+The packaging can be done by passing the option `CPACK_GENERATOR` to CMake then invoking CPack.
+
+*At the moment, only RPM and Debian packages are supported by JSBSim.*
+```bash
+> cmake -DCPACK_GENERATOR=DEB .. # or RPM
+> make
+> cpack
+```
+The following packages are then built (with the extension `.rpm` if you selected the RPM generator)
+- `JSBSim_[version].[platform].[architecture].deb` which contains the executables `JSBSim` and `aeromatic` (and shared libraries if `BUILD_SHARED_LIBS` was set to `ON`)
+- `JSBSim-devel_[version].[platform].[architecture].deb` which contains the files for C++ development headers (and the static library if `BUILD_SHARED_LIBS` was **not** set to `ON`)
+- `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains the JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
 
 # Documentation
 

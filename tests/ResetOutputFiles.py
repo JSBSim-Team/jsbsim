@@ -110,15 +110,16 @@ class ResetOutputFiles(JSBSimTestCase):
         self.assertTrue(self.sandbox.exists('that_one.csv'),
                         msg="Output name overwritten: 'that_one.csv' should exist.")
 
+        # Because JSBSim internals use static pointers, we cannot rely on
+        # Python garbage collector to decide when the FDM is destroyed
+        # otherwise we can get dangling pointers.
+        del fdm
+
         #
         # Check again on a brand new FDM
         #
         self.sandbox.delete_csv_files()
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
 
         fdm = CreateFDM(self.sandbox)
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
@@ -142,5 +143,7 @@ class ResetOutputFiles(JSBSimTestCase):
 
         self.assertTrue(self.sandbox.exists('oops.csv'),
                         msg="Reset new FDM: 'oops.csv' should exist.")
+
+        del fdm
 
 RunTest(ResetOutputFiles)

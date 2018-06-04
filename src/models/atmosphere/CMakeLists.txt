@@ -12,5 +12,4 @@ set(HEADERS FGMSIS.h
 add_full_path_name(ATMOSPHERE_SRC "${SOURCES}")
 add_full_path_name(ATMOSPHERE_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/models/atmosphere)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models/atmosphere COMPONENT devel)

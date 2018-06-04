@@ -52,5 +52,4 @@ propagate_source_files(MODELS ATMOSPHERE)
 propagate_source_files(MODELS FLIGHT_CONTROL)
 propagate_source_files(MODELS PROPULSION)
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/models)
-
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models COMPONENT devel)

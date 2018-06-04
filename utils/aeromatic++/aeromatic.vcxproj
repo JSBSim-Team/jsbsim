@@ -182,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aircraft.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="Systems\Controls.h" />
     <ClInclude Include="Systems\Propulsion.h" />
     <ClInclude Include="Systems\Systems.h" />

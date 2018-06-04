@@ -25,4 +25,4 @@ endif()
 add_full_path_name(XML_SRC "${SOURCES}")
 add_full_path_name(XML_HDR "${HEADERS}")
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml COMPONENT devel)

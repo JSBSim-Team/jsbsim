@@ -13,5 +13,4 @@ propagate_source_files(SIMGEAR PROPS)
 propagate_source_files(SIMGEAR XML)
 propagate_source_files(SIMGEAR IOSTREAMS)
 
-install(FILES ${JSBSIM_SIMGEAR_HDR} DESTINATION include/JSBSim/simgear)
-
+install(FILES ${JSBSIM_SIMGEAR_HDR} DESTINATION include/JSBSim/simgear COMPONENT devel)

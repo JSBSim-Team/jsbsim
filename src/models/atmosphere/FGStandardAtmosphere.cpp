@@ -428,6 +428,24 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGStandardAtmosphere::GetDensityAltitude() const
+{
+  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
+    return PressureAltitude;
+  } else {
+    // Calculate density given a non-standard temperature. GetPressure() and GetTemperature()
+    // take the temperature bias into account
+    double density = GetPressure(PressureAltitude) / (Reng * GetTemperature(PressureAltitude));
+
+    // Convert to density altitude based on ratio of density to standard sea-level density
+    double density_altitude = 518.67 / 0.00356616 * (1.0 - pow(density/StdSLdensity, 0.235));
+
+    return density_altitude;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGStandardAtmosphere::bind(void)
 {
   typedef double (FGStandardAtmosphere::*PMFi)(int) const;

@@ -260,7 +260,6 @@ CLASS DOCUMENTATION
  *
  *   - Linux (x86)
  *   - Windows (MSVC, Cygwin, Mingwin)
- *   - SGI (native compilers)
  *   - Mac OS X
  *   - FreeBSD
  *

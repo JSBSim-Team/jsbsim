@@ -4,13 +4,33 @@ image: Visual Studio 2017
 
 version: 1.0.{build}
 
-# TODO: switch to cmake approach
+# Need to add Python 3.6 explicitly to the path for CMake to pick it up,
+# also need to hide Python 2.7 otherwise CMake picks it up in preference to 3.6.
+# Cython isn't installed by default so we need to install it
+# Cython also gives a warning about not being on the path if the python36-x64 directory 
+# name in the PATH isn't all lowercase.
+# Need to call vcvarsall.bat to setup path and env variables for the 
+# the VS2017 compiler in order for CMake to pick them up
+# Need to explicitly set the path to Ninja.exe as the make program
+
 build_script:
-- cmd: msbuild JSBSim.vcxproj /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
+- ren c:\python27 python27-hide
+- pip install Cython
+- md build
+- cd build
+- call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
+- cmake --build . --config RelWithDebInfo 
+
 
 artifacts:
-- path: Release\JSBSim.exe
+- path: build\src\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
+
+- path: build\utils\aeromatic++\aeromatic.exe
+  name: JSBSim_Release_x64_v2018a
+
 
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
@@ -20,11 +40,11 @@ skip_tags: true
 
 deploy:
 - provider: GitHub
-  tag: JSBSim-win64-v2018a
-  description: VS 2017 - Release - x64
+  tag: JSBSim-trusty-v2018a
+  description: Windows - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: Release\JSBSim.exe
+  artifact: build\src\JSBSim.exe,build\utils\aeromatic++\aeromatic.exe
   prerelease: true
   on:
     branch: master
