@@ -8,7 +8,7 @@
 **[Installation](#installing-jsbsim)**          |
 **[Packaging](#packaging-jsbsim-for-releases)** |
 **[Documentation](#documentation)**             |
-**[Contact](#contact)**                         |
+**[Contact](#contact)**
 
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
@@ -183,7 +183,8 @@ A first place to look at for JSBSim documentation resouces is [http://jsbsim.sou
 
 However, due to the nature of the development of the project (JSBSim sources are updated often, sometimes even daily), several new features that are available in the software are not yet documented in the reference manual. Starting from March 2018 a new effort is underway to deliver an up-to-date documentation web site. You can browse the new *JSBSim Online Reference Manual* by going to: [https://jsbsim-team.github.io/jsbsim-reference-manual](https://jsbsim-team.github.io/jsbsim-reference-manual). The online manual is under construction and as a first milestone it will incorporate all the non-outdated material contained in the original PDF Reference Manual. The online manual web site is based on the GitHub Pages technology and its sources are available [here](https://github.com/JSBSim-Team/jsbsim-reference-manual). Eventually, the PDF Reference Manual will be superseded by the online manual, which is designed to be updated collaboratively as well as in efficient and timely fashion.
 
-The JSBSim API documentation can be viewed [here](http://jsbsim.sourceforge.net/JSBSim/).
+## C++ API documentation
+The JSBSim API documentation is built from the source code with [Doxygen](http://www.stack.nl/~dimitri/doxygen/). It is automatically published on GitHub each time a commit is pushed to the JSBSim GitHub project and can be viewed [here](https://jsbsim-team.github.io/jsbsim/).
 
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
