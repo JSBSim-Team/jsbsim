@@ -13,6 +13,11 @@ branches:
     - /^JSBSim-.*-v2018a.*$/
     - /^untagged-.*$/
 # command to install dependencies
+addons:
+  apt:
+    packages:
+      - doxygen
+      - graphviz
 before_install:
   - pip install cython numpy pandas scipy
   - gem install gist
@@ -28,6 +33,12 @@ script:
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
+# If the Python runtime is 2.7 then delete all Debian package but the Python module
+# The other packages will be deployed by the Python 3.4 runtime
+  - if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ] && [ "$USE_SYSTEM_EXPAT" = "ON" ]; then rm -f JSBSim*.deb; fi
+# Build the API documentation with Doxygen
+  - if [ "$TRAVIS_PYTHON_VERSION" = "3.4" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
+
 # If the build fails, the tests log will be uploaded to a gist under my account
 # (bcoconni) so that they can be deleted when irrelevant. The output of the
 # command line `gist` is the web address to the gist.
@@ -36,20 +47,27 @@ after_failure:
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
   - git tag -f $TRAVIS_TAG -m "Ubuntu Trusty 14.04 - Release - amd64"
-# If running Python 2.7 then delete all Debian package but the Python module
-# The other packages will deployed by the Python 3.4 runtime
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then rm -f JSBSim*.deb; fi
 deploy:
-  provider: releases
-  api_key:
-    secure: FHMLgbuRTSznrfMSpb3/nJIECKS0v8VFHUfC99ZpMBjZR4kxptDSPchpHzLFlrytzl1+H62w1iWChx5RYaH1MW8a/ejCUWYO0IjO6hLtG72nMJeDIBC2JzLnKN7cLqMrgEHKW7XmK3CtXGa/tXxu+KEvmbwskv3TOWGUokdUB3EI0vTLjjCQBW05VK7oSBq+7Jl4zGJumWwALP5EK7DC7McPXpLlkw5zdga+LQVcg8aDPrNwgF5kaH03b7TagYgiG2OFb4FAPvfz70RWeCRB7QQn1jOGULZ3PHz8EnNOfyBqGJ0flDyAfZcwJNY1OONW9ELnOctvzdmmU2P+KGuK4cJuzI59aRVQrwcSnnl26DU/95Hev4mdCIlPz798C3TfZu+U36uzGMurQJjE7Fg59N4WnqubhWKWu/7qRhn1uttdPm5sIcVAPpshKm8uzlsTLLMTNUMj5ZIimVbFV2lz0PbDWPnbHxHeDKgaVkIjTQy4e1XZH7IhjIVODG2PK1TnWS/6RRTBUVXxwup7Tj8HhVbLjrfPs2qLDJv70sRyKUgAqqKdGkr/7Es52y1i/io3BJqiIOpJBM5Wyzk37NCAlX4WCoqJZQbKKRQ9hH5baZaxlpz28Hc0tbAqfwFOwAOonf1+s7MBM896EoAtdKpr0Z0F/ra9ePQezTbtQhvws3g=
-  file_glob: true
-  file:
-    - "JSBSim-devel*.deb"
-    - "JSBSim_*[0-9].deb"
-    - "python[2-3]-JSBSim*.deb"
-  skip_cleanup: true
-  overwrite: true
-  on:
-    tags: true
-    condition: $USE_SYSTEM_EXPAT = ON
+# Deploy the Debian packages
+  - provider: releases
+    api_key:
+      secure: FHMLgbuRTSznrfMSpb3/nJIECKS0v8VFHUfC99ZpMBjZR4kxptDSPchpHzLFlrytzl1+H62w1iWChx5RYaH1MW8a/ejCUWYO0IjO6hLtG72nMJeDIBC2JzLnKN7cLqMrgEHKW7XmK3CtXGa/tXxu+KEvmbwskv3TOWGUokdUB3EI0vTLjjCQBW05VK7oSBq+7Jl4zGJumWwALP5EK7DC7McPXpLlkw5zdga+LQVcg8aDPrNwgF5kaH03b7TagYgiG2OFb4FAPvfz70RWeCRB7QQn1jOGULZ3PHz8EnNOfyBqGJ0flDyAfZcwJNY1OONW9ELnOctvzdmmU2P+KGuK4cJuzI59aRVQrwcSnnl26DU/95Hev4mdCIlPz798C3TfZu+U36uzGMurQJjE7Fg59N4WnqubhWKWu/7qRhn1uttdPm5sIcVAPpshKm8uzlsTLLMTNUMj5ZIimVbFV2lz0PbDWPnbHxHeDKgaVkIjTQy4e1XZH7IhjIVODG2PK1TnWS/6RRTBUVXxwup7Tj8HhVbLjrfPs2qLDJv70sRyKUgAqqKdGkr/7Es52y1i/io3BJqiIOpJBM5Wyzk37NCAlX4WCoqJZQbKKRQ9hH5baZaxlpz28Hc0tbAqfwFOwAOonf1+s7MBM896EoAtdKpr0Z0F/ra9ePQezTbtQhvws3g=
+    file_glob: true
+    file:
+      - "JSBSim-devel*.deb"
+      - "JSBSim_*[0-9].deb"
+      - "python[2-3]-JSBSim*.deb"
+    skip_cleanup: true
+    overwrite: true
+    on:
+      tags: true
+      condition: $USE_SYSTEM_EXPAT = ON
+# Deploy the Doxygen built docs
+  - provider: pages
+    skip_cleanup: true
+    local_dir: build/documentation/html
+    github_token: $GITHUB_TOKEN
+    verbose: true
+    on:
+      python: 3.4
+      condition: $USE_SYSTEM_EXPAT = OFF
