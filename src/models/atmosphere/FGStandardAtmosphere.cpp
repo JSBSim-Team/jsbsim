@@ -97,6 +97,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGAtmosphere(fdme
 
   LapseRateVector.resize(StdAtmosTemperatureTable->GetNumRows()-1);
   PressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
+  StdPressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
 
   // Assume the altitude to fade out the gradient at is at the highest
   // altitude in the table. Above that, other functions are used to
@@ -130,6 +131,7 @@ bool FGStandardAtmosphere::InitModel(void)
   SLpressure = Pressure;
   StdSLdensity     = SLdensity = Density;
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
+  StdPressureBreakpointVector = PressureBreakpointVector;
 
   rSLtemperature = 1/SLtemperature ;
   rSLpressure    = 1/SLpressure    ;
@@ -244,15 +246,38 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 
 double FGStandardAtmosphere::GetStdPressure(double altitude) const
 {
-  double press=0;
-  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
-    press = GetPressure(altitude);
-  } else if (altitude <= 100000.0) {
-    GetStdPressure100K(altitude);
-  } else {
-    // Cannot currently retrieve the standard pressure
+  unsigned int b=0;
+  double pressure = 0.0;
+  double Lmb, Exp, Tmb, deltaH, factor;
+  double numRows = StdAtmosTemperatureTable->GetNumRows();
+
+  // Iterate through the altitudes to find the current Base Altitude
+  // in the table. That is, if the current altitude (the argument passed in)
+  // is 20000 ft, then the base altitude from the table is 0.0. If the
+  // passed-in altitude is 40000 ft, the base altitude is 36089.2388 ft (and
+  // the index "b" is 2 - the second entry in the table).
+  double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
+  double GeoPotAlt = (altitude*20855531.5)/(20855531.5+altitude);
+  while ((GeoPotAlt >= testAlt) && (b <= numRows-2)) {
+    b++;
+    testAlt = (*StdAtmosTemperatureTable)(b+1,0);
   }
-  return press;
+  if (b>0) b--;
+
+  double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
+  Tmb = GetStdTemperature(BaseAlt);
+  deltaH = GeoPotAlt - BaseAlt;
+
+  if (LapseRateVector[b] != 0.00) {
+    Lmb = LapseRateVector[b];
+    Exp = Mair/(Rstar*Lmb);
+    factor = Tmb/(Tmb + Lmb*deltaH);
+    pressure = StdPressureBreakpointVector[b]*pow(factor, Exp);
+  } else {
+    pressure = StdPressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+  }
+
+  return pressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
