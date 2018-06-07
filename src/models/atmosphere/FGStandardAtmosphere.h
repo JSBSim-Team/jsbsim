@@ -243,7 +243,7 @@ public:
   virtual double GetStdDensity(double altitude) const;
   //@}
 
-  virtual double GetDensityAltitude() const;
+  virtual double CalculateDensityAltitude(const double altitude);
 
   /// Prints the U.S. Standard Atmosphere table.
   virtual void PrintStandardAtmosphereTable();
@@ -269,8 +269,22 @@ protected:
   /// altitudes in the standard temperature table.
   void CalculatePressureBreakpoints();
 
+  /// Convert a geometric altitude to a geopotential altitude
+  double GeopotentialAltitude(double geometalt) const { return (geometalt * EarthRadius) / (EarthRadius + geometalt); }
+
+  /// Convert a geopotential altitude to a geometric altitude
+  double GeometricAltitude(double geopotalt) const { return (geopotalt * EarthRadius) / (EarthRadius - geopotalt); }
+
   virtual void bind(void);
   void Debug(int from);
+
+  /// Earth radius in ft as defined for ISA 1976
+  static const double EarthRadius;
+
+  /// Density altitude calculation parameters
+  double ToposphereMaxAltitude;
+  double DAToposphereFactor;
+  double DAToposphereExponent;
 };
 
 } // namespace JSBSim

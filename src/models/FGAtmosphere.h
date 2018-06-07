@@ -214,6 +214,8 @@ public:
 
   virtual double GetPressureAltitude() const {return PressureAltitude;}
 
+  virtual double CalculateDensityAltitude(const double altitude) { return altitude; }
+
   struct Inputs {
     double altitudeASL;
   } in;
