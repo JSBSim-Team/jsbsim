@@ -57,8 +57,9 @@ IDENT(IdHdr,ID_STANDARDATMOSPHERE);
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// Earth radius in ft as defined for ISA 1976
-const double FGStandardAtmosphere::EarthRadius = 20855531.5;
+// Effective radius of the earth at a specific latitude per ISA 1976 (converted to ft)
+// r0 = 6356766 m
+const double FGStandardAtmosphere::EarthRadius = 6356766.0/FGJSBBase::fttom;
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGAtmosphere(fdmex),
                                                                TemperatureBias(0.0),
@@ -131,12 +132,12 @@ bool FGStandardAtmosphere::InitModel(void)
   CalculatePressureBreakpoints();
 
   // Density altitude parameters
-  // Density altitude formula only valid up until top of the toposhere
-  ToposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
-  // Standard sea level temp / toposphere lapse rate
-  DAToposphereFactor = -(*StdAtmosTemperatureTable)(1, 1) / LapseRateVector[0];
-  // Haven't figured out British units yet to compute this 'magic' number
-  DAToposphereExponent = 0.2349781324440659; // 0.235; 
+  // Density altitude formula only valid up until top of the Troposhere
+  TroposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
+  // Standard sea level temp / Troposphere lapse rate
+  DATroposphereFactor = -(*StdAtmosTemperatureTable)(1, 1) / LapseRateVector[0];
+  // Unitless exponent computed using SI values from LR/(g0M - L*R) 
+  DATroposphereExponent = 0.2349781324440659;  
 
   Calculate(0.0);
   StdSLtemperature = SLtemperature = Temperature;
@@ -212,7 +213,7 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 
 double FGStandardAtmosphere::GetTemperature(double altitude) const
 {
-  double GeoPotAlt = GeopotentialAltitude(altitude);;
+  double GeoPotAlt = GeopotentialAltitude(altitude);
 
   double T = StdAtmosTemperatureTable->GetValue(GeoPotAlt) + TemperatureBias;
   if (altitude <= GradientFadeoutAltitude)
@@ -232,7 +233,7 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 
   if (altitude < 298556.4) {                // 91 km - station 8
 
-    double GeoPotAlt = GeopotentialAltitude(altitude);;
+    double GeoPotAlt = GeopotentialAltitude(altitude);
     temp = StdAtmosTemperatureTable->GetValue(GeoPotAlt);
 
   } else if (altitude < 360892.4) {        // 110 km - station 9
@@ -269,7 +270,7 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
   // passed-in altitude is 40000 ft, the base altitude is 36089.2388 ft (and
   // the index "b" is 2 - the second entry in the table).
   double testAlt = (*StdAtmosTemperatureTable)(b+1,0);
-  double GeoPotAlt = GeopotentialAltitude(altitude);;
+  double GeoPotAlt = GeopotentialAltitude(altitude);
   while ((GeoPotAlt >= testAlt) && (b <= numRows-2)) {
     b++;
     testAlt = (*StdAtmosTemperatureTable)(b+1,0);
@@ -465,7 +466,7 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Calculates the density altitude given any temperature or pressure bias.
-// Currently the formula used is only valid up until the top of the troposphere,
+// Currently the formula used is only valid up until the top of the Troposphere,
 // 11.019km - 36151.8ft.
 // https://en.wikipedia.org/wiki/Density_altitude
 // https://wahiduddin.net/calc/density_altitude.htm
@@ -475,7 +476,7 @@ double FGStandardAtmosphere::CalculateDensityAltitude(const double altitude)
   if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
     return altitude;
   } else {
-    if (altitude > ToposphereMaxAltitude)
+    if (altitude > TroposphereMaxAltitude)
       return altitude;
     else {
       // Calculate density given a non-standard temperature. GetPressure() and GetTemperature()
@@ -483,7 +484,7 @@ double FGStandardAtmosphere::CalculateDensityAltitude(const double altitude)
       double density = GetPressure(altitude) / (Reng * GetTemperature(altitude));
 
       // Convert to density altitude based on ratio of density to standard sea-level density
-      double density_altitude = DAToposphereFactor * (1.0 - pow(density / StdSLdensity, DAToposphereExponent));
+      double density_altitude = DATroposphereFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
 
       return GeometricAltitude(density_altitude);
     }

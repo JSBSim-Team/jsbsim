@@ -282,9 +282,9 @@ protected:
   static const double EarthRadius;
 
   /// Density altitude calculation parameters
-  double ToposphereMaxAltitude;
-  double DAToposphereFactor;
-  double DAToposphereExponent;
+  double TroposphereMaxAltitude;
+  double DATroposphereFactor;
+  double DATroposphereExponent;
 };
 
 } // namespace JSBSim
