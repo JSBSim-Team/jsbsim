@@ -251,7 +251,7 @@ public:
   https://en.wikipedia.org/wiki/Density_altitude
   https://wahiduddin.net/calc/density_altitude.htm
   */
-  virtual double CalculateDensityAltitude(double altitude) const;
+  virtual double CalculateDensityAltitude(double altitude);
 
   /// Prints the U.S. Standard Atmosphere table.
   virtual void PrintStandardAtmosphereTable();

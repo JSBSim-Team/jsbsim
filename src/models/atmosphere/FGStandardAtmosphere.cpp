@@ -478,7 +478,7 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::CalculateDensityAltitude(double altitude) const
+double FGStandardAtmosphere::CalculateDensityAltitude(double altitude)
 {
   if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
     return altitude;
