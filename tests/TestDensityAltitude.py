@@ -28,7 +28,7 @@ class TestDensityAltitude(JSBSimTestCase):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', '737_cruise.xml')
         fdm.load_script(script_path)
 
-        # Reference data (Pressure Altitude, Temp Delta (Rankine), Density Altitude)
+        # Reference data (Geometric Altitude, Temp Delta (Rankine), Density Altitude)
         reference_data = [
             (0,        0,   0),
             (0,      -27,  -1838.3988720967413),
@@ -38,13 +38,16 @@ class TestDensityAltitude(JSBSimTestCase):
             (10000,   27,   11118.132212705985),
             (20000,    0,   20000),
             (20000,  -27,   19524.634674149132),
-            (20000,   27,   20511.56113767532)
+            (20000,   27,   20511.56113767532),
+            (30000,    0,   30000),
+            (30000,  -27,   30207.172355142768),
+            (30000,   27,   29904.429503416)
             ]
 
         # Run through refernce data and compare JSBSim calculated density altitude to expected
-        for pressure_alt, delta_T, density_alt in reference_data:
+        for geometric_alt, delta_T, density_alt in reference_data:
 
-            fdm['ic/h-sl-ft'] = pressure_alt
+            fdm['ic/h-sl-ft'] = geometric_alt
             fdm['atmosphere/delta-T'] = delta_T
             fdm.run_ic()
 
