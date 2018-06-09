@@ -215,9 +215,17 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
 {
   double GeoPotAlt = GeopotentialAltitude(altitude);
 
-  double T = StdAtmosTemperatureTable->GetValue(GeoPotAlt) + TemperatureBias;
-  if (altitude <= GradientFadeoutAltitude)
-    T += TemperatureDeltaGradient * (GradientFadeoutAltitude - altitude);
+  double T;
+
+  if (GeoPotAlt >= 0.0)
+    T = StdAtmosTemperatureTable->GetValue(GeoPotAlt);
+  else
+    T = StdAtmosTemperatureTable->GetValue(0.0) + GeoPotAlt*LapseRateVector[0];
+
+  T += TemperatureBias;
+
+  if (GeoPotAlt <= GradientFadeoutAltitude)
+    T += TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
 
   return T;
 }
@@ -234,7 +242,11 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
   if (altitude < 298556.4) {                // 91 km - station 8
 
     double GeoPotAlt = GeopotentialAltitude(altitude);
-    temp = StdAtmosTemperatureTable->GetValue(GeoPotAlt);
+
+    if (GeoPotAlt >= 0.0)
+      temp = StdAtmosTemperatureTable->GetValue(GeoPotAlt);
+    else
+      temp = StdAtmosTemperatureTable->GetValue(0.0) + GeoPotAlt*LapseRateVector[0];
 
   } else if (altitude < 360892.4) {        // 110 km - station 9
 
