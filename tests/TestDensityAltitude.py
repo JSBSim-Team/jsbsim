@@ -31,26 +31,34 @@ class TestDensityAltitude(JSBSimTestCase):
         # Reference data (Pressure Altitude, Temp Delta (Rankine), Density Altitude)
         reference_data = [
             (0,        0,   0),
-            (0,      -27,  -1838.7331194627707),
-            (0,       27,   1724.1606364208037),
+            (0,      -27,  -1838.3988720967413),
+            (0,       27,   1724.143674434715),
             (10000,    0,   10000),
-            (10000,  -27,   8839.82645080842),
-            (10000,   27,   11113.201852749373),
+            (10000,  -27,   8842.77714328003),
+            (10000,   27,   11118.132212705985),
             (20000,    0,   20000),
-            (20000,  -27,   19508.060846598906),
-            (20000,   27,   20493.173549213785)
+            (20000,  -27,   19524.634674149132),
+            (20000,   27,   20511.56113767532)
             ]
 
         # Run through refernce data and compare JSBSim calculated density altitude to expected
         for pressure_alt, delta_T, density_alt in reference_data:
 
-            fdm['ic/h-agl-ft'] = pressure_alt
-            fdm.run_ic()
+            fdm['ic/h-sl-ft'] = pressure_alt
             fdm['atmosphere/delta-T'] = delta_T
+            fdm.run_ic()
 
             jsbSim_density_alt = fdm['atmosphere/density-altitude']
 
             self.assertAlmostEqual(density_alt, jsbSim_density_alt, delta=1e-7)
+
+            density_ref = fdm['atmosphere/rho-slugs_ft3']
+
+            fdm['ic/h-sl-ft'] = jsbSim_density_alt
+            fdm['atmosphere/delta-T'] = 0.0
+            fdm.run_ic()
+
+            self.assertAlmostEqual(density_ref, fdm['atmosphere/rho-slugs_ft3'])
 
         del fdm
 
