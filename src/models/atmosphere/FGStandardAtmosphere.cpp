@@ -465,13 +465,8 @@ void FGStandardAtmosphere::ResetSLPressure()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Calculates the density altitude given any temperature or pressure bias.
-// Currently the formula used is only valid up until the top of the Troposphere,
-// 11.019km - 36151.8ft.
-// https://en.wikipedia.org/wiki/Density_altitude
-// https://wahiduddin.net/calc/density_altitude.htm
 
-double FGStandardAtmosphere::CalculateDensityAltitude(const double altitude) 
+double FGStandardAtmosphere::CalculateDensityAltitude(double altitude) const
 {
   if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
     return altitude;

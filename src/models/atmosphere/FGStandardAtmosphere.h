@@ -243,7 +243,15 @@ public:
   virtual double GetStdDensity(double altitude) const;
   //@}
 
-  virtual double CalculateDensityAltitude(const double altitude);
+  /** Calculates the density altitude given any temperature or pressure bias.
+  Currently the formula used is only valid up until the top of the Troposphere,
+  11.019km - 36151.8ft.
+  @param altitude 
+  @see
+  https://en.wikipedia.org/wiki/Density_altitude
+  https://wahiduddin.net/calc/density_altitude.htm
+  */
+  virtual double CalculateDensityAltitude(double altitude) const;
 
   /// Prints the U.S. Standard Atmosphere table.
   virtual void PrintStandardAtmosphereTable();
