@@ -131,7 +131,7 @@ void FGAtmosphere::Calculate(double altitude)
 
   Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
   PressureAltitude = altitude;
-  DensityAltitude = altitude;
+  DensityAltitude = CalculateDensityAltitude(altitude);
 
   Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
   KinematicViscosity = Viscosity / Density;
