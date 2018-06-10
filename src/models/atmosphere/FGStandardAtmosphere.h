@@ -301,6 +301,9 @@ protected:
   /// Density and pressure altitude calculation parameters
   double TroposphereMaxAltitude;
   double TroposphereAltitudeScaleFactor;
+  /** Unitless exponent computed using SI values from \f$L\times R/(g_0 M-L\times R)\f$
+      @see doc/spreadsheets/Standard_Atmosphere_constants.ods
+   */
   double DATroposphereExponent;
   double PATroposphereExponent;
 };
