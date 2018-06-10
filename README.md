@@ -6,7 +6,6 @@
 <img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
 </p>
 
-**[Introduction](#introduction)**              |  
 **[User Guide](#user-guide)**                  |
 **[Developer Docs](#developer-documentation)** |
 **[Contact](#contact)**                        |
@@ -14,6 +13,12 @@
 
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
+ 
+Features include:
+
+* Fully configurable flight control system, aerodynamics, propulsion, landing gear arrangement, etc. through XML-based text file format.
+* Rotational earth effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
+* Configurable data output formats to screen, file, socket, or any combination of those.
 
 More information on JSBSim can be found at the JSBSim home page here:
 
@@ -210,8 +215,8 @@ The following packages are then built (with the extension `.rpm` if you selected
 - `JSBSim-devel_[version].[platform].[architecture].deb` which contains the files for C++ development headers (and the static library if `BUILD_SHARED_LIBS` was **not** set to `ON`)
 - `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains the JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
 
-## Developer documentation
-The C++ source code is documented with Doxygen see the [C++ API documentation](#c++-api-documentation).
+## Code documentation
+The C++ source code is documented with Doxygen see the [C++ API documentation](#c-api-documentation).
 
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
@@ -219,6 +224,6 @@ For more information on JSBSim, you can contact the development team on the mail
 # Legal stuff
 JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
 
-No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference.
+No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
 
-Likewise, the aircraft models included in this project and distribution do not include any proprietary, sensitive, or classified data. All data is derived from textbooks, freely available technical reports, or other public data.
+Likewise, the aircraft models included in this project and distribution do not include any proprietary, sensitive, or classified data. All data is derived from textbooks (such as Stevens and Lewis "Aircraft Control and Simulation" and Sutton's "Rocket Propulsion Elements"), freely available technical reports (see: http://ntrs.nasa.gov and http://www.aiaa.org), or other public data (such as the FAA web site). Aircraft models included in the JSBSim distribution and with names corresponding to existing commercial or military aircraft are approximations crafted using publicly available information, and are for educational or entertainment uses only. 
