@@ -10,6 +10,7 @@
 **[Developer Docs](#developer-documentation)** |
 **[Contact](#contact)**                        |
 **[Legal notice](#legal-notice)**
+---
 
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
@@ -25,6 +26,11 @@ More information on JSBSim can be found at the JSBSim home page here:
 http://www.jsbsim.org
 
 # User Guide
+**[Installation](#installation)** |
+**[Quick Start](#quick-start)**   |
+**[User Docs](#user-documentation)** |
+**[Interfacing JSBSim with your app](#interfacing-jsbsim-with-your-application)**
+---
 ## Installation
 ### Windows
 Win64 executables for JSBSim are available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases). There are 2 executables:
@@ -58,20 +64,29 @@ A first place to look at for JSBSim documentation resources is [http://jsbsim.so
 
 However, due to the nature of the development of the project (JSBSim sources are updated often, sometimes even daily), several new features that are available in the software are not yet documented in the reference manual. Starting from March 2018 a new effort is underway to deliver an up-to-date documentation web site. You can browse the new *JSBSim Online Reference Manual* by going to: [https://jsbsim-team.github.io/jsbsim-reference-manual](https://jsbsim-team.github.io/jsbsim-reference-manual). The online manual is under construction and as a first milestone it will incorporate all the non-outdated material contained in the original PDF Reference Manual. The online manual web site is based on the GitHub Pages technology and its sources are available [here](https://github.com/JSBSim-Team/jsbsim-reference-manual). Eventually, the PDF Reference Manual will be superseded by the online manual, which is designed to be updated collaboratively as well as in efficient and timely fashion.
 
-## C++ API documentation
-JSBSim can be interfaced or integrated to your application via a C++ API
+## Interfacing JSBSim with your application
+JSBSim can be interfaced or integrated to your application via a C++ API. The  following  code  illustrates  how  JSBSim  could  be  called  by  a  small  program, with execution being controlled by a script: 
+```c++
+#include <FGFDMExec.h> 
 
-The JSBSim C++ API documentation is built from the source code with [Doxygen](http://www.stack.nl/~dimitri/doxygen/) and is automatically published on GitHub each time a commit is pushed to the JSBSim GitHub project. It can be viewed here:
-
-https://jsbsim-team.github.io/jsbsim/.
+int main(int argc, char **argv) 
+{ 
+  JSBSim::FGFDMExec FDMExec; 
+  bool result = true; 
+  FDMExec.LoadScript(argv[1]); 
+  while (result) result = FDMExec.Run();
+}
+ ```
+The API is described in more details in the [C++ API documentation](#c-api-documentation)
 
 # Developer documentation
-**[Sources Download](#downloading-the-source)** |
+**[Source Code](#downloading-the-source)** |
 **[Build](#building-jsbsim)**                   |
 **[Tests](#testing-jsbsim)**                    |
 **[Installation](#installing-jsbsim)**          |
 **[Packaging](#packaging-jsbsim-for-releases)** |
-**[Code documentation](#code-documentation)**
+**[C++ API](#c-api-documentation)**
+---
 ## Downloading the source
 
 The GitHub repository of JSBSim is reachable at this link: [github.com/JSBSim-Team/jsbsim](https://github.com/JSBSim-Team/jsbsim).
@@ -216,8 +231,12 @@ The following packages are then built (with the extension `.rpm` if you selected
 - `JSBSim-devel_[version].[platform].[architecture].deb` which contains the files for C++ development headers (and the static library if `BUILD_SHARED_LIBS` was **not** set to `ON`)
 - `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains the JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
 
-## Code documentation
-The C++ source code is documented with Doxygen and is generated automatically by Travis CI (see the [C++ API documentation](#c-api-documentation)). If you modify the documentation, you might need to generate the documentation locally in which case you should run the following command after `cmake` has been executed
+## C++ API documentation
+The JSBSim C++ API documentation is built from the source code with [Doxygen](http://www.stack.nl/~dimitri/doxygen/) and is automatically published on GitHub each time a commit is pushed to the JSBSim GitHub project. It can be viewed here:
+
+https://jsbsim-team.github.io/jsbsim/.
+
+If you modify the documentation, you might need to generate the documentation locally in which case you should run the following command after `cmake` has been executed
 ```bash
 > make doc
 ```
