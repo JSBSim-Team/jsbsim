@@ -125,24 +125,24 @@ FGStandardAtmosphere::~FGStandardAtmosphere()
 
 bool FGStandardAtmosphere::InitModel(void)
 {
-  PressureBreakpointVector[0] = StdSLpressure = 2116.22; // psf
+  PressureBreakpointVector[0] = StdSLpressure = SLpressure = Pressure = 2116.22; // psf
   TemperatureDeltaGradient = 0.0;
   TemperatureBias = 0.0;
   CalculateLapseRates();
   CalculatePressureBreakpoints();
 
+  StdSLtemperature = SLtemperature = (*StdAtmosTemperatureTable)(1, 1);
+  StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
+
   // Density altitude parameters
   // Density altitude formula only valid up until top of the Troposhere
   TroposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
   // Standard sea level temp / Troposphere lapse rate
-  DATroposphereFactor = -(*StdAtmosTemperatureTable)(1, 1) / LapseRateVector[0];
+  DATroposphereFactor = -StdSLtemperature / LapseRateVector[0];
   // Unitless exponent computed using SI values from LR/(g0M - L*R) 
-  DATroposphereExponent = 0.2349781324440659;  
+  DATroposphereExponent = 0.2349781324440659;
 
   Calculate(0.0);
-  StdSLtemperature = SLtemperature = Temperature;
-  SLpressure = Pressure;
-  StdSLdensity     = SLdensity = Density;
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
   StdPressureBreakpointVector = PressureBreakpointVector;
 
