@@ -243,16 +243,6 @@ public:
   virtual double GetStdDensity(double altitude) const;
   //@}
 
-  /** Calculates the density altitude given any temperature or pressure bias.
-  Currently the formula used is only valid up until the top of the Troposphere,
-  11.019km - 36151.8ft.
-  @param altitude 
-  @see
-  https://en.wikipedia.org/wiki/Density_altitude
-  https://wahiduddin.net/calc/density_altitude.htm
-  */
-  virtual double CalculateDensityAltitude(double altitude);
-
   /// Prints the U.S. Standard Atmosphere table.
   virtual void PrintStandardAtmosphereTable();
 
@@ -283,16 +273,36 @@ protected:
   /// Convert a geopotential altitude to a geometric altitude
   double GeometricAltitude(double geopotalt) const { return (geopotalt * EarthRadius) / (EarthRadius - geopotalt); }
 
+  /** Calculates the density altitude given any temperature or pressure bias.
+  Currently the formula used is only valid up until the top of the Troposphere,
+  11.019km - 36151.8ft.
+  @param altitude
+  @see
+  https://en.wikipedia.org/wiki/Density_altitude
+  https://wahiduddin.net/calc/density_altitude.htm
+  */
+  virtual double CalculateDensityAltitude(double altitude);
+
+  /** Calculates the pressure altitude given any temperature or pressure bias.
+  Currently the formula used is only valid up until the top of the Troposphere,
+  11.019km - 36151.8ft.
+  @param altitude
+  @see
+  https://en.wikipedia.org/wiki/Pressure_altitude
+  */
+  virtual double CalculatePressureAltitude(double altitude);
+
   virtual void bind(void);
   void Debug(int from);
 
   /// Earth radius in ft as defined for ISA 1976
   static const double EarthRadius;
 
-  /// Density altitude calculation parameters
+  /// Density and pressure altitude calculation parameters
   double TroposphereMaxAltitude;
-  double DATroposphereFactor;
+  double TroposphereAltitudeScaleFactor;
   double DATroposphereExponent;
+  double PATroposphereExponent;
 };
 
 } // namespace JSBSim

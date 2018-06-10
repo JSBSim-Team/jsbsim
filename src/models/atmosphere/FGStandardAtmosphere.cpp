@@ -134,13 +134,15 @@ bool FGStandardAtmosphere::InitModel(void)
   StdSLtemperature = SLtemperature = (*StdAtmosTemperatureTable)(1, 1);
   StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
 
-  // Density altitude parameters
+  // Density and pressure altitude parameters
   // Density altitude formula only valid up until top of the Troposhere
   TroposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
   // Standard sea level temp / Troposphere lapse rate
-  DATroposphereFactor = -StdSLtemperature / LapseRateVector[0];
+  TroposphereAltitudeScaleFactor = -StdSLtemperature / LapseRateVector[0];
   // Unitless exponent computed using SI values from LR/(g0M - L*R) 
   DATroposphereExponent = 0.2349781324440659;
+  // Pressure exponent 
+  PATroposphereExponent = 1.0 / (Mair / (Rstar * -LapseRateVector[0]));
 
   Calculate(0.0);
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
@@ -491,9 +493,27 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double altitude)
       double density = GetPressure(altitude) / (Reng * GetTemperature(altitude));
 
       // Convert to density altitude based on ratio of density to standard sea-level density
-      double density_altitude = DATroposphereFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
+      double density_altitude = TroposphereAltitudeScaleFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
 
       return GeometricAltitude(density_altitude);
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::CalculatePressureAltitude(double altitude)
+{
+  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
+    return altitude;
+  }
+  else {
+    if (altitude > TroposphereMaxAltitude)
+      return altitude;
+    else {
+      double pressure_altitude = TroposphereAltitudeScaleFactor * (1 - pow(GetPressure(altitude) / StdSLpressure, PATroposphereExponent));
+
+      return GeometricAltitude(pressure_altitude);
     }
   }
 }

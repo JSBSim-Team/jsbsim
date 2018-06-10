@@ -214,8 +214,6 @@ public:
 
   virtual double GetPressureAltitude() const {return PressureAltitude;}
 
-  virtual double CalculateDensityAltitude(const double altitude) { return altitude; }
-
   struct Inputs {
     double altitudeASL;
   } in;
@@ -233,6 +231,10 @@ protected:
 
   /// Calculate the atmosphere for the given altitude.
   void Calculate(double altitude);
+
+  virtual double CalculateDensityAltitude(const double altitude) { return altitude; }
+
+  virtual double CalculatePressureAltitude(const double altitude) { return altitude; }
 
   // Converts to Rankine from one of several unit systems.
   virtual double ConvertToRankine(double t, eTemperature unit) const;
