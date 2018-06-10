@@ -139,8 +139,8 @@ bool FGStandardAtmosphere::InitModel(void)
   TroposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
   // Standard sea level temp / Troposphere lapse rate
   DATroposphereFactor = -StdSLtemperature / LapseRateVector[0];
-  // Unitless exponent computed using SI values from LR/(g0M - L*R) 
-  DATroposphereExponent = 0.2349781324440659;
+  // Unitless exponent computed using SI values from LR/(g0M - L*R)
+  DATroposphereExponent = 0.23496824;
 
   Calculate(0.0);
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
@@ -480,21 +480,17 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 double FGStandardAtmosphere::CalculateDensityAltitude(double altitude)
 {
-  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
+  if (altitude > TroposphereMaxAltitude)
     return altitude;
-  } else {
-    if (altitude > TroposphereMaxAltitude)
-      return altitude;
-    else {
-      // Calculate density given a non-standard temperature. GetPressure() and GetTemperature()
-      // take the temperature bias into account
-      double density = GetPressure(altitude) / (Reng * GetTemperature(altitude));
+  else {
+    // Calculate density given a non-standard temperature. GetPressure() and GetTemperature()
+    // take the temperature bias into account
+    double density = GetPressure(altitude) / (Reng * GetTemperature(altitude));
 
-      // Convert to density altitude based on ratio of density to standard sea-level density
-      double density_altitude = DATroposphereFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
+    // Convert to density altitude based on ratio of density to standard sea-level density
+    double density_altitude = DATroposphereFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
 
-      return GeometricAltitude(density_altitude);
-    }
+    return GeometricAltitude(density_altitude);
   }
 }
 
