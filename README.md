@@ -9,7 +9,7 @@
 **[User Guide](#user-guide)**                  |
 **[Developer Docs](#developer-documentation)** |
 **[Contact](#contact)**                        |
-**[Legal stuff](#legal-stuff)**
+**[Legal notice](#legal-notice)**
 
 # Introduction
 JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
@@ -226,7 +226,7 @@ The HTML documentation will then be available in the directory `build/documentat
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
 
-# Legal stuff
+# Legal Notice
 JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
 
 No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
