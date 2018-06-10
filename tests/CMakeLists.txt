@@ -40,6 +40,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestAeroFuncFrame
                  TestTemplateFunctions
                  TestDensityAltitude
+                 TestPressureAltitude
                  fpectl
                  )
 
