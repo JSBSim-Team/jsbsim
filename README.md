@@ -70,7 +70,8 @@ https://jsbsim-team.github.io/jsbsim/.
 **[Build](#building-jsbsim)**                   |
 **[Tests](#testing-jsbsim)**                    |
 **[Installation](#installing-jsbsim)**          |
-**[Packaging](#packaging-jsbsim-for-releases)**
+**[Packaging](#packaging-jsbsim-for-releases)** |
+**[Code documentation](#code-documentation)**
 ## Downloading the source
 
 The GitHub repository of JSBSim is reachable at this link: [github.com/JSBSim-Team/jsbsim](https://github.com/JSBSim-Team/jsbsim).
@@ -216,7 +217,11 @@ The following packages are then built (with the extension `.rpm` if you selected
 - `python[2-3]-JSBSim_[version].[platform].[architecture].deb` which contains the JSBSim Python module if `INSTALL_PYTHON_MODULE` was set to `ON`
 
 ## Code documentation
-The C++ source code is documented with Doxygen see the [C++ API documentation](#c-api-documentation).
+The C++ source code is documented with Doxygen and is generated automatically by Travis CI (see the [C++ API documentation](#c-api-documentation)). If you modify the documentation, you might need to generate the documentation locally in which case you should run the following command after `cmake` has been executed
+```bash
+> make doc
+```
+The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](www.doxygen.org) and [Graphviz](www.graphviz.org) to be installed.
 
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
