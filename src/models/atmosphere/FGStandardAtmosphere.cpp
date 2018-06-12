@@ -480,16 +480,13 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::CalculateDensityAltitude(double altitude)
+double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geoalt)
 {
-  if (altitude > TroposphereMaxAltitude)
-    return altitude;
+  if (geoalt > TroposphereMaxAltitude)
+    return geoalt;
   else {
-    // Calculate density given a non-standard temperature. GetPressure() and GetTemperature()
-    // take the temperature bias into account
-    double density = GetPressure(altitude) / (Reng * GetTemperature(altitude));
-
-    // Convert to density altitude based on ratio of density to standard sea-level density
+    // Convert to density altitude based on ratio of density to standard sea-level density.
+    // Passed in density has taken into account any non standard ISA day changes.
     double density_altitude = TroposphereAltitudeScaleFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
 
     return GeometricAltitude(density_altitude);
@@ -498,19 +495,16 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double altitude)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::CalculatePressureAltitude(double altitude)
+double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double geoalt)
 {
-  if (TemperatureBias == 0.0 && TemperatureDeltaGradient == 0.0 && PressureBreakpointVector[0] == StdSLpressure) {
-    return altitude;
-  }
+  if (geoalt > TroposphereMaxAltitude)
+    return geoalt;
   else {
-    if (altitude > TroposphereMaxAltitude)
-      return altitude;
-    else {
-      double pressure_altitude = TroposphereAltitudeScaleFactor * (1 - pow(GetPressure(altitude) / StdSLpressure, PATroposphereExponent));
+    // Convert to pressure altitude base on ratio of pressure to sea-level pressure.
+    // Passed in pressure has taken into account any non standard ISA day changes.
+    double pressure_altitude = TroposphereAltitudeScaleFactor * (1 - pow(pressure / StdSLpressure, PATroposphereExponent));
 
-      return GeometricAltitude(pressure_altitude);
-    }
+    return GeometricAltitude(pressure_altitude);
   }
 }
 

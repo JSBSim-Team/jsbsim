@@ -130,8 +130,8 @@ void FGAtmosphere::Calculate(double altitude)
     Density = node->GetDouble("atmosphere/override/density");
 
   Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
-  PressureAltitude = CalculatePressureAltitude(altitude);
-  DensityAltitude = CalculateDensityAltitude(altitude);
+  PressureAltitude = CalculatePressureAltitude(Pressure, altitude);
+  DensityAltitude = CalculateDensityAltitude(Density, altitude);
 
   Viscosity = Beta * pow(Temperature, 1.5) / (SutherlandConstant + Temperature);
   KinematicViscosity = Viscosity / Density;
