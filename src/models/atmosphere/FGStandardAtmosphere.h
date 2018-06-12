@@ -281,7 +281,7 @@ protected:
   https://en.wikipedia.org/wiki/Density_altitude
   https://wahiduddin.net/calc/density_altitude.htm
   */
-  virtual double CalculateDensityAltitude(double altitude);
+  virtual double CalculateDensityAltitude(double density, double geoalt);
 
   /** Calculates the pressure altitude given any temperature or pressure bias.
   Currently the formula used is only valid up until the top of the Troposphere,
@@ -290,7 +290,7 @@ protected:
   @see
   https://en.wikipedia.org/wiki/Pressure_altitude
   */
-  virtual double CalculatePressureAltitude(double altitude);
+  virtual double CalculatePressureAltitude(double pressure, double geoalt);
 
   virtual void bind(void);
   void Debug(int from);

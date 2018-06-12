@@ -232,9 +232,9 @@ protected:
   /// Calculate the atmosphere for the given altitude.
   void Calculate(double altitude);
 
-  virtual double CalculateDensityAltitude(const double altitude) { return altitude; }
+  virtual double CalculateDensityAltitude(double density, double geoalt) { return geoalt; }
 
-  virtual double CalculatePressureAltitude(const double altitude) { return altitude; }
+  virtual double CalculatePressureAltitude(double pressure, double geoalt) { return geoalt; }
 
   // Converts to Rankine from one of several unit systems.
   virtual double ConvertToRankine(double t, eTemperature unit) const;
