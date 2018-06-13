@@ -109,6 +109,8 @@ public:
 
   enum ProtocolType {ptUDP, ptTCP};
  
+  void SetWaitSocketReply(const bool wait);
+
 private:
   int sckt;
   int sckt_in;
@@ -117,6 +119,7 @@ private:
   struct hostent *host;
   std::ostringstream buffer;
   bool connected;
+  bool waitSocketReply;
   void Debug(int from);
 };
 }

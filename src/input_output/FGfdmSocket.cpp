@@ -83,6 +83,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   sckt = sckt_in = 0;
   Protocol = (ProtocolType)protocol;
   connected = false;
+  waitSocketReply = false;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL()) return;
@@ -136,6 +137,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
 {
   sckt = -1;
   connected = false;
+  waitSocketReply = false;
   Protocol = (ProtocolType)protocol;
   string ProtocolName;
  
@@ -203,6 +205,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port) // assumes TCP
 {
   sckt = sckt_in = 0;
   connected = false;
+  waitSocketReply = false;
   Protocol = ptTCP;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -392,6 +395,13 @@ void FGfdmSocket::Send(const char *data, int length)
   if ((send(sckt,data,length,0)) <= 0) {
     perror("send");
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGfdmSocket::SetWaitSocketReply(const bool wait)
+{
+	waitSocketReply = wait;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

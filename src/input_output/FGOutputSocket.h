@@ -88,6 +88,17 @@ public:
   */
   virtual void SetOutputName(const std::string& name);
 
+  /** Overwrites the bool variable waitSocketReply, false by default.
+      @param wait true/false
+  */
+  virtual void SetWaitSocketReply(const bool wait);
+
+  /** Retrieves the value of waitSocketReply.
+      @result the bool value of waitSocketReply */
+  inline bool IsWaitSocketReply() {
+	  return waitSocketReply;
+  }
+
   /** Init the output directives from an XML file.
       @param element XML Element that is pointing to the output directives
   */
@@ -114,6 +125,7 @@ protected:
   unsigned int SockPort;
   FGfdmSocket::ProtocolType SockProtocol;
   FGfdmSocket* socket;
+  bool waitSocketReply;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -72,6 +72,8 @@ FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex) :
   FGOutputType(fdmex),
   socket(0)
 {
+	waitSocketReply = false;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +117,13 @@ void FGOutputSocket::SetOutputName(const string& fname)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGOutputSocket::SetWaitSocketReply(const bool wait)
+{
+	waitSocketReply = wait;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGOutputSocket::Load(Element* el)
 {
   if (!FGOutputType::Load(el))
@@ -124,6 +133,17 @@ bool FGOutputSocket::Load(Element* el)
                 el->GetAttributeValue("protocol") + "/" +
                 el->GetAttributeValue("port"));
 
+  std::string action = el->GetAttributeValue("action");
+  action = to_upper(action);
+
+  if (action == "WAIT_SOCKET_REPLY") {
+	  SetWaitSocketReply(true);
+	  std::cout << ">>>>>> WAIT_SOCKET_REPLY " << std::endl;
+  }
+  else if (action != string("NONE")) {
+	  cerr << "Unknown action of output socket specified in config file" << endl;
+  }
+  
   return true;
 }
 
@@ -136,6 +156,9 @@ bool FGOutputSocket::InitModel(void)
     socket = new FGfdmSocket(SockName, SockPort, SockProtocol);
 
     if (socket == 0) return false;
+
+	socket->SetWaitSocketReply(IsWaitSocketReply());
+
     if (!socket->GetConnectStatus()) return false;
 
     PrintHeaders();
@@ -269,6 +292,92 @@ void FGOutputSocket::PrintHeaders(void)
   }
 
   socket->Send();
+
+  // >> agodemar
+  // This is a blocking behaviour: if output socket waits for a reply before 
+  // the FDM instance could propagate the state.
+  // Possibly, the state will be modified when the socket reply is parsed
+  // See: FGInputSocket::Read() 
+  if (IsWaitSocketReply()) {
+
+	  string line, token;
+	  size_t start = 0, string_start = 0, string_end = 0;
+	  double value = 0;
+	  FGPropertyNode* node = 0;
+
+	  // socket is != 0 within this function
+	  // if (socket == 0) return;
+	  // socket is connected within this function
+	  // if (!socket->GetConnectStatus()) return;
+
+	  std::string data = socket->Receive(); // get socket transmission if present
+
+	  if (data.size() > 0) {
+		  // parse lines
+		  while (1) {
+			  string_start = data.find_first_not_of("\r\n", start);
+			  if (string_start == string::npos) break;
+			  string_end = data.find_first_of("\r\n", string_start);
+			  if (string_end == string::npos) break;
+			  line = data.substr(string_start, string_end - string_start);
+			  if (line.size() == 0) break;
+
+			  // now parse individual line
+			  vector <string> tokens = split(line, ' ');
+
+			  string command = "", argument = "", str_value = "";
+			  if (tokens.size() > 0) {
+				  command = to_lower(tokens[0]);
+				  if (tokens.size() > 1) {
+					  argument = trim(tokens[1]);
+					  if (tokens.size() > 2) {
+						  str_value = trim(tokens[2]);
+					  }
+				  }
+			  }
+
+			  if (command == "set") {                   // SET PROPERTY
+
+				  if (argument.size() == 0) {
+					  socket->Reply("No property argument supplied.\n");
+					  break;
+				  }
+				  try {
+					  node = PropertyManager->GetNode(argument);
+				  }
+				  catch (...) {
+					  socket->Reply("Badly formed property query\n");
+					  break;
+				  }
+
+				  if (node == 0) {
+					  socket->Reply("Unknown property\n");
+					  break;
+				  }
+				  else if (!node->hasValue()) {
+					  socket->Reply("Not a leaf property\n");
+					  break;
+				  }
+				  else {
+					  value = atof(str_value.c_str());
+					  node->setDoubleValue(value);
+				  }
+				  socket->Reply("");
+
+			  } 
+			  // only a set command is implemented
+			  else {
+				  socket->Reply(string("Unknown command: ") + token + string("\n"));
+			  }
+
+			  start = string_end;
+		  }
+	  }
+
+
+
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
