@@ -232,9 +232,19 @@ protected:
   /// Calculate the atmosphere for the given altitude.
   void Calculate(double altitude);
 
-  virtual double CalculateDensityAltitude(double density, double geoalt) { return geoalt; }
+  /// Calculates the density altitude given any temperature or pressure bias.
+  /// Calculated density for the specified geometric altitude given any temperature
+  /// or pressure biases is passed in.
+  /// @param density
+  /// @param geometricAlt
+  virtual double CalculateDensityAltitude(double density, double geometricAlt) { return geometricAlt; }
 
-  virtual double CalculatePressureAltitude(double pressure, double geoalt) { return geoalt; }
+  /// Calculates the pressure altitude given any temperature or pressure bias.
+  /// Calculated pressure for the specified geometric altitude given any temperature
+  /// or pressure biases is passed in.
+  /// @param pressure
+  /// @param geometricAlt
+  virtual double CalculatePressureAltitude(double pressure, double geometricAlt) { return geometricAlt; }
 
   // Converts to Rankine from one of several unit systems.
   virtual double ConvertToRankine(double t, eTemperature unit) const;
