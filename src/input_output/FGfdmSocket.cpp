@@ -269,12 +269,15 @@ string FGfdmSocket::Receive(void)
   string data;      // todo: should allocate this with a standard size as a
                     // class attribute and pass as a reference?
 
+  cout << ">>> FGfdmSocket::Receive >>> 0. sckt_in=" << sckt_in << endl;
+
   if (sckt_in <= 0 && Protocol == ptTCP) {
     #if defined(_MSC_VER) || defined(__MINGW32__)
       sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
     #else
       sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
     #endif
+    cout << ">>> FGfdmSocket::Receive >>> 0a. sckt_in=" << sckt_in << endl;
     if (sckt_in > 0) {
       #if defined(_MSC_VER) || defined(__MINGW32__)
          ioctlsocket(sckt_in, FIONBIO,&NoBlock);
@@ -284,6 +287,8 @@ string FGfdmSocket::Receive(void)
       send(sckt_in, "Connected to JSBSim server\nJSBSim> ", 35, 0);
     }
   }
+
+  cout << ">>> FGfdmSocket::Receive >>> 1. sckt_in=" << sckt_in << endl;
 
   if (sckt_in > 0) {
     while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
