@@ -274,23 +274,29 @@ protected:
   double GeometricAltitude(double geopotalt) const { return (geopotalt * EarthRadius) / (EarthRadius - geopotalt); }
 
   /** Calculates the density altitude given any temperature or pressure bias.
+  Calculated density for the specified geometric altitude given any temperature
+  or pressure biases is passed in.
   Currently the formula used is only valid up until the top of the Troposphere,
   11.019km - 36151.8ft.
-  @param altitude
+  @param density
+  @param geometricAlt
   @see
   https://en.wikipedia.org/wiki/Density_altitude
   https://wahiduddin.net/calc/density_altitude.htm
   */
-  virtual double CalculateDensityAltitude(double density, double geoalt);
+  virtual double CalculateDensityAltitude(double density, double geometricAlt);
 
   /** Calculates the pressure altitude given any temperature or pressure bias.
+  Calculated density for the specified geometric altitude given any temperature
+  or pressure biases is passed in.
   Currently the formula used is only valid up until the top of the Troposphere,
   11.019km - 36151.8ft.
-  @param altitude
+  @param pressure
+  @param geometricAlt
   @see
   https://en.wikipedia.org/wiki/Pressure_altitude
   */
-  virtual double CalculatePressureAltitude(double pressure, double geoalt);
+  virtual double CalculatePressureAltitude(double pressure, double geometricAlt);
 
   virtual void bind(void);
   void Debug(int from);

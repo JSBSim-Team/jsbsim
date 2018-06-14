@@ -91,18 +91,6 @@ const double FGJSBBase::in3tom3 = 1.638706E-5;
 const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
 const double FGJSBBase::inhgtopa = 3386.38;
 const double FGJSBBase::fttom = 0.3048;
-/** Gas constant for Air (ft-lb/slug-R)
-    @see doc/spreadsheets/Standard_Atmosphere_constants.ods
- */
-double FGJSBBase::Reng = 1716.5572;
-/** The variable below is improperly named: it is actually \f$ R^\ast/g_0 \f$.
-    It is expressed in a mixture of British and SI units using notations of the
-    international standard atmosphere (1976)
-    @see doc/spreadsheets/Standard_Atmosphere_constants.ods
- */
-double FGJSBBase::Rstar = 1545.3206; // ft*lbf*g/lb/R/mol
-double FGJSBBase::Mair = 28.9645;   //
-const double FGJSBBase::SHRatio = 1.40;
 
 // Note that definition of lbtoslug by the inverse of slugtolb and not
 // to a different constant you can also get from some tables will make

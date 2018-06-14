@@ -232,9 +232,19 @@ protected:
   /// Calculate the atmosphere for the given altitude.
   void Calculate(double altitude);
 
-  virtual double CalculateDensityAltitude(double density, double geoalt) { return geoalt; }
+  /// Calculates the density altitude given any temperature or pressure bias.
+  /// Calculated density for the specified geometric altitude given any temperature
+  /// or pressure biases is passed in.
+  /// @param density
+  /// @param geometricAlt
+  virtual double CalculateDensityAltitude(double density, double geometricAlt) { return geometricAlt; }
 
-  virtual double CalculatePressureAltitude(double pressure, double geoalt) { return geoalt; }
+  /// Calculates the pressure altitude given any temperature or pressure bias.
+  /// Calculated pressure for the specified geometric altitude given any temperature
+  /// or pressure biases is passed in.
+  /// @param pressure
+  /// @param geometricAlt
+  virtual double CalculatePressureAltitude(double pressure, double geometricAlt) { return geometricAlt; }
 
   // Converts to Rankine from one of several unit systems.
   virtual double ConvertToRankine(double t, eTemperature unit) const;
@@ -244,6 +254,14 @@ protected:
 
   // Converts from PSF (pounds per square foot) to one of several unit systems.
   virtual double ConvertFromPSF(double t, ePressure unit=ePSF) const;
+
+  static const double Rstar;  // Universal gas constant - ft*lbf/R/mol
+  static const double Mair;   // Mean molecular weight - slug/mol
+  static const double g0;     // Sea-level acceleration of gravity - ft/s^2
+  static double Reng;         // Specific gas constant - ft*lbf/slug/R  
+
+  static const double SHRatio;
+  
 
   virtual void bind(void);
   void Debug(int from);
