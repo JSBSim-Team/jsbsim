@@ -300,6 +300,8 @@ void FGOutputSocket::PrintHeaders(void)
   // See: FGInputSocket::Read() 
   if (IsWaitSocketReply()) {
 
+	  cout << ">>> SOCKET RECEIVE >>>" << endl;
+
 	  string line, token;
 	  size_t start = 0, string_start = 0, string_end = 0;
 	  double value = 0;
@@ -312,9 +314,20 @@ void FGOutputSocket::PrintHeaders(void)
 
 	  std::string data = socket->Receive(); // get socket transmission if present
 
+	  cout << ">>> DATA RECEIVE >>>" << endl;
+	  cout << data << endl;
+	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
+
 	  if (data.size() > 0) {
+
+		  /*
+		  cout << ">>> DATA RECEIVE >>>" << endl;
+		  cout << data << endl;
+		  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
+		  */
+
 		  // parse lines
-		  while (1) {
+		  while (0) { // 1 if you want to parse
 			  string_start = data.find_first_not_of("\r\n", start);
 			  if (string_start == string::npos) break;
 			  string_end = data.find_first_of("\r\n", string_start);

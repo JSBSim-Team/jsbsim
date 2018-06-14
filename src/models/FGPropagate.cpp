@@ -558,6 +558,13 @@ double FGPropagate::GetDistanceAGLKm(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGPropagate::GetDistanceAGLMeters(void) const
+{
+	return VState.vLocation.GetAltitudeAGL()*0.03048;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::SetDistanceAGL(double tt)
 {
   VState.vLocation.SetAltitudeAGL(tt);
@@ -570,6 +577,14 @@ void FGPropagate::SetDistanceAGLKm(double tt)
 {
   VState.vLocation.SetAltitudeAGL(tt*3280.8399);
   UpdateVehicleState();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetDistanceAGLMeters(double tt)
+{
+	VState.vLocation.SetAltitudeAGL(tt*3.2808399);
+	UpdateVehicleState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -779,6 +794,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/geod-alt-km", this, &FGPropagate::GetGeodeticAltitudeKm);
   PropertyManager->Tie("position/h-agl-km", this,  &FGPropagate::GetDistanceAGLKm, &FGPropagate::SetDistanceAGLKm);
+  PropertyManager->Tie("position/h-agl-meters", this, &FGPropagate::GetDistanceAGLMeters, &FGPropagate::SetDistanceAGLMeters);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
                           &FGPropagate::GetTerrainElevation,
