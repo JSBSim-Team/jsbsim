@@ -57,6 +57,16 @@ IDENT(IdHdr,ID_ATMOSPHERE);
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+// Atmosphere constants in British units converted from the SI values specified in the 
+// ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
+
+double FGAtmosphere::Rstar = 8.31432 * (0.224809 * 3.28084 / 1.8); // ft*lbf/R/mol    
+double FGAtmosphere::Mair = 28.9645 * 2.20462 / (32.174049 * 1000.0);   // slug/mol
+double FGAtmosphere::Reng = ((8.31432 * 1000) / 28.9645) / 1.8 / (0.3048 * 0.3048); // ft*lbf/slug/R
+const double FGAtmosphere::g0 = 9.80665 / 0.3048; // ft/s^2
+
+const double FGAtmosphere::SHRatio = 1.40;
+
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                                                PressureAltitude(0.0),      // ft
                                                DensityAltitude(0.0),       // ft

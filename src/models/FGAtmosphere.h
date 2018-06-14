@@ -255,6 +255,12 @@ protected:
   // Converts from PSF (pounds per square foot) to one of several unit systems.
   virtual double ConvertFromPSF(double t, ePressure unit=ePSF) const;
 
+  static double Reng;         // Specific Gas Constant,ft^2/(sec^2*R)
+  static double Rstar;
+  static double Mair;
+  static const double SHRatio;
+  static const double g0;
+
   virtual void bind(void);
   void Debug(int from);
 };

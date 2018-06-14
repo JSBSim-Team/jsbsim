@@ -358,10 +358,6 @@ protected:
   static const double m3toft3;
   static const double inhgtopa;
   static const double fttom;
-  static double Reng;         // Specific Gas Constant,ft^2/(sec^2*R)
-  static double Rstar;
-  static double Mair;
-  static const double SHRatio;
   static const double lbtoslug;
   static const double slugtolb;
   static const double kgtolb;

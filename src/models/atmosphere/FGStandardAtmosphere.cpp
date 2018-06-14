@@ -139,10 +139,10 @@ bool FGStandardAtmosphere::InitModel(void)
   TroposphereMaxAltitude = GeometricAltitude((*StdAtmosTemperatureTable)(2, 0));
   // Standard sea level temp / Troposphere lapse rate
   TroposphereAltitudeScaleFactor = -StdSLtemperature / LapseRateVector[0];
-  // Unitless exponent computed using SI values from LR/(g0M - L*R)
-  DATroposphereExponent = 0.23496824;
-  // Pressure exponent 
-  PATroposphereExponent = 1.0 / (Mair / (Rstar * -LapseRateVector[0]));
+  // Troposphere density altitude exponent = LR*/(g0M - LR*)
+  DATroposphereExponent = (-LapseRateVector[0] * Rstar) / (g0 * Mair - -LapseRateVector[0] * Rstar);
+  // Troposphere pressure altitude exponent  LR* / g0M 
+  PATroposphereExponent = (-LapseRateVector[0] * Rstar) / (g0 * Mair);
 
   Calculate(0.0);
   StdSLsoundspeed  = SLsoundspeed = Soundspeed;
@@ -189,11 +189,11 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
   if (LapseRateVector[b] != 0.00) {
     Lmb = LapseRateVector[b];
-    Exp = Mair/(Rstar*Lmb);
+    Exp = (g0*Mair)/(Rstar*Lmb);
     factor = Tmb/(Tmb + Lmb*deltaH);
     pressure = PressureBreakpointVector[b]*pow(factor, Exp);
   } else {
-    pressure = PressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+    pressure = PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
   }
 
   return pressure;
@@ -297,11 +297,11 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
 
   if (LapseRateVector[b] != 0.00) {
     Lmb = LapseRateVector[b];
-    Exp = Mair/(Rstar*Lmb);
+    Exp = (g0*Mair) / (Rstar*Lmb);
     factor = Tmb/(Tmb + Lmb*deltaH);
     pressure = StdPressureBreakpointVector[b]*pow(factor, Exp);
   } else {
-    pressure = StdPressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+    pressure = StdPressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
   }
 
   return pressure;
@@ -452,11 +452,11 @@ void FGStandardAtmosphere::CalculatePressureBreakpoints()
                  + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
     if (LapseRateVector[b] != 0.00) {
       double Lmb = LapseRateVector[b];
-      double Exp = Mair/(Rstar*Lmb);
+      double Exp = (g0*Mair) / (Rstar*Lmb);
       double factor = Tmb/(Tmb + Lmb*deltaH);
       PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*pow(factor, Exp);
     } else {
-      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-Mair*deltaH/(Rstar*Tmb));
+      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
     }
   }
 }
