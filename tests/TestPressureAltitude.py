@@ -22,7 +22,7 @@ from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 class TestPressureAltitude(JSBSimTestCase):
 
-    def test_densityaltitude(self):
+    def test_pressurealtitude(self):
         fdm = CreateFDM(self.sandbox)
         
         script_path = self.sandbox.path_to_jsbsim_file('scripts', '737_cruise.xml')
@@ -34,8 +34,8 @@ class TestPressureAltitude(JSBSimTestCase):
             (0,      -27,   0),
             (0,       27,   0),
             (10000,    0,   10000),
-            (10000,  -27,   10549.426597202126),
-            (10000,   27,   9504.969939165318),
+            (10000,  -27,   10549.426597202142),
+            (10000,   27,   9504.969939165301),
             (20000,    0,   20000),
             (20000,  -27,   21099.40877940678),
             (20000,   27,   19009.488882465),
