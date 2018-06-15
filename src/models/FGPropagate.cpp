@@ -560,7 +560,7 @@ double FGPropagate::GetDistanceAGLKm(void) const
 
 double FGPropagate::GetDistanceAGLMeters(void) const
 {
-	return VState.vLocation.GetAltitudeAGL()*0.03048;
+	return VState.vLocation.GetAltitudeAGL()*0.3048;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
