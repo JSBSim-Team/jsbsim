@@ -58,10 +58,13 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.km_to_ft = 1000/0.3048
         self.Pa_to_psf = 1.0/47.88 # From src/FGJSBBase.cpp
 
+        # Gradient fade out altitude
+        self.gradient_fade_out_h = 91.0 # km
+
     def geometric_altitude(self, h_geopot):
         return (self.R_earth*h_geopot)/(self.R_earth-h_geopot)
 
-    def check_temperature(self, fdm, T0):
+    def check_temperature(self, fdm, T0, T_gradient):
         T_K = T0
         h = self.ISA_temperature[0][0]
 
@@ -70,14 +73,14 @@ class TestStdAtmosphere(JSBSimTestCase):
 
             # Check half way of the interval to make sure the temperature is
             # linearly interpolated
-            T_half = T_K + 0.5*L*dH
+            T_half = T_K + 0.5*(L-T_gradient)*dH
 
             fdm['ic/h-sl-ft'] = self.geometric_altitude(h+0.5*dH) * self.km_to_ft
             fdm.run_ic()
             self.assertAlmostEqual(1.0, T_half*self.K_to_R/fdm['atmosphere/T-R'])
 
             # Check the temperature breakpoints
-            T_K += L*dH
+            T_K += (L-T_gradient)*dH
 
             fdm['ic/h-sl-ft'] = self.geometric_altitude(alt) * self.km_to_ft
             fdm.run_ic()
@@ -89,13 +92,13 @@ class TestStdAtmosphere(JSBSimTestCase):
         h = self.ISA_temperature[0][0]
         L = self.ISA_temperature[1][1]
         alt = -1.5
-        T_K = T0+L*(alt-h)
+        T_K = T0+(L-T_gradient)*(alt-h)
 
         fdm['ic/h-sl-ft'] = self.geometric_altitude(alt) * self.km_to_ft
         fdm.run_ic()
         self.assertAlmostEqual(1.0, T_K*self.K_to_R/fdm['atmosphere/T-R'])
 
-    def check_pressure(self, fdm, P0, T0):
+    def check_pressure(self, fdm, P0, T0, T_gradient):
         P_Pa = P0
         T_K = T0
         h = self.ISA_temperature[0][0]
@@ -104,60 +107,139 @@ class TestStdAtmosphere(JSBSimTestCase):
         for alt, L in self.ISA_temperature:
             dH = alt-h
 
-            P_half = compute_pressure(P_Pa, L, 0.5*dH, T_K, factor)
+            P_half = compute_pressure(P_Pa, L-T_gradient, 0.5*dH, T_K, factor)
             fdm['ic/h-sl-ft'] = self.geometric_altitude(h+0.5*dH) * self.km_to_ft
             fdm.run_ic()
             self.assertAlmostEqual(1.0, P_half*self.Pa_to_psf/fdm['atmosphere/P-psf'])
 
-            P_Pa = compute_pressure(P_Pa, L, dH, T_K, factor)
+            P_Pa = compute_pressure(P_Pa, L-T_gradient, dH, T_K, factor)
             fdm['ic/h-sl-ft'] = self.geometric_altitude(alt) * self.km_to_ft
             fdm.run_ic()
             self.assertAlmostEqual(1.0, P_Pa*self.Pa_to_psf/fdm['atmosphere/P-psf'])
 
             h = alt
-            T_K += L*dH
+            T_K += (L-T_gradient)*dH
 
     def test_std_atmosphere(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('ball')
 
-        self.check_temperature(fdm, self.T0)
-        self.check_pressure(fdm, self.P0, self.T0)
+        self.check_temperature(fdm, self.T0, 0.0)
+        self.check_pressure(fdm, self.P0, self.T0, 0.0)
 
         del fdm
 
     def test_temperature_bias(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('ball')
+
         delta_T_K = 15.0
+        T_sl = self.T0 + delta_T_K
         fdm['atmosphere/delta-T'] = delta_T_K*self.K_to_R
 
-        self.check_temperature(fdm, self.T0+delta_T_K)
-        self.check_pressure(fdm, self.P0, self.T0+delta_T_K)
+        self.check_temperature(fdm, T_sl, 0.0)
+        self.check_pressure(fdm, self.P0, T_sl, 0.0)
 
         del fdm
 
     def test_sl_pressure_bias(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('ball')
+
         P_sl = 95000.
         fdm['atmosphere/P-sl-psf'] = P_sl*self.Pa_to_psf
 
-        self.check_temperature(fdm, self.T0)
-        self.check_pressure(fdm, P_sl, self.T0)
+        self.check_temperature(fdm, self.T0, 0.0)
+        self.check_pressure(fdm, P_sl, self.T0, 0.0)
 
         del fdm
 
     def test_pressure_and_temperature_bias(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('ball')
+
         delta_T_K = 15.0
+        T_sl = self.T0 + delta_T_K
         fdm['atmosphere/delta-T'] = delta_T_K*self.K_to_R
         P_sl = 95000.
         fdm['atmosphere/P-sl-psf'] = P_sl*self.Pa_to_psf
 
-        self.check_temperature(fdm, self.T0+delta_T_K)
-        self.check_pressure(fdm, P_sl, self.T0+delta_T_K)
+        self.check_temperature(fdm, T_sl, 0.0)
+        self.check_pressure(fdm, P_sl, T_sl, 0.0)
+
+        del fdm
+
+    def test_temperature_gradient(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+
+        graded_delta_T_K = -10.0
+        fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
+
+        T_gradient = graded_delta_T_K / self.gradient_fade_out_h
+        self.assertAlmostEqual(T_gradient*self.K_to_R/self.km_to_ft,
+                               fdm['atmosphere/SL-graded-delta-T'])
+
+        self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
+        self.check_pressure(fdm, self.P0, self.T0 + graded_delta_T_K, T_gradient)
+
+        del fdm
+
+    def test_temperature_gradient_and_bias(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+
+        delta_T_K = 15.0
+        T_sl = self.T0 + delta_T_K
+        fdm['atmosphere/delta-T'] = delta_T_K*self.K_to_R
+        graded_delta_T_K = -10.0
+        fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
+
+        T_gradient = graded_delta_T_K / self.gradient_fade_out_h
+        self.assertAlmostEqual(T_gradient*self.K_to_R/self.km_to_ft,
+                               fdm['atmosphere/SL-graded-delta-T'])
+
+        self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
+        self.check_pressure(fdm, self.P0, T_sl + graded_delta_T_K, T_gradient)
+
+        del fdm
+
+    def test_pressure_and_temperature_gradient(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+
+        P_sl = 95000.
+        fdm['atmosphere/P-sl-psf'] = P_sl*self.Pa_to_psf
+        graded_delta_T_K = -10.0
+        fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
+
+        T_gradient = graded_delta_T_K / self.gradient_fade_out_h
+        self.assertAlmostEqual(T_gradient*self.K_to_R/self.km_to_ft,
+                               fdm['atmosphere/SL-graded-delta-T'])
+
+        self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
+        self.check_pressure(fdm, P_sl, self.T0 + graded_delta_T_K, T_gradient)
+
+        del fdm
+
+    def test_pressure_and_temperature_gradient_and_bias(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+
+        P_sl = 95000.
+        fdm['atmosphere/P-sl-psf'] = P_sl*self.Pa_to_psf
+        delta_T_K = 15.0
+        T_sl = self.T0 + delta_T_K
+        fdm['atmosphere/delta-T'] = delta_T_K*self.K_to_R
+        graded_delta_T_K = -10.0
+        fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
+
+        T_gradient = graded_delta_T_K / self.gradient_fade_out_h
+        self.assertAlmostEqual(T_gradient*self.K_to_R/self.km_to_ft,
+                               fdm['atmosphere/SL-graded-delta-T'])
+
+        self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
+        self.check_pressure(fdm, P_sl, T_sl + graded_delta_T_K, T_gradient)
 
         del fdm
 

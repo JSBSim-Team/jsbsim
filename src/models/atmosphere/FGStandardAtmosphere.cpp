@@ -94,8 +94,8 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
                            << 154199.4751 << 487.17  //   47.000      47.350
                            << 167322.8346 << 487.17  //   51.000      51.413
                            << 232939.6325 << 386.37  //   71.000      71.802
-                           << 278385.8268 << 336.5028  //   84.852      86.000
-                           << 298556.40   << 336.5028; //               91.000 - First layer in high altitude regime 
+                           << 278385.8268 << 336.5028  // 84.852      86.000
+                           << 298556.4304 << 336.5028; //             91.000 - First layer in high altitude regime 
 
   PressureBreakpointVector.resize(StdAtmosTemperatureTable.GetNumRows());
 
@@ -209,15 +209,19 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
 
   double T;
 
-  if (GeoPotAlt >= 0.0)
+  if (GeoPotAlt >= 0.0) {
     T = StdAtmosTemperatureTable.GetValue(GeoPotAlt);
-  else
+
+    if (GeoPotAlt <= GradientFadeoutAltitude)
+      T -= TemperatureDeltaGradient * GeoPotAlt;
+  }
+  else {
+    // We don't need to add TemperatureDeltaGradient*GeoPotAlt here because
+    // the lapse rate vector already accounts for the temperature gradient.
     T = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRateVector[0];
+  }
 
-  T += TemperatureBias;
-
-  if (GeoPotAlt <= GradientFadeoutAltitude)
-    T += TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
+  T += TemperatureBias + TemperatureDeltaGradient * GradientFadeoutAltitude;
 
   return T;
 }
@@ -353,7 +357,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
   if (unit == eCelsius || unit == eKelvin)
     deltemp *= 1.80; // If temp delta "t" is given in metric, scale up to English
 
-  TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - h);
+  TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - GeopotentialAltitude(h));
   CalculateLapseRates();
   CalculatePressureBreakpoints();
 }
@@ -395,7 +399,7 @@ void FGStandardAtmosphere::CalculateLapseRates()
     double t1 = StdAtmosTemperatureTable(bh+2,1);
     double h0 = StdAtmosTemperatureTable(bh+1,0);
     double h1 = StdAtmosTemperatureTable(bh+2,0);
-    LapseRateVector.push_back((t1 - t0) / (h1 - h0) + TemperatureDeltaGradient);
+    LapseRateVector.push_back((t1 - t0) / (h1 - h0) - TemperatureDeltaGradient);
   }
 }
 
