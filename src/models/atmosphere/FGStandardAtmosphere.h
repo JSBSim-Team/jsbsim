@@ -217,9 +217,6 @@ public:
   /// Returns the pressure at a specified altitude in psf.
   virtual double GetPressure(double altitude) const;
 
-  /// Returns the standard pressure at a specified altitude in psf
-  virtual double GetStdPressure100K(double altitude) const;
-
   /// Returns the standard pressure at the specified altitude.
   virtual double GetStdPressure(double altitude) const;
 
@@ -253,7 +250,7 @@ protected:
   double TemperatureDeltaGradient;
   double GradientFadeoutAltitude;
 
-  FGTable* StdAtmosTemperatureTable;
+  FGTable StdAtmosTemperatureTable;
   std::vector<double> LapseRateVector;
   std::vector<double> PressureBreakpointVector;
   std::vector<double> StdPressureBreakpointVector;
