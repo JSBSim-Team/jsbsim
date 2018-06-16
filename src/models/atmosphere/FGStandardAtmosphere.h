@@ -254,6 +254,7 @@ protected:
   std::vector<double> LapseRateVector;
   std::vector<double> PressureBreakpointVector;
   std::vector<double> StdPressureBreakpointVector;
+  std::vector<double> StdDensityBreakpointVector;
 
   /// Recalculate the lapse rate vectors when the temperature profile is altered
   /// in a way that would change the lapse rates, such as when a gradient is applied.
@@ -264,6 +265,10 @@ protected:
   /// altitudes in the standard temperature table.
   void CalculatePressureBreakpoints();
 
+  /// Calculate the atmospheric density breakpoints at the 
+  /// altitudes in the standard temperature table.
+  void CalculateStdDensityBreakpoints();
+
   /// Convert a geometric altitude to a geopotential altitude
   double GeopotentialAltitude(double geometalt) const { return (geometalt * EarthRadius) / (EarthRadius + geometalt); }
 
@@ -273,8 +278,6 @@ protected:
   /** Calculates the density altitude given any temperature or pressure bias.
   Calculated density for the specified geometric altitude given any temperature
   or pressure biases is passed in.
-  Currently the formula used is only valid up until the top of the Troposphere,
-  11.019km - 36151.8ft.
   @param density
   @param geometricAlt
   @see
@@ -286,8 +289,6 @@ protected:
   /** Calculates the pressure altitude given any temperature or pressure bias.
   Calculated density for the specified geometric altitude given any temperature
   or pressure biases is passed in.
-  Currently the formula used is only valid up until the top of the Troposphere,
-  11.019km - 36151.8ft.
   @param pressure
   @param geometricAlt
   @see
@@ -300,15 +301,6 @@ protected:
 
   /// Earth radius in ft as defined for ISA 1976
   static const double EarthRadius;
-
-  /// Density and pressure altitude calculation parameters
-  double TroposphereMaxAltitude;
-  double TroposphereAltitudeScaleFactor;
-  /** Unitless exponent computed using SI values from \f$L\times R/(g_0 M-L\times R)\f$
-      @see doc/spreadsheets/Standard_Atmosphere_constants.ods
-   */
-  double DATroposphereExponent;
-  double PATroposphereExponent;
 };
 
 } // namespace JSBSim
