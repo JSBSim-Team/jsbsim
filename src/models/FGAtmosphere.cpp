@@ -60,9 +60,10 @@ CLASS IMPLEMENTATION
 // Atmosphere constants in British units converted from the SI values specified in the 
 // ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
 
-const double FGAtmosphere::Rstar = 8.31432 * (2.20462 / (1.8 * 0.3048 * 0.3048 * 32.174049)); // ft*lbf/R/mol    
-const double FGAtmosphere::Mair = 28.9645 * 2.20462 / (32.174049 * 1000.0); // slug/mol
-const double FGAtmosphere::g0 = 9.80665 / 0.3048; // ft/s^2
+const double KtoDegR = 1.8; // Kelvin to degree Rankine
+const double FGAtmosphere::Rstar = 8.31432 * (FGJSBBase::kgtolb / (KtoDegR * FGJSBBase::fttom * FGJSBBase::fttom * FGJSBBase::slugtolb)); // ft*lbf/R/mol
+const double FGAtmosphere::Mair = 28.9645 * FGJSBBase::kgtolb / (FGJSBBase::slugtolb * 1000.0); // slug/mol
+const double FGAtmosphere::g0 = 9.80665 / FGJSBBase::fttom; // ft/s^2
 double FGAtmosphere::Reng = Rstar / Mair;
 
 const double FGAtmosphere::SHRatio = 1.40;
