@@ -96,8 +96,8 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex) : FGAtmosphere(fdme
                             << 154199.4751 << 487.17  //   47.000      47.350
                             << 167322.8346 << 487.17  //   51.000      51.413
                             << 232939.6325 << 386.37  //   71.000      71.802
-                            << 278385.8268 << 336.50 //   84.852      86.000
-                            << 298556.40   << 336.50; //               91.000 - First layer in high altitude regime 
+                            << 278385.8268 << 336.5028  //   84.852      86.000
+                            << 298556.40   << 336.5028; //               91.000 - First layer in high altitude regime 
 
   LapseRateVector.resize(StdAtmosTemperatureTable->GetNumRows()-1);
   PressureBreakpointVector.resize(StdAtmosTemperatureTable->GetNumRows());
@@ -125,7 +125,7 @@ FGStandardAtmosphere::~FGStandardAtmosphere()
 
 bool FGStandardAtmosphere::InitModel(void)
 {
-  PressureBreakpointVector[0] = StdSLpressure = SLpressure = Pressure = 2116.22; // psf
+  PressureBreakpointVector[0] = StdSLpressure = SLpressure = Pressure = 2116.228; // psf
   TemperatureDeltaGradient = 0.0;
   TemperatureBias = 0.0;
   CalculateLapseRates();
@@ -184,7 +184,7 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   if (b>0) b--;
 
   double BaseAlt = (*StdAtmosTemperatureTable)(b+1,0);
-  Tmb = GetTemperature(BaseAlt);
+  Tmb = GetTemperature(GeometricAltitude(BaseAlt));
   deltaH = GeoPotAlt - BaseAlt;
 
   if (LapseRateVector[b] != 0.00) {
