@@ -176,11 +176,11 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   double Lmb = LapseRateVector[b];
 
   if (Lmb != 0.0) {
-    double Exp = g0 / (Reng*Lmb);
+    double Exp = g0*Mair / (Rstar*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
     return PressureBreakpointVector[b]*pow(factor, Exp);
   } else
-    return PressureBreakpointVector[b]*exp(-g0*deltaH/(Reng*Tmb));
+    return PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,11 +284,11 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
   double Lmb = LapseRateVector[b];
 
   if (Lmb != 0.0) {
-    double Exp = g0 / (Reng*Lmb);
+    double Exp = g0*Mair / (Rstar*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
     return StdPressureBreakpointVector[b]*pow(factor, Exp);
   } else
-    return StdPressureBreakpointVector[b]*exp(-g0*deltaH/(Reng*Tmb));
+    return StdPressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -411,11 +411,11 @@ void FGStandardAtmosphere::CalculatePressureBreakpoints()
                  + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
     if (LapseRateVector[b] != 0.00) {
       double Lmb = LapseRateVector[b];
-      double Exp = g0 / (Reng*Lmb);
+      double Exp = g0*Mair / (Rstar*Lmb);
       double factor = Tmb/(Tmb + Lmb*deltaH);
       PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*pow(factor, Exp);
     } else {
-      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-g0*deltaH/(Reng*Tmb));
+      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
     }
   }
 }
