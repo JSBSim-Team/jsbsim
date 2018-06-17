@@ -128,12 +128,13 @@ bool FGStandardAtmosphere::InitModel(void)
   StdSLtemperature = SLtemperature = StdAtmosTemperatureTable(1, 1);
   StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
 
-  StdSLsoundspeed = SLsoundspeed = Soundspeed;
   StdPressureBreakpointVector = PressureBreakpointVector;
 
   CalculateStdDensityBreakpoints();
 
   Calculate(0.0);
+
+  StdSLsoundspeed = SLsoundspeed = Soundspeed;
 
   rSLtemperature = 1/SLtemperature ;
   rSLpressure    = 1/SLpressure    ;
