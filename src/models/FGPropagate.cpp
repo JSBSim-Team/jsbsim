@@ -553,14 +553,14 @@ double FGPropagate::GetDistanceAGL(void) const
 
 double FGPropagate::GetDistanceAGLKm(void) const
 {
-  return VState.vLocation.GetAltitudeAGL()*0.0003048;
+  return VState.vLocation.GetAltitudeAGL()*FGJSBBase::fttom*0.001; // *0.0003048;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGLMeters(void) const
 {
-	return VState.vLocation.GetAltitudeAGL()*0.3048;
+  return VState.vLocation.GetAltitudeAGL()*FGJSBBase::fttom; // *0.3048
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -575,7 +575,7 @@ void FGPropagate::SetDistanceAGL(double tt)
 
 void FGPropagate::SetDistanceAGLKm(double tt)
 {
-  VState.vLocation.SetAltitudeAGL(tt*3280.8399);
+  VState.vLocation.SetAltitudeAGL(tt / (FGJSBBase::fttom*0.001)); // *3280.8399
   UpdateVehicleState();
 }
 
@@ -583,7 +583,7 @@ void FGPropagate::SetDistanceAGLKm(double tt)
 
 void FGPropagate::SetDistanceAGLMeters(double tt)
 {
-	VState.vLocation.SetAltitudeAGL(tt*3.2808399);
+	VState.vLocation.SetAltitudeAGL(tt / FGJSBBase::fttom); // *3.2808399
 	UpdateVehicleState();
 }
 

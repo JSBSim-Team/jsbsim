@@ -300,7 +300,7 @@ void FGOutputSocket::PrintHeaders(void)
   // See: FGInputSocket::Read() 
   if (IsWaitSocketReply()) {
 
-	  cout << ">>> SOCKET RECEIVE >>>" << endl;
+	  cout << ">>> [FGOutputSocket::PrintHeaders] SOCKET RECEIVE >>>" << endl;
 
 	  string line, token;
 	  size_t start = 0, string_start = 0, string_end = 0;
@@ -314,7 +314,7 @@ void FGOutputSocket::PrintHeaders(void)
 
 	  std::string data = socket->Receive(); // get socket transmission if present
 
-	  cout << ">>> DATA RECEIVE >>>" << endl;
+	  cout << ">>> [FGOutputSocket::PrintHeaders] DATA RECEIVE >>>" << endl;
 	  cout << data << endl;
 	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
 
@@ -386,8 +386,6 @@ void FGOutputSocket::PrintHeaders(void)
 			  start = string_end;
 		  }
 	  }
-
-
 
   }
 
@@ -504,6 +502,24 @@ void FGOutputSocket::Print(void)
   }
 
   socket->Send();
+
+  // TODO: parse reply
+  // >> agodemar
+  // This is a blocking behaviour: if output socket waits for a reply before 
+  // the FDM instance could propagate the state.
+  // Possibly, the state will be modified when the socket reply is parsed
+  // See: FGInputSocket::Read() 
+  if (IsWaitSocketReply()) {
+
+	  cout << ">>> [FGOutputSocket::Print] SOCKET RECEIVE >>>" << endl;
+	  std::string data = socket->Receive(); // get socket transmission if present
+
+	  cout << ">>> [FGOutputSocket::Print] DATA RECEIVE >>>" << endl;
+	  cout << data << endl;
+	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
+
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
