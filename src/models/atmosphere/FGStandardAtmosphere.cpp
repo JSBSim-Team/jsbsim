@@ -441,10 +441,9 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
-  StdDensityBreakpointVector.resize(StdPressureBreakpointVector.size());
-  for (int i = 0; i < StdPressureBreakpointVector.size(); i++) {
-    double density = StdPressureBreakpointVector[i] / (Reng * StdAtmosTemperatureTable(i+1, 1));
-    StdDensityBreakpointVector[i] = density;
+  StdDensityBreakpointVector.clear();
+  for (unsigned int i = 0; i < StdPressureBreakpointVector.size(); i++) {
+    StdDensityBreakpointVector.push_back(StdPressureBreakpointVector[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
   }
 }
 
@@ -453,20 +452,20 @@ void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geometricAlt)
 {
   // Work out which layer we're dealing with
-  int i = 0;
-  for (; i < StdDensityBreakpointVector.size() - 2; i++) {
-    if (density >= StdDensityBreakpointVector[i + 1])
+  unsigned int b = 0;
+  for (; b < StdDensityBreakpointVector.size() - 2; b++) {
+    if (density >= StdDensityBreakpointVector[b + 1])
       break;
   }
 
   // Get layer properties
-  double Tmb = StdAtmosTemperatureTable(i + 1, 1);
-  double Hb = StdAtmosTemperatureTable(i + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(i + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(i + 2, 0);
+  double Tmb = StdAtmosTemperatureTable(b + 1, 1);
+  double Hb = StdAtmosTemperatureTable(b + 1, 0);
+  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
+  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
   double deltaH = UpperAlt - Hb;
   double Lmb = (UpperTemp - Tmb) / deltaH;
-  double pb = StdDensityBreakpointVector[i];
+  double pb = StdDensityBreakpointVector[b];
 
   double density_altitude = 0.0;
 
@@ -487,20 +486,20 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geo
 double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double geometricAlt)
 {
   // Work out which layer we're dealing with
-  int i = 0;
-  for (; i < StdPressureBreakpointVector.size() - 2; i++) {
-    if (pressure >= StdPressureBreakpointVector[i + 1])
+  unsigned int b = 0;
+  for (; b < StdPressureBreakpointVector.size() - 2; b++) {
+    if (pressure >= StdPressureBreakpointVector[b + 1])
       break;
   }
 
   // Get layer properties
-  double Tmb = StdAtmosTemperatureTable(i + 1, 1);
-  double Hb = StdAtmosTemperatureTable(i + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(i + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(i + 2, 0);
+  double Tmb = StdAtmosTemperatureTable(b + 1, 1);
+  double Hb = StdAtmosTemperatureTable(b + 1, 0);
+  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
+  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
   double deltaH = UpperAlt - Hb;
   double Lmb = (UpperTemp - Tmb) / deltaH;
-  double Pb = StdPressureBreakpointVector[i];
+  double Pb = StdPressureBreakpointVector[b];
 
   double pressure_altitude = 0.0;
 
