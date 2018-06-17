@@ -441,9 +441,10 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
+  StdDensityBreakpointVector.resize(StdPressureBreakpointVector.size());
   for (int i = 0; i < StdPressureBreakpointVector.size(); i++) {
     double density = StdPressureBreakpointVector[i] / (Reng * StdAtmosTemperatureTable(i+1, 1));
-    StdDensityBreakpointVector.push_back(density);
+    StdDensityBreakpointVector[i] = density;
   }
 }
 
