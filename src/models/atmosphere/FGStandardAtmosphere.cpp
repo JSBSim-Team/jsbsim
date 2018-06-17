@@ -128,19 +128,13 @@ bool FGStandardAtmosphere::InitModel(void)
   StdSLtemperature = SLtemperature = StdAtmosTemperatureTable(1, 1);
   StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
 
-  // Density and pressure altitude parameters
-  // Density altitude formula only valid up until top of the Troposhere
-  TroposphereMaxAltitude = GeometricAltitude(StdAtmosTemperatureTable(2, 0));
-  // Standard sea level temp / Troposphere lapse rate
-  TroposphereAltitudeScaleFactor = -StdSLtemperature / LapseRateVector[0];
-  // Troposphere density altitude exponent = LR*/(g0M - LR*)
-  DATroposphereExponent = (-LapseRateVector[0] * Rstar) / (g0 * Mair + LapseRateVector[0] * Rstar);
-  // Troposphere pressure altitude exponent  LR* / g0M 
-  PATroposphereExponent = (-LapseRateVector[0] * Reng) / g0;
+  StdPressureBreakpointVector = PressureBreakpointVector;
+
+  CalculateStdDensityBreakpoints();
 
   Calculate(0.0);
-  StdSLsoundspeed  = SLsoundspeed = Soundspeed;
-  StdPressureBreakpointVector = PressureBreakpointVector;
+
+  StdSLsoundspeed = SLsoundspeed = Soundspeed;
 
   rSLtemperature = 1/SLtemperature ;
   rSLpressure    = 1/SLpressure    ;
@@ -445,32 +439,81 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geoalt)
+void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
-  if (geoalt > TroposphereMaxAltitude)
-    return geoalt;
-  else {
-    // Convert to density altitude based on ratio of density to standard sea-level density.
-    // Passed in density has taken into account any non standard ISA day changes.
-    double density_altitude = TroposphereAltitudeScaleFactor * (1.0 - pow(density / StdSLdensity, DATroposphereExponent));
-
-    return GeometricAltitude(density_altitude);
+  StdDensityBreakpointVector.clear();
+  for (unsigned int i = 0; i < StdPressureBreakpointVector.size(); i++) {
+    StdDensityBreakpointVector.push_back(StdPressureBreakpointVector[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double geoalt)
+double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geometricAlt)
 {
-  if (geoalt > TroposphereMaxAltitude)
-    return geoalt;
-  else {
-    // Convert to pressure altitude base on ratio of pressure to sea-level pressure.
-    // Passed in pressure has taken into account any non standard ISA day changes.
-    double pressure_altitude = TroposphereAltitudeScaleFactor * (1 - pow(pressure / StdSLpressure, PATroposphereExponent));
-
-    return GeometricAltitude(pressure_altitude);
+  // Work out which layer we're dealing with
+  unsigned int b = 0;
+  for (; b < StdDensityBreakpointVector.size() - 2; b++) {
+    if (density >= StdDensityBreakpointVector[b + 1])
+      break;
   }
+
+  // Get layer properties
+  double Tmb = StdAtmosTemperatureTable(b + 1, 1);
+  double Hb = StdAtmosTemperatureTable(b + 1, 0);
+  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
+  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
+  double deltaH = UpperAlt - Hb;
+  double Lmb = (UpperTemp - Tmb) / deltaH;
+  double pb = StdDensityBreakpointVector[b];
+
+  double density_altitude = 0.0;
+
+  // https://en.wikipedia.org/wiki/Barometric_formula for density solved for H
+  if (Lmb != 0.0) {
+    double Exp = -1.0 / (1.0 + (g0*Mair)/(Rstar*Lmb));
+    density_altitude = Hb + (Tmb / Lmb) * (pow(density / pb, Exp) - 1);
+  } else {
+    double Factor = -(Rstar*Tmb) / (g0*Mair);
+    density_altitude = Hb + Factor * log(density / pb);
+  }
+
+  return GeometricAltitude(density_altitude);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double geometricAlt)
+{
+  // Work out which layer we're dealing with
+  unsigned int b = 0;
+  for (; b < StdPressureBreakpointVector.size() - 2; b++) {
+    if (pressure >= StdPressureBreakpointVector[b + 1])
+      break;
+  }
+
+  // Get layer properties
+  double Tmb = StdAtmosTemperatureTable(b + 1, 1);
+  double Hb = StdAtmosTemperatureTable(b + 1, 0);
+  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
+  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
+  double deltaH = UpperAlt - Hb;
+  double Lmb = (UpperTemp - Tmb) / deltaH;
+  double Pb = StdPressureBreakpointVector[b];
+
+  double pressure_altitude = 0.0;
+
+  if (Lmb != 0.00) {
+    // Equation 33(a) from ISA document solved for H
+    double Exp = -(Rstar*Lmb) / (g0*Mair);
+    pressure_altitude = Hb + (Tmb / Lmb) * (pow(pressure / Pb, Exp) - 1);
+  } else {
+    // Equation 33(b) from ISA document solved for H
+    double Factor = -(Rstar*Tmb) / (g0*Mair);
+    pressure_altitude = Hb + Factor * log(pressure / Pb);
+  }
+
+  return GeometricAltitude(pressure_altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
