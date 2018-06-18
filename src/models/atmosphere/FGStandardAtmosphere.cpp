@@ -129,6 +129,7 @@ bool FGStandardAtmosphere::InitModel(void)
   StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
 
   StdPressureBreakpointVector = PressureBreakpointVector;
+  StdLapseRates = LapseRateVector;
 
   CalculateStdDensityBreakpoints();
 
@@ -461,10 +462,7 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geo
   // Get layer properties
   double Tmb = StdAtmosTemperatureTable(b + 1, 1);
   double Hb = StdAtmosTemperatureTable(b + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
-  double deltaH = UpperAlt - Hb;
-  double Lmb = (UpperTemp - Tmb) / deltaH;
+  double Lmb = StdLapseRates[b];
   double pb = StdDensityBreakpointVector[b];
 
   double density_altitude = 0.0;
@@ -495,10 +493,7 @@ double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double g
   // Get layer properties
   double Tmb = StdAtmosTemperatureTable(b + 1, 1);
   double Hb = StdAtmosTemperatureTable(b + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
-  double deltaH = UpperAlt - Hb;
-  double Lmb = (UpperTemp - Tmb) / deltaH;
+  double Lmb = StdLapseRates[b];
   double Pb = StdPressureBreakpointVector[b];
 
   double pressure_altitude = 0.0;
