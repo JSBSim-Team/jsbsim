@@ -318,13 +318,8 @@ void FGOutputSocket::PrintHeaders(void)
 	  cout << data << endl;
 	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
 
+/*
 	  if (data.size() > 0) {
-
-		  /*
-		  cout << ">>> DATA RECEIVE >>>" << endl;
-		  cout << data << endl;
-		  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
-		  */
 
 		  // parse lines
 		  while (0) { // 1 if you want to parse
@@ -386,6 +381,7 @@ void FGOutputSocket::PrintHeaders(void)
 			  start = string_end;
 		  }
 	  }
+  */
 
   }
 
@@ -512,6 +508,7 @@ void FGOutputSocket::Print(void)
   if (IsWaitSocketReply()) {
 
 	  cout << ">>> [FGOutputSocket::Print] SOCKET RECEIVE >>>" << endl;
+
 	  std::string data = socket->Receive(); // get socket transmission if present
 
 	  cout << ">>> [FGOutputSocket::Print] DATA RECEIVE >>>" << endl;
