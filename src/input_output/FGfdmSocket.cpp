@@ -78,57 +78,74 @@ static bool LoadWinSockDLL(void)
 }
 #endif
 
+/*
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
 {
-  sckt = sckt_in = 0;
-  Protocol = (ProtocolType)protocol;
-  connected = false;
-  waitSocketReply = false;
+	FGfdmSocket(address, port, protocol, false);
+}
+*/
 
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
-  #endif
+FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dosocketreceive)
+{
+	sckt = sckt_in = 0;
+	Protocol = (ProtocolType)protocol;
+	connected = false;
+	waitSocketReply = dosocketreceive;
 
-  if (!is_number(address)) {
-    if ((host = gethostbyname(address.c_str())) == NULL) {
-      cout << "Could not get host net address by name..." << endl;
-    }
-  } else {
-    unsigned long ip;
-    ip = inet_addr(address.c_str());
-    if ((host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET)) == NULL) {
-      cout << "Could not get host net address by number..." << endl;
-    }
-  }
+#if defined(_MSC_VER) || defined(__MINGW32__)
+	if (!LoadWinSockDLL()) return;
+#endif
 
-  if (host != NULL) {
-    if (protocol == ptUDP) {  //use udp protocol
-       sckt = socket(AF_INET, SOCK_DGRAM, 0);
-       cout << "Creating UDP socket on port " << port << endl;
-    }
-    else { //use tcp protocol
-       sckt = socket(AF_INET, SOCK_STREAM, 0);
-       cout << "Creating TCP socket on port " << port << endl;
-    }
+	if (!is_number(address)) {
+		if ((host = gethostbyname(address.c_str())) == NULL) {
+			cout << "Could not get host net address by name..." << endl;
+		}
+	}
+	else {
+		unsigned long ip;
+		ip = inet_addr(address.c_str());
+		if ((host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET)) == NULL) {
+			cout << "Could not get host net address by number..." << endl;
+		}
+	}
 
-    if (sckt >= 0) {  // successful
-      memset(&scktName, 0, sizeof(struct sockaddr_in));
-      scktName.sin_family = AF_INET;
-      scktName.sin_port = htons(port);
-      memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
-      int len = sizeof(struct sockaddr_in);
-      if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-        cout << "Successfully connected to socket for output ..." << endl;
-        connected = true;
-      } else {                // unsuccessful
-        cout << "Could not connect to socket for output ..." << endl;
-      }
-    } else {          // unsuccessful
-      cout << "Could not create socket for FDM output, error = " << errno << endl;
-    }
+	if (host != NULL) {
+		if (protocol == ptUDP) {  //use udp protocol
+			sckt = socket(AF_INET, SOCK_DGRAM, 0);
+			cout << "Creating UDP socket on port " << port << endl;
+		}
+		else { //use tcp protocol
+			sckt = socket(AF_INET, SOCK_STREAM, 0);
+			cout << "Creating TCP socket on port " << port << endl;
+		}
 
-  }
-  Debug(0);
+		if (sckt >= 0) {  // successful
+			memset(&scktName, 0, sizeof(struct sockaddr_in));
+			scktName.sin_family = AF_INET;
+			scktName.sin_port = htons(port);
+			memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
+			int len = sizeof(struct sockaddr_in);
+			if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+				cout << "Successfully connected to socket for output ..." << endl;
+				connected = true;
+			}
+			else {                // unsuccessful
+				cout << "Could not connect to socket for output ..." << endl;
+			}
+			// TODO: ?? put here the logic that enables the same socket to receive
+			//       back data from a server app ??
+			if (waitSocketReply) {
+				// make socket a server as well
+				cout << "[FGfdmSocket] agodemar would like to connect to socket for input ..." << endl;
+
+			}
+		}
+		else {          // unsuccessful
+			cout << "Could not create socket for FDM output, error = " << errno << endl;
+		}
+	}
+	Debug(0);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

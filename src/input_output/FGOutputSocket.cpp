@@ -73,7 +73,6 @@ FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex) :
   socket(0)
 {
 	waitSocketReply = false;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +80,7 @@ FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex) :
 FGOutputSocket::~FGOutputSocket()
 {
   delete socket;
+  //delete socket_inbound;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,8 +137,24 @@ bool FGOutputSocket::Load(Element* el)
   action = to_upper(action);
 
   if (action == "WAIT_SOCKET_REPLY") {
+
+	  // http://www.cplusplus.com/forum/windows/20173/
+	  // https://stackoverflow.com/questions/467396/can-the-server-use-the-same-socket-to-send-the-response-to-the-client-how
+
+	  // Toggle status variable
 	  SetWaitSocketReply(true);
 	  std::cout << ">>>>>> WAIT_SOCKET_REPLY " << std::endl;
+
+	  /*
+	  // get the port number for inbound communication
+	  std::string s = el->GetAttributeValue("port_inbound");
+	  if ("" != s) {
+		  unsigned int p = atoi(s.c_str());
+		  SockPort_inbound = (0 != p) ? p : (SockPort + 1);
+	  } else
+		  SockPort = SockPort + 1;
+	  std::cout << ">>>>>> on port " << SockPort_inbound << std::endl;
+	  */
   }
   else if (action != string("NONE")) {
 	  cerr << "Unknown action of output socket specified in config file" << endl;
@@ -153,11 +169,19 @@ bool FGOutputSocket::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
     delete socket;
-    socket = new FGfdmSocket(SockName, SockPort, SockProtocol);
+
+    socket = new FGfdmSocket(SockName, SockPort, SockProtocol, IsWaitSocketReply());
+
+	// socket->SetWaitSocketReply(IsWaitSocketReply());
 
     if (socket == 0) return false;
 
-	socket->SetWaitSocketReply(IsWaitSocketReply());
+
+	if (IsWaitSocketReply()) {
+		// open socket
+		//delete socket_inbound;
+		//socket_inbound = new FGfdmSocket(SockPort_inbound, SockProtocol);
+	}
 
     if (!socket->GetConnectStatus()) return false;
 
@@ -301,24 +325,24 @@ void FGOutputSocket::PrintHeaders(void)
   if (IsWaitSocketReply()) {
 
 	  cout << ">>> [FGOutputSocket::PrintHeaders] SOCKET RECEIVE >>>" << endl;
-
+  
+  /*
 	  string line, token;
 	  size_t start = 0, string_start = 0, string_end = 0;
 	  double value = 0;
 	  FGPropertyNode* node = 0;
 
 	  // socket is != 0 within this function
-	  // if (socket == 0) return;
+	  if (socket_inbound == 0) return;
 	  // socket is connected within this function
-	  // if (!socket->GetConnectStatus()) return;
+	  if (!socket_inbound->GetConnectStatus()) return;
 
-	  std::string data = socket->Receive(); // get socket transmission if present
+	  std::string data = socket_inbound->Receive(); // get socket transmission if present
 
 	  cout << ">>> [FGOutputSocket::PrintHeaders] DATA RECEIVE >>>" << endl;
 	  cout << data << endl;
 	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
 
-/*
 	  if (data.size() > 0) {
 
 		  // parse lines
@@ -506,15 +530,23 @@ void FGOutputSocket::Print(void)
   // Possibly, the state will be modified when the socket reply is parsed
   // See: FGInputSocket::Read() 
   if (IsWaitSocketReply()) {
-
 	  cout << ">>> [FGOutputSocket::Print] SOCKET RECEIVE >>>" << endl;
 
-	  std::string data = socket->Receive(); // get socket transmission if present
+/*
+	  // socket is != 0 within this function
+	  if (socket_inbound == 0) return;
+	  // socket is connected within this function
+	  if (!socket_inbound->GetConnectStatus()) return;
+
+
+	  std::string data = socket_inbound->Receive(); // get socket transmission if present
 
 	  cout << ">>> [FGOutputSocket::Print] DATA RECEIVE >>>" << endl;
 	  cout << data << endl;
 	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
 
+	  // TODO: parse data
+*/
   }
 
 }
