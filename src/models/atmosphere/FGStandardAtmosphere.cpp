@@ -97,7 +97,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
                            << 278385.8268 << 336.5028  // 84.852      86.000
                            << 298556.4304 << 336.5028; //             91.000 - First layer in high altitude regime 
 
-  PressureBreakpointVector.resize(StdAtmosTemperatureTable.GetNumRows());
+  PressureBreakpoints.resize(StdAtmosTemperatureTable.GetNumRows());
 
   // Assume the altitude to fade out the gradient at is at the highest
   // altitude in the table. Above that, other functions are used to
@@ -119,7 +119,7 @@ FGStandardAtmosphere::~FGStandardAtmosphere()
 
 bool FGStandardAtmosphere::InitModel(void)
 {
-  PressureBreakpointVector[0] = StdSLpressure = SLpressure = Pressure = 2116.228; // psf
+  PressureBreakpoints[0] = StdSLpressure = SLpressure = Pressure = 2116.228; // psf
   TemperatureDeltaGradient = 0.0;
   TemperatureBias = 0.0;
   CalculateLapseRates();
@@ -128,7 +128,8 @@ bool FGStandardAtmosphere::InitModel(void)
   StdSLtemperature = SLtemperature = StdAtmosTemperatureTable(1, 1);
   StdSLdensity     = SLdensity = StdSLpressure / (Reng * StdSLtemperature);
 
-  StdPressureBreakpointVector = PressureBreakpointVector;
+  StdPressureBreakpoints = PressureBreakpoints;
+  StdLapseRates = LapseRates;
 
   CalculateStdDensityBreakpoints();
 
@@ -173,14 +174,14 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
   double Tmb = GetTemperature(GeometricAltitude(BaseAlt));
   double deltaH = GeoPotAlt - BaseAlt;
-  double Lmb = LapseRateVector[b];
+  double Lmb = LapseRates[b];
 
   if (Lmb != 0.0) {
     double Exp = g0*Mair / (Rstar*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
-    return PressureBreakpointVector[b]*pow(factor, Exp);
+    return PressureBreakpoints[b]*pow(factor, Exp);
   } else
-    return PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+    return PressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,7 +190,7 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
   double press = ConvertToPSF(pressure, unit);
 
-  PressureBreakpointVector[0] = press;
+  PressureBreakpoints[0] = press;
   CalculatePressureBreakpoints();
 }
 
@@ -212,7 +213,7 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
   else {
     // We don't need to add TemperatureDeltaGradient*GeoPotAlt here because
     // the lapse rate vector already accounts for the temperature gradient.
-    T = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRateVector[0];
+    T = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRates[0];
   }
 
   T += TemperatureBias + TemperatureDeltaGradient * GradientFadeoutAltitude;
@@ -236,7 +237,7 @@ double FGStandardAtmosphere::GetStdTemperature(double altitude) const
     if (GeoPotAlt >= 0.0)
       temp = StdAtmosTemperatureTable.GetValue(GeoPotAlt);
     else
-      temp = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRateVector[0];
+      temp = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRates[0];
 
   } else if (altitude < 360892.4) {        // 110 km - station 9
 
@@ -281,14 +282,14 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
 
   double Tmb = GetStdTemperature(GeometricAltitude(BaseAlt));
   double deltaH = GeoPotAlt - BaseAlt;
-  double Lmb = LapseRateVector[b];
+  double Lmb = LapseRates[b];
 
   if (Lmb != 0.0) {
     double Exp = g0*Mair / (Rstar*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
-    return StdPressureBreakpointVector[b]*pow(factor, Exp);
+    return StdPressureBreakpoints[b]*pow(factor, Exp);
   } else
-    return StdPressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+    return StdPressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,7 +386,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
 void FGStandardAtmosphere::CalculateLapseRates()
 {
   unsigned int numRows = StdAtmosTemperatureTable.GetNumRows();
-  LapseRateVector.clear();
+  LapseRates.clear();
 
   for (unsigned int bh=0; bh < numRows-1; bh++)
   {
@@ -393,7 +394,7 @@ void FGStandardAtmosphere::CalculateLapseRates()
     double t1 = StdAtmosTemperatureTable(bh+2,1);
     double h0 = StdAtmosTemperatureTable(bh+1,0);
     double h1 = StdAtmosTemperatureTable(bh+2,0);
-    LapseRateVector.push_back((t1 - t0) / (h1 - h0) - TemperatureDeltaGradient);
+    LapseRates.push_back((t1 - t0) / (h1 - h0) - TemperatureDeltaGradient);
   }
 }
 
@@ -401,7 +402,7 @@ void FGStandardAtmosphere::CalculateLapseRates()
 
 void FGStandardAtmosphere::CalculatePressureBreakpoints()
 {
-  for (unsigned int b=0; b<PressureBreakpointVector.size()-1; b++) {
+  for (unsigned int b=0; b<PressureBreakpoints.size()-1; b++) {
     double BaseTemp = StdAtmosTemperatureTable(b+1,1);
     double BaseAlt = StdAtmosTemperatureTable(b+1,0);
     double UpperAlt = StdAtmosTemperatureTable(b+2,0);
@@ -409,13 +410,13 @@ void FGStandardAtmosphere::CalculatePressureBreakpoints()
     double Tmb = BaseTemp
                  + TemperatureBias 
                  + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
-    if (LapseRateVector[b] != 0.00) {
-      double Lmb = LapseRateVector[b];
+    if (LapseRates[b] != 0.00) {
+      double Lmb = LapseRates[b];
       double Exp = g0*Mair / (Rstar*Lmb);
       double factor = Tmb/(Tmb + Lmb*deltaH);
-      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*pow(factor, Exp);
+      PressureBreakpoints[b+1] = PressureBreakpoints[b]*pow(factor, Exp);
     } else {
-      PressureBreakpointVector[b+1] = PressureBreakpointVector[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+      PressureBreakpoints[b+1] = PressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
     }
   }
 }
@@ -433,7 +434,7 @@ void FGStandardAtmosphere::ResetSLTemperature()
 
 void FGStandardAtmosphere::ResetSLPressure()
 {
-  PressureBreakpointVector[0] = StdSLpressure; // psf
+  PressureBreakpoints[0] = StdSLpressure; // psf
   CalculatePressureBreakpoints();
 }
 
@@ -441,9 +442,9 @@ void FGStandardAtmosphere::ResetSLPressure()
 
 void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
-  StdDensityBreakpointVector.clear();
-  for (unsigned int i = 0; i < StdPressureBreakpointVector.size(); i++) {
-    StdDensityBreakpointVector.push_back(StdPressureBreakpointVector[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
+  StdDensityBreakpoints.clear();
+  for (unsigned int i = 0; i < StdPressureBreakpoints.size(); i++) {
+    StdDensityBreakpoints.push_back(StdPressureBreakpoints[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
   }
 }
 
@@ -453,19 +454,16 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geo
 {
   // Work out which layer we're dealing with
   unsigned int b = 0;
-  for (; b < StdDensityBreakpointVector.size() - 2; b++) {
-    if (density >= StdDensityBreakpointVector[b + 1])
+  for (; b < StdDensityBreakpoints.size() - 2; b++) {
+    if (density >= StdDensityBreakpoints[b + 1])
       break;
   }
 
   // Get layer properties
   double Tmb = StdAtmosTemperatureTable(b + 1, 1);
   double Hb = StdAtmosTemperatureTable(b + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
-  double deltaH = UpperAlt - Hb;
-  double Lmb = (UpperTemp - Tmb) / deltaH;
-  double pb = StdDensityBreakpointVector[b];
+  double Lmb = StdLapseRates[b];
+  double pb = StdDensityBreakpoints[b];
 
   double density_altitude = 0.0;
 
@@ -487,19 +485,16 @@ double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double g
 {
   // Work out which layer we're dealing with
   unsigned int b = 0;
-  for (; b < StdPressureBreakpointVector.size() - 2; b++) {
-    if (pressure >= StdPressureBreakpointVector[b + 1])
+  for (; b < StdPressureBreakpoints.size() - 2; b++) {
+    if (pressure >= StdPressureBreakpoints[b + 1])
       break;
   }
 
   // Get layer properties
   double Tmb = StdAtmosTemperatureTable(b + 1, 1);
   double Hb = StdAtmosTemperatureTable(b + 1, 0);
-  double UpperTemp = StdAtmosTemperatureTable(b + 2, 1);
-  double UpperAlt = StdAtmosTemperatureTable(b + 2, 0);
-  double deltaH = UpperAlt - Hb;
-  double Lmb = (UpperTemp - Tmb) / deltaH;
-  double Pb = StdPressureBreakpointVector[b];
+  double Lmb = StdLapseRates[b];
+  double Pb = StdPressureBreakpoints[b];
 
   double pressure_altitude = 0.0;
 

@@ -64,6 +64,7 @@ CLASS DOCUMENTATION
 
 ~~~{.xml}
 <sense> {1 | -1} </sense> 
+<p_factor> {number} </p_factor>
 <propeller name="{string}" version="{string}">
   <ixx> {number} </ixx>
   <diameter unit="IN"> {number} </diameter>
@@ -75,7 +76,6 @@ CLASS DOCUMENTATION
   <maxrpm> {number} </maxrpm>
   <constspeed> {number} </constspeed>
   <reversepitch> {number} </reversepitch>
-  <p_factor> {number} </p_factor>
   <ct_factor> {number} </ct_factor>
   <cp_factor> {number} </cp_factor>
 
@@ -122,7 +122,8 @@ CLASS DOCUMENTATION
     \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
                         -1=anti-clockwise as viewed from cockpit). Sense is
                        specified in the parent tag of the propeller.
-    \<p_factor>      - P factor.
+    \<p_factor>      - P factor. It is specified in the parent tag of
+                       the propeller.
     \<ct_factor>     - A multiplier for the coefficients of thrust.
     \<cp_factor>     - A multiplier for the coefficients of power.
 </pre>
@@ -132,6 +133,11 @@ coefficient of power (Cp).
 
 Two tables are optional. They apply a factor to Ct and Cp based on the
 helical tip Mach.
+
+The parameters <sense> and <p_factor> must be specified at the parent level i.e.
+in the <thruster> element. This allows to specify different sense and P factor
+values for each propeller of the model while using the same definition file for
+all the propellers.
 
 In addition to thrust, the propeller applies two moments to the aircraft:
 - The torque that tends to roll the aircraft in the direction opposite to the

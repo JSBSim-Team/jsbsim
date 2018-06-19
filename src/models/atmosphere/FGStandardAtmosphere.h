@@ -251,10 +251,11 @@ protected:
   double GradientFadeoutAltitude;
 
   FGTable StdAtmosTemperatureTable;
-  std::vector<double> LapseRateVector;
-  std::vector<double> PressureBreakpointVector;
-  std::vector<double> StdPressureBreakpointVector;
-  std::vector<double> StdDensityBreakpointVector;
+  std::vector<double> LapseRates;
+  std::vector<double> PressureBreakpoints;
+  std::vector<double> StdPressureBreakpoints;
+  std::vector<double> StdDensityBreakpoints;
+  std::vector<double> StdLapseRates;
 
   /// Recalculate the lapse rate vectors when the temperature profile is altered
   /// in a way that would change the lapse rates, such as when a gradient is applied.
