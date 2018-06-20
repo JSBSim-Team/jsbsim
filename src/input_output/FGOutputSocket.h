@@ -112,6 +112,9 @@ public:
   /// Generates the output.
   void Print(void);
 
+  /// Parse the string read from socket and apply commands
+  void ParseReply(const std::string& data);
+
   /** Outputs a status thru the socket. This method issues a message prepended
       by the string "<STATUS>" to the socket.
       @param out_str status message
