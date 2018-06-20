@@ -125,6 +125,7 @@ private:
   std::ostringstream buffer;
   bool connected;
   bool waitSocketReply;
+  bool listening;
   void Debug(int from);
 };
 }

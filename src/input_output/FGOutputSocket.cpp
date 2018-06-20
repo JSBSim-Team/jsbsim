@@ -532,17 +532,16 @@ void FGOutputSocket::Print(void)
   if (IsWaitSocketReply()) {
 	  cout << ">>> [FGOutputSocket::Print] SOCKET RECEIVE >>>" << endl;
 
-/*
 	  // socket is != 0 within this function
-	  if (socket_inbound == 0) return;
+	  if (socket == 0) return;
 	  // socket is connected within this function
-	  if (!socket_inbound->GetConnectStatus()) return;
+	  if (!socket->GetConnectStatus()) return;
 
-
-	  std::string data = socket_inbound->Receive(); // get socket transmission if present
+	  std::string data = socket->Receive(); // get socket transmission if present
 
 	  cout << ">>> [FGOutputSocket::Print] DATA RECEIVE >>>" << endl;
 	  cout << data << endl;
+/*
 	  cout << ">>>>>>>>>>>>>>>>>>>>>>" << endl;
 
 	  // TODO: parse data

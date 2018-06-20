@@ -89,6 +89,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dos
 {
 	sckt = sckt_in = 0;
 	Protocol = (ProtocolType)protocol;
+	std::string ProtocolName;
 	connected = false;
 	waitSocketReply = dosocketreceive;
 
@@ -111,10 +112,12 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dos
 
 	if (host != NULL) {
 		if (protocol == ptUDP) {  //use udp protocol
+			ProtocolName = "UDP";
 			sckt = socket(AF_INET, SOCK_DGRAM, 0);
 			cout << "Creating UDP socket on port " << port << endl;
 		}
 		else { //use tcp protocol
+			ProtocolName = "TCP";
 			sckt = socket(AF_INET, SOCK_STREAM, 0);
 			cout << "Creating TCP socket on port " << port << endl;
 		}
@@ -132,11 +135,37 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dos
 			else {                // unsuccessful
 				cout << "Could not connect to socket for output ..." << endl;
 			}
-			// TODO: ?? put here the logic that enables the same socket to receive
-			//       back data from a server app ??
+			// Here is the logic that enables the same socket to receive
+			// back data from an external server app as a reply to the
+			// send operations
 			if (waitSocketReply) {
 				// make socket a server as well
 				cout << "[FGfdmSocket] agodemar would like to connect to socket for input ..." << endl;
+				if (bind(sckt, (struct sockaddr*)&scktName, sizeof(scktName)) != -1) {
+					cout << "Successfully bound to " << ProtocolName << " input socket on port "
+						<< port << endl << endl;
+					if (Protocol == ptTCP) {
+						unsigned long NoBlock = true;
+						if (listen(sckt, 5) >= 0) { // successful listen()
+#if defined(_MSC_VER) || defined(__MINGW32__)
+							ioctlsocket(sckt, FIONBIO, &NoBlock);
+							sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+#else
+							ioctl(sckt, FIONBIO, &NoBlock);
+							sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
+#endif
+							listening = true;
+						}
+						else {
+							cerr << "Could not listen ..." << endl;
+							listening = false;
+						}
+					}
+				}
+				else {                // unsuccessful
+					cout << "Could not bind to " << ProtocolName << " input socket, error = "
+						<< errno << endl;
+				}
 
 			}
 		}
