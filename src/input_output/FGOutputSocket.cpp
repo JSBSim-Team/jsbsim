@@ -79,40 +79,39 @@ FGOutputSocket::FGOutputSocket(FGFDMExec* fdmex) :
 
 FGOutputSocket::~FGOutputSocket()
 {
-  delete socket;
-  //delete socket_inbound;
+	delete socket;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGOutputSocket::SetOutputName(const string& fname)
 {
-  // tokenize the output name
-  size_t dot_pos = fname.find(':', 0);
-  size_t slash_pos = fname.find('/', 0);
+	// tokenize the output name
+	size_t dot_pos = fname.find(':', 0);
+	size_t slash_pos = fname.find('/', 0);
   
-  string name = fname.substr(0, dot_pos);
+	string name = fname.substr(0, dot_pos);
   
-  string proto = "TCP";
-  if(dot_pos + 1 < slash_pos)
-    proto = fname.substr(dot_pos + 1, slash_pos - dot_pos - 1);
+	string proto = "TCP";
+	if(dot_pos + 1 < slash_pos)
+		proto = fname.substr(dot_pos + 1, slash_pos - dot_pos - 1);
   
-  string port = "1138";
-  if(slash_pos < string::npos)
-    port = fname.substr(slash_pos + 1, string::npos);
+	string port = "1138";
+	if(slash_pos < string::npos)
+		port = fname.substr(slash_pos + 1, string::npos);
   
-  // set the model name
-  Name = name + ":" + port + "/" + proto;
+	// set the model name
+	Name = name + ":" + port + "/" + proto;
   
-  // set the socket params
-  SockName = name;
+	// set the socket params
+	SockName = name;
   
-  SockPort = atoi(port.c_str());
+	SockPort = atoi(port.c_str());
   
-  if (proto == "UDP")
-    SockProtocol = FGfdmSocket::ptUDP;
-  else // Default to TCP
-    SockProtocol = FGfdmSocket::ptTCP;
+	if (proto == "UDP")
+		SockProtocol = FGfdmSocket::ptUDP;
+	else // Default to TCP
+		SockProtocol = FGfdmSocket::ptTCP;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,18 +142,8 @@ bool FGOutputSocket::Load(Element* el)
 
 	  // Toggle status variable
 	  SetWaitSocketReply(true);
-	  std::cout << ">>>>>> WAIT_SOCKET_REPLY " << std::endl;
+	  std::cout << "set WAIT_SOCKET_REPLY" << std::endl;
 
-	  /*
-	  // get the port number for inbound communication
-	  std::string s = el->GetAttributeValue("port_inbound");
-	  if ("" != s) {
-		  unsigned int p = atoi(s.c_str());
-		  SockPort_inbound = (0 != p) ? p : (SockPort + 1);
-	  } else
-		  SockPort = SockPort + 1;
-	  std::cout << ">>>>>> on port " << SockPort_inbound << std::endl;
-	  */
   }
   else if (action != string("NONE")) {
 	  cerr << "Unknown action of output socket specified in config file" << endl;
@@ -167,30 +156,19 @@ bool FGOutputSocket::Load(Element* el)
 
 bool FGOutputSocket::InitModel(void)
 {
-  if (FGOutputType::InitModel()) {
-    delete socket;
+	if (FGOutputType::InitModel()) {
+		delete socket;
 
-    socket = new FGfdmSocket(SockName, SockPort, SockProtocol, IsWaitSocketReply());
+		socket = new FGfdmSocket(SockName, SockPort, SockProtocol, IsWaitSocketReply());
 
-	// socket->SetWaitSocketReply(IsWaitSocketReply());
+		if (socket == 0) return false;
+		if (!socket->GetConnectStatus()) return false;
 
-    if (socket == 0) return false;
+		PrintHeaders();
 
-
-	if (IsWaitSocketReply()) {
-		// open socket
-		//delete socket_inbound;
-		//socket_inbound = new FGfdmSocket(SockPort_inbound, SockProtocol);
+		return true;
 	}
-
-    if (!socket->GetConnectStatus()) return false;
-
-    PrintHeaders();
-
-    return true;
-  }
-
-  return false;
+	return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,25 +297,18 @@ void FGOutputSocket::PrintHeaders(void)
 
 	/*
 		The external server app connected to the socket might reply
-		to the header string sent in output.
+		to the header string sent on the output socket.
 		Reading a response.
 
-		NOTICE : this is a blocking behaviour, i.e.no data will be sent in
-		output until the read/parsing operation is terminated.
-		Until then, the FDM instance could not propagate the state.
-		See : FGInputSocket::Read()
-	  */
+		NOTE:	this is a blocking behaviour, i.e.no data will be sent in
+				output until the receive operation is terminated.
+				Until then, the FDM instance could not propagate the state.
+	*/
 
-  if (IsWaitSocketReply()) {
-
-	  std::string data = socket->Receive(); // get socket transmission if present
-	  cout << ">>> [FGOutputSocket::PrintHeaders] DATA RECEIVE >>>" << endl;
-	  cout << data << endl;
-	  // do nothing
-	  cout << ">>> [FGOutputSocket::PrintHeaders] no parsing." << endl;
-  
-  }
-
+	if (IsWaitSocketReply()) {
+		std::string data = socket->Receive(); // get socket transmission if present
+		// do nothing, no parsing on reply to headers
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -455,7 +426,7 @@ void FGOutputSocket::Print(void)
 	/*
 		If required, parse the server app reply on the same socket
 
-		NOTICE:	this is a blocking behaviour, i.e. no data will be sent in 
+		NOTE:	this is a blocking behaviour, i.e. no data will be sent in 
 				output until the read/parsing operation is terminated. 
 				Until then, the FDM instance could not propagate the state.
 				Possibly, the state will be modified when the socket reply 
@@ -464,15 +435,7 @@ void FGOutputSocket::Print(void)
 	*/
 	if (IsWaitSocketReply()) {
 
-		// socket is != 0 within this function
-		/* if (socket == 0) return; */
-		// socket is connected within this function
-		/* if (!socket->GetConnectStatus()) return; */
-
 		std::string data = socket->Receive(); // get socket transmission if present
-
-		cout << ">>> [FGOutputSocket::Print] DATA RECEIVE >>>" << endl;
-		cout << data << endl;
 		ParseReply(data);
 	}
 
@@ -485,11 +448,9 @@ void FGOutputSocket::ParseReply(const std::string& data)
 
 	if (data.size() > 0) {
 
-		cout << ">>> [FGOutputSocket::ParseReply] parsing inbound data >>>" << endl;
-
 		/*
 			NOTE: data must be terminated by a '\r\n' char
-				  chars after '\n' are discarded
+				  chars after last '\n' are discarded
 		*/
 
 		string line, token;
@@ -497,15 +458,8 @@ void FGOutputSocket::ParseReply(const std::string& data)
 		double value = 0;
 		FGPropertyNode* node = 0;
 
-		while (1) { // <================================================================
-/*
+		while (1) {
 
-set fcs/rudder-cmd-norm 1
-set atmosphere/gust-east-fps 5.0
-set atmosphere/gust-north-fps 12.0
-set atmosphere/gust-down-fps 0.0
-
-*/
 			// get the first non-cr char
 			string_start = data.find_first_not_of("\r\n", start);
 			if (string_start == string::npos) break;
@@ -519,8 +473,6 @@ set atmosphere/gust-down-fps 0.0
 
 			// now we have a line of char that we can parse
 			// NOTE: only a set command is accepted
-
-			cout << ">>> [FGOutputSocket::ParseReply] line: " << line << endl;
 
 			vector <string> tokens = split(line, ' ');
 
@@ -572,7 +524,7 @@ set atmosphere/gust-down-fps 0.0
 			}
 
 			start = string_end;
-		} // <================================================================
+		}
 	}
 }
 
@@ -580,13 +532,13 @@ set atmosphere/gust-down-fps 0.0
 
 void FGOutputSocket::SocketStatusOutput(const string& out_str)
 {
-  string asciiData;
+	string asciiData;
 
-  if (socket == 0) return;
+	if (socket == 0) return;
 
-  socket->Clear();
-  asciiData = string("<STATUS>") + out_str;
-  socket->Append(asciiData.c_str());
-  socket->Send();
+	socket->Clear();
+	asciiData = string("<STATUS>") + out_str;
+	socket->Append(asciiData.c_str());
+	socket->Send();
 }
 }
