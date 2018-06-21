@@ -90,7 +90,7 @@ class FGfdmSocket : public FGJSBBase
 {
 public:
   FGfdmSocket(const std::string&, int);
-  // FGfdmSocket(const std::string&, int, int);
+  FGfdmSocket(const std::string&, int, int);
   FGfdmSocket(const std::string&, int, int, bool);
   FGfdmSocket(int, int);
   ~FGfdmSocket();

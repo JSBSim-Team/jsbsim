@@ -78,12 +78,10 @@ static bool LoadWinSockDLL(void)
 }
 #endif
 
-/*
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
+	: FGfdmSocket(address, port, protocol, false) // C++11 delegating constructor
 {
-	FGfdmSocket(address, port, protocol, false);
 }
-*/
 
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dosocketreceive)
 {
