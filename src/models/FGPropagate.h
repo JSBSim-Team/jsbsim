@@ -443,6 +443,7 @@ public:
   double GetTerrainElevation(void) const { return GetLocalTerrainRadius() - VState.vLocation.GetSeaLevelRadius(); }
   double GetDistanceAGL(void)  const;
   double GetDistanceAGLKm(void)  const;
+  double GetDistanceAGLMeters(void)  const;
   double GetRadius(void) const {
       if (VState.vLocation.GetRadius() == 0) return 1.0;
       else return VState.vLocation.GetRadius();
@@ -577,6 +578,7 @@ public:
   void SetTerrainElevation(double tt);
   void SetDistanceAGL(double tt);
   void SetDistanceAGLKm(double tt);
+  void SetDistanceAGLMeters(double tt);
 
   void SetInitialState(const FGInitialCondition*);
   void SetLocation(const FGLocation& l);

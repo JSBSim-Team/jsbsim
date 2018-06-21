@@ -91,6 +91,7 @@ class FGfdmSocket : public FGJSBBase
 public:
   FGfdmSocket(const std::string&, int);
   FGfdmSocket(const std::string&, int, int);
+  FGfdmSocket(const std::string&, int, int, bool);
   FGfdmSocket(int, int);
   ~FGfdmSocket();
   void Send(void);
@@ -109,6 +110,12 @@ public:
 
   enum ProtocolType {ptUDP, ptTCP};
  
+  inline bool IsWaitFdmSocketReply() {
+	  return waitSocketReply;
+  }
+  void SetWaitSocketReply(const bool wait);
+
+
 private:
   int sckt;
   int sckt_in;
@@ -117,6 +124,8 @@ private:
   struct hostent *host;
   std::ostringstream buffer;
   bool connected;
+  bool waitSocketReply;
+  bool listening;
   void Debug(int from);
 };
 }

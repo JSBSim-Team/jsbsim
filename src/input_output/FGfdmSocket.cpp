@@ -79,55 +79,90 @@ static bool LoadWinSockDLL(void)
 #endif
 
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
+	: FGfdmSocket(address, port, protocol, false) // C++11 delegating constructor
 {
-  sckt = sckt_in = 0;
-  Protocol = (ProtocolType)protocol;
-  connected = false;
+}
 
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
-  #endif
+FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, bool dosocketreceive)
+{
+	sckt = sckt_in = 0;
+	Protocol = (ProtocolType)protocol;
+	std::string ProtocolName;
+	connected = false;
+	waitSocketReply = dosocketreceive;
 
-  if (!is_number(address)) {
-    if ((host = gethostbyname(address.c_str())) == NULL) {
-      cout << "Could not get host net address by name..." << endl;
-    }
-  } else {
-    unsigned long ip;
-    ip = inet_addr(address.c_str());
-    if ((host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET)) == NULL) {
-      cout << "Could not get host net address by number..." << endl;
-    }
-  }
+#if defined(_MSC_VER) || defined(__MINGW32__)
+	if (!LoadWinSockDLL()) return;
+#endif
 
-  if (host != NULL) {
-    if (protocol == ptUDP) {  //use udp protocol
-       sckt = socket(AF_INET, SOCK_DGRAM, 0);
-       cout << "Creating UDP socket on port " << port << endl;
-    }
-    else { //use tcp protocol
-       sckt = socket(AF_INET, SOCK_STREAM, 0);
-       cout << "Creating TCP socket on port " << port << endl;
-    }
+	if (!is_number(address)) {
+		if ((host = gethostbyname(address.c_str())) == NULL) {
+			cout << "Could not get host net address by name..." << endl;
+		}
+	}
+	else {
+		unsigned long ip;
+		ip = inet_addr(address.c_str());
+		if ((host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET)) == NULL) {
+			cout << "Could not get host net address by number..." << endl;
+		}
+	}
 
-    if (sckt >= 0) {  // successful
-      memset(&scktName, 0, sizeof(struct sockaddr_in));
-      scktName.sin_family = AF_INET;
-      scktName.sin_port = htons(port);
-      memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
-      int len = sizeof(struct sockaddr_in);
-      if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-        cout << "Successfully connected to socket for output ..." << endl;
-        connected = true;
-      } else {                // unsuccessful
-        cout << "Could not connect to socket for output ..." << endl;
-      }
-    } else {          // unsuccessful
-      cout << "Could not create socket for FDM output, error = " << errno << endl;
-    }
+	if (host != NULL) {
+		if (protocol == ptUDP) {  //use udp protocol
+			ProtocolName = "UDP";
+			sckt = socket(AF_INET, SOCK_DGRAM, 0);
+			cout << "Creating UDP socket on port " << port << endl;
+		}
+		else { //use tcp protocol
+			ProtocolName = "TCP";
+			sckt = socket(AF_INET, SOCK_STREAM, 0);
+			cout << "Creating TCP socket on port " << port << endl;
+		}
 
-  }
-  Debug(0);
+		if (sckt >= 0) {  // successful
+			memset(&scktName, 0, sizeof(struct sockaddr_in));
+			scktName.sin_family = AF_INET;
+			scktName.sin_port = htons(port);
+			memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
+			int len = sizeof(struct sockaddr_in);
+			if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+				cout << "Successfully connected to socket for output ..." << endl;
+				connected = true;
+
+				// Here is the logic that enables the same socket to receive
+				// back data from an external server app as a reply to the
+				// send operations
+
+				/* http://users.pja.edu.pl/~jms/qnx/help/tcpip_4.25_en/prog_guide/sock_advanced_tut.html
+
+				   We don't have to explicitly bind an address and port number to the socket, 
+				   since the connect() and send() calls will automatically bind an appropriate address 
+				   when they're used with an unbound socket.
+
+				   After a successful connect, if the client's socket is unbound at the time of the connect call, 
+				   the system will automatically select and bind a name to the socket if necessary
+				   (this is usually how local addresses are bound to a socket).
+
+				*/
+
+				if (waitSocketReply) {
+					// make socket a server as well
+					cout << "[agodemar] socket will be used also for input." << endl;
+
+				}
+
+			}
+			else {                // unsuccessful
+				cout << "Could not connect to socket for output ..." << endl;
+			}
+		}
+		else {          // unsuccessful
+			cout << "Could not create socket for FDM output, error = " << errno << endl;
+		}
+	}
+	Debug(0);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,6 +171,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
 {
   sckt = -1;
   connected = false;
+  waitSocketReply = false;
   Protocol = (ProtocolType)protocol;
   string ProtocolName;
  
@@ -203,6 +239,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port) // assumes TCP
 {
   sckt = sckt_in = 0;
   connected = false;
+  waitSocketReply = false;
   Protocol = ptTCP;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -259,57 +296,82 @@ FGfdmSocket::~FGfdmSocket()
 
 string FGfdmSocket::Receive(void)
 {
-  char buf[1024];
-  int len = sizeof(struct sockaddr_in);
-  int num_chars=0;
-  unsigned long NoBlock = true;
-  string data;      // todo: should allocate this with a standard size as a
-                    // class attribute and pass as a reference?
+	string data; /* todo: should allocate this with a standard size as a
+                    class attribute and pass as a reference? */
 
-  if (sckt_in <= 0 && Protocol == ptTCP) {
-    #if defined(_MSC_VER) || defined(__MINGW32__)
-      sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
-    #else
-      sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
-    #endif
-    if (sckt_in > 0) {
-      #if defined(_MSC_VER) || defined(__MINGW32__)
-         ioctlsocket(sckt_in, FIONBIO,&NoBlock);
-      #else
-         ioctl(sckt_in, FIONBIO, &NoBlock);
-      #endif
-      send(sckt_in, "Connected to JSBSim server\nJSBSim> ", 35, 0);
-    }
-  }
+	// *Separate* the logic of read actions on the output socket from the rest 
+	if (waitSocketReply) {
+		//================================================================================
+		// The current socket is for JSBSim acting as a client, i.e. sending output
+		// to an external server application.
+		// Yet we want to read data on this socket which come from the server
+		//
+		// Assume the incoming data will be readable in one shot
+		// 
+		// NOTICE: this is a blocking behaviour, i.e. no data will be sent in output until
+		//         the current read operation is terminated
 
-  if (sckt_in > 0) {
-    while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
-      data.append(buf, num_chars);
-    }
+		if (sckt > 0) {
+			cout << "[FGfdmSocket::Receive] reading data on the client's socket..." << endl;
 
-#if defined(_MSC_VER)
-    // when nothing received and the error isn't "would block"
-    // then assume that the client has closed the socket.
-    if (num_chars == 0) {
-        DWORD err = WSAGetLastError ();
-        if (err != WSAEWOULDBLOCK) {
-            printf ("Socket Closed. back to listening\n");
-            closesocket (sckt_in);
-            sckt_in = -1;
-        }
-    }
+			char in_buf[4096]; // assume this is a sufficiently large buffer
+			int bytes_read = 0;
+			bytes_read = recv(sckt, in_buf, sizeof in_buf, 0); // MSG_PEEK -> check but does not read
+			cout << "bytes read = " << bytes_read << endl;
+			data.append(in_buf, bytes_read);
+		}
+	}
+	else {
+		//================================================================================
+		// The current socket is for JSBSim acting as a server, i.e. accepting input
+		// from an external client application.
+
+		char buf[1024];
+		int len = sizeof(struct sockaddr_in);
+		int num_chars = 0;
+		unsigned long NoBlock = true;
+
+		if (sckt_in <= 0 && Protocol == ptTCP) {
+#if defined(_MSC_VER) || defined(__MINGW32__)
+			sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+#else
+			sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
 #endif
-  }
+			if (sckt_in > 0) {
+#if defined(_MSC_VER) || defined(__MINGW32__)
+				ioctlsocket(sckt_in, FIONBIO, &NoBlock);
+#else
+				ioctl(sckt_in, FIONBIO, &NoBlock);
+#endif
+			}
+		}
+		if (sckt_in > 0) {
+			while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
+				data.append(buf, num_chars);
+			}
+#if defined(_MSC_VER)
+			// when nothing received and the error isn't "would block"
+			// then assume that the client has closed the socket.
+			if (num_chars == 0) {
+				DWORD err = WSAGetLastError();
+				if (err != WSAEWOULDBLOCK) {
+					printf("Socket Closed. back to listening\n");
+					closesocket(sckt_in);
+					sckt_in = -1;
+				}
+			}
+#endif
+		}
+		// this is for FGUDPInputSocket
+		if (sckt >= 0 && Protocol == ptUDP) {
+			struct sockaddr addr;
+			socklen_t fromlen = sizeof addr;
+			num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
+			if (num_chars != -1) data.append(buf, num_chars);
+		}
+	}
   
-  // this is for FGUDPInputSocket
-  if (sckt >= 0 && Protocol == ptUDP) {
-    struct sockaddr addr;
-    socklen_t fromlen = sizeof addr;
-    num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
-    if (num_chars != -1) data.append(buf, num_chars); 
-  }
-  
-  return data;
+	return data;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,6 +454,13 @@ void FGfdmSocket::Send(const char *data, int length)
   if ((send(sckt,data,length,0)) <= 0) {
     perror("send");
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGfdmSocket::SetWaitSocketReply(const bool wait)
+{
+	waitSocketReply = wait;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
