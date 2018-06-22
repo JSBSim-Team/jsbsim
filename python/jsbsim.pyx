@@ -509,7 +509,8 @@ cdef class FGFDMExec:
         @return the carriage-return-delimited string containing all matching strings
             in the catalog.
         """
-        return (self.thisptr.QueryPropertyCatalog(check)).rstrip().split('\n')
+        check = check.encode()
+        return (self.thisptr.QueryPropertyCatalog(check)).decode('utf-8').rstrip().split('\n')
 
     def get_property_catalog(self, check):
         """
