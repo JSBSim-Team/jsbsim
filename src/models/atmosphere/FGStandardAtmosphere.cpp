@@ -307,9 +307,14 @@ double FGStandardAtmosphere::GetStdDensity(double altitude) const
 
 void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 {
-  double targetSLtemp = ConvertToRankine(t, unit);
+  double targetTemp = ConvertToRankine(t, unit);
+  double GeoPotAlt = GeopotentialAltitude(h);
 
-  TemperatureBias = targetSLtemp - GetTemperature(h);
+  TemperatureBias = targetTemp - GetStdTemperature(h);
+
+  if (GeoPotAlt <= GradientFadeoutAltitude)
+    TemperatureBias -= TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
+
   CalculatePressureBreakpoints();
 }
 

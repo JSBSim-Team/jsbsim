@@ -113,6 +113,16 @@ cdef class FGAircraft:
     def get_xyz_rp(self):
         return convertToNumpyVec(self.thisptr.GetXYZrp())
 
+cdef class FGAtmosphere:
+
+    cdef c_FGAtmosphere *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def set_temperature(self, t, h, unit):
+        return self.thisptr.SetTemperature(t, h, unit)
+
 cdef class FGMassBalance:
 
     cdef c_FGMassBalance *thisptr
@@ -647,3 +657,8 @@ cdef class FGFDMExec:
         massbalance = FGMassBalance()
         massbalance.thisptr = self.thisptr.GetMassBalance()
         return massbalance
+
+    def get_atmosphere(self):
+        atmosphere = FGAtmosphere()
+        atmosphere.thisptr = self.thisptr.GetAtmosphere()
+        return atmosphere

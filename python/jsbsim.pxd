@@ -22,30 +22,16 @@ from libcpp.vector cimport vector
 cdef extern from "ExceptionManagement.h":
     cdef void convertJSBSimToPyExc()
 
-cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
-    cdef cppclass c_FGPropulsion "JSBSim::FGPropulsion":
-        c_FGPropulsion(c_FGFDMExec* fdm)
-        void InitRunning(int n)
-        int GetNumEngines()
-
-cdef extern from "simgear/misc/sg_path.hxx":
-    cdef cppclass c_SGPath "SGPath":
-        c_SGPath(const string& path, int* validator)
-        c_SGPath(const c_SGPath& p)
-        void set(const string& p)
-        string utf8Str()
-
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
     cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
         c_FGInitialCondition(c_FGFDMExec* fdm)
         c_FGInitialCondition(c_FGInitialCondition* ic)
         bool Load(const c_SGPath& rstfile, bool useStoredPath)
 
-cdef extern from "math/FGMatrix33.h" namespace "JSBSim":
-    cdef cppclass c_FGMatrix33 "JSBSim::FGMatrix33":
-        c_FGMatrix33()
-        c_FGMatrix33(const c_FGMatrix33& m)
-        double Entry(unsigned int row, unsigned int col) const
+cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
+    cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
+        c_FGPropertyManager()
+        bool HasNode(string path)
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
     cdef cppclass c_FGColumnVector3 "JSBSim::FGColumnVector3":
@@ -53,33 +39,11 @@ cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
         c_FGColumnVector3(const c_FGColumnVector3& m)
         double Entry(unsigned int idx) const
 
-cdef extern from "models/FGPropagate.h" namespace "JSBSim":
-    cdef cppclass c_FGPropagate "JSBSim::FGPropagate":
-        c_FGPropagate(c_FGFDMExec* fdm)
-        c_FGMatrix33& GetTl2b()
-        c_FGMatrix33& GetTec2b()
-        c_FGColumnVector3& GetUVW()
-
-cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
-    cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
-        c_FGPropertyManager()
-        bool HasNode(string path)
-
-cdef extern from "models/FGGroundReactions.h" namespace "JSBSim":
-    cdef cppclass c_FGGroundReactions "JSBSim::FGGroundReactions":
-        c_FGGroundReactions(c_FGFDMExec* fdm)
-        c_FGLGear* GetGearUnit(int gear)
-        int GetNumGearUnits()
-
-cdef extern from "models/FGLGear.h" namespace "JSBSim":
-    cdef cppclass c_FGLGear "JSBSim::FGLGear":
-        double GetSteerNorm()
-
-cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
-    cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
-        c_FGAuxiliary(c_FGFDMExec* fdm)
-        c_FGMatrix33& GetTw2b()
-        c_FGMatrix33& GetTb2w()
+cdef extern from "math/FGMatrix33.h" namespace "JSBSim":
+    cdef cppclass c_FGMatrix33 "JSBSim::FGMatrix33":
+        c_FGMatrix33()
+        c_FGMatrix33(const c_FGMatrix33& m)
+        double Entry(unsigned int row, unsigned int col) const
 
 cdef extern from "models/FGAerodynamics.h" namespace "JSBSim":
     cdef cppclass c_FGAerodynamics "JSBSim::FGAerodynamics":
@@ -92,10 +56,58 @@ cdef extern from "models/FGAircraft.h" namespace "JSBSim":
         c_FGAircraft(c_FGFDMExec* fdm)
         c_FGColumnVector3& GetXYZrp()
 
+cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
+    cdef enum eTemperature "JSBSim::FGAtmosphere::eTemperature":
+        eNoTempUnit = 0,
+        eFahrenheit = 1,
+        eCelsius    = 2,
+        eRankine    = 3,
+        eKelvin     = 4
+
+    cdef cppclass c_FGAtmosphere "JSBSim::FGAtmosphere":
+        c_FGAtmosphere(c_FGFDMExec* fdm)
+        void SetTemperature(double t, double h, eTemperature unit)
+
+cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
+    cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
+        c_FGAuxiliary(c_FGFDMExec* fdm)
+        c_FGMatrix33& GetTw2b()
+        c_FGMatrix33& GetTb2w()
+
+cdef extern from "models/FGGroundReactions.h" namespace "JSBSim":
+    cdef cppclass c_FGGroundReactions "JSBSim::FGGroundReactions":
+        c_FGGroundReactions(c_FGFDMExec* fdm)
+        c_FGLGear* GetGearUnit(int gear)
+        int GetNumGearUnits()
+
+cdef extern from "models/FGLGear.h" namespace "JSBSim":
+    cdef cppclass c_FGLGear "JSBSim::FGLGear":
+        double GetSteerNorm()
+
 cdef extern from "models/FGMassBalance.h" namespace "JSBSim":
     cdef cppclass c_FGMassBalance "JSBSim::FGMassBalance":
         c_FGMassBalance(c_FGFDMExec* fdm)
         c_FGColumnVector3& GetXYZcg()
+
+cdef extern from "models/FGPropagate.h" namespace "JSBSim":
+    cdef cppclass c_FGPropagate "JSBSim::FGPropagate":
+        c_FGPropagate(c_FGFDMExec* fdm)
+        c_FGMatrix33& GetTl2b()
+        c_FGMatrix33& GetTec2b()
+        c_FGColumnVector3& GetUVW()
+
+cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
+    cdef cppclass c_FGPropulsion "JSBSim::FGPropulsion":
+        c_FGPropulsion(c_FGFDMExec* fdm)
+        void InitRunning(int n)
+        int GetNumEngines()
+
+cdef extern from "simgear/misc/sg_path.hxx":
+    cdef cppclass c_SGPath "SGPath":
+        c_SGPath(const string& path, int* validator)
+        c_SGPath(const c_SGPath& p)
+        void set(const string& p)
+        string utf8Str()
 
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
@@ -161,4 +173,5 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         c_FGAuxiliary* GetAuxiliary()
         c_FGAerodynamics* GetAerodynamics()
         c_FGAircraft* GetAircraft()
+        c_FGAtmosphere* GetAtmosphere()
         c_FGMassBalance* GetMassBalance()

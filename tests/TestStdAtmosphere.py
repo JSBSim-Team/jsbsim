@@ -89,7 +89,7 @@ class TestStdAtmosphere(JSBSimTestCase):
             h = alt
 
         # Check that the temperature gradient has no influence beyond a
-        # geometric altitude of 91 km
+        # geopotential altitude of 91 km
         dH = self.gradient_fade_out_h - h
         T_K -= T_gradient*dH
         fdm['ic/h-sl-ft'] = self.geometric_altitude(self.gradient_fade_out_h) * self.km_to_ft
@@ -262,6 +262,36 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, P_sl, T_sl + graded_delta_T_K, T_gradient)
+
+        del fdm
+
+    def test_set_temperature(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+        fdm.run_ic()
+
+        atmos = fdm.get_atmosphere()
+        eRankine = 3
+
+        # Check that there are no side effects if we call SetTemperature()
+        # twice in a row.
+        atmos.set_temperature(520, 0.0, eRankine)
+        fdm.run_ic()
+        self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/520.0)
+
+        atmos.set_temperature(500, 0.0, eRankine)
+        fdm.run_ic()
+        self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/500.0)
+
+        # Check that it works while a temperature gradient is set
+        graded_delta_T_K = -10.0
+        fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
+
+        atmos.set_temperature(530, 1000.0, eRankine)
+        fdm['ic/h-sl-ft'] = 1000.
+        fdm.run_ic()
+
+        self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/530.0)
 
         del fdm
 
