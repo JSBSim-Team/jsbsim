@@ -8,6 +8,14 @@ if(MSVC)
   add_definitions("/D _USE_MATH_DEFINES /D NOMINMAX")
 endif()
 
+if (CMAKE_VERSION VERSION_LESS 3.1)
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  endif()
+else()
+  set(CMAKE_CXX_STANDARD 11)
+endif()
+
 ################################################################################
 # Macros definition.                                                           #
 ################################################################################
