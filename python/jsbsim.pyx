@@ -45,9 +45,23 @@ cdef class FGPropagate:
 cdef class FGPropertyManager:
 
      cdef c_FGPropertyManager *thisptr
+     cdef bool thisptr_owner
 
-     def __init__(self):
-         self.thisptr = NULL
+     def __cinit__(self, new_instance=False):
+         if new_instance:
+             self.thisptr = new c_FGPropertyManager()
+             if self.thisptr is NULL:
+                 raise MemoryError()
+             self.thisptr_owner = True
+         else:
+             self.thisptr = NULL
+             self.thisptr_owner = False
+
+     def __dealloc__(self):
+         if self.thisptr is not NULL and self.thisptr_owner:
+             del self.thisptr
+             self.thisptr = NULL
+             self.thisptr_owner = False
 
      def hasNode(self, path):
          return self.thisptr.HasNode(path.encode())
@@ -138,10 +152,17 @@ cdef class FGFDMExec:
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
-    def __cinit__(self, root_dir=None):
+    def __cinit__(self, root_dir=None, FGPropertyManager pm_root=None):
+        cdef c_FGPropertyManager* root
         # this hides startup message
         # os.environ["JSBSIM_DEBUG"]=str(0)
-        self.thisptr = new c_FGFDMExec(NULL, NULL)
+
+        if pm_root:
+            root = pm_root.thisptr
+        else:
+            root = NULL
+
+        self.thisptr = new c_FGFDMExec(root, NULL)
         if self.thisptr is NULL:
             raise MemoryError()
         if root_dir is None:

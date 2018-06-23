@@ -49,8 +49,8 @@ class SandBox:
         shutil.rmtree(self._tmpdir)
 
 
-def CreateFDM(sandbox):
-    _fdm = jsbsim.FGFDMExec(root_dir=os.path.join(sandbox(), ''))
+def CreateFDM(sandbox, pm=None):
+    _fdm = jsbsim.FGFDMExec(os.path.join(sandbox(), ''), pm)
     path = sandbox.path_to_jsbsim_file()
     _fdm.set_aircraft_path(os.path.join(path, 'aircraft'))
     _fdm.set_engine_path(os.path.join(path, 'engine'))
