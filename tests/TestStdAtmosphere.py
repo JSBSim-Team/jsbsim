@@ -88,6 +88,19 @@ class TestStdAtmosphere(JSBSimTestCase):
 
             h = alt
 
+        # Check that the temperature gradient has no influence beyond a
+        # geometric altitude of 91 km
+        dH = self.gradient_fade_out_h - h
+        T_K -= T_gradient*dH
+        fdm['ic/h-sl-ft'] = self.geometric_altitude(self.gradient_fade_out_h) * self.km_to_ft
+        fdm.run_ic()
+        self.assertAlmostEqual(1.0, T_K*self.K_to_R/fdm['atmosphere/T-R'])
+
+        fdm['ic/h-sl-ft'] = 100.0 * self.km_to_ft
+        fdm.run_ic()
+        print("T_K={}\tT-R={}".format(T_K, fdm['atmosphere/T-R']/self.K_to_R))
+        self.assertAlmostEqual(1.0, T_K*self.K_to_R/fdm['atmosphere/T-R'])
+
         # Check negative altitudes (Dead Sea)
         h = self.ISA_temperature[0][0]
         L = self.ISA_temperature[1][1]

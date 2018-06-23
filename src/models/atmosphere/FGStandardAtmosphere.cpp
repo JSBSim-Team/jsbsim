@@ -216,7 +216,10 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
     T = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRates[0];
   }
 
-  T += TemperatureBias + TemperatureDeltaGradient * GradientFadeoutAltitude;
+  T += TemperatureBias;
+
+  if (GeoPotAlt <= GradientFadeoutAltitude)
+    T += TemperatureDeltaGradient * GradientFadeoutAltitude;
 
   return T;
 }
