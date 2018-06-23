@@ -133,6 +133,15 @@ class TestStdAtmosphere(JSBSimTestCase):
             h = alt
             T_K += (L-T_gradient)*dH
 
+        # Check negative altitudes (Dead Sea)
+        L = self.ISA_temperature[1][1]
+        alt = -1.5
+        P_Pa = compute_pressure(P0, L-T_gradient, alt, T0, factor)
+
+        fdm['ic/h-sl-ft'] = self.geometric_altitude(alt) * self.km_to_ft
+        fdm.run_ic()
+        self.assertAlmostEqual(1.0, P_Pa*self.Pa_to_psf/fdm['atmosphere/P-psf'])
+
     def test_std_atmosphere(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('ball')
