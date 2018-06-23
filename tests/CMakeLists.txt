@@ -43,6 +43,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestPressureAltitude
                  fpectl
                  TestStdAtmosphere
+                 TestMiscellaneous
                  )
 
 foreach(test ${PYTHON_TESTS})
