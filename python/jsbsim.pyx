@@ -518,7 +518,8 @@ cdef class FGFDMExec:
         """
         catalog = {}
         for item in self.query_property_catalog(check):
-            catalog[item] = self.get_property_value(item)
+            property_name = item.split(" ")[0]  # remove any (RW) flags
+            catalog[property_name] = self.get_property_value(property_name)
         return catalog
 
     def print_property_catalog(self):
