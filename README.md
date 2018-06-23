@@ -19,6 +19,7 @@ Features include:
 
 * Fully configurable flight control system, aerodynamics, propulsion, landing gear arrangement, etc. through XML-based text file format.
 * Rotational earth effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
+* The earth atmosphere is modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf)
 * Configurable data output formats to screen, file, socket, or any combination of those.
 
 More information on JSBSim can be found at the JSBSim home page here:
@@ -114,7 +115,7 @@ or (SSH mode)
 ## Building JSBSim
 JSBSim can either be built with [CMake](https://cmake.org/) or [Microsoft Visual Studio](https://www.visualstudio.com/free-developer-offers/). If you are using a Mac OSX or a Linux platform, you must use CMake. If you are a Windows user you can use either one.
 
-JSBSim is coded in standard C++98/C99 and has no dependencies, so all you need is a C/C++ compiler installed on your platform.
+JSBSim is coded in standard C++11/C99 and has no dependencies, so all you need is a C/C++ compiler installed on your platform.
 
 ### Building with CMake
 CMake is a multiplatform tool to build and test software. It can produce files to build JSBSim with GNU make or Microsoft Visual Studio. To keep the build files separated from the source code, it is preferable to build JSBSim in a separate directory.
