@@ -201,6 +201,9 @@ cdef class FGFDMExec:
                 self.get_systems_path())
 
     def __getitem__(self, key):
+        pm = self.get_property_manager()
+        if not pm.hasNode(key):
+            raise KeyError("No property named {}".format(key))
         return self.get_property_value(key)
 
     def __setitem__(self, key, value):
