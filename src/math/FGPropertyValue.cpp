@@ -74,6 +74,8 @@ FGPropertyNode* FGPropertyValue::GetNode(void) const
       throw(std::string("FGPropertyValue::GetValue() The property " +
                         PropertyName + " does not exist."));
     }
+
+    PropertyNode = node;
   }
 
   return node;

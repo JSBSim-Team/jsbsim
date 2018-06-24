@@ -81,7 +81,7 @@ protected:
 
 private:
   FGPropertyManager* PropertyManager; // Property root used to do late binding.
-  FGPropertyNode_ptr PropertyNode;
+  mutable FGPropertyNode_ptr PropertyNode;
   std::string PropertyName;
   int Sign;
 };
