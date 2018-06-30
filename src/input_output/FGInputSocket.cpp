@@ -60,9 +60,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGInputSocket::FGInputSocket(FGFDMExec* fdmex) :
-  FGInputType(fdmex),
-  socket(0),
-  SockProtocol(FGfdmSocket::ptTCP)
+  FGInputType(fdmex), socket(0), SockProtocol(FGfdmSocket::ptTCP),
+  BlockingInput(false)
 {
 }
 
@@ -86,6 +85,10 @@ bool FGInputSocket::Load(Element* el)
     cerr << endl << "No port assigned in input element" << endl;
     return false;
   }
+
+  string action = el->GetAttributeValue("action");
+  if (action == "BLOCKING_INPUT")
+    BlockingInput = true;
 
   return true;
 }
@@ -119,7 +122,9 @@ void FGInputSocket::Read(bool Holding)
   if (socket == 0) return;
   if (!socket->GetConnectStatus()) return;
 
-  data = socket->Receive(); // get socket transmission if present
+  if (BlockingInput)
+    socket->WaitUntilReadable(); // block until a transmission is received
+  data = socket->Receive(); // read data
 
   if (data.size() > 0) {
     // parse lines
