@@ -87,7 +87,7 @@ bool FGInputSocket::Load(Element* el)
   }
 
   string action = el->GetAttributeValue("action");
-  if (action == "BLOCKING_INPUT")
+  if (to_upper(action) == "BLOCKING_INPUT")
     BlockingInput = true;
 
   return true;
