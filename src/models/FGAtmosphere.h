@@ -230,7 +230,7 @@ protected:
   double Viscosity, KinematicViscosity;
 
   /// Calculate the atmosphere for the given altitude.
-  void Calculate(double altitude);
+  virtual void Calculate(double altitude);
 
   /// Calculates the density altitude given any temperature or pressure bias.
   /// Calculated density for the specified geometric altitude given any temperature
@@ -246,19 +246,33 @@ protected:
   /// @param geometricAlt
   virtual double CalculatePressureAltitude(double pressure, double geometricAlt) { return geometricAlt; }
 
-  // Converts to Rankine from one of several unit systems.
-  virtual double ConvertToRankine(double t, eTemperature unit) const;
+  /// Converts to Rankine from one of several unit systems.
+  double ConvertToRankine(double t, eTemperature unit) const;
   
-  // Converts to PSF (pounds per square foot) from one of several unit systems.
-  virtual double ConvertToPSF(double t, ePressure unit=ePSF) const;
+  /// Converts from Rankine to one of several unit systems.
+  double ConvertFromRankine(double t, eTemperature unit) const;
 
-  // Converts from PSF (pounds per square foot) to one of several unit systems.
-  virtual double ConvertFromPSF(double t, ePressure unit=ePSF) const;
+  /// Converts to PSF (pounds per square foot) from one of several unit systems.
+  double ConvertToPSF(double t, ePressure unit=ePSF) const;
 
-  static const double Rstar;  // Universal gas constant - ft*lbf/R/mol
-  static const double Mair;   // Mean molecular weight - slug/mol
-  static const double g0;     // Sea-level acceleration of gravity - ft/s^2
-  static double Reng;         // Specific gas constant - ft*lbf/slug/R  
+  /// Converts from PSF (pounds per square foot) to one of several unit systems.
+  double ConvertFromPSF(double t, ePressure unit=ePSF) const;
+
+  /// @name ISA constants
+  //@{
+  /// Universal gas constant - ft*lbf/R/mol
+  static const double Rstar;
+  /// Mean molecular weight for air - slug/mol
+  static const double Mair;
+  /** Sea-level acceleration of gravity - ft/s^2.
+      This constant is defined to compute the International Standard Atmosphere.
+      It is by definition the sea level gravity at a latitude of 45deg. This
+      value is fixed whichever gravity model is used by FGInertial.
+   */
+  static const double g0;
+  /// Specific gas constant for air - ft*lbf/slug/R
+  static double Reng;
+  //@}
 
   static const double SHRatio;
   

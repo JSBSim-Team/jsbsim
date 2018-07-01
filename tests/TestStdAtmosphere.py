@@ -57,6 +57,7 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.K_to_R = 1.8
         self.km_to_ft = 1000/0.3048
         self.Pa_to_psf = 1.0/47.88 # From src/FGJSBBase.cpp
+        self.kg_to_slug = 0.06852168 # From src/FGJSBBase.cpp
 
         # Gradient fade out altitude
         self.gradient_fade_out_h = 91.0 # km
@@ -292,6 +293,41 @@ class TestStdAtmosphere(JSBSimTestCase):
         fdm.run_ic()
 
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/530.0)
+
+        del fdm
+
+    def test_humidity_parameters(self):
+        # Table: Dew point (deg C), Vapor pressure (Pa), RH
+        humidity_table = [
+            (-40.0,   19.021201,     0.815452, 1.2040321),
+            (-30.0,   51.168875,     2.193645, 1.2038877),
+            (-20.0,  125.965126,    5.4002118, 1.2035517),
+            (-10.0,  287.031031,   12.3052182, 1.2028282),
+            (  0.0,  611.2,        26.2025655, 1.2013721),
+            ( 10.0, 1226.030206,   52.5607604, 1.1986102),
+            ( 20.0, 2332.5960221, 100.,        1.1936395)
+        ]
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('ball')
+        fdm['atmosphere/delta-T'] = 5.0*self.K_to_R
+        fdm.run_ic()
+
+        Psat = fdm['atmosphere/saturated-vapor-pressure-psf']/self.Pa_to_psf
+
+        self.assertAlmostEqual(Psat, humidity_table[-1][1])
+        self.assertAlmostEqual(fdm['atmosphere/vapor-pressure-psf'], 0.0)
+        self.assertAlmostEqual(fdm['atmosphere/RH'], 0.0)
+        self.assertAlmostEqual(fdm['atmosphere/dew-point-R'], 54.054)
+
+        for Tdp, Pv, RH, rho in humidity_table:
+            fdm['atmosphere/dew-point-R'] = (Tdp+273.15)*self.K_to_R
+            fdm.run_ic()
+            self.assertAlmostEqual(fdm['atmosphere/vapor-pressure-psf'],
+                                   Pv*self.Pa_to_psf)
+            self.assertAlmostEqual(fdm['atmosphere/RH'], RH)
+            self.assertAlmostEqual(fdm['atmosphere/rho-slugs_ft3']/(self.kg_to_slug*math.pow(0.3048,3)),
+                                   rho)
 
         del fdm
 

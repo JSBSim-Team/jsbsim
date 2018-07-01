@@ -37,6 +37,9 @@ COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [1]   Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
       1989, ISBN 0-07-001641-0
+[2]   Sonntag, D. "Important New Values of the Physical Constants of 1986,
+      Vapour Pressure Formulations based on the IST-90 and Psychrometer
+      Formulae", Z. Meteorol., 70 (5), pp. 340-344, 1990
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -60,10 +63,17 @@ CLASS IMPLEMENTATION
 // Effective radius of the earth at a specific latitude per ISA 1976 (converted to ft)
 // r0 = 6356766 m
 const double FGStandardAtmosphere::EarthRadius = 6356766.0/FGJSBBase::fttom;
+/** Sonntag constants based on ref [2]. They are valid for temperatures between
+    -45 degC (-49 degF) and 60 degC (140 degF) with a precision of +/-0.35 degC
+    (+/-0.63 degF) */
+const double FGStandardAtmosphere::a = 611.2/FGJSBBase::psftopa; // psf
+const double FGStandardAtmosphere::b = 17.62; // 1/degC
+const double FGStandardAtmosphere::c = 243.12; // degC
+const double FGStandardAtmosphere::Mwater = 18.016 * FGJSBBase::kgtoslug / 1000.0; // slug/mol
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   : FGAtmosphere(fdmex), TemperatureBias(0.0), TemperatureDeltaGradient(0.0),
-    StdAtmosTemperatureTable(9)
+    VaporPressure(0.0), SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(9)
 {
   Name = "FGStandardAtmosphere";
 
@@ -147,6 +157,18 @@ bool FGStandardAtmosphere::InitModel(void)
 //  PrintStandardAtmosphereTable();
 
   return true;
+}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::Calculate(double altitude)
+{
+  FGAtmosphere::Calculate(altitude);
+  SaturatedVaporPressure = CalculateVaporPressure(Temperature);
+
+  // Make sure the partial pressure of water vapor never becomes higher than the
+  // saturated vapor pressure.
+  if (VaporPressure > SaturatedVaporPressure)
+    VaporPressure = SaturatedVaporPressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,6 +325,17 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
 double FGStandardAtmosphere::GetStdDensity(double altitude) const
 {
   return GetStdPressure(altitude)/(Reng * GetStdTemperature(altitude));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the density, taking into account the water vapor in the air.
+
+double FGStandardAtmosphere::GetDensity(double altitude) const
+{
+  double P = GetPressure(altitude);
+  double Pa = P - VaporPressure; // Partial pressure of air
+
+  return (Pa/Reng + Mwater*VaporPressure/Rstar)/GetTemperature(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -523,6 +556,72 @@ double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double g
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGStandardAtmosphere::CalculateVaporPressure(double temperature)
+{
+  double temperature_degC = temperature/1.8-273.15;
+  return a*exp(b*temperature_degC/(c+temperature_degC));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
+{
+  VaporPressure = CalculateVaporPressure(ConvertToRankine(dewpoint, unit));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::GetDewPoint(eTemperature to) const
+{
+  double dewpoint_degC;
+
+  if (VaporPressure <= 0.0)
+    dewpoint_degC = -c;
+  else {
+    double x = log(VaporPressure/a);
+    dewpoint_degC = c*x / (b - x);
+  }
+
+  return ConvertFromRankine(1.8*(dewpoint_degC + 273.15), to);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetVaporPressure(ePressure unit, double Pa)
+{
+  VaporPressure = ConvertToPSF(Pa, unit);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::GetVaporPressure(ePressure to) const
+{
+  return ConvertFromPSF(VaporPressure, to);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::GetSaturatedVaporPressure(ePressure to) const
+{
+  return ConvertFromPSF(SaturatedVaporPressure, to);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::GetRelativeHumidity(void) const
+{
+  return 100.0*VaporPressure/SaturatedVaporPressure;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetRelativeHumidity(double RH)
+{
+  VaporPressure = 0.01*RH*SaturatedVaporPressure;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGStandardAtmosphere::bind(void)
 {
   typedef double (FGStandardAtmosphere::*PMFi)(int) const;
@@ -536,6 +635,17 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/P-sl-psf", this, ePSF,
                                    (PMFi)&FGStandardAtmosphere::GetPressureSL,
                                    (PMF)&FGStandardAtmosphere::SetPressureSL);
+  PropertyManager->Tie("atmosphere/dew-point-R", this, eRankine,
+                       (PMFi)&FGStandardAtmosphere::GetDewPoint,
+                       (PMF)&FGStandardAtmosphere::SetDewPoint);
+  PropertyManager->Tie("atmosphere/vapor-pressure-psf", this, ePSF,
+                       (PMFi)&FGStandardAtmosphere::GetVaporPressure,
+                       (PMF)&FGStandardAtmosphere::SetVaporPressure);
+  PropertyManager->Tie("atmosphere/saturated-vapor-pressure-psf", this, ePSF,
+                       (PMFi)&FGStandardAtmosphere::GetSaturatedVaporPressure);
+  PropertyManager->Tie("atmosphere/RH", this,
+                       &FGStandardAtmosphere::GetRelativeHumidity,
+                       &FGStandardAtmosphere::SetRelativeHumidity);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
