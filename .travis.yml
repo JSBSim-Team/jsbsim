@@ -18,6 +18,7 @@ addons:
     packages:
       - doxygen
       - graphviz
+      - cxxtest
 before_install:
   - pip install cython numpy pandas scipy
   - gem install gist
