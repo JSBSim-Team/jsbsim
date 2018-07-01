@@ -46,9 +46,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc, "$Id: FGModelLoader.cpp,v 1.5 2017/03/18 16:17:42 bcoconni Exp $");
-IDENT(IdHdr, ID_MODELLOADER);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

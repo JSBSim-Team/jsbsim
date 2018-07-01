@@ -6,7 +6,6 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.11 2015/12/25 10:03:28 ehofman Exp $
  */
 
 #ifndef __PROPS_HXX

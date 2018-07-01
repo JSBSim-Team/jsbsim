@@ -56,9 +56,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGTrimAxis.cpp,v 1.20 2016/01/17 15:54:04 bcoconni Exp $");
-IDENT(IdHdr,ID_TRIMAXIS);
-
 /*****************************************************************************/
 
 FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
@@ -361,8 +358,6 @@ void FGTrimAxis::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

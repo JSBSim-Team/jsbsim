@@ -41,12 +41,6 @@ INCLUDES
 #include "simgear/structure/SGReferenced.hxx"
 #include "simgear/structure/SGSharedPtr.hxx"
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINITIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.18 2014/11/30 12:35:32 bcoconni Exp $"
-
 namespace JSBSim {
 
 class FGLocation;
@@ -62,7 +56,6 @@ CLASS DOCUMENTATION
     ball formed earth with an adjustable terrain elevation.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.18 2014/11/30 12:35:32 bcoconni Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +171,6 @@ private:
    double mSeaLevelRadius;
    double mTerrainLevelRadius;
 };
-
 
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

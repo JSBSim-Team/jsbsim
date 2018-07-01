@@ -44,12 +44,6 @@ SENTRY
 #include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  DEFINITIONS
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.26 2013/11/24 16:53:15 bcoconni Exp $"
-
 namespace JSBSim {
 
 class FGMatrix33;

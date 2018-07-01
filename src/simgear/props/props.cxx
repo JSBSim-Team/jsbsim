@@ -4,7 +4,6 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.10 2015/12/25 10:03:28 ehofman Exp $
 
 #ifdef HAVE_CONFIG_H
 #  include <simgear_config.h>

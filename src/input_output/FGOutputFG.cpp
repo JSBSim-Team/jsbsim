@@ -71,9 +71,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGOutputFG.cpp,v 1.9 2014/02/17 05:01:55 jberndt Exp $");
-IDENT(IdHdr,ID_OUTPUTFG);
-
 // (stolen from FGFS native_fdm.cxx)
 // The function htond is defined this way due to the way some
 // processors and OSes treat floating point values.  Some will raise

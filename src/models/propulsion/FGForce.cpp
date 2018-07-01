@@ -53,9 +53,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGForce.cpp,v 1.20 2017/05/26 12:25:40 bcoconni Exp $");
-IDENT(IdHdr,ID_FORCE);
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
@@ -201,8 +198,6 @@ void FGForce::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

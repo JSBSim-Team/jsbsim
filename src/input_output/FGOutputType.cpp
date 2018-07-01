@@ -46,12 +46,9 @@ INCLUDES
 #include "math/FGTemplateFunc.h"
 #include "math/FGFunctionValue.h"
 
-namespace JSBSim {
-
-IDENT(IdSrc,"$Id: FGOutputType.cpp,v 1.17 2015/08/23 09:43:31 bcoconni Exp $");
-IDENT(IdHdr,ID_OUTPUTTYPE);
-
 using namespace std;
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -294,8 +291,6 @@ void FGOutputType::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

@@ -1,4 +1,3 @@
-
 #ifndef _STDINT_HXX
 #define _STDINT_HXX 1
 
@@ -9,7 +8,6 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: stdint.hxx,v 1.2 2009/11/05 05:15:35 jberndt Exp $
 
 
 //////////////////////////////////////////////////////////////////////

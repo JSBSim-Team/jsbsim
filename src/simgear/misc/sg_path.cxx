@@ -19,7 +19,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: sg_path.cxx,v 1.1 2017/02/25 14:23:20 bcoconni Exp $
 
 
 #include <simgear/compiler.h>

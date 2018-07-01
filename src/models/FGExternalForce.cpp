@@ -74,9 +74,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGExternalForce.cpp,v 1.22 2017/06/04 21:06:08 bcoconni Exp $");
-IDENT(IdHdr,ID_EXTERNALFORCE);
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGPropertyVector3::FGPropertyVector3(FGPropertyManager* pm,
@@ -262,8 +259,6 @@ void FGExternalForce::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

@@ -50,9 +50,6 @@ using std::max;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGGasCell.cpp,v 1.22 2015/03/28 14:49:02 bcoconni Exp $");
-IDENT(IdHdr,ID_GASCELL);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -492,8 +489,6 @@ void FGGasCell::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }
@@ -846,8 +841,6 @@ void FGBallonet::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

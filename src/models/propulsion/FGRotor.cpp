@@ -59,9 +59,6 @@ using std::ostringstream;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGRotor.cpp,v 1.25 2015/09/28 08:57:32 ehofman Exp $");
-IDENT(IdHdr,ID_ROTOR);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MISC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -892,13 +889,9 @@ void FGRotor::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 
 }
 
-
 } // namespace JSBSim
-

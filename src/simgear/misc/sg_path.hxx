@@ -22,7 +22,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: sg_path.hxx,v 1.1 2017/02/25 14:23:20 bcoconni Exp $
 
 
 #ifndef _SG_PATH_HXX
@@ -307,7 +306,4 @@ string_list sgPathBranchSplit( const std::string &path );
  */
 string_list sgPathSplit( const std::string &search_path );
 
-
 #endif // _SG_PATH_HXX
-
-

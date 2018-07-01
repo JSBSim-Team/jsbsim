@@ -44,9 +44,6 @@ using std::cout;
 using std::endl;
 
 namespace JSBSim {
-  
-IDENT(IdSrc,"$Id: FGRungeKutta.cpp,v 1.3 2014/01/13 10:46:03 ehofman Exp $");
-IDENT(IdHdr,ID_RUNGEKUTTA);
 
 const double FGRungeKutta::RealLimit = 1e30;
 
@@ -226,6 +223,5 @@ double FGRKFehlberg::approximate(double x, double y)
 
   return y4_val;
 }
-
 
 } // namespace JSBSim

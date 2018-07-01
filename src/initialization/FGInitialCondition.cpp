@@ -58,9 +58,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGInitialCondition.cpp,v 1.114 2017/02/25 14:23:18 bcoconni Exp $");
-IDENT(IdHdr,ID_INITIALCONDITION);
-
 //******************************************************************************
 
 FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
@@ -1528,8 +1525,6 @@ void FGInitialCondition::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

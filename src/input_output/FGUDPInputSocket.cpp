@@ -49,9 +49,6 @@ using namespace std;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id");
-IDENT(IdHdr,ID_UDPINPUTSOCKET);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

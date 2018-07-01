@@ -18,7 +18,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// $Id: strutils.cxx,v 1.2 2017/02/25 15:47:03 bcoconni Exp $
 
 #include <ctype.h>
 #include <cstring>

@@ -57,9 +57,6 @@ using std::string;
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGfdmSocket.cpp,v 1.32 2017/03/11 12:12:12 bcoconni Exp $");
-IDENT(IdHdr,ID_FDMSOCKET);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -433,8 +430,6 @@ void FGfdmSocket::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

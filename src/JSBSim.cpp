@@ -74,12 +74,6 @@ using JSBSim::FGXMLFileRead;
 using JSBSim::Element;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINITIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-IDENT(IdSrc,"$Id: JSBSim.cpp,v 1.91 2017/02/25 15:50:02 bcoconni Exp $");
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -772,4 +766,3 @@ void PrintHelp(void)
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
     cout << "        an option is followed by a filename" << endl << endl;
 }
-

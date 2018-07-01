@@ -61,9 +61,6 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-IDENT(IdSrc,"$Id: FGLGear.cpp,v 1.126 2017/06/03 12:06:14 bcoconni Exp $");
-IDENT(IdHdr,ID_LGEAR);
-
 // Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
 // ft instead of inches)
 const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
@@ -935,8 +932,6 @@ void FGLGear::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

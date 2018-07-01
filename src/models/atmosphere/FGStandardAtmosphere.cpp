@@ -53,9 +53,6 @@ INCLUDES
 
 namespace JSBSim {
 
-IDENT(IdSrc,"$Id: FGStandardAtmosphere.cpp,v 1.24 2014/05/17 15:07:48 jberndt Exp $");
-IDENT(IdHdr,ID_STANDARDATMOSPHERE);
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -689,8 +686,6 @@ void FGStandardAtmosphere::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      std::cout << IdSrc << std::endl;
-      std::cout << IdHdr << std::endl;
     }
   }
 }

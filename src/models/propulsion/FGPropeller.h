@@ -42,12 +42,6 @@ INCLUDES
 #include "math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINITIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.28 2017/03/03 23:00:39 bcoconni Exp $"
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -164,7 +158,6 @@ Airfoil Sections", NACA Report TN-640, 1938 (?)
 + Various NACA Technical Notes and Reports
 
 @author Jon S. Berndt
-@version $Id: FGPropeller.h,v 1.28 2017/03/03 23:00:39 bcoconni Exp $
 @see FGEngine
 @see FGThruster
 */
