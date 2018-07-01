@@ -36,8 +36,8 @@ after_success:
 # If the Python runtime is 2.7 then delete all Debian package but the Python module
 # The other packages will be deployed by the Python 3.4 runtime
   - if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ] && [ "$USE_SYSTEM_EXPAT" = "ON" ]; then rm -f JSBSim*.deb; fi
-# Build the API documentation with Doxygen
-  - if [ "$TRAVIS_PYTHON_VERSION" = "3.4" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
+# Build the API documentation with Doxygen (skip if we are building a pull request)
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.4" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
 
 # If the build fails, the tests log will be uploaded to a gist under my account
 # (bcoconni) so that they can be deleted when irrelevant. The output of the
