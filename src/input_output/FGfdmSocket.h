@@ -100,6 +100,7 @@ public:
   void Clear(const std::string& s);
   void Close(void);
   bool GetConnectStatus(void) {return connected;}
+  void WaitUntilReadable(void);
 
   enum ProtocolType {ptUDP, ptTCP};
  

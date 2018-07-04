@@ -392,6 +392,16 @@ void FGfdmSocket::Send(const char *data, int length)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGfdmSocket::WaitUntilReadable(void)
+{
+  fd_set fds;
+  FD_ZERO(&fds);
+  FD_SET(sckt_in, &fds);
+  select(sckt_in+1, &fds, NULL, NULL, NULL);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing

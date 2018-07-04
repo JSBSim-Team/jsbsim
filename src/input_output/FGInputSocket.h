@@ -88,6 +88,7 @@ protected:
   FGfdmSocket* socket;
   FGfdmSocket::ProtocolType SockProtocol;
   std::string data;
+  bool BlockingInput;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
