@@ -212,6 +212,7 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
   double press = ConvertToPSF(pressure, unit);
 
   PressureBreakpoints[0] = press;
+  SLpressure = press;
   CalculatePressureBreakpoints();
 }
 
