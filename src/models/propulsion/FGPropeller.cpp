@@ -255,7 +255,10 @@ double FGPropeller::Calculate(double EnginePower)
     double tangentialVel = localAeroVel.Magnitude(eV, eW);
 
     if (tangentialVel > 0.0001) {
-      double angle = atan2(tangentialVel, localAeroVel(eU));
+      // The angle made locally by the air flow with respect to the propeller
+      // axis is influenced by the induced velocity. This attenuates the
+      // influence of a string cross wind and gives a more realistic behavior.
+      double angle = atan2(tangentialVel, Vel+Vinduced);
       double factor = Sense * P_Factor * angle / tangentialVel;
       SetActingLocationY( GetLocationY() + factor * localAeroVel(eW));
       SetActingLocationZ( GetLocationZ() + factor * localAeroVel(eV));
