@@ -52,12 +52,15 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.g0 = 9.80665 # m/s^2
         self.Mair = 28.9645 # g/mol
         self.Rstar = 8.31432 # J/K/mol
+        self.gamma = 1.4
+        self.Reng = self.Rstar*1000/self.Mair
 
         # Conversion factors between SI and British units
         self.K_to_R = 1.8
         self.km_to_ft = 1000/0.3048
         self.Pa_to_psf = 1.0/47.88 # From src/FGJSBBase.cpp
         self.kg_to_slug = 0.06852168 # From src/FGJSBBase.cpp
+        self.m_to_ft = self.km_to_ft/1000
 
         # Gradient fade out altitude
         self.gradient_fade_out_h = 91.0 # km
@@ -66,6 +69,10 @@ class TestStdAtmosphere(JSBSimTestCase):
         return (self.R_earth*h_geopot)/(self.R_earth-h_geopot)
 
     def check_temperature(self, fdm, T0, T_gradient):
+        self.assertAlmostEqual(1.0, T0*self.K_to_R/fdm['atmosphere/T-sl-R'])
+        a0 = math.sqrt(self.gamma*self.Reng*T0)
+        self.assertAlmostEqual(1.0, a0*self.m_to_ft/fdm['atmosphere/a-sl-fps'])
+
         T_K = T0
         h = self.ISA_temperature[0][0]
 
@@ -113,6 +120,13 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.assertAlmostEqual(1.0, T_K*self.K_to_R/fdm['atmosphere/T-R'])
 
     def check_pressure(self, fdm, P0, T0, T_gradient):
+        self.assertAlmostEqual(1.0, P0*self.Pa_to_psf/fdm['atmosphere/P-sl-psf'])
+        rho0 = P0/(self.Reng*T0)
+        self.assertAlmostEqual(rho0*self.kg_to_slug/math.pow(self.m_to_ft,3),
+                               fdm['atmosphere/rho-sl-slugs_ft3'])
+        a0 = math.sqrt(self.gamma*self.Reng*T0)
+        self.assertAlmostEqual(1.0, a0*self.m_to_ft/fdm['atmosphere/a-sl-fps'])
+
         P_Pa = P0
         T_K = T0
         h = self.ISA_temperature[0][0]

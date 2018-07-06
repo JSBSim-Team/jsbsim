@@ -211,9 +211,28 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
   double press = ConvertToPSF(pressure, unit);
 
-  PressureBreakpoints[0] = press;
-  SLpressure = press;
+  SLpressure  = press;
+  rSLpressure = 1/SLpressure;
+  CalculateSLDensity();
+
   CalculatePressureBreakpoints();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::CalculateSLDensity(void)
+{
+  SLdensity   = SLpressure / (Reng * SLtemperature);
+  rSLdensity  = 1/SLdensity;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::CalculateSLSoundSpeedAndDensity(void)
+{
+  SLsoundspeed = sqrt(SHRatio*Reng*SLtemperature);
+  rSLsoundspeed = 1/SLsoundspeed;
+  CalculateSLDensity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,6 +368,10 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
     TemperatureBias -= TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
 
   CalculatePressureBreakpoints();
+
+  SLtemperature = GetTemperature(0.0);
+  rSLtemperature = 1/SLtemperature;
+  CalculateSLSoundSpeedAndDensity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,6 +383,10 @@ void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
 
   TemperatureBias = t;
   CalculatePressureBreakpoints();
+
+  SLtemperature = GetTemperature(0.0);
+  rSLtemperature = 1/SLtemperature;
+  CalculateSLSoundSpeedAndDensity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -396,6 +423,10 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
   TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - GeopotentialAltitude(h));
   CalculateLapseRates();
   CalculatePressureBreakpoints();
+
+  SLtemperature = GetTemperature(0.0);
+  rSLtemperature = 1/SLtemperature;
+  CalculateSLSoundSpeedAndDensity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -443,6 +474,8 @@ void FGStandardAtmosphere::CalculateLapseRates()
 
 void FGStandardAtmosphere::CalculatePressureBreakpoints()
 {
+  PressureBreakpoints[0] = SLpressure;
+
   for (unsigned int b=0; b<PressureBreakpoints.size()-1; b++) {
     double BaseTemp = StdAtmosTemperatureTable(b+1,1);
     double BaseAlt = StdAtmosTemperatureTable(b+1,0);
@@ -469,13 +502,20 @@ void FGStandardAtmosphere::ResetSLTemperature()
   TemperatureBias = TemperatureDeltaGradient = 0.0;
   CalculateLapseRates();
   CalculatePressureBreakpoints();
+
+  SLtemperature = StdSLtemperature;
+  rSLtemperature = 1/SLtemperature;
+  CalculateSLSoundSpeedAndDensity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGStandardAtmosphere::ResetSLPressure()
 {
-  PressureBreakpoints[0] = StdSLpressure; // psf
+  SLpressure  = StdSLpressure;
+  rSLpressure = 1/SLpressure;
+  CalculateSLDensity();
+
   CalculatePressureBreakpoints();
 }
 
@@ -484,9 +524,8 @@ void FGStandardAtmosphere::ResetSLPressure()
 void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
   StdDensityBreakpoints.clear();
-  for (unsigned int i = 0; i < StdPressureBreakpoints.size(); i++) {
+  for (unsigned int i = 0; i < StdPressureBreakpoints.size(); i++)
     StdDensityBreakpoints.push_back(StdPressureBreakpoints[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

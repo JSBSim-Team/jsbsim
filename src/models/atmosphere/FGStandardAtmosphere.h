@@ -125,11 +125,11 @@ public:
 
   /// Returns the standard sea level temperature in degrees Rankine.
   /// @return The STANDARD temperature at sea level in degrees Rankine.
-  virtual double GetStdTemperatureSL() const { return GetStdTemperature(0.0); }
+  virtual double GetStdTemperatureSL() const { return StdSLtemperature; }
 
   /// Returns the ratio of the standard temperature at the supplied altitude 
   /// over the standard sea level temperature.
-  virtual double GetStdTemperatureRatio(double h) const { return GetStdTemperature(h)*rSLtemperature; }
+  virtual double GetStdTemperatureRatio(double h) const { return GetStdTemperature(h)/StdSLtemperature; }
 
   /// Returns the temperature bias over the sea level value in degrees Rankine.
   virtual double GetTemperatureBias(eTemperature to) const
@@ -328,6 +328,12 @@ protected:
 
   /// Calculate the pressure of water vapor with the Magnus formula.
   double CalculateVaporPressure(double temperature);
+
+  /// Calculate the SL density
+  void CalculateSLDensity(void);
+
+  /// Calculate the SL density and sound speed
+  void CalculateSLSoundSpeedAndDensity(void);
 
   virtual void bind(void);
   void Debug(int from);

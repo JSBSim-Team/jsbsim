@@ -94,7 +94,7 @@ bool FGAtmosphere::InitModel(void)
   SLtemperature = Temperature = 518.67;
   SLpressure = Pressure = 2116.228;
   SLdensity = Density = Pressure/(Reng*Temperature);
-  SLsoundspeed = Soundspeed = sqrt(SHRatio*Reng*(Temperature));
+  SLsoundspeed = Soundspeed = sqrt(SHRatio*Reng*Temperature);
 
   rSLtemperature = 1/SLtemperature ;
   rSLpressure    = 1/SLpressure    ;
@@ -137,7 +137,7 @@ void FGAtmosphere::Calculate(double altitude)
   else
     Density = node->GetDouble("atmosphere/override/density");
 
-  Soundspeed  = sqrt(SHRatio*Reng*(Temperature));
+  Soundspeed  = sqrt(SHRatio*Reng*Temperature);
   PressureAltitude = CalculatePressureAltitude(Pressure, altitude);
   DensityAltitude = CalculateDensityAltitude(Density, altitude);
 

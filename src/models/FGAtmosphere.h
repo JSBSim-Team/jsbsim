@@ -116,7 +116,7 @@ public:
 
   /// Returns the actual, modeled sea level temperature in degrees Rankine.
   /// @return The modeled temperature in degrees Rankine at sea level.
-  virtual double GetTemperatureSL() const { return GetTemperature(0.0); }
+  virtual double GetTemperatureSL() const { return SLtemperature; }
 
   /// Returns the ratio of the at-current-altitude temperature as modeled
   /// over the sea level value.
@@ -142,7 +142,7 @@ public:
   /// @name Pressure access functions.
   //@{
   /// Returns the pressure in psf.
-  virtual double GetPressure(void)  const {return Pressure;}
+  virtual double GetPressure(void) const {return Pressure;}
 
   /// Returns the pressure at a specified altitude in psf.
   virtual double GetPressure(double altitude) const = 0;
