@@ -96,11 +96,6 @@ bool FGAtmosphere::InitModel(void)
   SLdensity = Density = Pressure/(Reng*Temperature);
   SLsoundspeed = Soundspeed = sqrt(SHRatio*Reng*Temperature);
 
-  rSLtemperature = 1/SLtemperature ;
-  rSLpressure    = 1/SLpressure    ;
-  rSLdensity     = 1/SLdensity     ;
-  rSLsoundspeed  = 1/SLsoundspeed  ;
-
   return true;
 }
 

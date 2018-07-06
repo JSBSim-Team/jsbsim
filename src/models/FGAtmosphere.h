@@ -120,11 +120,11 @@ public:
 
   /// Returns the ratio of the at-current-altitude temperature as modeled
   /// over the sea level value.
-  virtual double GetTemperatureRatio() const { return GetTemperature()*rSLtemperature; }
+  virtual double GetTemperatureRatio() const { return GetTemperature()/SLtemperature; }
 
   /// Returns the ratio of the temperature as modeled at the supplied altitude
   /// over the sea level value.
-  virtual double GetTemperatureRatio(double h) const { return GetTemperature(h)*rSLtemperature; }
+  virtual double GetTemperatureRatio(double h) const { return GetTemperature(h)/SLtemperature; }
 
   /// Sets the Sea Level temperature.
   /// @param t the temperature value in the unit provided.
@@ -151,7 +151,7 @@ public:
   virtual double GetPressureSL(ePressure to=ePSF) const { return ConvertFromPSF(SLpressure, to);  }
 
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  virtual double GetPressureRatio(void) const { return Pressure*rSLpressure; }
+  virtual double GetPressureRatio(void) const { return Pressure/SLpressure; }
 
   /** Sets the sea level pressure for modeling.
       @param pressure The pressure in the units specified.
@@ -174,7 +174,7 @@ public:
   virtual double GetDensitySL(void)  const { return SLdensity; }
 
   /// Returns the ratio of at-altitude density over the sea level value.
-  virtual double GetDensityRatio(void) const { return Density*rSLdensity; }
+  virtual double GetDensityRatio(void) const { return Density/SLdensity; }
   //@}
 
   //  *************************************************************************
@@ -190,7 +190,7 @@ public:
   virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude sound speed over the sea level value.
-  virtual double GetSoundSpeedRatio(void) const { return Soundspeed*rSLsoundspeed; }
+  virtual double GetSoundSpeedRatio(void) const { return Soundspeed/SLsoundspeed; }
   //@}
 
   //  *************************************************************************
@@ -214,7 +214,6 @@ public:
 protected:
   double    SLtemperature,    SLdensity,    SLpressure,    SLsoundspeed; // Sea level conditions
   double      Temperature,      Density,      Pressure,      Soundspeed; // Current actual conditions at altitude
-  double   rSLtemperature,   rSLdensity,   rSLpressure,   rSLsoundspeed; // Reciprocal of sea level conditions
 
   double PressureAltitude;
   double DensityAltitude;

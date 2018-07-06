@@ -146,11 +146,6 @@ bool FGStandardAtmosphere::InitModel(void)
 
   StdSLsoundspeed = SLsoundspeed = Soundspeed;
 
-  rSLtemperature = 1/SLtemperature ;
-  rSLpressure    = 1/SLpressure    ;
-  rSLdensity     = 1/SLdensity     ;
-  rSLsoundspeed  = 1/SLsoundspeed  ;
-
 //  PrintStandardAtmosphereTable();
 
   return true;
@@ -211,19 +206,9 @@ void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
   double press = ConvertToPSF(pressure, unit);
 
-  SLpressure  = press;
-  rSLpressure = 1/SLpressure;
+  SLpressure = press;
   CalculateSLDensity();
-
   CalculatePressureBreakpoints();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGStandardAtmosphere::CalculateSLDensity(void)
-{
-  SLdensity   = SLpressure / (Reng * SLtemperature);
-  rSLdensity  = 1/SLdensity;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -231,7 +216,6 @@ void FGStandardAtmosphere::CalculateSLDensity(void)
 void FGStandardAtmosphere::CalculateSLSoundSpeedAndDensity(void)
 {
   SLsoundspeed = sqrt(SHRatio*Reng*SLtemperature);
-  rSLsoundspeed = 1/SLsoundspeed;
   CalculateSLDensity();
 }
 
@@ -370,7 +354,6 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
   CalculatePressureBreakpoints();
 
   SLtemperature = GetTemperature(0.0);
-  rSLtemperature = 1/SLtemperature;
   CalculateSLSoundSpeedAndDensity();
 }
 
@@ -385,7 +368,6 @@ void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
   CalculatePressureBreakpoints();
 
   SLtemperature = GetTemperature(0.0);
-  rSLtemperature = 1/SLtemperature;
   CalculateSLSoundSpeedAndDensity();
 }
 
@@ -425,7 +407,6 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
   CalculatePressureBreakpoints();
 
   SLtemperature = GetTemperature(0.0);
-  rSLtemperature = 1/SLtemperature;
   CalculateSLSoundSpeedAndDensity();
 }
 
@@ -504,7 +485,6 @@ void FGStandardAtmosphere::ResetSLTemperature()
   CalculatePressureBreakpoints();
 
   SLtemperature = StdSLtemperature;
-  rSLtemperature = 1/SLtemperature;
   CalculateSLSoundSpeedAndDensity();
 }
 
@@ -513,9 +493,7 @@ void FGStandardAtmosphere::ResetSLTemperature()
 void FGStandardAtmosphere::ResetSLPressure()
 {
   SLpressure  = StdSLpressure;
-  rSLpressure = 1/SLpressure;
   CalculateSLDensity();
-
   CalculatePressureBreakpoints();
 }
 

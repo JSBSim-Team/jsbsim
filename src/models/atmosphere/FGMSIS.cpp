@@ -143,10 +143,6 @@ bool MSIS::InitModel(void)
 //  SLpressure    = intPressure = 2116.7;
 //  SLdensity     = intDensity = 0.002378;
 //  SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
-//  rSLtemperature = 1.0/intTemperature;
-//  rSLpressure    = 1.0/intPressure;
-//  rSLdensity     = 1.0/intDensity;
-//  rSLsoundspeed  = 1.0/SLsoundspeed;
 
   return true;
 }
@@ -172,10 +168,6 @@ bool MSIS::Run(bool Holding)
     SLdensity     = output.d[5] * 1.940321;
     SLpressure    = 1716.488 * SLdensity * SLtemperature;
     SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
-    rSLtemperature = 1.0/SLtemperature;
-    rSLpressure    = 1.0/SLpressure;
-    rSLdensity     = 1.0/SLdensity;
-    rSLsoundspeed  = 1.0/SLsoundspeed;
 
     // get at-altitude values
     Calculate(FDMExec->GetAuxiliary()->GetDayOfYear(),

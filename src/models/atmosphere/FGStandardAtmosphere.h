@@ -330,7 +330,7 @@ protected:
   double CalculateVaporPressure(double temperature);
 
   /// Calculate the SL density
-  void CalculateSLDensity(void);
+  void CalculateSLDensity(void) { SLdensity = SLpressure / (Reng * SLtemperature); }
 
   /// Calculate the SL density and sound speed
   void CalculateSLSoundSpeedAndDensity(void);
