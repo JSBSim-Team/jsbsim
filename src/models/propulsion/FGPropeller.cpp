@@ -363,12 +363,13 @@ double FGPropeller::GetPowerRequired(void)
 
 FGColumnVector3 FGPropeller::GetPFactor() const
 {
-  double px=0.0, py, pz;
+  // These are moments in lbf per ft : the lever arm along Z generates a moment
+  // along the pitch direction.
+  double p_pitch = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
+  // The lever arm along Y generates a moment along the yaw direction.
+  double p_yaw = Thrust * Sense * (GetActingLocationY() - GetLocationY()) / 12.0;
 
-  py = Thrust * Sense * (GetActingLocationY() - GetLocationY()) / 12.0;
-  pz = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
-
-  return FGColumnVector3(px, py, pz);
+  return FGColumnVector3(0.0, p_pitch, p_yaw);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
