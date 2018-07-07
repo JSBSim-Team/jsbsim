@@ -636,6 +636,21 @@ void FGPropulsion::SetStarter(int setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+int FGPropulsion::GetStarter(void) const
+{
+  if (ActiveEngine < 0) {
+    bool starter = true;
+
+    for (unsigned i=0; i<Engines.size(); i++)
+      starter &= Engines[i]->GetStarter();
+
+    return starter ? 1 : 0;
+  } else
+    return Engines[ActiveEngine]->GetStarter() ? 1: 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropulsion::SetCutoff(int setting)
 {
   bool bsetting = setting == 0 ? false : true;
@@ -665,6 +680,42 @@ void FGPropulsion::SetCutoff(int setting)
         break;
     }
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int FGPropulsion::GetCutoff(void) const
+{
+  if (ActiveEngine < 0) {
+    bool cutoff = true;
+
+    for (unsigned i=0; i<Engines.size(); i++) {
+      switch (Engines[i]->GetType()) { 
+      case FGEngine::etTurbine:
+        cutoff &= ((FGTurbine*)Engines[i])->GetCutoff();
+        break;
+      case FGEngine::etTurboprop:
+        cutoff &= ((FGTurboProp*)Engines[i])->GetCutoff();
+        break;
+      default:
+        return -1;
+      }
+    }
+
+    return cutoff ? 1 : 0;
+  } else {
+    switch (Engines[ActiveEngine]->GetType()) {
+    case FGEngine::etTurbine:
+      return ((FGTurbine*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
+    case FGEngine::etTurboprop:
+      return ((FGTurboProp*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
+      break;
+    default:
+      break;
+    }
+  }
+
+  return -1;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -760,12 +811,12 @@ void FGPropulsion::bind(void)
   IsBound = true;
   PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning, false);
   if (HaveTurbineEngine || HaveTurboPropEngine) {
-    PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  false);
-    PropertyManager->Tie("propulsion/cutoff_cmd", this,  (iPMF)0, &FGPropulsion::SetCutoff,   false);
+    PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
+    PropertyManager->Tie("propulsion/cutoff_cmd", this,  &FGPropulsion::GetCutoff, &FGPropulsion::SetCutoff);
   }
 
   if (HavePistonEngine) {
-    PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  false);
+    PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
     PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)0, &FGPropulsion::SetMagnetos, false);
   }
 

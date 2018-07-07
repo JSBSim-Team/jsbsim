@@ -179,7 +179,9 @@ public:
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);
+  int GetStarter(void) const;
   void SetCutoff(int setting=0);
+  int GetCutoff(void) const;
   void SetActiveEngine(int engine);
   void SetFuelFreeze(bool f);
   const FGMatrix33& CalculateTankInertias(void);
