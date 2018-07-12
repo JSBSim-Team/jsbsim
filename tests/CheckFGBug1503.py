@@ -33,6 +33,18 @@ from multiprocessing import Process
 from scipy import stats
 from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
+def SubProcessScriptExecution(sandbox, script_path, time_limit=1E+9):
+    # Run the script with the modified aircraft
+    fdm = CreateFDM(sandbox)
+    fdm.set_aircraft_path('aircraft')
+    fdm.load_script(script_path)
+    fdm.run_ic()
+
+    while fdm.run() and fdm.get_sim_time() < time_limit:
+        aileron_pos = fdm['fcs/left-aileron-pos-rad']
+        #self.assertEqual(aileron_pos, 0.0,
+        #                msg="Failed running the script %s at time step %f\nProperty fcs/left-aileron-pos-rad is non-zero (%f)" % (script_path, fdm.get_sim_time(), aileron_pos))
+
 
 class CheckFGBug1503(JSBSimTestCase):
     def setUp(self):
@@ -116,7 +128,7 @@ class CheckFGBug1503(JSBSimTestCase):
         # times the reference execution time for the script completion. Beyond
         # that time, if the process is not completed, it is terminated and the
         # test is failed.
-        p = Process(target=self.ScriptExecution, args=(fdm,))
+        p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path,))
         p.start()
         p.join(exec_time * 10.0)  # Wait 10 times the reference time
         alive = p.is_alive()
@@ -266,4 +278,6 @@ class CheckFGBug1503(JSBSimTestCase):
 
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
 
-RunTest(CheckFGBug1503)
+
+if __name__ == '__main__':
+   RunTest(CheckFGBug1503)
