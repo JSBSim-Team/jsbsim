@@ -124,6 +124,7 @@ void FGInputSocket::Read(bool Holding)
   data = socket->Receive(); // read data
 
   if (data.size() > 0) {
+    cout << "FGInputSocket::Read - Sim Frame - " << this->FDMExec->GetFrame() << " Data: " << data << endl;
     // parse lines
     while (1) {
       string_start = data.find_first_not_of("\r\n", start);
