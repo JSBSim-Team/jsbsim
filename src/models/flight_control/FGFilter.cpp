@@ -190,6 +190,9 @@ bool FGFilter::Run(void)
 {
   if (Initialize) {
 
+    // need to do this now as dt will not be correct during initialization
+    CalculateDynamicFilters();
+
     PreviousOutput2 = PreviousInput2 = PreviousOutput1 = PreviousInput1 = Output = Input;
     Initialize = false;
 
