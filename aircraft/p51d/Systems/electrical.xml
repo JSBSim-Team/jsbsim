@@ -10,6 +10,7 @@
     <property value="0">systems/right-flor-gain</property>
 
     <!-- Additional properties which are defined separately in FlightGear -->
+    <property value="0">/controls/gear/gear-safe-light-check</property>
     <property value="0">/controls/gear/gear-unsafe-light-check</property>
     <property value="0">/controls/lighting/left-flor-pos</property>
     <property value="0">/controls/lighting/right-flor-pos</property>
