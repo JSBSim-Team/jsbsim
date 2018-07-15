@@ -193,7 +193,9 @@ private:
   };
 
   std::vector <test*> tests;
+  bool initialized = false;
 
+  void VerifyProperties(void);
   void Debug(int from);
 };
 }
