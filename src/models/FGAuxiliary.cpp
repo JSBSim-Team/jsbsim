@@ -149,14 +149,14 @@ bool FGAuxiliary::Run(bool Holding)
   vAeroPQR = in.vPQR - in.TurbPQR;
   vAeroUVW = in.vUVW - in.Tl2b * in.TotalWindNED;
 
-  Vt = vAeroUVW.Magnitude();
   alpha = beta = adot = bdot = 0;
   double AeroU2 = vAeroUVW(eU)*vAeroUVW(eU);
   double AeroV2 = vAeroUVW(eV)*vAeroUVW(eV);
   double AeroW2 = vAeroUVW(eW)*vAeroUVW(eW);
   double mUW = AeroU2 + AeroW2;
 
-  double Vt2 = Vt*Vt;
+  double Vt2 = mUW + AeroV2;
+  Vt = sqrt(Vt2);
 
   if ( Vt > 0.001 ) {
     if (vAeroUVW(eW) != 0.0)
@@ -206,11 +206,9 @@ bool FGAuxiliary::Run(bool Holding)
   if (abs(Mach) > 0.0) {
     vcas = VcalibratedFromMach(Mach, in.Pressure, in.PressureSL, in.DensitySL);
     veas = sqrt(2 * qbar / in.DensitySL);
-    vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
   }
-  else {
-    vcas = veas = vtrue = 0.0;
-  }
+  else
+    vcas = veas = 0.0;
 
   vPilotAccel.InitMatrix();
   vNcg = in.vBodyAccel/in.SLGravity;
