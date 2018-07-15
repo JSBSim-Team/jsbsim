@@ -66,11 +66,13 @@ static bool LoadWinSockDLL(void)
 {
   WSADATA wsaData;
   if (WSAStartup(MAKEWORD(1, 1), &wsaData)) {
-	cout << "Winsock DLL not initialized ..." << endl;
-	return false;
+    cerr << "Winsock DLL not initialized ..." << endl;
+    return false;
   }
 
-  cout << "Winsock DLL loaded ..." << endl;
+  if (debug_lvl > 0)
+    cout << "Winsock DLL loaded ..." << endl;
+
   return true;
 }
 #endif
@@ -86,44 +88,49 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   #endif
 
   if (!is_number(address)) {
-    if ((host = gethostbyname(address.c_str())) == NULL) {
-      cout << "Could not get host net address by name..." << endl;
+    host = gethostbyname(address.c_str());
+    if (host == NULL) {
+      cerr << "Could not get host net address by name..." << endl;
+      return;
     }
   } else {
-    unsigned long ip;
-    ip = inet_addr(address.c_str());
-    if ((host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET)) == NULL) {
-      cout << "Could not get host net address by number..." << endl;
+    unsigned long ip = inet_addr(address.c_str());
+    host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET);
+    if (host == NULL) {
+      cerr << "Could not get host net address by number..." << endl;
+      return;
     }
   }
 
-  if (host != NULL) {
-    if (protocol == ptUDP) {  //use udp protocol
-       sckt = socket(AF_INET, SOCK_DGRAM, 0);
-       cout << "Creating UDP socket on port " << port << endl;
-    }
-    else { //use tcp protocol
-       sckt = socket(AF_INET, SOCK_STREAM, 0);
-       cout << "Creating TCP socket on port " << port << endl;
-    }
+  if (protocol == ptUDP) {  //use udp protocol
+    sckt = socket(AF_INET, SOCK_DGRAM, 0);
 
-    if (sckt >= 0) {  // successful
-      memset(&scktName, 0, sizeof(struct sockaddr_in));
-      scktName.sin_family = AF_INET;
-      scktName.sin_port = htons(port);
-      memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
-      int len = sizeof(struct sockaddr_in);
-      if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+    if (debug_lvl > 0)
+      cout << "Creating UDP socket on port " << port << endl;
+  }
+  else { //use tcp protocol
+    sckt = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (debug_lvl > 0)
+      cout << "Creating TCP socket on port " << port << endl;
+  }
+
+  if (sckt >= 0) {  // successful
+    memset(&scktName, 0, sizeof(struct sockaddr_in));
+    scktName.sin_family = AF_INET;
+    scktName.sin_port = htons(port);
+    memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
+
+    int len = sizeof(struct sockaddr_in);
+    if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+      if (debug_lvl > 0)
         cout << "Successfully connected to socket for output ..." << endl;
-        connected = true;
-      } else {                // unsuccessful
-        cout << "Could not connect to socket for output ..." << endl;
-      }
-    } else {          // unsuccessful
-      cout << "Could not create socket for FDM output, error = " << errno << endl;
-    }
+      connected = true;
+    } else                // unsuccessful
+      cerr << "Could not connect to socket for output ..." << endl;
+  } else          // unsuccessful
+    cerr << "Could not create socket for FDM output, error = " << errno << endl;
 
-  }
   Debug(0);
 }
 
@@ -154,18 +161,25 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
     ProtocolName = "TCP";
     sckt = socket(AF_INET, SOCK_STREAM, 0);
   }
-  cout << "Creating input " << ProtocolName << " socket on port " << port << endl;
+
+  if (debug_lvl > 0)
+    cout << "Creating input " << ProtocolName << " socket on port " << port
+         << endl;
   
   if (sckt != -1) {
     memset(&scktName, 0, sizeof(struct sockaddr_in));
     scktName.sin_family = AF_INET;
     scktName.sin_port = htons(port);
+
     if (Protocol == ptUDP)
       scktName.sin_addr.s_addr = htonl(INADDR_ANY);
+
     int len = sizeof(struct sockaddr_in);
     if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) {
-      cout << "Successfully bound to " << ProtocolName << " input socket on port "
-           << port << endl <<endl;
+      if (debug_lvl > 0)
+        cout << "Successfully bound to " << ProtocolName
+             << " input socket on port " << port << endl << endl;
+
       if (Protocol == ptTCP) {
         unsigned long NoBlock = true;
         if (listen(sckt, 5) >= 0) { // successful listen()
@@ -177,69 +191,17 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
           sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
 #endif
           connected = true;
-        } else {
+        } else
           cerr << "Could not listen ..." << endl;
-        }
       } else
         connected = true;
-    } else {                // unsuccessful
-        cout << "Could not bind to " << ProtocolName << " input socket, error = "
+    } else                // unsuccessful
+        cerr << "Could not bind to " << ProtocolName << " input socket, error = "
              << errno << endl;
-    }
-  } else {          // unsuccessful
-      cout << "Could not create " << ProtocolName << " socket for input, error = "
+  } else          // unsuccessful
+      cerr << "Could not create " << ProtocolName << " socket for input, error = "
            << errno << endl;
-  }
 
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGfdmSocket::FGfdmSocket(const string& address, int port) // assumes TCP
-{
-  sckt = sckt_in = 0;
-  connected = false;
-  Protocol = ptTCP;
-
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
-  #endif
-
-  cout << "... Socket Configuration Sanity Check ..." << endl;
-  cout << "Host name...   " << address << ",  Port...  " << port << "." << endl;
-  cout << "Host name... (char)  " << address.c_str() << "." << endl;
-
-  if (!is_number(address)) {
-    if ((host = gethostbyname(address.c_str())) == NULL) {
-      cout << "Could not get host net address by name..." << endl;
-    }
-  } else {
-    if ((host = gethostbyaddr(address.c_str(), address.size(), PF_INET)) == NULL) {
-      cout << "Could not get host net address by number..." << endl;
-    }
-  }
-
-  if (host != NULL) {
-    cout << "Got host net address..." << endl;
-    sckt = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (sckt >= 0) {  // successful
-      memset(&scktName, 0, sizeof(struct sockaddr_in));
-      scktName.sin_family = AF_INET;
-      scktName.sin_port = htons(port);
-      memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
-      int len = sizeof(struct sockaddr_in);
-      if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-        cout << "Successfully connected to socket for output ..." << endl;
-        connected = true;
-      } else {                // unsuccessful
-        cout << "Could not connect to socket for output ..." << endl;
-      }
-    } else {          // unsuccessful
-      cout << "Could not create socket for FDM output, error = " << errno << endl;
-    }
-  }
   Debug(0);
 }
 
