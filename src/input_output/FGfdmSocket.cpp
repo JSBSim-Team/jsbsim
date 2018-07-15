@@ -62,7 +62,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-static bool LoadWinSockDLL(void)
+static bool LoadWinSockDLL(int debug_lvl)
 {
   WSADATA wsaData;
   if (WSAStartup(MAKEWORD(1, 1), &wsaData)) {
@@ -84,7 +84,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   connected = false;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
+  if (!LoadWinSockDLL(debug_lvl)) return;
   #endif
 
   if (!is_number(address)) {
@@ -144,7 +144,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
   string ProtocolName;
  
 #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL()) return;
+  if (!LoadWinSockDLL(debug_lvl)) return;
 #endif
 
   if (Protocol == ptUDP) {  //use udp protocol
