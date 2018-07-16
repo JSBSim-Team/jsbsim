@@ -131,9 +131,9 @@ public:
   /** Returns equivalent airspeed in knots. */
   double GetVequivalentKTS(void) const { return veas*fpstokts; }
   /** Returns the true airspeed in feet per second. */
-  double GetVtrueFPS() const { return vtrue; }
+  double GetVtrueFPS() const { return Vt; }
   /** Returns the true airspeed in knots. */
-  double GetVtrueKTS() const { return vtrue * fpstokts; }
+  double GetVtrueKTS() const { return Vt * fpstokts; }
 
   /** Returns the total pressure.
       Total pressure is freestream total pressure for
@@ -290,7 +290,7 @@ public:
   } in;
 
 private:
-  double vcas, veas, vtrue;
+  double vcas, veas;
   double pt, tat, tatc; // Don't add a getter for pt!
 
   FGMatrix33 mTw2b;

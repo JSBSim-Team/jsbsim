@@ -1142,7 +1142,9 @@ void FGFDMExec::DoTrim(int mode)
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   bool success = trim.DoTrim();
-  trim.Report();
+
+  if (debug_lvl > 0)
+    trim.Report();
 
   if (!success)
     throw("Trim Failed");

@@ -16,13 +16,13 @@ version: 1.0.{build}
 build_script:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
-- pip install Cython
+- pip install Cython numpy pandas scipy
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 - cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
 - cmake --build . --config RelWithDebInfo 
-
+- ctest -j2
 
 artifacts:
 - path: build\src\JSBSim.exe
