@@ -16,7 +16,7 @@ version: 1.0.{build}
 build_script:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
-- pip install Cython
+- pip install Cython numpy pandas scipy
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
