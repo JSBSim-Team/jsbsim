@@ -94,7 +94,6 @@ public:
 
   virtual bool Run(void) { return true; }
   virtual void SetOutput(void);
-  void SetDtForFrameCount(int FrameCount);
   double GetOutput (void) const {return Output;}
   std::string GetName(void) const {return Name;}
   std::string GetType(void) const { return Type; }

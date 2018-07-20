@@ -63,7 +63,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
   string input,init, clip_string;
-  dt = fcs->GetDt();
+  dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
   if        (element->GetName() == string("lag_filter")) {
@@ -246,13 +246,6 @@ void FGFCSComponent::ResetPastStates(void)
 void FGFCSComponent::SetOutput(void)
 {
   for (unsigned int i=0; i<OutputNodes.size(); i++) OutputNodes[i]->setDoubleValue(Output);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCSComponent::SetDtForFrameCount(int FrameCount)
-{
-  dt = fcs->GetDt() * FrameCount;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
