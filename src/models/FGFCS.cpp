@@ -503,7 +503,7 @@ bool FGFCS::Load(Element* document)
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
     
-    if (channel_element->GetAttributeValue("execrate").empty())
+    if (!channel_element->GetAttributeValue("execrate").empty())
       ChannelRate = channel_element->GetAttributeValueAsNumber("execrate");
     else
       ChannelRate = 1;
