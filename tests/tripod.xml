@@ -17,6 +17,8 @@
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
     </contact>
     <contact type="STRUCTURE" name="LEFT">
       <location unit="FT">
@@ -26,6 +28,8 @@
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
     </contact>
     <contact type="STRUCTURE" name="RIGHT">
       <location unit="FT">
@@ -35,6 +39,8 @@
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
     </contact>
   </ground_reactions>
   <aerodynamics/>

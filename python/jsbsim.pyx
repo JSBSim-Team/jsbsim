@@ -91,6 +91,15 @@ cdef class FGLGear:
     def get_steer_norm(self):
         return self.thisptr.GetSteerNorm()
 
+    def get_body_x_force(self):
+        return self.thisptr.GetBodyXForce()
+
+    def get_body_y_force(self):
+        return self.thisptr.GetBodyYForce()
+
+    def get_body_z_force(self):
+        return self.thisptr.GetBodyZForce()
+
 cdef class FGAuxiliary:
 
     cdef c_FGAuxiliary *thisptr

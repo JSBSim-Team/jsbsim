@@ -42,12 +42,24 @@ class TestGndReactions(JSBSimTestCase):
         k = 10000.0 # Contact stiffness
         n = 3 # Number of contacts
         weight = fdm['forces/fbz-weight-lbs']
+        f = 0.1 # friction coefficient
+
         self.assertAlmostEqual(n*k*fdm['contact/unit[0]/compression-ft']/weight,
                                1.0)
         self.assertAlmostEqual(n*k*fdm['contact/unit[1]/compression-ft']/weight,
                                1.0)
         self.assertAlmostEqual(n*k*fdm['contact/unit[2]/compression-ft']/weight,
                                1.0)
+        # Check that the overall friction forces are negligible
+        self.assertAlmostEqual(n*abs(fdm['forces/fbx-gear-lbs'])/weight, 0.0)
+        self.assertAlmostEqual(n*abs(fdm['forces/fby-gear-lbs'])/weight, 0.0)
+
+        grndreact = fdm.get_ground_reactions()
+        for i in range(grndreact.get_num_gear_units()):
+            gear = grndreact.get_gear_unit(i)
+            max_friction_force = f*abs(gear.get_body_z_force())
+            self.assertTrue(abs(gear.get_body_x_force()) <= max_friction_force)
+            self.assertTrue(abs(gear.get_body_y_force()) <= max_friction_force)
 
         del fdm
 
