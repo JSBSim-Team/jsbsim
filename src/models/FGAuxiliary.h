@@ -234,9 +234,6 @@ public:
     else return BadUnits();
   }
 
-  double GetHeadWind(void) const;
-  double GetCrossWind(void) const;
-
 // Time routines, SET and GET functions, used by FGMSIS atmosphere
 
   void SetDayOfYear    (int doy)    { day_of_year = doy;    }
@@ -282,11 +279,8 @@ public:
     double SinTht;
     double CosPhi;
     double SinPhi;
-    double Psi;
     FGColumnVector3 TotalWindNED;
     FGColumnVector3 TurbPQR;
-    double WindPsi;
-    double Vwind;
   } in;
 
 private:
@@ -302,7 +296,6 @@ private:
   FGColumnVector3 vNwcg;
   FGColumnVector3 vAeroPQR;
   FGColumnVector3 vAeroUVW;
-  FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
   FGLocation vLocationVRP;
