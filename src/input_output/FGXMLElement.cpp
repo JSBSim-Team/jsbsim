@@ -124,6 +124,7 @@ Element::Element(const string& nm)
     convert["KTS"]["FT/SEC"] = 1.68781;
     convert["FT/SEC"]["KTS"] = 1.0/convert["KTS"]["FT/SEC"];
     convert["M/S"]["FT/S"] = 3.2808399;
+    convert["M/S"]["KTS"] = convert["M/S"]["FT/S"]/convert["KTS"]["FT/SEC"];
     convert["M/SEC"]["FT/SEC"] = 3.2808399;
     convert["FT/S"]["M/S"] = 1.0/convert["M/S"]["FT/S"];
     convert["M/SEC"]["FT/SEC"] = 3.2808399;
@@ -283,7 +284,7 @@ double Element::GetAttributeValueAsNumber(const string& attr)
            << attribute << endl;
       exit(-1);
     }
-    
+
     return (number);
   }
 }
@@ -473,8 +474,8 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
          << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]"
          << endl;
   }
-  
-  
+
+
   if (!supplied_units.empty()) {
     value *= convert[supplied_units][target_units];
   }
@@ -564,7 +565,7 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
   } else {
     triplet(1) = 0.0;
   }
-  
+
 
   item = FindElement("y");
   if (!item) item = FindElement("pitch");
