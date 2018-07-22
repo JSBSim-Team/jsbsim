@@ -44,6 +44,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  fpectl
                  TestStdAtmosphere
                  TestMiscellaneous
+                 TestGndReactions
                  )
 
 foreach(test ${PYTHON_TESTS})
