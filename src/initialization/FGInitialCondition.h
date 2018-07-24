@@ -163,7 +163,7 @@ CLASS DOCUMENTATION
    - vc (calibrated airspeed, ft/sec)
    - mach (mach)
    - vground (ground speed, ft/sec)
-   - running (-1 for all engines, 0 for no engines, 1 ... n for specific engines)
+   - running (-1 for all engines, 0 ... n-1 for specific engines)
    - trim (0 for no trim, 1 for ground trim)
 
    <h3>Properties</h3>
