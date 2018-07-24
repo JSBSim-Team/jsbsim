@@ -164,7 +164,7 @@ CLASS DOCUMENTATION
    - mach (mach)
    - vground (ground speed, ft/sec)
    - running (-1 for all engines, 0 for no engines, 1 ... n for specific engines)
-   - trim (0 for no trim, 1 for ground trim)
+   - trim (0 for no trim, 1 for ground trim, 'Longitudinal', 'Full', 'Ground', 'Pullup', 'Custom', 'Turn')
 
    <h3>Properties</h3>
    @property ic/vc-kts (read/write) Calibrated airspeed initial condition in knots
@@ -679,8 +679,8 @@ public:
   bool IsEngineRunning(unsigned int n) const { return (enginesRunning & (1 << n)) != 0; }
   
   /** Does initialization file call for trim ?
-      @return true if initialization file (version 1) called for trim. */
-  bool NeedTrim(void) const { return needTrim == 0 ? false : true; }
+      @return Trim type, if any requested (version 1). */
+  int TrimRequested(void) const { return trimRequested; }
 
   void bind(FGPropertyManager* pm);
 
@@ -701,7 +701,7 @@ private:
   altitudeset lastAltitudeSet;
   latitudeset lastLatitudeSet;
   unsigned int enginesRunning;
-  int needTrim;
+  int trimRequested;
 
   FGFDMExec *fdmex;
   FGAtmosphere* Atmosphere;
@@ -721,6 +721,7 @@ private:
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
   double ComputeGeodAltitude(double geodLatitude);
   bool LoadLatitude(Element* position_el);
+  void SetTrimRequest(std::string& trim);
   void Debug(int from);
 };
 }

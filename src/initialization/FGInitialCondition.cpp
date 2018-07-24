@@ -53,6 +53,7 @@ INCLUDES
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
 #include "input_output/FGXMLFileRead.h"
+#include "FGTrim.h"
 
 using namespace std;
 
@@ -148,7 +149,7 @@ void FGInitialCondition::InitializeIC(void)
   lastAltitudeSet = setasl;
   lastLatitudeSet = setgeoc;
   enginesRunning = 0;
-  needTrim = 0;
+  trimRequested = TrimMode::tNone;
 }
 
 //******************************************************************************
@@ -979,6 +980,27 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
 
 //******************************************************************************
 
+void FGInitialCondition::SetTrimRequest(std::string& trim)
+{
+  std::string& trimOption = to_lower(trim);
+  if (trimOption == "1")
+    trimRequested = TrimMode::tGround;  // For backwards compatabiity
+  else if (trimOption == "longitudinal")
+    trimRequested = TrimMode::tLongitudinal;
+  else if (trimOption == "full")
+    trimRequested = TrimMode::tFull;
+  else if (trimOption == "ground")
+    trimRequested = TrimMode::tGround;
+  else if (trimOption == "pullup")
+    trimRequested = TrimMode::tPullup;
+  else if (trimOption == "custom")
+    trimRequested = TrimMode::tCustom;
+  else if (trimOption == "turn")
+    trimRequested = TrimMode::tTurn;
+}
+
+//******************************************************************************
+
 bool FGInitialCondition::Load_v1(Element* document)
 {
   bool result = true;
@@ -1047,7 +1069,7 @@ bool FGInitialCondition::Load_v1(Element* document)
   if (document->FindElement("targetNlf"))
     SetTargetNlfIC(document->FindElementValueAsNumber("targetNlf"));
   if (document->FindElement("trim"))
-    needTrim = document->FindElementValueAsNumber("trim");
+    SetTrimRequest(document->FindElementValue("trim"));
 
   // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
   // This is the rotation rate of the "Local" frame, expressed in the local frame.
