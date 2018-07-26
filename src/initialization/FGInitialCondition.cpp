@@ -916,7 +916,8 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   // Check to see if any engines are specified to be initialized in a running state
   Element* running_elements = document->FindElement("running");
   while (running_elements) {
-    enginesRunning |= 1 << int(running_elements->GetDataAsNumber());
+    int engineNumber = int(running_elements->GetDataAsNumber());
+    enginesRunning |= engineNumber == -1 ? engineNumber : 1 << engineNumber;
     running_elements = document->FindNextElement("running");
   }
 
