@@ -460,10 +460,6 @@ int real_main(int argc, char* argv[])
   if (icTrimRequested != JSBSim::TrimMode::tNone) {
     trimmer = new JSBSim::FGTrim( FDMExec, icTrimRequested );
     try {
-      // If PullUp requested then we need to pass in target Nlf
-      if (icTrimRequested == JSBSim::TrimMode::tPullup)
-        trimmer->SetTargetNlf(FDMExec->GetIC()->GetTargetNlfIC());
-
       trimmer->DoTrim();
 
       if (FDMExec->GetDebugLevel() > 0)
