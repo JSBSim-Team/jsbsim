@@ -721,7 +721,7 @@ private:
   void calcThetaBeta(double alfa, const FGColumnVector3& _vt_NED);
   double ComputeGeodAltitude(double geodLatitude);
   bool LoadLatitude(Element* position_el);
-  void SetTrimRequest(std::string& trim);
+  void SetTrimRequest(std::string trim);
   void Debug(int from);
 };
 }

@@ -980,7 +980,7 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
 
 //******************************************************************************
 
-void FGInitialCondition::SetTrimRequest(std::string& trim)
+void FGInitialCondition::SetTrimRequest(std::string trim)
 {
   std::string& trimOption = to_lower(trim);
   if (trimOption == "1")
