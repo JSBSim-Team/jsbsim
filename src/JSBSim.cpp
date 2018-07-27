@@ -440,7 +440,8 @@ int real_main(int argc, char* argv[])
 
     if (!FDMExec->GetPropertyManager()->GetNode(CommandLineProperties[i])) {
       cerr << endl << "  No property by the name " << CommandLineProperties[i] << endl;
-      goto quit;
+      delete FDMExec;
+      exit(-1);
     } else {
       FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
     }
@@ -454,10 +455,16 @@ int real_main(int argc, char* argv[])
   // Dump the simulation state (position, orientation, etc.)
   FDMExec->GetPropagate()->DumpState();
   
-  if (FDMExec->GetIC()->NeedTrim()) {
-    trimmer = new JSBSim::FGTrim( FDMExec );
+  // Perform trim if requested via the initialization file
+  JSBSim::TrimMode icTrimRequested = (JSBSim::TrimMode)FDMExec->GetIC()->TrimRequested();
+  if (icTrimRequested != JSBSim::TrimMode::tNone) {
+    trimmer = new JSBSim::FGTrim( FDMExec, icTrimRequested );
     try {
       trimmer->DoTrim();
+
+      if (FDMExec->GetDebugLevel() > 0)
+        trimmer->Report();
+
       delete trimmer;
     } catch (string& msg) {
       cerr << endl << msg << endl << endl;
@@ -540,9 +547,6 @@ int real_main(int argc, char* argv[])
     }
 
   }
-
-  
-quit:
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
