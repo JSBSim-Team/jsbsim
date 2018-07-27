@@ -440,7 +440,8 @@ int real_main(int argc, char* argv[])
 
     if (!FDMExec->GetPropertyManager()->GetNode(CommandLineProperties[i])) {
       cerr << endl << "  No property by the name " << CommandLineProperties[i] << endl;
-      goto quit;
+      delete FDMExec;
+      exit(-1);
     } else {
       FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
     }
@@ -550,9 +551,6 @@ int real_main(int argc, char* argv[])
     }
 
   }
-
-  
-quit:
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
