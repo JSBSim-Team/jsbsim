@@ -100,6 +100,12 @@ cdef class FGLGear:
     def get_body_z_force(self):
         return self.thisptr.GetBodyZForce()
 
+    def get_location(self):
+        return convertToNumpyVec(self.thisptr.GetLocation())
+
+    def get_acting_location(self):
+        return convertToNumpyVec(self.thisptr.GetActingLocation())
+
 cdef class FGAuxiliary:
 
     cdef c_FGAuxiliary *thisptr

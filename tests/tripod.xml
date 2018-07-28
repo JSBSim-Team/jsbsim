@@ -7,13 +7,21 @@
     <iyy unit="SLUG*FT2"> 1.0 </iyy>
     <izz unit="SLUG*FT2"> 1.0 </izz>
     <emptywt unit="LBS"> 3000 </emptywt>
+    <pointmass name="PILOT">
+      <weight unit="LBS">0.0</weight>
+      <location unit="FT">
+        <x> 0.25 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </location>
+    </pointmass>
   </mass_balance>
   <ground_reactions>
     <contact type="STRUCTURE" name="NOSE">
       <location unit="FT">
         <x> 1.0 </x>
         <y> 0.0 </y>
-        <z> -0.1 </z>
+        <z> -0.2 </z>
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
@@ -24,7 +32,7 @@
       <location unit="FT">
         <x> -0.5 </x>
         <y> 1.0 </y>
-        <z> -0.1 </z>
+        <z> -0.2 </z>
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
@@ -35,7 +43,7 @@
       <location unit="FT">
         <x> -0.5 </x>
         <y> -1.0 </y>
-        <z> -0.1 </z>
+        <z> -0.2 </z>
       </location>
       <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>

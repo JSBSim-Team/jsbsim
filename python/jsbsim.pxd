@@ -86,6 +86,8 @@ cdef extern from "models/FGLGear.h" namespace "JSBSim":
         double GetBodyXForce()
         double GetBodyYForce()
         double GetBodyZForce()
+        c_FGColumnVector3& GetLocation()
+        c_FGColumnVector3& GetActingLocation()
 
 cdef extern from "models/FGMassBalance.h" namespace "JSBSim":
     cdef cppclass c_FGMassBalance "JSBSim::FGMassBalance":

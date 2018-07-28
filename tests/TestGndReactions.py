@@ -18,23 +18,21 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import math
+import numpy as np
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
 class TestGndReactions(JSBSimTestCase):
-    def test_ground_reactions(self):
+    def test_centered_mass(self):
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path(self.sandbox.path_to_jsbsim_file('tests'))
         fdm.load_model('tripod', False)
 
         fdm['ic/h-sl-ft'] = 0.0
-        # Let's go to the North pole to get rid of the centrifugal ad Coriolis
+        # Let's go to the North pole to get rid of the centrifugal and Coriolis
         # accelerations.
         fdm['ic/lat-gc-deg'] = 90.0
-        fdm['simulation/integrator/rate/rotational'] = 0
-        fdm['simulation/integrator/rate/translational'] = 1
-        fdm['simulation/integrator/position/rotational'] = 0
-        fdm['simulation/integrator/position/translational'] = 1
 
         fdm.run_ic()
         fdm.do_trim(2)
@@ -44,22 +42,107 @@ class TestGndReactions(JSBSimTestCase):
         weight = fdm['forces/fbz-weight-lbs']
         f = 0.1 # friction coefficient
 
+        self.assertAlmostEqual(fdm['forces/fbz-gear-lbs']/weight, -1.0, delta=1E-6)
         self.assertAlmostEqual(n*k*fdm['contact/unit[0]/compression-ft']/weight,
-                               1.0)
+                               1.0, delta=1E-6)
         self.assertAlmostEqual(n*k*fdm['contact/unit[1]/compression-ft']/weight,
-                               1.0)
+                               1.0, delta=1E-6)
         self.assertAlmostEqual(n*k*fdm['contact/unit[2]/compression-ft']/weight,
-                               1.0)
+                               1.0, delta=1E-6)
         # Check that the overall friction forces are negligible
-        self.assertAlmostEqual(n*abs(fdm['forces/fbx-gear-lbs'])/weight, 0.0)
-        self.assertAlmostEqual(n*abs(fdm['forces/fby-gear-lbs'])/weight, 0.0)
+        self.assertAlmostEqual(abs(fdm['forces/fbx-gear-lbs'])/weight, 0.0, delta=1E-6)
+        self.assertAlmostEqual(abs(fdm['forces/fby-gear-lbs'])/weight, 0.0)
 
+        # Check that each gear friction force follow the Coulomb friction law.
         grndreact = fdm.get_ground_reactions()
         for i in range(grndreact.get_num_gear_units()):
             gear = grndreact.get_gear_unit(i)
             max_friction_force = f*abs(gear.get_body_z_force())
             self.assertTrue(abs(gear.get_body_x_force()) <= max_friction_force)
             self.assertTrue(abs(gear.get_body_y_force()) <= max_friction_force)
+
+        del fdm
+
+    def test_eccentric_mass(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path(self.sandbox.path_to_jsbsim_file('tests'))
+        fdm.load_model('tripod', False)
+
+        fdm['ic/h-sl-ft'] = 0.0
+        # Let's go to the North pole to get rid of the centrifugal and Coriolis
+        # accelerations.
+        fdm['ic/lat-gc-deg'] = 90.0
+        fdm['inertia/pointmass-weight-lbs'] = 1000.
+
+        fdm.run_ic()
+        fdm.do_trim(2)
+        fdm.run()
+
+        k = 10000.0 # Contact stiffness
+        theta = fdm['attitude/theta-rad']
+        f = 0.1 # friction coefficient
+        ft_to_inch = 12
+
+        f_weight = np.array([[fdm['forces/fbx-weight-lbs'],
+                              fdm['forces/fby-weight-lbs'],
+                              fdm['forces/fbz-weight-lbs']]])
+        f_total_gear = np.array([[fdm['forces/fbx-gear-lbs'],
+                                  fdm['forces/fby-gear-lbs'],
+                                  fdm['forces/fbz-gear-lbs']]])
+        Tb2l = np.matrix([[ math.cos(theta), 0.0, math.sin(theta)],
+                          [             0.0, 1.0,             0.0],
+                          [-math.sin(theta), 0.0, math.cos(theta)]])
+        f_total_gear = Tb2l*f_total_gear.T
+        f_weight = Tb2l*f_weight.T
+        # Weight extraction: easier than computing the gravity acceleration at
+        # the North pole and multiplying by the mass.
+        weight = f_weight[2,0]
+
+        self.assertAlmostEqual(f_total_gear[2,0]/weight, -1.0, delta=1E-6)
+
+        # Check that the overall friction forces are negligible
+        self.assertAlmostEqual(f_total_gear[0,0]/weight, 0.0, delta=1E-6)
+        self.assertAlmostEqual(f_total_gear[1,0]/weight, 0.0, delta=1E-6)
+
+        grndreact = fdm.get_ground_reactions()
+        FN_total = 0.0
+        M_total = 0.0
+        for i in range(grndreact.get_num_gear_units()):
+            gear = grndreact.get_gear_unit(i)
+            f_gear = Tb2l*np.array([[gear.get_body_x_force()],
+                                    [gear.get_body_y_force()],
+                                    [gear.get_body_z_force()]])
+            FN = f_gear[2,0]
+            # Check that the friction forces follow the Coulomb friction law.
+            max_friction_force = f*abs(FN)
+            self.assertTrue(abs(f_gear[0,0]) <= max_friction_force)
+            self.assertTrue(abs(f_gear[1,0]) <= max_friction_force)
+
+            h = fdm['contact/unit[{}]/compression-ft'.format(i)]
+
+            # Check that the gear contact point has been moved by h*cos(theta)
+            self.assertAlmostEqual((gear.get_acting_location()-gear.get_location())[2,0],
+                                   h*ft_to_inch*math.cos(theta))
+            FN_total += FN
+
+            # Check that the gear reaction force is only due to the spring force
+            # (i.e. no damping force)
+            self.assertAlmostEqual(FN/(k*h), -1.0, delta=1E-6)
+            d = (Tb2l*gear.get_location())[0,0]
+
+            # Check that the x position of the gear is not modified by its
+            # compression (i.e. that it has been moved upward/vertically)
+            self.assertAlmostEqual((Tb2l*gear.get_acting_location())[0,0]/d, 1.0)
+            M = FN*d
+            M_total += M
+
+        # Check that the sum of the individual gear normal forces is again
+        # equal to the weight...
+        self.assertAlmostEqual(FN_total/weight, -1.0, delta=1E-6)
+        # ...and that their resulting moment is zero.
+        CGx = fdm['inertia/cg-x-in']
+        M_total += weight*CGx*math.cos(theta)
+        self.assertAlmostEqual(M_total/M, 0.0, delta=1E-6)
 
         del fdm
 
