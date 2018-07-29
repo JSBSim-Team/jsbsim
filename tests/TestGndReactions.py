@@ -20,16 +20,16 @@
 
 import math
 import numpy as np
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, RunTest
 
 
 class TestGndReactions(JSBSimTestCase):
     def test_centered_mass(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path(self.sandbox.path_to_jsbsim_file('tests'))
         fdm.load_model('tripod', False)
 
-        fdm['ic/h-sl-ft'] = 0.0
+        fdm['ic/h-sl-ft'] = 0.1
         # Let's go to the North pole to get rid of the centrifugal and Coriolis
         # accelerations.
         fdm['ic/lat-gc-deg'] = 90.0
@@ -64,11 +64,11 @@ class TestGndReactions(JSBSimTestCase):
         del fdm
 
     def test_eccentric_mass(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path(self.sandbox.path_to_jsbsim_file('tests'))
         fdm.load_model('tripod', False)
 
-        fdm['ic/h-sl-ft'] = 0.0
+        fdm['ic/h-sl-ft'] = 0.1
         # Let's go to the North pole to get rid of the centrifugal and Coriolis
         # accelerations.
         fdm['ic/lat-gc-deg'] = 90.0
@@ -92,6 +92,9 @@ class TestGndReactions(JSBSimTestCase):
         Tb2l = np.matrix([[ math.cos(theta), 0.0, math.sin(theta)],
                           [             0.0, 1.0,             0.0],
                           [-math.sin(theta), 0.0, math.cos(theta)]])
+        Ts2b = np.matrix([[-1.0, 0.0,  0.0],
+                          [ 0.0, 1.0,  0.0],
+                          [ 0.0, 0.0, -1.0]])
         f_total_gear = Tb2l*f_total_gear.T
         f_weight = Tb2l*f_weight.T
         # Weight extraction: easier than computing the gravity acceleration at
@@ -105,8 +108,11 @@ class TestGndReactions(JSBSimTestCase):
         self.assertAlmostEqual(f_total_gear[1,0]/weight, 0.0, delta=1E-6)
 
         grndreact = fdm.get_ground_reactions()
+        CGx = fdm['inertia/cg-x-in'] * math.cos(theta)
         FN_total = 0.0
-        M_total = 0.0
+        My_total = 0.0
+        Mz_total = 0.0
+
         for i in range(grndreact.get_num_gear_units()):
             gear = grndreact.get_gear_unit(i)
             f_gear = Tb2l*np.array([[gear.get_body_x_force()],
@@ -128,21 +134,27 @@ class TestGndReactions(JSBSimTestCase):
             # Check that the gear reaction force is only due to the spring force
             # (i.e. no damping force)
             self.assertAlmostEqual(FN/(k*h), -1.0, delta=1E-6)
-            d = (Tb2l*gear.get_location())[0,0]
 
-            # Check that the x position of the gear is not modified by its
-            # compression (i.e. that it has been moved upward/vertically)
-            self.assertAlmostEqual((Tb2l*gear.get_acting_location())[0,0]/d, 1.0)
-            M = FN*d
-            M_total += M
+            d = (Tb2l*Ts2b*gear.get_location())[0,0] + CGx
+            acting_location = Tb2l*Ts2b*gear.get_acting_location()
+            acting_location[0,0] += CGx
+
+            Mz = f_gear[0,0]*acting_location[1,0] - f_gear[1,0]*acting_location[0,0]
+            Mz_total += Mz
+
+            # Check that the x position of the gear in the local frame is not
+            # modified by the compression of the leg (i.e. that it has been
+            # moved upward/vertically)
+            self.assertAlmostEqual(acting_location[0,0]/d, 1.0)
+            My = FN*d
+            My_total += My
 
         # Check that the sum of the individual gear normal forces is again
         # equal to the weight...
         self.assertAlmostEqual(FN_total/weight, -1.0, delta=1E-6)
         # ...and that their resulting moment is zero.
-        CGx = fdm['inertia/cg-x-in']
-        M_total += weight*CGx*math.cos(theta)
-        self.assertAlmostEqual(M_total/M, 0.0, delta=1E-6)
+        self.assertAlmostEqual(My_total/My, 0.0, delta=1E-6)
+        self.assertAlmostEqual(Mz_total/Mz, 0.0, delta=1E-6)
 
         del fdm
 
