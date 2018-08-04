@@ -276,7 +276,7 @@ void FGAuxiliary::UpdateWindMatrices(void)
 double FGAuxiliary::GetNlf(void) const
 {
   if (in.Mass != 0)
-    return (-in.vFw(3))/(in.Mass*slugtolb);
+    return (in.vFw(3))/(in.Mass*slugtolb);
   else
     return 0.;
 }
