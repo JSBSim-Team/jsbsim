@@ -1509,6 +1509,11 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
                        true);
   PropertyManager->Tie("ic/geod-alt-ft", &position,
                        &FGLocation::GetGeodAltitude);
+
+  PropertyManager->Tie("ic/targetNlf", this,
+                       &FGInitialCondition::GetTargetNlfIC,
+                       &FGInitialCondition::SetTargetNlfIC,
+                       true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
