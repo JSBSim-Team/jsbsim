@@ -28,4 +28,21 @@
       <set name="atmosphere/wind-down-fps" action="FG_RAMP" value="-0.1" tc="10.0"/>
     </event>
   </run>
+  <output name="cross_wind.csv" type="CSV" rate="120">
+    <rates>            ON </rates>
+    <velocities>       ON </velocities>
+    <position>         ON </position>
+    <atmosphere>       ON </atmosphere>
+    <fcs>              ON </fcs>
+    <ground_reactions> ON </ground_reactions>
+    <propulsion>       ON </propulsion>
+    <simulation>       ON </simulation>
+    <massprops>        ON </massprops>
+    <forces>           ON </forces>
+    <moments>          ON </moments>
+    <aerosurfaces>     ON </aerosurfaces>
+    <coefficients>     ON </coefficients>
+    <property> aero/alpha-rad         </property>
+    <property> aero/alphadot-rad_sec  </property>
+  </output>
 </runscript>
