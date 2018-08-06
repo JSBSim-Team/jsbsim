@@ -76,7 +76,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
   gamma_fallback=false;
   mode=tt;
   xlo=xhi=alo=ahi=0.0;
-  targetNlf=1.0;
+  targetNlf=fgic.GetTargetNlfIC();
   debug_axis=tAll;
   SetMode(tt);
   if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;

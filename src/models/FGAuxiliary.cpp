@@ -59,9 +59,9 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  pt = 1.0;
-  tat = 1.0;
-  tatc = RankineToCelsius(tat);
+  pt = 2116.23; // ISA SL pressure
+  tatc = 15.0; // ISA SL temperature
+  tat = 518.67;
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
@@ -81,7 +81,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
-  vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
   bind();
@@ -117,7 +116,6 @@ bool FGAuxiliary::InitModel(void)
   vAeroUVW.InitMatrix();
   vAeroPQR.InitMatrix();
   vMachUVW.InitMatrix();
-  vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
   return true;
@@ -149,14 +147,14 @@ bool FGAuxiliary::Run(bool Holding)
   vAeroPQR = in.vPQR - in.TurbPQR;
   vAeroUVW = in.vUVW - in.Tl2b * in.TotalWindNED;
 
-  Vt = vAeroUVW.Magnitude();
   alpha = beta = adot = bdot = 0;
   double AeroU2 = vAeroUVW(eU)*vAeroUVW(eU);
   double AeroV2 = vAeroUVW(eV)*vAeroUVW(eV);
   double AeroW2 = vAeroUVW(eW)*vAeroUVW(eW);
   double mUW = AeroU2 + AeroW2;
 
-  double Vt2 = Vt*Vt;
+  double Vt2 = mUW + AeroV2;
+  Vt = sqrt(Vt2);
 
   if ( Vt > 0.001 ) {
     if (vAeroUVW(eW) != 0.0)
@@ -206,11 +204,9 @@ bool FGAuxiliary::Run(bool Holding)
   if (abs(Mach) > 0.0) {
     vcas = VcalibratedFromMach(Mach, in.Pressure, in.PressureSL, in.DensitySL);
     veas = sqrt(2 * qbar / in.DensitySL);
-    vtrue = 1116.43559 * Mach * sqrt(in.Temperature / 518.67);
   }
-  else {
-    vcas = veas = vtrue = 0.0;
-  }
+  else
+    vcas = veas = 0.0;
 
   vPilotAccel.InitMatrix();
   vNcg = in.vBodyAccel/in.SLGravity;
@@ -276,33 +272,11 @@ void FGAuxiliary::UpdateWindMatrices(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// A positive headwind is blowing with you, a negative headwind is blowing against you.
-// psi is the direction the wind is blowing *towards*.
-// ToDo: should this simply be in the atmosphere class? Same with Get Crosswind.
-
-double FGAuxiliary::GetHeadWind(void) const
-{
-  return in.Vwind * cos(in.WindPsi - in.Psi);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// A positive crosswind is blowing towards the right (from teh perspective of the
-// pilot). A negative crosswind is blowing towards the -Y direction (left).
-// psi is the direction the wind is blowing *towards*.
-
-double FGAuxiliary::GetCrossWind(void) const
-{
-  return in.Vwind * sin(in.WindPsi - in.Psi);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAuxiliary::GetNlf(void) const
 {
   if (in.Mass != 0)
-    return (-in.vFw(3))/(in.Mass*slugtolb);
+    return (in.vFw(3))/(in.Mass*slugtolb);
   else
     return 0.;
 }
@@ -377,8 +351,6 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
   PropertyManager->Tie("accelerations/Ny", this, &FGAuxiliary::GetNy);
   PropertyManager->Tie("forces/load-factor", this, &FGAuxiliary::GetNlf);
-  /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
-  PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */
   PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha);
   PropertyManager->Tie("aero/beta-rad", this, (PF)&FGAuxiliary::Getbeta);
   PropertyManager->Tie("aero/mag-beta-rad", this, (PF)&FGAuxiliary::GetMagBeta);

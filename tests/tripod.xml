@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<fdm_config version="2.0" release="ALPHA">
+  <fileheader/>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 1.0 </ixx>
+    <iyy unit="SLUG*FT2"> 1.0 </iyy>
+    <izz unit="SLUG*FT2"> 1.0 </izz>
+    <emptywt unit="LBS"> 3000 </emptywt>
+    <pointmass name="PILOT">
+      <weight unit="LBS">0.0</weight>
+      <location unit="FT">
+        <x> 0.25 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </location>
+    </pointmass>
+  </mass_balance>
+  <ground_reactions>
+    <contact type="STRUCTURE" name="NOSE">
+      <location unit="FT">
+        <x> 1.0 </x>
+        <y> 0.0 </y>
+        <z> -0.2 </z>
+      </location>
+      <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
+    </contact>
+    <contact type="STRUCTURE" name="LEFT">
+      <location unit="FT">
+        <x> -0.5 </x>
+        <y> 1.0 </y>
+        <z> -0.2 </z>
+      </location>
+      <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
+    </contact>
+    <contact type="STRUCTURE" name="RIGHT">
+      <location unit="FT">
+        <x> -0.5 </x>
+        <y> -1.0 </y>
+        <z> -0.2 </z>
+      </location>
+      <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+      <static_friction> 0.1 </static_friction>
+      <dynamic_friction> 0.1 </dynamic_friction>
+    </contact>
+  </ground_reactions>
+  <aerodynamics/>
+</fdm_config>

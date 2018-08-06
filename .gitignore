@@ -70,3 +70,8 @@ ipch/
 ## Jupyter
 #################
 .ipynb_checkpoints
+
+#################
+## Mac OSX
+#################
+.DS_Store

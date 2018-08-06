@@ -503,9 +503,10 @@ bool FGFCS::Load(Element* document)
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
     
-    int Rate = 0;
     if (!channel_element->GetAttributeValue("execrate").empty())
-      Rate = channel_element->GetAttributeValueAsNumber("execrate");
+      ChannelRate = channel_element->GetAttributeValueAsNumber("execrate");
+    else
+      ChannelRate = 1;
 
     if (sOnOffProperty.length() > 0) {
       FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
@@ -516,10 +517,10 @@ bool FGFCS::Load(Element* document)
              << "understood. The simulation will abort" << reset << endl;
         throw("Bad system definition");
       } else
-        newChannel = new FGFCSChannel(this, sChannelName, Rate,
+        newChannel = new FGFCSChannel(this, sChannelName, ChannelRate,
                                       OnOffPropertyNode);
     } else
-      newChannel = new FGFCSChannel(this, sChannelName, Rate);
+      newChannel = new FGFCSChannel(this, sChannelName, ChannelRate);
 
     SystemChannels.push_back(newChannel);
 

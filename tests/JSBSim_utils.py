@@ -156,6 +156,9 @@ class JSBSimTestCase(unittest.TestCase):
             if CheckXMLFile(fullpath, 'runscript'):
                 yield fullpath
 
+    def create_fdm(self):
+        return CreateFDM(self.sandbox)
+
 
 def RunTest(test):
     suite = unittest.TestLoader().loadTestsFromTestCase(test)

@@ -92,7 +92,6 @@ public:
   /// Adds a component to a channel
   void Add(FGFCSComponent* comp) {
     FCSComponents.push_back(comp);
-    comp->SetDtForFrameCount(ExecRate);
   }
   /// Returns the number of components in the channel.
   size_t GetNumComponents() {return FCSComponents.size();}

@@ -393,11 +393,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.SinTht       = Propagate->GetSinEuler(eTht);
     Auxiliary->in.CosPhi       = Propagate->GetCosEuler(ePhi);
     Auxiliary->in.SinPhi       = Propagate->GetSinEuler(ePhi);
-    Auxiliary->in.Psi          = Propagate->GetEuler(ePsi);
     Auxiliary->in.TotalWindNED = Winds->GetTotalWindNED();
     Auxiliary->in.TurbPQR      = Winds->GetTurbPQR();
-    Auxiliary->in.WindPsi      = Winds->GetWindPsi();
-    Auxiliary->in.Vwind        = Winds->GetTotalWindNED().Magnitude();
     break;
   case eSystems:
     // Dynamic inputs come into the components that FCS manages through properties
@@ -1142,7 +1139,9 @@ void FGFDMExec::DoTrim(int mode)
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   bool success = trim.DoTrim();
-  trim.Report();
+
+  if (debug_lvl > 0)
+    trim.Report();
 
   if (!success)
     throw("Trim Failed");

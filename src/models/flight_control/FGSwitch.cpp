@@ -135,6 +135,13 @@ bool FGSwitch::Run(void )
   bool pass = false;
   double default_output=0.0;
 
+  // To detect errors early, make sure all conditions and values can be
+  // evaluated in the first time step.
+  if (!initialized) {
+    initialized = true;
+    VerifyProperties();
+  }
+
   for (unsigned int i=0; i<tests.size(); i++) {
     if (tests[i]->Default) {
       default_output = tests[i]->GetValue();
@@ -155,6 +162,18 @@ bool FGSwitch::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSwitch::VerifyProperties(void)
+{
+  for (unsigned int i=0; i<tests.size(); i++) {
+    if (!tests[i]->Default) {
+      tests[i]->condition->Evaluate();
+    }
+    tests[i]->GetValue();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

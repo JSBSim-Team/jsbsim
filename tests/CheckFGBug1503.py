@@ -33,6 +33,12 @@ from multiprocessing import Process
 from scipy import stats
 from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
+# This wrapper launcher is needed to handle limitations with the Windows version of
+# the multiprocessing module since 'complex' objects can't be serialized/pickled
+def SubProcessScriptExecution(sandbox, script_path, aircraft_path, time_limit=1E+9):
+    test_case = CheckFGBug1503()
+    test_case.SubProcessScriptExecution(sandbox, script_path, aircraft_path, time_limit)
+
 
 class CheckFGBug1503(JSBSimTestCase):
     def setUp(self):
@@ -52,6 +58,13 @@ class CheckFGBug1503(JSBSimTestCase):
             aileron_pos = fdm['fcs/left-aileron-pos-rad']
             self.assertEqual(aileron_pos, 0.0,
                             msg="Failed running the script %s at time step %f\nProperty fcs/left-aileron-pos-rad is non-zero (%f)" % (self.script_path, fdm.get_sim_time(), aileron_pos))
+
+    def SubProcessScriptExecution(self, sandbox, script_path, aircraft_path, time_limit):
+        self.script_path = script_path
+        self.sandbox = sandbox
+        fdm = CreateFDM(sandbox)
+        fdm.set_aircraft_path(aircraft_path)
+        self.ScriptExecution(fdm, time_limit)
 
     def CheckRateValue(self, fdm, output_prop, rate_value):
         aileron_course = []
@@ -109,20 +122,19 @@ class CheckFGBug1503(JSBSimTestCase):
                                      self.aircraft_name+'.xml'))
 
         # Run the script with the modified aircraft
-        fdm = CreateFDM(self.sandbox)
-        fdm.set_aircraft_path('aircraft')
+        aircraft_path = 'aircraft'
 
         # A new process is created that launches the script. We wait for 10
         # times the reference execution time for the script completion. Beyond
         # that time, if the process is not completed, it is terminated and the
         # test is failed.
-        p = Process(target=self.ScriptExecution, args=(fdm,))
+        p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path, aircraft_path,))
         p.start()
         p.join(exec_time * 10.0)  # Wait 10 times the reference time
         alive = p.is_alive()
         if alive:
             p.terminate()
-        self.assertFalse(alive, msg="The script has hanged")
+        self.assertFalse(alive, msg="The script has hung")
 
     def test_actuator_rate_from_property(self):
         # Second part of the test.
@@ -266,4 +278,6 @@ class CheckFGBug1503(JSBSimTestCase):
 
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
 
-RunTest(CheckFGBug1503)
+
+if __name__ == '__main__':
+   RunTest(CheckFGBug1503)

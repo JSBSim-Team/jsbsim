@@ -131,9 +131,9 @@ public:
   /** Returns equivalent airspeed in knots. */
   double GetVequivalentKTS(void) const { return veas*fpstokts; }
   /** Returns the true airspeed in feet per second. */
-  double GetVtrueFPS() const { return vtrue; }
+  double GetVtrueFPS() const { return Vt; }
   /** Returns the true airspeed in knots. */
-  double GetVtrueKTS() const { return vtrue * fpstokts; }
+  double GetVtrueKTS() const { return Vt * fpstokts; }
 
   /** Returns the total pressure.
       Total pressure is freestream total pressure for
@@ -234,9 +234,6 @@ public:
     else return BadUnits();
   }
 
-  double GetHeadWind(void) const;
-  double GetCrossWind(void) const;
-
 // Time routines, SET and GET functions, used by FGMSIS atmosphere
 
   void SetDayOfYear    (int doy)    { day_of_year = doy;    }
@@ -282,15 +279,12 @@ public:
     double SinTht;
     double CosPhi;
     double SinPhi;
-    double Psi;
     FGColumnVector3 TotalWindNED;
     FGColumnVector3 TurbPQR;
-    double WindPsi;
-    double Vwind;
   } in;
 
 private:
-  double vcas, veas, vtrue;
+  double vcas, veas;
   double pt, tat, tatc; // Don't add a getter for pt!
 
   FGMatrix33 mTw2b;
@@ -302,7 +296,6 @@ private:
   FGColumnVector3 vNwcg;
   FGColumnVector3 vAeroPQR;
   FGColumnVector3 vAeroUVW;
-  FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
   FGLocation vLocationVRP;

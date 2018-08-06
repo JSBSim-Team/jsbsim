@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A">
+  <use aircraft="c172x" initialize="reset00"/>
+  <run start="0.0" end="25" dt="0.008333">
+    <!--
+        This test demonstrates pitch oscillations of high amplitude of the c172
+        due to a moderate cross wind (5kts beta=90 deg) as reported in issue
+        #89.
+        The vertical component of the cross wind is key to the triggering of the
+        oscillations.
+    -->
+
+    <!-- Initialize with brakes on -->
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+
+    <event name="Trim on ground">
+      <condition>simulation/sim-time-sec ge 0.1 </condition>
+      <set name="simulation/do_simple_trim" value="2" />
+    </event>
+
+    <event name="wind speed buildup">
+      <condition>simulation/sim-time-sec  ge  1.0</condition>
+      <set name="atmosphere/wind-east-fps" action="FG_RAMP" value="-5.0" tc="10.0"/>
+      <set name="atmosphere/wind-down-fps" action="FG_RAMP" value="-0.1" tc="10.0"/>
+    </event>
+  </run>
+  <output name="cross_wind.csv" type="CSV" rate="120">
+    <rates>            ON </rates>
+    <velocities>       ON </velocities>
+    <position>         ON </position>
+    <atmosphere>       ON </atmosphere>
+    <fcs>              ON </fcs>
+    <ground_reactions> ON </ground_reactions>
+    <propulsion>       ON </propulsion>
+    <simulation>       ON </simulation>
+    <massprops>        ON </massprops>
+    <forces>           ON </forces>
+    <moments>          ON </moments>
+    <aerosurfaces>     ON </aerosurfaces>
+    <coefficients>     ON </coefficients>
+    <property> aero/alpha-rad         </property>
+    <property> aero/alphadot-rad_sec  </property>
+  </output>
+</runscript>

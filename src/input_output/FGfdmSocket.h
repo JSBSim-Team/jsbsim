@@ -83,7 +83,8 @@ CLASS DECLARATION
 class FGfdmSocket : public FGJSBBase
 {
 public:
-  FGfdmSocket(const std::string&, int);
+  FGfdmSocket(const std::string& address, int port)
+    : FGfdmSocket(address, port, ptTCP) {}
   FGfdmSocket(const std::string&, int, int);
   FGfdmSocket(int, int);
   ~FGfdmSocket();
