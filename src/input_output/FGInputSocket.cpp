@@ -171,7 +171,7 @@ void FGInputSocket::Read(bool Holding)
           value = atof(str_value.c_str());
           node->setDoubleValue(value);
         }
-        socket->Reply("");
+        socket->Reply("set successful\n"); // agodemar
 
       } else if (command == "get") {             // GET PROPERTY
 
