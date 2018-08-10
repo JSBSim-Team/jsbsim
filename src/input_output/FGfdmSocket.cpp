@@ -360,29 +360,20 @@ void FGfdmSocket::WaitUntilReadable(void)
   if (sckt_in <= 0)
     return;
 
-  int recVal = 0;
-
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(sckt_in, &fds);
-  recVal = select(sckt_in+1, &fds, NULL, NULL, NULL);
-  switch (recVal) {
-    case(0): {
-      // Timeout
-      cout << "[FGfdmSocket::WaitUntilReadable] timeout" << endl;
-      break;
-    }
-    case(-1): {
-      // Error
-      cout << "[FGfdmSocket::WaitUntilReadable] error" << endl;
-      break;
-    }
-    default: {
-      // Readable Packet!!
-      cout << "[FGfdmSocket::WaitUntilReadable] readable" << endl;
-      break;
-    }
-  }
+  select(sckt_in+1, &fds, NULL, NULL, NULL);
+
+  /*
+    If you want to check select return status:
+
+    int recVal = select(sckt_in+1, &fds, NULL, NULL, NULL);
+    recVal: received value
+    0,             if socket timeout
+    -1,            if socket error
+    anithing else, if socket is readable
+  */
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
