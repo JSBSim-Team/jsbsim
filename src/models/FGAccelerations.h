@@ -59,8 +59,6 @@ CLASS DOCUMENTATION
 
     - Calculate the angular accelerations
     - Calculate the translational accelerations
-    - Calculate the angular rate
-    - Calculate the translational velocity
 
     This class is collecting all the forces and the moments acting on the body
     to calculate the corresponding accelerations according to Newton's second
@@ -100,7 +98,7 @@ class FGAccelerations : public FGModel {
 public:
   /** Constructor.
       @param Executive a pointer to the parent executive object */
-  FGAccelerations(FGFDMExec* Executive);
+  explicit FGAccelerations(FGFDMExec* Executive);
 
   /// Destructor
   ~FGAccelerations();
@@ -391,7 +389,7 @@ private:
   void CalculatePQRdot(void);
   void CalculateUVWdot(void);
 
-  void ResolveFrictionForces(double dt);
+  void CalculateFrictionForces(double dt);
 
   void bind(void);
   void Debug(int from);

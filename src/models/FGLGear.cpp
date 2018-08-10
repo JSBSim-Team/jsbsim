@@ -264,7 +264,7 @@ void FGLGear::ResetToIC(void)
   // Initialize Lagrange multipliers
   for (int i=0; i < 3; i++) {
     LMultiplier[i].ForceJacobian.InitMatrix();
-    LMultiplier[i].MomentJacobian.InitMatrix();
+    LMultiplier[i].LeverArm.InitMatrix();
     LMultiplier[i].Min = 0.0;
     LMultiplier[i].Max = 0.0;
     LMultiplier[i].value = 0.0;
@@ -675,29 +675,31 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     velocityDirection.Normalize();
 
     LMultiplier[ftDynamic].ForceJacobian = mT * velocityDirection;
-    LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
     LMultiplier[ftDynamic].Max = 0.;
     LMultiplier[ftDynamic].Min = -fabs(staticFFactor * dynamicFCoeff * vFn(eZ));
+    LMultiplier[ftDynamic].LeverArm = vWhlContactVec;
 
-    // The Lagrange multiplier value obtained from the previous iteration is kept
-    // This is supposed to accelerate the convergence of the projected Gauss-Seidel
-    // algorithm. The code just below is to make sure that the initial value
-    // is consistent with the current friction coefficient and normal reaction.
+    // The Lagrange multiplier value obtained from the previous iteration is
+    // kept. This is supposed to accelerate the convergence of the projected
+    // Gauss-Seidel algorithm. The code just below is to make sure that the
+    // initial value is consistent with the current friction coefficient and
+    // normal reaction.
     LMultiplier[ftDynamic].value = Constrain(LMultiplier[ftDynamic].Min, LMultiplier[ftDynamic].value, LMultiplier[ftDynamic].Max);
 
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftDynamic]);
   }
   else {
-    // Static friction is used for ctSTRUCTURE when the contact point is not moving.
-    // It is always used for ctBOGEY elements because the friction coefficients
-    // of a tyre depend on the direction of the movement (roll & side directions).
-    // This cannot be handled properly by the so-called "dynamic friction".
+    // Static friction is used for ctSTRUCTURE when the contact point is not
+    // moving. It is always used for ctBOGEY elements because the friction
+    // coefficients of a tyre depend on the direction of the movement (roll &
+    // side directions). This cannot be handled properly by the so-called
+    // "dynamic friction".
     StaticFriction = true;
 
     LMultiplier[ftRoll].ForceJacobian = mT * FGColumnVector3(1.,0.,0.);
     LMultiplier[ftSide].ForceJacobian = mT * FGColumnVector3(0.,1.,0.);
-    LMultiplier[ftRoll].MomentJacobian = vWhlContactVec * LMultiplier[ftRoll].ForceJacobian;
-    LMultiplier[ftSide].MomentJacobian = vWhlContactVec * LMultiplier[ftSide].ForceJacobian;
+    LMultiplier[ftRoll].LeverArm = vWhlContactVec;
+    LMultiplier[ftSide].LeverArm = vWhlContactVec;
 
     switch(eContactType) {
     case ctBOGEY:
@@ -713,10 +715,11 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
     LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
 
-    // The Lagrange multiplier value obtained from the previous iteration is kept
-    // This is supposed to accelerate the convergence of the projected Gauss-Seidel
-    // algorithm. The code just below is to make sure that the initial value
-    // is consistent with the current friction coefficient and normal reaction.
+    // The Lagrange multiplier value obtained from the previous iteration is
+    // kept. This is supposed to accelerate the convergence of the projected
+    // Gauss-Seidel algorithm. The code just below is to make sure that the
+    // initial value is consistent with the current friction coefficient and
+    // normal reaction.
     LMultiplier[ftRoll].value = Constrain(LMultiplier[ftRoll].Min, LMultiplier[ftRoll].value, LMultiplier[ftRoll].Max);
     LMultiplier[ftSide].value = Constrain(LMultiplier[ftSide].Min, LMultiplier[ftSide].value, LMultiplier[ftSide].Max);
 

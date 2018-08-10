@@ -118,7 +118,7 @@ bool FGAccelerations::Run(bool Holding)
   CalculateUVWdot();   // Translational rate derivative
 
   if (!FDMExec->GetHoldDown())
-    ResolveFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
+    CalculateFrictionForces(in.DeltaT * rate);  // Update rate derivatives with friction forces
 
   Debug(2);
   return false;
@@ -233,7 +233,7 @@ void FGAccelerations::SetHoldDown(bool hd)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Resolves the contact forces just before integrating the EOM.
+// Computes the contact forces just before integrating the EOM.
 // This routine is using Lagrange multipliers and the projected Gauss-Seidel
 // (PGS) method.
 // Reference: See Erin Catto, "Iterative Dynamics with Temporal Coherence",
@@ -245,11 +245,8 @@ void FGAccelerations::SetHoldDown(bool hd)
 // The friction forces are resolved in the body frame relative to the origin
 // (Earth center).
 
-void FGAccelerations::ResolveFrictionForces(double dt)
+void FGAccelerations::CalculateFrictionForces(double dt)
 {
-  const double invMass = 1.0 / in.Mass;
-  const FGMatrix33& Jinv = in.Jinv;
-  FGColumnVector3 vdot, wdot;
   vector<LagrangeMultiplier*>& multipliers = *in.MultipliersList;
   size_t n = multipliers.size();
 
@@ -264,25 +261,30 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   // Assemble the linear system of equations
   for (unsigned int i=0; i < n; i++) {
-    FGColumnVector3 v1 = invMass * multipliers[i]->ForceJacobian;
-    FGColumnVector3 v2 = Jinv * multipliers[i]->MomentJacobian; // Should be J^-T but J is symmetric and so is J^-1
+    FGColumnVector3 U = multipliers[i]->ForceJacobian;
+    FGColumnVector3 r = multipliers[i]->LeverArm;
+    FGColumnVector3 v1 = U / in.Mass;
+    FGColumnVector3 v2 = in.Jinv * (r*U); // Should be J^-T but J is symmetric and so is J^-1
 
     for (unsigned int j=0; j < i; j++)
       a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of Jac^T*M^-1*Jac
-    for (unsigned int j=i; j < n; j++)
-      a[i*n+j] = DotProduct(v1, multipliers[j]->ForceJacobian)
-               + DotProduct(v2, multipliers[j]->MomentJacobian);
+
+    for (unsigned int j=i; j < n; j++) {
+      U = multipliers[j]->ForceJacobian;
+      r = multipliers[j]->LeverArm;
+      a[i*n+j] = DotProduct(U, v1 + v2*r);
+    }
   }
 
   // Assemble the RHS member
 
   // Translation
-  vdot = vUVWdot;
+  FGColumnVector3 vdot = vUVWdot;
   if (dt > 0.) // Zeroes out the relative movement between the aircraft and the ground
     vdot += (in.vUVW - in.Tec2b * in.TerrainVelocity) / dt;
 
   // Rotation
-  wdot = vPQRdot;
+  FGColumnVector3 wdot = vPQRdot;
   if (dt > 0.) // Zeroes out the relative movement between the aircraft and the ground
     wdot += (in.vPQR - in.Tec2b * in.TerrainAngularVel) / dt;
 
@@ -291,12 +293,14 @@ void FGAccelerations::ResolveFrictionForces(double dt)
   // 2. Divide every line of 'a' and 'rhs' by a[i,i]. This is in order to save
   //    a division computation at each iteration of Gauss-Seidel.
   for (unsigned int i=0; i < n; i++) {
-    double d = 1.0 / a[i*n+i];
+    double d = a[i*n+i];
+    FGColumnVector3 U = multipliers[i]->ForceJacobian;
+    FGColumnVector3 r = multipliers[i]->LeverArm;
 
-    rhs[i] = -(DotProduct(multipliers[i]->ForceJacobian, vdot)
-              +DotProduct(multipliers[i]->MomentJacobian, wdot))*d;
+    rhs[i] = -DotProduct(U, vdot + wdot*r)/d;
+
     for (unsigned int j=0; j < n; j++)
-      a[i*n+j] *= d;
+      a[i*n+j] /= d;
   }
 
   // Resolve the Lagrange multipliers with the projected Gauss-Seidel method
@@ -323,12 +327,16 @@ void FGAccelerations::ResolveFrictionForces(double dt)
 
   for (unsigned int i=0; i< n; i++) {
     double lambda = multipliers[i]->value;
-    vFrictionForces += lambda * multipliers[i]->ForceJacobian;
-    vFrictionMoments += lambda * multipliers[i]->MomentJacobian;
+    FGColumnVector3 U = multipliers[i]->ForceJacobian;
+    FGColumnVector3 r = multipliers[i]->LeverArm;
+
+    FGColumnVector3 F = lambda * U;
+    vFrictionForces += F;
+    vFrictionMoments += r * F;
   }
 
-  FGColumnVector3 accel = invMass * vFrictionForces;
-  FGColumnVector3 omegadot = Jinv * vFrictionMoments;
+  FGColumnVector3 accel = vFrictionForces / in.Mass;
+  FGColumnVector3 omegadot = in.Jinv * vFrictionMoments;
 
   vBodyAccel += accel;
   vUVWdot += accel;
@@ -344,7 +352,7 @@ void FGAccelerations::InitializeDerivatives(void)
   // Make an initial run and set past values
   CalculatePQRdot();           // Angular rate derivative
   CalculateUVWdot();           // Translational rate derivative
-  ResolveFrictionForces(0.);   // Update rate derivatives with friction forces
+  CalculateFrictionForces(0.);   // Update rate derivatives with friction forces
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

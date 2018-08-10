@@ -50,7 +50,7 @@ CLASS DECLARATION
 
 struct LagrangeMultiplier {
   FGColumnVector3 ForceJacobian;
-  FGColumnVector3 MomentJacobian;
+  FGColumnVector3 LeverArm;
   double Min;
   double Max;
   double value;
