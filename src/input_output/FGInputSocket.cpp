@@ -147,7 +147,7 @@ void FGInputSocket::Read(bool Holding)
         }
       }
 
-      if (command == "set") {                   // SET PROPERTY
+      if (command == "set") {                       // SET PROPERTY
 
         if (argument.size() == 0) {
           socket->Reply("No property argument supplied.\n");
@@ -170,7 +170,7 @@ void FGInputSocket::Read(bool Holding)
           value = atof(str_value.c_str());
           node->setDoubleValue(value);
         }
-        socket->Reply("");
+        socket->Reply("set successful\n");
 
       } else if (command == "get") {             // GET PROPERTY
 
@@ -201,17 +201,17 @@ void FGInputSocket::Read(bool Holding)
           socket->Reply(buf.str());
         }
 
-      } else if (command == "hold") {                  // PAUSE
+      } else if (command == "hold") {               // PAUSE
 
         FDMExec->Hold();
-        socket->Reply("");
+        socket->Reply("Holding\n");
 
       } else if (command == "resume") {             // RESUME
 
         FDMExec->Resume();
-        socket->Reply("");
+        socket->Reply("Resuming\n");
 
-      } else if (command == "iterate") {             // ITERATE
+      } else if (command == "iterate") {            // ITERATE
 
         int argumentInt;
         istringstream (argument) >> argumentInt;
@@ -225,15 +225,15 @@ void FGInputSocket::Read(bool Holding)
         }
         FDMExec->EnableIncrementThenHold( argumentInt );
         FDMExec->Resume();
-        socket->Reply("");
+        socket->Reply("Iterations performed\n");
 
-      } else if (command == "quit") {                   // QUIT
+      } else if (command == "quit") {               // QUIT
 
         // close the socket connection
-        socket->Reply("");
+        socket->Reply("Closing connection\n");
         socket->Close();
 
-      } else if (command == "info") {                   // INFO
+      } else if (command == "info") {               // INFO
 
         // get info about the sim run and/or aircraft, etc.
         ostringstream info;
@@ -243,7 +243,7 @@ void FGInputSocket::Read(bool Holding)
         info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << endl;
         socket->Reply(info.str());
 
-      } else if (command == "help") {                   // HELP
+      } else if (command == "help") {               // HELP
 
         socket->Reply(
         " JSBSim Server commands:\n\n"
