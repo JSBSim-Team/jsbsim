@@ -290,6 +290,8 @@ The command above will succeed if you execute it from your build directory in wh
 # Contact
 For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
 
+We are also on Facebook: https://www.facebook.com/jsbsim/
+
 # Legal Notice
 JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
 
