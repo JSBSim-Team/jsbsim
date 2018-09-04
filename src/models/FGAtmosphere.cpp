@@ -65,6 +65,10 @@ double FGAtmosphere::Reng = Rstar / Mair;
 
 const double FGAtmosphere::SHRatio = 1.40;
 
+const double FGAtmosphere::StdDaySLtemperature = 518.67;
+const double FGAtmosphere::StdDaySLpressure = 2116.228;
+const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng*StdDaySLtemperature);
+
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                                                PressureAltitude(0.0),      // ft
                                                DensityAltitude(0.0),       // ft
@@ -91,10 +95,10 @@ bool FGAtmosphere::InitModel(void)
   if (!FGModel::InitModel()) return false;
 
   Calculate(0.0);
-  SLtemperature = Temperature = 518.67;
-  SLpressure = Pressure = 2116.228;
+  SLtemperature = Temperature = StdDaySLtemperature;
+  SLpressure = Pressure = StdDaySLpressure;
   SLdensity = Density = Pressure/(Reng*Temperature);
-  SLsoundspeed = Soundspeed = sqrt(SHRatio*Reng*Temperature);
+  SLsoundspeed = Soundspeed = StdDaySLsoundspeed;
 
   return true;
 }

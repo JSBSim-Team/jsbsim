@@ -211,6 +211,10 @@ public:
     double altitudeASL;
   } in;
 
+  static const double StdDaySLtemperature;
+  static const double StdDaySLpressure;
+  static const double StdDaySLsoundspeed;
+
 protected:
   double    SLtemperature,    SLdensity,    SLpressure,    SLsoundspeed; // Sea level conditions
   double      Temperature,      Density,      Pressure,      Soundspeed; // Current actual conditions at altitude

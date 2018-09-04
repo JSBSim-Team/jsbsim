@@ -41,6 +41,7 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include "models/FGAtmosphere.h"
 
 using namespace std;
 
@@ -295,43 +296,41 @@ double FGJSBBase::PitotTotalPressure(double mach, double p)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGJSBBase::VcalibratedFromMach(double mach, double p, double psl, double rhosl)
-{
-  double pt = PitotTotalPressure(mach, p);
-  double A = pow(((pt-p)/psl+1), 1./3.5);
+// Based on the formulas in the US Air Force Aircraft Performance Flight Testing 
+// Manual (AFFTC-TIH-99-01). In particular sections 4.6 to 4.8.
 
-  return sqrt(7*psl/rhosl*(A-1));
+double FGJSBBase::MachFromImpactPressure(double qc, double p)
+{
+  double A = qc / p + 1;
+  double M = sqrt(5.0*(pow(A, 1. / 3.5) - 1));  // Equation (4.12)
+
+  if (M > 1.0)
+    for (unsigned int i = 0; i<10; i++)
+      M = 0.881285*sqrt(A*pow(1 - 1.0 / (7.0*M*M), 2.5));  // Equation (4.17)
+
+  return M;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGJSBBase::MachFromVcalibrated(double vcas, double p, double psl, double rhosl)
+double FGJSBBase::VcalibratedFromMach(double mach, double p)
 {
-  double pt = p + psl*(pow(1+vcas*vcas*rhosl/(7.0*psl),3.5)-1);
+  double asl = FGAtmosphere::StdDaySLsoundspeed;
+  double psl = FGAtmosphere::StdDaySLpressure;
+  double qc = PitotTotalPressure(mach, p) - p;
 
-  if (pt/p < 1.89293)
-    return sqrt(5.0*(pow(pt/p, 1./3.5) -1)); // Mach < 1
-  else {
-    // Mach >= 1
-    double mach = sqrt(0.77666*pt/p); // Initial guess is based on a quadratic approximation of the Rayleigh formula
-    double delta = 1.;
-    double target = pt/(166.92158*p);
-    int iter = 0;
+  return asl * MachFromImpactPressure(qc, psl);  
+}
 
-    // Find the root with Newton-Raphson. Since the differential is never zero,
-    // the function is monotonic and has only one root with a multiplicity of one.
-    // Convergence is certain.
-    while (delta > 1E-5 && iter < 10) {
-      double m2 = mach*mach; // Mach^2
-      double m6 = m2*m2*m2;  // Mach^6
-      delta = mach*m6/pow(7.0*m2-1.0,2.5) - target;
-      double diff = 7.0*m6*(2.0*m2-1)/pow(7.0*m2-1.0,3.5); // Never zero when Mach >= 1
-      mach -= delta/diff;
-      iter++;
-    }
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    return mach;
-  }
+double FGJSBBase::MachFromVcalibrated(double vcas, double p)
+{
+  double asl = FGAtmosphere::StdDaySLsoundspeed;
+  double psl = FGAtmosphere::StdDaySLpressure;
+  double qc = PitotTotalPressure(vcas / asl, psl) - psl;
+
+  return MachFromImpactPressure(qc, p);
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

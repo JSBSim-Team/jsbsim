@@ -202,7 +202,7 @@ bool FGAuxiliary::Run(bool Holding)
   pt = PitotTotalPressure(Mach, in.Pressure);
 
   if (abs(Mach) > 0.0) {
-    vcas = VcalibratedFromMach(Mach, in.Pressure, in.PressureSL, in.DensitySL);
+    vcas = VcalibratedFromMach(Mach, in.Pressure);
     veas = sqrt(2 * qbar / in.DensitySL);
   }
   else
