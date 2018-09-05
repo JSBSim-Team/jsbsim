@@ -94,17 +94,16 @@ public:
   }
 
   void testCASConversion() {
-    double p  = 101325., psl = p; // SI units
-    double rhosl = 1.225; // SI units
-    TS_ASSERT_EQUALS(VcalibratedFromMach(-0.1, p, psl, rhosl), 0.0);
-    TS_ASSERT_EQUALS(VcalibratedFromMach(0, p, psl, rhosl), 0.0);
-    TS_ASSERT_DELTA(VcalibratedFromMach(0.5, p, psl, rhosl), 170.1469, 1E-4);
-    TS_ASSERT_DELTA(VcalibratedFromMach(1.0, p, psl, rhosl), 340.2939, 1E-4);
-    TS_ASSERT_DELTA(VcalibratedFromMach(1.5, p, psl, rhosl), 493.2217, 1E-4);
-    TS_ASSERT_EQUALS(MachFromVcalibrated(0.0, p, psl, rhosl), 0.0);
-    TS_ASSERT_DELTA(MachFromVcalibrated(170.1469, p, psl, rhosl), 0.5, 1E-4);
-    TS_ASSERT_DELTA(MachFromVcalibrated(340.2939, p, psl, rhosl), 1.0, 1E-4);
-    TS_ASSERT_DELTA(MachFromVcalibrated(493.2217, p, psl, rhosl), 1.5, 1E-4);
+    double p = 2116.228;
+    TS_ASSERT_EQUALS(VcalibratedFromMach(-0.1, p), 0.0);
+    TS_ASSERT_EQUALS(VcalibratedFromMach(0, p), 0.0);
+    TS_ASSERT_DELTA(VcalibratedFromMach(0.5, p), 558.2243, 1E-4);
+    TS_ASSERT_DELTA(VcalibratedFromMach(1.0, p), 1116.4486, 1E-4);
+    TS_ASSERT_DELTA(VcalibratedFromMach(1.5, p), 1674.6732, 1E-4);
+    TS_ASSERT_EQUALS(MachFromVcalibrated(0.0, p), 0.0);
+    TS_ASSERT_DELTA(MachFromVcalibrated(558.2243, p), 0.5, 1E-4);
+    TS_ASSERT_DELTA(MachFromVcalibrated(1116.4486, p), 1.0, 1E-4);
+    TS_ASSERT_DELTA(MachFromVcalibrated(1674.6732, p), 1.5, 1E-4);
   }
 
   void testNumericRoutines() {
