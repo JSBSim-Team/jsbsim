@@ -290,7 +290,7 @@ double FGJSBBase::PitotTotalPressure(double mach, double p)
     // The denominator below is zero for Mach ~ 0.38, for which
     // we'll never be here, so we're safe
 
-    return p*166.92158*pow(mach,7.0)/pow(7*mach*mach-1,2.5);
+    return p*166.92158009316827*pow(mach,7.0)/pow(7*mach*mach-1,2.5);
   }
 }
 
@@ -306,7 +306,7 @@ double FGJSBBase::MachFromImpactPressure(double qc, double p)
 
   if (M > 1.0)
     for (unsigned int i = 0; i<10; i++)
-      M = 0.881285*sqrt(A*pow(1 - 1.0 / (7.0*M*M), 2.5));  // Equation (4.17)
+      M = 0.8812848543473311*sqrt(A*pow(1 - 1.0 / (7.0*M*M), 2.5));  // Equation (4.17)
 
   return M;
 }
