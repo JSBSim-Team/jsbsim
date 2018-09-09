@@ -179,8 +179,6 @@ void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
   double altitudeASL = position.GetAltitudeASL();
   double pressure = Atmosphere->GetPressure(altitudeASL);
-  double pressureSL = Atmosphere->GetPressureSL();
-  double rhoSL = Atmosphere->GetDensitySL();
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
 
@@ -692,7 +690,6 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
   double altitudeASL = position.GetAltitudeASL();
   double pressure = Atmosphere->GetPressure(altitudeASL);
-  double pressureSL = Atmosphere->GetPressureSL();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
@@ -835,8 +832,6 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
   double altitudeASL = position.GetAltitudeASL();
   double pressure = Atmosphere->GetPressure(altitudeASL);
-  double pressureSL = Atmosphere->GetPressureSL();
-  double rhoSL = Atmosphere->GetDensitySL();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double mach = vt / soundSpeed;
 
