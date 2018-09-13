@@ -247,6 +247,7 @@ public:
   double getOilPressure_psi(void) const {return OilPressure_psi;}
   double getOilTemp_degF (void) const {return KelvinToFahrenheit(OilTemp_degK);}
   double getRPM(void) const {return RPM;}
+  double getAFR(void) const {return m_dot_fuel > 0.0 ? m_dot_air / m_dot_fuel : INFINITY;}
 
 protected:
 
