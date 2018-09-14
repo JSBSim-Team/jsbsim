@@ -388,6 +388,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
     property_name = base_property_name + "/boostloss-hp";
     PropertyManager->Tie(property_name, &BoostLossHP);
   }
+  property_name = base_property_name + "/AFR";
+  PropertyManager->Tie(property_name, this, &FGPiston::getAFR);
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -749,8 +751,6 @@ void FGPiston::doFuelFlow(void)
 {
   double thi_sea_level = 1.3 * in.MixturePos[EngineNumber]; // Allows an AFR of infinity:1 to 11.3075:1
   equivalence_ratio = thi_sea_level * 101325.0 / p_amb;
-//  double AFR = 10+(12*(1-in.Mixture[EngineNumber]));// mixture 10:1 to 22:1
-//  m_dot_fuel = m_dot_air / AFR;
   m_dot_fuel = (m_dot_air * equivalence_ratio) / 14.7;
   FuelFlowRate =  m_dot_fuel * 2.2046;  // kg to lb
   if(Starved) // There is no fuel, so zero out the flows we've calculated so far
