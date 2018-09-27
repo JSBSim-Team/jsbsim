@@ -70,7 +70,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
-  N1_spinup = 1.0; N2_spinup = 3.0;
+  N1_spinup = 1.0; N2_spinup = 3.0; StartN1 = 5.21; StartN2 = 25.18;
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
@@ -281,8 +281,8 @@ double FGTurbine::SpinUp(void)
 {
   Running = false;
   FuelFlow_pph = 0.0;
-  N2 = Seek(&N2, 25.18, N2_spinup, N2/2.0);
-  N1 = Seek(&N1, 5.21, N1_spinup, N1/2.0);
+  N2 = Seek(&N2, StartN2, N2_spinup, N2/2.0);
+  N1 = Seek(&N1, StartN1, N1_spinup, N1/2.0);
   EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0.2, 0.2);
@@ -448,6 +448,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     TSFC = el->FindElementValueAsNumber("tsfc");
   if (el->FindElement("atsfc"))
     ATSFC = el->FindElementValueAsNumber("atsfc");
+  if (el->FindElement("startn1"))
+    StartN1 = el->FindElementValueAsNumber("startn1");
+  if (el->FindElement("startn2"))
+    StartN2 = el->FindElementValueAsNumber("startn2");
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
   if (el->FindElement("idlen2"))
