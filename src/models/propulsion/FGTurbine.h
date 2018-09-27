@@ -89,6 +89,8 @@ CLASS DOCUMENTATION
   <bleed> {number} </bleed>
   <tsfc> {number} </tsfc>
   <atsfc> {number} </atsfc>
+  <startn1> {number} </startn1>
+  <startn2> {number} </startn2>
   <idlen1> {number} </idlen1>
   <idlen2> {number} </idlen2>
   <n1spinup> {number} </n1spinup>
@@ -111,10 +113,12 @@ CLASS DOCUMENTATION
   bleed       - Thrust reduction factor due to losses (0.0 to 1.0).
   tsfc        - Thrust-specific fuel consumption at cruise, lbm/hr/lbf
   atsfc       - Afterburning TSFC, lbm/hr/lbf
+  startn1     - Fan rotor rpm (% of max) while starting
+  startn2     - Core rotor rpm (% of max) while starting
   idlen1      - Fan rotor rpm (% of max) at idle
   idlen2      - Core rotor rpm (% of max) at idle
-  n1spinup    - Fan rotor rpm starter acceleration (default 1.0)
-  n2spinup    - Core rotor rpm starter acceleration (default 3.0)
+  n1spinup    - Fan rotor rpm starter acceleration to startn1 value (default 1.0)
+  n2spinup    - Core rotor rpm starter acceleration to startn2 value (default 3.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -238,6 +242,8 @@ private:
   double ATSFC;            ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
+  double StartN1;           ///< Start N1
+  double StartN2;           ///< Start N2
   double N1;               ///< N1
   double N2;               ///< N2
   double N2norm;           ///< N2 normalized (0=idle, 1=max)
