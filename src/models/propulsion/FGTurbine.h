@@ -95,6 +95,8 @@ CLASS DOCUMENTATION
   <idlen2> {number} </idlen2>
   <n1spinup> {number} </n1spinup>
   <n2spinup> {number} </n2spinup>
+  <n1start> {number} </n1start>
+  <n2start> {number} </n2start>
   <maxn1> {number} </maxn1>
   <maxn2> {number} </maxn2>
   <augmented> {0 | 1} </augmented>
@@ -119,6 +121,8 @@ CLASS DOCUMENTATION
   idlen2      - Core rotor rpm (% of max) at idle
   n1spinup    - Fan rotor rpm starter acceleration to startn1 value (default 1.0)
   n2spinup    - Core rotor rpm starter acceleration to startn2 value (default 3.0)
+  n1start     - Fan rotor rpm time taken to accelerate to idlen1 value (default 1.4)
+  n2start     - Core rotor rpm time taken to accelerate to idlen2 value (default 2.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -256,6 +260,8 @@ private:
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
   double N1_spinup;        ///< N1 spin up rate from starter (per second)
   double N2_spinup;        ///< N2 spin up rate from starter (per second)
+  double N1_start;    ///< N1 spin up rate from ignition (per second)
+  double N2_start;    ///< N2 spin up rate from ignition (per second)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
