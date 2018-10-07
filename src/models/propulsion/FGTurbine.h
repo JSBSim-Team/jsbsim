@@ -66,8 +66,8 @@ CLASS DOCUMENTATION
 <P>
     - STARTING (on ground):
       -# Set the control FGEngine::Starter to true.  The engine will spin up to
-         a maximum of about %25 N2 (%5.2 N1).  This simulates the action of a
-         pneumatic starter.
+         a maximum of about %25 N2 (%5.2 N1). This value may be changed using the <startnX> parameter.
+		 This simulates the action of a pneumatic starter.
       -# After reaching %15 N2 set the control FGEngine::Cutoff to false. If fuel
          is available the engine will now accelerate to idle.  The starter will
          automatically be set to false after the start cycle.
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
       -# Place the control FGEngine::Cutoff to false.
 <P>
     Ignition is assumed to be on anytime the Cutoff control is set to false,
-    therefore a seperate ignition system is not modeled.
+    therefore a separate ignition system is not modeled.
 
 <h3>Configuration File Format:</h3>
 @code
@@ -95,8 +95,8 @@ CLASS DOCUMENTATION
   <idlen2> {number} </idlen2>
   <n1spinup> {number} </n1spinup>
   <n2spinup> {number} </n2spinup>
-  <n1start> {number} </n1start>
-  <n2start> {number} </n2start>
+  <n1startrate> {number} </n1startrate>
+  <n2startrate> {number} </n2startrate>
   <maxn1> {number} </maxn1>
   <maxn2> {number} </maxn2>
   <augmented> {0 | 1} </augmented>
@@ -121,8 +121,8 @@ CLASS DOCUMENTATION
   idlen2      - Core rotor rpm (% of max) at idle
   n1spinup    - Fan rotor rpm starter acceleration to startn1 value (default 1.0)
   n2spinup    - Core rotor rpm starter acceleration to startn2 value (default 3.0)
-  n1start     - Fan rotor rpm time taken to accelerate to idlen1 value (default 1.4)
-  n2start     - Core rotor rpm time taken to accelerate to idlen2 value (default 2.0)
+  n1startrate - Fan rotor rpm time taken to accelerate from startn1 to idlen1 value (default 1.4)
+  n2startrate - Core rotor rpm time taken to accelerate to startn2 idlen2 value (default 2.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -260,8 +260,8 @@ private:
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
   double N1_spinup;        ///< N1 spin up rate from starter (per second)
   double N2_spinup;        ///< N2 spin up rate from starter (per second)
-  double N1_start;    ///< N1 spin up rate from ignition (per second)
-  double N2_start;    ///< N2 spin up rate from ignition (per second)
+  double N1_start_rate;    ///< N1 spin up rate from ignition (per second)
+  double N2_start_rate;    ///< N2 spin up rate from ignition (per second)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits

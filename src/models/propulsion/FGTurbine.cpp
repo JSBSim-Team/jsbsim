@@ -70,7 +70,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
-  N1_spinup = 1.0; N2_spinup = 3.0; StartN1 = 5.21; StartN2 = 25.18; N1_start = 1.4; N2_start = 2.0; 
+  N1_spinup = 1.0; N2_spinup = 3.0; StartN1 = 5.21; StartN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0; 
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
@@ -299,8 +299,8 @@ double FGTurbine::Start(void)
   if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
     Cranking = true;                   // provided for sound effects signal
     if (N2 < IdleN2) {
-      N2 = Seek(&N2, IdleN2, N2_start, N2/2.0);
-      N1 = Seek(&N1, IdleN1, N1_start, N1/2.0);
+      N2 = Seek(&N2, IdleN2, N2_start_rate, N2/2.0);
+      N1 = Seek(&N1, IdleN1, N1_start_rate, N1/2.0);
       EGT_degC = Seek(&EGT_degC, in.TAT_c + 363.1, 21.3, 7.3);
       FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
@@ -464,10 +464,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     N1_spinup = el->FindElementValueAsNumber("n1spinup");
   if (el->FindElement("n2spinup"))
     N2_spinup = el->FindElementValueAsNumber("n2spinup");
-  if (el->FindElement("n1start"))
-    N1_start = el->FindElementValueAsNumber("n1start");
-  if (el->FindElement("n2start"))
-    N2_start = el->FindElementValueAsNumber("n2start");
+  if (el->FindElement("n1startrate"))
+    N1_start_rate = el->FindElementValueAsNumber("n1startrate");
+  if (el->FindElement("n2startrate"))
+    N2_start_rate = el->FindElementValueAsNumber("n2startrate");
   if (el->FindElement("augmented"))
     Augmented = (int)el->FindElementValueAsNumber("augmented");
   if (el->FindElement("augmethod"))
