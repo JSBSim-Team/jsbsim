@@ -89,8 +89,8 @@ CLASS DOCUMENTATION
   <bleed> {number} </bleed>
   <tsfc> {number} </tsfc>
   <atsfc> {number} </atsfc>
-  <startn1> {number} </startn1>
-  <startn2> {number} </startn2>
+  <ignitionn1> {number} </ignitionn1>
+  <ignitionn2> {number} </ignitionn2>
   <idlen1> {number} </idlen1>
   <idlen2> {number} </idlen2>
   <n1spinup> {number} </n1spinup>
@@ -115,14 +115,14 @@ CLASS DOCUMENTATION
   bleed       - Thrust reduction factor due to losses (0.0 to 1.0).
   tsfc        - Thrust-specific fuel consumption at cruise, lbm/hr/lbf
   atsfc       - Afterburning TSFC, lbm/hr/lbf
-  startn1     - Fan rotor rpm (% of max) while starting
-  startn2     - Core rotor rpm (% of max) while starting
+  ignitionn1  - Fan rotor rpm (% of max) while starting
+  ignitionn2  - Core rotor rpm (% of max) while starting
   idlen1      - Fan rotor rpm (% of max) at idle
   idlen2      - Core rotor rpm (% of max) at idle
-  n1spinup    - Fan rotor rpm starter acceleration to startn1 value (default 1.0)
-  n2spinup    - Core rotor rpm starter acceleration to startn2 value (default 3.0)
-  n1startrate - Fan rotor rpm time taken to accelerate from startn1 to idlen1 value (default 1.4)
-  n2startrate - Core rotor rpm time taken to accelerate to startn2 idlen2 value (default 2.0)
+  n1spinup    - Fan rotor rpm starter acceleration to ignitionn1 value (default 1.0)
+  n2spinup    - Core rotor rpm starter acceleration to ignitionn2 value (default 3.0)
+  n1startrate - Fan rotor rpm time taken to accelerate from ignitionn1 to idlen1 value (default 1.4)
+  n2startrate - Core rotor rpm time taken to accelerate to ignitionn2 idlen2 value (default 2.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -246,8 +246,8 @@ private:
   double ATSFC;            ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
-  double StartN1;           ///< Start N1
-  double StartN2;           ///< Start N2
+  double IgnitionN1;       ///< Ignition N1
+  double IgnitionN2;       ///< Ignition N2
   double N1;               ///< N1
   double N2;               ///< N2
   double N2norm;           ///< N2 normalized (0=idle, 1=max)
@@ -258,8 +258,8 @@ private:
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottlePos;      ///< FCS-supplied throttle position - modified for local use!
   double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
-  double N1_spinup;        ///< N1 spin up rate from starter (per second)
-  double N2_spinup;        ///< N2 spin up rate from starter (per second)
+  double N1_spinup;        ///< N1 spin up rate from pneumatic starter (per second)
+  double N2_spinup;        ///< N2 spin up rate from pneumatic starter (per second)
   double N1_start_rate;    ///< N1 spin up rate from ignition (per second)
   double N2_start_rate;    ///< N2 spin up rate from ignition (per second)
   bool Stalled;            ///< true if engine is compressor-stalled
