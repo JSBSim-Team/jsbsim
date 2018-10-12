@@ -281,7 +281,7 @@ double FGTurbine::SpinUp(void)
 {
   Running = false;
   FuelFlow_pph = 0.0;
-  N2 = Seek(&N2, IgnitionN1, N2_spinup, N2/2.0);
+  N2 = Seek(&N2, IgnitionN2, N2_spinup, N2/2.0);
   N1 = Seek(&N1, IgnitionN1, N1_spinup, N1/2.0);
   EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
   OilPressure_psi = N2 * 0.62;
