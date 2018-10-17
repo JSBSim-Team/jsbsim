@@ -152,6 +152,9 @@ cdef class FGAtmosphere:
     def set_temperature(self, t, h, unit):
         return self.thisptr.SetTemperature(t, h, unit)
 
+    def get_temperature(self, h):
+        return self.thisptr.GetTemperature(h)
+
 cdef class FGMassBalance:
 
     cdef c_FGMassBalance *thisptr

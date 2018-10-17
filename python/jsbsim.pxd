@@ -66,6 +66,7 @@ cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
 
     cdef cppclass c_FGAtmosphere "JSBSim::FGAtmosphere":
         c_FGAtmosphere(c_FGFDMExec* fdm)
+        double GetTemperature(double h)
         void SetTemperature(double t, double h, eTemperature unit)
 
 cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":

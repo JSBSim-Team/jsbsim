@@ -298,6 +298,17 @@ class TestStdAtmosphere(JSBSimTestCase):
         fdm.run_ic()
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/500.0)
 
+        # Regression test for a bug reported in FlightGear. Checks that the
+        # temperature bias is updated correctly when the temperature is forced
+        # to a constant value.
+
+        for alt in range(5000):
+            h = alt*1000
+            fdm['atmosphere/delta-T'] = 0.0 # Make sure there is no temperature bias
+            atmos.set_temperature(354, h, eRankine)
+            self.assertAlmostEqual(1.0, atmos.get_temperature(h)/354.0,
+                                   msg='\nFailed at h={} ft'.format(h))
+
         # Check that it works while a temperature gradient is set
         graded_delta_T_K = -10.0
         fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
