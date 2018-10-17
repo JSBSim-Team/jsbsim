@@ -254,36 +254,12 @@ double FGStandardAtmosphere::GetTemperature(double altitude) const
 
 double FGStandardAtmosphere::GetStdTemperature(double altitude) const
 {
-  double Lk9 = 0.00658368; // deg R per foot
-  double Tinf = 1800.0; // Same as 1000 Kelvin
-  double temp = Tinf;
+  double GeoPotAlt = GeopotentialAltitude(altitude);
 
-  if (altitude < 298556.4) {                // 91 km - station 8
-
-    double GeoPotAlt = GeopotentialAltitude(altitude);
-
-    if (GeoPotAlt >= 0.0)
-      temp = StdAtmosTemperatureTable.GetValue(GeoPotAlt);
-    else
-      temp = StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRates[0];
-
-  } else if (altitude < 360892.4) {        // 110 km - station 9
-
-    temp = 473.7429 - 137.38176 * sqrt(1.0 - pow((altitude - 298556.4)/65429.462, 2.0));
-
-  } else if (altitude < 393700.8) {        // 120 km - station 10
-
-    temp = 432 + Lk9 * (altitude - 360892.4);
-
-  } else if (altitude < 3280839.9) {        // 1000 km station 12
-
-    double lambda = 0.00001870364;
-    double eps = (altitude - 393700.8) * (20855531.5 + 393700.8) / (20855531.5 + altitude);
-    temp = Tinf - (Tinf - 648.0) * exp(-lambda*eps);
-
-  }
-
-  return temp;
+  if (GeoPotAlt >= 0.0)
+    return StdAtmosTemperatureTable.GetValue(GeoPotAlt);
+  else
+    return StdAtmosTemperatureTable.GetValue(0.0) + GeoPotAlt*LapseRates[0];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
