@@ -70,7 +70,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
-  N1_spinup = 1.0; N2_spinup = 3.0;
+  N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0; 
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
@@ -281,8 +281,8 @@ double FGTurbine::SpinUp(void)
 {
   Running = false;
   FuelFlow_pph = 0.0;
-  N2 = Seek(&N2, 25.18, N2_spinup, N2/2.0);
-  N1 = Seek(&N1, 5.21, N1_spinup, N1/2.0);
+  N2 = Seek(&N2, IgnitionN2, N2_spinup, N2/2.0);
+  N1 = Seek(&N1, IgnitionN1, N1_spinup, N1/2.0);
   EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0.2, 0.2);
@@ -299,8 +299,8 @@ double FGTurbine::Start(void)
   if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
     Cranking = true;                   // provided for sound effects signal
     if (N2 < IdleN2) {
-      N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
-      N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
+      N2 = Seek(&N2, IdleN2, N2_start_rate, N2/2.0);
+      N1 = Seek(&N1, IdleN1, N1_start_rate, N1/2.0);
       EGT_degC = Seek(&EGT_degC, in.TAT_c + 363.1, 21.3, 7.3);
       FuelFlow_pph = IdleFF * N2 / IdleN2;
       OilPressure_psi = N2 * 0.62;
@@ -448,6 +448,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     TSFC = el->FindElementValueAsNumber("tsfc");
   if (el->FindElement("atsfc"))
     ATSFC = el->FindElementValueAsNumber("atsfc");
+  if (el->FindElement("ignitionn1"))
+    IgnitionN1 = el->FindElementValueAsNumber("ignitionn1");
+  if (el->FindElement("ignitionn2"))
+    IgnitionN1 = el->FindElementValueAsNumber("ignitionn2");
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
   if (el->FindElement("idlen2"))
@@ -460,6 +464,10 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     N1_spinup = el->FindElementValueAsNumber("n1spinup");
   if (el->FindElement("n2spinup"))
     N2_spinup = el->FindElementValueAsNumber("n2spinup");
+  if (el->FindElement("n1startrate"))
+    N1_start_rate = el->FindElementValueAsNumber("n1startrate");
+  if (el->FindElement("n2startrate"))
+    N2_start_rate = el->FindElementValueAsNumber("n2startrate");
   if (el->FindElement("augmented"))
     Augmented = (int)el->FindElementValueAsNumber("augmented");
   if (el->FindElement("augmethod"))
