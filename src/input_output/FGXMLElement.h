@@ -177,6 +177,7 @@ public:
   /** Retrieves the element name.
       @return the element name, or the empty string if no name has been set.*/
   const std::string& GetName(void) const {return name;}
+  void ChangeName(const std::string& _name) { name = _name; }
 
   /** Gets a line of data belonging to an element.
       @param i the index of the data line to return (0 by default).

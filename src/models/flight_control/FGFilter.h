@@ -199,15 +199,15 @@ For an integrator of the form:
 The corresponding filter definition is:
 
 @code
-<integrator name="name">
-  <input> property </input>
-  <c1> value|property </c1>
-  [<trigger> property </trigger>]
+<integrator name="{string}">
+  <input> {property} </input>
+  <c1 type="rect|trap|ab2|ab3"> {[-]property | number} </c1>
+  [<trigger> {property} </trigger>]
   [<clipto>
-    <min> {[-]property name | value} </min>
-    <max> {[-]property name | value} </max>
+    <min> {[-]property | number} </min>
+    <max> {[-]property | number} </max>
   </clipto>]
-  [<output> property </output>]
+  [<output> {property} </output>]
 </integrator>
 @endcode
 
@@ -217,12 +217,32 @@ property value is:
   - not 0: (or simply greater than zero), all current and previous inputs will
            be set to 0.0
 
+By default, the integration scheme is the trapezoidal scheme.
+
+An integrator is equivalent to a PID with the following parameters:
+@code
+<pid name="{string}">
+  <input> {[-]property} </input>
+  <kp> 0.0 </kp>
+  <ki type="rect|trap|ab2|ab3"> {number|[-]property} </ki>
+  <kd> 0.0 </kd>
+  <trigger> {property} </trigger>
+  [<clipto>
+  <min> {[-]property | value} </min>
+  <max> {[-]property | value} </max>
+  </clipto>]
+  [<output> {property} </output>]
+</pid>
+@endcode
+
+As a consequence, JSBSim internally uses PID controllers to simulate INTEGRATOR
+filters.
+
 In all the filter specifications above, an \<output> element is also seen.  This
-is so that the last component in a "string" can copy its value to the appropriate
-output, such as the elevator, or speedbrake, etc.
+is so that the last component in a "string" can copy its value to the
+appropriate output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Revision: 1.14 $
 
 */
 
@@ -243,7 +263,7 @@ public:
   bool Initialize;
   void ResetPastStates(void);
   
-  enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
+  enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
 private:
   double ca;

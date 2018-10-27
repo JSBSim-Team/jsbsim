@@ -534,8 +534,7 @@ bool FGFCS::Load(Element* document)
         if ((component_element->GetName() == string("lag_filter")) ||
             (component_element->GetName() == string("lead_lag_filter")) ||
             (component_element->GetName() == string("washout_filter")) ||
-            (component_element->GetName() == string("second_order_filter")) ||
-            (component_element->GetName() == string("integrator")) )
+            (component_element->GetName() == string("second_order_filter")) )
         {
           newChannel->Add(new FGFilter(this, component_element));
         } else if ((component_element->GetName() == string("pure_gain")) ||
@@ -554,6 +553,18 @@ bool FGFCS::Load(Element* document)
         } else if (component_element->GetName() == string("fcs_function")) {
           newChannel->Add(new FGFCSFunction(this, component_element));
         } else if (component_element->GetName() == string("pid")) {
+          newChannel->Add(new FGPID(this, component_element));
+        } else if (component_element->GetName() == string("integrator")) {
+          // <integrator> is equivalent to <pid type="trap">
+          Element* c1_el = component_element->FindElement("c1");
+          if (!c1_el) {
+            cerr << component_element->ReadFrom();
+            throw("INTEGRATOR component " + component_element->GetAttributeValue("name")
+                  + " does not provide the parameter <c1>");
+          }
+          c1_el->ChangeName("ki");
+          if (!c1_el->HasAttribute("type"))
+            c1_el->AddAttribute("type", "trap");
           newChannel->Add(new FGPID(this, component_element));
         } else if (component_element->GetName() == string("actuator")) {
           newChannel->Add(new FGActuator(this, component_element));

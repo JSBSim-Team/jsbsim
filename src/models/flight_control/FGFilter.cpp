@@ -68,7 +68,6 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;
   else if (Type == "SECOND_ORDER_FILTER") FilterType = eOrder2     ;
   else if (Type == "WASHOUT_FILTER")      FilterType = eWashout    ;
-  else if (Type == "INTEGRATOR")          FilterType = eIntegrator ;
   else                                    FilterType = eUnknown    ;
 
   if (element->FindElement("trigger")) {
@@ -170,10 +169,6 @@ void FGFilter::CalculateDynamicFilters(void)
       ca = 2.00 / denom;
       cb = (2.00 - dt*C[1]) / denom;
       break;
-    case eIntegrator:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
-      ca = dt*C[1] / 2.00;
-      break;
     case eUnknown:
       cerr << "Unknown filter type" << endl;
     break;
@@ -209,15 +204,6 @@ bool FGFilter::Run(void)
         break;
       case eWashout:
         Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;
-        break;
-      case eIntegrator:
-        if (Trigger != 0) {
-          double test = Trigger->getDoubleValue();
-          if (fabs(test) > 0.000001) {
-            Input  = PreviousInput1 = PreviousInput2 = 0.0;
-          }
-        }
-        Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
         break;
       case eUnknown:
         break;
@@ -316,12 +302,6 @@ void FGFilter::Debug(int from)
           else cout << "      C[6] is the value of property: " << sgn << PropertyNode[6]->GetName() << endl;
           break;
         case eWashout:
-          if (PropertySign[1] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
-          break;
-        case eIntegrator:
           if (PropertySign[1] < 0.0) sgn="-";
           else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
