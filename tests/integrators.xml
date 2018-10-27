@@ -22,5 +22,10 @@
       <ki type="ab3"> 1.0 </ki>
       <trigger> test/trigger </trigger>
     </pid>
+    <integrator name="test/output-integrator">
+      <input> test/input </input>
+      <c1> 1.0 </c1>
+      <trigger> test/trigger </trigger>
+    </integrator>
   </channel>
 </system>

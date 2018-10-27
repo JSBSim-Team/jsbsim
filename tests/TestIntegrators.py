@@ -24,7 +24,7 @@ from JSBSim_utils import JSBSimTestCase, RunTest
 
 
 class TestIntegrators(JSBSimTestCase):
-    def test_pid(self):
+    def test_integrators(self):
         fdm = self.create_fdm()
         path = self.sandbox.path_to_jsbsim_file('tests')
         tree = et.parse(os.path.join(path, 'tripod.xml'))
@@ -32,7 +32,7 @@ class TestIntegrators(JSBSimTestCase):
         system_tag = et.SubElement(root, 'system')
         system_tag.attrib['file'] = 'integrators.xml'
         tree.write('tripod.xml')
-        
+
         fdm.set_aircraft_path('.')
         fdm.set_systems_path(path)
         fdm.set_dt(0.005)
@@ -44,6 +44,7 @@ class TestIntegrators(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/output-pid-trap'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-ab2'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-ab3'], 0.0)
+        self.assertAlmostEqual(fdm['test/output-integrator'], 0.0)
 
         k = 8*math.pi # Constant for a period of 1/4s
 
@@ -55,6 +56,11 @@ class TestIntegrators(JSBSimTestCase):
             if i>1:
                 self.assertAlmostEqual(fdm['test/output-pid-ab3'],
                                        (1.0-math.cos(k*t))/k, delta=1E-4)
+
+            # Check that <integrator> is giving the same output than <pid> with
+            # a trapezoidal integration scheme.
+            self.assertAlmostEqual(fdm['test/output-pid-trap'],
+                                   fdm['test/output-integrator'], delta=1E-12)
             fdm.run()
 
         # Checks that a positive trigger value suspends the integration
@@ -63,12 +69,14 @@ class TestIntegrators(JSBSimTestCase):
         vtrap = fdm['test/output-pid-trap']
         vab2 = fdm['test/output-pid-ab2']
         vab3 = fdm['test/output-pid-ab3']
+        vinteg = fdm['test/output-integrator']
         for i in range(49):
             fdm.run()
             self.assertAlmostEqual(fdm['test/output-pid-rect'], vrect)
             self.assertAlmostEqual(fdm['test/output-pid-trap'], vtrap)
             self.assertAlmostEqual(fdm['test/output-pid-ab2'], vab2)
             self.assertAlmostEqual(fdm['test/output-pid-ab3'], vab3)
+            self.assertAlmostEqual(fdm['test/output-integrator'], vinteg)
 
         # Checks that a negative trigger value resets the integration
         fdm['test/trigger'] = -1.0
