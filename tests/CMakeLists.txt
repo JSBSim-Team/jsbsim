@@ -45,6 +45,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestStdAtmosphere
                  TestMiscellaneous
                  TestGndReactions
+                 TestIntegrators
                  )
 
 foreach(test ${PYTHON_TESTS})

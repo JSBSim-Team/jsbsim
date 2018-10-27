@@ -1,0 +1,26 @@
+<system>
+  <property> test/input </property>
+  <property> test/trigger </property>
+  <channel name="test">
+    <pid name="test/output-pid-rect">
+      <input> test/input </input>
+      <ki type="rect"> 1.0 </ki>
+      <trigger> test/trigger </trigger>
+    </pid>
+    <pid name="test/output-pid-trap">
+      <input> test/input </input>
+      <ki type="trap"> 1.0 </ki>
+      <trigger> test/trigger </trigger>
+    </pid>
+    <pid name="test/output-pid-ab2">
+      <input> test/input </input>
+      <ki type="ab2"> 1.0 </ki>
+      <trigger> test/trigger </trigger>
+    </pid>
+    <pid name="test/output-pid-ab3">
+      <input> test/input </input>
+      <ki type="ab3"> 1.0 </ki>
+      <trigger> test/trigger </trigger>
+    </pid>
+  </channel>
+</system>
