@@ -48,6 +48,7 @@ namespace JSBSim {
 
 class FGFCS;
 class Element;
+class FGParameter;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -59,9 +60,10 @@ CLASS DOCUMENTATION
 
 @code
 <pid name="{string}" [type="standard"]>
-  <kp> {number|property} </kp>
-  <ki> {number|property} </ki>
-  <kd> {number|property} </kd>
+  <input> {[-]property} </input>
+  <kp> {number|[-]property} </kp>
+  <ki type="rect|trap|ab2|ab3"> {number|[-]property} </ki>
+  <kd> {number|[-]property} </kd>
   <trigger> {property} </trigger>
   <pvdot> {property} </pvdot>
 </pid>
@@ -79,16 +81,14 @@ For example,
 
 @code
 <pid name="fcs/heading-control">
+  <input> fcs/heading-error </input>
   <kp> 3 </kp>
   <ki type="ab3"> 1 </ki>
   <kd> 1 </kd>
 </pid>
 @endcode
 
-
-
 <h3>Configuration Parameters:</h3>
-<pre>
 
   The values of kp, ki, and kd have slightly different interpretations depending
   on whether the PID controller is a standard one, or an ideal/parallel one -
@@ -115,12 +115,7 @@ For example,
             negative value.
   pvdot   - The property to be used as the process variable time derivative.
 
-
-
-</pre>
-
     @author Jon S. Berndt
-    @version $Revision: 1.16 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,21 +140,15 @@ public:
   }
 
 private:
-  double Kp, Ki, Kd;
   double I_out_total;
   double Input_prev, Input_prev2;
-  double KpPropertySign;
-  double KiPropertySign;
-  double KdPropertySign;
 
   bool IsStandard;
 
   eIntegrateType IntType;
 
+  FGParameter *Kp, *Ki, *Kd;
   FGPropertyNode_ptr Trigger;
-  FGPropertyNode_ptr KpPropertyNode;
-  FGPropertyNode_ptr KiPropertyNode;
-  FGPropertyNode_ptr KdPropertyNode;
   FGPropertyNode_ptr ProcessVariableDot;
 
   void Debug(int from);

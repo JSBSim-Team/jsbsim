@@ -37,6 +37,7 @@ INCLUDES
 
 #include "FGPID.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGRealValue.h"
 #include <string>
 #include <iostream>
 
@@ -50,15 +51,8 @@ CLASS IMPLEMENTATION
 
 FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  string kp_string, ki_string, kd_string;
+  Element *el;
 
-  Kp = Ki = Kd = 0.0;
-  KpPropertyNode = 0;
-  KiPropertyNode = 0;
-  KdPropertyNode = 0;
-  KpPropertySign = 1.0;
-  KiPropertySign = 1.0;
-  KdPropertySign = 1.0;
   I_out_total = 0.0;
   Input_prev = Input_prev2 = 0.0;
   Trigger = 0;
@@ -70,23 +64,21 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (pid_type == "standard") IsStandard = true;
 
-  if ( element->FindElement("kp") ) {
-    kp_string = element->FindElementValue("kp");
-    if (!is_number(kp_string)) { // property
-      if (kp_string[0] == '-') {
-       KpPropertySign = -1.0;
-       kp_string.erase(0,1);
-      }
-      KpPropertyNode = PropertyManager->GetNode(kp_string);
-    } else {
-      Kp = element->FindElementValueAsNumber("kp");
-    }
+  el = element->FindElement("kp");
+  if (el) {
+    string kp_string = el->GetDataLine();
+
+    if (!is_number(kp_string)) // property
+      Kp = new FGPropertyValue(kp_string, PropertyManager);
+    else
+      Kp = new FGRealValue(element->FindElementValueAsNumber("kp"));
   }
+  else
+    Kp = new FGRealValue(0.0);
 
-  if ( element->FindElement("ki") ) {
-    ki_string = element->FindElementValue("ki");
-
-    string integ_type = element->FindElement("ki")->GetAttributeValue("type");
+  el = element->FindElement("ki");
+  if (el) {
+    string integ_type = el->GetAttributeValue("type");
     if (integ_type == "rect") {            // Use rectangular integration
       IntType = eRectEuler;
     } else if (integ_type == "trap") {     // Use trapezoidal integration
@@ -99,37 +91,35 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       IntType = eAdamsBashforth2;
     }
 
-    if (!is_number(ki_string)) { // property
-      if (ki_string[0] == '-') {
-       KiPropertySign = -1.0;
-       ki_string.erase(0,1);
-      }
-      KiPropertyNode = PropertyManager->GetNode(ki_string);
-    } else {
-      Ki = element->FindElementValueAsNumber("ki");
-    }
-  }
+    string ki_string = el->GetDataLine();
 
-  if ( element->FindElement("kd") ) {
-    kd_string = element->FindElementValue("kd");
-    if (!is_number(kd_string)) { // property
-      if (kd_string[0] == '-') {
-       KdPropertySign = -1.0;
-       kd_string.erase(0,1);
-      }
-      KdPropertyNode = PropertyManager->GetNode(kd_string);
-    } else {
-      Kd = element->FindElementValueAsNumber("kd");
-    }
+    if (!is_number(ki_string)) // property
+      Ki = new FGPropertyValue(ki_string, PropertyManager);
+    else
+      Ki = new FGRealValue(element->FindElementValueAsNumber("ki"));
   }
+  else
+    Ki = new FGRealValue(0.0);
 
-  if (element->FindElement("pvdot")) {
-    ProcessVariableDot =  PropertyManager->GetNode(element->FindElementValue("pvdot"));
-  }
+  el = element->FindElement("kd");
+  if (el) {
+    string kd_string = el->GetDataLine();
 
-  if (element->FindElement("trigger")) {
-    Trigger =  PropertyManager->GetNode(element->FindElementValue("trigger"));
+    if (!is_number(kd_string)) // property
+      Kd = new FGPropertyValue(kd_string, PropertyManager);
+    else
+      Kd = new FGRealValue(element->FindElementValueAsNumber("kd"));
   }
+  else
+    Kd = new FGRealValue(0.0);
+
+  el = element->FindElement("pvdot");
+  if (el)
+    ProcessVariableDot = PropertyManager->GetNode(el->GetDataLine());
+
+  el = element->FindElement("trigger");
+  if (el)
+    Trigger = PropertyManager->GetNode(el->GetDataLine());
 
   FGFCSComponent::bind();
   string tmp;
@@ -148,6 +138,9 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGPID::~FGPID()
 {
+  delete Kp;
+  delete Ki;
+  delete Kd;
   Debug(1);
 }
 
@@ -169,10 +162,6 @@ bool FGPID::Run(void )
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  if (KpPropertyNode != 0) Kp = KpPropertyNode->getDoubleValue() * KpPropertySign;
-  if (KiPropertyNode != 0) Ki = KiPropertyNode->getDoubleValue() * KiPropertySign;
-  if (KdPropertyNode != 0) Kd = KdPropertyNode->getDoubleValue() * KdPropertySign;
-
   if (ProcessVariableDot) {
     Dval = ProcessVariableDot->getDoubleValue();
   } else {
@@ -190,19 +179,19 @@ bool FGPID::Run(void )
   if (fabs(test) < 0.000001) {
     switch(IntType) {
     case eRectEuler:
-      I_out_delta = Ki * dt * Input;                         // Normal rectangular integrator
+      I_out_delta = Input;                         // Normal rectangular integrator
       break;
     case eTrapezoidal:
-      I_out_delta = (Ki/2.0) * dt * (Input + Input_prev);    // Trapezoidal integrator
+      I_out_delta = 0.5 * (Input + Input_prev);    // Trapezoidal integrator
       break;
     case eAdamsBashforth2:
-      I_out_delta = Ki * dt * (1.5*Input - 0.5*Input_prev);  // 2nd order Adams Bashforth integrator
+      I_out_delta = 1.5*Input - 0.5*Input_prev;  // 2nd order Adams Bashforth integrator
       break;
     case eAdamsBashforth3:                                   // 3rd order Adams Bashforth integrator
-      I_out_delta = (Ki/12.0) * dt * (23.0*Input - 16.0*Input_prev + 5.0*Input_prev2);
+      I_out_delta = (23.0*Input - 16.0*Input_prev + 5.0*Input_prev2) / 12.0;
       break;
     case eNone:
-      // No integator is defined or used.
+      // No integrator is defined or used.
       I_out_delta = 0.0;
       break;
     }
@@ -210,13 +199,12 @@ bool FGPID::Run(void )
 
   if (test < 0.0) I_out_total = 0.0;  // Reset integrator to 0.0
   
-  I_out_total += I_out_delta;
+  I_out_total += Ki->GetValue() * dt * I_out_delta;
 
-  if (IsStandard) {
-    Output = Kp * (Input + I_out_total + Kd*Dval);
-  } else {
-    Output = Kp*Input + I_out_total + Kd*Dval;
-  }
+  if (IsStandard)
+    Output = Kp->GetValue() * (Input + I_out_total + Kd->GetValue()*Dval);
+  else
+    Output = Kp->GetValue()*Input + I_out_total + Kd->GetValue()*Dval;
 
   Input_prev2 = test < 0.0 ? 0.0:Input_prev;
   Input_prev = Input;
