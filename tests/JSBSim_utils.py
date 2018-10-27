@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 
-import os, sys, tempfile, shutil, unittest
+import os, sys, tempfile, shutil, unittest, functools
 import xml.etree.ElementTree as et
 import numpy as np
 import pandas as pd
@@ -158,6 +158,20 @@ class JSBSimTestCase(unittest.TestCase):
 
     def create_fdm(self):
         return CreateFDM(self.sandbox)
+
+def spare(filename):
+    # Decorator to spare a file from the deletion of the sandbox temporary
+    # directory
+    def decorated(func):
+        @functools.wraps(func)
+        def wrapper(self):
+            response = func(self)
+            shutil.copy(self.sandbox(filename),
+                        os.path.join(self.currentdir,
+                                     os.path.split(filename)[-1]))
+            return response
+        return wrapper
+    return decorated
 
 
 def RunTest(test):
