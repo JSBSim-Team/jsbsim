@@ -218,8 +218,8 @@ bool FGPID::Run(void )
     Output = Kp*Input + I_out_total + Kd*Dval;
   }
 
+  Input_prev2 = test < 0.0 ? 0.0:Input_prev;
   Input_prev = Input;
-  Input_prev2 = Input_prev;
 
   Clip();
   if (IsOutput) SetOutput();
