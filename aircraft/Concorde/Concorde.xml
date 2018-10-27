@@ -655,6 +655,9 @@
     <system name="Tractor">
      <property>/sim/model/pushback/target-speed-fps</property>
      <property>/sim/model/pushback/position-norm</property>     
+     <property>/sim/model/pushback/kp</property>
+     <property>/sim/model/pushback/ki</property>
+     <property>/sim/model/pushback/kd</property>
      <channel name="Tractor">
 
       <switch name="systems/pushback/linked">
