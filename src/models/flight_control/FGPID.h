@@ -63,6 +63,7 @@ CLASS DOCUMENTATION
   <ki> {number|property} </ki>
   <kd> {number|property} </kd>
   <trigger> {property} </trigger>
+  <pvdot> {property} </pvdot>
 </pid>
 @endcode
 
@@ -89,21 +90,30 @@ For example,
 <h3>Configuration Parameters:</h3>
 <pre>
 
-  The values of kp, ki, and kd have slightly different interpretations depending on
-  whether the PID controller is a standard one, or an ideal/parallel one - with the latter
-  being the default.
+  The values of kp, ki, and kd have slightly different interpretations depending
+  on whether the PID controller is a standard one, or an ideal/parallel one -
+  with the latter being the default.
+
+  By default, the PID controller computes the derivative as being the slope of
+  the line joining the value of the previous input to the value of the current
+  input. However if a better estimation can be determined for the derivative,
+  you can provide its value to the PID controller via the property supplied in
+  pvdot.
   
   kp      - Proportional constant, default value 0.
   ki      - Integrative constant, default value 0.
   kd      - Derivative constant, default value 0.
-  trigger - Property which is used to sense wind-up, optional. Most often, the trigger
-            will be driven by the "saturated" property of a particular actuator. When
-            the relevant actuator has reached it's limits (if there are any, specified
-            by the <clipto> element) the automatically generated saturated property will
-            be greater than zero (true). If this property is used as the trigger for the
-            integrator, the integrator will not continue to integrate while the property
-            is still true (> 1), preventing wind-up.
-  pvdot   - The property to be used as the process variable time derivative. 
+  trigger - Property which is used to sense wind-up, optional. Most often, the
+            trigger will be driven by the "saturated" property of a particular
+            actuator. When the relevant actuator has reached it's limits (if
+            there are any, specified by the <clipto> element) the automatically
+            generated saturated property will be greater than zero (true). If
+            this property is used as the trigger for the integrator, the
+            integrator will not continue to integrate while the property is
+            still true (> 1), preventing wind-up.
+            The integrator can also be reset to 0.0 if the property is set to a
+            negative value.
+  pvdot   - The property to be used as the process variable time derivative.
 
 
 
