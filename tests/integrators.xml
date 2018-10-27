@@ -1,6 +1,9 @@
 <system>
   <property> test/input </property>
   <property> test/trigger </property>
+  <property> test/kp </property>
+  <property> test/ki </property>
+  <property> test/kd </property>
   <channel name="test">
     <pid name="test/output-pid-rect">
       <input> test/input </input>
@@ -27,5 +30,25 @@
       <c1> 1.0 </c1>
       <trigger> test/trigger </trigger>
     </integrator>
+    <pid name="pid/negative-combined">
+      <input> test/input </input>
+      <kp> -test/kp </kp>
+      <ki> -test/ki </ki>
+      <kd> -test/kd </kd>
+    </pid>
+  </channel>
+  <channel name="pid/separate">
+    <pid name="pid/kp-alone">
+      <input> test/input </input>
+      <kp> test/kp </kp>
+    </pid>
+    <pid name="pid/ki-alone">
+      <input> test/input </input>
+      <ki> test/ki </ki>
+    </pid>
+    <pid name="pid/kd-alone">
+      <input> test/input </input>
+      <kd> test/kd </kd>
+    </pid>
   </channel>
 </system>

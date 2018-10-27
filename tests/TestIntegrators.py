@@ -24,8 +24,8 @@ from JSBSim_utils import JSBSimTestCase, RunTest
 
 
 class TestIntegrators(JSBSimTestCase):
-    def test_integrators(self):
-        fdm = self.create_fdm()
+    def start_fdm(self):
+        _fdm = self.create_fdm()
         path = self.sandbox.path_to_jsbsim_file('tests')
         tree = et.parse(os.path.join(path, 'tripod.xml'))
         root = tree.getroot()
@@ -33,13 +33,19 @@ class TestIntegrators(JSBSimTestCase):
         system_tag.attrib['file'] = 'integrators.xml'
         tree.write('tripod.xml')
 
-        fdm.set_aircraft_path('.')
-        fdm.set_systems_path(path)
-        fdm.set_dt(0.005)
-        fdm.load_model('tripod', False)
+        _fdm.set_aircraft_path('.')
+        _fdm.set_systems_path(path)
+        _fdm.set_dt(0.005)
+        _fdm.load_model('tripod', False)
 
-        fdm['test/input'] = 0.0
-        fdm.run_ic()
+        _fdm['test/input'] = 0.0
+        _fdm.run_ic()
+
+        return _fdm
+
+    def test_integrators(self):
+        fdm = self.start_fdm()
+
         self.assertAlmostEqual(fdm['test/output-pid-rect'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-trap'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-ab2'], 0.0)
@@ -88,6 +94,7 @@ class TestIntegrators(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/output-pid-trap'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-ab2'], 0.0)
         self.assertAlmostEqual(fdm['test/output-pid-ab3'], 0.0)
+        self.assertAlmostEqual(fdm['test/output-integrator'], 0.0)
 
         # Checks that resetting the trigger to zero restarts the integration
         fdm['test/trigger'] = 0.0
@@ -100,7 +107,48 @@ class TestIntegrators(JSBSimTestCase):
             if i>1:
                 self.assertAlmostEqual(fdm['test/output-pid-ab3'],
                                        (1.0-math.cos(k*(t-t0)))/k, delta=1E-4)
+            # Check that <integrator> is giving the same output than <pid> with
+            # a trapezoidal integration scheme.
+            self.assertAlmostEqual(fdm['test/output-pid-trap'],
+                                   fdm['test/output-integrator'], delta=1E-12)
             fdm.run()
+
+        del fdm
+
+    def test_pid(self):
+        fdm = self.start_fdm()
+
+        self.assertAlmostEqual(fdm['pid/negative-combined'], 0.0)
+        self.assertAlmostEqual(fdm['pid/kp-alone'], 0.0)
+        self.assertAlmostEqual(fdm['pid/ki-alone'], 0.0)
+        self.assertAlmostEqual(fdm['pid/kd-alone'], 0.0)
+
+        k = 2*math.pi # Constant for a period of 1s
+        kp = 2.0
+        ki = 0.5
+        kd = -1.5
+        fdm['test/kp'] = kp
+        fdm['test/ki'] = ki
+        fdm['test/kd'] = kd
+
+        for i in range(100):
+            t = fdm['simulation/sim-time-sec']
+            fdm['test/input'] = math.sin(k*t)
+
+            self.assertAlmostEqual(fdm['pid/ki-alone'],
+                                   ki*(1.0-math.cos(k*t))/k, delta=1E-4)
+
+            self.assertAlmostEqual(-fdm['pid/negative-combined'],
+                                   fdm['pid/kp-alone']+fdm['pid/ki-alone']+fdm['pid/kd-alone'])
+            fdm.run()
+
+            if i>1:
+                self.assertAlmostEqual(fdm['pid/kd-alone'], kd*k*math.cos(k*t),
+                                       delta=0.15)
+            self.assertAlmostEqual(fdm['pid/kp-alone'],
+                                   kp*math.sin(k*t), delta=1E-4)
+
+        del fdm
 
 
 RunTest(TestIntegrators)
