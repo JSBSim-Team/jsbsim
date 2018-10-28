@@ -1,10 +1,10 @@
 import os, sys
 
-from distutils.core import setup
+from setuptools import setup
 from distutils.extension import Extension
-from distutils.command.build_ext import build_ext
-from distutils.command.install_lib import install_lib
-from distutils.command.install_egg_info import install_egg_info
+from setuptools.command.build_ext import build_ext
+from setuptools.command.install_lib import install_lib
+from setuptools.command.install_egg_info import install_egg_info
 from distutils import log
 
 
@@ -37,8 +37,10 @@ class InstallJSBSimModule(install_lib):
         self.module_name = build_ext.get_ext_filename(build_ext.extensions[0].name)
 
     def install(self):
+        if not os.path.exists(self.install_dir):
+            os.makedirs(self.install_dir)
         self.copy_file(os.path.join('tests', self.module_name),
-                       self.install_dir+self.module_name)
+                       os.path.join(self.install_dir, self.module_name))
 
 # Dummy class to skip the installation process of the library
 class SkipInstallLib(InstallJSBSimModule):
@@ -64,13 +66,13 @@ setup(
                            library_dirs=[os.path.join('${CMAKE_BINARY_DIR}',
                                                       'src')],
                            language='c++')])
-
-# Build process for the fpectl module (but don't install !!!)
-setup(
-    cmdclass={'build_ext': QuietBuild, 'install_lib': SkipInstallLib,
-              'install_egg_info': SkipInstallEgg},
-    ext_modules=[Extension('fpectl',
-                           sources=[os.path.join('${CMAKE_SOURCE_DIR}',
-                                                 'python',
-                                                 'fpectlmodule.cpp')],
-                           language='c++')])
+if sys.argv[1] != 'bdist_wheel':
+    # Build process for the fpectl module (but don't install !!!)
+    setup(
+        cmdclass={'build_ext': QuietBuild, 'install_lib': SkipInstallLib,
+                  'install_egg_info': SkipInstallEgg},
+        ext_modules=[Extension('fpectl',
+                               sources=[os.path.join('${CMAKE_SOURCE_DIR}',
+                                                     'python',
+                                                     'fpectlmodule.cpp')],
+                               language='c++')])
