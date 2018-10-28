@@ -24,7 +24,7 @@ before_install:
   - gem install gist
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
+  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
   - python python/setup.py bdist_wheel --skip-build
 install:
