@@ -84,6 +84,9 @@ A function definition consists of an operation, a value, a table, or a property
 - avg (takes n args)
 - fraction
 - mod
+- floor (takes 1 arg)
+- ceil (takes 1 arg)
+- fmod (takes 2 args)
 - lt (less than, takes 2 args)
 - le (less equal, takes 2 args)
 - gt (greater than, takes 2 args)
@@ -466,13 +469,36 @@ of the three words refers to one or more instances of a property, value, or tabl
          quotient of 3 and leaves a remainder of 0.
     @code
     <mod>
-      {property, value, table, or other function element} {property, value, table, or other function element}
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
     </mod>
 
     Example: 5 mod 2, evaluates to 1
 
     <mod> <v> 5 </v> <v> 2 </v> </mod>
     @endcode
+- @b floor returns the largest integral value that is not greater than X.
+    @code
+    <floor>
+      {property, value, table, or other function element}
+    </floor>
+    @endcode
+    Examples: floor(2.3) evaluates to 2.0 while floor(-2.3) evaluates to -3.0
+- @b ceil returns the smallest integral value that is not less than X.
+    @code
+    <ceil>
+      {property, value, table, or other function element}
+    </ceil>
+    @endcode
+    Examples: ceil(2.3) evaluates to 3.0 while ceil(-2.3) evaluates to -2.0
+- @b fmod returns the floating-point remainder of X/Y (rounded towards zero)
+    @code
+    <fmod>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </fmod>
+    @endcode
+    Example: fmod(18.5, 4.2) evaluates to 1.7
 - @b lt returns a 1 if the value of the first immediate child element is less
         than the value of the second immediate child element, returns 0
         otherwise
@@ -799,6 +825,9 @@ private:
   static const std::string ifthen_string;
   static const std::string switch_string;
   static const std::string interpolate1d_string;
+  static const std::string floor_string;
+  static const std::string ceil_string;
+  static const std::string fmod_string;
 
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow, eSqrt, eToRadians,
                      eToDegrees, eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
@@ -806,7 +835,7 @@ private:
                      eLog2, eLn, eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
                      eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local,
                      eRotation_beta_local, eRotation_gamma_local, eRotation_bf_to_wf,
-                     eRotation_wf_to_bf} Type;
+                     eRotation_wf_to_bf, eFloor, eCeil, eFmod} Type;
   std::string Prefix;
   bool cached;
   double cachedValue;

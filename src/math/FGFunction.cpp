@@ -107,6 +107,9 @@ const std::string FGFunction::not_string = "not";
 const std::string FGFunction::ifthen_string = "ifthen";
 const std::string FGFunction::switch_string = "switch";
 const std::string FGFunction::interpolate1d_string = "interpolate1d";
+const std::string FGFunction::floor_string = "floor";
+const std::string FGFunction::ceil_string = "ceil";
+const std::string FGFunction::fmod_string = "fmod";
 
 FGFunction::FGFunction(FGPropertyManager* PropertyManager, Element* el,
                        const string& prefix, FGPropertyValue* var)
@@ -228,6 +231,12 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
     Type = eSwitch;
   } else if (operation == interpolate1d_string) {
     Type = eInterpolate1D;
+  } else if (operation == floor_string) {
+    Type = eFloor;
+  } else if (operation == ceil_string) {
+    Type = eCeil;
+  } else if (operation == fmod_string) {
+    Type = eFmod;
   } else if (operation != description_string) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -324,7 +333,10 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
                operation == not_string ||
                operation == ifthen_string ||
                operation == switch_string ||
-               operation == interpolate1d_string)
+               operation == interpolate1d_string ||
+               operation == floor_string ||
+               operation == ceil_string ||
+               operation == fmod_string)
       {
         Parameters.push_back(new FGFunction(PropertyManager, element, Prefix, var));
       } else if (operation != description_string) {
@@ -766,6 +778,18 @@ double FGFunction::GetValue(void) const
     }
     else // 
     {temp = 1;}
+    break;
+  case eFloor:
+    temp = floor(temp);
+    break;
+  case eCeil:
+    temp = ceil(temp);
+    break;
+  case eFmod:
+    if (Parameters[1]->GetValue() != 0.0)
+      temp = fmod(temp, Parameters[1]->GetValue());
+    else
+      temp = HUGE_VAL;
     break;
   default:
     cerr << "Unknown function operation type" << endl;
