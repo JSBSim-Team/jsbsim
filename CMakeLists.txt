@@ -67,7 +67,7 @@ endif(CXXTEST_FOUND)
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
   execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.dox.in
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/JSBSim.dox.in
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
   add_custom_target(doc
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
