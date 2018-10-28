@@ -157,13 +157,11 @@ bool FGSensor::Run(void)
 
 void FGSensor::ProcessSensorSignal(void)
 {
-  Output = Input; // perfect sensor
-
   // Degrade signal as specified
 
-  if (fail_stuck) {
-    Output = PreviousOutput;
-  } else {
+  if (!fail_stuck) {
+    Output = Input; // perfect sensor
+
     if (lag != 0.0)            Lag();       // models sensor lag and filter
     if (noise_variance != 0.0) Noise();     // models noise
     if (drift_rate != 0.0)     Drift();     // models drift over time
