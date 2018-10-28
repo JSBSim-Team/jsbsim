@@ -165,10 +165,12 @@ def spare(filename):
     def decorated(func):
         @functools.wraps(func)
         def wrapper(self):
-            response = func(self)
-            shutil.copy(self.sandbox(filename),
-                        os.path.join(self.currentdir,
-                                     os.path.split(filename)[-1]))
+            try:
+                response = func(self)
+            finally:
+                shutil.copy(self.sandbox(filename),
+                            os.path.join(self.currentdir,
+                                         os.path.split(filename)[-1]))
             return response
         return wrapper
     return decorated
