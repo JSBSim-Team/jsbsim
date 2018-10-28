@@ -22,7 +22,7 @@
 import math, os
 import xml.etree.ElementTree as et
 import numpy as np
-from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, ExecuteUntil, RunTest
+from JSBSim_utils import JSBSimTestCase, CopyAircraftDef, ExecuteUntil, RunTest
 
 
 class TestAccelerometer(JSBSimTestCase):
@@ -44,7 +44,7 @@ class TestAccelerometer(JSBSimTestCase):
         run_tag.attrib['dt'] = '0.1'
         tree.write(script_name)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_name)
         # Switch the accel on
@@ -69,7 +69,7 @@ class TestAccelerometer(JSBSimTestCase):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
         self.AddAccelerometersToAircraft(script_path)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_path)
 
@@ -106,7 +106,7 @@ class TestAccelerometer(JSBSimTestCase):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
         self.AddAccelerometersToAircraft(script_path)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_path)
         # Switch the accel on
@@ -160,7 +160,7 @@ class TestAccelerometer(JSBSimTestCase):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
         self.AddAccelerometersToAircraft(script_path)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_model('ball')
         # Offset the CG along Y (by 30")
@@ -199,5 +199,35 @@ class TestAccelerometer(JSBSimTestCase):
         self.assertAlmostEqual(fay / cgy_ft, 1.0, delta=1E-8)
         # Acceleration along Z should be zero
         self.assertAlmostEqual(faz, 0.0, delta=1E-8)
+
+        del fdm
+
+    def testFailStuck(self):
+        script_name = 'c1723.xml'
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
+        self.AddAccelerometersToAircraft(script_path)
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(script_path)
+
+        # Switch the accel on
+        fdm['fcs/accelerometer/on'] = 1.0
+        fdm.run_ic()
+
+        stuck = False
+
+        while fdm.run():
+            t = fdm['simulation/sim-time-sec']
+            if t > 30:
+                if not stuck:
+                    last_output = fdm['fcs/accelerometer/Z']
+                    fdm['fcs/accelerometer_z/malfunction/fail_stuck'] = 1.0
+                    stuck = True
+                else:
+                    self.assertAlmostEqual(fdm['fcs/accelerometer/Z'],
+                                           last_output)
+
+        del fdm
 
 RunTest(TestAccelerometer)
