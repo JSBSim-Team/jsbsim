@@ -19,9 +19,11 @@ build_script:
 - pip install Cython numpy pandas scipy
 - md build
 - cd build
+- md Release
+
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
-- cmake --build . --config RelWithDebInfo 
+- cmake -G "Visual Studio 15 2017 Win64" ..
+- cmake --build . --config Release
 - ctest -j2 -E TestInputSocket
 
 artifacts:
