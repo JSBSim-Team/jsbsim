@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.7)
+cmake_minimum_required (VERSION 2.8.8)
 
 ################################################################################
 # Project description                                                          #
@@ -24,6 +24,7 @@ endif()
 # Build JSBSim libs and exec                                                   #
 ################################################################################
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
 
 ################################################################################

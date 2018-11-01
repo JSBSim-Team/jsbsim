@@ -26,7 +26,6 @@ set(HEADERS FGElectric.h
             FGTransmission.h
             FGRotor.h)
 
-add_full_path_name(PROPULSION_SRC "${SOURCES}")
-add_full_path_name(PROPULSION_HDR "${HEADERS}")
+add_library(Propulsion OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion COMPONENT devel)

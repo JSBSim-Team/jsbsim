@@ -35,7 +35,6 @@ set(HEADERS FGDeadBand.h
             FGWaypoint.h
             FGDistributor.h)
 
-add_full_path_name(FLIGHT_CONTROL_SRC "${SOURCES}")
-add_full_path_name(FLIGHT_CONTROL_HDR "${HEADERS}")
+add_library(FlightControl OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/flight_control COMPONENT devel)

@@ -45,11 +45,6 @@ set(HEADERS FGAerodynamics.h
             FGAccelerations.h
             FGFCSChannel.h)
 
-add_full_path_name(MODELS_SRC "${SOURCES}")
-add_full_path_name(MODELS_HDR "${HEADERS}")
-
-propagate_source_files(MODELS ATMOSPHERE)
-propagate_source_files(MODELS FLIGHT_CONTROL)
-propagate_source_files(MODELS PROPULSION)
+add_library(Models OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models COMPONENT devel)

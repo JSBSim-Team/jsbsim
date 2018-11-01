@@ -2,6 +2,9 @@ set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
 if(NOT EXPAT_FOUND)
+  add_definitions("-DHAVE_EXPAT_CONFIG_H")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/simgear/xml)
+
   list(APPEND SOURCES xmlparse.c
                       xmltok.c
                       xmlrole.c)
@@ -22,7 +25,6 @@ if(NOT EXPAT_FOUND)
                       expat_config.h)
 endif()
 
-add_full_path_name(XML_SRC "${SOURCES}")
-add_full_path_name(XML_HDR "${HEADERS}")
+add_library(Xml OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml COMPONENT devel)

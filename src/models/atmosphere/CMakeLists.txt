@@ -9,7 +9,6 @@ set(HEADERS FGMSIS.h
             FGStandardAtmosphere.h
             FGWinds.h)
 
-add_full_path_name(ATMOSPHERE_SRC "${SOURCES}")
-add_full_path_name(ATMOSPHERE_HDR "${HEADERS}")
+add_library(Atmosphere OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/atmosphere COMPONENT devel)

@@ -26,7 +26,6 @@ set(HEADERS FGColumnVector3.h
             FGTemplateFunc.h
             FGFunctionValue.h)
 
-add_full_path_name(MATH_SRC "${SOURCES}")
-add_full_path_name(MATH_HDR "${HEADERS}")
+add_library(Math OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/math COMPONENT devel)

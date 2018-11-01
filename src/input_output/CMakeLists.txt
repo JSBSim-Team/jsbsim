@@ -35,7 +35,6 @@ set(HEADERS FGGroundCallback.h
             FGInputSocket.h
             FGUDPInputSocket.h)
 
-add_full_path_name(INPUT_OUTPUT_SRC "${SOURCES}")
-add_full_path_name(INPUT_OUTPUT_HDR "${HEADERS}")
+add_library(InputOutput OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output COMPONENT devel)

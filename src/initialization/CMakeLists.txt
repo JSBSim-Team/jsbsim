@@ -6,7 +6,6 @@ set(HEADERS FGInitialCondition.h
             FGTrim.h
             FGTrimAxis.h)
 
-add_full_path_name(INITIALISATION_SRC "${SOURCES}")
-add_full_path_name(INITIALISATION_HDR "${HEADERS}")
+add_library(Init OBJECT ${HEADERS} ${SOURCES})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization COMPONENT devel)
