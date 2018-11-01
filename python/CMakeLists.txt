@@ -1,8 +1,6 @@
 # Import the Cython utilities for CMake
 include(UseCython)
 
-export(EXPORT Prout FILE prout.cmake)
-
 # Declare JSBSim as a C++ project
 set_source_files_properties(jsbsim.pyx PROPERTIES CYTHON_IS_CXX TRUE)
 
@@ -11,10 +9,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 compile_pyx(jsbsim JSBSIM_CXX jsbsim.pyx)
 
 set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-get_target_property(JSBSIM_BINARY_DIR libJSBSim LIBRARY_OUTPUT_DIRECTORY)
-message(WARNING "Prout! ${JSBSIM_BINARY_DIR}")
-get_target_property(JSBSIM_BINARY_DIR2 libJSBSim LIBRARY_OUTPUT_DIRECTORY_$<CONFIG>)
-message(WARNING "Prout 2! ${JSBSIM_BINARY_DIR2}")
 configure_file(setup.py.in ${SETUP_PY})
 
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py OUTPUT_VARIABLE PYTHON_MODULE_NAME)

@@ -63,7 +63,8 @@ setup(
                                                       'src'),
                                          os.path.join('${CMAKE_SOURCE_DIR}',
                                                       'python')],
-                           library_dirs=["${JSBSIM_BINARY_DIR}"],
+                           library_dirs=[os.path.join("${CMAKE_BINARY_DIR}",
+                                                      'src')],
                            language='c++')])
 if sys.argv[1] != 'bdist_wheel':
     # Build process for the fpectl module (but don't install !!!)

@@ -112,6 +112,8 @@ else()
                             FRAMEWORK DESTINATION "/Library/Frameworks")
 endif()
 
+export(EXPORT Prout FILE prout.cmake)
+
 ################################################################################
 # Build and install command line executable                                    #
 ################################################################################
