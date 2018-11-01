@@ -25,6 +25,8 @@ build_script:
 - cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config Release
 - dir
+- dir src
+- dir Release
 - ctest -j2 -E TestInputSocket
 
 artifacts:
