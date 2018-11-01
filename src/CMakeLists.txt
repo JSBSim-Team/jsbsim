@@ -93,8 +93,7 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(libJSBSim PROPERTIES
                                   SOVERSION ${LIBRARY_SOVERSION}
                                   FRAMEWORK ON)
-  install(TARGETS libJSBSim EXPORT Prout
-                            LIBRARY DESTINATION lib
+  install(TARGETS libJSBSim LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
                             # For Mac
@@ -105,14 +104,11 @@ if(BUILD_SHARED_LIBS)
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
 else()
-  install(TARGETS libJSBSim EXPORT Prout
-                            ARCHIVE DESTINATION lib
+  install(TARGETS libJSBSim ARCHIVE DESTINATION lib
                             COMPONENT devel
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
 endif()
-
-export(EXPORT Prout FILE prout.cmake)
 
 ################################################################################
 # Build and install command line executable                                    #

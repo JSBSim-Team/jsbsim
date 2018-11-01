@@ -52,8 +52,9 @@ class SkipInstallEgg(install_egg_info):
     def run(self):
         log.info("Skipped installation of %s", os.path.split(self.target)[-1])
 
+# Parse the --config option that is set for MSVC (can contain Release, Debug,
+# RelWithDebInfo, etc.). This is needed to locate the JSBSim library.
 config = '/'
-
 for idx, opt in enumerate(sys.argv):
     if opt == '--config':
         config+=sys.argv[idx+1]
