@@ -90,10 +90,11 @@ set_target_properties (libJSBSim PROPERTIES
 target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
 
 if(BUILD_SHARED_LIBS)
-  set_target_properties (libJSBSim PROPERTIES
-                                   SOVERSION ${LIBRARY_SOVERSION}
-                                   FRAMEWORK ON)
-  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+  set_target_properties(libJSBSim PROPERTIES
+                                  SOVERSION ${LIBRARY_SOVERSION}
+                                  FRAMEWORK ON)
+  install(TARGETS libJSBSim EXPORT Prout
+                            LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
                             # For Mac
@@ -104,7 +105,8 @@ if(BUILD_SHARED_LIBS)
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
 else()
-  install(TARGETS libJSBSim ARCHIVE DESTINATION lib
+  install(TARGETS libJSBSim EXPORT Prout
+                            ARCHIVE DESTINATION lib
                             COMPONENT devel
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
