@@ -27,6 +27,7 @@ build_script:
 - dir
 - dir src
 - dir Release
+- type src\prout.cmake
 - ctest -j2 -E TestInputSocket
 
 artifacts:
