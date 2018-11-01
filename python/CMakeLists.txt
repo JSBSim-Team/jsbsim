@@ -9,6 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 compile_pyx(jsbsim JSBSIM_CXX jsbsim.pyx)
 
 set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+get_target_property(JSBSIM_BINARY_DIR libJSBSim BINARY_DIR)
 configure_file(setup.py.in ${SETUP_PY})
 
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py OUTPUT_VARIABLE PYTHON_MODULE_NAME)
