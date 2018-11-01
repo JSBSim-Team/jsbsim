@@ -90,9 +90,9 @@ set_target_properties (libJSBSim PROPERTIES
 target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
 
 if(BUILD_SHARED_LIBS)
-  set_target_properties(libJSBSim PROPERTIES
-                                  SOVERSION ${LIBRARY_SOVERSION}
-                                  FRAMEWORK ON)
+  set_target_properties (libJSBSim PROPERTIES
+                                   SOVERSION ${LIBRARY_SOVERSION}
+                                   FRAMEWORK ON)
   install(TARGETS libJSBSim LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
