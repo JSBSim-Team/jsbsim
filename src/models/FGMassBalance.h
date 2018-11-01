@@ -54,13 +54,19 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models weight, balance and moment of inertia information.  Maintains a vector
-    of point masses. Sums the contribution of all, and provides this to FGPropagate.
-    Loads the \<mass_balance> section of the aircraft configuration file. There
-    can be any number of <pointmasses>. Each can also have a shape which - if
-    present - causes an associated moment of inertia to be calculated based on
-    the shape. Note that a cylinder is solid, a tube is hollow, a ball is solid
-    and a sphere is hollow.
+/** Models weight, balance and moment of inertia information.
+
+    Maintains a vector of point masses. Sums the contribution of all, and
+    provides this to FGPropagate.  Loads the <mass_balance> section of the
+    aircraft configuration file. There can be any number of <pointmasses>. Each
+    can also have a shape which - if present - causes an associated moment of
+    inertia to be calculated based on the shape. Note that a cylinder is solid,
+    a tube is hollow, a ball is solid and a sphere is hollow.
+
+    The inertia tensor must be specified in the structural frame (x axis
+    positive aft, y axis positive out of the right wing and z axis upward). The
+    sign of the inertia cross products are not modified by JSBSim so in most
+    cases, negative values should be provided for <ixy>, <ixz> and <iyz>.
 
     <h3>Configuration File Format:</h3>
 @code

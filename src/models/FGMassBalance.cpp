@@ -117,9 +117,11 @@ static FGMatrix33 ReadInertiaMatrix(Element* document)
   if (document->FindElement("iyz"))
     biyz = document->FindElementValueAsNumberConvertTo("iyz", "SLUG*FT2");
 
-  return FGMatrix33(  bixx,  -bixy,  bixz,
-                      -bixy,  biyy,  -biyz,
-                      bixz,  -biyz,  bizz );
+  // Transform the inertia products from the structural frame to the body frame
+  // and create the inertia matrix.
+  return FGMatrix33( bixx, -bixy,  bixz,
+                    -bixy,  biyy, -biyz,
+                     bixz, -biyz,  bizz );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
