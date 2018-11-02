@@ -17,7 +17,7 @@ set(JSBSIM_PYTHON_MODULE "${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME}")
 # Check if we are using Visual Studio msbuild
 if(MSVC)
   string(TOUPPER CMAKE_GENERATOR _GENERATOR)
-  if(_GENERATOR STREQUAL NINJA)
+  if(NOT (_GENERATOR STREQUAL NINJA))
     set(USING_MSBUILD 1)
   endif()
 endif(MSVC)
