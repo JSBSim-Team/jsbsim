@@ -14,12 +14,20 @@ configure_file(setup.py.in ${SETUP_PY})
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py OUTPUT_VARIABLE PYTHON_MODULE_NAME)
 set(JSBSIM_PYTHON_MODULE "${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME}")
 
+# Check if we are using Visual Studio msbuild
+if(MSVC)
+  string(TOUPPER CMAKE_GENERATOR _GENERATOR)
+  if(_GENERATOR STREQUAL NINJA)
+    set(USING_MSBUILD 1)
+  endif()
+endif(MSVC)
+
 # setup.py build_ext is called with --force because dependencies and time stamps
 # are managed by CMake so we don't want setup.py to check them as well.
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
-  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:$<UPPER_CASE:${CMAKE_GENERATOR}>,NINJA>>>,--config,>
-                                           $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:$<UPPER_CASE:${CMAKE_GENERATOR}>,NINJA>>>,$<CONFIG>,>
+  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
+                                           $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
   COMMENT "Building Python modules...")
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
