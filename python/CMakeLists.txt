@@ -18,7 +18,8 @@ set(JSBSIM_PYTHON_MODULE "${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME}")
 # are managed by CMake so we don't want setup.py to check them as well.
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
-  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:${CMAKE_GENERATOR},Ninja>>>,--config,>  $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:${CMAKE_GENERATOR},Ninja>>>,$<CONFIG>,>
+  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:$<UPPER_CASE:${CMAKE_GENERATOR}>,NINJA>>>,--config,>
+                                           $<IF:$<AND:$<BOOL:${MSVC}>,$<NOT:$<STREQUAL:$<UPPER_CASE:${CMAKE_GENERATOR}>,NINJA>>>,$<CONFIG>,>
   COMMENT "Building Python modules...")
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
