@@ -20,15 +20,15 @@ build_script:
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
+- cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config RelWithDebInfo 
 - ctest -j2 -E TestInputSocket
 
 artifacts:
-- path: build\src\JSBSim.exe
+- path: build\src\RelWithDebInfo\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
 
-- path: build\utils\aeromatic++\aeromatic.exe
+- path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: JSBSim_Release_x64_v2018a
 
 

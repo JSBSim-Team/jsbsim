@@ -52,6 +52,16 @@ class SkipInstallEgg(install_egg_info):
     def run(self):
         log.info("Skipped installation of %s", os.path.split(self.target)[-1])
 
+# Parse the --config option that is set for MSVC (can contain Release, Debug,
+# RelWithDebInfo, etc.). This is needed to locate the JSBSim library.
+config = '/'
+for idx, opt in enumerate(sys.argv):
+    if opt == '--config':
+        config+=sys.argv[idx+1]
+        break
+
+sys.argv = sys.argv[:idx]+sys.argv[idx+2:]
+
 # Build & installation process for the JSBSim Python module
 setup(
     name="${PROJECT_NAME}",
@@ -64,7 +74,7 @@ setup(
                                          os.path.join('${CMAKE_SOURCE_DIR}',
                                                       'python')],
                            library_dirs=[os.path.join('${CMAKE_BINARY_DIR}',
-                                                      'src')],
+                                                      'src'+config)],
                            language='c++')])
 if sys.argv[1] != 'bdist_wheel':
     # Build process for the fpectl module (but don't install !!!)
