@@ -290,6 +290,10 @@ int main(int argc, char* argv[])
     std::cerr << "FATAL ERROR: JSBSim terminated with an exception."
               << std::endl << "The message was: " << msg << std::endl;
     return 1;
+  } catch (const char* msg) {
+    std::cerr << "FATAL ERROR: JSBSim terminated with an exception."
+              << std::endl << "The message was: " << msg << std::endl;
+    return 1;
   } catch (...) {
     std::cerr << "FATAL ERROR: JSBSim terminated with an unknown exception."
               << std::endl;
