@@ -142,12 +142,16 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       internal = true;
     } else {
       // internal table is a child element of a restricted type
-      throw("  An internal table cannot be nested within another type,"
-            " such as a function. The 'internal' keyword is ignored.");
+      std::cerr << el->ReadFrom()
+                << "  An internal table cannot be nested within another type,"
+                << " such as a function. The 'internal' keyword of table "
+                << Name << "is ignored." << endl;
     }
   } else if (!call_type.empty()) {
-    throw("  An unknown table type attribute is listed: "  
-          ". Execution cannot continue.");
+    std::cerr << el->ReadFrom()
+              <<"  An unknown table type attribute is listed: " << call_type
+              << endl;
+    throw("Execution cannot continue.");
   }
 
   // Determine and store the lookup properties for this table unless this table
