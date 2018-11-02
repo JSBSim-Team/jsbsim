@@ -19,22 +19,16 @@ build_script:
 - pip install Cython numpy pandas scipy
 - md build
 - cd build
-
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-- cmake -G "Visual Studio 15 2017 Win64" ..
-- cmake --build . --config RelWithDebInfo
+- cmake -G "Ninja" -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES (X86)\MICROSOFT VISUAL STUDIO\2017\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_BUILD_TYPE="RelWithDebInfo" ..
+- cmake --build . --config RelWithDebInfo 
 - ctest -j2 -E TestInputSocket
-- dir
-- dir src
-- dir utils
-- dir src\RelWithDebInfo
-- dir utils\aeromatic++
 
 artifacts:
-- path: build\src\RelWithDebInfo\JSBSim.exe
+- path: build\src\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
 
-- path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+- path: build\utils\aeromatic++\aeromatic.exe
   name: JSBSim_Release_x64_v2018a
 
 
