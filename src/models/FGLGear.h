@@ -167,7 +167,10 @@ CLASS DOCUMENTATION
             <max_steer unit="DEG"> {number | 0 | 360} </max_steer>
             <brake_group> {NONE | LEFT | RIGHT | CENTER | NOSE | TAIL} </brake_group>
             <retractable>{0 | 1}</retractable>
-            <table type="{CORNERING_COEFF}">
+            <table name="{CORNERING_COEFF}" type="internal">
+                <tableData>
+                    ...
+                </tableData>
             </table>
         </contact>
 @endcode

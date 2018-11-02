@@ -170,7 +170,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   ForceY_Table = 0;
   Element* force_table = el->FindElement("table");
   while (force_table) {
-    string force_type = force_table->GetAttributeValue("type");
+    string force_type = force_table->GetAttributeValue("name");
     if (force_type == "CORNERING_COEFF") {
       ForceY_Table = new FGTable(PropertyManager, force_table);
       break;
