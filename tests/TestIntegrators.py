@@ -113,8 +113,6 @@ class TestIntegrators(JSBSimTestCase):
                                    fdm['test/output-integrator'], delta=1E-12)
             fdm.run()
 
-        del fdm
-
     def test_pid(self):
         fdm = self.start_fdm()
 
@@ -147,8 +145,6 @@ class TestIntegrators(JSBSimTestCase):
                                        delta=0.15)
             self.assertAlmostEqual(fdm['pid/kp-alone'],
                                    kp*math.sin(k*t), delta=1E-4)
-
-        del fdm
 
 
 RunTest(TestIntegrators)

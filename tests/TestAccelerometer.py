@@ -62,8 +62,6 @@ class TestAccelerometer(JSBSimTestCase):
             self.assertAlmostEqual(fdm['accelerations/a-pilot-z-ft_sec2'], 0.0,
                                    delta=1E-8)
 
-        del fdm
-
     def testOnGround(self):
         script_name = 'c1721.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
@@ -98,8 +96,6 @@ class TestAccelerometer(JSBSimTestCase):
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], 0.0, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-7)
-
-        del fdm
 
     def testSteadyFlight(self):
         script_name = 'c1722.xml'
@@ -153,8 +149,6 @@ class TestAccelerometer(JSBSimTestCase):
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], fay, delta=1E-5)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-6)
 
-        del fdm
-
     def testSpinningBodyOnOrbit(self):
         script_name = 'ball_orbit.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
@@ -200,8 +194,6 @@ class TestAccelerometer(JSBSimTestCase):
         # Acceleration along Z should be zero
         self.assertAlmostEqual(faz, 0.0, delta=1E-8)
 
-        del fdm
-
     def testFailStuck(self):
         script_name = 'c1723.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
@@ -227,7 +219,5 @@ class TestAccelerometer(JSBSimTestCase):
                 else:
                     self.assertAlmostEqual(fdm['fcs/accelerometer/Z'],
                                            last_output)
-
-        del fdm
 
 RunTest(TestAccelerometer)

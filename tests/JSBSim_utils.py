@@ -134,12 +134,20 @@ def CopyAircraftDef(script_path, sandbox):
 
 
 class JSBSimTestCase(unittest.TestCase):
+    def __init__(self, methodName):
+        unittest.TestCase.__init__(self, methodName)
+        self._fdm = None
+
     def setUp(self, *args):
         self.sandbox = SandBox(*args)
         self.currentdir = os.getcwd()
         os.chdir(self.sandbox())
 
     def tearDown(self):
+        if self._fdm:
+            del self._fdm
+            self._fdm = None
+
         os.chdir(self.currentdir)
         self.sandbox.erase()
 
@@ -157,7 +165,8 @@ class JSBSimTestCase(unittest.TestCase):
                 yield fullpath
 
     def create_fdm(self):
-        return CreateFDM(self.sandbox)
+        self._fdm = CreateFDM(self.sandbox)
+        return self._fdm
 
 def spare(filename):
     # Decorator to spare a file from the deletion of the sandbox temporary

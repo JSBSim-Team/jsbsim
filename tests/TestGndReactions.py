@@ -61,8 +61,6 @@ class TestGndReactions(JSBSimTestCase):
             self.assertTrue(abs(gear.get_body_x_force()) <= max_friction_force)
             self.assertTrue(abs(gear.get_body_y_force()) <= max_friction_force)
 
-        del fdm
-
     def test_eccentric_mass(self):
         fdm = self.create_fdm()
         fdm.set_aircraft_path(self.sandbox.path_to_jsbsim_file('tests'))
@@ -156,6 +154,5 @@ class TestGndReactions(JSBSimTestCase):
         self.assertAlmostEqual(My_total/My, 0.0, delta=1E-6)
         self.assertAlmostEqual(Mz_total/Mz, 0.0, delta=1E-6)
 
-        del fdm
 
 RunTest(TestGndReactions)
