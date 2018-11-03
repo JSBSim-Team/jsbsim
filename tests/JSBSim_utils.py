@@ -168,6 +168,7 @@ class JSBSimTestCase(unittest.TestCase):
         self._fdm = CreateFDM(self.sandbox)
         return self._fdm
 
+
 def spare(filename):
     # Decorator to spare a file from the deletion of the sandbox temporary
     # directory
@@ -183,6 +184,39 @@ def spare(filename):
             return response
         return wrapper
     return decorated
+
+
+class FlightModel:
+    def __init__(self, test_case, name):
+        self.path = test_case.sandbox.path_to_jsbsim_file('tests')
+        self.fdm = test_case.create_fdm()
+        self.fdm.set_aircraft_path('.')
+
+        self.name = name
+        self.tree = et.parse(os.path.join(self.path, name+'.xml'))
+        self.root = self.tree.getroot()
+
+    def include_system_test_file(self, file_name):
+        self.fdm.set_systems_path(self.path)
+        system_tag = et.SubElement(self.root, 'system')
+        system_tag.attrib['file'] = file_name
+
+    def before_loading(self):
+        pass
+
+    def before_ic(self):
+        pass
+
+    def start(self):
+        self.tree.write(self.name+'.xml')
+
+        self.before_loading()
+        self.fdm.load_model(self.name, False)
+
+        self.before_ic()
+        self.fdm.run_ic()
+
+        return self.fdm
 
 
 def RunTest(test):

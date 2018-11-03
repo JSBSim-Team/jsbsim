@@ -20,28 +20,21 @@
 
 import os, math
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, RunTest
+from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 
+
+class FDMIntegrators(FlightModel):
+    def before_loading(self):
+        self.fdm.set_dt(0.005)
+
+    def before_ic(self):
+        self.fdm['test/input'] = 0.0
 
 class TestIntegrators(JSBSimTestCase):
     def start_fdm(self):
-        _fdm = self.create_fdm()
-        path = self.sandbox.path_to_jsbsim_file('tests')
-        tree = et.parse(os.path.join(path, 'tripod.xml'))
-        root = tree.getroot()
-        system_tag = et.SubElement(root, 'system')
-        system_tag.attrib['file'] = 'integrators.xml'
-        tree.write('tripod.xml')
-
-        _fdm.set_aircraft_path('.')
-        _fdm.set_systems_path(path)
-        _fdm.set_dt(0.005)
-        _fdm.load_model('tripod', False)
-
-        _fdm['test/input'] = 0.0
-        _fdm.run_ic()
-
-        return _fdm
+        tripod = FDMIntegrators(self, 'tripod')
+        tripod.include_system_test_file('integrators.xml')
+        return tripod.start()
 
     def test_integrators(self):
         fdm = self.start_fdm()
