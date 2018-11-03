@@ -49,6 +49,7 @@ namespace JSBSim {
 class FGPropertyManager;
 class FGPropertyValue;
 class Element;
+class FGParameter;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -65,26 +66,25 @@ class FGCondition : public FGJSBBase
 {
 public:
   FGCondition(Element* element, FGPropertyManager* PropertyManager);
-  FGCondition(const std::string& test, FGPropertyManager* PropertyManager);
   ~FGCondition(void);
 
   bool Evaluate(void);
   void PrintCondition(std::string indent="  ");
 
 private:
+  FGCondition(const std::string& test, FGPropertyManager* PropertyManager,
+              Element* el);
+
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
   enum eLogic {elUndef=0, eAND, eOR};
   std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
-  //FGPropertyManager *PropertyManager;
-  FGPropertyValue *TestParam1, *TestParam2;
-  double TestValue;
+  FGPropertyValue* TestParam1;
+  FGParameter* TestParam2;
   eComparison Comparison;
   bool isGroup;
   std::string conditional;
-
-  static std::string indent;
 
   std::vector <FGCondition*> conditions;
   void InitializeConditionals(void);
