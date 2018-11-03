@@ -115,14 +115,14 @@ void FGSummer::Debug(int from)
       cout << "      INPUTS: " << endl;
       for (unsigned i=0;i<InputNodes.size();i++) {
         if (InputSigns[i] < 0)
-          cout << "       -" << InputNames[i] << endl;
+          cout << "       -" << InputNodes[i]->GetName() << endl;
         else
-          cout << "       " << InputNames[i] << endl;
+          cout << "       " << InputNodes[i]->GetName() << endl;
       }
       if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
       if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+        for (auto node: OutputNodes)
+          cout << "      OUTPUT: " << node->GetName() << endl;
       }
     }
   }

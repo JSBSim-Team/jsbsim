@@ -107,11 +107,8 @@ protected:
   std::vector <FGPropertyNode_ptr> OutputNodes;
   FGPropertyNode_ptr ClipMinPropertyNode;
   FGPropertyNode_ptr ClipMaxPropertyNode;
-  std::vector <FGPropertyValue*> InitNodes;
-  std::vector <std::string> InitNames;
-  std::vector <float> InitSigns;
-  std::vector <FGPropertyValue*> InputNodes;
-  std::vector <std::string> InputNames;
+  std::vector <FGPropertyValue_ptr> InitNodes;
+  std::vector <FGPropertyValue_ptr> InputNodes;
   std::vector <float> InputSigns;
   std::vector <double> output_array;
   std::string Type;

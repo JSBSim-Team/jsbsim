@@ -60,7 +60,7 @@ class FGPropertyValue : public FGParameter
 {
 public:
 
-  FGPropertyValue(FGPropertyNode* propNode);
+  explicit FGPropertyValue(FGPropertyNode* propNode);
   FGPropertyValue(std::string propName, FGPropertyManager* propertyManager);
 
   virtual double GetValue(void) const;
@@ -79,6 +79,8 @@ private:
   std::string PropertyName;
   int Sign;
 };
+
+typedef SGSharedPtr<FGPropertyValue> FGPropertyValue_ptr;
 
 } // namespace JSBSim
 

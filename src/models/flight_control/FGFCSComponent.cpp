@@ -62,7 +62,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
   clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
-  string input,init, clip_string;
+  string input, clip_string;
   dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -120,23 +120,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   init_element = element->FindElement("init");
   while (init_element) {
-    init = init_element->GetDataLine();
-    if (init[0] == '-') {
-      InitSigns.push_back(-1.0);
-      init.erase(0,1);
-    } else {
-      InitSigns.push_back( 1.0);
-    }
-
-    if (PropertyManager->HasNode(init)) {
-      FGPropertyNode* node = PropertyManager->GetNode(init);
-      InitNodes.push_back(new FGPropertyValue( node ));
-    } else {
-      InitNodes.push_back(new FGPropertyValue( init,
-                                                PropertyManager ));
-    }
-    InitNames.push_back( init );
-
+    InitNodes.push_back(new FGPropertyValue(init_element->GetDataLine(),
+                                            PropertyManager ));
     init_element = element->FindNextElement("init");
   }
   
@@ -146,18 +131,10 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     if (input[0] == '-') {
       InputSigns.push_back(-1.0);
       input.erase(0,1);
-    } else {
+    } else
       InputSigns.push_back( 1.0);
-    }
 
-    if (PropertyManager->HasNode(input)) {
-      FGPropertyNode* node = PropertyManager->GetNode(input);
-      InputNodes.push_back(new FGPropertyValue( node ));
-    } else {
-      InputNodes.push_back(new FGPropertyValue( input,
-                                                PropertyManager ));
-    }
-    InputNames.push_back( input );
+    InputNodes.push_back(new FGPropertyValue( input, PropertyManager ));
 
     input_element = element->FindNextElement("input");
   }
@@ -227,9 +204,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 FGFCSComponent::~FGFCSComponent()
 {
   Debug(1);
-  for (unsigned int i=0; i<InputNodes.size(); i++) {
-    delete InputNodes[i];
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -237,15 +211,16 @@ FGFCSComponent::~FGFCSComponent()
 void FGFCSComponent::ResetPastStates(void)
 {
   index = 0;
-  for (unsigned int i = 0; i < output_array.size(); ++i)
-    output_array[i] = 0.0;
+  for (auto &elm: output_array)
+    elm = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFCSComponent::SetOutput(void)
 {
-  for (unsigned int i=0; i<OutputNodes.size(); i++) OutputNodes[i]->setDoubleValue(Output);
+  for (auto node: OutputNodes)
+    node->setDoubleValue(Output);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -321,13 +321,13 @@ void FGActuator::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       if (InputSigns[0] < 0)
-        cout << "      INPUT: -" << InputNames[0] << endl;
+        cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
       else
-        cout << "      INPUT: " << InputNames[0] << endl;
+        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
 
       if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+        for (auto node: OutputNodes)
+          cout << "      OUTPUT: " << node->GetName() << endl;
       }
       if (bias != 0.0) cout << "      Bias: " << bias << endl;
       if (rate_limit_incr != 0) {
