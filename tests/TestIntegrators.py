@@ -18,17 +18,13 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math
-import xml.etree.ElementTree as et
+import math
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 
 
 class FDMIntegrators(FlightModel):
     def before_loading(self):
         self.fdm.set_dt(0.005)
-
-    def before_ic(self):
-        self.fdm['test/input'] = 0.0
 
 class TestIntegrators(JSBSimTestCase):
     def start_fdm(self):

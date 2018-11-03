@@ -1,5 +1,5 @@
 <system>
-  <property> test/input </property>
+  <property value="0.0"> test/input </property>
   <property> test/trigger </property>
   <property> test/kp </property>
   <property> test/ki </property>
