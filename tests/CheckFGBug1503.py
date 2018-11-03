@@ -27,17 +27,22 @@
 #    property.
 # 3. The actuator output value is correctly driven by rate_limit.
 
-import os, time, string
+import os, time
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
 from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
-# This wrapper launcher is needed to handle limitations with the Windows version of
-# the multiprocessing module since 'complex' objects can't be serialized/pickled
-def SubProcessScriptExecution(sandbox, script_path, aircraft_path, time_limit=1E+9):
-    test_case = CheckFGBug1503()
-    test_case.SubProcessScriptExecution(sandbox, script_path, aircraft_path, time_limit)
+# This wrapper launcher is needed to handle limitations with the Windows version
+# of the multiprocessing module since 'complex' objects can't be
+# serialized/pickled
+def SubProcessScriptExecution(sandbox, script_path):
+    fdm = CreateFDM(sandbox)
+    fdm.load_script(script_path)
+    fdm.run_ic()
+
+    while fdm.run():
+        pass
 
 
 class CheckFGBug1503(JSBSimTestCase):
@@ -58,13 +63,6 @@ class CheckFGBug1503(JSBSimTestCase):
             aileron_pos = fdm['fcs/left-aileron-pos-rad']
             self.assertEqual(aileron_pos, 0.0,
                             msg="Failed running the script %s at time step %f\nProperty fcs/left-aileron-pos-rad is non-zero (%f)" % (self.script_path, fdm.get_sim_time(), aileron_pos))
-
-    def SubProcessScriptExecution(self, sandbox, script_path, aircraft_path, time_limit):
-        self.script_path = script_path
-        self.sandbox = sandbox
-        fdm = CreateFDM(sandbox)
-        fdm.set_aircraft_path(aircraft_path)
-        self.ScriptExecution(fdm, time_limit)
 
     def CheckRateValue(self, fdm, output_prop, rate_value):
         aileron_course = []
@@ -88,7 +86,6 @@ class CheckFGBug1503(JSBSimTestCase):
         self.ScriptExecution(fdm, 1.0)
 
         fdm[input_prop] = 1.0
-
         self.CheckRateValue(fdm, output_prop, incr_limit)
 
         fdm[input_prop] = 0.0
@@ -102,11 +99,10 @@ class CheckFGBug1503(JSBSimTestCase):
     def test_regression_bug_1503(self):
         # First, the execution time of the script c1724.xml is measured. It
         # will be used as a reference to check if JSBSim hangs or not.
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         start_time = time.time()
         self.ScriptExecution(fdm)
         exec_time = time.time() - start_time
-        del fdm
 
         # Now the copy of the aircraft definition file will be altered: the
         # <rate_limit> element is split in two: one with the 'decr' sense, the
@@ -121,14 +117,11 @@ class CheckFGBug1503(JSBSimTestCase):
         self.tree.write(self.sandbox('aircraft', self.aircraft_name,
                                      self.aircraft_name+'.xml'))
 
-        # Run the script with the modified aircraft
-        aircraft_path = 'aircraft'
-
         # A new process is created that launches the script. We wait for 10
         # times the reference execution time for the script completion. Beyond
         # that time, if the process is not completed, it is terminated and the
         # test is failed.
-        p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path, aircraft_path,))
+        p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path))
         p.start()
         p.join(exec_time * 10.0)  # Wait 10 times the reference time
         alive = p.is_alive()
@@ -166,10 +159,9 @@ class CheckFGBug1503(JSBSimTestCase):
 
         tree.write(self.sandbox('aircraft', self.aircraft_name, self.aircraft_name+'.xml'))
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         self.ScriptExecution(fdm)
-        del fdm
 
     def test_actuator_rate_is_linear(self):
         # Third part of the test.
@@ -279,5 +271,4 @@ class CheckFGBug1503(JSBSimTestCase):
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
 
 
-if __name__ == '__main__':
-   RunTest(CheckFGBug1503)
+RunTest(CheckFGBug1503)
