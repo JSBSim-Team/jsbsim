@@ -56,7 +56,7 @@ CLASS IMPLEMENTATION
 FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   Gain = nullptr;
-  Table = 0;
+  Table = nullptr;
   InMin = -1.0;
   InMax =  1.0;
   OutMin = OutMax = 0.0;
@@ -76,6 +76,8 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     } else
       Gain = new FGRealValue(element->FindElementValueAsNumber("gain"));
   }
+  else
+    Gain = new FGRealValue(1.0);
 
   if (Type == "AEROSURFACE_SCALE") {
     Element* scale_element = element->FindElement("domain");
