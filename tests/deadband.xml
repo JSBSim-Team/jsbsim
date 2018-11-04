@@ -1,0 +1,18 @@
+<system>
+  <property>test/input</property>
+  <property>test/reference</property>
+  <channel name="test">
+    <deadband name="test/db-value">
+      <input>test/input</input>
+      <width>1.0</width>
+    </deadband>
+    <deadband name="test/db-property">
+      <input>test/input</input>
+      <width>test/reference</width>
+    </deadband>
+    <deadband name="test/db-property-inverted-sign">
+      <input>test/input</input>
+      <width>-test/reference</width>
+    </deadband>
+  </channel>
+</system>

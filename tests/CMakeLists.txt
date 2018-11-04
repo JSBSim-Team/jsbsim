@@ -48,6 +48,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestIntegrators
                  TestSwitch
                  TestGain
+                 TestDeadBand
                  )
 
 foreach(test ${PYTHON_TESTS})
