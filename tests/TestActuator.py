@@ -31,8 +31,7 @@ import os, time
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
-from JSBSim_utils import (JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest,
-                          ExecuteUntil)
+from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
 
 # This wrapper launcher is needed to handle limitations with the Windows version
 # of the multiprocessing module since 'complex' objects can't be
@@ -283,27 +282,38 @@ class TestActuator(JSBSimTestCase):
 
         fdm[self.input_prop] = 2.0*clipmax
         dt = clipmax/rate_limit
-        ExecuteUntil(fdm, dt)
+        while fdm['simulation/sim-time-sec'] <= dt:
+            self.assertFalse(fdm[self.saturated_prop])
+            fdm.run()
 
+        self.assertTrue(fdm[self.saturated_prop])
         self.assertAlmostEqual(fdm[self.output_prop], clipmax)
 
         # Check that the actuator output can't go beyond clipmax
         t = fdm['simulation/sim-time-sec']
         while fdm['simulation/sim-time-sec'] <= t+dt:
             fdm.run()
+            self.assertTrue(fdm[self.saturated_prop])
             self.assertAlmostEqual(fdm[self.output_prop], clipmax)
 
         fdm[self.input_prop] = 2.0*clipmin
         dt = (2.0*clipmax-clipmin)/rate_limit
         t = fdm['simulation/sim-time-sec']
-        ExecuteUntil(fdm, t+dt)
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            if fdm[self.output_prop] < clipmax:
+                self.assertFalse(fdm[self.saturated_prop])
+            else:
+                self.assertTrue(fdm[self.saturated_prop])
+            fdm.run()
 
+        self.assertTrue(fdm[self.saturated_prop])
         self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
         # Check that the actuator output can't go beyond clipmin
         t = fdm['simulation/sim-time-sec']
         while fdm['simulation/sim-time-sec'] <= t+dt:
             fdm.run()
+            self.assertTrue(fdm[self.saturated_prop])
             self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
         del fdm
@@ -311,6 +321,7 @@ class TestActuator(JSBSimTestCase):
     def test_clipto(self):
         tree, flight_control_element, actuator_element = self.prepare_actuator()
         rate_limit = float(actuator_element.find('rate_limit').text)
+        self.saturated_prop = actuator_element.attrib['name']+"/saturated"
         clipto = actuator_element.find('clipto')
         clipmax = clipto.find('max')
         clipmin = clipto.find('min')
