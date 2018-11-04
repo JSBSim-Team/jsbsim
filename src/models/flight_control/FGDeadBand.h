@@ -59,9 +59,10 @@ CLASS DOCUMENTATION
 
     @code
     <deadband name="Windup Trigger">
-      <input> [-]property </input>
-      <width> number </width>
-      [<clipto>
+      <input> {[-]property name | value} </input>
+      <width> {[-]property name | value} </width>
+      [<gain> { value } </gain>
+      <clipto>
         <min> {[-]property name | value} </min>
         <max> {[-]property name | value} </max>
       </clipto>]
@@ -88,10 +89,8 @@ public:
   bool Run(void);
 
 private:
-  double width;
   double gain;
-  FGPropertyNode_ptr WidthPropertyNode;
-  double WidthPropertySign;
+  FGParameter* Width;
 
   void Debug(int from);
 };

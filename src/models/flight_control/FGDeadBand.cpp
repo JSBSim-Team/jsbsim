@@ -37,10 +37,12 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+
 #include "FGDeadBand.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-#include <iostream>
+#include "math/FGRealValue.h"
 
 using namespace std;
 
@@ -56,27 +58,21 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 {
   string width_string;
 
-  WidthPropertyNode = 0;
-  WidthPropertySign = 1.0;
+  Width = nullptr;
   gain = 1.0;
-  width = 0.0;
 
   if ( element->FindElement("width") ) {
     width_string = element->FindElementValue("width");
-    if (!is_number(width_string)) { // property
-      if (width_string[0] == '-') {
-       WidthPropertySign = -1.0;
-       width_string.erase(0,1);
-      }
-      WidthPropertyNode = PropertyManager->GetNode(width_string);
-    } else {
-      width = element->FindElementValueAsNumber("width");
-    }
+    if (!is_number(width_string))
+      Width = new FGPropertyValue(width_string, PropertyManager);
+    else
+      Width = new FGRealValue(element->FindElementValueAsNumber("width"));
   }
+  else
+    Width = new FGRealValue(0.0);
 
-  if (element->FindElement("gain")) {
+  if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");
-  }
 
   FGFCSComponent::bind();
   Debug(0);
@@ -86,6 +82,7 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 
 FGDeadBand::~FGDeadBand()
 {
+  delete Width;
   Debug(1);
 }
 
@@ -95,14 +92,12 @@ bool FGDeadBand::Run(void )
 {
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  if (WidthPropertyNode != 0) {
-    width = WidthPropertyNode->getDoubleValue() * WidthPropertySign;
-  }
+  double HalfWidth = 0.5*Width->GetValue();
 
-  if (Input < -width/2.0) {
-    Output = (Input + width/2.0)*gain;
-  } else if (Input > width/2.0) {
-    Output = (Input - width/2.0)*gain;
+  if (Input < -HalfWidth) {
+    Output = (Input + HalfWidth)*gain;
+  } else if (Input > HalfWidth) {
+    Output = (Input - HalfWidth)*gain;
   } else {
     Output = 0.0;
   }
@@ -139,15 +134,16 @@ void FGDeadBand::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      if (WidthPropertyNode != 0) {
-        cout << "      DEADBAND WIDTH: " << WidthPropertyNode->GetName() << endl;
-      } else {
-        cout << "      DEADBAND WIDTH: " << width << endl;
-      }
+      cout << "      DEADBAND WIDTH: ";
+      if (dynamic_cast<FGPropertyValue*>(Width))
+        cout << static_cast<FGPropertyValue*>(Width)->GetNameWithSign() << endl;
+      else
+        cout << Width->GetValue() << endl;
+
       cout << "      GAIN: " << gain << endl;
       if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+        for (auto node: OutputNodes)
+          cout << "      OUTPUT: " << node->getName() << endl;
       }
     }
   }
