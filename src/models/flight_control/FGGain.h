@@ -219,11 +219,8 @@ public:
 
 private:
   FGTable* Table;
-  FGPropertyNode_ptr GainPropertyNode;
-  double GainPropertySign;
-  double Gain;
+  FGParameter* Gain;
   double InMin, InMax, OutMin, OutMax;
-  int Rows;
   bool ZeroCentered;
 
   void Debug(int from);
