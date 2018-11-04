@@ -31,7 +31,8 @@ import os, time
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
-from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
+from JSBSim_utils import (JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest,
+                          ExecuteUntil)
 
 # This wrapper launcher is needed to handle limitations with the Windows version
 # of the multiprocessing module since 'complex' objects can't be
@@ -64,12 +65,12 @@ class TestActuator(JSBSimTestCase):
             self.assertEqual(aileron_pos, 0.0,
                             msg="Failed running the script %s at time step %f\nProperty fcs/left-aileron-pos-rad is non-zero (%f)" % (self.script_path, fdm.get_sim_time(), aileron_pos))
 
-    def CheckRateValue(self, fdm, output_prop, rate_value):
+    def CheckRateValue(self, fdm, rate_value):
         aileron_course = []
 
         t0 = fdm.get_sim_time()
         while fdm.run() and fdm.get_sim_time() <= t0 + 1.0:
-            aileron_course += [(fdm.get_sim_time(), fdm[output_prop])]
+            aileron_course += [(fdm.get_sim_time(), fdm[self.output_prop])]
 
         # Thanks to a linear regression on the values, we can check that the
         # value is following a slope equal to the rate limit. The correlation
@@ -79,17 +80,17 @@ class TestActuator(JSBSimTestCase):
         self.assertTrue(abs(slope - rate_value) < 1E-9 and abs(1.0 - abs(r_value)) < 1E-9,
                         msg="The actuator rate is not linear")
 
-    def CheckRateLimit(self, input_prop, output_prop, incr_limit, decr_limit):
+    def CheckRateLimit(self, incr_limit, decr_limit):
         fdm = CreateFDM(self.sandbox)
         fdm.set_aircraft_path('aircraft')
 
         self.ScriptExecution(fdm, 1.0)
 
-        fdm[input_prop] = 1.0
-        self.CheckRateValue(fdm, output_prop, incr_limit)
+        fdm[self.input_prop] = 1.0
+        self.CheckRateValue(fdm, incr_limit)
 
-        fdm[input_prop] = 0.0
-        self.CheckRateValue(fdm, output_prop, decr_limit)
+        fdm[self.input_prop] = 0.0
+        self.CheckRateValue(fdm, decr_limit)
 
         # Because JSBSim internals use static pointers, we cannot rely on
         # Python garbage collector to decide when the FDM is destroyed
@@ -163,6 +164,28 @@ class TestActuator(JSBSimTestCase):
         fdm.set_aircraft_path('aircraft')
         self.ScriptExecution(fdm)
 
+    def prepare_actuator(self):
+        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
+                                     self.aircraft_name+'.xml'))
+        flight_control_element = tree.getroot().find('flight_control')
+        actuator_element = flight_control_element.find('channel/actuator//rate_limit/..')
+
+        # Remove the hysteresis. We want to make sure we are measuring the
+        # rate_limit and just that.
+        hysteresis_element = actuator_element.find('hysteresis')
+        actuator_element.remove(hysteresis_element)
+        input_element = actuator_element.find('input')
+        self.input_prop = actuator_element.attrib['name'].split('-')
+        self.input_prop[-1] = 'input'
+        self.input_prop = '-'.join(self.input_prop)
+        input_element.text = self.input_prop
+        self.output_prop = actuator_element.find('output').text
+        property = et.SubElement(flight_control_element, 'property')
+        property.text = self.input_prop
+        property.attrib['value'] = '0.0'
+
+        return (tree, flight_control_element, actuator_element)
+
     def test_actuator_rate_is_linear(self):
         # Third part of the test.
         ########################
@@ -182,28 +205,10 @@ class TestActuator(JSBSimTestCase):
         # property is built in the variable 'input_prop' below. When setting
         # that property to 1.0 (resp. -1.0) the ascending (resp. descending)
         # rate is triggered.
-        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
-                                     self.aircraft_name+'.xml'))
-        flight_control_element = tree.getroot().find('flight_control')
-        actuator_element = flight_control_element.find('channel/actuator//rate_limit/..')
-
-        # Remove the hysteresis. We want to make sure we are measuring the
-        # rate_limit and just that.
-        hysteresis_element = actuator_element.find('hysteresis')
-        actuator_element.remove(hysteresis_element)
-        input_element = actuator_element.find('input')
-        input_prop = actuator_element.attrib['name'].split('-')
-        input_prop[-1] = 'input'
-        input_prop = '-'.join(input_prop)
-        input_element.text = input_prop
-        output_element = actuator_element.find('output')
-        output_prop = output_element.text.strip()
+        tree, flight_control_element, actuator_element = self.prepare_actuator()
 
         # Add the new properties to <flight_control> so that we can make
         # reference to them without JSBSim complaining
-        property = et.SubElement(flight_control_element, 'property')
-        property.text = input_prop
-        property.attrib['value'] = '0.0'
         property = et.SubElement(flight_control_element, 'property')
         property.text = 'fcs/rate-limit-value'
         property.attrib['value'] = '0.15'
@@ -220,7 +225,7 @@ class TestActuator(JSBSimTestCase):
                                    self.aircraft_name+'.xml')
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.1, -0.1)
+        self.CheckRateLimit(0.1, -0.1)
 
         # Check when rate_limit is set by the property 'fcs/rate-limit-value'
 
@@ -231,7 +236,7 @@ class TestActuator(JSBSimTestCase):
         rate_element.text = 'fcs/rate-limit-value'
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.15, -0.15)
+        self.CheckRateLimit(0.15, -0.15)
 
         # Checking when the ascending and descending rates are different.
         # First with the 2 rates set by hard coded values (0.1 and 0.2
@@ -244,7 +249,7 @@ class TestActuator(JSBSimTestCase):
         new_rate_element.text = '0.2'
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.2, -0.1)
+        self.CheckRateLimit(0.2, -0.1)
 
         # Check when the descending rate is set by a property and the ascending
         # rate is set by a value.
@@ -252,7 +257,7 @@ class TestActuator(JSBSimTestCase):
         rate_element.text = 'fcs/rate-limit-value'
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.2, -0.15)
+        self.CheckRateLimit(0.2, -0.15)
 
         # Check when the ascending rate is set by a property and the descending
         # rate is set by a value.
@@ -261,14 +266,98 @@ class TestActuator(JSBSimTestCase):
         new_rate_element.text = 'fcs/rate-limit-value'
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.15, -0.1)
+        self.CheckRateLimit(0.15, -0.1)
 
         # Check when the ascending and descending rates are set by properties
 
         rate_element.text = 'fcs/rate-limit-value2'
         tree.write(output_file)
 
-        self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
+        self.CheckRateLimit(0.15, -0.05)
+
+    def CheckClip(self, clipmin, clipmax, rate_limit):
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = 2.0*clipmax
+        dt = clipmax/rate_limit
+        ExecuteUntil(fdm, dt)
+
+        self.assertAlmostEqual(fdm[self.output_prop], clipmax)
+
+        # Check that the actuator output can't go beyond clipmax
+        t = fdm['simulation/sim-time-sec']
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+            self.assertAlmostEqual(fdm[self.output_prop], clipmax)
+
+        fdm[self.input_prop] = 2.0*clipmin
+        dt = (2.0*clipmax-clipmin)/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        ExecuteUntil(fdm, t+dt)
+
+        self.assertAlmostEqual(fdm[self.output_prop], clipmin)
+
+        # Check that the actuator output can't go beyond clipmin
+        t = fdm['simulation/sim-time-sec']
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+            self.assertAlmostEqual(fdm[self.output_prop], clipmin)
+
+        del fdm
+
+    def test_clipto(self):
+        tree, flight_control_element, actuator_element = self.prepare_actuator()
+        rate_limit = float(actuator_element.find('rate_limit').text)
+        clipto = actuator_element.find('clipto')
+        clipmax = clipto.find('max')
+        clipmin = clipto.find('min')
+        output_file = os.path.join('aircraft', self.aircraft_name,
+                                   self.aircraft_name+'.xml')
+        tree.write(output_file)
+
+        self.CheckClip(float(clipmin.text), float(clipmax.text), rate_limit)
+
+        property = et.SubElement(flight_control_element, 'property')
+        property.text = 'fcs/clip-min-value'
+        property.attrib['value'] = '-0.15'
+        property = et.SubElement(flight_control_element, 'property')
+        property.text = 'fcs/clip-max-value'
+        property.attrib['value'] = '0.05'
+
+        # Check a property for min and a value for max
+        clipmin.text = 'fcs/clip-min-value'
+        tree.write(output_file)
+
+        self.CheckClip(-0.15, float(clipmax.text), rate_limit)
+
+        # Check a property with minus sign for min and a value for max
+        clipmin.text = '-fcs/clip-max-value'
+        tree.write(output_file)
+
+        self.CheckClip(-0.05, float(clipmax.text), rate_limit)
+
+        # Check a property for max and a value for min
+        clipmin.text = '-0.1'
+        clipmax.text = 'fcs/clip-max-value'
+        tree.write(output_file)
+
+        self.CheckClip(-0.1, 0.05, rate_limit)
+
+        # Check a property with minus sign for max and a value for min
+        clipmax.text = '-fcs/clip-min-value'
+        tree.write(output_file)
+
+        self.CheckClip(-0.1, 0.15, rate_limit)
+
+        # Check a property for max and min
+        clipmin.text = '-fcs/clip-max-value'
+        clipmax.text = 'fcs/clip-max-value'
+        tree.write(output_file)
+
+        self.CheckClip(-0.05, 0.05, rate_limit)
 
 
 RunTest(TestActuator)
