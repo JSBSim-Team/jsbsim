@@ -316,12 +316,51 @@ class TestActuator(JSBSimTestCase):
             self.assertTrue(fdm[self.saturated_prop])
             self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
+        fdm[self.input_prop] = 1E-6
+        dt = (fdm[self.input_prop]-2.0*clipmin)/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while fdm['simulation/sim-time-sec'] <= t+2.0*dt:
+            if fdm[self.output_prop] > clipmin:
+                self.assertFalse(fdm[self.saturated_prop])
+            else:
+                self.assertTrue(fdm[self.saturated_prop])
+            fdm.run()
+
+        self.assertAlmostEqual(fdm[self.output_prop], fdm[self.input_prop])
+
+        fdm[self.fail_hardover] = 1.0
+        dt = (clipmax-fdm[self.input_prop])/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            if fdm[self.output_prop] < clipmax:
+                self.assertFalse(fdm[self.saturated_prop])
+            else:
+                self.assertTrue(fdm[self.saturated_prop])
+            fdm.run()
+
+        self.assertTrue(fdm[self.saturated_prop])
+        self.assertAlmostEqual(fdm[self.output_prop], clipmax)
+
+        fdm[self.input_prop] = -1E-6
+        dt = (clipmax-clipmin)/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            if fdm[self.output_prop] > clipmin and fdm[self.output_prop] < clipmax:
+                self.assertFalse(fdm[self.saturated_prop])
+            else:
+                self.assertTrue(fdm[self.saturated_prop])
+            fdm.run()
+
+        self.assertTrue(fdm[self.saturated_prop])
+        self.assertAlmostEqual(fdm[self.output_prop], clipmin)
+
         del fdm
 
     def test_clipto(self):
         tree, flight_control_element, actuator_element = self.prepare_actuator()
         rate_limit = float(actuator_element.find('rate_limit').text)
         self.saturated_prop = actuator_element.attrib['name']+"/saturated"
+        self.fail_hardover = actuator_element.attrib['name']+"/malfunction/fail_hardover"
         clipto = actuator_element.find('clipto')
         clipmax = clipto.find('max')
         clipmin = clipto.find('min')
