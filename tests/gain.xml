@@ -1,0 +1,18 @@
+<system>
+  <property>test/input</property>
+  <property>test/reference</property>
+  <channel name="test">
+    <pure_gain name="test/gain-value">
+      <input>test/input</input>
+      <gain> 2.0 </gain>
+    </pure_gain>
+    <pure_gain name="test/gain-property">
+      <input>test/input</input>
+      <gain> test/reference </gain>
+    </pure_gain>
+    <pure_gain name="test/gain-property-inverted-sign">
+      <input>test/input</input>
+      <gain> -test/reference </gain>
+    </pure_gain>
+  </channel>
+</system>

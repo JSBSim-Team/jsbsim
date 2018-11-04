@@ -47,6 +47,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestGndReactions
                  TestIntegrators
                  TestSwitch
+                 TestGain
                  )
 
 foreach(test ${PYTHON_TESTS})
