@@ -1,7 +1,7 @@
-# CheckFGBug1503.py
+# TestActuator.py
 #
-# A regression test for the bug reported in FG issue 1503
-# http://code.google.com/p/flightgear-bugs/issues/detail?id=1503
+# Test the <actuator> flight control and regression test for the bug reported in
+# FG issue 1503 (https://sourceforge.net/p/flightgear/codetickets/1503/)
 #
 # Copyright (c) 2014 Bertrand Coconnier
 #
@@ -45,7 +45,7 @@ def SubProcessScriptExecution(sandbox, script_path):
         pass
 
 
-class CheckFGBug1503(JSBSimTestCase):
+class TestActuator(JSBSimTestCase):
     def setUp(self):
         JSBSimTestCase.setUp(self)
         self.script_path = self.sandbox.path_to_jsbsim_file('scripts',
@@ -114,7 +114,7 @@ class CheckFGBug1503(JSBSimTestCase):
         new_rate_element.attrib['sense'] = 'incr'
         new_rate_element.text = str(float(rate_element.text) * 0.5)
 
-        self.tree.write(self.sandbox('aircraft', self.aircraft_name,
+        self.tree.write(os.path.join('aircraft', self.aircraft_name,
                                      self.aircraft_name+'.xml'))
 
         # A new process is created that launches the script. We wait for 10
@@ -142,22 +142,22 @@ class CheckFGBug1503(JSBSimTestCase):
         # fcs/left-aileron-pos-rad. The function ScriptExecution will monitor
         # that property and if it changes then the test is failed.
 
-        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts, self.aircraft_name+'.xml'))
-        actuator_element = tree.getroot().find('flight_control/channel/actuator//rate_limit/..')
-        rate_element = actuator_element.find('rate_limit')
+        tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
+                                     self.aircraft_name+'.xml'))
         flight_control_element = tree.getroot().find('flight_control')
+        actuator_element = flight_control_element.find('channel/actuator//rate_limit/..')
+        rate_element = actuator_element.find('rate_limit')
         property = et.SubElement(flight_control_element, 'property')
         property.text = 'fcs/rate-limit-value'
         property.attrib['value'] = rate_element.text
-        actuator_element = flight_control_element.find('channel/actuator//rate_limit/..')
-        rate_element = actuator_element.find('rate_limit')
         rate_element.attrib['sense'] = 'decr'
         rate_element.text = property.text
         new_rate_element = et.SubElement(actuator_element, 'rate_limit')
         new_rate_element.attrib['sense'] = 'incr'
         new_rate_element.text = rate_element.text
 
-        tree.write(self.sandbox('aircraft', self.aircraft_name, self.aircraft_name+'.xml'))
+        tree.write(os.path.join('aircraft', self.aircraft_name,
+                                self.aircraft_name+'.xml'))
 
         fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
@@ -271,4 +271,4 @@ class CheckFGBug1503(JSBSimTestCase):
         self.CheckRateLimit(input_prop, output_prop, 0.15, -0.05)
 
 
-RunTest(CheckFGBug1503)
+RunTest(TestActuator)

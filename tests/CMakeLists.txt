@@ -10,7 +10,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestICOverride
                  RunCheckCases
                  TestModelLoading
-                 CheckFGBug1503
+                 TestActuator
                  TestGustReset
                  TestPointMassInertia
                  CheckMomentsUpdate
