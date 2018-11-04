@@ -49,11 +49,13 @@ FGPropertyValue::FGPropertyValue(FGPropertyNode* propNode)
 FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* propertyManager)
   : PropertyManager(propertyManager), PropertyNode(0L)
 {
-  Sign = 1;
   if (propName[0] == '-') {
     propName.erase(0,1);
     Sign = -1;
   }
+  else
+    Sign = 1;
+
   PropertyName = propName;
 }
 
@@ -61,21 +63,17 @@ FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* proper
 
 FGPropertyNode* FGPropertyValue::GetNode(void) const
 {
-  FGPropertyNode* node = PropertyNode;
-
   if (!PropertyNode) {
-    // The node cannot be cached since this is a const method.
-    node = PropertyManager->GetNode(PropertyName);
+    FGPropertyNode* node = PropertyManager->GetNode(PropertyName);
     
-    if (!node) {
+    if (!node)
       throw(std::string("FGPropertyValue::GetValue() The property " +
                         PropertyName + " does not exist."));
-    }
 
     PropertyNode = node;
   }
 
-  return node;
+  return PropertyNode;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +92,22 @@ std::string FGPropertyValue::GetName(void) const
     return PropertyNode->GetName();
   else
     return PropertyName;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std::string FGPropertyValue::GetNameWithSign(void) const
+{
+  string name;
+
+  if (Sign < 0.0) name ="-";
+
+  if (PropertyNode)
+    name += PropertyNode->GetName();
+  else
+    name += PropertyName;
+
+  return name;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -156,7 +156,7 @@ bool FGActuator::Run(void )
   if( fcs->GetTrimStatus() ) initialized = 0;
 
   if (fail_zero) Input = 0;
-  if (fail_hardover) Input =  Input >= 0.0 ? clipmax : clipmin;
+  if (fail_hardover) Input = Input < 0.0 ? ClipMin->GetValue() : ClipMax->GetValue();
 
   Output = Input; // Perfect actuator. At this point, if no failures are present
                   // and no subsequent lag, limiting, etc. is done, the output
@@ -183,9 +183,16 @@ bool FGActuator::Run(void )
   Clip();
 
   if (clip) {
+    double clipmax = ClipMax->GetValue();
     saturated = false;
-    if (Output >= clipmax && clipmax != 0) saturated = true;
-    else if (Output <= clipmin && clipmin != 0) saturated = true;
+
+    if (Output >= clipmax && clipmax != 0)
+      saturated = true;
+    else{
+      double clipmin = ClipMin->GetValue();
+      if (Output <= clipmin && clipmin != 0)
+        saturated = true;
+    }
   }
 
   if (IsOutput) SetOutput();

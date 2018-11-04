@@ -103,10 +103,8 @@ public:
 protected:
   FGFCS* fcs;
   FGPropertyManager* PropertyManager;
-  FGPropertyNode_ptr treenode;
   std::vector <FGPropertyNode_ptr> OutputNodes;
-  FGPropertyNode_ptr ClipMinPropertyNode;
-  FGPropertyNode_ptr ClipMaxPropertyNode;
+  FGParameter *ClipMin, *ClipMax;
   std::vector <FGPropertyValue_ptr> InitNodes;
   std::vector <FGPropertyValue_ptr> InputNodes;
   std::vector <float> InputSigns;
@@ -115,11 +113,9 @@ protected:
   std::string Name;
   double Input;
   double Output;
-  double clipmax, clipmin;
   double delay_time;
   unsigned int delay;
   int index;
-  float clipMinSign, clipMaxSign;
   double dt;
   bool IsOutput;
   bool clip;

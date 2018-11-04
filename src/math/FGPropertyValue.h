@@ -67,6 +67,7 @@ public:
   void SetNode(FGPropertyNode* node) {PropertyNode = node;}
 
   virtual std::string GetName(void) const;
+  virtual std::string GetNameWithSign(void) const;
   virtual std::string GetFullyQualifiedName(void) const;
   virtual std::string GetPrintableName(void) const;
 

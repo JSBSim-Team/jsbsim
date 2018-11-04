@@ -44,6 +44,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGPropertyValue.h"
 #include "models/FGFCS.h"
+#include "math/FGRealValue.h"
 
 using namespace std;
 
@@ -56,13 +57,11 @@ CLASS IMPLEMENTATION
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
   Element *input_element,*init_element, *clip_el;
-  Input = Output = clipmin = clipmax = delay_time = 0.0;
-  treenode = 0;
+  Input = Output = delay_time = 0.0;
   delay = index = 0;
-  ClipMinPropertyNode = ClipMaxPropertyNode = 0;
-  clipMinSign = clipMaxSign = 1.0;
+  ClipMin = ClipMax = nullptr;
   IsOutput   = clip = false;
-  string input, clip_string;
+  string input;
   dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -173,26 +172,32 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   clip_el = element->FindElement("clipto");
   if (clip_el) {
-    clip_string = clip_el->FindElementValue("min");
-    if (!is_number(clip_string)) { // it's a property
-      if (clip_string[0] == '-') {
-        clipMinSign = -1.0;
-        clip_string.erase(0,1);
-      }
-      ClipMinPropertyNode = PropertyManager->GetNode( clip_string );
-    } else {
-      clipmin = clip_el->FindElementValueAsNumber("min");
+    Element* el = clip_el->FindElement("min");
+    if (!el) {
+      cerr << clip_el->ReadFrom()
+           << "Element <min> is missing, <clipto> is ignored." << endl;
+      return;
     }
-    clip_string = clip_el->FindElementValue("max");
-    if (!is_number(clip_string)) { // it's a property
-      if (clip_string[0] == '-') {
-        clipMaxSign = -1.0;
-        clip_string.erase(0,1);
-      }
-      ClipMaxPropertyNode = PropertyManager->GetNode( clip_string );
-    } else {
-      clipmax = clip_el->FindElementValueAsNumber("max");
+
+    string clip_string = el->GetDataLine();
+    if (is_number(clip_string))
+      ClipMin = new FGRealValue(atof(clip_string.c_str()));
+    else
+      ClipMin = new FGPropertyValue(clip_string, PropertyManager);
+
+    el = clip_el->FindElement("max");
+    if (!el) {
+      cerr << clip_el->ReadFrom()
+           << "Element <max> is missing, <clipto> is ignored." << endl;
+      return;
     }
+
+    clip_string = el->GetDataLine();
+    if (is_number(clip_string))
+      ClipMax = new FGRealValue(atof(clip_string.c_str()));
+    else
+      ClipMax = new FGPropertyValue(clip_string, PropertyManager);
+
     clip = true;
   }
 
@@ -203,6 +208,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
 FGFCSComponent::~FGFCSComponent()
 {
+  delete ClipMin;
+  delete ClipMax;
   Debug(1);
 }
 
@@ -237,12 +244,8 @@ void FGFCSComponent::Delay(void)
 
 void FGFCSComponent::Clip(void)
 {
-  if (clip) {
-    if (ClipMinPropertyNode != 0) clipmin = clipMinSign*ClipMinPropertyNode->getDoubleValue();
-    if (ClipMaxPropertyNode != 0) clipmax = clipMaxSign*ClipMaxPropertyNode->getDoubleValue();
-    if (Output > clipmax)      Output = clipmax;
-    else if (Output < clipmin) Output = clipmin;
-  }
+  if (clip)
+    Output = Constrain(ClipMin->GetValue(), Output, ClipMax->GetValue());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,23 +297,17 @@ void FGFCSComponent::Debug(int from)
                    << "\" of type: " << Type << endl;
 
       if (clip) {
-        string propsign;
+        cout << "      Minimum limit: ";
+        if (dynamic_cast<FGPropertyValue*>(ClipMin))
+          cout << static_cast<FGPropertyValue*>(ClipMin)->GetNameWithSign() << endl;
+        else
+          cout << ClipMin->GetValue() << endl;
 
-        if (ClipMinPropertyNode != 0L) {
-          if (clipMinSign < 0.0) propsign="-";
-          cout << "      Minimum limit: " << propsign << ClipMinPropertyNode->GetName() << endl;
-        } else {
-          cout << "      Minimum limit: " << clipmin << endl;
-        }
-
-        propsign="";
-
-        if (ClipMaxPropertyNode != 0L) {
-          if (clipMaxSign < 0.0) propsign="-";
-          cout << "      Maximum limit: " << propsign << ClipMaxPropertyNode->GetName() << endl;
-        } else {
-          cout << "      Maximum limit: " << clipmax << endl;
-        }
+        cout << "      Maximum limit: ";
+        if (dynamic_cast<FGPropertyValue*>(ClipMax))
+          cout << static_cast<FGPropertyValue*>(ClipMax)->GetNameWithSign() << endl;
+        else
+          cout << ClipMax->GetValue() << endl;
       }  
       if (delay > 0) cout <<"      Frame delay: " << delay
                                    << " frames (" << delay*dt << " sec)" << endl;
