@@ -31,7 +31,7 @@ cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
         c_FGPropertyManager()
-        bool HasNode(string path)
+        bool HasNode(string path) except +convertJSBSimToPyExc
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
     cdef cppclass c_FGColumnVector3 "JSBSim::FGColumnVector3":
@@ -139,7 +139,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         const c_SGPath& GetSystemsPath()
         const c_SGPath& GetRootDir()
         const c_SGPath& GetFullAircraftPath()
-        double GetPropertyValue(string property)
+        double GetPropertyValue(string property) except +convertJSBSimToPyExc
         void SetPropertyValue(string property, double value) except +convertJSBSimToPyExc
         string GetModelName()
         bool SetOutputDirectives(const c_SGPath& fname) except +
