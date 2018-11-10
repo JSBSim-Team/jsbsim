@@ -49,6 +49,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestSwitch
                  TestGain
                  TestDeadBand
+                 TestFilter
                  )
 
 foreach(test ${PYTHON_TESTS})

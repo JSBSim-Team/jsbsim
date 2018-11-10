@@ -1,0 +1,22 @@
+<system>
+  <property value="1.0">test/input</property>
+  <property>test/reference</property>
+  <channel name="test">
+    <lag_filter name="test/lag-value">
+      <input> test/input </input>
+      <c1> 2.0 </c1>
+    </lag_filter>
+    <lag_filter name="test/lag-property">
+      <input> test/input </input>
+      <c1> test/reference </c1>
+    </lag_filter>
+    <lag_filter name="test/lag-value-inverted-sign">
+      <input> -test/input </input>
+      <c1> 2.0 </c1>
+    </lag_filter>
+    <lag_filter name="test/lag-property-inverted-sign">
+      <input> -test/input </input>
+      <c1> -test/reference </c1>
+    </lag_filter>
+  </channel>
+</system>
