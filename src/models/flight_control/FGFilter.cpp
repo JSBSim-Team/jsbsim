@@ -37,12 +37,13 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+#include <string>
+
 #include "FGFilter.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-
-#include <iostream>
-#include <string>
+#include "math/FGRealValue.h"
 
 using namespace std;
 
@@ -52,29 +53,18 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGFilter::FGFilter(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element), DynamicFilter(false), Initialize(true)
 {
-  Trigger = 0;
-  DynamicFilter = false;
-
-  C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = 0.0;
-  for (int i=1; i<7; i++) {
-    PropertySign[i] = 1.0;
-    PropertyNode[i] = 0L;
+  C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = nullptr;
+  for (int i=1; i<7; i++)
     ReadFilterCoefficients(element, i);
-  }
 
   if      (Type == "LAG_FILTER")          FilterType = eLag        ;
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;
   else if (Type == "SECOND_ORDER_FILTER") FilterType = eOrder2     ;
   else if (Type == "WASHOUT_FILTER")      FilterType = eWashout    ;
   else                                    FilterType = eUnknown    ;
-
-  if (element->FindElement("trigger")) {
-    Trigger =  PropertyManager->GetNode(element->FindElementValue("trigger"));
-  }
-
-  Initialize = true;
 
   CalculateDynamicFilters();
 
@@ -87,6 +77,9 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGFilter::~FGFilter()
 {
+  for (int i=1; i<7; i++)
+    delete C[i];
+
   Debug(1);
 }
 
@@ -111,16 +104,10 @@ void FGFilter::ReadFilterCoefficients(Element* element, int index)
   if ( element->FindElement(coefficient) ) {
     string property_string = element->FindElementValue(coefficient);
     if (!is_number(property_string)) { // property
-      if (property_string[0] == '-') {
-       PropertySign[index] = -1.0;
-       property_string.erase(0,1);
-      } else {
-       PropertySign[index] = 1.0;
-      }
-      PropertyNode[index] = PropertyManager->GetNode(property_string);
+      C[index] = new FGPropertyValue(property_string, PropertyManager);
       DynamicFilter = true;
     } else {
-      C[index] = element->FindElementValueAsNumber(coefficient);
+      C[index] = new FGRealValue(element->FindElementValueAsNumber(coefficient));
     }
   }
 }
@@ -133,41 +120,29 @@ void FGFilter::CalculateDynamicFilters(void)
 
   switch (FilterType) {
     case eLag:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
-      denom = 2.00 + dt*C[1];
-      ca = dt*C[1] / denom;
-      cb = (2.00 - dt*C[1]) / denom;
+      denom = 2.0 + dt*C[1]->GetValue();
+      ca = dt*C[1]->GetValue() / denom;
+      cb = (2.0 - dt*C[1]->GetValue()) / denom;
 
       break;
     case eLeadLag:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
-      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue()*PropertySign[2];
-      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue()*PropertySign[3];
-      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue()*PropertySign[4];
-      denom = 2.00*C[3] + dt*C[4];
-      ca = (2.00*C[1] + dt*C[2]) / denom;
-      cb = (dt*C[2] - 2.00*C[1]) / denom;
-      cc = (2.00*C[3] - dt*C[4]) / denom;
+      denom = 2.0*C[3]->GetValue() + dt*C[4]->GetValue();
+      ca = (2.0*C[1]->GetValue() + dt*C[2]->GetValue()) / denom;
+      cb = (dt*C[2]->GetValue() - 2.0*C[1]->GetValue()) / denom;
+      cc = (2.0*C[3]->GetValue() - dt*C[4]->GetValue()) / denom;
       break;
     case eOrder2:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
-      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue()*PropertySign[2];
-      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue()*PropertySign[3];
-      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue()*PropertySign[4];
-      if (PropertyNode[5] != 0L) C[5] = PropertyNode[5]->getDoubleValue()*PropertySign[5];
-      if (PropertyNode[6] != 0L) C[6] = PropertyNode[6]->getDoubleValue()*PropertySign[6];
-      denom = 4.0*C[4] + 2.0*C[5]*dt + C[6]*dt*dt;
-      ca = (4.0*C[1] + 2.0*C[2]*dt + C[3]*dt*dt) / denom;
-      cb = (2.0*C[3]*dt*dt - 8.0*C[1]) / denom;
-      cc = (4.0*C[1] - 2.0*C[2]*dt + C[3]*dt*dt) / denom;
-      cd = (2.0*C[6]*dt*dt - 8.0*C[4]) / denom;
-      ce = (4.0*C[4] - 2.0*C[5]*dt + C[6]*dt*dt) / denom;
+      denom = 4.0*C[4]->GetValue() + 2.0*C[5]->GetValue()*dt + C[6]->GetValue()*dt*dt;
+      ca = (4.0*C[1]->GetValue() + 2.0*C[2]->GetValue()*dt + C[3]->GetValue()*dt*dt) / denom;
+      cb = (2.0*C[3]->GetValue()*dt*dt - 8.0*C[1]->GetValue()) / denom;
+      cc = (4.0*C[1]->GetValue() - 2.0*C[2]->GetValue()*dt + C[3]->GetValue()*dt*dt) / denom;
+      cd = (2.0*C[6]->GetValue()*dt*dt - 8.0*C[4]->GetValue()) / denom;
+      ce = (4.0*C[4]->GetValue() - 2.0*C[5]->GetValue()*dt + C[6]->GetValue()*dt*dt) / denom;
       break;
     case eWashout:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
-      denom = 2.00 + dt*C[1];
-      ca = 2.00 / denom;
-      cb = (2.00 - dt*C[1]) / denom;
+      denom = 2.0 + dt*C[1]->GetValue();
+      ca = 2.0 / denom;
+      cb = (2.0 - dt*C[1]->GetValue()) / denom;
       break;
     case eUnknown:
       cerr << "Unknown filter type" << endl;
@@ -249,70 +224,37 @@ void FGFilter::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      int n = 0;
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-        switch (FilterType) {
-        case eLag:
-          if (PropertySign[1] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
-          break;
-        case eLeadLag:
-          if (PropertySign[1] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
-          if (PropertySign[2] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
-          else cout << "      C[2] is the value of property: " << sgn << PropertyNode[2]->GetName() << endl;
-          if (PropertySign[3] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
-          else cout << "      C[3] is the value of property: " << sgn << PropertyNode[3]->GetName() << endl;
-          if (PropertySign[4] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
-          else cout << "      C[4] is the value of property: " << sgn << PropertyNode[4]->GetName() << endl;
-          break;
-        case eOrder2:
-          if (PropertySign[1] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
-          if (PropertySign[2] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
-          else cout << "      C[2] is the value of property: " << sgn << PropertyNode[2]->GetName() << endl;
-          if (PropertySign[3] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
-          else cout << "      C[3] is the value of property: " << sgn << PropertyNode[3]->GetName() << endl;
-          if (PropertySign[4] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
-          else cout << "      C[4] is the value of property: " << sgn << PropertyNode[4]->GetName() << endl;
-          if (PropertySign[5] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[5] == 0L) cout << "      C[5]: " << C[5] << endl;
-          else cout << "      C[5] is the value of property: " << sgn << PropertyNode[5]->GetName() << endl;
-          if (PropertySign[6] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[6] == 0L) cout << "      C[6]: " << C[6] << endl;
-          else cout << "      C[6] is the value of property: " << sgn << PropertyNode[6]->GetName() << endl;
-          break;
-        case eWashout:
-          if (PropertySign[1] < 0.0) sgn="-";
-          else sgn = "";
-          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
-          break;
-        case eUnknown:
-          break;
-       } 
+      switch (FilterType) {
+      case eLag:
+        n = 1;
+        break;
+      case eLeadLag:
+        n = 4;
+        break;
+      case eOrder2:
+        n = 6;
+        break;
+      case eWashout:
+        n = 1;
+        break;
+      case eUnknown:
+        n = 0;
+        break;
+      }
+
+      for (int i=1; i <= n; i++) {
+        if (dynamic_cast<FGPropertyValue*>(C[i]))
+          cout << "      C[" << i << "] is the value of property: "
+               << static_cast<FGPropertyValue*>(C[1])->GetNameWithSign() << endl;
+        else
+          cout << "      C[" << i << "]: " << C[i]->GetValue() << endl;
+      }
+
       if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
+        for (auto node: OutputNodes)
+          cout << "      OUTPUT: " << node->getName() << endl;
       }
     }
   }

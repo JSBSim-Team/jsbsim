@@ -75,15 +75,11 @@ time domain. The general format for a filter specification is:
 </typename>
 @endcode
 
-For a lag filter of the form,
+The numerical integration of filters is made by a Runge-Kutta scheme of order
+2 except for the second order filter which uses an RK scheme of order 3.
 
-@code
-  C1
-------
-s + C1
-@endcode
-
-the corresponding filter definition is:
+For a lag filter of the form \f$\frac{C_1}{s+C_1}\f$, the corresponding filter
+definition is:
 
 @code
 <lag_filter name="name">
@@ -97,15 +93,8 @@ the corresponding filter definition is:
 </lag_filter>
 @endcode
 
-As an example, for the specific filter:
-
-@code
-  600
-------
-s + 600
-@endcode
-
-the corresponding filter definition could be:
+As an example, for the specific filter \f$\frac{600}{s+600}\f$ the corresponding
+filter definition could be:
 
 @code
 <lag_filter name="Heading Roll Error Lag">
@@ -114,15 +103,8 @@ the corresponding filter definition could be:
 </lag_filter>
 @endcode
 
-For a lead-lag filter of the form:
-
-@code
-C1*s + C2
----------
-C3*s + C4
-@endcode
-
-The corresponding filter definition is:
+For a lead-lag filter of the form \f$\frac{C_1s+C_2}{C_3s+C_4}\f$, the
+corresponding filter definition is:
 
 @code
 <lead_lag_filter name="name">
@@ -139,15 +121,8 @@ The corresponding filter definition is:
 </lead_lag_filter>
 @endcode
 
-For a washout filter of the form:
-
-@code
-  s
-------
-s + C1
-@endcode
-
-The corresponding filter definition is:
+For a washout filter of the form \f$\frac{s}{s+C_1}\f$, the corresponding filter
+definition is:
 
 @code
 <washout_filter name="name">
@@ -161,15 +136,9 @@ The corresponding filter definition is:
 </washout_filter>
 @endcode
 
-For a second order filter of the form:
-
-@code
-C1*s^2 + C2*s + C3
-------------------
-C4*s^2 + C5*s + C6
-@endcode
-
-The corresponding filter definition is:
+For a second order filter of the form
+\f$\frac{C_1s^2+C_2s+C_3}{C_4s^2+C_5s+C_6}\f$, the corresponding filter
+definition is:
 
 @code
 <second_order_filter name="name">
@@ -188,15 +157,8 @@ The corresponding filter definition is:
 </second_order_filter>
 @endcode
 
-For an integrator of the form:
-
-@code
- C1
- ---
-  s
-@endcode
-
-The corresponding filter definition is:
+For an integrator of the form \f$\frac{C_1}{s}\f$, the corresponding filter
+definition is:
 
 @code
 <integrator name="{string}">
@@ -260,28 +222,20 @@ public:
 
   /** When true, causes previous values to be set to current values. This
       is particularly useful for first pass. */
-  bool Initialize;
   void ResetPastStates(void);
   
   enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
 private:
-  double ca;
-  double cb;
-  double cc;
-  double cd;
-  double ce;
-  double C[7]; // There are 6 coefficients, indexing is "1" based.
-  double PropertySign[7];
-  double PreviousInput1;
-  double PreviousInput2;
-  double PreviousOutput1;
-  double PreviousOutput2;
-  FGPropertyNode_ptr Trigger;
-  FGPropertyNode_ptr PropertyNode[7];
+  bool DynamicFilter;
+  bool Initialize;
+  double ca, cb, cc, cd, ce;
+  FGParameter* C[7]; // There are 6 coefficients, indexing is "1" based.
+  double PreviousInput1, PreviousInput2;
+  double PreviousOutput1, PreviousOutput2;
+
   void CalculateDynamicFilters(void);
   void ReadFilterCoefficients(Element* el, int index);
-  bool DynamicFilter;
   void Debug(int from);
 };
 }
