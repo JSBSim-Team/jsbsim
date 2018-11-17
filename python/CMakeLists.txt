@@ -17,7 +17,7 @@ if(MSVC)
   if(NOT (_GENERATOR STREQUAL NINJA))
     set(USING_MSBUILD 1)
   endif()
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+else()
   set(CXX_FLAGS "'-std=c++11'")
 endif(MSVC)
 
