@@ -1,0 +1,49 @@
+<system>
+  <property>test/input</property>
+  <property>test/reference</property>
+  <channel name="test">
+    <fcs_function name="test/sum-values">
+      <function>
+        <sum>
+          <v>1.0</v>
+          <v>-2.5</v>
+        </sum>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/sum-value-property">
+      <function>
+        <sum>
+          <v>1.0</v>
+          <p>test/reference</p>
+        </sum>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/product-values">
+      <function>
+        <product>
+          <v>2.0</v>
+          <pi/>
+        </product>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/product-value-property">
+      <function>
+        <product>
+          <v>1.5</v>
+          <p>test/reference</p>
+        </product>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/interpolate1d">
+      <function>
+        <interpolate1d>
+          <p>test/input</p>
+          <v>0.0</v> <v>-1.0</v>
+          <v>1.0</v> <v> 0.0</v>
+          <v>3.0</v> <v> 0.0</v>
+          <v>4.0</v> <v> 2.0</v>
+        </interpolate1d>
+      </function>
+    </fcs_function>
+  </channel>
+</system>
