@@ -77,9 +77,6 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
 
 FGFilter::~FGFilter()
 {
-  for (int i=1; i<7; i++)
-    delete C[i];
-
   Debug(1);
 }
 
@@ -106,9 +103,8 @@ void FGFilter::ReadFilterCoefficients(Element* element, int index)
     if (!is_number(property_string)) { // property
       C[index] = new FGPropertyValue(property_string, PropertyManager);
       DynamicFilter = true;
-    } else {
+    } else
       C[index] = new FGRealValue(element->FindElementValueAsNumber(coefficient));
-    }
   }
 }
 
@@ -168,7 +164,7 @@ bool FGFilter::Run(void)
     
     switch (FilterType) {
       case eLag:
-        Output = Input * ca + PreviousInput1 * ca + PreviousOutput1 * cb;
+        Output = (Input + PreviousInput1) * ca + PreviousOutput1 * cb;
         break;
       case eLeadLag:
         Output = Input * ca + PreviousInput1 * cb + PreviousOutput1 * cc;
@@ -218,36 +214,19 @@ bool FGFilter::Run(void)
 
 void FGFilter::Debug(int from)
 {
-  string sgn="";
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      int n = 0;
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      switch (FilterType) {
-      case eLag:
-        n = 1;
-        break;
-      case eLeadLag:
-        n = 4;
-        break;
-      case eOrder2:
-        n = 6;
-        break;
-      case eWashout:
-        n = 1;
-        break;
-      case eUnknown:
-        n = 0;
-        break;
-      }
 
-      for (int i=1; i <= n; i++) {
-        if (dynamic_cast<FGPropertyValue*>(C[i]))
+      for (int i=1; i <= 7; i++) {
+        if (!C[i]) break;
+
+        FGPropertyValue* C_i = dynamic_cast<FGPropertyValue*>(C[i].ptr());
+        if (C_i)
           cout << "      C[" << i << "] is the value of property: "
-               << static_cast<FGPropertyValue*>(C[1])->GetNameWithSign() << endl;
+               << C_i->GetNameWithSign() << endl;
         else
           cout << "      C[" << i << "]: " << C[i]->GetValue() << endl;
       }

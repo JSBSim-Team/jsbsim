@@ -45,7 +45,7 @@
 template<typename T>
 class SGSharedPtr {
 public:
-  SGSharedPtr(void) : _ptr(0)
+  SGSharedPtr(void) : _ptr(nullptr)
   {}
   SGSharedPtr(T* ptr) : _ptr(ptr)
   { get(_ptr); }

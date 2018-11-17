@@ -104,7 +104,7 @@ protected:
   FGFCS* fcs;
   FGPropertyManager* PropertyManager;
   std::vector <FGPropertyNode_ptr> OutputNodes;
-  FGParameter *ClipMin, *ClipMax;
+  FGParameter_ptr ClipMin, ClipMax;
   std::vector <FGPropertyValue_ptr> InitNodes;
   std::vector <FGPropertyValue_ptr> InputNodes;
   std::vector <float> InputSigns;

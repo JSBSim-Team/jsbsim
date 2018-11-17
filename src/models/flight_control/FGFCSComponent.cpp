@@ -208,8 +208,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
 FGFCSComponent::~FGFCSComponent()
 {
-  delete ClipMin;
-  delete ClipMax;
   Debug(1);
 }
 
@@ -298,14 +296,16 @@ void FGFCSComponent::Debug(int from)
 
       if (clip) {
         cout << "      Minimum limit: ";
-        if (dynamic_cast<FGPropertyValue*>(ClipMin))
-          cout << static_cast<FGPropertyValue*>(ClipMin)->GetNameWithSign() << endl;
+        FGPropertyValue* clip = dynamic_cast<FGPropertyValue*>(ClipMin.ptr());
+        if (clip)
+          cout << clip->GetNameWithSign() << endl;
         else
           cout << ClipMin->GetValue() << endl;
 
         cout << "      Maximum limit: ";
-        if (dynamic_cast<FGPropertyValue*>(ClipMax))
-          cout << static_cast<FGPropertyValue*>(ClipMax)->GetNameWithSign() << endl;
+        clip = dynamic_cast<FGPropertyValue*>(ClipMax.ptr());
+        if (clip)
+          cout << clip->GetNameWithSign() << endl;
         else
           cout << ClipMax->GetValue() << endl;
       }  

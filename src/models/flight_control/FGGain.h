@@ -219,7 +219,7 @@ public:
 
 private:
   FGTable* Table;
-  FGParameter* Gain;
+  FGParameter_ptr Gain;
   double InMin, InMax, OutMin, OutMax;
   bool ZeroCentered;
 

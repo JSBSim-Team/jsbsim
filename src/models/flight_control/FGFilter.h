@@ -220,19 +220,19 @@ public:
 
   bool Run (void);
 
-  /** When true, causes previous values to be set to current values. This
-      is particularly useful for first pass. */
   void ResetPastStates(void);
-  
-  enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
 private:
   bool DynamicFilter;
+  /** When true, causes previous values to be set to current values. This
+      is particularly useful for first pass. */
   bool Initialize;
   double ca, cb, cc, cd, ce;
-  FGParameter* C[7]; // There are 6 coefficients, indexing is "1" based.
+  FGParameter_ptr C[7]; // There are 6 coefficients, indexing is "1" based.
   double PreviousInput1, PreviousInput2;
   double PreviousOutput1, PreviousOutput2;
+
+  enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
   void CalculateDynamicFilters(void);
   void ReadFilterCoefficients(Element* el, int index);

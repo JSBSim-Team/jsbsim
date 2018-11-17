@@ -132,7 +132,6 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 FGGain::~FGGain()
 {
   delete Table;
-  delete Gain;
 
   Debug(1);
 }
@@ -209,11 +208,12 @@ void FGGain::Debug(int from)
       else
         cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
 
-      if (dynamic_cast<FGPropertyValue*>(Gain)) {
-        cout << "      GAIN: " << static_cast<FGPropertyValue*>(Gain)->GetNameWithSign() << endl;
-      } else {
+      FGPropertyValue* g = dynamic_cast<FGPropertyValue*>(Gain.ptr());
+      if (g)
+        cout << "      GAIN: " << g->GetNameWithSign() << endl;
+      else
         cout << "      GAIN: " << Gain->GetValue() << endl;
-      }
+
       if (IsOutput) {
         for (auto node: OutputNodes)
           cout << "      OUTPUT: " << node->getName() << endl;

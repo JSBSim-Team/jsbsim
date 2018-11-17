@@ -38,7 +38,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <map>
+
 #include "FGJSBBase.h"
+#include "math/FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -49,14 +51,13 @@ namespace JSBSim {
 class FGPropertyManager;
 class FGPropertyValue;
 class Element;
-class FGParameter;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates a condition, which is used in parts of JSBSim including switches
-*/
+ */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -80,10 +81,9 @@ private:
   std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
-  FGPropertyValue* TestParam1;
-  FGParameter* TestParam2;
+  FGPropertyValue_ptr TestParam1;
+  FGParameter_ptr TestParam2;
   eComparison Comparison;
-  bool isGroup;
   std::string conditional;
 
   std::vector <FGCondition*> conditions;

@@ -90,7 +90,7 @@ public:
 
 private:
   double gain;
-  FGParameter* Width;
+  FGParameter_ptr Width;
 
   void Debug(int from);
 };

@@ -82,7 +82,6 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 
 FGDeadBand::~FGDeadBand()
 {
-  delete Width;
   Debug(1);
 }
 
@@ -135,8 +134,10 @@ void FGDeadBand::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
       cout << "      DEADBAND WIDTH: ";
-      if (dynamic_cast<FGPropertyValue*>(Width))
-        cout << static_cast<FGPropertyValue*>(Width)->GetNameWithSign() << endl;
+
+      FGPropertyValue* w = dynamic_cast<FGPropertyValue*>(Width.ptr());
+      if (w)
+        cout << w->GetNameWithSign() << endl;
       else
         cout << Width->GetValue() << endl;
 

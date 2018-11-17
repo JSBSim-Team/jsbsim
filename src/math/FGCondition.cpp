@@ -54,7 +54,7 @@ CLASS IMPLEMENTATION
 // This constructor is called when tests are inside an element
 FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
-    Comparison(ecUndef), isGroup(true)
+    Comparison(ecUndef)
 {
   InitializeConditionals();
 
@@ -93,7 +93,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
 FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
                          Element* el)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
-    Comparison(ecUndef), isGroup(false)
+    Comparison(ecUndef)
 {
   InitializeConditionals();
 
@@ -151,7 +151,6 @@ void FGCondition::InitializeConditionals(void)
 
 FGCondition::~FGCondition(void)
 {
-  delete TestParam2;
   for (auto cond: conditions) delete cond;
 
   Debug(1);
@@ -221,7 +220,7 @@ void FGCondition::PrintCondition(string indent)
 {
   string scratch;
 
-  if (isGroup) {
+  if (!conditions.empty()) {
 
     switch(Logic) {
     case (elUndef):
@@ -251,8 +250,9 @@ void FGCondition::PrintCondition(string indent)
     cout << indent << TestParam1->GetName() << " "
          << conditional << " ";
 
-    if (dynamic_cast<FGPropertyValue*>(TestParam2))
-      cout << TestParam2->GetName();
+    FGPropertyValue* p2 = dynamic_cast<FGPropertyValue*>(TestParam2.ptr());
+    if (p2)
+      cout << p2->GetNameWithSign();
     else
       cout << TestParam2->GetValue();
   }
