@@ -31,8 +31,8 @@ class QuietBuild(build_ext):
 class InstallJSBSimModule(install_lib):
     def __init__(self, dist):
         install_lib.__init__(self, dist)
-        # Append whichever platform specific extension to the jsbsim module
-        # name
+        # Get the name of the JSBSim Python module (on some platforms this name
+        # can be quite complicated).
         build_ext = self.get_finalized_command('build_ext')
         self.module_name = build_ext.get_ext_filename(build_ext.extensions[0].name)
 
@@ -52,15 +52,23 @@ class SkipInstallEgg(install_egg_info):
     def run(self):
         log.info("Skipped installation of %s", os.path.split(self.target)[-1])
 
-# Parse the --config option that is set for MSVC (can contain Release, Debug,
-# RelWithDebInfo, etc.). This is needed to locate the JSBSim library.
-config = '/'
+# Process the path to the JSBSim library.
+library_path = os.path.join('${CMAKE_BINARY_DIR}','src')
+
+# Parse the --config option that we set for msbuild (it can contain Release,
+# Debug, RelWithDebInfo, etc.) then update the JSBSim library path accordingly.
 for idx, opt in enumerate(sys.argv):
     if opt == '--config':
-        config+=sys.argv[idx+1]
-        break
+        if len(sys.argv) <= idx+1:
+            raise ValueError("--config needs an attribute.")
 
-sys.argv = sys.argv[:idx]+sys.argv[idx+2:]
+        library_path=os.path.join(library_path, sys.argv[idx+1])
+
+        # Remove the --config option and its argument from sys.argv otherwise
+        # setuptools will complain about an unknown '--config' option.
+        del sys.argv[idx] # remove --config
+        del sys.argv[idx] # remove the --config argument
+        break
 
 # Build & installation process for the JSBSim Python module
 setup(
@@ -73,9 +81,13 @@ setup(
                                                       'src'),
                                          os.path.join('${CMAKE_SOURCE_DIR}',
                                                       'python')],
-                           library_dirs=[os.path.join('${CMAKE_BINARY_DIR}',
-                                                      'src'+config)],
+                           library_dirs=[library_path],
+                           extra_compile_args=[${CXX_FLAGS}],
                            language='c++')])
+
+# The fpectl module is not processed if we are building a wheel package since we
+# do not want to include fpectl in the distribution. This module is only used
+# to test the library.
 if sys.argv[1] != 'bdist_wheel':
     # Build process for the fpectl module (but don't install !!!)
     setup(
