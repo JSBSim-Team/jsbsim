@@ -99,10 +99,14 @@ class TestActuator(JSBSimTestCase):
     def test_regression_bug_1503(self):
         # First, the execution time of the script c1724.xml is measured. It
         # will be used as a reference to check if JSBSim hangs or not.
-        fdm = self.create_fdm()
+        fdm = CreateFDM(self.sandbox)
         start_time = time.time()
         self.ScriptExecution(fdm)
         exec_time = time.time() - start_time
+
+        # Delete the FDM instance to make sure that all files are closed and
+        # released before running the same script in another process.
+        del fdm
 
         # Now the copy of the aircraft definition file will be altered: the
         # <rate_limit> element is split in two: one with the 'decr' sense, the
