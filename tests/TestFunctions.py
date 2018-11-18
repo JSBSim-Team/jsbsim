@@ -114,6 +114,7 @@ class TestFunctions(JSBSimTestCase):
                 fdm['test/gamma'] = gamma
                 fdm.run()
                 self.assertAlmostEqual(fdm['test/alpha_local'], alpha)
+                self.assertAlmostEqual(fdm['test/gamma_local'], gamma)
 
         fdm['test/alpha'] = 0.
 
@@ -125,6 +126,7 @@ class TestFunctions(JSBSimTestCase):
                 fdm['test/gamma'] = gamma
                 fdm.run()
                 self.assertAlmostEqual(fdm['test/beta_local'], beta)
+                self.assertAlmostEqual(fdm['test/gamma_local'], gamma)
 
         fdm['test/alpha'] = 10.
         fdm['test/beta'] = 0.
@@ -135,6 +137,7 @@ class TestFunctions(JSBSimTestCase):
             fdm.run()
             self.assertAlmostEqual(fdm['test/alpha_local'], 0.0)
             self.assertAlmostEqual(fdm['test/beta_local'], 0.0)
+            self.assertAlmostEqual(fdm['test/gamma_local'], gamma)
 
         fdm['test/alpha'] = 0.
         fdm['test/beta'] = 10.
@@ -146,6 +149,7 @@ class TestFunctions(JSBSimTestCase):
             fdm.run()
             self.assertAlmostEqual(fdm['test/alpha_local'], 0.0)
             self.assertAlmostEqual(fdm['test/beta_local'], 0.0)
+            self.assertAlmostEqual(fdm['test/gamma_local'], gamma)
 
         alpha = 10.
         fdm['test/alpha'] = alpha
@@ -161,6 +165,7 @@ class TestFunctions(JSBSimTestCase):
                 fdm.run()
                 self.assertAlmostEqual(fdm['test/alpha_local'], alpha+theta)
                 self.assertAlmostEqual(fdm['test/beta_local'], 5.0)
+                self.assertAlmostEqual(fdm['test/gamma_local'], gamma)
 
     def CheckMatrix(self,fdm, M, transform):
         fdm['test/rx'] = 1.0

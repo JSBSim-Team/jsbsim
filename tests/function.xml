@@ -81,12 +81,6 @@
           <p>test/phi</p>
           <p>test/theta</p>
           <p>test/psi</p>
-          <!-- <v> 10.0 </v> -->
-          <!-- <v> 5.0 </v> -->
-          <!-- <v> 0.0 </v> -->
-          <!-- <v> 0.0 </v> -->
-          <!-- <v> 0.0 </v> -->
-          <!-- <v> 10.0 </v> -->
         </rotation_alpha_local>
       </function>
     </fcs_function>
@@ -100,6 +94,18 @@
           <p>test/theta</p>
           <p>test/psi</p>
         </rotation_beta_local>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/gamma_local">
+      <function>
+        <rotation_gamma_local>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <p>test/phi</p>
+          <p>test/theta</p>
+          <p>test/psi</p>
+        </rotation_gamma_local>
       </function>
     </fcs_function>
     <fcs_function name="test/bf_to_wf/x">
