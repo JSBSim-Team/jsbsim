@@ -1,6 +1,12 @@
 <system>
   <property>test/input</property>
   <property>test/reference</property>
+  <property value="0.0">test/alpha</property>
+  <property value="0.0">test/beta</property>
+  <property value="0.0">test/gamma</property>
+  <property value="0.0">test/phi</property>
+  <property value="0.0">test/theta</property>
+  <property value="0.0">test/psi</property>
   <channel name="test">
     <fcs_function name="test/sum-values">
       <function>
@@ -34,6 +40,23 @@
         </product>
       </function>
     </fcs_function>
+    <fcs_function name="test/sin-value">
+      <function>
+        <sin>
+          <quotient>
+            <pi/>
+            <v> 4.0 </v>
+          </quotient>
+        </sin>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/sin-property">
+      <function>
+        <sin>
+          <p>test/input</p>
+        </sin>
+      </function>
+    </fcs_function>
     <fcs_function name="test/interpolate1d">
       <function>
         <interpolate1d>
@@ -43,6 +66,36 @@
           <v>3.0</v> <v> 0.0</v>
           <v>4.0</v> <v> 2.0</v>
         </interpolate1d>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/alpha_local">
+      <function>
+        <rotation_alpha_local>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <p>test/phi</p>
+          <p>test/theta</p>
+          <p>test/psi</p>
+          <!-- <v> 10.0 </v> -->
+          <!-- <v> 5.0 </v> -->
+          <!-- <v> 0.0 </v> -->
+          <!-- <v> 0.0 </v> -->
+          <!-- <v> 0.0 </v> -->
+          <!-- <v> 10.0 </v> -->
+        </rotation_alpha_local>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/beta_local">
+      <function>
+        <rotation_beta_local>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <p>test/phi</p>
+          <p>test/theta</p>
+          <p>test/psi</p>
+        </rotation_beta_local>
       </function>
     </fcs_function>
   </channel>
