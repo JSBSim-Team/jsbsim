@@ -19,6 +19,7 @@
 #
 
 import math
+import numpy as np
 
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 
@@ -160,6 +161,92 @@ class TestFunctions(JSBSimTestCase):
                 fdm.run()
                 self.assertAlmostEqual(fdm['test/alpha_local'], alpha+theta)
                 self.assertAlmostEqual(fdm['test/beta_local'], 5.0)
+
+    def CheckMatrix(self,fdm, M, transform):
+        fdm['test/rx'] = 1.0
+        fdm['test/ry'] = 0.0
+        fdm['test/rz'] = 0.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['test/'+transform+'/x'], M[0,0])
+        self.assertAlmostEqual(fdm['test/'+transform+'/y'], M[1,0])
+        self.assertAlmostEqual(fdm['test/'+transform+'/z'], M[2,0])
+
+        fdm['test/rx'] = 0.0
+        fdm['test/ry'] = 1.0
+        fdm['test/rz'] = 0.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['test/'+transform+'/x'], M[0,1])
+        self.assertAlmostEqual(fdm['test/'+transform+'/y'], M[1,1])
+        self.assertAlmostEqual(fdm['test/'+transform+'/z'], M[2,1])
+
+        fdm['test/rx'] = 0.0
+        fdm['test/ry'] = 0.0
+        fdm['test/rz'] = 1.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['test/'+transform+'/x'], M[0,2])
+        self.assertAlmostEqual(fdm['test/'+transform+'/y'], M[1,2])
+        self.assertAlmostEqual(fdm['test/'+transform+'/z'], M[2,2])
+
+    def test_wf_to_bf(self):
+        tripod = FlightModel(self, 'tripod')
+        tripod.include_system_test_file('function.xml')
+        fdm = tripod.start()
+
+        alpha = 10.5
+        beta = -8.6
+        gamma = 45.0
+
+        a = alpha*math.pi/180.
+        b = beta*math.pi/180.
+        c = gamma*math.pi/180.
+
+        Ma = np.matrix([[ math.cos(a), 0.0, math.sin(a)],
+                        [              0.0, 1.0,     0.0],
+                        [ -math.sin(a), 0.0,  math.cos(a)]])
+        Mb = np.matrix([[  math.cos(b), math.sin(b), 0.0],
+                        [ -math.sin(b), math.cos(b), 0.0],
+                        [          0.0,         0.0, 1.0]])
+        Mc = np.matrix([[ 1.0,         0.0,          0.0],
+                        [ 0.0, math.cos(c), -math.sin(c)],
+                        [ 0.0, math.sin(c),  math.cos(c)]])
+
+        fdm['test/alpha'] = alpha
+        self.CheckMatrix(fdm, Ma, 'bf_to_wf')
+        self.CheckMatrix(fdm, Ma.T, 'wf_to_bf')
+
+        fdm['test/alpha'] = 0.0
+        fdm['test/beta'] = beta
+        self.CheckMatrix(fdm, Mb, 'bf_to_wf')
+        self.CheckMatrix(fdm, Mb.T, 'wf_to_bf')
+
+        fdm['test/beta'] = 0.0
+        fdm['test/gamma'] = gamma
+        self.CheckMatrix(fdm, Mc, 'bf_to_wf')
+        self.CheckMatrix(fdm, Mc.T, 'wf_to_bf')
+
+        fdm['test/alpha'] = alpha
+        fdm['test/beta'] = beta
+        fdm['test/gamma'] = 0.0
+        self.CheckMatrix(fdm, Mb*Ma, 'bf_to_wf')
+        self.CheckMatrix(fdm, (Mb*Ma).T, 'wf_to_bf')
+
+        fdm['test/alpha'] = alpha
+        fdm['test/beta'] = 0.0
+        fdm['test/gamma'] = gamma
+        self.CheckMatrix(fdm, Mc*Ma, 'bf_to_wf')
+        self.CheckMatrix(fdm, (Mc*Ma).T, 'wf_to_bf')
+
+        fdm['test/alpha'] = 0.0
+        fdm['test/beta'] = beta
+        fdm['test/gamma'] = gamma
+        self.CheckMatrix(fdm, Mc*Mb, 'bf_to_wf')
+        self.CheckMatrix(fdm, (Mc*Mb).T, 'wf_to_bf')
+
+        fdm['test/alpha'] = alpha
+        fdm['test/beta'] = beta
+        fdm['test/gamma'] = gamma
+        self.CheckMatrix(fdm, Mc*Mb*Ma, 'bf_to_wf')
+        self.CheckMatrix(fdm, (Mc*Mb*Ma).T, 'wf_to_bf')
 
 
 RunTest(TestFunctions)

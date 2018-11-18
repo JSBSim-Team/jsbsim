@@ -1,12 +1,16 @@
 <system>
   <property>test/input</property>
   <property>test/reference</property>
-  <property value="0.0">test/alpha</property>
-  <property value="0.0">test/beta</property>
-  <property value="0.0">test/gamma</property>
-  <property value="0.0">test/phi</property>
-  <property value="0.0">test/theta</property>
-  <property value="0.0">test/psi</property>
+  <property>test/alpha</property>
+  <property>test/beta</property>
+  <property>test/gamma</property>
+  <property>test/phi</property>
+  <property>test/theta</property>
+  <property>test/psi</property>
+  <property>test/rx</property>
+  <property>test/ry</property>
+  <property>test/rz</property>
+
   <channel name="test">
     <fcs_function name="test/sum-values">
       <function>
@@ -96,6 +100,84 @@
           <p>test/theta</p>
           <p>test/psi</p>
         </rotation_beta_local>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/bf_to_wf/x">
+      <function>
+        <rotation_bf_to_wf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 1 </v>
+        </rotation_bf_to_wf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/bf_to_wf/y">
+      <function>
+        <rotation_bf_to_wf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 2 </v>
+        </rotation_bf_to_wf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/bf_to_wf/z">
+      <function>
+        <rotation_bf_to_wf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 3 </v>
+        </rotation_bf_to_wf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/wf_to_bf/x">
+      <function>
+        <rotation_wf_to_bf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 1 </v>
+        </rotation_wf_to_bf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/wf_to_bf/y">
+      <function>
+        <rotation_wf_to_bf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 2 </v>
+        </rotation_wf_to_bf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/wf_to_bf/z">
+      <function>
+        <rotation_wf_to_bf>
+          <p>test/rx</p>
+          <p>test/ry</p>
+          <p>test/rz</p>
+          <p>test/alpha</p>
+          <p>test/beta</p>
+          <p>test/gamma</p>
+          <v> 3 </v>
+        </rotation_wf_to_bf>
       </function>
     </fcs_function>
   </channel>
