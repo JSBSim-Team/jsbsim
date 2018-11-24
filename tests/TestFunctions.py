@@ -34,6 +34,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sum-value-property'], 1.0)
         self.assertAlmostEqual(fdm['test/product-values'], 2.0*math.pi)
         self.assertAlmostEqual(fdm['test/product-value-property'], 0.0)
+        self.assertAlmostEqual(fdm['test/product-as-a-no-op'], 1.0)
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], 0.0)
 
@@ -44,6 +45,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sum-value-property'], 2.5)
         self.assertAlmostEqual(fdm['test/product-values'], 2.0*math.pi)
         self.assertAlmostEqual(fdm['test/product-value-property'], 2.25)
+        self.assertAlmostEqual(fdm['test/product-as-a-no-op'], 2.5)
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], 0.0)
 

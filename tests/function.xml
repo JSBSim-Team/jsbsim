@@ -44,6 +44,20 @@
         </product>
       </function>
     </fcs_function>
+    <fcs_function name="test/product-as-a-no-op">
+      <function>
+        <description>
+          Here product only has one argument and JSBSim interprets it as a
+          no-operation i.e. it does nothing.
+        </description>
+        <product>
+          <sum>
+            <p>test/reference</p>
+            <v>1.0</v>
+          </sum>
+        </product>
+      </function>
+    </fcs_function>
     <fcs_function name="test/sin-value">
       <function>
         <sin>
