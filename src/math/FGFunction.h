@@ -722,7 +722,7 @@ class FGFunction : public FGParameter, public FGJSBBase
 public:
   /// Default constructor.
   FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), pCopyTo(0L) {}
+    : cached(false), cachedValue(-HUGE_VAL), pCopyTo(nullptr) {}
 
   /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
@@ -763,87 +763,26 @@ public:
     @param shouldCache specifies whether the function should cache the computed value. */
   void cacheValue(bool shouldCache);
 
+  enum class OddEven {Either, Odd, Even};
+
 protected:
+  bool cached;
+  double cachedValue;
+  std::vector <FGParameter_ptr> Parameters;
+
   void Load(FGPropertyManager* PropertyManager, Element* element,
-            FGPropertyValue* var);
-  virtual void bind(Element*, FGPropertyManager*);
+            FGPropertyValue* var, const std::string& prefix="");
+  virtual void bind(Element*, FGPropertyManager*, const std::string&);
+  void CheckMinArguments(Element* el, unsigned int _min);
+  void CheckMaxArguments(Element* el, unsigned int _max);
+  void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
 
 private:
   static const double invlog2val;
-  static const std::string description_string;
-  static const std::string property_string;
-  static const std::string value_string;
-  static const std::string table_string;
-  static const std::string p_string;
-  static const std::string v_string;
-  static const std::string t_string;
-  static const std::string function_string;
-  static const std::string sum_string;
-  static const std::string difference_string;
-  static const std::string product_string;
-  static const std::string quotient_string;
-  static const std::string pow_string;
-  static const std::string sqrt_string;
-  static const std::string toradians_string;
-  static const std::string todegrees_string;
-  static const std::string exp_string;
-  static const std::string log2_string;
-  static const std::string ln_string;
-  static const std::string log10_string;
-  static const std::string abs_string;
-  static const std::string sign_string;
-  static const std::string sin_string;
-  static const std::string cos_string;
-  static const std::string tan_string;
-  static const std::string asin_string;
-  static const std::string acos_string;
-  static const std::string atan_string;
-  static const std::string atan2_string;
-  static const std::string pi_string;
-  static const std::string min_string;
-  static const std::string max_string;
-  static const std::string avg_string;
-  static const std::string fraction_string;
-  static const std::string mod_string;
-  static const std::string random_string;
-  static const std::string urandom_string;
-  static const std::string integer_string;
-  static const std::string rotation_alpha_local_string;
-  static const std::string rotation_beta_local_string;
-  static const std::string rotation_gamma_local_string;
-  static const std::string rotation_bf_to_wf_string;
-  static const std::string rotation_wf_to_bf_string;
-  static const std::string lessthan_string;
-  static const std::string lessequal_string;
-  static const std::string greatthan_string;
-  static const std::string greatequal_string;
-  static const std::string equal_string;
-  static const std::string notequal_string;
-  static const std::string and_string;
-  static const std::string or_string;
-  static const std::string not_string;
-  static const std::string ifthen_string;
-  static const std::string switch_string;
-  static const std::string interpolate1d_string;
-  static const std::string floor_string;
-  static const std::string ceil_string;
-  static const std::string fmod_string;
 
-  enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow, eSqrt, eToRadians,
-                     eToDegrees, eExp, eAbs, eSign, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom, eUrandom, ePi,
-                     eLog2, eLn, eLog10, eLT, eLE, eGE, eGT, eEQ, eNE,  eAND, eOR, eNOT,
-                     eIfThen, eSwitch, eInterpolate1D, eRotation_alpha_local,
-                     eRotation_beta_local, eRotation_gamma_local, eRotation_bf_to_wf,
-                     eRotation_wf_to_bf, eFloor, eCeil, eFmod} Type;
-  std::string Prefix;
-  bool cached;
-  double cachedValue;
   std::string Name;
-  std::vector <FGParameter_ptr> Parameters;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 
-  unsigned int GetBinary(double) const;
   void Debug(int from);
 };
 

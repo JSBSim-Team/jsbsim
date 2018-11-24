@@ -75,7 +75,7 @@ public:
 private:
   /** FGTemplateFunc must not be bound to the property manager. The bind method
       is therefore overloaded as a no-op */
-  virtual void bind(Element*, FGPropertyManager*) {}
+  virtual void bind(Element*, FGPropertyManager*, const std::string&) {}
   FGPropertyValue var;
 };
 

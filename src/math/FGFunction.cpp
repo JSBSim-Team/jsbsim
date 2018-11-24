@@ -39,6 +39,9 @@ INCLUDES
 #include "FGPropertyValue.h"
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
+#include "math/FGMatrix33.h"
+#include "math/FGQuaternion.h"
+#include "math/FGColumnVector3.h"
 
 using namespace std;
 
@@ -50,213 +53,158 @@ CLASS IMPLEMENTATION
 
 const double FGFunction::invlog2val = 1.0/log10(2.0);
 
-const std::string FGFunction::property_string = "property";
-const std::string FGFunction::value_string = "value";
-const std::string FGFunction::table_string = "table";
-const std::string FGFunction::p_string = "p";
-const std::string FGFunction::v_string = "v";
-const std::string FGFunction::t_string = "t";
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const std::string FGFunction::function_string = "function";
-const std::string FGFunction::description_string = "description";
-const std::string FGFunction::sum_string = "sum";
-const std::string FGFunction::difference_string = "difference";
-const std::string FGFunction::product_string = "product";
-const std::string FGFunction::quotient_string = "quotient";
-const std::string FGFunction::pow_string = "pow";
-const std::string FGFunction::sqrt_string = "sqrt";
-const std::string FGFunction::toradians_string = "toradians";
-const std::string FGFunction::todegrees_string = "todegrees";
-const std::string FGFunction::exp_string = "exp";
-const std::string FGFunction::log2_string = "log2";
-const std::string FGFunction::ln_string = "ln";
-const std::string FGFunction::log10_string = "log10";
-const std::string FGFunction::abs_string = "abs";
-const std::string FGFunction::sign_string = "sign";
-const std::string FGFunction::sin_string = "sin";
-const std::string FGFunction::cos_string = "cos";
-const std::string FGFunction::tan_string = "tan";
-const std::string FGFunction::asin_string = "asin";
-const std::string FGFunction::acos_string = "acos";
-const std::string FGFunction::atan_string = "atan";
-const std::string FGFunction::atan2_string = "atan2";
-const std::string FGFunction::min_string = "min";
-const std::string FGFunction::max_string = "max";
-const std::string FGFunction::avg_string = "avg";
-const std::string FGFunction::fraction_string = "fraction";
-const std::string FGFunction::mod_string = "mod";
-const std::string FGFunction::random_string = "random";
-const std::string FGFunction::urandom_string = "urandom";
-const std::string FGFunction::pi_string = "pi";
-const std::string FGFunction::integer_string = "integer";
-const std::string FGFunction::rotation_alpha_local_string = "rotation_alpha_local";
-const std::string FGFunction::rotation_beta_local_string = "rotation_beta_local";
-const std::string FGFunction::rotation_gamma_local_string = "rotation_gamma_local";
-const std::string FGFunction::rotation_bf_to_wf_string = "rotation_bf_to_wf";
-const std::string FGFunction::rotation_wf_to_bf_string = "rotation_wf_to_bf";
+bool GetBinary(double val)
+{
+  val = fabs(val);
+  if (val < 1E-9) return false;
+  else if (val-1 < 1E-9) return true;
+  else throw("Malformed conditional check in function definition.");
+}
 
-const std::string FGFunction::lessthan_string = "lt";
-const std::string FGFunction::lessequal_string = "le";
-const std::string FGFunction::greatthan_string = "gt";
-const std::string FGFunction::greatequal_string = "ge";
-const std::string FGFunction::equal_string = "eq";
-const std::string FGFunction::notequal_string = "nq";
-const std::string FGFunction::and_string = "and";
-const std::string FGFunction::or_string = "or";
-const std::string FGFunction::not_string = "not";
-const std::string FGFunction::ifthen_string = "ifthen";
-const std::string FGFunction::switch_string = "switch";
-const std::string FGFunction::interpolate1d_string = "interpolate1d";
-const std::string FGFunction::floor_string = "floor";
-const std::string FGFunction::ceil_string = "ceil";
-const std::string FGFunction::fmod_string = "fmod";
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+template<typename func_t, unsigned int Nmin, unsigned int Nmax=Nmin,
+         FGFunction::OddEven odd_even=FGFunction::OddEven::Either>
+class aFunc: public FGFunction
+{
+public:
+  aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
+        const string& prefix, FGPropertyValue* v)
+    : f(_f)
+  {
+    Load(pm, el, v, prefix);
+    CheckMinArguments(el, Nmin);
+    CheckMaxArguments(el, Nmax);
+    CheckOddOrEvenArguments(el, odd_even);
+  }
+
+  double GetValue(void) const {
+    return cached ? cachedValue : f(Parameters);
+  }
+
+private:
+  const func_t f;
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGFunction* make_MathFn(double(*math_fn)(double), FGPropertyManager* pm, Element* el,
+                        const string& prefix, FGPropertyValue* v)
+{
+  auto f = [math_fn](const std::vector<FGParameter_ptr> &p)->double {
+             return math_fn(p[0]->GetValue());
+           };
+  return new aFunc<decltype(f), 1>(f, pm, el, prefix, v);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGFunction::FGFunction(FGPropertyManager* PropertyManager, Element* el,
                        const string& prefix, FGPropertyValue* var)
-  : Prefix(prefix), cached(false), cachedValue(-HUGE_VAL), pCopyTo(0L)
+  : FGFunction()
 {
-  Load(PropertyManager, el, var);
+  Load(PropertyManager, el, var, prefix);
+  CheckMinArguments(el, 1);
+  CheckMaxArguments(el, 1);
+
+  string sCopyTo = el->GetAttributeValue("copyto");
+
+  if (!sCopyTo.empty()) {
+    if (sCopyTo.find("#") != string::npos) {
+      if (is_number(prefix))
+        sCopyTo = replace(sCopyTo,"#",prefix);
+      else {
+        cerr << el->ReadFrom() << fgred
+             << "Illegal use of the special character '#'" << reset << endl
+             << "The 'copyto' argument in function " << Name << " is ignored."
+             << endl;
+        return;
+      }
+    }
+
+    pCopyTo = PropertyManager->GetNode(sCopyTo);
+    if (!pCopyTo)
+      cerr << el->ReadFrom() << fgred
+           << "Property \"" << sCopyTo
+           << "\" must be previously defined in function " << Name << reset
+           << "The 'copyto' argument is ignored." << endl;
+  }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
+{
+  if (Parameters.size() < _min) {
+    cerr << el->ReadFrom() << fgred << highint
+         << "<" << el->GetName() << "> should have at least " << _min
+         << " argument." << reset << endl;
+    throw("Not enough arguments.");
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFunction::CheckMaxArguments(Element* el, unsigned int _max)
+{
+  if (Parameters.size() > _max) {
+    cerr << el->ReadFrom() << fgred << highint
+         << "<" << el->GetName() << "> should have no more than " << _max
+         << " argument." << reset << endl;
+    throw("Too many arguments.");
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
+{
+
+  switch(odd_even) {
+  case OddEven::Even:
+    if (Parameters.size() % 2 == 1) {
+      cerr << el->ReadFrom() << fgred << highint
+           << "<" << el->GetName() << "> must have an even number of arguments."
+           << reset << endl;
+      throw("Fatal Error");
+    }
+    break;
+  case OddEven::Odd:
+    if (Parameters.size() % 2 == 0) {
+      cerr << el->ReadFrom() << fgred << highint
+           << "<" << el->GetName() << "> must have an odd number of arguments."
+           << reset << endl;
+      throw("Fatal Error");
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
-                      FGPropertyValue* var)
+                      FGPropertyValue* var, const string& Prefix)
 {
   Name = el->GetAttributeValue("name");
-  string operation = el->GetName();
-
-  if (operation == function_string) {
-    string sCopyTo = el->GetAttributeValue("copyto");
-    if (!sCopyTo.empty()) {
-
-      if (sCopyTo.find("#") != string::npos) {
-        if (is_number(Prefix)) sCopyTo = replace(sCopyTo,"#",Prefix);
-      }
-
-      pCopyTo = PropertyManager->GetNode(sCopyTo);
-      if (pCopyTo == 0L) cerr << "Property \"" << sCopyTo << "\" must be previously defined in function "
-                              << Name << endl;
-    }
-    Type = eTopLevel;
-  } else if (operation == product_string) {
-    Type = eProduct;
-  } else if (operation == difference_string) {
-    Type = eDifference;
-  } else if (operation == sum_string) {
-    Type = eSum;
-  } else if (operation == quotient_string) {
-    Type = eQuotient;
-  } else if (operation == pow_string) {
-    Type = ePow;
-  } else if (operation == sqrt_string) {
-    Type = eSqrt;
-  } else if (operation == toradians_string) {
-    Type = eToRadians;
-  } else if (operation == todegrees_string) {
-    Type = eToDegrees;
-  } else if (operation == log2_string) {
-    Type = eLog2;
-  } else if (operation == ln_string) {
-    Type = eLn;
-  } else if (operation == log10_string) {
-    Type = eLog10;
-  } else if (operation == abs_string) {
-    Type = eAbs;
-  } else if (operation == sign_string) {
-    Type = eSign;
-  } else if (operation == sin_string) {
-    Type = eSin;
-  } else if (operation == exp_string) {
-    Type = eExp;
-  } else if (operation == cos_string) {
-    Type = eCos;
-  } else if (operation == tan_string) {
-    Type = eTan;
-  } else if (operation == asin_string) {
-    Type = eASin;
-  } else if (operation == acos_string) {
-    Type = eACos;
-  } else if (operation == atan_string) {
-    Type = eATan;
-  } else if (operation == atan2_string) {
-    Type = eATan2;
-  } else if (operation == min_string) {
-    Type = eMin;
-  } else if (operation == max_string) {
-    Type = eMax;
-  } else if (operation == avg_string) {
-    Type = eAvg;
-  } else if (operation == fraction_string) {
-    Type = eFrac;
-  } else if (operation == integer_string) {
-    Type = eInteger;
-  } else if (operation == mod_string) {
-    Type = eMod;
-  } else if (operation == random_string) {
-    Type = eRandom;
-  } else if (operation == urandom_string) {
-    Type = eUrandom;
-  } else if (operation == pi_string) {
-    Type = ePi;
-  } else if (operation == rotation_alpha_local_string) {
-    Type = eRotation_alpha_local;
-  } else if (operation == rotation_beta_local_string) {
-    Type = eRotation_beta_local;
-  } else if (operation == rotation_gamma_local_string) {
-    Type = eRotation_gamma_local;
-  } else if (operation == rotation_bf_to_wf_string) {
-    Type = eRotation_bf_to_wf;
-  } else if (operation == rotation_wf_to_bf_string) {
-    Type = eRotation_wf_to_bf;
-  } else if (operation == lessthan_string) {
-    Type = eLT;
-  } else if (operation == lessequal_string) {
-    Type = eLE;
-  } else if (operation == greatthan_string) {
-    Type = eGT;
-  } else if (operation == greatequal_string) {
-    Type = eGE;
-  } else if (operation == equal_string) {
-    Type = eEQ;
-  } else if (operation == notequal_string) {
-    Type = eNE;
-  } else if (operation == and_string) {
-    Type = eAND;
-  } else if (operation == or_string) {
-    Type = eOR;
-  } else if (operation == not_string) {
-    Type = eNOT;
-  } else if (operation == ifthen_string) {
-    Type = eIfThen;
-  } else if (operation == switch_string) {
-    Type = eSwitch;
-  } else if (operation == interpolate1d_string) {
-    Type = eInterpolate1D;
-  } else if (operation == floor_string) {
-    Type = eFloor;
-  } else if (operation == ceil_string) {
-    Type = eCeil;
-  } else if (operation == fmod_string) {
-    Type = eFmod;
-  } else if (operation != description_string) {
-    cerr << "Bad operation " << operation << " detected in configuration file" << endl;
-  }
-
   Element* element = el->GetElement();
-  if (!element && Type != eRandom && Type != eUrandom && Type != ePi) {
-    cerr << fgred << highint << endl;
-    cerr << "  No element was specified as an argument to the \"" << operation << "\" operation" << endl;
-    cerr << "  This can happen when, for instance, a cos operation is specified and a " << endl;
-    cerr << "  property name is given explicitly, but is not placed within a" << endl;
-    cerr << "  <property></property> element tag pair." << endl;
-    cerr << reset;
-    exit(-2);
-  }
+  auto sum = [](const decltype(Parameters)& Parameters)->double {
+               double temp = 0.0;
+
+               for (auto p: Parameters)
+                 temp += p->GetValue();
+
+               return temp;
+             };
   
   while (element) {
-    operation = element->GetName();
+    string operation = element->GetName();
 
     // data types
-    if (operation == property_string || operation == p_string) {
+    if (operation == "property" || operation == "p") {
       string property_name = element->GetDataLine();
 
       if (var && simgear::strutils::strip(property_name) == "#")
@@ -266,86 +214,478 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
           if (is_number(Prefix)) {
             property_name = replace(property_name,"#",Prefix);
           }
-          else
+          else {
             cerr << el->ReadFrom()
                  << fgred << "Illegal use of the special character '#'"
                  << reset << endl;
+            throw("Fatal Error.");
+          }
         }
 
-        if (PropertyManager->HasNode(property_name)) {
-          FGPropertyNode* newNode = PropertyManager->GetNode(property_name);
-          Parameters.push_back(new FGPropertyValue( newNode ));
-        } else {
-          // cerr << fgcyan << "Warning: The property " + property_name + " is initially undefined."
-          //      << reset << endl;
-          Parameters.push_back(new FGPropertyValue( property_name,
-                                                    PropertyManager ));
-        }
+        Parameters.push_back(new FGPropertyValue( property_name,
+                                                  PropertyManager ));
       }
-    } else if (operation == value_string || operation == v_string) {
+    } else if (operation == "value" || operation == "v") {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));
-    } else if (operation == table_string || operation == t_string) {
+    } else if (operation == "pi") {
+      Parameters.push_back(new FGRealValue(M_PI));
+    } else if (operation == "table" || operation == "t") {
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
-    } else if (operation == product_string ||
-               operation == difference_string ||
-               operation == sum_string ||
-               operation == quotient_string ||
-               operation == pow_string ||
-               operation == sqrt_string ||
-               operation == toradians_string ||
-               operation == todegrees_string ||
-               operation == exp_string ||
-               operation == log2_string ||
-               operation == ln_string ||
-               operation == log10_string ||
-               operation == abs_string ||
-               operation == sign_string ||
-               operation == sin_string ||
-               operation == cos_string ||
-               operation == tan_string ||
-               operation == asin_string ||
-               operation == acos_string ||
-               operation == atan_string ||
-               operation == atan2_string ||
-               operation == min_string ||
-               operation == max_string ||
-               operation == fraction_string ||
-               operation == integer_string ||
-               operation == mod_string ||
-               operation == random_string ||
-               operation == urandom_string ||
-               operation == pi_string ||
-               operation == avg_string ||
-               operation == rotation_alpha_local_string||
-               operation == rotation_beta_local_string||
-               operation == rotation_gamma_local_string||
-               operation == rotation_bf_to_wf_string||
-               operation == rotation_wf_to_bf_string ||
-               operation == lessthan_string ||
-               operation == lessequal_string ||
-               operation == greatthan_string ||
-               operation == greatequal_string ||
-               operation == equal_string ||
-               operation == notequal_string ||
-               operation == and_string ||
-               operation == or_string ||
-               operation == not_string ||
-               operation == ifthen_string ||
-               operation == switch_string ||
-               operation == interpolate1d_string ||
-               operation == floor_string ||
-               operation == ceil_string ||
-               operation == fmod_string)
-      {
-        Parameters.push_back(new FGFunction(PropertyManager, element, Prefix, var));
-      } else if (operation != description_string) {
-      cerr << "Bad operation " << operation << " detected in configuration file" << endl;
+    } else if (operation == "product") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 double temp = 1.0;
+
+                 for (auto p: Parameters)
+                   temp *= p->GetValue();
+
+                 return temp;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "sum") {
+      Parameters.push_back(new aFunc<decltype(sum), 1, 9999>(sum, PropertyManager, element, Prefix, var));
+    } else if (operation == "avg") {
+      auto avg = [&](const decltype(Parameters)& p)->double {
+                   return sum(p) / p.size();
+                 };
+      Parameters.push_back(new aFunc<decltype(avg), 1, 9999>(avg, PropertyManager, element, Prefix, var));
+    } else if (operation == "difference") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 double temp = Parameters[0]->GetValue();
+
+                 for (auto p = Parameters.begin()+1; p != Parameters.end(); ++p)
+                   temp -= (*p)->GetValue();
+
+                 return temp;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "min") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 double _min = HUGE_VAL;
+
+                 for (auto p : Parameters) {
+                   double x = p->GetValue();
+                   if (x < _min)
+                     _min = x;
+                 }
+
+                 return _min;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "max") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 double _max = -HUGE_VAL;
+
+                 for (auto p : Parameters) {
+                   double x = p->GetValue();
+                   if (x > _max)
+                     _max = x;
+                 }
+
+                 return _max;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "and") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 for (auto p : Parameters) {
+                   if (!GetBinary(p->GetValue())) // As soon as one parameter is false, the expression is guaranteed to be false.
+                     return false;
+                 }
+
+                 return true;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "or") {
+      auto f = [](const decltype(Parameters)& Parameters)->double {
+                 for (auto p : Parameters) {
+                   if (GetBinary(p->GetValue())) // As soon as one parameter is true, the expression is guaranteed to be true.
+                     return true;
+                 }
+
+                 return false;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "quotient") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double y = p[1]->GetValue();
+                 return y != 0.0 ? p[0]->GetValue()/y : HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "pow") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return pow(p[0]->GetValue(), p[1]->GetValue());
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "toradians") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue()*M_PI/180.;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "todegrees") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue()*180./M_PI;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "sqrt") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double x = p[0]->GetValue();
+                 return x >= 0.0 ? sqrt(x) : -HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "log2") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double x = p[0]->GetValue();
+                 return x > 0.0 ? log10(x)*invlog2val : -HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "ln") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double x = p[0]->GetValue();
+                 return x > 0.0 ? log(x) : -HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "log10") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double x = p[0]->GetValue();
+                 return x > 0.0 ? log10(x) : -HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "sign") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() < 0.0 ? -1 : 1; // 0.0 counts as positive.
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "exp") {
+      Parameters.push_back(make_MathFn(exp, PropertyManager, element, Prefix, var));
+    } else if (operation == "abs") {
+      Parameters.push_back(make_MathFn(fabs, PropertyManager, element, Prefix, var));
+    } else if (operation == "sin") {
+      Parameters.push_back(make_MathFn(sin, PropertyManager, element, Prefix, var));
+    } else if (operation == "cos") {
+      Parameters.push_back(make_MathFn(cos, PropertyManager, element, Prefix, var));
+    } else if (operation == "tan") {
+      Parameters.push_back(make_MathFn(tan, PropertyManager, element, Prefix, var));
+    } else if (operation == "asin") {
+      Parameters.push_back(make_MathFn(asin, PropertyManager, element, Prefix, var));
+    } else if (operation == "acos") {
+      Parameters.push_back(make_MathFn(acos, PropertyManager, element, Prefix, var));
+    } else if (operation == "atan") {
+      Parameters.push_back(make_MathFn(atan, PropertyManager, element, Prefix, var));
+    } else if (operation == "floor") {
+      Parameters.push_back(make_MathFn(floor, PropertyManager, element, Prefix, var));
+    } else if (operation == "ceil") {
+      Parameters.push_back(make_MathFn(ceil, PropertyManager, element, Prefix, var));
+    } else if (operation == "fmod") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double y = p[1]->GetValue();
+                 return y != 0.0 ? fmod(p[0]->GetValue(), y) : HUGE_VAL;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "atan2") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return atan2(p[0]->GetValue(), p[1]->GetValue());
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "mod") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return static_cast<int>(p[0]->GetValue()) % static_cast<int>(p[1]->GetValue());
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "fraction") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double scratch;
+                 return modf(p[0]->GetValue(), &scratch);
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "integer") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double result;
+                 modf(p[0]->GetValue(), &result);
+                 return result;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "lt") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() < p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "le") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() <= p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "gt") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() > p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "ge") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() >= p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "eq") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() == p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "nq") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return p[0]->GetValue() != p[1]->GetValue() ? 1.0 : 0.0;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "not") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return GetBinary(p[0]->GetValue()) ? 0 : 1;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "ifthen") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 if (GetBinary(p[0]->GetValue()))
+                   return p[1]->GetValue();
+                 else
+                   return p[2]->GetValue();
+               };
+      Parameters.push_back(new aFunc<decltype(f), 3>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "random") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return GaussianRandomNumber();
+               };
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "urandom") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
+               };
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "switch") {
+      string ctxMsg = el->ReadFrom();
+      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+                 double temp = p[0]->GetValue();
+                 if (temp < 0.0) {
+                   cerr << ctxMsg << fgred << highint
+                        << "The switch function index (" << temp
+                        << ") is negative." << reset << endl;
+                   throw("Fatal error");
+                 }
+                 size_t n = p.size()-1;
+                 size_t i = static_cast<size_t>(temp+0.5);
+
+                 if (i < n)
+                   return p[i+1]->GetValue();
+                 else {
+                   cerr << ctxMsg << fgred << highint
+                        << "The switch function index (" << temp
+                        << ") selected a value above the range of supplied values"
+                        << "[0:" << n-1 << "]"
+                        << " - not enough values were supplied." << reset << endl;
+                   throw("Fatal error");
+                 }
+               };
+      Parameters.push_back(new aFunc<decltype(f), 2, 9999>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "interpolate1d") {
+      auto f = [](const decltype(Parameters)& p)->double {
+                 // This is using the bisection algorithm. Special care has been
+                 // taken to evaluate each parameter only once.
+                 size_t n = p.size();
+                 double x = p[0]->GetValue();
+                 double xmin = p[1]->GetValue();
+                 double ymin = p[2]->GetValue();
+                 if (x <= xmin) return ymin;
+
+                 double xmax = p[n-2]->GetValue();
+                 double ymax = p[n-1]->GetValue();
+                 if (x >= xmax) return ymax;
+
+                 size_t nmin = 0;
+                 size_t nmax = (n-3)/2;
+                 while (nmax-nmin > 1) {
+                   size_t m = (nmax-nmin)/2+nmin;
+                   double xm = p[2*m+1]->GetValue();
+                   double ym = p[2*m+2]->GetValue();
+                   if (x < xm) {
+                     xmax = xm;
+                     ymax = ym;
+                     nmax= m;
+                   } else if (x > xm) {
+                     xmin = xm;
+                     ymin = ym;
+                     nmin = m;
+                   }
+                   else
+                     return ym;
+                 }
+
+                 return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
+               };
+      Parameters.push_back(new aFunc<decltype(f), 5, 9999, OddEven::Odd>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "rotation_alpha_local") {
+      // Calculates local angle of attack for skydiver body component.
+      // Euler angles from the intermediate body frame to the local body frame
+      // must be from a z-y-x axis rotation order
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
+                 double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
+                 double phi = p[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
+                 double theta = p[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
+                 double psi = p[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
+
+                 FGQuaternion qTb2l(phi, theta, psi);
+                 double cos_beta = cos(beta);
+                 FGColumnVector3 wind_body(cos(alpha)*cos_beta, sin(beta),
+                                           sin(alpha)*cos_beta);
+                 FGColumnVector3 wind_local = qTb2l.GetT()*wind_body;
+
+                 if (fabs(fabs(wind_local(eY)) - 1.0) < 1E-9)
+                   return 0.0;
+                 else
+                   return atan2(wind_local(eZ), wind_local(eX))*radtodeg;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "rotation_beta_local") {
+      // Calculates local angle of sideslip for skydiver body component.
+      // Euler angles from the intermediate body frame to the local body frame
+      // must be from a z-y-x axis rotation order
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
+                 double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
+                 double phi = p[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
+                 double theta = p[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
+                 double psi = p[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
+                 FGQuaternion qTb2l(phi, theta, psi);
+                 double cos_beta = cos(beta);
+                 FGColumnVector3 wind_body(cos(alpha)*cos_beta, sin(beta),
+                                           sin(alpha)*cos_beta);
+                 FGColumnVector3 wind_local = qTb2l.GetT()*wind_body;
+
+                 if (fabs(fabs(wind_local(eY)) - 1.0) < 1E-9)
+                   return wind_local(eY) > 0.0 ? 0.5*M_PI : -0.5*M_PI;
+
+                 double alpha_local = atan2(wind_local(eZ), wind_local(eX));
+                 double cosa = cos(alpha_local);
+                 double sina = sin(alpha_local);
+                 double cosb;
+
+                 if (fabs(cosa) > fabs(sina)) 
+                   cosb = wind_local(eX) / cosa;
+                 else
+                   cosb = wind_local(eZ) / sina;  
+
+                 return atan2(wind_local(eY), cosb)*radtodeg;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "rotation_gamma_local") {
+      // Calculates local roll angle for skydiver body component.
+      // Euler angles from the intermediate body frame to the local body frame
+      // must be from a z-y-x axis rotation order
+      auto f = [](const decltype(Parameters)& p)->double {
+                 double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
+                 double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
+                 double gamma = p[2]->GetValue()*degtorad; //roll angle of intermediate body frame
+                 double phi = p[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
+                 double theta = p[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
+                 double psi = p[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
+                 double cos_alpha = cos(alpha), sin_alpha = sin(alpha);
+                 double cos_beta = cos(beta),   sin_beta = sin(beta);
+                 double cos_gamma = cos(gamma), sin_gamma = sin(gamma);
+                 FGQuaternion qTb2l(phi, theta, psi);
+                 FGColumnVector3 wind_body_X(cos_alpha*cos_beta, sin_beta,
+                                             sin_alpha*cos_beta);
+                 FGColumnVector3 wind_body_Y(-sin_alpha*sin_gamma-sin_beta*cos_alpha*cos_gamma,
+                                             cos_beta*cos_gamma,
+                                             -sin_alpha*sin_beta*cos_gamma+sin_gamma*cos_alpha);
+                 FGColumnVector3 wind_local_X = qTb2l.GetT()*wind_body_X;
+                 FGColumnVector3 wind_local_Y = qTb2l.GetT()*wind_body_Y;
+                 double cosacosb = wind_local_X(eX);
+                 double sinb = wind_local_X(eY);
+                 double sinacosb = wind_local_X(eZ);
+                 double sinc, cosc;
+
+                 if (fabs(sinb) < 1E-9) { // cos(beta_local) == 1.0
+                   cosc = wind_local_Y(eY);
+
+                   if (fabs(cosacosb) > fabs(sinacosb))
+                     sinc = wind_local_Y(eZ) / cosacosb;
+                   else
+                     sinc = -wind_local_Y(eX) / sinacosb;
+                 }
+                 else if (fabs(fabs(sinb)-1.0) < 1E-9) { // cos(beta_local) == 0.0
+                   sinc = wind_local_Y(eZ);
+                   cosc = -wind_local_Y(eX);
+                 }
+                 else {
+                   sinc = cosacosb*wind_local_Y(eZ)-sinacosb*wind_local_Y(eX);
+                   cosc = (-sinacosb*wind_local_Y(eZ)-cosacosb*wind_local_Y(eX))/sinb;
+                 }
+
+                 return atan2(sinc, cosc)*radtodeg;
+               };
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "rotation_bf_to_wf") {
+      // Transforms the input vector from a body frame to a wind frame. The
+      // origin of the vector remains the same.
+      string ctxMsg = el->ReadFrom();
+      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+                 double rx = p[0]->GetValue();             //x component of input vector
+                 double ry = p[1]->GetValue();             //y component of input vector
+                 double rz = p[2]->GetValue();             //z component of input vector
+                 double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
+                 double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+                 double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
+                 int idx = static_cast<int>(p[6]->GetValue());
+
+                 if ((idx < 1) || (idx > 3)) {
+                   cerr << ctxMsg << fgred << highint
+                        << "The index must be one of the integer value 1, 2 or 3."
+                        << reset << endl;
+                   throw("Fatal error");
+                 }
+
+                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                 FGMatrix33 mT = (qa*qb*qc).GetT();
+                 FGColumnVector3 r0(rx, ry, rz);
+                 FGColumnVector3 r = mT*r0;
+
+                 return r(idx);
+               };
+      Parameters.push_back(new aFunc<decltype(f), 7>(f, PropertyManager, element, Prefix, var));
+    } else if (operation == "rotation_wf_to_bf") {
+      // Transforms the input vector from q wind frame to a body frame. The
+      // origin of the vector remains the same.
+      string ctxMsg = el->ReadFrom();
+      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+                 double rx = p[0]->GetValue();             //x component of input vector
+                 double ry = p[1]->GetValue();             //y component of input vector
+                 double rz = p[2]->GetValue();             //z component of input vector
+                 double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
+                 double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+                 double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
+                 int idx = static_cast<int>(p[6]->GetValue());
+
+                 if ((idx < 1) || (idx > 3)) {
+                   cerr << ctxMsg << fgred << highint
+                        << "The index must be one of the integer value 1, 2 or 3."
+                        << reset << endl;
+                   throw("Fatal error");
+                 }
+
+                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                 FGMatrix33 mT = (qa*qb*qc).GetT();
+                 FGColumnVector3 r0(rx, ry, rz);
+                 mT.T();
+                 FGColumnVector3 r = mT*r0;
+
+                 return r(idx);
+               };
+      Parameters.push_back(new aFunc<decltype(f), 7>(f, PropertyManager, element, Prefix, var));
+    } else if (operation != "description") {
+      cerr << el->ReadFrom() << fgred << highint
+           << "Bad operation <" << operation
+           << "> detected in configuration file" << reset << endl;
     }
     element = el->GetNextElement();
   }
 
-  bind(el, PropertyManager); // Allow any function to save its value
+  bind(el, PropertyManager, Prefix); // Allow any function to save its value
 
   Debug(0);
 }
@@ -361,442 +701,18 @@ void FGFunction::cacheValue(bool cache)
     cached = true;
   }
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-unsigned int FGFunction::GetBinary(double val) const
-{
-  val = fabs(val);
-  if (val < 1E-9) return 0;
-  else if (val-1 < 1E-9) return 1;
-  else {
-    throw("Malformed conditional check in function definition.");
-  }
-}
   
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGFunction::GetValue(void) const
 {
-  unsigned int i;
-  double scratch;
-  double temp=0;
-
   if (cached) return cachedValue;
 
-  if (   Type != eRandom
-      && Type != eUrandom
-      && Type != ePi      ) temp = Parameters[0]->GetValue();
-  
-  switch (Type) {
-  case eTopLevel:
-    if (pCopyTo) pCopyTo->setDoubleValue(temp);
-    break;
-  case eProduct:
-    for (i=1;i<Parameters.size();i++) {
-      temp *= Parameters[i]->GetValue();
-    }
-    break;
-  case eDifference:
-    for (i=1;i<Parameters.size();i++) {
-      temp -= Parameters[i]->GetValue();
-    }
-    break;
-  case eSum:
-    for (i=1;i<Parameters.size();i++) {
-      temp += Parameters[i]->GetValue();
-    }
-    break;
-  case eQuotient:
-    if (Parameters[1]->GetValue() != 0.0)
-      temp /= Parameters[1]->GetValue();
-    else
-      temp = HUGE_VAL;
-    break;
-  case ePow:
-    temp = pow(temp,Parameters[1]->GetValue());
-    break;
-  case eSqrt:
-    temp = sqrt(temp);
-    break;
-  case eToRadians:
-    temp *= M_PI/180.0;
-    break;
-  case eToDegrees:
-    temp *= 180.0/M_PI;
-    break;
-  case eExp:
-    temp = exp(temp);
-    break;
-  case eLog2:
-    if (temp > 0.00) temp = log10(temp)*invlog2val;
-    else temp = -HUGE_VAL;
-    break;
-  case eLn:
-    if (temp > 0.00) temp = log(temp);
-    else temp = -HUGE_VAL;
-    break;
-  case eLog10:
-    if (temp > 0.00) temp = log10(temp);
-    else temp = -HUGE_VAL;
-    break;
-  case eAbs:
-    temp = fabs(temp);
-    break;
-  case eSign:
-    temp =  temp < 0 ? -1:1; // 0.0 counts as positive.
-    break;
-  case eSin:
-    temp = sin(temp);
-    break;
-  case eCos:
-    temp = cos(temp);
-    break;
-  case eTan:
-    temp = tan(temp);
-    break;
-  case eACos:
-    temp = acos(temp);
-    break;
-  case eASin:
-    temp = asin(temp);
-    break;
-  case eATan:
-    temp = atan(temp);
-    break;
-  case eATan2:
-    temp = atan2(temp, Parameters[1]->GetValue());
-    break;
-  case eMod:
-    temp = ((int)temp) % ((int) Parameters[1]->GetValue());
-    break;
-  case eMin:
-    for (i=1;i<Parameters.size();i++) {
-      if (Parameters[i]->GetValue() < temp) temp = Parameters[i]->GetValue();
-    }    
-    break;
-  case eMax:
-    for (i=1;i<Parameters.size();i++) {
-      if (Parameters[i]->GetValue() > temp) temp = Parameters[i]->GetValue();
-    }    
-    break;
-  case eAvg:
-    for (i=1;i<Parameters.size();i++) {
-      temp += Parameters[i]->GetValue();
-    }
-    temp /= Parameters.size();
-    break;
-  case eFrac:
-    temp = modf(temp, &scratch);
-    break;
-  case eInteger:
-    modf(temp, &scratch);
-    temp = scratch;
-    break;
-  case eRandom:
-    temp = GaussianRandomNumber();
-    break;
-  case eUrandom:
-    temp = -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
-    break;
-  case ePi:
-    temp = M_PI;
-    break;
-  case eLT:
-    temp = (temp < Parameters[1]->GetValue())?1:0;
-    break;
-  case eLE:
-    temp = (temp <= Parameters[1]->GetValue())?1:0;
-    break;
-  case eGT:
-    temp = (temp > Parameters[1]->GetValue())?1:0;
-    break;
-  case eGE:
-    temp = (temp >= Parameters[1]->GetValue())?1:0;
-    break;
-  case eEQ:
-    temp = (temp == Parameters[1]->GetValue())?1:0;
-    break;
-  case eNE:
-    temp = (temp != Parameters[1]->GetValue())?1:0;
-    break;
-  case eAND:
-    {
-      bool flag = (GetBinary(temp) != 0u);
-      for (i=1; i<Parameters.size() && flag; i++) {
-        flag = (GetBinary(Parameters[i]->GetValue()) != 0);
-      }
-      temp = flag ? 1 : 0;
-    }
-    break;
-  case eOR:
-    {
-      bool flag = (GetBinary(temp) != 0);
-      for (i=1; i<Parameters.size() && !flag; i++) {
-        flag = (GetBinary(Parameters[i]->GetValue()) != 0);
-      }
-      temp = flag ? 1 : 0;
-    }
-    break;
-  case eNOT:
-    temp = (GetBinary(temp) != 0) ? 0 : 1;
-    break;
-  case eIfThen:
-    {
-      i = Parameters.size();
-      if (i == 3) {
-        if (GetBinary(temp) == 1) {
-          temp = Parameters[1]->GetValue();
-        } else {
-          temp = Parameters[2]->GetValue();
-        }
-      } else {
-        throw("Malformed if/then function statement");
-      }
-    }
-    break;
-  case eSwitch:
-    {
-      size_t n = Parameters.size()-1;
-      i = int(temp+0.5);
-      if (i < n) {
-        temp = Parameters[i+1]->GetValue();
-      } else {
-        throw(string("The switch function index selected a value above the range of supplied values"
-                     " - not enough values were supplied."));
-      }
-    }
-    break;
-  case eInterpolate1D:
-    {
-      size_t sz = Parameters.size();
-      if (temp <= Parameters[1]->GetValue()) {
-        temp = Parameters[2]->GetValue();
-      } else if (temp >= Parameters[sz-2]->GetValue()) {
-        temp = Parameters[sz-1]->GetValue();
-      } else {
-        for (unsigned int i=1; i<=sz-4; i+=2) {
-          if (temp < Parameters[i+2]->GetValue()) {
-            double factor = (temp - Parameters[i]->GetValue()) /
-                            (Parameters[i+2]->GetValue() - Parameters[i]->GetValue());
-            double span = Parameters[i+3]->GetValue() - Parameters[i+1]->GetValue();
-            double val = factor*span;
-            temp = Parameters[i+1]->GetValue() + val;
-            break;
-          }
-        }
-      }
-    }
-    break;
-  case eRotation_alpha_local:
-    if (Parameters.size()==6) // calculates local angle of attack for skydiver body component
-        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
-    {
-        double alpha = Parameters[0]->GetValue()*degtorad;
-        double beta = Parameters[1]->GetValue()*degtorad;
-        double gamma = Parameters[2]->GetValue()*degtorad;
-        double phi = Parameters[3]->GetValue()*degtorad;
-        double theta = Parameters[4]->GetValue()*degtorad;
-        double psi = Parameters[5]->GetValue()*degtorad;
-        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
-        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
-        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
-        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
-        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
-        //calculate local body frame to the intermediate body frame rotation quaternion
-        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
-        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
-        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
-        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
-        //calculate the intermediate body frame to global wind frame rotation quaternion
-        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
-        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
-        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
-        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
-        //multiply quaternions
-        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
-        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
-        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
-        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
-        //calculate alpha_local
-        temp = -atan2(2*(Cy*Ct-Cx*Cz),(Ct*Ct+Cx*Cx-Cy*Cy-Cz*Cz));
-        temp *= radtodeg;
-    } else {
-      temp = 1;
-    }
-    break;
-  case eRotation_beta_local:
-    if (Parameters.size()==6) // calculates local angle of sideslip for skydiver body component
-        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
-    {
-        double alpha = Parameters[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
-        double beta = Parameters[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
-        double gamma = Parameters[2]->GetValue()*degtorad; //roll angle of intermediate body frame
-        double phi = Parameters[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
-        double theta = Parameters[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
-        double psi = Parameters[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
-        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
-        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
-        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
-        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
-        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
-        //calculate local body frame to the intermediate body frame rotation quaternion
-        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
-        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
-        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
-        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
-        //calculate the intermediate body frame to global wind frame rotation quaternion
-        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
-        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
-        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
-        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
-        //multiply quaternions
-        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
-        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
-        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
-        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
-        //calculate beta_local
-        temp = asin(2*(Cx*Cy+Cz*Ct));
-        temp *= radtodeg;
-    }
-    else // 
-    {temp = 1;}
-    break;
-  case eRotation_gamma_local:
-    if (Parameters.size()==6) // calculates local angle of attack for skydiver body component
-        //Euler angles from the intermediate body frame to the local body frame must be from a z-y-x axis rotation order
-        {
-        double alpha = Parameters[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
-        double beta = Parameters[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
-        double gamma = Parameters[2]->GetValue()*degtorad; //roll angle of intermediate body frame
-        double phi = Parameters[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
-        double theta = Parameters[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
-        double psi = Parameters[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
-        double cphi2 = cos(-phi/2), ctht2 = cos(-theta/2), cpsi2 = cos(-psi/2);
-        double sphi2 = sin(-phi/2), stht2 = sin(-theta/2), spsi2 = sin(-psi/2);
-        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
-        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
-        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
-        //calculate local body frame to the intermediate body frame rotation quaternion
-        double At = cphi2*ctht2*cpsi2 - sphi2*stht2*spsi2;
-        double Ax = cphi2*stht2*spsi2 + sphi2*ctht2*cpsi2;
-        double Ay = cphi2*stht2*cpsi2 - sphi2*ctht2*spsi2;
-        double Az = cphi2*ctht2*spsi2 + sphi2*stht2*cpsi2;
-        //calculate the intermediate body frame to global wind frame rotation quaternion
-        double Bt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
-        double Bx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
-        double By = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
-        double Bz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
-        //multiply quaternions
-        double Ct = At*Bt - Ax*Bx - Ay*By - Az*Bz;
-        double Cx = At*Bx + Ax*Bt + Ay*Bz - Az*By;
-        double Cy = At*By - Ax*Bz + Ay*Bt + Az*Bx;
-        double Cz = At*Bz + Ax*By - Ay*Bx + Az*Bt;
-        //calculate local roll anlge
-        temp = -atan2(2*(Cx*Ct-Cz*Cy),(Ct*Ct-Cx*Cx+Cy*Cy-Cz*Cz));
-        temp *= radtodeg;
-    }
-    else // 
-    {temp = 1;}
-    break;
-  case eRotation_bf_to_wf:
-    if (Parameters.size()==7) // transforms the input vector from a body frame to a wind frame.  The origin of the vector remains the same.
-    {
-        double rx = Parameters[0]->GetValue();             //x component of input vector
-        double ry = Parameters[1]->GetValue();             //y component of input vector
-        double rz = Parameters[2]->GetValue();             //z component of input vector
-        double alpha = Parameters[3]->GetValue()*degtorad; //angle of attack of the body frame
-        double beta = Parameters[4]->GetValue()*degtorad;  //sideslip angle of the body frame
-        double gamma = Parameters[5]->GetValue()*degtorad; //roll angle of the body frame
-        double index = Parameters[6]->GetValue();
-        double calpha2 = cos(-alpha/2), salpha2 = sin(-alpha/2);
-        double cbeta2 = cos(beta/2), sbeta2 = sin(beta/2);
-        double cgamma2 = cos(-gamma/2), sgamma2 = sin(-gamma/2);
-        //calculate the body frame to wind frame quaternion
-        double qt = calpha2*cbeta2*cgamma2 - salpha2*sbeta2*sgamma2;
-        double qx = calpha2*cbeta2*sgamma2 + salpha2*sbeta2*cgamma2;
-        double qy = calpha2*sbeta2*sgamma2 + salpha2*cbeta2*cgamma2;
-        double qz = calpha2*sbeta2*cgamma2 - salpha2*cbeta2*sgamma2;
-        //calculate the quaternion conjugate
-        double qstart = qt;
-        double qstarx = -qx;
-        double qstary = -qy;
-        double qstarz = -qz;
-        //multiply quaternions v*q
-        double vqt = -rx*qx - ry*qy - rz*qz;
-        double vqx =  rx*qt + ry*qz - rz*qy;
-        double vqy = -rx*qz + ry*qt + rz*qx;
-        double vqz =  rx*qy - ry*qx + rz*qt;
-        //multiply quaternions qstar*vq
-        double Cx = qstart*vqx + qstarx*vqt + qstary*vqz - qstarz*vqy;
-        double Cy = qstart*vqy - qstarx*vqz + qstary*vqt + qstarz*vqx;
-        double Cz = qstart*vqz + qstarx*vqy - qstary*vqx + qstarz*vqt;
+  double val = Parameters[0]->GetValue();
 
-        if (index == 1)     temp = Cx;
-        else if (index ==2) temp = Cy;
-        else                temp = Cz;
-    }
-    else // 
-    {temp = 1;}
-    break;
-  case eRotation_wf_to_bf:
-    if (Parameters.size()==7) // transforms the input vector from q wind frame to a body frame.  The origin of the vector remains the same.
-    {
-        double rx = Parameters[0]->GetValue();             //x component of input vector
-        double ry = Parameters[1]->GetValue();             //y component of input vector
-        double rz = Parameters[2]->GetValue();             //z component of input vector
-        double alpha = Parameters[3]->GetValue()*degtorad; //angle of attack of the body frame
-        double beta = Parameters[4]->GetValue()*degtorad;  //sideslip angle of the body frame
-        double gamma = Parameters[5]->GetValue()*degtorad; //roll angle of the body frame
-        double index = Parameters[6]->GetValue();
-        double calpha2 = cos(alpha/2), salpha2 = sin(alpha/2);
-        double cbeta2 = cos(-beta/2), sbeta2 = sin(-beta/2);
-        double cgamma2 = cos(gamma/2), sgamma2 = sin(gamma/2);
-        //calculate the wind frame to body frame quaternion
-        double qt =  cgamma2*cbeta2*calpha2 + sgamma2*sbeta2*salpha2;
-        double qx = -cgamma2*sbeta2*salpha2 + sgamma2*cbeta2*calpha2;
-        double qy =  cgamma2*cbeta2*salpha2 - sgamma2*sbeta2*calpha2;
-        double qz =  cgamma2*sbeta2*calpha2 + sgamma2*cbeta2*salpha2;
-        //calculate the quaternion conjugate
-        double qstart =  qt;
-        double qstarx = -qx;
-        double qstary = -qy;
-        double qstarz = -qz;
-        //multiply quaternions v*q
-        double vqt = -rx*qx - ry*qy - rz*qz;
-        double vqx =  rx*qt + ry*qz - rz*qy;
-        double vqy = -rx*qz + ry*qt + rz*qx;
-        double vqz =  rx*qy - ry*qx + rz*qt;
-        //multiply quaternions qstar*vq
-        double Cx = qstart*vqx + qstarx*vqt + qstary*vqz - qstarz*vqy;
-        double Cy = qstart*vqy - qstarx*vqz + qstary*vqt + qstarz*vqx;
-        double Cz = qstart*vqz + qstarx*vqy - qstary*vqx + qstarz*vqt;
+  if (pCopyTo) pCopyTo->setDoubleValue(val);
 
-        if (index == 1)     temp = Cx;
-        else if (index ==2) temp = Cy;
-        else                temp = Cz;
-    }
-    else // 
-    {temp = 1;}
-    break;
-  case eFloor:
-    temp = floor(temp);
-    break;
-  case eCeil:
-    temp = ceil(temp);
-    break;
-  case eFmod:
-    if (Parameters[1]->GetValue() != 0.0)
-      temp = fmod(temp, Parameters[1]->GetValue());
-    else
-      temp = HUGE_VAL;
-    break;
-  default:
-    cerr << "Unknown function operation type" << endl;
-    break;
-  }
-
-  return temp;
+  return val;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -811,7 +727,8 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::bind(Element* el, FGPropertyManager* PropertyManager)
+void FGFunction::bind(Element* el, FGPropertyManager* PropertyManager,
+                      const string& Prefix)
 {
   if ( !Name.empty() ) {
     string tmp;
@@ -870,7 +787,7 @@ void FGFunction::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (Type == eTopLevel)
+      if (!Name.empty())
         cout << "    Function: " << Name << endl;
     }
   }
