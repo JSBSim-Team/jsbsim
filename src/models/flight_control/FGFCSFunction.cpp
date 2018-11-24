@@ -82,8 +82,8 @@ bool FGFCSFunction::Run(void )
 {
   Output = function->GetValue();
 
-  if (InputNodes.size() > 0) {
-    Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  if (!InputNodes.empty()) {
+    Input = InputNodes[0]->getDoubleValue();
     Output*= Input;
   }
 
@@ -118,13 +118,10 @@ void FGFCSFunction::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (InputNodes.size()>0)
+      if (!InputNodes.empty())
         cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-//    cout << "      Function: " << endl;
-      if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

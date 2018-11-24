@@ -144,7 +144,7 @@ void FGSensor::ResetPastStates(void)
 
 bool FGSensor::Run(void)
 {
-  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Input = InputNodes[0]->getDoubleValue();
 
   ProcessSensorSignal();
 
@@ -296,12 +296,8 @@ void FGSensor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (InputSigns.size() > 0) {
-        if (InputSigns[0] < 0)
-          cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
-        else
-          cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      }
+      if (!InputNodes.empty())
+        cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
       if (bits != 0) {
         if (quant_property.empty())
           cout << "      Quantized output" << endl;
@@ -331,10 +327,8 @@ void FGSensor::Debug(int from)
           cout << "      Random noise is gaussian distributed." << endl;
         }
       }
-      if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

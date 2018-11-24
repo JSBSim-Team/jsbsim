@@ -158,7 +158,7 @@ bool FGFilter::Run(void)
 
   } else {
 
-    Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+    Input = InputNodes[0]->getDoubleValue();
     
     if (DynamicFilter) CalculateDynamicFilters();
     
@@ -231,10 +231,8 @@ void FGFilter::Debug(int from)
           cout << "      C[" << i << "]: " << C[i]->GetValue() << endl;
       }
 
-      if (IsOutput) {
-        for (auto node: OutputNodes)
-          cout << "      OUTPUT: " << node->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

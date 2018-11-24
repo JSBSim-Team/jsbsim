@@ -99,7 +99,7 @@ bool FGKinemat::Run(void )
 {
   double dt0 = dt;
 
-  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Input = InputNodes[0]->getDoubleValue();
 
   if (DoScale) Input *= Detents.back();
 
@@ -187,10 +187,8 @@ void FGKinemat::Debug(int from)
       for (unsigned int i=0;i<Detents.size();i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
-      if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+          cout << "      OUTPUT: " << node->getName() << endl;
       if (!DoScale) cout << "      NOSCALE" << endl;
     }
   }

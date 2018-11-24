@@ -142,7 +142,7 @@ bool FGGain::Run(void )
 {
   double SchedGain = 1.0;
 
-  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Input = InputNodes[0]->getDoubleValue();
 
   double gain = Gain->GetValue();
 
@@ -203,10 +203,7 @@ void FGGain::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (InputSigns[0] < 0)
-        cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
-      else
-        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
 
       FGPropertyValue* g = dynamic_cast<FGPropertyValue*>(Gain.ptr());
       if (g)
@@ -214,10 +211,9 @@ void FGGain::Debug(int from)
       else
         cout << "      GAIN: " << Gain->GetValue() << endl;
 
-      if (IsOutput) {
-        for (auto node: OutputNodes)
-          cout << "      OUTPUT: " << node->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
+
       if (Type == "AEROSURFACE_SCALE") {
         cout << "      In/Out Mapping:" << endl;
         cout << "        Input MIN: " << InMin << endl;

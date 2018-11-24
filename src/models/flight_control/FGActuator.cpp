@@ -151,7 +151,7 @@ void FGActuator::ResetPastStates(void)
 
 bool FGActuator::Run(void )
 {
-  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Input = InputNodes[0]->getDoubleValue();
 
   if( fcs->GetTrimStatus() ) initialized = 0;
 
@@ -327,12 +327,9 @@ void FGActuator::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (InputSigns[0] < 0)
-        cout << "      INPUT: -" << InputNodes[0]->GetName() << endl;
-      else
-        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
+      cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
 
-      if (IsOutput) {
+      if (!OutputNodes.empty()) {
         for (auto node: OutputNodes)
           cout << "      OUTPUT: " << node->GetName() << endl;
       }

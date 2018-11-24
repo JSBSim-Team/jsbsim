@@ -61,7 +61,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   delay = index = 0;
   ClipMin = ClipMax = nullptr;
   IsOutput   = clip = false;
-  string input;
   dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -126,14 +125,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   
   input_element = element->FindElement("input");
   while (input_element) {
-    input = input_element->GetDataLine();
-    if (input[0] == '-') {
-      InputSigns.push_back(-1.0);
-      input.erase(0,1);
-    } else
-      InputSigns.push_back( 1.0);
-
-    InputNodes.push_back(new FGPropertyValue( input, PropertyManager ));
+    InputNodes.push_back(new FGPropertyValue(input_element->GetDataLine(),
+                                             PropertyManager ));
 
     input_element = element->FindNextElement("input");
   }

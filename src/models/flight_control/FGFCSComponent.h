@@ -107,7 +107,6 @@ protected:
   FGParameter_ptr ClipMin, ClipMax;
   std::vector <FGPropertyValue_ptr> InitNodes;
   std::vector <FGPropertyValue_ptr> InputNodes;
-  std::vector <float> InputSigns;
   std::vector <double> output_array;
   std::string Type;
   std::string Name;

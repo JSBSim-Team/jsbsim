@@ -89,7 +89,7 @@ FGDeadBand::~FGDeadBand()
 
 bool FGDeadBand::Run(void )
 {
-  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Input = InputNodes[0]->getDoubleValue();
 
   double HalfWidth = 0.5*Width->GetValue();
 
@@ -142,10 +142,9 @@ void FGDeadBand::Debug(int from)
         cout << Width->GetValue() << endl;
 
       cout << "      GAIN: " << gain << endl;
-      if (IsOutput) {
-        for (auto node: OutputNodes)
-          cout << "      OUTPUT: " << node->getName() << endl;
-      }
+
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
