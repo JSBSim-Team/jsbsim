@@ -60,13 +60,16 @@ const unsigned int MaxArgs = 9999;
 class WrongNumberOfArguments : public runtime_error
 {
 public:
-  WrongNumberOfArguments(const string &msg, const vector<FGParameter_ptr> &p)
-    : runtime_error(msg), Parameters(p) {}
-  size_t NumberOfArguments(void) { return Parameters.size(); }
-  FGParameter* FirstParameter(void) { return *(Parameters.cbegin()); }
+  WrongNumberOfArguments(const string &msg, const vector<FGParameter_ptr> &p,
+                         Element* el)
+    : runtime_error(msg), Parameters(p), element(el) {}
+  size_t NumberOfArguments(void) const { return Parameters.size(); }
+  FGParameter* FirstParameter(void) const { return *(Parameters.cbegin()); }
+  const Element* GetElement(void) const { return element; }
 
 private:
-  vector<FGParameter_ptr> Parameters;
+  const vector<FGParameter_ptr> Parameters;
+  const Element* element;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,12 +138,12 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGPropertyManager* pm, Element* el,
     return new aFunc<func_t, 2, MaxArgs>(_f, pm, el, prefix, v);
   }
   catch(WrongNumberOfArguments& e) {
-    if (e.NumberOfArguments() == 1) {
+    if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
       cerr << el->ReadFrom() << FGJSBBase::fgred
            << "<" << el->GetName()
            << "> only has one argument which makes it a no-op." << endl
            << "Its argument will be evaluated but <" << el->GetName()
-           << "> will not be applied on the result." << FGJSBBase::reset << endl;
+           << "> will not be applied to the result." << FGJSBBase::reset << endl;
       return e.FirstParameter();
     }
     else
@@ -191,7 +194,7 @@ void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
     buffer << el->ReadFrom() << fgred << highint
            << "<" << el->GetName() << "> should have at least " << _min
            << " argument(s)." << reset << endl;
-    throw WrongNumberOfArguments(buffer.str(), Parameters);
+    throw WrongNumberOfArguments(buffer.str(), Parameters, el);
   }
 }
 
@@ -204,7 +207,7 @@ void FGFunction::CheckMaxArguments(Element* el, unsigned int _max)
     buffer << el->ReadFrom() << fgred << highint
            << "<" << el->GetName() << "> should have no more than " << _max
            << " argument(s)." << reset << endl;
-    throw WrongNumberOfArguments(buffer.str(), Parameters);
+    throw WrongNumberOfArguments(buffer.str(), Parameters, el);
   }
 }
 
@@ -341,10 +344,10 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
                  for (auto p : Parameters) {
                    if (!GetBinary(p->GetValue(), ctxMsg)) // As soon as one parameter is false, the expression is guaranteed to be false.
-                     return false;
+                     return 0.0;
                  }
 
-                 return true;
+                 return 1.0;
                };
       Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "or") {
@@ -352,10 +355,10 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
                  for (auto p : Parameters) {
                    if (GetBinary(p->GetValue(), ctxMsg)) // As soon as one parameter is true, the expression is guaranteed to be true.
-                     return true;
+                     return 1.0;
                  }
 
-                 return false;
+                 return 0.0;
                };
       Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "quotient") {
@@ -490,9 +493,9 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
     } else if (operation == "not") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
-                 return GetBinary(p[0]->GetValue(), ctxMsg) ? 0 : 1;
+                 return GetBinary(p[0]->GetValue(), ctxMsg) ? 0.0 : 1.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "ifthen") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {

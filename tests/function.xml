@@ -53,7 +53,9 @@
         <product>
           <sum>
             <p>test/reference</p>
-            <v>1.0</v>
+            <not>
+              <v> 0.0 </v>
+            </not>
           </sum>
         </product>
       </function>
