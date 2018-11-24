@@ -51,7 +51,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-const double FGFunction::invlog2val = 1.0/log10(2.0);
+const double invlog2val = 1.0/log10(2.0);
+const unsigned int MaxArgs = 9999;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -140,7 +141,7 @@ void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
   if (Parameters.size() < _min) {
     cerr << el->ReadFrom() << fgred << highint
          << "<" << el->GetName() << "> should have at least " << _min
-         << " argument." << reset << endl;
+         << " argument(s)." << reset << endl;
     throw("Not enough arguments.");
   }
 }
@@ -152,7 +153,7 @@ void FGFunction::CheckMaxArguments(Element* el, unsigned int _max)
   if (Parameters.size() > _max) {
     cerr << el->ReadFrom() << fgred << highint
          << "<" << el->GetName() << "> should have no more than " << _max
-         << " argument." << reset << endl;
+         << " argument(s)." << reset << endl;
     throw("Too many arguments.");
   }
 }
@@ -241,14 +242,14 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return temp;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "sum") {
-      Parameters.push_back(new aFunc<decltype(sum), 1, 9999>(sum, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(sum), 2, MaxArgs>(sum, PropertyManager, element, Prefix, var));
     } else if (operation == "avg") {
       auto avg = [&](const decltype(Parameters)& p)->double {
                    return sum(p) / p.size();
                  };
-      Parameters.push_back(new aFunc<decltype(avg), 1, 9999>(avg, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(avg), 2, MaxArgs>(avg, PropertyManager, element, Prefix, var));
     } else if (operation == "difference") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = Parameters[0]->GetValue();
@@ -258,7 +259,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return temp;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "min") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _min = HUGE_VAL;
@@ -271,7 +272,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return _min;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "max") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _max = -HUGE_VAL;
@@ -284,7 +285,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return _max;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "and") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  for (auto p : Parameters) {
@@ -294,7 +295,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return true;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "or") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  for (auto p : Parameters) {
@@ -304,7 +305,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return false;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "quotient") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double y = p[1]->GetValue();
@@ -481,7 +482,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
                    throw("Fatal error");
                  }
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, 9999>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "interpolate1d") {
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
@@ -517,7 +518,7 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
 
                  return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
                };
-      Parameters.push_back(new aFunc<decltype(f), 5, 9999, OddEven::Odd>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 5, MaxArgs, OddEven::Odd>(f, PropertyManager, element, Prefix, var));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame

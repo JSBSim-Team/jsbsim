@@ -1574,23 +1574,19 @@
 
   <fcs_function name="electrical/lamps/landing/bow-current-A">
    <function>
-    <product>
      <quotient>
       <property>electrical/light-switch-panel/landing-voltage-V[0]</property>
       <value>2.4</value>
      </quotient>
-    </product>
    </function>
   </fcs_function>
 
   <fcs_function name="electrical/lamps/landing/wing-current-A">
    <function>
-    <product>
      <quotient>
       <property>electrical/light-switch-panel/landing-voltage-V[1]</property>
       <value>1.152</value>
      </quotient>
-    </product>
    </function>
   </fcs_function>
 

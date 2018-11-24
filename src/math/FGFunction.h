@@ -778,8 +778,6 @@ protected:
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
 
 private:
-  static const double invlog2val;
-
   std::string Name;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
 

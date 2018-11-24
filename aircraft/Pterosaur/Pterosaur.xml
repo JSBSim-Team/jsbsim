@@ -272,26 +272,24 @@
 
   <function name="aero/function/kCLge">
     <description>Change_in_lift_due_to_ground_effect</description>
-    <product>
-      <table>
-        <independentVar>aero/h_b-mac-ft</independentVar>
-        <tableData>
-           0.0000        1.3910
-           0.1000        1.2350
-           0.1500        1.1670
-           0.2000        1.1350
-           0.3000        1.0850
-           0.4000        1.1020
-           0.5000        1.0350
-           0.6000        1.0240
-           0.7000        1.0150
-           0.8000        1.0110
-           0.9000        1.0060
-           1.0000        1.0040
-           1.1000        1.0000
-        </tableData>
-      </table>
-    </product>
+    <table>
+      <independentVar>aero/h_b-mac-ft</independentVar>
+      <tableData>
+        0.0000        1.3910
+        0.1000        1.2350
+        0.1500        1.1670
+        0.2000        1.1350
+        0.3000        1.0850
+        0.4000        1.1020
+        0.5000        1.0350
+        0.6000        1.0240
+        0.7000        1.0150
+        0.8000        1.0110
+        0.9000        1.0060
+        1.0000        1.0040
+        1.1000        1.0000
+      </tableData>
+    </table>
   </function>
 
   <axis name="LIFT">

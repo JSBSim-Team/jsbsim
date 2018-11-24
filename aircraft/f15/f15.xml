@@ -441,74 +441,68 @@
 
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
-            <product>
-                  <table>
-                      <independentVar>aero/h_b-mac-ft</independentVar>
-                      <tableData>
-                          0.0000	1.0610
-                          0.1000	1.0330
-                          0.1500	1.0310
-                          0.2000	1.0330
-                          0.3000	1.0280
-                          0.4000	1.0110
-                          0.5000	1.0090
-                          0.6000	1.0050
-                          0.7000	1.0020
-                          0.8000	1.0000
-                          0.9000	1.0000
-                          1.0000	1.0000
-                          1.1000	1.0000
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+                <independentVar>aero/h_b-mac-ft</independentVar>
+                <tableData>
+                    0.0000	1.0610
+                    0.1000	1.0330
+                    0.1500	1.0310
+                    0.2000	1.0330
+                    0.3000	1.0280
+                    0.4000	1.0110
+                    0.5000	1.0090
+                    0.6000	1.0050
+                    0.7000	1.0020
+                    0.8000	1.0000
+                    0.9000	1.0000
+                    1.0000	1.0000
+                    1.1000	1.0000
+                </tableData>
+            </table>
         </function>
 
         <function name="aero/function/kCDge">
             <description>Change_in_drag_due_to_ground_effect</description>
-            <product>
-                  <table>
-                      <independentVar>aero/h_b-mac-ft</independentVar>
-                      <tableData>
-                          0.0000	0.8100
-                          0.1000	0.9900
-                          0.1500	0.9500
-                          0.2000	0.9800
-                          0.3000	0.9900
-                          0.4000	1.0000
-                          0.5000	1.0400
-                          0.6000	1.0100
-                          0.7000	0.9900
-                          0.8000	1.0100
-                          0.9000	1.0000
-                          1.0000	1.0000
-                          1.1000	1.0000
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+                <independentVar>aero/h_b-mac-ft</independentVar>
+                <tableData>
+                    0.0000	0.8100
+                    0.1000	0.9900
+                    0.1500	0.9500
+                    0.2000	0.9800
+                    0.3000	0.9900
+                    0.4000	1.0000
+                    0.5000	1.0400
+                    0.6000	1.0100
+                    0.7000	0.9900
+                    0.8000	1.0100
+                    0.9000	1.0000
+                    1.0000	1.0000
+                    1.1000	1.0000
+                </tableData>
+            </table>
         </function>
 
         <function name="aero/function/kCmge">
             <description>Change_in_pitch_due_to_ground_effect</description>
-            <product>
-                  <table>
-                      <independentVar>aero/h_b-mac-ft</independentVar>
-                      <tableData>
-                          0.0000	0.9920
-                          0.1000	0.9960
-                          0.1500	0.9990
-                          0.2000	0.9970
-                          0.3000	1.0000
-                          0.4000	1.0000
-                          0.5000	1.0020
-                          0.6000	1.0010
-                          0.7000	0.9980
-                          0.8000	0.9990
-                          0.9000	1.0000
-                          1.0000	1.0000
-                          1.1000	1.0000
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+                <independentVar>aero/h_b-mac-ft</independentVar>
+                <tableData>
+                    0.0000	0.9920
+                    0.1000	0.9960
+                    0.1500	0.9990
+                    0.2000	0.9970
+                    0.3000	1.0000
+                    0.4000	1.0000
+                    0.5000	1.0020
+                    0.6000	1.0010
+                    0.7000	0.9980
+                    0.8000	0.9990
+                    0.9000	1.0000
+                    1.0000	1.0000
+                    1.1000	1.0000
+                </tableData>
+            </table>
         </function>
 
         <axis name="DRAG">

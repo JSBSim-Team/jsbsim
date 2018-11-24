@@ -1367,19 +1367,17 @@
         <aero_ref_pt_shift_x>
           <function name="aero/function/kC0">
             <description>Shift_of_center_of_pressure</description>
-            <product>
-                  <table>
-                      <independentVar>velocities/mach</independentVar>
-                      <tableData>
-                          0.5   	0.550
-                          0.9   	0.580
-                          1.0   	0.645
-                          1.2   	0.635
-                          1.5   	0.625
-                          2.0   	0.620
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+              <independentVar>velocities/mach</independentVar>
+              <tableData>
+                0.5   	0.550
+                0.9   	0.580
+                1.0   	0.645
+                1.2   	0.635
+                1.5   	0.625
+                2.0   	0.620
+              </tableData>
+            </table>
           </function>
         </aero_ref_pt_shift_x>
 
@@ -1391,18 +1389,16 @@
         </documentation>
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
-            <product>
-                  <table>
-                      <independentVar>aero/h_b-mac-ft</independentVar>
-                      <tableData>
-                          0.0000	1.2000
-                          0.1000	1.1500
-                          0.1500	1.0900
-                          0.2000	1.0200
-                          1.1000	1.0000
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+                <independentVar>aero/h_b-mac-ft</independentVar>
+                <tableData>
+                    0.0000	1.2000
+                    0.1000	1.1500
+                    0.1500	1.0900
+                    0.2000	1.0200
+                    1.1000	1.0000
+                </tableData>
+            </table>
         </function>
 
         <axis name="DRAG">

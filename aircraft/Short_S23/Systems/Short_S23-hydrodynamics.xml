@@ -1068,14 +1068,12 @@
    <function>
     <product>
      <value> -1.0 </value>
-     <sum>
-      <product>
+     <product>
        <cos>
         <property> flight-path/psi-gt-rad </property>
        </cos>
        <property> hydro/left-float-drag-lbs </property>
-      </product>
-     </sum>
+     </product>
     </product>
    </function>
    <output> external_reactions/left-float-X/magnitude </output>
@@ -1085,14 +1083,12 @@
    <function>
     <product>
      <value> -1.0 </value>
-     <sum>
-      <product>
+     <product>
        <cos>
         <property> flight-path/psi-gt-rad </property>
        </cos>
        <property> hydro/right-float-drag-lbs </property>
-      </product>
-     </sum>
+     </product>
     </product>
    </function>
    <output> external_reactions/right-float-X/magnitude </output>
@@ -1104,7 +1100,6 @@
 
   <fcs_function name="hydro/Y/left-float-lbs">
    <function>
-    <sum>
      <product>
       <value> -1.0 </value>
       <product>
@@ -1114,14 +1109,12 @@
        <property> hydro/left-float-drag-lbs </property>
       </product>
      </product>
-    </sum>
    </function>
    <output> external_reactions/left-float-Y/magnitude </output>
   </fcs_function>
 
   <fcs_function name="hydro/Y/right-float-lbs">
    <function>
-    <sum>
      <product>
       <value> -1.0 </value>
       <product>
@@ -1131,7 +1124,6 @@
        <property> hydro/right-float-drag-lbs </property>
       </product>
      </product>
-    </sum>
    </function>
    <output> external_reactions/right-float-Y/magnitude </output>
   </fcs_function>
