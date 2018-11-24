@@ -14,5 +14,10 @@
       <input>test/input</input>
       <width>-test/reference</width>
     </deadband>
+    <deadband name="test/db-property-inverted-input-sign">
+      <input>-test/input</input>
+      <width>test/reference</width>
+      <output>test/output</output>
+    </deadband>
   </channel>
 </system>

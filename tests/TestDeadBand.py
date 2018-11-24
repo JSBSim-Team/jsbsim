@@ -44,6 +44,7 @@ class TestDeadBand(JSBSimTestCase):
             fdm.run()
             self.dead_band(fdm, v, 1.0, 'test/db-value')
             self.dead_band(fdm, v, 1.5, 'test/db-property')
+            self.dead_band(fdm, -v, 1.5, 'test/db-property-inverted-input-sign')
 
         fdm['test/reference'] = 0.707
 
@@ -53,6 +54,8 @@ class TestDeadBand(JSBSimTestCase):
             fdm.run()
             self.dead_band(fdm, v, 1.0, 'test/db-value')
             self.dead_band(fdm, v, 0.707, 'test/db-property')
+            self.dead_band(fdm, -v, 0.707,
+                           'test/db-property-inverted-input-sign')
 
         fdm['test/reference'] = -1.5
 

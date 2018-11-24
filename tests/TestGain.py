@@ -37,6 +37,8 @@ class TestGain(JSBSimTestCase):
             self.assertAlmostEqual(fdm['test/gain-property'], 1.5*v)
             self.assertAlmostEqual(fdm['test/gain-property-inverted-sign'],
                                    -1.5*v)
+            self.assertAlmostEqual(fdm['test/gain-property-inverted-input-sign'],
+                                   -1.5*v)
 
         fdm['test/reference'] = -0.707
 
@@ -47,6 +49,8 @@ class TestGain(JSBSimTestCase):
             self.assertAlmostEqual(fdm['test/gain-value'], 2.0*v)
             self.assertAlmostEqual(fdm['test/gain-property'], -0.707*v)
             self.assertAlmostEqual(fdm['test/gain-property-inverted-sign'],
+                                   0.707*v)
+            self.assertAlmostEqual(fdm['test/gain-property-inverted-input-sign'],
                                    0.707*v)
             
         fdm.run()

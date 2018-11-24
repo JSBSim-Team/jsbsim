@@ -14,5 +14,10 @@
       <input>test/input</input>
       <gain> -test/reference </gain>
     </pure_gain>
+    <pure_gain name="test/gain-property-inverted-input-sign">
+      <input>-test/input</input>
+      <gain> test/reference </gain>
+      <output>test/output</output>
+    </pure_gain>
   </channel>
 </system>

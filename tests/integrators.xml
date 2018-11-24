@@ -35,6 +35,7 @@
       <kp> -test/kp </kp>
       <ki> -test/ki </ki>
       <kd> -test/kd </kd>
+      <output>test/output</output>
     </pid>
   </channel>
   <channel name="pid/separate">
@@ -48,6 +49,18 @@
     </pid>
     <pid name="pid/kd-alone">
       <input> test/input </input>
+      <kd> test/kd </kd>
+    </pid>
+    <pid name="pid/kp-alone-inverted-input-sign">
+      <input> -test/input </input>
+      <kp> test/kp </kp>
+    </pid>
+    <pid name="pid/ki-alone-inverted-input-sign">
+      <input> -test/input </input>
+      <ki> test/ki </ki>
+    </pid>
+    <pid name="pid/kd-alone-inverted-input-sign">
+      <input> -test/input </input>
       <kd> test/kd </kd>
     </pid>
   </channel>

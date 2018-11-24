@@ -17,6 +17,7 @@
     <lag_filter name="test/lag-property-inverted-sign">
       <input> -test/input </input>
       <c1> -test/reference </c1>
+      <output>test/output</output>
     </lag_filter>
   </channel>
 </system>

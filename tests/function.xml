@@ -12,8 +12,9 @@
   <property>test/rz</property>
 
   <channel name="test">
-    <fcs_function name="test/sum-values">
-      <function>
+    <fcs_function name="test/sum-values-inverted-input-sign">
+      <input> -test/input </input>
+      <function name="test/sum-values">
         <sum>
           <v>1.0</v>
           <v>-2.5</v>
@@ -28,6 +29,23 @@
         </sum>
       </function>
     </fcs_function>
+    <fcs_function name="test/sum-properties">
+      <function>
+        <sum>
+          <p>test/input</p>
+          <p>test/reference</p>
+        </sum>
+      </function>
+    </fcs_function>
+    <summer name="test/summer-with-bias">
+      <input>test/reference</input>
+      <bias>1.0</bias>
+    </summer>
+    <summer name="test/summer">
+      <input>test/input</input>
+      <input>test/reference</input>
+      <output>test/output</output>
+    </summer>
     <fcs_function name="test/product-values">
       <function>
         <product>

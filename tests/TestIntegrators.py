@@ -109,6 +109,9 @@ class TestIntegrators(JSBSimTestCase):
         self.assertAlmostEqual(fdm['pid/kp-alone'], 0.0)
         self.assertAlmostEqual(fdm['pid/ki-alone'], 0.0)
         self.assertAlmostEqual(fdm['pid/kd-alone'], 0.0)
+        self.assertAlmostEqual(fdm['pid/kp-alone-inverted-input-sign'], 0.0)
+        self.assertAlmostEqual(fdm['pid/ki-alone-inverted-input-sign'], 0.0)
+        self.assertAlmostEqual(fdm['pid/kd-alone-inverted-input-sign'], 0.0)
 
         k = 2*math.pi # Constant for a period of 1s
         kp = 2.0
@@ -124,6 +127,8 @@ class TestIntegrators(JSBSimTestCase):
 
             self.assertAlmostEqual(fdm['pid/ki-alone'],
                                    ki*(1.0-math.cos(k*t))/k, delta=1E-4)
+            self.assertAlmostEqual(fdm['pid/ki-alone-inverted-input-sign'],
+                                   -ki*(1.0-math.cos(k*t))/k, delta=1E-4)
 
             self.assertAlmostEqual(-fdm['pid/negative-combined'],
                                    fdm['pid/kp-alone']+fdm['pid/ki-alone']+fdm['pid/kd-alone'])
@@ -132,8 +137,12 @@ class TestIntegrators(JSBSimTestCase):
             if i>1:
                 self.assertAlmostEqual(fdm['pid/kd-alone'], kd*k*math.cos(k*t),
                                        delta=0.15)
+                self.assertAlmostEqual(fdm['pid/kd-alone-inverted-input-sign'],
+                                       -kd*k*math.cos(k*t), delta=0.15)
             self.assertAlmostEqual(fdm['pid/kp-alone'],
                                    kp*math.sin(k*t), delta=1E-4)
+            self.assertAlmostEqual(fdm['pid/kp-alone-inverted-input-sign'],
+                                   -kp*math.sin(k*t), delta=1E-4)
 
 
 RunTest(TestIntegrators)
