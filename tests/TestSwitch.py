@@ -38,8 +38,8 @@ class TestSwitch(JSBSimTestCase):
 
         fdm['test/input'] = 0.0
         fdm.run()
-        self.assertEqual(fdm['test/sign1'], 0.0)
-        self.assertEqual(fdm['test/sign2'], 0.0)
+        self.assertEqual(fdm['test/sign1'], 0.2)
+        self.assertEqual(fdm['test/sign2'], -0.2)
         self.assertEqual(fdm['test/compare'], -1.0)
         self.assertEqual(fdm['test/interval'], 0.0)
         self.assertEqual(fdm['test/group'], -1.0)

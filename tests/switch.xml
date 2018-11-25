@@ -7,7 +7,7 @@
       <test value="-1">
         test/input lt 0.0
       </test>
-      <test value="0">
+      <test value="test/reference">
         test/input eq 0.0
       </test>
       <test value="1">
@@ -21,7 +21,7 @@
       <test value="-1">
         -test/input lt 0.0
       </test>
-      <test value="0">
+      <test value="-test/reference">
         -test/input == 0.0
       </test>
       <test value="1">
