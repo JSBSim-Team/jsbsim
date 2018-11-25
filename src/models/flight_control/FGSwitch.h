@@ -43,6 +43,7 @@ INCLUDES
 #include "FGFCSComponent.h"
 #include "math/FGCondition.h"
 #include "math/FGPropertyValue.h"
+#include "math/FGRealValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -145,54 +146,39 @@ public:
 
 private:
 
-  struct test {
+  struct Test {
     FGCondition* condition;
     bool Default;
-    double OutputVal;
-    FGPropertyValue *OutputProp;
-    float sign;
+    FGParameter_ptr OutputValue;
 
-    double GetValue(void) {
-      if (OutputProp == 0L) return OutputVal;
-      else                  return OutputProp->GetValue()*sign;
-    }
+    // constructor for the test structure
+    Test(void) : condition(nullptr), Default(false) {}
 
-    test(void) { // constructor for the test structure
-      Default    = false;
-      OutputVal  = 0.0;
-      OutputProp = 0L;
-      sign       = 1.0;
-    }
-
-    void setTestValue(std::string value, std::string Name,
-                      FGPropertyManager* propMan)
+    void setTestValue(const std::string &value, const std::string &Name,
+                      FGPropertyManager* pm)
     {
       if (value.empty()) {
         std::cerr << "No VALUE supplied for switch component: " << Name << std::endl;
       } else {
-        if (is_number(value)) {
-          OutputVal = atof(value.c_str());
-        } else {
-          // "value" must be a property if execution passes to here.
-          if (value[0] == '-') {
-            sign = -1.0;
-            value.erase(0,1);
-          } else {
-            sign = 1.0;
-          }
-          FGPropertyNode *node = propMan->GetNode(value, false);
-          if (node) {
-            OutputProp = new FGPropertyValue(node);
-          } else {
-            OutputProp = new FGPropertyValue(value, propMan);
-          }
-        }
+        if (is_number(value))
+          OutputValue = new FGRealValue(atof(value.c_str()));
+        else
+          OutputValue = new FGPropertyValue(value, pm);
       }
+    }
+
+    std::string GetOutputName(void)
+    {
+      FGPropertyValue *v = dynamic_cast<FGPropertyValue*>(OutputValue.ptr());
+      if (v)
+        return v->GetNameWithSign();
+      else
+        return to_string(OutputValue->GetValue());
     }
 
   };
 
-  std::vector <test*> tests;
+  std::vector <Test*> tests;
   bool initialized = false;
 
   void VerifyProperties(void);

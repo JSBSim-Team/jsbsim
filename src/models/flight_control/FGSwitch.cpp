@@ -77,20 +77,13 @@ CLASS IMPLEMENTATION
 FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   string value;
-  struct test *current_test;
-  Element *test_element;
+  Test *current_test;
 
   FGFCSComponent::bind(); // Bind() this component here in case it is used
                           // in its own definition for a sample-and-hold
-
-  int num = element->GetNumElements("test");
-  if (element->FindElement("default")) num++;
-  tests.reserve(num);
-
-  test_element = element->FindElement("default");
+  Element* test_element = element->FindElement("default");
   if (test_element) {
-    current_test = new struct test;
-    current_test->condition = 0;
+    current_test = new Test;
     value = test_element->GetAttributeValue("value");
     current_test->setTestValue(value, Name, PropertyManager);
     current_test->Default = true;
@@ -104,7 +97,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   test_element = element->FindElement("test");
   while (test_element) {
-    current_test = new struct test;
+    current_test = new Test;
     current_test->condition = new FGCondition(test_element, PropertyManager);
     value = test_element->GetAttributeValue("value");
     current_test->setTestValue(value, Name, PropertyManager);
@@ -119,10 +112,9 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGSwitch::~FGSwitch()
 {
-  for (unsigned int i=0; i<tests.size(); i++) {
-    delete tests[i]->condition;
-    delete tests[i]->OutputProp;
-    delete tests[i];
+  for (auto test: tests) {
+    delete test->condition;
+    delete test;
   }
 
   Debug(1);
@@ -142,15 +134,15 @@ bool FGSwitch::Run(void )
     VerifyProperties();
   }
 
-  for (unsigned int i=0; i<tests.size(); i++) {
-    if (tests[i]->Default) {
-      default_output = tests[i]->GetValue();
+  for (auto test: tests) {
+    if (test->Default) {
+      default_output = test->OutputValue->GetValue();
     } else {
-      pass = tests[i]->condition->Evaluate();
+      pass = test->condition->Evaluate();
     }
 
     if (pass) {
-      Output = tests[i]->GetValue();
+      Output = test->OutputValue->GetValue();
       break;
     }
   }
@@ -168,11 +160,11 @@ bool FGSwitch::Run(void )
 
 void FGSwitch::VerifyProperties(void)
 {
-  for (unsigned int i=0; i<tests.size(); i++) {
-    if (!tests[i]->Default) {
-      tests[i]->condition->Evaluate();
+  for (auto test: tests) {
+    if (!test->Default) {
+      test->condition->Evaluate();
     }
-    tests[i]->GetValue();
+    test->OutputValue->GetValue();
   }
 }
 
@@ -197,35 +189,24 @@ void FGSwitch::VerifyProperties(void)
 
 void FGSwitch::Debug(int from)
 {
-  string comp, scratch;
-  string indent = "        ";
-  //bool first = false;
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      for (unsigned int i=0; i<tests.size(); i++) {
-        if (tests[i]->Default) {
-          if (tests[i]->OutputProp == 0) {
-            cout << "      Switch default value is: " << tests[i]->OutputVal;
-          } else {
-            cout << "      Switch default value is: " << tests[i]->OutputProp->GetName();
-          }
+      unsigned int i = 0;
+      for (auto test: tests) {
+        if (test->Default) {
+          cout << "      Switch default value is: " << test->GetOutputName();
         } else {
-          if (tests[i]->OutputProp == 0) {
-            cout << "      Switch takes test " << i << " value (" << tests[i]->OutputVal << ")" << endl;
-          } else {
-            cout << "      Switch takes test " << i << " value (" << tests[i]->OutputProp->GetName() << ")" << endl;
-          }
-          tests[i]->condition->PrintCondition("      ");
+          cout << "      Switch takes test " << i << " value (" << test->GetOutputName() << ")" << endl;
+
+          test->condition->PrintCondition("      ");
         }
         cout << endl;
+        ++i;
       }
-      if (IsOutput) {
-        for (unsigned int i=0; i<OutputNodes.size(); i++)
-          cout << "      OUTPUT: " << OutputNodes[i]->getName() << endl;
-      }
+      for (auto node: OutputNodes)
+        cout << "      OUTPUT: " << node->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
