@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2013 jon@jsbsim.org  -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ Within a test, additional tests can be specified, which allows for
 complex groupings of logical comparisons. Each test contains
 additional conditions, as well as possibly additional tests.
 
-@code
+@code{.xml}
 <distributor name="name/is/irrelevant" type="exclusive|inclusive">
 
   <case>
@@ -84,10 +84,37 @@ additional conditions, as well as possibly additional tests.
 </distributor>
 @endcode
 
-Here's an example:
+If the distributor type is exclusive no further <case> components are evaluated
+once a case <test> condition has been found to be true.
 
-@code
+If the distributor type is inclusive all the <case> components are evaluated
+no matter how many <case> conditions are true.
 
+Whether the distributor type is inclusive or exclusive the <case> component
+without <test> is always executed.
+
+Here's an example that evaluate the sign of the property test/number and sets
+test/default to the value of test/reference.
+
+@code{.xml}
+<distributor>
+  <case>
+    <test>
+      test/number lt 0.0
+    </test>
+    <property value="-1.0"> test/sign </property>
+  </case>
+  <case>
+    <test>
+      test/number ge 0.0
+    </test>
+    <property value="1.0"> test/sign </property>
+  </case>
+  <!-- default case -->
+  <case>
+    <property value="test/reference"> test/default </property>
+  </case>
+</distributor>
 @endcode
 
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
@@ -113,7 +140,7 @@ public:
 
   /** Executes the distributor logic.
       @return true - always*/
-  bool Run(void);
+  bool Run(void) override;
 
 private:
 
@@ -121,86 +148,66 @@ private:
 
   class PropValPair {
   public:
-    PropValPair(std::string prop, std::string val, FGPropertyManager* propMan) {
+    PropValPair(const std::string& prop, const std::string& val,
+                FGPropertyManager* propMan) {
       // Process property to be set
-      PropMan = propMan;
-      sign = 1;
-      FGPropertyNode *node = propMan->GetNode(prop, false);
-      if (node) PropNode = node;
-      else PropNode = 0;
-      PropName = prop;
+      Prop = new FGPropertyValue(prop, propMan);
 
       // Process set value
-      LateBoundValue = false;
-      Val = 0;
-      ValString = val;
-      if (is_number(ValString)) {
-        Val = new FGRealValue(atof(ValString.c_str()));
+      if (is_number(val)) {
+        Val = new FGRealValue(atof(val.c_str()));
       } else {
         // "value" must be a property if execution passes to here.
-        if (ValString[0] == '-') {
-          sign = -1;
-          ValString.erase(0,1);
-        }
-        node = propMan->GetNode(ValString, false); // Reuse the node variable
-        if (node) Val = new FGPropertyValue(node);
-        else {
-          Val = new FGPropertyValue(ValString, propMan);
-          LateBoundValue = true;
-        }
+        Val = new FGPropertyValue(val, propMan);
       }
-    }
-
-    ~PropValPair() {
-      delete PropNode;
-      delete PropMan;
     }
     
     void SetPropToValue() {
-      if (PropNode == 0) {
-        if (PropMan->HasNode(PropName)) {
-          PropNode = PropMan->GetNode(PropName);
-        } else {
-          throw(PropName+" in distributor component is not known");
-        }
+      try {
+        Prop->SetValue(Val->GetValue());
       }
-      PropNode->setDoubleValue(Val->GetValue()*sign);
+      catch(...) {
+        throw(Prop->GetName()+" in distributor component is not known");
+      }
     }
 
-    std::string GetPropName() {return PropName;}
-    std::string GetValString() {return ValString;}
-    FGPropertyNode* GetPropNode() {return PropNode;}
-    bool GetLateBoundValue() {return LateBoundValue;}
+    std::string GetPropName() { return Prop->GetName(); }
+    std::string GetValString() {
+      FGPropertyValue* v = dynamic_cast<FGPropertyValue*>(Val.ptr());
+      if (v)
+        return v->GetNameWithSign();
+      else
+        return to_string(Val->GetValue());
+    }
+    bool GetLateBoundProp() { return Prop->IsLateBound(); }
+    bool GetLateBoundValue() {
+      FGPropertyValue* v = dynamic_cast<FGPropertyValue*>(Val.ptr());
+      return v != nullptr && v->IsLateBound();
+    }
   private:
-    std::string PropName;
-    FGPropertyNode* PropNode;
-    FGPropertyManager* PropMan;
-    FGParameter* Val;
-    std::string ValString;
-    bool LateBoundValue;
-    int sign;
+    FGPropertyValue_ptr Prop;
+    FGParameter_ptr Val;
   };
 
   class Case {
   public:
-    Case() {
-      Test = 0;
-    }
+    Case() : Test(nullptr) {}
 
     ~Case() {
-      for (unsigned int i=0; i<PropValPairs.size(); i++) delete PropValPairs[i];
-      PropValPairs.clear();
+      for (auto pair: PropValPairs) delete pair;
     }
 
     void SetTest(FGCondition* test) {Test = test;}
     FGCondition* GetTest(void) {return Test;}
     void AddPropValPair(PropValPair* pvPair) {PropValPairs.push_back(pvPair);}
     void SetPropValPairs() {
-      for (unsigned int i=0; i<PropValPairs.size(); i++) PropValPairs[i]->SetPropToValue();
+      for (auto pair: PropValPairs) pair->SetPropToValue();
     }
-    PropValPair* GetPropValPair(unsigned int idx) { return PropValPairs[idx]; }
-    size_t GetNumPropValPairs(void) {return PropValPairs.size();}
-    bool HasTest() {return (Test != 0);}
+    std::vector<PropValPair*>::const_iterator IterPropValPairs(void) const
+    { return PropValPairs.cbegin(); }
+    std::vector<PropValPair*>::const_iterator EndPropValPairs(void) const
+    { return PropValPairs.cend(); }
+    bool HasTest() {return Test != nullptr;}
     bool GetTestResult() { return Test->Evaluate(); }
 
   private:
@@ -210,7 +217,7 @@ private:
 
   std::vector <Case*> Cases;
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 #endif
