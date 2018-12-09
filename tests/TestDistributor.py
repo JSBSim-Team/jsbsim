@@ -30,24 +30,28 @@ class TestDistributor(JSBSimTestCase):
         fdm['test/input'] = -1.5
         fdm.run()
         self.assertAlmostEqual(fdm['test/result1'], 0.0)
+        self.assertAlmostEqual(fdm['test/default'], 0.0)
         self.assertAlmostEqual(fdm['test/result2'], -1.0)
         self.assertAlmostEqual(fdm['test/reference'], 1.5)
 
         fdm['test/input'] = 0.0
         fdm.run()
         self.assertAlmostEqual(fdm['test/result1'], 1.0)
+        self.assertAlmostEqual(fdm['test/default'], 1.0)
         self.assertAlmostEqual(fdm['test/result2'], 0.0)
         self.assertAlmostEqual(fdm['test/reference'], 1.5)
 
         fdm['test/input'] = 1.0
         fdm.run()
         self.assertAlmostEqual(fdm['test/result1'], 1.0)
+        self.assertAlmostEqual(fdm['test/default'], 1.0)
         self.assertAlmostEqual(fdm['test/result2'], 1.0)
         self.assertAlmostEqual(fdm['test/reference'], 1.5)
 
         fdm['test/input'] = -0.808
         fdm.run()
         self.assertAlmostEqual(fdm['test/result1'], 0.0)
+        self.assertAlmostEqual(fdm['test/default'], 0.0)
         self.assertAlmostEqual(fdm['test/result2'], -1.0)
         self.assertAlmostEqual(fdm['test/reference'], 0.808)
 

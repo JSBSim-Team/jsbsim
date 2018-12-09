@@ -2,7 +2,8 @@
   <property>test/input</property>
   <property>test/result1</property>
   <property>test/result2</property>
-  <property value="0.0">test/reference</property>
+  <property>test/reference</property>
+  <property>test/default</property>
   <channel name="test">
     <!-- Check the sign of test/input -->
     <distributor name="test/sign_inclusive" type="inclusive">
@@ -24,6 +25,10 @@
           test/input ge 0.0
         </test>
         <property value="1.0"> test/result1 </property>
+      </case>
+      <!-- default case -->
+      <case>
+        <property value="test/result1"> test/default </property>
       </case>
     </distributor>
     <distributor name="test/sign_exclusive" type="exclusive">
