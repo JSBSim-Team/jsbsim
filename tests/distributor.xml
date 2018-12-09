@@ -1,0 +1,50 @@
+<system>
+  <property>test/input</property>
+  <property>test/result1</property>
+  <property>test/result2</property>
+  <property value="0.0">test/reference</property>
+  <channel name="test">
+    <!-- Check the sign of test/input -->
+    <distributor name="test/sign_inclusive" type="inclusive">
+      <case>
+        <test>
+          test/input lt 0.0
+        </test>
+        <property value="-1.0"> test/result1 </property>
+        <property value="-test/input"> test/reference </property>
+      </case>
+      <case>
+        <test>
+          test/input le 0.0
+        </test>
+        <property value="0.0"> test/result1 </property>
+      </case>
+      <case>
+        <test>
+          test/input ge 0.0
+        </test>
+        <property value="1.0"> test/result1 </property>
+      </case>
+    </distributor>
+    <distributor name="test/sign_exclusive" type="exclusive">
+      <case>
+        <test>
+          test/input lt 0.0
+        </test>
+        <property value="-1.0"> test/result2 </property>
+      </case>
+      <case>
+        <test>
+          test/input le 0.0
+        </test>
+        <property value="0.0"> test/result2 </property>
+      </case>
+      <case>
+        <test>
+          test/input ge 0.0
+        </test>
+        <property value="1.0"> test/result2 </property>
+      </case>
+    </distributor>
+  </channel>
+</system>

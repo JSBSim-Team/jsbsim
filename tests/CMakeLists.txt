@@ -51,6 +51,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestDeadBand
                  TestFilter
                  TestFunctions
+                 TestDistributor
                  )
 
 foreach(test ${PYTHON_TESTS})
