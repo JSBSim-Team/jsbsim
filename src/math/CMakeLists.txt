@@ -24,7 +24,8 @@ set(HEADERS FGColumnVector3.h
             FGModelFunctions.h
             LagrangeMultiplier.h
             FGTemplateFunc.h
-            FGFunctionValue.h)
+            FGFunctionValue.h
+            FGParameterValue.h)
 
 add_library(Math OBJECT ${HEADERS} ${SOURCES})
 

@@ -42,8 +42,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 #include "math/FGCondition.h"
-#include "math/FGPropertyValue.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -152,14 +151,8 @@ private:
                 FGPropertyManager* propMan) {
       // Process property to be set
       Prop = new FGPropertyValue(prop, propMan);
-
       // Process set value
-      if (is_number(val)) {
-        Val = new FGRealValue(atof(val.c_str()));
-      } else {
-        // "value" must be a property if execution passes to here.
-        Val = new FGPropertyValue(val, propMan);
-      }
+      Val = new FGParameterValue(val, propMan);
     }
     
     void SetPropToValue() {
@@ -172,21 +165,13 @@ private:
     }
 
     std::string GetPropName() { return Prop->GetName(); }
-    std::string GetValString() {
-      FGPropertyValue* v = dynamic_cast<FGPropertyValue*>(Val.ptr());
-      if (v)
-        return v->GetNameWithSign();
-      else
-        return to_string(Val->GetValue());
-    }
+    std::string GetValString() { return Val->GetName(); }
     bool GetLateBoundProp() { return Prop->IsLateBound(); }
-    bool GetLateBoundValue() {
-      FGPropertyValue* v = dynamic_cast<FGPropertyValue*>(Val.ptr());
-      return v != nullptr && v->IsLateBound();
+    bool GetLateBoundValue() {return Val->IsLateBound();
     }
   private:
     FGPropertyValue_ptr Prop;
-    FGParameter_ptr Val;
+    FGParameterValue_ptr Val;
   };
 
   class Case {

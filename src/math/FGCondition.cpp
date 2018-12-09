@@ -7,21 +7,21 @@
  -------------- Copyright (C) 2003 Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPropertyValue.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-#include "FGRealValue.h"
+#include "FGParameterValue.h"
 
 using namespace std;
 
@@ -79,7 +79,8 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
   } else {
     for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
       string data = element->GetDataLine(i);
-      conditions.push_back(new FGCondition(data, PropertyManager, condition_element));
+      conditions.push_back(new FGCondition(data, PropertyManager,
+                                           condition_element));
     }
   }
 
@@ -102,13 +103,7 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
   if (test_strings.size() == 3) {
     TestParam1 = new FGPropertyValue(test_strings[0], PropertyManager);
     conditional = test_strings[1];
-
-    string property2 = test_strings[2];
-
-    if (is_number(property2))
-      TestParam2 = new FGRealValue(atof(property2.c_str()));
-    else
-      TestParam2 = new FGPropertyValue(property2, PropertyManager);
+    TestParam2 = new FGParameterValue(test_strings[2], PropertyManager);
   } else {
     cerr << el->ReadFrom()
          << "  Conditional test is invalid: \"" << test
@@ -119,7 +114,8 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
 
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
-    throw("Comparison operator: \""+conditional+"\" does not exist.  Please check the conditional.");
+    throw("Comparison operator: \""+conditional
+          +"\" does not exist.  Please check the conditional.");
   }
 }
 
@@ -247,14 +243,8 @@ void FGCondition::PrintCondition(string indent)
     cout << indent << "}";
 
   } else {
-    cout << indent << TestParam1->GetName() << " "
-         << conditional << " ";
-
-    FGPropertyValue* p2 = dynamic_cast<FGPropertyValue*>(TestParam2.ptr());
-    if (p2)
-      cout << p2->GetNameWithSign();
-    else
-      cout << TestParam2->GetValue();
+    cout << indent << TestParam1->GetName() << " " << conditional
+         << " " << TestParam2->GetName();
   }
 }
 

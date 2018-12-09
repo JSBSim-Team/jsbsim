@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ INCLUDES
 
 #include "FGGain.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 
 using namespace std;
 
@@ -69,15 +69,12 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  if ( element->FindElement("gain") ) {
-    string gain_string = element->FindElementValue("gain");
-    if (!is_number(gain_string)) { // property
-      Gain = new FGPropertyValue(gain_string, PropertyManager);
-    } else
-      Gain = new FGRealValue(element->FindElementValueAsNumber("gain"));
-  }
-  else
-    Gain = new FGRealValue(1.0);
+  string gain_string = "1.0";
+  Element* gain_element = element->FindElement("gain");
+  if (gain_element)
+    gain_string = gain_element->GetDataLine();
+
+  Gain = new FGParameterValue(gain_string, PropertyManager);
 
   if (Type == "AEROSURFACE_SCALE") {
     Element* scale_element = element->FindElement("domain");
@@ -144,16 +141,14 @@ bool FGGain::Run(void )
 
   Input = InputNodes[0]->getDoubleValue();
 
-  double gain = Gain->GetValue();
-
   if (Type == "PURE_GAIN") {                       // PURE_GAIN
 
-    Output = gain * Input;
+    Output = Gain * Input;
 
   } else if (Type == "SCHEDULED_GAIN") {           // SCHEDULED_GAIN
 
     SchedGain = Table->GetValue();
-    Output = gain * SchedGain * Input;
+    Output = Gain * SchedGain * Input;
 
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
 
@@ -169,7 +164,7 @@ bool FGGain::Run(void )
       Output = OutMin + ((Input - InMin) / (InMax - InMin)) * (OutMax - OutMin);
     }
 
-    Output *= gain;
+    Output *= Gain->GetValue();
   }
 
   Clip();
@@ -204,12 +199,7 @@ void FGGain::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
-
-      FGPropertyValue* g = dynamic_cast<FGPropertyValue*>(Gain.ptr());
-      if (g)
-        cout << "      GAIN: " << g->GetNameWithSign() << endl;
-      else
-        cout << "      GAIN: " << Gain->GetValue() << endl;
+      cout << "      GAIN: " << Gain->GetName() << endl;
 
       for (auto node: OutputNodes)
         cout << "      OUTPUT: " << node->getName() << endl;

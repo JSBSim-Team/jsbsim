@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGPropertyValue.h"
 #include "models/FGFCS.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 
 using namespace std;
 
@@ -173,10 +173,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     }
 
     string clip_string = el->GetDataLine();
-    if (is_number(clip_string))
-      ClipMin = new FGRealValue(atof(clip_string.c_str()));
-    else
-      ClipMin = new FGPropertyValue(clip_string, PropertyManager);
+    ClipMin = new FGParameterValue(clip_string, PropertyManager);
 
     el = clip_el->FindElement("max");
     if (!el) {
@@ -186,10 +183,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     }
 
     clip_string = el->GetDataLine();
-    if (is_number(clip_string))
-      ClipMax = new FGRealValue(atof(clip_string.c_str()));
-    else
-      ClipMax = new FGPropertyValue(clip_string, PropertyManager);
+    ClipMax = new FGParameterValue(clip_string, PropertyManager);
 
     clip = true;
   }
@@ -288,19 +282,8 @@ void FGFCSComponent::Debug(int from)
                    << "\" of type: " << Type << endl;
 
       if (clip) {
-        cout << "      Minimum limit: ";
-        FGPropertyValue* clip = dynamic_cast<FGPropertyValue*>(ClipMin.ptr());
-        if (clip)
-          cout << clip->GetNameWithSign() << endl;
-        else
-          cout << ClipMin->GetValue() << endl;
-
-        cout << "      Maximum limit: ";
-        clip = dynamic_cast<FGPropertyValue*>(ClipMax.ptr());
-        if (clip)
-          cout << clip->GetNameWithSign() << endl;
-        else
-          cout << ClipMax->GetValue() << endl;
+        cout << "      Minimum limit: " << ClipMin->GetName() << endl;
+        cout << "      Maximum limit: " << ClipMax->GetName() << endl;
       }  
       if (delay > 0) cout <<"      Frame delay: " << delay
                                    << " frames (" << delay*dt << " sec)" << endl;

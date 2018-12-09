@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2002 jon@jsbsim.org  -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -42,8 +42,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 #include "math/FGCondition.h"
-#include "math/FGPropertyValue.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,10 +115,12 @@ Here's an example:
 Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 The above example specifies that the default value of the component (i.e. the
-output property of the component, addressed by the property, ap/roll-ap-autoswitch)
-is 0.0.  If or when the attitude hold switch is selected (property
-ap/attitude_hold takes the value 1), the value of the switch component will be
-whatever value fcs/roll-ap-error-summer is.
+output property of the component, addressed by the property,
+ap/roll-ap-autoswitch) is 0.0.
+
+If or when the attitude hold switch is selected (property ap/attitude_hold takes
+the value 1), the value of the switch component will be whatever value
+fcs/roll-ap-error-summer is.
 
 @author Jon S. Berndt
 */
@@ -158,24 +159,13 @@ private:
                       FGPropertyManager* pm)
     {
       if (value.empty()) {
-        std::cerr << "No VALUE supplied for switch component: " << Name << std::endl;
-      } else {
-        if (is_number(value))
-          OutputValue = new FGRealValue(atof(value.c_str()));
-        else
-          OutputValue = new FGPropertyValue(value, pm);
-      }
+        std::cerr << "No VALUE supplied for switch component: " << Name
+                  << std::endl;
+      } else
+        OutputValue = new FGParameterValue(value, pm);
     }
 
-    std::string GetOutputName(void)
-    {
-      FGPropertyValue *v = dynamic_cast<FGPropertyValue*>(OutputValue.ptr());
-      if (v)
-        return v->GetNameWithSign();
-      else
-        return to_string(OutputValue->GetValue());
-    }
-
+    std::string GetOutputName(void) const {return OutputValue->GetName();}
   };
 
   std::vector <Test*> tests;

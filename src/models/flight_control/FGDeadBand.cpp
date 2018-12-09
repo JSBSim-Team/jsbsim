@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ INCLUDES
 #include "FGDeadBand.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGPropertyManager.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 
 using namespace std;
 
@@ -54,22 +54,19 @@ CLASS IMPLEMENTATION
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element)
 {
-  string width_string;
 
   Width = nullptr;
   gain = 1.0;
 
-  if ( element->FindElement("width") ) {
-    width_string = element->FindElementValue("width");
-    if (!is_number(width_string))
-      Width = new FGPropertyValue(width_string, PropertyManager);
-    else
-      Width = new FGRealValue(element->FindElementValueAsNumber("width"));
-  }
-  else
-    Width = new FGRealValue(0.0);
+  string width_string = "0.0";
+  Element* width_element = element->FindElement("width");
+  if (width_element)
+    width_string = width_element->GetDataLine();
+
+  Width = new FGParameterValue(width_string, PropertyManager);
 
   if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");
@@ -91,7 +88,7 @@ bool FGDeadBand::Run(void )
 {
   Input = InputNodes[0]->getDoubleValue();
 
-  double HalfWidth = 0.5*Width->GetValue();
+  double HalfWidth = 0.5*Width;
 
   if (Input < -HalfWidth) {
     Output = (Input + HalfWidth)*gain;
@@ -133,14 +130,7 @@ void FGDeadBand::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      cout << "      DEADBAND WIDTH: ";
-
-      FGPropertyValue* w = dynamic_cast<FGPropertyValue*>(Width.ptr());
-      if (w)
-        cout << w->GetNameWithSign() << endl;
-      else
-        cout << Width->GetValue() << endl;
-
+      cout << "      DEADBAND WIDTH: " << Width->GetName() << endl;
       cout << "      GAIN: " << gain << endl;
 
       for (auto node: OutputNodes)

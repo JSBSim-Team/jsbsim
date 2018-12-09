@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2006 Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPID.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 #include <string>
 #include <iostream>
 
@@ -64,18 +64,14 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (pid_type == "standard") IsStandard = true;
 
+  string kp_string = "0.0";
   el = element->FindElement("kp");
-  if (el) {
-    string kp_string = el->GetDataLine();
+  if (el)
+    kp_string = el->GetDataLine();
 
-    if (!is_number(kp_string)) // property
-      Kp = new FGPropertyValue(kp_string, PropertyManager);
-    else
-      Kp = new FGRealValue(element->FindElementValueAsNumber("kp"));
-  }
-  else
-    Kp = new FGRealValue(0.0);
+  Kp = new FGParameterValue(kp_string, PropertyManager);
 
+  string ki_string = "0.0";
   el = element->FindElement("ki");
   if (el) {
     string integ_type = el->GetAttributeValue("type");
@@ -91,27 +87,17 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       IntType = eAdamsBashforth2;
     }
 
-    string ki_string = el->GetDataLine();
-
-    if (!is_number(ki_string)) // property
-      Ki = new FGPropertyValue(ki_string, PropertyManager);
-    else
-      Ki = new FGRealValue(element->FindElementValueAsNumber("ki"));
+    ki_string = el->GetDataLine();
   }
-  else
-    Ki = new FGRealValue(0.0);
 
+  Ki = new FGParameterValue(ki_string, PropertyManager);
+
+  string kd_string = "0.0";
   el = element->FindElement("kd");
-  if (el) {
-    string kd_string = el->GetDataLine();
+  if (el)
+    kd_string = el->GetDataLine();
 
-    if (!is_number(kd_string)) // property
-      Kd = new FGPropertyValue(kd_string, PropertyManager);
-    else
-      Kd = new FGRealValue(element->FindElementValueAsNumber("kd"));
-  }
-  else
-    Kd = new FGRealValue(0.0);
+  Kd = new FGParameterValue(kd_string, PropertyManager);
 
   el = element->FindElement("pvdot");
   if (el)
