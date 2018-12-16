@@ -60,10 +60,16 @@ class FGPropertyValue : public FGParameter
 {
 public:
 
-  explicit FGPropertyValue(FGPropertyNode* propNode);
-  FGPropertyValue(std::string propName, FGPropertyManager* propertyManager);
+  explicit FGPropertyValue(FGPropertyNode* propNode)
+    : PropertyManager(nullptr), PropertyNode(propNode), Sign(1.0) {}
+  FGPropertyValue(const std::string& propName,
+                  FGPropertyManager* propertyManager);
 
   double GetValue(void) const override;
+  bool IsConstant(void) const override {
+    return PropertyNode && (!PropertyNode->isTied()
+                         && !PropertyNode->getAttribute(SGPropertyNode::WRITE));
+  }
   void SetNode(FGPropertyNode* node) {PropertyNode = node;}
   void SetValue(double value);
   bool IsLateBound(void) const { return PropertyNode == nullptr; }

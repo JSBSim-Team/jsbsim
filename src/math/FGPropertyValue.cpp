@@ -38,25 +38,18 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropertyValue::FGPropertyValue(FGPropertyNode* propNode)
-  : PropertyManager(0L), PropertyNode(propNode)
+FGPropertyValue::FGPropertyValue(const std::string& propName,
+                                 FGPropertyManager* propertyManager)
+  : PropertyManager(propertyManager), PropertyNode(nullptr),
+    PropertyName(propName), Sign(1.0)
 {
-  Sign = 1;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGPropertyValue::FGPropertyValue(std::string propName, FGPropertyManager* propertyManager)
-  : PropertyManager(propertyManager), PropertyNode(0L)
-{
-  if (propName[0] == '-') {
-    propName.erase(0,1);
-    Sign = -1;
+  if (PropertyName[0] == '-') {
+    PropertyName.erase(0,1);
+    Sign = -1.0;
   }
-  else
-    Sign = 1;
 
-  PropertyName = propName;
+  if (PropertyManager->HasNode(PropertyName))
+    PropertyNode = PropertyManager->GetNode(PropertyName);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,10 +101,7 @@ std::string FGPropertyValue::GetNameWithSign(void) const
 
   if (Sign < 0.0) name ="-";
 
-  if (PropertyNode)
-    name += PropertyNode->GetName();
-  else
-    name += PropertyName;
+  name += GetName();
 
   return name;
 }
@@ -132,8 +122,8 @@ std::string FGPropertyValue::GetPrintableName(void) const
 {
   if (PropertyNode)
     return PropertyNode->GetPrintableName();
- else
-   return PropertyName;
+  else
+    return PropertyName;
 }
 
 }
