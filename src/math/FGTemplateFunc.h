@@ -55,28 +55,24 @@ class FGTemplateFunc : public FGFunction
 {
 public:
 
-  FGTemplateFunc(FGPropertyManager* PropertyManager, Element* element)
-    : var(0L)
+  FGTemplateFunc(FGPropertyManager* pm, Element* element)
   {
-    Load(PropertyManager, element, &var);
-    // Since 'var' is a member of FGTemplateFunc, we don't want SGSharedPtr to
-    // destroy 'var' when it would no longer be referenced by any shared
-    // pointers. In order to avoid this, the reference counter is increased an
-    // extra time to make sure that it never reaches 0 when all shared pointers
-    // referencing 'var' are destroyed.
-    get(&var);
+    var = new FGPropertyValue(nullptr);
+    Load(pm, element, var);
+    CheckMinArguments(element, 1);
+    CheckMaxArguments(element, 1);
   }
 
   double GetValue(FGPropertyNode* node) {
-    var.SetNode(node);
+    var->SetNode(node);
     return FGFunction::GetValue();
   }
 
 private:
   /** FGTemplateFunc must not be bound to the property manager. The bind method
       is therefore overloaded as a no-op */
-  virtual void bind(Element*, FGPropertyManager*, const std::string&) {}
-  FGPropertyValue var;
+  void bind(Element*, FGPropertyManager*, const std::string&) override {}
+  FGPropertyValue_ptr var;
 };
 
 typedef SGSharedPtr<FGTemplateFunc> FGTemplateFunc_ptr;
