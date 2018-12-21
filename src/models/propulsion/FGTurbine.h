@@ -97,6 +97,8 @@ CLASS DOCUMENTATION
   <n2spinup> {number} </n2spinup>
   <n1startrate> {number} </n1startrate>
   <n2startrate> {number} </n2startrate>
+  <n1spindown> {number} </n1spindown>
+  <n2spindown> {number} </n2spindown>
   <maxn1> {number} </maxn1>
   <maxn2> {number} </maxn2>
   <augmented> {0 | 1} </augmented>
@@ -123,6 +125,8 @@ CLASS DOCUMENTATION
   n2spinup    - Core rotor rpm starter acceleration to ignitionn2 value (default 3.0)
   n1startrate - Fan rotor rpm time taken to accelerate from ignitionn1 to idlen1 value (default 1.4)
   n2startrate - Core rotor rpm time taken to accelerate to ignitionn2 idlen2 value (default 2.0)
+  n1spindown  - Factor used in calculation for fan rotor time to spool down to zero (default 2.0)
+  n2spindown  - Factor used in calculation for core rotor time to spool down to zero (default 2.0)
   maxn1       - Fan rotor rpm (% of max) at full throttle 
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
@@ -262,6 +266,8 @@ private:
   double N2_spinup;        ///< N2 spin up rate from pneumatic starter (per second)
   double N1_start_rate;    ///< N1 spin up rate from ignition (per second)
   double N2_start_rate;    ///< N2 spin up rate from ignition (per second)
+  double N1_spindown;      ///< N1 spin down factor
+  double N2_spindown;      ///< N2 spin down factor
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
