@@ -795,7 +795,11 @@
       <max>
        <value> 0.0 </value>
        <difference>
-        <value> 1.5708 </value>
+         <!--value> 1.5708 </value-->
+         <product name="test/half_pi">
+           <pi/>
+           <v> 0.5 </v>
+         </product>
         <property> environment/sun-angle-rad </property>
        </difference>
       </max>
