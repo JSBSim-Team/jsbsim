@@ -56,9 +56,10 @@ class FGTemplateFunc : public FGFunction
 public:
 
   FGTemplateFunc(FGPropertyManager* pm, Element* element)
+    : FGFunction(pm)
   {
     var = new FGPropertyValue(nullptr);
-    Load(pm, element, var);
+    Load(element, var);
     CheckMinArguments(element, 1);
     CheckMaxArguments(element, 1);
   }
@@ -70,8 +71,8 @@ public:
 
 private:
   /** FGTemplateFunc must not be bound to the property manager. The bind method
-      is therefore overloaded as a no-op */
-  void bind(Element*, FGPropertyManager*, const std::string&) override {}
+      is therefore made private and overloaded as a no-op */
+  void bind(Element*, const std::string&) override {}
   FGPropertyValue_ptr var;
 };
 

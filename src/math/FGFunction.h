@@ -7,21 +7,21 @@ Date started: August 25 2004
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -153,17 +153,18 @@ element contains all three. What is evaluated is written algebraically as:
 
 Some operations can take only a single argument. That argument, however, can be
 an operation (such as sum) which can contain other items. The point to keep in
-mind is that it evaluates to a single value - which is just what the trigonometric
-functions require (except atan2, which takes two arguments).
+mind is that it evaluates to a single value - which is just what the
+trigonometric functions require (except atan2, which takes two arguments).
 
 <h2>Specific Function Definitions</h2>
 
-Note: In the definitions below, a "property" refers to a single property specified
-within either the <property></property> tag or the shortcut tag, \<p>\</p>. The
-keyword "value" refers to a single numeric value specified either within the \<value>\</value>
-tag or the shortcut <v></v> tag. The keyword "table" refers to a single table specified
-either within the \<table>\</table> tag or the shortcut <t></t> tag. The plural form of any
-of the three words refers to one or more instances of a property, value, or table.
+Note: In the definitions below, a "property" refers to a single property
+specified within either the <property></property> tag or the shortcut tag,
+\<p>\</p>. The keyword "value" refers to a single numeric value specified either
+within the \<value>\</value> tag or the shortcut <v></v> tag. The keyword
+"table" refers to a single table specified either within the \<table>\</table>
+tag or the shortcut <t></t> tag. The plural form of any of the three words
+refers to one or more instances of a property, value, or table.
 
 - @b sum, sums the values of all immediate child elements:
     @code
@@ -722,7 +723,12 @@ class FGFunction : public FGParameter, public FGJSBBase
 public:
   /// Default constructor.
   FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), pCopyTo(nullptr) {}
+    : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr),
+      PropertyManager(nullptr) {}
+
+  explicit FGFunction(FGPropertyManager* pm)
+    : FGFunction()
+  { PropertyManager = pm; }
 
   /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
@@ -741,26 +747,32 @@ public:
     @param prefix an optional prefix to prepend to the name given to the
                   property that represents this function (if given).
 */
-  FGFunction(FGPropertyManager* PropertyManager, Element* element,
+  FGFunction(FGPropertyManager* pm, Element* element,
              const std::string& prefix="", FGPropertyValue* var=0L);
+
+  /** Destructor
+      Make sure the function is untied before destruction.
+   */
+  ~FGFunction(void) override;
 
 /** Retrieves the value of the function object.
     @return the total value of the function. */
-  double GetValue(void) const;
+  double GetValue(void) const override;
 
 /** The value that the function evaluates to, as a string.
   @return the value of the function as a string. */
   std::string GetValueAsString(void) const;
 
 /// Retrieves the name of the function.
-  std::string GetName(void) const {return Name;}
+  std::string GetName(void) const override {return Name;}
 
-/** Specifies whether to cache the value of the function, so it is calculated only
-    once per frame.
-    If shouldCache is true, then the value of the function is calculated, and
-    a flag is set so further calculations done this frame will use the cached value.
-    In order to turn off caching, cacheValue must be called with a false argument.
-    @param shouldCache specifies whether the function should cache the computed value. */
+/** Specifies whether to cache the value of the function, so it is calculated
+    only once per frame.
+    If shouldCache is true, then the value of the function is calculated, and a
+    flag is set so further calculations done this frame will use the cached
+    value.  In order to turn off caching, cacheValue must be called with a false
+    argument.  @param shouldCache specifies whether the function should cache
+    the computed value. */
   void cacheValue(bool shouldCache);
 
   enum class OddEven {Either, Odd, Even};
@@ -770,16 +782,18 @@ protected:
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
 
-  void Load(FGPropertyManager* PropertyManager, Element* element,
-            FGPropertyValue* var, const std::string& prefix="");
-  virtual void bind(Element*, FGPropertyManager*, const std::string&);
+  void Load(Element* element, FGPropertyValue* var,
+            const std::string& prefix="");
+  virtual void bind(Element*, const std::string&);
   void CheckMinArguments(Element* el, unsigned int _min);
   void CheckMaxArguments(Element* el, unsigned int _max);
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
 
 private:
   std::string Name;
+  FGPropertyNode_ptr pNode;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
+  FGPropertyManager* PropertyManager;
 
   void Debug(int from);
 };

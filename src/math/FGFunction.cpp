@@ -8,21 +8,21 @@ Purpose: Stores various parameter types for functions
  ------------- Copyright (C) 2004  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -81,9 +81,9 @@ class aFunc: public FGFunction
 public:
   aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
         const string& prefix, FGPropertyValue* v)
-    : f(_f)
+    : FGFunction(pm), f(_f)
   {
-    Load(pm, el, v, prefix);
+    Load(el, v, prefix);
     CheckMinArguments(el, Nmin);
     CheckMaxArguments(el, Nmax);
     CheckOddOrEvenArguments(el, odd_even);
@@ -153,11 +153,11 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGPropertyManager* pm, Element* el,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGFunction::FGFunction(FGPropertyManager* PropertyManager, Element* el,
-                       const string& prefix, FGPropertyValue* var)
-  : FGFunction()
+FGFunction::FGFunction(FGPropertyManager* pm, Element* el, const string& prefix,
+                       FGPropertyValue* var)
+  : FGFunction(pm)
 {
-  Load(PropertyManager, el, var, prefix);
+  Load(el, var, prefix);
   CheckMinArguments(el, 1);
   CheckMaxArguments(el, 1);
 
@@ -240,8 +240,7 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
-                      FGPropertyValue* var, const string& Prefix)
+void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
@@ -740,12 +739,25 @@ void FGFunction::Load(FGPropertyManager* PropertyManager, Element* el,
            << "Bad operation <" << operation
            << "> detected in configuration file" << reset << endl;
     }
+
     element = el->GetNextElement();
   }
 
-  bind(el, PropertyManager, Prefix); // Allow any function to save its value
+  bind(el, Prefix); // Allow any function to save its value
 
   Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGFunction::~FGFunction()
+{
+  if (pNode && pNode->isTied()) {
+    string pName = pNode->GetFullyQualifiedName();
+    PropertyManager->Untie(pName);
+  }
+
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -785,18 +797,17 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::bind(Element* el, FGPropertyManager* PropertyManager,
-                      const string& Prefix)
+void FGFunction::bind(Element* el, const string& Prefix)
 {
   if ( !Name.empty() ) {
-    string tmp;
+    string nName;
     if (Prefix.empty())
-      tmp  = PropertyManager->mkPropertyName(Name, false);
+      nName  = PropertyManager->mkPropertyName(Name, false);
     else {
       if (is_number(Prefix)) {
         if (Name.find("#") != string::npos) { // if "#" is found
           Name = replace(Name,"#",Prefix);
-          tmp  = PropertyManager->mkPropertyName(Name, false);
+          nName  = PropertyManager->mkPropertyName(Name, false);
         } else {
           cerr << el->ReadFrom()
                << "Malformed function name with number: " << Prefix
@@ -804,19 +815,18 @@ void FGFunction::bind(Element* el, FGPropertyManager* PropertyManager,
                << " but no \"#\" sign for substitution." << endl;
         }
       } else {
-        tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false);
+        nName  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false);
       }
     }
 
-    if (PropertyManager->HasNode(tmp)) {
-      FGPropertyNode* _property = PropertyManager->GetNode(tmp);
-      if (_property->isTied()) {
-        cerr << el->ReadFrom()
-             << "Property " << tmp << " has already been successfully bound (late)." << endl;
-        throw("Failed to bind the property to an existing already tied node.");
-      }
+    pNode = PropertyManager->GetNode(nName, true);
+    if (pNode->isTied()) {
+      cerr << el->ReadFrom()
+           << "Property " << nName << " has already been successfully bound (late)." << endl;
+      throw("Failed to bind the property to an existing already tied node.");
     }
-    PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
+
+    PropertyManager->Tie(nName, this, &FGFunction::GetValue);
   }
 }
 
