@@ -766,13 +766,18 @@ public:
 /// Retrieves the name of the function.
   std::string GetName(void) const override {return Name;}
 
+/** Does the function always return the same result (i.e. does it apply to
+    constant parameters) ? */
+  bool IsConstant(void) const override;
+
 /** Specifies whether to cache the value of the function, so it is calculated
     only once per frame.
     If shouldCache is true, then the value of the function is calculated, and a
     flag is set so further calculations done this frame will use the cached
     value.  In order to turn off caching, cacheValue must be called with a false
-    argument.  @param shouldCache specifies whether the function should cache
-    the computed value. */
+    argument.
+    @param shouldCache specifies whether the function should cache the computed
+    value. */
   void cacheValue(bool shouldCache);
 
   enum class OddEven {Either, Odd, Even};

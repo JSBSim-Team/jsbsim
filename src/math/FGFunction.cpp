@@ -740,6 +740,35 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
            << "> detected in configuration file" << reset << endl;
     }
 
+    // Optimize functions applied on constant parameters by replacing them by
+    // their constant result.
+    if (!Parameters.empty()){
+      SGSharedPtr<FGFunction> p = dynamic_cast<FGFunction*>(Parameters.back().ptr());
+
+      if (p && p->IsConstant()) {
+        double constant = p->GetValue();
+
+        Parameters.pop_back();
+        Parameters.push_back(new FGRealValue(constant));
+        if (debug_lvl > 0)
+          cout << element->ReadFrom() << fggreen << highint
+               << "<" << operation << "> is applied on constant parameters."
+               << endl << "It will be replaced by its result ("
+               << constant << ")";
+
+        // Unbind the function if necessary.
+        auto node = p->pNode;
+        if (node) {
+          node->setDoubleValue(constant);
+          node->setAttribute(SGPropertyNode::WRITE, false);
+          if (debug_lvl > 0)
+            cout << " and the property " << p->GetName()
+                 << " will be unbound and made read only.";
+        }
+        cout << reset << endl << endl;
+      }
+    }
+
     element = el->GetNextElement();
   }
 
@@ -758,6 +787,18 @@ FGFunction::~FGFunction()
   }
 
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFunction::IsConstant(void) const
+{
+  for (auto p: Parameters) {
+    if (!p->IsConstant())
+      return false;
+  }
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
