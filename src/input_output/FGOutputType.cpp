@@ -8,21 +8,21 @@
   ------------- Copyright (C) 2011 Bertrand Coconnier -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -80,9 +80,8 @@ FGOutputType::FGOutputType(FGFDMExec* fdmex) :
 
 FGOutputType::~FGOutputType()
 {
-  vector<FGPropertyValue*>::iterator it;
-  for (it=OutputParameters.begin(); it != OutputParameters.end(); ++it)
-    delete *it;
+  for (auto param: OutputParameters)
+    delete param;
 
   Debug(1);
 }
@@ -143,8 +142,7 @@ bool FGOutputType::Load(Element* element)
     } else {
       if (property_element->HasAttribute("apply")) {
         string function_str = property_element->GetAttributeValue("apply");
-        FGOutput* Output = FDMExec->GetOutput();
-        FGTemplateFunc* f = Output->GetTemplateFunc(function_str);
+        FGTemplateFunc* f = FDMExec->GetTemplateFunc(function_str);
         if (f)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {
@@ -226,9 +224,8 @@ double FGOutputType::GetRateHz(void) const
 
 void FGOutputType::SetOutputProperties(vector<FGPropertyNode_ptr> & outputProperties)
 {
-  vector<FGPropertyNode_ptr>::iterator it;
-  for (it = outputProperties.begin(); it != outputProperties.end(); ++it)
-    OutputParameters.push_back(new FGPropertyValue(*it));
+  for (auto prop: outputProperties)
+    OutputParameters.push_back(new FGPropertyValue(prop));
 }
 
 
@@ -257,7 +254,6 @@ void FGOutputType::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-
     }
     if (from == 2) {
       if (SubSystems & ssSimulation)      cout << "    Simulation parameters logged" << endl;
@@ -274,9 +270,8 @@ void FGOutputType::Debug(int from)
       if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
       if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;
       if (!OutputParameters.empty())      cout << "    Properties logged:" << endl;
-      for (unsigned int i=0;i<OutputParameters.size();i++) {
-        cout << "      - " << OutputParameters[i]->GetName() << endl;
-      }
+      for (auto param: OutputParameters)
+        cout << "      - " << param->GetName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

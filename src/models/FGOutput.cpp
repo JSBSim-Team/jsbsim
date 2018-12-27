@@ -9,21 +9,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -40,14 +40,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGOutput.h"
-#include "FGFDMExec.h"
 #include "input_output/FGOutputSocket.h"
 #include "input_output/FGOutputTextFile.h"
 #include "input_output/FGOutputFG.h"
 #include "input_output/FGXMLFileRead.h"
-#include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
-#include "math/FGTemplateFunc.h"
 
 using namespace std;
 
@@ -73,9 +70,8 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGOutput::~FGOutput()
 {
-  vector<FGOutputType*>::iterator itv;
-  for (itv = OutputTypes.begin(); itv != OutputTypes.end(); ++itv)
-    delete (*itv);
+  for (auto output: OutputTypes)
+    delete output;
 
   Debug(1);
 }
@@ -88,9 +84,8 @@ bool FGOutput::InitModel(void)
 
   if (!FGModel::InitModel()) return false;
 
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    ret &= (*it)->InitModel();
+  for (auto output: OutputTypes)
+    ret &= output->InitModel();
 
   return ret;
 }
@@ -104,9 +99,8 @@ bool FGOutput::Run(bool Holding)
   if (Holding) return false;
   if (!enabled) return true;
 
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    (*it)->Run();
+  for (auto output: OutputTypes)
+    output->Run();
 
   return false;
 }
@@ -115,18 +109,16 @@ bool FGOutput::Run(bool Holding)
 
 void FGOutput::Print(void)
 {
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    (*it)->Print();
+  for (auto output: OutputTypes)
+    output->Print();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGOutput::SetStartNewOutput(void)
 {
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    (*it)->SetStartNewOutput();
+  for (auto output: OutputTypes)
+    output->SetStartNewOutput();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,9 +135,8 @@ bool FGOutput::Toggle(int idx)
 
 void FGOutput::SetRateHz(double rate)
 {
-  vector<FGOutputType*>::iterator it;
-  for (it = OutputTypes.begin(); it != OutputTypes.end(); ++it)
-    (*it)->SetRateHz(rate);
+  for (auto output: OutputTypes)
+    output->SetRateHz(rate);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,19 +240,6 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   if (!FGModel::Load(document, false))
     return false;
 
-  Element *function = document->FindElement("function");
-
-  while (function) {
-    string fType = function->GetAttributeValue("type");
-
-    if (fType == "template") {
-      string name = function->GetAttributeValue("name");
-      TemplateFunctions[name] = new FGTemplateFunc(PropertyManager, function);
-    }
-
-    function = document->FindNextElement("function");
-  }
-
   size_t idx = OutputTypes.size();
   string type = document->GetAttributeValue("type");
   FGOutputType* Output = 0;
@@ -331,8 +309,6 @@ SGPath FGOutput::FindFullPathName(const SGPath& path) const
 
 void FGOutput::Debug(int from)
 {
-  string scratch="";
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

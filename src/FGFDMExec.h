@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -50,6 +50,7 @@ INCLUDES
 #include "math/FGColumnVector3.h"
 #include "models/FGOutput.h"
 #include "simgear/misc/sg_path.hxx"
+#include "math/FGTemplateFunc.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,16 +96,16 @@ CLASS DOCUMENTATION
     result = fdmex->LoadModel( ... );
     @endcode
 
-    When an aircraft model is loaded, the config file is parsed and for each of the
-    sections of the config file (propulsion, flight control, etc.) the
+    When an aircraft model is loaded, the config file is parsed and for each of
+    the sections of the config file (propulsion, flight control, etc.) the
     corresponding Load() method is called (e.g. FGFCS::Load()).
 
     Subsequent to the creation of the executive and loading of the model,
     initialization is performed. Initialization involves copying control inputs
-    into the appropriate JSBSim data storage locations, configuring it for the set
-    of user supplied initial conditions, and then copying state variables from
-    JSBSim. The state variables are used to drive the instrument displays and to
-    place the vehicle model in world space for visual rendering:
+    into the appropriate JSBSim data storage locations, configuring it for the
+    set of user supplied initial conditions, and then copying state variables
+    from JSBSim. The state variables are used to drive the instrument displays
+    and to place the vehicle model in world space for visual rendering:
 
     @code
     copy_to_JSBsim(); // copy control inputs to JSBSim
@@ -121,13 +122,13 @@ CLASS DOCUMENTATION
     @endcode
 
     JSBSim can be used in a standalone mode by creating a compact stub program
-    that effectively performs the same progression of steps as outlined above for
-    the integrated version, but with two exceptions. First, the copy_to_JSBSim()
-    and copy_from_JSBSim() functions are not used because the control inputs are
-    handled directly by the scripting facilities and outputs are handled by the
-    output (data logging) class. Second, the name of a script file can be supplied
-    to the stub program. Scripting (see FGScript) provides a way to supply command
-    inputs to the simulation:
+    that effectively performs the same progression of steps as outlined above
+    for the integrated version, but with two exceptions. First, the
+    copy_to_JSBSim() and copy_from_JSBSim() functions are not used because the
+    control inputs are handled directly by the scripting facilities and outputs
+    are handled by the output (data logging) class. Second, the name of a script
+    file can be supplied to the stub program. Scripting (see FGScript) provides
+    a way to supply command inputs to the simulation:
 
     @code
     FDMExec = new JSBSim::FGFDMExec();
@@ -593,6 +594,17 @@ public:
   */
   bool GetHoldDown(void) const {return HoldDown;}
 
+  FGTemplateFunc* GetTemplateFunc(const std::string& name) {
+    if (TemplateFunctions.count(name))
+      return TemplateFunctions[name];
+    else
+      return nullptr;
+  }
+
+  void AddTemplateFunc(const std::string& name, Element* el) {
+    TemplateFunctions[name] = new FGTemplateFunc(instance, el);
+  }
+
 private:
   int Error;
   unsigned int Frame;
@@ -656,6 +668,7 @@ private:
   std::vector <std::string> PropertyCatalog;
   std::vector <childData*> ChildFDMList;
   std::vector <FGModel*> Models;
+  std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
 
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);
