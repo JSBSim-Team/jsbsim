@@ -127,7 +127,7 @@ class TestActuator(JSBSimTestCase):
         # test is failed.
         p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path))
         p.start()
-        p.join(exec_time * 10.0)  # Wait 10 times the reference time
+        p.join(exec_time * 20.0)  # Wait 10 times the reference time
         alive = p.is_alive()
         if alive:
             p.terminate()
