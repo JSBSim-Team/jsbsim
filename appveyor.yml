@@ -44,7 +44,7 @@ deploy:
   description: Windows - Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\JSBSim.exe,build\utils\aeromatic++\aeromatic.exe
+  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   prerelease: true
   on:
     branch: master
