@@ -125,9 +125,10 @@ class TestActuator(JSBSimTestCase):
         # times the reference execution time for the script completion. Beyond
         # that time, if the process is not completed, it is terminated and the
         # test is failed.
-        p = Process(target=SubProcessScriptExecution, args=(self.sandbox, self.script_path))
+        p = Process(target=SubProcessScriptExecution,
+                    args=(self.sandbox, self.script_path))
         p.start()
-        p.join(exec_time * 10.0)  # Wait 10 times the reference time
+        p.join(exec_time * 20.0)  # Wait 20 times the reference time
         alive = p.is_alive()
         if alive:
             p.terminate()
@@ -148,7 +149,8 @@ class TestActuator(JSBSimTestCase):
 
         tree = et.parse(os.path.join(self.path_to_jsbsim_aircrafts,
                                      self.aircraft_name+'.xml'))
-        flight_control_element = tree.getroot().find('flight_control')
+        root = tree.getroot()
+        flight_control_element = root.find('flight_control')
         actuator_element = flight_control_element.find('channel/actuator//rate_limit/..')
         rate_element = actuator_element.find('rate_limit')
         property = et.SubElement(flight_control_element, 'property')
@@ -159,6 +161,8 @@ class TestActuator(JSBSimTestCase):
         new_rate_element = et.SubElement(actuator_element, 'rate_limit')
         new_rate_element.attrib['sense'] = 'incr'
         new_rate_element.text = rate_element.text
+        output_element = root.find('output')
+        output_element.attrib['name'] = 'test.csv'
 
         tree.write(os.path.join('aircraft', self.aircraft_name,
                                 self.aircraft_name+'.xml'))
