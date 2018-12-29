@@ -7,21 +7,21 @@
  ------- Copyright (C) 2010  Jon S. Berndt (jon@jsbsim.org) ------------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,12 +37,8 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <sstream>
-#include <string>
-
+#include "FGFDMExec.h"
 #include "FGModelFunctions.h"
-#include "FGFunction.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -55,8 +51,8 @@ CLASS IMPLEMENTATION
 
 FGModelFunctions::~FGModelFunctions()
 {
-  for (unsigned int i=0; i<PreFunctions.size(); i++) delete PreFunctions[i];
-  for (unsigned int i=0; i<PostFunctions.size(); i++) delete PostFunctions[i];
+  for (auto prefunc: PreFunctions) delete prefunc;
+  for (auto postfunc: PostFunctions) delete postfunc;
 
   if (debug_lvl & 2) cout << "Destroyed:    FGModelFunctions" << endl;
 }
@@ -72,17 +68,17 @@ bool FGModelFunctions::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModelFunctions::Load(Element* el, FGPropertyManager* PM, string prefix)
+bool FGModelFunctions::Load(Element* el, FGFDMExec* fdmex, string prefix)
 {
-  LocalProperties.Load(el, PM, false);
-  PreLoad(el, PM, prefix);
+  LocalProperties.Load(el, fdmex->GetPropertyManager(), false);
+  PreLoad(el, fdmex, prefix);
 
   return true; // TODO: Need to make this value mean something.
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGModelFunctions::PreLoad(Element* el, FGPropertyManager* PM, string prefix)
+void FGModelFunctions::PreLoad(Element* el, FGFDMExec* fdmex, string prefix)
 {
   // Load model post-functions, if any
 
@@ -91,7 +87,11 @@ void FGModelFunctions::PreLoad(Element* el, FGPropertyManager* PM, string prefix
   while (function) {
     string fType = function->GetAttributeValue("type");
     if (fType.empty() || fType == "pre")
-      PreFunctions.push_back(new FGFunction(PM, function, prefix));
+      PreFunctions.push_back(new FGFunction(fdmex, function, prefix));
+    else if (fType == "template") {
+      string name = function->GetAttributeValue("name");
+      fdmex->AddTemplateFunc(name, function);
+    }
 
     function = el->FindNextElement("function");
   }
@@ -99,14 +99,14 @@ void FGModelFunctions::PreLoad(Element* el, FGPropertyManager* PM, string prefix
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGModelFunctions::PostLoad(Element* el, FGPropertyManager* PM, string prefix)
+void FGModelFunctions::PostLoad(Element* el, FGFDMExec* fdmex, string prefix)
 {
   // Load model post-functions, if any
 
   Element *function = el->FindElement("function");
   while (function) {
     if (function->GetAttributeValue("type") == "post") {
-      PostFunctions.push_back(new FGFunction(PM, function, prefix));
+      PostFunctions.push_back(new FGFunction(fdmex, function, prefix));
     }
     function = el->FindNextElement("function");
   }
@@ -120,10 +120,8 @@ void FGModelFunctions::PostLoad(Element* el, FGPropertyManager* PM, string prefi
 
 void FGModelFunctions::RunPreFunctions(void)
 {
-  size_t sz = PreFunctions.size();
-  for (unsigned int i=0; i<sz; i++) {
-    PreFunctions[i]->cacheValue(true);
-  }
+  for (auto prefunc: PreFunctions)
+    prefunc->cacheValue(true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,52 +132,40 @@ void FGModelFunctions::RunPreFunctions(void)
 
 void FGModelFunctions::RunPostFunctions(void)
 {
-  size_t sz = PostFunctions.size();
-  for (unsigned int i=0; i<sz; i++) {
-    PostFunctions[i]->cacheValue(true);
-  }
+  for (auto postfunc: PostFunctions)
+    postfunc->cacheValue(true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGFunction* FGModelFunctions::GetPreFunction(const std::string& name)
 {
-  FGFunction* result;
-  vector<FGFunction*>::iterator it = PreFunctions.begin();
-
-  for (; it != PreFunctions.end(); ++it) {
-    result = *it;
-    if (result->GetName() == name)
-      return result;
+  for (auto prefunc: PreFunctions) {
+    if (prefunc->GetName() == name)
+      return prefunc;
   }
 
-  return 0;
+  return nullptr;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGModelFunctions::GetFunctionStrings(const string& delimeter) const
 {
-  string FunctionStrings = "";
-  bool firstime = true;
-  unsigned int sd;
+  string FunctionStrings;
 
-  for (sd = 0; sd < PreFunctions.size(); sd++) {
-    if (firstime) {
-      firstime = false;
-    } else {
+  for (auto prefunc: PreFunctions) {
+    if (!FunctionStrings.empty())
       FunctionStrings += delimeter;
-    }
-    FunctionStrings += PreFunctions[sd]->GetName();
+
+    FunctionStrings += prefunc->GetName();
   }
 
-  for (sd = 0; sd < PostFunctions.size(); sd++) {
-    if (firstime) {
-      firstime = false;
-    } else {
+  for (auto postfunc: PostFunctions) {
+    if (!FunctionStrings.empty())
       FunctionStrings += delimeter;
-    }
-    FunctionStrings += PostFunctions[sd]->GetName();
+
+    FunctionStrings += postfunc->GetName();
   }
 
   return FunctionStrings;
@@ -191,14 +177,14 @@ string FGModelFunctions::GetFunctionValues(const string& delimeter) const
 {
   ostringstream buf;
 
-  for (unsigned int sd = 0; sd < PreFunctions.size(); sd++) {
+  for (auto prefunc: PreFunctions) {
     if (buf.tellp() > 0) buf << delimeter;
-    buf << PreFunctions[sd]->GetValue();
+    buf << prefunc->GetValue();
   }
 
-  for (unsigned int sd = 0; sd < PostFunctions.size(); sd++) {
+  for (auto postfunc: PostFunctions) {
     if (buf.tellp() > 0) buf << delimeter;
-    buf << PostFunctions[sd]->GetValue();
+    buf << postfunc->GetValue();
   }
 
   return buf.str();

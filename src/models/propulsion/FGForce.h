@@ -4,24 +4,24 @@
  Author:       Tony Peden
  Date started: 5/20/00
 
- ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
+ ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -----
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 
  HISTORY
@@ -59,7 +59,6 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "math/FGMatrix33.h"
-#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,8 +72,8 @@ class FGFDMExec;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Utility class that aids in the conversion of forces between coordinate systems
-    and calculation of moments.
+/** Utility class that aids in the conversion of forces between coordinate
+    systems and calculation of moments.
 <br><h3>Resolution of Applied Forces into Moments and Body Axes Components</h3>
 <br><p>
 All forces acting on the aircraft that cannot be considered a change in weight
@@ -118,7 +117,8 @@ tCustom, and tNone. The local-to-body transform, like the wind-to-body, also
 makes use of that already available in JSBSim. tNone sets FGForce to do no
 angular transform at all, and tCustom allows for modeling force vectors at
 arbitrary angles relative to the body system such as that produced by propulsion
-systems. Setting up and using a custom transform is covered in more detail below.
+systems. Setting up and using a custom transform is covered in more detail
+below.
 Continuing with the example, the point of application of the aerodynamic forces,
 the aerodynamic reference point in JSBSim, also needs to be set:</p>
 <p><tt>
@@ -162,8 +162,9 @@ after the forces have been retrieved. </p>
 <h4>Use of the Custom Transform Type</h4>
 
 <p>In cases where the native force vector is not aligned with the body, wind, or
-local coordinate systems a custom transform type is provided. A vectorable engine
-nozzle will be used to demonstrate its usage. Initialization is much the same:</p>
+local coordinate systems a custom transform type is provided. A vectorable
+engine nozzle will be used to demonstrate its usage. Initialization is much the
+same:</p>
 
 <p><tt>FGForce fgf(FDMExec);</tt> <br>
 <tt>fgf.SetTransformType(tCustom);</tt> <br>
@@ -220,11 +221,11 @@ class FGForce : public FGJSBBase
 {
 public:
   /// Constructor
-  FGForce(FGFDMExec *FDMExec);
+  explicit FGForce(FGFDMExec *FDMExec);
   FGForce(const FGForce& force);
 
   /// Destructor
-  ~FGForce();
+  virtual ~FGForce();
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
 

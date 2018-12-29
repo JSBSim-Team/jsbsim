@@ -28,21 +28,15 @@ Purpose: Stores various parameter types for functions
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <sstream>
 #include <iomanip>
-#include <cstdlib>
-#include <cmath>
-#include <exception>
 
 #include "simgear/misc/strutils.hxx"
+#include "FGFDMExec.h"
 #include "FGFunction.h"
 #include "FGTable.h"
-#include "FGPropertyValue.h"
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGMatrix33.h"
-#include "math/FGQuaternion.h"
-#include "math/FGColumnVector3.h"
+#include "math/FGFunctionValue.h"
 
 using namespace std;
 
@@ -79,11 +73,11 @@ template<typename func_t, unsigned int Nmin, unsigned int Nmax=Nmin,
 class aFunc: public FGFunction
 {
 public:
-  aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
+  aFunc(const func_t& _f, FGFDMExec* fdmex, Element* el,
         const string& prefix, FGPropertyValue* v)
-    : FGFunction(pm), f(_f)
+    : FGFunction(fdmex->GetPropertyManager()), f(_f)
   {
-    Load(el, v, prefix);
+    Load(el, v, fdmex, prefix);
     CheckMinArguments(el, Nmin);
     CheckMaxArguments(el, Nmax);
     CheckOddOrEvenArguments(el, odd_even);
@@ -116,13 +110,13 @@ bool GetBinary(double val, const string &ctxMsg)
 // Hides the machinery to create a class for functions from <math.h> such as
 // sin, cos, exp, etc.
 
-FGFunction* make_MathFn(double(*math_fn)(double), FGPropertyManager* pm, Element* el,
+FGFunction* make_MathFn(double(*math_fn)(double), FGFDMExec* fdmex, Element* el,
                         const string& prefix, FGPropertyValue* v)
 {
   auto f = [math_fn](const std::vector<FGParameter_ptr> &p)->double {
              return math_fn(p[0]->GetValue());
            };
-  return new aFunc<decltype(f), 1>(f, pm, el, prefix, v);
+  return new aFunc<decltype(f), 1>(f, fdmex, el, prefix, v);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,11 +125,11 @@ FGFunction* make_MathFn(double(*math_fn)(double), FGPropertyManager* pm, Element
 // function: in that case the function is ignored and replaced by its argument.
 
 template<typename func_t>
-FGParameter_ptr VarArgsFn(const func_t& _f, FGPropertyManager* pm, Element* el,
+FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
                           const string& prefix, FGPropertyValue* v)
 {
   try {
-    return new aFunc<func_t, 2, MaxArgs>(_f, pm, el, prefix, v);
+    return new aFunc<func_t, 2, MaxArgs>(_f, fdmex, el, prefix, v);
   }
   catch(WrongNumberOfArguments& e) {
     if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
@@ -153,11 +147,11 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGPropertyManager* pm, Element* el,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGFunction::FGFunction(FGPropertyManager* pm, Element* el, const string& prefix,
+FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
                        FGPropertyValue* var)
-  : FGFunction(pm)
+  : FGFunction(fdmex->GetPropertyManager())
 {
-  Load(el, var, prefix);
+  Load(el, var, fdmex, prefix);
   CheckMinArguments(el, 1);
   CheckMaxArguments(el, 1);
 
@@ -240,7 +234,8 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
+void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
+                      const string& Prefix)
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
@@ -275,8 +270,23 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
           }
         }
 
-        Parameters.push_back(new FGPropertyValue( property_name,
-                                                  PropertyManager ));
+        if (element->HasAttribute("apply")) {
+          string function_str = element->GetAttributeValue("apply");
+          FGTemplateFunc* f = fdmex->GetTemplateFunc(function_str);
+          if (f)
+            Parameters.push_back(new FGFunctionValue(property_name,
+                                                     PropertyManager, f));
+          else {
+            cerr << element->ReadFrom()
+                 << fgred << highint << "  No function by the name "
+                 << function_str << " has been defined. This property will "
+                 << "not be logged. You should check your configuration file."
+                 << reset << endl;
+          }
+        }
+        else
+          Parameters.push_back(new FGPropertyValue(property_name,
+                                                   PropertyManager));
       }
     } else if (operation == "value" || operation == "v") {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));
@@ -294,14 +304,14 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return temp;
                };
-      Parameters.push_back(VarArgsFn<decltype(f)>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(f)>(f, fdmex, element, Prefix, var));
     } else if (operation == "sum") {
-      Parameters.push_back(VarArgsFn<decltype(sum)>(sum, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(sum)>(sum, fdmex, element, Prefix, var));
     } else if (operation == "avg") {
       auto avg = [&](const decltype(Parameters)& p)->double {
                    return sum(p) / p.size();
                  };
-      Parameters.push_back(VarArgsFn<decltype(avg)>(avg, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(avg)>(avg, fdmex, element, Prefix, var));
     } else if (operation == "difference") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = Parameters[0]->GetValue();
@@ -311,7 +321,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return temp;
                };
-      Parameters.push_back(VarArgsFn<decltype(f)>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(f)>(f, fdmex, element, Prefix, var));
     } else if (operation == "min") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _min = HUGE_VAL;
@@ -324,7 +334,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return _min;
                };
-      Parameters.push_back(VarArgsFn<decltype(f)>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(f)>(f, fdmex, element, Prefix, var));
     } else if (operation == "max") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _max = -HUGE_VAL;
@@ -337,7 +347,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return _max;
                };
-      Parameters.push_back(VarArgsFn<decltype(f)>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(VarArgsFn<decltype(f)>(f, fdmex, element, Prefix, var));
     } else if (operation == "and") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
@@ -348,7 +358,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return 1.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
     } else if (operation == "or") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
@@ -359,142 +369,142 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
     } else if (operation == "quotient") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double y = p[1]->GetValue();
                  return y != 0.0 ? p[0]->GetValue()/y : HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "pow") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return pow(p[0]->GetValue(), p[1]->GetValue());
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "toradians") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue()*M_PI/180.;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "todegrees") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue()*180./M_PI;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "sqrt") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double x = p[0]->GetValue();
                  return x >= 0.0 ? sqrt(x) : -HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "log2") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double x = p[0]->GetValue();
                  return x > 0.0 ? log10(x)*invlog2val : -HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "ln") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double x = p[0]->GetValue();
                  return x > 0.0 ? log(x) : -HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "log10") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double x = p[0]->GetValue();
                  return x > 0.0 ? log10(x) : -HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "sign") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() < 0.0 ? -1 : 1; // 0.0 counts as positive.
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "exp") {
-      Parameters.push_back(make_MathFn(exp, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(exp, fdmex, element, Prefix, var));
     } else if (operation == "abs") {
-      Parameters.push_back(make_MathFn(fabs, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(fabs, fdmex, element, Prefix, var));
     } else if (operation == "sin") {
-      Parameters.push_back(make_MathFn(sin, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(sin, fdmex, element, Prefix, var));
     } else if (operation == "cos") {
-      Parameters.push_back(make_MathFn(cos, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(cos, fdmex, element, Prefix, var));
     } else if (operation == "tan") {
-      Parameters.push_back(make_MathFn(tan, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(tan, fdmex, element, Prefix, var));
     } else if (operation == "asin") {
-      Parameters.push_back(make_MathFn(asin, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(asin, fdmex, element, Prefix, var));
     } else if (operation == "acos") {
-      Parameters.push_back(make_MathFn(acos, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(acos, fdmex, element, Prefix, var));
     } else if (operation == "atan") {
-      Parameters.push_back(make_MathFn(atan, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(atan, fdmex, element, Prefix, var));
     } else if (operation == "floor") {
-      Parameters.push_back(make_MathFn(floor, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(floor, fdmex, element, Prefix, var));
     } else if (operation == "ceil") {
-      Parameters.push_back(make_MathFn(ceil, PropertyManager, element, Prefix, var));
+      Parameters.push_back(make_MathFn(ceil, fdmex, element, Prefix, var));
     } else if (operation == "fmod") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double y = p[1]->GetValue();
                  return y != 0.0 ? fmod(p[0]->GetValue(), y) : HUGE_VAL;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "atan2") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return atan2(p[0]->GetValue(), p[1]->GetValue());
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "mod") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return static_cast<int>(p[0]->GetValue()) % static_cast<int>(p[1]->GetValue());
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "fraction") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double scratch;
                  return modf(p[0]->GetValue(), &scratch);
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "integer") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double result;
                  modf(p[0]->GetValue(), &result);
                  return result;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "lt") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() < p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "le") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() <= p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "gt") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() > p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "ge") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() >= p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "eq") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() == p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "nq") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return p[0]->GetValue() != p[1]->GetValue() ? 1.0 : 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "not") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
                  return GetBinary(p[0]->GetValue(), ctxMsg) ? 0.0 : 1.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
     } else if (operation == "ifthen") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
@@ -503,17 +513,17 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
                  else
                    return p[2]->GetValue();
                };
-      Parameters.push_back(new aFunc<decltype(f), 3>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 3>(f, fdmex, element, Prefix, var));
     } else if (operation == "random") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return GaussianRandomNumber();
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "urandom") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
@@ -538,7 +548,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
                    throw("Fatal error");
                  }
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
     } else if (operation == "interpolate1d") {
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
@@ -574,7 +584,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
                };
-      Parameters.push_back(new aFunc<decltype(f), 5, MaxArgs, OddEven::Odd>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 5, MaxArgs, OddEven::Odd>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -597,7 +607,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
                  else
                    return atan2(wind_local(eZ), wind_local(eX))*radtodeg;
                };
-      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_beta_local") {
       // Calculates local angle of sideslip for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -629,7 +639,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return atan2(wind_local(eY), cosb)*radtodeg;
                };
-      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_gamma_local") {
       // Calculates local roll angle for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -676,7 +686,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return atan2(sinc, cosc)*radtodeg;
                };
-      Parameters.push_back(new aFunc<decltype(f), 6>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 6>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_bf_to_wf") {
       // Transforms the input vector from a body frame to a wind frame. The
       // origin of the vector remains the same.
@@ -704,7 +714,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return r(idx);
                };
-      Parameters.push_back(new aFunc<decltype(f), 7>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 7>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_wf_to_bf") {
       // Transforms the input vector from q wind frame to a body frame. The
       // origin of the vector remains the same.
@@ -733,7 +743,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
 
                  return r(idx);
                };
-      Parameters.push_back(new aFunc<decltype(f), 7>(f, PropertyManager, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 7>(f, fdmex, element, Prefix, var));
     } else if (operation != "description") {
       cerr << element->ReadFrom() << fgred << highint
            << "Bad operation <" << operation
@@ -743,10 +753,12 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
     // Optimize functions applied on constant parameters by replacing them by
     // their constant result.
     if (!Parameters.empty()){
-      SGSharedPtr<FGFunction> p = dynamic_cast<FGFunction*>(Parameters.back().ptr());
+      FGFunction* p = dynamic_cast<FGFunction*>(Parameters.back().ptr());
 
       if (p && p->IsConstant()) {
         double constant = p->GetValue();
+        FGPropertyNode_ptr node = p->pNode;
+        string pName = p->GetName();
 
         Parameters.pop_back();
         Parameters.push_back(new FGRealValue(constant));
@@ -756,19 +768,16 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, const string& Prefix)
                << endl << "It will be replaced by its result ("
                << constant << ")";
 
-        // Unbind the function if necessary.
-        auto node = p->pNode;
         if (node) {
           node->setDoubleValue(constant);
           node->setAttribute(SGPropertyNode::WRITE, false);
           if (debug_lvl > 0)
-            cout << " and the property " << p->GetName()
+            cout << " and the property " << pName
                  << " will be unbound and made read only.";
         }
         cout << reset << endl << endl;
       }
     }
-
     element = el->GetNextElement();
   }
 

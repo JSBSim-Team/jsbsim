@@ -8,7 +8,8 @@ set(SOURCES FGColumnVector3.cpp
             FGTable.cpp
             FGCondition.cpp
             FGRungeKutta.cpp
-            FGModelFunctions.cpp)
+            FGModelFunctions.cpp
+            FGTemplateFunc.cpp)
 
 set(HEADERS FGColumnVector3.h
             FGFunction.h

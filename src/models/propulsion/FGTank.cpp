@@ -8,21 +8,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -36,13 +36,9 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cstdlib>
-#include <iostream>
 #include "FGTank.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
-#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -53,7 +49,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
-                  : TankNumber(tank_number)
+  : TankNumber(tank_number)
 {
   string token, strFuelName;
   Element* element;
@@ -143,7 +139,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         Element* element_ixx = element_Grain->FindElement("ixx");
         if (element_ixx->GetAttributeValue("unit") == "KG*M2") ixx_unit = 1.0/1.35594;
         if (element_ixx->FindElement("function") != 0) {
-          function_ixx = new FGFunction(PropertyManager, element_ixx->FindElement("function"));
+          function_ixx = new FGFunction(exec, element_ixx->FindElement("function"));
         }
       } else {
         throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an ixx must be specified when the FUNCTION grain type is specified.");
@@ -153,7 +149,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         Element* element_iyy = element_Grain->FindElement("iyy");
         if (element_iyy->GetAttributeValue("unit") == "KG*M2") iyy_unit = 1.0/1.35594;
         if (element_iyy->FindElement("function") != 0) {
-          function_iyy = new FGFunction(PropertyManager, element_iyy->FindElement("function"));
+          function_iyy = new FGFunction(exec, element_iyy->FindElement("function"));
         }
       } else {
         throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an iyy must be specified when the FUNCTION grain type is specified.");
@@ -163,7 +159,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         Element* element_izz = element_Grain->FindElement("izz");
         if (element_izz->GetAttributeValue("unit") == "KG*M2") izz_unit = 1.0/1.35594;
         if (element_izz->FindElement("function") != 0) {
-          function_izz = new FGFunction(PropertyManager, element_izz->FindElement("function"));
+          function_izz = new FGFunction(exec, element_izz->FindElement("function"));
         }
       } else {
         throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an izz must be specified when the FUNCTION grain type is specified.");

@@ -34,8 +34,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
-#include <string>
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -47,6 +45,7 @@ namespace JSBSim {
 
 class Element;
 class FGPropertyValue;
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -179,7 +178,8 @@ refers to one or more instances of a property, value, or table.
       <v> 0.01 </v>
     </sum>
     @endcode
-- @b difference, subtracts the values of all immediate child elements from the value of the first child element:
+- @b difference, subtracts the values of all immediate child elements from the
+                 value of the first child element:
     @code
     <difference>
       {properties, values, tables, or other function elements}
@@ -207,7 +207,8 @@ refers to one or more instances of a property, value, or table.
       <property> aero/coefficient/CY_beta </property>
     </product>
     @endcode
-- @b quotient, divides the value of the first immediate child element by the second immediate child element:
+- @b quotient, divides the value of the first immediate child element by the
+               second immediate child element:
     @code
     <quotient>
       {property, value, table, or other function element}
@@ -224,8 +225,8 @@ refers to one or more instances of a property, value, or table.
       <p> position/radius-to-vehicle-ft </p>
     </quotient>
     @endcode
-- @b pow, raises the value of the first immediate child element to the power of the value
-          of the second immediate child element:
+- @b pow, raises the value of the first immediate child element to the power of
+          the value of the second immediate child element:
     @code
     <pow>
       {property, value, table, or other function element}
@@ -249,8 +250,8 @@ refers to one or more instances of a property, value, or table.
 
     <sqrt> <v> 25.0 </v> </sqrt>
     @endcode
-- @b toradians, converts a presumed argument in degrees to radians by multiplying
-                the value of the immediate child element by pi/180:
+- @b toradians, converts a presumed argument in degrees to radians by
+                multiplying the value of the immediate child element by pi/180:
     @code
     <toradians>
       {property, value, table, or other function element}
@@ -260,8 +261,8 @@ refers to one or more instances of a property, value, or table.
 
     <toradians> <v> 45 </v> </toradians>
     @endcode
-- @b todegrees, converts a presumed argument in radians to degrees by multiplying
-     the value of the immediate child element by 180/pi:
+- @b todegrees, converts a presumed argument in radians to degrees by
+                multiplying the value of the immediate child element by 180/pi:
     @code
     <todegrees>
       {property, value, table, or other function element}
@@ -292,7 +293,8 @@ refers to one or more instances of a property, value, or table.
     Example:
     <log2> <v> 128 </v> </log2>
     @endcode
-- @b ln, calculates the natural logarithm of the value of the immediate child element:
+- @b ln, calculates the natural logarithm of the value of the immediate child
+         element:
     @code
     <ln>
       {property, value, table, or other function element}
@@ -302,7 +304,8 @@ refers to one or more instances of a property, value, or table.
 
     <ln> <v> 200 </v> </ln>
     @endcode
-- @b log10 calculates the base 10 logarithm of the value of the immediate child element
+- @b log10, calculates the base 10 logarithm of the value of the immediate child
+            element
     @code
     <log10>
       {property, value, table, or other function element}
@@ -322,7 +325,8 @@ refers to one or more instances of a property, value, or table.
 
     <abs> <p> flight-path/gamma-rad </p> </abs>
     @endcode
-- @b sin calculates the sine of the value of the immediate child element (the argument is expected to be in radians)
+- @b sin, calculates the sine of the value of the immediate child element (the
+          argument is expected to be in radians)
     @code
     <sin>
       {property, value, table, or other function element}
@@ -332,7 +336,8 @@ refers to one or more instances of a property, value, or table.
 
     <sin> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </sin>
     @endcode
-- @b cos calculates the cosine of the value of the immediate child element (the argument is expected to be in radians)
+- @b cos, calculates the cosine of the value of the immediate child element (the
+          argument is expected to be in radians)
     @code
     <cos>
       {property, value, table, or other function element}
@@ -342,7 +347,8 @@ refers to one or more instances of a property, value, or table.
 
     <cos> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </cos>
     @endcode
-- @b tan calculates the tangent of the value of the immediate child element (the argument is expected to be in radians)
+- @b tan, calculates the tangent of the value of the immediate child element
+          (the argument is expected to be in radians)
     @code
     <tan>
       {property, value, table, or other function element}
@@ -352,10 +358,10 @@ refers to one or more instances of a property, value, or table.
 
     <tan> <toradians> <p> fcs/heading-true-degrees </p> </toradians> </tan>
     @endcode
-- @b asin calculates the arcsine (inverse sine) of the value of the immediate child element. The
-          value provided should be in the range from -1 to +1. The value returned
-          will be expressed in radians, and will be in the range from -pi/2 to
-          +pi/2.
+- @b asin, calculates the arcsine (inverse sine) of the value of the immediate
+           child element. The value provided should be in the range from -1 to
+           +1. The value returned will be expressed in radians, and will be in
+           the range from -pi/2 to +pi/2.
     @code
     <asin>
       {property, value, table, or other function element}
@@ -365,9 +371,10 @@ refers to one or more instances of a property, value, or table.
 
     <asin> <v> 0.5 </v> </asin>
     @endcode
-- @b acos calculates the arccosine (inverse cosine) of the value of the immediate child element. The
-          value provided should be in the range from -1 to +1. The value returned
-          will be expressed in radians, and will be in the range from 0 to pi.
+- @b acos, calculates the arccosine (inverse cosine) of the value of the
+           immediate child element. The value provided should be in the range
+           from -1 to +1. The value returned will be expressed in radians, and
+           will be in the range from 0 to pi.
     @code
     <acos>
       {property, value, table, or other function element}
@@ -377,9 +384,9 @@ refers to one or more instances of a property, value, or table.
 
     <acos> <v> 0.5 </v> </acos>
     @endcode
-- @b atan calculates the inverse tangent of the value of the immediate child element.
-          The value returned will be expressed in radians, and will be in the
-          range from -pi/2 to +pi/2.
+- @b atan, calculates the inverse tangent of the value of the immediate child
+           element. The value returned will be expressed in radians, and will
+           be in the range from -pi/2 to +pi/2.
     @code
     <atan>
       {property, value, table, or other function element}
@@ -443,7 +450,8 @@ refers to one or more instances of a property, value, or table.
       <v> 0.50 </v>
     </avg>
     @endcode
-- @b fraction returns the fractional part of the value of the immediate child element 
+- @b fraction, returns the fractional part of the value of the immediate child
+               element
     @code
     <fraction>
       {property, value, table, or other function element}
@@ -453,7 +461,8 @@ refers to one or more instances of a property, value, or table.
 
     <fraction> <pi/> </fraction>
     @endcode
-- @b integer returns the integer portion of the value of the immediate child element
+- @b integer, returns the integer portion of the value of the immediate child
+              element
     @code
     <integer>
       {property, value, table, or other function element}
@@ -516,9 +525,9 @@ refers to one or more instances of a property, value, or table.
       <v> 10000.0 </v>
     </lt>
     @endcode
-- @b le returns a 1 if the value of the first immediate child element is less
-        than or equal to the value of the second immediate child element, returns 0
-        otherwise
+- @b le, returns a 1 if the value of the first immediate child element is less
+         than or equal to the value of the second immediate child element,
+         returns 0 otherwise
     @code
     <le>
       {property, value, table, or other function element}
@@ -548,16 +557,17 @@ refers to one or more instances of a property, value, or table.
       <v> 10000.0 </v>
     </gt>
     @endcode
-- @b ge returns a 1 if the value of the first immediate child element is greater
-        than or equal to the value of the second immediate child element, returns 0
-        otherwise
+- @b ge, returns a 1 if the value of the first immediate child element is
+         greater than or equal to the value of the second immediate child
+         element, returns 0 otherwise
     @code
     <ge>
       {property, value, table, or other function element}
       {property, value, table, or other function element}
     </ge>
 
-    Example: returns 1 if thrust is greater than or equal to 10,000, returns 0 otherwise
+    Example: returns 1 if thrust is greater than or equal to 10,000, returns 0
+    otherwise
 
     <ge>
       <p> propulsion/engine[2]/thrust-lbs </p>
@@ -626,8 +636,8 @@ refers to one or more instances of a property, value, or table.
       <p> control/engines-running-flag </p>
     </or>
     @endcode
-- @b not returns the inverse of the value of the supplied immediate child element
-         (e.g., returns 1 if supplied a 0)
+- @b not, returns the inverse of the value of the supplied immediate child
+          element (e.g., returns 1 if supplied a 0)
     @code
     <not>
       {property, value, table, or other function element} 
@@ -647,8 +657,9 @@ refers to one or more instances of a property, value, or table.
        {property, value, table, or other function element}
      </ifthen>
 
-     Example: if flight-mode is greater than 2, then a value of 0.00 is returned, 
-              otherwise the value of the property control/pitch-lag is returned.
+     Example: if flight-mode is greater than 2, then a value of 0.00 is
+              returned, otherwise the value of the property control/pitch-lag is
+              returned.
 
      <ifthen>
        <gt> <p> executive/flight-mode </p> <v> 2 </v> </gt>
@@ -679,8 +690,8 @@ refers to one or more instances of a property, value, or table.
      @endcode
 - @b random Takes no arguments and returns a Gaussian distributed random number
     @code <random/> @endcode
-- @b urandom Takes no arguments and returns a uniformly distributed random number
-             between -1 and +1
+- @b urandom, Takes no arguments and returns a uniformly distributed random
+              number between -1 and +1
     @code<urandom/>@endcode
 - @b pi Takes no argument and returns the value of Pi
     @code<pi/>@endcode
@@ -688,10 +699,10 @@ refers to one or more instances of a property, value, or table.
                    supplied values, with the value of the first immediate child
                    element representing the lookup value into the table, and the
                    following pairs of values representing the independent and
-                   dependent values. The first provided child element is expected
-                   to be a property. The interpolation does not extrapolate, but
-                   holds the highest value if the provided lookup value goes
-                   outside of the provided range.
+                   dependent values. The first provided child element is
+                   expected to be a property. The interpolation does not
+                   extrapolate, but holds the highest value if the provided
+                   lookup value goes outside of the provided range.
      @code
      <interpolate1d>
        {property, value, table, or other function element}
@@ -699,8 +710,8 @@ refers to one or more instances of a property, value, or table.
        ...
      </interpolate1d>
 
-     Example: If mach is 0.4, the interpolation will return 0.375. If mach is 1.5, the interpolation
-              will return 0.60.
+     Example: If mach is 0.4, the interpolation will return 0.375. If mach is
+              1.5, the interpolation will return 0.60.
 
      <interpolate1d>
        <p> velocities/mach </p>
@@ -747,8 +758,8 @@ public:
     @param prefix an optional prefix to prepend to the name given to the
                   property that represents this function (if given).
 */
-  FGFunction(FGPropertyManager* pm, Element* element,
-             const std::string& prefix="", FGPropertyValue* var=0L);
+  FGFunction(FGFDMExec* fdmex, Element* element, const std::string& prefix="",
+             FGPropertyValue* var=0L);
 
   /** Destructor
       Make sure the function is untied before destruction.
@@ -787,7 +798,7 @@ protected:
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
 
-  void Load(Element* element, FGPropertyValue* var,
+  void Load(Element* element, FGPropertyValue* var, FGFDMExec* fdmex,
             const std::string& prefix="");
   virtual void bind(Element*, const std::string&);
   void CheckMinArguments(Element* el, unsigned int _min);

@@ -42,9 +42,6 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <iterator>
-#include <cstdlib>
 #include <iomanip>
 
 #include "FGFDMExec.h"
@@ -53,17 +50,14 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
 #include "models/FGMassBalance.h"
-#include "models/FGGroundReactions.h"
 #include "models/FGExternalReactions.h"
 #include "models/FGBuoyantForces.h"
 #include "models/FGAerodynamics.h"
 #include "models/FGInertial.h"
 #include "models/FGAircraft.h"
 #include "models/FGAccelerations.h"
-#include "models/FGPropagate.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
-#include "models/FGOutput.h"
 #include "initialization/FGTrim.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
@@ -950,10 +944,10 @@ void FGFDMExec::PrintPropertyCatalog(void)
 void FGFDMExec::PrintSimulationConfiguration(void) const
 {
   cout << endl << "Simulation Configuration" << endl << "------------------------" << endl;
-  cout << MassBalance->Name << endl;
-  cout << GroundReactions->Name << endl;
-  cout << Aerodynamics->Name << endl;
-  cout << Propulsion->Name << endl;
+  cout << MassBalance->GetName() << endl;
+  cout << GroundReactions->GetName() << endl;
+  cout << Aerodynamics->GetName() << endl;
+  cout << Propulsion->GetName() << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,15 +41,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
-#include <string>
-
-#include "FGJSBBase.h"
-#include "input_output/FGPropertyManager.h"
 #include "models/FGPropagate.h"
-#include "math/FGColumnVector3.h"
 #include "models/FGOutput.h"
-#include "simgear/misc/sg_path.hxx"
 #include "math/FGTemplateFunc.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -595,14 +588,11 @@ public:
   bool GetHoldDown(void) const {return HoldDown;}
 
   FGTemplateFunc* GetTemplateFunc(const std::string& name) {
-    if (TemplateFunctions.count(name))
-      return TemplateFunctions[name];
-    else
-      return nullptr;
+    return TemplateFunctions.count(name) ? TemplateFunctions[name] : nullptr;
   }
 
   void AddTemplateFunc(const std::string& name, Element* el) {
-    TemplateFunctions[name] = new FGTemplateFunc(instance, el);
+    TemplateFunctions[name] = new FGTemplateFunc(this, el);
   }
 
 private:
@@ -662,7 +652,8 @@ private:
 
   bool HoldDown;
 
-  // The FDM counter is used to give each child FDM an unique ID. The root FDM has the ID 0
+  // The FDM counter is used to give each child FDM an unique ID. The root FDM
+  // has the ID 0
   unsigned int*      FDMctr;
 
   std::vector <std::string> PropertyCatalog;

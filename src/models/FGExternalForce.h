@@ -39,10 +39,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
-
 #include "models/propulsion/FGForce.h"
-#include "math/FGColumnVector3.h"
 #include "simgear/props/propertyObject.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +56,8 @@ class FGPropertyManager;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates code that models an individual arbitrary force, moment or a combination thereof.
+/** Encapsulates code that models an individual arbitrary force, moment or a
+    combination thereof.
     This class encapsulates an individual reaction applied at the specified
     location on the vehicle, and oriented as specified in one of three frames:
 
@@ -214,7 +212,7 @@ public:
       @param FDMExec pointer to the main executive class.
       @param el pointer to the XML element defining an individual force.
   */
-  FGExternalForce(FGFDMExec *FDMExec)
+  explicit FGExternalForce(FGFDMExec *FDMExec)
     : FGForce(FDMExec), forceMagnitude(NULL), momentMagnitude(NULL)
   { Debug(0); }
 
@@ -224,15 +222,15 @@ public:
   FGExternalForce(const FGExternalForce& extForce);
 
   /// Destructor
-  ~FGExternalForce();
+  ~FGExternalForce() override;
 
   void setForce(Element* el);
   void setMoment(Element* el);
-  const FGColumnVector3& GetBodyForces(void);
+  const FGColumnVector3& GetBodyForces(void) override;
 
 private:
-  FGParameter* bind(Element* el, FGPropertyManager* pm,
-                    const std::string& baseName, FGPropertyVector3& v);
+  FGParameter* bind(Element* el, const std::string& baseName,
+                    FGPropertyVector3& v);
 
   std::string Name;
   FGParameter *forceMagnitude, *momentMagnitude;

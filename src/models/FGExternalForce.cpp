@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2007  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
  HISTORY
 --------------------------------------------------------------------------------
@@ -62,13 +62,10 @@
 </external_reactions>
 
 */
-#include <iostream>
 
 #include "FGFDMExec.h"
 #include "FGExternalForce.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGPropertyValue.h"
-#include "math/FGFunction.h"
 
 using namespace std;
 
@@ -89,8 +86,8 @@ FGPropertyVector3::FGPropertyVector3(FGPropertyManager* pm,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGParameter* FGExternalForce::bind(Element *el, FGPropertyManager* pm,
-                                   const string& magName, FGPropertyVector3& v)
+FGParameter* FGExternalForce::bind(Element *el, const string& magName,
+                                   FGPropertyVector3& v)
 {
   // Set frame (from FGForce).
   string sFrame = el->GetAttributeValue("frame");
@@ -125,15 +122,17 @@ FGParameter* FGExternalForce::bind(Element *el, FGPropertyManager* pm,
     v = direction;
   }
 
-  // The value sent to the sim through the external_reactions/{force name}/magnitude
-  // property will be multiplied against the unit vector, which can come in
-  // initially in the direction vector. The frame in which the vector is defined
-  // is specified with the frame attribute. The vector is normalized to magnitude 1.
+  // The value sent to the sim through the external_reactions/{force
+  // name}/magnitude property will be multiplied against the unit vector, which
+  // can come in initially in the direction vector. The frame in which the
+  // vector is defined is specified with the frame attribute. The vector is
+  // normalized to magnitude 1.
 
   Element* function_element = el->FindElement("function");
   if (function_element) {
-    return new FGFunction(pm, function_element);
+    return new FGFunction(fdmex, function_element);
   } else {
+    FGPropertyManager* pm = fdmex->GetPropertyManager();
     FGPropertyNode* node = pm->GetNode(magName, true);
     return new FGPropertyValue(node);
   }
@@ -149,8 +148,7 @@ void FGExternalForce::setForce(Element *el)
 
   forceDirection = FGPropertyVector3(PropertyManager, BasePropertyName,
                                      "x", "y", "z");
-  forceMagnitude = bind(el, PropertyManager, BasePropertyName + "/magnitude",
-                        forceDirection);
+  forceMagnitude = bind(el, BasePropertyName + "/magnitude", forceDirection);
 
   Element* location_element = el->FindElement("location");
   if (!location_element) {
@@ -178,7 +176,7 @@ void FGExternalForce::setMoment(Element *el)
 
   momentDirection = FGPropertyVector3(PropertyManager, BasePropertyName,
                                       "l", "m", "n");
-  momentMagnitude = bind(el, PropertyManager, BasePropertyName + "/magnitude-lbsft",
+  momentMagnitude = bind(el, BasePropertyName + "/magnitude-lbsft",
                          momentDirection);
 }
 

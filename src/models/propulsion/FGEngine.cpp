@@ -8,20 +8,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
- This program is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,17 +38,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-
 #include "FGEngine.h"
-#include "FGTank.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGRotor.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGColumnVector3.h"
 
 using namespace std;
 
@@ -58,7 +53,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGEngine::FGEngine(int engine_number, struct Inputs& input)
-                      : in(input), EngineNumber(engine_number)
+  : in(input), EngineNumber(engine_number)
 {
   Type = etUnknown;
   X = Y = Z = 0.0;
@@ -202,7 +197,8 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 
   Name = engine_element->GetAttributeValue("name");
 
-  FGModelFunctions::Load(engine_element, PropertyManager, to_string((int)EngineNumber)); // Call ModelFunctions loader
+  // Call ModelFunctions loader
+  FGModelFunctions::Load(engine_element, exec, to_string((int)EngineNumber));
 
 // Find and set engine location
 
@@ -254,7 +250,7 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   property_name = base_property_name + "/fuel-used-lbs";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelUsedLbs);
 
-  PostLoad(engine_element, PropertyManager, to_string((int)EngineNumber));
+  PostLoad(engine_element, exec, to_string((int)EngineNumber));
 
   Debug(0);
 

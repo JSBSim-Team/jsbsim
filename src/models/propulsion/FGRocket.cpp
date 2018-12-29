@@ -8,21 +8,21 @@
  ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -38,9 +38,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <sstream>
-
 #include "FGFDMExec.h"
 #include "FGRocket.h"
 #include "FGThruster.h"
@@ -55,13 +52,13 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input), isp_function(0L), FDMExec(exec)
+  : FGEngine(engine_number, input), isp_function(nullptr), FDMExec(exec)
 {
   Load(exec, el);
 
   Type = etRocket;
-  Element* thrust_table_element = 0;
-  ThrustTable = 0L;
+  Element* thrust_table_element = nullptr;
+  ThrustTable = nullptr;
   BurnTime = 0.0;
   previousFuelNeedPerTank = 0.0;
   previousOxiNeedPerTank = 0.0;
@@ -90,13 +87,14 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
 
   Element* isp_el = el->FindElement("isp");
 
-  // Specific impulse may be specified as a constant value or as a function - perhaps as a function of mixture ratio.
+  // Specific impulse may be specified as a constant value or as a function -
+  // perhaps as a function of mixture ratio.
   if (isp_el) {
     Element* isp_func_el = isp_el->FindElement("function");
     if (isp_func_el) {
-      isp_function = new FGFunction(exec->GetPropertyManager(),isp_func_el, strEngineNumber.str());
+      isp_function = new FGFunction(exec, isp_func_el, strEngineNumber.str());
     } else {
-    Isp = el->FindElementValueAsNumber("isp");
+      Isp = el->FindElementValueAsNumber("isp");
     }
   } else {
     throw("Specific Impulse <isp> must be specified for a rocket engine");
@@ -118,7 +116,8 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
     MxR = SLOxiFlowMax/SLFuelFlowMax;
   } else if (el->FindElement("propflowmax")) {
     PropFlowMax = el->FindElementValueAsNumberConvertTo("propflowmax", "LBS/SEC");
-    // Mixture ratio may be specified here, but it can also be specified as a function or via property
+    // Mixture ratio may be specified here, but it can also be specified as a
+    // function or via property
     if (el->FindElement("mixtureratio")) {
       MxR = el->FindElementValueAsNumber("mixtureratio");
     }
@@ -162,8 +161,8 @@ void FGRocket::Calculate(void)
 
   PropellantFlowRate = (FuelExpended + OxidizerExpended)/in.TotalDeltaT;
   TotalPropellantExpended += FuelExpended + OxidizerExpended;
-  // If Isp has been specified as a function, override the value of Isp to that, otherwise
-  // assume a constant value is given.
+  // If Isp has been specified as a function, override the value of Isp to that,
+  // otherwise assume a constant value is given.
   if (isp_function) Isp = isp_function->GetValue();
 
   // If there is a thrust table, it is a function of propellant burned. The

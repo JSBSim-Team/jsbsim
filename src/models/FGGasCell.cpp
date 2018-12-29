@@ -7,21 +7,21 @@
  ----- Copyright (C) 2006 - 2013  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -39,8 +39,6 @@ INCLUDES
 #include "models/FGMassBalance.h"
 #include "FGGasCell.h"
 #include "input_output/FGXMLElement.h"
-#include <iostream>
-#include <cstdlib>
 
 using std::cerr;
 using std::endl;
@@ -220,8 +218,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   if (Element* heat = el->FindElement("heat")) {
     Element* function_element = heat->FindElement("function");
     while (function_element) {
-      HeatTransferCoeff.push_back(new FGFunction(PropertyManager,
-                                                 function_element));
+      HeatTransferCoeff.push_back(new FGFunction(exec, function_element));
       function_element = heat->FindNextElement("function");
     }
   }
@@ -654,16 +651,14 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   if (Element* heat = el->FindElement("heat")) {
     Element* function_element = heat->FindElement("function");
     while (function_element) {
-      HeatTransferCoeff.push_back(new FGFunction(PropertyManager,
-                                                 function_element));
+      HeatTransferCoeff.push_back(new FGFunction(exec, function_element));
       function_element = heat->FindNextElement("function");
     }
   }
   // Read blower input function
   if (Element* blower = el->FindElement("blower_input")) {
     Element* function_element = blower->FindElement("function");
-    BlowerInput = new FGFunction(PropertyManager,
-                                 function_element);
+    BlowerInput = new FGFunction(exec, function_element);
   }
 }
 

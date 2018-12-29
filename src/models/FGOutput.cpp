@@ -40,7 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGOutput.h"
-#include "input_output/FGOutputSocket.h"
 #include "input_output/FGOutputTextFile.h"
 #include "input_output/FGOutputFG.h"
 #include "input_output/FGXMLFileRead.h"
@@ -265,9 +264,9 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   if (!Output) return false;
 
   Output->SetIdx(idx);
-  Output->PreLoad(document, PropertyManager);
+  Output->PreLoad(document, FDMExec);
   Output->Load(document);
-  Output->PostLoad(document, PropertyManager);
+  Output->PostLoad(document, FDMExec);
 
   OutputTypes.push_back(Output);
 

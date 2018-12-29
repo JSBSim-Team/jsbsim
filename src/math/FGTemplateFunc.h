@@ -43,6 +43,8 @@
 
 namespace JSBSim {
 
+class FGFDMExec;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   CLASS DOCUMENTATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -55,14 +57,7 @@ class FGTemplateFunc : public FGFunction
 {
 public:
 
-  FGTemplateFunc(FGPropertyManager* pm, Element* element)
-    : FGFunction(pm)
-  {
-    var = new FGPropertyValue(nullptr);
-    Load(element, var);
-    CheckMinArguments(element, 1);
-    CheckMaxArguments(element, 1);
-  }
+  FGTemplateFunc(FGFDMExec* fdmex, Element* element);
 
   double GetValue(FGPropertyNode* node) {
     var->SetNode(node);

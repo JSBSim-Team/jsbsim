@@ -320,10 +320,10 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
       //of value or function is specified.
       if (!set_element->GetAttributeValue("value").empty()) {
         value = set_element->GetAttributeValueAsNumber("value");
-        newEvent->Functions.push_back((FGFunction*)0L);
+        newEvent->Functions.push_back(nullptr);
       } else if (set_element->FindElement("function")) {
         value = 0.0;
-        newEvent->Functions.push_back(new FGFunction(PropertyManager, set_element->FindElement("function")));
+        newEvent->Functions.push_back(new FGFunction(FDMExec, set_element->FindElement("function")));
       }
       newEvent->SetValue.push_back(value);
       newEvent->OriginalValue.push_back(0.0);

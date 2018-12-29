@@ -9,21 +9,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,14 +37,9 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <fstream>
-#include <sstream>
 #include <iomanip>
 
 #include "FGFCS.h"
-#include "FGFDMExec.h"
-#include "FGGroundReactions.h"
-#include "input_output/FGXMLElement.h"
 #include "input_output/FGModelLoader.h"
 
 #include "models/flight_control/FGFilter.h"
@@ -55,7 +50,6 @@ INCLUDES
 #include "models/flight_control/FGSummer.h"
 #include "models/flight_control/FGKinemat.h"
 #include "models/flight_control/FGFCSFunction.h"
-#include "models/flight_control/FGSensor.h"
 #include "models/flight_control/FGActuator.h"
 #include "models/flight_control/FGAccelerometer.h"
 #include "models/flight_control/FGMagnetometer.h"
@@ -597,7 +591,7 @@ bool FGFCS::Load(Element* document)
     channel_element = document->FindNextElement("channel");
   }
 
-  PostLoad(document, PropertyManager);
+  PostLoad(document, FDMExec);
 
   return true;
 }

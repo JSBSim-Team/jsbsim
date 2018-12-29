@@ -41,10 +41,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cstdlib>
-#include <cstring>
-
-#include "math/FGFunction.h"
 #include "FGLGear.h"
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
@@ -112,7 +108,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Element* strutForce = el->FindElement("strut_force");
   if (strutForce) {
     Element* springFunc = strutForce->FindElement("function");
-    fStrutForce = new FGFunction(PropertyManager, springFunc);
+    fStrutForce = new FGFunction(fdmex, springFunc);
   }
   else {
     if (el->FindElement("spring_coeff"))

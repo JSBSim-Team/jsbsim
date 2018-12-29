@@ -124,21 +124,7 @@ bool FGModel::Load(Element* el, bool preLoad)
   bool result = true;
 
   if (preLoad)
-    result = FGModelFunctions::Load(document, PropertyManager);
-
-  Element *function = document->FindElement("function");
-
-  // Load template functions.
-  while (function) {
-    string fType = function->GetAttributeValue("type");
-
-    if (fType == "template") {
-      string name = function->GetAttributeValue("name");
-      FDMExec->AddTemplateFunc(name, function);
-    }
-
-    function = document->FindNextElement("function");
-  }
+    result = FGModelFunctions::Load(document, FDMExec);
 
   if (document != el) {
     el->MergeAttributes(document);
