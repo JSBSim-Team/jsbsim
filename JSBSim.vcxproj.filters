@@ -305,348 +305,351 @@
     <ClCompile Include="src\simgear\io\iostreams\sgstream.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\math\FGTemplateFunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_output\FGInputSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGInputType.h" >
+    <ClInclude Include="src\input_output\FGInputType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgmodelloader.h" >
+    <ClInclude Include="src\input_output\fgmodelloader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgoutputfg.h" >
+    <ClInclude Include="src\input_output\fgoutputfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgoutputfile.h" >
+    <ClInclude Include="src\input_output\fgoutputfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgoutputsocket.h" >
+    <ClInclude Include="src\input_output\fgoutputsocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgoutputtextfile.h" >
+    <ClInclude Include="src\input_output\fgoutputtextfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgoutputtype.h" >
+    <ClInclude Include="src\input_output\fgoutputtype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\fgpropertyreader.h" >
+    <ClInclude Include="src\input_output\fgpropertyreader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGUDPInputSocket.h" >
+    <ClInclude Include="src\input_output\FGUDPInputSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\string_utilities.h" >
+    <ClInclude Include="src\input_output\string_utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\LagrangeMultiplier.h" >
+    <ClInclude Include="src\math\LagrangeMultiplier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" >
+    <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\atmosphere\FGWinds.h" >
+    <ClInclude Include="src\models\atmosphere\FGWinds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGAccelerations.h" >
+    <ClInclude Include="src\models\FGAccelerations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGFCSChannel.h" >
+    <ClInclude Include="src\models\FGFCSChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGSurface.h" >
+    <ClInclude Include="src\models\FGSurface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGAngles.h" >
+    <ClInclude Include="src\models\flight_control\FGAngles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGDistributor.h" >
+    <ClInclude Include="src\models\flight_control\FGDistributor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGWaypoint.h" >
+    <ClInclude Include="src\models\flight_control\FGWaypoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGTransmission.h" >
+    <ClInclude Include="src\models\propulsion\FGTransmission.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\ascii.h" >
+    <ClInclude Include="src\simgear\xml\ascii.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\asciitab.h" >
+    <ClInclude Include="src\simgear\xml\asciitab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\compiler.h" >
+    <ClInclude Include="src\simgear\compiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\magvar\coremag.hxx" >
+    <ClInclude Include="src\simgear\magvar\coremag.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\easyxml.hxx" >
+    <ClInclude Include="src\simgear\xml\easyxml.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\expat.h" >
+    <ClInclude Include="src\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\expat_config.h" >
+    <ClInclude Include="src\simgear\xml\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\expat_external.h" >
+    <ClInclude Include="src\simgear\xml\expat_external.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGAccelerometer.h" >
+    <ClInclude Include="src\models\flight_control\FGAccelerometer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGActuator.h" >
+    <ClInclude Include="src\models\flight_control\FGActuator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGAerodynamics.h" >
+    <ClInclude Include="src\models\FGAerodynamics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGAircraft.h" >
+    <ClInclude Include="src\models\FGAircraft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGAtmosphere.h" >
+    <ClInclude Include="src\models\FGAtmosphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGAuxiliary.h" >
+    <ClInclude Include="src\models\FGAuxiliary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGBuoyantForces.h" >
+    <ClInclude Include="src\models\FGBuoyantForces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGColumnVector3.h" >
+    <ClInclude Include="src\math\FGColumnVector3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGCondition.h" >
+    <ClInclude Include="src\math\FGCondition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGDeadBand.h" >
+    <ClInclude Include="src\models\flight_control\FGDeadBand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGElectric.h" >
+    <ClInclude Include="src\models\propulsion\FGElectric.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGEngine.h" >
+    <ClInclude Include="src\models\propulsion\FGEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGExternalForce.h" >
+    <ClInclude Include="src\models\FGExternalForce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGExternalReactions.h" >
+    <ClInclude Include="src\models\FGExternalReactions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGFCS.h" >
+    <ClInclude Include="src\models\FGFCS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGFCSComponent.h" >
+    <ClInclude Include="src\models\flight_control\FGFCSComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGFCSFunction.h" >
+    <ClInclude Include="src\models\flight_control\FGFCSFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FGFDMExec.h" >
+    <ClInclude Include="src\FGFDMExec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGfdmSocket.h" >
+    <ClInclude Include="src\input_output\FGfdmSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGFilter.h" >
+    <ClInclude Include="src\models\flight_control\FGFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGForce.h" >
+    <ClInclude Include="src\models\propulsion\FGForce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGFunction.h" >
+    <ClInclude Include="src\math\FGFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGGain.h" >
+    <ClInclude Include="src\models\flight_control\FGGain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGGasCell.h" >
+    <ClInclude Include="src\models\FGGasCell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGGroundCallback.h" >
+    <ClInclude Include="src\input_output\FGGroundCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGGroundReactions.h" >
+    <ClInclude Include="src\models\FGGroundReactions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGGyro.h" >
+    <ClInclude Include="src\models\flight_control\FGGyro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGInertial.h" >
+    <ClInclude Include="src\models\FGInertial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\initialization\FGInitialCondition.h" >
+    <ClInclude Include="src\initialization\FGInitialCondition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGInput.h" >
+    <ClInclude Include="src\models\FGInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FGJSBBase.h" >
+    <ClInclude Include="src\FGJSBBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGKinemat.h" >
+    <ClInclude Include="src\models\flight_control\FGKinemat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGLGear.h" >
+    <ClInclude Include="src\models\FGLGear.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGLocation.h" >
+    <ClInclude Include="src\math\FGLocation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGMagnetometer.h" >
+    <ClInclude Include="src\models\flight_control\FGMagnetometer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\atmosphere\FGMars.h" >
+    <ClInclude Include="src\models\atmosphere\FGMars.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGMassBalance.h" >
+    <ClInclude Include="src\models\FGMassBalance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGMatrix33.h" >
+    <ClInclude Include="src\math\FGMatrix33.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGModel.h" >
+    <ClInclude Include="src\models\FGModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGModelFunctions.h" >
+    <ClInclude Include="src\math\FGModelFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\atmosphere\FGMSIS.h" >
+    <ClInclude Include="src\models\atmosphere\FGMSIS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGNozzle.h" >
+    <ClInclude Include="src\models\propulsion\FGNozzle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGOutput.h" >
+    <ClInclude Include="src\models\FGOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGParameter.h" >
+    <ClInclude Include="src\math\FGParameter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGPID.h" >
+    <ClInclude Include="src\models\flight_control\FGPID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGPiston.h" >
+    <ClInclude Include="src\models\propulsion\FGPiston.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGPropagate.h" >
+    <ClInclude Include="src\models\FGPropagate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGPropeller.h" >
+    <ClInclude Include="src\models\propulsion\FGPropeller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGPropertyManager.h" >
+    <ClInclude Include="src\input_output\FGPropertyManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGPropertyValue.h" >
+    <ClInclude Include="src\math\FGPropertyValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\FGPropulsion.h" >
+    <ClInclude Include="src\models\FGPropulsion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGQuaternion.h" >
+    <ClInclude Include="src\math\FGQuaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGRealValue.h" >
+    <ClInclude Include="src\math\FGRealValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGRocket.h" >
+    <ClInclude Include="src\models\propulsion\FGRocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGRotor.h" >
+    <ClInclude Include="src\models\propulsion\FGRotor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGRungeKutta.h" >
+    <ClInclude Include="src\math\FGRungeKutta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGScript.h" >
+    <ClInclude Include="src\input_output\FGScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGSensor.h" >
+    <ClInclude Include="src\models\flight_control\FGSensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGSensorOrientation.h" >
+    <ClInclude Include="src\models\flight_control\FGSensorOrientation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGSummer.h" >
+    <ClInclude Include="src\models\flight_control\FGSummer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\flight_control\FGSwitch.h" >
+    <ClInclude Include="src\models\flight_control\FGSwitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\math\FGTable.h" >
+    <ClInclude Include="src\math\FGTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGTank.h" >
+    <ClInclude Include="src\models\propulsion\FGTank.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGThruster.h" >
+    <ClInclude Include="src\models\propulsion\FGThruster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\initialization\FGTrim.h" >
+    <ClInclude Include="src\initialization\FGTrim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\initialization\FGTrimAxis.h" >
+    <ClInclude Include="src\initialization\FGTrimAxis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGTurbine.h" >
+    <ClInclude Include="src\models\propulsion\FGTurbine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGTurboProp.h" >
+    <ClInclude Include="src\models\propulsion\FGTurboProp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGXMLElement.h" >
+    <ClInclude Include="src\input_output\FGXMLElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGXMLFileRead.h" >
+    <ClInclude Include="src\input_output\FGXMLFileRead.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\FGXMLParse.h" >
+    <ClInclude Include="src\input_output\FGXMLParse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\iasciitab.h" >
+    <ClInclude Include="src\simgear\xml\iasciitab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\internal.h" >
+    <ClInclude Include="src\simgear\xml\internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\latin1tab.h" >
+    <ClInclude Include="src\simgear\xml\latin1tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\macconfig.h" >
+    <ClInclude Include="src\simgear\xml\macconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\nametab.h" >
+    <ClInclude Include="src\simgear\xml\nametab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input_output\net_fdm.hxx" >
+    <ClInclude Include="src\input_output\net_fdm.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\props\propertyObject.hxx" >
+    <ClInclude Include="src\simgear\props\propertyObject.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\props\props.hxx" >
+    <ClInclude Include="src\simgear\props\props.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\misc\stdint.hxx" >
+    <ClInclude Include="src\simgear\misc\stdint.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\utf8tab.h" >
+    <ClInclude Include="src\simgear\xml\utf8tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\winconfig.h" >
+    <ClInclude Include="src\simgear\xml\winconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xmlrole.h" >
+    <ClInclude Include="src\simgear\xml\xmlrole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xmltok.h" >
+    <ClInclude Include="src\simgear\xml\xmltok.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xmltok_impl.h" >
+    <ClInclude Include="src\simgear\xml\xmltok_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
