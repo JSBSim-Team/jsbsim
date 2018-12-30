@@ -204,7 +204,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
       if (TankPriority != 0) {
         switch(Tank->GetType()) {
         case FGTank::ttFUEL:
-          if ((Tank->GetContents() > 0.0) && Tank->GetSelected() && (TankPriority == CurrentFuelTankPriority)) {
+          if ((Tank->GetContents() > Tank->GetUnusable()) && Tank->GetSelected() && (TankPriority == CurrentFuelTankPriority)) {
             TanksWithFuel++;
             Starved = false;
             FeedListFuel.push_back(TankId);
@@ -236,7 +236,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
             break;
           case FGTank::ttOXIDIZER:
             hasOxTanks = true;
-            if (Tank->GetContents() > 0.0 && Tank->GetSelected() && TankPriority == CurrentOxidizerTankPriority) {
+            if (Tank->GetContents() > Tank->GetUnusable() && Tank->GetSelected() && TankPriority == CurrentOxidizerTankPriority) {
               TanksWithOxidizer++;
               if (TanksWithFuel > 0) Starved = false;
               FeedListOxi.push_back(TankId);

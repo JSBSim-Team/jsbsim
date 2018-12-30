@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -46,8 +46,6 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "math/FGColumnVector3.h"
-#include "math/FGFunction.h"
-#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,6 +56,7 @@ namespace JSBSim {
 class Element;
 class FGPropertyManager;
 class FGFDMExec;
+class FGFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -69,8 +68,8 @@ CLASS DOCUMENTATION
  
     Fuel temperature is calculated using the following assumptions:
 
-    Fuel temperature will only be calculated for tanks which have an initial fuel
-    temperature specified in the configuration file.
+    Fuel temperature will only be calculated for tanks which have an initial
+    fuel temperature specified in the configuration file.
 
     The surface area of the tank is estimated from the capacity in pounds.  It
     is assumed that the tank is a wing tank with dimensions h by 4h by 10h. The
@@ -84,27 +83,30 @@ CLASS DOCUMENTATION
 
 <h3>Fuel Dump:</h3>
 
-    Fuel dumping is handled by the FGPropulsion class.  A standpipe can be defined
-    here for each tank which sets the level of contents (in pounds) which is not dumpable.
-    Default standpipe level is zero, making all contents dumpable.
+    Fuel dumping is handled by the FGPropulsion class.  A standpipe can be
+    defined here for each tank which sets the level of contents (in pounds)
+    which is not dumpable.  Default standpipe level is zero, making all contents
+    dumpable.
 
 <h3>Fuel Transfer:</h3>
 
-    Fuel transfer is handled by the FGPropulsion class, however the contents of tanks
-    may be manipulated directly using the SetContents() function here, or via the property
-    tree at <tt>propulsion/tank[i]/contents-lbs</tt>, where i is the tank number (Tanks
-    are automatically numbered, starting at zero, in the order in which they are read in
-    the aircraft configuration file).  The latter method allows one to use a system of FCS
-    components to control tank contents.
+    Fuel transfer is handled by the FGPropulsion class, however the contents of
+    tanks may be manipulated directly using the SetContents() function here, or
+    via the property tree at <tt>propulsion/tank[i]/contents-lbs</tt>, where i
+    is the tank number (Tanks are automatically numbered, starting at zero, in
+    the order in which they are read in the aircraft configuration file).  The
+    latter method allows one to use a system of FCS components to control tank
+    contents.
 
-    There is also a property <tt>propulsion/tank[i]/external-flow-rate-pps</tt>. Setting
-    this property to a positive value causes the tank to fill at the rate specified.
-    Setting a negative number causes the tank to drain. The value is the rate in pounds
-    of fuel per second. The tank will not fill past 100% full and will not drain below 0%.
-    Fuel may be transfered between two tanks by setting the source tank's external flow rate
-    to a negative value and the destination's external flow rate to the same positive value.
-    Care must be taken to stop fuel flow before the source tank becomes empty to prevent
-    phantom fuel being created.
+    There is also a property
+    <tt>propulsion/tank[i]/external-flow-rate-pps</tt>. Setting this property to
+    a positive value causes the tank to fill at the rate specified.  Setting a
+    negative number causes the tank to drain. The value is the rate in pounds of
+    fuel per second. The tank will not fill past 100% full and will not drain
+    below 0%.  Fuel may be transfered between two tanks by setting the source
+    tank's external flow rate to a negative value and the destination's external
+    flow rate to the same positive value.  Care must be taken to stop fuel flow
+    before the source tank becomes empty to prevent phantom fuel being created.
 
 <h3>Configuration File Format:</h3>
 
@@ -133,6 +135,7 @@ CLASS DOCUMENTATION
   <contents unit="{LBS | KG}"> {number} </contents>
   <temperature> {number} </temperature> <!-- must be degrees fahrenheit -->
   <standpipe unit="{LBS | KG"}> {number} </standpipe>
+  <unusable unit="{LBS | KG}"> {number} </unusable>
   <priority> {integer} </priority>
   <density unit="{KG/L | LBS/GAL}"> {number} </density>
   <type> {string} </type> <!-- will override previous density setting -->
@@ -144,16 +147,19 @@ CLASS DOCUMENTATION
 - \b type - One of FUEL or OXIDIZER.  This is required.
 - \b radius - Equivalent radius of tank for modeling slosh, defaults to inches.
 - \b grain_config type - One of CYLINDRICAL or ENDBURNING.
-- \b length - length of tank for modeling solid fuel propellant grain, defaults to inches.
+- \b length - length of tank for modeling solid fuel propellant grain, defaults
+              to inches.
 - \b capacity - Capacity, defaults to pounds.
 - \b contents - Initial contents, defaults to pounds.
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
+- \b unusable - Contents that cannot be used for combustion in the engine,
+                defaults to pounds.
 - \b priority - Establishes feed sequence of tank. "1" is the highest priority.
 - \b density - Density of liquid tank contents.
-- \b type - Named fuel type. One of AVGAS, JET-A, JET-A1, JET-B, JP-1, JP-2, JP-3,
-- \b        JP-4, JP-5, JP-6, JP-7, JP-8, JP-8+100, RP-1, T-1, ETHANOL, HYDRAZINE,
-- \b        F-34, F-35, F-40, F-44, AVTAG, AVCAT
+- \b type - Named fuel type. One of AVGAS, JET-A, JET-A1, JET-B, JP-1, JP-2,
+            JP-3, JP-4, JP-5, JP-6, JP-7, JP-8, JP-8+100, RP-1, T-1, ETHANOL,
+            HYDRAZINE, F-34, F-35, F-40, F-44, AVTAG, AVCAT
 
 location:
 - \b x - Location of tank on aircraft's x-axis, defaults to inches.
@@ -178,6 +184,7 @@ be printed to the console if the location is not given
 - \b contents - 0.0
 - \b temperature - -9999.0 (flag which indicates no temperature is set)
 - \b standpipe - 0.0 (all contents may be dumped)
+- \b unusable - 0.0 (all contents may be burnt)
 - \b priority - 1 (highest feed sequence priority)
 - \b density - 6.6
 
@@ -195,7 +202,8 @@ class FGTank : public FGJSBBase
 {
 public:
   /** Constructor.
-      The constructor reads in the defining parameters from a configuration file.
+      The constructor reads in the defining parameters from a configuration
+      file.
       @param exec a pointer to the base FGFDMExec instance.
       @param el a pointer to the Tank element.
       @param tank_number the tank number (zero based).
@@ -271,7 +279,15 @@ public:
 
   /** Returns the density of a named fuel type.
       @return the density, in lbs/gal, or 6.6 if name cannot be resolved. */
-  double ProcessFuelName(const std::string& name); 
+  double ProcessFuelName(const std::string& name);
+
+  /** Returns the amount of unusable fuel in the tank.
+      @return the amount in lbs. */
+  double GetUnusable(void) const {return Unusable;}
+
+  /** Sets the amount of unusable fuel in the tank.
+      @param amount the amount of unusable fuel in lbs. */
+  void SetUnusable(double amount) {Unusable = amount;}
 
   double GetIxx(void) const {return Ixx;}
   double GetIyy(void) const {return Iyy;}
@@ -298,7 +314,7 @@ public:
   FGColumnVector3 GetXYZ(void) const;
   double GetXYZ(int idx) const;
 
-  const GrainType GetGrainType(void) const {return grainType;}
+  GrainType GetGrainType(void) const {return grainType;}
 
   double Fill(double amount);
   void SetContents(double amount);
@@ -321,7 +337,7 @@ private:
   FGFunction* function_ixx;
   FGFunction* function_iyy;
   FGFunction* function_izz;
-  double Capacity;
+  double Capacity, Unusable;
   double Radius;
   double InnerRadius;
   double Length;

@@ -63,7 +63,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
   ExternalFlow = 0.0;
   InitialStandpipe = 0.0;
-  Capacity = 0.00001;
+  Capacity = 0.00001; Unusable = 0.0;
   Priority = InitialPriority = 1;
   vXYZ.InitMatrix();
   vXYZ_drain.InitMatrix();
@@ -95,6 +95,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Capacity = el->FindElementValueAsNumberConvertTo("capacity", "LBS");
   if (el->FindElement("contents"))
     InitialContents = Contents = el->FindElementValueAsNumberConvertTo("contents", "LBS");
+  if (el->FindElement("unusable"))
+    Unusable = el->FindElementValueAsNumberConvertTo("unusable", "LBS");
   if (el->FindElement("temperature"))
     InitialTemperature = Temperature = el->FindElementValueAsNumber("temperature");
   if (el->FindElement("standpipe"))
@@ -115,12 +117,24 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Capacity = 0.00001;
     Contents = 0.0;
   }
+  if (Capacity <= Unusable) {
+    cerr << el->ReadFrom() << "Tank capacity (" << Capacity
+         << " lbs) is lower than the amount of unusable fuel (" << Unusable
+         << " lbs) for tank " << tank_number
+         << "! Did you accidentally swap unusable and capacity?" << endl;
+    throw("tank definition error");
+  }
   if (Contents > Capacity) {
     cerr << el->ReadFrom() << "Tank content (" << Contents
          << " lbs) is greater than tank capacity (" << Capacity
          << " lbs) for tank " << tank_number
          << "! Did you accidentally swap contents and capacity?" << endl;
     throw("tank definition error");
+  }
+  if (Contents < Unusable) {
+    cerr << el->ReadFrom() << "Tank content (" << Contents
+         << " lbs) is lower than the amount of unusable fuel (" << Unusable
+         << " lbs) for tank " << tank_number << endl;
   }
 
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
@@ -253,17 +267,16 @@ double FGTank::Drain(double used)
 {
   double remaining = Contents - used;
 
-  if (remaining >= 0) { // Reduce contents by amount used.
-
+  if (remaining >= Unusable) { // Reduce contents by amount used.
     Contents -= used;
-    PctFull = 100.0*Contents/Capacity;
-
   } else { // This tank must be empty.
+    if (Contents > Unusable)
+      Contents = Unusable;
 
-    Contents = 0.0;
-    PctFull = 0.0;
+    remaining = Contents;
   }
 
+  PctFull = 100.0*Contents/Capacity;
   CalculateInertias();
 
   return remaining;
