@@ -283,11 +283,15 @@ public:
 
   /** Returns the amount of unusable fuel in the tank.
       @return the amount in lbs. */
-  double GetUnusable(void) const {return Unusable;}
+  double GetUnusable(void) const {return UnusableVol*Density;}
 
-  /** Sets the amount of unusable fuel in the tank.
-      @param amount the amount of unusable fuel in lbs. */
-  void SetUnusable(double amount) {Unusable = amount;}
+  /** Returns the unusable volume of fuel in the tank.
+      @return the volume in gal. */
+  double GetUnusableVolume(void) const {return UnusableVol;}
+
+  /** Sets the volume of unusable fuel in the tank.
+      @param amount the amount of unusable fuel in gal. */
+  void SetUnusableVolume(double volume) {UnusableVol = volume;}
 
   double GetIxx(void) const {return Ixx;}
   double GetIyy(void) const {return Iyy;}
@@ -305,7 +309,11 @@ public:
   int  GetPriority(void) const {return Priority;}
   void SetPriority(int p) { Priority = p; Selected = p>0 ? true:false; } 
 
+  /** Returns the fuel density.
+      @return the density in lbs/gal. */
   double GetDensity(void) const {return Density;}
+  /** Sets the fuel density.
+      @param d the density in lbs/gal. */
   void   SetDensity(double d) { Density = d; }
 
   double GetExternalFlow(void) const {return ExternalFlow;}
@@ -337,7 +345,7 @@ private:
   FGFunction* function_ixx;
   FGFunction* function_iyy;
   FGFunction* function_izz;
-  double Capacity, Unusable;
+  double Capacity, UnusableVol;
   double Radius;
   double InnerRadius;
   double Length;
