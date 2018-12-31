@@ -63,7 +63,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Radius = Contents = Standpipe = Length = InnerRadius = 0.0;
   ExternalFlow = 0.0;
   InitialStandpipe = 0.0;
-  Capacity = 0.00001;
+  Capacity = 0.00001; UnusableVol = 0.0;
   Priority = InitialPriority = 1;
   vXYZ.InitMatrix();
   vXYZ_drain.InitMatrix();
@@ -95,6 +95,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Capacity = el->FindElementValueAsNumberConvertTo("capacity", "LBS");
   if (el->FindElement("contents"))
     InitialContents = Contents = el->FindElementValueAsNumberConvertTo("contents", "LBS");
+  if (el->FindElement("unusable-volume"))
+    UnusableVol = el->FindElementValueAsNumberConvertTo("unusable-volume", "GAL");
   if (el->FindElement("temperature"))
     InitialTemperature = Temperature = el->FindElementValueAsNumber("temperature");
   if (el->FindElement("standpipe"))
@@ -115,12 +117,24 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     Capacity = 0.00001;
     Contents = 0.0;
   }
+  if (Capacity <= GetUnusable()) {
+    cerr << el->ReadFrom() << "Tank capacity (" << Capacity
+         << " lbs) is lower than the amount of unusable fuel (" << GetUnusable()
+         << " lbs) for tank " << tank_number
+         << "! Did you accidentally swap unusable and capacity?" << endl;
+    throw("tank definition error");
+  }
   if (Contents > Capacity) {
     cerr << el->ReadFrom() << "Tank content (" << Contents
          << " lbs) is greater than tank capacity (" << Capacity
          << " lbs) for tank " << tank_number
          << "! Did you accidentally swap contents and capacity?" << endl;
     throw("tank definition error");
+  }
+  if (Contents < GetUnusable()) {
+    cerr << el->ReadFrom() << "Tank content (" << Contents
+         << " lbs) is lower than the amount of unusable fuel (" << GetUnusable()
+         << " lbs) for tank " << tank_number << endl;
   }
 
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
@@ -253,17 +267,16 @@ double FGTank::Drain(double used)
 {
   double remaining = Contents - used;
 
-  if (remaining >= 0) { // Reduce contents by amount used.
-
+  if (remaining >= GetUnusable()) { // Reduce contents by amount used.
     Contents -= used;
-    PctFull = 100.0*Contents/Capacity;
-
   } else { // This tank must be empty.
+    if (Contents > GetUnusable())
+      Contents = GetUnusable();
 
-    Contents = 0.0;
-    PctFull = 0.0;
+    remaining = Contents;
   }
 
+  PctFull = 100.0*Contents/Capacity;
   CalculateInertias();
 
   return remaining;
@@ -443,6 +456,9 @@ void FGTank::bind(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/contents-lbs";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetContents,
                                        &FGTank::SetContents );
+  property_name = base_property_name + "/unusable-volume-gal";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetUnusableVolume,
+                        &FGTank::SetUnusableVolume );
   property_name = base_property_name + "/pct-full";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
 

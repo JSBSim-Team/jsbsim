@@ -37,12 +37,8 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <cstdlib>
-
 #include "FGFCSComponent.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGPropertyValue.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
@@ -60,7 +56,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Input = Output = delay_time = 0.0;
   delay = index = 0;
   ClipMin = ClipMax = nullptr;
-  IsOutput   = clip = false;
+  IsOutput = clip = cyclic_clip = false;
   dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -185,6 +181,10 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     clip_string = el->GetDataLine();
     ClipMax = new FGParameterValue(clip_string, PropertyManager);
 
+    clip_string = clip_el->GetAttributeValue("type");
+    if (clip_string == "cyclic")
+      cyclic_clip = true;
+
     clip = true;
   }
 
@@ -229,8 +229,16 @@ void FGFCSComponent::Delay(void)
 
 void FGFCSComponent::Clip(void)
 {
-  if (clip)
-    Output = Constrain(ClipMin->GetValue(), Output, ClipMax->GetValue());
+  if (clip) {
+    double vmin = ClipMin->GetValue();
+    if (cyclic_clip) {
+      double value = Output - vmin;
+      double range = ClipMax->GetValue() - vmin;
+      Output = fmod(value, range) + vmin;
+    }
+    else
+      Output = Constrain(vmin, Output, ClipMax->GetValue());
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

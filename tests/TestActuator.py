@@ -27,7 +27,7 @@
 #    property.
 # 3. The actuator output value is correctly driven by rate_limit.
 
-import os, time
+import os, time, math
 import xml.etree.ElementTree as et
 from multiprocessing import Process
 from scipy import stats
@@ -317,7 +317,7 @@ class TestActuator(JSBSimTestCase):
         self.assertTrue(fdm[self.saturated_prop])
         self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
-        # Check that the actuator output can't go beyond clipmin
+        # Check that the actuator output can't go below clipmin
         t = fdm['simulation/sim-time-sec']
         while fdm['simulation/sim-time-sec'] <= t+dt:
             fdm.run()
@@ -416,6 +416,55 @@ class TestActuator(JSBSimTestCase):
         tree.write(output_file)
 
         self.CheckClip(-0.05, 0.05, rate_limit)
+
+        # Check the cyclic clip
+        clipmin.text = str(-math.pi)
+        clipmax.text = str(math.pi)
+        clipto.attrib['type'] = 'cyclic'
+        tree.write(output_file)
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = 2.0*math.pi
+        dt = math.pi/rate_limit
+        while fdm['simulation/sim-time-sec'] <= dt:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   fdm['simulation/sim-time-sec']*rate_limit)
+            fdm.run()
+
+        while fdm['simulation/sim-time-sec'] <= 2.0*dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   fdm['simulation/sim-time-sec']*rate_limit-2.0*math.pi)
+            fdm.run()
+
+        # Check that the output value does not go beyond 0.0
+        self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+        fdm.run()
+        self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+
+        t = fdm['simulation/sim-time-sec']
+        fdm[self.input_prop] = -0.5*math.pi
+
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t-fdm['simulation/sim-time-sec'])*rate_limit)
+            fdm.run()
+
+        while fdm['simulation/sim-time-sec'] <= t+1.5*dt:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= -0.5*math.pi)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t-fdm['simulation/sim-time-sec'])*rate_limit+2.0*math.pi)
+            fdm.run()
 
 
 RunTest(TestActuator)

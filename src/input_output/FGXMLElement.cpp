@@ -8,33 +8,27 @@
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
-
 #include "FGXMLElement.h"
-#include "string_utilities.h"
 #include "FGJSBBase.h"
 
 using namespace std;
@@ -91,6 +85,12 @@ Element::Element(const string& nm)
     convert["FT3"]["M3"] = 1.0/convert["M3"]["FT3"];
     convert["LTR"]["IN3"] = 61.0237441;
     convert["IN3"]["LTR"] = 1.0/convert["LTR"]["IN3"];
+    convert["GAL"]["FT3"] = 0.133681;
+    convert["FT3"]["GAL"] = 1.0/convert["GAL"]["FT3"];
+    convert["IN3"]["GAL"] = convert["IN3"]["FT3"]*convert["FT3"]["GAL"];
+    convert["LTR"]["GAL"] = convert["LTR"]["IN3"]*convert["IN3"]["GAL"];
+    convert["M3"]["GAL"] = 1000.*convert["LTR"]["GAL"];
+    convert["CC"]["GAL"] = convert["CC"]["IN3"]*convert["IN3"]["GAL"];
     // Mass & Weight
     convert["LBS"]["KG"] = 0.45359237;
     convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
@@ -177,6 +177,7 @@ Element::Element(const string& nm)
     convert["M3"]["M3"] = 1.0;
     convert["FT3"]["FT3"] = 1.0;
     convert["LTR"]["LTR"] = 1.0;
+    convert["GAL"]["GAL"] = 1.0;
     // Mass & Weight
     convert["KG"]["KG"] = 1.00;
     convert["LBS"]["LBS"] = 1.00;
