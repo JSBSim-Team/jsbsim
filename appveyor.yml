@@ -22,7 +22,9 @@ build_script:
 - md cxxtest
 - cd cxxtest
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
-- cd ..
+- cd python
+- python setup.py install
+- cd ../..
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
