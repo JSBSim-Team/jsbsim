@@ -13,10 +13,16 @@ version: 1.0.{build}
 # the VS2017 compiler in order for CMake to pick them up
 # Need to explicitly set the path to Ninja.exe as the make program
 
-build_script:
+init:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy
+- md cxxtest
+- cd cxxtest
+- git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
+- cd ..
+
+build_script:
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
