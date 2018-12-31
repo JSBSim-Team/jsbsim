@@ -19,10 +19,8 @@ init:
 - pip install Cython numpy pandas scipy
 
 build_script:
-- md cxxtest
-- cd cxxtest
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
-- cd python
+- cd cxxtest\python
 - python setup.py install
 - cd ../..
 - md build
