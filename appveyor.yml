@@ -22,7 +22,6 @@ build_script:
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 - cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config RelWithDebInfo 
-- python python\setup.py bdist_wheel --skip-build
 - ctest -j2 -E TestInputSocket
 
 artifacts:
