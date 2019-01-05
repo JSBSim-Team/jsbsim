@@ -36,7 +36,7 @@ build_script:
 - ctest -j2 -E TestInputSocket
 
 on_failure:
-- ps: Get-ChildItem build\Testing\Temporary\LastTest.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+- ps: Get-ChildItem Testing\Temporary\LastTest.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
