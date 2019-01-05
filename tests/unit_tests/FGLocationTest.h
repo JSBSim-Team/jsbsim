@@ -7,7 +7,7 @@ const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
 double NormalizedAngle(double angle) {
   if (angle > M_PI) angle -= 2.0*M_PI;
-  if (angle < -M_PI) angle += 2.0*M_PI;
+  if (angle <= -M_PI) angle += 2.0*M_PI;
   return angle;
 }
 
@@ -65,21 +65,8 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   TS_ASSERT_DELTA(r, loc.GetRadius(), r*epsilon);
 
   vec.Normalize();
-
-  JSBSim::FGColumnVector3 ref(1., 0., 0.);
-  JSBSim::FGColumnVector3 axis = ref * vec;
-  double cosa = DotProduct(vec, ref);
-  double sina = axis.Magnitude();
-  double lon, lat;
-  if (fabs(sina) > epsilon) {
-    q = JSBSim::FGQuaternion(atan2(sina, cosa), axis.Normalize());
-    lon = NormalizedAngle(q.GetEuler(3));
-    lat = -NormalizedAngle(q.GetEuler(2));
-  }
-  else {
-    lon = acos(cosa);
-    lat = 0.0;
-  }
+  double lon = atan2(vec(2), vec(1));
+  double lat = asin(vec(3));
 
   TS_ASSERT_DELTA(lon, loc.GetLongitude(), epsilon);
   TS_ASSERT_DELTA(lat, loc.GetLatitude(), epsilon);
@@ -169,7 +156,7 @@ public:
     TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
-    TS_ASSERT_EQUALS(0.0, l.GetGeodAltitude());
+    TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);
     TS_ASSERT_EQUALS(0.0, l.GetEPA());
     TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
     TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());

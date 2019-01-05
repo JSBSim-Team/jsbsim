@@ -36,7 +36,10 @@ build_script:
 - ctest -j2 -E TestInputSocket
 
 on_failure:
-- ps: Get-ChildItem Testing\Temporary\LastTest.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+# Zip the test logs (see  https://stackoverflow.com/a/26843122 for details)
+- ps: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('C:\projects\jsbsim\build\Testing\Temporary', 'C:\projects\jsbsim\build\TestLogs.zip');
+# Push the zip file to AppVeyor artifacts (see https://www.appveyor.com/docs/packaging-artifacts/#pushing-artifacts-from-scripts for details)
+- ps: Get-ChildItem TestLogs.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
@@ -46,9 +49,6 @@ artifacts:
   name: JSBSim_Release_x64_v2018a
 
 - path: build\dist\JSBSim-1.0.0-cp37-cp37m-win_amd64.whl
-  name: JSBSim_Release_x64_v2018a
-
-- path: build\Testing\Temporary\LastTest.log
   name: JSBSim_Release_x64_v2018a
 
 # Do not build on tags (GitHub and BitBucket)
