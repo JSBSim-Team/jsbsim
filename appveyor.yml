@@ -24,7 +24,9 @@ build_script:
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
+- python setup.py build
 - python setup.py install
+- dir dist
 - cd ..\..
 - dir c:\python36-x64\lib\site-packages
 
