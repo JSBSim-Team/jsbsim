@@ -17,21 +17,14 @@ init:
 - set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
-- pip install --upgrade setuptools
 
 build_script:
 # Install CXXTest for C++ unit tests
-- git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
+- git clone --depth=10 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py install
-#- md c:\python36-x64\lib\site-packages\cxxtest
-#- xcopy python3\cxxtest c:\python36-x64\lib\site-packages\cxxtest
-- dir /s /b
-- type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
-- dir c:\python37-x64\lib\site-packages
-- dir c:\python37-x64\lib\site-packages\__pycache__
 
 # Build JSBSim
 - md build
