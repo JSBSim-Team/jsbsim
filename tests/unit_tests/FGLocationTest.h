@@ -71,7 +71,7 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   double cosa = DotProduct(vec, ref);
   double sina = axis.Magnitude();
   double lon, lat;
-  if (fabs(sina) > epsilon) {
+  if (fabs(sina) > epsilon/10.) {
     q = JSBSim::FGQuaternion(atan2(sina, cosa), axis.Normalize());
     lon = NormalizedAngle(q.GetEuler(3));
     lat = -NormalizedAngle(q.GetEuler(2));
