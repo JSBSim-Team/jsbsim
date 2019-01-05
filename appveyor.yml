@@ -16,7 +16,7 @@ version: 1.0.{build}
 init:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
-- pip install Cython numpy pandas scipy
+- pip install Cython numpy pandas scipy wheel
 
 build_script:
 # Install CXXTest for C++ unit tests
@@ -32,7 +32,8 @@ build_script:
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 - cmake -G "Visual Studio 15 2017 Win64" ..
-- cmake --build . --config RelWithDebInfo 
+- cmake --build . --config RelWithDebInfo
+- python python\setup.py bdist_wheel --skip-build
 - ctest -j2 -E TestInputSocket
 
 artifacts:
