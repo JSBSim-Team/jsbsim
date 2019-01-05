@@ -16,7 +16,9 @@ version: 1.0.{build}
 init:
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
-- pip install Cython numpy pandas scipy wheel setuptools
+- pip install Cython numpy pandas scipy wheel
+- pip list --outdated
+- pip install --upgrade setuptools
 
 build_script:
 # Install CXXTest for C++ unit tests
