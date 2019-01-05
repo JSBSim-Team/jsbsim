@@ -14,7 +14,7 @@ version: 1.0.{build}
 # Need to explicitly set the path to Ninja.exe as the make program
 
 init:
-- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
+- set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
 
@@ -34,7 +34,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: JSBSim_Release_x64_v2018a
 
-- path: build\dist\JSBSim-1.0.0-cp36-cp36m-win_amd64.whl
+- path: build\dist\JSBSim-1.0.0-cp37-cp37m-win_amd64.whl
   name: JSBSim_Release_x64_v2018a
 
 - path: build\Testing\Temporary\LastTest.log
