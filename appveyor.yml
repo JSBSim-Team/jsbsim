@@ -25,8 +25,9 @@ build_script:
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py build
+- dir .\build
 - python setup.py install
-- dir dist
+- dir .\dist
 - cd ..\..
 - dir c:\python36-x64\lib\site-packages
 
