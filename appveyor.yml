@@ -26,6 +26,7 @@ build_script:
 - cd cxxtest\python
 - python setup.py install
 - cd ..\..
+- dir c:\python36-x64\lib\site-packages
 
 # Build JSBSim
 - md build
