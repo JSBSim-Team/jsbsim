@@ -22,7 +22,7 @@ build_script:
 # Install CXXTest for C++ unit tests
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - cd cxxtest\python
-- python setup.py install
+- set PATH=%PATH%;%CD%
 - cd ..
 - set PATH=%PATH%;%CD%
 - cd ..
