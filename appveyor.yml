@@ -24,7 +24,7 @@ build_script:
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
-- python setup.py install
+- python setup.py install --skip_build
 - dir /s /b
 - type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
