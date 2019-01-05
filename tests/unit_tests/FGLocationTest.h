@@ -65,21 +65,8 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   TS_ASSERT_DELTA(r, loc.GetRadius(), r*epsilon);
 
   vec.Normalize();
-
-  JSBSim::FGColumnVector3 ref(1., 0., 0.);
-  JSBSim::FGColumnVector3 axis = ref * vec;
-  double cosa = DotProduct(vec, ref);
-  double sina = axis.Magnitude();
-  double lon, lat;
-  if (fabs(sina) > epsilon) {
-    q = JSBSim::FGQuaternion(atan2(sina, cosa), axis.Normalize());
-    lon = NormalizedAngle(q.GetEuler(3));
-    lat = -q.GetEuler(2);
-  }
-  else {
-    lon = acos(cosa);
-    lat = 0.0;
-  }
+  double lon = atan2(vec(2), vec(1));
+  double lat = asin(vec(3));
 
   TS_ASSERT_DELTA(lon, loc.GetLongitude(), epsilon);
   TS_ASSERT_DELTA(lat, loc.GetLatitude(), epsilon);
