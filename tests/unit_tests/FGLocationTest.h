@@ -7,7 +7,7 @@ const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
 double NormalizedAngle(double angle) {
   if (angle > M_PI) angle -= 2.0*M_PI;
-  if (angle < -M_PI) angle += 2.0*M_PI;
+  if (angle <= -M_PI) angle += 2.0*M_PI;
   return angle;
 }
 
@@ -71,10 +71,10 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   double cosa = DotProduct(vec, ref);
   double sina = axis.Magnitude();
   double lon, lat;
-  if (fabs(sina) > epsilon*100.) {
+  if (fabs(sina) > epsilon) {
     q = JSBSim::FGQuaternion(atan2(sina, cosa), axis.Normalize());
     lon = NormalizedAngle(q.GetEuler(3));
-    lat = -NormalizedAngle(q.GetEuler(2));
+    lat = -q.GetEuler(2);
   }
   else {
     lon = acos(cosa);
