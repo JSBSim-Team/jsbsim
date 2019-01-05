@@ -25,8 +25,8 @@ build_script:
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py install
-- easy_install python3\dist\cxxtest-4.4-py3.6.egg
 - dir /s /b
+- type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
 - dir c:\python36-x64\lib\site-packages
 
