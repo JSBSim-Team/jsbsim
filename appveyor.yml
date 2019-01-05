@@ -14,7 +14,7 @@ version: 1.0.{build}
 # Need to explicitly set the path to Ninja.exe as the make program
 
 init:
-- set PATH=c:\python36-x64;%PATH%
+- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
 - pip install --upgrade setuptools
