@@ -35,6 +35,9 @@ build_script:
 - python python\setup.py bdist_wheel --skip-build
 - ctest -j2 -E TestInputSocket
 
+on_failure:
+- ps: Get-ChildItem build\Testing\Temporary\LastTest.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
   name: JSBSim_Release_x64_v2018a
@@ -43,9 +46,6 @@ artifacts:
   name: JSBSim_Release_x64_v2018a
 
 - path: build\dist\JSBSim-1.0.0-cp36-cp36m-win_amd64.whl
-  name: JSBSim_Release_x64_v2018a
-
-- path: build\Testing\Temporary\LastTest.log
   name: JSBSim_Release_x64_v2018a
 
 # Do not build on tags (GitHub and BitBucket)
