@@ -24,9 +24,8 @@ build_script:
 - git clone --depth=50 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
-- python setup.py build
-- dir /s /b
 - python setup.py install
+- easy_install python3\dist\cxxtest-4.4-py3.6.egg
 - dir /s /b
 - cd ..\..
 - dir c:\python36-x64\lib\site-packages
