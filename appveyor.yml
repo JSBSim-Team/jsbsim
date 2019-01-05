@@ -46,7 +46,6 @@ artifacts:
 - path: build\dist\JSBSim-1.0.0-cp36-cp36m-win_amd64.whl
   name: JSBSim_Release_x64_v2018a
 
-
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
 skip_tags: true
