@@ -14,7 +14,7 @@ version: 1.0.{build}
 # Need to explicitly set the path to Ninja.exe as the make program
 
 init:
-- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
+- set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
 - pip install --upgrade setuptools
@@ -25,13 +25,13 @@ build_script:
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py install
-- md c:\python36-x64\lib\site-packages\cxxtest
-- xcopy python3\cxxtest c:\python36-x64\lib\site-packages\cxxtest
+#- md c:\python36-x64\lib\site-packages\cxxtest
+#- xcopy python3\cxxtest c:\python36-x64\lib\site-packages\cxxtest
 - dir /s /b
 - type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
-- dir c:\python36-x64\lib\site-packages
-- dir c:\python36-x64\lib\site-packages\__pycache__
+- dir c:\python37-x64\lib\site-packages
+- dir c:\python37-x64\lib\site-packages\__pycache__
 
 # Build JSBSim
 - md build
