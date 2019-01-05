@@ -13,16 +13,30 @@ version: 1.0.{build}
 # the VS2017 compiler in order for CMake to pick them up
 # Need to explicitly set the path to Ninja.exe as the make program
 
-build_script:
-- set PATH=c:\python36-x64;c:\python36-x64\Scripts;%PATH%
+init:
+- set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
-- pip install Cython numpy pandas scipy
+- pip install Cython numpy pandas scipy wheel
+
+build_script:
+# Install CXXTest for C++ unit tests
+- git clone --depth=10 --branch=4.4 https://github.com/CxxTest/cxxtest.git
+- set PATH=%CD%\cxxtest;%PATH%
+- cd cxxtest\python
+- python setup.py install
+- cd ..\..
+
+# Build JSBSim
 - md build
 - cd build
 - call "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 - cmake -G "Visual Studio 15 2017 Win64" ..
-- cmake --build . --config RelWithDebInfo 
+- cmake --build . --config RelWithDebInfo
+- python python\setup.py bdist_wheel --skip-build
 - ctest -j2 -E TestInputSocket
+
+on_failure:
+- ps: Get-ChildItem Testing\Temporary\LastTest.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
@@ -31,6 +45,11 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: JSBSim_Release_x64_v2018a
 
+- path: build\dist\JSBSim-1.0.0-cp37-cp37m-win_amd64.whl
+  name: JSBSim_Release_x64_v2018a
+
+- path: build\Testing\Temporary\LastTest.log
+  name: JSBSim_Release_x64_v2018a
 
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
