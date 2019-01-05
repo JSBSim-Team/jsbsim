@@ -169,7 +169,7 @@ public:
     TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
-    TS_ASSERT_EQUALS(0.0, l.GetGeodAltitude());
+    TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);
     TS_ASSERT_EQUALS(0.0, l.GetEPA());
     TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
     TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());
