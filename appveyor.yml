@@ -29,6 +29,7 @@ build_script:
 - type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
 - dir c:\python36-x64\lib\site-packages
+- dir c:\python36-x64\lib\site-packages\__pycache__
 
 # Build JSBSim
 - md build
