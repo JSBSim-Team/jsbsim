@@ -25,7 +25,8 @@ build_script:
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py install
-- xcopy python3\cxxtest c:\python36-x64\lib\site-packages
+- md c:\python36-x64\lib\site-packages\cxxtest
+- xcopy python3\cxxtest c:\python36-x64\lib\site-packages\cxxtest
 - dir /s /b
 - type python3\cxxtest.egg-info\SOURCES.txt
 - cd ..\..
