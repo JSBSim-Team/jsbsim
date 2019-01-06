@@ -29,5 +29,7 @@ set(HEADERS FGColumnVector3.h
             FGParameterValue.h)
 
 add_library(Math OBJECT ${HEADERS} ${SOURCES})
+set_target_properties(Math PROPERTIES TARGET_DIRECTORY
+                           ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/math COMPONENT devel)

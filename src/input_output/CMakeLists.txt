@@ -36,5 +36,8 @@ set(HEADERS FGGroundCallback.h
             FGUDPInputSocket.h)
 
 add_library(InputOutput OBJECT ${HEADERS} ${SOURCES})
+set_target_properties(InputOutput PROPERTIES TARGET_DIRECTORY
+                                  ${CMAKE_CURRENT_SOURCE_DIR})
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output COMPONENT devel)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output
+                         COMPONENT devel)

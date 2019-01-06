@@ -36,5 +36,8 @@ set(HEADERS FGDeadBand.h
             FGDistributor.h)
 
 add_library(FlightControl OBJECT ${HEADERS} ${SOURCES})
+set_target_properties(FlightControl PROPERTIES TARGET_DIRECTORY
+                                    ${CMAKE_CURRENT_SOURCE_DIR})
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/models/flight_control COMPONENT devel)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models/flight_control
+                         COMPONENT devel)

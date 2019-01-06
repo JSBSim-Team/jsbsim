@@ -5,6 +5,10 @@ add_subdirectory(misc)
 add_subdirectory(xml)
 add_subdirectory(io/iostreams)
 
-set(JSBSIM_SIMGEAR_HDR compiler.h)
+set(HEADERS compiler.h)
 
-install(FILES ${JSBSIM_SIMGEAR_HDR} DESTINATION include/JSBSim/simgear COMPONENT devel)
+add_library(Simgear OBJECT ${HEADERS})
+set_target_properties(Simgear PROPERTIES TARGET_DIRECTORY
+                              ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear COMPONENT devel)

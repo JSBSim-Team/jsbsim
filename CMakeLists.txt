@@ -20,6 +20,14 @@ if (SYSTEM_EXPAT)
   find_package(EXPAT)
 endif()
 
+function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
+  string(REPLACE ${SEPARATOR} " " TEMP_LIST ${INPUT_STRING})
+  separate_arguments(TEMP_LIST)
+  list(GET TEMP_LIST -1 TEMP_TAIL)
+  string(STRIP ${TEMP_TAIL} TAIL)
+  set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
+endfunction()
+
 ################################################################################
 # Build JSBSim libs and exec                                                   #
 ################################################################################
@@ -80,14 +88,6 @@ endif()
 # Packaging                                                                    #
 ################################################################################
 
-function(get_tail INPUT_STRING OUTPUT_STRING)
-  string(REPLACE "\t" " " TEMP_LIST ${INPUT_STRING})
-  separate_arguments(TEMP_LIST)
-  list(GET TEMP_LIST -1 TEMP_TAIL)
-  string(STRIP ${TEMP_TAIL} TAIL)
-  set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
-endfunction()
-
 # Extract the host architecture for the package name
 if (UNIX)
   execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -107,8 +107,8 @@ if (UNIX)
   else()
     execute_process(COMMAND ${LSB_RELEASE_EXECUTABLE} -i OUTPUT_VARIABLE DISTRIB_NAME)
     execute_process(COMMAND ${LSB_RELEASE_EXECUTABLE} -r OUTPUT_VARIABLE DISTRIB_RELEASE)
-    get_tail(${DISTRIB_NAME} LINUX_DISTRIB_NAME)
-    get_tail(${DISTRIB_RELEASE} LINUX_DISTRIB_RELEASE)
+    get_tail(${DISTRIB_NAME} LINUX_DISTRIB_NAME "\t")
+    get_tail(${DISTRIB_RELEASE} LINUX_DISTRIB_RELEASE "\t")
     string(TOLOWER ${LINUX_DISTRIB_NAME} TEMP_NAME)
     if (TEMP_NAME STREQUAL "fedora")
       set(LINUX_DISTRIB_NAME ".fc")

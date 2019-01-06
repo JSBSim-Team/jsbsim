@@ -1,4 +1,9 @@
-set(JSBSIM_SIMGEAR_STRUCTURE_HDR SGReferenced.hxx
-                                 SGSharedPtr.hxx)
+set(HEADERS SGReferenced.hxx
+            SGSharedPtr.hxx)
 
-install(FILES ${JSBSIM_SIMGEAR_STRUCTURE_HDR} DESTINATION include/JSBSim/simgear/structure COMPONENT devel)
+add_library(Structure OBJECT ${HEADERS})
+set_target_properties(Structure PROPERTIES TARGET_DIRECTORY
+                                ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/structure
+                         COMPONENT devel)

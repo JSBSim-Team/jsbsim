@@ -27,5 +27,8 @@ set(HEADERS FGElectric.h
             FGRotor.h)
 
 add_library(Propulsion OBJECT ${HEADERS} ${SOURCES})
+set_target_properties(Propulsion PROPERTIES TARGET_DIRECTORY
+                                 ${CMAKE_CURRENT_SOURCE_DIR})
 
-install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion COMPONENT devel)
+install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion
+                         COMPONENT devel)

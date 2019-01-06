@@ -81,11 +81,14 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Magvar>
   $<TARGET_OBJECTS:Misc>
   $<TARGET_OBJECTS:IOStreams>
+  $<TARGET_OBJECTS:Structure>
+  $<TARGET_OBJECTS:Simgear>
   )
 
 set_target_properties (libJSBSim PROPERTIES
                                  OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
-                                 VERSION ${LIBRARY_VERSION})
+                                 VERSION ${LIBRARY_VERSION}
+                                 TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
 

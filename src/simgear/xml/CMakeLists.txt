@@ -26,5 +26,7 @@ if(NOT EXPAT_FOUND)
 endif()
 
 add_library(Xml OBJECT ${HEADERS} ${SOURCES})
+set_target_properties(Xml PROPERTIES TARGET_DIRECTORY
+                          ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml COMPONENT devel)
