@@ -26,6 +26,9 @@ before_install:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
+  - cd python/package
+  - python setup.py sdist
+  - cd ../..
   - python python/setup.py bdist_wheel --skip-build
 install:
   - pip install dist/JSBSim*.whl
