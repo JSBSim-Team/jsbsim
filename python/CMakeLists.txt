@@ -18,10 +18,8 @@ if(MSVC)
   if(NOT (_GENERATOR STREQUAL NINJA))
     set(USING_MSBUILD 1)
   endif()
-  set(COPY_COMMAND "copy")
 else()
   set(CXX_FLAGS "'-std=c++11'")
-  set(COPY_COMMAND "cp")
 endif(MSVC)
 
 set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
@@ -32,6 +30,9 @@ cmake_policy(SET CMP0051 NEW)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
 file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
+file(COPY "${CMAKE_SOURCE_DIR}/README.md" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
+file(COPY "${CMAKE_SOURCE_DIR}/COPYING" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
+file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/package/COPYING" "${CMAKE_CURRENT_BINARY_DIR}/package/LICENSE.txt")
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
 file(COPY "${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c"
      DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package/src/simgear/xml")
@@ -76,7 +77,6 @@ add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
-  COMMAND ${COPY_COMMAND} ${JSBSIM_CXX} "package"
   COMMENT "Building Python modules...")
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
