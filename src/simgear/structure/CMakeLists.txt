@@ -3,8 +3,7 @@ set(HEADERS SGReferenced.hxx
 
 add_library(Structure OBJECT ${HEADERS})
 set_target_properties(Structure PROPERTIES
-                                TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                                IMPORTED TRUE)
+                                TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/structure
                          COMPONENT devel)
