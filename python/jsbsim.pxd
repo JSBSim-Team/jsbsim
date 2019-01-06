@@ -1,3 +1,5 @@
+# cython: language_level=2
+#
 # PyJSBSim a JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
