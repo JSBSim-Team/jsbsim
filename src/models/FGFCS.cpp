@@ -57,6 +57,7 @@ INCLUDES
 #include "models/flight_control/FGWaypoint.h"
 #include "models/flight_control/FGAngles.h"
 #include "models/flight_control/FGDistributor.h"
+#include "models/flight_control/FGLinearActuator.h"
 
 #include "FGFCSChannel.h"
 
@@ -578,6 +579,8 @@ bool FGFCS::Load(Element* document)
           newChannel->Add(new FGAngles(this, component_element));
         } else if (component_element->GetName() == string("distributor")) {
           newChannel->Add(new FGDistributor(this, component_element));
+        } else if (component_element->GetName() == string("linear_actuator")) {
+          newChannel->Add(new FGLinear_Actuator(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
