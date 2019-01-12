@@ -6,6 +6,8 @@
     
   <use aircraft="c172x" initialize="reset01"/>
   <run start="0.0" end="200" dt="0.00833333">
+    <property value="19.65"> propulsion/tank[0]/unusable-volume-gal </property>
+    <property value="19.65"> propulsion/tank[1]/unusable-volume-gal </property>
     
     <event name="Engine start">
       <condition>simulation/sim-time-sec  ge  0.25</condition>
@@ -17,6 +19,27 @@
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/engine/set-running</property>
+        <property>propulsion/engine/fuel-flow-rate-gph</property>
+        <property>propulsion/engine/engine-rpm</property>
+        <property>propulsion/engine/power-hp</property>
+      </notify>
+    </event>
+
+    <event name="Engine starved">
+      <condition>
+        simulation/sim-time-sec gt 0.0
+        propulsion/engine/set-running == 0.0
+      </condition>
+      <notify>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/engine/set-running</property>
+        <property>propulsion/engine/fuel-flow-rate-gph</property>
+        <property>propulsion/engine/engine-rpm</property>
+        <property>propulsion/engine/power-hp</property>
       </notify>
     </event>
     
@@ -26,6 +49,12 @@
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/engine/set-running</property>
+        <property>propulsion/engine/fuel-flow-rate-gph</property>
+        <property>propulsion/engine/engine-rpm</property>
+        <property>propulsion/engine/power-hp</property>
       </notify>
     </event>
 
@@ -35,6 +64,11 @@
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/engine/fuel-flow-rate-gph</property>
+        <property>propulsion/engine/engine-rpm</property>
+        <property>propulsion/engine/power-hp</property>
       </notify>
     </event>
 
