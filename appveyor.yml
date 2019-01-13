@@ -34,6 +34,9 @@ build_script:
 - cmake --build . --config RelWithDebInfo
 - python python\setup.py sdist
 - python python\setup.py bdist_wheel --skip-build
+# Check that the Python module has been correctly installed
+- python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
+- pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
 
 on_failure:
