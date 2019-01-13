@@ -30,9 +30,9 @@ before_install:
   - python python/setup.py bdist_wheel --skip-build
 install:
   - pip install python/dist/JSBSim*.whl
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
-  - pip uninstall jsbsim
+  - pip uninstall jsbsim --yes
   - ctest -j2
 after_success:
   - cpack
@@ -47,10 +47,10 @@ after_failure:
   - echo $GIST_TOKEN > ~/.gist
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
+  - git tag -f $TRAVIS_TAG -m "Ubuntu Trusty 14.04 - Release - amd64"
 # If the Python runtime is 2.7 then delete all Debian package but the Python module
 # The other packages will be deployed by the Python 3.4 runtime
   - if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ] && [ "$USE_SYSTEM_EXPAT" = "ON" ]; then rm -f JSBSim*.deb; fi
-  - git tag -f $TRAVIS_TAG -m "Ubuntu Trusty 14.04 - Release - amd64"
 deploy:
 # Deploy the Debian packages
   - provider: releases
