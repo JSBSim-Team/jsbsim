@@ -24,7 +24,7 @@ before_install:
   - gem install gist
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
+  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=OFF -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
   - python python/setup.py sdist
   - python python/setup.py bdist_wheel --skip-build
@@ -52,7 +52,7 @@ after_failure:
 before_deploy:
   - git tag -f $TRAVIS_TAG -m "Ubuntu Trusty 14.04 - Release - amd64"
 deploy:
-# Deploy the Debian packages and python wheels
+# Deploy the Debian packages
   - provider: releases
     api_key:
       secure: FHMLgbuRTSznrfMSpb3/nJIECKS0v8VFHUfC99ZpMBjZR4kxptDSPchpHzLFlrytzl1+H62w1iWChx5RYaH1MW8a/ejCUWYO0IjO6hLtG72nMJeDIBC2JzLnKN7cLqMrgEHKW7XmK3CtXGa/tXxu+KEvmbwskv3TOWGUokdUB3EI0vTLjjCQBW05VK7oSBq+7Jl4zGJumWwALP5EK7DC7McPXpLlkw5zdga+LQVcg8aDPrNwgF5kaH03b7TagYgiG2OFb4FAPvfz70RWeCRB7QQn1jOGULZ3PHz8EnNOfyBqGJ0flDyAfZcwJNY1OONW9ELnOctvzdmmU2P+KGuK4cJuzI59aRVQrwcSnnl26DU/95Hev4mdCIlPz798C3TfZu+U36uzGMurQJjE7Fg59N4WnqubhWKWu/7qRhn1uttdPm5sIcVAPpshKm8uzlsTLLMTNUMj5ZIimVbFV2lz0PbDWPnbHxHeDKgaVkIjTQy4e1XZH7IhjIVODG2PK1TnWS/6RRTBUVXxwup7Tj8HhVbLjrfPs2qLDJv70sRyKUgAqqKdGkr/7Es52y1i/io3BJqiIOpJBM5Wyzk37NCAlX4WCoqJZQbKKRQ9hH5baZaxlpz28Hc0tbAqfwFOwAOonf1+s7MBM896EoAtdKpr0Z0F/ra9ePQezTbtQhvws3g=
@@ -61,12 +61,23 @@ deploy:
       - "JSBSim-devel*.deb"
       - "JSBSim_*[0-9].deb"
       - "python[2-3]-JSBSim*.deb"
-      - "JSBSim*.whl"
     skip_cleanup: true
     overwrite: true
     on:
       tags: true
       condition: $USE_SYSTEM_EXPAT = ON
+# Deploy the Python wheels
+  - provider: releases
+    api_key:
+      secure: FHMLgbuRTSznrfMSpb3/nJIECKS0v8VFHUfC99ZpMBjZR4kxptDSPchpHzLFlrytzl1+H62w1iWChx5RYaH1MW8a/ejCUWYO0IjO6hLtG72nMJeDIBC2JzLnKN7cLqMrgEHKW7XmK3CtXGa/tXxu+KEvmbwskv3TOWGUokdUB3EI0vTLjjCQBW05VK7oSBq+7Jl4zGJumWwALP5EK7DC7McPXpLlkw5zdga+LQVcg8aDPrNwgF5kaH03b7TagYgiG2OFb4FAPvfz70RWeCRB7QQn1jOGULZ3PHz8EnNOfyBqGJ0flDyAfZcwJNY1OONW9ELnOctvzdmmU2P+KGuK4cJuzI59aRVQrwcSnnl26DU/95Hev4mdCIlPz798C3TfZu+U36uzGMurQJjE7Fg59N4WnqubhWKWu/7qRhn1uttdPm5sIcVAPpshKm8uzlsTLLMTNUMj5ZIimVbFV2lz0PbDWPnbHxHeDKgaVkIjTQy4e1XZH7IhjIVODG2PK1TnWS/6RRTBUVXxwup7Tj8HhVbLjrfPs2qLDJv70sRyKUgAqqKdGkr/7Es52y1i/io3BJqiIOpJBM5Wyzk37NCAlX4WCoqJZQbKKRQ9hH5baZaxlpz28Hc0tbAqfwFOwAOonf1+s7MBM896EoAtdKpr0Z0F/ra9ePQezTbtQhvws3g=
+    file_glob: true
+    file:
+      - "python/dist/JSBSim*.whl"
+    skip_cleanup: true
+    overwrite: true
+    on:
+      tags: true
+      condition: $USE_SYSTEM_EXPAT = OFF
 # Deploy the Doxygen built docs
   - provider: pages
     skip_cleanup: true
