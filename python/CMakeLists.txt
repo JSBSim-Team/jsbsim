@@ -24,6 +24,7 @@ endif(MSVC)
 cmake_policy(SET CMP0051 NEW)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
+get_directory_property(FLAGS_LIST DIRECTORY ${libJSBSim_DIRECTORY} COMPILE_DEFINITIONS)
 file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 
 file(COPY ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -39,6 +40,7 @@ foreach(_FILE "MANIFEST.in" "jsbsim.pyx" "jsbsim.pxd" "ExceptionManagement.h"
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 
+# Copy each source file and collect the compile flags specified by add_definitions()
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   string(SUBSTRING ${OBJECT} 0 17 HEADER)
   if (${HEADER} STREQUAL "$<TARGET_OBJECTS:")
@@ -47,6 +49,8 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
     string(SUBSTRING ${OBJECT} 17 ${TARGET_LENGTH} TARGET)
     get_target_property(TARGET_SOURCE_FILES ${TARGET} SOURCES)
     get_target_property(TARGET_SOURCE_DIRECTORY ${TARGET} TARGET_DIRECTORY)
+    get_directory_property(FLAGS DIRECTORY ${TARGET_SOURCE_DIRECTORY} COMPILE_DEFINITIONS)
+    list(APPEND FLAGS_LIST ${FLAGS})
     file(RELATIVE_PATH TARGET_PATH ${CMAKE_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
     file(MAKE_DIRECTORY ${TARGET_PATH})
     foreach(_FILE ${TARGET_SOURCE_FILES})
@@ -65,6 +69,12 @@ foreach(_FILE ${SOURCE_FILES})
     string(APPEND JSBSIM_SOURCE_FILES "'${_FILE}',")
   endif()
 endforeach(_FILE)
+
+# Clean up the compile flags list
+list(REMOVE_DUPLICATES FLAGS_LIST)
+foreach(FLAG ${FLAGS_LIST})
+  string(APPEND JSBSIM_FLAGS "'${FLAG}',")
+endforeach()
 
 file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
