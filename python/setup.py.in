@@ -80,7 +80,8 @@ for idx, opt in enumerate(sys.argv):
         del sys.argv[idx] # remove the --config argument
         break
 
-log.info("[Python] Library path: {}".format(library_path))
+# We deliberately want it to crash to see the message...
+raise BaseException("[Python] Library path: {}".format(library_path))
 
 # Move to the directory in which the script setup.py is located.
 cwd = os.path.dirname(sys.argv[0])
