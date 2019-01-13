@@ -5,6 +5,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ################################################################################
 
 if(MSVC)
+  # CMake requires to specify flags with -D even for Windows. The transformation
+  # to /D is made by CMake.
   add_definitions(-D_USE_MATH_DEFINES -DNOMINMAX)
 endif()
 
