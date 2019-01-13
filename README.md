@@ -246,12 +246,37 @@ The HTML documentation will then be available in the directory `build/documentat
 
 # Frequently Asked Questions
 
-#### How can I get more details about the failure of a test ran by `ctest` ?
+### How can I interface JSBSim with FlightGear ?
+**Q:** I would like to visualize the aircraft model in [FlightGear](http://flightgear.org) while running the FDM with the JSBSim executable. How do I proceed ?
+
+**A:** We are assuming that FlightGear is installed on your platform. If it is not, please follow the instructions on the [FlightGear website](http://home.flightgear.org/download/main-program).
+
+You will need to launch separately FlightGear and JSBSim from a console. In the example below, you will execute the script [ShortS23_2.xml](scripts/Short_S23_2.xml) so you might need to install the [Short Empire aircraft](http://wiki.flightgear.org/Short_Empire). This is optional however and any aircraft can be used for visualization even if it does not correspond to the FDM.
+
+First, run FlightGear and tell it that the flight dynamics will be provided thru a socket by an external program. It is assumed that the executable of FlightGear is `fgfs` (see the FlightGear docs for [details on the parameters of `--native-fdm`](http://wiki.flightgear.org/Property_Tree/Sockets#Native_Socket) argument).
+```bash
+> fgfs --fdm=null --native-fdm=socket,in,60,,5550,udp --aircraft=Short_Empire --airport=SP01
+```
+Once FlightGear is launched, you will see the aircraft standing still.
+
+![FlightGear is launched](doc/JSB2FG_interface_1.png)
+
+Now we will run JSBSim and tell it that it must send the flight dynamics data to a socket with the FlightGear protocol
+```bash
+> JSBSim scripts/Short_S23_2.xml data_output/flightgear.xml --realtime --nice
+```
+The parameters describing the protocol are detailed in [`data_output/flightgear.xml`](data_output/flightgear.xml). The flag `--realtime` requests JSBSim to execute in real time. Otherwise JSBSim will run as fast as it can and the flight will look like it is played fast forward. The flag `--nice` tells JSBSim to use as few CPU power as possible. This is an optional flag but since we requested `--realtime`, JSBSim will spend a considerable amount of time idling, waiting for the next time step.
+
+At the this stage, the two executables are interacting and FlightGear produces the visualization of the flight dynamics simulated by JSBSim.
+
+![FlightGear/JSBSim interface running](doc/JSB2FG_interface_2.png)
+
+### How can I get more details about the failure of a test ran by `ctest` ?
 **Q:** I ran `ctest` from my build directory and it reports one or several tests failures. The problem is that `ctest` does not seem to give any details about the reason why the tests failed.
 
 **A:** All the output issued by tests run by `ctest` are logged in the file `Testing/Temporary/LastTestsFailed.log`.
 
-#### How can I select the tests ran by `ctest` ? 
+### How can I select the tests ran by `ctest` ? 
 **Q:** One of the tests ran by `ctest` is failing and I am trying to debug it. But `ctest` always executes all the tests and it takes much time. To iterate faster, I would like to focus only on the test that fails. How do I tell `ctest` to skip all the tests but the test that fails ?
 
 **A:** You can filter the tests executed by `ctest` with the options `-R`, `-E` and `-I`. Say you want to run exclusively `TestDensityAltitude.py` then you can use the following command
@@ -271,7 +296,7 @@ If you need to run tests #12 to #14, you can use
 > ctest -I 12,14
 ```
 You can find more informations about `ctest` from its [manual page](https://cmake.org/cmake/help/v3.0/manual/ctest.1.html)
-#### When I try to run `ctest`, Python fails with an `ImportError`
+### When I try to run `ctest`, Python fails with an `ImportError`
 **Q:** Before running `make install`, I want to execute `ctest` but all the tests fail. And when I check in the file `Testing/Temporary/LastTestsFailed.log` it reports many errors such as
 ```
 31: Traceback (most recent call last):
