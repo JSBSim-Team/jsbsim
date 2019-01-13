@@ -17,7 +17,6 @@ init:
 - set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
-- pip list --outdated
 - pip install -U setuptools
 
 build_script:
@@ -42,6 +41,7 @@ build_script:
 - python --version
 - dir c:\python37-x64\lib\site-packages\JSBSim-1.0.0.dev1.dist-info
 - dir tests
+- dir src\RelWithDebInfo
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
