@@ -35,7 +35,7 @@ install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
   - pip uninstall jsbsim --yes
-  - ctest -R ResetOutput -V
+  - ctest -j2
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
