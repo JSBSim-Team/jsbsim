@@ -35,8 +35,7 @@ install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
 script:
   - pip uninstall jsbsim --yes
-  - ctest -j2
-  - pip install python/dist/JSBSim*.tar.gz
+  - ctest -R ResetOutput -V
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
