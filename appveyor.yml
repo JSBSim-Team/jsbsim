@@ -17,6 +17,8 @@ init:
 - set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
+- pip list --outdated
+- pip install -U setuptools
 
 build_script:
 # Install CXXTest for C++ unit tests
