@@ -5,7 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ################################################################################
 
 if(MSVC)
-  add_definitions("/D _USE_MATH_DEFINES /D NOMINMAX")
+  add_definitions(-D_USE_MATH_DEFINES -DNOMINMAX)
 endif()
 
 if (CMAKE_VERSION VERSION_LESS 3.1)
@@ -45,7 +45,7 @@ elseif(DEFINED ENV{APPVEYOR})
   set(VERSION_MESSAGE " [build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
 endif()
 
-add_definitions("-DJSBSIM_VERSION=\"${PROJECT_VERSION}${VERSION_MESSAGE}\"")
+add_definitions(-DJSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 
 set(STATIC_LIBNAME_SUFFIX)
 if(MSVC AND BUILD_SHARED_LIBS)
