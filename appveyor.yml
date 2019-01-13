@@ -17,6 +17,8 @@ init:
 - set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 - pip install Cython numpy pandas scipy wheel
+# Upgrade setuptools to recognize the parameter long_description_content_type
+- pip install -U setuptools
 
 build_script:
 # Install CXXTest for C++ unit tests
@@ -33,12 +35,14 @@ build_script:
 - cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config RelWithDebInfo
 - python python\setup.py sdist
-- python python\setup.py bdist_wheel --skip-build
+- python python\setup.py bdist_wheel --skip-build --config RelWithDebInfo
 # Check that the Python module correctly installs
 - pip install python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
+- pip install python\dist\JSBSim-1.0.0.dev1.tar.gz -v
+- python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 
 on_failure:
 # Zip the test logs (see  https://stackoverflow.com/a/26843122 for details)

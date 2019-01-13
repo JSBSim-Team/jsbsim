@@ -36,6 +36,8 @@ script:
   - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
   - pip uninstall jsbsim --yes
   - ctest -j2
+  - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then pip install python/dist/JSBSim-*.tar.gz -v; fi
+  - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"; fi
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
