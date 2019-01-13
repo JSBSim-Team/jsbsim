@@ -106,7 +106,7 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = [('/D '+flag).replace('"', '\\"') for flag in [${JSBSIM_FLAGS}]]
+        compile_flags = [('/D'+flag).replace('"', '\\"') for flag in [${JSBSIM_FLAGS}]]
     else:
         compile_flags = ['-D'+flag for flag in [${JSBSIM_FLAGS}]]
 

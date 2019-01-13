@@ -41,7 +41,8 @@ build_script:
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
-- pip install python\dist\JSBSim-1.0.0.dev1.tar.gz
+- pip install python\dist\JSBSim-1.0.0.dev1.tar.gz -v
+- python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 
 on_failure:
 # Zip the test logs (see  https://stackoverflow.com/a/26843122 for details)
