@@ -32,7 +32,7 @@ before_install:
   - python python/setup.py bdist_wheel --skip-build
 install:
   - pip install dist/JSBSim*.whl
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
   - pip uninstall jsbsim --yes
   - ctest -R ResetOutput -V
