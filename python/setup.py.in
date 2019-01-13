@@ -58,7 +58,7 @@ class InstallJSBSimModule(install_lib):
     def install(self):
         if not os.path.exists(self.install_dir):
             os.makedirs(self.install_dir)
-        log.info("Module name: {}\nInstallation directory: {}".format(self.module_name, self.install_dir)
+        log.info("Module name: {}\nInstallation directory: {}".format(self.module_name, self.install_dir))
         self.copy_file(os.path.join('${BUILD_ROOT_PATH}', 'tests', self.module_name),
                        os.path.join(self.install_dir, self.module_name))
 
