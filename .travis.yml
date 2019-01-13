@@ -35,7 +35,7 @@ install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
 # Check that the module has been correctly installed
-  - python -c "import jsbsim2;fdm=FGFDMExec('.', None)"
+  - python -c "import jsbsim;fdm=FGFDMExec('.', None)"
   - pip uninstall jsbsim --yes
   - ctest -j2
 after_success:
