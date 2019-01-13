@@ -24,7 +24,7 @@ before_install:
   - gem install gist
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=OFF -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
+  - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
   - cd python/package
   - python setup.py sdist
@@ -33,9 +33,10 @@ before_install:
 install:
   - pip install dist/JSBSim*.whl
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
-  - make install
 script:
+  - pip uninstall jsbsim --yes
   - ctest -j2
+  - pip install python/dist/JSBSim*.tar.gz
 after_success:
   - cpack
   - export TRAVIS_TAG=JSBSim-trusty-v2018a
