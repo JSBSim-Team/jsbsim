@@ -80,6 +80,8 @@ for idx, opt in enumerate(sys.argv):
         del sys.argv[idx] # remove the --config argument
         break
 
+log.info("[Python] Library path: {}".format(library_path))
+
 # Move to the directory in which the script setup.py is located.
 cwd = os.path.dirname(sys.argv[0])
 if cwd:
@@ -93,6 +95,7 @@ else:
 
 # Check if the library exists and build the Python module accordingly.
 if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist':
+    log.info("[Python] Build w/ library")
     # OK, the JSBSim library has already been compiled so let us it to build the
     # Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
@@ -104,6 +107,7 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
                                    'install_lib': InstallJSBSimModule}}
 else:
+    log.info("[Python] Build w/ sources")
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
