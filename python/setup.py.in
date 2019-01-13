@@ -54,7 +54,6 @@ class InstallJSBSimModule(install_lib):
         # can be quite complicated).
         build_ext = self.get_finalized_command('build_ext')
         self.module_name = build_ext.get_ext_filename(build_ext.extensions[0].name)
-        log.info("Module name: {}".format(self.module_name))
 
     def install(self):
         if not os.path.exists(self.install_dir):
@@ -104,8 +103,6 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
                                    'install_lib': InstallJSBSimModule}}
 else:
-    # We deliberately want it to crash to see the message...
-    raise BaseException("[Python] Build w/ sources\nLibrary path: {}".format(library_path))
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
