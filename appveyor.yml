@@ -35,7 +35,7 @@ build_script:
 - cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config RelWithDebInfo
 - python python\setup.py sdist
-- python python\setup.py bdist_wheel --skip-build
+- python python\setup.py bdist_wheel
 # Check that the Python module correctly installs
 - pip install python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
 - pip list
