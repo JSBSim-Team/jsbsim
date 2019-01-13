@@ -7,10 +7,10 @@ set_source_files_properties(jsbsim.pyx PROPERTIES CYTHON_IS_CXX TRUE)
 # Build the Python module using Cython and the JSBSim library
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 compile_pyx(jsbsim _JSBSIM_CXX jsbsim.pyx)
-file(RELATIVE_PATH JSBSIM_CXX "${CMAKE_CURRENT_BINARY_DIR}" ${_JSBSIM_CXX})
+file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
 
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py OUTPUT_VARIABLE PYTHON_MODULE_NAME)
-set(JSBSIM_PYTHON_MODULE "${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME}")
+set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
 
 # Check if we are using Visual Studio msbuild
 if(MSVC)
@@ -18,29 +18,29 @@ if(MSVC)
   if(NOT (_GENERATOR STREQUAL NINJA))
     set(USING_MSBUILD 1)
   endif()
-  set(COPY_COMMAND "copy")
-else()
-  set(CXX_FLAGS "'-std=c++11'")
-  set(COPY_COMMAND "cp")
 endif(MSVC)
-
-set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-configure_file(setup.py.in ${SETUP_PY})
 
 # Duplicate the files for the source distribution of JSBSim
 cmake_policy(SET CMP0051 NEW)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
+get_directory_property(FLAGS_LIST DIRECTORY ${libJSBSim_DIRECTORY} COMPILE_DEFINITIONS)
 file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
-file(COPY "${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c"
-     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package/src/simgear/xml")
-file(COPY "${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c"
-     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package/src/simgear/xml")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.h" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/package")
+
+file(COPY ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt)
+file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
+file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
+
+foreach(_FILE "MANIFEST.in" "jsbsim.pyx" "jsbsim.pxd" "ExceptionManagement.h"
+              "fpectlmodule.h")
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endforeach()
+
+# Copy each source file and collect the compile flags specified by add_definitions()
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   string(SUBSTRING ${OBJECT} 0 17 HEADER)
   if (${HEADER} STREQUAL "$<TARGET_OBJECTS:")
@@ -49,15 +49,17 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
     string(SUBSTRING ${OBJECT} 17 ${TARGET_LENGTH} TARGET)
     get_target_property(TARGET_SOURCE_FILES ${TARGET} SOURCES)
     get_target_property(TARGET_SOURCE_DIRECTORY ${TARGET} TARGET_DIRECTORY)
-    file(RELATIVE_PATH TARGET_PATH ${CMAKE_SOURCE_DIR} "${TARGET_SOURCE_DIRECTORY}")
-    file(MAKE_DIRECTORY "${TARGET_PATH}")
+    get_directory_property(FLAGS DIRECTORY ${TARGET_SOURCE_DIRECTORY} COMPILE_DEFINITIONS)
+    list(APPEND FLAGS_LIST ${FLAGS})
+    file(RELATIVE_PATH TARGET_PATH ${CMAKE_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
+    file(MAKE_DIRECTORY ${TARGET_PATH})
     foreach(_FILE ${TARGET_SOURCE_FILES})
-      file(COPY "${TARGET_SOURCE_DIRECTORY}/${_FILE}" DESTINATION "package/${TARGET_PATH}")
-      list(APPEND SOURCE_FILES "${TARGET_PATH}/${_FILE}")
+      file(COPY ${TARGET_SOURCE_DIRECTORY}/${_FILE} DESTINATION ${TARGET_PATH})
+      list(APPEND SOURCE_FILES ${TARGET_PATH}/${_FILE})
     endforeach()
   else()
-    file(COPY "${libJSBSim_DIRECTORY}/${OBJECT}" DESTINATION "package/${libJSBSim_PATH}")
-    list(APPEND SOURCE_FILES "${libJSBSim_PATH}/${OBJECT}")
+    file(COPY ${libJSBSim_DIRECTORY}/${OBJECT} DESTINATION ${libJSBSim_PATH})
+    list(APPEND SOURCE_FILES ${libJSBSim_PATH}/${OBJECT})
   endif()
 endforeach(OBJECT)
 
@@ -68,7 +70,16 @@ foreach(_FILE ${SOURCE_FILES})
   endif()
 endforeach(_FILE)
 
-configure_file(setup-package.py.in "${CMAKE_CURRENT_BINARY_DIR}/package/setup.py")
+# Clean up the compile flags list
+list(REMOVE_DUPLICATES FLAGS_LIST)
+foreach(FLAG ${FLAGS_LIST})
+  string(APPEND JSBSIM_FLAGS "'${FLAG}',")
+endforeach()
+
+file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
+
+set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
+configure_file(setup.py.in ${SETUP_PY})
 
 # setup.py build_ext is called with --force because dependencies and time stamps
 # are managed by CMake so we don't want setup.py to check them as well.
@@ -76,7 +87,6 @@ add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
-  COMMAND ${COPY_COMMAND} ${JSBSIM_CXX} "package"
   COMMENT "Building Python modules...")
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})

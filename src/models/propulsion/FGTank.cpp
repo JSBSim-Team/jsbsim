@@ -461,6 +461,8 @@ void FGTank::bind(FGPropertyManager* PropertyManager)
                         &FGTank::SetUnusableVolume );
   property_name = base_property_name + "/pct-full";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPctFull);
+  property_name = base_property_name + "/density-lbs_per_gal";
+  PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetDensity);
 
   property_name = base_property_name + "/priority";
   PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetPriority,
