@@ -106,11 +106,10 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_definition = '/D '
+        compile_flags = [('/D '+flag).replace('"', '\\"') for flag in [${JSBSIM_FLAGS}]]
     else:
-        compile_definition = '-D'
+        compile_flags = ['-D'+flag for flag in [${JSBSIM_FLAGS}]]
 
-    compile_flags = [compile_definition+flag for flag in [${JSBSIM_FLAGS}]]
 
     ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
                    'include_dirs': ['src', 'src/simgear/xml'],
