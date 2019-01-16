@@ -101,7 +101,8 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
                    'library_dirs': [library_path],
                    'extra_compile_args': cpp11_compile_flag }
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
-                                   'install_lib': InstallJSBSimModule}}
+                                   'install_lib': InstallJSBSimModule},
+                     'install_requires': ['numpy']}
 else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
