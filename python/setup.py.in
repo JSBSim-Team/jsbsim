@@ -61,6 +61,22 @@ class InstallJSBSimModule(install_lib):
         self.copy_file(os.path.join('${BUILD_ROOT_PATH}', 'tests', self.module_name),
                        os.path.join(self.install_dir, self.module_name))
 
+        # Make sure the MSVC DLL for C++ code msvcp140.dll is included in the
+        # wheel.
+        if compiler.compiler_type == 'msvc':
+            import win32api
+
+            path = win32api.GetEnvironmentVariable('PATH')
+            dirs = set([win32api.GetSystemDirectory(),
+                        win32api.GetWindowsDirectory()] + path.split(';'))
+
+            for d in dirs:
+                libpath = os.path.join(d, 'msvcp140.dll')
+                if os.path.exists(libpath):
+                    self.copy_file(libpath, os.path.join(install_dir,
+                                                         'msvcp140.dll'))
+                    break
+
 # Process the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
@@ -101,20 +117,6 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
                                    'install_lib': InstallJSBSimModule},
                      'install_requires': ['numpy']}
-
-    # Make sure the MSVC DLL for C++ code msvcp140.dll is included in the wheel.
-    if compiler.compiler_type == 'msvc':
-        import win32api, shutil
-
-        path = win32api.GetEnvironmentVariable('PATH')
-        dirs = set([win32api.GetSystemDirectory(),
-                    win32api.GetWindowsDirectory()] + path.split(';'))
-
-        for d in dirs:
-            libpath = os.path.join(d, 'msvcp140.dll')
-            if os.path.exists(libpath):
-                shutil.copy(libpath, 'msvcp140.dll')
-                break
 else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
