@@ -47,6 +47,7 @@ class QuietBuild(build_ext):
 # build directory. Here, we just want to install the JSBSim module so that it
 # can be accessed everywhere on the platform. This class is therefore
 # specializing the standard install_lib to do just that.
+# It also takes care of extra dependencies for Windows systems.
 class InstallJSBSimModule(install_lib):
     def __init__(self, dist):
         install_lib.__init__(self, dist)
@@ -60,6 +61,25 @@ class InstallJSBSimModule(install_lib):
             os.makedirs(self.install_dir)
         self.copy_file(os.path.join('${BUILD_ROOT_PATH}', 'tests', self.module_name),
                        os.path.join(self.install_dir, self.module_name))
+
+        # When compiled with Microsoft Visual C++, the JSBSim Python module is
+        # linked with the dynamically linked library msvcp140.dll which is not a
+        # standard library on Windows. So this code allows msvcp140.dll to be
+        # shipped with the Python module.
+        if compiler.compiler_type == 'msvc':
+            import win32api
+
+            path = win32api.GetEnvironmentVariable('PATH')
+            # Use a set below to remove duplication.
+            dirs = set([win32api.GetSystemDirectory(),
+                        win32api.GetWindowsDirectory()] + path.split(';'))
+
+            for d in dirs:
+                libpath = os.path.join(d, 'msvcp140.dll')
+                if os.path.exists(libpath):
+                    self.copy_file(libpath, os.path.join(self.install_dir,
+                                                         'msvcp140.dll'))
+                    break
 
 # Process the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
@@ -80,9 +100,7 @@ for idx, opt in enumerate(sys.argv):
         break
 
 # Move to the directory in which the script setup.py is located.
-cwd = os.path.dirname(sys.argv[0])
-if cwd:
-    os.chdir(cwd)
+os.chdir(os.path.dirname(__file__))
 
 compiler = new_compiler()
 if compiler.compiler_type == 'unix':
@@ -131,7 +149,7 @@ setup(
     long_description="JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.",
     long_description_content_type="text/markdown",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Science/Research",
         "Intended Audience :: Other Audience",
