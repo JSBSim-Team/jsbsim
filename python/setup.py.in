@@ -73,7 +73,7 @@ class InstallJSBSimModule(install_lib):
             for d in dirs:
                 libpath = os.path.join(d, 'msvcp140.dll')
                 if os.path.exists(libpath):
-                    self.copy_file(libpath, os.path.join(install_dir,
+                    self.copy_file(libpath, os.path.join(self.install_dir,
                                                          'msvcp140.dll'))
                     break
 
