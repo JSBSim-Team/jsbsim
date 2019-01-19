@@ -14,7 +14,8 @@ set(SOURCES FGDeadBand.cpp
             FGMagnetometer.cpp
             FGAngles.cpp
             FGWaypoint.cpp
-            FGDistributor.cpp)
+            FGDistributor.cpp
+            FGLinearActuator.cpp)
 
 set(HEADERS FGDeadBand.h
             FGFCSComponent.h
@@ -33,7 +34,8 @@ set(HEADERS FGDeadBand.h
             FGSensorOrientation.h
             FGAngles.h
             FGWaypoint.h
-            FGDistributor.h)
+            FGDistributor.h
+            FGLinearActuator.h)
 
 add_library(FlightControl OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(FlightControl PROPERTIES TARGET_DIRECTORY
