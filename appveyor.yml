@@ -39,6 +39,7 @@ build_script:
 - dir python
 # Check that the Python module correctly installs
 - pip install python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
+- dir c:\python37-x64\lib\site-packages
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
