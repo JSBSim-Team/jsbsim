@@ -62,14 +62,25 @@ namespace JSBSim {
      *    List of parameters:
      * 
      *    input: Value to be transformed
+     *    Output: Output value following the following rule:
+     *      Output = gain * (bias + Input + module*countSpin)
+     *      CountSpin is the number of complete rotations calculated by this device
+     *    gain: Apply a multiplication coefficient of the output value, the default value is 1.0
+     *    bias: Value that is added to the input value
      *    module: Difference of the maximum and minimum value Input, default is 1.0
+     *    hysteresis: Defines the sensitivity of the actuator according to the input.
+     *      For example, if the actuator has a module of 360 and if the hysteresis is 5.0,
+     *      the actuator, with gain = 1, will put a value equal to: 5, 10...355, 360, 365, 370 etc.
+     *      This parameter allows to simulate stepper motors. The default value is 0.1
+     *      It is not advisable to have this parameter too small ( less than 0.1)
+     *      as it could make the CPU load heavier.
      *    versus: Direction of rotation if fixed. The versus allows to obtain a kinematism
-     *      similar to the escapement of a clock. The default value is 0.0 If the value
+     *      similar to the escapement of a clock. The default value is 0 If the value
      *      is zero, the verse is automatically obtained according to variation of
      *      the input data.
-     *      If set to a value> 0 the verse is increasing, ie the output changes only
+     *      If set to a value > 0.5 the verse is increasing, ie the output changes only
      *      if the Input value is greater than the previous one.
-     *      If set to a negative value, the output changes only if the next value
+     *      If set to a value < -0.5 the output changes only if the next value
      *      is lower than the previous one.
      *      With this parameter allows to easily obtain a "step counter".
      *    rate: To define when the rotation is complete, the differential criterion is used.
@@ -81,30 +92,30 @@ namespace JSBSim {
      *      If a difficulty in determining the rotation is observed during the tests,
      *      this parameter must be modified with a positive value not exceeding 1.
      *      The default value is 0.3
-     *    set: If the value is greater than zero, the output changes according to the input.
-     *      If its value is zero, the output remains constant (the system stores the data).
+     *    set: If the absoloute value is greater or equal 0.5, the output changes according to the input.
+     *      If its value is lower 0.5, the output remains constant (the system stores the data).
      *      The use of this parameter allows to simulate the behavior of a servomechanism
      *      that is blocked, for example due to a power failure.
-     *    Reset: When high, the output returns to zero.
-     *    Lag: Activate a lag filter on exit.
-     *    Gain: Apply a multiplication coefficient of the output value.
+     *    Reset: if the absolute value is greater or equal 0.5, the output returns to zero and reset internal data.
+     *    lag: Activate a lag filter on exit if the value is greater 0.0 the lag is active.
+     *      Be very careful to use the lag filter in case you use two or more "linear_actuator" in cascade;
+     *      may happen that the smoothing effect due to the lag in the output value can mislead the rotation
+     *      determination system. The effect is similar to that of a loose coupling of a rack and pinion.
+     *      Therefore, with these types of coupling, place lag only at the last stage.
      *    Clipto: Clips the output. The clipping is applied after the gain and lag.
-     *    Output: Output value following the following rule:
-     *      Output = gain * (Input + module*countSpin)
-     *      CountSpin is the number of complete rotations
-     * 
-     *    The form of the linear_actuator component specification is:
      * 
      * @code
      *    <linear_actuator name="{string}">
      *      <input> {property name} </input>
-     *      <module> value </module>
-     *      <versus> value|property </versus>
-     *      <rate> value </rate>
+     *      <bias> {property name | value} </bias>
+     *      <module> {value} </module>
+     *      <hysteresis> {value} </hysteresis>
+     *      <rate> {value} </rate>
+     *      <versus> {property name | value} </versus>
+     *      <gain> {value} </gain>
      *      <set> {property name | value} </set>
      *      <reset> {property name | value} </reset>
-     *      <lag> number </lag>
-     *      <gain> value|property </gain>
+     *      <lag> {value} </lag>
      *      <clipto>
      *         <min> {value} </min>
      *         <max> {value} </max>
@@ -157,17 +168,20 @@ namespace JSBSim {
      * Count steps with memory:
      * If you use a button or switch to advance a mechanism, we can build a step counter.
      * In this case the module is 1 and the rate 1. The verse is positive (increasing).
+     * A pulse counter (for example the count of the switched-on states of a switch with values 1 and 0),
+     * the module must be 1 in that each step must advance its value by one unit.
+     * The verse is "1" because it has to accept only increasing values (as in a clock escapement).
+     * The gain is 0.5 because, in similitude to an escapement of a clock,
+     * the gear makes two steps for a complete rotation of the pendulum.
      *
      * @code
      * 
      *  <linear_actuator name="switch-increase-summer">
-     *      <input>switch-increase-trigger</input>
-     *      <set>switch-increase-operative</set>
+     *     <input>systems/gauges/PHI/doppler/switch-increase</input>
      *      <module>1</module>
      *      <rate>1</rate>
      *      <versus>1</versus>
-     *      <lag>8.0</lag>
-     *      <gain>1.0</gain>
+     *      <gain>0.5</gain>
      *  </linear_actuator>
      *  
      * @endcode
@@ -200,29 +214,32 @@ namespace JSBSim {
     private:
         
         simgear::PropertyObject<double> setProperty;
-        bool isSetProperty;
-        double set;
+        bool isResetProperty = false;
+        bool set = true;
+        
         simgear::PropertyObject<double> resetProperty;
-        bool isResetProperty;
-        double reset;
-        
-        int initialized;
-        int direction;
-        int countSpin;
-        
-        double lagProperty;
-        double lagPrevius;
-        double versus;
-        double input_prec;
-        double module, rate, minRate, maxRate;
+        bool isSetProperty = false;
+        bool reset = false;
+
+        int direction = 0;
+        int countSpin = 0;
+        int versus = 0;
+        FGParameter_ptr ptrVersus;
+        double bias = 0.0;
+        FGParameter_ptr ptrBias;
+        double input_lost = 0.0;
+        double input_mem = 0.0;
+        double module = 1.0;
+        double hysteresis = 0.1;
+        double input = 1.0;
+        double rate, minRate, maxRate;
+        double gain = 1.0;
+        double lag = 0.0;
         double previousLagInput;
         double previousLagOutput;
-        double gain;
-        double lag;
         double ca; // lag filter coefficient "a"
         double cb; // lag filter coefficient "b"
         
-        void Lag(void);
         void Debug(int from);
     };
 }
