@@ -220,7 +220,7 @@ namespace JSBSim {
         simgear::PropertyObject<double> resetProperty;
         bool isSetProperty = false;
         bool reset = false;
-
+        
         int direction = 0;
         int countSpin = 0;
         int versus = 0;
@@ -232,7 +232,7 @@ namespace JSBSim {
         double module = 1.0;
         double hysteresis = 0.1;
         double input = 1.0;
-        double rate, minRate, maxRate;
+        double rate = 0.3;
         double gain = 1.0;
         double lag = 0.0;
         double previousLagInput;
