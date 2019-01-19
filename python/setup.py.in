@@ -47,6 +47,7 @@ class QuietBuild(build_ext):
 # build directory. Here, we just want to install the JSBSim module so that it
 # can be accessed everywhere on the platform. This class is therefore
 # specializing the standard install_lib to do just that.
+# It also takes care of extra dependencies for Windows systems.
 class InstallJSBSimModule(install_lib):
     def __init__(self, dist):
         install_lib.__init__(self, dist)
@@ -61,12 +62,15 @@ class InstallJSBSimModule(install_lib):
         self.copy_file(os.path.join('${BUILD_ROOT_PATH}', 'tests', self.module_name),
                        os.path.join(self.install_dir, self.module_name))
 
-        # Make sure the MSVC DLL for C++ code msvcp140.dll is included in the
-        # wheel.
+        # When compiled with Microsoft Visual C++, the JSBSim Python module is
+        # linked with the dynamically linked library msvcp140.dll which is not a
+        # standard library on Windows. So this code allows msvcp140.dll to be
+        # shipped with the Python module.
         if compiler.compiler_type == 'msvc':
             import win32api
 
             path = win32api.GetEnvironmentVariable('PATH')
+            # Use a set below to remove duplication.
             dirs = set([win32api.GetSystemDirectory(),
                         win32api.GetWindowsDirectory()] + path.split(';'))
 
