@@ -37,10 +37,13 @@
  * INCLUDES
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <stdlib.h>
+
 #include "FGLinearActuator.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGParameterValue.h"
-#include <iostream>
+
+#include "models/FGFCS.h"
 
 using namespace std;
 
