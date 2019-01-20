@@ -60,6 +60,7 @@ namespace JSBSim {
             isSetProperty = true;
             setProperty = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("set"));
         }
+        
         if (element->FindElement("reset")) {
             isResetProperty = true;
             resetProperty = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("reset"));
@@ -88,27 +89,40 @@ namespace JSBSim {
         
         if (element->FindElement("module")) {
             module = element->FindElementValueAsNumber("module");
-            if (module < 0) module = 1.0;
+            if (module < 0) {
+                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <module> parameter is forced from " << module << " value to 1.0 value" << endl;
+                module = 1.0;
+            }
         }
+        
         if (element->FindElement("hysteresis")) {
             hysteresis = element->FindElementValueAsNumber("hysteresis");
-            if (hysteresis < 0) hysteresis = 0.0;
+            if (hysteresis < 0) {
+                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <hysteresis> parameter is forced from " << hysteresis << " value to 0.0 value" << endl;
+                hysteresis = 0.0;
+            }
         }
         
         if (element->FindElement("lag")) {
-            double aLag = element->FindElementValueAsNumber("lag");
-            if (aLag > 0.0) {
-                lag = aLag;
+            lag = element->FindElementValueAsNumber("lag");
+            if (lag > 0.0) {
                 double denom = 2.00 + dt*lag;
                 ca = dt * lag / denom;
                 cb = (2.00 - dt * lag) / denom;
+            } else {
+                if (lag < 0) {
+                    cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <lag> parameter is forced from " << lag << " value to 0.0 value" << endl;
+                    lag = 0;
+                }
             }
         }
         
         if (element->FindElement("rate")) {
-            double aRate = element->FindElementValueAsNumber("rate");
-            if (aRate <= 0 or aRate > 1.0) aRate = 0.5;
-            rate = aRate;
+            rate = element->FindElementValueAsNumber("rate");
+            if (rate <= 0 || rate > 1.0) {
+                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <rate> parameter is forced from " << rate << " value to 0.5 value" << endl;
+                rate = 0.5;
+            }
         }
         
         if (element->FindElement("gain")) gain = element->FindElementValueAsNumber("gain");
