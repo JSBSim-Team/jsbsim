@@ -36,9 +36,10 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
 
 foreach(_FILE "MANIFEST.in" "jsbsim.pyx" "jsbsim.pxd" "ExceptionManagement.h"
-              "fpectlmodule.h")
+              "fpectlmodule.h" "JSBSim.py")
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
+file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
 
 # Copy each source file and collect the compile flags specified by add_definitions()
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})

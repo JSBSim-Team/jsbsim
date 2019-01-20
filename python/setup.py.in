@@ -161,6 +161,7 @@ setup(
         "Topic :: Games/Entertainment :: Simulation",
         "Topic :: Scientific/Engineering"
     ],
+    scripts=['JSBSim'],
     ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
     **setup_kwargs)
 
