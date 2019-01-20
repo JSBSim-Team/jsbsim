@@ -580,7 +580,7 @@ bool FGFCS::Load(Element* document)
         } else if (component_element->GetName() == string("distributor")) {
           newChannel->Add(new FGDistributor(this, component_element));
         } else if (component_element->GetName() == string("linear_actuator")) {
-          newChannel->Add(new FGLinear_Actuator(this, component_element));
+          newChannel->Add(new FGLinearActuator(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
