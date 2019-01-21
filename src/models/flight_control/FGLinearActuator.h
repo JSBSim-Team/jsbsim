@@ -102,7 +102,6 @@ namespace JSBSim {
      *      may happen that the smoothing effect due to the lag in the output value can mislead the rotation
      *      determination system. The effect is similar to that of a loose coupling of a rack and pinion.
      *      Therefore, with these types of coupling, place lag only at the last stage.
-     *    Clipto: Clips the output. The clipping is applied after the gain and lag.
      * 
      * @code
      *    <linear_actuator name="{string}">
@@ -116,10 +115,6 @@ namespace JSBSim {
      *      <set> {property name | value} </set>
      *      <reset> {property name | value} </reset>
      *      <lag> {value} </lag>
-     *      <clipto>
-     *         <min> {value} </min>
-     *         <max> {value} </max>
-     *      </clipto>
      *      <output> {property name} </output>
      *    </linear_actuator>
      * @endcode
@@ -176,12 +171,14 @@ namespace JSBSim {
      *
      * @code
      * 
-     *  <linear_actuator name="switch-increase-summer">
-     *     <input>systems/gauges/PHI/doppler/switch-increase</input>
+     *  <linear_actuator name="systems/gauges/PHI/doppler/switch-increase-summer">
+     *      <input>systems/gauges/PHI/doppler/switch-increase</input>
      *      <module>1</module>
      *      <rate>1</rate>
      *      <versus>1</versus>
      *      <gain>0.5</gain>
+     *      <lag>0.0</lag>
+     *      <reset>systems/gauges/PHI/doppler/test_reset_off</reset>
      *  </linear_actuator>
      *  
      * @endcode
@@ -198,37 +195,33 @@ namespace JSBSim {
      * CLASS DECLARATION
      * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     
-    class FGLinear_Actuator : public FGFCSComponent
+    class FGLinearActuator : public FGFCSComponent
     {
     public:
         /** Constructor.
          *      @param fcs a pointer to the parent FGFCS object.
          *      @param element a pointer to the configuration file node. */
-        FGLinear_Actuator(FGFCS* fcs, Element* element);
+        FGLinearActuator(FGFCS* fcs, Element* element);
         /// Destructor
-        ~FGLinear_Actuator();
+        ~FGLinearActuator();
         
         /// The execution method for this FCS component.
         bool Run(void);
         
     private:
         
-        simgear::PropertyObject<double> setProperty;
-        bool isResetProperty = false;
+        FGParameter_ptr ptrSet;
         bool set = true;
-        
-        simgear::PropertyObject<double> resetProperty;
-        bool isSetProperty = false;
+        FGParameter_ptr ptrReset;
         bool reset = false;
-        
         int direction = 0;
         int countSpin = 0;
         int versus = 0;
         FGParameter_ptr ptrVersus;
         double bias = 0.0;
         FGParameter_ptr ptrBias;
-        double input_lost = 0.0;
-        double input_mem = 0.0;
+        double inputLast = 0.0;
+        double inputMem = 0.0;
         double module = 1.0;
         double hysteresis = 0.1;
         double input = 1.0;

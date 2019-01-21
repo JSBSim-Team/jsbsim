@@ -53,44 +53,53 @@ namespace JSBSim {
      * CLASS IMPLEMENTATION
      * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     
-    FGLinear_Actuator::FGLinear_Actuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+    FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     {
         
+        //if (element->FindElement("set")) isSetNodeToSearch = true;
+        
+        //if (element->FindElement("reset")) isResetNodeToSearch = true;
+        
+        ptrSet = nullptr;
         if (element->FindElement("set")) {
-            isSetProperty = true;
-            setProperty = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("set"));
+            string property_string = element->FindElementValue("set");
+            ptrSet = new FGParameterValue(property_string, PropertyManager);
+            if (ptrSet && ptrSet->IsConstant()) {
+                set = ptrSet->GetValue() >= 0.5;
+            }
         }
         
+        ptrReset = nullptr;
         if (element->FindElement("reset")) {
-            isResetProperty = true;
-            resetProperty = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("reset"));
+            string property_string = element->FindElementValue("reset");
+            ptrReset = new FGParameterValue(property_string, PropertyManager);
+            if (ptrReset && ptrReset->IsConstant()) {
+                reset = ptrReset->GetValue() >= 0.5;
+            }
         }
         
         ptrVersus = nullptr;
         if (element->FindElement("versus")) {
             string property_string = element->FindElementValue("versus");
             ptrVersus = new FGParameterValue(property_string, PropertyManager);
-            double setVersus = ptrVersus->GetValue();
-            if (ptrVersus->IsConstant()) {
-                if (setVersus >= 0.5) {
-                    versus = 1;
-                } else if (setVersus <= -0.5) {
-                    versus = -1;
-                }
+            if (ptrVersus && ptrVersus->IsConstant()) {
+                versus = ptrVersus->GetValue();
             }
-        } else versus = 0;
+        }
         
         ptrBias = nullptr;
         if (element->FindElement("bias")) {
             string property_string = element->FindElementValue("bias");
             ptrBias = new FGParameterValue(property_string, PropertyManager);
-            bias = ptrBias->GetValue();
-        } else bias = 0;
+            if (ptrBias && ptrBias->IsConstant()) {
+                bias = ptrBias->GetValue();
+            }
+        }
         
         if (element->FindElement("module")) {
             module = element->FindElementValueAsNumber("module");
             if (module < 0) {
-                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <module> parameter is forced from " << module << " value to 1.0 value" << endl;
+                cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign() << " <module> parameter is forced from " << module << " value to 1.0 value" << endl;
                 module = 1.0;
             }
         }
@@ -98,7 +107,7 @@ namespace JSBSim {
         if (element->FindElement("hysteresis")) {
             hysteresis = element->FindElementValueAsNumber("hysteresis");
             if (hysteresis < 0) {
-                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <hysteresis> parameter is forced from " << hysteresis << " value to 0.0 value" << endl;
+                cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign() << " <hysteresis> parameter is forced from " << hysteresis << " value to 0.0 value" << endl;
                 hysteresis = 0.0;
             }
         }
@@ -111,7 +120,7 @@ namespace JSBSim {
                 cb = (2.00 - dt * lag) / denom;
             } else {
                 if (lag < 0) {
-                    cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <lag> parameter is forced from " << lag << " value to 0.0 value" << endl;
+                    cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign() << " <lag> parameter is forced from " << lag << " value to 0.0 value" << endl;
                     lag = 0;
                 }
             }
@@ -120,7 +129,7 @@ namespace JSBSim {
         if (element->FindElement("rate")) {
             rate = element->FindElementValueAsNumber("rate");
             if (rate <= 0 || rate > 1.0) {
-                cout << "FGLinear_Actuator::Run " << InputNodes[0]->GetNameWithSign() << " <rate> parameter is forced from " << rate << " value to 0.5 value" << endl;
+                cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign() << " <rate> parameter is forced from " << rate << " value to 0.5 value" << endl;
                 rate = 0.5;
             }
         }
@@ -134,49 +143,49 @@ namespace JSBSim {
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    FGLinear_Actuator::~FGLinear_Actuator()
+    FGLinearActuator::~FGLinearActuator()
     {
         Debug(1);
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    bool FGLinear_Actuator::Run(void )
+    bool FGLinearActuator::Run(void )
     {
         
-        if (isSetProperty) set = abs(setProperty) >= 0.5;
-        if (isResetProperty) reset = abs(resetProperty) >= 0.5;
+        if (ptrSet && !ptrSet->IsConstant()) set = ptrSet->GetValue() >= 0.5;
+        if (ptrReset && !ptrReset->IsConstant()) reset = ptrReset->GetValue() >= 0.5;
         
         if (reset) {
-            input_mem = 0.0;
+            inputMem = 0.0;
             countSpin = 0;
             direction = 0;
             Output = 0.0;
-            input_lost = 0.0;
+            inputLast = 0.0;
         } else {
             if (set) {
-                Input = InputNodes[0]->getDoubleValue() - input_lost;
-                double input_delta = Input - input_mem;
-                if (abs(input_delta) >= hysteresis) {
+                Input = InputNodes[0]->getDoubleValue() - inputLast;
+                double inputDelta = Input - inputMem;
+                if (abs(inputDelta) >= hysteresis) {
                     if (ptrVersus && !ptrVersus->IsConstant()) {
-                        double setVersus = ptrVersus->GetValue();
-                        if (setVersus >= 0.5) {
+                        versus = ptrVersus->GetValue();
+                        if (versus >= 0.5) {
                             versus = 1;
-                        } else if (setVersus <= -0.5) {
+                        } else if (versus <= -0.5) {
                             versus = -1;
                         } else versus = 0;
                     }
-                    if (abs(input_delta) <= (module * rate)) {
-                        if (input_delta > 0.0) {
+                    if (abs(inputDelta) <= (module * rate)) {
+                        if (inputDelta > 0.0) {
                             direction = 1;
-                        } else if (input_delta < 0.0) {
+                        } else if (inputDelta < 0.0) {
                             direction = -1;
                         }
                     }
                     if ((versus == 0) || (versus == direction)) {
-                        input_mem = Input;
+                        inputMem = Input;
                         if (direction != 0) {
-                            if (abs(input_delta) >= (module*rate)) {
+                            if (abs(inputDelta) >= (module*rate)) {
                                 if (direction > 0) {
                                     countSpin++;
                                     direction = 0;
@@ -187,11 +196,14 @@ namespace JSBSim {
                             }
                         }
                     } else if ((versus != 0) && (direction != 0) && (versus != direction)) {
-                        input_lost += input_delta;
+                        inputLast += inputDelta;
                     }
                 }
             }
-            Output = gain * (bias + input_mem + module*countSpin);
+            if (ptrBias && !ptrBias->IsConstant()) {
+                bias = ptrBias->GetValue();
+            }
+            Output = gain * (bias + inputMem + module*countSpin);
         }
         
         if (lag > 0.0) {
@@ -201,7 +213,6 @@ namespace JSBSim {
             previousLagOutput = Output;
         }
         
-        Clip();
         if (IsOutput) SetOutput();
         
         return true;
@@ -226,14 +237,14 @@ namespace JSBSim {
     //    16: When set various parameters are sanity checked and
     //       a message is printed out when they go out of bounds
     
-    void FGLinear_Actuator::Debug(int from)
+    void FGLinearActuator::Debug(int from)
     {
         if (debug_lvl <= 0) return;
         
         if (debug_lvl & 1) { // Standard console startup message output
             if (from == 0) { // Constructor                 
                 cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
-                cout << "  input_mem: " << input_mem << endl;
+                cout << "   inputMem: " << inputMem << endl;
                 cout << "       bias: " << bias << endl;
                 cout << "     module: " << module << endl;
                 cout << " hysteresis: " << hysteresis << endl;
@@ -250,8 +261,8 @@ namespace JSBSim {
             }
         }
         if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-            if (from == 0) cout << "Instantiated: FGLinear_Actuator" << endl;
-            if (from == 1) cout << "Destroyed:    FGLinear_Actuator" << endl;
+            if (from == 0) cout << "Instantiated: FGLinearActuator" << endl;
+            if (from == 1) cout << "Destroyed:    FGLinearActuator" << endl;
         }
         if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
         }
