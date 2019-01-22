@@ -308,6 +308,9 @@
     <ClCompile Include="src\math\FGTemplateFunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\models\flight_control\FGLinearActuator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_output\FGInputSocket.h">
@@ -650,6 +653,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\simgear\xml\xmltok_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\flight_control\FGLinearActuator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
