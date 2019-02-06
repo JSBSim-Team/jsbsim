@@ -56,10 +56,6 @@ namespace JSBSim {
     FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     {
         
-        //if (element->FindElement("set")) isSetNodeToSearch = true;
-        
-        //if (element->FindElement("reset")) isResetNodeToSearch = true;
-        
         ptrSet = nullptr;
         if (element->FindElement("set")) {
             string property_string = element->FindElementValue("set");
@@ -118,6 +114,7 @@ namespace JSBSim {
                 double denom = 2.00 + dt*lag;
                 ca = dt * lag / denom;
                 cb = (2.00 - dt * lag) / denom;
+                previousLagInput = previousLagOutput = 0.0;
             } else {
                 if (lag < 0) {
                     cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign() << " <lag> parameter is forced from " << lag << " value to 0.0 value" << endl;
