@@ -446,4 +446,76 @@ public:
     TS_ASSERT_DELTA(q(3), sin(0.5*theta), 1E-8);
     TS_ASSERT_DELTA(q(4), 0.0, 1E-8);
   }
+
+  void test_angles_psi_270deg()
+  {
+    double phi = 10. * M_PI / 180.;
+    double theta = 45. * M_PI / 180.;
+    double psi = 1.5*M_PI;
+    double cphi = cos(phi), sphi = sin(phi);
+    double cth = cos(theta), sth = sin(theta);
+    double cpsi = 0.0, spsi = -1.0;
+    const JSBSim::FGMatrix33 m_phi(1.0,   0.0,  0.0,
+                                   0.0,  cphi, sphi,
+                                   0.0, -sphi, cphi);
+    const JSBSim::FGMatrix33 m_th(cth, 0.0, -sth,
+                                  0.0, 1.0,  0.0,
+                                  sth, 0.0,  cth);
+    const JSBSim::FGMatrix33 m_psi(cpsi,  spsi, 0.0,
+                                   -spsi, cpsi, 0.0,
+                                   0.0,    0.0, 1.0);
+    JSBSim::FGColumnVector3 angles = m_phi.GetEuler();
+    TS_ASSERT_DELTA(angles(1), phi, 1E-8);
+    TS_ASSERT_DELTA(angles(2), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(3), 0.0, 1E-8);
+    angles = m_th.GetEuler();
+    TS_ASSERT_DELTA(angles(1), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(2), theta, 1E-8);
+    TS_ASSERT_DELTA(angles(3), 0.0, 1E-8);
+    angles = m_psi.GetEuler();
+    TS_ASSERT_DELTA(angles(1), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(2), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(3), psi, 1E-8);
+    JSBSim::FGMatrix33 m = m_phi * m_th * m_psi;
+    angles = m.GetEuler();
+    TS_ASSERT_DELTA(angles(1), phi, 1E-8);
+    TS_ASSERT_DELTA(angles(2), theta, 1E-8);
+    TS_ASSERT_DELTA(angles(3), psi, 1E-8);
+  }
+
+  void test_angles_phi_m90deg()
+  {
+    double phi = -0.5*M_PI;
+    double theta = 10. * M_PI / 180.;
+    double psi = 45. * M_PI / 180.;
+    double cphi = 0.0, sphi = -1.0;
+    double cth = cos(theta), sth = sin(theta);
+    double cpsi = cos(psi), spsi = sin(psi);
+    const JSBSim::FGMatrix33 m_phi(1.0,   0.0,  0.0,
+                                   0.0,  cphi, sphi,
+                                   0.0, -sphi, cphi);
+    const JSBSim::FGMatrix33 m_th(cth, 0.0, -sth,
+                                  0.0, 1.0,  0.0,
+                                  sth, 0.0,  cth);
+    const JSBSim::FGMatrix33 m_psi(cpsi,  spsi, 0.0,
+                                   -spsi, cpsi, 0.0,
+                                   0.0,    0.0, 1.0);
+    JSBSim::FGColumnVector3 angles = m_phi.GetEuler();
+    TS_ASSERT_DELTA(angles(1), phi, 1E-8);
+    TS_ASSERT_DELTA(angles(2), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(3), 0.0, 1E-8);
+    angles = m_th.GetEuler();
+    TS_ASSERT_DELTA(angles(1), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(2), theta, 1E-8);
+    TS_ASSERT_DELTA(angles(3), 0.0, 1E-8);
+    angles = m_psi.GetEuler();
+    TS_ASSERT_DELTA(angles(1), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(2), 0.0, 1E-8);
+    TS_ASSERT_DELTA(angles(3), psi, 1E-8);
+    JSBSim::FGMatrix33 m = m_phi * m_th * m_psi;
+    angles = m.GetEuler();
+    TS_ASSERT_DELTA(angles(1), phi, 1E-8);
+    TS_ASSERT_DELTA(angles(2), theta, 1E-8);
+    TS_ASSERT_DELTA(angles(3), psi, 1E-8);
+  }
 };
