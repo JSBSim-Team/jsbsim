@@ -117,8 +117,13 @@ cdef extern from "simgear/misc/sg_path.hxx":
         void set(const string& p)
         string utf8Str()
 
+cdef extern from "FGJSBBase.h" namespace "JSBSim":
+    cdef cppclass c_FGJSBBase "JSBSim::FGJSBBase":
+        c_FGJSBBase()
+        string GetVersion()
+
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
-    cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec":
+    cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec" (c_FGJSBBase):
         c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
         void Unbind()
         bool Run() except +convertJSBSimToPyExc
@@ -161,6 +166,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         void SetDebugLevel(int level)
         string QueryPropertyCatalog(string check)
         void PrintPropertyCatalog()
+        void PrintSimulationConfiguration()
         void SetTrimStatus(bool status)
         bool GetTrimStatus()
         string GetPropulsionTankReport()

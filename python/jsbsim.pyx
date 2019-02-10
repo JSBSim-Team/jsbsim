@@ -165,8 +165,23 @@ cdef class FGMassBalance:
     def get_xyz_cg(self):
         return convertToNumpyVec(self.thisptr.GetXYZcg())
 
+cdef class FGJSBBase:
+
+    cdef c_FGJSBBase *baseptr
+
+    def __cinit__(self):
+        if type(self) is FGJSBBase:
+            self.baseptr = new c_FGJSBBase()
+
+    def __dealloc__(self):
+        if type(self) is FGJSBBase:
+            del self.baseptr
+
+    def get_version(self):
+        return self.baseptr.GetVersion().decode('utf-8')
+
 # this is the python wrapper class
-cdef class FGFDMExec:
+cdef class FGFDMExec(FGJSBBase):
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
@@ -180,7 +195,7 @@ cdef class FGFDMExec:
         else:
             root = NULL
 
-        self.thisptr = new c_FGFDMExec(root, NULL)
+        self.thisptr = self.baseptr = new c_FGFDMExec(root, NULL)
         if self.thisptr is NULL:
             raise MemoryError()
         if root_dir is None:
@@ -583,6 +598,9 @@ cdef class FGFDMExec:
         Print the contents of the property catalog for the loaded aircraft.
         """
         self.thisptr.PrintPropertyCatalog()
+
+    def print_simulation_configuration(self):
+        self.thisptr.PrintSimulationConfiguration()
 
     def set_trim_status(self, status):
         self.thisptr.SetTrimStatus(status)
