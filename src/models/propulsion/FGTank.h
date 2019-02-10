@@ -135,7 +135,7 @@ CLASS DOCUMENTATION
   <contents unit="{LBS | KG}"> {number} </contents>
   <temperature> {number} </temperature> <!-- must be degrees fahrenheit -->
   <standpipe unit="{LBS | KG"}> {number} </standpipe>
-  <unusable unit="{LBS | KG}"> {number} </unusable>
+  <unusable unit="{GAL | LTR | M3 | IN3 | FT3 | CC}"> {number} </unusable>
   <priority> {integer} </priority>
   <density unit="{KG/L | LBS/GAL}"> {number} </density>
   <type> {string} </type> <!-- will override previous density setting -->
@@ -154,7 +154,7 @@ CLASS DOCUMENTATION
 - \b temperature - Initial temperature, defaults to degrees Fahrenheit.
 - \b standpipe - Minimum contents to which tank can dump, defaults to pounds.
 - \b unusable - Contents that cannot be used for combustion in the engine,
-                defaults to pounds.
+                defaults to gallons.
 - \b priority - Establishes feed sequence of tank. "1" is the highest priority.
 - \b density - Density of liquid tank contents.
 - \b type - Named fuel type. One of AVGAS, JET-A, JET-A1, JET-B, JP-1, JP-2,

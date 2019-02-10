@@ -63,20 +63,22 @@ if args.input:
         print('The argument "{}" cannot be interpreted as a file name.'.format(args.input))
         sys.exit(1)
 
-    if tree.getroot().tag == 'runscript':
+    root = tree.getroot()
+
+    if root.tag == 'runscript':
         if args.script:
             print('Two script files are specified.')
             sys.exit(1)
         else:
             args.script = args.input
 
-    if tree.getroot().tag == 'output':
+    if root.tag == 'output':
         if args.logdirectivefile:
             args.logdirectivefile += [args.input]
         else:
             args.logdirectivefile = [args.input]
 
-    if tree.getroot().tag == 'fdm_config':
+    if root.tag == 'fdm_config':
         if args.aircraft:
             print('Two aircraft files are specified.')
             sys.exit(1)

@@ -198,56 +198,11 @@ cdef class FGFDMExec(FGJSBBase):
         self.thisptr = self.baseptr = new c_FGFDMExec(root, NULL)
         if self.thisptr is NULL:
             raise MemoryError()
-        if root_dir is None:
-            self.find_root_dir()
-        else:
+
+        if root_dir:
             if not os.path.isdir(root_dir):
                 raise IOError("Can't find root directory: {0}".format(root_dir))
             self.set_root_dir(root_dir)
-
-    def simulate(self, record_properties=[], t_final=1, dt=1.0/120, verbose=False):
-        y = {}
-        t = []
-        self.set_dt(dt)
-        self.run_ic()
-        for prop in record_properties:
-            y[prop] = []
-        while self.get_sim_time() < t_final:
-            if self.run() is False:
-                break
-            if verbose:
-                print 't:', self.get_sim_time()
-            t.append(self.get_sim_time())
-            print 'dt: ', self.get_delta_t()
-            for prop in record_properties:
-                y[prop].append(self.get_property_value(prop))
-        return (t,y)
-
-    def find_root_dir(self, search_paths=[], verbose=False):
-        root_dir = None
-        search_paths.append(os.environ.get("JSBSIM"))
-        if platform.system() == "Linux":
-            search_paths.append("/usr/local/share/JSBSim/")
-            search_paths.append("/usr/share/JSBSim/")
-        elif platform.system() == "Windows":
-            #TODO add some windows search paths
-            pass
-        elif platform.system() == "Darwin":
-            search_paths.append("/opt/local/share/JSBSim/")
-            search_paths.append("/usr/local/share/JSBSim/")
-
-        if verbose:
-            print "search_paths"
-        for path in search_paths:
-            if verbose:
-                print '\t', path
-            if path is not None and os.path.isdir(path):
-                root_dir = path
-                break
-        if root_dir is None:
-            raise IOError("Could not find JSBSim root, try "
-                          "defining JSBSIM environment variable")
-        self.set_root_dir(root_dir)
 
     def __dealloc__(self):
         del self.thisptr
@@ -397,32 +352,32 @@ cdef class FGFDMExec(FGJSBBase):
         """
         Retrieves the engine path
         """
-        return self.thisptr.GetEnginePath().utf8Str()
+        return self.thisptr.GetEnginePath().utf8Str().decode('utf-8')
 
     def get_aircraft_path(self):
         """
         Retrieves the aircraft path
         """
-        return self.thisptr.GetAircraftPath().utf8Str()
+        return self.thisptr.GetAircraftPath().utf8Str().decode('utf-8')
 
     def get_systems_path(self):
         """
         Retrieves the systems path
         """
-        return self.thisptr.GetSystemsPath().utf8Str()
+        return self.thisptr.GetSystemsPath().utf8Str().decode('utf-8')
 
     def get_full_aircraft_path(self):
         """
         Retrieves the full aircraft path name
         """
-        return self.thisptr.GetFullAircraftPath().utf8Str()
+        return self.thisptr.GetFullAircraftPath().utf8Str().decode('utf-8')
 
     def get_root_dir(self):
         """
         Retrieves the Root Directory.
         @return the string representing the root (base) JSBSim directory.
         """
-        return self.thisptr.GetRootDir().utf8Str()
+        return self.thisptr.GetRootDir().utf8Str().decode('utf-8')
 
     def get_property_value(self, name):
         """

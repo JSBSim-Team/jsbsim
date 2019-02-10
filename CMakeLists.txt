@@ -70,7 +70,7 @@ if (CXXTEST_FOUND)
 endif(CXXTEST_FOUND)
 
 ################################################################################
-# Documentation
+# Documentation                                                                #
 ################################################################################
 
 find_package(Doxygen)
@@ -145,7 +145,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}")
 string(TOLOWER ${CMAKE_PROJECT_NAME} CPACK_PACKAGE_NAME)
 
 ################################################################################
-# Debian/Ubuntu packaging                                                                    #
+# Debian/Ubuntu packaging                                                      #
 ################################################################################
 
 set(CPACK_DEBIAN_PACKAGE_SECTION "science")
@@ -162,7 +162,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 ################################################################################
-# Red Hat packaging                                                                    #
+# Red Hat packaging                                                            #
 ################################################################################
 
 set(CPACK_RPM_COMPONENT_INSTALL ON)
@@ -178,7 +178,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 ################################################################################
-# Source packaging                                                                    #
+# Source packaging                                                             #
 ################################################################################
 
 set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"

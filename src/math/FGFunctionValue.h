@@ -44,7 +44,7 @@ namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   CLASS DOCUMENTATION
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Represents a property value on which a function is applied
     @author Bertrand Coconnier
@@ -52,7 +52,7 @@ namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   DECLARATION: FGFunctionValue
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGFunctionValue : public FGPropertyValue
 {
@@ -64,15 +64,18 @@ public:
                   FGTemplateFunc* f)
     :FGPropertyValue(propName, propertyManager), function(f) {}
 
-  double GetValue(void) const { return function->GetValue(GetNode()); }
+  double GetValue(void) const override { return function->GetValue(GetNode()); }
 
-  std::string GetName(void) const {
+  std::string GetName(void) const override {
     return function->GetName() + "(" + FGPropertyValue::GetName() + ")";
   }
-  std::string GetPrintableName(void) const {
+  std::string GetNameWithSign(void) const override {
+    return function->GetName() + "(" + FGPropertyValue::GetNameWithSign() + ")";
+  }
+  std::string GetPrintableName(void) const override {
     return function->GetName() + "(" + FGPropertyValue::GetPrintableName() + ")";
   }
-  std::string GetFullyQualifiedName(void) const {
+  std::string GetFullyQualifiedName(void) const override {
     return function->GetName() + "(" + FGPropertyValue::GetFullyQualifiedName() + ")";
   }
 
