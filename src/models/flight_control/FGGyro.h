@@ -49,7 +49,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFCS;
-class FGAccelerations;
+class FGPropagate;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -113,10 +113,11 @@ public:
   bool Run (void);
 
 private:
-  FGAccelerations* Accelerations;
-  FGColumnVector3 vAccel;
+  FGPropagate* Propagate;
+  FGColumnVector3 Rates;
+  FGColumnVector3 vRates;
   void CalculateTransformMatrix(void);
-  
+
   void Debug(int from);
 };
 }

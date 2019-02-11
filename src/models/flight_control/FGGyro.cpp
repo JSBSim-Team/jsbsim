@@ -40,7 +40,7 @@ INCLUDES
 #include <iostream>
 
 #include "FGGyro.h"
-#include "models/FGAccelerations.h"
+#include "models/FGPropagate.h"
 #include "input_output/FGXMLElement.h"
 #include "models/FGFCS.h"
 
@@ -55,8 +55,8 @@ CLASS IMPLEMENTATION
 FGGyro::FGGyro(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
                                                FGSensorOrientation(element)
 {
-  Accelerations = fcs->GetExec()->GetAccelerations();
-  
+  Propagate = fcs->GetExec()->GetPropagate();
+
   Debug(0);
 }
 
@@ -71,12 +71,15 @@ FGGyro::~FGGyro()
 
 bool FGGyro::Run(void )
 {
-  // There is no input assumed. This is a dedicated angular acceleration sensor.
-  
-  //aircraft rates
-  vAccel = mT * Accelerations->GetPQRdot();
+  // There is no input assumed. This is a dedicated rotation rate sensor.
 
-  Input = vAccel(axis);
+  // get aircraft rates
+  Rates = Propagate->GetPQRi();
+
+  // transform to the specified orientation
+  vRates = mT * Rates;
+
+  Input = vRates(axis);
 
   ProcessSensorSignal();
 
