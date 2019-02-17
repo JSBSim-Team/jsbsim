@@ -61,6 +61,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #=============================================================================
+#
+# Bertrand Coconnier 2019/02/16 - Commented out the addition of include directories from the *.pyx path.
 
 # Configuration options.
 set( CYTHON_ANNOTATE OFF
@@ -107,7 +109,7 @@ function( compile_pyx _name generated_file )
     # Get the include directories.
     get_source_file_property( pyx_location ${pyx_file} LOCATION )
     get_filename_component( pyx_path ${pyx_location} PATH )
-    get_directory_property( cmake_include_directories DIRECTORY ${pyx_path} INCLUDE_DIRECTORIES )
+    # get_directory_property( cmake_include_directories DIRECTORY ${pyx_path} INCLUDE_DIRECTORIES )
     list( APPEND cython_include_directories ${cmake_include_directories} )
     list( APPEND pyx_locations "${pyx_location}" )
 
