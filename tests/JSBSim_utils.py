@@ -122,7 +122,7 @@ def CopyAircraftDef(script_path, sandbox):
             else:
                 name_with_system_path = os.path.join(path_to_jsbsim_aircrafts,
                                                      'Systems', name)
-                print(name_with_system_path)
+
                 if os.path.exists(name_with_system_path):
                     system_path = sandbox(aircraft_path, 'Systems')
                     if not os.path.exists(system_path):
