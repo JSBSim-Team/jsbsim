@@ -144,10 +144,7 @@ class JSBSimTestCase(unittest.TestCase):
         os.chdir(self.sandbox())
 
     def tearDown(self):
-        if self._fdm:
-            del self._fdm
-            self._fdm = None
-
+        self.delete_fdm()
         os.chdir(self.currentdir)
         self.sandbox.erase()
 
@@ -167,6 +164,11 @@ class JSBSimTestCase(unittest.TestCase):
     def create_fdm(self):
         self._fdm = CreateFDM(self.sandbox)
         return self._fdm
+
+    def delete_fdm(self):
+        if self._fdm:
+            del self._fdm
+            self._fdm = None
 
 
 def spare(filename):
