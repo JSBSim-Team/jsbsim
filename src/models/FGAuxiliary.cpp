@@ -9,21 +9,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -157,19 +157,12 @@ bool FGAuxiliary::Run(bool Holding)
   Vt = sqrt(Vt2);
 
   if ( Vt > 0.001 ) {
-    if (vAeroUVW(eW) != 0.0)
-      alpha = AeroU2 > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
-    if (vAeroUVW(eV) != 0.0)
-      beta  =    mUW > 0.0 ? atan2(vAeroUVW(eV), sqrt(mUW)) : 0.0;
+    beta = atan2(vAeroUVW(eV), sqrt(mUW));
 
-    //double signU=1;
-    //if (vAeroUVW(eU) < 0.0) signU=-1;
-
-    if ( mUW >= 0.001 ) {
+    if ( mUW >= 1E-6 ) {
+      alpha = atan2(vAeroUVW(eW), vAeroUVW(eU));
       double Vtdot = (vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eV)*in.vUVWdot(eV) + vAeroUVW(eW)*in.vUVWdot(eW))/Vt;
       adot = (vAeroUVW(eU)*in.vUVWdot(eW) - vAeroUVW(eW)*in.vUVWdot(eU))/mUW;
-      // bdot = (signU*mUW*in.vUVWdot(eV)
-      //        - vAeroUVW(eV)*(vAeroUVW(eU)*in.vUVWdot(eU) + vAeroUVW(eW)*in.vUVWdot(eW)))/(Vt2*sqrt(mUW));
       bdot = (in.vUVWdot(eV)*Vt - vAeroUVW(eV)*Vtdot)/(Vt*sqrt(mUW));
     }
   }
