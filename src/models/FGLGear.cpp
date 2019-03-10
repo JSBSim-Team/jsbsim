@@ -58,8 +58,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
-// ft instead of inches)
+// Body To Structural (body frame is rotated 180 deg about Y and lengths are
+// given in ft instead of inches)
 const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
 const FGMatrix33 FGLGear::Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
 
@@ -308,9 +308,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
       vGroundNormal = in.Tec2b * normal;
 
       // The height returned by GetGroundCallback() is the AGL and is expressed
-      // in the Z direction of the local coordinate frame. We now need to transform
-      // this height in actual compression of the strut (BOGEY) or in the normal
-      // direction to the ground (STRUCTURE)
+      // in the Z direction of the local coordinate frame. We now need to
+      // transform this height in actual compression of the strut (BOGEY) or in
+      // the normal direction to the ground (STRUCTURE)
       double normalZ = (in.Tec2l*normal)(eZ);
       LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
 
@@ -348,12 +348,19 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
       vGroundWhlVel = mT.Transposed() * vBodyWhlVel;
 
-      if (fdmex->GetTrimStatus())
+      if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
         compressSpeed = 0.0; // Steady state is sought during trimming
       else {
         compressSpeed = -vGroundWhlVel(eZ);
         if (eContactType == ctBOGEY)
           compressSpeed /= LGearProj;
+
+        // If the gear is entering in contact with the ground during the current
+        // time step, the compression speed might actually be lower than the
+        // aircraft velocity projected along the gear leg (compressSpeed).
+        double maxCompressSpeed = compressLength/in.TotalDeltaT;
+        if (fabs(compressSpeed) > maxCompressSpeed)
+          compressSpeed = sign(compressSpeed)*maxCompressSpeed;
       }
 
       ComputeVerticalStrutForce();
