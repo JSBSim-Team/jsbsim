@@ -72,7 +72,7 @@ skip_tags: true
 
 deploy:
 - provider: GitHub
-  tag: Rolling_Release_x64_v2019
+  tag: Rolling-release-v2019
   description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
