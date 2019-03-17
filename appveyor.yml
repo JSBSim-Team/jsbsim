@@ -53,13 +53,13 @@ on_failure:
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
-  name: JSBSim_Release_x64_v2018a
+  name: Rolling_Release_x64_v2019
 
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
-  name: JSBSim_Release_x64_v2018a
+  name: Rolling_Release_x64_v2019
 
 - path: build\python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
-  name: JSBSim_Release_x64_v2018a
+  name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
@@ -69,8 +69,8 @@ skip_tags: true
 
 deploy:
 - provider: GitHub
-  tag: JSBSim-trusty-v2018a
-  description: Windows - Release - x64
+  tag: Rolling_Release_x64_v2019
+  description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
   artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
