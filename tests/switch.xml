@@ -65,5 +65,21 @@
         </condition>
       </test>
     </switch>
+    <!-- Test nested tests (issue #176) -->
+    <switch name="test/nested">
+      <default value="0"/>
+      <test logic="AND" value="20">
+        test/reference GT 203
+        <test logic="OR">
+          test/input == 25
+          test/input == 30
+        </test>
+      </test>
+      <test logic="AND" value="25">
+        test/reference GT 170
+        test/reference LT 203
+        test/input == 30
+      </test>
+    </switch>
   </channel>
 </system>
