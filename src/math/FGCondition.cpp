@@ -71,17 +71,16 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
   }
 
   Element* condition_element = element->GetElement();
-  if (condition_element) {
-    while (condition_element) {
-      conditions.push_back(new FGCondition(condition_element, PropertyManager));
-      condition_element = element->GetNextElement();
-    }
-  } else {
-    for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
-      string data = element->GetDataLine(i);
-      conditions.push_back(new FGCondition(data, PropertyManager,
-                                           condition_element));
-    }
+
+  for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
+    string data = element->GetDataLine(i);
+    conditions.push_back(new FGCondition(data, PropertyManager,
+                                         condition_element));
+  }
+
+  while (condition_element) {
+    conditions.push_back(new FGCondition(condition_element, PropertyManager));
+    condition_element = element->GetNextElement();
   }
 
   Debug(0);
