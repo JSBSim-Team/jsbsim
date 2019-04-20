@@ -57,16 +57,14 @@ CLASS IMPLEMENTATION
 FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
-
   Width = nullptr;
   gain = 1.0;
 
-  string width_string = "0.0";
   Element* width_element = element->FindElement("width");
   if (width_element)
-    width_string = width_element->GetDataLine();
-
-  Width = new FGParameterValue(width_string, PropertyManager);
+    Width = new FGParameterValue(width_element, PropertyManager);
+  else
+    Width = new FGRealValue(0.0);
 
   if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");

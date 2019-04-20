@@ -69,12 +69,11 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  string gain_string = "1.0";
   Element* gain_element = element->FindElement("gain");
   if (gain_element)
-    gain_string = gain_element->GetDataLine();
-
-  Gain = new FGParameterValue(gain_string, PropertyManager);
+    Gain = new FGParameterValue(gain_element, PropertyManager);
+  else
+    Gain = new FGRealValue(1.0);
 
   if (Type == "AEROSURFACE_SCALE") {
     Element* scale_element = element->FindElement("domain");

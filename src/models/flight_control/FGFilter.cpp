@@ -99,8 +99,8 @@ void FGFilter::ReadFilterCoefficients(Element* element, int index)
   coefficient[1] += index;
   
   if ( element->FindElement(coefficient) ) {
-    string property_string = element->FindElementValue(coefficient);
-    C[index] = new FGParameterValue(property_string, PropertyManager);
+    C[index] = new FGParameterValue(element->FindElement(coefficient),
+                                    PropertyManager);
     DynamicFilter |= !C[index]->IsConstant();
   }
 }

@@ -168,21 +168,19 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       return;
     }
 
-    string clip_string = el->GetDataLine();
-    ClipMin = new FGParameterValue(clip_string, PropertyManager);
+    ClipMin = new FGParameterValue(el, PropertyManager);
 
     el = clip_el->FindElement("max");
     if (!el) {
       cerr << clip_el->ReadFrom()
            << "Element <max> is missing, <clipto> is ignored." << endl;
+      ClipMin = nullptr;
       return;
     }
 
-    clip_string = el->GetDataLine();
-    ClipMax = new FGParameterValue(clip_string, PropertyManager);
+    ClipMax = new FGParameterValue(el, PropertyManager);
 
-    clip_string = clip_el->GetAttributeValue("type");
-    if (clip_string == "cyclic")
+    if (clip_el->GetAttributeValue("type") == "cyclic")
       cyclic_clip = true;
 
     clip = true;

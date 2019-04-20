@@ -34,8 +34,11 @@
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <stdexcept>
+
 #include "math/FGRealValue.h"
 #include "math/FGPropertyValue.h"
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   FORWARD DECLARATIONS
@@ -60,13 +63,22 @@ class FGPropertyManager;
 class FGParameterValue : public FGParameter
 {
 public:
-  FGParameterValue(const std::string& value, FGPropertyManager* pm) {
-    if (is_number(value)) {
-      param = new FGRealValue(atof(value.c_str()));
-    } else {
-      // "value" must be a property if execution passes to here.
-      param = new FGPropertyValue(value, pm);
+  FGParameterValue(Element* el, FGPropertyManager* pm) {
+    string value = el->GetDataLine();
+
+    if (el->GetNumDataLines() != 1 || value.empty()) {
+      cerr << el->ReadFrom()
+           << "The element <" << el->GetName()
+           << "> must either contain a value number or a property name."
+           << endl;
+      throw invalid_argument("Illegal argument");
     }
+
+    Construct(value, pm);
+  }
+
+  FGParameterValue(const std::string& value, FGPropertyManager* pm) {
+    Construct(value, pm);
   }
 
   double GetValue(void) const override { return param->GetValue(); }
@@ -86,6 +98,15 @@ public:
   }
 private:
   FGParameter_ptr param;
+
+  void Construct(const std::string& value, FGPropertyManager* pm) {
+    if (is_number(value)) {
+      param = new FGRealValue(atof(value.c_str()));
+    } else {
+      // "value" must be a property if execution passes to here.
+      param = new FGPropertyValue(value, pm);
+    }
+  }
 };
 
 typedef SGSharedPtr<FGParameterValue> FGParameterValue_ptr;

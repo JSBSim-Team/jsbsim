@@ -64,14 +64,12 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (pid_type == "standard") IsStandard = true;
 
-  string kp_string = "0.0";
   el = element->FindElement("kp");
   if (el)
-    kp_string = el->GetDataLine();
+    Kp = new FGParameterValue(el, PropertyManager);
+  else
+    Kp = new FGRealValue(0.0);
 
-  Kp = new FGParameterValue(kp_string, PropertyManager);
-
-  string ki_string = "0.0";
   el = element->FindElement("ki");
   if (el) {
     string integ_type = el->GetAttributeValue("type");
@@ -87,17 +85,17 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       IntType = eAdamsBashforth2;
     }
 
-    ki_string = el->GetDataLine();
+    Ki = new FGParameterValue(el, PropertyManager);
   }
+  else
+    Ki = new FGRealValue(0.0);
 
-  Ki = new FGParameterValue(ki_string, PropertyManager);
 
-  string kd_string = "0.0";
   el = element->FindElement("kd");
   if (el)
-    kd_string = el->GetDataLine();
-
-  Kd = new FGParameterValue(kd_string, PropertyManager);
+    Kd = new FGParameterValue(el, PropertyManager);
+  else
+    Kd = new FGRealValue(0.0);
 
   el = element->FindElement("pvdot");
   if (el)
