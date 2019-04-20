@@ -56,13 +56,13 @@
     <switch name="test/group">
       <default value="0.56"/>
       <test value="-1.0" logic="OR">
-        <condition>
+        <test>
           test/input le 0.0
-        </condition>
-        <condition logic="AND">
+        </test>
+        <test logic="AND">
           test/input gt 0.1
           test/input le test/reference
-        </condition>
+        </test>
       </test>
     </switch>
     <!-- Test nested tests (issue #176) -->
