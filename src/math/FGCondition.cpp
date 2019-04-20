@@ -36,6 +36,7 @@ INCLUDES
 
 #include <iostream>
 #include <cstdlib>
+#include <stdexcept>
 
 #include "FGCondition.h"
 #include "FGPropertyValue.h"
@@ -65,20 +66,30 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
     else { // error
       cerr << element->ReadFrom()
            << "Unrecognized LOGIC token " << logic << endl;
+      throw std::invalid_argument("Illegal argument");
     }
   } else {
     Logic = eAND; // default
   }
 
-  Element* condition_element = element->GetElement();
-
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
-    conditions.push_back(new FGCondition(data, PropertyManager,
-                                         condition_element));
+    conditions.push_back(new FGCondition(data, PropertyManager, element));
   }
 
+  Element* condition_element = element->GetElement();
+  const string& elName = element->GetName();
+
   while (condition_element) {
+    string tagName = condition_element->GetName();
+
+    if (tagName != elName) {
+      cerr << condition_element->ReadFrom()
+           << "Unrecognized tag <" << tagName << "> in the condition statement."
+           << endl;
+      throw std::invalid_argument("Illegal argument");
+    }
+
     conditions.push_back(new FGCondition(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
