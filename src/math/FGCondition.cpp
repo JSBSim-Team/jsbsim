@@ -102,15 +102,11 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
     }
 
     if (tagName == "or") {
-      string status = condition_element->GetAttributeValue("status");
-      if (status != "verified") {
-        cerr << condition_element->ReadFrom() << fgred << highint
-             << "Detected usage of the tag <or>." << endl
-             << "WARNING: the meaning of this tag has been recently modified." << endl
-             << "Please check that it is currently properly used." << endl
-             << "To disable this warning message add the attribute status=\"verified\" to the <or> element."
-             << reset << endl;
-      }
+      cerr << condition_element->ReadFrom() << fgred << highint
+           << "Detected usage of the tag <or>." << endl
+           << "WARNING: the meaning of this tag has been recently modified." << endl
+           << "Please check that it is currently properly used." << endl
+           << reset << endl;
     }
 
     conditions.push_back(new FGCondition(condition_element, PropertyManager));
