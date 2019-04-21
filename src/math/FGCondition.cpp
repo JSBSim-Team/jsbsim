@@ -60,7 +60,16 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
   InitializeConditionals();
 
   string logic = element->GetAttributeValue("logic");
+  const string& elName = element->GetName();
+
   if (!logic.empty()) {
+    if (elName == "and" || elName == "or") {
+      cerr << element->ReadFrom()
+           << "Tag <" << elName << "> cannot be mixed with the LOGIC token."
+           << endl;
+      throw std::invalid_argument("Illegal argument");
+    }
+
     if (logic == "OR") Logic = eOR;
     else if (logic == "AND") Logic = eAND;
     else { // error
@@ -69,7 +78,10 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
       throw std::invalid_argument("Illegal argument");
     }
   } else {
-    Logic = eAND; // default
+    if (elName == "or")
+      Logic = eOR;
+    else
+      Logic = eAND; // default
   }
 
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
@@ -78,16 +90,27 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
   }
 
   Element* condition_element = element->GetElement();
-  const string& elName = element->GetName();
 
   while (condition_element) {
     string tagName = condition_element->GetName();
 
-    if (tagName != elName) {
+    if (tagName != elName && tagName != "and" && tagName != "or") {
       cerr << condition_element->ReadFrom()
            << "Unrecognized tag <" << tagName << "> in the condition statement."
            << endl;
       throw std::invalid_argument("Illegal argument");
+    }
+
+    if (tagName == "or") {
+      string status = condition_element->GetAttributeValue("status");
+      if (status != "verified") {
+        cerr << condition_element->ReadFrom() << fgred << highint
+             << "Detected usage of the tag <or>." << endl
+             << "WARNING: the meaning of this tag has been recently modified." << endl
+             << "Please check that it is currently properly used." << endl
+             << "To disable this warning message add the attribute status=\"verified\" to the <or> element."
+             << reset << endl;
+      }
     }
 
     conditions.push_back(new FGCondition(condition_element, PropertyManager));

@@ -35,6 +35,7 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], -1.0)
         self.assertEqual(fdm['test/interval'], 0.0)
         self.assertEqual(fdm['test/group'], -1.0)
+        self.assertEqual(fdm['test/and'], -1.0)
 
         fdm['test/input'] = 0.0
         fdm.run()
@@ -43,6 +44,7 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], -1.0)
         self.assertEqual(fdm['test/interval'], 0.0)
         self.assertEqual(fdm['test/group'], -1.0)
+        self.assertEqual(fdm['test/and'], -1.0)
 
         fdm['test/input'] = 0.1
         fdm.run()
@@ -51,6 +53,7 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], -1.0)
         self.assertEqual(fdm['test/interval'], 1.0)
         self.assertEqual(fdm['test/group'], 0.56)
+        self.assertEqual(fdm['test/and'], 0.56)
 
         fdm['test/input'] = 0.2
         fdm.run()
@@ -59,6 +62,7 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/interval'], 2.0)
         self.assertEqual(fdm['test/group'], -1.0)
+        self.assertEqual(fdm['test/and'], -1.0)
 
         fdm['test/input'] = 0.235
         fdm.run()
@@ -67,29 +71,35 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/interval'], 2.0)
         self.assertEqual(fdm['test/group'], 0.56)
+        self.assertEqual(fdm['test/and'], 0.56)
 
         fdm['test/input'] = -1.5
         fdm['test/reference'] = -0.5
         fdm.run()
         self.assertEqual(fdm['test/compare'], -1.0)
         self.assertEqual(fdm['test/group'], -1.0)
+        self.assertEqual(fdm['test/and'], -1.0)
 
         fdm['test/input'] = 0.0
         fdm.run()
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/group'], -1.0)
+        self.assertEqual(fdm['test/and'], -1.0)
 
         fdm['test/input'] = 0.2
         fdm.run()
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/group'], 0.56)
+        self.assertEqual(fdm['test/and'], 0.56)
 
         fdm['test/input'] = 0.235
         fdm.run()
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/group'], 0.56)
+        self.assertEqual(fdm['test/and'], 0.56)
 
     # Regression test to reproduce GitHub issue #176
+    # Also test the new tag <or>
     def test_nested(self):
         tripod = FlightModel(self, 'tripod')
         tripod.include_system_test_file('switch.xml')
@@ -99,31 +109,37 @@ class TestSwitch(JSBSimTestCase):
         fdm['test/input'] = 30
         fdm.run()
         self.assertEqual(fdm['test/nested'], 0)
+        self.assertEqual(fdm['test/or'], 0)
 
         fdm['test/reference'] = 180
         fdm['test/input'] = 30
         fdm.run()
         self.assertEqual(fdm['test/nested'], 25)
+        self.assertEqual(fdm['test/or'], 25)
 
         fdm['test/reference'] = 180
         fdm['test/input'] = 25
         fdm.run()
         self.assertEqual(fdm['test/nested'], 0)
+        self.assertEqual(fdm['test/or'], 0)
 
         fdm['test/reference'] = 210
         fdm['test/input'] = 25
         fdm.run()
         self.assertEqual(fdm['test/nested'], 20)
+        self.assertEqual(fdm['test/or'], 20)
 
         fdm['test/reference'] = 210
         fdm['test/input'] = 30
         fdm.run()
         self.assertEqual(fdm['test/nested'], 20)
+        self.assertEqual(fdm['test/or'], 20)
 
         fdm['test/reference'] = 210
         fdm['test/input'] = 15
         fdm.run()
         self.assertEqual(fdm['test/nested'], 0)
+        self.assertEqual(fdm['test/or'], 0)
 
 
 RunTest(TestSwitch)

@@ -81,5 +81,34 @@
         test/input == 30
       </test>
     </switch>
+    <!-- Test the "and" keyword -->
+    <switch name="test/and">
+      <default value="0.56"/>
+      <test value="-1.0" logic="OR">
+        <and>
+          test/input le 0.0
+        </and>
+        <and>
+          test/input gt 0.1
+          test/input le test/reference
+        </and>
+      </test>
+    </switch>
+    <!-- Test the "or" keyword -->
+    <switch name="test/or">
+      <default value="0"/>
+      <test logic="AND" value="20">
+        test/reference GT 203
+        <or status="verified">
+          test/input == 25
+          test/input == 30
+        </or>
+      </test>
+      <test logic="AND" value="25">
+        test/reference GT 170
+        test/reference LT 203
+        test/input == 30
+      </test>
+    </switch>
   </channel>
 </system>
