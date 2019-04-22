@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <vector>
+
 #include "math/FGTable.h"
 #include "models/FGAtmosphere.h"
 
@@ -76,10 +77,11 @@ Density, kinematic viscosity, speed of sound, etc., are all calculated based
 on various constants and temperature and pressure. At higher altitudes (above 
 86 km (282152 ft) a different and more complicated method of calculating
 pressure is used.
+
 The temperature may be modified through the use of several methods. Ultimately,
-these access methods allow the user to modify the sea level standard temperature,
-and/or the sea level standard pressure, so that the entire profile will be 
-consistently and accurately calculated.
+these access methods allow the user to modify the sea level standard
+temperature, and/or the sea level standard pressure, so that the entire profile
+will be consistently and accurately calculated.
 
   <h2> Properties </h2>
   @property atmosphere/delta-T
@@ -101,26 +103,31 @@ public:
   /// Destructor
   virtual ~FGStandardAtmosphere();
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   //  *************************************************************************
   /// @name Temperature access functions.
-  /// There are several ways to get the temperature, and several modeled temperature
-  /// values that can be retrieved. The U.S. Standard Atmosphere temperature either
-  /// at a specified altitude, or at sea level can be retrieved. These two temperatures
-  /// do NOT include the effects of any bias or delta gradient that may have been
-  /// supplied by the user. The modeled temperature and the modeled temperature
-  /// at sea level can also be retrieved. These two temperatures DO include the
-  /// effects of an optionally user-supplied bias or delta gradient.
+  /// There are several ways to get the temperature, and several modeled
+  /// temperature values that can be retrieved. The U.S. Standard Atmosphere
+  /// temperature either at a specified altitude, or at sea level can be
+  /// retrieved. These two temperatures do NOT include the effects of any bias
+  /// or delta gradient that may have been supplied by the user. The modeled
+  /// temperature and the modeled temperature at sea level can also be
+  /// retrieved. These two temperatures DO include the effects of an optionally
+  /// user-supplied bias or delta gradient.
   // @{
-  /// Returns the actual modeled temperature in degrees Rankine at a specified altitude.
+  /// Returns the actual modeled temperature in degrees Rankine at a specified
+  /// altitude.
   /// @param altitude The altitude above sea level (ASL) in feet.
   /// @return Modeled temperature in degrees Rankine at the specified altitude.
-  virtual double GetTemperature(double altitude) const;
+  double GetTemperature(double altitude) const override;
 
-  /// Returns the standard temperature in degrees Rankine at a specified altitude.
-  /// @param altitude The altitude in feet above sea level (ASL) to get the temperature at.
-  /// @return The STANDARD temperature in degrees Rankine at the specified altitude.
+  /// Returns the standard temperature in degrees Rankine at a specified
+  /// altitude.
+  /// @param altitude The altitude in feet above sea level (ASL) to get the
+  ///                 temperature at.
+  /// @return The STANDARD temperature in degrees Rankine at the specified
+  ///         altitude.
   virtual double GetStdTemperature(double altitude) const;
 
   /// Returns the standard sea level temperature in degrees Rankine.
@@ -140,7 +147,8 @@ public:
   virtual double GetTemperatureDeltaGradient(eTemperature to)
   { if (to == eCelsius || to == eKelvin) return TemperatureDeltaGradient/1.80; else return TemperatureDeltaGradient; }
 
-  /// Sets the Sea Level temperature, if it is to be different than the standard.
+  /// Sets the Sea Level temperature, if it is to be different than the
+  /// standard.
   /// This function will calculate a bias - a difference - from the standard
   /// atmosphere temperature and will apply that bias to the entire
   /// temperature profile. This is one way to set the temperature bias. Using
@@ -148,7 +156,7 @@ public:
   /// this function.
   /// @param t the temperature value in the unit provided.
   /// @param unit the unit of the temperature.
-  virtual void SetTemperatureSL(double t, eTemperature unit=eFahrenheit);
+  void SetTemperatureSL(double t, eTemperature unit=eFahrenheit) override;
 
   /// Sets the temperature at the supplied altitude, if it is to be different
   /// than the standard temperature.
@@ -161,9 +169,10 @@ public:
   /// @param t The temperature value in the unit provided.
   /// @param h The altitude in feet above sea level.
   /// @param unit The unit of the temperature.
-  virtual void SetTemperature(double t, double h, eTemperature unit=eFahrenheit);
+  void SetTemperature(double t, double h, eTemperature unit=eFahrenheit) override;
 
-  /// Sets the temperature bias to be added to the standard temperature at all altitudes.
+  /// Sets the temperature bias to be added to the standard temperature at all
+  /// altitudes.
   /// This function sets the bias - the difference - from the standard
   /// atmosphere temperature. This bias applies to the entire
   /// temperature profile. Another way to set the temperature bias is to use the
@@ -208,7 +217,7 @@ public:
   /// @name Pressure access functions.
   //@{
   /// Returns the pressure at a specified altitude in psf.
-  virtual double GetPressure(double altitude) const;
+  double GetPressure(double altitude) const override;
 
   /// Returns the standard pressure at the specified altitude.
   virtual double GetStdPressure(double altitude) const;
@@ -219,7 +228,7 @@ public:
       @param pressure The pressure in the units specified.
       @param unit the unit of measure that the specified pressure is
                        supplied in.*/
-  virtual void SetPressureSL(ePressure unit, double pressure);
+  void SetPressureSL(ePressure unit, double pressure) override;
 
   /** Resets the sea level to the Standard sea level pressure, and recalculates
       dependent parameters so that the pressure calculations are standard. */
@@ -232,7 +241,7 @@ public:
   /// Returns the standard density at a specified altitude
   virtual double GetStdDensity(double altitude) const;
   /// Returns the standard density at a specified altitude
-  virtual double GetDensity(double altitude) const;
+  double GetDensity(double altitude) const override;
   //@}
 
   //  *************************************************************************
@@ -252,10 +261,12 @@ public:
                   supplied in. */
   void SetVaporPressure(ePressure unit, double Pv);
   /** Returns the partial pressure of water vapor.
-      @param to The unit of measure that the water vapor should be supplied in. */
+      @param to The unit of measure that the water vapor should be supplied in.
+  */
   double GetVaporPressure(ePressure to) const;
   /** Returns the saturated pressure of water vapor.
-      @param to The unit of measure that the water vapor should be supplied in. */
+      @param to The unit of measure that the water vapor should be supplied in.
+  */
   double GetSaturatedVaporPressure(ePressure to) const;
   /** Sets the relative humidity.
       @param RH The relative humidity in percent. */
@@ -278,22 +289,24 @@ protected:
   double SaturatedVaporPressure;
 
   FGTable StdAtmosTemperatureTable;
+  FGTable MaxVaporMassFraction;
   std::vector<double> LapseRates;
   std::vector<double> PressureBreakpoints;
   std::vector<double> StdPressureBreakpoints;
   std::vector<double> StdDensityBreakpoints;
   std::vector<double> StdLapseRates;
 
-  virtual void Calculate(double altitude);
+  void Calculate(double altitude) override;
 
   /// Recalculate the lapse rate vectors when the temperature profile is altered
-  /// in a way that would change the lapse rates, such as when a gradient is applied.
+  /// in a way that would change the lapse rates, such as when a gradient is
+  /// applied.
   /// This function is also called to initialize the lapse rate vector.
   void CalculateLapseRates();
 
   /// Calculate (or recalculate) the atmospheric pressure breakpoints at the 
   /// altitudes in the standard temperature table.
-  void CalculatePressureBreakpoints();
+  void CalculatePressureBreakpoints(double SLpress);
 
   /// Calculate the atmospheric density breakpoints at the 
   /// altitudes in the standard temperature table.
@@ -314,7 +327,7 @@ protected:
   https://en.wikipedia.org/wiki/Density_altitude
   https://wahiduddin.net/calc/density_altitude.htm
   */
-  virtual double CalculateDensityAltitude(double density, double geometricAlt);
+  double CalculateDensityAltitude(double density, double geometricAlt) override;
 
   /** Calculates the pressure altitude given any temperature or pressure bias.
   Calculated density for the specified geometric altitude given any temperature
@@ -324,10 +337,13 @@ protected:
   @see
   https://en.wikipedia.org/wiki/Pressure_altitude
   */
-  virtual double CalculatePressureAltitude(double pressure, double geometricAlt);
+  double CalculatePressureAltitude(double pressure, double geometricAlt) override;
 
   /// Calculate the pressure of water vapor with the Magnus formula.
   double CalculateVaporPressure(double temperature);
+
+  /// Validate the value of the vapor pressure
+  void ValidateVaporPressure(double geometricAlt);
 
   /// Calculate the SL density
   void CalculateSLDensity(void) { SLdensity = SLpressure / (Reng * SLtemperature); }
@@ -335,8 +351,8 @@ protected:
   /// Calculate the SL density and sound speed
   void CalculateSLSoundSpeedAndDensity(void);
 
-  virtual void bind(void);
-  void Debug(int from);
+  void bind(void) override;
+  void Debug(int from) override;
 
   /// Earth radius in ft as defined for ISA 1976
   static const double EarthRadius;
