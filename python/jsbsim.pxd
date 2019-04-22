@@ -66,10 +66,18 @@ cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
         eRankine    = 3,
         eKelvin     = 4
 
+    cdef enum ePressure "JSBSim::FGAtmosphere::ePressure":
+        eNoPressUnit= 0,
+        ePSF        = 1,
+        eMillibars  = 2,
+        ePascals    = 3,
+        eInchesHg   = 4
+
     cdef cppclass c_FGAtmosphere "JSBSim::FGAtmosphere":
         c_FGAtmosphere(c_FGFDMExec* fdm)
         double GetTemperature(double h)
         void SetTemperature(double t, double h, eTemperature unit)
+        void SetPressureSL(ePressure unit, double pressure)
 
 cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
     cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":

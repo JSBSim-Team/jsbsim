@@ -157,6 +157,9 @@ cdef class FGAtmosphere:
     def get_temperature(self, h):
         return self.thisptr.GetTemperature(h)
 
+    def set_pressure_SL(self, unit, p):
+        return self.thisptr.SetPressureSL(unit, p)
+
 cdef class FGMassBalance:
 
     cdef c_FGMassBalance *thisptr

@@ -281,6 +281,18 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         del fdm
 
+    def test_set_pressure_SL(self):
+        fdm = self.create_fdm()
+        fdm.load_model('ball')
+        fdm.run_ic()
+
+        atmos = fdm.get_atmosphere()
+        eInchesHg = 4
+
+        atmos.set_pressure_SL(eInchesHg, 29.92)
+        fdm.run_ic()
+        self.assertAlmostEqual(2115.8849626, fdm['atmosphere/P-psf'])
+
     def test_set_temperature(self):
         fdm = self.create_fdm()
         fdm.load_model('ball')

@@ -236,11 +236,9 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
 void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
-  double press = ConvertToPSF(pressure, unit);
-
-  SLpressure = press;
+  SLpressure = ConvertToPSF(pressure, unit);
   CalculateSLDensity();
-  CalculatePressureBreakpoints(pressure);
+  CalculatePressureBreakpoints(SLpressure);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
