@@ -243,7 +243,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   }
 
   // Environment
-  net->cur_time    = static_cast<uint32_t>(FDMExec->GetSimTime()*1e6);   // used for simulation time sync in ArduPlane (not processed by FGFS)
+  net->cur_time    = static_cast<uint32_t>(FDMExec->GetSimTime()*1e6);   // simulation time (not processed by FGFS)
   net->warp        = 0;                       // offset in seconds to unix time
   net->visibility  = 25000.0;                 // visibility in meters (for env. effects)
 
