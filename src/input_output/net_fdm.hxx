@@ -100,8 +100,7 @@ public:
     float gear_compression[FG_MAX_WHEELS];
 
     // Environment
-    uint32_t cur_time;           // current unix time
-                                 // FIXME: make this uint64_t before 2038
+    uint32_t cur_time;           // current simulation time
     int32_t warp;                // offset in seconds to unix time
     float visibility;            // visibility in meters (for env. effects)
 
