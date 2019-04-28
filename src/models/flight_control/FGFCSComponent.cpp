@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
@@ -248,15 +247,24 @@ void FGFCSComponent::Clip(void)
 // properties in the FCS component name attribute. The old way is supported in
 // code at this time, but deprecated.
 
-void FGFCSComponent::bind(void)
+void FGFCSComponent::bind(Element* el)
 {
   string tmp;
-  if (Name.find("/") == string::npos) {
+  if (Name.find("/") == string::npos)
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
-  } else {
+  else
     tmp = Name;
+
+  FGPropertyNode* node = PropertyManager->GetNode(tmp, true);
+
+  if (node) {
+    OutputNodes.push_back(node);
+    IsOutput = true;
   }
-  PropertyManager->Tie( tmp, this, &FGFCSComponent::GetOutput);
+  else {
+    cerr << el->ReadFrom()
+         << "Could not get or create property " << tmp << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

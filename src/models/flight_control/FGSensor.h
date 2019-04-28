@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2005 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,29 +92,29 @@ Example:
 The only required element in the sensor definition is the input element. In that
 case, no degradation would be modeled, and the output would simply be the input.
 
-Noise can be Gaussian or uniform, and the noise can be applied as a factor (PERCENT)
-or additively (ABSOLUTE). The noise that can be applied at each frame of the
-simulation execution is calculated as a random factor times a noise value that
-is specified in the config file. When the noise distribution type is Gaussian,
-the random number can be between roughly -3 and +3 for a span of six sigma. When
-the distribution type is UNIFORM, the random value can be between -1.0 and +1.0.
-This random value is multiplied against the specified noise to arrive at a random
-noise value for the frame. If the noise type is PERCENT, then random noise value
-is added to one, and that sum is then multiplied against the input signal for the
-sensor. In this case, the specified noise value in the config file would be
-expected to actually be a percent value, such as 0.05 (for a 5% variance). If the
-noise type is ABSOLUTE, then the random noise value specified in the config file
-is understood to be an absolute value of noise to be added to the input signal
-instead of being added to 1.0 and having that sum be multiplied against the input
-signal as in the PERCENT type. For the ABSOLUTE noise case, the noise number
-specified in the config file could be any number.
+Noise can be Gaussian or uniform, and the noise can be applied as a factor
+(PERCENT) or additively (ABSOLUTE). The noise that can be applied at each frame
+of the simulation execution is calculated as a random factor times a noise value
+that is specified in the config file. When the noise distribution type is
+Gaussian, the random number can be between roughly -3 and +3 for a span of six
+sigma. When the distribution type is UNIFORM, the random value can be between
+-1.0 and +1.0. This random value is multiplied against the specified noise to
+arrive at a random noise value for the frame. If the noise type is PERCENT, then
+random noise value is added to one, and that sum is then multiplied against the
+input signal for the sensor. In this case, the specified noise value in the
+config file would be expected to actually be a percent value, such as 0.05 (for
+a 5% variance). If the noise type is ABSOLUTE, then the random noise value
+specified in the config file is understood to be an absolute value of noise to
+be added to the input signal instead of being added to 1.0 and having that sum
+be multiplied against the input signal as in the PERCENT type. For the ABSOLUTE
+noise case, the noise number specified in the config file could be any number.
 
-If the type is ABSOLUTE, then the noise number times the random number is
-added to the input signal instead of being multiplied against it as with the
-PERCENT type of noise.
+If the type is ABSOLUTE, then the noise number times the random number is added
+to the input signal instead of being multiplied against it as with the PERCENT
+type of noise.
 
-The delay element can specify a frame delay. The integer number provided is
-the number of frames to delay the output signal.
+The delay element can specify a frame delay. The integer number provided is the
+number of frames to delay the output signal.
 
 @author Jon S. Berndt
 @version $Revision: 1.24 $
@@ -140,8 +139,8 @@ public:
   double GetFailStuck(void) const {if (fail_stuck) return 1.0; else return 0.0;}
   int    GetQuantized(void) const {return quantized;}
 
-  virtual bool Run (void);
-  void ResetPastStates(void);
+  bool Run (void) override;
+  void ResetPastStates(void) override;
 
 protected:
   enum eNoiseType {ePercent=0, eAbsolute} NoiseType;
@@ -176,10 +175,10 @@ protected:
   void Lag(void);
   void Gain(void);
 
-  void bind(void);
+  void bind(Element* el) override;
 
 private:
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 #endif

@@ -36,10 +36,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPID.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGParameterValue.h"
-#include <string>
-#include <iostream>
 
 using namespace std;
 
@@ -105,7 +102,8 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (el)
     Trigger = PropertyManager->GetNode(el->GetDataLine());
 
-  FGFCSComponent::bind();
+  bind(element);
+
   string tmp;
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
@@ -113,7 +111,8 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     tmp = Name;
   }
   typedef double (FGPID::*PMF)(void) const;
-  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)0, &FGPID::SetInitialOutput);
+  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)0,
+                       &FGPID::SetInitialOutput);
 
   Debug(0);
 }

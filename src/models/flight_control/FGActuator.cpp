@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2007 Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,8 +37,6 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <stdlib.h>
-
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGRealValue.h"
@@ -52,8 +50,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGActuator::FGActuator(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element)
 {
   // inputs are read from the base class constructor
 
@@ -120,8 +118,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
     cb = (2.00 - dt*lag) / denom;
   }
 
-  FGFCSComponent::bind();
-  bind();
+  bind(element);
 
   Debug(0);
 }
@@ -226,9 +223,9 @@ void FGActuator::Lag(void)
 
 void FGActuator::Hysteresis(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this Hysteresis method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this Hysteresis method - really the input
+  // to the method.
   double input = Output;
   
   if ( initialized ) {
@@ -245,9 +242,9 @@ void FGActuator::Hysteresis(void)
 
 void FGActuator::RateLimit(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this RateLimit method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this RateLimit method - really the input
+  // to the method.
   double input = Output;
   if ( initialized ) {
     double delta = input - PreviousRateLimOutput;
@@ -269,9 +266,9 @@ void FGActuator::RateLimit(void)
 
 void FGActuator::Deadband(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this Deadband method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this Deadband method - really the input
+  // to the method.
   double input = Output;
 
   if (input < -deadband_width/2.0) {
@@ -285,9 +282,12 @@ void FGActuator::Deadband(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGActuator::bind(void)
+void FGActuator::bind(Element* el)
 {
   string tmp = Name;
+
+  FGFCSComponent::bind(el);
+
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
   }

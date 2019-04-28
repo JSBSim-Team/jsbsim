@@ -37,8 +37,8 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "models/FGFCS.h"
 #include "FGFCSFunction.h"
+#include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -59,11 +59,12 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
   if (function_element)
     function = new FGFunction(fcs->GetExec(), function_element);
   else {
-    cerr << "FCS Function should contain a \"function\" element" << endl;
-    exit(-1);
+    cerr << element->ReadFrom()
+         << "FCS Function should contain a \"function\" element" << endl;
+    throw("Malformed FCS function specification.");
   }
 
-  FGFCSComponent::bind();
+  bind(element);
   Debug(0);
 }
 

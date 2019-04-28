@@ -118,7 +118,7 @@ protected:
 
   void Delay(void);
   void Clip(void);
-  virtual void bind();
+  virtual void bind(Element* el);
   virtual void Debug(int from);
 };
 

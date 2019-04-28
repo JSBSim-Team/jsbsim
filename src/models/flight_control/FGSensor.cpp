@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2005 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -36,9 +36,6 @@ COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#include <iostream>
-#include <cstdlib>
 
 #include "FGSensor.h"
 #include "input_output/FGXMLElement.h"
@@ -118,8 +115,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  FGFCSComponent::bind();
-  bind();
+  bind(element);
 
   Debug(0);
 }
@@ -248,9 +244,12 @@ void FGSensor::Lag(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSensor::bind(void)
+void FGSensor::bind(Element* el)
 {
   string tmp = Name;
+
+  FGFCSComponent::bind(el);
+
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
   }
@@ -265,7 +264,14 @@ void FGSensor::bind(void)
   if (!quant_property.empty()) {
     if (quant_property.find("/") == string::npos) { // not found
       string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
-      PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);
+      FGPropertyNode* node = PropertyManager->GetNode(qprop, true);
+      if (node->isTied()) {
+        cerr << el->ReadFrom()
+             << "Property " << tmp << " has already been successfully bound (late)." << endl;
+        throw("Failed to bind the property to an existing already tied node.");
+      }
+      else
+        PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);
     }
   }
 

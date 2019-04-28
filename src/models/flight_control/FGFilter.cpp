@@ -37,12 +37,7 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <string>
-
 #include "FGFilter.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 #include "math/FGParameterValue.h"
 
 using namespace std;
@@ -68,7 +63,7 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
 
   CalculateDynamicFilters();
 
-  FGFCSComponent::bind();
+  bind(element);
 
   Debug(0);
 }

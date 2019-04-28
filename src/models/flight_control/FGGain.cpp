@@ -37,13 +37,9 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <string>
-#include <cstdlib>
-
 #include "FGGain.h"
-#include "input_output/FGXMLElement.h"
 #include "math/FGParameterValue.h"
+#include "math/FGTable.h"
 
 using namespace std;
 
@@ -85,7 +81,8 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
     }
     scale_element = element->FindElement("range");
-    if (!scale_element) throw(string("No range supplied for aerosurface scale component"));
+    if (!scale_element)
+      throw(string("No range supplied for aerosurface scale component"));
     if (scale_element->FindElement("max") && scale_element->FindElement("min") )
     {
       OutMax = scale_element->FindElementValueAsNumber("max");
@@ -118,7 +115,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  FGFCSComponent::bind();
+  bind(element);
 
   Debug(0);
 }
@@ -136,8 +133,6 @@ FGGain::~FGGain()
 
 bool FGGain::Run(void )
 {
-  double SchedGain = 1.0;
-
   Input = InputNodes[0]->getDoubleValue();
 
   if (Type == "PURE_GAIN") {                       // PURE_GAIN
@@ -146,7 +141,7 @@ bool FGGain::Run(void )
 
   } else if (Type == "SCHEDULED_GAIN") {           // SCHEDULED_GAIN
 
-    SchedGain = Table->GetValue();
+    double SchedGain = Table->GetValue();
     Output = Gain * SchedGain * Input;
 
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE

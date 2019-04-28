@@ -37,11 +37,7 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-
 #include "FGDeadBand.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 #include "math/FGParameterValue.h"
 
 using namespace std;
@@ -69,7 +65,7 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element)
   if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");
 
-  FGFCSComponent::bind();
+  bind(element);
   Debug(0);
 }
 
@@ -82,7 +78,7 @@ FGDeadBand::~FGDeadBand()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGDeadBand::Run(void )
+bool FGDeadBand::Run(void)
 {
   Input = InputNodes[0]->getDoubleValue();
 

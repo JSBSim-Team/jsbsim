@@ -38,11 +38,8 @@ Also, see the header file (FGDistributor.h) for further details.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#include <iostream>
  
 #include "FGDistributor.h"
-#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
@@ -55,8 +52,8 @@ CLASS IMPLEMENTATION
 FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
-  FGFCSComponent::bind(); // Bind() this component here in case it is used
-                          // in its own definition for a sample-and-hold
+  bind(element); // Bind() this component here in case it is used in its own
+                 // definition for a sample-and-hold
 
   string type_string = element->GetAttributeValue("type");
   if (type_string == "inclusive") Type = eInclusive;
