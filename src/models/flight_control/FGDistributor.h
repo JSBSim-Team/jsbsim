@@ -37,9 +37,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <cstdlib>
-
 #include "FGFCSComponent.h"
 #include "math/FGCondition.h"
 #include "math/FGParameterValue.h"
@@ -148,12 +145,9 @@ private:
   class PropValPair {
   public:
     PropValPair(const std::string& prop, const std::string& val,
-                FGPropertyManager* propMan) {
-      // Process property to be set
-      Prop = new FGPropertyValue(prop, propMan);
-      // Process set value
-      Val = new FGParameterValue(val, propMan);
-    }
+                FGPropertyManager* propMan)
+      : Prop(new FGPropertyValue(prop, propMan)),
+        Val(new FGParameterValue(val, propMan)) {}
     
     void SetPropToValue() {
       try {

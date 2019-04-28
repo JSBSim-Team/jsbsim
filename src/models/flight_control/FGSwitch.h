@@ -37,11 +37,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <cstdlib>
-
 #include "FGFCSComponent.h"
-#include "math/FGCondition.h"
 #include "math/FGParameterValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,6 +45,8 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -143,7 +141,7 @@ public:
 
   /** Executes the switch logic.
       @return true - always*/
-  bool Run(void);
+  bool Run(void) override;
 
 private:
 
@@ -172,7 +170,7 @@ private:
   bool initialized = false;
 
   void VerifyProperties(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 #endif
