@@ -1,5 +1,5 @@
 <system name="QUARTER" >
-    <property value="0">tests/rate-4</property>
+    <property value="0" persistent="true">tests/rate-4</property>
     <property value="0">tests/rate-4-actuator-dmd</property>
     <property value="1">tests/rate-4-actuator-rate</property>
 
