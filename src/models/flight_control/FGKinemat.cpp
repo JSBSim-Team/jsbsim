@@ -102,7 +102,8 @@ bool FGKinemat::Run(void )
 
   if (DoScale) Input *= Detents.back();
 
-  if (IsOutput) Output = OutputNodes[0]->getDoubleValue();
+  if (!OutputNodes.empty())
+    Output = OutputNodes[0]->getDoubleValue();
 
   Input = Constrain(Detents.front(), Input, Detents.back());
 
@@ -151,7 +152,7 @@ bool FGKinemat::Run(void )
   }
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

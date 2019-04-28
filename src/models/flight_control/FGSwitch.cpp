@@ -149,7 +149,7 @@ bool FGSwitch::Run(void )
 
   if (delay != 0) Delay();
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

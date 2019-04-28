@@ -180,7 +180,7 @@ bool FGFilter::Run(void)
   PreviousInput1  = Input;
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

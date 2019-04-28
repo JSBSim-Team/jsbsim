@@ -151,7 +151,7 @@ bool FGAngles::Run(void )
   else              Output = -angle_to_heading_rad * output_unit;
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

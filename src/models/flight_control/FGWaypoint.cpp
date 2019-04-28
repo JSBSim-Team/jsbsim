@@ -191,7 +191,7 @@ bool FGWaypoint::Run(void )
   }
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

@@ -144,7 +144,7 @@ bool FGSensor::Run(void)
 
   ProcessSensorSignal();
 
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

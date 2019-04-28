@@ -193,7 +193,7 @@ bool FGPID::Run(void )
   Input_prev = Input;
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

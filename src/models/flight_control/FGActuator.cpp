@@ -192,7 +192,7 @@ bool FGActuator::Run(void )
     }
   }
 
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

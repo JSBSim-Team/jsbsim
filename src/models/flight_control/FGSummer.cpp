@@ -78,7 +78,7 @@ bool FGSummer::Run(void)
   Output += Bias;
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

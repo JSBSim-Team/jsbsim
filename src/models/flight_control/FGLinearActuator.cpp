@@ -213,7 +213,7 @@ bool FGLinearActuator::Run(void )
     previousLagOutput = Output;
   }
 
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

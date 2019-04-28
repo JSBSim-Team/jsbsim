@@ -55,7 +55,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Input = Output = delay_time = 0.0;
   delay = index = 0;
   ClipMin = ClipMax = nullptr;
-  IsOutput = clip = cyclic_clip = false;
+  clip = cyclic_clip = false;
   dt = fcs->GetChannelDeltaT();
 
   PropertyManager = fcs->GetPropertyManager();
@@ -128,7 +128,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Element *out_elem = element->FindElement("output");
   while (out_elem) {
-    IsOutput = true;
     string output_node_name = out_elem->GetDataLine();
     FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
     OutputNodes.push_back(OutputNode);
@@ -257,10 +256,8 @@ void FGFCSComponent::bind(Element* el)
 
   FGPropertyNode* node = PropertyManager->GetNode(tmp, true);
 
-  if (node) {
+  if (node)
     OutputNodes.push_back(node);
-    IsOutput = true;
-  }
   else {
     cerr << el->ReadFrom()
          << "Could not get or create property " << tmp << endl;

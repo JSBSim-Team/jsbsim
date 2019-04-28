@@ -88,7 +88,7 @@ bool FGFCSFunction::Run(void )
   }
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

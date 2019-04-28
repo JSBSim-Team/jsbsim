@@ -113,7 +113,6 @@ protected:
   unsigned int delay;
   int index;
   double dt;
-  bool IsOutput;
   bool clip, cyclic_clip;
 
   void Delay(void);
