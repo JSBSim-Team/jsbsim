@@ -9,7 +9,7 @@ env:
   - USE_SYSTEM_EXPAT=ON
 notifications:
   email: false
-# Skip the build of tagged branches (otherwise the same commit is built multiple times)
+# Skip the build of some tagged branches (otherwise the same commit is built multiple times)
 branches:
   except:
     - /^JSBSim-.*-v2018a.*$/
@@ -44,7 +44,14 @@ script:
   - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"; fi
 after_success:
   - cpack
-  - export TRAVIS_TAG=Rolling-release-v2019
+  - if [ -z $TRAVIS_TAG ]
+    then
+      # Default release when the branch is not tagged
+      export TRAVIS_TAG=Release_Candidate_v1.0.0
+    else
+      # Add a symbolic link so that the PyPI deployment can reach the distributions.
+      ln -s python/dist dist
+    fi
 # Build the API documentation with Doxygen (skip if we are building a pull request)
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
 
@@ -55,7 +62,6 @@ after_failure:
   - echo $GIST_TOKEN > ~/.gist
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
-  - git tag -f $TRAVIS_TAG -m "Ubuntu Xenial 16.04 - Release - amd64"
 # If the Python runtime is 2.7 then delete all Debian package but the Python module
 # The other packages will be deployed by the Python 3.6 runtime
   - if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ] && [ "$USE_SYSTEM_EXPAT" = "ON" ]; then rm -f JSBSim*.deb; fi
@@ -72,7 +78,6 @@ deploy:
     skip_cleanup: true
     overwrite: true
     on:
-      tags: true
       condition: $USE_SYSTEM_EXPAT = ON
 # Deploy the Python wheels
   - provider: releases
@@ -84,7 +89,6 @@ deploy:
     skip_cleanup: true
     overwrite: true
     on:
-      tags: true
       condition: $USE_SYSTEM_EXPAT = OFF
 # Deploy the Doxygen built docs
   - provider: pages
