@@ -79,4 +79,4 @@ deploy:
   artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.0.0rc1-cp37-cp37m-win_amd64.whl
   prerelease: true
   on:
-    branch: master
+    branch: v1.0.0
