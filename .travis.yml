@@ -15,6 +15,7 @@ branches:
     - /^JSBSim-.*-v2018a.*$/
     - /^Rolling-.*-v2019.*$/
     - /^untagged-.*$/
+    - /^Release_Candidate_v.*$/
 # command to install dependencies
 addons:
   apt:
@@ -76,6 +77,7 @@ deploy:
     skip_cleanup: true
     overwrite: true
     on:
+      tags: true
       condition: $USE_SYSTEM_EXPAT = ON
 # Deploy the Python wheels
   - provider: releases
@@ -87,13 +89,5 @@ deploy:
     skip_cleanup: true
     overwrite: true
     on:
-      condition: $USE_SYSTEM_EXPAT = OFF
-# Deploy the Doxygen built docs
-  - provider: pages
-    skip_cleanup: true
-    local_dir: build/documentation/html
-    github_token: $GITHUB_TOKEN
-    verbose: true
-    on:
-      python: 3.6
+      tags: true
       condition: $USE_SYSTEM_EXPAT = OFF
