@@ -44,13 +44,11 @@ script:
   - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"; fi
 after_success:
   - cpack
-  - if [ -z $TRAVIS_TAG ]
+  - if [ -z $TRAVIS_TAG ];
     then
-      # Default release when the branch is not tagged
-      export TRAVIS_TAG=Release_Candidate_v1.0.0
+      export TRAVIS_TAG=Release_Candidate_v1.0.0;
     else
-      # Add a symbolic link so that the PyPI deployment can reach the distributions.
-      ln -s python/dist dist
+      ln -s python/dist dist;
     fi
 # Build the API documentation with Doxygen (skip if we are building a pull request)
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
