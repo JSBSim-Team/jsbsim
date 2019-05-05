@@ -8,21 +8,21 @@
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -38,9 +38,6 @@ INCLUDES
 #define BASE
 
 #include "FGJSBBase.h"
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
 #include "models/FGAtmosphere.h"
 
 using namespace std;
@@ -76,30 +73,6 @@ CLASS IMPLEMENTATION
     char FGJSBBase::fggreen[6]  = {'\0' };
     char FGJSBBase::fgdef[6]    = {'\0' };
 #endif
-
-const double FGJSBBase::radtodeg = 57.295779513082320876798154814105;
-const double FGJSBBase::degtorad = 0.017453292519943295769236907684886;
-const double FGJSBBase::hptoftlbssec = 550.0;
-const double FGJSBBase::psftoinhg = 0.014138;
-const double FGJSBBase::psftopa = 47.88;
-const double FGJSBBase::ktstofps = 1.68781;
-const double FGJSBBase::fpstokts = 1.0/ktstofps;
-const double FGJSBBase::inchtoft = 1.0/12;
-const double FGJSBBase::in3tom3 = 1.638706E-5;
-const double FGJSBBase::m3toft3 = 1.0/(fttom*fttom*fttom);
-const double FGJSBBase::inhgtopa = 3386.38;
-const double FGJSBBase::fttom = 0.3048;
-
-// Note that definition of lbtoslug by the inverse of slugtolb and not
-// to a different constant you can also get from some tables will make
-// lbtoslug*slugtolb == 1 up to the magnitude of roundoff. So converting from
-// slug to lb and back will yield to the original value you started with up
-// to the magnitude of roundoff.
-// Taken from units gnu commandline tool
-const double FGJSBBase::slugtolb = 32.174049;
-const double FGJSBBase::lbtoslug = 1.0/slugtolb;
-const double FGJSBBase::kgtolb = 2.20462;
-const double FGJSBBase::kgtoslug = 0.06852168;
 
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = JSBSIM_VERSION " " __DATE__ " " __TIME__ ;

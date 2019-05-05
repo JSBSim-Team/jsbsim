@@ -355,15 +355,20 @@ protected:
   void Debug(int from) override;
 
   /// Earth radius in ft as defined for ISA 1976
-  static const double EarthRadius;
-  /// Constants for the Magnus formula (vapor pressure)
-  static const double a, b, c;
+  static constexpr double EarthRadius = 6356766.0 / fttom;
+  /** Sonntag constants based on ref [2]. They are valid for temperatures
+      between -45 degC (-49 degF) and 60 degC (140 degF) with a precision of
+      +/-0.35 degC (+/-0.63 degF) */
+  static constexpr double a = 611.2/psftopa; // psf
+  static constexpr double b = 17.62; // 1/degC
+  static constexpr double c = 243.12; // degC
   /// Mean molecular weight for water - slug/mol
-  static const double Mwater;
+  static constexpr double Mwater = 18.016 * kgtoslug / 1000.0;
+  static constexpr double Rdry = Rstar / Mair;
+  static constexpr double Rwater = Rstar / Mwater;
 };
 
 } // namespace JSBSim
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

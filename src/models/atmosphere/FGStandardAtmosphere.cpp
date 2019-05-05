@@ -45,9 +45,7 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
 #include <iomanip>
-#include <cstdlib>
 
 #include "FGFDMExec.h"
 #include "FGStandardAtmosphere.h"
@@ -57,17 +55,6 @@ namespace JSBSim {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-// Effective radius of the earth at a specific latitude per ISA 1976 (converted
-// to ft) r0 = 6356766 m
-const double FGStandardAtmosphere::EarthRadius = 6356766.0/FGJSBBase::fttom;
-/** Sonntag constants based on ref [2]. They are valid for temperatures between
-    -45 degC (-49 degF) and 60 degC (140 degF) with a precision of +/-0.35 degC
-    (+/-0.63 degF) */
-const double FGStandardAtmosphere::a = 611.2/FGJSBBase::psftopa; // psf
-const double FGStandardAtmosphere::b = 17.62; // 1/degC
-const double FGStandardAtmosphere::c = 243.12; // degC
-const double FGStandardAtmosphere::Mwater = 18.016 * FGJSBBase::kgtoslug / 1000.0; // slug/mol
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   : FGAtmosphere(fdmex), StdSLpressure(StdDaySLpressure), TemperatureBias(0.0),
@@ -143,10 +130,10 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   StdPressureBreakpoints = PressureBreakpoints;
 
   StdSLtemperature = StdAtmosTemperatureTable(1, 1);
-  StdSLdensity     = StdSLpressure / (Reng * StdSLtemperature);
+  StdSLdensity     = StdSLpressure / (Rdry * StdSLtemperature);
 
   CalculateStdDensityBreakpoints();
-  StdSLsoundspeed = sqrt(SHRatio*Reng*StdSLtemperature);
+  StdSLsoundspeed = sqrt(SHRatio*Rdry*StdSLtemperature);
 
   bind();
   Debug(0);
@@ -225,11 +212,11 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
   double Lmb = LapseRates[b];
 
   if (Lmb != 0.0) {
-    double Exp = g0*Mair / (Rstar*Lmb);
+    double Exp = g0 / (Rdry*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
     return PressureBreakpoints[b]*pow(factor, Exp);
   } else
-    return PressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+    return PressureBreakpoints[b]*exp(-g0*deltaH/(Rdry*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,11 +306,11 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
   double Lmb = LapseRates[b];
 
   if (Lmb != 0.0) {
-    double Exp = g0*Mair / (Rstar*Lmb);
+    double Exp = g0 / (Rdry*Lmb);
     double factor = Tmb/(Tmb + Lmb*deltaH);
     return StdPressureBreakpoints[b]*pow(factor, Exp);
   } else
-    return StdPressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+    return StdPressureBreakpoints[b]*exp(-g0*deltaH/(Rdry*Tmb));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,7 +318,7 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
 
 double FGStandardAtmosphere::GetStdDensity(double altitude) const
 {
-  return GetStdPressure(altitude)/(Reng * GetStdTemperature(altitude));
+  return GetStdPressure(altitude)/(Rdry * GetStdTemperature(altitude));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -342,7 +329,7 @@ double FGStandardAtmosphere::GetDensity(double altitude) const
   double P = GetPressure(altitude);
   double Pa = P - VaporPressure; // Partial pressure of air
 
-  return (Pa/Reng + Mwater*VaporPressure/Rstar)/GetTemperature(altitude);
+  return (Pa/Rdry + VaporPressure/Rwater)/GetTemperature(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -473,11 +460,11 @@ void FGStandardAtmosphere::CalculatePressureBreakpoints(double SLpress)
                  + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
     if (LapseRates[b] != 0.00) {
       double Lmb = LapseRates[b];
-      double Exp = g0*Mair / (Rstar*Lmb);
+      double Exp = g0 / (Rdry*Lmb);
       double factor = Tmb/(Tmb + Lmb*deltaH);
       PressureBreakpoints[b+1] = PressureBreakpoints[b]*pow(factor, Exp);
     } else {
-      PressureBreakpoints[b+1] = PressureBreakpoints[b]*exp(-g0*Mair*deltaH/(Rstar*Tmb));
+      PressureBreakpoints[b+1] = PressureBreakpoints[b]*exp(-g0*deltaH/(Rdry*Tmb));
     }
   }
 }
@@ -509,7 +496,7 @@ void FGStandardAtmosphere::CalculateStdDensityBreakpoints()
 {
   StdDensityBreakpoints.clear();
   for (unsigned int i = 0; i < StdPressureBreakpoints.size(); i++)
-    StdDensityBreakpoints.push_back(StdPressureBreakpoints[i] / (Reng * StdAtmosTemperatureTable(i + 1, 1)));
+    StdDensityBreakpoints.push_back(StdPressureBreakpoints[i] / (Rdry * StdAtmosTemperatureTable(i + 1, 1)));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -533,10 +520,10 @@ double FGStandardAtmosphere::CalculateDensityAltitude(double density, double geo
 
   // https://en.wikipedia.org/wiki/Barometric_formula for density solved for H
   if (Lmb != 0.0) {
-    double Exp = -1.0 / (1.0 + (g0*Mair)/(Rstar*Lmb));
+    double Exp = -1.0 / (1.0 + g0/(Rdry*Lmb));
     density_altitude = Hb + (Tmb / Lmb) * (pow(density / pb, Exp) - 1);
   } else {
-    double Factor = -(Rstar*Tmb) / (g0*Mair);
+    double Factor = -Rdry*Tmb / g0;
     density_altitude = Hb + Factor * log(density / pb);
   }
 
@@ -564,11 +551,11 @@ double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double g
 
   if (Lmb != 0.00) {
     // Equation 33(a) from ISA document solved for H
-    double Exp = -(Rstar*Lmb) / (g0*Mair);
+    double Exp = -Rdry*Lmb / g0;
     pressure_altitude = Hb + (Tmb / Lmb) * (pow(pressure / Pb, Exp) - 1);
   } else {
     // Equation 33(b) from ISA document solved for H
-    double Factor = -(Rstar*Tmb) / (g0*Mair);
+    double Factor = -Rdry*Tmb / g0;
     pressure_altitude = Hb + Factor * log(pressure / Pb);
   }
 
@@ -579,7 +566,7 @@ double FGStandardAtmosphere::CalculatePressureAltitude(double pressure, double g
 
 double FGStandardAtmosphere::CalculateVaporPressure(double temperature)
 {
-  double temperature_degC = temperature/1.8-273.15;
+  double temperature_degC = RankineToCelsius(temperature);
   return a*exp(b*temperature_degC/(c+temperature_degC));
 }
 
@@ -587,7 +574,7 @@ double FGStandardAtmosphere::CalculateVaporPressure(double temperature)
 
 void FGStandardAtmosphere::ValidateVaporPressure(double h)
 {
-  const double coeff = 1E6*Reng*Mwater / Rstar;
+  constexpr double coeff = 1E6 * Mwater / Mair;
 
   if (VaporPressure > SaturatedVaporPressure)
     VaporPressure = SaturatedVaporPressure;

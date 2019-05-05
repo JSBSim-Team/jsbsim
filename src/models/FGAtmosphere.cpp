@@ -9,26 +9,26 @@
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This models a base atmosphere class to serve as a common interface to any derived
-atmosphere models.
+This models a base atmosphere class to serve as a common interface to any
+derived atmosphere models.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -42,9 +42,6 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <iomanip>
-#include <cstdlib>
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 
@@ -56,24 +53,13 @@ CLASS IMPLEMENTATION
 
 // Atmosphere constants in British units converted from the SI values specified in the 
 // ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
-
-const double KtoDegR = 1.8; // Kelvin to degree Rankine
-const double FGAtmosphere::Rstar = 8.31432 * (FGJSBBase::kgtoslug / (KtoDegR * FGJSBBase::fttom * FGJSBBase::fttom)); // ft*lbf/R/mol
-const double FGAtmosphere::Mair = 28.9645 * FGJSBBase::kgtoslug / 1000.0; // slug/mol
-const double FGAtmosphere::g0 = 9.80665 / FGJSBBase::fttom; // ft/s^2
 double FGAtmosphere::Reng = Rstar / Mair;
 
-const double FGAtmosphere::SHRatio = 1.40;
-
-const double FGAtmosphere::StdDaySLtemperature = 518.67;
-const double FGAtmosphere::StdDaySLpressure = 2116.228;
 const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng*StdDaySLtemperature);
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                                                PressureAltitude(0.0),      // ft
-                                               DensityAltitude(0.0),       // ft
-                                               SutherlandConstant(198.72), // deg Rankine
-                                               Beta(2.269690E-08)          // slug/(sec ft R^0.5)
+                                               DensityAltitude(0.0)       // ft
 {
   Name = "FGAtmosphere";
 
