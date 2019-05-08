@@ -273,6 +273,16 @@ public:
               data is missing. */
   double FindElementValueAsNumber(const std::string& el="");
 
+  /** Searches for the named element and returns the data belonging to it as a bool.
+      This function allows the data belonging to a named element to be returned
+      as a bool. If no element is found, false is returned. If no
+      argument is supplied, the data for the first element is returned.
+      @param el the name of the element being searched for (the empty string by
+      default)
+      @return the data value for the named element as a bool, or false if the
+              data is missing. Zero will be false, while any other number will be true. */
+  bool FindElementValueAsBoolean(const std::string& el="");
+  
   /** Searches for the named element and converts and returns the data belonging to it.
       This function allows the data belonging to a named element to be returned
       as a double. If no element is found, HUGE_VAL is returned. If no

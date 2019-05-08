@@ -75,6 +75,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
+  disableWindmill = false;
 
   Load(exec, el);
   Debug(0);
@@ -187,8 +188,14 @@ double FGTurbine::Off(void)
 {
   Running = false;
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
-  N1 = Seek(&N1, in.qbar/10.0, N1/2.0, N1/N1_spindown);
-  N2 = Seek(&N2, in.qbar/15.0, N2/2.0, N2/N2_spindown);
+  // some engines have inlets that close when they are off. So, if a flag is true disable windmilling
+  if (disableWindmill == false) {
+    N1 = Seek(&N1, in.qbar/10.0, N1/2.0, N1/N1_spindown);
+    N2 = Seek(&N2, in.qbar/15.0, N2/2.0, N2/N2_spindown);
+  } else {
+    N1 = Seek(&N1, 0, N1/2.0, N1/N1_spindown);
+    N2 = Seek(&N2, 0, N2/2.0, N2/N2_spindown);
+  }
   EGT_degC = Seek(&EGT_degC, in.TAT_c, 11.7, 7.3);
   OilTemp_degK = Seek(&OilTemp_degK, in.TAT_c + 273.0, 0.2, 0.2);
   OilPressure_psi = N2 * 0.62;
@@ -263,7 +270,7 @@ double FGTurbine::Run()
     InjectionTimer += in.TotalDeltaT;
     if (InjectionTimer < InjectionTime) {
        thrust = thrust * InjectionLookup->GetValue();
-       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime);	
+       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime); 
     } else {
        Injection = false;
        InjWaterNorm = 0.0;
@@ -487,7 +494,8 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     InjN1increment = el->FindElementValueAsNumber("injection-N1-inc");
   if (el->FindElement("injection-N2-inc"))
     InjN2increment = el->FindElementValueAsNumber("injection-N2-inc");
-
+  if (el->FindElement("disable-windmill"))
+    disableWindmill = el->FindElementValueAsBoolean("disable-windmill");
   string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
 
   IdleThrustLookup = GetPreFunction(property_prefix+"/IdleThrust");
