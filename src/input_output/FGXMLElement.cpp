@@ -428,16 +428,15 @@ bool Element::FindElementValueAsBoolean(const string& el)
 {
   Element* element = FindElement(el);
   if (element) {
-	// check value as an ordinary number
+	  // check value as an ordinary number
     double value = element->GetDataAsNumber();
-    value = DisperseValue(element, value);
 	
-	// now check how it should return data
-	if (value == 0) {
-		return false;
-	} else {
-		return true;
-	}
+	  // now check how it should return data
+	  if (value == 0) {
+		  return false;
+	  } else {
+		  return true;
+	  }
   } else {
     cerr << ReadFrom() << "Attempting to get non-existent element " << el << " ;returning false"
          << endl;
