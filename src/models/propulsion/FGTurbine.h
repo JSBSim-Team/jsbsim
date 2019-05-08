@@ -105,6 +105,7 @@ CLASS DOCUMENTATION
   <augmethod> {0 | 1 | 2} </augmethod>
   <injected> {0 | 1} </injected>
   <injection-time> {number} </injection-time>
+  <disable-windmill> {0 | 1}</disable-windmill>
  </turbine_engine>
 @endcode
 
@@ -142,6 +143,7 @@ CLASS DOCUMENTATION
   injection-time - Time, in seconds, of water injection duration 
   InjN1increment - % increase in N1 when injection is taking place
   InjN2increment - % increase in N2 when injection is taking place
+  disable-windmill - flag that disables engine windmilling when off if true
 </pre>
 
 <h3>NOTES:</h3>  
@@ -276,6 +278,7 @@ private:
   bool Augmentation;
   bool Reversed;
   bool Cutoff;
+  bool disableWindmill;    ///< flag to disable windmilling of engine in Off phase
   int Injected;            ///< = 1 if water injection installed
   int Ignition;
   int Augmented;           ///< = 1 if augmentation installed
