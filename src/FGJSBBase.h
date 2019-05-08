@@ -176,7 +176,7 @@ public:
 
   /** Returns the version number of JSBSim.
   *   @return The version number of JSBSim. */
-  static const std::string GetVersion(void) {return JSBSim_version;}
+  static const std::string& GetVersion(void) {return JSBSim_version;}
 
   /// Disables highlighting in the console output.
   void disableHighLighting(void);
