@@ -335,7 +335,7 @@ class TestStdAtmosphere(JSBSimTestCase):
         del fdm
 
     def test_humidity_parameters(self):
-        # Table: Dew point (deg C), Vapor pressure (Pa), RH
+        # Table: Dew point (deg C), Vapor pressure (Pa), RH, density
         humidity_table = [
             (-40.0,   19.021201,     0.815452, 1.2040321),
             (-30.0,   51.168875,     2.193645, 1.2038877),
@@ -359,8 +359,10 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.assertAlmostEqual(fdm['atmosphere/dew-point-R'], 54.054)
 
         for Tdp, Pv, RH, rho in humidity_table:
-            fdm['atmosphere/dew-point-R'] = (Tdp+273.15)*self.K_to_R
+            dew_point_R = (Tdp+273.15)*self.K_to_R
+            fdm['atmosphere/dew-point-R'] = dew_point_R
             fdm.run_ic()
+            self.assertAlmostEqual(fdm['atmosphere/dew-point-R'], dew_point_R)
             self.assertAlmostEqual(fdm['atmosphere/vapor-pressure-psf'],
                                    Pv*self.Pa_to_psf)
             self.assertAlmostEqual(fdm['atmosphere/RH'], RH)
@@ -401,6 +403,7 @@ class TestStdAtmosphere(JSBSimTestCase):
             rhoa = (P-Pv)/(self.Reng*T)
 
             self.assertAlmostEqual(rhov/rhoa, ppm*1E-6)
+            self.assertAlmostEqual(fdm['atmosphere/vapor-fraction-ppm']/ppm, 1.0)
 
         del fdm
 

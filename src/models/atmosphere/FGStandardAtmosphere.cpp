@@ -58,7 +58,8 @@ CLASS IMPLEMENTATION
 
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   : FGAtmosphere(fdmex), StdSLpressure(StdDaySLpressure), TemperatureBias(0.0),
-    TemperatureDeltaGradient(0.0), VaporPressure(0.0), SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(9),
+    TemperatureDeltaGradient(0.0), VaporMassFraction(0.0),
+    SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(9),
     MaxVaporMassFraction(10)
 {
   Name = "FGStandardAtmosphere";
@@ -179,7 +180,7 @@ void FGStandardAtmosphere::Calculate(double altitude)
 {
   FGAtmosphere::Calculate(altitude);
   SaturatedVaporPressure = CalculateVaporPressure(Temperature);
-  ValidateVaporPressure(altitude);
+  ValidateVaporMassFraction(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,17 +320,6 @@ double FGStandardAtmosphere::GetStdPressure(double altitude) const
 double FGStandardAtmosphere::GetStdDensity(double altitude) const
 {
   return GetStdPressure(altitude)/(Rdry * GetStdTemperature(altitude));
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the density, taking into account the water vapor in the air.
-
-double FGStandardAtmosphere::GetDensity(double altitude) const
-{
-  double P = GetPressure(altitude);
-  double Pa = P - VaporPressure; // Partial pressure of air
-
-  return (Pa/Rdry + VaporPressure/Rwater)/GetTemperature(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -572,19 +562,22 @@ double FGStandardAtmosphere::CalculateVaporPressure(double temperature)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGStandardAtmosphere::ValidateVaporPressure(double h)
+void FGStandardAtmosphere::ValidateVaporMassFraction(double h)
 {
-  constexpr double coeff = 1E6 * Mwater / Mair;
+  if (SaturatedVaporPressure < Pressure) {
+    double VaporPressure = Pressure*VaporMassFraction / (VaporMassFraction+Rdry/Rwater);
+    if (VaporPressure > SaturatedVaporPressure)
+      VaporMassFraction = Rdry * SaturatedVaporPressure / (Rwater * (Pressure - SaturatedVaporPressure));
+  }
 
-  if (VaporPressure > SaturatedVaporPressure)
-    VaporPressure = SaturatedVaporPressure;
-
-  double fraction = coeff*VaporPressure/(Pressure-VaporPressure);
   double GeoPotAlt = GeopotentialAltitude(h);
-  double maxFraction = MaxVaporMassFraction.GetValue(GeoPotAlt);
+  double maxFraction = 1E-6*MaxVaporMassFraction.GetValue(GeoPotAlt);
 
-  if ((fraction > maxFraction) || (fraction < 0.0))
-    VaporPressure = Pressure / (1.0 + coeff/maxFraction);
+  if ((VaporMassFraction > maxFraction) || (VaporMassFraction < 0.0))
+    VaporMassFraction = maxFraction;
+
+  // Update the gas constant factor
+  Reng = (VaporMassFraction*Rwater + Rdry)/(1.0 + VaporMassFraction);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -592,8 +585,9 @@ void FGStandardAtmosphere::ValidateVaporPressure(double h)
 void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
 {
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
-  VaporPressure = CalculateVaporPressure(ConvertToRankine(dewpoint, unit));
-  ValidateVaporPressure(altitude);
+  double VaporPressure = CalculateVaporPressure(ConvertToRankine(dewpoint, unit));
+  VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
+  ValidateVaporMassFraction(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -601,6 +595,7 @@ void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
 double FGStandardAtmosphere::GetDewPoint(eTemperature to) const
 {
   double dewpoint_degC;
+  double VaporPressure = Pressure*VaporMassFraction / (VaporMassFraction+Rdry/Rwater);
 
   if (VaporPressure <= 0.0)
     dewpoint_degC = -c;
@@ -617,14 +612,16 @@ double FGStandardAtmosphere::GetDewPoint(eTemperature to) const
 void FGStandardAtmosphere::SetVaporPressure(ePressure unit, double Pa)
 {
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
-  VaporPressure = ConvertToPSF(Pa, unit);
-  ValidateVaporPressure(altitude);
+  double VaporPressure = ConvertToPSF(Pa, unit);
+  VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
+  ValidateVaporMassFraction(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGStandardAtmosphere::GetVaporPressure(ePressure to) const
 {
+  double VaporPressure = Pressure*VaporMassFraction / (VaporMassFraction+Rdry/Rwater);
   return ConvertFromPSF(VaporPressure, to);
 }
 
@@ -639,6 +636,7 @@ double FGStandardAtmosphere::GetSaturatedVaporPressure(ePressure to) const
 
 double FGStandardAtmosphere::GetRelativeHumidity(void) const
 {
+  double VaporPressure = Pressure*VaporMassFraction / (VaporMassFraction+Rdry/Rwater);
   return 100.0*VaporPressure/SaturatedVaporPressure;
 }
 
@@ -647,8 +645,25 @@ double FGStandardAtmosphere::GetRelativeHumidity(void) const
 void FGStandardAtmosphere::SetRelativeHumidity(double RH)
 {
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
-  VaporPressure = 0.01*RH*SaturatedVaporPressure;
-  ValidateVaporPressure(altitude);
+  double VaporPressure = 0.01*RH*SaturatedVaporPressure;
+  VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
+  ValidateVaporMassFraction(altitude);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGStandardAtmosphere::GetVaporMassFractionPPM(void) const
+{
+  return VaporMassFraction*1E6;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGStandardAtmosphere::SetVaporMassFractionPPM(double frac)
+{
+  double altitude = CalculatePressureAltitude(Pressure, 0.0);
+  VaporMassFraction = frac*1E-6;
+  ValidateVaporMassFraction(altitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -677,6 +692,9 @@ void FGStandardAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/RH", this,
                        &FGStandardAtmosphere::GetRelativeHumidity,
                        &FGStandardAtmosphere::SetRelativeHumidity);
+  PropertyManager->Tie("atmosphere/vapor-fraction-ppm", this,
+                       &FGStandardAtmosphere::GetVaporMassFractionPPM,
+                       &FGStandardAtmosphere::SetVaporMassFractionPPM);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

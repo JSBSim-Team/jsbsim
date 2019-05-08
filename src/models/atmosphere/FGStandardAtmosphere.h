@@ -240,8 +240,6 @@ public:
   //@{
   /// Returns the standard density at a specified altitude
   virtual double GetStdDensity(double altitude) const;
-  /// Returns the standard density at a specified altitude
-  double GetDensity(double altitude) const override;
   //@}
 
   //  *************************************************************************
@@ -273,6 +271,11 @@ public:
   void SetRelativeHumidity(double RH);
   /// Returns the relative humidity in percent.
   double GetRelativeHumidity(void) const;
+  /** Sets the vapor mass per million of dry air mass units.
+      @param frac The fraction of water in ppm of dry air. */
+  void SetVaporMassFractionPPM(double frac);
+  /// Returns the vapor mass per million of dry air mass units (ppm).
+  double GetVaporMassFractionPPM(void) const;
   //@}
 
   /// Prints the U.S. Standard Atmosphere table.
@@ -285,7 +288,7 @@ protected:
   double TemperatureBias;
   double TemperatureDeltaGradient;
   double GradientFadeoutAltitude;
-  double VaporPressure;
+  double VaporMassFraction;
   double SaturatedVaporPressure;
 
   FGTable StdAtmosTemperatureTable;
@@ -342,8 +345,8 @@ protected:
   /// Calculate the pressure of water vapor with the Magnus formula.
   double CalculateVaporPressure(double temperature);
 
-  /// Validate the value of the vapor pressure
-  void ValidateVaporPressure(double geometricAlt);
+  /// Validate the value of the vapor mass fraction
+  void ValidateVaporMassFraction(double geometricAlt);
 
   /// Calculate the SL density
   void CalculateSLDensity(void) { SLdensity = SLpressure / (Reng * SLtemperature); }
