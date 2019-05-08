@@ -29,13 +29,7 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
-#include <iostream>
-#include <cstdlib>
-
-#include "FGJSBBase.h"
 #include "FGXMLParse.h"
-#include "FGXMLElement.h"
 #include "input_output/string_utilities.h"
 
 using namespace std;
@@ -46,31 +40,10 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-using namespace std;
-
-FGXMLParse::FGXMLParse(void)
-{
-  current_element = document = nullptr;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGXMLParse::startXML(void)
-{
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGXMLParse::reset(void)
 {
   current_element = document = nullptr;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGXMLParse::endXML(void)
-{
-  // At this point, document should equal current_element ?
+  working_string.erase();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,25 +61,24 @@ void FGXMLParse::dumpDataLines(void)
 
 void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
 {
-  string Name(name);
-  Element *temp_element;
-
   if (!document) {
-    document = new Element(Name);
+    document = new Element(name);
     current_element = document;
   } else {
     dumpDataLines();
 
-    temp_element = new Element(Name);
-    temp_element->SetParent(current_element);
-    current_element->AddChildElement(temp_element);
+    Element* temp_element = new Element(name);
+    if (temp_element) {
+      temp_element->SetParent(current_element);
+      current_element->AddChildElement(temp_element);
+    }
     current_element = temp_element;
   }
 
-  if (current_element == 0L) {
+  if (!current_element) {
     cerr << "In file " << getPath() << ": line " << getLine() << endl
          << "No current element read (running out of memory?)" << endl;
-    exit (-1);
+    throw("Fatal error");
   }
 
   current_element->SetLineNumber(getLine());
@@ -134,15 +106,10 @@ void FGXMLParse::data (const char * s, int length)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::pi (const char * target, const char * data)
-{
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGXMLParse::warning (const char * message, int line, int column)
 {
-  cerr << "Warning: " << message << " line: " << line << " column: " << column << endl;
+  cerr << "Warning: " << message << " line: " << line << " column: " << column
+       << endl;
 }
 
 } // end namespace JSBSim

@@ -55,7 +55,8 @@ class Element;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
+/** Encapsulates an XML parser based on the EasyXML parser from the SimGear
+    library.
     @author Jon S. Berndt
 */
 
@@ -66,23 +67,20 @@ CLASS DECLARATION
 class FGXMLParse : public XMLVisitor
 {
 public:
-  FGXMLParse(void);
+  FGXMLParse(void) : current_element(nullptr) {}
 
   Element* GetDocument(void) {return document;}
 
-  void startXML();
-  void endXML();
-  void startElement (const char * name, const XMLAttributes &atts);
-  void endElement (const char * name);
-  void data (const char * s, int length);
-  void pi (const char * target, const char * data);
-  void warning (const char * message, int line, int column);
+  void startElement (const char * name, const XMLAttributes &atts) override;
+  void endElement (const char * name) override;
+  void data (const char * s, int length) override;
+  void warning (const char * message, int line, int column) override;
   void reset(void);
 
 private:
   void dumpDataLines(void);
 
-  mutable std::string working_string;
+  std::string working_string;
   Element_ptr document;
   Element *current_element;
 };
