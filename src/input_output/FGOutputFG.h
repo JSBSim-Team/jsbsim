@@ -68,10 +68,21 @@ public:
 
   virtual void Print(void);
 
+  /** Evaluate the output directives from an XML file.
+      @param element XML Element that is pointing to the output directives
+  */
+  virtual bool Load(Element*);
+
 protected:
   virtual void PrintHeaders(void) {};
 
 private:
+
+  struct {
+    bool useSimTime;
+    double timeFactor;
+  } outputOptions;
+
   FGNetFDM fgSockBuf;
   void SocketDataFill(FGNetFDM* net);
 };

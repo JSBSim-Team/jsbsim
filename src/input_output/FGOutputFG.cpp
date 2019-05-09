@@ -44,6 +44,7 @@ INCLUDES
 
 #include "FGOutputFG.h"
 #include "FGFDMExec.h"
+#include "FGXMLElement.h"
 #include "models/FGAerodynamics.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
@@ -119,7 +120,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGOutputFG::FGOutputFG(FGFDMExec* fdmex) :
-  FGOutputSocket(fdmex)
+  FGOutputSocket(fdmex), outputOptions{false, 1e6}
 {
   memset(&fgSockBuf, 0x0, sizeof(fgSockBuf));
 
@@ -142,6 +143,35 @@ FGOutputFG::FGOutputFG(FGFDMExec* fdmex) :
            << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_WHEELS << " bogeys." << endl
            << "Only the first " << FGNetFDM::FG_MAX_WHEELS << " bogeys will be used." << endl;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutputFG::Load(Element* el)
+{
+  if (!FGOutputSocket::Load(el)) {
+    return false;
+  }
+
+  // Check if there is a <time> element
+  Element* time_el = el->FindElement("time");
+  if (time_el) {
+    // Check if the attribute "type" is specified and is set to "simulation"
+    if (time_el->HasAttribute("type") && time_el->GetAttributeValue("type") == "simulation") {
+      outputOptions.useSimTime = true;
+    }
+
+    // Check if the attribute "resolution" is specified and set to a valid value
+    if (time_el->HasAttribute("resolution")) {
+      if (time_el->GetAttributeValueAsNumber("resolution") <= 1 &&
+          time_el->GetAttributeValueAsNumber("resolution") >= 1e-9) {
+        outputOptions.timeFactor = 1./time_el->GetAttributeValueAsNumber("resolution");
+      } else {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +273,14 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   }
 
   // Environment
-  net->cur_time    = static_cast<uint32_t>(FDMExec->GetSimTime()*1e6);   // simulation time (not processed by FGFS)
+  if (outputOptions.useSimTime) {
+    // Send simulation time with specified resolution
+    net->cur_time    = static_cast<uint32_t>(FDMExec->GetSimTime()*outputOptions.timeFactor);
+  } else {
+    // Default to sending constant dummy value to ensure backwards-compatibility
+    net->cur_time = 1234567890u;
+  }
+  
   net->warp        = 0;                       // offset in seconds to unix time
   net->visibility  = 25000.0;                 // visibility in meters (for env. effects)
 
