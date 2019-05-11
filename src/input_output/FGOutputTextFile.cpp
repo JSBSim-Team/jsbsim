@@ -199,6 +199,7 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << delimeter;
     outstream << "Altitude ASL (ft)" + delimeter;
     outstream << "Altitude AGL (ft)" + delimeter;
+    outstream << "Altitude Geodetic (ft)" + delimeter;
     outstream << "Phi (deg)" + delimeter + "Theta (deg)" + delimeter + "Psi (deg)" + delimeter;
     outstream << "Q(1)_{LOCAL}" + delimeter + "Q(2)_{LOCAL}" + delimeter + "Q(3)_{LOCAL}" + delimeter + "Q(4)_{LOCAL}" +  delimeter;
     outstream << "Q(1)_{ECEF}" + delimeter + "Q(2)_{ECEF}" + delimeter + "Q(3)_{ECEF}" + delimeter + "Q(4)_{ECEF}" +  delimeter;
@@ -351,6 +352,7 @@ void FGOutputTextFile::Print(void)
     outstream << delimeter;
     outstream << Propagate->GetAltitudeASL() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
+    outstream << Propagate->GetGeodeticAltitude() << delimeter;
     outstream << (radtodeg*Propagate->GetEuler()).Dump(delimeter) << delimeter;
     outstream << Propagate->GetQuaternion().Dump(delimeter) << delimeter;
     FGQuaternion Qec = Propagate->GetQuaternionECEF();
