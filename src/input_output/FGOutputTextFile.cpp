@@ -212,7 +212,6 @@ bool FGOutputTextFile::OpenFile(void)
     outstream << "X_{ECI} (ft)" + delimeter + "Y_{ECI} (ft)" + delimeter + "Z_{ECI} (ft)" + delimeter;
     outstream << "X_{ECEF} (ft)" + delimeter + "Y_{ECEF} (ft)" + delimeter + "Z_{ECEF} (ft)" + delimeter;
     outstream << "Earth Position Angle (deg)" + delimeter;
-    outstream << "Distance AGL (ft)" + delimeter;
     outstream << "Terrain Elevation (ft)";
   }
   if (SubSystems & ssAeroFunctions) {
@@ -368,7 +367,6 @@ void FGOutputTextFile::Print(void)
     outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;
     outstream.precision(14);
     outstream << Propagate->GetEarthPositionAngleDeg() << delimeter;
-    outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << Propagate->GetTerrainElevation();
     outstream.precision(10);
   }
