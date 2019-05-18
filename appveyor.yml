@@ -41,11 +41,11 @@ build_script:
 
 test_script:
 # Check that the Python module correctly installs
-- pip install python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
+- pip install python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
-- pip install python\dist\JSBSim-1.0.0.dev1.tar.gz
+- pip install python\dist\JSBSim-1.1.0.dev1.tar.gz
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 
 on_failure:
@@ -61,7 +61,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: Rolling_Release_x64_v2019
 
-- path: build\python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
+- path: build\python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
@@ -76,7 +76,7 @@ deploy:
   description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.0.0.dev1-cp37-cp37m-win_amd64.whl
+  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
   prerelease: true
   on:
     branch: master
