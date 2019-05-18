@@ -66,6 +66,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
   mJ.InitMatrix();
   mJinv.InitMatrix();
   pmJ.InitMatrix();
+  Propagate = fdmex->GetPropagate();
 
   bind();
 
@@ -76,8 +77,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance()
 {
-  for (unsigned int i=0; i<PointMasses.size(); i++) delete PointMasses[i];
-  PointMasses.clear();
+  for(auto pm: PointMasses) delete pm;
 
   Debug(1);
 }
@@ -205,7 +205,9 @@ bool FGMassBalance::Run(bool Holding)
   vDeltaXYZcg = vXYZcg - vLastXYZcg;
   vDeltaXYZcgBody = StructuralToBody(vLastXYZcg) - StructuralToBody(vXYZcg);
   vLastXYZcg = vXYZcg;
-  FDMExec->GetPropagate()->NudgeBodyLocation(vDeltaXYZcgBody);
+
+  if (FDMExec->GetHoldDown())
+    Propagate->NudgeBodyLocation(vDeltaXYZcgBody);
 
 // Calculate new total moments of inertia
 
@@ -312,9 +314,9 @@ double FGMassBalance::GetTotalPointMassWeight(void) const
 {
   double PM_total_weight = 0.0;
 
-  for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PM_total_weight += PointMasses[i]->Weight;
-  }
+  for(auto pm: PointMasses)
+    PM_total_weight += pm->Weight;
+
   return PM_total_weight;
 }
 
@@ -324,9 +326,9 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 {
   PointMassCG.InitMatrix();
 
-  for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PointMassCG += PointMasses[i]->Weight*PointMasses[i]->Location;
-  }
+  for (auto pm: PointMasses)
+    PointMassCG += pm->Weight * pm->Location;
+
   return PointMassCG;
 }
 
@@ -334,15 +336,13 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 const FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
-  size_t size = PointMasses.size();
-
-  if (size == 0) return pmJ;
+  if (PointMasses.empty()) return pmJ;
 
   pmJ = FGMatrix33();
 
-  for (unsigned int i=0; i<size; i++) {
-    pmJ += GetPointmassInertia( lbtoslug * PointMasses[i]->Weight, PointMasses[i]->Location );
-    pmJ += PointMasses[i]->GetPointMassInertia();
+  for (auto pm: PointMasses) {
+    pmJ += GetPointmassInertia( lbtoslug * pm->Weight, pm->Location );
+    pmJ += pm->GetPointMassInertia();
   }
 
   return pmJ;
