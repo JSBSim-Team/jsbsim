@@ -19,15 +19,15 @@
 #ifndef JSBSim_FGStateSpace_H
 #define JSBSim_FGStateSpace_H
 
-#include "FGFDMExec.h"
-#include "models/FGPropulsion.h"
-#include "models/FGAccelerations.h"
-#include "models/propulsion/FGEngine.h"
-#include "models/propulsion/FGThruster.h"
-#include "models/propulsion/FGTurbine.h"
-#include "models/propulsion/FGTurboProp.h"
-#include "models/FGAuxiliary.h"
-#include "models/FGFCS.h"
+#include "../FGFDMExec.h"
+#include "../models/FGPropulsion.h"
+#include "../models/FGAccelerations.h"
+#include "../models/propulsion/FGEngine.h"
+#include "../models/propulsion/FGThruster.h"
+#include "../models/propulsion/FGTurbine.h"
+#include "../models/propulsion/FGTurboProp.h"
+#include "../models/FGAuxiliary.h"
+#include "../models/FGFCS.h"
 #include <fstream>
 #include <iostream>
 #include <limits>

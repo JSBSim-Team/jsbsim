@@ -41,8 +41,8 @@ INCLUDES
 #include <vector>
 #include <map>
 
-#include "simgear/props/props.hxx"
-#include "input_output/FGPropertyManager.h"
+#include "../simgear/props/props.hxx"
+#include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

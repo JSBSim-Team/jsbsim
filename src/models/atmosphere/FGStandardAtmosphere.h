@@ -40,8 +40,8 @@ INCLUDES
 
 #include <vector>
 
-#include "math/FGTable.h"
-#include "models/FGAtmosphere.h"
+#include "../../math/FGTable.h"
+#include "../FGAtmosphere.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

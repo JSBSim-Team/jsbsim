@@ -50,8 +50,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
-#include "FGJSBBase.h"
+#include "../FGFDMExec.h"
+#include "../FGJSBBase.h"
 #include "FGTrimAxis.h"
 
 #include <vector>

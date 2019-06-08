@@ -41,7 +41,7 @@ INCLUDES
 #include <string>
 
 #include "FGXMLElement.h"
-#include "simgear/misc/sg_path.hxx"
+#include "../simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

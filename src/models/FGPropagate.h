@@ -38,11 +38,11 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "models/FGModel.h"
-#include "math/FGColumnVector3.h"
-#include "math/FGLocation.h"
-#include "math/FGQuaternion.h"
-#include "math/FGMatrix33.h"
+#include "FGModel.h"
+#include "../math/FGColumnVector3.h"
+#include "../math/FGLocation.h"
+#include "../math/FGQuaternion.h"
+#include "../math/FGMatrix33.h"
 #include <deque>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

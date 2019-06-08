@@ -42,12 +42,12 @@ INCLUDES
 #endif
 
 #include <string>
-#include "simgear/props/propertyObject.hxx"
+#include "../simgear/props/propertyObject.hxx"
 #if !PROPS_STANDALONE
-# include "simgear/math/SGMath.hxx"
+# include "../simgear/math/SGMath.hxx"
 #endif
 
-#include "FGJSBBase.h"
+#include "../FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

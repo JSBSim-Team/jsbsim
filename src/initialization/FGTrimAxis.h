@@ -40,8 +40,8 @@ INCLUDES
 
 #include <string>
 
-#include "FGFDMExec.h"
-#include "FGJSBBase.h"
+#include "../FGFDMExec.h"
+#include "../FGJSBBase.h"
 #include "FGInitialCondition.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

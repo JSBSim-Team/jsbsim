@@ -43,9 +43,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "FGFDMExec.h"
-#include "input_output/FGPropertyManager.h"
+#include "../../FGJSBBase.h"
+#include "../../FGFDMExec.h"
+#include "../../input_output/FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

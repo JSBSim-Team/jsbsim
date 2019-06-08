@@ -19,9 +19,9 @@
 #ifndef JSBSim_FGTrimmer_H
 #define JSBSim_FGTrimmer_H
 
-#include "math/FGNelderMead.h"
-#include "FGFDMExec.h"
-#include "models/FGInertial.h"
+#include "../math/FGNelderMead.h"
+#include "../FGFDMExec.h"
+#include "../models/FGInertial.h"
 
 namespace JSBSim
 {

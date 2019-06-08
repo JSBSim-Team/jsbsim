@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGGasCell.h"
-#include "math/FGColumnVector3.h"
+#include "../math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

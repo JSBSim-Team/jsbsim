@@ -47,9 +47,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "math/FGLocation.h"
-#include "math/FGQuaternion.h"
-#include "simgear/misc/sg_path.hxx"
+#include "../math/FGLocation.h"
+#include "../math/FGQuaternion.h"
+#include "../simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

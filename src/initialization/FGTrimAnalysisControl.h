@@ -46,9 +46,9 @@ INCLUDES
 
 #include <string>
 
-#include "FGFDMExec.h"
-#include "FGJSBBase.h"
-#include "initialization/FGInitialCondition.h"
+#include "../FGFDMExec.h"
+#include "../FGJSBBase.h"
+#include "FGInitialCondition.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS

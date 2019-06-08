@@ -44,7 +44,7 @@ INCLUDES
 
 #include <vector>
 #include "FGEngine.h"
-#include "math/FGTable.h"
+#include "../../math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

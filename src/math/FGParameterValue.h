@@ -36,9 +36,9 @@
 
 #include <stdexcept>
 
-#include "math/FGRealValue.h"
-#include "math/FGPropertyValue.h"
-#include "input_output/FGXMLElement.h"
+#include "FGRealValue.h"
+#include "FGPropertyValue.h"
+#include "../input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   FORWARD DECLARATIONS

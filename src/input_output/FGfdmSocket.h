@@ -42,7 +42,7 @@ INCLUDES
 #include <string>
 #include <sstream>
 #include <sys/types.h>
-#include "FGJSBBase.h"
+#include "../FGJSBBase.h"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
   #include <winsock.h>

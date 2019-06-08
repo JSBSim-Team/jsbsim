@@ -38,8 +38,8 @@ INCLUDES
 #include <map>
 #include <vector>
 
-#include "simgear/structure/SGSharedPtr.hxx"
-#include "math/FGColumnVector3.h"
+#include "../simgear/structure/SGSharedPtr.hxx"
+#include "../math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

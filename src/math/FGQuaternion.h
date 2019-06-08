@@ -41,7 +41,7 @@ SENTRY
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
-#include "FGJSBBase.h"
+#include "../FGJSBBase.h"
 #include "FGColumnVector3.h"
 
 namespace JSBSim {

@@ -40,9 +40,9 @@ INCLUDES
 
 #include <string>
 
-#include "models/propulsion/FGForce.h"
-#include "math/FGColumnVector3.h"
-#include "math/LagrangeMultiplier.h"
+#include "propulsion/FGForce.h"
+#include "../math/FGColumnVector3.h"
+#include "../math/LagrangeMultiplier.h"
 #include "FGSurface.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,7 +41,7 @@ INCLUDES
 #include <string>
 
 #include "FGModel.h"
-#include "math/FGMatrix33.h"
+#include "../math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

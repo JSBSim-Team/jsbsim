@@ -40,10 +40,10 @@ INCLUDES
 #include <vector>
 #include <map>
 
-#include "FGJSBBase.h"
+#include "../FGJSBBase.h"
 #include "FGPropertyReader.h"
-#include "input_output/FGPropertyManager.h"
-#include "simgear/misc/sg_path.hxx"
+#include "FGPropertyManager.h"
+#include "../simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

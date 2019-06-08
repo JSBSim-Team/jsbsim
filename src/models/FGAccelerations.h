@@ -40,10 +40,10 @@ INCLUDES
 
 #include <vector>
 
-#include "models/FGModel.h"
-#include "math/FGColumnVector3.h"
-#include "math/LagrangeMultiplier.h"
-#include "math/FGMatrix33.h"
+#include "FGModel.h"
+#include "../math/FGColumnVector3.h"
+#include "../math/LagrangeMultiplier.h"
+#include "../math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

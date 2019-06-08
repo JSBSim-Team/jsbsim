@@ -49,26 +49,26 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
-#include "FGJSBBase.h"
+#include "../FGFDMExec.h"
+#include "../FGJSBBase.h"
 #include "FGTrimAnalysisControl.h"
 
-#include "models/FGAtmosphere.h"
-#include "initialization/FGInitialCondition.h"
-#include "models/FGAircraft.h"
-#include "models/FGMassBalance.h"
-#include "models/FGGroundReactions.h"
-#include "models/FGInertial.h"
-#include "models/FGAerodynamics.h"
-#include "math/FGColumnVector3.h"
-#include "models/FGAuxiliary.h"
-#include "models/FGPropulsion.h"
+#include "../models/FGAtmosphere.h"
+#include "FGInitialCondition.h"
+#include "../models/FGAircraft.h"
+#include "../models/FGMassBalance.h"
+#include "../models/FGGroundReactions.h"
+#include "../models/FGInertial.h"
+#include "../models/FGAerodynamics.h"
+#include "../math/FGColumnVector3.h"
+#include "../models/FGAuxiliary.h"
+#include "../models/FGPropulsion.h"
 
 #include <vector>
 #include <map>
 #include <string>
 
-#include "math/direct_search/vec.h"
+#include "../math/direct_search/vec.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS

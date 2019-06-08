@@ -19,15 +19,15 @@
 #ifndef FGSimplexTrim_H_
 #define FGSimplexTrim_H_
 
-#include "initialization/FGTrimmer.h"
-#include "math/FGStateSpace.h"
+#include "FGTrimmer.h"
+#include "../math/FGStateSpace.h"
 #include <iomanip>
 #include <fstream>
-#include "models/FGAircraft.h"
-#include "models/propulsion/FGEngine.h"
-#include "models/propulsion/FGTurbine.h"
-#include "models/propulsion/FGTurboProp.h"
-#include "math/FGNelderMead.h"
+#include "../models/FGAircraft.h"
+#include "../models/propulsion/FGEngine.h"
+#include "../models/propulsion/FGTurbine.h"
+#include "../models/propulsion/FGTurboProp.h"
+#include "../math/FGNelderMead.h"
 #include <stdexcept>
 #include <fstream>
 #include <cstdlib>

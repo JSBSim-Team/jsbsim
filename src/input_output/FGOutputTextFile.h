@@ -41,7 +41,7 @@ INCLUDES
 #include <fstream>
 
 #include "FGOutputFile.h"
-#include "simgear/io/iostreams/sgstream.hxx"
+#include "../simgear/io/iostreams/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

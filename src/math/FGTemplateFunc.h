@@ -34,8 +34,8 @@
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "math/FGFunction.h"
-#include "math/FGPropertyValue.h"
+#include "FGFunction.h"
+#include "FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   FORWARD DECLARATIONS

@@ -38,8 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "simgear/structure/SGReferenced.hxx"
-#include "simgear/structure/SGSharedPtr.hxx"
+#include "../simgear/structure/SGReferenced.hxx"
+#include "../simgear/structure/SGSharedPtr.hxx"
 
 namespace JSBSim {
 

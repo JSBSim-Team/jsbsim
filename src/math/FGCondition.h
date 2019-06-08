@@ -39,8 +39,8 @@ INCLUDES
 
 #include <map>
 
-#include "FGJSBBase.h"
-#include "math/FGPropertyValue.h"
+#include "../FGJSBBase.h"
+#include "FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

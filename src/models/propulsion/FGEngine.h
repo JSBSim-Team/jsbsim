@@ -46,8 +46,8 @@ INCLUDES
 #include <vector>
 #include <string>
 
-#include "math/FGModelFunctions.h"
-#include "math/FGColumnVector3.h"
+#include "../../math/FGModelFunctions.h"
+#include "../../math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

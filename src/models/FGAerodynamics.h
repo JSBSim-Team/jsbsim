@@ -43,9 +43,9 @@ INCLUDES
 #include <map>
 
 #include "FGModel.h"
-#include "math/FGFunction.h"
-#include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
+#include "../math/FGFunction.h"
+#include "../math/FGColumnVector3.h"
+#include "../math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

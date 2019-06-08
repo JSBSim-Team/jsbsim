@@ -38,9 +38,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
-#include "input_output/FGXMLElement.h"
-#include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
+#include "../../input_output/FGXMLElement.h"
+#include "../../math/FGColumnVector3.h"
+#include "../../math/FGMatrix33.h"
 
 #include <iostream>
 

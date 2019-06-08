@@ -42,10 +42,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
+#include "../FGJSBBase.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
-#include "input_output/FGGroundCallback.h"
+#include "../input_output/FGGroundCallback.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

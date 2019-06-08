@@ -39,10 +39,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "math/FGColumnVector3.h"
-#include "models/propulsion/FGForce.h"
-#include "math/FGFunction.h"
+#include "../FGJSBBase.h"
+#include "../math/FGColumnVector3.h"
+#include "propulsion/FGForce.h"
+#include "../math/FGFunction.h"
 
 #include <string>
 

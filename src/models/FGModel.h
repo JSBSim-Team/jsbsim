@@ -40,8 +40,8 @@ INCLUDES
 
 #include <string>
 
-#include "math/FGModelFunctions.h"
-#include "simgear/misc/sg_path.hxx"
+#include "../math/FGModelFunctions.h"
+#include "../simgear/misc/sg_path.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

@@ -41,10 +41,10 @@ INCLUDES
 #include <vector>
 #include <iosfwd>
 
-#include "simgear/props/propertyObject.hxx"
+#include "../simgear/props/propertyObject.hxx"
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
-#include "math/FGMatrix33.h"
+#include "../math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

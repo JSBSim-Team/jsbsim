@@ -38,9 +38,9 @@ INCLUDES
 #include <iostream>
 #include <fstream>
 
-#include "input_output/FGXMLParse.h"
-#include "simgear/misc/sg_path.hxx"
-#include "simgear/io/iostreams/sgstream.hxx"
+#include "FGXMLParse.h"
+#include "../simgear/misc/sg_path.hxx"
+#include "../simgear/io/iostreams/sgstream.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

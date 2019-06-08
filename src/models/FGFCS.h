@@ -42,9 +42,9 @@ INCLUDES
 #include <vector>
 #include <string>
 
-#include "models/FGModel.h"
-#include "models/FGLGear.h"
-#include "models/FGGroundReactions.h"
+#include "FGModel.h"
+#include "FGLGear.h"
+#include "FGGroundReactions.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

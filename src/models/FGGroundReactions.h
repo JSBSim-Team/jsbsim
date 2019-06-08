@@ -43,7 +43,7 @@ INCLUDES
 #include "FGSurface.h"
 #include "FGModel.h"
 #include "FGLGear.h"
-#include "math/FGColumnVector3.h"
+#include "../math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
