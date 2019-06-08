@@ -276,7 +276,7 @@ void CableControls::set(const float* cg_loc)
             }
             break;
         case 1:
-            Vt = 1.1*Vs;
+            Vt = 1.1f*Vs;
             Q = 0.5f*rho*Vs*Vs;
             CL = W/Q/Sw;
             break;

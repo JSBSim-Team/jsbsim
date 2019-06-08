@@ -182,7 +182,7 @@ void  Propeller::bladeElement()
     do
     {
         float step = 0.05f;
-        for (float J=1e-9; J<2.4f; J += step)
+        for (float J=1e-9f; J<2.4f; J += step)
         {
             _ixx = 0.0f;
 
@@ -209,7 +209,7 @@ void  Propeller::bladeElement()
                 float AR = rstep/chord;
                 float PAR = PI*AR;
 
-                float eff = 0.71 + (i*0.23f/NUM_ELEMENTS);
+                float eff = 0.71f + (i*0.23f/NUM_ELEMENTS);
                 float CL0 = 4.0f*PI*CC;
                 float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
                 float CDi = 1.0f/(eff*B*PAR);
@@ -455,7 +455,7 @@ std::string Propeller::roll()
 //  float TR = aircraft->_wing.taper;
 
     // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
-    float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
+    float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0f);
     
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Roll_differential_propwash\">" << std::endl;
@@ -578,7 +578,7 @@ std::string Propeller::thruster()
         file << " <!-- power coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        unsigned size = _performance.size()/_pitch_levels;
+        size_t size = _performance.size()/_pitch_levels;
         file << std::setw(16) << "";
         for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
             file << std::setw(10) << -15+int(p*15);
@@ -633,7 +633,7 @@ float const Propeller::_CL_t[180] = {
     -0.05, -0.185, -0.32, -0.45, -0.575, -0.67, -0.76, -0.85, -0.93, -0.98,
     -0.9, -0.77, -0.67, -0.635, -0.68, -0.85, -0.66, 0.0
 #else
-    0.2500,
+0.2500,
 0.3800,
 0.5100,
 0.6400,
