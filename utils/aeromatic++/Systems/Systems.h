@@ -68,7 +68,7 @@ public:
     virtual std::string pitch() { return ""; }
     virtual std::string yaw() { return ""; }
 
-    unsigned no_descriptors() {
+    size_t no_descriptors() {
         return _description.size();
     }
 

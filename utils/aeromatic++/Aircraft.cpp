@@ -69,7 +69,7 @@ const char*
 Aircraft::get_verbose_description(int no_engines)
 {
     static char desc[1024];
-    int num = _subclasses.size();
+    size_t num = _subclasses.size();
     std::string rv;
 
     if (no_engines < 0 || num == 0) {
@@ -79,7 +79,7 @@ Aircraft::get_verbose_description(int no_engines)
 
     if (num)
     {
-        for (int i=0; i<num; i++) {
+        for (size_t i=0; i<num; i++) {
             rv += _subclasses[i];
             if (i < (num-1)) rv += ", ";
         }
