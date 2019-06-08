@@ -539,7 +539,7 @@ std::string Propeller::thruster()
         file << " <!-- thrust coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "      <tableData>" << std::endl;
-        unsigned size = _performance.size()/_pitch_levels;
+        size_t size = _performance.size()/_pitch_levels;
         file << std::setw(16) << "";
         for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
             file << std::setw(10) << -15+int(p*15);
