@@ -57,9 +57,9 @@ namespace boost {
 # include <boost/utility.hpp>
 # include <boost/type_traits/is_enum.hpp>
 
-# include <simgear/debug/logstream.hxx>
-# include <simgear/math/SGMathFwd.hxx>
-# include <simgear/math/sg_types.hxx>
+# include "../debug/logstream.hxx"
+# include "../math/SGMathFwd.hxx"
+# include "../math/sg_types.hxx"
 #endif
 #include "../structure/SGReferenced.hxx"
 #include "../structure/SGSharedPtr.hxx"
