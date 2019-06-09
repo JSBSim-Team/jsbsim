@@ -21,7 +21,7 @@
 #include <sstream>
 #include <typeinfo>
 
-#include <simgear/compiler.h>
+#include "../compiler.h"
 #if PROPS_STANDALONE
 // taken from: boost/utility/enable_if.hpp
 #ifndef SG_LOG
@@ -61,8 +61,8 @@ namespace boost {
 # include <simgear/math/SGMathFwd.hxx>
 # include <simgear/math/sg_types.hxx>
 #endif
-#include <simgear/structure/SGReferenced.hxx>
-#include <simgear/structure/SGSharedPtr.hxx>
+#include "../structure/SGReferenced.hxx"
+#include "../structure/SGSharedPtr.hxx"
 
 // XXX This whole file should be in the simgear namespace, but I don't
 // have the guts yet...

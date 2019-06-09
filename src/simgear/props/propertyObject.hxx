@@ -18,7 +18,7 @@
 #ifndef SG_PROPERTY_OBJECT
 #define SG_PROPERTY_OBJECT
 
-#include <simgear/props/props.hxx>
+#include "props.hxx"
 
 namespace simgear
 {

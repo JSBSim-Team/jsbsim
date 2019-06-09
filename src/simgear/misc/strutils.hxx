@@ -26,7 +26,7 @@
 #ifndef STRUTILS_H
 #define STRUTILS_H
 
-#include <simgear/compiler.h>
+#include "../compiler.h"
 
 #include <string>
 #include <vector>

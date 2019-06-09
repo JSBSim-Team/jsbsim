@@ -13,7 +13,7 @@
 
 
 #include <time.h> // time_t
-#include <simgear/misc/stdint.hxx>
+#include "../simgear/misc/stdint.hxx"
 
 // NOTE: this file defines an external interface structure.  Due to
 // variability between platforms and architectures, we only used fixed

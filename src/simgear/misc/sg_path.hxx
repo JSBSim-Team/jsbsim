@@ -29,7 +29,7 @@
 
 #include <sys/types.h>
 
-#include <simgear/compiler.h>
+#include "../compiler.h"
 #include <string>
 #include <ctime>
 #include <vector>
