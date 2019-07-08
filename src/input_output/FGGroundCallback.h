@@ -7,21 +7,21 @@
  ------ Copyright (C) 2004 Mathias Froehlich (Mathias.Froehlich@web.de) -------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 -------------------------------------------------------------------------------
@@ -38,7 +38,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "simgear/structure/SGReferenced.hxx"
 #include "simgear/structure/SGSharedPtr.hxx"
 
 namespace JSBSim {
@@ -124,13 +123,7 @@ public:
       Only needs to be implemented if JSBSim should be allowed
       to modify the local terrain radius (see the default implementation)
    */
-  virtual void SetTerrainGeoCentRadius(double radius)  { }
-
-  /** Set the sea level radius.
-      Only needs to be implemented if JSBSim should be allowed
-      to modify the sea level radius (see the default implementation)
-   */
-  virtual void SetSeaLevelRadius(double radius) {  }
+  virtual void SetTerrainGeoCentRadius(double radius)  {}
 
   void SetTime(double _time) { time = _time; }
 
@@ -149,21 +142,21 @@ class FGDefaultGroundCallback : public FGGroundCallback
 public:
 
    // This should not be hardcoded, but retrieved from FGInertial
-   FGDefaultGroundCallback(double referenceRadius);
+   explicit FGDefaultGroundCallback(double referenceRadius);
 
-   double GetAltitude(const FGLocation& l) const;
+   double GetAltitude(const FGLocation& l) const override;
 
    double GetAGLevel(double t, const FGLocation& location,
                      FGLocation& contact,
                      FGColumnVector3& normal, FGColumnVector3& v,
-                     FGColumnVector3& w) const;
+                     FGColumnVector3& w) const override;
 
-   void SetTerrainGeoCentRadius(double radius)  {  mTerrainLevelRadius = radius;}
-   double GetTerrainGeoCentRadius(double t, const FGLocation& location) const
+   void SetTerrainGeoCentRadius(double radius) override
+  {  mTerrainLevelRadius = radius;}
+   double GetTerrainGeoCentRadius(double t, const FGLocation& location) const override
    { return mTerrainLevelRadius; }
 
-   void SetSeaLevelRadius(double radius) { mSeaLevelRadius = radius;   }
-   double GetSeaLevelRadius(const FGLocation& location) const
+   double GetSeaLevelRadius(const FGLocation& location) const override
    {return mSeaLevelRadius; }
 
 private:
