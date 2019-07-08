@@ -68,11 +68,6 @@ public:
   FGGroundCallback() : time(0.0) {}
   virtual ~FGGroundCallback() {}
 
-  /** Compute the altitude above sealevel
-      @param l location
-   */
-  virtual double GetAltitude(const FGLocation& l) const = 0;
-
   /** Compute the altitude above ground.
       The altitude depends on time t and location l.
       @param t simulation time
@@ -143,8 +138,6 @@ public:
 
    // This should not be hardcoded, but retrieved from FGInertial
    explicit FGDefaultGroundCallback(double referenceRadius);
-
-   double GetAltitude(const FGLocation& l) const override;
 
    double GetAGLevel(double t, const FGLocation& location,
                      FGLocation& contact,

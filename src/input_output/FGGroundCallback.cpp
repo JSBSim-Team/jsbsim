@@ -47,13 +47,6 @@ FGDefaultGroundCallback::FGDefaultGroundCallback(double referenceRadius)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGDefaultGroundCallback::GetAltitude(const FGLocation& loc) const
-{
-  return loc.GetRadius() - mSeaLevelRadius;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGDefaultGroundCallback::GetAGLevel(double t, const FGLocation& loc,
                                     FGLocation& contact, FGColumnVector3& normal,
                                     FGColumnVector3& vel, FGColumnVector3& angularVel) const
