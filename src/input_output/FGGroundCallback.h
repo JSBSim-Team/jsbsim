@@ -122,7 +122,7 @@ public:
 
   void SetTime(double _time) { time = _time; }
 
-private:
+protected:
   double time;
 };
 
@@ -135,25 +135,23 @@ typedef SGSharedPtr<FGGroundCallback> FGGroundCallback_ptr;
 class FGDefaultGroundCallback : public FGGroundCallback
 {
 public:
+  explicit FGDefaultGroundCallback(double referenceRadius) :
+    mSeaLevelRadius(referenceRadius), mTerrainLevelRadius(referenceRadius) {}
 
-   // This should not be hardcoded, but retrieved from FGInertial
-   explicit FGDefaultGroundCallback(double referenceRadius);
+  double GetAGLevel(double t, const FGLocation& location,
+                    FGLocation& contact,
+                    FGColumnVector3& normal, FGColumnVector3& v,
+                    FGColumnVector3& w) const override;
 
-   double GetAGLevel(double t, const FGLocation& location,
-                     FGLocation& contact,
-                     FGColumnVector3& normal, FGColumnVector3& v,
-                     FGColumnVector3& w) const override;
-
-   void SetTerrainGeoCentRadius(double radius) override
+  void SetTerrainGeoCentRadius(double radius) override
   {  mTerrainLevelRadius = radius;}
-   double GetTerrainGeoCentRadius(double t, const FGLocation& location) const override
-   { return mTerrainLevelRadius; }
+  double GetTerrainGeoCentRadius(double t, const FGLocation& location) const override
+  { return mTerrainLevelRadius; }
 
-   double GetSeaLevelRadius(const FGLocation& location) const override
-   {return mSeaLevelRadius; }
+  double GetSeaLevelRadius(const FGLocation& location) const override
+  {return mSeaLevelRadius; }
 
 private:
-
    double mSeaLevelRadius;
    double mTerrainLevelRadius;
 };
