@@ -10,28 +10,29 @@
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 This class encapsulates the calculation of the derivatives of the state vectors
 UVW and PQR - the translational and rotational rates relative to the planet
 fixed frame. The derivatives relative to the inertial frame are also calculated
-as a side effect. Also, the derivative of the attitude quaterion is also calculated.
+as a side effect. Also, the derivative of the attitude quaterion is also
+calculated.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -54,7 +55,6 @@ INCLUDES
 
 #include "FGAccelerations.h"
 #include "FGFDMExec.h"
-#include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
@@ -69,13 +69,11 @@ FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
 {
   Debug(0);
   Name = "FGAccelerations";
-  gravType = gtWGS84;
   gravTorque = false;
 
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
   vUVWdot.InitMatrix();
-  vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
 
   bind();
@@ -98,7 +96,6 @@ bool FGAccelerations::InitModel(void)
   vPQRidot.InitMatrix();
   vUVWidot.InitMatrix();
   vUVWdot.InitMatrix();
-  vGravAccel.InitMatrix();
   vBodyAccel.InitMatrix();
 
   return true;
@@ -147,7 +144,7 @@ void FGAccelerations::CalculatePQRdot(void)
     FGColumnVector3 R = in.Ti2b * in.vInertialPosition;
     double invRadius = 1.0 / R.Magnitude();
     R *= invRadius;
-    in.Moment += (3.0 * in.GAccel * invRadius) * (R * (in.J * R));
+    in.Moment += (3.0 * in.vGravAccel.Magnitude() * invRadius) * (R * (in.J * R));
   }
 
   // Compute body frame rotational accelerations based on the current body
@@ -195,19 +192,6 @@ void FGAccelerations::CalculateUVWdot(void)
   // Include Centripetal acceleration.
   vUVWdot -= in.Ti2b * (in.vOmegaPlanet * (in.vOmegaPlanet * in.vInertialPosition));
 
-  // Include Gravitation accel
-  switch (gravType) {
-  case gtStandard:
-    {
-      double radius = in.vInertialPosition.Magnitude();
-      vGravAccel = -(in.GAccel / radius) * in.vInertialPosition;
-    }
-    break;
-  case gtWGS84:
-    vGravAccel = in.Tec2i * in.J2Grav;
-    break;
-  }
-
   if (FDMExec->GetHoldDown()) {
     // The acceleration in ECI is calculated so that the acceleration is zero
     // in the body frame.
@@ -215,8 +199,8 @@ void FGAccelerations::CalculateUVWdot(void)
     vUVWdot.InitMatrix();
   }
   else {
-    vUVWdot += in.Ti2b * vGravAccel;
-    vUVWidot = in.Tb2i * vBodyAccel + vGravAccel;
+    vUVWdot += in.Tec2b * in.vGravAccel;
+    vUVWidot = in.Tb2i * vBodyAccel + in.Tec2i * in.vGravAccel;
   }
 }
 
@@ -370,7 +354,6 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
-  PropertyManager->Tie("simulation/gravity-model", &gravType);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
   PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, (PMF)&FGAccelerations::GetWeight);
   PropertyManager->Tie("forces/fby-weight-lbs", this, eY, (PMF)&FGAccelerations::GetWeight);

@@ -726,7 +726,7 @@ bool FGTrim::checkLimits(FGTrimAxis& axis)
 
 void FGTrim::setupPullup() {
   double g,q,cgamma;
-  g=fdmex->GetInertial()->gravity();
+  g=fdmex->GetInertial()->GetGravity().Magnitude();
   cgamma=cos(fgic.GetFlightPathAngleRadIC());
   cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
        << fgic.GetVtrueFpsIC() << endl;
@@ -744,7 +744,7 @@ void FGTrim::setupTurn(void){
   phi = fgic.GetPhiRadIC();
   if( fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
     targetNlf = 1 / cos(phi);
-    g = fdmex->GetInertial()->gravity();
+    g = fdmex->GetInertial()->GetGravity().Magnitude();
     psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
     cout << targetNlf << ", " << psidot << endl;
   }
@@ -756,7 +756,7 @@ void FGTrim::setupTurn(void){
 void FGTrim::updateRates(void){
   if( mode == tTurn ) {
     double phi = fgic.GetPhiRadIC();
-    double g = fdmex->GetInertial()->gravity();
+    double g = fdmex->GetInertial()->GetGravity().Magnitude();
     double p,q,r,theta;
     if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
       theta=fgic.GetThetaRadIC();
@@ -773,7 +773,7 @@ void FGTrim::updateRates(void){
     fgic.SetRRadpsIC(r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
       double g,q,cgamma;
-      g=fdmex->GetInertial()->gravity();
+      g=fdmex->GetInertial()->GetGravity().Magnitude();
       cgamma=cos(fgic.GetFlightPathAngleRadIC());
       q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
       fgic.SetQRadpsIC(q);

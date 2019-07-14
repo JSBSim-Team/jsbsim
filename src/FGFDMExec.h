@@ -596,7 +596,6 @@ public:
   }
 
 private:
-  int Error;
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
