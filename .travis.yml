@@ -22,13 +22,14 @@ addons:
       - doxygen
       - graphviz
       - cxxtest
+      - lcov
 before_install:
   - pip install cython numpy pandas scipy
   - gem install gist
   - mkdir build
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
-  - make -j2
+  - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make -j2 CFLAGS="--coverage"; else make -j2; fi
   - python python/setup.py sdist
   - python python/setup.py build_scripts
   - python python/setup.py bdist_wheel --skip-build
@@ -47,6 +48,7 @@ after_success:
   - export TRAVIS_TAG=Rolling-release-v2019
 # Build the API documentation with Doxygen (skip if we are building a pull request)
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
+  - ./../tests/unit_tests/test_coverage.sh
 
 # If the build fails, the tests log will be uploaded to a gist under my account
 # (bcoconni) so that they can be deleted when irrelevant. The output of the
