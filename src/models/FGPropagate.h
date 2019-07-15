@@ -422,9 +422,15 @@ public:
       */
   double GetLocalTerrainRadius(void) const;
 
-  double GetEarthPositionAngle(void) const { return VState.vLocation.GetEPA(); }
+  /** Returns the Earth position angle.
+      @return Earth position angle in radians.
+   */
+  double GetEarthPositionAngle(void) const { return epa; }
 
-  double GetEarthPositionAngleDeg(void) const { return GetEarthPositionAngle()*radtodeg;}
+  /** Returns the Earth position angle in degrees.
+      @return Earth position angle in degrees.
+  */
+  double GetEarthPositionAngleDeg(void) const { return epa*radtodeg;}
 
   const FGColumnVector3& GetTerrainVelocity(void) const { return LocalTerrainVelocity; }
   const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
@@ -480,11 +486,13 @@ public:
   const FGMatrix33& GetTb2i(void) const { return Tb2i; }
 
   /** Retrieves the ECEF-to-ECI transformation matrix.
-      @return a reference to the ECEF-to-ECI transformation matrix.  */
+      @return a reference to the ECEF-to-ECI transformation matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTec2i(void) const { return Tec2i; }
 
   /** Retrieves the ECI-to-ECEF transformation matrix.
-      @return a reference to the ECI-to-ECEF matrix.  */
+      @return a reference to the ECI-to-ECEF matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTi2ec(void) const { return Ti2ec; }
 
   /** Retrieves the ECEF-to-local transformation matrix.
@@ -500,18 +508,25 @@ public:
   const FGMatrix33& GetTl2ec(void) const { return Tl2ec; }
 
   /** Retrieves the local-to-inertial transformation matrix.
-      @return a reference to the local-to-inertial transformation matrix.  */
+      @return a reference to the local-to-inertial transformation matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTl2i(void) const { return Tl2i; }
 
   /** Retrieves the inertial-to-local transformation matrix.
-      @return a reference to the inertial-to-local matrix.  */
+      @return a reference to the inertial-to-local matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTi2l(void) const { return Ti2l; }
 
   const VehicleState& GetVState(void) const { return VState; }
 
   void SetVState(const VehicleState& vstate);
 
-  void SetEarthPositionAngle(double epa) {VState.vLocation.SetEarthPositionAngle(epa);}
+  /** Sets the Earth position angle.
+      This is the relative angle around the Z axis of the ECEF frame with
+      respect to the inertial frame.
+      @param EPA Earth position angle in radians.
+   */
+  void SetEarthPositionAngle(double EPA) {epa = EPA;}
 
   void SetInertialOrientation(const FGQuaternion& Qi);
   void SetInertialVelocity(const FGColumnVector3& Vi);
@@ -621,6 +636,7 @@ private:
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
+  double epa;        // Earth Position Angle
 
   FGQuaternion Qec2b;
 

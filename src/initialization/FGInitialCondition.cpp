@@ -120,7 +120,8 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
 
 void FGInitialCondition::InitializeIC(void)
 {
-  alpha=beta=0;
+  alpha = beta = 0.0;
+  epa = 0.0;
   a = fdmex->GetInertial()->GetSemimajor();
   double b = fdmex->GetInertial()->GetSemiminor();
   double ec = b/a;
@@ -129,7 +130,6 @@ void FGInitialCondition::InitializeIC(void)
   position.SetEllipse(a, b);
 
   position.SetPositionGeodetic(0.0, 0.0, 0.0);
-  position.SetEarthPositionAngle(fdmex->GetPropagate()->GetEarthPositionAngle());
 
   orientation = FGQuaternion(0.0, 0.0, 0.0);
   vUVW_NED.InitMatrix();
@@ -1079,9 +1079,15 @@ bool FGInitialCondition::Load_v2(Element* document)
 
   // support both earth_position_angle and planet_position_angle, for now.
   if (document->FindElement("earth_position_angle"))
-    position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD"));
+    epa = document->FindElementValueAsNumberConvertTo("earth_position_angle", "RAD");
   if (document->FindElement("planet_position_angle"))
-    position.SetEarthPositionAngle(document->FindElementValueAsNumberConvertTo("planet_position_angle", "RAD"));
+    epa = document->FindElementValueAsNumberConvertTo("planet_position_angle", "RAD");
+
+  // Calculate the inertial to ECEF matrices
+  FGMatrix33 Ti2ec(cos(epa), sin(epa), 0.0,
+                   -sin(epa), cos(epa), 0.0,
+                   0.0, 0.0, 1.0);
+  FGMatrix33 Tec2i = Ti2ec.Transposed();
 
   if (document->FindElement("planet_rotation_rate")) {
     fdmex->GetInertial()->SetOmegaPlanet(document->FindElementValueAsNumberConvertTo("planet_rotation_rate", "RAD"));
@@ -1104,7 +1110,7 @@ bool FGInitialCondition::Load_v2(Element* document)
     string frame = position_el->GetAttributeValue("frame");
     frame = to_lower(frame);
     if (frame == "eci") { // Need to transform vLoc to ECEF for storage and use in FGLocation.
-      position = position.GetTi2ec() * position_el->FindElementTripletConvertTo("FT");
+      position = Ti2ec * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
         if (position_el->FindElement("longitude"))
@@ -1179,7 +1185,7 @@ bool FGInitialCondition::Load_v2(Element* document)
 
       FGQuaternion QuatI2Body = FGQuaternion(vOrient);
       QuatI2Body.Normalize();
-      FGQuaternion QuatLocal2I = position.GetTl2i();
+      FGQuaternion QuatLocal2I = Tec2i * position.GetTl2ec();
       QuatLocal2I.Normalize();
       orientation = QuatLocal2I * QuatI2Body;
 
@@ -1234,7 +1240,7 @@ bool FGInitialCondition::Load_v2(Element* document)
     FGColumnVector3 vInitVelocity = velocity_el->FindElementTripletConvertTo("FT/SEC");
 
     if (frame == "eci") {
-      FGColumnVector3 omega_cross_r = vOmegaEarth * (position.GetTec2i() * position);
+      FGColumnVector3 omega_cross_r = vOmegaEarth * (Tec2i * position);
       vUVW_NED = mTec2l * (vInitVelocity - omega_cross_r);
       lastSpeedSet = setned;
     } else if (frame == "ecef") {
@@ -1288,7 +1294,8 @@ bool FGInitialCondition::Load_v2(Element* document)
     FGColumnVector3 vAttRate = attrate_el->FindElementTripletConvertTo("RAD/SEC");
 
     if (frame == "eci") {
-      vPQR_body = Tl2b * position.GetTi2l() * (vAttRate - vOmegaEarth);
+      FGMatrix33 Ti2l = position.GetTec2l() * Ti2ec;
+      vPQR_body = Tl2b * Ti2l * (vAttRate - vOmegaEarth);
     } else if (frame == "ecef") {
       vPQR_body = Tl2b * position.GetTec2l() * vAttRate;
     } else if (frame == "local") {

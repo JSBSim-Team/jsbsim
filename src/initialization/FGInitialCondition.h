@@ -387,6 +387,10 @@ public:
       @return Initial terrain elevation in feet */
   double GetTerrainElevationFtIC(void) const;
 
+  /** Gets the initial Earth position angle.
+      @return Initial Earth position angle in radians. */
+  double GetEarthPositionAngleIC(void) const { return epa; }
+
   /** Sets the initial ground speed.
       @param vg Initial ground speed in feet/second */
   void SetVgroundFpsIC(double vg);
@@ -692,6 +696,7 @@ private:
   FGMatrix33 Tw2b, Tb2w;
   double  alpha, beta;
   double a, e2;
+  double epa;
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;

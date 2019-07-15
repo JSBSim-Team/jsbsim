@@ -59,17 +59,12 @@ FGLocation::FGLocation(void)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,17 +74,12 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 
   double sinLat = sin(lat);
   double cosLat = cos(lat);
@@ -107,17 +97,12 @@ FGLocation::FGLocation(const FGColumnVector3& lv)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +115,6 @@ FGLocation::FGLocation(const FGLocation& l)
   c = l.c;
   ec = l.ec;
   ec2 = l.ec2;
-  epa = l.epa;
 
   /*ag
    * if the cache is not valid, all of the following values are unset.
@@ -146,10 +130,6 @@ FGLocation::FGLocation(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
-  mTi2ec = l.mTi2ec;
-  mTec2i = l.mTec2i;
-  mTi2l = l.mTi2l;
-  mTl2i = l.mTl2i;
 
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
@@ -167,7 +147,6 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
   c = l.c;
   ec = l.ec;
   ec2 = l.ec2;
-  epa = l.epa;
 
   //ag See comment in constructor above
   if (!mCacheValid) return *this;
@@ -178,10 +157,6 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
-  mTi2ec = l.mTi2ec;
-  mTec2i = l.mTec2i;
-  mTi2l = l.mTi2l;
-  mTl2i = l.mTl2i;
 
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
@@ -348,19 +323,6 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // and a transformation from nav (local) to ECEF frame.
 
   mTl2ec = mTec2l.Transposed();
-
-  // Calculate the inertial to ECEF and transpose matrices
-  double cos_epa = cos(epa);
-  double sin_epa = sin(epa);
-  mTi2ec = FGMatrix33( cos_epa, sin_epa, 0.0,
-                      -sin_epa, cos_epa, 0.0,
-                           0.0,      0.0, 1.0 );
-  mTec2i = mTi2ec.Transposed();
-
-  // Now calculate the local (or nav, or ned) frame to inertial transform matrix,
-  // and the inverse.
-  mTl2i = mTec2i * mTl2ec;
-  mTi2l = mTl2i.Transposed();
 
   // Calculate the geodetic latitude based on "Transformation from Cartesian
   // to geodetic coordinates accelerated by Halley's method", Fukushima T. (2006)

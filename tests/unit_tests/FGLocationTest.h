@@ -54,7 +54,7 @@ void assertMatrixIsIdentity(const char* _file, int _line,
 #define TS_ASSERT_MATRIX_IS_IDENTITY(x) assertMatrixIsIdentity(__FILE__, __LINE__, x, epsilon)
 
 void CheckLocation(const JSBSim::FGLocation& loc,
-                   JSBSim::FGColumnVector3 vec, double epa = 0.0) {
+                   JSBSim::FGColumnVector3 vec) {
   const JSBSim::FGQuaternion qloc(2, -0.5*M_PI);
   JSBSim::FGQuaternion q;
   double r = vec.Magnitude();
@@ -80,24 +80,6 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   JSBSim::FGMatrix33 m = (q * qloc).GetT();
   TS_ASSERT_MATRIX_EQUALS(m, loc.GetTec2l());
   TS_ASSERT_MATRIX_EQUALS(m.Transposed(), loc.GetTl2ec());
-  TS_ASSERT_EQUALS(epa, loc.GetEPA());
-  if (epa == 0.0) {
-    TS_ASSERT_MATRIX_IS_IDENTITY(loc.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(loc.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(loc.GetTi2l(), loc.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(loc.GetTl2i(), loc.GetTl2ec());
-  }
-  else {
-    JSBSim::FGMatrix33 mat(cos(epa), -sin(epa), 0.0,
-                           sin(epa), cos(epa), 0.0,
-                           0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat, loc.GetTec2i());
-    JSBSim::FGMatrix33 m2 = m * mat.Transposed();
-    TS_ASSERT_MATRIX_EQUALS(m2, loc.GetTi2l());
-    TS_ASSERT_MATRIX_EQUALS(mat.Transposed(), loc.GetTi2ec());
-    m2 = mat * m.Transposed();
-    TS_ASSERT_MATRIX_EQUALS(m2, loc.GetTl2i());
-  }
 }
 
 class  FGLocationTest : public CxxTest::TestSuite
@@ -127,17 +109,6 @@ public:
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeDeg());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodAltitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l0.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l0.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTi2l(), JSBSim::FGMatrix33( 0.0, 0.0, 1.0,
-                                                              0.0, 1.0, 0.0,
-                                                              -1.0, 0.0, 0.0));
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTl2i(), JSBSim::FGMatrix33(0.0, 0.0,-1.0,
-                                                             0.0, 1.0, 0.0,
-                                                             1.0, 0.0, 0.0));
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTi2l(), l0.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTl2i(), l0.GetTl2ec());
     TS_ASSERT_EQUALS(static_cast<JSBSim::FGGroundCallback*>(0),
                      l0.GetGroundCallback());
 
@@ -157,11 +128,6 @@ public:
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
     TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);
-    TS_ASSERT_EQUALS(0.0, l.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(l.GetTi2l(), l.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(l.GetTl2i(), l.GetTl2ec());
 
     const JSBSim::FGQuaternion qloc(2, -0.5*M_PI);
     JSBSim::FGQuaternion q(0., -lat, lon);
@@ -181,11 +147,6 @@ public:
     m = (qlat * qloc).GetT();
     TS_ASSERT_MATRIX_EQUALS(m, lv1.GetTec2l());
     TS_ASSERT_MATRIX_EQUALS(m.Transposed(), lv1.GetTl2ec());
-    TS_ASSERT_EQUALS(0.0, lv1.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv1.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv1.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(lv1.GetTi2l(), lv1.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(lv1.GetTl2i(), lv1.GetTl2ec());
 
     v = JSBSim::FGColumnVector3(1.,1.,0.);
     JSBSim::FGLocation lv2(v);
@@ -199,11 +160,6 @@ public:
     m = (qlon * qloc).GetT();
     TS_ASSERT_MATRIX_EQUALS(m, lv2.GetTec2l());
     TS_ASSERT_MATRIX_EQUALS(m.Transposed(), lv2.GetTl2ec());
-    TS_ASSERT_EQUALS(0.0, lv2.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv2.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv2.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(lv2.GetTi2l(), lv2.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(lv2.GetTl2i(), lv2.GetTl2ec());
 
     v = JSBSim::FGColumnVector3(1.5,-2.,3.);
     JSBSim::FGLocation lv3(v);
@@ -426,45 +382,6 @@ public:
     TS_ASSERT_EQUALS(l2(2), -0.5*l(2));
     TS_ASSERT_EQUALS(l2(3), -0.5*l(3));
     CheckLocation(l2, -0.5*v);
-  }
-
-  void testEPA() {
-    const JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
-    JSBSim::FGLocation l(v);
-    double lon = l.GetLongitude();
-    double lat = l.GetLatitude();
-
-    TS_ASSERT_EQUALS(0.0, l.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());
-
-    l.SetEarthPositionAngle(M_PI/6.0);
-    TS_ASSERT_DELTA(M_PI/6.0, l.GetEPA(), epsilon);
-    TS_ASSERT_EQUALS(lon, l.GetLongitude());
-    TS_ASSERT_EQUALS(lat, l.GetLatitude());
-
-    JSBSim::FGMatrix33 mat0(sqrt(3.0) * 0.5, -0.5, 0.0,
-                            0.5, sqrt(3.0) * 0.5, 0.0,
-                            0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat0, l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(mat0.Transposed(), l.GetTi2ec());
-
-    l.IncrementEarthPositionAngle(M_PI/6.0);
-    TS_ASSERT_DELTA(M_PI/3.0, l.GetEPA(), epsilon);
-
-    mat0 = JSBSim::FGMatrix33(0.5, -0.5 * sqrt(3.0), 0.0,
-                              0.5 * sqrt(3.0), 0.5, 0.0,
-                              0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat0, l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(mat0.Transposed(), l.GetTi2ec());
-
-    CheckLocation(l, v, M_PI/3.0);
-
-    // Check that a fixed point in the ECI has a relative movement to the West
-    // (i.e. increases its longitude) when the ECEF frame is rotating
-    JSBSim::FGLocation l2(mat0.Transposed() * v);
-    TS_ASSERT_EQUALS(lat, l2.GetLatitude());
-    TS_ASSERT(lon > l2.GetLongitude());
   }
 
   void testLocalLocation() {

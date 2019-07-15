@@ -97,6 +97,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(5, FGQuaternion(0.0,0.0,0.0));
 
+  epa = 0.0;
+
   bind();
   Debug(0);
 }
@@ -128,6 +130,8 @@ bool FGPropagate::InitModel(void)
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
 
+  epa = 0.0;
+
   return true;
 }
 
@@ -140,7 +144,10 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // Set the position lat/lon/radius
   VState.vLocation = FGIC->GetPosition();
 
-  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  epa = FGIC->GetEarthPositionAngleIC();
+  Ti2ec = FGMatrix33(cos(epa), sin(epa), 0.0,
+                     -sin(epa), cos(epa), 0.0,
+                     0.0, 0.0, 1.0);
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   VState.vInertialPosition = Tec2i * VState.vLocation;
@@ -225,10 +232,14 @@ bool FGPropagate::Run(bool Holding)
   // matrices that are consistent with the new state of the vehicle
 
   // 1. Update the Earth position angle (EPA)
-  VState.vLocation.IncrementEarthPositionAngle(in.vOmegaPlanet(eZ)*dt);
+  epa += in.vOmegaPlanet(eZ)*dt;
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
-  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  double cos_epa = cos(epa);
+  double sin_epa = sin(epa);
+  Ti2ec = FGMatrix33(cos_epa, sin_epa, 0.0,
+                     -sin_epa, cos_epa, 0.0,
+                     0.0, 0.0, 1.0);
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   // 3. Update the location from the updated Ti2ec and inertial position
@@ -456,7 +467,7 @@ void FGPropagate::UpdateLocationMatrices(void)
 {
   Tl2ec = VState.vLocation.GetTl2ec(); // local to ECEF transform
   Tec2l = Tl2ec.Transposed();          // ECEF to local frame transform
-  Ti2l  = VState.vLocation.GetTi2l();  // ECI to local frame transform
+  Ti2l  = Tec2l * Ti2ec;               // ECI to local frame transform
   Tl2i  = Ti2l.Transposed();           // local to ECI transform
 }
 
@@ -562,8 +573,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
 {
   //ToDo: Shouldn't all of these be set from the vstate vector passed in?
   VState.vLocation = vstate.vLocation;
-  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
-  Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();
   SetInertialOrientation(vstate.qAttitudeECI);
   RecomputeLocalTerrainVelocity();
@@ -592,8 +601,6 @@ void FGPropagate::UpdateVehicleState(void)
 void FGPropagate::SetLocation(const FGLocation& l)
 {
   VState.vLocation = l;
-  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
-  Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
 }
 
