@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ev
-if [ "${TRAVIS_PULL_REQUEST}" = "false"] && ["${USE_SYSTEM_EXPAT}" = "OFF"]; then
+if [ "$TRAVIS_PULL_REQUEST" = "false"] && ["$USE_SYSTEM_EXPAT" = "OFF"]; then
     make clean
     make -j2 CFLAGS="--coverage" CXXFLAGS="--coverage"
     lcov -d . -z
