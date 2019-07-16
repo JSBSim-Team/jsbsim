@@ -2,7 +2,7 @@
 set -ev
 if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
     make clean
-    cmake -DCMAKE_C_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage"
+    cmake -DCMAKE_C_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" ..
     make -j2
     ctest -R Test1
     lcov -d . -c -o tmp.info
