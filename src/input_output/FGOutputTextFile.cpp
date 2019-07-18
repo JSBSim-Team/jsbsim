@@ -9,21 +9,21 @@
  ------------- Copyright (C) 2011 Bertrand Coconnier -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -38,28 +38,20 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cstring>
-#include <cstdlib>
 #include <iomanip>
-#include <sstream>
 
 #include "FGOutputTextFile.h"
-#include "FGFDMExec.h"
 #include "models/FGAerodynamics.h"
 #include "models/FGAccelerations.h"
-#include "models/FGAircraft.h"
 #include "models/FGAtmosphere.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
 #include "models/FGMassBalance.h"
-#include "models/FGPropagate.h"
-#include "models/FGGroundReactions.h"
 #include "models/FGExternalReactions.h"
 #include "models/FGBuoyantForces.h"
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGPropertyValue.h"
 
 using namespace std;
 
@@ -358,9 +350,9 @@ void FGOutputTextFile::Print(void)
     outstream << Propagate->GetQuaternionECI().Dump(delimeter) << delimeter;
     outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
-    outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
-    outstream << Propagate->GetLocation().GetGeodLatitudeDeg() << delimeter;
-    outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
+    outstream << Propagate->GetLatitudeDeg() << delimeter;
+    outstream << Propagate->GetGeodLatitudeDeg() << delimeter;
+    outstream << Propagate->GetLongitudeDeg() << delimeter;
     outstream.precision(18);
     outstream << ((FGColumnVector3)Propagate->GetInertialPosition()).Dump(delimeter) << delimeter;
     outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;

@@ -9,21 +9,21 @@
  ------------- Copyright (C) 2011 Bertrand Coconnier -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -40,17 +40,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cstring>
-#include <cstdlib>
 
 #include "FGOutputFG.h"
-#include "FGFDMExec.h"
 #include "FGXMLElement.h"
-#include "models/FGAerodynamics.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
-#include "models/FGMassBalance.h"
-#include "models/FGPropagate.h"
-#include "models/FGGroundReactions.h"
 #include "models/FGFCS.h"
 #include "models/propulsion/FGPiston.h"
 #include "models/propulsion/FGTank.h"
@@ -184,8 +178,8 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->version = FG_NET_FDM_VERSION;
 
   // Positions
-  net->longitude = Propagate->GetLocation().GetLongitude(); // 
-  net->latitude  = Propagate->GetLocation().GetGeodLatitudeRad(); // geodetic (radians)
+  net->longitude = Propagate->GetLongitude(); // longitude (radians)
+  net->latitude  = Propagate->GetGeodLatitudeRad(); // geodetic (radians)
   net->altitude  = Propagate->GetAltitudeASL()*0.3048; // altitude, above sea level (meters)
   net->agl       = (float)(Propagate->GetDistanceAGL()*0.3048); // altitude, above ground level (meters)
 
