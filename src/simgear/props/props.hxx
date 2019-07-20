@@ -23,13 +23,17 @@
 
 #include <simgear/compiler.h>
 #if PROPS_STANDALONE
-// taken from: boost/utility/enable_if.hpp
+
 #ifndef SG_LOG
 # define SG_GENERAL	0
 # define SG_ALERT	0
 # define SG_WARN		1
 # define SG_LOG(type, level, message) (type) ? (std::cerr <<message << endl) : (std::cout <<message << endl)
 #endif
+
+// use this local implementation only if boost has not been included
+#if !defined(BOOST_UTILITY_ENABLE_IF_HPP) && !defined(BOOST_CORE_ENABLE_IF_HPP)
+// taken from: boost/utility/enable_if.hpp
 namespace boost {
   template <bool B, class T = void>
   struct enable_if_c {
@@ -53,6 +57,7 @@ namespace boost {
   template <class Cond, class T = void>
   struct disable_if : public disable_if_c<Cond::value, T> {};
 }
+#endif
 #else
 # include <boost/utility.hpp>
 # include <boost/type_traits/is_enum.hpp>
