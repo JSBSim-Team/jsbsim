@@ -54,7 +54,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Element *input_element,*init_element, *clip_el;
   Input = Output = delay_time = 0.0;
   delay = index = 0;
-  ClipMin = ClipMax = nullptr;
+  ClipMin = ClipMax = new FGRealValue(0.0);
   clip = cyclic_clip = false;
   dt = fcs->GetChannelDeltaT();
 
