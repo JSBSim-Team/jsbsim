@@ -466,5 +466,53 @@ class TestActuator(JSBSimTestCase):
                                    (t-fdm['simulation/sim-time-sec'])*rate_limit+2.0*math.pi)
             fdm.run()
 
+    # Regression test for the bug reported in issue #200
+    # JSBSim crashes when "fail hardover" is set while no <clipto> element is
+    # specified.
+    def test_failhardover_without_clipto(self):
+        tree, flight_control_element, actuator_element = self.prepare_actuator()
+        rate_limit = float(actuator_element.find('rate_limit').text)
+        fail_hardover = actuator_element.attrib['name']+"/malfunction/fail_hardover"
+        clipto = actuator_element.find('clipto')
+        clipmax = float(clipto.find('max').text)
+        actuator_element.remove(clipto)
+        output_file = os.path.join('aircraft', self.aircraft_name,
+                                   self.aircraft_name+'.xml')
+        tree.write(output_file)
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        # Displace the actuator in the maximum position.
+        fdm[self.input_prop] = clipmax
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+
+        # Check the maximum position has been reached.
+        self.assertAlmostEqual(fdm[self.output_prop], clipmax)
+
+        # Trigger "fail hardover"
+        fdm[fail_hardover] = 1.0
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+
+        # Check the actuator is failed in neutral position
+        self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+
+        # Check that setting an input different from the neutral position does
+        # not result in a modification of the actuator position.
+        fdm[self.input_prop] = clipmax
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+            self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+
 
 RunTest(TestActuator)
