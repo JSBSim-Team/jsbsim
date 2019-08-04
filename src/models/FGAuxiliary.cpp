@@ -46,6 +46,7 @@ INCLUDES
 #include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
+#include "FGInertial.h"
 
 using namespace std;
 
@@ -280,7 +281,7 @@ double FGAuxiliary::GetLongitudeRelativePosition(void) const
 {
   FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
                     FDMExec->GetIC()->GetLatitudeRadIC(),
-                    in.vLocation.GetSeaLevelRadius());
+                    FDMExec->GetInertial()->GetRefRadius());
   return source.GetDistanceTo(in.vLocation.GetLongitude(),
                               FDMExec->GetIC()->GetLatitudeRadIC()) * fttom;
 }
@@ -291,7 +292,7 @@ double FGAuxiliary::GetLatitudeRelativePosition(void) const
 {
   FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
                     FDMExec->GetIC()->GetLatitudeRadIC(),
-                    in.vLocation.GetSeaLevelRadius());
+                    FDMExec->GetInertial()->GetRefRadius());
   return source.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
                               in.vLocation.GetLatitude()) * fttom;
 }
@@ -302,7 +303,7 @@ double FGAuxiliary::GetDistanceRelativePosition(void) const
 {
   FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
                     FDMExec->GetIC()->GetLatitudeRadIC(),
-                    in.vLocation.GetSeaLevelRadius());
+                    FDMExec->GetInertial()->GetRefRadius());
   return source.GetDistanceTo(in.vLocation.GetLongitude(),
                               in.vLocation.GetLatitude()) * fttom;
 }

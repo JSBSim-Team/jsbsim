@@ -307,12 +307,6 @@ public:
   void SetAltitudeAGL(double altitudeAGL)
   { SetRadius(GetTerrainRadius() + altitudeAGL); }
 
-  /** Get the local sea level radius
-      @return the sea level radius at the location in feet.
-      @see SetGroundCallback */
-  double GetSeaLevelRadius(void) const
-  { ComputeDerived(); return GroundCallback->GetSeaLevelRadius(*this); }
-
   /** Get the local terrain radius
       @return the terrain level radius at the location in feet.
       @see SetGroundCallback */

@@ -639,8 +639,9 @@ void FGInitialCondition::SetWindDirDegIC(double dir)
 void FGInitialCondition::SetTerrainElevationFtIC(double elev)
 {
   double agl = GetAltitudeAGLFtIC();
+  double sea_level = fdmex->GetInertial()->GetRefRadius();
 
-  fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(elev + position.GetSeaLevelRadius());
+  fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(elev + sea_level);
 
   if (lastAltitudeSet == setagl)
     SetAltitudeAGLFtIC(agl);
@@ -664,7 +665,7 @@ double FGInitialCondition::GetAltitudeASLFtIC(void) const
 
 double FGInitialCondition::GetTerrainElevationFtIC(void) const
 {
-  return position.GetTerrainRadius() - position.GetSeaLevelRadius();
+  return position.GetTerrainRadius() - fdmex->GetInertial()->GetRefRadius();
 }
 
 //******************************************************************************
@@ -672,7 +673,7 @@ double FGInitialCondition::GetTerrainElevationFtIC(void) const
 void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 {
   double terrainElevation = position.GetTerrainRadius()
-    - position.GetSeaLevelRadius();
+    - fdmex->GetInertial()->GetRefRadius();
   SetAltitudeASLFtIC(agl + terrainElevation);
   lastAltitudeSet = setagl;
 }
@@ -1101,8 +1102,10 @@ bool FGInitialCondition::Load_v2(Element* document)
   }
   FGColumnVector3 vOmegaEarth = fdmex->GetInertial()->GetOmegaPlanet();
 
-  if (document->FindElement("elevation"))
-    fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(document->FindElementValueAsNumberConvertTo("elevation", "FT")+position.GetSeaLevelRadius());
+  if (document->FindElement("elevation")) {
+    double sea_level = fdmex->GetInertial()->GetRefRadius();
+    fdmex->GetGroundCallback()->SetTerrainGeoCentRadius(document->FindElementValueAsNumberConvertTo("elevation", "FT")+sea_level);
+  }
 
   // Initialize vehicle position
   //

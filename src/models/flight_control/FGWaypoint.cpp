@@ -40,6 +40,8 @@ INCLUDES
 #include "FGWaypoint.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGLocation.h"
+#include "models/FGFCS.h"
+#include "models/FGInertial.h"
 
 using namespace std;
 
@@ -121,9 +123,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   if (element->FindElement("radius"))
     radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
   else {
-    FGLocation source(source_longitude * source_latitude_unit,
-                      source_latitude * source_longitude_unit, 1.0);
-    radius = source.GetSeaLevelRadius(); // Radius of Earth in feet.
+    radius = fcs->GetExec()->GetInertial()->GetRefRadius(); // Radius of Earth in feet.
   }
 
   unit = element->GetAttributeValue("unit");

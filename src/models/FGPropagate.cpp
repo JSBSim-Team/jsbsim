@@ -540,9 +540,16 @@ void FGPropagate::RecomputeLocalTerrainVelocity()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGPropagate::GetTerrainElevation(void) const
+{
+  return VState.vLocation.GetTerrainRadius() - FDMExec->GetInertial()->GetRefRadius();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  double radius = terrainElev + VState.vLocation.GetSeaLevelRadius();
+  double radius = terrainElev + FDMExec->GetInertial()->GetRefRadius();
   FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(radius);
 }
 

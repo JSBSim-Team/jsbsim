@@ -436,7 +436,7 @@ public:
   const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
   void RecomputeLocalTerrainVelocity();
 
-  double GetTerrainElevation(void) const { return GetLocalTerrainRadius() - VState.vLocation.GetSeaLevelRadius(); }
+  double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetDistanceAGLKm(void)  const;
   double GetRadius(void) const {
