@@ -69,6 +69,7 @@ INCLUDES
 #include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "simgear/io/iostreams/sgstream.hxx"
+#include "FGInertial.h"
 
 using namespace std;
 
@@ -510,6 +511,21 @@ void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
   VState.vPQRi = Ti2b * vRates;
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
   CalculateQuatdot();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropagate::GetAltitudeASL() const
+{
+  return FDMExec->GetInertial()->GetAltitudeASL(VState.vLocation);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetAltitudeASL(double altASL)
+{
+  FDMExec->GetInertial()->SetAltitudeASL(VState.vLocation, altASL);
+  UpdateVehicleState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

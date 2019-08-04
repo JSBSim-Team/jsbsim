@@ -377,7 +377,7 @@ public:
 
   /** Gets the initial altitude above sea level.
       @return Initial altitude in feet. */
-  double GetAltitudeASLFtIC(void) const { return position.GetAltitudeASL(); }
+  double GetAltitudeASLFtIC(void) const;
 
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */

@@ -58,9 +58,9 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** FGLocation holds an arbitrary location in the Earth centered Earth fixed
-    reference frame (ECEF). The coordinate frame ECEF has its center in the middle
-    of the earth. The X-axis points from the center of the Earth towards a
-    location with zero latitude and longitude on the Earth surface. The Y-axis
+    reference frame (ECEF). The coordinate frame ECEF has its center in the
+    middle of the earth. The X-axis points from the center of the Earth towards
+    a location with zero latitude and longitude on the Earth surface. The Y-axis
     points from the center of the Earth towards a location with zero latitude
     and 90 deg East longitude on the Earth surface. The Z-axis points from the
     Earth center to the geographic north pole.
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     the Y-axis points east and the Z-axis points to the center of the Earth.
 
     Since the local frame is determined by the location (and NOT by the
-    orientation of the  vehicle IN any frame), this class also provides the
+    orientation of the vehicle IN any frame), this class also provides the
     rotation matrices required to transform from the Earth centered (ECEF) frame
     to the local horizontal frame and back. This class also "owns" the
     transformations that go from the inertial frame (Earth-centered Inertial, or
@@ -96,15 +96,15 @@ CLASS DOCUMENTATION
     The Earth centered reference frame is NOT an inertial frame since it rotates
     with the Earth.
 
-    The cartesian coordinates (X,Y,Z) in the Earth centered frame are the master values. All other
-    values are computed from these master values and are cached as long as the
-    location is changed by access through a non-const member function. Values
-    are cached to improve performance. It is best practice to work with a
-    natural set of master values. Other parameters that are derived from these
-    master values are calculated only when needed, and IF they are needed and
-    calculated, then they are cached (stored and remembered) so they do not need
-    to be re-calculated until the master values they are derived from are
-    themselves changed (and become stale).
+    The cartesian coordinates (X,Y,Z) in the Earth centered frame are the master
+    values. All other values are computed from these master values and are
+    cached as long as the location is changed by access through a non-const
+    member function. Values are cached to improve performance. It is best
+    practice to work with a natural set of master values. Other parameters that
+    are derived from these master values are calculated only when needed, and IF
+    they are needed and calculated, then they are cached (stored and remembered)
+    so they do not need to be re-calculated until the master values they are
+    derived from are themselves changed (and become stale).
 
     Accuracy and round off
 
@@ -301,12 +301,6 @@ public:
       therefore be set with SetGroundCallback() before calling any of these
       functions. */
   ///@{
-  /** Set the altitude above sea level.
-      @param altitudeASL altitude above Sea Level in feet.
-      @see SetGroundCallback */
-  void SetAltitudeASL(double altitudeASL)
-  { SetRadius(GetSeaLevelRadius() + altitudeASL); }
-
   /** Set the altitude above ground level.
       @param altitudeAGL altitude above Ground Level in feet.
       @see SetGroundCallback */
@@ -324,12 +318,6 @@ public:
       @see SetGroundCallback */
   double GetTerrainRadius(void) const
   { ComputeDerived(); return GroundCallback->GetTerrainGeoCentRadius(*this); }
-
-  /** Get the altitude above sea level.
-      @return the altitude ASL in feet.
-      @see SetGroundCallback */
-  double GetAltitudeASL(void) const
-  { return GetRadius() - GetSeaLevelRadius(); }
 
   /** Get the altitude above ground level.
       @return the altitude AGL in feet.

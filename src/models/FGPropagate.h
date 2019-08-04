@@ -324,7 +324,7 @@ public:
       units ft
       @return The current altitude above sea level in feet.
   */
-  double GetAltitudeASL(void) const { return VState.vLocation.GetAltitudeASL(); }
+  double GetAltitudeASL(void) const;
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.
@@ -571,11 +571,7 @@ public:
     VState.vInertialPosition = Tec2i * VState.vLocation;
   }
 
-  void SetAltitudeASL(double altASL)
-  {
-    VState.vLocation.SetAltitudeASL(altASL);
-    UpdateVehicleState();
-  }
+  void SetAltitudeASL(double altASL);
   void SetAltitudeASLmeters(double altASL) { SetAltitudeASL(altASL/fttom); }
 
   void SetTerrainElevation(double tt);

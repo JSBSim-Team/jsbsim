@@ -152,7 +152,7 @@ void FGInitialCondition::InitializeIC(void)
 
 void FGInitialCondition::SetVequivalentKtsIC(double ve)
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   SetVtrueFpsIC(ve*ktstofps*sqrt(rhoSL/rho));
@@ -163,7 +163,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
 
 void FGInitialCondition::SetMachIC(double mach)
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   SetVtrueFpsIC(mach*soundSpeed);
   lastSpeedSet = setmach;
@@ -173,7 +173,7 @@ void FGInitialCondition::SetMachIC(double mach)
 
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
@@ -648,7 +648,14 @@ void FGInitialCondition::SetTerrainElevationFtIC(double elev)
 
 //******************************************************************************
 
-double FGInitialCondition::GetAltitudeAGLFtIC(void) const
+double FGInitialCondition::GetAltitudeASLFtIC(void) const
+{
+  return fdmex->GetInertial()->GetAltitudeASL(position);
+}
+
+//******************************************************************************
+
+  double FGInitialCondition::GetAltitudeAGLFtIC(void) const
 {
   return position.GetAltitudeAGL();
 }
@@ -677,7 +684,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double rho = Atmosphere->GetDensity(altitudeASL);
@@ -689,7 +696,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   double geodLatitude = position.GetGeodLatitudeRad();
   altitudeASL=alt;
-  position.SetAltitudeASL(alt);
+  fdmex->GetInertial()->SetAltitudeASL(position, alt);
 
   // The call to SetAltitudeASL has most likely modified the geodetic latitude
   // so we need to restore it to its initial value.
@@ -762,9 +769,7 @@ void FGInitialCondition::SetLongitudeRadIC(double lon)
     SetAltitudeAGLFtIC(altitude);
     break;
   default:
-    altitude = position.GetAltitudeASL();
     position.SetLongitude(lon);
-    position.SetAltitudeASL(altitude);
     break;
   }
 }
@@ -819,7 +824,7 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double mach = vt / soundSpeed;
@@ -831,7 +836,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 
 double FGInitialCondition::GetVequivalentKtsIC(void) const
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   return fpstokts * vt * sqrt(rho/rhoSL);
@@ -841,7 +846,7 @@ double FGInitialCondition::GetVequivalentKtsIC(void) const
 
 double FGInitialCondition::GetMachIC(void) const
 {
-  double altitudeASL = position.GetAltitudeASL();
+  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   return vt / soundSpeed;
 }
@@ -1121,7 +1126,8 @@ bool FGInitialCondition::Load_v2(Element* document)
         } else if (position_el->FindElement("altitudeAGL")) {
           position.SetAltitudeAGL(position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
         } else if (position_el->FindElement("altitudeMSL")) {
-          position.SetAltitudeASL(position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+          fdmex->GetInertial()->SetAltitudeASL(position,
+                                               position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
