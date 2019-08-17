@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -38,11 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iosfwd>
-#include <vector>
-#include <string>
 #include "FGParameter.h"
-#include "input_output/FGPropertyManager.h"
+#include "math/FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -278,13 +275,14 @@ public:
   FGTable& operator<<(const int n);
 
   inline double GetElement(int r, int c) const {return Data[r][c];}
-//  inline double GetElement(int r, int c, int t);
 
-  double operator()(unsigned int r, unsigned int c) const {return GetElement(r, c);}
-//  double operator()(unsigned int r, unsigned int c, unsigned int t) {GetElement(r, c, t);}
+  double operator()(unsigned int r, unsigned int c) const
+  { return GetElement(r, c); }
 
-  void SetRowIndexProperty(FGPropertyNode *node) {lookupProperty[eRow] = node;}
-  void SetColumnIndexProperty(FGPropertyNode *node) {lookupProperty[eColumn] = node;}
+  void SetRowIndexProperty(FGPropertyNode *node)
+  { lookupProperty[eRow] = new FGPropertyValue(node); }
+  void SetColumnIndexProperty(FGPropertyNode *node)
+  { lookupProperty[eColumn] = new FGPropertyValue(node); }
 
   unsigned int GetNumRows() const {return nRows;}
 
@@ -296,7 +294,7 @@ private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
   bool internal;
-  FGPropertyNode_ptr lookupProperty[3];
+  FGPropertyValue_ptr lookupProperty[3];
   double** Data;
   std::vector <FGTable*> Tables;
   unsigned int nRows, nCols, nTables, dimension;
