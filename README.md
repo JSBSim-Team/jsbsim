@@ -14,7 +14,7 @@
 ---
 
 # Introduction
-JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.
+JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](https://www.flightgear.org/) or other flight simulator.
  
 Features include:
 
@@ -22,6 +22,7 @@ Features include:
 * Rotational earth effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
 * The earth atmosphere is modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf)
 * Configurable data output formats to screen, file, socket, or any combination of those.
+* A [Python](https://www.python.org) module which provides the exact same features than the C++ library
 
 More information on JSBSim can be found at the JSBSim home page here:
 
@@ -41,14 +42,14 @@ Win64 executables for JSBSim are available in the [JSBSim project release sectio
 
 Both executables should be used from the console.
 ### Ubuntu Linux
-Debian packages for Ubuntu Linux "Trusty" 14.04 on 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases). There are 3 packages:
-* `JSBSim_1.0.0-xxx.trusty.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
-* `JSBSim-devel_1.0.0-xxx.trusty.amd64.deb` which installs the development resources (headers and libraries)
-* `pythonX-JSBSim_1.0.0-xxx.trusty.amd64.deb` which installs the Python module of JSBSim (for python 2.7 if the package name starts with **python2** or 3.4 if it starts with **python3**)
+Debian packages for Ubuntu Linux "Xenial" 16.04 LTS on 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases). There are 3 packages:
+* `JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
+* `JSBSim-devel_1.0.0-xxx.xenial.amd64.deb` which installs the development resources (headers and libraries)
+* `pythonX-JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the Python module of JSBSim (for python 2.7 if the package name starts with **python2** or 3.6 if it starts with **python3**)
 ### Other platforms
-At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 14.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](#developer-documentation) to build JSBSim on your platform.
+At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 16.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
-You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/JSBSim-trusty-v2018a.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/JSBSim-trusty-v2018a.tar.gz).
+You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.tar.gz).
 ## Quick start
 Once you have downloaded (or built) the binaries and unzipped the [aircraft data](#aircraft-data-and-example-scripts). Go to the root of the data package and make sure the executable is accessible from there.
 
@@ -67,6 +68,7 @@ A first place to look at for JSBSim documentation resources is [http://jsbsim.so
 However, due to the nature of the development of the project (JSBSim sources are updated often, sometimes even daily), several new features that are available in the software are not yet documented in the reference manual. Starting from March 2018 a new effort is underway to deliver an up-to-date documentation web site. You can browse the new *JSBSim Online Reference Manual* by going to: [https://jsbsim-team.github.io/jsbsim-reference-manual](https://jsbsim-team.github.io/jsbsim-reference-manual). The online manual is under construction and as a first milestone it will incorporate all the non-outdated material contained in the original PDF Reference Manual. The online manual web site is based on the GitHub Pages technology and its sources are available [here](https://github.com/JSBSim-Team/jsbsim-reference-manual). Eventually, the PDF Reference Manual will be superseded by the online manual, which is designed to be updated collaboratively as well as in efficient and timely fashion.
 
 ## Interfacing JSBSim with your application
+### Using the C++ API
 JSBSim can be interfaced or integrated to your application via a C++ API. The  following  code  illustrates  how  JSBSim  could  be  called  by  a  small  program, with execution being controlled by a script: 
 ```c++
 #include <FGFDMExec.h> 
@@ -79,7 +81,20 @@ int main(int argc, char **argv)
   while (result) result = FDMExec.Run();
 }
  ```
-The API is described in more details in the [C++ API documentation](#c-api-documentation)
+The API is described in more details in the [C++ API documentation](DevelopersDocs.md#c-api-documentation)
+
+### Using the Python module
+JSBSim can also be used as a Python module. The following code provides a simple example of how to interface with JSBSim using the Python programming language:
+```python
+import jsbsim
+
+fdm = jsbsim.FGFDMExec('.', None)
+fdm.load_script('scripts/c1721.xml')
+fdm.run_ic()
+
+while fdm.run():
+  pass
+```
 
 # Frequently Asked Questions
 
