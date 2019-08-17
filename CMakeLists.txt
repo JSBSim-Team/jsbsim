@@ -86,6 +86,12 @@ if(DOXYGEN_FOUND)
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  if (BUILD_PYTHON_MODULE AND CYTHON_FOUND AND PYTHONLIBS_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
+      ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
 endif()
 
 ################################################################################
