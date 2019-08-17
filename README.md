@@ -6,10 +6,10 @@
 <img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
 </p>
 
-**[User Guide](#user-guide)**           |
-**[Developer Docs](DevelopersDocs.md)** |
-**[FAQ](#frequently-asked-questions)**  |
-**[Contact](#contact)**                 |
+**[User Guide](#user-guide)**               |
+**[Developer Docs](doc/DevelopersDocs.md)** |
+**[FAQ](#frequently-asked-questions)**      |
+**[Contact](#contact)**                     |
 **[Legal notice](#legal-notice)**
 ---
 
@@ -47,7 +47,7 @@ Debian packages for Ubuntu Linux "Xenial" 16.04 LTS on 64 bits platform are also
 * `JSBSim-devel_1.0.0-xxx.xenial.amd64.deb` which installs the development resources (headers and libraries)
 * `pythonX-JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the Python module of JSBSim (for python 2.7 if the package name starts with **python2** or 3.6 if it starts with **python3**)
 ### Other platforms
-At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 16.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](DevelopersDocs.md) to build JSBSim on your platform.
+At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 16.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
 You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.tar.gz).
 ## Quick start
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   while (result) result = FDMExec.Run();
 }
  ```
-The API is described in more details in the [C++ API documentation](DevelopersDocs.md#c-api-documentation)
+The API is described in more details in the [C++ API documentation](doc/DevelopersDocs.md#c-api-documentation)
 
 ### Using the Python module
 JSBSim can also be used as a Python module. The following code provides a simple example of how to interface with JSBSim using the Python programming language:
