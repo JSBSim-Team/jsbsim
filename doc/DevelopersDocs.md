@@ -103,6 +103,11 @@ The test suite can then be run using `ctest` in the `build` directory. Tests can
 > ctest -j4
 ```
 
+### C++ code coverage
+Tests ran with `ctest` include C++ unit tests that are written with the [CxxTest](https://cxxtest.com) test framework.
+
+A code coverage report is automatically generated and is available at: https://jsbsim-team.github.io/jsbsim/coverage/
+
 ## Installing JSBSim
 Once JSBSim is built and tested, you can install the C++ headers and library. For that, you can invoke GNU make from the `build` directory
 ```bash
