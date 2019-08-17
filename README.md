@@ -96,6 +96,7 @@ fdm.run_ic()
 while fdm.run():
   pass
 ```
+A more elaborate example is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python version of `JSBSim.exe`.
 
 # Frequently Asked Questions
 
