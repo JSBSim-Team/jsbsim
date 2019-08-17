@@ -71,13 +71,14 @@ However, due to the nature of the development of the project (JSBSim sources are
 ### Using the C++ API
 JSBSim can be interfaced or integrated to your application via a C++ API. The  following  code  illustrates  how  JSBSim  could  be  called  by  a  small  program, with execution being controlled by a script: 
 ```c++
-#include <FGFDMExec.h> 
+#include <FGFDMExec.h>
 
-int main(int argc, char **argv) 
-{ 
-  JSBSim::FGFDMExec FDMExec; 
-  bool result = true; 
-  FDMExec.LoadScript(argv[1]); 
+int main(int argc, char **argv)
+{
+  JSBSim::FGFDMExec FDMExec;
+  FDMExec.LoadScript(argv[1]);
+  FDMExec.RunIC();
+  bool result = true;
   while (result) result = FDMExec.Run();
 }
  ```
