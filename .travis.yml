@@ -49,7 +49,7 @@ after_success:
 # Build the API documentation with Doxygen (skip if we are building a pull request)
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
 # Build the Python API documentation with sphinx (skip if we are building a pull request)
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then sphinx-build -M html . documentation/python; fi
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then sphinx-build -b html . documentation/html/python; fi
  # Run the C++ unit tests coverage
   - ./../tests/unit_tests/test_coverage.sh
 
