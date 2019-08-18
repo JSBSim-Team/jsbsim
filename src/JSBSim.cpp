@@ -191,11 +191,12 @@ CLASS DOCUMENTATION
  * versatile and powerful specification written in an XML format. The format is
  * formally known as JSBSim-ML (JSBSim Markup Language).
  *
- * JSBSim (www.jsbsim.org) was created initially for the open source FlightGear
- * flight simulator (www.flightgear.org). JSBSim maintains the ability to run as
- * a standalone executable in soft real-time, or batch mode. This is useful for
- * running tests or sets of tests automatically using the internal scripting
- * capability.
+ * JSBSim (<a href="https://www.jsbsim.org">www.jsbsim.org</a>) was created
+ * initially for the open source FlightGear flight simulator (<a
+ * href="https://www.flightgear.org">www.flightgear.org</a>). JSBSim maintains
+ * the ability to run as a standalone executable in soft real-time, or batch
+ * mode. This is useful for running tests or sets of tests automatically using
+ * the internal scripting capability.
  *
  * JSBSim does not model specific aircraft in program code. The aircraft itself
  * is defined in a file written in an XML-based format where the aircraft mass
@@ -268,7 +269,8 @@ CLASS DOCUMENTATION
  *
  * \section website Website
  *
- * For more information, see the JSBSim web site: www.jsbsim.org.
+ * For more information, see the JSBSim web site: <a
+ * href="https://www.jsbsim.org">www.jsbsim.org</a>.
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

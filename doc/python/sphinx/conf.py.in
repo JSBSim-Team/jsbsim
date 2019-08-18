@@ -27,17 +27,22 @@ tree = et.parse('documentation/xml/indexpage.xml')
 root = tree.getroot()
 
 with open('mainpage.rst', 'w') as mainpage:
-    for sect in root.findall('compounddef/detaileddescription/sect1'):
+    for sect in root.findall('.//sect1'):
         mainpage.write('.. '+sect.attrib['id']+':\n\n')
         title = sect.find('title').text
         mainpage.write(title+'\n'+'='*len(title)+'\n')
         for para in sect.findall('para'):
             if para.text:
-                mainpage.write(para.text+'\n')
+                mainpage.write(para.text)
             for item_list in para.findall('itemizedlist'):
                 for item in item_list.findall('listitem'):
                     mainpage.write('* '+item.find('para').text+'\n')
-            mainpage.write('\n')
+            for href in para.findall('ulink'):
+                if href.text:
+                    mainpage.write('`'+href.text+' <'+href.attrib['url']+'>`_')
+                if href.tail:
+                    mainpage.write(href.tail)
+            mainpage.write('\n\n')
 
 # -- Project information -----------------------------------------------------
 
