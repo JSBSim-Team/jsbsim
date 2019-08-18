@@ -121,7 +121,7 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-html_logo = "${CMAKE_CURRENT_SOURCE_DIR}/JSBSimGlobeLogo.png"
+html_logo = "${CMAKE_CURRENT_SOURCE_DIR}/doc/logo_JSBSIM_globe.png"
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
