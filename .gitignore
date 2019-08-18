@@ -29,7 +29,6 @@ src/.libs/
 ./dotest
 *.patch
 *.diff
-*.png
 *.catalog
 TAGS
 .dir-locals.el
