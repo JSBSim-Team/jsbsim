@@ -9,27 +9,27 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 
-This class implements the JSBSim standalone application. It is set up for compilation
-under gnu C++, MSVC++, or other compiler.
+This class implements the JSBSim standalone application. It is set up for
+compilation under gnu C++, MSVC++, or other compiler.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -192,15 +192,15 @@ CLASS DOCUMENTATION
  * formally known as JSBSim-ML (JSBSim Markup Language).
  *
  * JSBSim (www.jsbsim.org) was created initially for the open source FlightGear
- * flight simulator (www.flightgear.org). JSBSim maintains the ability to run 
- * as a standalone executable in soft real-time, or batch mode. This is useful
- * for running tests or sets of tests automatically using the internal scripting
+ * flight simulator (www.flightgear.org). JSBSim maintains the ability to run as
+ * a standalone executable in soft real-time, or batch mode. This is useful for
+ * running tests or sets of tests automatically using the internal scripting
  * capability.
  *
  * JSBSim does not model specific aircraft in program code. The aircraft itself
- * is defined in a file written in an XML-based format
- * where the aircraft mass and geometric properties are specified.  Additional
- * statements define such characteristics as:
+ * is defined in a file written in an XML-based format where the aircraft mass
+ * and geometric properties are specified.  Additional statements define such
+ * characteristics as:
  *
  * - Landing gear location and properties.
  * - Pilot eyepoint
@@ -216,18 +216,18 @@ CLASS DOCUMENTATION
  * basic theoretical aero knowledge.
  *
  * One of the more unique features of JSBSim is its method of modeling aircraft
- * systems such as a flight control system, autopilot, electrical, etc. 
- * These are modeled by assembling strings of components that represent filters,
+ * systems such as a flight control system, autopilot, electrical, etc. These
+ * are modeled by assembling strings of components that represent filters,
  * switches, summers, gains, sensors, and so on.
  *
  * Another unique feature is displayed in the use of "properties".  Properties
  * essentially expose chosen variables as nodes in a tree, in a directory-like
- * hierarchy.  This approach facilitates plugging in different FDMs (Flight Dynamics
- * Model) into FlightGear, but it also is a fundamental tool in allowing a wide
- * range of aircraft to be modeled, each having its own unique control system,
- * aerosurfaces, and flight deck instrument panel.  The use of properties allows
- * all these items for a craft to be modeled and integrated without the need for
- * specific and unique program source code.
+ * hierarchy.  This approach facilitates plugging in different FDMs (Flight
+ * Dynamics Model) into FlightGear, but it also is a fundamental tool in
+ * allowing a wide range of aircraft to be modeled, each having its own unique
+ * control system, aerosurfaces, and flight deck instrument panel.  The use of
+ * properties allows all these items for a craft to be modeled and integrated
+ * without the need for specific and unique program source code.
  *
  * The equations of motion are modeled essentially as they are presented in
  * aerospace textbooks for the benefit of student users, but quaternions are
@@ -238,8 +238,9 @@ CLASS DOCUMENTATION
  * JSBSim can output (log) data in a configurable way.  Sets of data that are
  * logically related can be selected to be output at a chosen rate, and
  * individual properties can be selected for output.  The output can be streamed
- * to the console, and/or to a file (or files), and/or can be transmitted through a
- * socket or sockets, or any combination of the aforementioned methods.
+ * to the console, and/or to a file (or files), and/or can be transmitted
+ * through a socket or sockets, or any combination of the aforementioned
+ * methods.
  *
  * JSBSim has been used in a variety of ways:
  *
@@ -249,7 +250,7 @@ CLASS DOCUMENTATION
  * - As an FDM that drives motion base simulators for some
  *   commercial/entertainment simulators
  *
- * \section Supported Platforms:
+ * \section platforms Supported Platforms
  * JSBSim has been built on the following platforms:
  *
  *   - Linux (x86)
