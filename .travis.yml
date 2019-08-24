@@ -46,10 +46,8 @@ script:
 after_success:
   - cpack
   - export TRAVIS_TAG=Rolling-release-v2019
-# Build the API documentation with Doxygen (skip if we are building a pull request)
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then make doc; fi
-# Build the Python API documentation with sphinx (skip if we are building a pull request)
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then sphinx-build -b html . documentation/html/python; fi
+# Build the C++ and Python API documentation
+  - ./../doc/build_docs.sh
  # Run the C++ unit tests coverage
   - ./../tests/unit_tests/test_coverage.sh
 

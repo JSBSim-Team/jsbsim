@@ -87,10 +87,6 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-  # Make sure GitHub does not skip underscored folders
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/documentation/html)
-  file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/documentation/html/.nojekyll)
-
   # Prepare the sphinx build files
   if (BUILD_PYTHON_MODULE AND CYTHON_FOUND AND PYTHONLIBS_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
