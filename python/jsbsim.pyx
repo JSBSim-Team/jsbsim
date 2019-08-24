@@ -37,12 +37,15 @@ cdef class FGPropagate:
         self.thisptr = NULL
 
     def get_Tl2b(self):
+        """@Dox(JSBSim::FGPropagate::GetTl2b)"""
         return convertToNumpyMat(self.thisptr.GetTl2b())
 
     def get_Tec2b(self):
+        """@Dox(JSBSim::FGPropagate::GetTec2b)"""
         return convertToNumpyMat(self.thisptr.GetTec2b())
 
     def get_uvw(self):
+        """@Dox(JSBSim::FGPropagate::GetUVW)"""
         return convertToNumpyVec(self.thisptr.GetUVW())
 
 cdef class FGPropertyManager:

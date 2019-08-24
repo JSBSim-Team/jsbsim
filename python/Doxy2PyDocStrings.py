@@ -24,24 +24,24 @@ import re
 from textwrap import wrap
 import xml.etree.ElementTree as et
 
-version = '${PROJECT_VERSION}'
+version = '_'+'_'.join('${PROJECT_VERSION}'.split('.')[:2])
 
-def convert_para(tag, ident):
+def convert_para(tag, indent):
     docstring = ''
     for para in tag.findall('para'):
-        docstring += ' '*ident
+        docstring += ' '*indent
         if para.text:
-            docstring += ('\n'+' '*ident).join(wrap(para.text, 80-ident))
+            docstring += ('\n'+' '*indent).join(wrap(para.text, 80-indent))
         for item_list in para.findall('itemizedlist'):
             for item in item_list.findall('listitem'):
-                docstring += convert_para(item, ident+2)
+                docstring += convert_para(item, indent)
         listings = para.findall('programlisting')
         if listings:
             for listing in listings:
-                docstring = docstring[:-2-ident]+' ::\n\n'
+                docstring = docstring[:-2-indent]+' ::\n\n'
                 for codeline in listing.findall('codeline/highlight'):
                     if codeline.text:
-                        docstring += ' '*(ident+2)+codeline.text.strip()
+                        docstring += ' '*(indent+2)+codeline.text.strip()
                     for sp in codeline.findall('sp'):
                         docstring += ' '
                         if sp.tail:
@@ -50,8 +50,13 @@ def convert_para(tag, ident):
                 if listing.tail:
                     docstring += listing.tail.strip()
                 docstring += '\n'
-        else:
+        elif docstring.rstrip():
             docstring += '\n\n'
+        ret = para.find('simplesect[@kind="return"]/para')
+        if ret is not None and ret.text:
+            if docstring.rstrip():
+                docstring +=' '*indent
+            docstring += ':returns: '+ret.text+'\n'
 
     return docstring
 
@@ -62,23 +67,34 @@ doxytag = re.search(r'@Dox\(([\w:]+)\)', txt)
 
 while doxytag:
     names = doxytag.group(1).split('::')
-    xmlfilename = 'class'+('_'+'_'.join(version.split('.')[:2])).join(names)+'.xml'
+    xmlfilename = 'class'+version.join(names[:2])+'.xml'
     tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/'+xmlfilename)
     root = tree.getroot()
     docstring = ''
+    col = doxytag.start() - txt[:doxytag.start()].rfind('\n')
 
     for tag in root.findall('compounddef/compoundname'):
         if tag.text != '::'.join(names[:2]):
             raise IOError("File {} does not contain {}".format(xmlfilename,
                                                                doxytag.group(1)))
 
-    for tag in root.findall('compounddef/briefdescription'):
-        for para in tag.findall('para'):
-            if para.text:
-                docstring = para.text.strip()+'\n\n'
+    if len(names) == 2:
+        # Class docs
+        member = root.find('compounddef')
+    else:
+        # Member function docs
+        for member in root.findall('.//memberdef'):
+            if member.find('name').text == names[2]:
+                break
+        else:
+            raise IOError("Could not find {} in {}".format(doxytag.group(1),
+                                                           xmlfilename))
+    para = member.find('briefdescription/para')
+    if para is not None and para.text:
+        docstring = para.text.strip()+'\n\n'
 
-    for tag in root.findall('compounddef/detaileddescription'):
-        col = doxytag.start() - txt[:doxytag.start()].rfind('\n')
+    tag = member.find('detaileddescription')
+    if tag is not None:
         docstring += convert_para(tag, col-1)
 
     if len(docstring) == 0:
