@@ -29,6 +29,7 @@ cdef convertToNumpyVec(const c_FGColumnVector3& v):
     return numpy.mat([v.Entry(1), v.Entry(2), v.Entry(3)]).T
 
 cdef class FGPropagate:
+    """@Dox(JSBSim::FGPropagate)"""
 
     cdef c_FGPropagate *thisptr
 
@@ -45,30 +46,32 @@ cdef class FGPropagate:
         return convertToNumpyVec(self.thisptr.GetUVW())
 
 cdef class FGPropertyManager:
+    """@Dox(JSBSim::FGPropertyManager)"""
 
-     cdef c_FGPropertyManager *thisptr
-     cdef bool thisptr_owner
+    cdef c_FGPropertyManager *thisptr
+    cdef bool thisptr_owner
 
-     def __cinit__(self, new_instance=False):
-         if new_instance:
-             self.thisptr = new c_FGPropertyManager()
-             if self.thisptr is NULL:
-                 raise MemoryError()
-             self.thisptr_owner = True
-         else:
-             self.thisptr = NULL
-             self.thisptr_owner = False
+    def __cinit__(self, new_instance=False):
+        if new_instance:
+            self.thisptr = new c_FGPropertyManager()
+            if self.thisptr is NULL:
+                raise MemoryError()
+            self.thisptr_owner = True
+        else:
+            self.thisptr = NULL
+            self.thisptr_owner = False
 
-     def __dealloc__(self):
-         if self.thisptr is not NULL and self.thisptr_owner:
-             del self.thisptr
-             self.thisptr = NULL
-             self.thisptr_owner = False
+    def __dealloc__(self):
+        if self.thisptr is not NULL and self.thisptr_owner:
+            del self.thisptr
+            self.thisptr = NULL
+            self.thisptr_owner = False
 
-     def hasNode(self, path):
-         return self.thisptr.HasNode(path.encode())
+    def hasNode(self, path):
+        return self.thisptr.HasNode(path.encode())
 
 cdef class FGGroundReactions:
+    """@Dox(JSBSim::FGGroundReactions)"""
 
     cdef c_FGGroundReactions *thisptr
 
@@ -84,6 +87,7 @@ cdef class FGGroundReactions:
         return self.thisptr.GetNumGearUnits()
 
 cdef class FGLGear:
+    """@Dox(JSBSim::FGLGear)"""
 
     cdef c_FGLGear *thisptr
 
@@ -109,6 +113,7 @@ cdef class FGLGear:
         return convertToNumpyVec(self.thisptr.GetActingLocation())
 
 cdef class FGAuxiliary:
+    """@Dox(JSBSim::FGAuxiliary)"""
 
     cdef c_FGAuxiliary *thisptr
 
@@ -122,6 +127,7 @@ cdef class FGAuxiliary:
         return convertToNumpyMat(self.thisptr.GetTb2w())
 
 cdef class FGAerodynamics:
+    """@Dox(JSBSim::FGAerodynamics)"""
 
     cdef c_FGAerodynamics *thisptr
 
@@ -135,6 +141,7 @@ cdef class FGAerodynamics:
         return convertToNumpyVec(self.thisptr.GetForces())
 
 cdef class FGAircraft:
+    """@Dox(JSBSim::FGAircraft)"""
 
     cdef c_FGAircraft *thisptr
 
@@ -145,6 +152,7 @@ cdef class FGAircraft:
         return convertToNumpyVec(self.thisptr.GetXYZrp())
 
 cdef class FGAtmosphere:
+    """@Dox(JSBSim::FGAtmosphere)"""
 
     cdef c_FGAtmosphere *thisptr
 
@@ -161,6 +169,7 @@ cdef class FGAtmosphere:
         return self.thisptr.SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
+    """@Dox(JSBSim::FGMassBalance)"""
 
     cdef c_FGMassBalance *thisptr
 
@@ -171,6 +180,7 @@ cdef class FGMassBalance:
         return convertToNumpyVec(self.thisptr.GetXYZcg())
 
 cdef class FGJSBBase:
+    """@Dox(JSBSim::FGJSBBase)"""
 
     cdef c_FGJSBBase *baseptr
 
@@ -187,6 +197,7 @@ cdef class FGJSBBase:
 
 # this is the python wrapper class
 cdef class FGFDMExec(FGJSBBase):
+    """@Dox(JSBSim::FGFDMExec)"""
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
