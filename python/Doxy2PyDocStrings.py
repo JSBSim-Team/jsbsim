@@ -26,20 +26,29 @@ import xml.etree.ElementTree as et
 
 version = '_'+'_'.join('${PROJECT_VERSION}'.split('.')[:2])
 
+def wrap_last_line(txt, tab):
+    col = txt.rfind('\n'+tab)+len(tab)+1
+    lastline = txt[col:].strip()
+    n = len(tab)
+    if len(lastline) > 80-n:
+        return txt[:col]+('\n'+' '*n).join(wrap(lastline, 80-n))
+
+    return txt
+
 def convert_para(tag, indent):
     docstring = ''
+    tab = ' '*indent
     for para in tag.findall('para'):
-        docstring += ' '*indent
+        docstring += '\n\n'+tab
         if para.text:
-            docstring += ('\n'+' '*indent).join(wrap(para.text, 80-indent))
-        for item_list in para.findall('itemizedlist'):
-            for item in item_list.findall('listitem'):
-                docstring += convert_para(item, indent)
-        listings = para.findall('programlisting')
-        if listings:
-            for listing in listings:
+            docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
+        for elem in para.iter():
+            if elem.tag == 'itemizedlist':
+                for item in elem.findall('listitem'):
+                    docstring += tab+'* '+convert_para(item, indent+2)
+            elif elem.tag == 'programlisting':
                 docstring = docstring[:-2-indent]+' ::\n\n'
-                for codeline in listing.findall('codeline/highlight'):
+                for codeline in elem.findall('codeline/highlight'):
                     if codeline.text:
                         docstring += ' '*(indent+2)+codeline.text.strip()
                     for sp in codeline.findall('sp'):
@@ -47,16 +56,23 @@ def convert_para(tag, indent):
                         if sp.tail:
                             docstring += sp.tail.strip()
                     docstring +='\n'
-                if listing.tail:
-                    docstring += listing.tail.strip()
-                docstring += '\n'
-        elif docstring.rstrip():
-            docstring += '\n\n'
-        ret = para.find('simplesect[@kind="return"]/para')
-        if ret is not None and ret.text:
-            if docstring.rstrip():
-                docstring +=' '*indent
-            docstring += ':returns: '+ret.text+'\n'
+                if elem.tail:
+                    docstring += elem.tail
+                else:
+                    # Remove the last carriage return
+                    docstring = docstring[:-1]
+            # TODO: Make a link from <ref>
+            elif elem.tag == 'ref':
+                docstring += ' '+elem.text
+                if elem.tail:
+                    docstring += elem.tail
+                docstring = wrap_last_line(docstring, tab)
+            elif elem.tag == 'simplesect' and elem.attrib['kind'] == 'return':
+                ret = elem.find('para')
+                if ret is not None and ret.text:
+                    if docstring.rstrip():
+                        docstring +='\n\n'+tab
+                    docstring += ':returns: '+ret.text+'\n'
 
     return docstring
 
@@ -91,7 +107,7 @@ while doxytag:
                                                            xmlfilename))
     para = member.find('briefdescription/para')
     if para is not None and para.text:
-        docstring = para.text.strip()+'\n\n'
+        docstring = para.text.strip()
 
     tag = member.find('detaileddescription')
     if tag is not None:
