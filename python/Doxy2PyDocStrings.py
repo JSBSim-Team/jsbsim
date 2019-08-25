@@ -35,17 +35,21 @@ def wrap_last_line(txt, tab):
 
     return txt
 
-def convert_para(para, indent, recursive=False):
+def wrap_list_item(text, bullet, indent):
+    tab = ' '*(indent+len(bullet))
+    return ('\n'+tab).join(wrap(text, 80-len(tab)))
+
+def convert_para(para, indent):
     tab = ' '*indent
-    if recursive:
-        docstring = ''
-    else:
-        docstring = '\n\n'+tab
+    docstring = ''
     if para.text:
-        docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
+        text = " ".join(para.text.split())
+        docstring += ('\n'+tab).join(wrap(text, 80-indent))
     for elem in list(para):
         if elem.tag == 'heading':
-            docstring += '\n\n'+tab+'.. rubric:: '+elem.text
+            if docstring:
+                docstring = docstring.strip()+'\n\n'+tab
+            docstring += '.. rubric:: '+elem.text
         elif elem.tag == 'linebreak':
             docstring +='\n'+tab
             if elem.tail:
@@ -55,18 +59,28 @@ def convert_para(para, indent, recursive=False):
             if elem.tail:
                 docstring += elem.tail
         elif elem.tag == 'itemizedlist':
+            if docstring:
+                docstring = docstring.strip()+'\n\n'+tab
             for item in elem.findall('listitem/para'):
-                docstring += '* '+convert_para(item, indent, True)+'\n'+tab
+                text = " ".join(convert_para(item, indent).split())
+                docstring += '* '+wrap_list_item(text, '* ', indent)+'\n'+tab
+            docstring = docstring.rstrip()
         elif elem.tag == 'orderedlist':
+            if docstring:
+                docstring = docstring.strip()+'\n\n'+tab
             num = 1
             for item in elem.findall('listitem/para'):
-                listnum = '{}. '.format(num)
-                docstring += listnum+('\n'+tab+' '*len(listnum)).join(wrap(convert_para(item, indent, True),
-                                                                      80-indent-len(listnum)))+'\n'+tab
+                bullet = '{}. '.format(num)
+                text = " ".join(convert_para(item, indent).split())
+                docstring += bullet+wrap_list_item(text, bullet,
+                                                   indent)+'\n'+tab
                 num += 1
+            docstring = docstring.rstrip()
         elif elem.tag == 'programlisting':
             # TODO: Must also manage other languages
-            docstring = docstring.strip()+'\n\n'+tab+'.. code-block:: xml\n\n'
+            if docstring:
+                docstring = docstring.strip()+'\n\n'+tab
+            docstring += '.. code-block:: xml\n\n'
             for codeline in elem.findall('codeline/highlight'):
                 line = ' '*(indent+3)
                 if codeline.text:
@@ -78,9 +92,6 @@ def convert_para(para, indent, recursive=False):
                 docstring += line+'\n'
             if elem.tail:
                 docstring += elem.tail
-            else:
-                # Remove the last carriage return
-                docstring = docstring[:-1]
         elif elem.tag == 'ref':
             # TODO: Make a link from <ref>
             docstring += ' '+elem.text
@@ -137,12 +148,12 @@ while doxytag:
                                                                doxytag.group(1)))
     para = member.find('briefdescription/para')
     if para is not None and para.text:
-        docstring = para.text.strip()
+        docstring = para.text.strip()+'\n\n'+' '*(col-1)
 
     tag = member.find('detaileddescription')
     if tag is not None:
         for para in tag.findall('para'):
-            docstring += convert_para(para, col-1)
+            docstring += convert_para(para, col-1).strip()+'\n\n'+' '*(col-1)
 
     if len(docstring) == 0:
         docstring = 'Not yet documented.'
