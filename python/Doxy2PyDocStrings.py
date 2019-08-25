@@ -41,7 +41,9 @@ def convert_para(para, indent):
     if para.text:
         docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
     for elem in list(para):
-        if elem.tag == 'itemizedlist':
+        if elem.tag == 'heading':
+            docstring += '\n\n'+tab+elem.text
+        elif elem.tag == 'itemizedlist':
             for item in elem.findall('listitem'):
                 docstring += tab+'* '+convert_para(item, indent+2)
         elif elem.tag == 'programlisting':
