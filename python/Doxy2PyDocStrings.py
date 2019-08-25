@@ -35,21 +35,40 @@ def wrap_last_line(txt, tab):
 
     return txt
 
-def convert_para(para, indent):
+def convert_para(para, indent, recursive=False):
     tab = ' '*indent
-    docstring = '\n\n'+tab
+    if recursive:
+        docstring = ''
+    else:
+        docstring = '\n\n'+tab
     if para.text:
         docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
     for elem in list(para):
         if elem.tag == 'heading':
-            docstring += '\n\n'+tab+elem.text
+            docstring += '\n\n'+tab+'.. rubric:: '+elem.text
+        elif elem.tag == 'linebreak':
+            docstring +='\n'+tab
+            if elem.tail:
+                docstring += elem.tail.strip()
+        elif elem.tag == 'bold':
+            docstring += '**'+elem.text+'**'
+            if elem.tail:
+                docstring += elem.tail
         elif elem.tag == 'itemizedlist':
-            for item in elem.findall('listitem'):
-                docstring += tab+'* '+convert_para(item, indent+2)
+            for item in elem.findall('listitem/para'):
+                docstring += '* '+convert_para(item, indent, True)+'\n'+tab
+        elif elem.tag == 'orderedlist':
+            num = 1
+            for item in elem.findall('listitem/para'):
+                listnum = '{}. '.format(num)
+                docstring += listnum+('\n'+tab+' '*len(listnum)).join(wrap(convert_para(item, indent, True),
+                                                                      80-indent-len(listnum)))+'\n'+tab
+                num += 1
         elif elem.tag == 'programlisting':
-            docstring = docstring[:-2-indent]+' ::\n\n'
+            # TODO: Must also manage other languages
+            docstring = docstring.strip()+'\n\n'+tab+'.. code-block:: xml\n\n'
             for codeline in elem.findall('codeline/highlight'):
-                line = ' '*(indent+2)
+                line = ' '*(indent+3)
                 if codeline.text:
                     line += codeline.text.strip()
                 for sp in codeline.findall('sp'):
@@ -68,7 +87,7 @@ def convert_para(para, indent):
             if elem.tail:
                 docstring += elem.tail
             docstring = wrap_last_line(docstring, tab)
-        elif elem.tag == 'simple sect' and elem.attrib['kind'] == 'return':
+        elif elem.tag == 'simplesect' and elem.attrib['kind'] == 'return':
             ret = elem.find('para')
             if ret is not None and ret.text:
                 if docstring.rstrip():
@@ -89,7 +108,8 @@ for klass in klasses:
         f.write("="*len(title)+'\n'+title+'\n'+"="*len(title)+'\n\n')
         f.write('.. autoclass:: jsbsim.'+klass+'\n   :members:\n')
 
-doxytag = re.search(r'@Dox\(([\w:]+)\)', txt)
+request = re.compile(r'@Dox\(([\w:]+)\)')
+doxytag = re.search(request, txt)
 
 while doxytag:
     names = doxytag.group(1).split('::')
@@ -129,7 +149,7 @@ while doxytag:
 
     txt = txt[:doxytag.start()]+txt[doxytag.start():].replace(doxytag.group(),
                                                               docstring.rstrip())
-    doxytag = re.search(r'@Dox\(([\w:]+)\)', txt)
+    doxytag = re.search(request, txt)
 
 with open('jsbsim.pyx', 'w') as dest:
     dest.write(txt)
