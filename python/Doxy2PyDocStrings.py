@@ -35,44 +35,43 @@ def wrap_last_line(txt, tab):
 
     return txt
 
-def convert_para(tag, indent):
-    docstring = ''
+def convert_para(para, indent):
     tab = ' '*indent
-    for para in tag.findall('para'):
-        docstring += '\n\n'+tab
-        if para.text:
-            docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
-        for elem in para.iter():
-            if elem.tag == 'itemizedlist':
-                for item in elem.findall('listitem'):
-                    docstring += tab+'* '+convert_para(item, indent+2)
-            elif elem.tag == 'programlisting':
-                docstring = docstring[:-2-indent]+' ::\n\n'
-                for codeline in elem.findall('codeline/highlight'):
-                    if codeline.text:
-                        docstring += ' '*(indent+2)+codeline.text.strip()
-                    for sp in codeline.findall('sp'):
-                        docstring += ' '
-                        if sp.tail:
-                            docstring += sp.tail.strip()
-                    docstring +='\n'
-                if elem.tail:
-                    docstring += elem.tail
-                else:
-                    # Remove the last carriage return
-                    docstring = docstring[:-1]
+    docstring = '\n\n'+tab
+    if para.text:
+        docstring += ('\n'+tab).join(wrap(para.text, 80-indent))
+    for elem in list(para):
+        if elem.tag == 'itemizedlist':
+            for item in elem.findall('listitem'):
+                docstring += tab+'* '+convert_para(item, indent+2)
+        elif elem.tag == 'programlisting':
+            docstring = docstring[:-2-indent]+' ::\n\n'
+            for codeline in elem.findall('codeline/highlight'):
+                line = ' '*(indent+2)
+                if codeline.text:
+                    line += codeline.text.strip()
+                for sp in codeline.findall('sp'):
+                    line += ' '
+                    if sp.tail:
+                        line += sp.tail.strip()
+                docstring += line+'\n'
+            if elem.tail:
+                docstring += elem.tail
+            else:
+                # Remove the last carriage return
+                docstring = docstring[:-1]
+        elif elem.tag == 'ref':
             # TODO: Make a link from <ref>
-            elif elem.tag == 'ref':
-                docstring += ' '+elem.text
-                if elem.tail:
-                    docstring += elem.tail
-                docstring = wrap_last_line(docstring, tab)
-            elif elem.tag == 'simplesect' and elem.attrib['kind'] == 'return':
-                ret = elem.find('para')
-                if ret is not None and ret.text:
-                    if docstring.rstrip():
-                        docstring +='\n\n'+tab
-                    docstring += ':returns: '+ret.text+'\n'
+            docstring += ' '+elem.text
+            if elem.tail:
+                docstring += elem.tail
+            docstring = wrap_last_line(docstring, tab)
+        elif elem.tag == 'simple sect' and elem.attrib['kind'] == 'return':
+            ret = elem.find('para')
+            if ret is not None and ret.text:
+                if docstring.rstrip():
+                    docstring +='\n\n'+tab
+                docstring += ':returns: '+ret.text+'\n'
 
     return docstring
 
@@ -112,15 +111,16 @@ while doxytag:
             if member.find('name').text == names[2]:
                 break
         else:
-            raise IOError("Could not find {} in {}".format(doxytag.group(1),
-                                                           xmlfilename))
+            raise IOError("File {} does not contain {}".format(xmlfilename,
+                                                               doxytag.group(1)))
     para = member.find('briefdescription/para')
     if para is not None and para.text:
         docstring = para.text.strip()
 
     tag = member.find('detaileddescription')
     if tag is not None:
-        docstring += convert_para(tag, col-1)
+        for para in tag.findall('para'):
+            docstring += convert_para(para, col-1)
 
     if len(docstring) == 0:
         docstring = 'Not yet documented.'
