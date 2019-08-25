@@ -79,6 +79,15 @@ def convert_para(tag, indent):
 with open('jsbsim.pyx') as source:
     txt = source.read()
 
+klasses = re.findall(r'cdef\s+class\s+(\w+)', txt)
+
+# Autogenerate the documentation page for each class
+for klass in klasses:
+    with open('${CMAKE_CURRENT_BINARY_DIR}/documentation/'+klass+'.rst', 'w') as f:
+        title = klass
+        f.write("="*len(title)+'\n'+title+'\n'+"="*len(title)+'\n\n')
+        f.write('.. autoclass:: jsbsim.'+klass+'\n   :members:\n')
+
 doxytag = re.search(r'@Dox\(([\w:]+)\)', txt)
 
 while doxytag:

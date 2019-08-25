@@ -9,13 +9,12 @@ JSBSim Flight Dynamics Model
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :hidden:
+   :glob:
+
+   documentation/*
 
 .. include:: mainpage.rst
-
-.. autoclass:: jsbsim.FGFDMExec
-   :members:
-
 
 Indices and tables
 ==================
