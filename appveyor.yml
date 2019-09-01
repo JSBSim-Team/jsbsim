@@ -18,11 +18,10 @@ init:
 - ren c:\python27 python27-hide
 
 install:
-- pip install cython numpy pandas scipy wheel pywin32
 # Upgrade setuptools to recognize the parameter long_description_content_type
-- pip install -U setuptools
+- pip install -U cython numpy pandas scipy wheel pywin32 setuptools
 # Install CXXTest for C++ unit tests
-- git clone --depth=10 --branch=4.4 https://github.com/CxxTest/cxxtest.git
+- git clone --depth=1 --branch=4.4 https://github.com/CxxTest/cxxtest.git
 - set PATH=%CD%\cxxtest;%PATH%
 - cd cxxtest\python
 - python setup.py install
@@ -42,7 +41,7 @@ build_script:
 test_script:
 # Check that the Python module correctly installs
 - pip install python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
-- python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
+- python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
 - pip install python\dist\JSBSim-1.1.0.dev1.tar.gz

@@ -24,7 +24,7 @@ addons:
       - cxxtest
       - lcov
 before_install:
-  - pip install cython numpy pandas scipy sphinx
+  - pip install -U cython numpy pandas scipy sphinx
   - gem install gist
   - mkdir build
   - cd build
@@ -38,7 +38,7 @@ install:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
 # Check that the Python module has been correctly installed
-  - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
+  - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
   - pip uninstall jsbsim --yes
   - ctest -j2
   - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then pip install python/dist/JSBSim-*.tar.gz; fi
