@@ -154,7 +154,7 @@ for sect in root.findall('.//sect1'):
 pyx_data = pyx_data[:doxymain.start()]+pyx_data[doxymain.start():].replace(doxymain.group(),
                                                                            mainpage.rstrip())
 
-with open('${CMAKE_CURRENT_BINARY_DIR}/mainpage.rst', 'w') as f:
+with open('${CMAKE_CURRENT_BINARY_DIR}/documentation/mainpage.rst', 'w') as f:
     f.write('\n'.join(mainpage.split('\n'+tab)))
 
 request = re.compile(r'@Dox\(([\w:]+)(\(([\w:,&\s]+)\))?\)')

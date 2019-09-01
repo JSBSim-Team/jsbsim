@@ -77,16 +77,16 @@ if (BUILD_PYTHON_MODULE)
         endif()
         execute_process(COMMAND ${PYTHON_EXECUTABLE} doxy2pydocs.py
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python)
+
+        # Prepare the sphinx build files
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
+          ${CMAKE_CURRENT_BINARY_DIR}/documentation/conf.py)
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
+          DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/documentation)
       endif(DOXYGEN_FOUND)
       enable_testing()
       add_subdirectory(tests)
       add_subdirectory(python)
-
-      # Prepare the sphinx build files
-      configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
-        ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
-      file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif(PYTHONLIBS_FOUND)
   elseif(NOT PYTHONLIBS_FOUND)
     message(WARNING "JSBSim Python module and test suite will not be built")

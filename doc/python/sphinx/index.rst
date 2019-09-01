@@ -12,7 +12,7 @@ JSBSim Flight Dynamics Model
    :hidden:
    :glob:
 
-   documentation/*
+   *
 
 .. include:: mainpage.rst
 
