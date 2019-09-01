@@ -1,6 +1,7 @@
 # PyJSBSim a JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
+# Copyright (c) 2014-2019 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -14,6 +15,10 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
+
+"""An Open source flight dynamics & control software library
+
+   @DoxMainPage"""
 
 import os, platform, numpy
 
@@ -71,6 +76,7 @@ cdef class FGPropertyManager:
             self.thisptr_owner = False
 
     def hasNode(self, path):
+        """@Dox(JSBSim::FGPropertyManager::HasNode)"""
         return self.thisptr.HasNode(path.encode())
 
 cdef class FGGroundReactions:
@@ -82,11 +88,13 @@ cdef class FGGroundReactions:
         self.thisptr = NULL
 
     def get_gear_unit(self, gear):
+        """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
         lgear = FGLGear()
         lgear.thisptr = self.thisptr.GetGearUnit(gear)
         return lgear
 
     def get_num_gear_units(self):
+        """@Dox(JSBSim::FGGroundReactions::GetNumGearUnits)"""
         return self.thisptr.GetNumGearUnits()
 
 cdef class FGLGear:
@@ -98,15 +106,19 @@ cdef class FGLGear:
         self.thisptr = NULL
 
     def get_steer_norm(self):
+        """@Dox(JSBSim::FGLGear::GetSteerNorm)"""
         return self.thisptr.GetSteerNorm()
 
     def get_body_x_force(self):
+        """@Dox(JSBSim::FGLGear::GetBodyXForce)"""
         return self.thisptr.GetBodyXForce()
 
     def get_body_y_force(self):
+        """@Dox(JSBSim::FGLGear::GetBodyYForce)"""
         return self.thisptr.GetBodyYForce()
 
     def get_body_z_force(self):
+        """@Dox(JSBSim::FGLGear::GetBodyZForce)"""
         return self.thisptr.GetBodyZForce()
 
     def get_location(self):
@@ -124,9 +136,11 @@ cdef class FGAuxiliary:
         self.thisptr = NULL
 
     def get_Tw2b(self):
+        """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
         return convertToNumpyMat(self.thisptr.GetTw2b())
 
     def get_Tb2w(self):
+        """@Dox(JSBSim::FGAuxiliary::GetTb2w)"""
         return convertToNumpyMat(self.thisptr.GetTb2w())
 
 cdef class FGAerodynamics:
@@ -138,9 +152,11 @@ cdef class FGAerodynamics:
         self.thisptr = NULL
 
     def get_moments_MRC(self):
+        """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
         return convertToNumpyVec(self.thisptr.GetMomentsMRC())
 
     def get_forces(self):
+        """@Dox(JSBSim::FGAerodynamics::GetForces)"""
         return convertToNumpyVec(self.thisptr.GetForces())
 
 cdef class FGAircraft:
@@ -152,6 +168,7 @@ cdef class FGAircraft:
         self.thisptr = NULL
 
     def get_xyz_rp(self):
+        """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
         return convertToNumpyVec(self.thisptr.GetXYZrp())
 
 cdef class FGAtmosphere:
@@ -163,12 +180,15 @@ cdef class FGAtmosphere:
         self.thisptr = NULL
 
     def set_temperature(self, t, h, unit):
+        """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
         return self.thisptr.SetTemperature(t, h, unit)
 
     def get_temperature(self, h):
+        """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
         return self.thisptr.GetTemperature(h)
 
     def set_pressure_SL(self, unit, p):
+        """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
         return self.thisptr.SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
@@ -180,6 +200,7 @@ cdef class FGMassBalance:
         self.thisptr = NULL
 
     def get_xyz_cg(self):
+        """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
         return convertToNumpyVec(self.thisptr.GetXYZcg())
 
 cdef class FGJSBBase:
@@ -196,6 +217,7 @@ cdef class FGJSBBase:
             del self.baseptr
 
     def get_version(self):
+        """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
 
 # this is the python wrapper class
@@ -249,118 +271,47 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_property_value(key.strip(), value)
 
     def run(self):
-        """
-        This function executes each scheduled model in succession.
-        @param return true if successful, false if sim should be ended
-        """
+        """@Dox(JSBSim::FGFDMExec::Run)"""
         return self.thisptr.Run()
 
     def run_ic(self):
-        """
-        Initializes the sim from the initial condition object and executes
-        each scheduled model without integrating i.e. dt=0.
-        @param return true if successful
-        """
+        """@Dox(JSBSim::FGFDMExec::RunIC)"""
         return  self.thisptr.RunIC()
 
     def load_model(self, model, add_model_to_path=True):
-        """
-        Loads an aircraft model.
-        @param AircraftPath path to the aircraft/ directory. For instance:
-            "aircraft". Under aircraft, then, would be directories for various
-            modeled aircraft such as C172/, x15/, etc.
-        @param EnginePath path to the directory under which engine config
-            files are kept, for instance "engine"
-        @param SystemsPath path to the directory under which systems config
-            files are kept, for instance "systems"
-        @param model the name of the aircraft model itself. This file will
-            be looked for in the directory specified in the AircraftPath variable,
-            and in turn under the directory with the same name as the model. For
-            instance: "aircraft/x15/x15.xml"
-        @param addModelToPath set to true to add the model name to the
-            AircraftPath, defaults to true
-        @return true if successful
-        """
-        model = model.encode()
-        return self.thisptr.LoadModel(model, add_model_to_path)
+        """@Dox(JSBSim::FGFDMExec::LoadModel(const std::string &, bool))"""
+        return self.thisptr.LoadModel(model.encode(), add_model_to_path)
 
     def load_model_with_paths(self, model, aircraft_path,
                    engine_path, systems_path, add_model_to_path=True):
-        """
-        Loads an aircraft model.  The paths to the aircraft and engine
-        config file directories must be set prior to calling this.  See
-        below.
-        @param model the name of the aircraft model itself. This file will
-            be looked for in the directory specified in the AircraftPath variable,
-            and in turn under the directory with the same name as the model. For
-            instance: "aircraft/x15/x15.xml"
-        @param addModelToPath set to true to add the model name to the
-            AircraftPath, defaults to true
-        @return true if successful
-        """
-        model = model.encode()
-        aircraft_path = aircraft_path.encode()
-        engine_path = engine_path.encode()
-        systems_path = systems_path.encode()
-
-        return self.thisptr.LoadModel(c_SGPath(aircraft_path, NULL),
-            c_SGPath(engine_path, NULL), c_SGPath(systems_path, NULL), model,
-            add_model_to_path)
+        """@Dox(JSBSim::FGFDMExec::LoadModel(const SGPath &, const SGPath &,
+                                             const SGPath &, const std::string &,
+                                             bool))"""
+        return self.thisptr.LoadModel(c_SGPath(aircraft_path.encode(), NULL),
+                                      c_SGPath(engine_path.encode(), NULL),
+                                      c_SGPath(systems_path.encode(), NULL),
+                                      model.encode(), add_model_to_path)
 
     def load_script(self, script, delta_t=0.0, initfile=""):
-        """
-        Loads a script
-        @param Script The full path name and file name for the script to be loaded.
-        @param deltaT The simulation integration step size, if given.  If no value is supplied
-            then 0.0 is used and the value is expected to be supplied in
-            the script file itself.
-        @param initfile The initialization file that will override the initialization file
-            specified in the script file. If no file name is given on the command line,
-            the file specified in the script will be used. If an initialization file
-            is not given in either place, an error will result.
-        @return true if successfully loads; false otherwise. */
-        """
-        script = script.encode()
-        initfile = initfile.encode()
-
-        return self.thisptr.LoadScript(c_SGPath(script, NULL), delta_t,
-                                       c_SGPath(initfile,NULL))
+        """@Dox(JSBSim::FGFDMExec::LoadScript) """
+        return self.thisptr.LoadScript(c_SGPath(script.encode(), NULL), delta_t,
+                                       c_SGPath(initfile.encode(),NULL))
 
     def set_engine_path(self, path):
-        """
-        Sets the path to the engine config file directories.
-        @param path path to the directory under which engine config
-            files are kept, for instance "engine"
-        """
-        path = path.encode()
-        return self.thisptr.SetEnginePath(c_SGPath(path, NULL))
+        """@Dox(JSBSim::FGFDMExec::SetEnginePath) """
+        return self.thisptr.SetEnginePath(c_SGPath(path.encode(), NULL))
 
     def set_aircraft_path(self, path):
-        """
-        Sets the path to the aircraft config file directories.
-        @param path path to the aircraft directory. For instance:
-            "aircraft". Under aircraft, then, would be directories for various
-            modeled aircraft such as C172/, x15/, etc.
-        """
-        path = path.encode()
-        return self.thisptr.SetAircraftPath(c_SGPath(path, NULL))
+        """@Dox(JSBSim::FGFDMExec::SetAircraftPath)"""
+        return self.thisptr.SetAircraftPath(c_SGPath(path.encode(), NULL))
 
     def set_systems_path(self, path):
-        """
-        Sets the path to the systems config file directories.
-        @param path path to the directory under which systems config
-            files are kept, for instance "systems"
-        """
-        path = path.encode()
-        return self.thisptr.SetSystemsPath(c_SGPath(path, NULL))
+        """@Dox(JSBSim::FGFDMExec::SetSystemsPath) """
+        return self.thisptr.SetSystemsPath(c_SGPath(path.encode(), NULL))
 
     def set_root_dir(self, path):
-        """
-        Sets the root directory where JSBSim starts looking for its system directories.
-        @param path the string containing the root directory.
-        """
-        path = path.encode()
-        self.thisptr.SetRootDir(c_SGPath(path, NULL))
+        """@Dox(JSBSim::FGFDMExec::SetRootDir)"""
+        self.thisptr.SetRootDir(c_SGPath(path.encode(), NULL))
 
         # this is a hack to fix a bug in JSBSim
         self.set_engine_path("engine")
@@ -368,189 +319,99 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_systems_path("systems")
 
     def get_engine_path(self):
-        """
-        Retrieves the engine path
-        """
+        """@Dox(JSBSim::FGFDMExec::GetEnginePath)"""
         return self.thisptr.GetEnginePath().utf8Str().decode('utf-8')
 
     def get_aircraft_path(self):
-        """
-        Retrieves the aircraft path
-        """
+        """@Dox(JSBSim::FGFDMExec::GetAircraftPath)"""
         return self.thisptr.GetAircraftPath().utf8Str().decode('utf-8')
 
     def get_systems_path(self):
-        """
-        Retrieves the systems path
-        """
+        """@Dox(JSBSim::FGFDMExec::GetSystemsPath)"""
         return self.thisptr.GetSystemsPath().utf8Str().decode('utf-8')
 
     def get_full_aircraft_path(self):
-        """
-        Retrieves the full aircraft path name
-        """
+        """@Dox(JSBSim::FGFDMExec::GetFullAircraftPath)"""
         return self.thisptr.GetFullAircraftPath().utf8Str().decode('utf-8')
 
     def get_root_dir(self):
-        """
-        Retrieves the Root Directory.
-        @return the string representing the root (base) JSBSim directory.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetRootDir)"""
         return self.thisptr.GetRootDir().utf8Str().decode('utf-8')
 
     def get_property_value(self, name):
-        """
-        Retrieves the value of a property.
-        @param property the name of the property
-        @result the value of the specified property
-        """
-        name = name.encode()
-        return self.thisptr.GetPropertyValue(name)
+        """@Dox(JSBSim::FGFDMExec::GetPropertyValue) """
+        return self.thisptr.GetPropertyValue(name.encode())
 
     def set_property_value(self, name, value):
-        """
-        Sets a property value.
-        @param property the property to be set
-        @param value the value to set the property to *
-        """
+        """@Dox(JSBSim::FGFDMExec::SetPropertyValue)"""
         self.thisptr.SetPropertyValue(name.encode(), value)
 
     def get_model_name(self):
-        """
-        Retrieves the model name.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetModelName)"""
         return self.thisptr.GetModelName()
 
     def set_output_directive(self, fname):
-        """
-        Sets the output (logging) mechanism for this run.
-        Calling this function passes the name of an output directives file to
-        the FGOutput object associated with this run. The call to this function
-        should be made prior to loading an aircraft model. This call results in an
-        FGOutput object being built as the first Output object in the FDMExec-managed
-        list of Output objects that may be created for an aircraft model. If this call
-        is made after an aircraft model is loaded, there is no effect. Any Output
-        objects added by the aircraft model itself (in an &lt;output> element) will be
-        added after this one. Care should be taken not to refer to the same file
-        name.
-        An output directives file contains an &lt;output> &lt;/output> element, within
-        which should be specified the parameters or parameter groups that should
-        be logged.
-        @param fname the filename of an output directives file.
-        """
+        """@Dox(JSBSim::FGFDMExec::SetOutputDirectives)"""
         return self.thisptr.SetOutputDirectives(c_SGPath(fname.encode(), NULL))
 
-    #def force_output(self, index):
-        #"""
-        #Forces the specified output object to print its items once
-        #"""
-        #self.thisptr.ForceOutput(index)
+    # def force_output(self, index):
+    #     """@Dox(JSBSim::FGFDMExec::ForceOutput)"""
+    #     self.thisptr.ForceOutput(index)
 
     def set_logging_rate(self, rate):
-        """
-        Sets the logging rate for all output objects (if any).
-        """
+        """@Dox(JSBSim::FGFDMExec::SetLoggingRate)"""
         self.thisptr.SetLoggingRate(rate)
 
     def set_output_filename(self, n, fname):
-        """
-        Sets (or overrides) the output filename
-        @param n index of file
-        @param fname the name of the file to output data to
-        @return true if successful, false if there is no output specified for the flight model
-        """
+        """@Dox(JSBSim::FGFDMExec::SetOutputFileName)"""
         return self.thisptr.SetOutputFileName(n, fname.encode())
 
     def get_output_filename(self, n):
-        """
-        Retrieves the current output filename.
-        @param n index of file
-        @return the name of the output file for the first output specified by the flight model.
-            If none is specified, the empty string is returned.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetOutputFileName)"""
         return self.thisptr.GetOutputFileName(n)
 
     def do_trim(self, mode):
-        """
-        Executes trimming in the selected mode.
-        @param mode Specifies how to trim:
-            - tLongitudinal=0
-            - tFull
-            - tGround
-            - tPullup
-            - tCustom
-            - tTurn
-            - tNone
-        """
+        """@Dox(JSBSim::FGFDMExec::DoTrim) """
         self.thisptr.DoTrim(mode)
 
     def disable_output(self):
-        """
-        Disables data logging to all outputs.
-        """
+        """@Dox(JSBSim::FGFDMExec::DisableOutput)"""
         self.thisptr.DisableOutput()
 
     def enable_output(self):
-        """
-        Enables data logging to all outputs.
-        """
+        """@Dox(JSBSim::FGFDMExec::EnableOutput)"""
         self.thisptr.EnableOutput()
 
     def hold(self):
-        """
-        Pauses execution by preventing time from incrementing.
-        """
+        """@Dox(JSBSim::FGFDMExec::Hold)"""
         self.thisptr.Hold()
 
     def enable_increment_then_hold(self, time_steps):
-        """
-        Turn on hold after increment
-        """
+        """@Dox(JSBSim::FGFDMExec::EnableIncrementThenHold)"""
         self.thisptr.EnableIncrementThenHold(time_steps)
 
     def check_incremental_hold(self):
-        """
-        Checks if required to hold afer increment
-        """
+        """@Dox(JSBSim::FGFDMExec::CheckIncrementalHold)"""
         self.thisptr.CheckIncrementalHold()
 
     def resume(self):
-        """
-        Resumes execution from a "Hold".
-        """
+        """@Dox(JSBSim::FGFDMExec::Resume)"""
         self.thisptr.Resume()
 
     def holding(self):
-        """
-        Returns true if the simulation is Holding (i.e. simulation time is not moving).
-        """
+        """@Dox(JSBSim::FGFDMExec::Holding)"""
         return self.thisptr.Holding()
 
     def reset_to_initial_conditions(self, mode):
-        """
-        Resets the initial conditions object and prepares the simulation to run
-        again. If mode is set to 1 the output instances will take special actions
-        such as closing the current output file and open a new one with a
-        different name.
-        @param mode Sets the reset mode.*/
-        """
+        """@Dox(JSBSim::FGFDMExec::ResetToInitialConditions)"""
         self.thisptr.ResetToInitialConditions(mode)
 
     def set_debug_level(self, level):
-        """
-        Sets the debug level.
-        """
+        """@Dox(JSBSim::FGFDMExec::SetDebugLevel)"""
         self.thisptr.SetDebugLevel(level)
 
     def query_property_catalog(self, check):
-        """
-        Retrieves property or properties matching the supplied string.
-        A string is returned that contains a carriage return delimited list of all
-        strings in the property catalog that matches the supplied check string.
-        @param check The string to search for in the property catalog.
-        @return the carriage-return-delimited string containing all matching strings
-            in the catalog.
-        """
+        """@Dox(JSBSim::FGFDMExec::QueryPropertyCatalog)"""
         catalog = (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8').rstrip().split('\n')
         if len(catalog) == 1 and catalog[0] == "No matches found":
             return []
@@ -558,9 +419,7 @@ cdef class FGFDMExec(FGJSBBase):
             return catalog
 
     def get_property_catalog(self, check):
-        """
-        Retrieves the property catalog as a dictionary.
-        """
+        """Retrieves the property catalog as a dictionary."""
         catalog = {}
         for item in self.query_property_catalog(check):
             property_name = item.split(" ")[0]  # remove any (RW) flags
@@ -568,81 +427,59 @@ cdef class FGFDMExec(FGJSBBase):
         return catalog
 
     def print_property_catalog(self):
-        """
-        Print the contents of the property catalog for the loaded aircraft.
-        """
+        """@Dox(JSBSim::FGFDMExec::PrintPropertyCatalog)"""
         self.thisptr.PrintPropertyCatalog()
 
     def print_simulation_configuration(self):
+        """@Dox(JSBSim::FGFDMExec::PrintSimulationConfiguration)"""
         self.thisptr.PrintSimulationConfiguration()
 
     def set_trim_status(self, status):
+        """@Dox(JSBSim::FGFDMExec::SetTrimStatus)"""
         self.thisptr.SetTrimStatus(status)
 
     def get_trim_status(self):
+        """@Dox(JSBSim::FGFDMExec::GetTrimStatus)"""
         return self.thisptr.GetTrimStatus()
 
     def get_propulsion_tank_report(self):
+        """@Dox(JSBSim::FGFDMExec::GetPropulsionTankReport)"""
         return self.thisptr.GetPropulsionTankReport()
 
     def get_sim_time(self):
-        """
-        Returns the cumulative simulation time in seconds.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetSimTime)"""
         return self.thisptr.GetSimTime()
 
     def get_delta_t(self):
-        """
-        Returns the simulation delta T.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetDeltaT)"""
         return self.thisptr.GetDeltaT()
 
     def suspend_integration(self):
-        """
-        Suspends the simulation and sets the delta T to zero.
-        """
+        """@Dox(JSBSim::FGFDMExec::SuspendIntegration)"""
         self.thisptr.SuspendIntegration()
 
     def resume_integration(self):
-        """
-        Resumes the simulation by resetting delta T to the correct value.
-        """
+        """@Dox(JSBSim::FGFDMExec::ResumeIntegration)"""
         self.thisptr.ResumeIntegration()
 
     def integration_suspended(self):
-        """
-        Returns the simulation suspension state.
-        @return true if suspended, false if executing
-        """
+        """@Dox(JSBSim::FGFDMExec::IntegrationSuspended)"""
         return self.thisptr.IntegrationSuspended()
 
     def set_sim_time(self, time):
-        """
-        Sets the current sim time.
-        @param time the current time
-        @return the current simulation time.
-        """
+        """@Dox(JSBSim::FGFDMExec::Setsim_time)"""
         return self.thisptr.Setsim_time(time)
 
     def set_dt(self, dt):
-        """
-        Sets the integration time step for the simulation executive.
-        @param dt the time step in seconds.
-        """
+        """@Dox(JSBSim::FGFDMExec::Setdt)"""
         self.thisptr.Setdt(dt)
 
     def incr_time(self):
-        """
-        Increments the simulation time if not in Holding mode. The Frame counter
-        is also incremented.
-        @return the new simulation time.
-        """
+        """@Dox(JSBSim::FGFDMExec::IncrTime)"""
         return self.thisptr.IncrTime()
 
     def get_debug_level(self):
-        """
-        Retrieves the current debug level setting.
-        """
+        """@Dox(JSBSim::FGFDMExec::GetDebugLevel) """
         return self.thisptr.GetDebugLevel()
 
     def propulsion_init_running(self, n):
@@ -656,41 +493,49 @@ cdef class FGFDMExec(FGJSBBase):
         return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
 
     def get_propagate(self):
+        """@Dox(JSBSim::FGFDMExec::GetPropagate)"""
         propagate = FGPropagate()
         propagate.thisptr = self.thisptr.GetPropagate()
         return propagate
 
     def get_property_manager(self):
+        """@Dox(JSBSim::FGFDMExec::GetPropertyManager)"""
         pm = FGPropertyManager()
         pm.thisptr = self.thisptr.GetPropertyManager()
         return pm
 
     def get_ground_reactions(self):
+        """@Dox(JSBSim::FGFDMExec::GetGroundReactions)"""
         grndreact = FGGroundReactions()
         grndreact.thisptr = self.thisptr.GetGroundReactions()
         return grndreact
 
     def get_auxiliary(self):
+        """@Dox(JSBSim::FGFDMExec::GetAuxiliary)"""
         auxiliary = FGAuxiliary()
         auxiliary.thisptr = self.thisptr.GetAuxiliary()
         return auxiliary
 
     def get_aerodynamics(self):
+        """@Dox(JSBSim::FGFDMExec::GetAerodynamics)"""
         aerodynamics = FGAerodynamics()
         aerodynamics.thisptr = self.thisptr.GetAerodynamics()
         return aerodynamics
 
     def get_aircraft(self):
+        """@Dox(JSBSim::FGFDMExec::GetAircraft)"""
         aircraft = FGAircraft()
         aircraft.thisptr = self.thisptr.GetAircraft()
         return aircraft
 
     def get_mass_balance(self):
+        """@Dox(JSBSim::FGFDMExec::GetMassBalance)"""
         massbalance = FGMassBalance()
         massbalance.thisptr = self.thisptr.GetMassBalance()
         return massbalance
 
     def get_atmosphere(self):
+        """@Dox(JSBSim::FGFDMExec::GetAtmosphere)"""
         atmosphere = FGAtmosphere()
         atmosphere.thisptr = self.thisptr.GetAtmosphere()
         return atmosphere

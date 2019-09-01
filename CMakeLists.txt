@@ -36,7 +36,23 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
 
 ################################################################################
-# Build the automated test infrastructure (needs Python and Cython)            #
+# Documentation                                                                #
+################################################################################
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/JSBSim.dox.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  add_custom_target(doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+endif()
+
+################################################################################
+# Build the Python module and the automated test infrastructure (needs Python  #
+# and Cython)                                                                  #
 ################################################################################
 
 option(BUILD_PYTHON_MODULE "Set to ON to build the Python module for JSBSim" ON)
@@ -50,15 +66,31 @@ if (BUILD_PYTHON_MODULE)
     find_package(PythonLibs)
     if (PYTHONLIBS_FOUND)
       include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
+      configure_file(python/jsbsim.pyx ${CMAKE_CURRENT_BINARY_DIR}/python/jsbsim.pyx)
+      # Autogenerate the Python module doc strings from Doxygen docs
+      if(DOXYGEN_FOUND)
+        configure_file(${CMAKE_CURRENT_LIST_DIR}/python/Doxy2PyDocStrings.py
+          python/doxy2pydocs.py)
+        if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/documentation/xml)
+          execute_process(COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        endif()
+        execute_process(COMMAND ${PYTHON_EXECUTABLE} doxy2pydocs.py
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python)
+      endif(DOXYGEN_FOUND)
       enable_testing()
       add_subdirectory(tests)
       add_subdirectory(python)
-    endif(PYTHONLIBS_FOUND)
-  endif(CYTHON_FOUND)
 
-  if (NOT (CYTHON_FOUND AND PYTHONLIBS_FOUND))
+      # Prepare the sphinx build files
+      configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
+      file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    endif(PYTHONLIBS_FOUND)
+  elseif(NOT PYTHONLIBS_FOUND)
     message(WARNING "JSBSim Python module and test suite will not be built")
-  endif()
+  endif(CYTHON_FOUND)
 endif(BUILD_PYTHON_MODULE)
 
 ################################################################################
@@ -72,29 +104,6 @@ if (CXXTEST_FOUND)
   enable_testing()
   add_subdirectory(tests/unit_tests)
 endif(CXXTEST_FOUND)
-
-################################################################################
-# Documentation                                                                #
-################################################################################
-
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/JSBSim.dox.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-
-  # Prepare the sphinx build files
-  if (BUILD_PYTHON_MODULE AND CYTHON_FOUND AND PYTHONLIBS_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-  endif()
-endif()
 
 ################################################################################
 # Packaging                                                                    #

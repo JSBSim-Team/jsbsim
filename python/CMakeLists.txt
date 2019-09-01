@@ -3,7 +3,6 @@ include(UseCython)
 
 # Declare JSBSim as a C++ project
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx)
-configure_file(jsbsim.pyx ${JSBSIM_PYX})
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE)
 
 # Build the Python module using Cython and the JSBSim library
