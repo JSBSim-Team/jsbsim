@@ -106,13 +106,18 @@ def convert_para(para, indent):
                     docstring +='\n\n'+tab
                 bullet = ':returns: '
                 docstring += bullet+wrap_list_item(ret, bullet, indent)+'\n'
+        elif elem.tag == 'ulink':
+            docstring += '`'+elem.text+' <'+elem.attrib['url']+'>`_'
+            if elem.tail:
+                docstring += elem.tail
+            docstring = wrap_last_line(docstring, tab)
 
     return docstring
 
 with open('jsbsim.pyx') as source:
-    txt = source.read()
+    pyx_data = source.read()
 
-klasses = re.findall(r'cdef\s+class\s+(\w+)', txt)
+klasses = re.findall(r'cdef\s+class\s+(\w+)', pyx_data)
 
 # Autogenerate the documentation page for each class
 for klass in klasses:
@@ -122,8 +127,22 @@ for klass in klasses:
         f.write("="*len(title)+'\n'+title+'\n'+"="*len(title)+'\n\n')
         f.write('.. autoclass:: jsbsim.'+klass+'\n   :members:\n')
 
+tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/indexpage.xml')
+root = tree.getroot()
+mainpage = ''
+
+for sect in root.findall('.//sect1'):
+    mainpage += '.. '+sect.attrib['id']+':\n\n'
+    title = sect.find('title').text
+    mainpage += title+'\n'+'='*len(title)+'\n\n'
+    for para in sect.findall('para'):
+        mainpage += convert_para(para, 0).strip()+'\n\n'
+
+with open('${CMAKE_CURRENT_BINARY_DIR}/mainpage.rst', 'w') as f:
+    f.write(mainpage)
+
 request = re.compile(r'@Dox\(([\w:]+)\)')
-doxytag = re.search(request, txt)
+doxytag = re.search(request, pyx_data)
 
 while doxytag:
     names = doxytag.group(1).split('::')
@@ -131,7 +150,7 @@ while doxytag:
     tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/'+xmlfilename)
     root = tree.getroot()
     docstring = ''
-    col = doxytag.start() - txt[:doxytag.start()].rfind('\n')
+    col = doxytag.start() - pyx_data[:doxytag.start()].rfind('\n')
     tab = ' '*(col-1)
 
     for tag in root.findall('compounddef/compoundname'):
@@ -162,10 +181,10 @@ while doxytag:
     if len(docstring) == 0:
         docstring = '.. note::\n\n   '+tab+'This feature is not yet documented.'
 
-    txt = txt[:doxytag.start()]+txt[doxytag.start():].replace(doxytag.group(),
-                                                              docstring.rstrip())
-    doxytag = re.search(request, txt)
+    pyx_data = pyx_data[:doxytag.start()]+pyx_data[doxytag.start():].replace(doxytag.group(),
+                                                                             docstring.rstrip())
+    doxytag = re.search(request, pyx_data)
 
 with open('jsbsim.pyx', 'w') as dest:
-    dest.write(txt)
+    dest.write(pyx_data)
 
