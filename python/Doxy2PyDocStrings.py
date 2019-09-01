@@ -35,7 +35,8 @@ def wrap_last_line(txt, tab):
 
     return txt
 
-def wrap_list_item(text, bullet, indent):
+def wrap_list_item(item, bullet, indent):
+    text = " ".join(convert_para(item, indent).split())
     tab = ' '*(indent+len(bullet))
     return ('\n'+tab).join(wrap(text, 80-len(tab)))
 
@@ -62,8 +63,7 @@ def convert_para(para, indent):
             if docstring:
                 docstring = docstring.strip()+'\n\n'+tab
             for item in elem.findall('listitem/para'):
-                text = " ".join(convert_para(item, indent).split())
-                docstring += '* '+wrap_list_item(text, '* ', indent)+'\n'+tab
+                docstring += '* '+wrap_list_item(item, '* ', indent)+'\n'+tab
             docstring = docstring.rstrip()
         elif elem.tag == 'orderedlist':
             if docstring:
@@ -71,8 +71,7 @@ def convert_para(para, indent):
             num = 1
             for item in elem.findall('listitem/para'):
                 bullet = '{}. '.format(num)
-                text = " ".join(convert_para(item, indent).split())
-                docstring += bullet+wrap_list_item(text, bullet,
+                docstring += bullet+wrap_list_item(item, bullet,
                                                    indent)+'\n'+tab
                 num += 1
             docstring = docstring.rstrip()
@@ -103,7 +102,8 @@ def convert_para(para, indent):
             if ret is not None and ret.text:
                 if docstring.rstrip():
                     docstring +='\n\n'+tab
-                docstring += ':returns: '+ret.text+'\n'
+                bullet = ':returns: '
+                docstring += bullet+wrap_list_item(ret, bullet, indent)+'\n'
 
     return docstring
 
@@ -129,6 +129,7 @@ while doxytag:
     root = tree.getroot()
     docstring = ''
     col = doxytag.start() - txt[:doxytag.start()].rfind('\n')
+    tab = ' '*(col-1)
 
     for tag in root.findall('compounddef/compoundname'):
         if tag.text != '::'.join(names[:2]):
@@ -148,15 +149,15 @@ while doxytag:
                                                                doxytag.group(1)))
     para = member.find('briefdescription/para')
     if para is not None and para.text:
-        docstring = para.text.strip()+'\n\n'+' '*(col-1)
+        docstring = para.text.strip()+'\n\n'+tab
 
     tag = member.find('detaileddescription')
     if tag is not None:
         for para in tag.findall('para'):
-            docstring += convert_para(para, col-1).strip()+'\n\n'+' '*(col-1)
+            docstring += convert_para(para, col-1).strip()+'\n\n'+tab
 
     if len(docstring) == 0:
-        docstring = 'Not yet documented.'
+        docstring = '.. note::\n\n   '+tab+'This feature is not yet documented.'
 
     txt = txt[:doxytag.start()]+txt[doxytag.start():].replace(doxytag.group(),
                                                               docstring.rstrip())
