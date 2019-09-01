@@ -157,7 +157,7 @@ pyx_data = pyx_data[:doxymain.start()]+pyx_data[doxymain.start():].replace(doxym
 with open('${CMAKE_CURRENT_BINARY_DIR}/mainpage.rst', 'w') as f:
     f.write('\n'.join(mainpage.split('\n'+tab)))
 
-request = re.compile(r'@Dox\(([\w:]+)\)')
+request = re.compile(r'@Dox\(([\w:]+)(\(([\w:,&\s]+)\))?\)')
 doxytag = re.search(request, pyx_data)
 
 while doxytag:
@@ -179,8 +179,16 @@ while doxytag:
         member = root.find('compounddef')
     else:
         # Member function docs
+        if doxytag.group(3):
+            params_type = [ptype.strip() for ptype in doxytag.group(3).split(',')]
+        else:
+            params_type = None
         for member in root.findall('.//memberdef'):
             if member.find('name').text == names[2]:
+                if params_type is not None:
+                    ptypes = [ptype.text for ptype in member.findall('param/type')]
+                    if ptypes != params_type:
+                        continue
                 break
         else:
             raise IOError("File {} does not contain {}".format(xmlfilename,
@@ -195,7 +203,7 @@ while doxytag:
             docstring += convert_para(para, col-1).strip()+'\n\n'+tab
 
     if len(docstring) == 0:
-        docstring = '\n.. note::\n\n   '+tab+'This feature is not yet documented.'
+        docstring = '\n'+tab+'.. note::\n\n   '+tab+'This feature is not yet documented.'
 
     pyx_data = pyx_data[:doxytag.start()]+pyx_data[doxytag.start():].replace(doxytag.group(),
                                                                              docstring.rstrip())
