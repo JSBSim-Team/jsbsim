@@ -26,7 +26,7 @@ install:
 - cd cxxtest\python
 - python setup.py install
 - cd ..\..
-- ps: choco install doxygen.portable
+- ps: choco install doxygen.install
 
 build_script:
 # Build JSBSim
