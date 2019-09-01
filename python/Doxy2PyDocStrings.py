@@ -24,28 +24,30 @@ import re
 from textwrap import wrap
 import xml.etree.ElementTree as et
 
+LASTCOL = 79
+
 version = '_'+'_'.join('${PROJECT_VERSION}'.split('.')[:2])
 
 def wrap_last_line(txt, tab):
     col = txt.rfind('\n'+tab)+len(tab)+1
     lastline = txt[col:].strip()
     n = len(tab)
-    if len(lastline) > 80-n:
-        return txt[:col]+('\n'+' '*n).join(wrap(lastline, 80-n))
+    if len(lastline) > LASTCOL-n:
+        return txt[:col]+('\n'+tab).join(wrap(lastline, LASTCOL-n))
 
     return txt
 
 def wrap_list_item(item, bullet, indent):
     text = " ".join(convert_para(item, indent).split())
     tab = ' '*(indent+len(bullet))
-    return ('\n'+tab).join(wrap(text, 80-len(tab)))
+    return ('\n'+tab).join(wrap(text, LASTCOL-len(tab)))
 
 def convert_para(para, indent):
     tab = ' '*indent
     docstring = ''
     if para.text:
         text = " ".join(para.text.split())
-        docstring += ('\n'+tab).join(wrap(text, 80-indent))
+        docstring += ('\n'+tab).join(wrap(text, LASTCOL-indent))
     for elem in list(para):
         if elem.tag == 'heading':
             if docstring:
@@ -130,16 +132,22 @@ for klass in klasses:
 tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/indexpage.xml')
 root = tree.getroot()
 mainpage = ''
+doxymain = re.search(r'@DoxMainPage', pyx_data)
+col = doxymain.start() - pyx_data[:doxymain.start()].rfind('\n')
+tab = ' '*(col-1)
 
 for sect in root.findall('.//sect1'):
-    mainpage += '.. '+sect.attrib['id']+':\n\n'
+    # mainpage += '.. '+sect.attrib['id']+':\n\n'
     title = sect.find('title').text
-    mainpage += title+'\n'+'='*len(title)+'\n\n'
+    mainpage += title+'\n'+tab+'='*len(title)+'\n\n'+tab
     for para in sect.findall('para'):
-        mainpage += convert_para(para, 0).strip()+'\n\n'
+        mainpage += convert_para(para, col-1).strip()+'\n\n'+tab
+
+pyx_data = pyx_data[:doxymain.start()]+pyx_data[doxymain.start():].replace(doxymain.group(),
+                                                                           mainpage.rstrip())
 
 with open('${CMAKE_CURRENT_BINARY_DIR}/mainpage.rst', 'w') as f:
-    f.write(mainpage)
+    f.write('\n'.join(mainpage.split('\n'+tab)))
 
 request = re.compile(r'@Dox\(([\w:]+)\)')
 doxytag = re.search(request, pyx_data)
