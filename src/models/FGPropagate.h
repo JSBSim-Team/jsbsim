@@ -182,7 +182,7 @@ public:
   const FGColumnVector3& GetVel(void) const { return vVel; }
 
   /** Retrieves the body frame vehicle velocity vector.
-      The vector returned is represented by an FGColumnVector reference. The vector
+      The vector returned is represented by an FGColumnVector3 reference. The vector
       for the velocity in Body frame is organized (Vx, Vy, Vz). The vector
       is 1-based, so that the first element can be retrieved using the "()" operator.
       In other words, vUVW(1) is Vx. Various convenience enumerators are defined
@@ -196,7 +196,7 @@ public:
   /** Retrieves the body angular rates vector, relative to the ECEF frame.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
-      The vector returned is represented by an FGColumnVector reference. The vector
+      The vector returned is represented by an FGColumnVector3 reference. The vector
       for the angular velocity in Body frame is organized (P, Q, R). The vector
       is 1-based, so that the first element can be retrieved using the "()" operator.
       In other words, vPQR(1) is P. Various convenience enumerators are defined

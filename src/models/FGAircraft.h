@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 <p> The \<metrics> section of the aircraft configuration file is read here, and
     the metrical information is held by this class.
 <h3>Configuration File Format for \<metrics> Section:</h3>
-@code
+@code{.xml}
     <metrics>
         <wingarea unit="{FT2 | M2}"> {number} </wingarea>
         <wingspan unit="{FT | M}"> {number} </wingspan>
@@ -150,6 +150,8 @@ public:
   double GetMoments(int idx) const { return vMoments(idx); }
   const FGColumnVector3& GetForces(void) const { return vForces; }
   double GetForces(int idx) const { return vForces(idx); }
+  /** Gets the the aero reference point (RP) coordinates.
+      @return a vector containing the RP coordinates in the structural frame. */
   const FGColumnVector3& GetXYZrp(void) const { return vXYZrp; }
   const FGColumnVector3& GetXYZvrp(void) const { return vXYZvrp; }
   const FGColumnVector3& GetXYZep(void) const { return vXYZep; }

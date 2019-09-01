@@ -67,8 +67,8 @@ CLASS DOCUMENTATION
     sign of the inertia cross products are not modified by JSBSim so in most
     cases, negative values should be provided for <ixy>, <ixz> and <iyz>.
 
-    <h3>Configuration File Format:</h3>
-@code
+    <h3>Configuration File Format for \<mass_balance> Section:</h3>
+@code{.xml}
     <mass_balance>
         <ixx unit="{SLUG*FT2 | KG*M2}"> {number} </ixx>
         <iyy unit="{SLUG*FT2 | KG*M2}"> {number} </iyy>
