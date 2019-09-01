@@ -78,18 +78,22 @@ def convert_para(para, indent):
                 num += 1
             docstring = docstring.rstrip()
         elif elem.tag == 'programlisting':
-            # TODO: Must also manage other languages
             if docstring:
                 docstring = docstring.strip()+'\n\n'+tab
-            docstring += '.. code-block:: xml\n\n'
-            for codeline in elem.findall('codeline/highlight'):
+            language = 'xml'
+            if 'filename' in elem.attrib.keys():
+                language = elem.attrib['filename'][1:]
+            docstring += '.. code-block:: '+language+'\n\n'
+            for codeline in elem.findall('codeline'):
                 line = ' '*(indent+3)
-                if codeline.text:
-                    line += codeline.text.strip()
-                for sp in codeline.findall('sp'):
-                    line += ' '
-                    if sp.tail:
-                        line += sp.tail.strip()
+                for cl in codeline.iter():
+                    if cl.tag in ('highlight', 'ref'):
+                        if cl.text:
+                            line += cl.text.strip()
+                    elif cl.tag == 'sp':
+                        line += ' '
+                    if cl.tail:
+                        line += cl.tail.strip()
                 docstring += line+'\n'
             if elem.tail:
                 docstring += elem.tail
