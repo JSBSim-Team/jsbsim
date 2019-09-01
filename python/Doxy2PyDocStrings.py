@@ -101,12 +101,20 @@ def convert_para(para, indent):
             if elem.tail:
                 docstring += elem.tail
             docstring = wrap_last_line(docstring, tab)
+        elif elem.tag == 'parameterlist':
+            if docstring.rstrip():
+                docstring +='\n\n'+tab
+            for item in elem.findall('parameteritem'):
+                pname = item.find('parameternamelist/parametername').text
+                pdesc = item.find('parameterdescription/para')
+                bullet = ':param '+pname+': '
+                docstring += bullet+wrap_list_item(pdesc, bullet, indent)+'\n'+tab
         elif elem.tag == 'simplesect' and elem.attrib['kind'] == 'return':
             ret = elem.find('para')
             if ret is not None and ret.text:
                 if docstring.rstrip():
                     docstring +='\n\n'+tab
-                bullet = ':returns: '
+                bullet = ':return: '
                 docstring += bullet+wrap_list_item(ret, bullet, indent)+'\n'
         elif elem.tag == 'ulink':
             docstring += '`'+elem.text+' <'+elem.attrib['url']+'>`_'
@@ -187,7 +195,7 @@ while doxytag:
             docstring += convert_para(para, col-1).strip()+'\n\n'+tab
 
     if len(docstring) == 0:
-        docstring = '.. note::\n\n   '+tab+'This feature is not yet documented.'
+        docstring = '\n.. note::\n\n   '+tab+'This feature is not yet documented.'
 
     pyx_data = pyx_data[:doxytag.start()]+pyx_data[doxytag.start():].replace(doxytag.group(),
                                                                              docstring.rstrip())
