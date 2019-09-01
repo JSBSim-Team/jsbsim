@@ -92,8 +92,10 @@ def convert_para(para, indent):
             if elem.tail:
                 docstring += elem.tail
         elif elem.tag == 'ref':
-            # TODO: Make a link from <ref>
-            docstring += ' '+elem.text
+            if elem.attrib['kindref'] == 'compound' and elem.text in klasses:
+                docstring += ' :ref:`'+elem.text+'`'
+            else:
+                docstring += ' '+elem.text
             if elem.tail:
                 docstring += elem.tail
             docstring = wrap_last_line(docstring, tab)
@@ -116,6 +118,7 @@ klasses = re.findall(r'cdef\s+class\s+(\w+)', txt)
 for klass in klasses:
     with open('${CMAKE_CURRENT_BINARY_DIR}/documentation/'+klass+'.rst', 'w') as f:
         title = klass
+        f.write('.. _'+klass+':\n\n')
         f.write("="*len(title)+'\n'+title+'\n'+"="*len(title)+'\n\n')
         f.write('.. autoclass:: jsbsim.'+klass+'\n   :members:\n')
 
