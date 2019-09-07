@@ -82,6 +82,11 @@ html_theme = 'alabaster'
 #
 html_theme_options = {
     "description": "An open source flight dynamics & control software library",
+    "fixed_sidebar": True,
+    "github_banner": True,
+    "github_user" : "JSBSim-Team",
+    "github_repo": "jsbsim",
+    "travis_button" : True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

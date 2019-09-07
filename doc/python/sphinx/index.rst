@@ -15,9 +15,3 @@ JSBSim Flight Dynamics Model
    *
 
 .. include:: mainpage.rst
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
