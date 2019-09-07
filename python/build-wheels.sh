@@ -2,9 +2,8 @@
 set -e -x
 
 # Compile C++ code
-make clean
 make
-ctest
+#ctest
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
