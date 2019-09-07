@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -x
 
+yum install -y cmake
+
 # Compile C++ code
 cd io
 ls
