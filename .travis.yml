@@ -41,8 +41,11 @@ script:
   - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
   - pip uninstall jsbsim --yes
   - ctest -j2
-  - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then pip install python/dist/JSBSim-*.tar.gz; fi
-  - if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"; fi
+  - |
+    if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
+      pip install python/dist/JSBSim-*.tar.gz
+      python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+    fi
 after_success:
   - cpack
   - export TRAVIS_TAG=Rolling-release-v2019
