@@ -2,6 +2,7 @@
 set -e -x
 
 # Compile C++ code
+cd io
 ls
 make
 #ctest
