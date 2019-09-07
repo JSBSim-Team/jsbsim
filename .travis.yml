@@ -1,6 +1,10 @@
 language: python
 dist:
   - xenial
+sudo:
+  - required
+services:
+  - docker
 python:
   - "2.7"
   - "3.6"
@@ -34,7 +38,8 @@ before_install:
   - python python/setup.py build_scripts
   - python python/setup.py bdist_wheel --skip-build
 install:
-  - pip install python/dist/JSBSim*.whl
+  - docker pull quay.io/pypa/manylinux2010_x86_64
+  - pip install jsbsim --no-index -f python/dist
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
 script:
 # Check that the Python module has been correctly installed
