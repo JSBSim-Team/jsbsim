@@ -37,7 +37,7 @@ build_script:
 - cmake --build . --config RelWithDebInfo
 - python python\setup.py sdist
 - python python\setup.py build_scripts
-- python python\setup.py bdist_wheel --skip-build --config RelWithDebInfo
+- python python\setup.py bdist_wheel --config RelWithDebInfo
 
 test_script:
 # Check that the Python module correctly installs

@@ -57,14 +57,17 @@ after_success:
   - sh ../doc/build_docs.sh
 # Run the C++ unit tests coverage
   - sh ../tests/unit_tests/test_coverage.sh
-# Build the manylinux2010 wheel binary packages 
+# Build Linux portable Python packages.
   - |
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
-      docker pull quay.io/pypa/manylinux2010_x86_64
+    if [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
+      # Clean up the existing build files
       rm -f CMakeCache.txt
+      make clean
+      # Install the Docker build environment
+      docker pull quay.io/pypa/manylinux2010_x86_64
       cp ../python/build-wheels.sh .
       chmod +x build-wheels.sh
-      make clean
+      # Build the manylinux1 wheel binary packages
       docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       ls python/dist/
     fi
