@@ -113,8 +113,8 @@ else:
 
 # Check if the library exists and build the Python module accordingly.
 if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist':
-    # OK, the JSBSim library has already been compiled so let us it to build the
-    # Python module.
+    # OK, the JSBSim library has already been compiled so let's use it to build
+    # the Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
                    'include_dirs': ['src'],
                    'libraries': ['JSBSim'],
