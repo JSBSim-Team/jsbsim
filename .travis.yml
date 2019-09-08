@@ -68,7 +68,7 @@ after_success:
       cp ../python/build-wheels.sh .
       chmod +x build-wheels.sh
       # Build the manylinux1 wheel binary packages
-      docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+      docker run --rm -e TRAVIS_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       ls python/dist/
     fi
 
