@@ -61,10 +61,11 @@ after_success:
   - |
     if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
       docker pull quay.io/pypa/manylinux2010_x86_64
+      rm -f CMakeCache.txt
       cp ../python/build-wheels.sh .
       chmod +x build-wheels.sh
       make clean
-      docker run --rm -v `pwd`:/io quay.io/pypa/manylinux2010_x86_64 /io/build-wheels.sh
+      docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       ls python/dist/
     fi
 
