@@ -22,5 +22,5 @@ done
 for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" install jsbsim --no-index -f python/dist
     "${PYBIN}/python" -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-    "${PYBIN}/JSBSim" ../scripts/c1721.xml
+    "${PYBIN}/JSBSim" -root=.. --script=scripts/c1721.xml
 done
