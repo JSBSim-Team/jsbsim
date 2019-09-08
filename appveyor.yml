@@ -75,7 +75,7 @@ deploy:
   description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
+  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp37-cp37m-win_amd64.whl
   prerelease: true
   on:
     branch: master
