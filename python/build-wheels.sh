@@ -3,7 +3,7 @@ set -e -x
 
 # Compile C++ code
 cd /io/build
-cmake ../..
+cmake ..
 make
 
 # Compile wheels
