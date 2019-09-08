@@ -36,12 +36,11 @@ build_script:
 - cmake -G "Visual Studio 15 2017 Win64" ..
 - cmake --build . --config RelWithDebInfo
 - python python\setup.py sdist
-- python python\setup.py build_scripts
-- python python\setup.py bdist_wheel --skip-build --config RelWithDebInfo
+- python python\setup.py bdist_wheel --config RelWithDebInfo --build-number=%APPVEYOR_BUILD_NUMBER%
 
 test_script:
 # Check that the Python module correctly installs
-- pip install python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
+- pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 - pip uninstall jsbsim --yes
 - ctest -j2 -E TestInputSocket
@@ -61,7 +60,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: Rolling_Release_x64_v2019
 
-- path: build\python\dist\JSBSim-1.1.0.dev1-cp37-cp37m-win_amd64.whl
+- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp37-cp37m-win_amd64.whl
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
