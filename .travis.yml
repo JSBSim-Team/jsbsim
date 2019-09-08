@@ -61,13 +61,14 @@ after_success:
     if [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
       # Clean up the existing build files
       rm -f CMakeCache.txt
+      rm -f python/dist/*.whl
       make clean
       # Install the Docker build environment
       docker pull quay.io/pypa/manylinux2010_x86_64
       cp ../python/build-wheels.sh .
       chmod +x build-wheels.sh
       # Build the manylinux1 wheel binary packages
-      docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+      docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux1_x86_64 /io/build/build-wheels.sh
       ls python/dist/
     fi
 
