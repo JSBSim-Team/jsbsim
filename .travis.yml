@@ -35,8 +35,7 @@ before_install:
   - cmake -DCMAKE_INSTALL_PREFIX=~/ -DINSTALL_PYTHON_MODULE=ON -DCPACK_GENERATOR=DEB -DBUILD_SHARED_LIBS=$USE_SYSTEM_EXPAT -DSYSTEM_EXPAT=$USE_SYSTEM_EXPAT ..
   - make -j2
   - python python/setup.py sdist
-  - python python/setup.py build_scripts
-  - python python/setup.py bdist_wheel
+  - python python/setup.py bdist_wheel --build-number=$TRAVIS_BUILD_NUMBER
 install:
   - pip install jsbsim --no-index -f python/dist
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src
