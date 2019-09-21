@@ -466,6 +466,88 @@ class TestActuator(JSBSimTestCase):
                                    (t-fdm['simulation/sim-time-sec'])*rate_limit+2.0*math.pi)
             fdm.run()
 
+        del fdm
+
+        # Check the cyclic clip handles correctly negative numbers (GH issue
+        # #211)
+        # Case 1 : The interval is positive
+        clipmin.text = '0.0'
+        clipmax.text = str(math.pi)
+        tree.write(output_file)
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = -2.0*math.pi
+        t0 = math.pi/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while t <= t0:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= 0.0)
+            if t == 0:
+                self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+            else:
+                self.assertAlmostEqual(fdm[self.output_prop],
+                                       math.pi-t*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        while t <= 2.0*t0:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   math.pi-(t-t0)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        del fdm
+
+        # Case 2 : The interval is negative
+        clipmin.text = str(-math.pi)
+        clipmax.text = '0.0'
+        tree.write(output_file)
+
+        fdm = CreateFDM(self.sandbox)
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = math.pi
+        dt = math.pi/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while t <= dt:
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   t*rate_limit-math.pi)
+            self.assertTrue(fdm[self.output_prop] >= -math.pi-1E-8)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        t0 = t
+        fdm[self.input_prop] = -2.0*math.pi
+        fdm.run()
+        t = fdm['simulation/sim-time-sec']
+
+        while t <= t0+dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t0-t)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        t0 += dt
+
+        while t <= t0+dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t0-t)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
     # Regression test for the bug reported in issue #200
     # JSBSim crashes when "fail hardover" is set while no <clipto> element is
     # specified.
