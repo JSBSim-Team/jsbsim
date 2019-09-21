@@ -227,13 +227,25 @@ void FGFCSComponent::Clip(void)
 {
   if (clip) {
     double vmin = ClipMin->GetValue();
-    if (cyclic_clip) {
+    double vmax = ClipMax->GetValue();
+    double range = vmax - vmin;
+
+    if (range < 0.0) {
+      cerr << "Trying to clip with a max value " << ClipMax->GetName()
+           << " lower than the min value " << ClipMin->GetName()
+           << endl;
+      throw("JSBSim aborts");
+      return;
+    }
+
+    if (cyclic_clip && range != 0.0) {
       double value = Output - vmin;
-      double range = ClipMax->GetValue() - vmin;
       Output = fmod(value, range) + vmin;
+      if (Output < vmin)
+        Output += range;
     }
     else
-      Output = Constrain(vmin, Output, ClipMax->GetValue());
+      Output = Constrain(vmin, Output, vmax);
   }
 }
 
