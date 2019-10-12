@@ -220,6 +220,40 @@ cdef class FGJSBBase:
         """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
 
+cdef class FGPropulsion:
+    """@Dox(JSBSim::FGPropulsion)"""
+
+    cdef c_FGPropulsion *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def init_running(self, n):
+        """@Dox(JSBSim::FGPropulsion::InitRunning)"""
+        self.thisptr.InitRunning(n)
+
+    def get_num_engines(self):
+        """@Dox(JSBSim::FGPropulsion::GetNumEngines)"""
+        return self.thisptr.GetNumEngines()
+
+    def get_engine(self, idx):
+        """@Dox(JSBSim::FGPropulsion::GetEngine)"""
+        engine = FGEngine()
+        engine.thisptr = self.thisptr.GetEngine(idx)
+        return engine
+
+cdef class FGEngine:
+    """@Dox(JSBSim::FGEngine)"""
+
+    cdef c_FGEngine *thisptr
+
+    def __init__(self):
+        self.thisptr = NULL
+
+    def init_running(self):
+        """@Dox(JSBSim::FGEngine::InitRunning)"""
+        return self.thisptr.InitRunning()
+
 # this is the python wrapper class
 cdef class FGFDMExec(FGJSBBase):
     """@Dox(JSBSim::FGFDMExec)"""
@@ -482,12 +516,6 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::GetDebugLevel) """
         return self.thisptr.GetDebugLevel()
 
-    def propulsion_init_running(self, n):
-        self.thisptr.GetPropulsion().InitRunning(n)
-
-    def propulsion_get_num_engines(self):
-        return self.thisptr.GetPropulsion().GetNumEngines()
-
     def load_ic(self, rstfile, useStoredPath):
         rstfile = rstfile.encode()
         return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
@@ -539,3 +567,9 @@ cdef class FGFDMExec(FGJSBBase):
         atmosphere = FGAtmosphere()
         atmosphere.thisptr = self.thisptr.GetAtmosphere()
         return atmosphere
+
+    def get_propulsion(self):
+        """@Dox(JSBSim::FGFDMExec::GetPropulsion)"""
+        propulsion = FGPropulsion()
+        propulsion.thisptr = self.thisptr.GetPropulsion()
+        return propulsion
