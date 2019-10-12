@@ -242,6 +242,10 @@ cdef class FGPropulsion:
         engine.thisptr = self.thisptr.GetEngine(idx)
         return engine
 
+    def get_steady_state(self):
+        """@Dox(JSBSim::FGPropulsion::GetSteadyState)"""
+        return self.thisptr.GetSteadyState()
+
 cdef class FGEngine:
     """@Dox(JSBSim::FGEngine)"""
 
