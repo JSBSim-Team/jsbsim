@@ -735,7 +735,7 @@ public:
   /// Default constructor.
   FGFunction()
     : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr),
-      PropertyManager(nullptr), constForConstParams(true) {}
+      PropertyManager(nullptr) {}
 
   explicit FGFunction(FGPropertyManager* pm)
     : FGFunction()
@@ -797,8 +797,6 @@ protected:
   bool cached;
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
-
-  bool constForConstParams;
 
   void Load(Element* element, FGPropertyValue* var, FGFDMExec* fdmex,
             const std::string& prefix="");

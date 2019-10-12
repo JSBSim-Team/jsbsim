@@ -74,10 +74,9 @@ class aFunc: public FGFunction
 {
 public:
   aFunc(const func_t& _f, FGFDMExec* fdmex, Element* el,
-        const string& prefix, FGPropertyValue* v, bool constForConstParams=true)
+        const string& prefix, FGPropertyValue* v)
     : FGFunction(fdmex->GetPropertyManager()), f(_f)
   {
-    this->constForConstParams = constForConstParams;
     Load(el, v, fdmex, prefix);
     CheckMinArguments(el, Nmin);
     CheckMaxArguments(el, Nmax);
@@ -519,12 +518,12 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [](const decltype(Parameters)& p)->double {
                  return GaussianRandomNumber();
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var, false));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "urandom") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var, false));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
@@ -803,14 +802,15 @@ FGFunction::~FGFunction()
 
 bool FGFunction::IsConstant(void) const
 {
-  if (constForConstParams) {
-    for (auto p: Parameters) {
-      if (!p->IsConstant())
-        return false;
-    }
-    return true;
-  } else
-    return false;
+  // Functions without parameters are assumed to be non-const
+  if (Parameters.empty()) return false;
+
+  for (auto p: Parameters) {
+    if (!p->IsConstant())
+      return false;
+  }
+  
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
