@@ -142,6 +142,21 @@ public:
     TS_ASSERT_EQUALS(v(3), -2.0);
   }
 
+  // Check the assignment via an initializer list
+  void testAssignmentInitializerList(void) {
+    JSBSim::FGColumnVector3 v;
+
+    TS_ASSERT_EQUALS(v(1), 0.0);
+    TS_ASSERT_EQUALS(v(2), 0.0);
+    TS_ASSERT_EQUALS(v(3), 0.0);
+
+    v = { 1.0, 2.0, -3.0 };
+
+    TS_ASSERT_EQUALS(v(1), 1.0);
+    TS_ASSERT_EQUALS(v(2), 2.0);
+    TS_ASSERT_EQUALS(v(3), -3.0);
+  }
+
   void testEquality(void) {
     JSBSim::FGColumnVector3 v(1., 0., -2.);
     JSBSim::FGColumnVector3 v1(v);

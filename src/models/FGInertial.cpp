@@ -73,7 +73,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   b               = 5695439.63;           // semiminor axis length in feet
   */
 
-  vOmegaPlanet = FGColumnVector3( 0.0, 0.0, RotationRate );
+  vOmegaPlanet = { 0.0, 0.0, RotationRate };
   gAccelReference = GetGAccel(RadiusReference);
 
   bind();

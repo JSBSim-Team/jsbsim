@@ -85,9 +85,9 @@ FGLocation::FGLocation(double lon, double lat, double radius)
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-  mECLoc = FGColumnVector3( radius*cosLat*cosLon,
-                            radius*cosLat*sinLon,
-                            radius*sinLat );
+  mECLoc = { radius*cosLat*cosLon,
+             radius*cosLat*sinLon,
+             radius*sinLat };
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,9 +232,9 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
   double sinLon = sin(lon);
   double cosLon = cos(lon);
 
-  mECLoc = FGColumnVector3( radius*cosLat*cosLon,
-                            radius*cosLat*sinLon,
-                            radius*sinLat );
+  mECLoc = { radius*cosLat*cosLon,
+             radius*cosLat*sinLon,
+             radius*sinLat };
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -67,9 +67,6 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
-  gasCellJ = FGMatrix33();
-  gasCellM = FGColumnVector3();
-
   Buoyancy = MaxVolume = MaxOverpressure = Temperature = Pressure =
     Contents = Volume = dVolumeIdeal = 0.0;
   Xradius = Yradius = Zradius = Xwidth = Ywidth = Zwidth = 0.0;
