@@ -438,7 +438,7 @@ void FGWinds::CosineGust()
   if (profile.elapsedTime > (profile.startupDuration + profile.steadyDuration + profile.endDuration)) {
     profile.Running = false;
     profile.elapsedTime = 0.0;
-    oneMinusCosineGust.vWindTransformed.InitMatrix(0.0);
+    oneMinusCosineGust.vWindTransformed.InitMatrix();
     vCosineGust.InitMatrix(0);
   }
 }

@@ -108,9 +108,9 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   vt = vUVW_NED.Magnitude();
   lastSpeedSet = setuvw;
 
-  Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
-                           sbeta,         cbeta,      0.0,
-                    salpha*cbeta, -salpha*sbeta,   calpha);
+  Tw2b = { calpha*cbeta, -calpha*sbeta,  -salpha,
+                  sbeta,         cbeta,      0.0,
+           salpha*cbeta, -salpha*sbeta,   calpha };
   Tb2w = Tw2b.Transposed();
 
   SetFlightPathAngleRadIC(gamma0);
@@ -138,8 +138,8 @@ void FGInitialCondition::InitializeIC(void)
 
   targetNlfIC = 1.0;
 
-  Tw2b.InitMatrix(1., 0., 0., 0., 1., 0., 0., 0., 1.);
-  Tb2w.InitMatrix(1., 0., 0., 0., 1., 0., 0., 0., 1.);
+  Tw2b = { 1., 0., 0., 0., 1., 0., 0., 0., 1. };
+  Tb2w = { 1., 0., 0., 0., 1., 0., 0., 0., 1. };
 
   lastSpeedSet = setvt;
   lastAltitudeSet = setasl;
@@ -223,9 +223,9 @@ void FGInitialCondition::calcAeroAngles(const FGColumnVector3& _vt_NED)
     sbeta = va / vt;
   }
 
-  Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
-                           sbeta,         cbeta,      0.0,
-                    salpha*cbeta, -salpha*sbeta,   calpha);
+  Tw2b = { calpha*cbeta, -calpha*sbeta,  -salpha,
+                  sbeta,         cbeta,      0.0,
+           salpha*cbeta, -salpha*sbeta,   calpha };
   Tb2w = Tw2b.Transposed();
 }
 
@@ -383,9 +383,9 @@ void FGInitialCondition::calcThetaBeta(double alfa, const FGColumnVector3& _vt_N
     cbeta = v2(eU) / vt;
     sbeta = v2(eV) / vt;
   }
-  Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
-                           sbeta,         cbeta,      0.0,
-                    salpha*cbeta, -salpha*sbeta,   calpha);
+  Tw2b = { calpha*cbeta, -calpha*sbeta,  -salpha,
+                  sbeta,         cbeta,      0.0,
+           salpha*cbeta, -salpha*sbeta,   calpha };
   Tb2w = Tw2b.Transposed();
 }
 
@@ -409,9 +409,9 @@ void FGInitialCondition::SetBetaRadIC(double bta)
                      0., cphi,-sphi,
                      0., sphi, cphi);
 
-  Tw2b = FGMatrix33(calpha*cbeta, -calpha*sbeta,  -salpha,
-                           sbeta,         cbeta,      0.0,
-                    salpha*cbeta, -salpha*sbeta,   calpha);
+  Tw2b = { calpha*cbeta, -calpha*sbeta,  -salpha,
+                  sbeta,         cbeta,      0.0,
+           salpha*cbeta, -salpha*sbeta,   calpha };
   Tb2w = Tw2b.Transposed();
 
   FGColumnVector3 vf = TphiInv * Tw2b * FGColumnVector3(vt, 0., 0.);

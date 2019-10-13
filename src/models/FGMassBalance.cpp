@@ -58,10 +58,10 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
 
-  vbaseXYZcg.InitMatrix(0.0);
-  vXYZcg.InitMatrix(0.0);
-  vLastXYZcg.InitMatrix(0.0);
-  vDeltaXYZcg.InitMatrix(0.0);
+  vbaseXYZcg.InitMatrix();
+  vXYZcg.InitMatrix();
+  vLastXYZcg.InitMatrix();
+  vDeltaXYZcg.InitMatrix();
   baseJ.InitMatrix();
   mJ.InitMatrix();
   mJinv.InitMatrix();
@@ -88,8 +88,8 @@ bool FGMassBalance::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  vLastXYZcg.InitMatrix(0.0);
-  vDeltaXYZcg.InitMatrix(0.0);
+  vLastXYZcg.InitMatrix();
+  vDeltaXYZcg.InitMatrix();
 
   return true;
 }
@@ -227,7 +227,8 @@ bool FGMassBalance::Run(bool Holding)
   Ixz = -mJ(1,3);
   Iyz = -mJ(2,3);
 
-// Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
+// Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control &
+// Simulation")
 
   k1 = (Iyy*Izz - Iyz*Iyz);
   k2 = (Iyz*Ixz + Ixy*Izz);
@@ -241,9 +242,9 @@ bool FGMassBalance::Run(bool Holding)
   k5 = (Ixy*Ixz + Iyz*Ixx)*denom;
   k6 = (Ixx*Iyy - Ixy*Ixy)*denom;
 
-  mJinv.InitMatrix( k1, k2, k3,
-                    k2, k4, k5,
-                    k3, k5, k6 );
+  mJinv = { k1, k2, k3,
+            k2, k4, k5,
+            k3, k5, k6 };
 
   RunPostFunctions();
 
@@ -338,7 +339,7 @@ const FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
   if (PointMasses.empty()) return pmJ;
 
-  pmJ = FGMatrix33();
+  pmJ.InitMatrix();
 
   for (auto pm: PointMasses) {
     pmJ += GetPointmassInertia( lbtoslug * pm->Weight, pm->Location );

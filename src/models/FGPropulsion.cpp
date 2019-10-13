@@ -581,7 +581,7 @@ const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 
   if (size == 0) return tankJ;
 
-  tankJ = FGMatrix33();
+  tankJ.InitMatrix();
 
   for (unsigned int i=0; i<size; i++) {
     tankJ += FDMExec->GetMassBalance()->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),

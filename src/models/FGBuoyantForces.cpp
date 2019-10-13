@@ -168,7 +168,7 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
   
   if (size == 0) return gasCellJ;
 
-  gasCellJ = FGMatrix33();
+  gasCellJ.InitMatrix();
 
   for (unsigned int i=0; i < size; i++) {
     gasCellJ += Cells[i]->GetInertia();

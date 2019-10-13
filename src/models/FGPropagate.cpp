@@ -146,9 +146,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   VState.vLocation = FGIC->GetPosition();
 
   epa = FGIC->GetEarthPositionAngleIC();
-  Ti2ec = FGMatrix33(cos(epa), sin(epa), 0.0,
-                     -sin(epa), cos(epa), 0.0,
-                     0.0, 0.0, 1.0);
+  Ti2ec = { cos(epa), sin(epa), 0.0,
+            -sin(epa), cos(epa), 0.0,
+            0.0, 0.0, 1.0 };
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   VState.vInertialPosition = Tec2i * VState.vLocation;
@@ -229,8 +229,9 @@ bool FGPropagate::Run(bool Holding)
     Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
   }
 
-  // CAUTION : the order of the operations below is very important to get transformation
-  // matrices that are consistent with the new state of the vehicle
+  // CAUTION : the order of the operations below is very important to get
+  // transformation matrices that are consistent with the new state of the
+  // vehicle
 
   // 1. Update the Earth position angle (EPA)
   epa += in.vOmegaPlanet(eZ)*dt;
@@ -238,23 +239,24 @@ bool FGPropagate::Run(bool Holding)
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
   double cos_epa = cos(epa);
   double sin_epa = sin(epa);
-  Ti2ec = FGMatrix33(cos_epa, sin_epa, 0.0,
-                     -sin_epa, cos_epa, 0.0,
-                     0.0, 0.0, 1.0);
+  Ti2ec = { cos_epa, sin_epa, 0.0,
+            -sin_epa, cos_epa, 0.0,
+            0.0, 0.0, 1.0 };
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   // 3. Update the location from the updated Ti2ec and inertial position
   VState.vLocation = Ti2ec*VState.vInertialPosition;
 
-  // 4. Update the other "Location-based" transformation matrices from the updated
-  //    vLocation vector.
+  // 4. Update the other "Location-based" transformation matrices from the
+  //    updated vLocation vector.
   UpdateLocationMatrices();
 
   // 5. Update the "Orientation-based" transformation matrices from the updated
   //    orientation quaternion and vLocation vector.
   UpdateBodyMatrices();
 
-  // Translational position derivative (velocities are integrated in the inertial frame)
+  // Translational position derivative (velocities are integrated in the
+  // inertial frame)
   CalculateUVW();
 
   // Set auxilliary state variables
@@ -267,7 +269,8 @@ bool FGPropagate::Run(bool Holding)
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
-  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
+  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal
+  // frame.
   vVel = Tb2l * VState.vUVW;
 
   Debug(2);

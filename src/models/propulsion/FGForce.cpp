@@ -4,24 +4,24 @@
  Author:       Tony Peden
  Date started: 6/10/00
 
- ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
+ --------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) --------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 
  HISTORY
@@ -33,19 +33,14 @@ FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 
 The purpose of this class is to provide storage for computed forces and
-encapsulate all the functionality associated with transforming those
-forces from their native coord system to the body system.  This includes
-computing the moments due to the difference between the point of application
-and the cg.
+encapsulate all the functionality associated with transforming those forces from
+their native coord system to the body system.  This includes computing the
+moments due to the difference between the point of application and the cg.
 
 */
 
-#include <iostream>
-#include <cstdlib>
-
 #include "FGForce.h"
 #include "FGFDMExec.h"
-#include "models/FGPropagate.h"
 #include "models/FGMassBalance.h"
 #include "models/FGAuxiliary.h"
 
@@ -68,9 +63,9 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
   vFb.InitMatrix();
   vM.InitMatrix();
 
-  mT.InitMatrix(1., 0., 0.,
-                0., 1., 0.,
-                0., 0., 1.);
+  mT = { 1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1. };
 
   Debug(0);
 }
