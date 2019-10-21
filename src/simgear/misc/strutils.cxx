@@ -376,9 +376,9 @@ namespace simgear {
         vector<string> v1parts(split(v1, "."));
         vector<string> v2parts(split(v2, "."));
 
-        int lastPart = std::min(v1parts.size(), v2parts.size());
+        int lastPart = (std::min)(v1parts.size(), v2parts.size());
         if (maxComponents > 0) {
-            lastPart = std::min(lastPart, maxComponents);
+            lastPart = (std::min)(lastPart, maxComponents);
         }
 
         for (int part=0; part < lastPart; ++part) {
