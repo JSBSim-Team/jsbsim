@@ -42,6 +42,7 @@ INCLUDES
 #include <cstring>
 
 #include "FGOutputFG.h"
+#include "FGXMLElement.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
 #include "models/FGFCS.h"
