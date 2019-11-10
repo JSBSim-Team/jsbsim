@@ -42,11 +42,11 @@ INCLUDES
 #include <cstring>
 
 #include "FGOutputFG.h"
-#include "FGXMLElement.h"
 #include "models/FGAuxiliary.h"
 #include "models/FGPropulsion.h"
 #include "models/FGFCS.h"
 #include "models/propulsion/FGPiston.h"
+#include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTank.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -216,32 +216,37 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
   net->num_engines = min(FGNetFDM::FG_MAX_ENGINES,Propulsion->GetNumEngines()); // Number of valid engines
 
   for (i=0; i<net->num_engines; i++) {
-    if (Propulsion->GetEngine(i)->GetRunning())
+    FGEngine* engine = Propulsion->GetEngine(i);
+    if (engine->GetRunning())
       net->eng_state[i] = 2;       // Engine state running
-    else if (Propulsion->GetEngine(i)->GetCranking())
+    else if (engine->GetCranking())
       net->eng_state[i] = 1;       // Engine state cranking
     else
       net->eng_state[i] = 0;       // Engine state off
 
-    switch (Propulsion->GetEngine(i)->GetType()) {
+    switch (engine->GetType()) {
     case (FGEngine::etRocket):
       break;
     case (FGEngine::etPiston):
-      net->rpm[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->getRPM());
-      net->fuel_flow[i] = (float)(((FGPiston *)Propulsion->GetEngine(i))->getFuelFlow_gph());
-      net->fuel_px[i]   = 0; // Fuel pressure, psi  (N/A in current model)
-      net->egt[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->GetEGT());
-      net->cht[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->getCylinderHeadTemp_degF());
-      net->mp_osi[i]    = (float)(((FGPiston *)Propulsion->GetEngine(i))->getManifoldPressure_inHg());
-      net->oil_temp[i]  = (float)(((FGPiston *)Propulsion->GetEngine(i))->getOilTemp_degF());
-      net->oil_px[i]    = (float)(((FGPiston *)Propulsion->GetEngine(i))->getOilPressure_psi());
-      net->tit[i]       = 0; // Turbine Inlet Temperature  (N/A for piston)
+      {
+        FGPiston* piston_engine = static_cast<FGPiston*>(engine);
+        net->rpm[i]       = (float)(piston_engine->getRPM());
+        net->fuel_flow[i] = (float)(piston_engine->getFuelFlow_gph());
+        net->fuel_px[i]   = 0; // Fuel pressure, psi  (N/A in current model)
+        net->egt[i]       = (float)(piston_engine->GetEGT());
+        net->cht[i]       = (float)(piston_engine->getCylinderHeadTemp_degF());
+        net->mp_osi[i]    = (float)(piston_engine->getManifoldPressure_inHg());
+        net->oil_temp[i]  = (float)(piston_engine->getOilTemp_degF());
+        net->oil_px[i]    = (float)(piston_engine->getOilPressure_psi());
+        net->tit[i]       = 0; // Turbine Inlet Temperature  (N/A for piston)
+      }
       break;
     case (FGEngine::etTurbine):
       break;
     case (FGEngine::etTurboprop):
       break;
     case (FGEngine::etElectric):
+      net->rpm[i] = static_cast<float>(static_cast<FGElectric*>(engine)->getRPM());
       break;
     case (FGEngine::etUnknown):
       break;
