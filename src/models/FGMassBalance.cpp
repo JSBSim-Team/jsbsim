@@ -42,6 +42,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
+#include "FGGroundReactions.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -53,7 +54,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
+FGMassBalance::FGMassBalance(FGFDMExec* fdmex)
+  : FGModel(fdmex), GroundReactions(nullptr)
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
@@ -88,6 +90,7 @@ bool FGMassBalance::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
+  GroundReactions = FDMExec->GetGroundReactions();
   vLastXYZcg.InitMatrix();
   vDeltaXYZcg.InitMatrix();
 
@@ -206,7 +209,9 @@ bool FGMassBalance::Run(bool Holding)
   vDeltaXYZcgBody = StructuralToBody(vLastXYZcg) - StructuralToBody(vXYZcg);
   vLastXYZcg = vXYZcg;
 
-  if (FDMExec->GetHoldDown())
+  // Compensate displacements of the structural frame when the mass distribution
+  // is modified while the aircraft is in contact with the ground.
+  if (FDMExec->GetHoldDown() || GroundReactions->GetWOW())
     Propagate->NudgeBodyLocation(vDeltaXYZcgBody);
 
 // Calculate new total moments of inertia
