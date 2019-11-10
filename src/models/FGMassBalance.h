@@ -48,6 +48,7 @@ FORWARD DECLARATIONSS
 namespace JSBSim {
 
 class FGPropagate;
+class FGGroundReactions;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -113,12 +114,13 @@ public:
   bool Load(Element* el);
   bool InitModel(void) override;
   /** Runs the Mass Balance model; called by the Executive
-      Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
-                     advancing time. Some models may ignore this flag, such as the Input
-                     model, which may need to be active to listen on a socket for the
-                     "Resume" command to be given.
-      @return false if no error */
+      Can pass in a value indicating if the executive is directing the
+      simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time. Some models may ignore this flag, such
+                     as the Input model, which may need to be active to listen
+                     on a socket for the "Resume" command to be given.  @return
+                     false if no error */
   bool Run(bool Holding) override;
 
   double GetMass(void) const {return Mass;}
@@ -186,6 +188,7 @@ public:
 
 private:
   FGPropagate* Propagate;
+  FGGroundReactions* GroundReactions;
   double Weight;
   double EmptyWeight;
   double Mass;
