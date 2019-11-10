@@ -4,17 +4,17 @@ image: Visual Studio 2017
 
 version: 1.0.{build}
 
-# Need to add Python 3.6 explicitly to the path for CMake to pick it up,
-# also need to hide Python 2.7 otherwise CMake picks it up in preference to 3.6.
-# Cython isn't installed by default so we need to install it
-# Cython also gives a warning about not being on the path if the python36-x64 directory 
-# name in the PATH isn't all lowercase.
-# Need to call vcvarsall.bat to setup path and env variables for the 
-# the VS2017 compiler in order for CMake to pick them up
+# Need to add Python 3.8 explicitly to the path for CMake to pick it up, also
+# need to hide Python 2.7 otherwise CMake picks it up in preference to 3.8.
+# Cython isn't installed by default so we need to install it.
+# Cython also gives a warning about not being on the path if the python38-x64
+# directory name in the PATH isn't all lowercase.
+# Need to call vcvarsall.bat to setup path and env variables for the the VS2017
+# compiler in order for CMake to pick them up.
 # Need to explicitly set the path to Ninja.exe as the make program
 
 init:
-- set PATH=c:\python37-x64;c:\python37-x64\Scripts;%PATH%
+- set PATH=c:\python38-x64;c:\python38-x64\Scripts;%PATH%
 - ren c:\python27 python27-hide
 
 install:
@@ -60,7 +60,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: Rolling_Release_x64_v2019
 
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp37-cp37m-win_amd64.whl
+- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp38-cp38m-win_amd64.whl
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
@@ -75,7 +75,7 @@ deploy:
   description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp37-cp37m-win_amd64.whl
+  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp38-cp38m-win_amd64.whl
   prerelease: true
   on:
     branch: master
