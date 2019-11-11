@@ -459,7 +459,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("ignitionn1"))
     IgnitionN1 = el->FindElementValueAsNumber("ignitionn1");
   if (el->FindElement("ignitionn2"))
-    IgnitionN1 = el->FindElementValueAsNumber("ignitionn2");
+    IgnitionN2 = el->FindElementValueAsNumber("ignitionn2");
   if (el->FindElement("idlen1"))
     IdleN1 = el->FindElementValueAsNumber("idlen1");
   if (el->FindElement("idlen2"))
