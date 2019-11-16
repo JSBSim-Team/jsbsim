@@ -126,6 +126,8 @@ public:
   double GetMass(void) const {return Mass;}
   double GetWeight(void) const {return Weight;}
   double GetEmptyWeight(void) const {return EmptyWeight;}
+  /** Returns the coordinates of the center of gravity expressed in the
+      structural frame. */
   const FGColumnVector3& GetXYZcg(void) const {return vXYZcg;}
   double GetXYZcg(int axis) const  {return vXYZcg(axis);}
   const FGColumnVector3& GetDeltaXYZcg(void) const {return vDeltaXYZcg;}
@@ -172,7 +174,9 @@ public:
   double GetTotalPointMassWeight(void) const;
 
   const FGColumnVector3& GetPointMassMoment(void);
+  /// Returns the inertia matrix expressed in the body frame.
   const FGMatrix33& GetJ(void) const {return mJ;}
+  /// Returns the inverse of the inertia matrix expressed in the body frame.
   const FGMatrix33& GetJinv(void) const {return mJinv;}
   void SetAircraftBaseInertias(const FGMatrix33& BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(int i);
@@ -209,7 +213,7 @@ private:
   double GetIyy(void) const { return mJ(2,2); }
   double GetIzz(void) const { return mJ(3,3); }
   double GetIxy(void) const { return -mJ(1,2); }
-  double GetIxz(void) const { return -mJ(1,3); }
+  double GetIxz(void) const { return mJ(1,3); }
   double GetIyz(void) const { return -mJ(2,3); }
 
   /** The PointMass structure encapsulates a point mass object, moments of inertia
