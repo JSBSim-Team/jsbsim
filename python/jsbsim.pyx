@@ -203,6 +203,14 @@ cdef class FGMassBalance:
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
         return convertToNumpyVec(self.thisptr.GetXYZcg())
 
+    def get_J(self):
+        """@Dox(JSBSim::FGMassBalance::GetJ)"""
+        return convertToNumpyMat(self.thisptr.GetJ())
+
+    def get_Jinv(self):
+        """@Dox(JSBSim::FGMassBalance::GetJinv)"""
+        return convertToNumpyMat(self.thisptr.GetJinv())
+
 cdef class FGJSBBase:
     """@Dox(JSBSim::FGJSBBase)"""
 

@@ -170,6 +170,22 @@ class JSBSimTestCase(unittest.TestCase):
             del self._fdm
             self._fdm = None
 
+    def load_script(self, script_name):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       append_xml(script_name))
+        self._fdm.load_script(script_path)
+
+    def get_aircraft_xml_tree(self, script_name):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       append_xml(script_name))
+        tree = et.parse(script_path)
+        use_element = tree.getroot().find('use')
+        aircraft_name = use_element.attrib['aircraft']
+
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
+                                                         aircraft_name+'.xml')
+        return et.parse(aircraft_path)
+
 
 def spare(filename):
     # Decorator to spare a file from the deletion of the sandbox temporary
