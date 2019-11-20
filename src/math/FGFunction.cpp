@@ -29,6 +29,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
+#include <random>
+#include <chrono>
 
 #include "simgear/misc/strutils.hxx"
 #include "FGFDMExec.h"
@@ -515,13 +517,19 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 3>(f, fdmex, element, Prefix, var));
     } else if (operation == "random") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return GaussianRandomNumber();
+      unsigned int seed = chrono::system_clock::now().time_since_epoch().count();
+      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
+      shared_ptr<normal_distribution<double>> distribution(new normal_distribution<double>(0.0, 1.0));
+      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+                 return (*distribution.get())(*generator);
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "urandom") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
+      unsigned int seed = chrono::system_clock::now().time_since_epoch().count();
+      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
+      shared_ptr<uniform_real_distribution<double>> distribution(new uniform_real_distribution<double>(0.0, 1.0));
+      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+                 return (*distribution.get())(*generator);
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "switch") {
