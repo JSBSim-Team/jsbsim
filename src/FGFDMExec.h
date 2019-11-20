@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     executive is subsequently directed to load the chosen aircraft specification
     file:
 
-    @code{.cpp}
+    @code
     fdmex = new FGFDMExec( ... );
     result = fdmex->LoadModel( ... );
     @endcode
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     from JSBSim. The state variables are used to drive the instrument displays
     and to place the vehicle model in world space for visual rendering:
 
-    @code{.cpp}
+    @code
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->RunIC(); // loop JSBSim once w/o integrating
     copy_from_JSBsim(); // update the bus
@@ -108,7 +108,7 @@ CLASS DOCUMENTATION
 
     Once initialization is complete, cyclic execution proceeds:
 
-    @code{.cpp}
+    @code
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->Run(); // execute JSBSim
     copy_from_JSBsim(); // update the bus
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
     file can be supplied to the stub program. Scripting (see FGScript) provides
     a way to supply command inputs to the simulation:
 
-    @code{.cpp}
+    @code
     FDMExec = new JSBSim::FGFDMExec();
     FDMExec->LoadScript( ScriptName ); // the script loads the aircraft and ICs
     result = FDMExec->Run();
@@ -594,6 +594,9 @@ public:
   void AddTemplateFunc(const std::string& name, Element* el) {
     TemplateFunctions[name] = new FGTemplateFunc(this, el);
   }
+  
+  void SRand(int sr);
+  int  SRand(void) const {return RandomSeed;}
 
 private:
   unsigned int Frame;
@@ -663,8 +666,6 @@ private:
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
-  void SRand(int sr);
-  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);

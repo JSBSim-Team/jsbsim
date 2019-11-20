@@ -679,7 +679,6 @@ refers to one or more instances of a property, value, or table.
      </switch>
 
      Example: if flight-mode is 2, the switch function returns 0.50
-
      <switch>
        <p> executive/flight-mode </p>
        <v> 0.25 </v>
@@ -689,10 +688,24 @@ refers to one or more instances of a property, value, or table.
      </switch>
      @endcode
 - @b random Takes no arguments and returns a Gaussian distributed random number
-    @code <random/> @endcode
+    @code
+    <random/> 
+    Default configuration with mean: mean="0.0" and standard deviation: stddev="1.0"
+    Optional parameters:
+    <random seed="1234"/>
+    <random seed="time_now"/>
+    <random seed="time_now" mean="0.0" stddev="1.0"/>
+    @endcode
 - @b urandom, Takes no arguments and returns a uniformly distributed random
               number between -1 and +1
-    @code<urandom/>@endcode
+    @code
+    <urandom/>
+    Default configuration with lower value: lower="-1.0" and upper value: upper="1.0"
+    Optional parameters:
+    <random seed="1234"/>
+    <random seed="time_now"/>
+    <random seed="time_now" lower="-1.0" upper="1.0"/>
+    @endcode
 - @b pi Takes no argument and returns the value of Pi
     @code<pi/>@endcode
 - @b interpolate1d returns the result from a 1-dimensional interpolation of the
