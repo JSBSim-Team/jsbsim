@@ -97,6 +97,8 @@ cdef extern from "models/FGLGear.h" namespace "JSBSim":
 cdef extern from "models/FGMassBalance.h" namespace "JSBSim":
     cdef cppclass c_FGMassBalance "JSBSim::FGMassBalance":
         c_FGColumnVector3& GetXYZcg()
+        c_FGMatrix33& GetJ()
+        c_FGMatrix33& GetJinv()
 
 cdef extern from "models/FGPropagate.h" namespace "JSBSim":
     cdef cppclass c_FGPropagate "JSBSim::FGPropagate":
