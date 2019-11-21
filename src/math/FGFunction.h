@@ -687,21 +687,28 @@ refers to one or more instances of a property, value, or table.
        <v> 1.00 </v>
      </switch>
      @endcode
-- @b random Takes no arguments and returns a Gaussian distributed random number
+- @b random Returns a normal distributed random number.
+            The function, without parameters, returns a normal distributed 
+            random value with a distribution defined by the parameters
+            mean = 0.0 and standard deviation (stddev) = 1.0
+            The Mean of the distribution (its expected value, μ).
+            Which coincides with the location of its peak.
+            Standard deviation (σ): The square root of variance,
+            representing the dispersion of values from the distribution mean.
+            This shall be a positive value (σ>0).
     @code
     <random/> 
-    Default configuration with mean: mean="0.0" and standard deviation: stddev="1.0"
-    Optional parameters:
     <random seed="1234"/>
     <random seed="time_now"/>
     <random seed="time_now" mean="0.0" stddev="1.0"/>
     @endcode
-- @b urandom, Takes no arguments and returns a uniformly distributed random
-              number between -1 and +1
+- @b urandom Returns a uniformly distributed random number.
+             The function, without parameters, returns a random value 
+             between the minimum value -1.0 and the maximum value of 1.0
+             The two maximum and minimum values can be modified using the 
+             lower and upper parameters.
     @code
     <urandom/>
-    Default configuration with lower value: lower="-1.0" and upper value: upper="1.0"
-    Optional parameters:
     <random seed="1234"/>
     <random seed="time_now"/>
     <random seed="time_now" lower="-1.0" upper="1.0"/>
