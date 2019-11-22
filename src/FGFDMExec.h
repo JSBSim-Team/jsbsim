@@ -594,6 +594,9 @@ public:
   void AddTemplateFunc(const std::string& name, Element* el) {
     TemplateFunctions[name] = new FGTemplateFunc(this, el);
   }
+  
+  void SRand(int sr);
+  int  SRand(void) const {return RandomSeed;}
 
 private:
   unsigned int Frame;
@@ -663,8 +666,6 @@ private:
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
-  void SRand(int sr);
-  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);

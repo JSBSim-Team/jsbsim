@@ -29,6 +29,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
+#include <random>
+#include <chrono>
+#include <memory>
 
 #include "simgear/misc/strutils.hxx"
 #include "FGFDMExec.h"
@@ -37,6 +40,7 @@ INCLUDES
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGFunctionValue.h"
+
 
 using namespace std;
 
@@ -239,6 +243,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
+      
   auto sum = [](const decltype(Parameters)& Parameters)->double {
                double temp = 0.0;
 
@@ -515,13 +520,49 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 3>(f, fdmex, element, Prefix, var));
     } else if (operation == "random") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return GaussianRandomNumber();
+      string seed_attr = element->GetAttributeValue("seed");
+      unsigned int seed;
+      if (seed_attr.empty())
+        seed = fdmex->SRand();
+      else if (seed_attr == "time_now")
+        seed = chrono::system_clock::now().time_since_epoch().count();
+      else
+        seed = atoi(seed_attr.c_str());
+      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
+      double mean = 0.0;
+      double stddev = 1.0;
+      string mean_attr = element->GetAttributeValue("mean");
+      string stddev_attr = element->GetAttributeValue("stddev");
+      if (!mean_attr.empty())
+        mean = atof(mean_attr.c_str());
+      if (!stddev_attr.empty())
+        stddev = atof(stddev_attr.c_str());
+      shared_ptr<normal_distribution<double>> distribution(new normal_distribution<double>(mean, stddev));
+      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+                 return (*distribution.get())(*generator);
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "urandom") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
+      string seed_attr = element->GetAttributeValue("seed");
+      unsigned int seed;
+      if (seed_attr.empty())
+        seed = fdmex->SRand();
+      else if (seed_attr == "time_now")
+        seed = chrono::system_clock::now().time_since_epoch().count();
+      else
+        seed = atoi(seed_attr.c_str());
+      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
+      double lower = -1.0;
+      double upper = 1.0;
+      string lower_attr = element->GetAttributeValue("lower");
+      string upper_attr = element->GetAttributeValue("upper");
+      if (!lower_attr.empty())
+        lower = atof(lower_attr.c_str());
+      if (!upper_attr.empty())
+        upper = atof(upper_attr.c_str());
+      shared_ptr<uniform_real_distribution<double>> distribution(new uniform_real_distribution<double>(lower, upper));
+      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+                 return (*distribution.get())(*generator);
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "switch") {
@@ -809,7 +850,7 @@ bool FGFunction::IsConstant(void) const
     if (!p->IsConstant())
       return false;
   }
-  
+
   return true;
 }
 
