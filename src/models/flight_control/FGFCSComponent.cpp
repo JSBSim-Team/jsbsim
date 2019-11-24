@@ -51,7 +51,6 @@ CLASS IMPLEMENTATION
 
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
-  Element *input_element,*init_element, *clip_el;
   Input = Output = delay_time = 0.0;
   delay = index = 0;
   ClipMin = ClipMax = new FGRealValue(0.0);
@@ -111,14 +110,14 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Name = element->GetAttributeValue("name");
 
-  init_element = element->FindElement("init");
+  Element *init_element = element->FindElement("init");
   while (init_element) {
     InitNodes.push_back(new FGPropertyValue(init_element->GetDataLine(),
                                             PropertyManager ));
     init_element = element->FindNextElement("init");
   }
   
-  input_element = element->FindElement("input");
+  Element *input_element = element->FindElement("input");
   while (input_element) {
     InputNodes.push_back(new FGPropertyValue(input_element->GetDataLine(),
                                              PropertyManager ));
@@ -129,12 +128,20 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Element *out_elem = element->FindElement("output");
   while (out_elem) {
     string output_node_name = out_elem->GetDataLine();
+    bool node_exists = PropertyManager->HasNode(output_node_name);
     FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
-    OutputNodes.push_back(OutputNode);
     if (!OutputNode) {
-      cerr << endl << "  Unable to process property: " << output_node_name << endl;
+      cerr << out_elem->ReadFrom() << "  Unable to process property: "
+           << output_node_name << endl;
       throw(string("Invalid output property name in flight control definition"));
     }
+    OutputNodes.push_back(OutputNode);
+    // If the node has just been created then it must be initialized to a
+    // sensible value since FGPropertyNode::GetNode() does not take care of
+    // that.  If the node was already existing, its current value is kept
+    // unchanged.
+    if (!node_exists)
+      OutputNode->setDoubleValue(Output);
     out_elem = element->FindNextElement("output");
   }
 
@@ -157,7 +164,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
   }
 
-  clip_el = element->FindElement("clipto");
+  Element *clip_el = element->FindElement("clipto");
   if (clip_el) {
     Element* el = clip_el->FindElement("min");
     if (!el) {
@@ -266,10 +273,18 @@ void FGFCSComponent::bind(Element* el)
   else
     tmp = Name;
 
+  bool node_exists = PropertyManager->HasNode(tmp);
   FGPropertyNode* node = PropertyManager->GetNode(tmp, true);
 
-  if (node)
+  if (node) {
     OutputNodes.push_back(node);
+    // If the node has just been created then it must be initialized to a
+    // sensible value since FGPropertyNode::GetNode() does not take care of
+    // that.  If the node was already existing, its current value is kept
+    // unchanged.
+    if (!node_exists)
+      node->setDoubleValue(Output);
+  }
   else {
     cerr << el->ReadFrom()
          << "Could not get or create property " << tmp << endl;

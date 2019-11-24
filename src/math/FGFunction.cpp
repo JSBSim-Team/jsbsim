@@ -51,7 +51,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 const double invlog2val = 1.0/log10(2.0);
-const unsigned int MaxArgs = 9999;
+constexpr unsigned int MaxArgs = 9999;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -87,7 +87,7 @@ public:
     CheckOddOrEvenArguments(el, odd_even);
   }
 
-  double GetValue(void) const {
+  double GetValue(void) const override {
     return cached ? cachedValue : f(Parameters);
   }
 
@@ -234,6 +234,21 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
   default:
     break;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+shared_ptr<default_random_engine> makeRandomEngine(Element *el, FGFDMExec* fdmex)
+{
+  string seed_attr = el->GetAttributeValue("seed");
+  unsigned int seed;
+  if (seed_attr.empty())
+    return fdmex->GetRandomEngine();
+  else if (seed_attr == "time_now")
+    seed = chrono::system_clock::now().time_since_epoch().count();
+  else
+    seed = atoi(seed_attr.c_str());
+  return make_shared<default_random_engine>(seed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -520,15 +535,6 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 3>(f, fdmex, element, Prefix, var));
     } else if (operation == "random") {
-      string seed_attr = element->GetAttributeValue("seed");
-      unsigned int seed;
-      if (seed_attr.empty())
-        seed = fdmex->SRand();
-      else if (seed_attr == "time_now")
-        seed = chrono::system_clock::now().time_since_epoch().count();
-      else
-        seed = atoi(seed_attr.c_str());
-      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
       double mean = 0.0;
       double stddev = 1.0;
       string mean_attr = element->GetAttributeValue("mean");
@@ -537,21 +543,13 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         mean = atof(mean_attr.c_str());
       if (!stddev_attr.empty())
         stddev = atof(stddev_attr.c_str());
-      shared_ptr<normal_distribution<double>> distribution(new normal_distribution<double>(mean, stddev));
+      auto distribution = make_shared<normal_distribution<double>>(mean, stddev);
+      auto generator(makeRandomEngine(element, fdmex));
       auto f = [generator, distribution](const decltype(Parameters)& p)->double {
                  return (*distribution.get())(*generator);
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
     } else if (operation == "urandom") {
-      string seed_attr = element->GetAttributeValue("seed");
-      unsigned int seed;
-      if (seed_attr.empty())
-        seed = fdmex->SRand();
-      else if (seed_attr == "time_now")
-        seed = chrono::system_clock::now().time_since_epoch().count();
-      else
-        seed = atoi(seed_attr.c_str());
-      shared_ptr<default_random_engine> generator(new default_random_engine(seed));
       double lower = -1.0;
       double upper = 1.0;
       string lower_attr = element->GetAttributeValue("lower");
@@ -560,7 +558,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         lower = atof(lower_attr.c_str());
       if (!upper_attr.empty())
         upper = atof(upper_attr.c_str());
-      shared_ptr<uniform_real_distribution<double>> distribution(new uniform_real_distribution<double>(lower, upper));
+      auto distribution = make_shared<uniform_real_distribution<double>>(lower, upper);
+      auto generator(makeRandomEngine(element, fdmex));
       auto f = [generator, distribution](const decltype(Parameters)& p)->double {
                  return (*distribution.get())(*generator);
                };

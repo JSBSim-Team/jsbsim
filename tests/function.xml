@@ -225,6 +225,11 @@
         <random/>
       </function>
     </fcs_function>
+    <fcs_function name="test/random2">
+      <function>
+        <random/>
+      </function>
+    </fcs_function>
     <fcs_function name="test/urandom">
       <function>
         <urandom/>

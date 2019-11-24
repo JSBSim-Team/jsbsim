@@ -46,6 +46,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], 0.0)
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/reference'] = 1.5
@@ -63,6 +64,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], 0.0)
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = -1.0
@@ -74,6 +76,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(-1.0))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 0.0
@@ -83,6 +86,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], 0.0)
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 0.5
@@ -93,6 +97,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(0.5))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 1.0
@@ -101,6 +106,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(1.0))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 1.5
@@ -109,6 +115,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(1.5))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 3.0
@@ -117,6 +124,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(3.0))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 3.5
@@ -125,6 +133,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(3.5))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 4.0
@@ -133,6 +142,7 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(4.0))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
         fdm['test/input'] = 5.0
@@ -141,13 +151,17 @@ class TestFunctions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['test/sin-value'], 0.5*math.sqrt(2.0))
         self.assertAlmostEqual(fdm['test/sin-property'], math.sin(5.0))
         random.append(fdm['test/random'])
+        random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
-        # Since a set() removes duplicates, the length of "random" should be
-        # equal to the number of steps if test/random has successfully issued
+        # Since a set() removes duplicates, the length of "urandom" should be
+        # equal to the number of steps if test/urandom has successfully issued
         # different numbers at each time step.
-        self.assertEqual(len(set(random)), fdm['simulation/frame']+1)
         self.assertEqual(len(set(urandom)), fdm['simulation/frame']+1)
+        # Since the set "random" has cumulated the results of tests/random and
+        # tests/random2 then its size must be equal to twice the number of time
+        # steps.
+        self.assertEqual(len(set(random)), 2*(fdm['simulation/frame']+1))
 
     def test_rotations(self):
         tripod = FlightModel(self, 'tripod')
