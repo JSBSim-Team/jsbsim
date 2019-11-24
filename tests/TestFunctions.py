@@ -154,11 +154,14 @@ class TestFunctions(JSBSimTestCase):
         random.append(fdm['test/random2'])
         urandom.append(fdm['test/urandom'])
 
-        # Since a set() removes duplicates, the length of "random" should be
-        # equal to the number of steps if test/random has successfully issued
+        # Since a set() removes duplicates, the length of "urandom" should be
+        # equal to the number of steps if test/urandom has successfully issued
         # different numbers at each time step.
-        self.assertEqual(len(set(random)), 2*(fdm['simulation/frame']+1))
         self.assertEqual(len(set(urandom)), fdm['simulation/frame']+1)
+        # Since the set "random" has cumulated the results of tests/random and
+        # tests/random2 then its size must be equal to twice the number of time
+        # steps.
+        self.assertEqual(len(set(random)), 2*(fdm['simulation/frame']+1))
 
     def test_rotations(self):
         tripod = FlightModel(self, 'tripod')

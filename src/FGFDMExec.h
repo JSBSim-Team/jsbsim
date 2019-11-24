@@ -41,6 +41,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+#include <random>
+
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
 #include "math/FGTemplateFunc.h"
@@ -594,9 +597,9 @@ public:
   void AddTemplateFunc(const std::string& name, Element* el) {
     TemplateFunctions[name] = new FGTemplateFunc(this, el);
   }
-  
-  void SRand(int sr);
-  int  SRand(void) const {return RandomSeed;}
+
+  const std::shared_ptr<std::default_random_engine>& GetRandomEngine(void) const
+  { return RandomEngine; }
 
 private:
   unsigned int Frame;
@@ -609,7 +612,6 @@ private:
   bool holding;
   bool IncrementThenHolding;
   int TimeStepsUntilHold;
-  int RandomSeed;
   bool Constructing;
   bool modelLoaded;
   bool IsChild;
@@ -654,6 +656,9 @@ private:
 
   bool HoldDown;
 
+  int RandomSeed;
+  std::shared_ptr<std::default_random_engine> RandomEngine;
+
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
   // has the ID 0
   unsigned int*      FDMctr;
@@ -666,6 +671,8 @@ private:
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
+  void SRand(int sr);
+  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   void LoadModelConstants(void);
