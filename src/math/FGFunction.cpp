@@ -72,13 +72,13 @@ private:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-template<typename func_t, unsigned int Nmin, unsigned int Nmax=Nmin,
-         FGFunction::OddEven odd_even=FGFunction::OddEven::Either>
+template<typename func_t, unsigned int Nmin>
 class aFunc: public FGFunction
 {
 public:
   aFunc(const func_t& _f, FGFDMExec* fdmex, Element* el,
-        const string& prefix, FGPropertyValue* v)
+        const string& prefix, FGPropertyValue* v, unsigned int Nmax=Nmin,
+        FGFunction::OddEven odd_even=FGFunction::OddEven::Either)
     : FGFunction(fdmex->GetPropertyManager()), f(_f)
   {
     Load(el, v, fdmex, prefix);
@@ -89,6 +89,38 @@ public:
 
   double GetValue(void) const override {
     return cached ? cachedValue : f(Parameters);
+  }
+
+private:
+  const func_t f;
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+template<typename func_t>
+class aFunc<func_t, 0>: public FGFunction
+{
+public:
+  aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
+        const string& Prefix)
+    : FGFunction(pm), f(_f)
+  {
+    if (el->GetNumElements() != 0) {
+      ostringstream buffer;
+      buffer << el->ReadFrom() << fgred << highint
+             << "<" << el->GetName() << "> should have no arguments." << reset
+             << endl;
+      throw WrongNumberOfArguments(buffer.str(), Parameters, el);
+    }
+  }
+
+  double GetValue(void) const override {
+    return cached ? cachedValue : f();
+  }
+
+  // Functions without parameters are assumed to be non-const
+  bool IsConstant(void) const override {
+    return false;
   }
 
 private:
@@ -133,7 +165,7 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
                           const string& prefix, FGPropertyValue* v)
 {
   try {
-    return new aFunc<func_t, 2, MaxArgs>(_f, fdmex, el, prefix, v);
+    return new aFunc<func_t, 2>(_f, fdmex, el, prefix, v, MaxArgs);
   }
   catch(WrongNumberOfArguments& e) {
     if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
@@ -378,7 +410,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return 1.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "or") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
@@ -389,7 +422,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "quotient") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double y = p[1]->GetValue();
@@ -545,10 +579,11 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         stddev = atof(stddev_attr.c_str());
       auto distribution = make_shared<normal_distribution<double>>(mean, stddev);
       auto generator(makeRandomEngine(element, fdmex));
-      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+      auto f = [generator, distribution]()->double {
                  return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
+                                                     Prefix));
     } else if (operation == "urandom") {
       double lower = -1.0;
       double upper = 1.0;
@@ -560,10 +595,11 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         upper = atof(upper_attr.c_str());
       auto distribution = make_shared<uniform_real_distribution<double>>(lower, upper);
       auto generator(makeRandomEngine(element, fdmex));
-      auto f = [generator, distribution](const decltype(Parameters)& p)->double {
+      auto f = [generator, distribution]()->double {
                  return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
+                                                     Prefix));
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
@@ -588,7 +624,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                    throw("Fatal error");
                  }
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "interpolate1d") {
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
@@ -624,7 +661,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
                };
-      Parameters.push_back(new aFunc<decltype(f), 5, MaxArgs, OddEven::Odd>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 5>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs, OddEven::Odd));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -842,9 +880,6 @@ FGFunction::~FGFunction()
 
 bool FGFunction::IsConstant(void) const
 {
-  // Functions without parameters are assumed to be non-const
-  if (Parameters.empty()) return false;
-
   for (auto p: Parameters) {
     if (!p->IsConstant())
       return false;
