@@ -91,11 +91,19 @@ public:
     return cached ? cachedValue : f(Parameters);
   }
 
+protected:
+  void bind(Element* el, const string& Prefix) override {
+    string nName = CreateOutputNode(el, Prefix);
+    if (!nName.empty())
+      PropertyManager->Tie(nName, this, &aFunc<func_t, Nmin>::GetValue);
+  }
+
 private:
   const func_t f;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Template specialization for functions without parameters.
 
 template<typename func_t>
 class aFunc<func_t, 0>: public FGFunction
@@ -112,15 +120,29 @@ public:
              << endl;
       throw WrongNumberOfArguments(buffer.str(), Parameters, el);
     }
+
+    bind(el, Prefix);
   }
 
   double GetValue(void) const override {
-    return cached ? cachedValue : f();
+    double result = cached ? cachedValue : f();
+    if (pNode) pNode->setDoubleValue(result);
+    return result;
   }
 
   // Functions without parameters are assumed to be non-const
   bool IsConstant(void) const override {
     return false;
+  }
+
+protected:
+  // The method GetValue() is not bound for functions without parameters because
+  // we do not want the property to return a different value each time it is
+  // read.
+  void bind(Element* el, const string& Prefix) override {
+    CreateOutputNode(el, Prefix);
+    // Initialize the node to a sensible value.
+    if (pNode) pNode->setDoubleValue(f());
   }
 
 private:
@@ -925,10 +947,11 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::bind(Element* el, const string& Prefix)
+string FGFunction::CreateOutputNode(Element* el, const string& Prefix)
 {
+  string nName;
+
   if ( !Name.empty() ) {
-    string nName;
     if (Prefix.empty())
       nName  = PropertyManager->mkPropertyName(Name, false);
     else {
@@ -953,9 +976,19 @@ void FGFunction::bind(Element* el, const string& Prefix)
            << "Property " << nName << " has already been successfully bound (late)." << endl;
       throw("Failed to bind the property to an existing already tied node.");
     }
-
-    PropertyManager->Tie(nName, this, &FGFunction::GetValue);
   }
+
+  return nName;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFunction::bind(Element* el, const string& Prefix)
+{
+  string nName = CreateOutputNode(el, Prefix);
+
+  if (!nName.empty())
+    PropertyManager->Tie(nName, this, &FGFunction::GetValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
