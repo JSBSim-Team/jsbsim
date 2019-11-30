@@ -101,7 +101,7 @@ class FGAuxiliary : public FGModel {
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGAuxiliary(FGFDMExec* Executive);
+  explicit FGAuxiliary(FGFDMExec* Executive);
 
   /// Destructor
   ~FGAuxiliary();
@@ -187,12 +187,12 @@ public:
   /** Calculates and returns the wind-to-body axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTw2b(void) { return mTw2b; }
+  const FGMatrix33& GetTw2b(void) const { return mTw2b; }
 
   /** Calculates and returns the body-to-wind axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTb2w(void) { return mTb2w; }
+  const FGMatrix33& GetTb2w(void) const { return mTb2w; }
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
@@ -259,7 +259,7 @@ public:
     double DistanceAGL;
     double Wingspan;
     double Wingchord;
-    double SLGravity;
+    double StandardGravity;
     double Mass;
     FGMatrix33 Tl2b;
     FGMatrix33 Tb2l;
