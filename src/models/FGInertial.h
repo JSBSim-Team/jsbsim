@@ -74,7 +74,7 @@ public:
                      on a socket for the "Resume" command to be given.
       @return false if no error */
   bool Run(bool Holding) override;
-  constexpr double GetStandardGravity(void) const { return gAccelReference; }
+  static constexpr double GetStandardGravity(void) { return gAccelReference; }
   const FGColumnVector3& GetGravity(void) const {return vGravAccel;}
   const FGColumnVector3& GetOmegaPlanet() const {return vOmegaPlanet;}
   void SetOmegaPlanet(double rate) {
