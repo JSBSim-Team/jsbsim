@@ -48,6 +48,7 @@ test_script:
 - ctest -j2 -E TestInputSocket
 - pip install python\dist\JSBSim-1.1.0.dev1.tar.gz
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
+- JSBSim --version
 
 on_failure:
 # Zip the test logs (see  https://stackoverflow.com/a/26843122 for details)
@@ -62,6 +63,7 @@ on_success:
 - python python\setup.py bdist_wheel --config RelWithDebInfo --build-number=%APPVEYOR_BUILD_NUMBER%
 - pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+- JSBSim --version
 
 # Build the binary wheel package for Python 3.6
 - set PATH=c:\python36-x64;c:\python36-x64\Scripts;%ORIG_PATH%
@@ -69,6 +71,7 @@ on_success:
 - python python\setup.py bdist_wheel --config RelWithDebInfo --build-number=%APPVEYOR_BUILD_NUMBER%
 - pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+- JSBSim --version
 
 # Build the binary wheel package for Python 3.7
 - set PATH=c:\python37-x64;c:\python37-x64\Scripts;%ORIG_PATH%
@@ -76,7 +79,7 @@ on_success:
 - python python\setup.py bdist_wheel --config RelWithDebInfo --build-number=%APPVEYOR_BUILD_NUMBER%
 - pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-- dir python\dist
+- JSBSim --version
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
