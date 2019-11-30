@@ -28,7 +28,7 @@ install:
 - cd cxxtest\python
 - python setup.py install
 - cd ..\..
-- cinst doxygen.install
+#- cinst doxygen.install
 
 build_script:
 # Build JSBSim
@@ -76,7 +76,6 @@ on_success:
 - python python\setup.py bdist_wheel --config RelWithDebInfo --build-number=%APPVEYOR_BUILD_NUMBER%
 - pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-- dir python\dist
 
 artifacts:
 - path: build\src\RelWithDebInfo\JSBSim.exe
@@ -85,16 +84,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: Rolling_Release_x64_v2019
 
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp35-cp35m-win_amd64.whl
-  name: Rolling_Release_x64_v2019
-
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp36-cp36m-win_amd64.whl
-  name: Rolling_Release_x64_v2019
-
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp37-cp37m-win_amd64.whl
-  name: Rolling_Release_x64_v2019
-
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp38-cp38-win_amd64.whl
+- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp*-cp*-win_amd64.whl
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
