@@ -754,8 +754,8 @@ class FGFunction : public FGParameter, public FGJSBBase
 public:
   /// Default constructor.
   FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr),
-      PropertyManager(nullptr) {}
+    : cached(false), cachedValue(-HUGE_VAL), PropertyManager(nullptr),
+      pNode(nullptr), pCopyTo(nullptr) {}
 
   explicit FGFunction(FGPropertyManager* pm)
     : FGFunction()
@@ -817,6 +817,8 @@ protected:
   bool cached;
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
+  FGPropertyManager* PropertyManager;
+  FGPropertyNode_ptr pNode;
 
   void Load(Element* element, FGPropertyValue* var, FGFDMExec* fdmex,
             const std::string& prefix="");
@@ -824,12 +826,11 @@ protected:
   void CheckMinArguments(Element* el, unsigned int _min);
   void CheckMaxArguments(Element* el, unsigned int _max);
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
+  std::string CreateOutputNode(Element* el, const string& Prefix);
 
 private:
   std::string Name;
-  FGPropertyNode_ptr pNode;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
-  FGPropertyManager* PropertyManager;
 
   void Debug(int from);
 };
