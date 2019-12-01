@@ -66,7 +66,8 @@ class TestICOverride(JSBSimTestCase):
 
         # Kill the fdm so that Windows do not block further access to
         # JSBout172B.csv
-        del fdm
+        fdm = None
+        self.delete_fdm()
 
         # Re-run the same check than above. This time we are making sure than
         # the total initial velocity is increased by 1 ft/s

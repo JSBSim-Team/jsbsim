@@ -112,7 +112,8 @@ class ResetOutputFiles(JSBSimTestCase):
 
         # Kill the fdm so that Windows do not block further access to
         # that_one.csv.
-        del fdm
+        fdm = None
+        self.delete_fdm()
 
         #
         # Check again on a brand new FDM
