@@ -23,7 +23,7 @@
 import os, math, shutil
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import CreateFDM, append_xml, ExecuteUntil, JSBSimTestCase, RunTest
+from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
@@ -116,7 +116,6 @@ class TestInitialConditions(JSBSimTestCase):
 
             f, fdm = self.LoadScript(tree, s, prop_output_to_CSV)
             self.CheckICValues(vars, 'script %s' % (f,), fdm, IC_root)
-            del fdm
 
     def LoadScript(self, tree, script_path, prop_output_to_CSV=[]):
         # Make a local copy of files referenced by the script.
@@ -145,7 +144,7 @@ class TestInitialConditions(JSBSimTestCase):
         tree.write(f)
 
         # Initialize the script
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         self.assertTrue(fdm.load_script(f),
                         msg="Failed to load script %s" % (f,))
         fdm.run_ic()
@@ -271,7 +270,6 @@ class TestInitialConditions(JSBSimTestCase):
             f, fdm = self.LoadScript(tree, s)
             self.CheckICValues(self.GetVariables(lat_tag), 'script %s' % (f,),
                                fdm, position_tag)
-            del fdm
 
     def test_initial_latitude(self):
         Output_file = self.sandbox.path_to_jsbsim_file('tests', 'output.xml')
@@ -312,7 +310,7 @@ class TestInitialConditions(JSBSimTestCase):
 
                     IC_tree.write('IC.xml')
 
-                    fdm = CreateFDM(self.sandbox)
+                    fdm = self.create_fdm()
                     fdm.load_model('ball')
                     fdm.set_output_directive(Output_file)
                     fdm.set_output_filename(1, 'check_csv_values.csv')
@@ -322,13 +320,11 @@ class TestInitialConditions(JSBSimTestCase):
                     self.CheckICValues(self.GetVariables(latitude_tag),
                                        'IC%d' % (i,), fdm, position_tag)
 
-                    del fdm
-
     def test_set_initial_geodetic_latitude(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                        '737_cruise.xml')
         output_file = self.sandbox.path_to_jsbsim_file('tests', 'output.xml')
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(script_path)
         fdm.set_output_directive(output_file)
 

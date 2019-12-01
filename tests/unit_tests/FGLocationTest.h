@@ -86,9 +86,6 @@ class  FGLocationTest : public CxxTest::TestSuite
 {
 public:
   void testConstructors() {
-    TS_ASSERT_EQUALS(static_cast<JSBSim::FGGroundCallback*>(0),
-                     JSBSim::FGLocation::GetGroundCallback());
-
     JSBSim::FGLocation l0;
     TS_ASSERT_EQUALS(1.0, l0(1));
     TS_ASSERT_EQUALS(0.0, l0(2));
@@ -109,8 +106,6 @@ public:
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeDeg());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodAltitude());
-    TS_ASSERT_EQUALS(static_cast<JSBSim::FGGroundCallback*>(0),
-                     l0.GetGroundCallback());
 
     double lat = -0.25*M_PI;
     double lon = M_PI/6.0;

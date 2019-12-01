@@ -30,7 +30,7 @@
 #     simulation has been initialized (i.e. after FGModel::InitModel() is
 #     called) then it is ignored until the next call to FGMFDMExec::InitModel()
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
+from JSBSim_utils import JSBSimTestCase, ExecuteUntil, RunTest
 
 
 class ResetOutputFiles(JSBSimTestCase):
@@ -41,7 +41,7 @@ class ResetOutputFiles(JSBSimTestCase):
         # execution, the simulation is interrupted after 1.0sec of simulated
         # time.
         #
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'c1722.xml'))
 
@@ -110,10 +110,10 @@ class ResetOutputFiles(JSBSimTestCase):
         self.assertTrue(self.sandbox.exists('that_one.csv'),
                         msg="Output name overwritten: 'that_one.csv' should exist.")
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
+        # Kill the fdm so that Windows do not block further access to
+        # that_one.csv.
+        fdm = None
+        self.delete_fdm()
 
         #
         # Check again on a brand new FDM
@@ -121,7 +121,7 @@ class ResetOutputFiles(JSBSimTestCase):
         self.sandbox.delete_csv_files()
 
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'c1722.xml'))
 
@@ -143,7 +143,5 @@ class ResetOutputFiles(JSBSimTestCase):
 
         self.assertTrue(self.sandbox.exists('oops.csv'),
                         msg="Reset new FDM: 'oops.csv' should exist.")
-
-        del fdm
 
 RunTest(ResetOutputFiles)

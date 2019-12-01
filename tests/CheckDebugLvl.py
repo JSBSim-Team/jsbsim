@@ -21,7 +21,7 @@
 
 import os
 import pandas as pd
-from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil,
+from JSBSim_utils import (JSBSimTestCase, ExecuteUntil,
                           isDataMatching, FindDifferences, RunTest)
 
 
@@ -30,7 +30,7 @@ class TestDebugLvl(JSBSimTestCase):
         JSBSimTestCase.setUp(self, 'check_cases', 'orbit')
 
     def testDebugLvl(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'ball_orbit.xml'))
         fdm.run_ic()
@@ -38,10 +38,9 @@ class TestDebugLvl(JSBSimTestCase):
         ExecuteUntil(fdm, 1000.)
 
         ref = pd.read_csv('BallOut.csv', index_col=0)
-        del fdm
 
         os.environ["JSBSIM_DEBUG"] = str(0)
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'ball_orbit.xml'))
         fdm.run_ic()

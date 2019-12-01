@@ -21,9 +21,8 @@
 import numpy as np
 import pandas as pd
 import xml.etree.ElementTree as et
-from JSBSim_utils import (JSBSimTestCase, ExecuteUntil,
-                          CopyAircraftDef, isDataMatching, FindDifferences,
-                          RunTest)
+from JSBSim_utils import (JSBSimTestCase, ExecuteUntil, CopyAircraftDef,
+                          isDataMatching, FindDifferences, RunTest)
 
 
 class TestPointMassInertia(JSBSimTestCase):
@@ -72,12 +71,6 @@ class TestPointMassInertia(JSBSimTestCase):
 
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
-
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        fdm = None
-        self.delete_fdm()
 
         fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')

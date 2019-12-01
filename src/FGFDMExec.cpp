@@ -197,15 +197,29 @@ FGFDMExec::~FGFDMExec()
   }
 
   for (unsigned int i=1; i<ChildFDMList.size(); i++) delete ChildFDMList[i]->exec;
-  ChildFDMList.clear();
-
-  PropertyCatalog.clear();
-  
-  SetGroundCallback(0);
 
   if (FDMctr != 0) (*FDMctr)--;
 
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFDMExec::Setsim_time(double cur_time) {
+  sim_time = cur_time;
+  Inertial->SetTime(sim_time);
+  return sim_time;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFDMExec::IncrTime(void) {
+  if (!holding && !IntegrationSuspended()) {
+    sim_time += dT;
+    Inertial->SetTime(sim_time);
+    Frame++;
+  }
+  return sim_time;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,7 +235,6 @@ bool FGFDMExec::Allocate(void)
   // Note that this does not affect the order in which the models will be
   // executed later.
   Models[eInertial]          = new FGInertial(this);
-  SetGroundCallback(new FGDefaultGroundCallback(static_cast<FGInertial*>(Models[eInertial])->GetRefRadius()));
 
   // See the eModels enum specification in the header file. The order of the
   // enums specifies the order of execution. The Models[] vector is the primary

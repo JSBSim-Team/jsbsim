@@ -18,12 +18,12 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, RunTest
 
 class TestPressureAltitude(JSBSimTestCase):
 
     def test_pressurealtitude(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         # Reference data (Geometric Altitude, Temp Delta (Rankine), Pressure Altitude)
@@ -90,9 +90,6 @@ class TestPressureAltitude(JSBSimTestCase):
             fdm.run_ic()
 
             self.assertAlmostEqual(pressure_ref, fdm['atmosphere/P-psf'])
-
-        del fdm
-
 
 RunTest(TestPressureAltitude)
 

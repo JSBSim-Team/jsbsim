@@ -49,6 +49,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGInitialCondition;
+class FGInertial;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -143,7 +144,7 @@ public:
       - integrator, rotational position = Trapezoidal
       - integrator, translational position = Trapezoidal
       @param Executive a pointer to the parent executive object */
-  FGPropagate(FGFDMExec* Executive);
+  explicit FGPropagate(FGFDMExec* Executive);
 
   /// Destructor
   ~FGPropagate();
@@ -619,6 +620,7 @@ private:
 
   struct VehicleState VState;
 
+  FGInertial* Inertial = nullptr;
   FGColumnVector3 vVel;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;

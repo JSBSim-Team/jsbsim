@@ -85,6 +85,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   Debug(0);
   Name = "FGPropagate";
 
+  Inertial = FDMExec->GetInertial();
+
   /// These define the indices use to select the various integrators.
   // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
 
@@ -119,7 +121,7 @@ bool FGPropagate::InitModel(void)
 
   // For initialization ONLY:
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
-  VState.vLocation.SetAltitudeAGL(4.0);
+  Inertial->SetAltitudeAGL(VState.vLocation, 4.0);
 
   VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
@@ -539,51 +541,56 @@ void FGPropagate::RecomputeLocalTerrainVelocity()
 {
   FGLocation contact;
   FGColumnVector3 normal;
-  VState.vLocation.GetContactPoint(contact, normal, LocalTerrainVelocity,
-                                   LocalTerrainAngularVelocity);
+  Inertial->GetContactPoint(VState.vLocation, contact, normal,
+                            LocalTerrainVelocity, LocalTerrainAngularVelocity);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetTerrainElevation(void) const
 {
-  return VState.vLocation.GetTerrainRadius() - FDMExec->GetInertial()->GetRefRadius();
+  FGLocation contact;
+  FGColumnVector3 vDummy;
+  Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
+  return contact.GetGeodAltitude();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  double radius = terrainElev + FDMExec->GetInertial()->GetRefRadius();
-  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(radius);
+  Inertial->SetTerrainElevation(terrainElev);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetLocalTerrainRadius(void) const
 {
-  return VState.vLocation.GetTerrainRadius();
+  FGLocation contact;
+  FGColumnVector3 vDummy;
+  Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
+  return contact.GetRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGL(void) const
 {
-  return VState.vLocation.GetAltitudeAGL();
+  return Inertial->GetAltitudeAGL(VState.vLocation);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGLKm(void) const
 {
-  return VState.vLocation.GetAltitudeAGL()*0.0003048;
+  return GetDistanceAGL()*0.0003048;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  VState.vLocation.SetAltitudeAGL(tt);
+  Inertial->SetAltitudeAGL(VState.vLocation, tt);
   UpdateVehicleState();
 }
 
@@ -591,8 +598,7 @@ void FGPropagate::SetDistanceAGL(double tt)
 
 void FGPropagate::SetDistanceAGLKm(double tt)
 {
-  VState.vLocation.SetAltitudeAGL(tt*3280.8399);
-  UpdateVehicleState();
+  SetDistanceAGL(tt*3280.8399);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

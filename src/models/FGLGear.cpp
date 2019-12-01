@@ -45,6 +45,7 @@ INCLUDES
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGInertial.h"
 
 using namespace std;
 
@@ -288,7 +289,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = gearLoc.GetContactPoint(contact, normal, terrainVel, dummy);
+    double height = fdmex->GetInertial()->GetContactPoint(gearLoc, contact,
+                                                          normal, terrainVel,
+                                                          dummy);
 
     // Does this surface contact point interact with another surface?
     if (surface) {
@@ -603,13 +606,11 @@ void FGLGear::ComputeSideForceCoefficient(void)
 
 void FGLGear::ComputeVerticalStrutForce()
 {
-  double springForce = 0;
-  double dampForce = 0;
-
   if (fStrutForce)
     StrutForce = min(fStrutForce->GetValue(), (double)0.0);
   else {
-    springForce = -compressLength * kSpring;
+    double springForce = -compressLength * kSpring;
+    double dampForce = 0;
 
     if (compressSpeed >= 0.0) {
 

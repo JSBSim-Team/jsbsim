@@ -252,15 +252,6 @@ public:
       @return true if successful */
   bool RunIC(void);
 
-  /** Sets the ground callback pointer. For optimal memory management, a shared
-      pointer is used internally that maintains a reference counter. The calling
-      application must therefore use FGGroundCallback_ptr 'smart pointers' to
-      manage their copy of the ground callback.
-      @param gc A pointer to a ground callback object
-      @see FGGroundCallback
-   */
-  void SetGroundCallback(FGGroundCallback* gc) { FGLocation::SetGroundCallback(gc); }
-
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft/ directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
@@ -364,12 +355,6 @@ public:
   FGInput* GetInput(void)              {return (FGInput*)Models[eInput];}
   /// Returns the FGOutput pointer.
   FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
-  /** Get a pointer to the ground callback currently used. It is recommanded
-      to store the returned pointer in a 'smart pointer' FGGroundCallback_ptr.
-      @return A pointer to the current ground callback object.
-      @see FGGroundCallback
-   */
-  FGGroundCallback* GetGroundCallback(void) {return FGLocation::GetGroundCallback();}
   /// Retrieves the script object
   FGScript* GetScript(void) {return Script;}
   /// Returns a pointer to the FGInitialCondition object
@@ -539,17 +524,14 @@ public:
   /** Sets the current sim time.
       @param cur_time the current time
       @return the current simulation time.      */
-  double Setsim_time(double cur_time) {
-    sim_time = cur_time;
-    GetGroundCallback()->SetTime(sim_time);
-    return sim_time;
-  }
+  double Setsim_time(double cur_time);
 
   /** Sets the integration time step for the simulation executive.
       @param delta_t the time step in seconds.     */
   void Setdt(double delta_t) { dT = delta_t; }
 
-  /** Sets the root directory where JSBSim starts looking for its system directories.
+  /** Sets the root directory where JSBSim starts looking for its system
+      directories.
       @param rootDir the string containing the root directory. */
   void SetRootDir(const SGPath& rootDir) {RootDir = rootDir;}
 
@@ -560,14 +542,7 @@ public:
   /** Increments the simulation time if not in Holding mode. The Frame counter
       is also incremented.
       @return the new simulation time.     */
-  double IncrTime(void) {
-    if (!holding && !IntegrationSuspended()) {
-      sim_time += dT;
-      GetGroundCallback()->SetTime(sim_time);
-      Frame++;
-    }
-    return sim_time;
-  }
+  double IncrTime(void);
 
   /** Retrieves the current frame count. */
   unsigned int GetFrame(void) const {return Frame;}

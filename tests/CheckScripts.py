@@ -41,9 +41,6 @@ class CheckScripts(JSBSimTestCase):
             except Exception as e:
                 self.fail("Script %s failed:\n%s" % (s, e.args[0]))
 
-            fdm = None
-            self.delete_fdm()
-
     def testScriptEndTime(self):
         # Regression test: using a time step different than 120Hz in a script
         # could result in executing an extra time step in certain conditions

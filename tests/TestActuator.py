@@ -80,7 +80,7 @@ class TestActuator(JSBSimTestCase):
                         msg="The actuator rate is not linear")
 
     def CheckRateLimit(self, incr_limit, decr_limit):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
 
         self.ScriptExecution(fdm, 1.0)
@@ -91,15 +91,10 @@ class TestActuator(JSBSimTestCase):
         fdm[self.input_prop] = 0.0
         self.CheckRateValue(fdm, decr_limit)
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
-
     def test_regression_bug_1503(self):
         # First, the execution time of the script c1724.xml is measured. It
         # will be used as a reference to check if JSBSim hangs or not.
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         start_time = time.time()
         self.ScriptExecution(fdm)
         exec_time = time.time() - start_time
@@ -283,7 +278,7 @@ class TestActuator(JSBSimTestCase):
         self.CheckRateLimit(0.15, -0.05)
 
     def CheckClip(self, clipmin, clipmax, rate_limit):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -362,8 +357,6 @@ class TestActuator(JSBSimTestCase):
         self.assertTrue(fdm[self.saturated_prop])
         self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
-        del fdm
-
     def test_clipto(self):
         tree, flight_control_element, actuator_element = self.prepare_actuator()
         rate_limit = float(actuator_element.find('rate_limit').text)
@@ -423,7 +416,7 @@ class TestActuator(JSBSimTestCase):
         clipto.attrib['type'] = 'cyclic'
         tree.write(output_file)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -466,8 +459,6 @@ class TestActuator(JSBSimTestCase):
                                    (t-fdm['simulation/sim-time-sec'])*rate_limit+2.0*math.pi)
             fdm.run()
 
-        del fdm
-
         # Check the cyclic clip handles correctly negative numbers (GH issue
         # #211)
         # Case 1 : The interval is positive
@@ -475,7 +466,7 @@ class TestActuator(JSBSimTestCase):
         clipmax.text = str(math.pi)
         tree.write(output_file)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -502,14 +493,12 @@ class TestActuator(JSBSimTestCase):
             fdm.run()
             t = fdm['simulation/sim-time-sec']
 
-        del fdm
-
         # Case 2 : The interval is negative
         clipmin.text = str(-math.pi)
         clipmax.text = '0.0'
         tree.write(output_file)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -562,7 +551,7 @@ class TestActuator(JSBSimTestCase):
                                    self.aircraft_name+'.xml')
         tree.write(output_file)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()

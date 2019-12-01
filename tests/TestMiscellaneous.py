@@ -20,12 +20,12 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, jsbsim
+from JSBSim_utils import JSBSimTestCase, RunTest, jsbsim
 
 
 class TestMiscellaneous(JSBSimTestCase):
     def test_property_access(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
         fdm.run_ic()
 
@@ -47,10 +47,8 @@ class TestMiscellaneous(JSBSimTestCase):
         self.assertAlmostEqual(fdm.get_property_value('qwerty'), 42.0)
         self.assertAlmostEqual(fdm['qwerty'], 42.0)
 
-        del fdm
-
     def test_property_catalog(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
         fdm.run_ic()
 
@@ -65,8 +63,6 @@ class TestMiscellaneous(JSBSimTestCase):
         item = 'ic/lat-geod-deg'
         self.assertEqual(values[item], fdm[item])
 
-        del fdm
-
     def test_FG_reset(self):
         # This test reproduces how FlightGear resets. The important thing is
         # that the property manager is managed by FlightGear. So it is not
@@ -75,24 +71,19 @@ class TestMiscellaneous(JSBSimTestCase):
 
         self.assertFalse(pm.hasNode('fdm/jsbsim/ic/lat-geod-deg'))
 
-        fdm = CreateFDM(self.sandbox, pm)
+        fdm = self.create_fdm(pm)
         fdm.load_model('ball')
         self.assertAlmostEqual(fdm['ic/lat-geod-deg'], 0.0)
 
         fdm['ic/lat-geod-deg'] = 45.0
         fdm.run_ic()
 
-        del fdm
-
         # Check that the property ic/lat-geod-deg has survived the JSBSim
         # instance.
         self.assertTrue(pm.hasNode('fdm/jsbsim/ic/lat-geod-deg'))
 
         # Re-use the property manager just as FlightGear does.
-        fdm = CreateFDM(self.sandbox, pm)
+        fdm = self.create_fdm(pm)
         self.assertAlmostEqual(fdm['ic/lat-geod-deg'], 45.0)
-
-        del fdm
-
 
 RunTest(TestMiscellaneous)
