@@ -55,7 +55,7 @@ on_failure:
 # Push the zip file to AppVeyor artifacts (see https://www.appveyor.com/docs/packaging-artifacts/#pushing-artifacts-from-scripts for details)
 - ps: Get-ChildItem TestLogs.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
-on_success:
+after_test:
 # Build the binary wheel package for Python 3.5
 - set PATH=c:\python35-x64;c:\python35-x64\Scripts;%ORIG_PATH%
 - pip install -U cython numpy wheel pywin32 setuptools
@@ -84,7 +84,7 @@ artifacts:
 - path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
   name: Rolling_Release_x64_v2019
 
-- path: build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp*-cp*-win_amd64.whl
+- path: build\python\dist\*.whl
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)
@@ -99,7 +99,6 @@ deploy:
   description: Release - x64
   auth_token:
     secure: YWG8FRFWv/ylTuA1DIFNcN01uFGz7xKit8CayOMTE0orPKXhztwLmwm8MZ4IzFbr
-  artifact: build\src\RelWithDebInfo\JSBSim.exe,build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe,build\python\dist\JSBSim-1.1.0.dev1-%APPVEYOR_BUILD_NUMBER%-cp*-cp*-win_amd64.whl
   prerelease: true
   on:
     branch: master

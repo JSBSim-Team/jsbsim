@@ -203,7 +203,7 @@ bool FGAuxiliary::Run(bool Holding)
     vcas = veas = 0.0;
 
   vPilotAccel.InitMatrix();
-  vNcg = in.vBodyAccel/in.SLGravity;
+  vNcg = in.vBodyAccel/in.StandardGravity;
   // Nz is Acceleration in "g's", along normal axis (-Z body axis)
   Nz = -vNcg(eZ);
   Ny =  vNcg(eY);
@@ -213,7 +213,7 @@ bool FGAuxiliary::Run(bool Holding)
   vNwcg = mTb2w * vNcg;
   vNwcg(eZ) = 1.0 - vNwcg(eZ);
 
-  vPilotAccelN = vPilotAccel / in.SLGravity;
+  vPilotAccelN = vPilotAccel / in.StandardGravity;
 
   // VRP computation
   vLocationVRP = in.vLocation.LocalToLocation( in.Tb2l * in.VRPBody );

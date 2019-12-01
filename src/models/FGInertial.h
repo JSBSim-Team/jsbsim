@@ -74,7 +74,7 @@ public:
                      on a socket for the "Resume" command to be given.
       @return false if no error */
   bool Run(bool Holding) override;
-  double SLgravity(void) const {return gAccelReference;}
+  static constexpr double GetStandardGravity(void) { return gAccelReference; }
   const FGColumnVector3& GetGravity(void) const {return vGravAccel;}
   const FGColumnVector3& GetOmegaPlanet() const {return vOmegaPlanet;}
   void SetOmegaPlanet(double rate) {
@@ -104,9 +104,13 @@ private:
     gtWGS84
   };
 
+  // Standard gravity (9.80665 m/s^2) in ft/s^2 which is the gravity at 45 deg.
+  // of latitude (see ISA 1976 and Steven & Lewis)
+  // It includes the centripetal acceleration.
+  static constexpr double gAccelReference = 9.80665 / fttom;
+
   FGColumnVector3 vOmegaPlanet;
   FGColumnVector3 vGravAccel;
-  double gAccelReference;
   double RadiusReference;
   double GM;
   double C2_0; // WGS84 value for the C2,0 coefficient

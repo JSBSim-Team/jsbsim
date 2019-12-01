@@ -74,7 +74,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   */
 
   vOmegaPlanet = { 0.0, 0.0, RotationRate };
-  gAccelReference = GetGAccel(RadiusReference);
 
   bind();
 
