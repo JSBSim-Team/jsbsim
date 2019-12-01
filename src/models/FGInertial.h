@@ -38,8 +38,11 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGModel.h"
 #include "math/FGLocation.h"
+#include "input_output/FGGroundCallback.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,6 +87,69 @@ public:
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
 
+  /** @name Functions that rely on the ground callback
+      The following functions allow to set and get the vehicle position above
+      the ground. The ground level is obtained by interrogating an instance of
+      FGGroundCallback. A ground callback must therefore be set with
+      SetGroundCallback() before calling any of these functions. */
+  ///@{
+  /** Get terrain contact point information below the current location.
+      @param location     Location at which the contact point is evaluated.
+      @param contact      Contact point location
+      @param normal       Terrain normal vector in contact point    (ECEF frame)
+      @param velocity     Terrain linear velocity in contact point  (ECEF frame)
+      @param ang_velocity Terrain angular velocity in contact point (ECEF frame)
+      @return Location altitude above contact point (AGL) in feet.
+      @see SetGroundCallback */
+  double GetContactPoint(const FGLocation& location, FGLocation& contact,
+                         FGColumnVector3& normal, FGColumnVector3& velocity,
+                         FGColumnVector3& ang_velocity) const
+  {
+    return GroundCallback->GetAGLevel(location, contact, normal, velocity,
+                                      ang_velocity); }
+
+  /** Get the altitude above ground level.
+      @return the altitude AGL in feet.
+      @param location Location at which the AGL is evaluated.
+      @see SetGroundCallback */
+  double GetAltitudeAGL(const FGLocation& location) const {
+    FGLocation lDummy;
+    FGColumnVector3 vDummy;
+    return GroundCallback->GetAGLevel(location, lDummy, vDummy, vDummy,
+                                      vDummy);
+  }
+
+  /** Set the altitude above ground level.
+      @param location    Location at which the AGL is set.
+      @param altitudeAGL Altitude above Ground Level in feet.
+      @see SetGroundCallback */
+  void SetAltitudeAGL(FGLocation& location, double altitudeAGL);
+
+  /** Set the terrain elevation above sea level.
+      @param h Terrain elevation in ft.
+      @see SetGroundcallback */
+  void SetTerrainElevation(double h) {
+    GroundCallback->SetTerrainElevation(h);
+  }
+
+  /** Set the simulation time.
+      The elapsed time can be used by the ground callbck to assess the planet
+      rotation or the movement of objects.
+      @param time elapsed time in seconds since the simulation started.
+  */
+  void SetTime(double time) {
+    GroundCallback->SetTime(time);
+  }
+  ///@}
+
+  /** Sets the ground callback pointer.
+      FGInertial will take ownership of the pointer which must therefore be
+      located in the heap.
+      @param gc A pointer to a ground callback object
+      @see FGGroundCallback
+  */
+  void SetGroundCallback(FGGroundCallback* gc) { GroundCallback.reset(gc); }
+
   struct Inputs {
     FGLocation Position;
   } in;
@@ -113,6 +179,7 @@ private:
   double a;    // WGS84 semimajor axis length in feet 
   double b;    // WGS84 semiminor axis length in feet
   int gravType;
+  std::unique_ptr<FGGroundCallback> GroundCallback;
 
   double GetGAccel(double r) const;
   FGColumnVector3 GetGravityJ2(const FGLocation& position) const;

@@ -397,7 +397,9 @@ void FGTrim::trimOnGround(void)
 
     FGColumnVector3 normal, vDummy;
     FGLocation lDummy;
-    double height = gearLoc.GetContactPoint(lDummy, normal, vDummy, vDummy);
+    double height = fdmex->GetInertial()->GetContactPoint(gearLoc, lDummy,
+                                                          normal, vDummy,
+                                                          vDummy);
 
     if (gear->IsBogey() && !GroundReactions->GetSolid())
       continue;

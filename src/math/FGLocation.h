@@ -45,7 +45,6 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
-#include "input_output/FGGroundCallback.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,19 +78,12 @@ CLASS DOCUMENTATION
     Since the local frame is determined by the location (and NOT by the
     orientation of the vehicle IN any frame), this class also provides the
     rotation matrices required to transform from the Earth centered (ECEF) frame
-    to the local horizontal frame and back. This class also "owns" the
-    transformations that go from the inertial frame (Earth-centered Inertial, or
-    ECI) to and from the ECEF frame, as well as to and from the local frame.
-    Again, this is because the ECI, ECEF, and local frames do not involve the
-    actual orientation of the vehicle - only the location on the Earth surface,
-    and the angular difference between the ECI and ECEF frames. There are
-    conversion functions for conversion of position vectors given in the one
+    to the local horizontal frame and back. This class "owns" the
+    transformations that go from the ECEF frame to and from the local frame.
+    Again, this is because the ECEF, and local frames do not involve the actual
+    orientation of the vehicle - only the location on the Earth surface. There
+    are conversion functions for conversion of position vectors given in the one
     frame to positions in the other frame.
-
-    To keep the transformation matrices between the ECI and ECEF frames up to
-    date, the Earth angular position must be updated by calling
-    SetEarthPositionAngle() or IncrementEarthPositionAngle(). This must be done
-    prior to any conversion from and to the ECI frame.
 
     The Earth centered reference frame is NOT an inertial frame since it rotates
     with the Earth.
@@ -287,75 +279,14 @@ public:
       return -mTec2l(3,3)/cLat;
   }
 
+  /** Get the sea level radius below the current location. */
+  double GetSeaLevelRadius(void) const;
+
   /** Get the distance from the center of the earth.
       @return the distance of the location represented with this class
       instance to the center of the earth in ft. The radius value is
       always positive. */
-  //double GetRadius() const { return mECLoc.Magnitude(); } // may not work with FlightGear
   double GetRadius() const { ComputeDerived(); return mRadius; }
-
-  /** @name Functions that rely on the ground callback
-      The following functions allow to set and get the vehicle position above
-      the sea or the ground. The sea and the ground levels are obtained by
-      interrogating an FGGroundCallback instance. A ground callback must
-      therefore be set with SetGroundCallback() before calling any of these
-      functions. */
-  ///@{
-  /** Set the altitude above ground level.
-      @param altitudeAGL altitude above Ground Level in feet.
-      @see SetGroundCallback */
-  void SetAltitudeAGL(double altitudeAGL)
-  { SetRadius(GetTerrainRadius() + altitudeAGL); }
-
-  /** Get the local terrain radius
-      @return the terrain level radius at the location in feet.
-      @see SetGroundCallback */
-  double GetTerrainRadius(void) const
-  { ComputeDerived(); return GroundCallback->GetTerrainGeoCentRadius(*this); }
-
-  /** Get the altitude above ground level.
-      @return the altitude AGL in feet.
-      @see SetGroundCallback */
-  double GetAltitudeAGL(void) const {
-    FGLocation c;
-    FGColumnVector3 n,v,w;
-    return GetContactPoint(c,n,v,w);
-  }
-
-  /** Get terrain contact point information below the current location.
-      @param contact Contact point location
-      @param normal  Terrain normal vector in contact point    (ECEF frame)
-      @param v       Terrain linear velocity in contact point  (ECEF frame)
-      @param w       Terrain angular velocity in contact point (ECEF frame)
-      @return Location altitude above contact point (AGL) in feet.
-      @see SetGroundCallback */
-  double GetContactPoint(FGLocation& contact, FGColumnVector3& normal,
-                         FGColumnVector3& v, FGColumnVector3& w) const
-  { ComputeDerived(); return GroundCallback->GetAGLevel(*this, contact, normal, v, w); }
-  ///@}
-
-  /** Sets the ground callback pointer. The FGGroundCallback instance will be
-      interrogated by FGLocation each time some terrain informations are needed.
-      This will mainly occur when altitudes above the sea level or above the
-      ground level are needed. A 'smart pointer' is used internally to prevent
-      the FGGroundCallback instance against accidental deletion. This can only
-      work if the calling application also make use of FGGroundCallback_ptr
-      'smart pointers' to manage their copy of the ground callback.
-      @param gc A pointer to a ground callback object
-      @see FGGroundCallback
-   */
-  static void SetGroundCallback(FGGroundCallback* gc) { GroundCallback = gc; }
-
-  /** Get a pointer to the ground callback currently used. Since the
-      FGGroundcallback instance might have been created outside JSBSim, it is
-      recommanded to store the returned pointer in a 'smart pointer'
-      FGGroundCallback_ptr. This pointer maintains a reference counter and
-      protects the returned pointer against an accidental deletion of the object
-      it is pointing to.
-      @return A pointer to the current ground callback object.
-      @see FGGroundCallback
-   */
-  static FGGroundCallback* GetGroundCallback(void) { return GroundCallback; }
 
   /** Transform matrix from local horizontal to earth centered frame.
       @return a const reference to the rotation matrix of the transform from
@@ -461,7 +392,7 @@ public:
   /** Sets this location via the supplied location object.
       @param v A location object reference.
       @return a reference to the FGLocation object. */
-  const FGLocation& operator=(const FGLocation& l);
+  FGLocation& operator=(const FGLocation& l);
 
   /** This operator returns true if the ECEF location vectors for the two
       location objects are equal. */
@@ -589,9 +520,6 @@ private:
       The C++ keyword "mutable" tells the compiler that the data member is
       allowed to change during a const member function. */
   mutable bool mCacheValid;
-
-  /** The ground callback object pointer */
-  static FGGroundCallback_ptr GroundCallback;
 };
 
 /** Scalar multiplication.

@@ -48,6 +48,7 @@ double FGDefaultGroundCallback::GetAGLevel(double t, const FGLocation& loc,
   double loc_radius = loc.GetRadius();  // Get the radius of the given location
                                         // (e.g. the CG)
   double agl = loc_radius - mTerrainLevelRadius;
+  contact.SetEllipse(mSeaLevelRadius, mSeaLevelRadius);
   contact = (mTerrainLevelRadius/loc_radius)*FGColumnVector3(loc);
   return agl;
 }

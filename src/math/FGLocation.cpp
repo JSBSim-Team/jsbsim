@@ -47,9 +47,6 @@ INCLUDES
 
 namespace JSBSim {
 
-// Set up the default ground callback object.
-FGGroundCallback_ptr FGLocation::GroundCallback = nullptr;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -137,7 +134,7 @@ FGLocation::FGLocation(const FGLocation& l)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGLocation& FGLocation::operator=(const FGLocation& l)
+FGLocation& FGLocation::operator=(const FGLocation& l)
 {
   mECLoc = l.mECLoc;
   mCacheValid = l.mCacheValid;
@@ -263,6 +260,17 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
   ec2 = ec * ec;
   e2 = 1.0 - ec2;
   c = a * e2;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGLocation::GetSeaLevelRadius(void) const
+{
+  if (!mCacheValid) ComputeDerivedUnconditional();
+
+  double sinGeodLat = sin(mGeodLat);
+
+  return a/sqrt(1+e2*sinGeodLat*sinGeodLat/ec2);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

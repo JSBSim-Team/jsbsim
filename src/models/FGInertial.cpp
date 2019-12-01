@@ -46,7 +46,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
+FGInertial::FGInertial(FGFDMExec* fgex)
+  : FGModel(fgex), RadiusReference(20925646.32546),
+    GroundCallback(new FGDefaultGroundCallback(RadiusReference))
 {
   Name = "FGInertial";
 
@@ -59,7 +61,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   a               = 20925646.32546;     // WGS84 semimajor axis length in feet
 //  a               = 20902254.5305;      // Effective Earth radius for a sphere
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
-  RadiusReference = a;
   gravType = gtWGS84;
 
   // Lunar defaults
@@ -148,10 +149,24 @@ FGColumnVector3 FGInertial::GetGravityJ2(const FGLocation& position) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
+{
+  FGLocation contact;
+  FGColumnVector3 vDummy;
+  GroundCallback->GetAGLevel(location, contact, vDummy, vDummy, vDummy);
+  double groundHeight = contact.GetGeodAltitude();
+  double longitude = location.GetLongitude();
+  double geodLat = location.GetGeodLatitudeRad();
+  location.SetPositionGeodetic(longitude, geodLat,
+                               groundHeight + altitudeAGL);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGInertial::bind(void)
 {
-  PropertyManager->Tie("inertial/sea-level-radius_ft", this,
-                       &FGInertial::GetRefRadius);
+  PropertyManager->Tie("inertial/sea-level-radius_ft", &in.Position,
+                       &FGLocation::GetSeaLevelRadius);
   PropertyManager->Tie("simulation/gravity-model", &gravType);
 }
 
