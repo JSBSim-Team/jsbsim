@@ -21,12 +21,12 @@
 
 import os
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
+from JSBSim_utils import JSBSimTestCase, ExecuteUntil, RunTest
 
 
 class TestSimTimeReset(JSBSimTestCase):
     def test_no_script(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         fdm.load_model('c172x')
 
@@ -44,12 +44,10 @@ class TestSimTimeReset(JSBSimTestCase):
         fdm.reset_to_initial_conditions(1)
         self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)
 
-        del fdm
-
     def test_script_start_time_0(self):
         script_name = 'ball_orbit.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(script_path)
         fdm.run_ic()
 
@@ -59,8 +57,6 @@ class TestSimTimeReset(JSBSimTestCase):
         fdm.reset_to_initial_conditions(1)
         self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)
 
-        del fdm
-
     def test_script_start_time(self):
         script_name = 'ball_orbit.xml'
         script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
@@ -68,7 +64,7 @@ class TestSimTimeReset(JSBSimTestCase):
         run_tag = tree.getroot().find('./run')
         run_tag.attrib['start'] = '1.2'
         tree.write(script_name)
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
 
         fdm.load_script(script_name)
         fdm.run_ic()
@@ -78,8 +74,6 @@ class TestSimTimeReset(JSBSimTestCase):
 
         fdm.reset_to_initial_conditions(1)
         self.assertEqual(fdm['simulation/sim-time-sec'], 1.2)
-
-        del fdm
 
     def test_script_no_start_time(self):
         script_name = 'ball_orbit.xml'
@@ -89,7 +83,7 @@ class TestSimTimeReset(JSBSimTestCase):
         # Remove the parameter 'start' from the tag <run>
         del run_tag.attrib['start']
         tree.write(script_name)
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
 
         fdm.load_script(script_name)
         fdm.run_ic()
@@ -99,7 +93,5 @@ class TestSimTimeReset(JSBSimTestCase):
 
         fdm.reset_to_initial_conditions(1)
         self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)
-
-        del fdm
 
 RunTest(TestSimTimeReset)

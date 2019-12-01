@@ -161,8 +161,8 @@ class JSBSimTestCase(unittest.TestCase):
             if CheckXMLFile(fullpath, 'runscript'):
                 yield fullpath
 
-    def create_fdm(self):
-        self._fdm = CreateFDM(self.sandbox)
+    def create_fdm(self, pm=None):
+        self._fdm = CreateFDM(self.sandbox, pm)
         return self._fdm
 
     def delete_fdm(self):

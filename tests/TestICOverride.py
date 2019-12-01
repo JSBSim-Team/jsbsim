@@ -21,7 +21,7 @@
 
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import CreateFDM, ExecuteUntil, JSBSimTestCase, RunTest
+from JSBSim_utils import ExecuteUntil, JSBSimTestCase, RunTest
 
 fpstokts = 0.592484
 
@@ -31,7 +31,7 @@ class TestICOverride(JSBSimTestCase):
         # Run the script c1724.xml
         script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1724.xml')
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(script_path)
 
         vt0 = fdm['ic/vt-kts']
@@ -64,16 +64,11 @@ class TestICOverride(JSBSimTestCase):
         property.attrib['value'] = str(vt0)
         tree.write('c1724_0.xml')
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
-
         # Re-run the same check than above. This time we are making sure than
         # the total initial velocity is increased by 1 ft/s
         self.sandbox.delete_csv_files()
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script('c1724_0.xml')
 
         self.assertAlmostEqual(fdm['ic/vt-kts'], vt0, delta=1E-6)
@@ -90,7 +85,7 @@ class TestICOverride(JSBSimTestCase):
                                delta=1E-6)
 
     def test_asl_override_vs_geod_lat(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('c310')
         fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'c310',
                                                      'ellington.xml'), False)

@@ -18,12 +18,12 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, RunTest
 
 class TestDensityAltitude(JSBSimTestCase):
 
     def test_densityaltitude(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')        
 
         # Reference data (Geometric Altitude, Temp Delta (Rankine), Density Altitude)
@@ -93,9 +93,6 @@ class TestDensityAltitude(JSBSimTestCase):
             fdm.run_ic()
 
             self.assertAlmostEqual(density_ref, fdm['atmosphere/rho-slugs_ft3'])
-
-        del fdm
-
 
 RunTest(TestDensityAltitude)
 

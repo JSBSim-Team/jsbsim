@@ -165,8 +165,6 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, self.T0, 0.0)
         self.check_pressure(fdm, self.P0, self.T0, 0.0)
 
-        del fdm
-
     def test_temperature_bias(self):
         fdm = self.create_fdm()
         fdm.load_model('ball')
@@ -178,8 +176,6 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl, 0.0)
         self.check_pressure(fdm, self.P0, T_sl, 0.0)
 
-        del fdm
-
     def test_sl_pressure_bias(self):
         fdm = self.create_fdm()
         fdm.load_model('ball')
@@ -189,8 +185,6 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.check_temperature(fdm, self.T0, 0.0)
         self.check_pressure(fdm, P_sl, self.T0, 0.0)
-
-        del fdm
 
     def test_pressure_and_temperature_bias(self):
         fdm = self.create_fdm()
@@ -205,8 +199,6 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl, 0.0)
         self.check_pressure(fdm, P_sl, T_sl, 0.0)
 
-        del fdm
-
     def test_temperature_gradient(self):
         fdm = self.create_fdm()
         fdm.load_model('ball')
@@ -220,8 +212,6 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, self.P0, self.T0 + graded_delta_T_K, T_gradient)
-
-        del fdm
 
     def test_temperature_gradient_and_bias(self):
         fdm = self.create_fdm()
@@ -240,8 +230,6 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, self.P0, T_sl + graded_delta_T_K, T_gradient)
 
-        del fdm
-
     def test_pressure_and_temperature_gradient(self):
         fdm = self.create_fdm()
         fdm.load_model('ball')
@@ -257,8 +245,6 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, P_sl, self.T0 + graded_delta_T_K, T_gradient)
-
-        del fdm
 
     def test_pressure_and_temperature_gradient_and_bias(self):
         fdm = self.create_fdm()
@@ -278,8 +264,6 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, P_sl, T_sl + graded_delta_T_K, T_gradient)
-
-        del fdm
 
     def test_set_pressure_SL(self):
         fdm = self.create_fdm()
@@ -332,8 +316,6 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/530.0)
 
-        del fdm
-
     def test_humidity_parameters(self):
         # Table: Dew point (deg C), Vapor pressure (Pa), RH, density
         humidity_table = [
@@ -369,8 +351,6 @@ class TestStdAtmosphere(JSBSimTestCase):
             self.assertAlmostEqual(fdm['atmosphere/rho-slugs_ft3']/(self.kg_to_slug*math.pow(0.3048,3)),
                                    rho)
 
-        del fdm
-
     def test_max_HR(self):
         max_water_ppm = [(  0.0, 35000.),
                          (  1.0, 31000.),
@@ -404,8 +384,5 @@ class TestStdAtmosphere(JSBSimTestCase):
 
             self.assertAlmostEqual(rhov/rhoa, ppm*1E-6)
             self.assertAlmostEqual(fdm['atmosphere/vapor-fraction-ppm']/ppm, 1.0)
-
-        del fdm
-
 
 RunTest(TestStdAtmosphere)
