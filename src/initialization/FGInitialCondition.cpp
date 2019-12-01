@@ -122,10 +122,14 @@ void FGInitialCondition::InitializeIC(void)
 {
   alpha = beta = 0.0;
   epa = 0.0;
-  a = fdmex->GetInertial()->GetSemimajor();
-  double b = fdmex->GetInertial()->GetSemiminor();
-  double ec = b/a;
-  e2 = 1.0 - ec*ec;
+  // FIXME: Since FGDefaultGroundCallback assumes the Earth is spherical, so
+  // must FGLocation. However this should be updated according to the assumption
+  // made by the actual callback.
+
+  // double a = fdmex->GetInertial()->GetSemimajor();
+  // double b = fdmex->GetInertial()->GetSemiminor();
+  double a = fdmex->GetInertial()->GetRefRadius();
+  double b = fdmex->GetInertial()->GetRefRadius();
 
   position.SetEllipse(a, b);
 
@@ -152,7 +156,7 @@ void FGInitialCondition::InitializeIC(void)
 
 void FGInitialCondition::SetVequivalentKtsIC(double ve)
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   SetVtrueFpsIC(ve*ktstofps*sqrt(rhoSL/rho));
@@ -163,7 +167,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
 
 void FGInitialCondition::SetMachIC(double mach)
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   SetVtrueFpsIC(mach*soundSpeed);
   lastSpeedSet = setmach;
@@ -173,7 +177,7 @@ void FGInitialCondition::SetMachIC(double mach)
 
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
@@ -651,7 +655,7 @@ void FGInitialCondition::SetTerrainElevationFtIC(double elev)
 
 double FGInitialCondition::GetAltitudeASLFtIC(void) const
 {
-  return fdmex->GetInertial()->GetAltitudeASL(position);
+  return position.GetGeodAltitude();
 }
 
 //******************************************************************************
@@ -685,7 +689,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double rho = Atmosphere->GetDensity(altitudeASL);
@@ -696,13 +700,9 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double ve0 = vt * sqrt(rho/rhoSL);
 
   double geodLatitude = position.GetGeodLatitudeRad();
+  double longitude = position.GetLongitude();
   altitudeASL=alt;
-  fdmex->GetInertial()->SetAltitudeASL(position, alt);
-
-  // The call to SetAltitudeASL has most likely modified the geodetic latitude
-  // so we need to restore it to its initial value.
-  if (lastLatitudeSet == setgeod)
-    SetGeodLatitudeRadIC(geodLatitude);
+  position.SetPositionGeodetic(longitude, geodLatitude, alt);
 
   soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   rho = Atmosphere->GetDensity(altitudeASL);
@@ -730,7 +730,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
 void FGInitialCondition::SetGeodLatitudeRadIC(double geodLatitude)
 {
-  double h = ComputeGeodAltitude(geodLatitude);
+  double h = position.GetGeodAltitude();
   double lon = position.GetLongitude();
 
   position.SetPositionGeodetic(lon, geodLatitude, h);
@@ -825,7 +825,7 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double mach = vt / soundSpeed;
@@ -837,7 +837,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 
 double FGInitialCondition::GetVequivalentKtsIC(void) const
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double rho = Atmosphere->GetDensity(altitudeASL);
   double rhoSL = Atmosphere->GetDensitySL();
   return fpstokts * vt * sqrt(rho/rhoSL);
@@ -847,7 +847,7 @@ double FGInitialCondition::GetVequivalentKtsIC(void) const
 
 double FGInitialCondition::GetMachIC(void) const
 {
-  double altitudeASL = fdmex->GetInertial()->GetAltitudeASL(position);
+  double altitudeASL = position.GetGeodAltitude();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   return vt / soundSpeed;
 }
@@ -913,23 +913,6 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   }
 
   return result;
-}
-
-//******************************************************************************
-// Given an altitude above the mean sea level (or a position radius which is the
-// same) and a geodetic latitude, compute the geodetic altitude.
-//
-// TODO: extend the routine to the case where lastAltitudeSet is equal to
-// setagl.
-
-double FGInitialCondition::ComputeGeodAltitude(double geodLatitude)
-{
-  double R = position.GetRadius();
-  double slat = sin(geodLatitude);
-  double RN = a / sqrt(1.0 - e2*slat*slat);
-  double p1 = e2*RN*slat*slat;
-  double p2 = e2*e2*RN*RN*slat*slat-R*R;
-  return p1 + sqrt(p1*p1-p2) - RN;
 }
 
 //******************************************************************************
@@ -1120,22 +1103,25 @@ bool FGInitialCondition::Load_v2(Element* document)
       position = Ti2ec * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
-        if (position_el->FindElement("longitude"))
-          position.SetLongitude(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
-
+        double longitude = 0.0;
+        if (position_el->FindElement("longitude")) {
+          longitude = position_el->FindElementValueAsNumberConvertTo("longitude", "RAD");
+          position.SetLongitude(longitude);
+        }
         if (position_el->FindElement("radius")) {
           position.SetRadius(position_el->FindElementValueAsNumberConvertTo("radius", "FT"));
         } else if (position_el->FindElement("altitudeAGL")) {
           position.SetAltitudeAGL(position_el->FindElementValueAsNumberConvertTo("altitudeAGL", "FT"));
         } else if (position_el->FindElement("altitudeMSL")) {
-          fdmex->GetInertial()->SetAltitudeASL(position,
-                                               position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
+          position.SetPositionGeodetic(longitude, 0.0,
+                                       position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {
           cerr << endl << "  No altitude or radius initial condition is given." << endl;
           result = false;
         }
 
-        result = LoadLatitude(position_el);
+        if (result)
+          result = LoadLatitude(position_el);
 
       } else {
         position = position_el->FindElementTripletConvertTo("FT");
@@ -1237,7 +1223,6 @@ bool FGInitialCondition::Load_v2(Element* document)
   // The vehicle will be defaulted to (0,0,0) in the Body frame if nothing is provided.
 
   Element* velocity_el = document->FindElement("velocity");
-  FGColumnVector3 vInitVelocity(0.0, 0.0, 0.0);
   FGMatrix33 mTec2l = position.GetTec2l();
   const FGMatrix33& Tb2l = orientation.GetTInv();
 
@@ -1270,7 +1255,7 @@ bool FGInitialCondition::Load_v2(Element* document)
 
   } else {
 
-    vUVW_NED = Tb2l * vInitVelocity;
+    vUVW_NED.InitMatrix();
 
   }
 

@@ -28,7 +28,7 @@ install:
 - cd cxxtest\python
 - python setup.py install
 - cd ..\..
-- cinst doxygen.install
+#- cinst doxygen.install
 
 build_script:
 # Build JSBSim

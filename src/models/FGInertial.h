@@ -84,11 +84,6 @@ public:
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
 
-  double GetAltitudeASL(const FGLocation& l) const
-  { return l.GetRadius() - RadiusReference; }
-  void SetAltitudeASL(FGLocation& l, double altitude) const
-  { l.SetRadius(altitude + RadiusReference); }
-
   struct Inputs {
     FGLocation Position;
   } in;

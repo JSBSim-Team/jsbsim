@@ -520,14 +520,16 @@ void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
 
 double FGPropagate::GetAltitudeASL() const
 {
-  return FDMExec->GetInertial()->GetAltitudeASL(VState.vLocation);
+  return VState.vLocation.GetGeodAltitude();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetAltitudeASL(double altASL)
 {
-  FDMExec->GetInertial()->SetAltitudeASL(VState.vLocation, altASL);
+  double geodLat = VState.vLocation.GetGeodLatitudeRad();
+  double longitude = VState.vLocation.GetLongitude();
+  VState.vLocation.SetPositionGeodetic(longitude, geodLat, altASL);
   UpdateVehicleState();
 }
 

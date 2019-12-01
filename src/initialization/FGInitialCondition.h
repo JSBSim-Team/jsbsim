@@ -694,8 +694,7 @@ private:
   double targetNlfIC;
 
   FGMatrix33 Tw2b, Tb2w;
-  double  alpha, beta;
-  double a, e2;
+  double alpha, beta;
   double epa;
 
   speedset lastSpeedSet;
