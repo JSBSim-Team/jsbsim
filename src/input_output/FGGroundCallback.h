@@ -109,11 +109,6 @@ public:
   virtual double GetTerrainGeoCentRadius(const FGLocation& location) const
   { return GetTerrainGeoCentRadius(time, location); }
 
-  /** Return the sea level radius
-      @param location location
-   */
-  virtual double GetSeaLevelRadius(const FGLocation& location) const = 0;
-
   /** Set the local terrain radius.
       Only needs to be implemented if JSBSim should be allowed
       to modify the local terrain radius (see the default implementation)
@@ -147,9 +142,6 @@ public:
   {  mTerrainLevelRadius = radius;}
   double GetTerrainGeoCentRadius(double t, const FGLocation& location) const override
   { return mTerrainLevelRadius; }
-
-  double GetSeaLevelRadius(const FGLocation& location) const override
-  {return mSeaLevelRadius; }
 
 private:
    double mSeaLevelRadius;
