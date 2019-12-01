@@ -98,6 +98,8 @@ JSBSim comes with a test suite to automatically check that the build is correct.
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
+Make sure that the JSBSim library is in the path of the dynamic loader before running the tests (see [the procedure to add the JSBSim library to dynamic loader path](#when-i-try-to-run-ctest-most-of-the-tests-fail) if you get multiple failures of the tests).
+
 The test suite can then be run using `ctest` in the `build` directory. Tests can also be run in parallel on several cores (4 in the example below) using the option `-j`
 ```bash
 > ctest -j4
@@ -194,8 +196,8 @@ If you need to run tests #12 to #14, you can use
 > ctest -I 12,14
 ```
 You can find more informations about `ctest` from its [manual page](https://cmake.org/cmake/help/v3.0/manual/ctest.1.html)
-### When I try to run `ctest`, Python fails with an `ImportError`
-**Q:** Before running `make install`, I want to execute `ctest` but all the tests fail. And when I check in the file `Testing/Temporary/LastTestsFailed.log` it reports many errors such as
+### When I try to run `ctest`, most of the tests fail
+**Q:** Before running `make install`, I want to execute `ctest` but most of the tests fail. And when I check in the file `Testing/Temporary/LastTestsFailed.log` it reports many Python `ImportError` such as
 ```
 31: Traceback (most recent call last):
 31:   File "TestTurbine.py", line 23, in <module>
@@ -209,3 +211,9 @@ You can find more informations about `ctest` from its [manual page](https://cmak
 > LD_LIBRARY_PATH=$PWD/src ctest
 ```
 The command above will succeed if you execute it from your build directory in which case the environment variable `PWD` will contain the path to your build directory.
+
+To avoid prepending every `ctest` command with `LD_LIBRARY_PATH=$PWD/src` you can execute the command below to store the modification to the `LD_LIBRARY_PATH` environment variable. This command must be executed from your `build` directory in order to store the appropriate path.
+```bash
+> export LD_LIBRARY_PATH=$PWD/src:$LD_LIBRARY_PATH
+```
+Please note that as soon as your shell session will be terminated, the modification to `LD_LIBRARY_PATH` will be lost.
