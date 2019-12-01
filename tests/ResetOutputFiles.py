@@ -110,6 +110,10 @@ class ResetOutputFiles(JSBSimTestCase):
         self.assertTrue(self.sandbox.exists('that_one.csv'),
                         msg="Output name overwritten: 'that_one.csv' should exist.")
 
+        # Kill the fdm so that Windows do not block further access to
+        # that_one.csv.
+        del fdm
+
         #
         # Check again on a brand new FDM
         #

@@ -36,6 +36,9 @@ class TestTurboProp(JSBSimTestCase):
         while fdm.run():
             pass
 
+        # Kill the fdm so that Windows do not block further access to L410.csv.
+        del fdm
+
         ref = pd.read_csv('L410.csv', index_col=0)
 
         tree = et.parse(self.sandbox.path_to_jsbsim_file('engine',

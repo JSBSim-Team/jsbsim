@@ -64,6 +64,10 @@ class TestICOverride(JSBSimTestCase):
         property.attrib['value'] = str(vt0)
         tree.write('c1724_0.xml')
 
+        # Kill the fdm so that Windows do not block further access to
+        # JSBout172B.csv
+        del fdm
+
         # Re-run the same check than above. This time we are making sure than
         # the total initial velocity is increased by 1 ft/s
         self.sandbox.delete_csv_files()
