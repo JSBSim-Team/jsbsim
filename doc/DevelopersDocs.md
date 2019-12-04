@@ -98,7 +98,7 @@ JSBSim comes with a test suite to automatically check that the build is correct.
 
 The tests are also using `numpy`, `pandas` and `scipy` so you need these Python modules to be installed on your system.
 
-Make sure that the JSBSim library is in the path of the dynamic loader before running the tests (see [the procedure to add the JSBSim library to dynamic loader path](#when-i-try-to-run-ctest-most-of-the-tests-fail) if you get multiple failures of the tests).
+Make sure that the JSBSim shared library is in the path of the dynamic linker before running the tests (see [the procedure to add the JSBSim library to the dynamic linker path](#when-i-try-to-run-ctest-most-of-the-tests-fail) if you get multiple failures of the tests).
 
 The test suite can then be run using `ctest` in the `build` directory. Tests can also be run in parallel on several cores (4 in the example below) using the option `-j`
 ```bash
@@ -206,7 +206,7 @@ You can find more informations about `ctest` from its [manual page](https://cmak
 31:     import jsbsim
 31: ImportError: libJSBSim.so.1: cannot open shared object file: No such file or directory
 ```
-**A:** This error means that the library loader cannot find the JSBSim shared library (`libJSBSim.so.1`) so you must tell it where it is located. For that purpose, you can use the environment variable `LD_LIBRARY_PATH` like below
+**A:** This error means that the dynamic linker `ld.so` cannot find the JSBSim shared library (`libJSBSim.so.1`) so you must tell it where it is located. For that purpose, you can use the environment variable `LD_LIBRARY_PATH` like below
 ```bash
 > LD_LIBRARY_PATH=$PWD/src ctest
 ```
