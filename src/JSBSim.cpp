@@ -269,7 +269,7 @@ CLASS DOCUMENTATION
  *
  * \section website Website
  *
- * For more information, see the JSBSim web site: <a
+ * For more information, see the JSBSim web site: <a>
  * href="https://www.jsbsim.org">www.jsbsim.org</a>.
  */
 
@@ -279,7 +279,7 @@ IMPLEMENTATION
 
 int main(int argc, char* argv[])
 {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
   _clearfp();
   _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
            _MCW_EM);
