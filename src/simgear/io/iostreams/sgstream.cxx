@@ -14,9 +14,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51
+// Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
 #include <simgear/compiler.h>
@@ -31,40 +31,40 @@ using std::ostream;
 
 sg_ifstream::sg_ifstream(const SGPath& path, std::ios::openmode io_mode)
 {
-#if defined(SG_WINDOWS)
-	std::wstring ps = path.wstr();
+#if defined(_MSC_VER)
+    std::wstring ps = path.wstr();
 #else
     std::string ps = path.local8BitStr();
 #endif
-	std::ifstream::open(ps.c_str(), io_mode);
+    std::ifstream::open(ps.c_str(), io_mode);
 }
 
 void sg_ifstream::open( const SGPath& name, std::ios::openmode io_mode )
 {
-#if defined(SG_WINDOWS)
-	std::wstring ps = name.wstr();
+#if defined(_MSC_VER)
+    std::wstring ps = name.wstr();
 #else
-	std::string ps = name.local8BitStr();
+    std::string ps = name.local8BitStr();
 #endif
     std::ifstream::open(ps.c_str(), io_mode);
 }
 
 sg_ofstream::sg_ofstream(const SGPath& path, std::ios::openmode io_mode)
 {
-#if defined(SG_WINDOWS)
-	std::wstring ps = path.wstr();
+#if defined(_MSC_VER)
+    std::wstring ps = path.wstr();
 #else
-	std::string ps = path.local8BitStr();
+    std::string ps = path.local8BitStr();
 #endif
     std::ofstream::open(ps.c_str(), io_mode);
 }
 
 void sg_ofstream::open( const SGPath& name, std::ios::openmode io_mode )
 {
-#if defined(SG_WINDOWS)
-	std::wstring ps = name.wstr();
+#if defined(_MSC_VER)
+    std::wstring ps = name.wstr();
 #else
-	std::string ps = name.local8BitStr();
+    std::string ps = name.local8BitStr();
 #endif
     std::ofstream::open(ps.c_str(), io_mode);
 }
