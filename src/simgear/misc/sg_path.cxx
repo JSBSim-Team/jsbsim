@@ -15,9 +15,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51
+// Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
 
@@ -33,7 +33,7 @@
 #include <iostream>
 
 #ifdef _WIN32
-#  include <direct.h>
+#include <direct.h>
 #endif
 #include "sg_path.hxx"
 
@@ -329,7 +329,7 @@ void SGPath::validate() const
 	  return;
   }
 
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
   struct _stat buf ;
   bool remove_trailing = false;
   std::wstring statPath(wstr());
@@ -546,7 +546,7 @@ bool SGPath::operator!=(const SGPath& other) const
 //------------------------------------------------------------------------------
 SGPath SGPath::fromEnv(const char* name, const SGPath& def)
 {
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
 	std::wstring wname = simgear::strutils::convertUtf8ToWString(name);
 	const wchar_t* val = _wgetenv(wname.c_str());
 	if (val && val[0])
@@ -564,7 +564,7 @@ SGPath SGPath::fromEnv(const char* name, const SGPath& def)
 std::vector<SGPath> SGPath::pathsFromEnv(const char *name)
 {
     std::vector<SGPath> r;
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
 	std::wstring wname = simgear::strutils::convertUtf8ToWString(name);
 	const wchar_t* val = _wgetenv(wname.c_str());
 #else
@@ -574,7 +574,7 @@ std::vector<SGPath> SGPath::pathsFromEnv(const char *name)
 		return r;
 	}
    
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
 	return pathsFromUtf8(simgear::strutils::convertWStringToUtf8(val));
 #else
 	return pathsFromUtf8(val);
@@ -612,7 +612,7 @@ std::vector<SGPath> SGPath::pathsFromLocal8Bit(const std::string& paths)
 //------------------------------------------------------------------------------
 SGPath SGPath::realpath() const
 {
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
     // with absPath NULL, will allocate, and ignore length
   	std::wstring ws = wstr();
     wchar_t *buf = _wfullpath( NULL, ws.c_str(), _MAX_PATH );
@@ -641,7 +641,7 @@ SGPath SGPath::realpath() const
         return SGPath(this_dir).realpath() / file();
     }
 
-#if defined(SG_WINDOWS)
+#if defined(_MSC_VER)
 	  SGPath p = SGPath(std::wstring(buf), NULL);
 #else
 		SGPath p(SGPath::fromLocal8Bit(buf));
