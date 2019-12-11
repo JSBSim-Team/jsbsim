@@ -52,6 +52,7 @@ INCLUDES
 #if defined(_MSC_VER)
 #  include <float.h>
 #elif defined(__GNUC__) && !defined(sgi)
+#  define __GNU_VISIBLE
 #  include <fenv.h>
 #endif
 
@@ -279,7 +280,7 @@ IMPLEMENTATION
 
 int main(int argc, char* argv[])
 {
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
   _clearfp();
   _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
            _MCW_EM);
