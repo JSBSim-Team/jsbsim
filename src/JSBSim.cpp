@@ -52,7 +52,7 @@ INCLUDES
 #if defined(_MSC_VER)
 #  include <float.h>
 #elif defined(__GNUC__) && !defined(sgi)
-#  define __GNU_VISIBLE
+#  define __GNU_VISIBLE 1
 #  include <fenv.h>
 #endif
 
