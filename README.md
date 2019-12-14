@@ -18,6 +18,7 @@ JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Mode
  
 Features include:
 
+* Nonlinear 6 DoF (Degree of Freedom)
 * Fully configurable flight control system, aerodynamics, propulsion, landing gear arrangement, etc. through XML-based text file format.
 * Rotational earth effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
 * The earth atmosphere is modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf)
@@ -46,6 +47,16 @@ Debian packages for Ubuntu Linux "Xenial" 16.04 LTS on 64 bits platform are also
 * `JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
 * `JSBSim-devel_1.0.0-xxx.xenial.amd64.deb` which installs the development resources (headers and libraries)
 * `pythonX-JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the Python module of JSBSim (for python 2.7 if the package name starts with **python2** or 3.6 if it starts with **python3**)
+### Python module
+JSBSim provides binary packages (a.k.a. known as [wheel packages](https://www.python.org/dev/peps/pep-0427)) for its Python module on Windows and Linux platforms for several Python versions (3.5, 3.6, 3.7 and 3.8).
+
+The module is installed with the `pip` command line (check the [pip documentation](https://packaging.python.org/tutorials/installing-packages) for more details):
+```bash
+> pip install jsbsim --no-index -f https://github.com/JSBSim-Team/jsbsim/releases/download/Rolling-release-v2019/JSBSim-1.1.0.dev1-cp37-cp37m-manylinux1_x86_64.whl
+```
+The example above downloads and installs JSBSim for Python 3.7 on a Linux platform directly from the JSBSim GitHub project page. The package corresponding to your platform and Python version must be picked among all the available JSBSim wheel packages that are listed in the [Releases page](https://github.com/JSBSim-Team/jsbsim/releases/tag/Rolling-release-v2019).
+
+Note that wheel packages for Linux meet the [ManyLinux packages requirements](https://www.python.org/dev/peps/pep-0513) and as such are compatible with all the major Linux distributions.
 ### Other platforms
 At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 16.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
