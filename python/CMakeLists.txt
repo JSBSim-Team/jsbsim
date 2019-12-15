@@ -2,8 +2,28 @@
 include(UseCython)
 
 # Declare JSBSim as a C++ project
+include_directories(${CMAKE_SOURCE_DIR}/src)
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE)
+
+# Autogenerate the Python module doc strings from Doxygen docs
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
+    doxy2pydocs.py)
+  if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
+    execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  endif()
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} python/doxy2pydocs.py
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Prepare the sphinx build files
+  configure_file(${CMAKE_SOURCE_DIR}/doc/python/sphinx/conf.py.in
+    ${CMAKE_BINARY_DIR}/documentation/conf.py)
+  file(COPY ${CMAKE_SOURCE_DIR}/doc/python/sphinx/index.rst
+    DESTINATION ${CMAKE_BINARY_DIR}/documentation)
+endif(DOXYGEN_FOUND)
 
 # Build the Python module using Cython and the JSBSim library
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

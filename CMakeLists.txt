@@ -42,11 +42,11 @@ add_subdirectory(src)
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
   execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/JSBSim.dox.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
+    ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
   add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif()
 
@@ -59,31 +59,12 @@ option(BUILD_PYTHON_MODULE "Set to ON to build the Python module for JSBSim" ON)
 option(INSTALL_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
 
 if (BUILD_PYTHON_MODULE)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/python/CMakeModules)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/python/CMakeModules)
   find_package(Cython)
 
   if (CYTHON_FOUND)
     find_package(PythonLibs)
     if (PYTHONLIBS_FOUND)
-      include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
-      configure_file(python/jsbsim.pyx ${CMAKE_CURRENT_BINARY_DIR}/python/jsbsim.pyx)
-      # Autogenerate the Python module doc strings from Doxygen docs
-      if(DOXYGEN_FOUND)
-        configure_file(${CMAKE_CURRENT_LIST_DIR}/python/Doxy2PyDocStrings.py
-          python/doxy2pydocs.py)
-        if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/documentation/xml)
-          execute_process(COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-        endif()
-        execute_process(COMMAND ${PYTHON_EXECUTABLE} doxy2pydocs.py
-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python)
-
-        # Prepare the sphinx build files
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/conf.py.in
-          ${CMAKE_CURRENT_BINARY_DIR}/documentation/conf.py)
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/python/sphinx/index.rst
-          DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/documentation)
-      endif(DOXYGEN_FOUND)
       enable_testing()
       add_subdirectory(tests)
       add_subdirectory(python)
@@ -100,7 +81,7 @@ endif(BUILD_PYTHON_MODULE)
 find_package(CxxTest)
 
 if (CXXTEST_FOUND)
-  include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
+  include_directories(${CMAKE_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
 endif(CXXTEST_FOUND)
@@ -205,7 +186,7 @@ endif()
 # Source packaging                                                             #
 ################################################################################
 
-set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
+set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/"
                                "/admin/"
                                "/autom4te.cache"
                                "/Makefile$"
