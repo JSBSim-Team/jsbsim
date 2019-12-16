@@ -14,7 +14,7 @@ import sys
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute.
 
-sys.path.insert(0, '${CMAKE_CURRENT_BINARY_DIR}/tests')
+sys.path.insert(0, '${CMAKE_BINARY_DIR}/tests')
 
 # -- Project information -----------------------------------------------------
 
@@ -103,7 +103,7 @@ html_static_path = []
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-html_logo = "${CMAKE_CURRENT_SOURCE_DIR}/doc/logo_JSBSIM_globe.png"
+html_logo = "${CMAKE_SOURCE_DIR}/doc/logo_JSBSIM_globe.png"
 
 
 # -- Options for HTMLHelp output ---------------------------------------------

@@ -128,20 +128,20 @@ def convert_para(para, indent):
 
     return docstring
 
-with open('jsbsim.pyx') as source:
+with open('${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx') as source:
     pyx_data = source.read()
 
 klasses = re.findall(r'cdef\s+class\s+(\w+)', pyx_data)
 
 # Autogenerate the documentation page for each class
 for klass in klasses:
-    with open('${CMAKE_CURRENT_BINARY_DIR}/documentation/'+klass+'.rst', 'w') as f:
+    with open('${CMAKE_BINARY_DIR}/documentation/'+klass+'.rst', 'w') as f:
         title = klass
         f.write('.. _'+klass+':\n\n')
         f.write("="*len(title)+'\n'+title+'\n'+"="*len(title)+'\n\n')
         f.write('.. autoclass:: jsbsim.'+klass+'\n   :members:\n')
 
-tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/indexpage.xml')
+tree = et.parse('${CMAKE_BINARY_DIR}/documentation/xml/indexpage.xml')
 root = tree.getroot()
 mainpage = ''
 doxymain = re.search(r'@DoxMainPage', pyx_data)
@@ -158,7 +158,7 @@ for sect in root.findall('.//sect1'):
 pyx_data = pyx_data[:doxymain.start()]+pyx_data[doxymain.start():].replace(doxymain.group(),
                                                                            mainpage.rstrip())
 
-with open('${CMAKE_CURRENT_BINARY_DIR}/documentation/mainpage.rst', 'w') as f:
+with open('${CMAKE_BINARY_DIR}/documentation/mainpage.rst', 'w') as f:
     f.write('\n'.join(mainpage.split('\n'+tab)))
 
 request = re.compile(r'@Dox\(([\w:]+)(\(([\w:,&\s]+)\))?\)')
@@ -167,7 +167,7 @@ doxytag = re.search(request, pyx_data)
 while doxytag:
     names = doxytag.group(1).split('::')
     xmlfilename = 'class'+version.join(names[:2])+'.xml'
-    tree = et.parse('${CMAKE_CURRENT_BINARY_DIR}/documentation/xml/'+xmlfilename)
+    tree = et.parse('${CMAKE_BINARY_DIR}/documentation/xml/'+xmlfilename)
     root = tree.getroot()
     docstring = ''
     col = doxytag.start() - pyx_data[:doxytag.start()].rfind('\n')
@@ -213,6 +213,6 @@ while doxytag:
                                                                              docstring.rstrip())
     doxytag = re.search(request, pyx_data)
 
-with open('jsbsim.pyx', 'w') as dest:
+with open('${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx', 'w') as dest:
     dest.write(pyx_data)
 
