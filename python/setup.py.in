@@ -16,7 +16,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys
+import os, sys, argparse
 
 from setuptools import setup
 from setuptools.dist import Distribution
@@ -87,21 +87,6 @@ class InstallJSBSimModule(install_lib):
 # Process the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
-# Parse the --config option that we set for msbuild (it can contain Release,
-# Debug, RelWithDebInfo, etc.) then update the JSBSim library path accordingly.
-for idx, opt in enumerate(sys.argv):
-    if opt == '--config':
-        if len(sys.argv) <= idx+1:
-            raise ValueError("--config needs an attribute.")
-
-        library_path=os.path.join(library_path, sys.argv[idx+1])
-
-        # Remove the --config option and its argument from sys.argv otherwise
-        # setuptools will complain about an unknown '--config' option.
-        del sys.argv[idx] # remove --config
-        del sys.argv[idx] # remove the --config argument
-        break
-
 # Move to the directory in which the script setup.py is located.
 os.chdir(os.path.dirname(__file__))
 
@@ -110,6 +95,18 @@ if compiler.compiler_type == 'unix':
     cpp11_compile_flag = ['-std=c++11']
 else:
     cpp11_compile_flag = []
+
+# Parse the --config option that we set for msbuild (it can contain Release,
+# Debug, RelWithDebInfo, etc.) then update the JSBSim library path accordingly.
+if compiler.compiler_type == 'msvc':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="Build mode used by Visual C++",
+                        choices=['Debug', 'Release', 'RelWithDebInfo'])
+    args, extra = parser.parse_known_args()
+
+    if args.config:
+        library_path=os.path.join(library_path, args.config)
+        sys.argv[1:] = extra
 
 # Check if the library exists and build the Python module accordingly.
 if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist':
@@ -121,8 +118,7 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
                    'library_dirs': [library_path],
                    'extra_compile_args': cpp11_compile_flag }
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
-                                   'install_lib': InstallJSBSimModule},
-                     'install_requires': ['numpy']}
+                                   'install_lib': InstallJSBSimModule}}
 else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
@@ -136,8 +132,7 @@ else:
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags + cpp11_compile_flag}
     # List of required modules to build the JSBSim module from the sources.
-    setup_kwargs = {'install_requires': ["setuptools>=18.0", "cython>=0.25",
-                                         "numpy"]}
+    setup_kwargs = {'setup_requires': ["setuptools>=18.0", "cython>=0.25"]}
 
 # Build & installation process for the JSBSim Python module
 setup(
@@ -164,6 +159,7 @@ setup(
         "Topic :: Scientific/Engineering"
     ],
     scripts=['JSBSim'],
+    install_requires=['numpy'],
     ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
     **setup_kwargs)
 
