@@ -2,7 +2,7 @@
 set -e -x
 
 # Compile C++ code
-cd /build
+cd /io/build
 cmake ..
 make
 
@@ -15,7 +15,7 @@ done
 
 # Bundle external shared libraries into the wheels
 for whl in python/dist/*.whl; do
-    auditwheel repair "$whl" --plat manylinux1_x86_64 -w python/dist
+    auditwheel repair "$whl" --plat manylinux2010_x86_64 -w python/dist
 done
 
 # Install packages and test

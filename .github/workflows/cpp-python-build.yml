@@ -25,32 +25,37 @@ jobs:
           mkdir build
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
-      # - name: Build JSBSim
-      #   run: |
-      #     cd build
-      #     make -j2
-      # - name: Test JSBSim
-      #   run: |
-      #     cd build
-      #     ctest -j2
-      # - name: Build wheel package
-      #   run: |
-      #     cd build
-      #     python python/setup.py sdist
-      #     python python/setup.py bdist_wheel
-      # - name: Test wheel package
-      #   run: |
-      #     pip install jsbsim --no-index -f build/python/dist
-      #     python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      #     pip uninstall jsbsim -y
-      - name: Prepare for ManyLinux wheel packages build
+      - name: Build JSBSim
+        run: |
+          cd build
+          make -j2
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2
+      - name: Build wheel package
+        run: |
+          cd build
+          python python/setup.py sdist
+          python python/setup.py bdist_wheel
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
+      - name: Build ManyLinux wheel packages (PEP 513)
         run: |
           cd build
           rm -f CMakeCache.txt
           rm -f python/dist/*.whl
           make clean
-      - name: Build ManyLinux wheel packages (PEP 513)
-        uses: ./.github/actions/manylinux-wheels
+          # Install the Docker build environment
+          docker pull quay.io/pypa/manylinux2010_x86_64
+          cp ../python/build-wheels.sh .
+          chmod +x build-wheels.sh
+          # Build the manylinux1 wheel binary packages
+          docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+          ls python/dist/
       - name: Build Ubuntu packages
         run: |
           cd build
