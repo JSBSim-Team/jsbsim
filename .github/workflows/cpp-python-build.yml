@@ -241,13 +241,17 @@ jobs:
         run: |
           cd build
           make -j2
-          export CXX=`find /usr/local/Cellar/gcc -type f -name g++-9`
+          export CC=`find /usr/local/Cellar/gcc -type f -name g++-9`
+          export CXX=$CC
+          echo $CC
           echo $CXX
           ls tests/*.so
+          which gcc
           rm -f tests/fpectl*.so
           ls tests/*.so
-          python ../python/fpectl/setup.py build_ext -b tests
-          ls tests/*.so
+          cd ../python/fpectl
+          python setup.py build_ext -b tests
+          ls ../../build/tests/*.so
       - name: Test JSBSim
         run: |
           cd build
