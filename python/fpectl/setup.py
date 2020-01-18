@@ -22,17 +22,17 @@ from setuptools import setup
 from setuptools.extension import Extension
 from setuptools.command.build_ext import build_ext
 from distutils import log
-from distutils.ccompiler import new_compiler
 
 
 # Performs a build which verbosity is driven by VERBOSE
 class QuietBuild(build_ext):
     def run(self):
         if "VERBOSE" not in os.environ:
-            log.info("building '{}' extension".format(self.extensions[0].name))
+            name = self.extensions[0].name
+            log.info("building '{}' extension".format(name))
 
             self.oldstdout = os.dup(sys.stdout.fileno())
-            self.devnull = open('devnull.txt', 'w')
+            self.devnull = open(os.path.join(self.build_lib, name+'.out'), 'w')
             os.dup2(self.devnull.fileno(), sys.stdout.fileno())
 
         build_ext.run(self)
