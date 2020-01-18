@@ -1,0 +1,222 @@
+name: C/C++ build
+
+on: [push]
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: sudo apt-get install doxygen cxxtest
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel
+      - name: Checkout JSBSim
+        uses: actions/checkout@v1
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          mkdir build
+          cd build
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
+      - name: Build JSBSim
+        run: |
+          cd build
+          make -j2
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2
+      - name: Build wheel package
+        run: |
+          cd build
+          python python/setup.py sdist
+          python python/setup.py bdist_wheel
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
+      - name: Build Ubuntu packages
+        run: |
+          cd build
+          cpack
+          mkdir Ubuntu-packages
+          mv *.deb Ubuntu-packages
+
+    # Upload files
+      - name: Upload Ubuntu packages
+        uses: actions/upload-artifact@v1
+        with:
+          name: Ubuntu-packages
+          path: build/Ubuntu-packages
+      - name: Upload failed tests log
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: LastTest-Linux.log
+          path: build/Testing/Temporary/LastTest.log
+
+  Windows:
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel pywin32
+      - name: Install Doxygen
+        run: cinst doxygen.install
+      - name: Checkout CxxTest
+        uses: actions/checkout@v1
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+      - name: Configure CxxTest
+        run: |
+          cd ..\cxxtest\python
+          python setup.py install
+          cd ..\..\jsbsim
+      - name: Checkout JSBSim
+        uses: actions/checkout@v1
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+          mkdir build
+          cd build
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" ..
+      - name: Build JSBSim
+        run: |
+          cd build
+          cmake --build . --config RelWithDebInfo
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2 -E TestInputSocket
+      - name: Build wheel package for Python 3.8
+        run: |
+          cd build
+          python python/setup.py sdist
+          python python/setup.py bdist_wheel --config RelWithDebInfo
+      - name: Test wheel package for Python 3.8
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Build wheel package for Python 3.7
+        run: |
+          pip install -U cython numpy wheel pywin32
+          cd build
+          python python/setup.py bdist_wheel --config RelWithDebInfo
+      - name: Test wheel package for Python 3.7
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Build wheel package for Python 3.6
+        run: |
+          pip install -U cython numpy wheel pywin32
+          cd build
+          python python/setup.py bdist_wheel --config RelWithDebInfo
+      - name: Test wheel package for Python 3.6
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Prepare wheel packages for upload
+        run: |
+          mkdir PythonWinPackages
+          mv build\python\dist\*.whl PythonWinPackages
+
+    # Upload files
+      - name: Upload Python wheel packages
+        uses: actions/upload-artifact@v1
+        with:
+          name: Python-wheel-packages-win64
+          path: PythonWinPackages
+      - name: Upload JSBSim executable
+        uses: actions/upload-artifact@v1
+        with:
+          name: JSBSim.exe
+          path: build\src\RelWithDebInfo\JSBSim.exe
+      - name: Upload aeromatic executable
+        uses: actions/upload-artifact@v1
+        with:
+          name: aeromatic.exe
+          path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+      - name: Upload failed tests log
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: LastTest-Win.log
+          path: build/Testing/Temporary/LastTest.log
+
+  MacOSX:
+    runs-on: macos-latest
+    steps:
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel
+      - name: Install Doxygen
+        run: brew install doxygen
+      - name: Checkout CxxTest
+        uses: actions/checkout@v1
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+      - name: Configure CxxTest
+        run: |
+          cd ../cxxtest/python
+          python setup.py install
+          cd ../../jsbsim
+      - name: Checkout JSBSim
+        uses: actions/checkout@v1
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          mkdir build
+          cd build
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../../cxxtest ..
+      - name: Build JSBSim
+        run: |
+          cd build
+          make -j2
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2 -E TestInputSocket
+      - name: Build wheel package
+        run: |
+          cd build
+          python python/setup.py sdist
+          python python/setup.py bdist_wheel
+
+    # Upload files
+      - name: Upload failed tests log
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: LastTest-MacOSX.log
+          path: build/Testing/Temporary/LastTest.log
