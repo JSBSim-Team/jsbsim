@@ -9,21 +9,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -43,12 +43,9 @@ INCLUDES
 #else
 #include <fcntl.h>
 #endif
-#include <iostream>
 #include <iomanip>
 #include <cstring>
-#include <cstdio>
 #include "FGfdmSocket.h"
-#include "string_utilities.h"
 
 using std::cout;
 using std::cerr;
@@ -82,46 +79,53 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   sckt = sckt_in = 0;
   Protocol = (ProtocolType)protocol;
   connected = false;
+  struct addrinfo *addr = nullptr;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL(debug_lvl)) return;
   #endif
 
-  if (!is_number(address)) {
-    host = gethostbyname(address.c_str());
-    if (host == NULL) {
-      cerr << "Could not get host net address by name..." << endl;
-      return;
-    }
-  } else {
-    unsigned long ip = inet_addr(address.c_str());
-    host = gethostbyaddr((char*)&ip, sizeof(ip), PF_INET);
-    if (host == NULL) {
-      cerr << "Could not get host net address by number..." << endl;
-      return;
-    }
+  struct addrinfo hints;
+  hints.ai_family = AF_UNSPEC;
+  if (protocol == ptUDP)
+    hints.ai_socktype = SOCK_DGRAM;
+  else
+    hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = 0;
+  if (!is_number(address))
+    hints.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
+  else
+    hints.ai_flags = AI_NUMERICHOST;
+
+  int failure = getaddrinfo(address.c_str(), NULL, &hints, &addr);
+  if (failure || !addr) {
+    cerr << "Could not get host net address " << address;
+
+    if (hints.ai_flags == AI_NUMERICHOST)
+       cerr << " by number..." << endl;
+    else
+      cerr << " by name..." << endl;
+
+    cerr  << gai_strerror(failure) << endl;
+
+    freeaddrinfo(addr);
+    return;
   }
 
-  if (protocol == ptUDP) {  //use udp protocol
-    sckt = socket(AF_INET, SOCK_DGRAM, 0);
+  sckt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
-    if (debug_lvl > 0)
+  if (debug_lvl > 0) {
+    if (protocol == ptUDP)  //use udp protocol
       cout << "Creating UDP socket on port " << port << endl;
-  }
-  else { //use tcp protocol
-    sckt = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (debug_lvl > 0)
+    else //use tcp protocol
       cout << "Creating TCP socket on port " << port << endl;
   }
 
   if (sckt >= 0) {  // successful
-    memset(&scktName, 0, sizeof(struct sockaddr_in));
-    scktName.sin_family = AF_INET;
-    scktName.sin_port = htons(port);
-    memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
-
     int len = sizeof(struct sockaddr_in);
+    memcpy(&scktName, addr->ai_addr, len);
+    scktName.sin_port = htons(port);
+
     if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
       if (debug_lvl > 0)
         cout << "Successfully connected to socket for output ..." << endl;
@@ -130,6 +134,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
       cerr << "Could not connect to socket for output ..." << endl;
   } else          // unsuccessful
     cerr << "Could not create socket for FDM output, error = " << errno << endl;
+
+  freeaddrinfo(addr);
 
   Debug(0);
 }
