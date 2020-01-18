@@ -45,6 +45,7 @@ endif(MSVC)
 cmake_policy(SET CMP0051 NEW)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
+get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 get_directory_property(FLAGS_LIST DIRECTORY ${libJSBSim_DIRECTORY} COMPILE_DEFINITIONS)
 file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 
@@ -91,6 +92,10 @@ foreach(_FILE ${SOURCE_FILES})
     string(APPEND JSBSIM_SOURCE_FILES "'${_FILE}',")
   endif()
 endforeach(_FILE)
+
+foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
+  string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
+endforeach(_LIB)
 
 # Clean up the compile flags list
 list(REMOVE_DUPLICATES FLAGS_LIST)
