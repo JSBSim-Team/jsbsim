@@ -1,6 +1,6 @@
 FROM quay.io/pypa/manylinux1_x86_64
 
-COPY python/build-wheels.sh /build-wheels.sh
+COPY /github/workspace/python/build-wheels.sh /build-wheels.sh
 
 RUN pwd
 RUN ls
