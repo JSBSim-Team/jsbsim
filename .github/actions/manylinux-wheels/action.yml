@@ -1,0 +1,8 @@
+name: 'Build manylinux1 wheel packages'
+description: 'Build manylinux1 wheel packages'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    PLAT: 'manylinux1_x86_64'
+  entrypoint: '/python/build-wheels.sh'

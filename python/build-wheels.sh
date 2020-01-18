@@ -2,7 +2,7 @@
 set -e -x
 
 # Compile C++ code
-cd /io/build
+cd /build
 cmake ..
 make
 
@@ -10,12 +10,12 @@ make
 for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" install cython numpy
     "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
-    "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$TRAVIS_BUILD_NUMBER
+    "${PYBIN}/python" python/setup.py bdist_wheel
 done
 
 # Bundle external shared libraries into the wheels
 for whl in python/dist/*.whl; do
-    auditwheel repair "$whl" --plat manylinux2010_x86_64 -w python/dist
+    auditwheel repair "$whl" --plat manylinux1_x86_64 -w python/dist
 done
 
 # Install packages and test
