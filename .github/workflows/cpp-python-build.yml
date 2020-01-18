@@ -43,6 +43,12 @@ jobs:
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
           pip uninstall jsbsim -y
+          cp build/python/dist/JSBSim-*.tar.gz .
+      - name: Build ManyLinux wheel packages (PEP 513)
+        uses: RalfG/python-wheels-manylinux-build@v0.1
+        with:
+          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38'
+          build-requirements: 'setuptools numpy cython'
       - name: Build Ubuntu packages
         run: |
           cd build
@@ -56,6 +62,11 @@ jobs:
         with:
           name: Ubuntu-packages
           path: build/Ubuntu-packages
+      - name: Upload wheel packages
+        uses: actions/upload-artifact@v1
+        with:
+          name: Python-wheel-packages-manyliux
+          path: wheelhouse
       - name: Upload failed tests log
         uses: actions/upload-artifact@v1
         if: failure()
