@@ -94,7 +94,12 @@ foreach(_FILE ${SOURCE_FILES})
 endforeach(_FILE)
 
 foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
-  string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
+  string(REGEX MATCH "(^[A-Za-z0-9]+).lib" LIBNAME ${_LIB})
+  if (LIBNAME STREQUAL "")
+    string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
+  else()
+    string(APPEND JSBSIM_LINK_LIBRARIES "'${LIBNAME}',")
+  endif()
 endforeach(_LIB)
 
 # Clean up the compile flags list
