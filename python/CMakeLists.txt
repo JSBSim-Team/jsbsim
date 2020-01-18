@@ -58,7 +58,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
 
 foreach(_FILE "MANIFEST.in" "jsbsim.pxd" "ExceptionManagement.h"
-              "fpectlmodule.h" "JSBSim.py")
+              "fpectl/fpectlmodule.h" "JSBSim.py")
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
@@ -120,6 +120,9 @@ add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
   COMMENT "Building Python modules...")
+
+execute_process(COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -b ${CMAKE_BINARY_DIR}/tests
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fpectl)
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
 add_dependencies(PythonJSBSim libJSBSim)
