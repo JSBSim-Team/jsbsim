@@ -42,6 +42,8 @@ INCLUDES
 #include <WS2tcpip.h>
 #else
 #include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 #endif
 #include <iomanip>
 #include <cstring>
