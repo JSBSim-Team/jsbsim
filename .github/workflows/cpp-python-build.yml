@@ -213,7 +213,7 @@ jobs:
         run: |
           brew install doxygen
           brew install gcc
-          ls /usr/local/Cellar/gcc/9.2.0_3
+          ls /usr/local/Cellar/gcc/9.2.0_3/bin
       - name: Checkout CxxTest
         uses: actions/checkout@v1
         with:
