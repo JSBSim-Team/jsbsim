@@ -24,6 +24,7 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           pwd
+          uname -a
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
       - name: Build JSBSim
@@ -62,6 +63,7 @@ jobs:
         run: |
           cd build
           pwd
+          uname -a
           cpack
           mkdir Ubuntu-packages
           mv *.deb Ubuntu-packages
@@ -239,7 +241,13 @@ jobs:
         run: |
           cd build
           make -j2
-          python ../python/fpectl/setup.py build_ext --help-compiler
+          export CXX=`find /usr/local/Cellar/gcc -type f -name g++-9`
+          echo $CXX
+          ls tests/*.so
+          rm -f tests/fpectl*.so
+          ls tests/*.so
+          python ../python/fpectl/setup.py build_ext -b tests
+          ls tests/*.so
       - name: Test JSBSim
         run: |
           cd build
