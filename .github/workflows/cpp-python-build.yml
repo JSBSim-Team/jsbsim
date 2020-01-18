@@ -147,6 +147,7 @@ jobs:
         if: failure()
         run: |
           dir build
+          dir build\python
           dir build\src
           dir build\src\RelWithDebInfo
 
