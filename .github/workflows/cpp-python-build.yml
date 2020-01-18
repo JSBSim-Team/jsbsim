@@ -211,11 +211,8 @@ jobs:
           python-version: '3.6'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel
-      - name: Install Doxygen & gcc
-        run: |
-          brew install doxygen
-          brew install gcc
-          ls /usr/local/Cellar/gcc/9.2.0_3/bin
+      - name: Install Doxygen
+        run: brew install doxygen
       - name: Checkout CxxTest
         uses: actions/checkout@v1
         with:
@@ -241,21 +238,6 @@ jobs:
         run: |
           cd build
           make -j2
-          export CC=`find /usr/local/Cellar/gcc -type f -name g++-9`
-          export CXX=$CC
-          echo $CC
-          echo $CXX
-          ls tests/*.so
-          which gcc
-          which cc
-          rm -f tests/fpectl*.so
-          ls tests/*.so
-          cd ../python/fpectl
-          find /usr/local/Cellar/gcc -type d -name include
-          cat /usr/local/Cellar/gcc/9.2.0_3/include/fenv.h
-          python setup.py build_ext -b ../../build/tests -I `find /usr/local/Cellar/gcc -type d -name include`
-          ls ../../build/tests/*.so
-          ldd ../../build/tests/*.so
       - name: Test JSBSim
         run: |
           cd build
