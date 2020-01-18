@@ -1,6 +1,6 @@
 # Build the fpectl module
 if (APPLE)
-  file(COPY fpectl.py DESTINATION ${CMAKE_BINARY_DIR}/tests/fpectl.py)
+  file(COPY fpectl.py DESTINATION ${CMAKE_BINARY_DIR}/tests)
 else()
   execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/python/findModuleFileName.py fpectl OUTPUT_VARIABLE FPECTL_MODULE_NAME)
   set(FPECTL_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${FPECTL_MODULE_NAME})
