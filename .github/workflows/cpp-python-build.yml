@@ -166,6 +166,12 @@ jobs:
         with:
           name: LastTest-Win.log
           path: build/Testing/Temporary/LastTest.log
+      - name: Upload python compilation output
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: python-Win-compilation-output.txt
+          path: build/devnull.txt
 
   MacOSX:
     runs-on: macos-latest
