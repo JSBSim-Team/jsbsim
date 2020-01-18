@@ -1,9 +1,10 @@
 FROM quay.io/pypa/manylinux1_x86_64
 
+COPY python/build-wheels.sh /build-wheels.sh
+
 RUN pwd
 RUN ls
 RUN ls -R /home
-RUN ls /github
-RUN chmod +x python/build-wheels.sh
+RUN chmod +x /build-wheels.sh
 
-ENTRYPOINT ["/python/build-wheels.sh"]
+ENTRYPOINT ["/build-wheels.sh"]
