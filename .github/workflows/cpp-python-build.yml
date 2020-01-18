@@ -178,7 +178,7 @@ jobs:
         if: failure()
         with:
           name: python-Win-compilation-output.txt
-          path: build/devnull.txt
+          path: build/python/devnull.txt
 
   MacOSX:
     runs-on: macos-latest
