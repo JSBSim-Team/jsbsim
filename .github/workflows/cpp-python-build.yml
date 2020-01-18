@@ -250,8 +250,9 @@ jobs:
           rm -f tests/fpectl*.so
           ls tests/*.so
           cd ../python/fpectl
-          python setup.py build_ext -b tests
+          python setup.py build_ext -b ../../build/tests
           ls ../../build/tests/*.so
+          ldd ../../build/tests/*.so
       - name: Test JSBSim
         run: |
           cd build
