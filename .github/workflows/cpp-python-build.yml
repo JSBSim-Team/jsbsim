@@ -50,7 +50,7 @@ jobs:
           rm -f python/dist/*.whl
           make clean
       - name: Build ManyLinux wheel packages (PEP 513)
-        uses: manylinux-wheels
+        uses: ./.github/actions/manylinux-wheels
       - name: Build Ubuntu packages
         run: |
           cd build
