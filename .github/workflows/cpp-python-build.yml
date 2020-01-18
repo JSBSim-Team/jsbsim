@@ -23,6 +23,7 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
+          pwd
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
       - name: Build JSBSim
@@ -212,6 +213,7 @@ jobs:
         run: |
           brew install doxygen
           brew install gcc
+          ls /usr/local/Cellar/gcc/9.2.0_3
       - name: Checkout CxxTest
         uses: actions/checkout@v1
         with:
