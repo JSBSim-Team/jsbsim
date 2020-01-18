@@ -98,7 +98,7 @@ foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
   if (LIBNAME STREQUAL "")
     string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
   else()
-    string(APPEND JSBSIM_LINK_LIBRARIES "'${LIBNAME}',")
+    string(APPEND JSBSIM_LINK_LIBRARIES "'${CMAKE_MATCH_1}',")
   endif()
 endforeach(_LIB)
 
