@@ -252,7 +252,7 @@ jobs:
           ls tests/*.so
           cd ../python/fpectl
           find /usr/local/Cellar/gcc -type d -name include
-          echo /usr/local/Cellar/gcc/9.2.0_3/include/fenv.h
+          cat /usr/local/Cellar/gcc/9.2.0_3/include/fenv.h
           python setup.py build_ext -b ../../build/tests -I `find /usr/local/Cellar/gcc -type d -name include`
           ls ../../build/tests/*.so
           ldd ../../build/tests/*.so
