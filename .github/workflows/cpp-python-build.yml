@@ -143,6 +143,9 @@ jobs:
         run: |
           mkdir PythonWinPackages
           mv build\python\dist\*.whl PythonWinPackages
+      - name: Look for devnull.txt
+        if: failure()
+        run: |
           dir build
           dir build\src
           dir build\src\RelWithDebInfo
