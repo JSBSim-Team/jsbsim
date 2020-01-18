@@ -247,6 +247,7 @@ jobs:
           echo $CXX
           ls tests/*.so
           which gcc
+          which cc
           rm -f tests/fpectl*.so
           ls tests/*.so
           cd ../python/fpectl
