@@ -10,7 +10,7 @@ make
 for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" install cython numpy
     "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
-    "${PYBIN}/python" python/setup.py bdist_wheel
+    "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$TRAVIS_BUILD_NUMBER
 done
 
 # Bundle external shared libraries into the wheels
