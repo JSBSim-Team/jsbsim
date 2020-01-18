@@ -94,7 +94,7 @@ foreach(_FILE ${SOURCE_FILES})
 endforeach(_FILE)
 
 foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
-  string(REGEX MATCH "(^[A-Za-z0-9]+).lib" LIBNAME ${_LIB})
+  string(REGEX MATCH "(^[A-Za-z0-9_]+).lib" LIBNAME ${_LIB})
   if (LIBNAME STREQUAL "")
     string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
   else()
