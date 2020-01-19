@@ -67,20 +67,20 @@ jobs:
       - name: Upload wheel packages
         uses: actions/upload-artifact@v1
         with:
-          name: Python-wheel-packages-manyliux
+          name: Python-wheel-packages-manylinux
           path: build/python/dist
-      - name: Upload failed tests log
+      - name: [On failure] Prepare logs for upload
+        if: failure()
+        run: |
+          mkdir logs
+          cp build/Testing/Temporary/*.log logs/.
+          cp build/python/*-build.log logs/.
+      - name: [On failure] Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: LastTest-Linux.log
-          path: build/Testing/Temporary/LastTest.log
-      - name: Upload python compilation output
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: python-Linux-compilation-output.txt
-          path: build/python/devnull.txt
+          name: Linux.logs
+          path: logs
 
   Windows:
     runs-on: windows-latest
@@ -179,18 +179,18 @@ jobs:
         with:
           name: aeromatic.exe
           path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
-      - name: Upload failed tests log
+      - name: [On failure] Prepare logs for upload
+        if: failure()
+        run: |
+          mkdir logs
+          cp build/Testing/Temporary/*.log logs/.
+          cp build/python/*-build.log logs/.
+      - name: [On failure] Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: LastTest-Win.log
-          path: build/Testing/Temporary/LastTest.log
-      - name: Upload python compilation output
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: python-Win-compilation-output.txt
-          path: build/python/devnull.txt
+          name: Windows.logs
+          path: logs
 
   MacOSX:
     runs-on: macos-latest
@@ -244,15 +244,20 @@ jobs:
           pip uninstall jsbsim -y
 
     # Upload files
-      - name: Upload failed tests log
+      - name: Upload wheel packages
+        uses: actions/upload-artifact@v1
+        with:
+          name: Python-wheel-packages-MacOSX
+          path: build/python/dist
+      - name: [On failure] Prepare logs for upload
+        if: failure()
+        run: |
+          mkdir logs
+          cp build/Testing/Temporary/*.log logs/.
+          cp build/python/*-build.log logs/.
+      - name: [On failure] Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: LastTest-MacOSX.log
-          path: build/Testing/Temporary/LastTest.log
-      - name: Upload python compilation output
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: python-MacOSX-compilation-output.txt
-          path: build/python/devnull.txt
+          name: MacOSX.logs
+          path: logs

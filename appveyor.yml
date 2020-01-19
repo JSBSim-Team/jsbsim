@@ -87,6 +87,9 @@ artifacts:
 - path: build\python\dist\*.whl
   name: Rolling_Release_x64_v2019
 
+- path: build\python\*-build.log
+  name: Rolling_Release_x64_v2019
+
 # Do not build on tags (GitHub and BitBucket)
 # to avoid infinite build loops
 skip_tags: true
