@@ -114,7 +114,7 @@ if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist'
     # the Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
                    'include_dirs': ['src'],
-                   'libraries': ['JSBSim'],
+                   'libraries': ['JSBSim', ${JSBSIM_LINK_LIBRARIES}],
                    'library_dirs': [library_path],
                    'extra_compile_args': cpp11_compile_flag }
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
@@ -129,6 +129,7 @@ else:
 
 
     ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
+                   'libraries': [${JSBSIM_LINK_LIBRARIES}],
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags + cpp11_compile_flag}
     # List of required modules to build the JSBSim module from the sources.
