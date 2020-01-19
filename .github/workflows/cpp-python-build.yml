@@ -23,8 +23,6 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
-          pwd
-          uname -a
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
       - name: Build JSBSim
@@ -35,16 +33,12 @@ jobs:
         run: |
           cd build
           ctest -j2
-      - name: Build wheel package
+      - name: Build Ubuntu packages
         run: |
           cd build
-          python python/setup.py sdist
-          python python/setup.py bdist_wheel
-      - name: Test wheel package
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-          pip uninstall jsbsim -y
+          cpack
+          mkdir Ubuntu-packages
+          mv *.deb Ubuntu-packages
       - name: Build ManyLinux wheel packages (PEP 513)
         run: |
           cd build
@@ -57,16 +51,12 @@ jobs:
           chmod +x build-wheels.sh
           # Build the manylinux1 wheel binary packages
           docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
-          pwd
           ls python/dist/
-      - name: Build Ubuntu packages
+      - name: Test wheel package
         run: |
-          cd build
-          pwd
-          uname -a
-          cpack
-          mkdir Ubuntu-packages
-          mv *.deb Ubuntu-packages
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
 
     # Upload files
       - name: Upload Ubuntu packages
