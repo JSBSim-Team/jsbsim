@@ -18,11 +18,11 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
+from JSBSim_utils import JSBSimTestCase, RunTest, ExecuteUntil
+
 import fpectl
 import xml.etree.ElementTree as et
 import pandas as pd
-
-from JSBSim_utils import JSBSimTestCase, RunTest, ExecuteUntil
 
 
 class CheckScripts(JSBSimTestCase):

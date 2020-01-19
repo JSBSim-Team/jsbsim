@@ -18,6 +18,10 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import os, sys
+
+sys.path.append(os.getcwd())
+
 import fpectl
 import unittest
 from JSBSim_utils import RunTest
