@@ -33,6 +33,10 @@ class QuietBuild(build_ext):
             name = self.extensions[0].name
             log.info("building '{}' extension".format(name))
 
+            if not os.path.exists(self.build_lib):
+                log.info('creating {}'.format(self.build_lib))
+                os.makedirs(self.build_lib)
+
             self.oldstdout = os.dup(sys.stdout.fileno())
             self.devnull = open(os.path.join(self.build_lib, name+'.out'), 'w')
             os.dup2(self.devnull.fileno(), sys.stdout.fileno())
