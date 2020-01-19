@@ -30,9 +30,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 compile_pyx(jsbsim _JSBSIM_CXX ${JSBSIM_PYX})
 file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py OUTPUT_VARIABLE PYTHON_MODULE_NAME)
-set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
-
 # Check if we are using Visual Studio msbuild
 if(MSVC)
   string(TOUPPER CMAKE_GENERATOR _GENERATOR)
@@ -58,7 +55,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
 
 foreach(_FILE "MANIFEST.in" "jsbsim.pxd" "ExceptionManagement.h"
-              "fpectlmodule.h" "JSBSim.py")
+              "fpectl/fpectlmodule.h" "JSBSim.py")
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
@@ -113,13 +110,18 @@ file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DI
 set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 configure_file(setup.py.in ${SETUP_PY})
 
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py jsbsim OUTPUT_VARIABLE PYTHON_MODULE_NAME)
+set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
+
 # setup.py build_ext is called with --force because dependencies and time stamps
 # are managed by CMake so we don't want setup.py to check them as well.
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
-  COMMENT "Building Python modules...")
+  COMMENT "Building Python module...")
+
+add_subdirectory(fpectl)
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
 add_dependencies(PythonJSBSim libJSBSim)

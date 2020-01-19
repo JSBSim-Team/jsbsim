@@ -41,7 +41,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestTemplateFunctions
                  TestDensityAltitude
                  TestPressureAltitude
-                 fpectl
+                 test_fpectl
                  TestStdAtmosphere
                  TestMiscellaneous
                  TestGndReactions
