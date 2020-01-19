@@ -69,13 +69,13 @@ jobs:
         with:
           name: Python-wheel-packages-manylinux
           path: build/python/dist
-      - name: [On failure] Prepare logs for upload
+      - name: On failure - Prepare logs for upload
         if: failure()
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
           cp build/python/*-build.log logs/.
-      - name: [On failure] Upload logs
+      - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
@@ -179,13 +179,13 @@ jobs:
         with:
           name: aeromatic.exe
           path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
-      - name: [On failure] Prepare logs for upload
+      - name: On failure - Prepare logs for upload
         if: failure()
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
           cp build/python/*-build.log logs/.
-      - name: [On failure] Upload logs
+      - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
@@ -249,13 +249,13 @@ jobs:
         with:
           name: Python-wheel-packages-MacOSX
           path: build/python/dist
-      - name: [On failure] Prepare logs for upload
+      - name: On failure - Prepare logs for upload
         if: failure()
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
           cp build/python/*-build.log logs/.
-      - name: [On failure] Upload logs
+      - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
