@@ -123,8 +123,10 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
 #if defined(_MSC_VER)
   _controlfp(fp_flags, _MCW_EM);
+
 #elif defined(__clang__)
   feraiseexcept(fp_flags);
+
 #elif defined(__GNUC__) && !defined(sgi)
   fedisableexcept(fp_flags);
 #endif
