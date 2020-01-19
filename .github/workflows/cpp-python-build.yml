@@ -121,7 +121,7 @@ jobs:
       - name: Test JSBSim
         run: |
           cd build
-          ctest -j2 -E TestInputSocket
+          ctest -j2 -E TestInputSocket --build-config RelWithDebInfo
       - name: Build wheel package for Python 3.8
         run: |
           cd build
