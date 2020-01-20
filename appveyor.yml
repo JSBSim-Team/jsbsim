@@ -45,7 +45,7 @@ test_script:
 - pip install jsbsim --no-index -f python/dist
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 - pip uninstall jsbsim --yes
-- ctest -j2 -E TestInputSocket
+- ctest -j2 -E TestInputSocket --build-config RelWithDebInfo
 - pip install python\dist\JSBSim-1.1.0.dev1.tar.gz
 - python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None)"
 
@@ -85,6 +85,9 @@ artifacts:
   name: Rolling_Release_x64_v2019
 
 - path: build\python\dist\*.whl
+  name: Rolling_Release_x64_v2019
+
+- path: build\python\*-build.log
   name: Rolling_Release_x64_v2019
 
 # Do not build on tags (GitHub and BitBucket)

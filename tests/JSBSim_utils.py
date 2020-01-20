@@ -21,13 +21,16 @@ import os, sys, tempfile, shutil, unittest, functools
 import xml.etree.ElementTree as et
 import numpy as np
 import pandas as pd
+
+sys.path.append(os.getcwd())
+
 import jsbsim
 
 
 class SandBox:
     def __init__(self, *args):
         self._tmpdir = tempfile.mkdtemp(dir=os.getcwd())
-        path_to_jsbsim = os.path.join(sys.argv[1], *args)
+        path_to_jsbsim = os.path.join(os.path.dirname(sys.argv[0]), '..', *args)
         self._relpath_to_jsbsim = os.path.relpath(path_to_jsbsim, self._tmpdir)
 
     def __call__(self, *args):

@@ -32,7 +32,7 @@ class QuietBuild(build_ext):
             log.info("building '{}' extension".format(name))
 
             self.oldstdout = os.dup(sys.stdout.fileno())
-            self.devnull = open(os.path.join(self.build_lib, name+'.out'), 'w')
+            self.devnull = open(os.path.join(self.build_lib, name+'-build.log'), 'w')
             os.dup2(self.devnull.fileno(), sys.stdout.fileno())
 
         build_ext.run(self)

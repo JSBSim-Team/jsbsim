@@ -1,10 +1,3 @@
-# Replicate the Python files in the build dir.
-# With CMake, the build tree can be separated from the source tree. For tests
-# written in Python to be executed by 'make test', the sources must be
-# collocated with the JSBSim Python module in the build tree.
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${CMAKE_BINARY_DIR}
-                                      FILES_MATCHING PATTERN "*.py")
-
 # Declare the tests to CTest so that they can be executed by 'make test'
 set(PYTHON_TESTS ResetOutputFiles
                  TestICOverride
@@ -55,5 +48,6 @@ set(PYTHON_TESTS ResetOutputFiles
                  )
 
 foreach(test ${PYTHON_TESTS})
-  add_test(${test} ${PYTHON_EXECUTABLE} ${test}.py ${CMAKE_SOURCE_DIR})
+  add_test(NAME ${test}
+    COMMAND ${PYTHON_EXECUTABLE} -B ${CMAKE_CURRENT_SOURCE_DIR}/${test}.py)
 endforeach()
