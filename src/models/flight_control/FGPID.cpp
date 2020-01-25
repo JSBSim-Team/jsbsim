@@ -52,8 +52,8 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   I_out_total = 0.0;
   Input_prev = Input_prev2 = 0.0;
-  Trigger = 0;
-  ProcessVariableDot = 0;
+  Trigger = nullptr;
+  ProcessVariableDot = nullptr;
   IsStandard = false;
   IntType = eNone;       // No integrator initially defined.
 
@@ -96,13 +96,20 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   el = element->FindElement("pvdot");
   if (el)
-    ProcessVariableDot = PropertyManager->GetNode(el->GetDataLine());
+    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager);
 
   el = element->FindElement("trigger");
   if (el)
-    Trigger = PropertyManager->GetNode(el->GetDataLine());
+    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager);
 
-  bind(element);
+  bind(el);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPID::bind(Element *el)
+{
+  FGFCSComponent::bind(el);
 
   string tmp;
   if (Name.find("/") == string::npos) {
@@ -111,7 +118,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     tmp = Name;
   }
   typedef double (FGPID::*PMF)(void) const;
-  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)0,
+  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)nullptr,
                        &FGPID::SetInitialOutput);
 
   Debug(0);
@@ -124,6 +131,8 @@ FGPID::~FGPID()
   delete Kp;
   delete Ki;
   delete Kd;
+  delete Trigger;
+  delete ProcessVariableDot;
   Debug(1);
 }
 
@@ -157,7 +166,7 @@ bool FGPID::Run(void )
   // is negative.
 
   double test = 0.0;
-  if (Trigger != 0) test = Trigger->getDoubleValue();
+  if (Trigger) test = Trigger->getDoubleValue();
 
   if (fabs(test) < 0.000001) {
     switch(IntType) {
