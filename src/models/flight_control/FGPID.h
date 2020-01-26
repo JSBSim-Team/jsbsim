@@ -148,10 +148,9 @@ private:
 
   eIntegrateType IntType;
 
-  FGParameter *Kp, *Ki, *Kd;
-  FGPropertyNode_ptr Trigger;
-  FGPropertyNode_ptr ProcessVariableDot;
+  FGParameter *Kp, *Ki, *Kd, *Trigger, *ProcessVariableDot;
 
+  void bind(Element* el) override;
   void Debug(int from) override;
 };
 }

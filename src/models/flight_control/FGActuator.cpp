@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 #include "models/FGFCS.h"
 
 using namespace std;
@@ -78,22 +78,9 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   // a property.
   Element* ratelim_el = element->FindElement("rate_limit");
   while ( ratelim_el ) {
-    FGParameter* rate_limit = 0;
     string rate_limit_str = ratelim_el->GetDataLine();
-
-    trim(rate_limit_str);
-    if (is_number(rate_limit_str))
-      rate_limit = new FGRealValue(fabs(atof(rate_limit_str.c_str())));
-    else {
-      if (rate_limit_str[0] == '-') rate_limit_str.erase(0,1);
-      FGPropertyNode* rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);
-      if (!rate_limit_prop) {
-        std::cerr << "No such property, " << rate_limit_str << " for rate limiting" << std::endl;
-        ratelim_el = element->FindNextElement("rate_limit");
-        continue;
-      }
-      rate_limit = new FGPropertyValue(rate_limit_prop);
-    }
+    FGParameter* rate_limit = new FGParameterValue(rate_limit_str,
+                                                   PropertyManager);
 
     if (ratelim_el->HasAttribute("sense")) {
       string sense = ratelim_el->GetAttributeValue("sense");
