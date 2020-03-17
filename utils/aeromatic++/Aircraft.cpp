@@ -315,11 +315,6 @@ bool Aeromatic::fdm()
         }
     }
 
-    // for now let's use a standard 2 degrees wing incidence
-    if (_wing.incidence == 0) {
-        _wing.incidence = 2.0;
-    }
-
     // estimate horizontal tail area
     if (_htail.area == 0) {
         _htail.area = _wing.area * aircraft->get_htail_area();
