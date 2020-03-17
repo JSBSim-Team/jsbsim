@@ -621,7 +621,7 @@ public:
             aspect(0),
             taper(1.0f),
             chord_mean(0),
-            incidence(0),
+            incidence(2.0),
             dihedral(0),
             sweep(0),
             sweep_le(0),
