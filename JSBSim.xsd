@@ -198,6 +198,11 @@
             <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.29 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
+        <xs:element name="copyright" type="xs:string" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>Copyright holder(s)</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>A simple text description of the aircraft model.</xs:documentation>
@@ -233,6 +238,7 @@
       <xs:attribute name="date" use="optional" />
       <xs:attribute name="refID" use="optional" type="xs:string" />
       <xs:attribute name="title" use="required" />
+      <xs:attribute name="URL" use="optional" type="xs:anyURI" />
     </xs:complexType>
   </xs:element>
 
@@ -681,6 +687,7 @@
   <xs:element name="lag_filter">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
         <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
@@ -695,6 +702,7 @@
   <xs:element name="summer">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" maxOccurs="unbounded"/>
         <xs:element name="bias" type="xs:float" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
@@ -717,6 +725,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element ref="domain" minOccurs="0" maxOccurs="1" />
         <xs:element ref="range" minOccurs="1" maxOccurs="1" />
@@ -737,6 +746,7 @@
   <xs:element name="kinematic">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element ref="traverse" />
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
@@ -766,6 +776,7 @@
   <xs:element name="lead_lag_filter">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element name="c1" type="xs:double" />
         <xs:element name="c2" type="xs:double" minOccurs="0" />
@@ -783,6 +794,7 @@
   <xs:element name="washout_filter">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
         <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
@@ -797,6 +809,7 @@
   <xs:element name="integrator">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
         <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
@@ -812,6 +825,7 @@
   <xs:element name="pid">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element name="kp" type="xs:float" minOccurs="0"/>
         <xs:element name="ki" type="xs:float" minOccurs="0"/>
@@ -828,6 +842,7 @@
   <xs:element name="second_order_filter">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element name="c1" type="xs:double" />
         <xs:element name="c2" type="xs:double" />
@@ -847,6 +862,7 @@
   <xs:element name="pure_gain">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element name="gain" type="xs:string" minOccurs="1" maxOccurs="1">
           <xs:annotation>
@@ -865,6 +881,7 @@
   <xs:element name="scheduled_gain">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
         <xs:element ref="table" minOccurs="1" maxOccurs="1" />
         <xs:element name="gain" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -884,6 +901,7 @@
   <xs:element name="switch">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" minOccurs="0" />
         <xs:element ref="default" minOccurs="0" />
         <xs:element ref="test" minOccurs="1" maxOccurs="unbounded" />
@@ -899,6 +917,7 @@
   <xs:element name="sensor">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string" maxOccurs="1"/>
         <xs:element name="lag" type="xs:float" maxOccurs="1"/>        
         <xs:element ref="noise" maxOccurs="1"/>
@@ -924,6 +943,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" minOccurs="1" type="xs:string" />
         <xs:element name="lag" type="xs:float" minOccurs="0"/>
         <xs:element name="rate_limit" type="xs:float" minOccurs="0"/>
@@ -942,6 +962,7 @@
   <xs:element name="deadband">
     <xs:complexType>
       <xs:all>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="width" type="xs:float"/>
         <xs:element ref="clipto" minOccurs="0"/>
@@ -956,6 +977,7 @@
     <xs:complexType>
       <xs:all>
         <xs:element name="input" type="xs:string" minOccurs="0"/>
+        <xs:element ref="description" minOccurs="0"/>
         <xs:element ref="function"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" type="xs:string" />
@@ -1270,6 +1292,7 @@
         <xs:element ref="radius" minOccurs="0" />
         <xs:element name="inertia_factor" type="xs:double" minOccurs="0"/>
         <xs:element ref="capacity" minOccurs="0" />
+        <xs:element ref="standpipe" minOccurs="0" />
         <xs:element ref="contents" minOccurs="0" />
         <xs:element ref="drain_location" minOccurs="0" />
       </xs:all>
@@ -1287,6 +1310,15 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="capacity">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:double">
+          <xs:attribute name="unit" use="required" type="xs:NCName" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="standpipe">
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:double">
@@ -1329,7 +1361,15 @@
     <xs:complexType>
       <xs:choice maxOccurs="3">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:simpleContent>
+                <xs:extension base="xs:string">
+                  <xs:attribute name="caption" type="xs:string"/>
+                </xs:extension>
+              </xs:simpleContent>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
         <xs:sequence minOccurs="0">
           <xs:element name="simulation" type="xs:string" minOccurs="0" />
