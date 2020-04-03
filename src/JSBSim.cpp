@@ -1,4 +1,4 @@
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+﻿/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       JSBSim.cpp
  Author:       Jon S. Berndt
@@ -308,7 +308,7 @@ int main(int argc, char* argv[])
 
 int real_main(int argc, char* argv[])
 {
-  // *** INITIALIZATIONS *** //
+  // *** 初始化 *** //
 
   ScriptName = "";
   AircraftName = "";
@@ -336,14 +336,14 @@ int real_main(int argc, char* argv[])
   catalog = false;
   nohighlight = false;
 
-  // *** PARSE OPTIONS PASSED INTO THIS SPECIFIC APPLICATION: JSBSim *** //
+  // *** 解析从命令行传入的参数 *** //
   success = options(argc, argv);
   if (!success) {
     PrintHelp();
     exit(-1);
   }
 
-  // *** SET UP JSBSIM *** //
+  // *** 设置仿真参数 *** //
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetRootDir(RootDir);
   FDMExec->SetAircraftPath(SGPath("aircraft"));
