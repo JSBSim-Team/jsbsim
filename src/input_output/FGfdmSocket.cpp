@@ -54,6 +54,9 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+// link with Ws2_32.lib
+#pragma comment (lib, "Ws2_32.lib")
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
