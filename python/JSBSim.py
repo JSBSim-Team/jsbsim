@@ -23,6 +23,9 @@
 import xml.etree.ElementTree as et
 import argparse, sys, os
 import jsbsim
+import time
+
+sleep_period = 0.01
 
 parser = argparse.ArgumentParser()
 parser.add_argument("input", nargs='?', help="script file name")
@@ -42,6 +45,7 @@ parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
                     help="specifies the sim end time")
+parser.add_argument("--realtime", default=False, action="store_true")
 args = parser.parse_args()
 
 def CheckXMLFile(f):
@@ -108,6 +112,25 @@ if args.outputlogfile:
 
 fdm.run_ic()
 fdm.print_simulation_configuration()
+frame_duration = fdm.get_delta_t()
+sleep_nseconds = (frame_duration if args.realtime else sleep_period) * 1E9
+current_seconds = initial_seconds = time.time()
 
-while fdm.run() and fdm.get_sim_time() <= args.end:
+while fdm.get_sim_time() <= args.end:
+    if args.realtime:
+        current_seconds = time.time()
+        actual_elapsed_time = current_seconds - initial_seconds
+        sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
+
+        for i in range(0, int(sim_lag_time/frame_duration)):
+            fdm.run()
+            cycle_duration = time.time() - current_seconds
+            fdm.set_property_value("simulation/cycle_duration", cycle_duration)
+
+            current_seconds = time.time()
+            if fdm.holding():
+                break
+    else:
+        fdm.run()
     pass
+
