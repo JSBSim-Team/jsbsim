@@ -25,8 +25,6 @@ import argparse, sys, os
 import jsbsim
 import time
 
-sleep_period = 0.01
-
 parser = argparse.ArgumentParser()
 parser.add_argument("input", nargs='?', help="script file name")
 parser.add_argument("--version", action="version",
@@ -46,7 +44,11 @@ parser.add_argument("--initfile", metavar="<filename>",
 parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
                     help="specifies the sim end time")
 parser.add_argument("--realtime", default=False, action="store_true")
+parser.add_argument("--nice", default=False, action="store_true")
 args = parser.parse_args()
+
+sleep_period = 0.01
+
 
 def CheckXMLFile(f):
     # Is f a file ?
@@ -60,6 +62,7 @@ def CheckXMLFile(f):
         return None
 
     return tree
+
 
 if args.input:
     tree = CheckXMLFile(args.input)
@@ -103,7 +106,7 @@ if args.logdirectivefile:
             sys.exit(1)
 
 if args.outputlogfile:
-    for n,f in enumerate(args.outputlogfile):
+    for n, f in enumerate(args.outputlogfile):
         old_filename = fdm.get_output_filename(n)
         if not fdm.set_output_filename(n, f):
             print("Output filename could not be set")
@@ -122,7 +125,7 @@ while fdm.get_sim_time() <= args.end:
         actual_elapsed_time = current_seconds - initial_seconds
         sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
 
-        for i in range(0, int(sim_lag_time/frame_duration)):
+        for i in range(0, int(sim_lag_time / frame_duration)):
             fdm.run()
             cycle_duration = time.time() - current_seconds
             fdm.set_property_value("simulation/cycle_duration", cycle_duration)
@@ -132,5 +135,6 @@ while fdm.get_sim_time() <= args.end:
                 break
     else:
         fdm.run()
-    pass
 
+    if args.nice:
+        time.sleep(sleep_nseconds / 1000000.0)
