@@ -43,8 +43,10 @@ parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
                     help="specifies the sim end time")
-parser.add_argument("--realtime", default=False, action="store_true")
-parser.add_argument("--nice", default=False, action="store_true")
+parser.add_argument("--realtime", default=False, action="store_true",
+                    help="specifies to run in real world time")
+parser.add_argument("--nice", default=False, action="store_true",
+                    help="specifies to run at lower CPU usage")
 args = parser.parse_args()
 
 sleep_period = 0.01
