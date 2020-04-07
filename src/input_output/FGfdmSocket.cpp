@@ -87,8 +87,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   if (!LoadWinSockDLL(debug_lvl)) return;
   #endif
 
-  struct addrinfo hints;
-  ZeroMemory(&hints, sizeof(hints));
+  struct addrinfo hints = { 0 };
+  memset(&hints, 0, sizeof(hints));
   //ai_family:AF_INET(ipv4)  AF_INET6 (IPv6)  AF_UNSPEC(no limit)
   //set ai_family to AF_INET,limit the getaddrinfo() addr relsut to ipv4;
   hints.ai_family = AF_INET;
