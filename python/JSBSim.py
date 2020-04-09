@@ -101,6 +101,9 @@ if args.script:
 elif args.aircraft:
     fdm.load_model(args.aircraft, False)
 
+if args.initfile:
+    fdm.load_ic(args.initfile, True)
+
 if args.logdirectivefile:
     for f in args.logdirectivefile:
         if not fdm.set_output_directive(f):
