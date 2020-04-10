@@ -100,9 +100,12 @@ if args.script:
     fdm.load_script(args.script)
 elif args.aircraft:
     fdm.load_model(args.aircraft, False)
+    if args.initfile:
+        fdm.load_ic(args.initfile, True)
 
-if args.initfile:
-    fdm.load_ic(args.initfile, True)
+if args.initfile and not args.aircraft:
+    print("You must specify an initilization file with the aircraft name")
+    sys.exit(1)
 
 if args.logdirectivefile:
     for f in args.logdirectivefile:
@@ -123,23 +126,19 @@ fdm.print_simulation_configuration()
 frame_duration = fdm.get_delta_t()
 sleep_nseconds = (frame_duration if args.realtime else sleep_period) * 1E9
 current_seconds = initial_seconds = time.time()
+result = fdm.run()
 
-while fdm.get_sim_time() <= args.end:
+while result and fdm.get_sim_time() <= args.end:
     if args.realtime:
         current_seconds = time.time()
         actual_elapsed_time = current_seconds - initial_seconds
         sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
 
-        for i in range(0, int(sim_lag_time / frame_duration)):
-            fdm.run()
-            cycle_duration = time.time() - current_seconds
-            fdm.set_property_value("simulation/cycle_duration", cycle_duration)
-
+        for _ in range(int(sim_lag_time / frame_duration)):
+            result = fdm.run()
             current_seconds = time.time()
-            if fdm.holding():
-                break
     else:
-        fdm.run()
+        result = fdm.run()
 
-    if args.nice:
-        time.sleep(sleep_nseconds / 1000000.0)
+        if args.nice:
+            time.sleep(sleep_nseconds / 1000000.0)
