@@ -112,6 +112,7 @@ FGLocation::FGLocation(const FGLocation& l)
   c = l.c;
   ec = l.ec;
   ec2 = l.ec2;
+  mEllipseSet = l.mEllipseSet;
 
   /*ag
    * if the cache is not valid, all of the following values are unset.
@@ -138,6 +139,7 @@ FGLocation& FGLocation::operator=(const FGLocation& l)
 {
   mECLoc = l.mECLoc;
   mCacheValid = l.mCacheValid;
+  mEllipseSet = l.mEllipseSet;
 
   a = l.a;
   e2 = l.e2;
@@ -238,6 +240,7 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
 
 void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 {
+  assert(mEllipseSet);
   mCacheValid = false;
 
   double slat = sin(lat);
@@ -254,6 +257,7 @@ void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 void FGLocation::SetEllipse(double semimajor, double semiminor)
 {
   mCacheValid = false;
+  mEllipseSet = true;
 
   a = semimajor;
   ec = semiminor/a;
@@ -266,6 +270,7 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 
 double FGLocation::GetSeaLevelRadius(void) const
 {
+  assert(mEllipseSet);
   if (!mCacheValid) ComputeDerivedUnconditional();
 
   double sinGeodLat = sin(mGeodLat);
@@ -340,25 +345,26 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // iteration suffices. In addition, Fukushima's method has a much better
   // numerical stability over Sofair's method at the North and South poles and
   // it also gives the correct result for a spherical Earth.
-
-  double s0 = fabs(mECLoc(eZ));
-  double zc = ec * s0;
-  double c0 = ec * rxy;
-  double c02 = c0 * c0;
-  double s02 = s0 * s0;
-  double a02 = c02 + s02;
-  double a0 = sqrt(a02);
-  double a03 = a02 * a0;
-  double s1 = zc*a03 + c*s02*s0;
-  double c1 = rxy*a03 - c*c02*c0;
-  double cs0c0 = c*c0*s0;
-  double b0 = 1.5*cs0c0*((rxy*s0-zc*c0)*a0-cs0c0);
-  s1 = s1*a03-b0*s0;
-  double cc = ec*(c1*a03-b0*c0);
-  mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
-  double s12 = s1 * s1;
-  double cc2 = cc * cc;
-  GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / sqrt(s12 + cc2);
+  if (mEllipseSet) {
+    double s0 = fabs(mECLoc(eZ));
+    double zc = ec * s0;
+    double c0 = ec * rxy;
+    double c02 = c0 * c0;
+    double s02 = s0 * s0;
+    double a02 = c02 + s02;
+    double a0 = sqrt(a02);
+    double a03 = a02 * a0;
+    double s1 = zc*a03 + c*s02*s0;
+    double c1 = rxy*a03 - c*c02*c0;
+    double cs0c0 = c*c0*s0;
+    double b0 = 1.5*cs0c0*((rxy*s0-zc*c0)*a0-cs0c0);
+    s1 = s1*a03-b0*s0;
+    double cc = ec*(c1*a03-b0*c0);
+    mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
+    double s12 = s1 * s1;
+    double cc2 = cc * cc;
+    GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / sqrt(s12 + cc2);
+  }
 
   // Mark the cached values as valid
   mCacheValid = true;

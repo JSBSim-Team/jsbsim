@@ -103,6 +103,8 @@ public:
     TS_ASSERT_EQUALS(0.0, l0.GetSinLatitude());
     TS_ASSERT_EQUALS(1.0, l0.GetCosLatitude());
     TS_ASSERT_EQUALS(0.0, l0.GetTanLatitude());
+
+    l0.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeDeg());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodAltitude());
@@ -120,6 +122,8 @@ public:
     TS_ASSERT_DELTA(-0.5*sqrt(2.0), l.GetSinLatitude(), epsilon);
     TS_ASSERT_DELTA(0.5*sqrt(2.0), l.GetCosLatitude(), epsilon);
     TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
+
+    l.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
     TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);

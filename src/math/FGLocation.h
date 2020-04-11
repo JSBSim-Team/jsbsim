@@ -42,6 +42,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <cassert>
+
 #include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
@@ -246,7 +248,10 @@ public:
       @return the geodetic latitude in rad of the location represented with this
       class instance. The returned values are in the range between
       -pi/2 <= lon <= pi/2. Latitude is positive north and negative south. */
-  double GetGeodLatitudeRad(void) const { ComputeDerived(); return mGeodLat; }
+  double GetGeodLatitudeRad(void) const {
+    assert(mEllipseSet);
+    ComputeDerived(); return mGeodLat;
+  }
 
   /** Get the latitude.
       @return the latitude in deg of the location represented with this
@@ -258,10 +263,16 @@ public:
       @return the geodetic latitude in degrees of the location represented by
       this class instance. The returned value is in the range between
       -90 <= lon <= 90. Latitude is positive north and negative south. */
-  double GetGeodLatitudeDeg(void) const { ComputeDerived(); return radtodeg*mGeodLat; }
+  double GetGeodLatitudeDeg(void) const {
+    assert(mEllipseSet);
+    ComputeDerived(); return radtodeg*mGeodLat;
+  }
 
   /** Gets the geodetic altitude in feet. */
-  double GetGeodAltitude(void) const {ComputeDerived(); return GeodeticAltitude;}
+  double GetGeodAltitude(void) const {
+    assert(mEllipseSet);
+    ComputeDerived(); return GeodeticAltitude;
+  }
 
   /** Get the sine of Latitude. */
   double GetSinLatitude() const { ComputeDerived(); return -mTec2l(3,3); }
@@ -520,6 +531,9 @@ private:
       The C++ keyword "mutable" tells the compiler that the data member is
       allowed to change during a const member function. */
   mutable bool mCacheValid;
+  // Flag that checks that geodetic methods are called after SetEllipse() has
+  // been called.
+  bool mEllipseSet = false;
 };
 
 /** Scalar multiplication.
