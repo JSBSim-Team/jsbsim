@@ -4,7 +4,7 @@ set -e -x
 # Compile C++ code
 cd /io/build
 cmake ..
-make
+make -DNDEBUG
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
