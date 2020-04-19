@@ -51,7 +51,6 @@ jobs:
           chmod +x build-wheels.sh
           # Build the manylinux1 wheel binary packages
           docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
-          ls python/dist/
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -59,16 +58,6 @@ jobs:
           pip uninstall jsbsim -y
 
     # Upload files
-      - name: Upload Ubuntu packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Ubuntu-packages
-          path: build/Ubuntu-packages
-      - name: Upload wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-manylinux
-          path: build/python/dist
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
@@ -81,6 +70,22 @@ jobs:
         with:
           name: Linux.logs
           path: logs
+
+    # Release files
+      - name: Upload binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build/*.deb
+            build/python/dist/*-manylinux1*.whl
 
   Windows:
     runs-on: windows-latest
@@ -164,21 +169,6 @@ jobs:
           mv build\python\dist\*.whl PythonWinPackages
 
     # Upload files
-      - name: Upload Python wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-win64
-          path: PythonWinPackages
-      - name: Upload JSBSim executable
-        uses: actions/upload-artifact@v1
-        with:
-          name: JSBSim.exe
-          path: build\src\RelWithDebInfo\JSBSim.exe
-      - name: Upload aeromatic executable
-        uses: actions/upload-artifact@v1
-        with:
-          name: aeromatic.exe
-          path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
@@ -191,6 +181,23 @@ jobs:
         with:
           name: Windows.logs
           path: logs
+
+    # Release files
+      - name: Upload binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build\src\RelWithDebInfo\JSBSim.exe
+            build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+            build\python\dist\*.whl
 
   MacOSX:
     runs-on: macos-latest
@@ -261,3 +268,18 @@ jobs:
         with:
           name: MacOSX.logs
           path: logs
+
+    # Release files
+      - name: Upload binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build/python/dist/*.whl
