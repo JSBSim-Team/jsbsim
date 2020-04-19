@@ -37,8 +37,6 @@ jobs:
         run: |
           cd build
           cpack
-          mkdir Ubuntu-packages
-          mv *.deb Ubuntu-packages
       - name: Build ManyLinux wheel packages (PEP 513)
         run: |
           cd build
@@ -72,7 +70,7 @@ jobs:
           path: logs
 
     # Release files
-      - name: Upload binaries
+      - name: Release binaries
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,10 +161,6 @@ jobs:
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      - name: Prepare wheel packages for upload
-        run: |
-          mkdir PythonWinPackages
-          mv build\python\dist\*.whl PythonWinPackages
 
     # Upload files
       - name: On failure - Prepare logs for upload
@@ -183,7 +177,7 @@ jobs:
           path: logs
 
     # Release files
-      - name: Upload binaries
+      - name: Release binaries
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -270,7 +264,7 @@ jobs:
           path: logs
 
     # Release files
-      - name: Upload binaries
+      - name: Release binaries
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
