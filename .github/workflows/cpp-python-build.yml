@@ -14,6 +14,16 @@ jobs:
           python-version: '3.6'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel
+      - name: Checkout ValgrindCI
+        uses: actions/checkout@v2
+        with:
+          repository: bcoconni/ValgrindCI
+      - name: Install ValgrindCI
+        run: |
+          ls
+          cd ValgrindCI
+          python setup.py bdist_wheel
+          pip install valgrindci --no-index -f dist
       - name: Checkout JSBSim
         uses: actions/checkout@v1
       - name: Configure JSBSim
@@ -32,6 +42,7 @@ jobs:
       - name: Test with Valgrind
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml ./build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+          valgrindci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         run: |
           cd build
