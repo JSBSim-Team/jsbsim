@@ -86,7 +86,7 @@ jobs:
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
         run: |
-          valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary
+          valgrindci valgrind_Short_S23_3.xml --number-of-errors --summary
       - name: On failure - Upload Valgrind report
         uses: actions/upload-artifact@v1
         if: failure()
