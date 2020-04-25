@@ -36,17 +36,15 @@ jobs:
           mkdir build
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
-      - name: Test with Valgrind
-        run: |
-          cd build
-          make CFLAGS="-g" CXXFLAGS="-g" -j2
-          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml ./src/JSBSim --root=.. scripts/Short_S23_3.xml --end-time=5.
-          valgrindci valgrind_Short_S23_3.xml --abort-on-errors
-          make clean
       - name: Build JSBSim
         run: |
           cd build
-          make -j2
+          make CFLAGS="-g -O2" CXXFLAGS="-g -O2" -j2
+      - name: Test with Valgrind
+        run: |
+          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml ./src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+          valgrindci valgrind_Short_S23_3.xml --abort-on-errors
+          make clean
       - name: Test JSBSim
         run: |
           cd build
@@ -89,13 +87,13 @@ jobs:
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
         run: |
-          valgrindci build/valgrind_Short_S23_3.xml --number-of-errors --summary
+          valgrindci valgrind_Short_S23_3.xml --number-of-errors --summary
       - name: On failure - Upload Valgrind report
         uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: valgrind_Short_S23_3.xml
-          path: build/valgrind_Short_S23_3.xml
+          path: valgrind_Short_S23_3.xml
 
     # Release files
       - name: Release binaries
