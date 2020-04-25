@@ -35,7 +35,7 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g" -DCMAKE_CXX_FLAGS_DEBUG="-g" -DCMAKE_BUILD_TYPE=Debug ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build JSBSim
         run: |
           cd build
@@ -87,7 +87,7 @@ jobs:
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
         run: |
-          valgrindci valgrind_Short_S23_3.xml --number-of-errors --summary
+          valgrindci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
       - name: On failure - Upload Valgrind report
         uses: actions/upload-artifact@v1
         if: failure()
