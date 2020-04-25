@@ -39,7 +39,7 @@ jobs:
       - name: Build JSBSim
         run: |
           cd build
-          make CFLAGS="-g -O2" CXXFLAGS="-g -O2" -j2
+          make CFLAGS="-g" CXXFLAGS="-g" -j2
       - name: Test with Valgrind
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
