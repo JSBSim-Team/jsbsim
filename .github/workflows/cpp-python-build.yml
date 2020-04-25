@@ -23,6 +23,7 @@ jobs:
         run: |
           ls
           cd valgrindci
+          pip install -r requirements.txt
           python setup.py bdist_wheel
           pip install valgrindci --no-index -f dist
       - name: Checkout JSBSim
