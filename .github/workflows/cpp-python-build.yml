@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ubuntu packages
-        run: sudo apt-get install doxygen cxxtest
+        run: sudo apt-get install doxygen cxxtest valgrind
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
@@ -29,6 +29,9 @@ jobs:
         run: |
           cd build
           make -j2
+      - name: Test with Valgrind
+        run: |
+          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml ./build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
       - name: Test JSBSim
         run: |
           cd build
@@ -68,6 +71,11 @@ jobs:
         with:
           name: Linux.logs
           path: logs
+      - name: Upload Valgrind report
+        uses: actions/upload-artifact@v1
+        with:
+          name: valgrind_Short_S23_3.xml
+          path: ./valgrind_Short_S23_3.xml
 
     # Release files
       - name: Release binaries
