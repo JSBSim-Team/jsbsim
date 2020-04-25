@@ -18,10 +18,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: bcoconni/ValgrindCI
+          path: valgrindci
       - name: Install ValgrindCI
         run: |
           ls
-          cd ValgrindCI
+          cd valgrindci
           python setup.py bdist_wheel
           pip install valgrindci --no-index -f dist
       - name: Checkout JSBSim
