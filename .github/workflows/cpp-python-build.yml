@@ -21,13 +21,12 @@ jobs:
           path: valgrindci
       - name: Install ValgrindCI
         run: |
-          ls
           cd valgrindci
           pip install -r requirements.txt
           python setup.py bdist_wheel
           pip install valgrindci --no-index -f dist
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -84,8 +83,13 @@ jobs:
         with:
           name: Linux.logs
           path: logs
-      - name: Upload Valgrind report
+      - name: On failure - Display a summary of valgrind errors.
+        if: failure()
+        run: |
+          valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary
+      - name: On failure - Upload Valgrind report
         uses: actions/upload-artifact@v1
+        if: failure()
         with:
           name: valgrind_Short_S23_3.xml
           path: ./valgrind_Short_S23_3.xml
