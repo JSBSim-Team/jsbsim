@@ -44,7 +44,6 @@ jobs:
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
           valgrindci valgrind_Short_S23_3.xml --abort-on-errors
-          make clean
       - name: Test JSBSim
         run: |
           cd build
