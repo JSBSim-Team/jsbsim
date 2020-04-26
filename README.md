@@ -46,7 +46,7 @@ Both executables should be used from the console.
 Debian packages for Ubuntu Linux "Xenial" 16.04 LTS on 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases). There are 3 packages:
 * `JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
 * `JSBSim-devel_1.0.0-xxx.xenial.amd64.deb` which installs the development resources (headers and libraries)
-* `pythonX-JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the Python module of JSBSim (for python 2.7 if the package name starts with **python2** or 3.6 if it starts with **python3**)
+* `python3-JSBSim_1.0.0-xxx.xenial.amd64.deb` which installs the Python 3.6 module of JSBSim
 ### Python module
 JSBSim provides binary packages (a.k.a. known as [wheel packages](https://www.python.org/dev/peps/pep-0427)) for its Python module on Windows and Linux platforms for several Python versions (3.5, 3.6, 3.7 and 3.8).
 
