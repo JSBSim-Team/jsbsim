@@ -13,7 +13,8 @@ set(UNIT_TESTS FGColumnVector3Test
                FGJSBBaseTest
                FGMatrix33Test
                FGQuaternionTest
-               FGLocationTest)
+               FGLocationTest
+               FGGroundCallbackTest)
 
 foreach(test ${UNIT_TESTS})
   cxxtest_add_test(${test}1 ${test}.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${test}.h)
