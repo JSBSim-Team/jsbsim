@@ -24,7 +24,7 @@ jobs:
           cd valgrindci
           pip install -r requirements.txt
           python setup.py bdist_wheel
-          pip install valgrindci --no-index -f dist
+          pip install ValgrindCI --no-index -f dist
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Configure JSBSim
@@ -43,7 +43,7 @@ jobs:
       - name: Test with Valgrind
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
-          valgrindci valgrind_Short_S23_3.xml --abort-on-errors
+          valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         run: |
           cd build
@@ -86,7 +86,7 @@ jobs:
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
         run: |
-          valgrindci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
+          valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
       - name: On failure - Upload Valgrind report
         uses: actions/upload-artifact@v1
         if: failure()
