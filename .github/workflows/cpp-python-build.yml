@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ubuntu packages
-        run: sudo apt-get install doxygen cxxtest
+        run: sudo apt-get install doxygen cxxtest valgrind
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel
+        run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
         uses: actions/checkout@v1
       - name: Configure JSBSim
@@ -24,11 +24,15 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build JSBSim
         run: |
           cd build
           make -j2
+      - name: Test with Valgrind
+        run: |
+          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+          valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         run: |
           cd build
@@ -68,6 +72,16 @@ jobs:
         with:
           name: Linux.logs
           path: logs
+      - name: On failure - Display a summary of valgrind errors.
+        if: failure()
+        run: |
+          valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
+      - name: On failure - Upload Valgrind report
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: valgrind_Short_S23_3.xml
+          path: ./valgrind_Short_S23_3.xml
 
     # Release files
       - name: Release binaries
