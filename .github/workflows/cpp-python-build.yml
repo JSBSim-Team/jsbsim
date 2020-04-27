@@ -135,6 +135,10 @@ jobs:
         run: |
           cd build
           mingw32-make -j2
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2
 
   Windows-MSVC:
     runs-on: windows-latest
