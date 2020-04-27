@@ -11,10 +11,10 @@ if(MSVC)
 endif()
 
 if(MINGW)
-  # Need to force _WIN32_WINNT to a recent value for FGfdmSocket to compile due
+  # Need to force _WIN32_WINNT to a quite recent value for FGfdmSocket to compile due
   # to the usage of the flags AI_ADDRCONFIG and AI_V4MAPPED
   # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
-  add_definitions(-D_WIN32_WINNT=0x600)
+  add_definitions(-D_WIN32_WINNT=0x600) # Windows Vista/Windows Server 2008
 endif()
 
 if (CMAKE_VERSION VERSION_LESS 3.1)
