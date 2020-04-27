@@ -134,7 +134,7 @@ jobs:
       - name: Build JSBSim
         run: |
           cd build
-          make -j2
+          mingw32-make -j2
 
   Windows-MSVC:
     runs-on: windows-latest
