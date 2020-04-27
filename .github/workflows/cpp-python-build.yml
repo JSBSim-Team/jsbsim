@@ -99,7 +99,44 @@ jobs:
             build/*.deb
             build/python/dist/*-manylinux1*.whl
 
-  Windows:
+  Windows-MinGW32:
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel pywin32
+      - name: Install Doxygen
+        run: cinst doxygen.install
+      - name: Checkout CxxTest
+        uses: actions/checkout@v1
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+      - name: Configure CxxTest
+        run: |
+          cd ..\cxxtest\python
+          python setup.py install
+          cd ..\..\jsbsim
+      - name: Checkout JSBSim
+        uses: actions/checkout@v1
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+          mkdir build
+          cd build
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" ..
+      - name: Build JSBSim
+        run: |
+          cd build
+          mingw32-make
+
+  Windows-MSVC:
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.8
