@@ -44,8 +44,7 @@ INCLUDES
 #if defined(_MSC_VER) || defined(__MINGW32__)
   #include <winsock.h>
   #include <io.h>
-#endif
-#ifndef _MSC_VER
+#else
   #include <netdb.h>
 #endif
 
