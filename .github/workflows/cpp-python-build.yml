@@ -130,7 +130,7 @@ jobs:
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" ..
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
       - name: Build JSBSim
         run: |
           cd build
