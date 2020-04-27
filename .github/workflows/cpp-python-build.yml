@@ -102,14 +102,10 @@ jobs:
   Windows-MinGW32:
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.8
+      - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
-      - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32
-      - name: Install Doxygen
-        run: cinst doxygen.install
+          python-version: '3.6'
       - name: Checkout CxxTest
         uses: actions/checkout@v1
         with:
