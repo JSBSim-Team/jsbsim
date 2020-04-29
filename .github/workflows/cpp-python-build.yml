@@ -136,6 +136,14 @@ jobs:
           cd build
           ctest -j2
 
+    # Upload files
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: Windows.logs
+          path: build/Testing/Temporary
+
   Windows-MSVC:
     runs-on: windows-latest
     steps:
