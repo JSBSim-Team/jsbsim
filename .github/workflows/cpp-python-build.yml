@@ -304,11 +304,6 @@ jobs:
           pip uninstall jsbsim -y
 
     # Upload files
-      - name: Upload wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-MacOSX
-          path: build/python/dist
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
