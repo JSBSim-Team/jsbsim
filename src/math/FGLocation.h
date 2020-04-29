@@ -48,6 +48,11 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
 
+/* Setting the -ffast-math compilation flag is highly discouraged */
+#ifdef __FAST_MATH__
+#error Usage of -ffast-math is strongly discouraged
+#endif
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
