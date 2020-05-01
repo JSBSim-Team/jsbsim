@@ -37,7 +37,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGFCSComponent.h"
+#include "math/FGLocation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,10 +103,11 @@ public:
   bool Run(void) override;
 
 private:
-  simgear::PropertyObject<double> target_latitude;
-  simgear::PropertyObject<double> target_longitude;
-  simgear::PropertyObject<double> source_latitude;
-  simgear::PropertyObject<double> source_longitude;
+  FGLocation source;
+  std::unique_ptr<FGPropertyValue> target_latitude;
+  std::unique_ptr<FGPropertyValue> target_longitude;
+  std::unique_ptr<FGPropertyValue> source_latitude;
+  std::unique_ptr<FGPropertyValue> source_longitude;
   double target_latitude_unit;
   double target_longitude_unit;
   double source_latitude_unit;
