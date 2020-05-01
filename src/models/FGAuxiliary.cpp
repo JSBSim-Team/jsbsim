@@ -279,33 +279,25 @@ double FGAuxiliary::GetNlf(void) const
 
 double FGAuxiliary::GetLongitudeRelativePosition(void) const
 {
-  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
-                    FDMExec->GetIC()->GetLatitudeRadIC(),
-                    FDMExec->GetInertial()->GetRefRadius());
-  return source.GetDistanceTo(in.vLocation.GetLongitude(),
-                              FDMExec->GetIC()->GetLatitudeRadIC()) * fttom;
+  return in.vLocation.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
+                                    in.vLocation.GetLatitude())* fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAuxiliary::GetLatitudeRelativePosition(void) const
 {
-  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
-                    FDMExec->GetIC()->GetLatitudeRadIC(),
-                    FDMExec->GetInertial()->GetRefRadius());
-  return source.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
-                              in.vLocation.GetLatitude()) * fttom;
+  return in.vLocation.GetDistanceTo(in.vLocation.GetLongitude(),
+                                    FDMExec->GetIC()->GetLatitudeRadIC())* fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAuxiliary::GetDistanceRelativePosition(void) const
 {
-  FGLocation source(FDMExec->GetIC()->GetLongitudeRadIC(),
-                    FDMExec->GetIC()->GetLatitudeRadIC(),
-                    FDMExec->GetInertial()->GetRefRadius());
-  return source.GetDistanceTo(in.vLocation.GetLongitude(),
-                              in.vLocation.GetLatitude()) * fttom;
+  FGInitialCondition *ic = FDMExec->GetIC();
+  return in.vLocation.GetDistanceTo(ic->GetLongitudeRadIC(),
+                                    ic->GetLatitudeRadIC())* fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
