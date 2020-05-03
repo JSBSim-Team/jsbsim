@@ -187,8 +187,7 @@ jobs:
       - name: Build wheel package for Python 3.8
         run: |
           cd build
-          python python/setup.py sdist
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.8
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -202,7 +201,7 @@ jobs:
         run: |
           pip install -U cython numpy wheel pywin32
           cd build
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.7
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -215,7 +214,7 @@ jobs:
         run: |
           pip install -U cython numpy wheel pywin32
           cd build
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.6
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -295,8 +294,7 @@ jobs:
       - name: Build wheel package
         run: |
           cd build
-          python python/setup.py sdist
-          python python/setup.py bdist_wheel
+          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f build/python/dist
