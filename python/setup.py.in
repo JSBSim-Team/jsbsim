@@ -18,12 +18,14 @@
 
 import os, sys, argparse
 
+from argparse import ArgumentError
 from setuptools import setup
 from setuptools.extension import Extension
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
 from distutils import log
 from distutils.ccompiler import new_compiler
+from distutils.dist import Distribution
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -94,26 +96,42 @@ library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 # Move to the directory in which the script setup.py is located.
 os.chdir(os.path.dirname(__file__))
 
-compiler = new_compiler()
+# Intercept the --config option that we set for msbuild
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("--config", help="Build mode used by Visual C++",
+                    choices=['Debug', 'Release', 'RelWithDebInfo'])
+args, extra = parser.parse_known_args()
+
+if args.config:
+    # Remove the option from the command line to prevent complaints from
+    # distutils
+    sys.argv[1:] = extra
+
+# Determine which compiler will be used to build the package.
+dist = Distribution({'script_name': __file__})
+
+if dist.parse_command_line() and 'build_ext' in dist.commands:
+    compiler_name = dist.get_command_obj('build_ext').compiler
+else:
+    compiler_name = None
+
+compiler = new_compiler(compiler=compiler_name)
+
 if compiler.compiler_type == 'unix':
     cpp11_compile_flag = ['-std=c++11']
 else:
     cpp11_compile_flag = []
 
-# Parse the --config option that we set for msbuild (it can contain Release,
-# Debug, RelWithDebInfo, etc.) then update the JSBSim library path accordingly.
-if compiler.compiler_type == 'msvc':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="Build mode used by Visual C++",
-                        choices=['Debug', 'Release', 'RelWithDebInfo'])
-    args, extra = parser.parse_known_args()
-
-    if args.config:
+# Update the JSBSim library path according to the --config option
+if args.config:
+    if compiler.compiler_type == 'msvc':
         library_path=os.path.join(library_path, args.config)
-        sys.argv[1:] = extra
+    else:
+        raise ArgumentError(None, 'option --config not recognized.')
 
 # Check if the library exists and build the Python module accordingly.
-if compiler.find_library_file([library_path], 'JSBSim') and sys.argv[1]!='sdist':
+if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
+                                                               'JSBSim'):
     # OK, the JSBSim library has already been compiled so let's use it to build
     # the Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
@@ -158,6 +176,7 @@ setup(
         "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Operating System :: Microsoft",
         "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS :: MacOS X",
         "Programming Language :: C++",
         "Programming Language :: Python",
         "Topic :: Games/Entertainment :: Simulation",
