@@ -10,6 +10,13 @@ if(MSVC)
   add_definitions(-D_USE_MATH_DEFINES -DNOMINMAX)
 endif()
 
+if(MINGW)
+  # Need to force _WIN32_WINNT to a quite recent value for FGfdmSocket to compile due
+  # to the usage of the flags AI_ADDRCONFIG and AI_V4MAPPED
+  # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
+  add_definitions(-D_WIN32_WINNT=0x600) # Windows Vista/Windows Server 2008
+endif()
+
 if (CMAKE_VERSION VERSION_LESS 3.1)
   if (NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -42,9 +49,11 @@ endif()
 
 set(VERSION_MESSAGE)
 if(DEFINED ENV{TRAVIS})
-  set(VERSION_MESSAGE " [build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
+  set(VERSION_MESSAGE " [Travis build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
 elseif(DEFINED ENV{APPVEYOR})
-  set(VERSION_MESSAGE " [build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+  set(VERSION_MESSAGE " [AppVeyor build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+elseif(DEFINED ENV{GITHUB_RUN_NUMBER})
+  set(VERSION_MESSAGE " [GitHub build $ENV{GITHUB_RUN_NUMBER}/commit $ENV{GITHUB_SHA}]")
 endif()
 
 add_definitions(-DJSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")

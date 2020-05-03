@@ -6,7 +6,6 @@ sudo:
 services:
   - docker
 python:
-  - "2.7"
   - "3.6"
 env:
   - USE_SYSTEM_EXPAT=OFF
@@ -58,7 +57,7 @@ after_success:
   - sh ../tests/unit_tests/test_coverage.sh
 # Build Linux portable Python packages.
   - |
-    if [ "$TRAVIS_PYTHON_VERSION" = "3.6" ] && [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
+    if [ "$USE_SYSTEM_EXPAT" = "OFF" ]; then
       # Clean up the existing build files
       rm -f CMakeCache.txt
       rm -f python/dist/*.whl
@@ -80,9 +79,6 @@ after_failure:
   - gist -d "JSBSim build $TRAVIS_JOB_NUMBER failed" Testing/Temporary/*.log | envsubst
 before_deploy:
   - git tag -f $TRAVIS_TAG -m "Ubuntu Xenial 16.04 - Release - amd64"
-# If the Python runtime is 2.7 then delete all Debian package but the Python module
-# The other packages will be deployed by the Python 3.6 runtime
-  - if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ] && [ "$USE_SYSTEM_EXPAT" = "ON" ]; then rm -f JSBSim*.deb; fi
 deploy:
 # Deploy the Debian packages
   - provider: releases
@@ -92,7 +88,7 @@ deploy:
     file:
       - "JSBSim-devel*.deb"
       - "JSBSim_*[0-9].deb"
-      - "python[2-3]-JSBSim*.deb"
+      - "python3-JSBSim*.deb"
     skip_cleanup: true
     overwrite: true
     on:

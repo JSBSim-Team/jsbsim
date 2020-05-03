@@ -42,6 +42,7 @@ INCLUDES
 #include "math/FGLocation.h"
 #include "models/FGFCS.h"
 #include "models/FGInertial.h"
+#include "initialization/FGInitialCondition.h"
 
 using namespace std;
 
@@ -63,9 +64,11 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   target_longitude_unit = 1.0;
   source_latitude_unit = 1.0;
   source_longitude_unit = 1.0;
+  source = fcs->GetExec()->GetIC()->GetPosition();
 
   if (element->FindElement("target_latitude") ) {
-    target_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_latitude"));
+    target_latitude.reset(new FGPropertyValue(element->FindElementValue("target_latitude"),
+                                              PropertyManager));
     if (element->FindElement("target_latitude")->HasAttribute("unit")) {
       if (element->FindElement("target_latitude")->GetAttributeValue("unit") == "DEG") {
         target_latitude_unit = 0.017453293;
@@ -79,7 +82,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("target_longitude") ) {
-    target_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_longitude"));
+    target_longitude.reset(new FGPropertyValue(element->FindElementValue("target_longitude"),
+                                               PropertyManager));
     if (element->FindElement("target_longitude")->HasAttribute("unit")) {
       if (element->FindElement("target_longitude")->GetAttributeValue("unit") == "DEG") {
         target_longitude_unit = 0.017453293;
@@ -93,7 +97,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("source_latitude") ) {
-    source_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_latitude"));
+    source_latitude.reset(new FGPropertyValue(element->FindElementValue("source_latitude"),
+                                              PropertyManager));
     if (element->FindElement("source_latitude")->HasAttribute("unit")) {
       if (element->FindElement("source_latitude")->GetAttributeValue("unit") == "DEG") {
         source_latitude_unit = 0.017453293;
@@ -107,7 +112,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("source_longitude") ) {
-    source_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_longitude"));
+    source_longitude.reset(new FGPropertyValue(element->FindElementValue("source_longitude"),
+                                               PropertyManager));
     if (element->FindElement("source_longitude")->HasAttribute("unit")) {
       if (element->FindElement("source_longitude")->GetAttributeValue("unit") == "DEG") {
         source_longitude_unit = 0.017453293;
@@ -123,7 +129,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   if (element->FindElement("radius"))
     radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
   else {
-    radius = fcs->GetExec()->GetInertial()->GetRefRadius(); // Radius of Earth in feet.
+    radius = -1.0;
   }
 
   unit = element->GetAttributeValue("unit");
@@ -170,10 +176,14 @@ FGWaypoint::~FGWaypoint()
 
 bool FGWaypoint::Run(void )
 {
-  double target_latitude_rad = target_latitude * target_latitude_unit;
-  double target_longitude_rad = target_longitude * target_longitude_unit;
-  FGLocation source(source_longitude * source_latitude_unit,
-                    source_latitude * source_longitude_unit, radius);
+  double source_latitude_rad = source_latitude->GetValue() * source_latitude_unit;
+  double source_longitude_rad = source_longitude->GetValue() * source_longitude_unit;
+  double target_latitude_rad = target_latitude->GetValue() * target_latitude_unit;
+  double target_longitude_rad = target_longitude->GetValue() * target_longitude_unit;
+  if (radius > 0.0)
+    source.SetPosition(source_longitude_rad, source_latitude_rad, radius);
+  else
+    source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (WaypointType == eHeading) {     // Calculate Heading
     double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude_rad,

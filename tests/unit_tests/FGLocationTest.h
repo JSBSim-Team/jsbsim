@@ -2,6 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include <math/FGLocation.h>
 #include <math/FGQuaternion.h>
+#include "TestAssertions.h"
 
 const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
@@ -10,48 +11,6 @@ double NormalizedAngle(double angle) {
   if (angle <= -M_PI) angle += 2.0*M_PI;
   return angle;
 }
-
-void assertVectorEqual(const char* _file, int _line,
-                       const JSBSim::FGColumnVector3& x,
-                       const JSBSim::FGColumnVector3& y,
-                       double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1), y(1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2), y(2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3), y(3), delta);
-}
-
-void assertMatrixEqual(const char* _file, int _line,
-                       const JSBSim::FGMatrix33& x,
-                       const JSBSim::FGMatrix33& y,
-                       double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1,1), y(1,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,2), y(1,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,3), y(1,3), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,1), y(2,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,2), y(2,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,3), y(2,3), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,1), y(3,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,2), y(3,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,3), y(3,3), delta);
-}
-
-void assertMatrixIsIdentity(const char* _file, int _line,
-                            const JSBSim::FGMatrix33& x,
-                            double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1,1), 1.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,2), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,3), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,1), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,2), 1.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,3), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,1), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,2), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,3), 1.0, delta);
-}
-
-#define TS_ASSERT_VECTOR_EQUALS(x, y) assertVectorEqual(__FILE__, __LINE__, x, y, epsilon)
-#define TS_ASSERT_MATRIX_EQUALS(x, y) assertMatrixEqual(__FILE__, __LINE__, x, y, epsilon)
-#define TS_ASSERT_MATRIX_IS_IDENTITY(x) assertMatrixIsIdentity(__FILE__, __LINE__, x, epsilon)
 
 void CheckLocation(const JSBSim::FGLocation& loc,
                    JSBSim::FGColumnVector3 vec) {
@@ -103,6 +62,8 @@ public:
     TS_ASSERT_EQUALS(0.0, l0.GetSinLatitude());
     TS_ASSERT_EQUALS(1.0, l0.GetCosLatitude());
     TS_ASSERT_EQUALS(0.0, l0.GetTanLatitude());
+
+    l0.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeDeg());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodAltitude());
@@ -120,6 +81,8 @@ public:
     TS_ASSERT_DELTA(-0.5*sqrt(2.0), l.GetSinLatitude(), epsilon);
     TS_ASSERT_DELTA(0.5*sqrt(2.0), l.GetCosLatitude(), epsilon);
     TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
+
+    l.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
     TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);

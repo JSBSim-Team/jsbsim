@@ -329,7 +329,7 @@ void SGPath::validate() const
 	  return;
   }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
   struct _stat buf ;
   bool remove_trailing = false;
   std::wstring statPath(wstr());
@@ -546,7 +546,7 @@ bool SGPath::operator!=(const SGPath& other) const
 //------------------------------------------------------------------------------
 SGPath SGPath::fromEnv(const char* name, const SGPath& def)
 {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 	std::wstring wname = simgear::strutils::convertUtf8ToWString(name);
 	const wchar_t* val = _wgetenv(wname.c_str());
 	if (val && val[0])
@@ -564,7 +564,7 @@ SGPath SGPath::fromEnv(const char* name, const SGPath& def)
 std::vector<SGPath> SGPath::pathsFromEnv(const char *name)
 {
     std::vector<SGPath> r;
-#if defined(_MSC_VER)
+#if defined(_MSC_VER)  || defined(__MINGW32__)
 	std::wstring wname = simgear::strutils::convertUtf8ToWString(name);
 	const wchar_t* val = _wgetenv(wname.c_str());
 #else
@@ -574,7 +574,7 @@ std::vector<SGPath> SGPath::pathsFromEnv(const char *name)
 		return r;
 	}
    
-#if defined(_MSC_VER)
+#if defined(_MSC_VER)  || defined(__MINGW32__)
 	return pathsFromUtf8(simgear::strutils::convertWStringToUtf8(val));
 #else
 	return pathsFromUtf8(val);
@@ -612,7 +612,7 @@ std::vector<SGPath> SGPath::pathsFromLocal8Bit(const std::string& paths)
 //------------------------------------------------------------------------------
 SGPath SGPath::realpath() const
 {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
     // with absPath NULL, will allocate, and ignore length
   	std::wstring ws = wstr();
     wchar_t *buf = _wfullpath( NULL, ws.c_str(), _MAX_PATH );
@@ -641,7 +641,7 @@ SGPath SGPath::realpath() const
         return SGPath(this_dir).realpath() / file();
     }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 	  SGPath p = SGPath(std::wstring(buf), NULL);
 #else
 		SGPath p(SGPath::fromLocal8Bit(buf));

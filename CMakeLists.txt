@@ -90,6 +90,13 @@ endif(CXXTEST_FOUND)
 # Packaging                                                                    #
 ################################################################################
 
+find_package(PkgConfig)
+
+if (PKG_CONFIG_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.pc.in ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig COMPONENT devel)
+endif()
+
 # Extract the host architecture for the package name
 if (UNIX)
   execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)

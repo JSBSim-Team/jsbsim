@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ubuntu packages
-        run: sudo apt-get install doxygen cxxtest
+        run: sudo apt-get install doxygen cxxtest valgrind
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel
+        run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
         uses: actions/checkout@v1
       - name: Configure JSBSim
@@ -24,11 +24,15 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build JSBSim
         run: |
           cd build
           make -j2
+      - name: Test with Valgrind
+        run: |
+          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+          valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         run: |
           cd build
@@ -37,8 +41,6 @@ jobs:
         run: |
           cd build
           cpack
-          mkdir Ubuntu-packages
-          mv *.deb Ubuntu-packages
       - name: Build ManyLinux wheel packages (PEP 513)
         run: |
           cd build
@@ -50,8 +52,7 @@ jobs:
           cp ../python/build-wheels.sh .
           chmod +x build-wheels.sh
           # Build the manylinux1 wheel binary packages
-          docker run --rm -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
-          ls python/dist/
+          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -59,16 +60,6 @@ jobs:
           pip uninstall jsbsim -y
 
     # Upload files
-      - name: Upload Ubuntu packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Ubuntu-packages
-          path: build/Ubuntu-packages
-      - name: Upload wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-manylinux
-          path: build/python/dist
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
@@ -81,8 +72,79 @@ jobs:
         with:
           name: Linux.logs
           path: logs
+      - name: On failure - Display a summary of valgrind errors.
+        if: failure()
+        run: |
+          valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
+      - name: On failure - Upload Valgrind report
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: valgrind_Short_S23_3.xml
+          path: ./valgrind_Short_S23_3.xml
 
-  Windows:
+    # Release files
+      - name: Release binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build/*.deb
+            build/python/dist/*-manylinux1*.whl
+
+  Windows-MinGW32:
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - name: Checkout CxxTest
+        uses: actions/checkout@v1
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+      - name: Configure CxxTest
+        run: |
+          cd ..\cxxtest\python
+          python setup.py install
+          cd ..\..\jsbsim
+      - name: Checkout JSBSim
+        uses: actions/checkout@v1
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+          mkdir build
+          cd build
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
+      - name: Build JSBSim
+        run: |
+          cd build
+          mingw32-make -j2
+      - name: Test JSBSim
+        run: |
+          cd build
+          ctest -j2
+
+    # Upload files
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: Windows.logs
+          path: build/Testing/Temporary
+
+  Windows-MSVC:
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.8
@@ -158,27 +220,8 @@ jobs:
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      - name: Prepare wheel packages for upload
-        run: |
-          mkdir PythonWinPackages
-          mv build\python\dist\*.whl PythonWinPackages
 
     # Upload files
-      - name: Upload Python wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-win64
-          path: PythonWinPackages
-      - name: Upload JSBSim executable
-        uses: actions/upload-artifact@v1
-        with:
-          name: JSBSim.exe
-          path: build\src\RelWithDebInfo\JSBSim.exe
-      - name: Upload aeromatic executable
-        uses: actions/upload-artifact@v1
-        with:
-          name: aeromatic.exe
-          path: build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
@@ -191,6 +234,23 @@ jobs:
         with:
           name: Windows.logs
           path: logs
+
+    # Release files
+      - name: Release binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build\src\RelWithDebInfo\JSBSim.exe
+            build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+            build\python\dist\*.whl
 
   MacOSX:
     runs-on: macos-latest
@@ -244,11 +304,6 @@ jobs:
           pip uninstall jsbsim -y
 
     # Upload files
-      - name: Upload wheel packages
-        uses: actions/upload-artifact@v1
-        with:
-          name: Python-wheel-packages-MacOSX
-          path: build/python/dist
       - name: On failure - Prepare logs for upload
         if: failure()
         run: |
@@ -261,3 +316,18 @@ jobs:
         with:
           name: MacOSX.logs
           path: logs
+
+    # Release files
+      - name: Release binaries
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
+          prerelease: true
+          body: |
+            Contains the ${{ github.job}} packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            build/python/dist/*.whl

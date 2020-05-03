@@ -119,6 +119,7 @@ add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
+                                           $<IF:$<BOOL:${MINGW}>,--compiler,> $<IF:$<BOOL:${MINGW}>,mingw32,>
   COMMENT "Building Python module...")
 
 add_subdirectory(fpectl)

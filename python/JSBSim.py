@@ -23,6 +23,7 @@
 import xml.etree.ElementTree as et
 import argparse, sys, os
 import jsbsim
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("input", nargs='?', help="script file name")
@@ -42,7 +43,14 @@ parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
                     help="specifies the sim end time")
+parser.add_argument("--realtime", default=False, action="store_true",
+                    help="specifies to run in real world time")
+parser.add_argument("--nice", default=False, action="store_true",
+                    help="specifies to run at lower CPU usage")
 args = parser.parse_args()
+
+sleep_period = 0.01
+
 
 def CheckXMLFile(f):
     # Is f a file ?
@@ -56,6 +64,7 @@ def CheckXMLFile(f):
         return None
 
     return tree
+
 
 if args.input:
     tree = CheckXMLFile(args.input)
@@ -91,6 +100,12 @@ if args.script:
     fdm.load_script(args.script)
 elif args.aircraft:
     fdm.load_model(args.aircraft, False)
+    if args.initfile:
+        fdm.load_ic(args.initfile, True)
+
+if args.initfile and not args.aircraft:
+    print("You must specify an initilization file with the aircraft name")
+    sys.exit(1)
 
 if args.logdirectivefile:
     for f in args.logdirectivefile:
@@ -99,7 +114,7 @@ if args.logdirectivefile:
             sys.exit(1)
 
 if args.outputlogfile:
-    for n,f in enumerate(args.outputlogfile):
+    for n, f in enumerate(args.outputlogfile):
         old_filename = fdm.get_output_filename(n)
         if not fdm.set_output_filename(n, f):
             print("Output filename could not be set")
@@ -108,6 +123,22 @@ if args.outputlogfile:
 
 fdm.run_ic()
 fdm.print_simulation_configuration()
+frame_duration = fdm.get_delta_t()
+sleep_nseconds = (frame_duration if args.realtime else sleep_period) * 1E9
+current_seconds = initial_seconds = time.time()
+result = fdm.run()
 
-while fdm.run() and fdm.get_sim_time() <= args.end:
-    pass
+while result and fdm.get_sim_time() <= args.end:
+    if args.realtime:
+        current_seconds = time.time()
+        actual_elapsed_time = current_seconds - initial_seconds
+        sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
+
+        for _ in range(int(sim_lag_time / frame_duration)):
+            result = fdm.run()
+            current_seconds = time.time()
+    else:
+        result = fdm.run()
+
+        if args.nice:
+            time.sleep(sleep_nseconds / 1000000.0)
