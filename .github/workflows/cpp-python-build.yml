@@ -43,10 +43,10 @@ jobs:
           cpack
       - name: Build ManyLinux wheel packages (PEP 513)
         run: |
-          # Restart a fresh build
-          rm -fR build
-          mkdir build
           cd build
+          rm -f CMakeCache.txt
+          rm -f python/dist/*.whl
+          make clean
           # Install the Docker build environment
           docker pull quay.io/pypa/manylinux2010_x86_64
           cp ../python/build-wheels.sh .
