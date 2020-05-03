@@ -3,8 +3,8 @@ set -e -x
 
 # Compile C++ code
 cd /io/build
-cmake ..
-make CFLAGS="-DNDEBUG" CXXFLAGS="-DNDEBUG"
+cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_BUILD_TYPE=Release ..
+make
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
