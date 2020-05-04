@@ -106,6 +106,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.8'
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
         uses: actions/checkout@v2
         with:
@@ -117,8 +119,6 @@ jobs:
           cd cxxtest\python
           python setup.py install
           cd ..\..
-      - name: Checkout JSBSim
-        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -127,7 +127,7 @@ jobs:
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
       - name: Build JSBSim
         run: |
           cd build
@@ -156,6 +156,8 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Install Doxygen
         run: cinst doxygen.install
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
         uses: actions/checkout@v2
         with:
@@ -167,8 +169,6 @@ jobs:
           cd cxxtest\python
           python setup.py install
           cd ..\..
-      - name: Checkout JSBSim
-        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -177,7 +177,7 @@ jobs:
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
       - name: Build JSBSim
         run: |
           cd build
@@ -264,6 +264,8 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel
       - name: Install Doxygen
         run: brew install doxygen
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
         uses: actions/checkout@v2
         with:
@@ -272,12 +274,9 @@ jobs:
           path: cxxtest
       - name: Configure CxxTest
         run: |
-          ls
           cd cxxtest/python
           python setup.py install
           cd ../..
-      - name: Checkout JSBSim
-        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -286,7 +285,7 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../../cxxtest ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
       - name: Build JSBSim
         run: |
           cd build
