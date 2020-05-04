@@ -15,7 +15,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -107,17 +107,18 @@ jobs:
         with:
           python-version: '3.8'
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ..\cxxtest\python
+          cd cxxtest\python
           python setup.py install
-          cd ..\..\jsbsim
+          cd ..\..
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -156,17 +157,18 @@ jobs:
       - name: Install Doxygen
         run: cinst doxygen.install
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ..\cxxtest\python
+          cd cxxtest\python
           python setup.py install
-          cd ..\..\jsbsim
+          cd ..\..
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -263,17 +265,19 @@ jobs:
       - name: Install Doxygen
         run: brew install doxygen
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ../cxxtest/python
+          ls
+          cd cxxtest/python
           python setup.py install
-          cd ../../jsbsim
+          cd ../..
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
