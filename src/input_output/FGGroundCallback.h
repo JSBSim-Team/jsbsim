@@ -119,8 +119,8 @@ protected:
 class FGDefaultGroundCallback : public FGGroundCallback
 {
 public:
-  explicit FGDefaultGroundCallback(double referenceRadius) :
-    mSeaLevelRadius(referenceRadius), mTerrainLevelRadius(referenceRadius) {}
+  explicit FGDefaultGroundCallback(double semiMajor, double semiMinor) :
+    a(semiMajor), b(semiMinor) {}
 
   double GetAGLevel(double t, const FGLocation& location,
                     FGLocation& contact,
@@ -128,11 +128,11 @@ public:
                     FGColumnVector3& w) const override;
 
   void SetTerrainElevation(double h) override
-  { mTerrainLevelRadius = mSeaLevelRadius + h; }
+  { mTerrainElevation = h; }
 
 private:
-   double mSeaLevelRadius;
-   double mTerrainLevelRadius;
+  double a, b;
+  double mTerrainElevation = 0.0;
 };
 
 }
