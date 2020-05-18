@@ -335,8 +335,8 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-x-norm", this, eX, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
-  PropertyManager->Tie("accelerations/Ny", this, &FGAuxiliary::GetNy);
   PropertyManager->Tie("accelerations/Nx", this, &FGAuxiliary::GetNx);
+  PropertyManager->Tie("accelerations/Ny", this, &FGAuxiliary::GetNy);
   PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
   PropertyManager->Tie("forces/load-factor", this, &FGAuxiliary::GetNlf);
   PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha);

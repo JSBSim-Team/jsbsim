@@ -216,10 +216,10 @@ public:
   double GetMachU         (void) const { return MachU;      }
 
   /** The longitudinal acceleration in g's of the aircraft center of gravity. */
-  double GetNx            (void) const { return Nx; }
+  double GetNx            (void) const { return Nx;         }
 
   /** The lateral acceleration in g's of the aircraft center of gravity. */
-  double GetNy            (void) const { return Ny; }
+  double GetNy            (void) const { return Ny;         }
 
   /** The vertical acceleration in g's of the aircraft center of gravity. */
   double GetNz            (void) const { return Nz;         }
