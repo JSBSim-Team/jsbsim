@@ -215,11 +215,14 @@ public:
   /** The mach number calculated using the vehicle X axis velocity. */
   double GetMachU         (void) const { return MachU;      }
 
-  /** The vertical acceleration in g's of the aircraft center of gravity. */
-  double GetNz            (void) const { return Nz;         }
+  /** The longitudinal acceleration in g's of the aircraft center of gravity. */
+  double GetNx            (void) const { return Nx;         }
 
   /** The lateral acceleration in g's of the aircraft center of gravity. */
   double GetNy            (void) const { return Ny;         }
+
+  /** The vertical acceleration in g's of the aircraft center of gravity. */
+  double GetNz            (void) const { return Nz;         }
 
   const FGColumnVector3& GetNwcg(void) const { return vNwcg; }
 
@@ -307,7 +310,7 @@ private:
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;
-  double Nz, Ny;
+  double Nx, Ny, Nz;
   double seconds_in_day;  // seconds since current GMT day began
   int    day_of_year;     // GMT day, 1 .. 366
 
