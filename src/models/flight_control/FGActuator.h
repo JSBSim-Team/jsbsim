@@ -80,7 +80,7 @@ Syntax:
 @code
 <actuator name="name">
   <input> {[-]property} </input>
-  <lag> number </lag>
+  <lag> {property name | value} </lag>
   [<rate_limit> {property name | value} </rate_limit>]
   [<rate_limit sense="incr"> {property name | value} </rate_limit>
    <rate_limit sense="decr"> {property name | value} </rate_limit>]
@@ -154,7 +154,8 @@ private:
   FGParameter* rate_limit_decr;
   double hysteresis_width;
   double deadband_width;
-  double lag;
+  FGParameter* lag;
+  double lagVal;
   double ca; // lag filter coefficient "a"
   double cb; // lag filter coefficient "b"
   double PreviousOutput;
@@ -175,6 +176,8 @@ private:
   void Bias(void);
 
   void bind(Element* el) override;
+
+  void InitializeLagCoefficients();
 
   void Debug(int from) override;
 };
