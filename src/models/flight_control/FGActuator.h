@@ -74,13 +74,17 @@ CLASS DOCUMENTATION
     <rate_limit> element is supplied with a "sense" attribute of either
     "incr[easing]" or "decr[easing]" then the actuator is limited to the
     provided numeric or property value) exactly as provided.
+    
+    Lag filter's numerical integration assumes that the lag parameter is
+    constant. So a continuously varying parameter via a property will introduce
+    a non negligible error that will accumulate as the simulation progresses.
 
 Syntax:
 
 @code
 <actuator name="name">
   <input> {[-]property} </input>
-  <lag> number </lag>
+  <lag> {property name | value} </lag>
   [<rate_limit> {property name | value} </rate_limit>]
   [<rate_limit sense="incr"> {property name | value} </rate_limit>
    <rate_limit sense="decr"> {property name | value} </rate_limit>]
@@ -154,7 +158,8 @@ private:
   FGParameter* rate_limit_decr;
   double hysteresis_width;
   double deadband_width;
-  double lag;
+  FGParameter* lag;
+  double lagVal;
   double ca; // lag filter coefficient "a"
   double cb; // lag filter coefficient "b"
   double PreviousOutput;
@@ -175,6 +180,8 @@ private:
   void Bias(void);
 
   void bind(Element* el) override;
+
+  void InitializeLagCoefficients();
 
   void Debug(int from) override;
 };

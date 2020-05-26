@@ -59,7 +59,8 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   PreviousHystOutput = 0.0;
   PreviousRateLimOutput = 0.0;
   PreviousLagInput = PreviousLagOutput = 0.0;
-  bias = lag = hysteresis_width = deadband_width = 0.0;
+  bias = hysteresis_width = deadband_width = 0.0;
+  lag = nullptr;
   rate_limit_incr = rate_limit_decr = 0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
@@ -98,11 +99,13 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   if ( element->FindElement("bias") ) {
     bias = element->FindElementValueAsNumber("bias");
   }
-  if ( element->FindElement("lag") ) {
-    lag = element->FindElementValueAsNumber("lag");
-    double denom = 2.00 + dt*lag;
-    ca = dt*lag / denom;
-    cb = (2.00 - dt*lag) / denom;
+
+  // Lag if specified can be numeric or a property
+  Element* lag_el = element->FindElement("lag");
+  if ( lag_el ) {
+    string lag_str = lag_el->GetDataLine();
+    lag = new FGParameterValue(lag_str, PropertyManager);
+    InitializeLagCoefficients();
   }
 
   bind(element);
@@ -117,6 +120,8 @@ FGActuator::~FGActuator()
   delete rate_limit_incr;
   if (rate_limit_decr != rate_limit_incr)
     delete rate_limit_decr;
+
+  delete lag;
 
   Debug(1);
 }
@@ -152,7 +157,7 @@ bool FGActuator::Run(void )
   if (fail_stuck) {
     Output = PreviousOutput;
   } else {
-    if (lag != 0.0)              Lag();        // models actuator lag
+    if (lag)                Lag();        // models actuator lag
     if (rate_limit_incr != 0 || rate_limit_decr != 0) RateLimit();  // limit the actuator rate
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
@@ -199,8 +204,12 @@ void FGActuator::Lag(void)
   // for this Lag filter
   double input = Output;
 
-  if ( initialized )
+  if (initialized) {
+    // Check if lag value has changed via dynamic property
+    if (lagVal != lag->GetValue())
+      InitializeLagCoefficients();
     Output = ca * (input + PreviousLagInput) + PreviousLagOutput * cb;
+  }
 
   PreviousLagInput = input;
   PreviousLagOutput = Output;
@@ -287,6 +296,16 @@ void FGActuator::bind(Element* el)
   PropertyManager->Tie( tmp_hardover, this, &FGActuator::GetFailHardover, &FGActuator::SetFailHardover);
   PropertyManager->Tie( tmp_stuck, this, &FGActuator::GetFailStuck, &FGActuator::SetFailStuck);
   PropertyManager->Tie( tmp_sat, this, &FGActuator::IsSaturated);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::InitializeLagCoefficients()
+{
+  lagVal = lag->GetValue();
+  double denom = 2.00 + dt * lagVal;
+  ca = dt * lagVal / denom;
+  cb = (2.00 - dt * lagVal) / denom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
