@@ -74,6 +74,10 @@ CLASS DOCUMENTATION
     <rate_limit> element is supplied with a "sense" attribute of either
     "incr[easing]" or "decr[easing]" then the actuator is limited to the
     provided numeric or property value) exactly as provided.
+    
+    Lag filter's numerical integration assumes that the lag parameter is
+    constant. So a continuously varying parameter via a property will introduce
+    a non negligible error that will accumulate as the simulation progresses.
 
 Syntax:
 
