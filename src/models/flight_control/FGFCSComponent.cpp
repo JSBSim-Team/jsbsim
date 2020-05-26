@@ -222,10 +222,17 @@ void FGFCSComponent::SetOutput(void)
 
 void FGFCSComponent::Delay(void)
 {
-  output_array[index] = Output;
-  if ((unsigned int)index == delay-1) index = 0;
-  else index++;
-  Output = output_array[index];
+  if (fcs->GetTrimStatus()) {
+    // Update the whole history while trim routines are executing.
+    // Don't want to model delays while calculating a trim solution.
+    std::fill(output_array.begin(), output_array.end(), Output);
+  }
+  else {
+    output_array[index] = Output;
+    if ((unsigned int)index == delay-1) index = 0;
+    else index++;
+    Output = output_array[index];
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
