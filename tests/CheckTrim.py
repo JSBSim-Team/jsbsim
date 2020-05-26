@@ -101,5 +101,28 @@ class CheckTrim(JSBSimTestCase):
         while fdm['simulation/sim-time-sec'] < 6.0:
             fdm.run()
 
+    def test_trim_with_actuator_delay(self):
+        # This is a regression test that checks that actuators delays are
+        # disabled when the trim takes place (GitHub issue #293).
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       'c1722.xml')
+        aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
+                                                          self.sandbox)
+        root = aircraft_tree.getroot()
+        elevator_actuator = root.find("flight_control/channel/actuator[@name='fcs/elevator-actuator']")
+        delay = et.SubElement(elevator_actuator, 'delay')
+        delay.text = '0.1'
+        aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
+                                         aircraft_name+'.xml'))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path(self.sandbox('aircraft'))
+        fdm.load_script(script_path)
+        fdm.run_ic()
+
+        while fdm.run():
+            if fdm['simulation/trim-completed'] == 1:
+                break
+
 
 RunTest(CheckTrim)
