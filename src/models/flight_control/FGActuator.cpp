@@ -60,7 +60,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   PreviousRateLimOutput = 0.0;
   PreviousLagInput = PreviousLagOutput = 0.0;
   bias = hysteresis_width = deadband_width = 0.0;
-  lag = 0;
+  lag = nullptr;
   rate_limit_incr = rate_limit_decr = 0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
@@ -157,7 +157,7 @@ bool FGActuator::Run(void )
   if (fail_stuck) {
     Output = PreviousOutput;
   } else {
-    if (lag != 0)                Lag();        // models actuator lag
+    if (lag)                Lag();        // models actuator lag
     if (rate_limit_incr != 0 || rate_limit_decr != 0) RateLimit();  // limit the actuator rate
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
