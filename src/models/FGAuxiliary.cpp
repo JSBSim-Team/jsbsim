@@ -75,7 +75,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
-  Nz = Ny = 0.0;
+  Nx = Ny = Nz = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
@@ -207,6 +207,7 @@ bool FGAuxiliary::Run(bool Holding)
   // Nz is Acceleration in "g's", along normal axis (-Z body axis)
   Nz = -vNcg(eZ);
   Ny =  vNcg(eY);
+  Nx =  vNcg(eX);
   vPilotAccel = in.vBodyAccel + in.vPQRidot * in.ToEyePt;
   vPilotAccel += in.vPQRi * (in.vPQRi * in.ToEyePt);
 
@@ -334,8 +335,9 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-x-norm", this, eX, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
-  PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
+  PropertyManager->Tie("accelerations/Nx", this, &FGAuxiliary::GetNx);
   PropertyManager->Tie("accelerations/Ny", this, &FGAuxiliary::GetNy);
+  PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
   PropertyManager->Tie("forces/load-factor", this, &FGAuxiliary::GetNlf);
   PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha);
   PropertyManager->Tie("aero/beta-rad", this, (PF)&FGAuxiliary::Getbeta);

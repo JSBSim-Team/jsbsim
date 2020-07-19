@@ -3,16 +3,17 @@ set -e -x
 
 # Compile C++ code
 cd /io/build
-cmake ..
-make CFLAGS="-DNDEBUG" CXXFLAGS="-DNDEBUG"
+cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_BUILD_TYPE=Release ..
+make
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,5))))" | grep -q '1'; then
         "${PYBIN}/pip" install cython numpy
+        cmake .. # Generate jsbsim.pyx and setup.py
         "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
-        "${PYBIN}/python" python/setup.py bdist_wheel
+        "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
     fi
 done
 

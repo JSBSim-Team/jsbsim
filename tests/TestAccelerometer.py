@@ -95,7 +95,7 @@ class TestAccelerometer(JSBSimTestCase):
 
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], 0.0, delta=1E-7)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-7)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z']/faz, 1.0, delta=1E-8)
 
     def testSteadyFlight(self):
         script_name = 'c1722.xml'

@@ -15,7 +15,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -106,18 +106,19 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.8'
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ..\cxxtest\python
+          cd cxxtest\python
           python setup.py install
-          cd ..\..\jsbsim
-      - name: Checkout JSBSim
-        uses: actions/checkout@v1
+          cd ..\..
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -126,7 +127,7 @@ jobs:
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
       - name: Build JSBSim
         run: |
           cd build
@@ -155,18 +156,19 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Install Doxygen
         run: cinst doxygen.install
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ..\cxxtest\python
+          cd cxxtest\python
           python setup.py install
-          cd ..\..\jsbsim
-      - name: Checkout JSBSim
-        uses: actions/checkout@v1
+          cd ..\..
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -175,7 +177,7 @@ jobs:
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\..\cxxtest" ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
       - name: Build JSBSim
         run: |
           cd build
@@ -187,8 +189,7 @@ jobs:
       - name: Build wheel package for Python 3.8
         run: |
           cd build
-          python python/setup.py sdist
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.8
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -202,7 +203,7 @@ jobs:
         run: |
           pip install -U cython numpy wheel pywin32
           cd build
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.7
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -215,7 +216,7 @@ jobs:
         run: |
           pip install -U cython numpy wheel pywin32
           cd build
-          python python/setup.py bdist_wheel --config RelWithDebInfo
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Test wheel package for Python 3.6
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -263,18 +264,19 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel
       - name: Install Doxygen
         run: brew install doxygen
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
       - name: Checkout CxxTest
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
+          path: cxxtest
       - name: Configure CxxTest
         run: |
-          cd ../cxxtest/python
+          cd cxxtest/python
           python setup.py install
-          cd ../../jsbsim
-      - name: Checkout JSBSim
-        uses: actions/checkout@v1
+          cd ../..
       - name: Configure JSBSim
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -283,7 +285,7 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../../cxxtest ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
       - name: Build JSBSim
         run: |
           cd build
@@ -292,16 +294,41 @@ jobs:
         run: |
           cd build
           ctest -j2 -E TestInputSocket
-      - name: Build wheel package
+      - name: Build wheel package for Python 3.6
         run: |
           cd build
-          python python/setup.py sdist
-          python python/setup.py bdist_wheel
-      - name: Test wheel package
+          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+      - name: Test wheel package for Python 3.6
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
           pip uninstall jsbsim -y
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Build wheel package for Python 3.7
+        run: |
+          pip install -U cython numpy wheel
+          cd build
+          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+      - name: Test wheel package for Python 3.7
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - name: Build wheel package for Python 3.8
+        run: |
+          pip install -U cython numpy wheel
+          cd build
+          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+      - name: Test wheel package for Python 3.8
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 
     # Upload files
       - name: On failure - Prepare logs for upload
