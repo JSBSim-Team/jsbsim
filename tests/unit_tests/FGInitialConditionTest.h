@@ -100,7 +100,7 @@ public:
           TS_ASSERT_DELTA(ic.GetLongitudeRadIC(), lon*M_PI/180., epsilon);
           TS_ASSERT_DELTA(ic.GetAltitudeASLFtIC()/asl, 1.0, 2E-8);
           TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC()/asl, 1.0, 2E-8);
-          TS_ASSERT_DELTA(ic.GetLatitudeDegIC(), lat, epsilon*10.);
+          TS_ASSERT_DELTA(ic.GetLatitudeDegIC(), lat, epsilon*100.);
           TS_ASSERT_DELTA(ic.GetLatitudeRadIC(), lat*M_PI/180., epsilon);
         }
       }
