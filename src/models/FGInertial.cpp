@@ -74,7 +74,7 @@ FGInertial::FGInertial(FGFDMExec* fgex)
   */
 
   vOmegaPlanet = { 0.0, 0.0, RotationRate };
-  GroundCallback.reset(new FGDefaultGroundCallback(RadiusReference, RadiusReference));
+  GroundCallback.reset(new FGDefaultGroundCallback(a, b));
 
   bind();
 

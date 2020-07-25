@@ -122,14 +122,9 @@ void FGInitialCondition::InitializeIC(void)
 {
   alpha = beta = 0.0;
   epa = 0.0;
-  // FIXME: Since FGDefaultGroundCallback assumes the Earth is spherical, so
-  // must FGLocation. However this should be updated according to the assumption
-  // made by the actual callback.
 
-  // double a = fdmex->GetInertial()->GetSemimajor();
-  // double b = fdmex->GetInertial()->GetSemiminor();
-  double a = fdmex->GetInertial()->GetRefRadius();
-  double b = fdmex->GetInertial()->GetRefRadius();
+  double a = fdmex->GetInertial()->GetSemimajor();
+  double b = fdmex->GetInertial()->GetSemiminor();
 
   position.SetEllipse(a, b);
 
@@ -677,7 +672,38 @@ double FGInitialCondition::GetTerrainElevationFtIC(void) const
 
 void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 {
-  fdmex->GetInertial()->SetAltitudeAGL(position, agl);
+  // TODO Airpseed is not managed as it is in SetAltitudeASLFtIC.
+  switch(lastLatitudeSet) {
+  case setgeod:
+    fdmex->GetInertial()->SetAltitudeAGL(position, agl);
+    break;
+  case setgeoc:
+    {
+      double a = fdmex->GetInertial()->GetSemimajor();
+      double b = fdmex->GetInertial()->GetSemiminor();
+      double e2 = 1.0-b*b/(a*a);
+      double tanlat = tan(position.GetLatitude());
+      double n = e2;
+      double prev_n = 1.0;
+      int iter = 0;
+      double longitude = position.GetLongitude();
+      double alt = position.GetGeodAltitude();
+      double h = -2.0*max(a,b);
+      double geodLat;
+      while ((fabs(1000.*(n-prev_n)) > 1E-12 || fabs(h-agl) > 1E-10) && iter < 10) {
+        geodLat = atan(tanlat/(1-n));
+        position.SetPositionGeodetic(longitude, geodLat, alt);
+        h = GetAltitudeAGLFtIC();
+        alt += agl-h;
+        double sinGeodLat = sin(geodLat);
+        double N = a/sqrt(1-e2*sinGeodLat*sinGeodLat);
+        prev_n = n;
+        n = e2*N/(N+alt);
+        iter++;
+      }
+    }
+    break;
+  }
   lastAltitudeSet = setagl;
 }
 
@@ -698,10 +724,38 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double vc0 = VcalibratedFromMach(mach0, pressure);
   double ve0 = vt * sqrt(rho/rhoSL);
 
-  double geodLatitude = position.GetGeodLatitudeRad();
   double longitude = position.GetLongitude();
+
   altitudeASL=alt;
-  position.SetPositionGeodetic(longitude, geodLatitude, alt);
+  switch(lastLatitudeSet) {
+  case setgeod:
+    {
+      double latitude = position.GetGeodLatitudeRad();
+      position.SetPositionGeodetic(longitude, latitude, alt);
+    }
+    break;
+  case setgeoc:
+    {
+      double a = fdmex->GetInertial()->GetSemimajor();
+      double b = fdmex->GetInertial()->GetSemiminor();
+      double e2 = 1.0-b*b/(a*a);
+      double tanlat = tan(position.GetLatitude());
+      double n = e2;
+      double prev_n = 1.0;
+      int iter = 0;
+      double geodLat;
+      while (fabs(1000.*(n-prev_n)) > 1E-12 && iter < 10) {
+        geodLat = atan(tanlat/(1-n));
+        double sinGeodLat = sin(geodLat);
+        double N = a/sqrt(1-e2*sinGeodLat*sinGeodLat);
+        prev_n = n;
+        n = e2*N/(N+alt);
+        iter++;
+      }
+      position.SetPositionGeodetic(longitude, geodLat, alt);
+    }
+    break;
+  }
 
   soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   rho = Atmosphere->GetDensity(altitudeASL);
@@ -732,6 +786,7 @@ void FGInitialCondition::SetGeodLatitudeRadIC(double geodLatitude)
   double h = position.GetGeodAltitude();
   double lon = position.GetLongitude();
 
+  // TODO This is assuming that ASL was set but AGL is not managed correctly.
   position.SetPositionGeodetic(lon, geodLatitude, h);
   lastLatitudeSet = setgeod;
 }
@@ -751,7 +806,9 @@ void FGInitialCondition::SetLatitudeRadIC(double lat)
     SetAltitudeAGLFtIC(altitude);
     break;
   default:
+    altitude = GetAltitudeASLFtIC();
     position.SetLatitude(lat);
+    SetAltitudeASLFtIC(altitude);
     break;
   }
 }
@@ -940,10 +997,12 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
 
     string lat_type = latitude_el->GetAttributeValue("type");
 
-    if (lat_type == "geod" || lat_type == "geodetic")
+    if (lat_type == "geod" || lat_type == "geodetic") {
       SetGeodLatitudeRadIC(latitude);
+      lastLatitudeSet = setgeod;
+    }
     else {
-      position.SetLatitude(latitude);
+      SetLatitudeRadIC(latitude);
       lastLatitudeSet = setgeoc;
     }
   }
