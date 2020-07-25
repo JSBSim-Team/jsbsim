@@ -320,6 +320,10 @@ class TestInitialConditions(JSBSimTestCase):
                     self.CheckICValues(self.GetVariables(latitude_tag),
                                        'IC%d' % (i,), fdm, position_tag)
 
+                    # Kill the fdm so that Windows do not block further access to BallOut.csv
+                    fdm = None
+                    self.delete_fdm()
+
     def test_set_initial_geodetic_latitude(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                        '737_cruise.xml')
