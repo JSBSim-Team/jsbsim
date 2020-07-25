@@ -20,7 +20,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math, shutil
+import os, math, shutil, gc
 import xml.etree.ElementTree as et
 import pandas as pd
 from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest
@@ -313,7 +313,6 @@ class TestInitialConditions(JSBSimTestCase):
                     fdm = self.create_fdm()
                     fdm.load_model('ball')
                     fdm.set_output_directive(Output_file)
-                    fdm.set_output_filename(0, 'BallOutput{}.csv'.format((i+1)*(latitude_pos+1)))
                     fdm.set_output_filename(1, 'check_csv_values.csv')
                     fdm.load_ic('IC.xml', False)
                     fdm.run_ic()
@@ -324,6 +323,7 @@ class TestInitialConditions(JSBSimTestCase):
                     # Kill the fdm so that Windows do not block further access to BallOut.csv
                     fdm = None
                     self.delete_fdm()
+                    gc.collect()
 
     def test_set_initial_geodetic_latitude(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
