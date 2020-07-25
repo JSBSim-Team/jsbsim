@@ -313,6 +313,7 @@ class TestInitialConditions(JSBSimTestCase):
                     fdm = self.create_fdm()
                     fdm.load_model('ball')
                     fdm.set_output_directive(Output_file)
+                    fdm.set_output_filename(0, 'BallOutput{}.csv'.format((i+1)*(latitude_pos+1))
                     fdm.set_output_filename(1, 'check_csv_values.csv')
                     fdm.load_ic('IC.xml', False)
                     fdm.run_ic()
